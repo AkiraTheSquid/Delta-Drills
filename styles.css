@@ -17,7 +17,7 @@ body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
   color: var(--text);
-  background: var(--bg);
+  background: #0b0b0d;
 }
 
 .topbar {
