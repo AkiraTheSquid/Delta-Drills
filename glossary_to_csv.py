@@ -51,12 +51,20 @@ def _normalize_text(s: str) -> str:
     return s.strip()
 
 
-def _find_title_page_indices(pdf_path: Path, titles: list[str], max_pages: int | None = None) -> dict[str, int]:
+def _find_title_page_indices(
+    pdf_path: Path,
+    titles: list[str],
+    max_pages: int | None = None,
+    start_page: int | None = None,
+) -> dict[str, int]:
     reader = PdfReader(str(pdf_path))
     total_pages = len(reader.pages)
     last_idx = total_pages - 1
     if max_pages is not None:
         last_idx = min(last_idx, max_pages - 1)
+    start_idx = 0
+    if start_page is not None and start_page > 1:
+        start_idx = min(total_pages - 1, start_page - 1)
 
     normalized_titles: dict[str, list[str]] = {}
     for t in titles:
@@ -69,7 +77,7 @@ def _find_title_page_indices(pdf_path: Path, titles: list[str], max_pages: int |
             tokens.append(f"chapter {m.group(1)}")
         normalized_titles[t] = tokens
     hits: dict[str, int] = {}
-    for i in range(0, last_idx + 1):
+    for i in range(start_idx, last_idx + 1):
         try:
             page_text = reader.pages[i].extract_text() or ""
         except Exception:
@@ -347,6 +355,46 @@ def _run_splitter(pdf_path: Path, chapters_csv: Path, output_dir: Path) -> int:
     return result.returncode
 
 
+def _extract_outline_chapters(pdf_path: Path) -> list[tuple[str, int]]:
+    reader = PdfReader(str(pdf_path))
+    try:
+        outlines = reader.outline
+    except Exception:
+        return []
+    if not outlines:
+        return []
+
+    chapters: list[tuple[str, int]] = []
+
+    def walk(items):
+        for it in items:
+            if isinstance(it, list):
+                walk(it)
+                continue
+            title = getattr(it, "title", None)
+            if not title:
+                continue
+            if not re.match(r"^\s*chapter\s+\d+", title, flags=re.IGNORECASE):
+                continue
+            try:
+                page_num = reader.get_destination_page_number(it) + 1
+            except Exception:
+                continue
+            chapters.append((title.strip(), page_num))
+
+    walk(outlines)
+    # De-duplicate by title, keep first occurrence, and sort by page
+    seen = set()
+    unique: list[tuple[str, int]] = []
+    for title, page in chapters:
+        if title in seen:
+            continue
+        seen.add(title)
+        unique.append((title, page))
+    unique.sort(key=lambda x: x[1])
+    return unique
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Detect TOC pages via ChatGPT, convert to Markdown via Mathpix, then to CSV via ChatGPT."
@@ -364,6 +412,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--chapters-csv", default=str(BASE_DIR / "toc_chapters.csv"), help="Output chapters CSV path")
     parser.add_argument("--split", action="store_true", help="Split PDF into chapter PDFs using TOC")
     parser.add_argument("--chapters-dir", default=None, help="Output folder for chapter PDFs (auto if omitted)")
+    parser.add_argument("--no-prefer-outline", action="store_true", help="Disable using PDF outline/bookmarks for chapter pages")
     args = parser.parse_args(argv)
 
     pdf_path = Path(args.pdf_path).expanduser().resolve()
@@ -424,14 +473,19 @@ def main(argv: list[str] | None = None) -> int:
     csv_path = Path(args.csv_path).expanduser().resolve()
     _write_csv_text(csv_text, csv_path)
 
-    # Build chapters CSV with inferred offset
+    # Build chapters CSV with inferred offset (TOC-based)
     schema = [c.strip() for c in args.schema.split(",") if c.strip()]
     entries = _parse_toc_csv(csv_text, schema)
     # If the TOC lacks page numbers, fall back to locating titles directly in the PDF.
     with_page_nums = [e for e in entries if _safe_int(e.get("page_number", "") or "") is not None]
     if len(with_page_nums) < 2:
         titles = [e.get("section_title", "") for e in entries if e.get("section_title")]
-        title_hits = _find_title_page_indices(pdf_path, titles, max_pages=total_pages)
+        title_hits = _find_title_page_indices(
+            pdf_path,
+            titles,
+            max_pages=total_pages,
+            start_page=end_page + 1,
+        )
         for e in entries:
             title = e.get("section_title", "")
             if title and title in title_hits:
@@ -440,13 +494,41 @@ def main(argv: list[str] | None = None) -> int:
         offset = 0
     else:
         sample_titles = [e.get("section_title", "") for e in entries[:8] if e.get("section_title")]
-        hits = _find_title_page_indices(pdf_path, sample_titles, max_pages=total_pages)
+        hits = _find_title_page_indices(
+            pdf_path,
+            sample_titles,
+            max_pages=total_pages,
+            start_page=end_page + 1,
+        )
         offset = _compute_offset_from_hits(entries, hits)
         if offset is None:
             offset = 0
 
     chapters_csv = Path(args.chapters_csv).expanduser().resolve()
-    _write_chapters_csv(entries, offset, total_pages, chapters_csv)
+
+    outline_chapters: list[tuple[str, int]] = []
+    prefer_outline = not args.no_prefer_outline
+    if prefer_outline:
+        outline_chapters = _extract_outline_chapters(pdf_path)
+
+    if outline_chapters:
+        # Use outline data as the source of truth for chapter start pages
+        rows = [(title, page, 0) for title, page in outline_chapters]
+        rows.sort(key=lambda r: r[1])
+        for i in range(len(rows)):
+            start = rows[i][1]
+            end = rows[i + 1][1] - 1 if i + 1 < len(rows) else total_pages
+            if end < start:
+                end = start
+            rows[i] = (rows[i][0], start, end)
+        chapters_csv.parent.mkdir(parents=True, exist_ok=True)
+        with chapters_csv.open("w", encoding="utf-8", newline="") as f:
+            f.write("title,start_page,end_page\n")
+            for title, start, end in rows:
+                safe_title = title.replace("\n", " ").strip()
+                f.write(f"\"{safe_title}\",{start},{end}\n")
+    else:
+        _write_chapters_csv(entries, offset, total_pages, chapters_csv)
 
     print("TOC detection:")
     print(f"- Pages: {start_page} to {end_page}")
@@ -454,6 +536,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"- TOC CSV output: {csv_path}")
     print(f"- Chapters CSV output: {chapters_csv}")
     print(f"- Inferred page offset: {offset}")
+    if outline_chapters:
+        print(f"- Outline chapters used: {len(outline_chapters)}")
 
     if args.split:
         if args.chapters_dir:

@@ -47,6 +47,18 @@ def strip_leading_index(title: str) -> str:
     return title_wo_num.strip()
 
 
+def index_to_letters(index: int) -> str:
+    """Convert 1-based index to letters: 1->A, 26->Z, 27->AA, etc."""
+    if index <= 0:
+        return "A"
+    letters = ""
+    n = index
+    while n > 0:
+        n, rem = divmod(n - 1, 26)
+        letters = chr(65 + rem) + letters
+    return letters
+
+
 def preferred_python_invocation() -> str:
     """Return a robust Python invocation command for Windows.
 
@@ -188,10 +200,11 @@ def split_pdf_by_exercises(
         for page_index in range(start_zero, end_excl):
             writer.add_page(reader.pages[page_index])
 
-        # Clean the title of any leading global numbering (e.g., "1.", "10.")
+        # Clean and normalize title, then prefix with letters for NotebookLM ordering
         display_title = strip_leading_index(title)
-        # Prefix with the global counter (no zero padding), e.g., "1 Exercises 1A - ..."
-        filename = f"{idx} " + sanitize_filename(display_title) + ".pdf"
+        display_title = display_title.lower()
+        letter_prefix = index_to_letters(idx)
+        filename = f"{letter_prefix} " + sanitize_filename(display_title) + ".pdf"
         out_path = output_dir / filename
         with out_path.open("wb") as out_f:
             writer.write(out_f)
@@ -446,5 +459,4 @@ if __name__ == "__main__":
         raise SystemExit(interactive_session())
     else:
         raise SystemExit(main(sys.argv))
-
 

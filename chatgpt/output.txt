@@ -1,32 +1,33 @@
-section_title,page_number
-"About the Authors",1
-"Acknowledgments",2
-"Introduction",3
-"Part 1: Internal Medicine",4
-"Chapter 1: Neurology",5
-"Chapter 2: Cardiology",6
-"Chapter 3: Infectious Diseases",7
-"Chapter 4: Tropical, Fungal, and Animal- and Tick-Borne Diseases",8
-"Chapter 5: Allergy and Immunology",9
-"Chapter 6: Endocrinology",10
-"Chapter 7: Pulmonology",11
-"Chapter 8: Rheumatology",12
-"Chapter 9: Hematology",13
-"Chapter 10: Gastroenterology",14
-"Chapter 11: Nephrology",15
-"Chapter 12: Oncology",16
-"Part 2: Preventive Medicine",17
-"Part 3: Biostatistics and Epidemiology",18
-"Part 4: Dermatology",19
-"Part 5: Surgery",20
-"Part 6: Urology",21
-"Part 7: Pediatrics",22
-"Part 8: Obstetrics",23
-"Part 9: Gynecology",24
-"Part 10: Radiology",25
-"Part 11: Psychiatry",26
-"Part 12: Emergency Medicine/Toxicology",27
-"Part 13: Ethics",28
-"Part 14: Patient Safety",29
-"Part 15: Ophthalmology",30
-"Part 16: Ear, Nose, and Throat",31
+section_title,page_number  
+"About the Authors",  
+"Acknowledgments",  
+"Introduction",  
+"Part 1: Internal Medicine",  
+"Chapter 1: Neurology",  
+"Chapter 2: Cardiology",  
+"Chapter 3: Infectious Diseases",  
+"Chapter 4: Tropical, Fungal, and Animal- and Tick-Borne Diseases",  
+"Chapter 5: Allergy and Immunology",  
+"Chapter 6: Endocrinology",  
+"Chapter 7: Pulmonology",  
+"Chapter 8: Rheumatology",  
+"Chapter 9: Hematology",  
+"Chapter 10: Gastroenterology",  
+"Chapter 11: Nephrology",  
+"Chapter 12: Oncology",  
+"Part 2: Preventive Medicine",  
+"Part 3: Biostatistics and Epidemiology",  
+"Part 4: Dermatology",  
+"Part 5: Surgery",  
+"Part 6: Urology",  
+"Part 7: Pediatrics",  
+"Part 8: Obstetrics",  
+"Part 9: Gynecology",  
+"Part 10: Radiology",  
+"Part 11: Psychiatry",  
+"Part 12: Emergency Medicine/Toxicology",  
+"Part 13: Ethics",  
+"Part 14: Patient Safety",  
+"Part 15: Ophthalmology",  
+"Part 16: Ear, Nose, and Throat",  
+"Additional resources available at kaptest.com/usmlebookresources",  

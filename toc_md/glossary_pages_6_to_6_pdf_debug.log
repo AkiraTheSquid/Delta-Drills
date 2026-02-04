@@ -28,3 +28,17 @@
 2026-02-03 22:12:11,673 - INFO - PDF job created. Waiting up to 600s for completion...
 2026-02-03 22:12:17,886 - INFO - Saved Markdown to: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.md
 2026-02-03 22:12:17,886 - INFO - PDF extraction completed successfully
+2026-02-03 22:19:26,878 - INFO - Starting PDF extraction for: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.pdf
+2026-02-03 22:19:26,878 - INFO - Outputs will be written to: /home/stellar-thread/Applications/pdf-split-tool/toc_md
+2026-02-03 22:19:26,963 - INFO - Mathpix client initialized for PDF processing
+2026-02-03 22:19:26,964 - INFO - Submitting PDF to Mathpix: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.pdf
+2026-02-03 22:19:27,470 - INFO - PDF job created. Waiting up to 600s for completion...
+2026-02-03 22:19:33,773 - INFO - Saved Markdown to: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.md
+2026-02-03 22:19:33,773 - INFO - PDF extraction completed successfully
+2026-02-03 22:21:03,012 - INFO - Starting PDF extraction for: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.pdf
+2026-02-03 22:21:03,012 - INFO - Outputs will be written to: /home/stellar-thread/Applications/pdf-split-tool/toc_md
+2026-02-03 22:21:03,088 - INFO - Mathpix client initialized for PDF processing
+2026-02-03 22:21:03,089 - INFO - Submitting PDF to Mathpix: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.pdf
+2026-02-03 22:21:03,569 - INFO - PDF job created. Waiting up to 600s for completion...
+2026-02-03 22:21:09,825 - INFO - Saved Markdown to: /home/stellar-thread/Applications/pdf-split-tool/toc_md/glossary_pages_6_to_6.md
+2026-02-03 22:21:09,825 - INFO - PDF extraction completed successfully
