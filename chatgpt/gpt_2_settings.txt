@@ -1,0 +1,55 @@
+# GPT-2 TransformerLens Batch Configuration
+# ===========================================
+
+# Model configuration:
+# Available models: gpt2-small, gpt2-medium, gpt2-large, gpt2-xl
+# Note: Larger models require more VRAM (small ~500MB, medium ~1.5GB, large ~3GB, xl ~6GB)
+model="gpt2-small"
+
+# Device configuration:
+# Options: "cuda", "cpu", "mps" (Apple Silicon), "auto" (auto-detect)
+device="auto"
+
+# Generation parameters:
+# temperature: Controls randomness (0.0 = deterministic, 1.0+ = more random)
+temperature="0"
+
+# max_new_tokens: Maximum number of tokens to generate per prompt
+max_new_tokens="100"
+
+# top_k: Number of highest probability tokens to consider (0 = disabled)
+top_k="50"
+
+# top_p: Nucleus sampling - cumulative probability cutoff (1.0 = disabled)
+top_p="1.0"
+
+# Logprobs configuration:
+# logprobs: Enable/disable log probability output (TRUE/FALSE)
+logprobs="TRUE"
+
+# top_logprobs: Number of top tokens to return logprobs for (1-20)
+top_logprobs="5"
+
+# Batch processing configuration:
+# num_prompts_in_batch: Number of prompts to process concurrently
+# Note: Higher values use more memory but may be faster
+num_prompts_in_batch="1"
+
+# Rate limiting (for GPU memory management):
+# limit: Maximum tokens per minute (helps prevent OOM errors)
+# Set lower for smaller GPUs or when running other programs
+limit="50000"
+
+# Memory management:
+# clear_cache_after_batch: Clear GPU cache after each batch (TRUE/FALSE)
+# Helps prevent memory fragmentation but may slow processing
+clear_cache_after_batch="TRUE"
+
+# Output configuration:
+# save_activations: Save internal activations (for interpretability research)
+# Options: "none", "residual", "all"
+# Warning: "all" generates very large files
+save_activations="none"
+
+# seed: Random seed for reproducibility (-1 = random)
+seed="-1"

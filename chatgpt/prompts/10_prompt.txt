@@ -1,0 +1,411 @@
+## Pass 2 – Canonical Category Merge
+
+You will receive a summary of group assignments generated during Pass 1. Each entry includes:
+- the original `section_number.section_title`
+- the provisional `group_number.group_name`
+- a confidence percentage
+
+Your task is to merge semantically equivalent provisional groups into a single canonical category list that can be reused across future runs.
+
+### Output Schema
+Return CSV rows in this exact order (no header). Wrap any field that contains a comma or leading/trailing spaces in double quotes; never quote the confidence column:
+`[canonical_id], [canonical_name], [merged_source_names], [representative_sections], [confidence_percent], [notes]`
+
+- `canonical_id`: sequential identifiers `G001`, `G002`, … (three digits, zero padded).
+- `canonical_name`: short title (≤5 words) that best captures the merged concept.
+- `merged_source_names`: semicolon-separated list of distinct provisional group names that map to this canonical category (omit trailing spaces).
+- `representative_sections`: semicolon-separated list of the most illustrative `section_number.section_title` values (limit 4 entries).
+- `confidence_percent`: your overall confidence (0–100) that the merge is correct.
+- `notes`: one concise sentence (≤20 words) giving rationale or disambiguation guidance.
+
+### Guidance
+- Prefer fewer, broader canonical categories over many nearly identical ones, but avoid collapsing genuinely different topics.
+- When provisional groups diverge meaningfully, keep them separate even if their names share keywords.
+- Use the provided confidence scores as hints; low-confidence pass-1 groups should carry less weight when merging.
+- Do not include any commentary before or after the CSV rows.
+
+## Pass 1 Group Assignments (CSV)
+section_index,section_identifier,group_cell,group_name,confidence
+1,1. Toy Models of Superposition,1. Superposition Concepts,Superposition Concepts,90
+1,2. Discussion,2. General Discussion,General Discussion,85
+1,3. Does this occur in real models?,2. General Discussion,General Discussion,80
+1,4. Open Questions,2. General Discussion,General Discussion,75
+1,5. SECTION 10,2. General Discussion,General Discussion,70
+1,6. Related Work,3. Related Research,Related Research,80
+1,7. SECTION 11 <br> Related Work,3. Related Research,Related Research,75
+1,8. Comments \& <br> Replications,2. General Discussion,General Discussion,70
+1,9. SECTION 12,2. General Discussion,General Discussion,65
+1,10. AUTHORS,4. Author Information,Author Information,90
+1,11. 0\% Sparsity,5. Sparsity Levels,Sparsity Levels,85
+1,12. 80\% Sparsity,5. Sparsity Levels,Sparsity Levels,85
+1,13. 90\% Sparsity,5. Sparsity Levels,Sparsity Levels,85
+1,14. KEY RESULTS FROM OUR TOY MODELS,1. Superposition Concepts,Superposition Concepts,80
+1,"15. Definitions and Motivation: Features, Directions, and Superposition",1. Superposition Concepts,Superposition Concepts,75
+1,16. Empirical Phenomena,1. Superposition Concepts,Superposition Concepts,80
+1,17. What are Features?,1. Superposition Concepts,Superposition Concepts,75
+1,18. Features as Directions,1. Superposition Concepts,Superposition Concepts,75
+1,19. Privileged vs Non-privileged Bases,1. Superposition Concepts,Superposition Concepts,75
+1,20. The Superposition Hypothesis,1. Superposition Concepts,Superposition Concepts,80
+1,21. Summary: A Hierarchy of Feature Properties,1. Superposition Concepts,Superposition Concepts,75
+1,22. Demonstrating Superposition,1. Superposition Concepts,Superposition Concepts,80
+1,23. Experiment Setup,1. Superposition Concepts,Superposition Concepts,75
+1,24. THE FEATURE VECTOR ( $X$ ),1. Superposition Concepts,Superposition Concepts,75
+1,25. THE MODEL ( $X \rightarrow X^{\prime}$ ),1. Superposition Concepts,Superposition Concepts,75
+1,26. Linear Model,1. Superposition Concepts,Superposition Concepts,80
+1,27. ReLU Output Model,1. Superposition Concepts,Superposition Concepts,80
+1,28. THE LOSS,1. Superposition Concepts,Superposition Concepts,75
+1,29. Basic Results,1. Superposition Concepts,Superposition Concepts,80
+1,26. Linear Model,1. Superposition Concepts,Superposition Concepts,80
+1,27. ReLU Output Model,1. Superposition Concepts,Superposition Concepts,80
+2,21. Summary: A Hierarchy of Feature Properties,1. Feature Properties,Feature Properties,90
+2,22. Demonstrating Superposition,2. Superposition Concepts,Superposition Concepts,85
+2,23. Experiment Setup,2. Superposition Concepts,Superposition Concepts,80
+2,24. THE FEATURE VECTOR ( $X$ ),3. Feature Representation,Feature Representation,88
+2,25. THE MODEL ( $X \rightarrow X^{\prime}$ ),3. Feature Representation,Feature Representation,85
+2,26. Linear Model,4. Model Types,Model Types,90
+2,27. ReLU Output Model,4. Model Types,Model Types,90
+2,28. THE LOSS,5. Loss Functions,Loss Functions,92
+2,29. Basic Results,6. Experimental Results,Experimental Results,87
+2,26. Linear Model,4. Model Types,Model Types,90
+2,27. ReLU Output Model,4. Model Types,Model Types,90
+2,32. Mathematical Understanding,7. Mathematical Insights,Mathematical Insights,80
+2,33. Superposition as a Phase Change,2. Superposition Concepts,Superposition Concepts,75
+2,"34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ )",8. Phase Diagrams,Phase Diagrams,78
+2,35. Extra Feature is Not Represented,9. Feature Representation Outcomes,Feature Representation Outcomes,80
+2,36. Extra Feature Gets Dedicated Dimension,9. Feature Representation Outcomes,Feature Representation Outcomes,80
+2,37. Extra Feature is Stored In Superposition,9. Feature Representation Outcomes,Feature Representation Outcomes,80
+2,"38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )",8. Phase Diagrams,Phase Diagrams,78
+2,39. The Geometry of Superposition,10. Geometry of Features,Geometry of Features,85
+2,40. Uniform Superposition,10. Geometry of Features,Geometry of Features,80
+2,41. FEATURE DIMENSIONALITY,11. Dimensionality Concepts,Dimensionality Concepts,82
+2,42. WHY THESE GEOMETRIC STRUCTURES?,12. Geometric Structures,Geometric Structures,75
+2,43. Aside: Polytopes and Low-Rank Matrices,13. Polytopes and Matrices,Polytopes and Matrices,70
+2,44. Non-Uniform Superposition,14. Non-Uniform Features,Non-Uniform Features,75
+3,"34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ )",1. Sparsity and Importance,Sparsity and Importance,90
+3,35. Extra Feature is Not Represented,2. Extra Features,Extra Features,85
+3,36. Extra Feature Gets Dedicated Dimension,2. Extra Features,Extra Features,85
+3,37. Extra Feature is Stored In Superposition,2. Extra Features,Extra Features,85
+3,"38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )",1. Sparsity and Importance,Sparsity and Importance,90
+3,39. The Geometry of Superposition,3. Geometry of Superposition,Geometry of Superposition,88
+3,40. Uniform Superposition,3. Geometry of Superposition,Geometry of Superposition,88
+3,41. FEATURE DIMENSIONALITY,4. Feature Dimensionality,Feature Dimensionality,85
+3,42. WHY THESE GEOMETRIC STRUCTURES?,5. Geometric Structures,Geometric Structures,80
+3,43. Aside: Polytopes and Low-Rank Matrices,6. Polytopes and Matrices,Polytopes and Matrices,75
+3,44. Non-Uniform Superposition,7. Non-Uniform Superposition,Non-Uniform Superposition,85
+3,45. PERTURBING A SINGLE FEATURE,8. Perturbation Effects,Perturbation Effects,80
+3,46. Correlated and Anticorrelated Features,9. Feature Correlation,Feature Correlation,85
+3,47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES,9. Feature Correlation,Feature Correlation,85
+3,48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES,9. Feature Correlation,Feature Correlation,85
+3,49. Models prefer to represent correlated features in orthogonal dimensions.,9. Feature Correlation,Feature Correlation,85
+3,50. Models prefer to represent anticorrelated features in opposite directions.,9. Feature Correlation,Feature Correlation,85
+3,51. Models prefer to arrange correlated features side by side if they can't be orthogonal.,9. Feature Correlation,Feature Correlation,85
+3,52. LOCAL ALMOST-ORTHOGONAL BASES,10. Local Bases,Local Bases,80
+3,"53. Models prefer to represent correlated features in orthogonal dimensions, creating ""local orthogonal bases"".",10. Local Bases,Local Bases,80
+3,54. COLLAPSING OF CORRELATED FEATURES,11. Feature Collapse,Feature Collapse,85
+3,55. Superposition and Learning Dynamics,12. Learning Dynamics,Learning Dynamics,80
+3,"56. PHENOMENON 1: DISCRETE ""ENERGY LEVEL"" JUMPS",13. Energy Level Jumps,Energy Level Jumps,85
+3,57. PHENOMENON 2: LEARNING AS GEOMETRIC TRANSFORMATIONS,14. Geometric Transformations,Geometric Transformations,85
+3,58. Relationship to Adversarial Robustness,15. Adversarial Robustness,Adversarial Robustness,80
+3,59. Vulnerability to Adversarial Examples (Relative to Non-Superposition Model),15. Adversarial Robustness,Adversarial Robustness,80
+3,60. Features Per Dimension,16. Features Analysis,Features Analysis,80
+4,46. Correlated and Anticorrelated Features,1. Correlation Dynamics,Correlation Dynamics,90
+4,47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES,1. Correlation Dynamics,Correlation Dynamics,85
+4,48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES,1. Correlation Dynamics,Correlation Dynamics,88
+4,49. Models prefer to represent correlated features in orthogonal dimensions.,1. Correlation Dynamics,Correlation Dynamics,92
+4,50. Models prefer to represent anticorrelated features in opposite directions.,1. Correlation Dynamics,Correlation Dynamics,92
+4,51. Models prefer to arrange correlated features side by side if they can't be orthogonal.,1. Correlation Dynamics,Correlation Dynamics,90
+4,52. LOCAL ALMOST-ORTHOGONAL BASES,1. Correlation Dynamics,Correlation Dynamics,85
+4,"53. Models prefer to represent correlated features in orthogonal dimensions, creating ""local orthogonal bases"".",1. Correlation Dynamics,Correlation Dynamics,85
+4,54. COLLAPSING OF CORRELATED FEATURES,1. Correlation Dynamics,Correlation Dynamics,80
+4,55. Superposition and Learning Dynamics,2. Learning Dynamics,Learning Dynamics,75
+4,"56. PHENOMENON 1: DISCRETE ""ENERGY LEVEL"" JUMPS",2. Learning Dynamics,Learning Dynamics,70
+4,57. PHENOMENON 2: LEARNING AS GEOMETRIC TRANSFORMATIONS,2. Learning Dynamics,Learning Dynamics,70
+4,58. Relationship to Adversarial Robustness,3. Adversarial Insights,Adversarial Insights,80
+4,59. Vulnerability to Adversarial Examples (Relative to Non-Superposition Model),3. Adversarial Insights,Adversarial Insights,80
+4,60. Features Per Dimension,3. Adversarial Insights,Adversarial Insights,75
+4,61. Superposition in a Privileged Basis,4. Privileged Basis Exploration,Privileged Basis Exploration,80
+4,62. VISUALIZING SUPERPOSITION IN TERMS OF NEURONS,4. Privileged Basis Exploration,Privileged Basis Exploration,75
+4,63. $W$ as Matrix,4. Privileged Basis Exploration,Privileged Basis Exploration,75
+4,64. $W$ as Stack Plot,4. Privileged Basis Exploration,Privileged Basis Exploration,75
+4,65. Six Features in Four Neurons ( $1-\mathrm{S}=0.12$ ),4. Privileged Basis Exploration,Privileged Basis Exploration,70
+4,66. Eight Features in Five Neurons ( $0.05 \leq 1-\mathrm{S} \leq 0.08$ ),4. Privileged Basis Exploration,Privileged Basis Exploration,70
+4,67. Features are Pairs of Neurons ( $1-\mathrm{S} \leq 0.04$ ),4. Privileged Basis Exploration,Privileged Basis Exploration,70
+4,68. LIMITATIONS OF THE RELU HIDDEN LAYER TOY MODEL SIMULATING IDENTITY,5. Model Limitations,Model Limitations,80
+4,69. Computation in Superposition,6. Superposition Computation,Superposition Computation,75
+4,23. Experiment Setup,6. Superposition Computation,Superposition Computation,80
+4,29. Basic Results,6. Superposition Computation,Superposition Computation,80
+4,63. $W$ as Matrix,6. Superposition Computation,Superposition Computation,75
+4,64. $W$ as Stack Plot,6. Superposition Computation,Superposition Computation,75
+4,74. $W$ as Graph,6. Superposition Computation,Superposition Computation,75
+4,75. Superposition vs Sparsity,6. Superposition Computation,Superposition Computation,75
+5,62. VISUALIZING SUPERPOSITION IN TERMS OF NEURONS,1. Superposition Visualization,Superposition Visualization,90
+5,63. $W$ as Matrix,1. Superposition Visualization,Superposition Visualization,85
+5,64. $W$ as Stack Plot,1. Superposition Visualization,Superposition Visualization,85
+5,65. Six Features in Four Neurons ( $1-\mathrm{S}=0.12$ ),2. Neuron Feature Representation,Neuron Feature Representation,80
+5,66. Eight Features in Five Neurons ( $0.05 \leq 1-\mathrm{S} \leq 0.08$ ),2. Neuron Feature Representation,Neuron Feature Representation,80
+5,67. Features are Pairs of Neurons ( $1-\mathrm{S} \leq 0.04$ ),2. Neuron Feature Representation,Neuron Feature Representation,80
+5,68. LIMITATIONS OF THE RELU HIDDEN LAYER TOY MODEL SIMULATING IDENTITY,3. Model Limitations,Model Limitations,75
+5,69. Computation in Superposition,4. Superposition Computation,Superposition Computation,85
+5,23. Experiment Setup,5. Experiment Methodology,Experiment Methodology,90
+5,29. Basic Results,5. Experiment Methodology,Experiment Methodology,90
+5,63. $W$ as Matrix,1. Superposition Visualization,Superposition Visualization,85
+5,64. $W$ as Stack Plot,1. Superposition Visualization,Superposition Visualization,85
+5,74. $W$ as Graph,1. Superposition Visualization,Superposition Visualization,80
+5,75. Superposition vs Sparsity,6. Sparsity Analysis,Sparsity Analysis,85
+5,76. The Asymmetric Superposition Motif,7. Superposition Mechanisms,Superposition Mechanisms,80
+5,77. The Strategic Picture of Superposition,8. Superposition Strategy,Superposition Strategy,85
+5,"78. Safety, Interpretability, \& ""Solving Superposition""",9. Superposition Safety,Superposition Safety,80
+5,79. Three Ways Out,10. Superposition Solutions,Superposition Solutions,85
+5,80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION,10. Superposition Solutions,Superposition Solutions,80
+5,81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS,10. Superposition Solutions,Superposition Solutions,80
+5,82. APPROACH 3: HYBRID APPROACHES,10. Superposition Solutions,Superposition Solutions,80
+5,83. Additional Considerations,11. Additional Insights,Additional Insights,75
+5,2. Discussion,12. General Discussion,General Discussion,80
+5,85. To What Extent Does Superposition Exist in Real Models?,13. Real Model Analysis,Real Model Analysis,85
+6,"78. Safety, Interpretability, \& ""Solving Superposition""",1. Superposition and Interpretability,Superposition and Interpretability,90
+6,79. Three Ways Out,1. Superposition and Interpretability,Superposition and Interpretability,85
+6,80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION,1. Superposition and Interpretability,Superposition and Interpretability,88
+6,81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS,1. Superposition and Interpretability,Superposition and Interpretability,88
+6,82. APPROACH 3: HYBRID APPROACHES,1. Superposition and Interpretability,Superposition and Interpretability,88
+6,83. Additional Considerations,1. Superposition and Interpretability,Superposition and Interpretability,85
+6,2. Discussion,2. General Discussion,General Discussion,80
+6,85. To What Extent Does Superposition Exist in Real Models?,3. Superposition in Real Models,Superposition in Real Models,90
+6,4. Open Questions,4. Future Research Directions,Future Research Directions,80
+6,6. Related Work,5. Background Research,Background Research,85
+6,88. INTERPRETABLE FEATURES,1. Superposition and Interpretability,Superposition and Interpretability,90
+6,89. SUPERPOSITION,1. Superposition and Interpretability,Superposition and Interpretability,95
+6,90. DISENTANGLEMENT,1. Superposition and Interpretability,Superposition and Interpretability,80
+6,91. COMPRESSED SENSING,1. Superposition and Interpretability,Superposition and Interpretability,80
+6,92. SPARSE CODING AND DICTIONARY LEARNING,1. Superposition and Interpretability,Superposition and Interpretability,80
+6,93. THEORIES OF NEURAL CODING AND REPRESENTATION,1. Superposition and Interpretability,Superposition and Interpretability,80
+6,94. ADDITIONAL CONNECTIONS,1. Superposition and Interpretability,Superposition and Interpretability,75
+6,95. Comments \& Replications,2. General Discussion,General Discussion,70
+6,96. REPLICATION \& FORTHCOMING PAPER,2. General Discussion,General Discussion,70
+6,97. ANTHROPIC BASIC TOY MODEL,3. Superposition in Real Models,Superposition in Real Models,75
+6,98. REDWOOD TOY MODEL,3. Superposition in Real Models,Superposition in Real Models,75
+7,6. Related Work,1. Related Concepts,Related Concepts,80
+7,88. INTERPRETABLE FEATURES,1. Related Concepts,Related Concepts,90
+7,89. SUPERPOSITION,1. Related Concepts,Related Concepts,90
+7,90. DISENTANGLEMENT,1. Related Concepts,Related Concepts,90
+7,91. COMPRESSED SENSING,1. Related Concepts,Related Concepts,80
+7,92. SPARSE CODING AND DICTIONARY LEARNING,1. Related Concepts,Related Concepts,85
+7,93. THEORIES OF NEURAL CODING AND REPRESENTATION,1. Related Concepts,Related Concepts,85
+7,94. ADDITIONAL CONNECTIONS,1. Related Concepts,Related Concepts,75
+7,95. Comments \& Replications,2. Replication Insights,Replication Insights,80
+7,96. REPLICATION \& FORTHCOMING PAPER,2. Replication Insights,Replication Insights,85
+7,97. ANTHROPIC BASIC TOY MODEL,3. Toy Models,Toy Models,90
+7,98. REDWOOD TOY MODEL,3. Toy Models,Toy Models,90
+7,99. REPLICATION \& FURTHER RESULTS,2. Replication Insights,Replication Insights,85
+7,100. REPLICATION,2. Replication Insights,Replication Insights,85
+7,100. REPLICATION,2. Replication Insights,Replication Insights,85
+7,102. ENGINEERING MONOSEMANTICITY IN TOY MODELS,3. Toy Models,Toy Models,80
+7,"103. FRACTIONAL DIMENSIONALITY AND ""PRESSURE""",4. Dimensionality Concepts,Dimensionality Concepts,75
+7,100. REPLICATION,2. Replication Insights,Replication Insights,85
+7,105. EXTRACTING FEATURES WITH SPARSE AUTOENCODERS,1. Related Concepts,Related Concepts,80
+7,106. LINEAR REPRESENTATION IN OTHELLO,1. Related Concepts,Related Concepts,80
+7,107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY,4. Dimensionality Concepts,Dimensionality Concepts,75
+7,108. Code,5. Code and Acknowledgments,Code and Acknowledgments,70
+7,109. Acknowledgments,5. Code and Acknowledgments,Code and Acknowledgments,70
+7,110. Author,5. Code and Acknowledgments,Code and Acknowledgments,70
+8,100. REPLICATION,1. Replication Studies,Replication Studies,90
+8,100. REPLICATION,1. Replication Studies,Replication Studies,90
+8,102. ENGINEERING MONOSEMANTICITY IN TOY MODELS,2. Monosemanticity in Models,Monosemanticity in Models,85
+8,"103. FRACTIONAL DIMENSIONALITY AND ""PRESSURE""",3. Feature Dimensionality Concepts,Feature Dimensionality Concepts,80
+8,100. REPLICATION,1. Replication Studies,Replication Studies,90
+8,105. EXTRACTING FEATURES WITH SPARSE AUTOENCODERS,4. Feature Extraction Techniques,Feature Extraction Techniques,75
+8,106. LINEAR REPRESENTATION IN OTHELLO,5. Linear Representation Studies,Linear Representation Studies,80
+8,107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY,3. Feature Dimensionality Concepts,Feature Dimensionality Concepts,75
+8,108. Code,6. Code and Implementation,Code and Implementation,70
+8,109. Acknowledgments,7. Acknowledgments and Contributions,Acknowledgments and Contributions,95
+8,110. Author,8. Author Information,Author Information,95
+8,111. Contributions,7. Acknowledgments and Contributions,Acknowledgments and Contributions,90
+8,112. Citation,9. Citation Information,Citation Information,95
+8,113. Information,10. General Information,General Information,90
+8,114. Footnotes,11. Footnotes and Notes,Footnotes and Notes,85
+8,115. References,12. References and Further Reading,References and Further Reading,90
+8,116. 2. Decoding The Thought Vector [link],13. Related Works,Related Works,80
+8,117. 3. Zoom In: An Introduction to Circuits,13. Related Works,Related Works,80
+8,118. 4. Softmax Linear Units,13. Related Works,Related Works,80
+8,119. 5. Compressed sensing,13. Related Works,Related Works,80
+8,120. 6. Local vs. Distributed Coding,13. Related Works,Related Works,80
+8,121. 7. Representation learning: A review and new perspectives,13. Related Works,Related Works,80
+8,122. 8. Feature Visualization [link],13. Related Works,Related Works,80
+8,123. 9. Curve Detectors [link],13. Related Works,Related Works,80
+8,124. 10. Superposition of many models into one,13. Related Works,Related Works,80
+8,125. 11. Linguistic regularities in continuous space word representations [PDF],13. Related Works,Related Works,80
+8,126. 12. Linguistic regularities in sparse and explicit word representations,13. Related Works,Related Works,80
+8,127. 13. Unsupervised representation learning with deep convolutional generative adversarial networks,13. Related Works,Related Works,80
+8,128. 14. Visualizing and understanding recurrent networks [PDF],13. Related Works,Related Works,80
+8,129. 15. Learning to generate reviews and discovering sentiment [PDF],13. Related Works,Related Works,80
+8,130. 16. Object detectors emerge in deep scene cnns [PDF],13. Related Works,Related Works,80
+8,131. 17. Network Dissection: Quantifying Interpretability of Deep Visual Representations [PDF],13. Related Works,Related Works,80
+8,132. 18. Understanding the role of individual units in a deep neural network,13. Related Works,Related Works,80
+8,133. 19. On the importance of single directions for generalization [PDF],13. Related Works,Related Works,80
+8,134. 20. On Interpretability and Feature Representations: An Analysis of the Sentiment Neuron,13. Related Works,Related Works,80
+8,135. 21. High-Low Frequency Detectors,13. Related Works,Related Works,80
+8,136. 22. Multimodal Neurons in Artificial Neural Networks,13. Related Works,Related Works,80
+8,"137. 24. Adversarial examples are not bugs, they are features",14. Adversarial Examples,Adversarial Examples,75
+8,138. 25. Proofs and refutations,15. Theoretical Foundations,Theoretical Foundations,70
+8,139. 27. Decoding by linear programming,16. Linear Programming Techniques,Linear Programming Techniques,75
+8,140. 29. In-context Learning and Induction Heads [HTML],17. Learning Techniques,Learning Techniques,75
+8,141. 30. A Mechanistic Interpretability Analysis of Grokking [link],18. Interpretability Studies,Interpretability Studies,75
+8,142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets,19. Generalization Studies,Generalization Studies,75
+8,143. 32. The surprising simplicity of the early-time learning dynamics of neural networks,20. Learning Dynamics,Learning Dynamics,75
+8,144. 33. A mathematical theory of semantic development in deep neural networks,21. Semantic Development,Semantic Development,75
+8,145. 34. Towards the science of security and privacy in machine learning,22. Security and Privacy,Security and Privacy,75
+8,146. 35. Adversarial spheres,14. Adversarial Examples,Adversarial Examples,75
+8,147. 36. Adversarial robustness as a prior for learned representations,14. Adversarial Examples,Adversarial Examples,75
+8,148. 37. Delving into transferable adversarial examples and black-box attacks,14. Adversarial Examples,Adversarial Examples,75
+9,115. References,1. General References,General References,90
+9,116. 2. Decoding The Thought Vector [link],2. Thought Vector Decoding,Thought Vector Decoding,85
+9,117. 3. Zoom In: An Introduction to Circuits,3. Circuit Analysis,Circuit Analysis,80
+9,118. 4. Softmax Linear Units,4. Activation Functions,Activation Functions,75
+9,119. 5. Compressed sensing,5. Compressed Sensing,Compressed Sensing,90
+9,120. 6. Local vs. Distributed Coding,6. Coding Strategies,Coding Strategies,80
+9,121. 7. Representation learning: A review and new perspectives,7. Representation Learning,Representation Learning,85
+9,122. 8. Feature Visualization [link],8. Feature Visualization,Feature Visualization,85
+9,123. 9. Curve Detectors [link],9. Curve Detection,Curve Detection,80
+9,124. 10. Superposition of many models into one,10. Model Superposition,Model Superposition,75
+9,125. 11. Linguistic regularities in continuous space word representations [PDF],11. Word Representations,Word Representations,85
+9,126. 12. Linguistic regularities in sparse and explicit word representations,11. Word Representations,Word Representations,85
+9,127. 13. Unsupervised representation learning with deep convolutional generative adversarial networks,12. Unsupervised Learning,Unsupervised Learning,80
+9,128. 14. Visualizing and understanding recurrent networks [PDF],13. Recurrent Networks,Recurrent Networks,80
+9,129. 15. Learning to generate reviews and discovering sentiment [PDF],14. Sentiment Analysis,Sentiment Analysis,80
+9,130. 16. Object detectors emerge in deep scene cnns [PDF],15. Object Detection,Object Detection,80
+9,131. 17. Network Dissection: Quantifying Interpretability of Deep Visual Representations [PDF],16. Network Interpretability,Network Interpretability,80
+9,132. 18. Understanding the role of individual units in a deep neural network,17. Neural Network Units,Neural Network Units,80
+9,133. 19. On the importance of single directions for generalization [PDF],18. Generalization,Generalization,75
+9,134. 20. On Interpretability and Feature Representations: An Analysis of the Sentiment Neuron,19. Feature Interpretability,Feature Interpretability,75
+9,135. 21. High-Low Frequency Detectors,20. Frequency Detection,Frequency Detection,75
+9,136. 22. Multimodal Neurons in Artificial Neural Networks,21. Multimodal Learning,Multimodal Learning,75
+9,"137. 24. Adversarial examples are not bugs, they are features",22. Adversarial Examples,Adversarial Examples,80
+9,138. 25. Proofs and refutations,23. Theoretical Foundations,Theoretical Foundations,70
+9,139. 27. Decoding by linear programming,24. Linear Programming,Linear Programming,75
+9,140. 29. In-context Learning and Induction Heads [HTML],25. In-context Learning,In-context Learning,80
+9,141. 30. A Mechanistic Interpretability Analysis of Grokking [link],26. Mechanistic Interpretability,Mechanistic Interpretability,75
+9,142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets,27. Generalization,Generalization,75
+9,143. 32. The surprising simplicity of the early-time learning dynamics of neural networks,28. Learning Dynamics,Learning Dynamics,75
+9,144. 33. A mathematical theory of semantic development in deep neural networks,29. Semantic Development,Semantic Development,75
+9,145. 34. Towards the science of security and privacy in machine learning,30. Security and Privacy,Security and Privacy,75
+9,146. 35. Adversarial spheres,31. Adversarial Techniques,Adversarial Techniques,75
+9,147. 36. Adversarial robustness as a prior for learned representations,32. Adversarial Robustness,Adversarial Robustness,75
+9,148. 37. Delving into transferable adversarial examples and black-box attacks,33. Adversarial Attacks,Adversarial Attacks,75
+9,149. 38. An introduction to systems biology: design principles of biological circuits,34. Systems Biology,Systems Biology,70
+9,150. 39. The Building Blocks of Interpretability [link],35. Interpretability Foundations,Interpretability Foundations,80
+9,151. 40. Visualizing Weights [link],36. Weight Visualization,Weight Visualization,80
+9,152. 41. Learning effective and interpretable semantic models using non-negative sparse embedding,37. Semantic Models,Semantic Models,75
+9,153. 42. Word2Sense: sparse interpretable word embeddings,38. Sparse Embeddings,Sparse Embeddings,75
+9,154. Nonlinear,39. Nonlinear Representations,Nonlinear Representations,60
+9,155. Compression,40. Compression Techniques,Compression Techniques,70
+9,156. Connection between compressed sensing lower bounds and the toy model,41. Compressed Sensing Theory,Compressed Sensing Theory,75
+
+## Group Buckets Summary
+Superposition Concepts :: count=22 :: avg_conf=78.4 :: labels=1. Superposition Concepts; 2. Superposition Concepts :: sections=1. Toy Models of Superposition; 14. KEY RESULTS FROM OUR TOY MODELS; 15. Definitions and Motivation: Features, Directions, and Superposition; 16. Empirical Phenomena
+General Discussion :: count=10 :: avg_conf=74.5 :: labels=12. General Discussion; 2. General Discussion :: sections=2. Discussion; 3. Does this occur in real models?; 4. Open Questions; 5. SECTION 10
+Related Research :: count=2 :: avg_conf=77.5 :: labels=3. Related Research :: sections=6. Related Work; 7. SECTION 11 <br> Related Work
+Author Information :: count=2 :: avg_conf=92.5 :: labels=4. Author Information; 8. Author Information :: sections=10. AUTHORS; 110. Author
+Sparsity Levels :: count=3 :: avg_conf=85.0 :: labels=5. Sparsity Levels :: sections=11. 0\% Sparsity; 12. 80\% Sparsity; 13. 90\% Sparsity
+Feature Properties :: count=1 :: avg_conf=90.0 :: labels=1. Feature Properties :: sections=21. Summary: A Hierarchy of Feature Properties
+Feature Representation :: count=2 :: avg_conf=86.5 :: labels=3. Feature Representation :: sections=24. THE FEATURE VECTOR ( $X$ ); 25. THE MODEL ( $X \rightarrow X^{\prime}$ )
+Model Types :: count=4 :: avg_conf=90.0 :: labels=4. Model Types :: sections=26. Linear Model; 27. ReLU Output Model; 26. Linear Model; 27. ReLU Output Model
+Loss Functions :: count=1 :: avg_conf=92.0 :: labels=5. Loss Functions :: sections=28. THE LOSS
+Experimental Results :: count=1 :: avg_conf=87.0 :: labels=6. Experimental Results :: sections=29. Basic Results
+Mathematical Insights :: count=1 :: avg_conf=80.0 :: labels=7. Mathematical Insights :: sections=32. Mathematical Understanding
+Phase Diagrams :: count=2 :: avg_conf=78.0 :: labels=8. Phase Diagrams :: sections=34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ ); 38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )
+Feature Representation Outcomes :: count=3 :: avg_conf=80.0 :: labels=9. Feature Representation Outcomes :: sections=35. Extra Feature is Not Represented; 36. Extra Feature Gets Dedicated Dimension; 37. Extra Feature is Stored In Superposition
+Geometry of Features :: count=2 :: avg_conf=82.5 :: labels=10. Geometry of Features :: sections=39. The Geometry of Superposition; 40. Uniform Superposition
+Dimensionality Concepts :: count=3 :: avg_conf=77.3 :: labels=11. Dimensionality Concepts; 4. Dimensionality Concepts :: sections=41. FEATURE DIMENSIONALITY; 103. FRACTIONAL DIMENSIONALITY AND "PRESSURE"; 107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY
+Geometric Structures :: count=2 :: avg_conf=77.5 :: labels=12. Geometric Structures; 5. Geometric Structures :: sections=42. WHY THESE GEOMETRIC STRUCTURES?; 42. WHY THESE GEOMETRIC STRUCTURES?
+Polytopes and Matrices :: count=2 :: avg_conf=72.5 :: labels=13. Polytopes and Matrices; 6. Polytopes and Matrices :: sections=43. Aside: Polytopes and Low-Rank Matrices; 43. Aside: Polytopes and Low-Rank Matrices
+Non-Uniform Features :: count=1 :: avg_conf=75.0 :: labels=14. Non-Uniform Features :: sections=44. Non-Uniform Superposition
+Sparsity and Importance :: count=2 :: avg_conf=90.0 :: labels=1. Sparsity and Importance :: sections=34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ ); 38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )
+Extra Features :: count=3 :: avg_conf=85.0 :: labels=2. Extra Features :: sections=35. Extra Feature is Not Represented; 36. Extra Feature Gets Dedicated Dimension; 37. Extra Feature is Stored In Superposition
+Geometry of Superposition :: count=2 :: avg_conf=88.0 :: labels=3. Geometry of Superposition :: sections=39. The Geometry of Superposition; 40. Uniform Superposition
+Feature Dimensionality :: count=1 :: avg_conf=85.0 :: labels=4. Feature Dimensionality :: sections=41. FEATURE DIMENSIONALITY
+Non-Uniform Superposition :: count=1 :: avg_conf=85.0 :: labels=7. Non-Uniform Superposition :: sections=44. Non-Uniform Superposition
+Perturbation Effects :: count=1 :: avg_conf=80.0 :: labels=8. Perturbation Effects :: sections=45. PERTURBING A SINGLE FEATURE
+Feature Correlation :: count=6 :: avg_conf=85.0 :: labels=9. Feature Correlation :: sections=46. Correlated and Anticorrelated Features; 47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES; 48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES; 49. Models prefer to represent correlated features in orthogonal dimensions.
+Local Bases :: count=2 :: avg_conf=80.0 :: labels=10. Local Bases :: sections=52. LOCAL ALMOST-ORTHOGONAL BASES; 53. Models prefer to represent correlated features in orthogonal dimensions, creating "local orthogonal bases".
+Feature Collapse :: count=1 :: avg_conf=85.0 :: labels=11. Feature Collapse :: sections=54. COLLAPSING OF CORRELATED FEATURES
+Learning Dynamics :: count=6 :: avg_conf=74.2 :: labels=12. Learning Dynamics; 2. Learning Dynamics; 20. Learning Dynamics; 28. Learning Dynamics :: sections=55. Superposition and Learning Dynamics; 55. Superposition and Learning Dynamics; 56. PHENOMENON 1: DISCRETE "ENERGY LEVEL" JUMPS; 57. PHENOMENON 2: LEARNING AS GEOMETRIC TRANSFORMATIONS
+Energy Level Jumps :: count=1 :: avg_conf=85.0 :: labels=13. Energy Level Jumps :: sections=56. PHENOMENON 1: DISCRETE "ENERGY LEVEL" JUMPS
+Geometric Transformations :: count=1 :: avg_conf=85.0 :: labels=14. Geometric Transformations :: sections=57. PHENOMENON 2: LEARNING AS GEOMETRIC TRANSFORMATIONS
+Adversarial Robustness :: count=3 :: avg_conf=78.3 :: labels=15. Adversarial Robustness; 32. Adversarial Robustness :: sections=58. Relationship to Adversarial Robustness; 59. Vulnerability to Adversarial Examples (Relative to Non-Superposition Model); 147. 36. Adversarial robustness as a prior for learned representations
+Features Analysis :: count=1 :: avg_conf=80.0 :: labels=16. Features Analysis :: sections=60. Features Per Dimension
+Correlation Dynamics :: count=9 :: avg_conf=87.4 :: labels=1. Correlation Dynamics :: sections=46. Correlated and Anticorrelated Features; 47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES; 48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES; 49. Models prefer to represent correlated features in orthogonal dimensions.
+Adversarial Insights :: count=3 :: avg_conf=78.3 :: labels=3. Adversarial Insights :: sections=58. Relationship to Adversarial Robustness; 59. Vulnerability to Adversarial Examples (Relative to Non-Superposition Model); 60. Features Per Dimension
+Privileged Basis Exploration :: count=7 :: avg_conf=73.6 :: labels=4. Privileged Basis Exploration :: sections=61. Superposition in a Privileged Basis; 62. VISUALIZING SUPERPOSITION IN TERMS OF NEURONS; 63. $W$ as Matrix; 64. $W$ as Stack Plot
+Model Limitations :: count=2 :: avg_conf=77.5 :: labels=3. Model Limitations; 5. Model Limitations :: sections=68. LIMITATIONS OF THE RELU HIDDEN LAYER TOY MODEL SIMULATING IDENTITY; 68. LIMITATIONS OF THE RELU HIDDEN LAYER TOY MODEL SIMULATING IDENTITY
+Superposition Computation :: count=8 :: avg_conf=77.5 :: labels=4. Superposition Computation; 6. Superposition Computation :: sections=69. Computation in Superposition; 23. Experiment Setup; 29. Basic Results; 63. $W$ as Matrix
+Superposition Visualization :: count=6 :: avg_conf=85.0 :: labels=1. Superposition Visualization :: sections=62. VISUALIZING SUPERPOSITION IN TERMS OF NEURONS; 63. $W$ as Matrix; 64. $W$ as Stack Plot; 63. $W$ as Matrix
+Neuron Feature Representation :: count=3 :: avg_conf=80.0 :: labels=2. Neuron Feature Representation :: sections=65. Six Features in Four Neurons ( $1-\mathrm{S}=0.12$ ); 66. Eight Features in Five Neurons ( $0.05 \leq 1-\mathrm{S} \leq 0.08$ ); 67. Features are Pairs of Neurons ( $1-\mathrm{S} \leq 0.04$ )
+Experiment Methodology :: count=2 :: avg_conf=90.0 :: labels=5. Experiment Methodology :: sections=23. Experiment Setup; 29. Basic Results
+Sparsity Analysis :: count=1 :: avg_conf=85.0 :: labels=6. Sparsity Analysis :: sections=75. Superposition vs Sparsity
+Superposition Mechanisms :: count=1 :: avg_conf=80.0 :: labels=7. Superposition Mechanisms :: sections=76. The Asymmetric Superposition Motif
+Superposition Strategy :: count=1 :: avg_conf=85.0 :: labels=8. Superposition Strategy :: sections=77. The Strategic Picture of Superposition
+Superposition Safety :: count=1 :: avg_conf=80.0 :: labels=9. Superposition Safety :: sections=78. Safety, Interpretability, \& "Solving Superposition"
+Superposition Solutions :: count=4 :: avg_conf=81.2 :: labels=10. Superposition Solutions :: sections=79. Three Ways Out; 80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION; 81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS; 82. APPROACH 3: HYBRID APPROACHES
+Additional Insights :: count=1 :: avg_conf=75.0 :: labels=11. Additional Insights :: sections=83. Additional Considerations
+Real Model Analysis :: count=1 :: avg_conf=85.0 :: labels=13. Real Model Analysis :: sections=85. To What Extent Does Superposition Exist in Real Models?
+Superposition and Interpretability :: count=13 :: avg_conf=84.9 :: labels=1. Superposition and Interpretability :: sections=78. Safety, Interpretability, \& "Solving Superposition"; 79. Three Ways Out; 80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION; 81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS
+Superposition in Real Models :: count=3 :: avg_conf=80.0 :: labels=3. Superposition in Real Models :: sections=85. To What Extent Does Superposition Exist in Real Models?; 97. ANTHROPIC BASIC TOY MODEL; 98. REDWOOD TOY MODEL
+Future Research Directions :: count=1 :: avg_conf=80.0 :: labels=4. Future Research Directions :: sections=4. Open Questions
+Background Research :: count=1 :: avg_conf=85.0 :: labels=5. Background Research :: sections=6. Related Work
+Related Concepts :: count=10 :: avg_conf=83.5 :: labels=1. Related Concepts :: sections=6. Related Work; 88. INTERPRETABLE FEATURES; 89. SUPERPOSITION; 90. DISENTANGLEMENT
+Replication Insights :: count=6 :: avg_conf=84.2 :: labels=2. Replication Insights :: sections=95. Comments \& Replications; 96. REPLICATION \& FORTHCOMING PAPER; 99. REPLICATION \& FURTHER RESULTS; 100. REPLICATION
+Toy Models :: count=3 :: avg_conf=86.7 :: labels=3. Toy Models :: sections=97. ANTHROPIC BASIC TOY MODEL; 98. REDWOOD TOY MODEL; 102. ENGINEERING MONOSEMANTICITY IN TOY MODELS
+Code and Acknowledgments :: count=3 :: avg_conf=70.0 :: labels=5. Code and Acknowledgments :: sections=108. Code; 109. Acknowledgments; 110. Author
+Replication Studies :: count=3 :: avg_conf=90.0 :: labels=1. Replication Studies :: sections=100. REPLICATION; 100. REPLICATION; 100. REPLICATION
+Monosemanticity in Models :: count=1 :: avg_conf=85.0 :: labels=2. Monosemanticity in Models :: sections=102. ENGINEERING MONOSEMANTICITY IN TOY MODELS
+Feature Dimensionality Concepts :: count=2 :: avg_conf=77.5 :: labels=3. Feature Dimensionality Concepts :: sections=103. FRACTIONAL DIMENSIONALITY AND "PRESSURE"; 107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY
+Feature Extraction Techniques :: count=1 :: avg_conf=75.0 :: labels=4. Feature Extraction Techniques :: sections=105. EXTRACTING FEATURES WITH SPARSE AUTOENCODERS
+Linear Representation Studies :: count=1 :: avg_conf=80.0 :: labels=5. Linear Representation Studies :: sections=106. LINEAR REPRESENTATION IN OTHELLO
+Code and Implementation :: count=1 :: avg_conf=70.0 :: labels=6. Code and Implementation :: sections=108. Code
+Acknowledgments and Contributions :: count=2 :: avg_conf=92.5 :: labels=7. Acknowledgments and Contributions :: sections=109. Acknowledgments; 111. Contributions
+Citation Information :: count=1 :: avg_conf=95.0 :: labels=9. Citation Information :: sections=112. Citation
+General Information :: count=1 :: avg_conf=90.0 :: labels=10. General Information :: sections=113. Information
+Footnotes and Notes :: count=1 :: avg_conf=85.0 :: labels=11. Footnotes and Notes :: sections=114. Footnotes
+References and Further Reading :: count=1 :: avg_conf=90.0 :: labels=12. References and Further Reading :: sections=115. References
+Related Works :: count=21 :: avg_conf=80.0 :: labels=13. Related Works :: sections=116. 2. Decoding The Thought Vector [link]; 117. 3. Zoom In: An Introduction to Circuits; 118. 4. Softmax Linear Units; 119. 5. Compressed sensing
+Adversarial Examples :: count=5 :: avg_conf=76.0 :: labels=14. Adversarial Examples; 22. Adversarial Examples :: sections=137. 24. Adversarial examples are not bugs, they are features; 146. 35. Adversarial spheres; 147. 36. Adversarial robustness as a prior for learned representations; 148. 37. Delving into transferable adversarial examples and black-box attacks
+Theoretical Foundations :: count=2 :: avg_conf=70.0 :: labels=15. Theoretical Foundations; 23. Theoretical Foundations :: sections=138. 25. Proofs and refutations; 138. 25. Proofs and refutations
+Linear Programming Techniques :: count=1 :: avg_conf=75.0 :: labels=16. Linear Programming Techniques :: sections=139. 27. Decoding by linear programming
+Learning Techniques :: count=1 :: avg_conf=75.0 :: labels=17. Learning Techniques :: sections=140. 29. In-context Learning and Induction Heads [HTML]
+Interpretability Studies :: count=1 :: avg_conf=75.0 :: labels=18. Interpretability Studies :: sections=141. 30. A Mechanistic Interpretability Analysis of Grokking [link]
+Generalization Studies :: count=1 :: avg_conf=75.0 :: labels=19. Generalization Studies :: sections=142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets
+Semantic Development :: count=2 :: avg_conf=75.0 :: labels=21. Semantic Development; 29. Semantic Development :: sections=144. 33. A mathematical theory of semantic development in deep neural networks; 144. 33. A mathematical theory of semantic development in deep neural networks
+Security and Privacy :: count=2 :: avg_conf=75.0 :: labels=22. Security and Privacy; 30. Security and Privacy :: sections=145. 34. Towards the science of security and privacy in machine learning; 145. 34. Towards the science of security and privacy in machine learning
+General References :: count=1 :: avg_conf=90.0 :: labels=1. General References :: sections=115. References
+Thought Vector Decoding :: count=1 :: avg_conf=85.0 :: labels=2. Thought Vector Decoding :: sections=116. 2. Decoding The Thought Vector [link]
+Circuit Analysis :: count=1 :: avg_conf=80.0 :: labels=3. Circuit Analysis :: sections=117. 3. Zoom In: An Introduction to Circuits
+Activation Functions :: count=1 :: avg_conf=75.0 :: labels=4. Activation Functions :: sections=118. 4. Softmax Linear Units
+Compressed Sensing :: count=1 :: avg_conf=90.0 :: labels=5. Compressed Sensing :: sections=119. 5. Compressed sensing
+Coding Strategies :: count=1 :: avg_conf=80.0 :: labels=6. Coding Strategies :: sections=120. 6. Local vs. Distributed Coding
+Representation Learning :: count=1 :: avg_conf=85.0 :: labels=7. Representation Learning :: sections=121. 7. Representation learning: A review and new perspectives
+Feature Visualization :: count=1 :: avg_conf=85.0 :: labels=8. Feature Visualization :: sections=122. 8. Feature Visualization [link]
+Curve Detection :: count=1 :: avg_conf=80.0 :: labels=9. Curve Detection :: sections=123. 9. Curve Detectors [link]
+Model Superposition :: count=1 :: avg_conf=75.0 :: labels=10. Model Superposition :: sections=124. 10. Superposition of many models into one
+Word Representations :: count=2 :: avg_conf=85.0 :: labels=11. Word Representations :: sections=125. 11. Linguistic regularities in continuous space word representations [PDF]; 126. 12. Linguistic regularities in sparse and explicit word representations
+Unsupervised Learning :: count=1 :: avg_conf=80.0 :: labels=12. Unsupervised Learning :: sections=127. 13. Unsupervised representation learning with deep convolutional generative adversarial networks
+Recurrent Networks :: count=1 :: avg_conf=80.0 :: labels=13. Recurrent Networks :: sections=128. 14. Visualizing and understanding recurrent networks [PDF]
+Sentiment Analysis :: count=1 :: avg_conf=80.0 :: labels=14. Sentiment Analysis :: sections=129. 15. Learning to generate reviews and discovering sentiment [PDF]
+Object Detection :: count=1 :: avg_conf=80.0 :: labels=15. Object Detection :: sections=130. 16. Object detectors emerge in deep scene cnns [PDF]
+Network Interpretability :: count=1 :: avg_conf=80.0 :: labels=16. Network Interpretability :: sections=131. 17. Network Dissection: Quantifying Interpretability of Deep Visual Representations [PDF]
+Neural Network Units :: count=1 :: avg_conf=80.0 :: labels=17. Neural Network Units :: sections=132. 18. Understanding the role of individual units in a deep neural network
+Generalization :: count=2 :: avg_conf=75.0 :: labels=18. Generalization; 27. Generalization :: sections=133. 19. On the importance of single directions for generalization [PDF]; 142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets
+Feature Interpretability :: count=1 :: avg_conf=75.0 :: labels=19. Feature Interpretability :: sections=134. 20. On Interpretability and Feature Representations: An Analysis of the Sentiment Neuron
+Frequency Detection :: count=1 :: avg_conf=75.0 :: labels=20. Frequency Detection :: sections=135. 21. High-Low Frequency Detectors
+Multimodal Learning :: count=1 :: avg_conf=75.0 :: labels=21. Multimodal Learning :: sections=136. 22. Multimodal Neurons in Artificial Neural Networks
+Linear Programming :: count=1 :: avg_conf=75.0 :: labels=24. Linear Programming :: sections=139. 27. Decoding by linear programming
+In-context Learning :: count=1 :: avg_conf=80.0 :: labels=25. In-context Learning :: sections=140. 29. In-context Learning and Induction Heads [HTML]
+Mechanistic Interpretability :: count=1 :: avg_conf=75.0 :: labels=26. Mechanistic Interpretability :: sections=141. 30. A Mechanistic Interpretability Analysis of Grokking [link]
+Adversarial Techniques :: count=1 :: avg_conf=75.0 :: labels=31. Adversarial Techniques :: sections=146. 35. Adversarial spheres
+Adversarial Attacks :: count=1 :: avg_conf=75.0 :: labels=33. Adversarial Attacks :: sections=148. 37. Delving into transferable adversarial examples and black-box attacks
+Systems Biology :: count=1 :: avg_conf=70.0 :: labels=34. Systems Biology :: sections=149. 38. An introduction to systems biology: design principles of biological circuits
+Interpretability Foundations :: count=1 :: avg_conf=80.0 :: labels=35. Interpretability Foundations :: sections=150. 39. The Building Blocks of Interpretability [link]
+Weight Visualization :: count=1 :: avg_conf=80.0 :: labels=36. Weight Visualization :: sections=151. 40. Visualizing Weights [link]
+Semantic Models :: count=1 :: avg_conf=75.0 :: labels=37. Semantic Models :: sections=152. 41. Learning effective and interpretable semantic models using non-negative sparse embedding
+Sparse Embeddings :: count=1 :: avg_conf=75.0 :: labels=38. Sparse Embeddings :: sections=153. 42. Word2Sense: sparse interpretable word embeddings
+Nonlinear Representations :: count=1 :: avg_conf=60.0 :: labels=39. Nonlinear Representations :: sections=154. Nonlinear
+Compression Techniques :: count=1 :: avg_conf=70.0 :: labels=40. Compression Techniques :: sections=155. Compression
+Compressed Sensing Theory :: count=1 :: avg_conf=75.0 :: labels=41. Compressed Sensing Theory :: sections=156. Connection between compressed sensing lower bounds and the toy model

@@ -1,0 +1,183 @@
+G001, "Superposition Concepts", "Superposition Concepts; Superposition Concepts; Superposition Concepts; Feature Properties", "1. Toy Models of Superposition; 14. KEY RESULTS FROM OUR TOY MODELS; 15. Definitions and Motivation: Features, Directions, and Superposition; 21. Summary: A Hierarchy of Feature Properties", 90, "Merges all superposition-related concepts into one category."
+
+G002, "General Discussion", "General Discussion", "2. Discussion; 3. Does this occur in real models?; 4. Open Questions; 5. SECTION 10", 80, "Consolidates various discussion sections into a single category."
+
+G003, "Related Research", "Related Research", "6. Related Work; 7. SECTION 11 <br> Related Work", 80, "Combines related work sections into one category."
+
+G004, "Author Information", "Author Information", "10. AUTHORS; 110. Author", 90, "Merges all author-related sections into one category."
+
+G005, "Sparsity Levels", "Sparsity Levels", "11. 0% Sparsity; 12. 80% Sparsity; 13. 90% Sparsity", 85, "Combines all sparsity-related sections into one category."
+
+G006, "Feature Representation", "Feature Representation; Feature Representation", "24. THE FEATURE VECTOR ( $X$ ); 25. THE MODEL ( $X \rightarrow X^{\prime}$ )", 86, "Merges feature representation sections into one category."
+
+G007, "Model Types", "Model Types", "26. Linear Model; 27. ReLU Output Model", 90, "Combines model type sections into one category."
+
+G008, "Loss Functions", "Loss Functions", "28. THE LOSS", 92, "Single section on loss functions."
+
+G009, "Experimental Results", "Experimental Results", "29. Basic Results", 87, "Single section on experimental results."
+
+G010, "Mathematical Insights", "Mathematical Insights", "32. Mathematical Understanding", 80, "Single section on mathematical insights."
+
+G011, "Phase Diagrams", "Phase Diagrams", "34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ ); 38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )", 78, "Merges phase diagram sections into one category."
+
+G012, "Feature Representation Outcomes", "Feature Representation Outcomes", "35. Extra Feature is Not Represented; 36. Extra Feature Gets Dedicated Dimension; 37. Extra Feature is Stored In Superposition", 80, "Combines outcomes of feature representation into one category."
+
+G013, "Geometry of Features", "Geometry of Features", "39. The Geometry of Superposition; 40. Uniform Superposition", 85, "Merges geometry-related sections into one category."
+
+G014, "Dimensionality Concepts", "Dimensionality Concepts", "41. FEATURE DIMENSIONALITY; 103. FRACTIONAL DIMENSIONALITY AND 'PRESSURE'; 107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY", 77, "Combines dimensionality-related sections into one category."
+
+G015, "Geometric Structures", "Geometric Structures", "42. WHY THESE GEOMETRIC STRUCTURES?", 75, "Single section on geometric structures."
+
+G016, "Polytopes and Matrices", "Polytopes and Matrices", "43. Aside: Polytopes and Low-Rank Matrices", 70, "Single section on polytopes and matrices."
+
+G017, "Non-Uniform Features", "Non-Uniform Features", "44. Non-Uniform Superposition", 75, "Single section on non-uniform features."
+
+G018, "Sparsity and Importance", "Sparsity and Importance", "34. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{2} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{1}$ ); 38. Sparsity-Relative Importance Phase Diagram ( $\mathbf{n} \boldsymbol{=} \mathbf{3} \boldsymbol{,} \mathbf{m} \boldsymbol{=} \mathbf{2}$ )", 90, "Merges sparsity and importance into one category."
+
+G019, "Extra Features", "Extra Features", "35. Extra Feature is Not Represented; 36. Extra Feature Gets Dedicated Dimension; 37. Extra Feature is Stored In Superposition", 85, "Combines extra feature sections into one category."
+
+G020, "Feature Correlation", "Feature Correlation", "46. Correlated and Anticorrelated Features; 47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES; 48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES; 49. Models prefer to represent correlated features in orthogonal dimensions.", 85, "Merges all feature correlation sections into one category."
+
+G021, "Local Bases", "Local Bases", "52. LOCAL ALMOST-ORTHOGONAL BASES; 53. Models prefer to represent correlated features in orthogonal dimensions, creating 'local orthogonal bases'.", 80, "Combines local bases sections into one category."
+
+G022, "Learning Dynamics", "Learning Dynamics", "55. Superposition and Learning Dynamics; 56. PHENOMENON 1: DISCRETE 'ENERGY LEVEL' JUMPS; 57. PHENOMENON 2: LEARNING AS GEOMETRIC TRANSFORMATIONS", 75, "Merges learning dynamics sections into one category."
+
+G023, "Adversarial Robustness", "Adversarial Robustness", "58. Relationship to Adversarial Robustness; 59. Vulnerability to Adversarial Examples (Relative to Non-Superposition Model); 147. 36. Adversarial robustness as a prior for learned representations", 80, "Combines adversarial robustness sections into one category."
+
+G024, "Features Analysis", "Features Analysis", "60. Features Per Dimension", 80, "Single section on features analysis."
+
+G025, "Correlation Dynamics", "Correlation Dynamics", "46. Correlated and Anticorrelated Features; 47. SETUP FOR EXPLORING CORRELATED AND ANTICORRELATED FEATURES; 48. ORGANIZATION OF CORRELATED AND ANTICORRELATED FEATURES; 49. Models prefer to represent correlated features in orthogonal dimensions.", 90, "Merges correlation dynamics sections into one category."
+
+G026, "Superposition Computation", "Superposition Computation", "69. Computation in Superposition; 23. Experiment Setup; 29. Basic Results; 63. $W$ as Matrix", 80, "Combines superposition computation sections into one category."
+
+G027, "Superposition Visualization", "Superposition Visualization", "62. VISUALIZING SUPERPOSITION IN TERMS OF NEURONS; 63. $W$ as Matrix; 64. $W$ as Stack Plot", 85, "Merges visualization sections into one category."
+
+G028, "Neuron Feature Representation", "Neuron Feature Representation", "65. Six Features in Four Neurons ( $1-\mathrm{S}=0.12$ ); 66. Eight Features in Five Neurons ( $0.05 \leq 1-\mathrm{S} \leq 0.08$ ); 67. Features are Pairs of Neurons ( $1-\mathrm{S} \leq 0.04$ )", 80, "Combines neuron feature representation sections into one category."
+
+G029, "Experiment Methodology", "Experiment Methodology", "23. Experiment Setup; 29. Basic Results", 90, "Merges experiment methodology sections into one category."
+
+G030, "Superposition Solutions", "Superposition Solutions", "79. Three Ways Out; 80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION; 81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS; 82. APPROACH 3: HYBRID APPROACHES", 81, "Combines superposition solutions sections into one category."
+
+G031, "Superposition and Interpretability", "Superposition and Interpretability", "78. Safety, Interpretability, & 'Solving Superposition'; 79. Three Ways Out; 80. APPROACH 1: CREATING MODELS WITHOUT SUPERPOSITION; 81. APPROACH 2: FINDING AN OVERCOMPLETE BASIS", 85, "Merges interpretability sections into one category."
+
+G032, "Superposition in Real Models", "Superposition in Real Models", "85. To What Extent Does Superposition Exist in Real Models?; 97. ANTHROPIC BASIC TOY MODEL; 98. REDWOOD TOY MODEL", 80, "Combines real model analysis sections into one category."
+
+G033, "Future Research Directions", "Future Research Directions", "4. Open Questions", 80, "Single section on future research directions."
+
+G034, "Background Research", "Background Research", "6. Related Work", 85, "Single section on background research."
+
+G035, "Related Concepts", "Related Concepts", "6. Related Work; 88. INTERPRETABLE FEATURES; 89. SUPERPOSITION; 90. DISENTANGLEMENT", 85, "Merges related concepts into one category."
+
+G036, "Replication Insights", "Replication Insights", "95. Comments & Replications; 96. REPLICATION & FORTHCOMING PAPER; 99. REPLICATION & FURTHER RESULTS; 100. REPLICATION", 85, "Combines replication insights into one category."
+
+G037, "Toy Models", "Toy Models", "97. ANTHROPIC BASIC TOY MODEL; 98. REDWOOD TOY MODEL; 102. ENGINEERING MONOSEMANTICITY IN TOY MODELS", 90, "Merges toy model sections into one category."
+
+G038, "Code and Acknowledgments", "Code and Acknowledgments", "108. Code; 109. Acknowledgments; 110. Author", 70, "Combines code and acknowledgments into one category."
+
+G039, "Replication Studies", "Replication Studies", "100. REPLICATION; 100. REPLICATION; 100. REPLICATION", 90, "Merges all replication studies into one category."
+
+G040, "Monosemanticity in Models", "Monosemanticity in Models", "102. ENGINEERING MONOSEMANTICITY IN TOY MODELS", 85, "Single section on monosemanticity in models."
+
+G041, "Feature Dimensionality Concepts", "Feature Dimensionality Concepts", "103. FRACTIONAL DIMENSIONALITY AND 'PRESSURE'; 107. LEVERAGE SCORE AND FEATURE DIMENSIONALITY", 75, "Merges dimensionality concepts into one category."
+
+G042, "Feature Extraction Techniques", "Feature Extraction Techniques", "105. EXTRACTING FEATURES WITH SPARSE AUTOENCODERS", 75, "Single section on feature extraction techniques."
+
+G043, "Linear Representation Studies", "Linear Representation Studies", "106. LINEAR REPRESENTATION IN OTHELLO", 80, "Single section on linear representation studies."
+
+G044, "Code and Implementation", "Code and Implementation", "108. Code", 70, "Single section on code and implementation."
+
+G045, "Acknowledgments and Contributions", "Acknowledgments and Contributions", "109. Acknowledgments; 111. Contributions", 90, "Merges acknowledgments and contributions into one category."
+
+G046, "Citation Information", "Citation Information", "112. Citation", 95, "Single section on citation information."
+
+G047, "General Information", "General Information", "113. Information", 90, "Single section on general information."
+
+G048, "Footnotes and Notes", "Footnotes and Notes", "114. Footnotes", 85, "Single section on footnotes and notes."
+
+G049, "References and Further Reading", "References and Further Reading", "115. References", 90, "Single section on references and further reading."
+
+G050, "Related Works", "Related Works", "116. 2. Decoding The Thought Vector [link]; 117. 3. Zoom In: An Introduction to Circuits; 118. 4. Softmax Linear Units; 119. 5. Compressed sensing", 80, "Merges all related works into one category."
+
+G051, "Adversarial Examples", "Adversarial Examples", "137. 24. Adversarial examples are not bugs, they are features; 146. 35. Adversarial spheres; 147. 36. Adversarial robustness as a prior for learned representations; 148. 37. Delving into transferable adversarial examples and black-box attacks", 80, "Merges all adversarial examples into one category."
+
+G052, "Theoretical Foundations", "Theoretical Foundations", "138. 25. Proofs and refutations", 70, "Single section on theoretical foundations."
+
+G053, "Linear Programming Techniques", "Linear Programming Techniques", "139. 27. Decoding by linear programming", 75, "Single section on linear programming techniques."
+
+G054, "Learning Techniques", "Learning Techniques", "140. 29. In-context Learning and Induction Heads [HTML]", 75, "Single section on learning techniques."
+
+G055, "Interpretability Studies", "Interpretability Studies", "141. 30. A Mechanistic Interpretability Analysis of Grokking [link]", 75, "Single section on interpretability studies."
+
+G056, "Generalization Studies", "Generalization Studies", "142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets", 75, "Single section on generalization studies."
+
+G057, "Semantic Development", "Semantic Development", "144. 33. A mathematical theory of semantic development in deep neural networks", 75, "Merges semantic development sections into one category."
+
+G058, "Security and Privacy", "Security and Privacy", "145. 34. Towards the science of security and privacy in machine learning", 75, "Merges security and privacy sections into one category."
+
+G059, "General References", "General References", "115. References", 90, "Single section on general references."
+
+G060, "Thought Vector Decoding", "Thought Vector Decoding", "116. 2. Decoding The Thought Vector [link]", 85, "Single section on thought vector decoding."
+
+G061, "Circuit Analysis", "Circuit Analysis", "117. 3. Zoom In: An Introduction to Circuits", 80, "Single section on circuit analysis."
+
+G062, "Activation Functions", "Activation Functions", "118. 4. Softmax Linear Units", 75, "Single section on activation functions."
+
+G063, "Compressed Sensing", "Compressed Sensing", "119. 5. Compressed sensing", 90, "Single section on compressed sensing."
+
+G064, "Coding Strategies", "Coding Strategies", "120. 6. Local vs. Distributed Coding", 80, "Single section on coding strategies."
+
+G065, "Representation Learning", "Representation Learning", "121. 7. Representation learning: A review and new perspectives", 85, "Single section on representation learning."
+
+G066, "Feature Visualization", "Feature Visualization", "122. 8. Feature Visualization [link]", 85, "Single section on feature visualization."
+
+G067, "Curve Detection", "Curve Detection", "123. 9. Curve Detectors [link]", 80, "Single section on curve detection."
+
+G068, "Model Superposition", "Model Superposition", "124. 10. Superposition of many models into one", 75, "Single section on model superposition."
+
+G069, "Word Representations", "Word Representations", "125. 11. Linguistic regularities in continuous space word representations [PDF]; 126. 12. Linguistic regularities in sparse and explicit word representations", 85, "Merges word representation sections into one category."
+
+G070, "Unsupervised Learning", "Unsupervised Learning", "127. 13. Unsupervised representation learning with deep convolutional generative adversarial networks", 80, "Single section on unsupervised learning."
+
+G071, "Recurrent Networks", "Recurrent Networks", "128. 14. Visualizing and understanding recurrent networks [PDF]", 80, "Single section on recurrent networks."
+
+G072, "Sentiment Analysis", "Sentiment Analysis", "129. 15. Learning to generate reviews and discovering sentiment [PDF]", 80, "Single section on sentiment analysis."
+
+G073, "Object Detection", "Object Detection", "130. 16. Object detectors emerge in deep scene cnns [PDF]", 80, "Single section on object detection."
+
+G074, "Network Interpretability", "Network Interpretability", "131. 17. Network Dissection: Quantifying Interpretability of Deep Visual Representations [PDF]", 80, "Single section on network interpretability."
+
+G075, "Neural Network Units", "Neural Network Units", "132. 18. Understanding the role of individual units in a deep neural network", 80, "Single section on neural network units."
+
+G076, "Generalization", "Generalization", "133. 19. On the importance of single directions for generalization [PDF]; 142. 31. Grokking: Generalization beyond overfitting on small algorithmic datasets", 75, "Merges generalization sections into one category."
+
+G077, "Feature Interpretability", "Feature Interpretability", "134. 20. On Interpretability and Feature Representations: An Analysis of the Sentiment Neuron", 75, "Single section on feature interpretability."
+
+G078, "Frequency Detection", "Frequency Detection", "135. 21. High-Low Frequency Detectors", 75, "Single section on frequency detection."
+
+G079, "Multimodal Learning", "Multimodal Learning", "136. 22. Multimodal Neurons in Artificial Neural Networks", 75, "Single section on multimodal learning."
+
+G080, "Linear Programming", "Linear Programming", "139. 27. Decoding by linear programming", 75, "Single section on linear programming."
+
+G081, "In-context Learning", "In-context Learning", "140. 29. In-context Learning and Induction Heads [HTML]", 80, "Single section on in-context learning."
+
+G082, "Mechanistic Interpretability", "Mechanistic Interpretability", "141. 30. A Mechanistic Interpretability Analysis of Grokking [link]", 75, "Single section on mechanistic interpretability."
+
+G083, "Adversarial Techniques", "Adversarial Techniques", "146. 35. Adversarial spheres", 75, "Single section on adversarial techniques."
+
+G084, "Adversarial Attacks", "Adversarial Attacks", "148. 37. Delving into transferable adversarial examples and black-box attacks", 75, "Single section on adversarial attacks."
+
+G085, "Systems Biology", "Systems Biology", "149. 38. An introduction to systems biology: design principles of biological circuits", 70, "Single section on systems biology."
+
+G086, "Interpretability Foundations", "Interpretability Foundations", "150. 39. The Building Blocks of Interpretability [link]", 80, "Single section on interpretability foundations."
+
+G087, "Weight Visualization", "Weight Visualization", "151. 40. Visualizing Weights [link]", 80, "Single section on weight visualization."
+
+G088, "Semantic Models", "Semantic Models", "152. 41. Learning effective and interpretable semantic models using non-negative sparse embedding", 75, "Single section on semantic models."
+
+G089, "Sparse Embeddings", "Sparse Embeddings", "153. 42. Word2Sense: sparse interpretable word embeddings", 75, "Single section on sparse embeddings."
+
+G090, "Nonlinear Representations", "Nonlinear Representations", "154. Nonlinear", 60, "Single section on nonlinear representations."
+
+G091, "Compression Techniques", "Compression Techniques", "155. Compression", 70, "Single section on compression techniques."
+
+G092, "Compressed Sensing Theory", "Compressed Sensing Theory", "156. Connection between compressed sensing lower bounds and the toy model", 75, "Single section on compressed sensing theory."
