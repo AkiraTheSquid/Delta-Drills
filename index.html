@@ -36,11 +36,7 @@
           <div class="feature-text">Get split PDFs ready for upload to NotebookLM.</div>
         </div>
       </div>
-      <form class="login-form" id="auth-form">
-        <div class="toggle" role="tablist" aria-label="Authentication mode">
-          <button id="mode-login" class="toggle-btn active" type="button" role="tab" aria-selected="true">Log in</button>
-          <button id="mode-signup" class="toggle-btn" type="button" role="tab" aria-selected="false">Create account</button>
-        </div>
+      <form class="login-form" id="login-form">
         <div class="field">
           <label for="email">Email</label>
           <input id="email" class="text-input" type="email" placeholder="you@example.com" />
@@ -49,9 +45,34 @@
           <label for="password">Password</label>
           <input id="password" class="text-input" type="password" placeholder="Enter your password" />
         </div>
-        <button id="auth-button" class="primary" type="submit">Log in</button>
-        <button id="auth-secondary" class="ghost" type="button">Create account</button>
-        <div id="auth-message" class="hint" role="status"></div>
+        <button id="login-button" class="primary" type="submit">Log in</button>
+        <button id="to-signup" class="ghost" type="button">Create account</button>
+        <div id="login-message" class="hint" role="status"></div>
+      </form>
+    </div>
+  </main>
+
+  <main id="signup-screen" class="login hidden">
+    <div class="login-card">
+      <div class="login-badge">NotebookLM Converter</div>
+      <h1>Create your account</h1>
+      <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+      <form class="login-form" id="signup-form">
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="signup-password">Password</label>
+          <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+        </div>
+        <div class="field">
+          <label for="signup-confirm">Confirm password</label>
+          <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+        </div>
+        <button id="signup-button" class="primary" type="submit">Create account</button>
+        <button id="to-login" class="ghost" type="button">Back to log in</button>
+        <div id="signup-message" class="hint" role="status"></div>
       </form>
     </div>
   </main>
@@ -167,13 +188,14 @@
     const mathpixKey = document.getElementById("mathpix-key");
     const uploadLabel = document.querySelector("label[for='pdf-input']");
     const loginScreen = document.getElementById("login-screen");
+    const signupScreen = document.getElementById("signup-screen");
     const app = document.getElementById("app");
-    const authForm = document.getElementById("auth-form");
-    const authButton = document.getElementById("auth-button");
-    const authMessage = document.getElementById("auth-message");
-    const loginMode = document.getElementById("mode-login");
-    const signupMode = document.getElementById("mode-signup");
-    const authSecondary = document.getElementById("auth-secondary");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const signupForm = document.getElementById("signup-form");
+    const signupMessage = document.getElementById("signup-message");
+    const toSignup = document.getElementById("to-signup");
+    const toLogin = document.getElementById("to-login");
 
     const updateUploadState = () => {
       const ready = openaiKey.value.trim() && mathpixId.value.trim() && mathpixKey.value.trim();
@@ -187,25 +209,25 @@
 
     updateUploadState();
 
-    const setMode = (mode) => {
-      const isLogin = mode === "login";
-      loginMode.classList.toggle("active", isLogin);
-      signupMode.classList.toggle("active", !isLogin);
-      loginMode.setAttribute("aria-selected", isLogin ? "true" : "false");
-      signupMode.setAttribute("aria-selected", isLogin ? "false" : "true");
-      authButton.textContent = isLogin ? "Log in" : "Create account";
-      authSecondary.textContent = isLogin ? "Create account" : "Log in instead";
-      authForm.dataset.mode = mode;
-      authMessage.textContent = "";
+    const showSignup = () => {
+      loginScreen.classList.add("hidden");
+      signupScreen.classList.remove("hidden");
     };
 
-    setMode("login");
+    const showLogin = () => {
+      signupScreen.classList.add("hidden");
+      app.classList.add("hidden");
+      loginScreen.classList.remove("hidden");
+    };
 
-    loginMode.addEventListener("click", () => setMode("login"));
-    signupMode.addEventListener("click", () => setMode("signup"));
-    authSecondary.addEventListener("click", () => {
-      const mode = authForm.dataset.mode || "login";
-      setMode(mode === "login" ? "signup" : "login");
+    toSignup.addEventListener("click", () => {
+      loginMessage.textContent = "";
+      showSignup();
+    });
+
+    toLogin.addEventListener("click", () => {
+      signupMessage.textContent = "";
+      showLogin();
     });
 
     const supabase = window.supabase.createClient(
@@ -215,12 +237,8 @@
 
     const showApp = () => {
       loginScreen.classList.add("hidden");
+      signupScreen.classList.add("hidden");
       app.classList.remove("hidden");
-    };
-
-    const showLogin = () => {
-      app.classList.add("hidden");
-      loginScreen.classList.remove("hidden");
     };
 
     const initSession = async () => {
@@ -242,37 +260,51 @@
       }
     });
 
-    authForm.addEventListener("submit", async (event) => {
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      authMessage.textContent = "Working...";
+      loginMessage.textContent = "Working...";
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       if (!email || !password) {
-        authMessage.textContent = "Enter an email and password.";
+        loginMessage.textContent = "Enter an email and password.";
         return;
       }
 
-      const mode = authForm.dataset.mode || "login";
-      let result;
-
-      if (mode === "signup") {
-        result = await supabase.auth.signUp({ email, password });
-      } else {
-        result = await supabase.auth.signInWithPassword({ email, password });
-      }
+      const result = await supabase.auth.signInWithPassword({ email, password });
 
       if (result.error) {
-        authMessage.textContent = result.error.message;
+        loginMessage.textContent = result.error.message;
+        return;
+      }
+      loginMessage.textContent = "";
+    });
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      signupMessage.textContent = "Working...";
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const confirm = document.getElementById("signup-confirm").value;
+
+      if (!email || !password || !confirm) {
+        signupMessage.textContent = "Enter an email and both password fields.";
         return;
       }
 
-      if (mode === "signup") {
-        authMessage.textContent = "Account created. Check your email to confirm, then log in.";
-        setTimeout(() => setMode("login"), 1500);
-      } else {
-        authMessage.textContent = "";
+      if (password !== confirm) {
+        signupMessage.textContent = "Passwords do not match.";
+        return;
       }
+
+      const result = await supabase.auth.signUp({ email, password });
+
+      if (result.error) {
+        signupMessage.textContent = result.error.message;
+        return;
+      }
+
+      signupMessage.textContent = "Account created. Check your email to confirm, then log in.";
     });
 
     input.addEventListener("change", () => {
