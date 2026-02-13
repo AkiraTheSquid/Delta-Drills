@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Split PDF file</title>
+  <title>Delta Drills v1.0.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 <body>
   <header class="topbar">
     <div class="logo">
-      <span class="logo-heart">Automatic PDF Chapter Split</span>
+      <span class="logo-heart">Delta Drills</span>
     </div>
     <button id="auth-toggle" class="ghost topbar-button" type="button">Account</button>
   </header>
@@ -170,16 +170,11 @@
 
   <footer class="footer">
     <div class="footer-copy">
-      <span>© Delta Network</span>
+      <span>© Delta Labs</span>
       <span id="version-inline" class="version-label"></span>
     </div>
     <div class="footer-meta">
       <span id="version-label" class="version-label"></span>
-      <button id="version-toggle" class="ghost" type="button">History</button>
-    </div>
-    <div id="version-history" class="version-history hidden" role="dialog" aria-live="polite">
-      <div class="history-title">Version history</div>
-      <ul id="version-list" class="history-list"></ul>
     </div>
   </footer>
 
@@ -204,8 +199,6 @@
     const signupTab = document.getElementById("tab-signup");
     const versionLabel = document.getElementById("version-label");
     const versionInline = document.getElementById("version-inline");
-    const versionToggle = document.getElementById("version-toggle");
-    const versionHistory = document.getElementById("version-history");
     const versionList = document.getElementById("version-list");
     const authToggle = document.getElementById("auth-toggle");
 
@@ -284,7 +277,7 @@
       }
     });
 
-    const VERSION = "048d80c";
+    const VERSION = "1.0.2";
     const VERSION_HISTORY = [
       {
         version: "048d80c",
@@ -332,10 +325,6 @@
     };
 
     renderVersionHistory();
-
-    versionToggle.addEventListener("click", () => {
-      versionHistory.classList.toggle("hidden");
-    });
 
     authToggle.addEventListener("click", () => {
       showLogin();
