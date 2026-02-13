@@ -15,9 +15,10 @@
     <div class="logo">
       <span class="logo-heart">Automatic PDF Chapter Split</span>
     </div>
+    <button id="auth-toggle" class="ghost topbar-button" type="button">Account</button>
   </header>
 
-  <main id="login-screen" class="login">
+  <main id="auth-screen" class="login">
     <div class="login-card">
       <div class="login-badge">NotebookLM Converter</div>
       <h1>Turn textbooks into a structured NotebookLM library</h1>
@@ -36,6 +37,10 @@
           <div class="feature-text">Get split PDFs ready for upload to NotebookLM.</div>
         </div>
       </div>
+      <div class="toggle" role="tablist" aria-label="Account mode">
+        <button id="tab-login" class="toggle-btn active" type="button" role="tab" aria-selected="true">Log in</button>
+        <button id="tab-signup" class="toggle-btn" type="button" role="tab" aria-selected="false">Create account</button>
+      </div>
       <form class="login-form" id="login-form">
         <div class="field">
           <label for="email">Email</label>
@@ -46,18 +51,10 @@
           <input id="password" class="text-input" type="password" placeholder="Enter your password" />
         </div>
         <button id="login-button" class="primary" type="submit">Log in</button>
-        <button id="to-signup" class="ghost" type="button">Create account</button>
         <div id="login-message" class="hint" role="status"></div>
       </form>
-    </div>
-  </main>
-
-  <main id="signup-screen" class="login hidden">
-    <div class="login-card">
-      <div class="login-badge">NotebookLM Converter</div>
-      <h1>Create your account</h1>
-      <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
-      <form class="login-form" id="signup-form">
+      <form class="login-form hidden" id="signup-form">
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
         <div class="field">
           <label for="signup-email">Email</label>
           <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
@@ -71,7 +68,6 @@
           <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
         </div>
         <button id="signup-button" class="primary" type="submit">Create account</button>
-        <button id="to-login" class="ghost" type="button">Back to log in</button>
         <div id="signup-message" class="hint" role="status"></div>
       </form>
     </div>
@@ -173,7 +169,18 @@
   </main>
 
   <footer class="footer">
-    <span>&copy; 2026 Automatic PDF Chapter Split</span>
+    <div class="footer-copy">
+      <span>© Delta Network</span>
+      <span id="version-inline" class="version-label"></span>
+    </div>
+    <div class="footer-meta">
+      <span id="version-label" class="version-label"></span>
+      <button id="version-toggle" class="ghost" type="button">History</button>
+    </div>
+    <div id="version-history" class="version-history hidden" role="dialog" aria-live="polite">
+      <div class="history-title">Version history</div>
+      <ul id="version-list" class="history-list"></ul>
+    </div>
   </footer>
 
   <script>
@@ -187,15 +194,20 @@
     const mathpixId = document.getElementById("mathpix-id");
     const mathpixKey = document.getElementById("mathpix-key");
     const uploadLabel = document.querySelector("label[for='pdf-input']");
-    const loginScreen = document.getElementById("login-screen");
-    const signupScreen = document.getElementById("signup-screen");
+    const authScreen = document.getElementById("auth-screen");
     const app = document.getElementById("app");
     const loginForm = document.getElementById("login-form");
     const loginMessage = document.getElementById("login-message");
     const signupForm = document.getElementById("signup-form");
     const signupMessage = document.getElementById("signup-message");
-    const toSignup = document.getElementById("to-signup");
-    const toLogin = document.getElementById("to-login");
+    const loginTab = document.getElementById("tab-login");
+    const signupTab = document.getElementById("tab-signup");
+    const versionLabel = document.getElementById("version-label");
+    const versionInline = document.getElementById("version-inline");
+    const versionToggle = document.getElementById("version-toggle");
+    const versionHistory = document.getElementById("version-history");
+    const versionList = document.getElementById("version-list");
+    const authToggle = document.getElementById("auth-toggle");
 
     const updateUploadState = () => {
       const ready = openaiKey.value.trim() && mathpixId.value.trim() && mathpixKey.value.trim();
@@ -209,25 +221,38 @@
 
     updateUploadState();
 
+    const setAuthMode = (mode) => {
+      const isLogin = mode === "login";
+      loginForm.classList.toggle("hidden", !isLogin);
+      signupForm.classList.toggle("hidden", isLogin);
+      loginTab.classList.toggle("active", isLogin);
+      signupTab.classList.toggle("active", !isLogin);
+      loginTab.setAttribute("aria-selected", isLogin ? "true" : "false");
+      signupTab.setAttribute("aria-selected", isLogin ? "false" : "true");
+    };
+
     const showSignup = () => {
-      loginScreen.classList.add("hidden");
-      signupScreen.classList.remove("hidden");
+      authScreen.classList.remove("hidden");
+      app.classList.add("hidden");
+      setAuthMode("signup");
     };
 
     const showLogin = () => {
-      signupScreen.classList.add("hidden");
+      authScreen.classList.remove("hidden");
       app.classList.add("hidden");
-      loginScreen.classList.remove("hidden");
+      setAuthMode("login");
     };
 
-    toSignup.addEventListener("click", () => {
+    loginTab.addEventListener("click", () => {
       loginMessage.textContent = "";
-      showSignup();
+      signupMessage.textContent = "";
+      setAuthMode("login");
     });
 
-    toLogin.addEventListener("click", () => {
+    signupTab.addEventListener("click", () => {
+      loginMessage.textContent = "";
       signupMessage.textContent = "";
-      showLogin();
+      setAuthMode("signup");
     });
 
     const supabase = window.supabase.createClient(
@@ -236,8 +261,7 @@
     );
 
     const showApp = () => {
-      loginScreen.classList.add("hidden");
-      signupScreen.classList.add("hidden");
+      authScreen.classList.add("hidden");
       app.classList.remove("hidden");
     };
 
@@ -258,6 +282,63 @@
       } else {
         showLogin();
       }
+    });
+
+    const VERSION = "048d80c";
+    const VERSION_HISTORY = [
+      {
+        version: "048d80c",
+        notes: [
+          "Restored login toggle entry point and updated footer version."
+        ]
+      },
+      {
+        version: "1.0.1",
+        notes: [
+          "Login and create account toggle with password confirmation.",
+          "Footer version label and history panel."
+        ]
+      },
+      {
+        version: "1.0.0",
+        notes: [
+          "Initial release with Supabase auth and PDF splitting flow."
+        ]
+      }
+    ];
+
+    const renderVersionHistory = () => {
+      versionLabel.textContent = `version ${VERSION}`;
+      versionInline.textContent = `version ${VERSION}`;
+      versionList.textContent = "";
+
+      VERSION_HISTORY.forEach((entry) => {
+        const item = document.createElement("li");
+        const title = document.createElement("div");
+        title.className = "history-version";
+        title.textContent = `v${entry.version}`;
+        item.appendChild(title);
+
+        const notes = document.createElement("ul");
+        notes.className = "history-notes";
+        entry.notes.forEach((note) => {
+          const noteItem = document.createElement("li");
+          noteItem.textContent = note;
+          notes.appendChild(noteItem);
+        });
+        item.appendChild(notes);
+        versionList.appendChild(item);
+      });
+    };
+
+    renderVersionHistory();
+
+    versionToggle.addEventListener("click", () => {
+      versionHistory.classList.toggle("hidden");
+    });
+
+    authToggle.addEventListener("click", () => {
+      showLogin();
     });
 
     loginForm.addEventListener("submit", async (event) => {
