@@ -1,0 +1,8 @@
+.vercel
+backend/user_data/
+storage/
+backend/.env
+backend/.venv/
+__pycache__/
+*.pyc
+.DS_Store

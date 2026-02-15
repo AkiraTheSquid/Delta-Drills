@@ -3,20 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Delta Drills v1.0.9</title>
+  <title>Delta Drills v1.0.10</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="practice.css" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="logo">Delta Drills <span class="version-tag">v1.0.9</span></div>
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.10</span></div>
     <nav class="tabs">
       <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
       <button class="tab auth-only" data-tab="split-tool" type="button">Split Tool</button>
       <button class="tab auth-only" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="learn" type="button">Learn</button>
+      <button class="tab auth-only" data-tab="course" type="button">Course</button>
+      <button class="tab auth-only" data-tab="papers" type="button">Papers</button>
+      <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
+      <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
       <button class="tab guest-only" data-tab="login" type="button">Log In</button>
       <button class="tab guest-only" data-tab="signup" type="button">Create Account</button>
     </nav>
@@ -140,6 +147,140 @@
     </div>
   </main>
 
+  <main class="page hidden" id="page-course">
+    <div class="container coming-soon-page">
+      <h1>Course</h1>
+      <p class="coming-soon-message">Coming Soon</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-papers">
+    <div class="container coming-soon-page">
+      <h1>Papers</h1>
+      <p class="coming-soon-message">Coming Soon</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-practice">
+    <div class="practice-container">
+      <div class="practice-split">
+        <!-- Left Panel: Questions -->
+        <div class="practice-left">
+          <!-- Timed Mode Toggle -->
+          <div class="timed-mode-row">
+            <div class="timed-mode-control">
+              <label class="timed-mode-label">Timed Mode</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="timed-mode-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="timer-controls hidden" id="timer-controls">
+              <button class="timer-play-btn" id="timer-play-btn" type="button">&#9654;</button>
+              <div class="timer-display" id="timer-display">00:10</div>
+            </div>
+          </div>
+
+          <!-- Question Number -->
+          <div class="question-number" id="question-number">Question 1</div>
+
+          <!-- Question Text -->
+          <div class="question-text" id="question-text"></div>
+
+          <!-- Submit Area (pre-submission) -->
+          <div id="practice-submit-area">
+            <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
+          </div>
+
+          <!-- Feedback Area (post-submission, hidden by default) -->
+          <div id="practice-feedback-area" class="hidden">
+            <div class="result-badge correct" id="result-badge">Correct</div>
+            <div class="feedback-prompt">How much should this result change your next problem?</div>
+            <div class="feedback-buttons">
+              <button class="ghost feedback-btn" data-feedback="not_much" type="button">Not much</button>
+              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat</button>
+              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">A lot</button>
+            </div>
+            <div class="question-meta-row">
+              <span class="subtopic-label" id="subtopic-label"></span>
+              <span class="difficulty-label" id="difficulty-label"></span>
+            </div>
+            <div class="solution-section">
+              <div class="solution-label">Solution</div>
+              <pre class="solution-code" id="solution-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Code Editor + Runner -->
+        <div class="practice-right">
+          <div class="editor-header">Code Editor</div>
+          <textarea class="code-editor" id="code-editor" spellcheck="false">import numpy as np
+
+# Write your solution here
+</textarea>
+          <button class="primary run-btn" id="run-btn" type="button">Run</button>
+          <div class="output-header">Output</div>
+          <pre class="output-area" id="output-area"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-statistics">
+    <div class="container stats-container">
+      <div class="section-header">
+        <div>
+          <h1>Statistics</h1>
+          <p class="subtitle">Priority and learning-rate breakdown by area and sub-area.</p>
+        </div>
+      </div>
+
+      <div class="stats-tabs">
+        <button class="stats-tab active" type="button" data-stats-tab="areas">Areas</button>
+        <button class="stats-tab" type="button" data-stats-tab="graph">Graph</button>
+      </div>
+
+      <section class="stats-panel" data-stats-panel="areas">
+        <div class="stats-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Delta Analysis</span>
+            <span class="stats-subtitle">Delta = Weight × Learning Rate</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th class="stats-col-toggle"></th>
+                  <th class="stats-col-check">Use</th>
+                  <th>Rank</th>
+                  <th>Area</th>
+                  <th>Weight</th>
+                  <th>Current Score</th>
+                  <th>Learning Rate</th>
+                  <th>Delta Score</th>
+                </tr>
+              </thead>
+              <tbody id="stats-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-panel hidden" data-stats-panel="graph">
+        <div class="stats-card stats-graph-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Priority Graph</span>
+            <span class="stats-subtitle">Data visualization will appear here.</span>
+          </div>
+          <div class="stats-graph-placeholder">
+            Graph placeholder
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
   <main class="page hidden" id="page-login">
     <div class="container">
       <div class="auth-card">
@@ -187,330 +328,13 @@
 
   <footer class="footer">
     <span>&copy; Delta Labs</span>
-    <span class="version-tag">v1.0.9</span>
+    <span class="version-tag">v1.0.10</span>
   </footer>
 
-  <script>
-    const tabs = document.querySelectorAll(".tab");
-    const authOnlyTabs = document.querySelectorAll(".auth-only");
-    const guestOnlyTabs = document.querySelectorAll(".guest-only");
-    const pages = document.querySelectorAll(".page");
-    const loginForm = document.getElementById("login-form");
-    const loginMessage = document.getElementById("login-message");
-    const signupForm = document.getElementById("signup-form");
-    const signupMessage = document.getElementById("signup-message");
-    const jobForm = document.getElementById("job-form");
-    const jobMessage = document.getElementById("job-message");
-    const jobStatus = document.getElementById("job-status");
-    const jobStatusText = document.getElementById("job-status-text");
-    const jobIdLabel = document.getElementById("job-id");
-    const chaptersSection = document.getElementById("chapters-section");
-    const chaptersList = document.getElementById("chapters-list");
-    const authStatus = document.getElementById("auth-status");
-    const logoutButton = document.getElementById("logout-button");
-    const autoToc = document.getElementById("auto-toc");
-    const pageOffsetField = document.getElementById("page-offset-field");
-    const accountForm = document.getElementById("account-form");
-    const accountMessage = document.getElementById("account-message");
-    const accountLogout = document.getElementById("account-logout");
-
-    const defaultApiBase = `${window.location.origin}`;
-    let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
-    let authToken = localStorage.getItem("auth_token") || "";
-    let authEmail = localStorage.getItem("auth_email") || "";
-
-    const switchTab = (tabName) => {
-      if ((tabName === "split-tool" || tabName === "account" || tabName === "learn") && !authToken) {
-        loginMessage.textContent = "Please log in to start a job.";
-        tabName = "login";
-      }
-      tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
-      pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
-    };
-
-    tabs.forEach((t) => {
-      t.addEventListener("click", () => switchTab(t.dataset.tab));
-    });
-
-    const updateTabVisibility = () => {
-      authOnlyTabs.forEach((t) => t.classList.toggle("hidden", !authToken));
-      guestOnlyTabs.forEach((t) => t.classList.toggle("hidden", !!authToken));
-    };
-
-    const setAuthState = (token, email) => {
-      authToken = token || "";
-      authEmail = email || "";
-      if (authToken) {
-        localStorage.setItem("auth_token", authToken);
-        localStorage.setItem("auth_email", authEmail);
-        authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
-        switchTab("split-tool");
-      } else {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_email");
-        authStatus.textContent = "";
-        switchTab("login");
-      }
-      updateTabVisibility();
-    };
-
-    logoutButton.addEventListener("click", () => {
-      setAuthState("", "");
-    });
-    accountLogout.addEventListener("click", () => {
-      setAuthState("", "");
-    });
-
-    const apiFetch = async (path, options = {}) => {
-      const headers = options.headers ? { ...options.headers } : {};
-      if (authToken) {
-        headers.Authorization = `Bearer ${authToken}`;
-      }
-      const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-      return response;
-    };
-
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      loginMessage.textContent = "Working...";
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!email || !password) {
-        loginMessage.textContent = "Enter an email and password.";
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          loginMessage.textContent = data.detail || "Login failed.";
-          return;
-        }
-        loginMessage.textContent = "Logged in!";
-        loginForm.reset();
-        setAuthState(data.access_token, email);
-        setTimeout(() => (loginMessage.textContent = ""), 1000);
-      } catch (e) {
-        loginMessage.textContent = e.message;
-      }
-    });
-
-    signupForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      signupMessage.textContent = "Working...";
-      const email = document.getElementById("signup-email").value.trim();
-      const password = document.getElementById("signup-password").value;
-      const confirm = document.getElementById("signup-confirm").value;
-
-      if (!email || !password || !confirm) {
-        signupMessage.textContent = "Enter an email and both password fields.";
-        return;
-      }
-
-      if (password !== confirm) {
-        signupMessage.textContent = "Passwords do not match.";
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE}/auth/signup`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          signupMessage.textContent = data.detail || "Signup failed.";
-          return;
-        }
-        signupMessage.textContent = "Account created!";
-        signupForm.reset();
-        setAuthState(data.access_token, email);
-        setTimeout(() => (signupMessage.textContent = ""), 1000);
-      } catch (e) {
-        signupMessage.textContent = e.message;
-      }
-    });
-
-    const updateAutoTocState = () => {
-      const isAuto = autoToc.checked;
-      pageOffsetField.classList.toggle("hidden", isAuto);
-    };
-
-    autoToc.addEventListener("change", updateAutoTocState);
-    updateAutoTocState();
-
-    const renderChapters = (jobId, chapters) => {
-      chaptersList.innerHTML = "";
-      if (!chapters.length) {
-        chaptersList.textContent = "No chapters generated.";
-        return;
-      }
-      chapters.forEach((chapter) => {
-        const row = document.createElement("div");
-        row.className = "result-item";
-
-        const title = document.createElement("span");
-        title.textContent = `${chapter.title} (${chapter.start_page}-${chapter.end_page})`;
-
-        const button = document.createElement("button");
-        button.className = "ghost";
-        button.type = "button";
-        button.textContent = "Download";
-        button.addEventListener("click", async () => {
-          button.disabled = true;
-          try {
-            const response = await apiFetch(`/jobs/${jobId}/chapters/${chapter.id}/download`);
-            if (!response.ok) {
-              jobMessage.textContent = "Download failed.";
-              return;
-            }
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = chapter.filename || "chapter.pdf";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            URL.revokeObjectURL(url);
-          } catch (e) {
-            jobMessage.textContent = e.message;
-          } finally {
-            button.disabled = false;
-          }
-        });
-
-        row.appendChild(title);
-        row.appendChild(button);
-        chaptersList.appendChild(row);
-      });
-    };
-
-    const pollJob = async (jobId) => {
-      try {
-        const response = await apiFetch(`/jobs/${jobId}`);
-        const data = await response.json();
-        if (!response.ok) {
-          jobStatusText.textContent = data.detail || "Failed to fetch job.";
-          return;
-        }
-        jobStatusText.textContent = data.status;
-        if (data.status === "completed") {
-          const chaptersResponse = await apiFetch(`/jobs/${jobId}/chapters`);
-          const chapters = await chaptersResponse.json();
-          chaptersSection.classList.remove("hidden");
-          renderChapters(jobId, chaptersResponse.ok ? chapters : []);
-          return;
-        }
-        if (data.status === "failed") {
-          jobMessage.textContent = data.error_message || "Job failed.";
-          return;
-        }
-        setTimeout(() => pollJob(jobId), 2500);
-      } catch (e) {
-        jobStatusText.textContent = e.message;
-      }
-    };
-
-    jobForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      jobMessage.textContent = "";
-      chaptersSection.classList.add("hidden");
-
-      const pdfFile = document.getElementById("pdf-file").files[0];
-      const csvFile = document.getElementById("chapters-csv").files[0];
-      const pageOffset = document.getElementById("page-offset").value || "0";
-
-      if (!pdfFile) {
-        jobMessage.textContent = "Please select a PDF.";
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("pdf_file", pdfFile);
-      if (csvFile) {
-        formData.append("chapters_csv", csvFile);
-      }
-      formData.append("auto_toc", autoToc.checked ? "true" : "false");
-      formData.append("page_offset", pageOffset);
-      const savedOpenaiKey = localStorage.getItem("account_openai_key") || "";
-      const savedMathpixId = localStorage.getItem("account_mathpix_id") || "";
-      const savedMathpixKey = localStorage.getItem("account_mathpix_key") || "";
-      if (savedOpenaiKey) {
-        formData.append("openai_api_key", savedOpenaiKey);
-      }
-      if (savedMathpixId) {
-        formData.append("mathpix_app_id", savedMathpixId);
-      }
-      if (savedMathpixKey) {
-        formData.append("mathpix_app_key", savedMathpixKey);
-      }
-
-      try {
-        jobMessage.textContent = "Uploading...";
-        const response = await apiFetch("/jobs", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          jobMessage.textContent = data.detail || "Job creation failed.";
-          return;
-        }
-        jobMessage.textContent = "Job started.";
-        jobStatus.classList.remove("hidden");
-        jobIdLabel.textContent = data.id;
-        jobStatusText.textContent = data.status;
-        pollJob(data.id);
-      } catch (e) {
-        jobMessage.textContent = e.message;
-      }
-    });
-
-    if (authToken) {
-      authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
-      switchTab("split-tool");
-    } else {
-      switchTab("how-it-works");
-    }
-    updateTabVisibility();
-
-    accountForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const apiBase = document.getElementById("account-api-base").value.trim();
-      const openaiKey = document.getElementById("account-openai-key").value.trim();
-      const mathpixId = document.getElementById("account-mathpix-id").value.trim();
-      const mathpixKey = document.getElementById("account-mathpix-key").value.trim();
-
-      if (apiBase) {
-        localStorage.setItem("api_base", apiBase);
-        API_BASE = apiBase;
-      } else {
-        localStorage.removeItem("api_base");
-        API_BASE = defaultApiBase;
-      }
-      localStorage.setItem("account_openai_key", openaiKey);
-      localStorage.setItem("account_mathpix_id", mathpixId);
-      localStorage.setItem("account_mathpix_key", mathpixKey);
-      accountMessage.textContent = "Saved locally in this browser.";
-      setTimeout(() => (accountMessage.textContent = ""), 1500);
-    });
-
-    const savedApiBase = localStorage.getItem("api_base") || "";
-    const savedOpenai = localStorage.getItem("account_openai_key") || "";
-    const savedMathpixId = localStorage.getItem("account_mathpix_id") || "";
-    const savedMathpixKey = localStorage.getItem("account_mathpix_key") || "";
-    document.getElementById("account-api-base").value = savedApiBase;
-    document.getElementById("account-openai-key").value = savedOpenai;
-    document.getElementById("account-mathpix-id").value = savedMathpixId;
-    document.getElementById("account-mathpix-key").value = savedMathpixKey;
-  </script>
+  <script src="app.js"></script>
+  <script src="split-tool.js"></script>
+  <script src="supabase-practice.js"></script>
+  <script src="practice.js"></script>
+  <script src="stats.js"></script>
 </body>
 </html>

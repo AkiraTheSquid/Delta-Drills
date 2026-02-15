@@ -91,6 +91,148 @@ body {
   color: var(--white);
 }
 
+/* ================================================================
+   Statistics
+   ================================================================ */
+
+.stats-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stats-container {
+  max-width: 1100px;
+}
+
+.stats-tab {
+  background: rgba(15, 28, 56, 0.9);
+  border: 1px solid rgba(63, 78, 122, 0.4);
+  color: var(--muted);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.stats-tab.active {
+  color: var(--white);
+  border-color: rgba(80, 129, 255, 0.6);
+  background: rgba(80, 129, 255, 0.18);
+}
+
+.stats-panel {
+  display: block;
+}
+
+.stats-card {
+  background: #101b33;
+  border: 1px solid rgba(63, 78, 122, 0.5);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.stats-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.stats-title {
+  font-weight: 600;
+  color: var(--white);
+}
+
+.stats-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stats-table-wrap {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(63, 78, 122, 0.3);
+  font-size: 13px;
+}
+
+.stats-table th {
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+  background: rgba(9, 16, 34, 0.7);
+}
+
+.stats-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stats-row-top {
+  background: rgba(80, 129, 255, 0.08);
+}
+
+.stats-subrow {
+  background: rgba(255, 130, 46, 0.14);
+}
+
+.stats-subarea {
+  font-weight: 600;
+}
+
+.stats-col-toggle {
+  width: 36px;
+}
+
+.stats-col-check {
+  width: 56px;
+}
+
+.stats-toggle {
+  border: 1px solid rgba(63, 78, 122, 0.5);
+  background: rgba(15, 28, 56, 0.9);
+  color: var(--white);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.stats-check {
+  width: 16px;
+  height: 16px;
+}
+
+.stats-graph-card {
+  min-height: 320px;
+}
+
+.stats-graph-placeholder {
+  border: 1px dashed rgba(63, 78, 122, 0.6);
+  border-radius: 12px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .subtitle {
   color: var(--muted);
   font-size: 15px;
@@ -195,6 +337,11 @@ body {
 
 .primary:hover {
   background: var(--accent-dark);
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .ghost {
@@ -321,6 +468,30 @@ body {
   background: var(--surface);
   border-top: 1px solid var(--border);
 }
+
+/* ================================================================
+   COMING SOON PAGES (Course, Papers)
+   ================================================================ */
+
+.coming-soon-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 40vh;
+}
+
+.coming-soon-message {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ================================================================
+   RESPONSIVE — General
+   ================================================================ */
 
 @media (max-width: 600px) {
   .topbar {
