@@ -1,9 +1,19 @@
 # Mathpix API Configuration
 # Get your credentials from: https://accounts.mathpix.com/
 
+import os
+
+
+def _env_or_default(name, default_value):
+    value = os.environ.get(name)
+    if value and value.strip():
+        return value.strip()
+    return default_value
+
+
 # You need to set both of these values:
-MATHPIX_APP_ID = "seth_spersonalsnips_e8fea9_996429"  # Your Mathpix App ID
-MATHPIX_APP_KEY = "fa9647d163bac68dad31a136bdd4c23027e5a52325f6eb0221dfea792e501d26"
+MATHPIX_APP_ID = _env_or_default("MATHPIX_APP_ID", "seth_spersonalsnips_e8fea9_996429")  # Your Mathpix App ID
+MATHPIX_APP_KEY = _env_or_default("MATHPIX_APP_KEY", "fa9647d163bac68dad31a136bdd4c23027e5a52325f6eb0221dfea792e501d26")
 
 # API endpoint (usually doesn't need to change)
 MATHPIX_URL = "https://api.mathpix.com"

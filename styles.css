@@ -102,7 +102,7 @@ body {
 }
 
 .stats-container {
-  max-width: 1100px;
+  max-width: 1240px;
 }
 
 .stats-tab {
@@ -158,6 +158,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   min-width: 720px;
+  table-layout: fixed;
 }
 
 .stats-table th,
@@ -166,6 +167,7 @@ body {
   text-align: left;
   border-bottom: 1px solid rgba(63, 78, 122, 0.3);
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .stats-table th {
@@ -201,6 +203,26 @@ body {
   width: 56px;
 }
 
+.stats-col-area {
+  width: 320px;
+  white-space: normal;
+}
+
+.stats-table th:nth-child(5),
+.stats-table td:nth-child(5) {
+  width: 120px;
+}
+
+.stats-table th:nth-child(7),
+.stats-table td:nth-child(7) {
+  width: 150px;
+}
+
+.stats-col-score,
+.stats-col-delta {
+  width: 200px;
+}
+
 .stats-toggle {
   border: 1px solid rgba(63, 78, 122, 0.5);
   background: rgba(15, 28, 56, 0.9);
@@ -216,6 +238,31 @@ body {
 .stats-check {
   width: 16px;
   height: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(190, 198, 214, 0.7);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.stats-check:checked {
+  border-color: rgba(80, 129, 255, 0.8);
+  background: rgba(80, 129, 255, 0.2);
+}
+
+.stats-check:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: 2px solid #cfe0ff;
+  border-top: 0;
+  border-left: 0;
+  transform: rotate(45deg);
 }
 
 .stats-graph-card {
@@ -231,6 +278,37 @@ body {
   justify-content: center;
   color: var(--muted);
   font-size: 14px;
+}
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats-bar-track {
+  width: 120px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.stats-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(80, 129, 255, 0.9), rgba(80, 129, 255, 0.45));
+}
+
+.stats-bar-fill-delta {
+  background: linear-gradient(90deg, rgba(255, 140, 70, 0.95), rgba(255, 140, 70, 0.45));
+}
+
+.stats-bar-value {
+  font-size: 12px;
+  color: var(--white);
+  min-width: 52px;
+  text-align: right;
 }
 
 .subtitle {

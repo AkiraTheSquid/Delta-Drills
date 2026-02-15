@@ -37,13 +37,18 @@ fi
 
 info "Checking for uncommitted changes on main..."
 if ! git -C "$REPO_DIR" diff --quiet || ! git -C "$REPO_DIR" diff --cached --quiet; then
-  warn "You have uncommitted changes on main:"
+  warn "Uncommitted changes detected — auto-committing tracked files:"
   git -C "$REPO_DIR" status --short
-  echo ""
-  read -r -p "Continue anyway? Changes will NOT be deployed. [y/N] " answer
-  if [[ ! "$answer" =~ ^[Yy]$ ]]; then
-    echo "Aborted. Commit your changes first."
-    exit 1
+
+  # Auto-commit tracked file changes; leave untracked files untouched.
+  git -C "$REPO_DIR" add -u
+  if ! git -C "$REPO_DIR" diff --cached --quiet; then
+    git -C "$REPO_DIR" commit -m "chore: auto-commit before deploy"
+  fi
+
+  if git -C "$REPO_DIR" ls-files --others --exclude-standard | grep -q .; then
+    warn "Untracked files were NOT committed:"
+    git -C "$REPO_DIR" ls-files --others --exclude-standard
   fi
 fi
 

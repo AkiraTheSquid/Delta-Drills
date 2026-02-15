@@ -23,8 +23,14 @@ const renderStatsTable = () => {
   if (!statsTableBody) return;
   statsTableBody.innerHTML = "";
 
+  const maxDelta = statsData.reduce((maxArea, area) => {
+    const subMax = area.subareas.reduce((max, s) => Math.max(max, s.delta), 0);
+    return Math.max(maxArea, subMax);
+  }, 0);
+
   statsData.forEach((area) => {
-    const maxDelta = area.subareas.reduce((max, s) => Math.max(max, s.delta), 0);
+    const areaDelta = area.subareas.reduce((max, s) => Math.max(max, s.delta), 0);
+    const areaDeltaWidth = maxDelta > 0 ? (areaDelta / maxDelta) * 100 : 0;
     const areaRow = document.createElement("tr");
     areaRow.className = "stats-row stats-row-top";
     areaRow.innerHTML = `
@@ -35,15 +41,31 @@ const renderStatsTable = () => {
         <input type="checkbox" class="stats-check" checked />
       </td>
       <td>${area.rank}</td>
-      <td>${area.area}</td>
+      <td class="stats-col-area">${area.area}</td>
       <td>${(area.weight * 100).toFixed(0)}%</td>
-      <td>${area.currentScore}%</td>
+      <td class="stats-col-score">
+        <div class="stats-bar">
+          <div class="stats-bar-track">
+            <div class="stats-bar-fill" style="width: ${area.currentScore}%"></div>
+          </div>
+          <span class="stats-bar-value">${area.currentScore}%</span>
+        </div>
+      </td>
       <td>${area.learningRate.toFixed(2)}</td>
-      <td>${maxDelta.toFixed(3)}</td>
+      <td class="stats-col-delta">
+        <div class="stats-bar">
+          <div class="stats-bar-track">
+            <div class="stats-bar-fill stats-bar-fill-delta" style="width: ${areaDeltaWidth}%"></div>
+          </div>
+          <span class="stats-bar-value">${areaDelta.toFixed(3)}</span>
+        </div>
+      </td>
     `;
     statsTableBody.appendChild(areaRow);
 
-    area.subareas.forEach((sub) => {
+    const rankedSubareas = [...area.subareas].sort((a, b) => b.delta - a.delta);
+    rankedSubareas.forEach((sub, index) => {
+      const subDeltaWidth = maxDelta > 0 ? (sub.delta / maxDelta) * 100 : 0;
       const subRow = document.createElement("tr");
       subRow.className = "stats-row stats-subrow hidden";
       subRow.dataset.subareaFor = area.id;
@@ -52,12 +74,26 @@ const renderStatsTable = () => {
         <td class="stats-col-check">
           <input type="checkbox" class="stats-check" checked />
         </td>
-        <td>—</td>
-        <td class="stats-subarea">${sub.label}</td>
+        <td>${area.rank}.${index + 1}</td>
+        <td class="stats-col-area stats-subarea">${sub.label}</td>
         <td>${(sub.weightShare * 100).toFixed(0)}% × ${(area.weight * 100).toFixed(0)}%</td>
-        <td>${sub.currentScore}%</td>
+        <td class="stats-col-score">
+          <div class="stats-bar">
+            <div class="stats-bar-track">
+              <div class="stats-bar-fill" style="width: ${sub.currentScore}%"></div>
+            </div>
+            <span class="stats-bar-value">${sub.currentScore}%</span>
+          </div>
+        </td>
         <td>${sub.learningRate.toFixed(2)}</td>
-        <td>${sub.delta.toFixed(3)}</td>
+        <td class="stats-col-delta">
+          <div class="stats-bar">
+            <div class="stats-bar-track">
+              <div class="stats-bar-fill stats-bar-fill-delta" style="width: ${subDeltaWidth}%"></div>
+            </div>
+            <span class="stats-bar-value">${sub.delta.toFixed(3)}</span>
+          </div>
+        </td>
       `;
       statsTableBody.appendChild(subRow);
     });
