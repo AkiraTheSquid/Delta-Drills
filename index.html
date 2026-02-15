@@ -273,8 +273,36 @@
             <span class="stats-title">Priority Graph</span>
             <span class="stats-subtitle">Data visualization will appear here.</span>
           </div>
-          <div class="stats-graph-placeholder">
-            Graph placeholder
+          <div class="stats-graph-controls">
+            <button class="stats-tab stats-tab-compact active" type="button" data-graph-range="day">Day</button>
+            <button class="stats-tab stats-tab-compact" type="button" data-graph-range="week">Week</button>
+            <button class="stats-tab stats-tab-compact" type="button" data-graph-range="month">Month</button>
+          </div>
+          <div class="stats-graph" id="stats-graph"></div>
+          <div class="stats-tree">
+            <div class="stats-tree-title">Display areas</div>
+            <label class="stats-tree-row">
+              <input class="stats-check" type="checkbox" checked />
+              <span>NumPy</span>
+            </label>
+            <div class="stats-tree-children">
+              <label class="stats-tree-row">
+                <input class="stats-check" type="checkbox" checked />
+                <span>Core array literacy</span>
+              </label>
+              <label class="stats-tree-row">
+                <input class="stats-check" type="checkbox" checked />
+                <span>Indexing and selection</span>
+              </label>
+              <label class="stats-tree-row">
+                <input class="stats-check" type="checkbox" checked />
+                <span>Vectorization and broadcasting</span>
+              </label>
+              <label class="stats-tree-row">
+                <input class="stats-check" type="checkbox" checked />
+                <span>Applied patterns and advanced</span>
+              </label>
+            </div>
           </div>
         </div>
       </section>
