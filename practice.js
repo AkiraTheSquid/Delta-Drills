@@ -504,27 +504,36 @@ runBtn.addEventListener("click", async () => {
     let actualOutput = "";
     let runFailed = false;
 
+    let useLocalPyodide = practiceMode !== "backend";
+
     if (practiceMode === "backend") {
-      const res = await apiFetch("/api/practice/run-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: codeEditor.value }),
-      });
-      if (!res.ok) {
-        const detail = await res.text();
-        outputArea.textContent = detail || "Failed to run code.";
-        runFailed = true;
-      } else {
-        const data = await res.json();
-        const stdout = normalizeOutput(data.stdout);
-        const stderr = normalizeOutput(data.stderr);
-        actualOutput = stdout;
-        outputArea.textContent = stdout || stderr || "(No output)";
-        if (stderr) {
+      try {
+        const res = await apiFetch("/api/practice/run-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: codeEditor.value }),
+        });
+        if (!res.ok) {
+          const detail = await res.text();
+          outputArea.textContent = detail || "Failed to run code.";
           runFailed = true;
+        } else {
+          const data = await res.json();
+          const stdout = normalizeOutput(data.stdout);
+          const stderr = normalizeOutput(data.stderr);
+          actualOutput = stdout;
+          outputArea.textContent = stdout || stderr || "(No output)";
+          if (stderr) {
+            runFailed = true;
+          }
         }
+      } catch (_fetchErr) {
+        // Backend unreachable — fall back to in-browser Pyodide
+        useLocalPyodide = true;
       }
-    } else {
+    }
+
+    if (useLocalPyodide) {
       const pyodide = await initPyodide();
       if (!pyodide) {
         runBtn.disabled = false;
