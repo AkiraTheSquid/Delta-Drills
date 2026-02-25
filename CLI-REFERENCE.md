@@ -51,7 +51,7 @@ Vercel auto-deploys from the `deploy` branch via GitHub integration. You do NOT 
 If you need to trigger a manual deployment:
 ```bash
 # From the deploy worktree
-cd /home/stellar-thread/Applications/pdf-split-tool-deployed
+cd /home/stellar-thread/Applications/Delta-Drills-Deployed
 vercel --prod --scope team_eGrwrqNQ97xD8TJZdXfhStdf
 ```
 
@@ -59,7 +59,7 @@ vercel --prod --scope team_eGrwrqNQ97xD8TJZdXfhStdf
 
 `vercel link` requires interactive terminal input and cannot be run by an AI agent in non-interactive mode. If the project becomes unlinked, the user must run:
 ```bash
-cd /home/stellar-thread/Applications/pdf-split-tool
+cd /home/stellar-thread/Applications/Delta-Drills-Local
 vercel link --scope seth-gibsons-projects
 # Select "delta-drills" when prompted
 ```
@@ -161,8 +161,8 @@ supabase link --project-ref qaxtcaoydbpigomnfjpl
 
 | What | Path |
 |------|------|
-| Main worktree | `/home/stellar-thread/Applications/pdf-split-tool` (branch: `main`) |
-| Deploy worktree | `/home/stellar-thread/Applications/pdf-split-tool-deployed` (branch: `deploy`) |
+| Main worktree | `/home/stellar-thread/Applications/Delta-Drills-Local` (branch: `main`) |
+| Deploy worktree | `/home/stellar-thread/Applications/Delta-Drills-Deployed` (branch: `deploy`) |
 | Deploy command | `/usr/local/bin/deploy_delta_drills` (symlink to `scripts/deploy_delta_drills.sh`) |
 | Supabase config | `supabase/config.toml` |
 | Supabase migrations | `supabase/migrations/` |

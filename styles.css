@@ -102,7 +102,7 @@ body {
 }
 
 .stats-container {
-  max-width: 1240px;
+  max-width: 1440px;
 }
 
 .stats-tab {
@@ -208,19 +208,79 @@ body {
   white-space: normal;
 }
 
-.stats-table th:nth-child(5),
-.stats-table td:nth-child(5) {
+.stats-col-weight {
+  width: 130px;
+}
+
+.stats-col-solved {
+  width: 70px;
+  text-align: right;
+}
+
+.stats-col-lr {
   width: 120px;
 }
 
-.stats-table th:nth-child(7),
-.stats-table td:nth-child(7) {
-  width: 150px;
+.weight-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: left;
+  -moz-appearance: textfield;
+  cursor: text;
+  padding: 0;
+  min-width: 1ch;
+}
+
+.weight-input::-webkit-outer-spin-button,
+.weight-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.weight-input:focus {
+  outline: none;
+  border-bottom-color: rgba(80, 129, 255, 0.8);
+}
+
+.weight-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
 .stats-col-score,
 .stats-col-delta {
   width: 200px;
+}
+
+.stats-col-rank {
+  width: 52px;
+}
+
+.stats-col-p {
+  width: 90px;
+  text-align: right;
+}
+
+.stats-col-target {
+  width: 120px;
+  text-align: right;
+}
+
+.stats-col-mult {
+  width: 120px;
+  text-align: right;
+}
+
+/* Advanced table is wider — allow horizontal scroll via stats-table-wrap */
+.stats-table-adv {
+  min-width: 1200px;
+}
+
+.stats-table-adv .stats-col-area {
+  width: 225px;
 }
 
 .stats-toggle {

@@ -6,3 +6,7 @@ backend/.venv/
 __pycache__/
 *.pyc
 .DS_Store
+*.deb
+chatgpt/api_key.txt
+backend/uvicorn.log
+frontend.log

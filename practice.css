@@ -189,6 +189,72 @@
   padding: 5px 12px;
 }
 
+.target-difficulty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.target-difficulty-title {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.target-difficulty-track {
+  position: relative;
+}
+
+.target-difficulty-delta {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+}
+
+.target-difficulty-delta.up {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.95), rgba(34, 197, 94, 0.45));
+}
+
+.target-difficulty-delta.down {
+  background: linear-gradient(90deg, rgba(248, 113, 113, 0.95), rgba(248, 113, 113, 0.45));
+}
+
+.target-difficulty-marker {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.target-difficulty-line {
+  position: absolute;
+  left: -1px;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.target-difficulty-number {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.target-difficulty-number-old {
+  top: -20px;
+}
+
+.target-difficulty-number-new {
+  top: 12px;
+}
+
 /* Submit Button */
 .practice-submit-btn {
   width: 100%;
@@ -204,12 +270,43 @@
   margin-bottom: 16px;
 }
 
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .result-badge.correct {
   color: #4ade80;
 }
 
 .result-badge.incorrect {
   color: #f87171;
+}
+
+.result-badge.checking {
+  color: #fbbf24;
+}
+
+/* Hide feedback controls while the AI judge is running */
+#practice-feedback-area.checking .feedback-prompt,
+#practice-feedback-area.checking .feedback-buttons {
+  display: none;
+}
+
+.override-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.override-btn {
+  align-self: flex-start;
+  padding: 8px 12px;
+  font-size: 12px;
 }
 
 /* Feedback Prompt */
@@ -239,6 +336,12 @@
   background: rgba(227, 33, 44, 0.1);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.next-problem-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13px;
 }
 
 /* Solution Section */
@@ -341,6 +444,37 @@
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0;
+}
+
+/* AI Explanation Section */
+.ai-explanation-section {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-top: 18px;
+}
+
+.ai-explanation-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.ai-explanation-text {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+  font-size: 13px;
+  color: #fca5a5;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  overflow-x: auto;
 }
 
 /* ================================================================

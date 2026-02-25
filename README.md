@@ -23,16 +23,14 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ```
 cd /home/stellar-thread/Applications/pdf-split-tool
-python3 -m http.server 5173
+python3 serve.py 5173
 ```
 
 3) Open the UI:
 
 - http://localhost:5173/
 
-In the UI Account tab, set API base to:
-
-- http://localhost:8000
+The API base defaults to `http://localhost:8000` automatically when running on localhost — no manual configuration needed.
 
 ## Practice (adaptive learning)
 
@@ -55,7 +53,7 @@ In the UI Account tab, set API base to:
 
 - Make sure you are serving `http://localhost:5173/` from `/home/stellar-thread/Applications/pdf-split-tool`.
 - If the tab still does not show, hard refresh and confirm you are logged in.
-- For the adaptive algorithm, the backend must be running and the API base must be set to `http://localhost:8000`.
+- For the adaptive algorithm, the backend must be running on port 8000.
 
 ## Production deploy workflow
 

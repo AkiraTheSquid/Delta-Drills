@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delta Drills v1.0.10</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="practice.css" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.10</span></div>
+    <nav class="tabs">
+      <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
+      <button class="tab auth-only" data-tab="split-tool" type="button">Split Tool</button>
+      <button class="tab auth-only" data-tab="account" type="button">Account</button>
+      <button class="tab auth-only" data-tab="learn" type="button">Learn</button>
+      <button class="tab auth-only" data-tab="course" type="button">Course</button>
+      <button class="tab auth-only" data-tab="papers" type="button">Papers</button>
+      <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
+      <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
+      <button class="tab guest-only" data-tab="login" type="button">Log In</button>
+      <button class="tab guest-only" data-tab="signup" type="button">Create Account</button>
+    </nav>
+  </header>
+
+  <main class="page" id="page-how-it-works">
+    <div class="container">
+      <h1>How It Works</h1>
+      <p class="subtitle">Upload a PDF textbook, extract the table of contents, and split chapters into clean files ready for NotebookLM.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-card-title">Upload your PDF</div>
+          <div class="step-card-text">Select any PDF textbook from your computer.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-card-title">Detect chapters</div>
+          <div class="step-card-text">We read the table of contents and organize chapters automatically.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-card-title">Download splits</div>
+          <div class="step-card-text">Choose the chapters you want and download them as individual PDFs.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-split-tool">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h1>Split a PDF</h1>
+          <p class="subtitle">Upload a PDF and optionally a chapters CSV. Use Auto TOC if you want the backend to detect chapters.</p>
+        </div>
+        <div class="section-actions">
+          <span id="auth-status" class="status-text"></span>
+          <button id="logout-button" class="ghost" type="button">Log out</button>
+        </div>
+      </div>
+
+      <section class="card">
+        <form id="job-form">
+          <div class="field">
+            <label for="pdf-file">PDF file</label>
+            <input id="pdf-file" class="file-input" type="file" accept="application/pdf" />
+          </div>
+          <div class="field">
+            <label for="chapters-csv">Chapters CSV (optional)</label>
+            <input id="chapters-csv" class="file-input" type="file" accept=".csv" />
+            <div class="hint">Upload if you already know the chapter page ranges.</div>
+          </div>
+          <div class="field checkbox-field">
+            <input id="auto-toc" type="checkbox" />
+            <label for="auto-toc">Auto TOC (use Mathpix + ChatGPT)</label>
+          </div>
+          <div class="field" id="page-offset-field">
+            <label for="page-offset">Page offset (only when Auto TOC is off)</label>
+            <input id="page-offset" class="text-input" type="number" value="0" />
+          </div>
+          <button class="primary" type="submit">Start split job</button>
+          <div id="job-message" class="hint" role="status"></div>
+        </form>
+      </section>
+
+      <section id="job-status" class="card hidden">
+        <div class="status-row">
+          <div>
+            <div class="status-title">Job status</div>
+            <div id="job-status-text" class="status-text"></div>
+          </div>
+          <div id="job-id" class="status-id"></div>
+        </div>
+      </section>
+
+      <section id="chapters-section" class="card hidden">
+        <div class="status-title">Download chapters</div>
+        <div id="chapters-list" class="results"></div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-account">
+    <div class="container">
+      <h1>Account</h1>
+      <p class="subtitle">Update your API credentials and defaults used by the split tool.</p>
+      <section class="card">
+        <form id="account-form">
+          <div class="field">
+            <label for="account-api-base">API base URL</label>
+            <input id="account-api-base" class="text-input" type="text" placeholder="https://api.example.com" />
+            <div class="hint">Use your deployed backend URL (not localhost) for Vercel.</div>
+          </div>
+          <div class="field">
+            <label for="account-openai-key">OpenAI API key</label>
+            <input id="account-openai-key" class="text-input" type="text" placeholder="sk-..." />
+          </div>
+          <div class="field">
+            <label for="account-mathpix-id">Mathpix App ID</label>
+            <input id="account-mathpix-id" class="text-input" type="text" placeholder="Your Mathpix App ID" />
+          </div>
+          <div class="field">
+            <label for="account-mathpix-key">Mathpix App Key</label>
+            <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
+          </div>
+          <button class="primary" type="submit">Save settings</button>
+          <div id="account-message" class="hint" role="status"></div>
+        </form>
+        <div class="account-actions">
+          <button id="account-logout" class="ghost" type="button">Log out</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-learn">
+    <div class="container">
+      <h1>Learn</h1>
+      <p class="subtitle">Coming soon.</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-course">
+    <div class="container coming-soon-page">
+      <h1>Course</h1>
+      <p class="coming-soon-message">Coming Soon</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-papers">
+    <div class="container coming-soon-page">
+      <h1>Papers</h1>
+      <p class="coming-soon-message">Coming Soon</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-practice">
+    <div class="practice-container">
+      <div class="practice-split">
+        <!-- Left Panel: Questions -->
+        <div class="practice-left">
+          <!-- Timed Mode Toggle -->
+          <div class="timed-mode-row">
+            <div class="timed-mode-control">
+              <label class="timed-mode-label">Timed Mode</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="timed-mode-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="timer-controls hidden" id="timer-controls">
+              <button class="timer-play-btn" id="timer-play-btn" type="button">&#9654;</button>
+              <div class="timer-display" id="timer-display">00:10</div>
+            </div>
+          </div>
+
+          <!-- Question Number -->
+          <div class="question-number" id="question-number">Question 1</div>
+
+          <!-- Question Text -->
+          <div class="question-text" id="question-text"></div>
+
+          <!-- Submit Area (pre-submission) -->
+          <div id="practice-submit-area">
+            <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
+          </div>
+
+          <!-- Feedback Area (post-submission, hidden by default) -->
+          <div id="practice-feedback-area" class="hidden">
+            <div class="result-badge correct" id="result-badge">Correct</div>
+            <div class="feedback-prompt">How much should this result change your next problem?</div>
+            <div class="feedback-buttons">
+              <button class="ghost feedback-btn" data-feedback="not_much" type="button">Not much</button>
+              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat</button>
+              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">A lot</button>
+            </div>
+            <div class="question-meta-row">
+              <span class="subtopic-label" id="subtopic-label"></span>
+              <span class="difficulty-label" id="difficulty-label"></span>
+            </div>
+            <div class="solution-section">
+              <div class="solution-label">Solution</div>
+              <pre class="solution-code" id="solution-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Code Editor + Runner -->
+        <div class="practice-right">
+          <div class="editor-header">Code Editor</div>
+          <textarea class="code-editor" id="code-editor" spellcheck="false">import numpy as np
+
+# Write your solution here
+</textarea>
+          <button class="primary run-btn" id="run-btn" type="button">Run</button>
+          <div class="output-header">Output</div>
+          <pre class="output-area" id="output-area"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-statistics">
+    <div class="container stats-container">
+      <div class="section-header">
+        <div>
+          <h1>Statistics</h1>
+          <p class="subtitle">Priority and learning-rate breakdown by area and sub-area.</p>
+        </div>
+      </div>
+
+      <div class="stats-tabs">
+        <button class="stats-tab active" type="button" data-stats-tab="areas">Areas</button>
+        <button class="stats-tab" type="button" data-stats-tab="graph">Graph</button>
+      </div>
+
+      <section class="stats-panel" data-stats-panel="areas">
+        <div class="stats-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Delta Analysis</span>
+            <span class="stats-subtitle">Delta = Weight × Learning Rate</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th class="stats-col-toggle"></th>
+                  <th class="stats-col-check">Use</th>
+                  <th>Rank</th>
+                  <th>Area</th>
+                  <th>Weight</th>
+                  <th>Current Score</th>
+                  <th>Learning Rate</th>
+                  <th>Delta Score</th>
+                </tr>
+              </thead>
+              <tbody id="stats-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-panel hidden" data-stats-panel="graph">
+        <div class="stats-card stats-graph-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Priority Graph</span>
+            <span class="stats-subtitle">Data visualization will appear here.</span>
+          </div>
+          <div class="stats-graph-placeholder">
+            Graph placeholder
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-login">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Log In</h1>
+        <form id="login-form">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+          </div>
+          <button class="primary" type="submit">Log in</button>
+          <div id="login-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-signup">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+        <form id="signup-form">
+          <div class="field">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+          </div>
+          <div class="field">
+            <label for="signup-confirm">Confirm password</label>
+            <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+          </div>
+          <button class="primary" type="submit">Create account</button>
+          <div id="signup-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; Delta Labs</span>
+    <span class="version-tag">v1.0.10</span>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="split-tool.js"></script>
+  <script src="practice.js"></script>
+  <script src="stats.js"></script>
+</body>
+</html>

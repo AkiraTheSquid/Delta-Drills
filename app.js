@@ -16,7 +16,8 @@ const accountForm = document.getElementById("account-form");
 const accountMessage = document.getElementById("account-message");
 const accountLogout = document.getElementById("account-logout");
 
-const defaultApiBase = `${window.location.origin}`;
+const isLocalHost = ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
+const defaultApiBase = isLocalHost ? "http://localhost:8000" : window.location.origin;
 let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
 let authToken = localStorage.getItem("auth_token") || "";
 let authEmail = localStorage.getItem("auth_email") || "";

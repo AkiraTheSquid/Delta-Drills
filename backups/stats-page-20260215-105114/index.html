@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delta Drills v1.0.9</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="frontend/practice.css" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.9</span></div>
+    <nav class="tabs">
+      <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
+      <button class="tab auth-only" data-tab="split-tool" type="button">Split Tool</button>
+      <button class="tab auth-only" data-tab="account" type="button">Account</button>
+      <button class="tab auth-only" data-tab="learn" type="button">Learn</button>
+      <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
+      <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
+      <button class="tab guest-only" data-tab="login" type="button">Log In</button>
+      <button class="tab guest-only" data-tab="signup" type="button">Create Account</button>
+    </nav>
+  </header>
+
+  <main class="page" id="page-how-it-works">
+    <div class="container">
+      <h1>How It Works</h1>
+      <p class="subtitle">Upload a PDF textbook, extract the table of contents, and split chapters into clean files ready for NotebookLM.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-card-title">Upload your PDF</div>
+          <div class="step-card-text">Select any PDF textbook from your computer.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-card-title">Detect chapters</div>
+          <div class="step-card-text">We read the table of contents and organize chapters automatically.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-card-title">Download splits</div>
+          <div class="step-card-text">Choose the chapters you want and download them as individual PDFs.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-split-tool">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h1>Split a PDF</h1>
+          <p class="subtitle">Upload a PDF and optionally a chapters CSV. Use Auto TOC if you want the backend to detect chapters.</p>
+        </div>
+        <div class="section-actions">
+          <span id="auth-status" class="status-text"></span>
+          <button id="logout-button" class="ghost" type="button">Log out</button>
+        </div>
+      </div>
+
+      <section class="card">
+        <form id="job-form">
+          <div class="field">
+            <label for="pdf-file">PDF file</label>
+            <input id="pdf-file" class="file-input" type="file" accept="application/pdf" />
+          </div>
+          <div class="field">
+            <label for="chapters-csv">Chapters CSV (optional)</label>
+            <input id="chapters-csv" class="file-input" type="file" accept=".csv" />
+            <div class="hint">Upload if you already know the chapter page ranges.</div>
+          </div>
+          <div class="field checkbox-field">
+            <input id="auto-toc" type="checkbox" />
+            <label for="auto-toc">Auto TOC (use Mathpix + ChatGPT)</label>
+          </div>
+          <div class="field" id="page-offset-field">
+            <label for="page-offset">Page offset (only when Auto TOC is off)</label>
+            <input id="page-offset" class="text-input" type="number" value="0" />
+          </div>
+          <button class="primary" type="submit">Start split job</button>
+          <div id="job-message" class="hint" role="status"></div>
+        </form>
+      </section>
+
+      <section id="job-status" class="card hidden">
+        <div class="status-row">
+          <div>
+            <div class="status-title">Job status</div>
+            <div id="job-status-text" class="status-text"></div>
+          </div>
+          <div id="job-id" class="status-id"></div>
+        </div>
+      </section>
+
+      <section id="chapters-section" class="card hidden">
+        <div class="status-title">Download chapters</div>
+        <div id="chapters-list" class="results"></div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-account">
+    <div class="container">
+      <h1>Account</h1>
+      <p class="subtitle">Update your API credentials and defaults used by the split tool.</p>
+      <section class="card">
+        <form id="account-form">
+          <div class="field">
+            <label for="account-api-base">API base URL</label>
+            <input id="account-api-base" class="text-input" type="text" placeholder="https://api.example.com" />
+            <div class="hint">Use your deployed backend URL (not localhost) for Vercel.</div>
+          </div>
+          <div class="field">
+            <label for="account-openai-key">OpenAI API key</label>
+            <input id="account-openai-key" class="text-input" type="text" placeholder="sk-..." />
+          </div>
+          <div class="field">
+            <label for="account-mathpix-id">Mathpix App ID</label>
+            <input id="account-mathpix-id" class="text-input" type="text" placeholder="Your Mathpix App ID" />
+          </div>
+          <div class="field">
+            <label for="account-mathpix-key">Mathpix App Key</label>
+            <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
+          </div>
+          <button class="primary" type="submit">Save settings</button>
+          <div id="account-message" class="hint" role="status"></div>
+        </form>
+        <div class="account-actions">
+          <button id="account-logout" class="ghost" type="button">Log out</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-learn">
+    <div class="container">
+      <h1>Learn</h1>
+      <p class="subtitle">Coming soon.</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-statistics">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h1>Statistics</h1>
+          <p class="subtitle">Priority and learning-rate breakdown by area and sub-area.</p>
+        </div>
+      </div>
+
+      <div class="stats-tabs">
+        <button class="stats-tab active" type="button" data-stats-tab="areas">Areas</button>
+        <button class="stats-tab" type="button" data-stats-tab="graph">Graph</button>
+      </div>
+
+      <section class="stats-panel" data-stats-panel="areas">
+        <div class="stats-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Delta Analysis</span>
+            <span class="stats-subtitle">Delta = Weight × Learning Rate</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th class="stats-col-toggle"></th>
+                  <th class="stats-col-check">Use</th>
+                  <th>Rank</th>
+                  <th>Area</th>
+                  <th>Weight</th>
+                  <th>Current Score</th>
+                  <th>Learning Rate</th>
+                  <th>Delta Score</th>
+                </tr>
+              </thead>
+              <tbody id="stats-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-panel hidden" data-stats-panel="graph">
+        <div class="stats-card stats-graph-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Priority Graph</span>
+            <span class="stats-subtitle">Data visualization will appear here.</span>
+          </div>
+          <div class="stats-graph-placeholder">
+            Graph placeholder
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-practice">
+    <div class="practice-container">
+      <div class="practice-split">
+        <div class="practice-left">
+          <div class="timed-mode-row">
+            <div class="timed-mode-control">
+              <label class="timed-mode-label">Timed Mode</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="timed-mode-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="timer-controls hidden" id="timer-controls">
+              <button class="timer-play-btn" id="timer-play-btn" type="button">&#9654;</button>
+              <div class="timer-display" id="timer-display">00:10</div>
+            </div>
+          </div>
+
+          <div class="question-number" id="question-number">Question 1</div>
+          <div class="question-text" id="question-text"></div>
+
+          <div id="practice-submit-area">
+            <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
+          </div>
+
+          <div id="practice-feedback-area" class="hidden">
+            <div class="result-badge correct" id="result-badge">Correct</div>
+            <div class="feedback-prompt">How much should this result change your next problem?</div>
+            <div class="feedback-buttons">
+              <button class="ghost feedback-btn" data-feedback="not_much" type="button">Not much</button>
+              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat</button>
+              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">A lot</button>
+            </div>
+            <div class="question-meta-row">
+              <span class="subtopic-label" id="subtopic-label"></span>
+              <span class="difficulty-label" id="difficulty-label"></span>
+            </div>
+            <div class="solution-section">
+              <div class="solution-label">Solution</div>
+              <pre class="solution-code" id="solution-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="practice-right">
+          <div class="editor-header">Code Editor</div>
+          <textarea class="code-editor" id="code-editor" spellcheck="false">import numpy as np
+
+# Write your solution here
+</textarea>
+          <button class="primary run-btn" id="run-btn" type="button">Run</button>
+          <div class="output-header">Output</div>
+          <pre class="output-area" id="output-area"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-login">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Log In</h1>
+        <form id="login-form">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+          </div>
+          <button class="primary" type="submit">Log in</button>
+          <div id="login-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-signup">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+        <form id="signup-form">
+          <div class="field">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+          </div>
+          <div class="field">
+            <label for="signup-confirm">Confirm password</label>
+            <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+          </div>
+          <button class="primary" type="submit">Create account</button>
+          <div id="signup-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; Delta Labs</span>
+    <span class="version-tag">v1.0.9</span>
+  </footer>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const authOnlyTabs = document.querySelectorAll(".auth-only");
+    const guestOnlyTabs = document.querySelectorAll(".guest-only");
+    const pages = document.querySelectorAll(".page");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const signupForm = document.getElementById("signup-form");
+    const signupMessage = document.getElementById("signup-message");
+    const jobForm = document.getElementById("job-form");
+    const jobMessage = document.getElementById("job-message");
+    const jobStatus = document.getElementById("job-status");
+    const jobStatusText = document.getElementById("job-status-text");
+    const jobIdLabel = document.getElementById("job-id");
+    const chaptersSection = document.getElementById("chapters-section");
+    const chaptersList = document.getElementById("chapters-list");
+    const authStatus = document.getElementById("auth-status");
+    const logoutButton = document.getElementById("logout-button");
+    const autoToc = document.getElementById("auto-toc");
+    const pageOffsetField = document.getElementById("page-offset-field");
+    const accountForm = document.getElementById("account-form");
+    const accountMessage = document.getElementById("account-message");
+    const accountLogout = document.getElementById("account-logout");
+    const statsTableBody = document.getElementById("stats-table-body");
+    const statsTabs = document.querySelectorAll(".stats-tab");
+    const statsPanels = document.querySelectorAll("[data-stats-panel]");
+
+    const defaultApiBase = `${window.location.origin}`;
+    let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
+    let authToken = localStorage.getItem("auth_token") || "";
+    let authEmail = localStorage.getItem("auth_email") || "";
+
+    const switchTab = (tabName) => {
+      if ((tabName === "split-tool" || tabName === "account" || tabName === "learn" || tabName === "practice" || tabName === "statistics") && !authToken) {
+        loginMessage.textContent = "Please log in to start a job.";
+        tabName = "login";
+      }
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
+      pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
+    };
+
+    tabs.forEach((t) => {
+      t.addEventListener("click", () => switchTab(t.dataset.tab));
+    });
+
+    const updateTabVisibility = () => {
+      authOnlyTabs.forEach((t) => t.classList.toggle("hidden", !authToken));
+      guestOnlyTabs.forEach((t) => t.classList.toggle("hidden", !!authToken));
+    };
+
+    const setAuthState = (token, email) => {
+      authToken = token || "";
+      authEmail = email || "";
+      if (authToken) {
+        localStorage.setItem("auth_token", authToken);
+        localStorage.setItem("auth_email", authEmail);
+        authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
+        switchTab("split-tool");
+      } else {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_email");
+        authStatus.textContent = "";
+        switchTab("login");
+      }
+      updateTabVisibility();
+    };
+
+    logoutButton.addEventListener("click", () => {
+      supabaseSignOut();
+      setAuthState("", "");
+    });
+    accountLogout.addEventListener("click", () => {
+      supabaseSignOut();
+      setAuthState("", "");
+    });
+
+    const statsData = [
+      {
+        id: "numpy",
+        rank: 1,
+        area: "NumPy",
+        weight: 0.12,
+        currentScore: 72,
+        learningRate: 0.42,
+        subareas: [
+          { id: "core", label: "Core array literacy", weightShare: 0.25, currentScore: 68, learningRate: 0.31, delta: 0.037 },
+          { id: "indexing", label: "Indexing and selection", weightShare: 0.25, currentScore: 74, learningRate: 0.45, delta: 0.054 },
+          { id: "vector", label: "Vectorization and broadcasting", weightShare: 0.25, currentScore: 70, learningRate: 0.39, delta: 0.047 },
+          { id: "applied", label: "Applied patterns and advanced", weightShare: 0.25, currentScore: 65, learningRate: 0.51, delta: 0.061 },
+        ],
+      },
+    ];
+
+    const renderStatsTable = () => {
+      if (!statsTableBody) return;
+      statsTableBody.innerHTML = "";
+
+      statsData.forEach((area) => {
+        const maxDelta = area.subareas.reduce((max, s) => Math.max(max, s.delta), 0);
+        const areaRow = document.createElement("tr");
+        areaRow.className = "stats-row";
+        areaRow.innerHTML = `
+          <td class="stats-col-toggle">
+            <button class="stats-toggle" type="button" data-area-toggle="${area.id}">+</button>
+          </td>
+          <td class="stats-col-check">
+            <input type="checkbox" class="stats-check" checked />
+          </td>
+          <td>${area.rank}</td>
+          <td>${area.area}</td>
+          <td>${(area.weight * 100).toFixed(0)}%</td>
+          <td>${area.currentScore}%</td>
+          <td>${area.learningRate.toFixed(2)}</td>
+          <td>${maxDelta.toFixed(3)}</td>
+        `;
+        statsTableBody.appendChild(areaRow);
+
+        area.subareas.forEach((sub) => {
+          const subRow = document.createElement("tr");
+          subRow.className = "stats-row stats-subrow hidden";
+          subRow.dataset.subareaFor = area.id;
+          subRow.innerHTML = `
+            <td class="stats-col-toggle"></td>
+            <td class="stats-col-check">
+              <input type="checkbox" class="stats-check" checked />
+            </td>
+            <td>—</td>
+            <td class="stats-subarea">${sub.label}</td>
+            <td>${(sub.weightShare * 100).toFixed(0)}% × ${(area.weight * 100).toFixed(0)}%</td>
+            <td>${sub.currentScore}%</td>
+            <td>${sub.learningRate.toFixed(2)}</td>
+            <td>${sub.delta.toFixed(3)}</td>
+          `;
+          statsTableBody.appendChild(subRow);
+        });
+      });
+
+      statsTableBody.querySelectorAll("[data-area-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const areaId = btn.getAttribute("data-area-toggle");
+          const isOpen = btn.dataset.open === "true";
+          btn.dataset.open = isOpen ? "false" : "true";
+          btn.textContent = isOpen ? "+" : "−";
+          statsTableBody.querySelectorAll(`[data-subarea-for="${areaId}"]`).forEach((row) => {
+            row.classList.toggle("hidden", isOpen);
+          });
+        });
+      });
+    };
+
+    statsTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.statsTab;
+        statsTabs.forEach((t) => t.classList.toggle("active", t === tab));
+        statsPanels.forEach((panel) => {
+          panel.classList.toggle("hidden", panel.dataset.statsPanel !== target);
+        });
+      });
+    });
+
+    const apiFetch = async (path, options = {}) => {
+      const headers = options.headers ? { ...options.headers } : {};
+      if (authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+      const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+      return response;
+    };
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      loginMessage.textContent = "Working...";
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        loginMessage.textContent = "Enter an email and password.";
+        return;
+      }
+
+      try {
+        if (shouldUseLocalBackend(email)) {
+          // Admin on localhost — use local backend JWT auth
+          const response = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            loginMessage.textContent = data.detail || "Login failed.";
+            return;
+          }
+          loginMessage.textContent = "Logged in!";
+          loginForm.reset();
+          setAuthState(data.access_token, email);
+        } else {
+          // Non-admin or deployed — use Supabase Auth
+          const data = await supabaseSignIn(email, password);
+          loginMessage.textContent = "Logged in!";
+          loginForm.reset();
+          setAuthState(data.session?.access_token || "supabase_session", email);
+        }
+        setTimeout(() => (loginMessage.textContent = ""), 1000);
+      } catch (e) {
+        loginMessage.textContent = e.message;
+      }
+    });
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      signupMessage.textContent = "Working...";
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const confirm = document.getElementById("signup-confirm").value;
+
+      if (!email || !password || !confirm) {
+        signupMessage.textContent = "Enter an email and both password fields.";
+        return;
+      }
+
+      if (password !== confirm) {
+        signupMessage.textContent = "Passwords do not match.";
+        return;
+      }
+
+      try {
+        if (shouldUseLocalBackend(email)) {
+          // Admin on localhost — use local backend
+          const response = await fetch(`${API_BASE}/auth/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            signupMessage.textContent = data.detail || "Signup failed.";
+            return;
+          }
+          signupMessage.textContent = "Account created!";
+          signupForm.reset();
+          setAuthState(data.access_token, email);
+        } else {
+          // Non-admin or deployed — use Supabase Auth
+          const data = await supabaseSignUp(email, password);
+          if (data.user && !data.session) {
+            signupMessage.textContent = "Check your email to confirm your account.";
+            signupForm.reset();
+            return;
+          }
+          signupMessage.textContent = "Account created!";
+          signupForm.reset();
+          setAuthState(data.session?.access_token || "supabase_session", email);
+        }
+        setTimeout(() => (signupMessage.textContent = ""), 1000);
+      } catch (e) {
+        signupMessage.textContent = e.message;
+      }
+    });
+
+    const updateAutoTocState = () => {
+      const isAuto = autoToc.checked;
+      pageOffsetField.classList.toggle("hidden", isAuto);
+    };
+
+    autoToc.addEventListener("change", updateAutoTocState);
+    updateAutoTocState();
+
+    const renderChapters = (jobId, chapters) => {
+      chaptersList.innerHTML = "";
+      if (!chapters.length) {
+        chaptersList.textContent = "No chapters generated.";
+        return;
+      }
+      chapters.forEach((chapter) => {
+        const row = document.createElement("div");
+        row.className = "result-item";
+
+        const title = document.createElement("span");
+        title.textContent = `${chapter.title} (${chapter.start_page}-${chapter.end_page})`;
+
+        const button = document.createElement("button");
+        button.className = "ghost";
+        button.type = "button";
+        button.textContent = "Download";
+        button.addEventListener("click", async () => {
+          button.disabled = true;
+          try {
+            const response = await apiFetch(`/jobs/${jobId}/chapters/${chapter.id}/download`);
+            if (!response.ok) {
+              jobMessage.textContent = "Download failed.";
+              return;
+            }
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = chapter.filename || "chapter.pdf";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+          } catch (e) {
+            jobMessage.textContent = e.message;
+          } finally {
+            button.disabled = false;
+          }
+        });
+
+        row.appendChild(title);
+        row.appendChild(button);
+        chaptersList.appendChild(row);
+      });
+    };
+
+    const pollJob = async (jobId) => {
+      try {
+        const response = await apiFetch(`/jobs/${jobId}`);
+        const data = await response.json();
+        if (!response.ok) {
+          jobStatusText.textContent = data.detail || "Failed to fetch job.";
+          return;
+        }
+        jobStatusText.textContent = data.status;
+        if (data.status === "completed") {
+          const chaptersResponse = await apiFetch(`/jobs/${jobId}/chapters`);
+          const chapters = await chaptersResponse.json();
+          chaptersSection.classList.remove("hidden");
+          renderChapters(jobId, chaptersResponse.ok ? chapters : []);
+          return;
+        }
+        if (data.status === "failed") {
+          jobMessage.textContent = data.error_message || "Job failed.";
+          return;
+        }
+        setTimeout(() => pollJob(jobId), 2500);
+      } catch (e) {
+        jobStatusText.textContent = e.message;
+      }
+    };
+
+    jobForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      jobMessage.textContent = "";
+      chaptersSection.classList.add("hidden");
+
+      const pdfFile = document.getElementById("pdf-file").files[0];
+      const csvFile = document.getElementById("chapters-csv").files[0];
+      const pageOffset = document.getElementById("page-offset").value || "0";
+
+      if (!pdfFile) {
+        jobMessage.textContent = "Please select a PDF.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("pdf_file", pdfFile);
+      if (csvFile) {
+        formData.append("chapters_csv", csvFile);
+      }
+      formData.append("auto_toc", autoToc.checked ? "true" : "false");
+      formData.append("page_offset", pageOffset);
+      const savedOpenaiKey = localStorage.getItem("account_openai_key") || "";
+      const savedMathpixId = localStorage.getItem("account_mathpix_id") || "";
+      const savedMathpixKey = localStorage.getItem("account_mathpix_key") || "";
+      if (savedOpenaiKey) {
+        formData.append("openai_api_key", savedOpenaiKey);
+      }
+      if (savedMathpixId) {
+        formData.append("mathpix_app_id", savedMathpixId);
+      }
+      if (savedMathpixKey) {
+        formData.append("mathpix_app_key", savedMathpixKey);
+      }
+
+      try {
+        jobMessage.textContent = "Uploading...";
+        const response = await apiFetch("/jobs", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          jobMessage.textContent = data.detail || "Job creation failed.";
+          return;
+        }
+        jobMessage.textContent = "Job started.";
+        jobStatus.classList.remove("hidden");
+        jobIdLabel.textContent = data.id;
+        jobStatusText.textContent = data.status;
+        pollJob(data.id);
+      } catch (e) {
+        jobMessage.textContent = e.message;
+      }
+    });
+
+    if (authToken) {
+      authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
+      switchTab("split-tool");
+    } else {
+      switchTab("how-it-works");
+    }
+    updateTabVisibility();
+    renderStatsTable();
+
+    accountForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const apiBase = document.getElementById("account-api-base").value.trim();
+      const openaiKey = document.getElementById("account-openai-key").value.trim();
+      const mathpixId = document.getElementById("account-mathpix-id").value.trim();
+      const mathpixKey = document.getElementById("account-mathpix-key").value.trim();
+
+      if (apiBase) {
+        localStorage.setItem("api_base", apiBase);
+        API_BASE = apiBase;
+      } else {
+        localStorage.removeItem("api_base");
+        API_BASE = defaultApiBase;
+      }
+      localStorage.setItem("account_openai_key", openaiKey);
+      localStorage.setItem("account_mathpix_id", mathpixId);
+      localStorage.setItem("account_mathpix_key", mathpixKey);
+      accountMessage.textContent = "Saved locally in this browser.";
+      setTimeout(() => (accountMessage.textContent = ""), 1500);
+    });
+
+    const savedApiBase = localStorage.getItem("api_base") || "";
+    const savedOpenai = localStorage.getItem("account_openai_key") || "";
+    const savedMathpixId = localStorage.getItem("account_mathpix_id") || "";
+    const savedMathpixKey = localStorage.getItem("account_mathpix_key") || "";
+    document.getElementById("account-api-base").value = savedApiBase;
+    document.getElementById("account-openai-key").value = savedOpenai;
+    document.getElementById("account-mathpix-id").value = savedMathpixId;
+    document.getElementById("account-mathpix-key").value = savedMathpixKey;
+  </script>
+  <script src="frontend/supabase-practice.js"></script>
+  <script src="frontend/practice.js"></script>
+</body>
+</html>

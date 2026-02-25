@@ -243,6 +243,21 @@ def apply_feedback(
     return attempt
 
 
+def override_pending_attempt(
+    user_state: UserPracticeState,
+    question_id: int,
+    correct: bool = True,
+) -> bool:
+    attempt = user_state.pending_attempt
+    if attempt is None:
+        return False
+    if attempt.question_id != question_id:
+        return False
+    attempt.correct = correct
+    attempt.grade = 100.0 if correct else 0.0
+    return True
+
+
 # ---------------------------------------------------------------------------
 # Subtopic prioritization (from prioritization.py)
 # ---------------------------------------------------------------------------
@@ -403,6 +418,14 @@ class EngineAPI:
         """
         state = state_from_json(state_json)
         apply_feedback(state, feedback)
+        return state_to_json(state)
+
+    def override_attempt(self, state_json: str, question_id: int, correct: bool = True) -> str:
+        """
+        Override the pending attempt correctness before feedback.
+        """
+        state = state_from_json(state_json)
+        override_pending_attempt(state, question_id, correct)
         return state_to_json(state)
 
 

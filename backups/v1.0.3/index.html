@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delta Drills v1.0.3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-heart">Delta Drills <span style="font-weight:400;font-size:13px;color:#6a6a73;">v1.0.3</span></span>
+    </div>
+    <button id="auth-toggle" class="ghost topbar-button" type="button">Account</button>
+  </header>
+
+  <main id="auth-screen" class="login">
+    <div class="login-card">
+      <div class="login-badge">NotebookLM Converter</div>
+      <h1>Turn textbooks into a structured NotebookLM library</h1>
+      <p class="subtitle">Upload a PDF, extract the table of contents, and split chapters into clean, organized files ready for NotebookLM.</p>
+      <div class="login-grid">
+        <div class="login-feature">
+          <div class="feature-title">Smart structure</div>
+          <div class="feature-text">Chapters and subheadings are detected and organized logically.</div>
+        </div>
+        <div class="login-feature">
+          <div class="feature-title">Precise selection</div>
+          <div class="feature-text">Choose only the chapters and sections you want returned.</div>
+        </div>
+        <div class="login-feature">
+          <div class="feature-title">Fast delivery</div>
+          <div class="feature-text">Get split PDFs ready for upload to NotebookLM.</div>
+        </div>
+      </div>
+      <div class="toggle" role="tablist" aria-label="Account mode">
+        <button id="tab-login" class="toggle-btn active" type="button" role="tab" aria-selected="true">Log in</button>
+        <button id="tab-signup" class="toggle-btn" type="button" role="tab" aria-selected="false">Create account</button>
+      </div>
+      <form class="login-form" id="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+        </div>
+        <button id="login-button" class="primary" type="submit">Log in</button>
+        <div id="login-message" class="hint" role="status"></div>
+      </form>
+      <form class="login-form hidden" id="signup-form">
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="signup-password">Password</label>
+          <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+        </div>
+        <div class="field">
+          <label for="signup-confirm">Confirm password</label>
+          <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+        </div>
+        <button id="signup-button" class="primary" type="submit">Create account</button>
+        <div id="signup-message" class="hint" role="status"></div>
+      </form>
+    </div>
+  </main>
+
+  <main id="app" class="hero hidden">
+    <h1>Split Your PDF by Chapter</h1>
+    <p class="subtitle">Upload your PDF, review the detected table of contents, then choose the chapters you want returned.</p>
+
+    <section class="card">
+      <div class="step">
+        <div class="step-title">1. Upload your PDF</div>
+        <div class="field">
+          <label for="api-key">OpenAI API key</label>
+          <input id="api-key" class="text-input" type="password" placeholder="Paste your API key" />
+          <div class="hint">Stored locally in your browser session only.</div>
+        </div>
+        <div class="field">
+          <label for="mathpix-id">Mathpix App ID</label>
+          <input id="mathpix-id" class="text-input" type="text" placeholder="Paste your Mathpix App ID" />
+          <div class="hint">Required to read the table of contents.</div>
+        </div>
+        <div class="field">
+          <label for="mathpix-key">Mathpix App Key</label>
+          <input id="mathpix-key" class="text-input" type="password" placeholder="Paste your Mathpix App Key" />
+        </div>
+        <label class="primary" for="pdf-input">Select PDF file</label>
+        <input id="pdf-input" class="file-input" type="file" accept="application/pdf" />
+        <div class="hint">Supported: PDF only</div>
+      </div>
+
+      <div id="loading-upload" class="loader" aria-hidden="true">
+        <div class="spinner"></div>
+        <div class="loader-text">Reading file and finding the table of contents...</div>
+      </div>
+
+      <div id="toc" class="step hidden">
+        <div class="step-title">2. Select the chapters you want uploaded</div>
+        <div class="toc-tree" role="tree">
+          <div class="tree-item" role="treeitem" aria-expanded="true">
+            <label><input type="checkbox" checked> Chapter 1 — Introduction</label>
+            <div class="tree-children">
+              <label><input type="checkbox" checked> 1.1 Overview</label>
+              <label><input type="checkbox"> 1.2 Goals and scope</label>
+              <label><input type="checkbox"> 1.3 Key terms</label>
+            </div>
+          </div>
+          <div class="tree-item" role="treeitem" aria-expanded="true">
+            <label><input type="checkbox" checked> Chapter 2 — Fundamentals</label>
+            <div class="tree-children">
+              <label><input type="checkbox" checked> 2.1 Core concepts</label>
+              <label><input type="checkbox"> 2.2 Examples</label>
+              <label><input type="checkbox"> 2.3 Common pitfalls</label>
+            </div>
+          </div>
+          <div class="tree-item" role="treeitem" aria-expanded="true">
+            <label><input type="checkbox"> Chapter 3 — Deep Dive</label>
+            <div class="tree-children">
+              <label><input type="checkbox"> 3.1 Architecture</label>
+              <label><input type="checkbox"> 3.2 Implementation details</label>
+              <label><input type="checkbox"> 3.3 Performance notes</label>
+            </div>
+          </div>
+          <div class="tree-item" role="treeitem" aria-expanded="true">
+            <label><input type="checkbox"> Chapter 4 — Case Studies</label>
+            <div class="tree-children">
+              <label><input type="checkbox"> 4.1 Small teams</label>
+              <label><input type="checkbox"> 4.2 Enterprise</label>
+              <label><input type="checkbox"> 4.3 Lessons learned</label>
+            </div>
+          </div>
+        </div>
+        <button id="split-button" class="primary">Split selected chapters</button>
+      </div>
+
+      <div id="loading-split" class="loader hidden" aria-hidden="true">
+        <div class="spinner"></div>
+        <div class="loader-text">Splitting PDF into chapters...</div>
+      </div>
+
+      <div id="results" class="step hidden">
+        <div class="step-title">3. Download split chapters</div>
+        <div class="results">
+          <div class="result-item">
+            <span>Chapter 1 — Introduction.pdf</span>
+            <button class="ghost">Download</button>
+          </div>
+          <div class="result-item">
+            <span>Chapter 2 — Fundamentals.pdf</span>
+            <button class="ghost">Download</button>
+          </div>
+          <div class="result-item">
+            <span>Chapter 3 — Deep Dive.pdf</span>
+            <button class="ghost">Download</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-copy">
+      <span>© Delta Labs</span>
+      <span id="version-inline" class="version-label"></span>
+    </div>
+    <div class="footer-meta">
+      <span id="version-label" class="version-label"></span>
+    </div>
+  </footer>
+
+  <script>
+    const input = document.getElementById("pdf-input");
+    const loadingUpload = document.getElementById("loading-upload");
+    const toc = document.getElementById("toc");
+    const loadingSplit = document.getElementById("loading-split");
+    const results = document.getElementById("results");
+    const splitButton = document.getElementById("split-button");
+    const openaiKey = document.getElementById("api-key");
+    const mathpixId = document.getElementById("mathpix-id");
+    const mathpixKey = document.getElementById("mathpix-key");
+    const uploadLabel = document.querySelector("label[for='pdf-input']");
+    const authScreen = document.getElementById("auth-screen");
+    const app = document.getElementById("app");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const signupForm = document.getElementById("signup-form");
+    const signupMessage = document.getElementById("signup-message");
+    const loginTab = document.getElementById("tab-login");
+    const signupTab = document.getElementById("tab-signup");
+    const versionLabel = document.getElementById("version-label");
+    const versionInline = document.getElementById("version-inline");
+    const authToggle = document.getElementById("auth-toggle");
+
+    const updateUploadState = () => {
+      const ready = openaiKey.value.trim() && mathpixId.value.trim() && mathpixKey.value.trim();
+      uploadLabel.classList.toggle("disabled", !ready);
+      uploadLabel.setAttribute("aria-disabled", ready ? "false" : "true");
+    };
+
+    [openaiKey, mathpixId, mathpixKey].forEach((field) => {
+      field.addEventListener("input", updateUploadState);
+    });
+
+    updateUploadState();
+
+    const setAuthMode = (mode) => {
+      const isLogin = mode === "login";
+      loginForm.classList.toggle("hidden", !isLogin);
+      signupForm.classList.toggle("hidden", isLogin);
+      loginTab.classList.toggle("active", isLogin);
+      signupTab.classList.toggle("active", !isLogin);
+      loginTab.setAttribute("aria-selected", isLogin ? "true" : "false");
+      signupTab.setAttribute("aria-selected", isLogin ? "false" : "true");
+    };
+
+    const showSignup = () => {
+      authScreen.classList.remove("hidden");
+      app.classList.add("hidden");
+      setAuthMode("signup");
+    };
+
+    const showLogin = () => {
+      authScreen.classList.remove("hidden");
+      app.classList.add("hidden");
+      setAuthMode("login");
+    };
+
+    loginTab.addEventListener("click", () => {
+      loginMessage.textContent = "";
+      signupMessage.textContent = "";
+      setAuthMode("login");
+    });
+
+    signupTab.addEventListener("click", () => {
+      loginMessage.textContent = "";
+      signupMessage.textContent = "";
+      setAuthMode("signup");
+    });
+
+    const supabase = window.supabase.createClient(
+      "https://qaxtcaoydbpigomnfjpl.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFheHRjYW95ZGJwaWdvbW5manBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxNzQ3MjQsImV4cCI6MjA4NTc1MDcyNH0.Mom-rTokqsvEbEshyvvfEjyL77AVa0LqJIg9FbpLvU4"
+    );
+
+    const showApp = () => {
+      authScreen.classList.add("hidden");
+      app.classList.remove("hidden");
+    };
+
+    const showAuthScreen = () => {
+      authScreen.classList.remove("hidden");
+      app.classList.add("hidden");
+    };
+
+    const initSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        showApp();
+      } else {
+        showAuthScreen();
+      }
+    };
+
+    initSession();
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        showApp();
+      } else {
+        showAuthScreen();
+      }
+    });
+
+    const VERSION = "1.0.3";
+    versionLabel.textContent = `version ${VERSION}`;
+    versionInline.textContent = `version ${VERSION}`;
+
+    authToggle.addEventListener("click", () => {
+      showLogin();
+    });
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      loginMessage.textContent = "Working...";
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        loginMessage.textContent = "Enter an email and password.";
+        return;
+      }
+
+      const result = await supabase.auth.signInWithPassword({ email, password });
+
+      if (result.error) {
+        loginMessage.textContent = result.error.message;
+        return;
+      }
+      loginMessage.textContent = "";
+    });
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      signupMessage.textContent = "Working...";
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const confirm = document.getElementById("signup-confirm").value;
+
+      if (!email || !password || !confirm) {
+        signupMessage.textContent = "Enter an email and both password fields.";
+        return;
+      }
+
+      if (password !== confirm) {
+        signupMessage.textContent = "Passwords do not match.";
+        return;
+      }
+
+      const result = await supabase.auth.signUp({ email, password });
+
+      if (result.error) {
+        signupMessage.textContent = result.error.message;
+        return;
+      }
+
+      signupMessage.textContent = "Account created. Check your email to confirm, then log in.";
+    });
+
+    input.addEventListener("change", () => {
+      if (uploadLabel.classList.contains("disabled")) return;
+      if (!input.files.length) return;
+      loadingUpload.classList.remove("hidden");
+      toc.classList.add("hidden");
+      results.classList.add("hidden");
+
+      setTimeout(() => {
+        loadingUpload.classList.add("hidden");
+        toc.classList.remove("hidden");
+      }, 1400);
+    });
+
+    splitButton.addEventListener("click", () => {
+      loadingSplit.classList.remove("hidden");
+      results.classList.add("hidden");
+
+      setTimeout(() => {
+        loadingSplit.classList.add("hidden");
+        results.classList.remove("hidden");
+      }, 1400);
+    });
+  </script>
+</body>
+</html>

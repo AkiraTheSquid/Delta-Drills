@@ -1,0 +1,420 @@
+Topic,Subtopic,Question,Problem difficulty,Output,Answer
+Einsum,Vectorization and broadcasting,"Given a batch of vectors $u$ and $v$, create a batch of matrices where every element of $u$ is multiplied by every element of $v$.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+u = np.arange(1, 5).reshape((2, 2))
+v = np.arange(1, 5).reshape((2, 2))",30,"[[[ 1  2]
+  [ 2  4]]
+
+ [[ 9 12]
+  [12 16]]]","einsum(u, v, 'b i, b j -> b i j')"
+Einsum,Core array literacy,"Swap the rows and columns of a 2D matrix $A$.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",20,"[[1 3]
+ [2 4]]","einsum(A, 'i j -> j i')"
+Einsum,Core array literacy,"Multiply two vectors element-wise and sum the results into a single scalar.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v1 = np.arange(1, 3)
+v2 = np.arange(1, 3)",30,5,"einsum(v1, v2, 'i, i ->')"
+Einsum,Vectorization and broadcasting,"Given two matrices $A$ and $B$, compute the product and return only the values along the diagonal (row $i$, column $i$).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+B = np.arange(1, 5).reshape((2, 2))",50,[ 7 22],"einsum(A, B, 'i k, k i -> i')"
+Einsum,Core array literacy,"Reduce a 2D matrix into a 1D vector by summing along the vertical (row) axis.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",20,[4 6],"einsum(A, 'i j -> j')"
+Einsum,Vectorization and broadcasting,"Take two matrices and compute the dot product for every possible pair of rows between them.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 5).reshape((2, 2))
+Y = np.arange(1, 5).reshape((2, 2))",35,"[[ 5 11]
+ [11 25]]","einsum(X, Y, 'n d, m d -> n m')"
+Einsum,Vectorization and broadcasting,"For a batch of images, square every pixel value and sum them all up per image.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 17).reshape((2, 2, 2, 2))",35,[ 204 1292],"einsum(X, X, 'b c h w, b c h w -> b')"
+Einsum,Vectorization and broadcasting,"For each item in a batch, compute the similarity between its own internal feature vectors.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))",50,"[[[  5  11]
+  [ 11  25]]
+
+ [[ 61  83]
+  [ 83 113]]]","einsum(A, A, 'b i d, b j d -> b i j')"
+Einsum,Applied patterns and advanced,"Apply a single weight vector to every token in a batch, reducing the hidden dimension via a dot product.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 9).reshape((2, 2, 2))
+v = np.arange(1, 3)",25,"[[ 5 11]
+ [17 23]]","einsum(X, v, 'b t d, d -> b t')"
+Einsum,Applied patterns and advanced,"Perform a triple-contraction: use a vector to select a weighted combination of a matrix, then dot that result with the vector again.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 3)
+W = np.arange(1, 5).reshape((2, 2))",55,27,"einsum(x, W, x, 'i, i j, j ->')"
+Einsum,Applied patterns and advanced,"Compare two feature maps by dot-producting the channel dimension at every spatial $(h, w)$ location.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+F = np.arange(1, 9).reshape((2, 2, 2))
+G = np.arange(1, 9).reshape((2, 2, 2))",40,"[[26 40]
+ [58 80]]","einsum(F, G, 'c h w, c h w -> h w')"
+Einsum,Applied patterns and advanced,"Combine attention weights with values by summing over the ""keys"" dimension.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+S = np.arange(1, 17).reshape((2, 2, 2, 2))
+V = np.arange(1, 17).reshape((2, 2, 2, 2))",50,"[[[[  7  10]
+   [ 15  22]]
+
+  [[ 67  78]
+   [ 91 106]]]
+
+
+ [[[191 210]
+   [231 254]]
+
+  [[379 406]
+   [435 466]]]]","einsum(S, V, 'b h q k, b h k d -> b h q d')"
+Einsum,Vectorization and broadcasting,"Multiply rows by a weight vector and sum them, then normalize (weighted sum).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+w = np.arange(1, 3)
+A = np.arange(1, 5).reshape((2, 2))",35,[2.33333333 3.33333333],"einsum(w, A, 'n, n d -> d') / w.sum()"
+Einsum,Core array literacy,"Create a matrix where every element $(i, j)$ is the product of $v1[i]$ and $v2[j]$.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v1 = np.arange(1, 3)
+v2 = np.arange(1, 3)",35,"[[1 2]
+ [2 4]]","einsum(v1, v2, 'i, j -> i j')"
+Einsum,Indexing and selection,"Extract only the elements where the row index and column index are equal.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",30,[1 4],"einsum(A, 'i i -> i')"
+Einsum,Vectorization and broadcasting,"Multiply a matrix by its own transpose to find the correlation between its columns.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 5).reshape((2, 2))",40,"[[10 14]
+ [14 20]]","einsum(X, X, 'n d, n e -> d e')"
+Einsum,Applied patterns and advanced,"Compute the variance/covariance by contracting the batch dimension of mean-centered data.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 5).reshape((2, 2))
+mu = X.mean(axis=0)
+n = 2",55,"[[2. 2.]
+ [2. 2.]]","einsum(X-mu, X-mu, 'n d, n e -> d e') / (n-1)"
+Einsum,Core array literacy,"Standard matrix-matrix multiplication: sum over the shared inner dimension.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+C = np.arange(1, 5).reshape((2, 2))
+D = np.arange(1, 5).reshape((2, 2))",40,"[[ 7 10]
+ [15 22]]","einsum(C, D, 'i k, k j -> i j')"
+Einsum,Core array literacy,"Collapse a 1D tensor into a single number by summing all elements.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 3)",15,3,"einsum(x, 'i ->')"
+Einsum,Core array literacy,"Multiply a matrix by a vector to produce a new vector.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+b = np.arange(1, 3)",35,[ 5 11],"einsum(A, b, 'i j, j -> i')"
+Einsum,Applied patterns and advanced,"Compute the ""raw"" attention scores by comparing Query and Key vectors across a batch.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+Q = np.arange(1, 17).reshape((2, 2, 2, 2))
+K = np.arange(1, 17).reshape((2, 2, 2, 2))",45,"[[[[  5  11]
+   [ 11  25]]
+
+  [[ 61  83]
+   [ 83 113]]]
+
+
+ [[[181 219]
+   [219 265]]
+
+  [[365 419]
+   [419 481]]]]","einsum(Q, K, 'b h q d, b h k d -> b h q k')"
+Einsum,Applied patterns and advanced,"Perform three matrix multiplications in a row in a single operation.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+B = np.arange(1, 5).reshape((2, 2))
+C = np.arange(1, 5).reshape((2, 2))",45,"[[ 37  54]
+ [ 81 118]]","einsum(A, B, C, 'i k, k m, m p -> i p')"
+Einsum,Applied patterns and advanced,"In a batch of tensors, multiply the inner matrices together per batch item.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+T = np.arange(1, 9).reshape((2, 2, 2))
+U = np.arange(1, 9).reshape((2, 2, 2))",45,"[[[  7  10]
+  [ 15  22]]
+
+ [[ 67  78]
+  [ 91 106]]]","einsum(T, U, 'a i j, a j k -> a i k')"
+Einsum,Indexing and selection,"For a batch of square matrices, get the sum of the diagonal for each matrix.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))",30,[ 5 13],"einsum(A, 'b i i -> b')"
+Einsum,Core array literacy,"Flatten two matrices and find their dot product (element-wise multiplication then global sum).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+B = np.arange(1, 5).reshape((2, 2))",30,30,"einsum(A, B, 'i j, i j ->')"
+Einsum,Vectorization and broadcasting,"Apply a batch of matrices to a batch of vectors (one-to-one mapping).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))
+x = np.arange(1, 5).reshape((2, 2))",35,"[[ 5 11]
+ [39 53]]","einsum(A, x, 'b i j, b j -> b i')"
+Einsum,Applied patterns and advanced,"Blend image channels into a single spatial map using specific channel weights.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+img = np.arange(1, 9).reshape((2, 2, 2))
+w = np.arange(1, 3)",30,"[[11 14]
+ [17 20]]","einsum(img, w, 'c h w, c -> h w')"
+Einsum,Applied patterns and advanced,"Compute the total sum of element-wise products between two 3D tensors.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))
+B = np.arange(1, 9).reshape((2, 2, 2))",30,204,"einsum(A, B, 'a b c, a b c ->')"
+Einsum,Indexing and selection,"Rearrange a 4D tensor (e.g., move the color channel from the second position to the last).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+T = np.arange(1, 17).reshape((2, 2, 2, 2))",25,"[[[[ 1  5]
+   [ 2  6]]
+
+  [[ 3  7]
+   [ 4  8]]]
+
+
+ [[[ 9 13]
+   [10 14]]
+
+  [[11 15]
+   [12 16]]]]","einsum(T, 'b c h w -> b h w c')"
+Einsum,Applied patterns and advanced,"Transform the feature dimension of a sequence using a projection matrix.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 9).reshape((2, 2, 2))
+M = np.arange(1, 5).reshape((2, 2))",35,"[[[ 7 10]
+  [15 22]]
+
+ [[23 34]
+  [31 46]]]","einsum(X, M, 'b t c, c f -> b t f')"
+Einsum,Indexing and selection,"For a batch of matrices, extract the diagonal values as a batch of vectors.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))",35,"[[1 4]
+ [5 8]]","einsum(A, 'b i i -> b i')"
+Einsum,Core array literacy,"Reduce a 2D matrix into a 1D vector by summing along the horizontal (column) axis.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",20,[3 7],"einsum(A, 'i j -> i')"
+Einsum,Applied patterns and advanced,"Create a massive tensor where every element of $A$ is multiplied by every element of $B$.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+B = np.arange(1, 5).reshape((2, 2))",90,"[[[[ 1  2]
+   [ 2  4]]
+
+  [[ 3  4]
+   [ 6  8]]]
+
+
+ [[[ 3  6]
+   [ 4  8]]
+
+  [[ 9 12]
+   [12 16]]]]","einsum(A, B, 'p q, r s -> p r q s')"
+Einsum,Vectorization and broadcasting,"Perform standard matrix multiplication independently for every item in a batch.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))
+B = np.arange(1, 9).reshape((2, 2, 2))",40,"[[[  7  10]
+  [ 15  22]]
+
+ [[ 67  78]
+  [ 91 106]]]","einsum(A, B, 'b i k, b k j -> b i j')"
+Einsum,Indexing and selection,"Sum the diagonal elements of a single square matrix.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",30,5,"einsum(A, 'i i ->')"
+Einsum,Core array literacy,"Given a vector v of size (n), create a square matrix where every element (i, j) is v[i] * v[j].
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 3)",35,"[[1 2]
+ [2 4]]","einsum(v, v, 'i, j -> i j')"
+Einsum,Core array literacy,"You have a batch of vectors x with shape (b, d) and a transformation matrix W of shape (d, d). Apply W to every vector in the batch.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 5).reshape((2, 2))
+W = np.arange(1, 5).reshape((2, 2))",45,"[[ 7 10]
+ [15 22]]","einsum(x, W, 'b d, d e -> b e')"
+Einsum,Indexing and selection,"You have a 4D tensor activations with shape (b, h, s, d). Sum out the h dimension entirely to get a shape of (b, s, d).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+activations = np.arange(1, 17).reshape((2, 2, 2, 2))",30,"[[[ 6  8]
+  [10 12]]
+
+ [[22 24]
+  [26 28]]]","einsum(activations, 'b h s d -> b s d')"
+Einsum,Vectorization and broadcasting,"Take a vector v of shape (d) and ""repeat"" it n times to create a matrix of shape (n, d).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 3)
+n = 2",50,"[[1 2]
+ [1 2]]","einsum(v, 'd -> n d', n=n)"
+Einsum,Core array literacy,"Given a 3D tensor data of shape (b, t, d), calculate the average across the t dimension by summing it and dividing by its length.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+data = np.arange(1, 9).reshape((2, 2, 2))
+t = 2",35,"[[2. 3.]
+ [6. 7.]]","einsum(data, 'b t d -> b d') / t"
+Einsum,Applied patterns and advanced,"You have input x (shape b, i), weights W1 (shape i, h), and W2 (shape h, o). Compute the full pass (x @ W1) @ W2 in one go.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 5).reshape((2, 2))
+W1 = np.arange(1, 5).reshape((2, 2))
+W2 = np.arange(1, 5).reshape((2, 2))",80,"[[ 37  54]
+ [ 81 118]]","einsum(x, W1, W2, 'b i, i h, h o -> b o')"
+Einsum,Vectorization and broadcasting,"For a batch of vectors v of shape (b, d), calculate the squared length (dot product with itself) for each vector.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 5).reshape((2, 2))",40,[ 5 25],"einsum(v, v, 'b d, b d -> b')"
+Einsum,Indexing and selection,"You have a tensor T with shape (batch, head, seq, dim). Swap the head and seq axes.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+T = np.arange(1, 17).reshape((2, 2, 2, 2))",45,"[[[[ 1  2]
+   [ 5  6]]
+
+  [[ 3  4]
+   [ 7  8]]]
+
+
+ [[[ 9 10]
+   [13 14]]
+
+  [[11 12]
+   [15 16]]]]","einsum(T, 'b h s d -> b s h d')"
+Einsum,Applied patterns and advanced,"Given a query vector q of shape (d) and a memory matrix M of shape (n, d), find the similarity of q to every row in M.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+q = np.arange(1, 3)
+M = np.arange(1, 5).reshape((2, 2))",55,[ 5 11],"einsum(q, M, 'd, n d -> n')"
+Einsum,Vectorization and broadcasting,"Given a batch of vectors x of shape (b, d), create a batch of matrices (b, d, d) showing how every feature interacts with every other feature.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 5).reshape((2, 2))",65,"[[[ 1  2]
+  [ 2  4]]
+
+ [[ 9 12]
+  [12 16]]]","einsum(x, x, 'b d, b e -> b d e')"
+Einsum,Applied patterns and advanced,"Project input x (shape b, t, d) into three different spaces (Q, K, V) simultaneously using a weight tensor W of shape (3, d, d).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 9).reshape((2, 2, 2))
+W = np.arange(1, 9).reshape((2, 2, 2))",90,"[[[[  7  10]
+   [ 15  22]]
+
+  [[ 23  34]
+   [ 31  46]]]
+
+
+ [[[ 19  22]
+   [ 43  50]]
+
+  [[ 67  78]
+   [ 91 106]]]]","einsum(x, W, 'b t d, n d e -> n b t e')"
+Einsum,Core array literacy,"Given a 3D tensor X of shape (b, t, d), sum all values belonging to the same t and d across all batches.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 9).reshape((2, 2, 2))",35,"[[ 6  8]
+ [10 12]]","einsum(X, 'b t d -> t d')"
+Einsum,Core array literacy,"Take any tensor X of any dimensionality and sum every single element into a single scalar.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 5).reshape((2, 2))",15,10,"einsum(X, '... ->')"
+Einsum,Applied patterns and advanced,"Multiply an image img (shape c, h, w) by a per-channel scale factor s (shape c).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+img = np.arange(1, 9).reshape((2, 2, 2))
+s = np.arange(1, 3)",50,"[[[ 1  2]
+  [ 3  4]]
+
+ [[10 12]
+  [14 16]]]","einsum(img, s, 'c h w, c -> c h w')"
+Einsum,Vectorization and broadcasting,"Perform the operation u @ v.T where u and v are vectors of shape (m) and (n), then add the result to matrix A (shape m, n).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+u = np.arange(1, 3)
+v = np.arange(1, 3)
+A = 2",60,"[[3 4]
+ [4 6]]","einsum(u, v, 'i, j -> i j') + A"
+Einsum,Indexing and selection,"From a 3D tensor A of shape (b, n, n), extract only the very first element (0, 0) of each matrix in the batch.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 9).reshape((2, 2, 2))",55,[1 5],"einsum(A, 'b i j -> b i j')[:, 0, 0]"
+Einsum,Applied patterns and advanced,"Contract a weight tensor W (shape o, i, h, w) against an input X (shape i, h, w) to produce an output vector of shape (o).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+W = np.arange(1, 17).reshape((2, 2, 2, 2))
+X = np.arange(1, 9).reshape((2, 2, 2))",80,[204 492],"einsum(W, X, 'o i h w, i h w -> o')"
+Einsum,Indexing and selection,"Given a 4D tensor X (shape b, c, h, w), sum all pixels and channels to get one value per batch item.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+X = np.arange(1, 17).reshape((2, 2, 2, 2))",40,[ 36 100],"einsum(X, 'b c h w -> b')"
+Einsum,Vectorization and broadcasting,"You have a sequence x of shape (t, d). Create a 3D tensor (t, t, d) where each entry (i, j) is the element-wise product of vector i and vector j.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 5).reshape((2, 2))",100,"[[[ 1  4]
+  [ 3  8]]
+
+ [[ 3  8]
+  [ 9 16]]]","einsum(x, x, 'i d, j d -> i j d')"
+Einsum,Vectorization and broadcasting,"You have a batch of matrices B (shape b, i, j) and one constant matrix M (shape j, k). Multiply every matrix in the batch by M.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+B = np.arange(1, 9).reshape((2, 2, 2))
+M = np.arange(1, 5).reshape((2, 2))",65,"[[[ 7 10]
+  [15 22]]
+
+ [[23 34]
+  [31 46]]]","einsum(B, M, 'b i j, j k -> b i k')"
+Einsum,Core array literacy,"Given two matrices A and B of shape (n, n), compute the sum of the diagonal of their product without calculating the full product.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+B = np.arange(1, 5).reshape((2, 2))",60,29,"einsum(A, B, 'i j, j i ->')"
+Einsum,Vectorization and broadcasting,"Given queries (shape b, q, d) and keys (shape b, k, d), compute a score matrix of shape (b, q, k).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+Q = np.arange(1, 9).reshape((2, 2, 2))
+K = np.arange(1, 9).reshape((2, 2, 2))",75,"[[[  5  11]
+  [ 11  25]]
+
+ [[ 61  83]
+  [ 83 113]]]","einsum(Q, K, 'b q d, b k d -> b q k')"
+Einsum,Indexing and selection,"Take a 3D tensor img (shape c, h, w) and flatten the spatial dimensions into one, resulting in shape (c, h*w).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+img = np.arange(1, 9).reshape((2, 2, 2))",40,"[[1 2 3 4]
+ [5 6 7 8]]","einops.rearrange(img, 'c h w -> c (h w)')"
+Einsum,Applied patterns and advanced,"You have two tensors P and Q of shape (b, h, n, d). For each batch and head, compute the similarity matrix of shape (n, n).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+P = np.arange(1, 17).reshape((2, 2, 2, 2))
+Q = np.arange(1, 17).reshape((2, 2, 2, 2))",85,"[[[[  5  11]
+   [ 11  25]]
+
+  [[ 61  83]
+   [ 83 113]]]
+
+
+ [[[181 219]
+   [219 265]]
+
+  [[365 419]
+   [419 481]]]]","einsum(P, Q, 'b h n d, b h m d -> b h n m')"
+Einsum,Applied patterns and advanced,"For a 5D video tensor v (shape b, t, c, h, w), average out everything except the batch and channel dimensions.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 33).reshape((2, 2, 2, 2, 2))
+h = 2
+t = 2
+w = 2",70,"[[ 6.5 10.5]
+ [22.5 26.5]]","einsum(v, 'b t c h w -> b c') / (t*h*w)"
+Einsum,Core array literacy,"Subtract the transpose of a square matrix A from itself to find the anti-symmetric part.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))",45,"[[ 0 -1]
+ [ 1  0]]","einsum(A, 'i j -> i j') - einsum(A, 'j i -> i j')"
+Einsum,Indexing and selection,"Given x (shape b, t, d), sum across the d dimension using a weight vector w (shape d) to get shape (b, t).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 9).reshape((2, 2, 2))
+w = np.arange(1, 3)",50,"[[ 5 11]
+ [17 23]]","einsum(x, w, 'b t d, d -> b t')"
+Einsum,Applied patterns and advanced,"In an MLP, multiply hidden states h (shape b, t, hidden) by output weights W (shape hidden, out).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+h = np.arange(1, 9).reshape((2, 2, 2))
+W = np.arange(1, 5).reshape((2, 2))",65,"[[[ 7 10]
+  [15 22]]
+
+ [[23 34]
+  [31 46]]]","einsum(h, W, 'b t h, h d -> b t d')"
+Einsum,Applied patterns and advanced,"Compute the scalar result of $v^T M v$ where v is shape (d) and M is shape (d, d).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 3)
+M = np.arange(1, 5).reshape((2, 2))",85,27,"einsum(v, M, v, 'i, i j, j ->')"
+Einsum,Indexing and selection,"Create an identity-like batch: given a vector of scales s (shape b), create a batch of diagonal matrices (b, n, n).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+s = np.arange(1, 3)
+n = 2",70,"[[[1 0]
+  [0 1]]
+
+ [[2 0]
+  [0 2]]]","einsum(s, torch.eye(n), 'b, i j -> b i j')"
+Einsum,Applied patterns and advanced,"Given a sequence x of shape (t, d), compute the dot product between each token and the token immediately following it.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 7).reshape((3, 2))",60,[11 39],"einsum(x[:-1], x[1:], 't d, t d -> t')"
+Einsum,Applied patterns and advanced,"You have a multi-head tensor x (shape b, t, h, d) and a head-importance weight w (shape h). Weighted-sum the heads into shape (b, t, d).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+x = np.arange(1, 17).reshape((2, 2, 2, 2))
+w = np.arange(1, 3)",70,"[[[ 7 10]
+  [19 22]]
+
+ [[31 34]
+  [43 46]]]","einsum(x, w, 'b t h d, h -> b t d')"
+Einsum,Vectorization and broadcasting,"For each item in a batch of vectors v (shape b, d), compute v @ v.T and sum those resulting matrices together.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+v = np.arange(1, 5).reshape((2, 2))",65,"[[10 14]
+ [14 20]]","einsum(v, v, 'b i, b j -> i j')"
+Einsum,Applied patterns and advanced,"Multiply matrix A (shape i, j) by a diagonal matrix (represented as vector v, shape j), then by matrix B (shape j, k).
+Use numpy (imported as np). Use the exact inputs below and print the result.
+A = np.arange(1, 5).reshape((2, 2))
+v = np.arange(1, 3)
+B = np.arange(1, 5).reshape((2, 2))",85,"[[13 18]
+ [27 38]]","einsum(A, v, B, 'i j, j, j k -> i k')"
+Einsum,Core array literacy,"Using a permutation matrix P (shape n, n) and a vector v (shape n), reorder the elements of v.
+Use numpy (imported as np). Use the exact inputs below and print the result.
+P = np.arange(1, 5).reshape((2, 2))
+v = np.arange(1, 3)",50,[ 5 11],"einsum(P, v, 'i j, j -> i')"
