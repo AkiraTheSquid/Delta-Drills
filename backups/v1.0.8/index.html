@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delta Drills v1.0.8</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.8</span></div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="how-it-works" type="button">How It Works</button>
+      <button class="tab" data-tab="courses" type="button">Courses</button>
+      <button class="tab" data-tab="login" type="button">Log In</button>
+      <button class="tab" data-tab="signup" type="button">Create Account</button>
+    </nav>
+  </header>
+
+  <main class="page" id="page-how-it-works">
+    <div class="container">
+      <h1>How It Works</h1>
+      <p class="subtitle">Upload a PDF textbook, extract the table of contents, and split chapters into clean files ready for NotebookLM.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-card-title">Upload your PDF</div>
+          <div class="step-card-text">Select any PDF textbook from your computer.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-card-title">Detect chapters</div>
+          <div class="step-card-text">We read the table of contents and organize chapters automatically.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-card-title">Download splits</div>
+          <div class="step-card-text">Choose the chapters you want and download them as individual PDFs.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-courses">
+    <div class="container">
+      <h1>Courses</h1>
+      <p class="subtitle">Coming soon. Your uploaded course materials will appear here.</p>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-login">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Log In</h1>
+        <form id="login-form">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+          </div>
+          <button class="primary" type="submit">Log in</button>
+          <div id="login-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-signup">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+        <form id="signup-form">
+          <div class="field">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+          </div>
+          <div class="field">
+            <label for="signup-confirm">Confirm password</label>
+            <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+          </div>
+          <button class="primary" type="submit">Create account</button>
+          <div id="signup-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; Delta Labs</span>
+    <span class="version-tag">v1.0.8</span>
+  </footer>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const pages = document.querySelectorAll(".page");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const signupForm = document.getElementById("signup-form");
+    const signupMessage = document.getElementById("signup-message");
+
+    const switchTab = (tabName) => {
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
+      pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
+    };
+
+    tabs.forEach((t) => {
+      t.addEventListener("click", () => switchTab(t.dataset.tab));
+    });
+
+    let supabase = null;
+    try {
+      supabase = window.supabase.createClient(
+        "http://127.0.0.1:54321",
+        "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+      );
+    } catch (e) {
+      console.error("Supabase init failed:", e);
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!supabase) {
+        loginMessage.textContent = "Auth service unavailable. Try refreshing.";
+        return;
+      }
+      loginMessage.textContent = "Working...";
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        loginMessage.textContent = "Enter an email and password.";
+        return;
+      }
+
+      try {
+        const result = await supabase.auth.signInWithPassword({ email, password });
+        if (result.error) {
+          loginMessage.textContent = result.error.message;
+          return;
+        }
+        loginMessage.textContent = "Logged in!";
+        loginForm.reset();
+        setTimeout(() => {
+          loginMessage.textContent = "";
+          switchTab("courses");
+        }, 600);
+      } catch (e) {
+        loginMessage.textContent = e.message;
+      }
+    });
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!supabase) {
+        signupMessage.textContent = "Auth service unavailable. Try refreshing.";
+        return;
+      }
+      signupMessage.textContent = "Working...";
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const confirm = document.getElementById("signup-confirm").value;
+
+      if (!email || !password || !confirm) {
+        signupMessage.textContent = "Enter an email and both password fields.";
+        return;
+      }
+
+      if (password !== confirm) {
+        signupMessage.textContent = "Passwords do not match.";
+        return;
+      }
+
+      try {
+        const result = await supabase.auth.signUp({ email, password });
+        if (result.error) {
+          signupMessage.textContent = result.error.message;
+          return;
+        }
+        signupMessage.textContent = "Account created! Check your email to confirm, then log in.";
+        signupForm.reset();
+        setTimeout(() => {
+          signupMessage.textContent = "";
+          switchTab("login");
+        }, 2000);
+      } catch (e) {
+        signupMessage.textContent = e.message;
+      }
+    });
+  </script>
+</body>
+</html>

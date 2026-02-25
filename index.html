@@ -194,20 +194,50 @@
 
           <!-- Feedback Area (post-submission, hidden by default) -->
           <div id="practice-feedback-area" class="hidden">
-            <div class="result-badge correct" id="result-badge">Correct</div>
-            <div class="feedback-prompt">How much should this result change your next problem?</div>
+            <div class="result-row">
+              <div class="result-badge correct" id="result-badge">Correct</div>
+              <div class="override-row hidden" id="override-row">
+                <span class="override-text">Is this a mistake? Correct it with</span>
+                <button class="ghost override-btn" id="override-correct-btn" type="button">
+                  I got it right
+                </button>
+              </div>
+            </div>
+            <div class="feedback-prompt" id="feedback-prompt"></div>
             <div class="feedback-buttons">
               <button class="ghost feedback-btn" data-feedback="not_much" type="button">Not much</button>
               <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat</button>
               <button class="ghost feedback-btn" data-feedback="a_lot" type="button">A lot</button>
+              <button class="primary next-problem-btn hidden" id="next-problem-btn" type="button">
+                Next problem
+              </button>
             </div>
             <div class="question-meta-row">
               <span class="subtopic-label" id="subtopic-label"></span>
+              <div class="target-difficulty" id="target-difficulty">
+                <div class="target-difficulty-title" id="target-difficulty-title">Old target difficulty = 0.0</div>
+                <div class="stats-bar-track target-difficulty-track">
+                  <div class="stats-bar-fill" id="target-difficulty-fill"></div>
+                  <div class="target-difficulty-delta hidden" id="target-difficulty-delta"></div>
+                  <div class="target-difficulty-marker" id="target-difficulty-marker-old">
+                    <div class="target-difficulty-line"></div>
+                    <div class="target-difficulty-number target-difficulty-number-old" id="target-difficulty-number-old">0.0</div>
+                  </div>
+                  <div class="target-difficulty-marker target-difficulty-marker-new hidden" id="target-difficulty-marker-new">
+                    <div class="target-difficulty-line"></div>
+                    <div class="target-difficulty-number target-difficulty-number-new" id="target-difficulty-number-new">0.0</div>
+                  </div>
+                </div>
+              </div>
               <span class="difficulty-label" id="difficulty-label"></span>
             </div>
             <div class="solution-section">
               <div class="solution-label">Solution</div>
               <pre class="solution-code" id="solution-code"></pre>
+            </div>
+            <div class="ai-explanation-section hidden" id="ai-explanation-section">
+              <div class="ai-explanation-label">AI Explanation</div>
+              <pre class="ai-explanation-text" id="ai-explanation-text"></pre>
             </div>
           </div>
         </div>
@@ -216,6 +246,7 @@
         <div class="practice-right">
           <div class="editor-header">Code Editor</div>
           <textarea class="code-editor" id="code-editor" spellcheck="false">import numpy as np
+np.random.seed(0)
 
 # Write your solution here
 </textarea>
@@ -239,12 +270,14 @@
       <div class="stats-tabs">
         <button class="stats-tab active" type="button" data-stats-tab="areas">Areas</button>
         <button class="stats-tab" type="button" data-stats-tab="graph">Graph</button>
+        <button class="stats-tab" type="button" data-stats-tab="advanced">Advanced</button>
       </div>
 
       <section class="stats-panel" data-stats-panel="areas">
         <div class="stats-card">
           <div class="stats-card-header">
             <span class="stats-title">Delta Analysis</span>
+            <span class="stats-subtitle">Baseline Score = running average of the difficulty of questions you solve correctly (hardest = 100, half as hard = 50)</span>
             <span class="stats-subtitle">Delta = Weight × Learning Rate</span>
           </div>
           <div class="stats-table-wrap">
@@ -255,13 +288,45 @@
                   <th class="stats-col-check">Use</th>
                   <th>Rank</th>
                   <th class="stats-col-area">Area</th>
-                  <th>Weight</th>
-                  <th class="stats-col-score">Current Score</th>
-                  <th>Learning Rate</th>
+                  <th class="stats-col-weight">Weight</th>
+                  <th class="stats-col-score">Baseline Score</th>
+                  <th class="stats-col-solved">Solved</th>
+                  <th class="stats-col-lr">Learning Rate</th>
                   <th class="stats-col-delta">Delta Score</th>
                 </tr>
               </thead>
               <tbody id="stats-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-panel hidden" data-stats-panel="advanced">
+        <div class="stats-card">
+          <div class="stats-card-header">
+            <span class="stats-title">Advanced Statistics</span>
+            <span class="stats-subtitle">% Correct = smoothed correctness rate p(n): how often you're solving questions right, weighted toward recent attempts</span>
+            <span class="stats-subtitle">Target Difficulty = Baseline × Difficulty Multiplier — the difficulty level the algorithm aims to serve next</span>
+            <span class="stats-subtitle">Difficulty Multiplier = f(p): &lt;1× when struggling (pushes easier), ~1× near p=0.85, up to 2.5× when consistently correct</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="stats-table stats-table-adv">
+              <thead>
+                <tr>
+                  <th class="stats-col-toggle"></th>
+                  <th class="stats-col-check">Use</th>
+                  <th class="stats-col-rank">Rank</th>
+                  <th class="stats-col-area">Area</th>
+                  <th class="stats-col-score">Baseline Score</th>
+                  <th class="stats-col-solved">Solved</th>
+                  <th class="stats-col-lr">Learning Rate</th>
+                  <th class="stats-col-delta">Delta</th>
+                  <th class="stats-col-p">% Correct</th>
+                  <th class="stats-col-target">Target Diff.</th>
+                  <th class="stats-col-mult">Diff. Mult.</th>
+                </tr>
+              </thead>
+              <tbody id="adv-table-body"></tbody>
             </table>
           </div>
         </div>
@@ -359,10 +424,10 @@
     <span class="version-tag">v1.0.10</span>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js"></script>
-  <script src="practice.js"></script>
-  <script src="stats.js"></script>
+  <script src="practice.js?v=4"></script>
+  <script src="stats.js?v=6"></script>
 </body>
 </html>

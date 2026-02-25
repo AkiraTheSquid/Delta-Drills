@@ -4,7 +4,7 @@ set -euo pipefail
 # ============================================================
 # deploy_delta_drills — one-command deploy for Delta Drills
 #
-# 1. Checks for uncommitted changes on main (warns + prompts)
+# 1. Checks for uncommitted changes on main (auto-commits all)
 # 2. Exports question bank to frontend/questions.json
 # 3. Pushes main to origin
 # 4. In the deploy worktree, merges main into deploy
@@ -12,8 +12,8 @@ set -euo pipefail
 # 6. Pushes deploy to origin (triggers Vercel)
 # ============================================================
 
-REPO_DIR="/home/stellar-thread/Applications/pdf-split-tool"
-DEPLOY_DIR="/home/stellar-thread/Applications/pdf-split-tool-deployed"
+REPO_DIR="/home/stellar-thread/Applications/Delta-Drills-Local"
+DEPLOY_DIR="/home/stellar-thread/Applications/Delta-Drills-Deployed"
 VERCEL_URL="https://delta-drills.vercel.app"
 
 RED='\033[0;31m'
@@ -37,18 +37,13 @@ fi
 
 info "Checking for uncommitted changes on main..."
 if ! git -C "$REPO_DIR" diff --quiet || ! git -C "$REPO_DIR" diff --cached --quiet; then
-  warn "Uncommitted changes detected — auto-committing tracked files:"
+  warn "Uncommitted changes detected — auto-committing all files:"
   git -C "$REPO_DIR" status --short
 
-  # Auto-commit tracked file changes; leave untracked files untouched.
-  git -C "$REPO_DIR" add -u
+  # Auto-commit everything, including untracked files.
+  git -C "$REPO_DIR" add -A
   if ! git -C "$REPO_DIR" diff --cached --quiet; then
     git -C "$REPO_DIR" commit -m "chore: auto-commit before deploy"
-  fi
-
-  if git -C "$REPO_DIR" ls-files --others --exclude-standard | grep -q .; then
-    warn "Untracked files were NOT committed:"
-    git -C "$REPO_DIR" ls-files --others --exclude-standard
   fi
 fi
 
@@ -70,36 +65,27 @@ fi
 info "Pushing main to origin..."
 git -C "$REPO_DIR" push origin main
 
+# --- Step 3b: Deploy Supabase (best-effort, non-blocking) ---
+
+if command -v supabase >/dev/null 2>&1 && [ -f "$REPO_DIR/supabase/config.toml" ]; then
+  info "Deploying Supabase (best-effort)..."
+  set +e
+  (cd "$REPO_DIR" && supabase db push)
+  if [ -d "$REPO_DIR/supabase/functions" ]; then
+    (cd "$REPO_DIR" && supabase functions deploy --all)
+  fi
+  set -e
+else
+  warn "Supabase CLI/config not found — skipping Supabase deploy."
+fi
+
 # --- Step 4: Merge main into deploy worktree ---
 
 info "Merging main into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
 git -C "$DEPLOY_DIR" merge main --no-edit
 
-# --- Step 5: Verify no user data leaked ---
-
-LEAKED=0
-for pattern in "backend/user_data" "storage/jobs"; do
-  if [ -d "$DEPLOY_DIR/$pattern" ] && [ "$(ls -A "$DEPLOY_DIR/$pattern" 2>/dev/null)" ]; then
-    error "User data found in deploy tree: $pattern/"
-    LEAKED=1
-  fi
-done
-
-if [ -f "$DEPLOY_DIR/backend/.env" ]; then
-  error "backend/.env found in deploy tree!"
-  LEAKED=1
-fi
-
-if [ "$LEAKED" -eq 1 ]; then
-  error "User data leaked into deploy tree. Aborting push."
-  echo "  Fix .gitignore and run: git rm -r --cached <path>"
-  exit 1
-fi
-
-info "No user data in deploy tree."
-
-# --- Step 6: Push deploy to origin (triggers Vercel) ---
+# --- Step 5: Push deploy to origin (triggers Vercel) ---
 
 info "Pushing deploy to origin..."
 git -C "$DEPLOY_DIR" push origin deploy

@@ -1,0 +1,116 @@
+ $$
+\text { target difficulty }=\text { baseline }(n) \text { • difficulty multiplier }(n)
+$$
+
+
+Where $n$ is the $n$ 'th problem the user is solving for that concept.
+After each problem, the user is asked:
+How much should this result change your next problem?
+- Not much $\rightarrow \alpha(n)=0.3$
+- Somewhat $\rightarrow \alpha(n)=0.6$
+- A lot $\rightarrow \alpha(n)=0.80$
+
+This per-iteration recency factor $\alpha(n) \in\{0.3,0.6,0.80\}$ controls how heavily the system weights the most recent result versus prior history. A higher $\alpha$ means a larger correction; a lower $\alpha$ means the system stays the course.
+
+$$
+\text { baseline }(n)=\alpha(n) \cdot \operatorname{score}(n)+(1-\alpha(n)) \text { baseline }(n-1)
+$$
+
+
+Where:
+
+$$
+\operatorname{score}(n)=\frac{\operatorname{grade}(n) \cdot \operatorname{difficulty}(n)}{100}
+$$
+
+grade $(n) \in(0,100)$ is a self-assessed grade on a scale of 1 to 100 .
+difficulty $(n) \in(0,100)$, where 100 is the most difficult problem, and a problem half as difficult as that is a 50 .
+The difficulty multiplier is given by:
+
+$$
+\text { difficulty multiplier }(p(n))= \begin{cases}0.5+0.5\left(\frac{p(n)}{0.85}\right)^{1.8}, & \text { if } p(n) \leq 0.85 \\ \min \left(2.5,1+\left(\frac{p(n)-0.85}{0.15}\right)^{2.5}\right), & \text { if } p(n)>0.85\end{cases}
+$$
+
+
+Then $p(n)$ is given by:
+
+$$
+p(n)=\alpha(n) \cdot 1(\operatorname{grade}(n))+(1-\alpha(n)) p(n-1)
+$$
+
+where $p(n) \in(0,1)$ represents the running correctness rate. "Correctness" is captured by:
+
+$$
+\mathbf{1}(\operatorname{grade}(n))= \begin{cases}1 & \text { if } \operatorname{grade}(n)>85 \\ 0 & \text { if } \operatorname{grade}(n) \leq 85\end{cases}
+$$
+
+
+All of the above should apply for $n>3$ for each subtopics. It will be a cold start of 3 sampling from 3 different difficulty levels (easy/medium/hard) where you just choose $25,50,75$ as the target difficulties for those 3 first questions.
+
+Subtopic and topic selection.
+
+Let $S$ be the set of subtopics that have at least one unserved question.
+
+User-defined weights are set via the Statistics page. The user assigns a
+percentage $P_T \in [0, \infty)$ to each topic $T$ and a share percentage
+$P_s \in [0, \infty)$ to each subtopic $s$ within that topic. The effective
+weight for subtopic $s$ is
+
+$$
+w_s = \frac{P_{T(s)}}{100} \cdot \frac{P_s}{100}
+$$
+
+where $T(s)$ denotes the topic containing $s$. Weights need not sum to 1;
+only their relative magnitudes affect selection.
+
+If no custom weights have been set, the system falls back to a uniform weight
+$$
+w_s = \frac{1}{|S|}
+$$
+
+For each subtopic $s \in S$, let the recorded baseline sequence be
+$$
+b_{s,1}, b_{s,2}, \dots, b_{s,n_s}
+$$
+Define the step deltas
+$$
+\Delta_{s,t}=b_{s,t}-b_{s,t-1}, \quad t=2, \dots, n_s
+$$
+
+The learning-rate estimate uses an EWMA with
+$$
+\alpha=1-e^{-\lambda}, \quad \lambda=0.3
+$$
+If $n_s<2$, set
+$$
+\hat{r}_s=0.5
+$$
+Otherwise,
+$$
+s_1=\Delta_{s,2}
+$$
+$$
+s_k=\alpha \Delta_{s,k+1}+(1-\alpha) s_{k-1}, \quad k=2,\dots,n_s-1
+$$
+and
+$$
+\hat{r}_s=s_{n_s-1}
+$$
+
+Define the subtopic priority (gradient)
+$$
+g_s=w_s \cdot \hat{r}_s
+$$
+The next subtopic is chosen by
+$$
+s^*=\arg\max_{s \in S} g_s
+$$
+If all questions are served (so $S$ is empty), the served sets are reset and the
+selection is recomputed.
+
+Main topics are not selected directly. Each question carries a topic label
+$T(s)$ attached to its subtopic; therefore the chosen topic is the one induced
+by $s^*$:
+$$
+\text { topic }^*=T(s^*)
+$$

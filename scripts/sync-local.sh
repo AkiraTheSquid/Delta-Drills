@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR="/home/stellar-thread/Applications/pdf-split-tool"
-DEPLOY_DIR="/home/stellar-thread/Applications/pdf-split-tool-deployed"
+REPO_DIR="/home/stellar-thread/Applications/Delta-Drills-Local"
+DEPLOY_DIR="/home/stellar-thread/Applications/Delta-Drills-Deployed"
 
 if [ ! -d "$DEPLOY_DIR/.git" ]; then
   echo "Deploy worktree not found. Run:"

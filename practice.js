@@ -54,6 +54,25 @@ const practiceQuestionPool = [
 ];
 let practiceQuestionIndex = 0;
 
+// --- Auth helpers ---
+
+/**
+ * Call when a backend API returns 401. Clears the stale token and
+ * switches this session to local mode so the page stays usable.
+ */
+function handleExpiredToken() {
+  console.warn("[practice] Token expired or invalid — falling back to local mode.");
+  if (typeof setAuthState === "function") {
+    setAuthState(""); // clears localStorage and resets authToken in app.js
+  } else {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_email");
+  }
+  practiceMode = "local";
+  // Clear any stale backend question so local mode picks a fresh one
+  practiceProgress.currentQuestion = null;
+}
+
 // --- Mode detection ---
 
 // practiceMode is set once at init based on email + environment
@@ -80,6 +99,7 @@ async function loadQuestionsBank() {
     const res = await fetch("questions.json");
     if (!res.ok) throw new Error("HTTP " + res.status);
     questionsBank = await res.json();
+    questionsBank = questionsBank.filter((q) => !curatedExcludedIds.has(q.id));
     questionsBankJson = JSON.stringify(questionsBank);
     console.log(`[practice] loaded ${questionsBank.length} questions from questions.json`);
   } catch (e) {
@@ -156,6 +176,18 @@ async function saveAdaptiveState() {
   }
 }
 
+function getTargetDifficultyFromAdaptiveState(subtopic) {
+  if (!adaptiveStateJson || !subtopic) return null;
+  try {
+    const state = JSON.parse(adaptiveStateJson);
+    const subState = state?.subtopic_states?.[subtopic];
+    const value = subState?.target_difficulty;
+    return Number.isFinite(value) ? value : null;
+  } catch (_err) {
+    return null;
+  }
+}
+
 // --- Progress persistence (question count, etc.) ---
 
 const getPracticeStorageKey = () => {
@@ -186,16 +218,25 @@ const PracticeAPI = {
     if (practiceMode === "backend") {
       // Admin on localhost — use backend API
       const res = await apiFetch("/api/practice/next-question");
-      if (!res.ok) {
+      if (res.status === 401) {
+        handleExpiredToken();
+        // fall through to local mode below
+      } else if (!res.ok) {
         const detail = await res.text();
         throw new Error(detail || "Failed to load next question.");
+      } else {
+        const data = await res.json();
+        this.currentQuestion = {
+          ...data,
+          target_difficulty: Number.isFinite(data.target_difficulty)
+            ? data.target_difficulty
+            : data.difficulty,
+        };
+        practiceProgress.currentQuestion = this.currentQuestion;
+        practiceProgress.currentQuestionId = data.question_id;
+        savePracticeProgress(practiceProgress);
+        return this.currentQuestion;
       }
-      const data = await res.json();
-      this.currentQuestion = data;
-      practiceProgress.currentQuestion = data;
-      practiceProgress.currentQuestionId = data.question_id;
-      savePracticeProgress(practiceProgress);
-      return data;
     }
 
     // supabase or local mode — use Pyodide engine
@@ -217,6 +258,7 @@ const PracticeAPI = {
           difficulty: q.difficulty_score,
           expected_output: q.expected_output,
           solution_code: q.answer_code,
+          target_difficulty: getTargetDifficultyFromAdaptiveState(q.subtopic) ?? q.difficulty_score,
         };
       }
     } else {
@@ -246,18 +288,22 @@ const PracticeAPI = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question_id: questionId, user_code: userCode }),
       });
-      if (!res.ok) {
+      if (res.status === 401) {
+        handleExpiredToken();
+        // fall through to local mode below
+      } else if (!res.ok) {
         const detail = await res.text();
         throw new Error(detail || "Failed to submit answer.");
+      } else {
+        return await res.json();
       }
-      return await res.json();
     }
 
-    // supabase/local — run code with Pyodide and compare output
+    // supabase/local — run code with Pyodide and AI judge
     const pyodide = await initPyodide();
     let actualOutput = "";
     if (pyodide) {
-      pyodide.runPython("import sys\nfrom io import StringIO\nsys.stdout = StringIO()\nsys.stderr = StringIO()");
+      pyodide.runPython("import sys\nfrom io import StringIO\nsys.stdout = StringIO()\nsys.stderr = StringIO()\nimport numpy as np\nnp.random.seed(0)");
       try {
         pyodide.runPython(userCode);
         actualOutput = pyodide.runPython("sys.stdout.getvalue()").trim();
@@ -268,7 +314,16 @@ const PracticeAPI = {
       }
     }
     const expected = (this.currentQuestion.expected_output || "").trim();
-    const correct = actualOutput === expected;
+
+    const solCode = this.currentQuestion.solution_code || "";
+    const questionText = this.currentQuestion.question_text || "";
+    let correct = false;
+    try {
+      const verdict = await fetchAIJudge(questionText, solCode, userCode, actualOutput, expected);
+      correct = verdict === "1";
+    } catch (err) {
+      throw new Error("AI judge unavailable. Please sign in or use backend mode.");
+    }
 
     // Record attempt in adaptive engine
     if (practiceEngineLoaded && adaptiveStateJson) {
@@ -292,7 +347,10 @@ const PracticeAPI = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question_id: questionId, feedback }),
       });
-      if (!res.ok) {
+      if (res.status === 401) {
+        handleExpiredToken();
+        return; // feedback is non-critical, just skip it
+      } else if (!res.ok) {
         const detail = await res.text();
         throw new Error(detail || "Failed to send feedback.");
       }
@@ -304,6 +362,32 @@ const PracticeAPI = {
     if (pyodide && practiceEngineLoaded && adaptiveStateJson) {
       const api = pyodide.globals.get("engine_api");
       adaptiveStateJson = api.send_feedback(adaptiveStateJson, feedback);
+      await saveAdaptiveState();
+    }
+    return { success: true };
+  },
+
+  async overrideCorrect(questionId) {
+    if (practiceMode === "backend") {
+      const res = await apiFetch("/api/practice/override", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question_id: questionId, correct: true }),
+      });
+      if (res.status === 401) {
+        handleExpiredToken();
+        return;
+      } else if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || "Failed to override attempt.");
+      }
+      return await res.json();
+    }
+
+    const pyodide = await initPyodide();
+    if (pyodide && practiceEngineLoaded && adaptiveStateJson) {
+      const api = pyodide.globals.get("engine_api");
+      adaptiveStateJson = api.override_attempt(adaptiveStateJson, questionId, true);
       await saveAdaptiveState();
     }
     return;
@@ -320,14 +404,27 @@ const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
+const targetDifficultyTitle = document.getElementById("target-difficulty-title");
+const targetDifficultyFill = document.getElementById("target-difficulty-fill");
+const targetDifficultyDelta = document.getElementById("target-difficulty-delta");
+const targetDifficultyMarkerOld = document.getElementById("target-difficulty-marker-old");
+const targetDifficultyNumberOld = document.getElementById("target-difficulty-number-old");
+const targetDifficultyMarkerNew = document.getElementById("target-difficulty-marker-new");
+const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
 const practiceSubmitBtn = document.getElementById("practice-submit-btn");
 const practiceFeedbackArea = document.getElementById("practice-feedback-area");
 const resultBadge = document.getElementById("result-badge");
+const overrideRow = document.getElementById("override-row");
+const overrideCorrectBtn = document.getElementById("override-correct-btn");
+const nextProblemBtn = document.getElementById("next-problem-btn");
 const solutionCode = document.getElementById("solution-code");
+const aiExplanationSection = document.getElementById("ai-explanation-section");
+const aiExplanationText = document.getElementById("ai-explanation-text");
 const codeEditor = document.getElementById("code-editor");
 const runBtn = document.getElementById("run-btn");
 const outputArea = document.getElementById("output-area");
+const feedbackPrompt = document.getElementById("feedback-prompt");
 const feedbackButtons = document.querySelectorAll(".feedback-btn");
 
 // --- Timer ---
@@ -380,7 +477,21 @@ timerPlayBtn.addEventListener("click", () => {
 
 // --- Question rendering ---
 
+const curatedExcludedIds = new Set([9, 20, 21, 33, 39, 44, 45, 57, 88, 161, 188, 203, 221, 222, 223, 226]);
 const savedProgress = loadPracticeProgress();
+const staleGaussianQuestion = (q) =>
+  typeof q?.question_text === "string" &&
+  q.question_text.startsWith("Generate a generic 2D Gaussian-like array");
+
+if (
+  (savedProgress?.currentQuestionId && curatedExcludedIds.has(savedProgress.currentQuestionId)) ||
+  (savedProgress?.currentQuestion?.question_id && curatedExcludedIds.has(savedProgress.currentQuestion.question_id)) ||
+  staleGaussianQuestion(savedProgress?.currentQuestion)
+) {
+  savedProgress.currentQuestionId = null;
+  savedProgress.currentQuestion = null;
+  savePracticeProgress(savedProgress);
+}
 const practiceProgress = {
   currentQuestion: savedProgress?.currentQuestion || null,
   currentQuestionId: savedProgress?.currentQuestionId || practiceQuestionPool[0].question_id,
@@ -388,6 +499,13 @@ const practiceProgress = {
   completedQuestionIds: Array.isArray(savedProgress?.completedQuestionIds)
     ? savedProgress.completedQuestionIds
     : [],
+  pendingFeedback: savedProgress?.pendingFeedback || null,
+  currentTargetDifficulty: Number.isFinite(savedProgress?.currentTargetDifficulty)
+    ? savedProgress.currentTargetDifficulty
+    : null,
+  lastResultCorrect: typeof savedProgress?.lastResultCorrect === "boolean"
+    ? savedProgress.lastResultCorrect
+    : null,
 };
 
 if (practiceProgress.currentQuestion) {
@@ -403,16 +521,32 @@ if (practiceProgress.currentQuestion) {
 let practiceQuestionCount = practiceProgress.questionCount;
 
 function renderQuestion(q, count) {
+  if (curatedExcludedIds.has(q.question_id)) {
+    PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
+    return;
+  }
+  if (staleGaussianQuestion(q)) {
+    PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
+    return;
+  }
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
   questionText.textContent = q.question_text;
   subtopicLabel.textContent = q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
+  setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   solutionCode.textContent = q.solution_code;
+  overrideRow.classList.add("hidden");
 
   // Reset to pre-submit state
   practiceSubmitArea.classList.remove("hidden");
   practiceFeedbackArea.classList.add("hidden");
+  practiceFeedbackArea.classList.remove("checking");
+  showFeedbackButtons();
+
+  // Reset AI explanation
+  aiExplanationSection.classList.add("hidden");
+  aiExplanationText.textContent = "";
 
   // Reset timer for next question if timed mode is on
   if (timedModeToggle.checked) {
@@ -422,19 +556,244 @@ function renderQuestion(q, count) {
     updateTimerDisplay();
     timerPlayBtn.textContent = "\u25B6";
   }
+
+  const pending = practiceProgress.pendingFeedback;
+  if (pending) {
+    if (pending.questionId === q.question_id) {
+      applyPendingFeedbackState(pending);
+    } else {
+      practiceProgress.pendingFeedback = null;
+      savePracticeProgress(practiceProgress);
+    }
+  }
+}
+
+function clampDifficulty(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
+function formatDifficulty(value) {
+  if (!Number.isFinite(value)) return "--";
+  return value.toFixed(1);
+}
+
+function getTargetDifficultyForQuestion(q) {
+  if (q && Number.isFinite(q.target_difficulty)) return q.target_difficulty;
+  const fromState = getTargetDifficultyFromAdaptiveState(q?.subtopic);
+  if (Number.isFinite(fromState)) return fromState;
+  return Number.isFinite(q?.difficulty) ? q.difficulty : 0;
+}
+
+function setTargetDifficultyInitial(targetDifficulty) {
+  const clamped = clampDifficulty(targetDifficulty);
+  targetDifficultyTitle.textContent = `Old target difficulty = ${formatDifficulty(clamped)}`;
+  targetDifficultyFill.style.width = `${clamped}%`;
+  targetDifficultyDelta.classList.add("hidden");
+  targetDifficultyDelta.style.width = "0%";
+  targetDifficultyMarkerOld.style.left = `${clamped}%`;
+  targetDifficultyNumberOld.textContent = formatDifficulty(clamped);
+  targetDifficultyMarkerNew.classList.add("hidden");
+}
+
+function setTargetDifficultyFinal(oldTarget, newTarget) {
+  const oldClamped = clampDifficulty(oldTarget);
+  const newClamped = clampDifficulty(newTarget);
+  const diff = Math.abs(newClamped - oldClamped);
+  targetDifficultyTitle.textContent = `New target difficulty = ${formatDifficulty(newClamped)}`;
+  targetDifficultyFill.style.width = `${newClamped}%`;
+  targetDifficultyMarkerOld.style.left = `${oldClamped}%`;
+  targetDifficultyNumberOld.textContent = formatDifficulty(oldClamped);
+  targetDifficultyMarkerNew.classList.remove("hidden");
+  targetDifficultyMarkerNew.style.left = `${newClamped}%`;
+  targetDifficultyNumberNew.textContent = formatDifficulty(newClamped);
+
+  if (diff < 0.01) {
+    targetDifficultyDelta.classList.add("hidden");
+    targetDifficultyDelta.style.width = "0%";
+    return;
+  }
+  const left = Math.min(oldClamped, newClamped);
+  targetDifficultyDelta.style.left = `${left}%`;
+  targetDifficultyDelta.style.width = `${diff}%`;
+  targetDifficultyDelta.classList.remove("hidden");
+  targetDifficultyDelta.classList.toggle("up", newClamped > oldClamped);
+  targetDifficultyDelta.classList.toggle("down", newClamped < oldClamped);
+}
+
+function animateTargetDifficulty(oldTarget, newTarget, onComplete) {
+  const oldClamped = clampDifficulty(oldTarget);
+  const newClamped = clampDifficulty(newTarget);
+  const isUp = newClamped > oldClamped;
+  const start = performance.now();
+  const duration = 900;
+
+  targetDifficultyMarkerNew.classList.remove("hidden");
+  targetDifficultyMarkerNew.style.left = `${oldClamped}%`;
+  targetDifficultyNumberNew.textContent = formatDifficulty(oldClamped);
+  targetDifficultyTitle.textContent = `Old target difficulty = ${formatDifficulty(oldClamped)}`;
+  targetDifficultyDelta.classList.toggle("up", isUp);
+  targetDifficultyDelta.classList.toggle("down", !isUp && newClamped !== oldClamped);
+  targetDifficultyDelta.classList.remove("hidden");
+
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const value = oldClamped + (newClamped - oldClamped) * progress;
+    targetDifficultyFill.style.width = `${value}%`;
+    targetDifficultyMarkerNew.style.left = `${value}%`;
+    targetDifficultyNumberNew.textContent = formatDifficulty(value);
+    const left = Math.min(oldClamped, value);
+    const width = Math.abs(value - oldClamped);
+    targetDifficultyDelta.style.left = `${left}%`;
+    targetDifficultyDelta.style.width = `${width}%`;
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+      return;
+    }
+    targetDifficultyTitle.textContent = `New target difficulty = ${formatDifficulty(newClamped)}`;
+    targetDifficultyFill.style.width = `${newClamped}%`;
+    targetDifficultyMarkerNew.style.left = `${newClamped}%`;
+    targetDifficultyNumberNew.textContent = formatDifficulty(newClamped);
+    if (Math.abs(newClamped - oldClamped) < 0.01) {
+      targetDifficultyDelta.classList.add("hidden");
+      targetDifficultyDelta.style.width = "0%";
+    }
+    if (typeof onComplete === "function") onComplete();
+  };
+
+  requestAnimationFrame(tick);
+}
+
+function showFeedbackButtons() {
+  feedbackButtons.forEach((btn) => btn.classList.remove("hidden"));
+  nextProblemBtn.classList.add("hidden");
+}
+
+function showNextProblemButton() {
+  feedbackButtons.forEach((btn) => btn.classList.add("hidden"));
+  nextProblemBtn.classList.remove("hidden");
+}
+
+function applyPendingFeedbackState(pending) {
+  practiceSubmitArea.classList.add("hidden");
+  practiceFeedbackArea.classList.remove("hidden");
+  applyResult(!!pending.correct);
+  overrideRow.classList.add("hidden");
+  showNextProblemButton();
+  setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
+}
+
+// --- AI helpers ---
+
+// Apply correct/incorrect result to the feedback area UI.
+function applyResult(correct) {
+  resultBadge.textContent = correct ? "Correct" : "Incorrect";
+  resultBadge.className = "result-badge " + (correct ? "correct" : "incorrect");
+  overrideRow.classList.toggle("hidden", correct);
+  practiceFeedbackArea.classList.remove("checking");
+  if (correct) {
+    feedbackPrompt.textContent = "Nailed it! How hard should we go next?";
+    feedbackButtons.forEach((btn, i) => {
+      btn.textContent = ["Inch it up", "Rev the engine", "Full throttle"][i];
+    });
+  } else {
+    feedbackPrompt.textContent = "Tough one. How much should we dial it back?";
+    feedbackButtons.forEach((btn, i) => {
+      btn.textContent = ["Just a hair easier", "Take the edge off", "Back to basics"][i];
+    });
+  }
+}
+
+// Fetch AI explanation and update the explanation element when done.
+async function fetchAIExplanation(questionText, solCode, userCode, actualOutput, expectedOutput) {
+  try {
+    const res = await apiFetch("/api/practice/ai-explanation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question_text: questionText,
+        solution_code: solCode,
+        user_code: userCode,
+        actual_output: actualOutput,
+        expected_output: expectedOutput,
+      }),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      aiExplanationText.textContent = "Could not load explanation." + (detail ? "\n" + detail : "");
+      return;
+    }
+    const data = await res.json();
+    aiExplanationText.textContent = data.explanation || "No explanation available.";
+  } catch (e) {
+    aiExplanationText.textContent = "Could not load explanation.";
+  }
+}
+
+// Fetch AI judge verdict ("1" = correct, "0" = incorrect).
+async function fetchAIJudge(questionText, solCode, userCode, actualOutput, expectedOutput) {
+  const payload = {
+    question_text: questionText,
+    solution_code: solCode,
+    user_code: userCode,
+    actual_output: actualOutput,
+    expected_output: expectedOutput,
+  };
+  const res = typeof apiFetch === "function"
+    ? await apiFetch("/api/practice/ai-judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+    : await fetch("/api/practice/ai-judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  if (!res.ok) throw new Error("Judge request failed");
+  const data = await res.json();
+  return data.verdict; // "0" or "1"
 }
 
 // --- Submit ---
 
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
-  const result = await PracticeAPI.submitAnswer(q.question_id, codeEditor.value);
+  const userCode = codeEditor.value;
+  const result = await PracticeAPI.submitAnswer(q.question_id, userCode);
 
-  // Show feedback area
-  resultBadge.textContent = result.correct ? "Correct" : "Incorrect";
-  resultBadge.className = "result-badge " + (result.correct ? "correct" : "incorrect");
+  const solCode = q.solution_code || result.solution_code || "";
+  const actualOutput = result.actual_output || "";
+  const expectedOutput = result.expected_output || q.expected_output || "";
+
+  solutionCode.textContent = solCode;
   practiceSubmitArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("hidden");
+
+  applyResult(result.correct);
+  practiceProgress.lastResultCorrect = result.correct;
+  practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
+  savePracticeProgress(practiceProgress);
+  if (practiceMode === "backend") {
+    aiExplanationSection.classList.remove("hidden");
+    aiExplanationText.textContent = "Loading explanation...";
+    fetchAIExplanation(q.question_text, solCode, userCode, actualOutput, expectedOutput);
+  }
+});
+
+overrideCorrectBtn.addEventListener("click", async () => {
+  const q = PracticeAPI.currentQuestion;
+  await PracticeAPI.overrideCorrect(q.question_id);
+
+  resultBadge.textContent = "Correct";
+  resultBadge.className = "result-badge correct";
+  feedbackPrompt.textContent = "Nailed it! How hard should we go next?";
+  const labels = ["Inch it up", "Rev the engine", "Full throttle"];
+  feedbackButtons.forEach((btn, i) => { btn.textContent = labels[i]; });
+  overrideRow.classList.add("hidden");
+  practiceProgress.lastResultCorrect = true;
+  savePracticeProgress(practiceProgress);
 });
 
 // --- Feedback ---
@@ -443,27 +802,58 @@ feedbackButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const feedback = btn.dataset.feedback;
     const q = PracticeAPI.currentQuestion;
-    await PracticeAPI.sendFeedback(q.question_id, feedback);
-    practiceProgress.currentQuestion = null;
+    const oldTarget = Number.isFinite(practiceProgress.currentTargetDifficulty)
+      ? practiceProgress.currentTargetDifficulty
+      : getTargetDifficultyForQuestion(q);
+    const response = await PracticeAPI.sendFeedback(q.question_id, feedback);
+    const backendTarget = Number.isFinite(response?.target_difficulty_after)
+      ? response.target_difficulty_after
+      : null;
+    const newTarget = Number.isFinite(backendTarget)
+      ? backendTarget
+      : (getTargetDifficultyFromAdaptiveState(q.subtopic) ?? oldTarget);
+
     if (!practiceProgress.completedQuestionIds.includes(q.question_id)) {
       practiceProgress.completedQuestionIds.push(q.question_id);
     }
 
-    // Reset to pre-submit state (ready for next question)
-    practiceSubmitArea.classList.remove("hidden");
-    practiceFeedbackArea.classList.add("hidden");
+    showNextProblemButton();
+    animateTargetDifficulty(oldTarget, newTarget, () => {
+      setTargetDifficultyFinal(oldTarget, newTarget);
+    });
 
-    // Reset code editor
-    codeEditor.value = "import numpy as np\n\n# Write your solution here\n";
-    outputArea.textContent = "";
-
-    // Load next question
-    const nextQ = await PracticeAPI.getNextQuestion();
-    const nextCount = practiceQuestionCount + 1;
-    practiceProgress.questionCount = nextCount;
+    practiceProgress.pendingFeedback = {
+      questionId: q.question_id,
+      subtopic: q.subtopic,
+      oldTarget,
+      newTarget,
+      correct: !!practiceProgress.lastResultCorrect,
+    };
     savePracticeProgress(practiceProgress);
-    renderQuestion(nextQ, nextCount);
   });
+});
+
+nextProblemBtn.addEventListener("click", async () => {
+  practiceProgress.currentQuestion = null;
+  practiceProgress.pendingFeedback = null;
+  practiceProgress.currentTargetDifficulty = null;
+  practiceProgress.lastResultCorrect = null;
+
+  // Reset to pre-submit state (ready for next question)
+  practiceSubmitArea.classList.remove("hidden");
+  practiceFeedbackArea.classList.add("hidden");
+  showFeedbackButtons();
+
+  // Reset code editor
+  codeEditor.value = "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  outputArea.textContent = "";
+
+  // Load next question
+  const nextQ = await PracticeAPI.getNextQuestion();
+  const nextCount = practiceQuestionCount + 1;
+  practiceProgress.questionCount = nextCount;
+  savePracticeProgress(practiceProgress);
+  renderQuestion(nextQ, nextCount);
 });
 
 // --- Pyodide code runner ---
@@ -500,7 +890,6 @@ runBtn.addEventListener("click", async () => {
   outputArea.textContent = "";
 
   try {
-    const expected = normalizeOutput(PracticeAPI.currentQuestion?.expected_output);
     let actualOutput = "";
     let runFailed = false;
 
@@ -513,7 +902,10 @@ runBtn.addEventListener("click", async () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: codeEditor.value }),
         });
-        if (!res.ok) {
+        if (res.status === 401) {
+          handleExpiredToken();
+          useLocalPyodide = true; // fall back to in-browser Pyodide
+        } else if (!res.ok) {
           const detail = await res.text();
           outputArea.textContent = detail || "Failed to run code.";
           runFailed = true;
@@ -547,6 +939,8 @@ import sys
 from io import StringIO
 sys.stdout = StringIO()
 sys.stderr = StringIO()
+import numpy as np
+np.random.seed(0)
 `);
 
       try {
@@ -573,9 +967,6 @@ sys.stderr = sys.__stderr__
       }
     }
 
-    if (!runFailed && expected && normalizeOutput(actualOutput) === expected) {
-      practiceSubmitBtn.click();
-    }
   } catch (e) {
     outputArea.textContent = "Error: " + e.message;
   }

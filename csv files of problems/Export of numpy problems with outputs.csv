@@ -1,0 +1,2254 @@
+,,,,
+,,,,
+Topic,Subtopic,Question,Answer,Problem difficulty,Output
+Numpy,Vectorization and broadcasting,"Row-wise argmax of a 5x5 random int matrix (★☆☆)
+Print the result.","Z = np.random.randint(0,10,(5,5)); print(Z.argmax(axis=1))",24,[2 1 0 0 2]
+Numpy,Indexing and selection,"Create a 8x8 matrix and fill it with a checkerboard pattern (★☆☆)
+Print the result.","Z = np.zeros((8,8),dtype=int)
+Z[1::2,::2] = 1
+Z[::2,1::2] = 1
+print(Z)",24,"[[0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]]"
+Numpy,Applied patterns and advanced,"Create a custom dtype that describes a color as four unsigned bytes (RGBA) (★☆☆)
+Print the result.","color = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])
+print(color)",24,"[('r', 'u1'), ('g', 'u1'), ('b', 'u1'), ('a', 'u1')]"
+Numpy,Indexing and selection,"Create a 5x5 matrix with values 1,2,3,4 just below the diagonal (★☆☆)
+Print the result.","Z = np.diag(1+np.arange(4),k=-1)
+print(Z)",24,"[[0 0 0 0 0]
+ [1 0 0 0 0]
+ [0 2 0 0 0]
+ [0 0 3 0 0]
+ [0 0 0 4 0]]"
+Numpy,Vectorization and broadcasting,"Compute the Frobenius norm of a 3x3 matrix (★☆☆)
+Print the result.","Z = np.random.random((3,3)); print(np.linalg.norm(Z))",22,1.5646026648910527
+Numpy,Vectorization and broadcasting,"Normalize a random vector to L2 norm 1 (★☆☆)
+Print the result.",v = np.random.random(5); v /= np.linalg.norm(v); print(v),22,[0.38158715 0.16702306 0.22728842 0.51478185 0.71402673]
+Numpy,Vectorization and broadcasting,"Subtract each row's mean from a 5x5 random matrix (★☆☆)
+Print the result.","Z = np.random.random((5,5)); Z -= Z.mean(axis=1, keepdims=True); print(Z)",22,"[[-0.18075516 -0.33656325  0.43336769  0.03705023  0.04690049]
+ [-0.07416761  0.05931944 -0.25957298  0.08563998  0.18878116]
+ [-0.18972818 -0.09626449  0.1565576  -0.07345407  0.20288914]
+ [-0.11746031  0.12000872  0.33778269 -0.15196078 -0.18837032]
+ [-0.16436352 -0.38635364  0.36401961 -0.19494465  0.3816422 ]]"
+Numpy,Core array literacy,"Create reproducible random numbers using a seed (★☆☆)
+Print the result.",rng = np.random.default_rng(42); print(rng.random(3)),22,[0.77395605 0.43887844 0.85859792]
+Numpy,Applied patterns and advanced,"What is the result of the following expression? (★☆☆)
+0 * np.nan
+np.nan == np.nan
+np.inf > np.nan
+np.nan - np.nan
+np.nan in set([np.nan])
+0.3 == 3 * 0.1
+Print the result.","print(0 * np.nan)
+print(np.nan == np.nan)
+print(np.inf > np.nan)
+print(np.nan - np.nan)
+print(np.nan in set([np.nan]))
+print(0.3 == 3 * 0.1)",22,"nan
+False
+False
+nan
+True
+False"
+Numpy,Vectorization and broadcasting,"Normalize a 5x5 random matrix (★☆☆)
+Print the result.","Z = np.random.random((5,5))
+Z = (Z - np.mean (Z)) / (np.std (Z))
+print(Z)",22,"[[ 0.52893663  1.06857029 -0.86650139 -0.57639068 -0.2588925 ]
+ [-1.83496024 -1.06518312  0.45755049 -0.22892142  0.34772359]
+ [-1.87448732  0.80076562  0.44797266  0.85034123  0.33909274]
+ [-1.24016654 -0.72517537  1.51074523  1.72892268  0.61821021]
+ [-0.11949262  1.40552524  0.29897438 -0.01526342 -1.59789637]]"
+Numpy,Indexing and selection,"Create a 4x4 matrix of row indices (★☆☆)
+Print the result.","Z = np.indices((4,4))[0]; print(Z)",22,"[[0 0 0 0]
+ [1 1 1 1]
+ [2 2 2 2]
+ [3 3 3 3]]"
+Numpy,Indexing and selection,"Given a 1D array, negate all elements which are between 3 and 8, in place. (★☆☆)
+Print the result.","# Author: Evgeni Burovski
+
+Z = np.arange(11)
+Z[(3 < Z) & (Z < 8)] *= -1
+print(Z)",26,[ 0  1  2  3 -4 -5 -6 -7  8  9 10]
+Numpy,Core array literacy,"Consider a (6,7,8) shape array, what is the index (x,y,z) of the 100th element? (★☆☆)
+Print the result.","print(np.unravel_index(99,(6,7,8)))",26,"(np.int64(1), np.int64(5), np.int64(3))"
+Numpy,Indexing and selection,"Find unique values and counts in an array (★☆☆)
+Print the result.","Z = np.array([1,2,2,3,3,3]); vals, cnts = np.unique(Z, return_counts=True); print(vals, cnts)",20,[1 2 3] [1 2 3]
+Numpy,Vectorization and broadcasting,"Center a 3x3 matrix by subtracting its mean (★☆☆)
+Print the result.","Z = np.random.random((3,3)); Z = Z - Z.mean(); print(Z)",20,"[[ 0.21936346  0.13127684 -0.48393371]
+ [ 0.19049139  0.08942673  0.17334346]
+ [ 0.16389669  0.09502324 -0.5788881 ]]"
+Numpy,Core array literacy,"Create a 5x5 strict lower triangular matrix of ones (★☆☆)
+Print the result.","Z = np.tril(np.ones((5,5)), k=-1); print(Z)",20,"[[0. 0. 0. 0. 0.]
+ [1. 0. 0. 0. 0.]
+ [1. 1. 0. 0. 0.]
+ [1. 1. 1. 0. 0.]
+ [1. 1. 1. 1. 0.]]"
+Numpy,Indexing and selection,"How to add a border (filled with 0's) around an existing array? (★☆☆)
+Print the result.","Z = np.ones((5,5))
+Z = np.pad(Z, pad_width=1, mode='constant', constant_values=0)
+print(Z)
+
+# Using fancy indexing
+Z[:, [0, -1]] = 0
+Z[[0, -1], :] = 0
+print(Z)",20,"[[0. 0. 0. 0. 0. 0. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]]
+[[0. 0. 0. 0. 0. 0. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 1. 1. 1. 1. 1. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]]"
+Numpy,Core array literacy,"Replace NaNs with zero (★☆☆)
+Print the result.","Z = np.array([0.0, np.nan, 1.0]); Z = np.nan_to_num(Z, nan=0.0); print(Z)",20,[0. 0. 1.]
+Numpy,Core array literacy,"Get real and imaginary parts of complex array (★☆☆)
+Print the result.","Z = np.array([1+2j, 3+4j]); print(np.real(Z), np.imag(Z))",20,[1. 3.] [2. 4.]
+Numpy,Applied patterns and advanced,"What is the output of the following script? (★☆☆)
+# Author: Jake VanderPlas
+
+print(sum(range(5),-1))
+from numpy import *
+print(sum(range(5),-1))","# Author: Jake VanderPlas
+
+print(sum(range(5),-1))
+from numpy import *
+print(sum(range(5),-1))",28,"9
+10"
+Numpy,Applied patterns and advanced,"Consider an integer vector Z, which of these expressions are legal? (★☆☆)
+Z**Z
+2 << Z >> 2
+Z <- Z
+1j*Z
+Z/1/1
+Z<Z>Z
+Print the result.","Z**Z
+2 << Z >> 2
+Z <- Z
+1j*Z
+Z/1/1
+Z<Z>Z",28,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 2, in <module>
+NameError: name 'Z' is not defined"
+Numpy,Indexing and selection,"Compute differences along rows of a 3x3 matrix (★☆☆)
+Print the result.","Z = np.arange(9).reshape(3,3); print(np.diff(Z, axis=1))",18,"[[1 1]
+ [1 1]
+ [1 1]]"
+Numpy,Vectorization and broadcasting,"Flatten a 3x4 matrix in column-major order (★☆☆)
+Print the result.","Z = np.arange(12).reshape(3,4); print(Z.flatten('F'))",18,[ 0  4  8  1  5  9  2  6 10  3  7 11]
+Numpy,Core array literacy,"Replace the maximum of a random vector with 0 (★☆☆)
+Print the result.",Z = np.random.random(10); Z[Z.argmax()] = 0; print(Z),18,"[0.47574857 0.94318884 0.17651576 0.81866012 0.17983904 0.55808314
+ 0.46369884 0.54385119 0.         0.1807641 ]"
+Numpy,Core array literacy,"Swap the first and last rows of a 3x3 matrix (★☆☆)
+Print the result.","Z = np.arange(9).reshape(3,3); Z[[0,2]] = Z[[2,0]]; print(Z)",18,"[[6 7 8]
+ [3 4 5]
+ [0 1 2]]"
+Numpy,Core array literacy,"Create a 10x10 array with random values and find the minimum and maximum values (★☆☆)
+Print the result.","Z = np.random.random((10,10))
+Zmin, Zmax = Z.min(), Z.max()
+print(Zmin, Zmax)",18,0.0023942929669520385 0.9883593991580394
+Numpy,Indexing and selection,"Create a 2d array with 1 on the border and 0 inside (★☆☆)
+Print the result.","Z = np.ones((10,10))
+Z[1:-1,1:-1] = 0
+print(Z)",18,"[[1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]]"
+Numpy,Core array literacy,"Create a random vector of size 30 and find the mean value (★☆☆)
+Print the result.","Z = np.random.random(30)
+m = Z.mean()
+print(m)",18,0.53640139985914
+Numpy,Core array literacy,"Create meshgrid for x=[0,1,2], y=[0,1] (★☆☆)
+Print the result.","x, y = np.meshgrid(np.arange(3), np.arange(2)); print(x); print(y)",18,"[[0 1 2]
+ [0 1 2]]
+[[0 0 0]
+ [1 1 1]]"
+Numpy,Core array literacy,"Swap the first and last columns of a 3x3 matrix (★☆☆)
+Print the result.","Z = np.arange(9).reshape(3,3); Z[:,[0,2]] = Z[:,[2,0]]; print(Z)",18,"[[2 1 0]
+ [5 4 3]
+ [8 7 6]]"
+Numpy,Core array literacy,"Create a 5x5 upper triangular matrix of ones (★☆☆)
+Print the result.","Z = np.triu(np.ones((5,5))); print(Z)",18,"[[1. 1. 1. 1. 1.]
+ [0. 1. 1. 1. 1.]
+ [0. 0. 1. 1. 1.]
+ [0. 0. 0. 1. 1.]
+ [0. 0. 0. 0. 1.]]"
+Numpy,Core array literacy,"Check if any element is NaN (★☆☆)
+Print the result.","Z = np.array([0.0, np.nan, 1.0]); print(np.isnan(Z).any())",18,True
+Numpy,Applied patterns and advanced,"What are the result of the following expressions? (★☆☆)
+np.array(0) / np.array(0)
+np.array(0) // np.array(0)
+np.array([np.nan]).astype(int).astype(float)
+Print the result.","print(np.array(0) / np.array(0))
+print(np.array(0) // np.array(0))
+print(np.array([np.nan]).astype(int).astype(float))",30,"nan
+0
+[-9.22337204e+18]"
+Numpy,Core array literacy,"Tile [1,2,3] three times (★☆☆)
+Print the result.","Z = np.array([1,2,3]); print(np.tile(Z, 3))",16,[1 2 3 1 2 3 1 2 3]
+Numpy,Core array literacy,"Repeat each element of [1,2,3] three times (★☆☆)
+Print the result.","Z = np.array([1,2,3]); print(np.repeat(Z, 3))",16,[1 1 1 2 2 2 3 3 3]
+Numpy,Core array literacy,"Reshape a vector of size 12 to shape (2,2,3) (★☆☆)
+Print the result.","Z = np.arange(12).reshape(2,2,3); print(Z.shape)",16,"(2, 2, 3)"
+Numpy,Vectorization and broadcasting,"Compute dot product of two length-3 random vectors (★☆☆)
+Print the result.","a = np.random.random(3); b = np.random.random(3); print(np.dot(a,b))",16,0.619317506745586
+Numpy,Indexing and selection,"Index of the minimum in a random vector (★☆☆)
+Print the result.",Z = np.random.random(10); print(Z.argmin()),16,8
+Numpy,Core array literacy,"How to get the documentation of the numpy add function from the command line? (★☆☆)
+Print the result.","%run `python -c ""import numpy; numpy.info(numpy.add)""`",16,"[ERROR] File ""<string>"", line 2
+    %run `python -c ""import numpy; numpy.info(numpy.add)""`
+    ^
+SyntaxError: invalid syntax"
+Numpy,Indexing and selection,"Find indices of non-zero elements from [1,2,0,0,4,0] (★☆☆)
+Print the result.","nz = np.nonzero([1,2,0,0,4,0])
+print(nz)",16,"(array([0, 1, 4]),)"
+Numpy,Core array literacy,"Create zeros_like an existing (2,3,4) array (★☆☆)
+Print the result.","a = np.empty((2,3,4)); Z = np.zeros_like(a); print(Z.shape)",16,"(2, 3, 4)"
+Numpy,Core array literacy,"Create a 3x3x3 array with random values (★☆☆)
+Print the result.","Z = np.random.random((3,3,3))
+print(Z)",16,"[[[0.38405161 0.39712299 0.88449136]
+  [0.12672671 0.93825344 0.38776081]
+  [0.62859974 0.26609589 0.58898664]]
+
+ [[0.92227792 0.15219338 0.7566384 ]
+  [0.60577162 0.1097569  0.01551242]
+  [0.46076452 0.38069121 0.08818755]]
+
+ [[0.44448478 0.04066118 0.79337226]
+  [0.09948202 0.17218629 0.04788884]
+  [0.00430341 0.05953571 0.27682031]]]"
+Numpy,Vectorization and broadcasting,"Element-wise maximum of two arrays (★☆☆)
+Print the result.","a = np.array([1,5,3]); b = np.array([2,4,3]); print(np.maximum(a,b))",16,[2 5 3]
+Numpy,Applied patterns and advanced,"Is the following expressions true? (★☆☆)
+np.sqrt(-1) == np.emath.sqrt(-1)
+Print the result.",np.sqrt(-1) == np.emath.sqrt(-1),32,
+Numpy,Applied patterns and advanced,"How to ignore all numpy warnings (not recommended)? (★☆☆)
+Print the result.","# Suicide mode on
+defaults = np.seterr(all=""ignore"")
+Z = np.ones(1) / 0
+
+# Back to sanity
+_ = np.seterr(**defaults)
+
+# Equivalently with a context manager
+with np.errstate(all=""ignore""):
+    np.arange(3) / 0",32,
+Numpy,Core array literacy,"Create a 3x3 matrix with values ranging from 0 to 8 (★☆☆)
+Print the result.","Z = np.arange(9).reshape(3, 3)
+print(Z)",14,"[[0 1 2]
+ [3 4 5]
+ [6 7 8]]"
+Numpy,Core array literacy,"Create a 3x3 matrix with diagonal values 1,2,3 (★☆☆)
+Print the result.",Z = np.diag(1 + np.arange(3)); print(Z),14,"[[1 0 0]
+ [0 2 0]
+ [0 0 3]]"
+Numpy,Vectorization and broadcasting,"Set odd indices of a vector 0..9 to -1 (★☆☆)
+Print the result.",Z = np.arange(10); Z[1::2] = -1; print(Z),14,[ 0 -1  2 -1  4 -1  6 -1  8 -1]
+Numpy,Core array literacy,"Remove fractional parts from a float array (★☆☆)
+Print the result.","Z = np.array([1.2, 3.7, -0.3]); print(np.floor(Z))",14,[ 1.  3. -1.]
+Numpy,Core array literacy,"Create a 4x4 matrix with 2s on the diagonal (★☆☆)
+Print the result.",Z = np.eye(4) * 2; print(Z),14,"[[2. 0. 0. 0.]
+ [0. 2. 0. 0.]
+ [0. 0. 2. 0.]
+ [0. 0. 0. 2.]]"
+Numpy,Core array literacy,"How to find the memory size of any array (★☆☆)
+Print the result.","Z = np.zeros((10,10))
+print(""%d bytes"" % (Z.size * Z.itemsize))
+
+# Simpler alternative
+print(""%d bytes"" % Z.nbytes)",14,"800 bytes
+800 bytes"
+Numpy,Indexing and selection,"Count the number of True values in a boolean array (★☆☆)
+Print the result.","Z = np.array([True, False, True, True]); print(np.count_nonzero(Z))",12,3
+Numpy,Core array literacy,"Generate 5 evenly spaced numbers from 0 to 1 (★☆☆)
+Print the result.","Z = np.linspace(0, 1, 5); print(Z)",12,[0.   0.25 0.5  0.75 1.  ]
+Numpy,Core array literacy,"Convert degrees to radians for [0,90,180] (★☆☆)
+Print the result.","print(np.deg2rad([0,90,180]))",12,[0.         1.57079633 3.14159265]
+Numpy,Applied patterns and advanced,"How to get all the dates corresponding to the month of July 2016? (★★☆)
+Print the result.","Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')
+print(Z)",40,"['2016-07-01' '2016-07-02' '2016-07-03' '2016-07-04' '2016-07-05'
+ '2016-07-06' '2016-07-07' '2016-07-08' '2016-07-09' '2016-07-10'
+ '2016-07-11' '2016-07-12' '2016-07-13' '2016-07-14' '2016-07-15'
+ '2016-07-16' '2016-07-17' '2016-07-18' '2016-07-19' '2016-07-20'
+ '2016-07-21' '2016-07-22' '2016-07-23' '2016-07-24' '2016-07-25'
+ '2016-07-26' '2016-07-27' '2016-07-28' '2016-07-29' '2016-07-30'
+ '2016-07-31']"
+Numpy,Core array literacy,"Consider a generator function that generates 10 integers and use it to build an array (★☆☆)
+Print the result.","def generate():
+    for x in range(10):
+        yield x
+Z = np.fromiter(generate(),dtype=float,count=-1)
+print(Z)",42,[0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+Numpy,Core array literacy,How to print all the values of an array? (★★☆),"np.set_printoptions(threshold=float(""inf""))
+Z = np.zeros((40,40))
+print(Z)",44,"[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]"
+Numpy,Core array literacy,"Create a random vector of size 10 and sort it (★★☆)
+Print the result.","Z = np.random.random(10)
+Z.sort()
+print(Z)",46,"[0.16992849 0.18833719 0.2267247  0.48070648 0.53760859 0.59427194
+ 0.59700102 0.63698946 0.73558225 0.90656448]"
+Numpy,Vectorization and broadcasting,"How to compute ((A+B)*(-A/2)) in place (without copy)? (★★☆)
+Print the result.","A = np.ones(3)*1
+B = np.ones(3)*2
+np.add(A,B,out=B)
+np.divide(A,2,out=A)
+np.negative(A,out=A)
+np.multiply(A,B,out=A)
+print(A)",48,[-1.5 -1.5 -1.5]
+Numpy,Vectorization and broadcasting,"Create a 5x5 matrix with row values ranging from 0 to 4 (★★☆)
+Print the result.","Z = np.zeros((5,5))
+Z += np.arange(5)
+print(Z)
+
+# without broadcasting
+Z = np.tile(np.arange(0, 5), (5,1))
+print(Z)",50,"[[0. 1. 2. 3. 4.]
+ [0. 1. 2. 3. 4.]
+ [0. 1. 2. 3. 4.]
+ [0. 1. 2. 3. 4.]
+ [0. 1. 2. 3. 4.]]
+[[0 1 2 3 4]
+ [0 1 2 3 4]
+ [0 1 2 3 4]
+ [0 1 2 3 4]
+ [0 1 2 3 4]]"
+Numpy,Indexing and selection,"How to find the closest value (to a given scalar) in a vector? (★★☆)
+Print the result.","Z = np.arange(100)
+v = np.random.uniform(0,100)
+index = (np.abs(Z-v)).argmin()
+print(Z[index])",50,63
+Numpy,Vectorization and broadcasting,"How to sum a small array faster than np.sum? (★★☆)
+Print the result.","# Author: Evgeni Burovski
+
+Z = np.arange(10)
+print(np.add.reduce(Z))",50,45
+Numpy,Vectorization and broadcasting,"Extract the integer part of a random array of positive numbers using 4 different methods (★★☆)
+Print the result.","Z = np.random.uniform(0,10,10)
+
+print(Z - Z%1)
+print(Z // 1)
+print(np.floor(Z))
+print(Z.astype(int))
+print(np.trunc(Z))",50,"[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]
+[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]
+[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]
+[4 2 8 0 3 7 9 5 7 9]
+[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]"
+Numpy,Vectorization and broadcasting,"Consider two random arrays A and B, check if they are equal (★★☆)
+Print the result.","A = np.random.randint(0,2,5)
+B = np.random.randint(0,2,5)
+
+# Assuming identical shape of the arrays and a tolerance for the comparison of values
+equal = np.allclose(A,B)
+print(equal)
+
+# Checking both the shape and the element values, no tolerance (values have to be exactly equal)
+equal = np.array_equal(A,B)
+print(equal)",54,"False
+False"
+Numpy,Vectorization and broadcasting,"Make an array immutable (read-only) (★★☆)
+Print the result.","Z = np.zeros(10)
+Z.flags.writeable = False
+Z[0] = 1",56,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 4, in <module>
+ValueError: assignment destination is read-only"
+Numpy,Vectorization and broadcasting,"Consider a random 10x2 matrix representing cartesian coordinates, convert them to polar coordinates (★★☆)
+Print the result.","Z = np.random.random((10,2))
+X,Y = Z[:,0], Z[:,1]
+R = np.sqrt(X**2+Y**2)
+T = np.arctan2(Y,X)
+print(R)
+print(T)",56,"[0.57252467 0.91137137 0.77340607 0.81284509 0.3169809  0.85470956
+ 0.1693644  0.62853931 0.48933242 0.82315806]
+[0.77985606 0.4937261  0.88104334 0.63844228 0.46415504 1.48101358
+ 0.47704524 0.10165502 1.22255291 0.25003248]"
+Numpy,Core array literacy,"Set negative values to 0 using clipping (ReLU). (★★☆)
+Print the result.","Z = np.linspace(-3, 3, 7)
+Z = Z.clip(min=0)
+print(Z)",58,[0. 0. 0. 0. 1. 2. 3.]
+Numpy,Vectorization and broadcasting,"Check if a 1D array is non-decreasing. (★★☆)
+Print the result.","Z = np.array([1,2,2,4,5])
+is_mono = np.all(np.diff(Z) >= 0)
+print(is_mono)",58,True
+Numpy,Core array literacy,"Repeat each element of a vector a variable number of times. (★★☆)
+Print the result.","x = np.array([1,2,3])
+repeats = np.array([1,3,2])
+y = np.repeat(x, repeats)
+print(y)",58,[1 2 2 2 3 3]
+Numpy,Core array literacy,"Shuffle the rows of a 2D array. (★★☆)
+Print the result.","Z = np.arange(12).reshape(4,3)
+perm = np.random.permutation(Z.shape[0])
+print(Z[perm])",58,"[[ 9 10 11]
+ [ 6  7  8]
+ [ 0  1  2]
+ [ 3  4  5]]"
+Numpy,Indexing and selection,"Map integer labels to new values using fancy indexing. (★★☆)
+Print the result.","labels = np.array([0,2,1,2,0])
+values = np.array([10, 20, 30])
+mapped = values[labels]
+print(mapped)",58,[10 30 20 30 10]
+Numpy,Indexing and selection,"Create an 8x8 checkerboard array using slicing. (★★☆)
+Print the result.","Z = np.zeros((8,8), dtype=int)
+Z[1::2, ::2] = 1
+Z[::2, 1::2] = 1
+print(Z)",58,"[[0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]]"
+Numpy,Indexing and selection,"What is the equivalent of enumerate for numpy arrays? (★★☆)
+Print the result.","Z = np.arange(9).reshape(3,3)
+for index, value in np.ndenumerate(Z):
+    print(index, value)
+for index in np.ndindex(Z.shape):
+    print(index, Z[index])",58,"(0, 0) 0
+(0, 1) 1
+(0, 2) 2
+(1, 0) 3
+(1, 1) 4
+(1, 2) 5
+(2, 0) 6
+(2, 1) 7
+(2, 2) 8
+(0, 0) 0
+(0, 1) 1
+(0, 2) 2
+(1, 0) 3
+(1, 1) 4
+(1, 2) 5
+(2, 0) 6
+(2, 1) 7
+(2, 2) 8"
+Numpy,Vectorization and broadcasting,"Set every 3rd element of a vector to -1. (★★☆)
+Print the result.","Z = np.arange(12)
+Z[::3] = -1
+print(Z)",58,[-1  1  2 -1  4  5 -1  7  8 -1 10 11]
+Numpy,Core array literacy,"Rotate a 2D array by 90 degrees counterclockwise. (★★☆)
+Print the result.","Z = np.arange(9).reshape(3,3)
+R = np.rot90(Z)
+print(R)",58,"[[2 5 8]
+ [1 4 7]
+ [0 3 6]]"
+Numpy,Core array literacy,"Flip a 2D array horizontally and vertically. (★★☆)
+Print the result.","Z = np.arange(9).reshape(3,3)
+H = Z[:, ::-1]
+V = Z[::-1, :]
+print(H)
+print(V)",58,"[[2 1 0]
+ [5 4 3]
+ [8 7 6]]
+[[6 7 8]
+ [3 4 5]
+ [0 1 2]]"
+Numpy,Core array literacy,"Extract the first superdiagonal (k=1) of a square matrix. (★★☆)
+Print the result.","Z = np.arange(25).reshape(5,5)
+d = np.diag(Z, k=1)
+print(d)",58,[ 1  7 13 19]
+Numpy,Indexing and selection,"Create a boolean mask for the upper triangular part including diagonal. (★★☆)
+Print the result.","n = 5
+mask = np.triu(np.ones((n,n), dtype=bool))
+print(mask)",58,"[[ True  True  True  True  True]
+ [False  True  True  True  True]
+ [False False  True  True  True]
+ [False False False  True  True]
+ [False False False False  True]]"
+Numpy,Indexing and selection,"Get unique rows of a 2D array. (★★☆)
+Print the result.","Z = np.array([[1,2,3],[1,2,3],[2,3,4]])
+U = np.unique(Z, axis=0)
+print(U)",58,"[[1 2 3]
+ [2 3 4]]"
+Numpy,Vectorization and broadcasting,"Min-max scale a vector to the [0,1] interval. (★★☆)
+Print the result.","Z = np.random.rand(10)
+Z = (Z - Z.min()) / (Z.ptp())
+print(Z)",58,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 3, in <module>
+AttributeError: 'numpy.ndarray' object has no attribute 'ptp'"
+Numpy,Vectorization and broadcasting,"Tile a 1D vector into a 2D matrix and compute column means. (★★☆)
+Print the result.","v = np.arange(5)
+M = np.tile(v, (4,1))
+cm = M.mean(axis=0)
+print(M)
+print(cm)",58,"[[0 1 2 3 4]
+ [0 1 2 3 4]
+ [0 1 2 3 4]
+ [0 1 2 3 4]]
+[0. 1. 2. 3. 4.]"
+Numpy,Vectorization and broadcasting,"Compute row-wise cumulative sums of a 2D array. (★★☆)
+Print the result.","Z = np.arange(12).reshape(3,4)
+R = Z.cumsum(axis=1)
+print(R)",58,"[[ 0  1  3  6]
+ [ 4  9 15 22]
+ [ 8 17 27 38]]"
+Numpy,Applied patterns and advanced,"Create a structured array with `x` and `y` coordinates covering the [0,1]x[0,1] area (★★☆)
+Print the result.","Z = np.zeros((5,5), [('x',float),('y',float)])
+Z['x'], Z['y'] = np.meshgrid(np.linspace(0,1,5),
+                             np.linspace(0,1,5))
+print(Z)",58,"[[(0.  , 0.  ) (0.25, 0.  ) (0.5 , 0.  ) (0.75, 0.  ) (1.  , 0.  )]
+ [(0.  , 0.25) (0.25, 0.25) (0.5 , 0.25) (0.75, 0.25) (1.  , 0.25)]
+ [(0.  , 0.5 ) (0.25, 0.5 ) (0.5 , 0.5 ) (0.75, 0.5 ) (1.  , 0.5 )]
+ [(0.  , 0.75) (0.25, 0.75) (0.5 , 0.75) (0.75, 0.75) (1.  , 0.75)]
+ [(0.  , 1.  ) (0.25, 1.  ) (0.5 , 1.  ) (0.75, 1.  ) (1.  , 1.  )]]"
+Numpy,Vectorization and broadcasting,"Stack two arrays along a new axis and take the mean. (★★☆)
+Print the result.","A = np.random.rand(3,4)
+B = np.random.rand(3,4)
+S = np.stack([A,B], axis=0).mean(axis=0)
+print(S)",58,"[[0.31206589 0.56800654 0.28367568 0.66187566]
+ [0.21160109 0.68957924 0.6353237  0.22636494]
+ [0.24468365 0.54233246 0.73668624 0.96023693]]"
+Numpy,Vectorization and broadcasting,"Remove all-zero rows from a 2D array. (★★☆)
+Print the result.","Z = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])
+Z = Z[~(Z==0).all(axis=1)]
+print(Z)",58,"[[1 0 2]
+ [3 4 5]]"
+Numpy,Indexing and selection,"Get coordinates of nonzero elements from a binary mask. (★★☆)
+Print the result.","Z = np.zeros((4,5), dtype=int)
+Z[1,2] = 1; Z[3,4] = 1
+coords = np.argwhere(Z)
+print(coords)",58,"[[1 2]
+ [3 4]]"
+Numpy,Indexing and selection,"Compute a histogram of values with 5 bins and return bin counts. (★★☆)
+Print the result.","Z = np.random.rand(100)
+counts, edges = np.histogram(Z, bins=5, range=(0.0, 1.0))
+print(counts)
+print(edges)",60,"[20 22 18 18 22]
+[0.  0.2 0.4 0.6 0.8 1. ]"
+Numpy,Applied patterns and advanced,Print the minimum and maximum representable values for each numpy scalar type (★★☆),"for dtype in [np.int8, np.int32, np.int64]:
+   print(np.iinfo(dtype).min)
+   print(np.iinfo(dtype).max)
+for dtype in [np.float32, np.float64]:
+   print(np.finfo(dtype).min)
+   print(np.finfo(dtype).max)
+   print(np.finfo(dtype).eps)",60,"-128
+127
+-2147483648
+2147483647
+-9223372036854775808
+9223372036854775807
+-3.4028235e+38
+3.4028235e+38
+1.1920929e-07
+-1.7976931348623157e+308
+1.7976931348623157e+308
+2.220446049250313e-16"
+Numpy,Vectorization and broadcasting,"Interleave two equal-length vectors elementwise. (★★☆)
+Print the result.","a = np.array([1,3,5])
+b = np.array([2,4,6])
+out = np.ravel(np.column_stack((a,b)))
+print(out)",60,[1 2 3 4 5 6]
+Numpy,Vectorization and broadcasting,"Pad a 2D array with a constant 1-wide border of -1. (★★☆)
+Print the result.","Z = np.ones((3,3), dtype=int)
+P = np.pad(Z, pad_width=1, mode='constant', constant_values=-1)
+print(P)",60,"[[-1 -1 -1 -1 -1]
+ [-1  1  1  1 -1]
+ [-1  1  1  1 -1]
+ [-1  1  1  1 -1]
+ [-1 -1 -1 -1 -1]]"
+Numpy,Indexing and selection,"How to randomly place p elements in a 2D array? (★★☆)
+Print the result.","# Author: Divakar
+
+n = 10
+p = 3
+Z = np.zeros((n,n))
+np.put(Z, np.random.choice(range(n*n), p, replace=False),1)
+print(Z)",60,"[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 1. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]"
+Numpy,Indexing and selection,"How to sort an array by the nth column? (★★☆)
+Print the result.","# Author: Steve Tjoa
+
+Z = np.random.randint(0,10,(3,3))
+print(Z)
+print(Z[Z[:,1].argsort()])",60,"[[2 1 8]
+ [5 2 5]
+ [7 3 6]]
+[[2 1 8]
+ [5 2 5]
+ [7 3 6]]"
+Numpy,Vectorization and broadcasting,"One-hot encode integer labels from 0..K-1. (★★☆)
+Print the result.","labels = np.array([0,2,1,2])
+K = labels.max() + 1
+onehot = np.eye(K)[labels]
+print(onehot)",60,"[[1. 0. 0.]
+ [0. 0. 1.]
+ [0. 1. 0.]
+ [0. 0. 1.]]"
+Numpy,Indexing and selection,"Mask elements of an array where another array exceeds 0.5. (★★☆)
+Print the result.","Z = np.random.rand(4,4)
+Y = np.random.rand(4,4)
+Z[Y > 0.5] = -1
+print(Z)",60,"[[ 0.14159384 -1.          0.64613209  0.7921272 ]
+ [ 0.11454557  0.71502814  0.66959616 -1.        ]
+ [-1.          0.10595674  0.8494133  -1.        ]
+ [-1.          0.39363278 -1.         -1.        ]]"
+Numpy,Vectorization and broadcasting,"Convert an RGB image to grayscale using dot product. (★★☆)
+Print the result.","I = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)
+G = np.dot(I[...,:3], [0.299, 0.587, 0.114])
+print(G)",60,"[[153.506 107.705 166.418 127.088]
+ [199.612 156.776 190.38  115.287]
+ [ 71.01  228.706 192.557  77.841]
+ [188.672 120.394 153.159 106.723]]"
+Numpy,Applied patterns and advanced,"Create a structured array representing a position (x,y) and a color (r,g,b) (★★☆)
+Print the result.","Z = np.zeros(10, [ ('position', [ ('x', float, 1),
+                                  ('y', float, 1)]),
+                   ('color',    [ ('r', float, 1),
+                                  ('g', float, 1),
+                                  ('b', float, 1)])])
+print(Z)",60,"[(([0.], [0.]), ([0.], [0.], [0.])) (([0.], [0.]), ([0.], [0.], [0.]))
+ (([0.], [0.]), ([0.], [0.], [0.])) (([0.], [0.]), ([0.], [0.], [0.]))
+ (([0.], [0.]), ([0.], [0.], [0.])) (([0.], [0.]), ([0.], [0.], [0.]))
+ (([0.], [0.]), ([0.], [0.], [0.])) (([0.], [0.]), ([0.], [0.], [0.]))
+ (([0.], [0.]), ([0.], [0.], [0.])) (([0.], [0.]), ([0.], [0.], [0.]))]"
+Numpy,Vectorization and broadcasting,"Normalize a vector to unit L2 length. (★★☆)
+Print the result.","Z = np.random.rand(10)
+Z = Z / np.linalg.norm(Z)
+print(Z)",60,"[0.27995634 0.07506861 0.14604666 0.40894894 0.20797201 0.20250243
+ 0.43321546 0.27503238 0.45066407 0.4204095 ]"
+Numpy,Indexing and selection,"Find the nearest value from a given value in an array (★★☆)
+Print the result.","Z = np.random.uniform(0,1,10)
+z = 0.5
+m = Z.flat[np.abs(Z - z).argmin()]
+print(m)",60,0.4259094837948626
+Numpy,Indexing and selection,"Compute a 1D moving average with window size 3 using convolution. (★★☆)
+Print the result.","x = np.arange(10, dtype=float)
+kernel = np.ones(3)/3.0
+ma = np.convolve(x, kernel, mode='valid')
+print(ma)",60,[1. 2. 3. 4. 5. 6. 7. 8.]
+Numpy,Core array literacy,"Safely divide two arrays, treating division by zero as 0. (★★☆)
+Print the result.","a = np.array([1.0, 2.0, 0.0])
+b = np.array([2.0, 0.0, 3.0])
+out = np.divide(a, b, out=np.zeros_like(a), where=b!=0)
+print(out)",60,[0.5 0.  0. ]
+Numpy,Indexing and selection,"Randomly select k unique rows from a 2D array. (★★☆)
+Print the result.","Z = np.random.randint(0,10,(10,3))
+k = 4
+idx = np.random.choice(Z.shape[0], k, replace=False)
+print(Z[idx])",60,"[[3 2 6]
+ [1 9 8]
+ [5 1 2]
+ [9 4 1]]"
+Numpy,Indexing and selection,"Get unique values and their counts, sorted by count desc. (★★☆)
+Print the result.","Z = np.random.randint(0,5,20)
+vals, cnts = np.unique(Z, return_counts=True)
+order = np.argsort(cnts)[::-1]
+print(vals[order])
+print(cnts[order])",60,"[2 0 1 3 4]
+[5 5 5 3 2]"
+Numpy,Indexing and selection,"Compute softmax over a vector. (★★☆)
+Print the result.","z = np.array([1.0, 2.0, 3.0])
+e = np.exp(z - z.max())
+softmax = e / e.sum()
+print(softmax)",60,[0.09003057 0.24472847 0.66524096]
+Numpy,Core array literacy,"Generate a random permutation matrix of size n. (★★☆)
+Print the result.","n = 5
+P = np.eye(n)[np.random.permutation(n)]
+print(P)",60,"[[1. 0. 0. 0. 0.]
+ [0. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 1.]
+ [0. 1. 0. 0. 0.]
+ [0. 0. 0. 1. 0.]]"
+Numpy,Applied patterns and advanced,"Generate a 2D Gaussian-like array using the exact grid and parameters below (★★☆)
+Use X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))
+Then D = np.sqrt(X*X+Y*Y), sigma = 1.0, mu = 0.0, and
+G = np.exp(-((D-mu)**2 / (2.0 * sigma**2)))
+Print G.","X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))
+D = np.sqrt(X*X+Y*Y)
+sigma, mu = 1.0, 0.0
+G = np.exp(-( (D-mu)**2 / ( 2.0 * sigma**2 ) ) )
+print(G)",62,"[[0.36787944 0.44822088 0.51979489 0.57375342 0.60279818 0.60279818
+  0.57375342 0.51979489 0.44822088 0.36787944]
+ [0.44822088 0.54610814 0.63331324 0.69905581 0.73444367 0.73444367
+  0.69905581 0.63331324 0.54610814 0.44822088]
+ [0.51979489 0.63331324 0.73444367 0.81068432 0.85172308 0.85172308
+  0.81068432 0.73444367 0.63331324 0.51979489]
+ [0.57375342 0.69905581 0.81068432 0.89483932 0.9401382  0.9401382
+  0.89483932 0.81068432 0.69905581 0.57375342]
+ [0.60279818 0.73444367 0.85172308 0.9401382  0.98773022 0.98773022
+  0.9401382  0.85172308 0.73444367 0.60279818]
+ [0.60279818 0.73444367 0.85172308 0.9401382  0.98773022 0.98773022
+  0.9401382  0.85172308 0.73444367 0.60279818]
+ [0.57375342 0.69905581 0.81068432 0.89483932 0.9401382  0.9401382
+  0.89483932 0.81068432 0.69905581 0.57375342]
+ [0.51979489 0.63331324 0.73444367 0.81068432 0.85172308 0.85172308
+  0.81068432 0.73444367 0.63331324 0.51979489]
+ [0.44822088 0.54610814 0.63331324 0.69905581 0.73444367 0.73444367
+  0.69905581 0.63331324 0.54610814 0.44822088]
+ [0.36787944 0.44822088 0.51979489 0.57375342 0.60279818 0.60279818
+  0.57375342 0.51979489 0.44822088 0.36787944]]"
+Numpy,Vectorization and broadcasting,"Standardize each column of a matrix to zero mean and unit std. (★★☆)
+Print the result.","X = np.random.randn(5, 4)
+X = (X - X.mean(axis=0)) / X.std(axis=0, ddof=0)
+print(X)",62,"[[ 1.40469618 -1.22025664 -1.57277145  0.88360839]
+ [-1.35792998  1.77309263  0.98873144  0.37054491]
+ [ 0.53170776 -0.27248252  0.25102389  1.07712429]
+ [-0.89455739  0.21589242  1.01218449 -1.48525444]
+ [ 0.31608344 -0.49624589 -0.67916837 -0.84602316]]"
+Numpy,Core array literacy,"Solve a linear system Ax = b for a random 3x3 A. (★★☆)
+Print the result.","A = np.random.rand(3,3)
+b = np.random.rand(3)
+x = np.linalg.solve(A, b)
+print(x)",62,[ 5.14506648  0.47077899 -4.38722011]
+Numpy,Vectorization and broadcasting,"Compute column-wise quartiles (0.25, 0.5, 0.75). (★★☆)
+Print the result.","X = np.random.randn(100,3)
+q = np.quantile(X, [0.25, 0.5, 0.75], axis=0)
+print(q)",62,"[[-0.49251721 -0.61809092 -0.72365599]
+ [-0.00706699  0.11535494  0.02562234]
+ [ 0.84945466  0.91432367  0.72241158]]"
+Numpy,Vectorization and broadcasting,"Subtract the mean of each row of a matrix (★★☆)
+Print the result.","# Author: Warren Weckesser
+
+X = np.random.rand(5, 10)
+
+# Recent versions of numpy
+Y = X - X.mean(axis=1, keepdims=True)
+
+# Older versions of numpy
+Y = X - X.mean(axis=1).reshape(-1, 1)
+
+print(Y)",62,"[[-0.38319189  0.00882367 -0.1750345  -0.35522474  0.5079892   0.05089086
+  -0.22387468  0.24632219 -0.11764188  0.44094177]
+ [ 0.14796244  0.15437542  0.01179455 -0.46516048  0.0689555  -0.05635658
+   0.08551346  0.44360694 -0.44147799  0.05078673]
+ [-0.19198306  0.44187083 -0.24142991 -0.03958377  0.07343688 -0.12095197
+   0.39130212 -0.13598446 -0.17249766 -0.00417899]
+ [ 0.13545534 -0.26779492  0.13541999 -0.15180051  0.34405964  0.45543967
+  -0.30020802 -0.36311538 -0.0200415   0.03258569]
+ [-0.14970781  0.41353103  0.05889307  0.13121059 -0.39064405  0.04437748
+  -0.26178678 -0.36702406  0.06075783  0.46039269]]"
+Numpy,Indexing and selection,"Find the bounding box of nonzero entries in a 2D array. (★★☆)
+Print the result.","Z = np.zeros((6,7), dtype=int)
+Z[2:5, 3:6] = 1
+rows = np.any(Z, axis=1)
+cols = np.any(Z, axis=0)
+rmin, rmax = np.where(rows)[0][[0, -1]]
+cmin, cmax = np.where(cols)[0][[0, -1]]
+print((rmin, rmax, cmin, cmax))",62,"(np.int64(2), np.int64(4), np.int64(3), np.int64(5))"
+Numpy,Applied patterns and advanced,"Considering two arrays with shape (1,3) and (3,1), how to compute their sum using an iterator? (★★☆)
+Print the result.","A = np.arange(3).reshape(3,1)
+B = np.arange(3).reshape(1,3)
+it = np.nditer([A,B,None])
+for x,y,z in it: z[...] = x + y
+print(it.operands[2])",62,"[[0 1 2]
+ [1 2 3]
+ [2 3 4]]"
+Numpy,Core array literacy,"Keep only elements within k=1 diagonal band of a square matrix. (★★☆)
+Print the result.","Z = np.arange(25).reshape(5,5)
+mask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1
+Z = Z * mask
+print(Z)",62,"[[ 0  1  0  0  0]
+ [ 5  6  7  0  0]
+ [ 0 11 12 13  0]
+ [ 0  0 17 18 19]
+ [ 0  0  0 23 24]]"
+Numpy,Applied patterns and advanced,"Create an array class that has a name attribute (★★☆)
+Print the result.","class NamedArray(np.ndarray):
+    def __new__(cls, array, name=""no name""):
+        obj = np.asarray(array).view(cls)
+        obj.name = name
+        return obj
+    def __array_finalize__(self, obj):
+        if obj is None: return
+        self.name = getattr(obj, 'name', ""no name"")
+
+Z = NamedArray(np.arange(10), ""range_10"")
+print (Z.name)",62,range_10
+Numpy,Vectorization and broadcasting,"Rank elements within a vector (0-based) using argsort twice. (★★☆)
+Print the result.","Z = np.array([10, 40, 20, 30])
+ranks = Z.argsort().argsort()
+print(ranks)",62,[0 3 1 2]
+Numpy,Indexing and selection,"How to tell if a given 2D array has null columns? (★★☆)
+Print the result.","# Author: Warren Weckesser
+
+# null : 0 
+Z = np.random.randint(0,3,(3,10))
+print((~Z.any(axis=0)).any())
+
+# null : np.nan
+Z=np.array([
+    [0,1,np.nan],
+    [1,2,np.nan],
+    [4,5,np.nan]
+])
+print(np.isnan(Z).all(axis=0))",62,"False
+[False False  True]"
+Numpy,Core array literacy,"Create a 2D Manhattan distance map from the center. (★★☆)
+Print the result.","n = 5
+Y, X = np.ogrid[:n, :n]
+center = (n//2, n//2)
+D = np.abs(Y - center[0]) + np.abs(X - center[1])
+print(D)",62,"[[4 3 2 3 4]
+ [3 2 1 2 3]
+ [2 1 0 1 2]
+ [3 2 1 2 3]
+ [4 3 2 3 4]]"
+Numpy,Core array literacy,"Create sliding window views (size=3) over a 1D array. (★★☆)
+Print the result.","x = np.arange(7)
+from numpy.lib.stride_tricks import sliding_window_view
+W = sliding_window_view(x, window_shape=3)
+print(W)",64,"[[0 1 2]
+ [1 2 3]
+ [2 3 4]
+ [3 4 5]
+ [4 5 6]]"
+Numpy,Applied patterns and advanced,"Given two arrays, X and Y, construct the Cauchy matrix C (Cij =1/(xi - yj)) (★★☆)
+Print the result.","# Author: Evgeni Burovski
+
+X = np.arange(8)
+Y = X + 0.5
+C = 1.0 / np.subtract.outer(X, Y)
+print(np.linalg.det(C))",64,3638.1636371179666
+Numpy,Vectorization and broadcasting,"Find indices of the top-3 largest elements in a vector. (★★☆)
+Print the result.","Z = np.random.rand(10)
+k = 3
+idx = np.argpartition(Z, -k)[-k:]
+idx = idx[np.argsort(Z[idx])[::-1]]
+print(idx)",64,[4 0 2]
+Numpy,Vectorization and broadcasting,"Replace NaNs in each column with the column mean. (★★☆)
+Print the result.","X = np.random.randn(5,4)
+X[::2, 1] = np.nan
+col_means = np.nanmean(X, axis=0)
+idx = np.where(np.isnan(X))
+X[idx] = np.take(col_means, idx[1])
+print(X)",64,"[[-0.68251698 -0.27056533 -0.34717368  1.62302513]
+ [ 2.25959845 -0.76308003 -1.5788158  -0.73524404]
+ [ 0.39078776 -0.27056533  0.51673811  0.04037029]
+ [-1.12575257  0.22194937 -0.46028186 -1.89396384]
+ [-2.39524508 -0.27056533 -0.54098371 -0.22534603]]"
+Numpy,Vectorization and broadcasting,"Batched dot products of row-aligned vectors using einsum. (★★☆)
+Print the result.","A = np.random.rand(5,4)
+B = np.random.rand(5,4)
+dots = np.einsum('ij,ij->i', A, B)
+print(dots)",64,[0.2411849  1.63791094 0.99392208 1.74768498 1.28837497]
+Numpy,Indexing and selection,"Compute the correlation matrix between columns. (★★☆)
+Print the result.","X = np.random.randn(100,4)
+C = np.corrcoef(X, rowvar=False)
+print(C)",64,"[[ 1.         -0.12835261  0.0905946   0.03156166]
+ [-0.12835261  1.         -0.18839136  0.08954937]
+ [ 0.0905946  -0.18839136  1.          0.05502689]
+ [ 0.03156166  0.08954937  0.05502689  1.        ]]"
+Numpy,Applied patterns and advanced,"How to convert a float (32 bits) array into an integer (32 bits) array in place?
+Print the result.","# Thanks Vikas (https://stackoverflow.com/a/10622758/5989906)
+# & unutbu (https://stackoverflow.com/a/4396247/5989906)
+Z = (np.random.rand(10)*100).astype(np.float32)
+Y = Z.view(np.int32)
+Y[:] = Z
+print(Y)",64,[91 14  7 70 53 86 61 12 43 46]
+Numpy,Core array literacy,"For each row, set only the max element to 1 and others to 0. (★★☆)
+Print the result.","Z = np.random.rand(4,5)
+idx = Z.argmax(axis=1)
+out = np.zeros_like(Z)
+out[np.arange(Z.shape[0]), idx] = 1
+print(out)",64,"[[0. 0. 0. 0. 1.]
+ [0. 0. 0. 1. 0.]
+ [0. 0. 0. 0. 1.]
+ [0. 0. 0. 0. 1.]]"
+Numpy,Applied patterns and advanced,"How to read the following file? (★★☆)
+1, 2, 3, 4, 5
+6,  ,  , 7, 8
+ ,  , 9,10,11
+Print the result.","from io import StringIO
+
+# Fake file
+s = StringIO('''1, 2, 3, 4, 5
+
+                6,  ,  , 7, 8
+
+                 ,  , 9,10,11
+''')
+Z = np.genfromtxt(s, delimiter=',', dtype=np.int)
+print(Z)",64,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 11, in <module>
+  File ""/home/stellar-thread/Applications/pdf-split-tool/backend/.venv/lib/python3.12/site-packages/numpy/__init__.py"", line 775, in __getattr__
+    raise AttributeError(__former_attrs__[attr], name=None)
+AttributeError: module 'numpy' has no attribute 'int'.
+`np.int` was a deprecated alias for the builtin `int`. To avoid this error in existing code, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
+The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:
+    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations"
+Numpy,Indexing and selection,"Compute block sums by reshaping a 2D array into 2x2 blocks. (★★☆)
+Print the result.","Z = np.arange(4*6).reshape(4,6)
+Z2 = Z.reshape(2,2,3,2)
+block_sums = Z2.sum(axis=(1,3))
+print(block_sums)",66,"[[14 22 30]
+ [62 70 78]]"
+Numpy,Applied patterns and advanced,"Consider a random vector with shape (100,2) representing coordinates, find point by point distances (★★☆)
+Print the result.","Z = np.random.random((10,2))
+X,Y = np.atleast_2d(Z[:,0], Z[:,1])
+D = np.sqrt( (X-X.T)**2 + (Y-Y.T)**2)
+print(D)
+
+# Much faster with scipy
+import scipy
+# Thanks Gavin Heverly-Coulson (#issue 1)
+import scipy.spatial
+
+Z = np.random.random((10,2))
+D = scipy.spatial.distance.cdist(Z,Z)
+print(D)",66,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 8, in <module>
+ModuleNotFoundError: No module named 'scipy'"
+Numpy,Indexing and selection,"Compute cosine similarity matrix between row vectors. (★★☆)
+Print the result.","X = np.random.rand(5,4)
+norms = np.linalg.norm(X, axis=1, keepdims=True)
+S = (X @ X.T) / (norms @ norms.T)
+print(S)",66,"[[1.         0.80378514 0.79234472 0.66140213 0.8206145 ]
+ [0.80378514 1.         0.9577044  0.91974193 0.83739071]
+ [0.79234472 0.9577044  1.         0.97520674 0.84711683]
+ [0.66140213 0.91974193 0.97520674 1.         0.84030333]
+ [0.8206145  0.83739071 0.84711683 0.84030333 1.        ]]"
+Numpy,Indexing and selection,"Compute k=2 nearest neighbors (indices) for points in 2D. (★★☆)
+Print the result.","Z = np.random.rand(6,2)
+X, Y = Z[:,None,:], Z[None,:,:]
+dist2 = ((X - Y)**2).sum(axis=2)
+k = 2
+idx = np.argpartition(dist2, kth=k+1, axis=1)[:, 1:k+1]
+print(idx)",66,"[[3 2]
+ [3 0]
+ [0 3]
+ [0 2]
+ [1 5]
+ [1 2]]"
+Numpy,Vectorization and broadcasting,"Index of first nonzero element in each row (or -1 if none). (★★☆)
+Print the result.","Z = np.array([[0,0,3],[0,2,0],[0,0,0]])
+mask = Z != 0
+idx = np.where(mask.any(axis=1), mask.argmax(axis=1), -1)
+print(idx)",66,[ 2  1 -1]
+Numpy,Applied patterns and advanced,"Consider a given vector, how to add 1 to each element indexed by a second vector (be careful with repeated indices)? (★★★)
+Print the result.","# Author: Brett Olsen
+
+Z = np.ones(10)
+I = np.random.randint(0,len(Z),20)
+Z += np.bincount(I, minlength=len(Z))
+print(Z)
+
+# Another solution
+# Author: Bartosz Telenczuk
+np.add.at(Z, I, 1)
+print(Z)",72,"[1. 1. 2. 3. 2. 2. 4. 4. 6. 5.]
+[ 1.  1.  3.  5.  3.  3.  7.  7. 11.  9.]"
+Numpy,Applied patterns and advanced,"How to accumulate elements of a vector (X) to an array (F) based on an index list (I)? (★★★)
+Print the result.","# Author: Alan G Isaac
+
+X = [1,2,3,4,5,6]
+I = [1,3,9,3,4,1]
+F = np.bincount(I,X)
+print(F)",74,[0. 7. 0. 6. 5. 0. 0. 0. 0. 3.]
+Numpy,Applied patterns and advanced,"Considering a (w,h,3) image of (dtype=ubyte), compute the number of unique colors (★★☆)
+Print the result.","# Author: Fisher Wang
+
+w, h = 256, 256
+I = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)
+colors = np.unique(I.reshape(-1, 3), axis=0)
+n = len(colors)
+print(n)
+
+# Faster version
+# Author: Mark Setchell
+# https://stackoverflow.com/a/59671950/2836621
+
+w, h = 256, 256
+I = np.random.randint(0,4,(h,w,3), dtype=np.uint8)
+
+# View each pixel as a single 24-bit integer, rather than three 8-bit bytes
+I24 = np.dot(I.astype(np.uint32),[1,256,65536])
+
+# Count unique colours
+n = len(np.unique(I24))
+print(n)",76,"64
+64"
+Numpy,Vectorization and broadcasting,"How to find the most frequent value in an array?
+Print the result.","Z = np.random.randint(0,10,50)
+print(np.bincount(Z).argmax())",78,1
+Numpy,Vectorization and broadcasting,"Considering a four dimensions array, how to get sum over the last two axis at once? (★★★)
+Print the result.","A = np.random.randint(0,10,(3,4,3,4))
+# solution by passing a tuple of axes (introduced in numpy 1.7.0)
+sum = A.sum(axis=(-2,-1))
+print(sum)
+# solution by flattening the last two dimensions into one
+# (useful for functions that don't accept tuples for axis argument)
+sum = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)
+print(sum)",78,"[[67 37 52 55]
+ [51 55 70 60]
+ [51 61 38 48]]
+[[67 37 52 55]
+ [51 55 70 60]
+ [51 61 38 48]]"
+Numpy,Indexing and selection,"How to swap two rows of an array? (★★★)
+Print the result.","# Author: Eelco Hoogendoorn
+
+A = np.arange(25).reshape(5,5)
+A[[0,1]] = A[[1,0]]
+print(A)",80,"[[ 5  6  7  8  9]
+ [ 0  1  2  3  4]
+ [10 11 12 13 14]
+ [15 16 17 18 19]
+ [20 21 22 23 24]]"
+Numpy,Applied patterns and advanced,"Considering a one-dimensional vector D, how to compute means of subsets of D using a vector S of same size describing subset  indices? (★★★)
+Print the result.","# Author: Jaime Fernández del Río
+
+D = np.random.uniform(0,1,100)
+S = np.random.randint(0,10,100)
+D_sums = np.bincount(S, weights=D)
+D_counts = np.bincount(S)
+D_means = D_sums / D_counts
+print(D_means)
+
+# Pandas solution as a reference due to more intuitive code
+import pandas as pd
+print(pd.Series(D).groupby(S).mean())",80,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 12, in <module>
+ModuleNotFoundError: No module named 'pandas'"
+Numpy,Indexing and selection,"Shuffle the rows of a 2D array in-place given a random permutation (★★★)
+Print the result.","Z = np.arange(20).reshape(5,4)
+p = np.random.permutation(Z.shape[0])
+Z[:] = Z[p]
+print(Z)",82,"[[ 8  9 10 11]
+ [12 13 14 15]
+ [16 17 18 19]
+ [ 0  1  2  3]
+ [ 4  5  6  7]]"
+Numpy,Indexing and selection,"Sample m distinct rows from a 2D array without replacement (★★★)
+Print the result.","Z = np.arange(40).reshape(10,4)
+m = 3
+idx = np.random.choice(Z.shape[0], size=m, replace=False)
+print(Z[idx])",82,"[[12 13 14 15]
+ [32 33 34 35]
+ [36 37 38 39]]"
+Numpy,Indexing and selection,"Extract the k-th diagonal (k can be negative) of a 2D array (★★★)
+Print the result.","A = np.arange(1, 26).reshape(5,5)
+k = -2
+diag_k = np.diag(A, k=k)
+print(diag_k)",82,[11 17 23]
+Numpy,Vectorization and broadcasting,"How to get the diagonal of a dot product? (★★★)
+Print the result.","# Author: Mathieu Blondel
+
+A = np.random.uniform(0,1,(5,5))
+B = np.random.uniform(0,1,(5,5))
+
+# Slow version
+print(np.diag(np.dot(A, B)))
+
+# Fast version
+print(np.sum(A * B.T, axis=1))
+
+# Faster version
+print(np.einsum(""ij,ji->i"", A, B))",82,"[0.2753403  1.55482718 1.02467369 0.67419803 2.49856616]
+[0.2753403  1.55482718 1.02467369 0.67419803 2.49856616]
+[0.2753403  1.55482718 1.02467369 0.67419803 2.49856616]"
+Numpy,Indexing and selection,"Find rows containing any non-finite values (NaN or Inf) (★★★)
+Print the result.","Z = np.random.randn(6, 4)
+Z[1,2] = np.nan; Z[4,0] = np.inf
+mask = ~np.isfinite(Z).all(axis=1)
+print(np.where(mask)[0])",82,[1 4]
+Numpy,Indexing and selection,"Remove consecutive duplicates from a 1D array (keep first of each run) (★★★)
+Print the result.","a = np.array([1,1,2,2,2,3,1,1,4])
+mask = np.r_[True, a[1:] != a[:-1]]
+out = a[mask]
+print(out)",82,[1 2 3 1 4]
+Numpy,Vectorization and broadcasting,"Compute row-wise dot products between a 2D array and a vector without loops (★★★)
+Print the result.","Z = np.random.rand(6, 5)
+v = np.random.rand(5)
+dots = Z @ v
+print(dots)",82,[1.97195793 1.65927772 2.54998545 1.75031846 1.9040491  1.47574759]
+Numpy,Indexing and selection,"Find indices of strict local maxima in a 1D array (exclude endpoints) (★★★)
+Print the result.","a = np.random.randn(20)
+peaks = np.where((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:]))[0] + 1
+print(peaks)",82,[ 1  3  6  9 13 15 17]
+Numpy,Vectorization and broadcasting,"Interleave two 1D arrays A and B elementwise: [a0,b0,a1,b1,...] (★★★)
+Print the result.","A = np.arange(5)
+B = 10 + np.arange(5)
+C = np.empty(A.size + B.size, dtype=A.dtype)
+C[0::2] = A
+C[1::2] = B
+print(C)",82,[ 0 10  1 11  2 12  3 13  4 14]
+Numpy,Applied patterns and advanced,"Winsorize a 1D array by clipping to its 5th and 95th percentiles (★★★)
+Print the result.","Z = np.random.randn(1000)
+lo, hi = np.percentile(Z, [5, 95])
+Z_wins = np.clip(Z, lo, hi)
+print(Z_wins.min(), Z_wins.max())",82,-1.4549729742092148 1.6323986775053554
+Numpy,Indexing and selection,"Get first occurrence indices of each unique value in a 1D array, preserving input order (★★★)
+Print the result.","a = np.random.randint(0, 10, 20)
+_, idx = np.unique(a, return_index=True)
+idx_sorted = np.sort(idx)
+print(idx_sorted)",82,[ 0  1  2  3  4  5  9 12 13]
+Numpy,Vectorization and broadcasting,"Compute the k-th order discrete difference of a 1D array (★★★)
+Print the result.","a = np.arange(10)
+k = 3
+d = np.diff(a, n=k)
+print(d)",82,[0 0 0 0 0 0 0]
+Numpy,Vectorization and broadcasting,"One-hot encode a label vector y with C classes using array operations (★★★)
+Print the result.","y = np.array([0,2,1,2,0])
+C = y.max() + 1
+I = np.eye(C, dtype=int)
+one_hot = I[y]
+print(one_hot)",82,"[[1 0 0]
+ [0 0 1]
+ [0 1 0]
+ [0 0 1]
+ [1 0 0]]"
+Numpy,Vectorization and broadcasting,"Consider an array of dimension (5,5,3), how to multiply it by an array with dimensions (5,5)? (★★★)
+Print the result.","A = np.ones((5,5,3))
+B = 2*np.ones((5,5))
+print(A * B[:,:,None])",82,"[[[2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]]
+
+ [[2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]]
+
+ [[2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]]
+
+ [[2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]]
+
+ [[2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]
+  [2. 2. 2.]]]"
+Numpy,Vectorization and broadcasting,"Compute a cumulative maximum along axis=1 for a 2D array (★★★)
+Print the result.","Z = np.random.randint(0, 100, (4, 7))
+cummax = np.maximum.accumulate(Z, axis=1)
+print(cummax)",83,"[[15 46 46 46 72 72 72]
+ [ 2  8 89 89 89 89 89]
+ [20 57 57 57 57 57 97]
+ [96 97 97 97 97 97 97]]"
+Numpy,Vectorization and broadcasting,"Normalize each row of a 2D array to unit L2 norm (★★★)
+Print the result.","Z = np.random.rand(5, 4)
+norms = np.linalg.norm(Z, axis=1, keepdims=True)
+Z_unit = np.divide(Z, norms, out=np.zeros_like(Z), where=norms!=0)
+print(Z_unit)",84,"[[0.63455023 0.40523623 0.48119577 0.44897688]
+ [0.33535763 0.01059808 0.10125842 0.93657337]
+ [0.44127614 0.66514376 0.60029569 0.05004233]
+ [0.4815804  0.26723269 0.63788148 0.53830682]
+ [0.33822481 0.66412228 0.58741397 0.315421  ]]"
+Numpy,Vectorization and broadcasting,"Z-score each column and clip values to [-3, 3] (★★★)
+Print the result.","Z = np.random.randn(100, 5)
+mu = Z.mean(axis=0, keepdims=True)
+sd = Z.std(axis=0, ddof=0, keepdims=True)
+Zz = (Z - mu) / np.where(sd==0, 1, sd)
+Zc = np.clip(Zz, -3, 3)
+print(Zc.min(), Zc.max())",84,-3.0 2.9597301783501373
+Numpy,Vectorization and broadcasting,"Run-length decode given values and counts to reconstruct the original array (★★★)
+Print the result.","values = np.array([1, 3, 2, 2])
+counts = np.array([2, 1, 3, 2])
+decoded = np.repeat(values, counts)
+print(decoded)",84,[1 1 3 2 2 2 2 2]
+Numpy,Applied patterns and advanced,"Compute the summed-area table (integral image) of a 2D array (★★★)
+Print the result.","Z = np.random.randint(0, 5, (6, 7))
+I = np.cumsum(np.cumsum(Z, axis=0), axis=1)
+print(I)",84,"[[ 2  2  3  5  8 12 16]
+ [ 3  3  6 10 14 21 29]
+ [ 7 10 15 22 28 36 44]
+ [ 7 13 18 25 35 47 57]
+ [ 9 17 25 35 45 61 75]
+ [10 21 31 42 56 74 88]]"
+Numpy,Applied patterns and advanced,"How to create a record array from a regular array? (★★★)
+Print the result.","Z = np.array([(""Hello"", 2.5, 3),
+              (""World"", 3.6, 2)])
+R = np.core.records.fromarrays(Z.T,
+                               names='col1, col2, col3',
+                               formats = 'S8, f8, i8')
+print(R)",84,"[(b'Hello', 2.5, 3) (b'World', 3.6, 2)]"
+Numpy,Applied patterns and advanced,"Count the number of distinct values per row of an integer matrix (★★★)
+Print the result.","Z = np.random.randint(0, 6, (5, 8))
+counts = np.apply_along_axis(lambda r: np.unique(r).size, 1, Z)
+print(counts)",84,[5 4 5 5 6]
+Numpy,Vectorization and broadcasting,"Consider the vector [1, 2, 3, 4, 5], how to build a new vector with 3 consecutive zeros interleaved between each value? (★★★)
+Print the result.","# Author: Warren Weckesser
+
+Z = np.array([1,2,3,4,5])
+nz = 3
+Z0 = np.zeros(len(Z) + (len(Z)-1)*(nz))
+Z0[::nz+1] = Z
+print(Z0)",84,[1. 0. 0. 0. 2. 0. 0. 0. 3. 0. 0. 0. 4. 0. 0. 0. 5.]
+Numpy,Vectorization and broadcasting,"Construct a lower-triangular matrix whose i-th row contains the first i+1 elements of v (★★★)
+Print the result.","v = np.arange(1, 6)
+n = v.size
+L = np.tril(np.tile(v, (n,1)))
+print(L)",84,"[[1 0 0 0 0]
+ [1 2 0 0 0]
+ [1 2 3 0 0]
+ [1 2 3 4 0]
+ [1 2 3 4 5]]"
+Numpy,Vectorization and broadcasting,"How to negate a boolean, or to change the sign of a float inplace? (★★★)
+Print the result.","# Author: Nathaniel J. Smith
+
+Z = np.random.randint(0,2,100)
+np.logical_not(Z, out=Z)
+
+Z = np.random.uniform(-1.0,1.0,100)
+np.negative(Z, out=Z)",84,
+Numpy,Vectorization and broadcasting,"Normalize each row of a 2D array so rows sum to 1 (avoid division by zero) (★★★)
+Print the result.","Z = np.random.rand(5, 3)
+row_sums = Z.sum(axis=1, keepdims=True)
+Z_norm = np.divide(Z, row_sums, out=np.zeros_like(Z), where=row_sums!=0)
+print(Z_norm)",84,"[[0.46023749 0.00790967 0.53185284]
+ [0.5355077  0.07378921 0.39070308]
+ [0.39494427 0.22061054 0.38444519]
+ [0.3723624  0.2907398  0.3368978 ]
+ [0.35834705 0.15279255 0.48886041]]"
+Numpy,Indexing and selection,"Find rows of a 2D array that are strictly increasing (★★★)
+Print the result.","Z = np.random.randint(0, 10, (8, 5))
+mask = np.all(np.diff(Z, axis=1) > 0, axis=1)
+print(Z[mask])",84,[]
+Numpy,Vectorization and broadcasting,"Create a symmetric Toeplitz matrix from a 1D vector c (T[i,j] = c[|i-j|]) (★★★)
+Print the result.","c = np.arange(6)
+i = np.arange(c.size)[:, None]
+j = np.arange(c.size)[None, :]
+T = c[np.abs(i - j)]
+print(T)",85,"[[0 1 2 3 4 5]
+ [1 0 1 2 3 4]
+ [2 1 0 1 2 3]
+ [3 2 1 0 1 2]
+ [4 3 2 1 0 1]
+ [5 4 3 2 1 0]]"
+Numpy,Applied patterns and advanced,"Build an undirected adjacency matrix from an integer edge list (0-indexed) (★★★)
+Print the result.","n = 6
+edges = np.array([[0,1],[0,2],[3,5],[2,5]])
+A = np.zeros((n,n), dtype=int)
+A[edges[:,0], edges[:,1]] = 1
+A[edges[:,1], edges[:,0]] = 1
+print(A)",86,"[[0 1 1 0 0 0]
+ [1 0 0 0 0 0]
+ [1 0 0 0 0 1]
+ [0 0 0 0 0 1]
+ [0 0 0 0 0 0]
+ [0 0 1 1 0 0]]"
+Numpy,Vectorization and broadcasting,"How to compute averages using a sliding window over an array? (★★★)
+Print the result.","# Author: Jaime Fernández del Río
+
+def moving_average(a, n=3) :
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n
+Z = np.arange(20)
+print(moving_average(Z, n=3))
+
+# Author: Jeff Luo (@Jeff1999)
+# make sure your NumPy >= 1.20.0
+
+from numpy.lib.stride_tricks import sliding_window_view
+
+Z = np.arange(20)
+print(sliding_window_view(Z, window_shape=3).mean(axis=-1))",86,"[ 1.  2.  3.  4.  5.  6.  7.  8.  9. 10. 11. 12. 13. 14. 15. 16. 17. 18.]
+[ 1.  2.  3.  4.  5.  6.  7.  8.  9. 10. 11. 12. 13. 14. 15. 16. 17. 18.]"
+Numpy,Applied patterns and advanced,"Extract all the contiguous 3x3 blocks from a random 10x10 matrix (★★★)
+Print the result.","# Author: Chris Barker
+
+Z = np.random.randint(0,5,(10,10))
+n = 3
+i = 1 + (Z.shape[0]-3)
+j = 1 + (Z.shape[1]-3)
+C = stride_tricks.as_strided(Z, shape=(i, j, n, n), strides=Z.strides + Z.strides)
+print(C)
+
+# Author: Jeff Luo (@Jeff1999)
+
+Z = np.random.randint(0,5,(10,10))
+print(sliding_window_view(Z, window_shape=(3, 3)))",86,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 8, in <module>
+NameError: name 'stride_tricks' is not defined"
+Numpy,Indexing and selection,"Row-wise argmax with tie-breaking by last occurrence (★★★)
+Print the result.","Z = np.random.randint(0, 9, (4, 8))
+# use argmax on reversed view, then convert index
+rev = Z[:, ::-1]
+idx_rev = rev.argmax(axis=1)
+idx = Z.shape[1] - 1 - idx_rev
+print(idx)",86,[7 6 3 0]
+Numpy,Applied patterns and advanced,"Compute cosine similarity matrix between row vectors of X (★★★)
+Print the result.","X = np.random.rand(6, 5)
+Xn = X / np.linalg.norm(X, axis=1, keepdims=True)
+S = Xn @ Xn.T
+print(S)",86,"[[1.         0.80711555 0.93078138 0.77111694 0.54029131 0.57408377]
+ [0.80711555 1.         0.94936222 0.84387821 0.63333035 0.82541215]
+ [0.93078138 0.94936222 1.         0.79706433 0.50331774 0.71177219]
+ [0.77111694 0.84387821 0.79706433 1.         0.79021235 0.91442022]
+ [0.54029131 0.63333035 0.50331774 0.79021235 1.         0.68136092]
+ [0.57408377 0.82541215 0.71177219 0.91442022 0.68136092 1.        ]]"
+Numpy,Applied patterns and advanced,"Replace NaNs in each column with the column mean (★★★)
+Print the result.","Z = np.random.randn(6, 4)
+Z[np.random.rand(*Z.shape) < 0.2] = np.nan
+col_means = np.nanmean(Z, axis=0, keepdims=True)
+inds = np.where(np.isnan(Z))
+Z[inds] = np.take(col_means, inds[1])
+print(Z)",86,"[[ 0.92821132 -1.83963087  0.12356746 -0.55141404]
+ [-0.7066612   0.69027074  0.66444057  0.17103801]
+ [-1.42796954 -1.83899556  0.11414011 -0.52026126]
+ [ 0.48156796 -1.50226676  0.11414011 -0.10020617]
+ [ 0.53257051 -0.34731895 -0.6347048   0.05417213]
+ [ 0.35098503 -0.09033296  0.30325719 -0.18933427]]"
+Numpy,Applied patterns and advanced,"Given an arbitrary number of vectors, build the cartesian product (every combination of every item) (★★★)
+Print the result.","# Author: Stefan Van der Walt
+
+def cartesian(arrays):
+    arrays = [np.asarray(a) for a in arrays]
+    shape = (len(x) for x in arrays)
+
+    ix = np.indices(shape, dtype=int)
+    ix = ix.reshape(len(arrays), -1).T
+
+    for n, arr in enumerate(arrays):
+        ix[:, n] = arrays[n][ix[:, n]]
+
+    return ix
+
+print (cartesian(([1, 2, 3], [4, 5], [6, 7])))",86,"[[1 4 6]
+ [1 4 7]
+ [1 5 6]
+ [1 5 7]
+ [2 4 6]
+ [2 4 7]
+ [2 5 6]
+ [2 5 7]
+ [3 4 6]
+ [3 4 7]
+ [3 5 6]
+ [3 5 7]]"
+Numpy,Applied patterns and advanced,"Compute the mode along axis=1 of a small integer matrix using bincount (tie-break by smallest value) (★★★)
+Print the result.","Z = np.random.randint(0, 5, (6, 7))
+m = Z.max() + 1
+mode = np.apply_along_axis(lambda r: np.bincount(r, minlength=m).argmax(), 1, Z)
+print(mode)",86,[2 3 4 1 0 2]
+Numpy,Applied patterns and advanced,"Solve Ax = b for multiple right-hand sides b (columns) at once (★★★)
+Print the result.","A = np.random.randn(5, 5)
+b = np.random.randn(5, 3)
+x = np.linalg.solve(A, b)
+print(x)",86,"[[-0.61263028  0.61163874  0.1301234 ]
+ [ 0.00810086  1.29363193  0.15139921]
+ [ 2.75483703 -2.84042273  0.26377655]
+ [-2.80720085  2.65293911 -0.80116749]
+ [-1.34292333  3.68290416 -1.01076944]]"
+Numpy,Indexing and selection,"Compute the row-wise median using np.partition (odd number of columns) (★★★)
+Print the result.","Z = np.random.rand(7, 9)
+m = Z.shape[1]//2
+part = np.partition(Z, m, axis=1)
+med = part[:, m]
+print(med)",86,"[0.61210779 0.52380325 0.68382924 0.66444396 0.88770145 0.3531581
+ 0.42496453]"
+Numpy,Vectorization and broadcasting,"Consider a one-dimensional array Z, build a two-dimensional array whose first row is (Z[0],Z[1],Z[2]) and each subsequent row is  shifted by 1 (last row should be (Z[-3],Z[-2],Z[-1]) (★★★)
+Print the result.","# Author: Joe Kington / Erik Rigtorp
+from numpy.lib import stride_tricks
+
+def rolling(a, window):
+    shape = (a.size - window + 1, window)
+    strides = (a.strides[0], a.strides[0])
+    return stride_tricks.as_strided(a, shape=shape, strides=strides)
+Z = rolling(np.arange(10), 3)
+print(Z)
+
+# Author: Jeff Luo (@Jeff1999)
+
+Z = np.arange(10)
+print(sliding_window_view(Z, window_shape=3))",86,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 15, in <module>
+NameError: name 'sliding_window_view' is not defined"
+Numpy,Applied patterns and advanced,"Extract all 2x4 sliding windows from a 2D array and compute their sums (★★★)
+Print the result.","from numpy.lib.stride_tricks import sliding_window_view
+Z = np.arange(8*10).reshape(8, 10)
+W = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)
+S = W.sum(axis=(-2, -1))
+print(S)",86,"[[ 52  60  68  76  84  92 100]
+ [132 140 148 156 164 172 180]
+ [212 220 228 236 244 252 260]
+ [292 300 308 316 324 332 340]
+ [372 380 388 396 404 412 420]
+ [452 460 468 476 484 492 500]
+ [532 540 548 556 564 572 580]]"
+Numpy,Vectorization and broadcasting,"Vectorized value mapping: replace values in a 1D array using a mapping dict {old:new} (★★★)
+Print the result.","a = np.array([1,2,3,2,1,0])
+mapping = {0:9, 1:8, 2:7}
+max_key = max(mapping.keys())
+table = np.arange(max_key+1)
+for k,v in mapping.items():
+    table[k] = v
+out = table[a]
+print(out)",86,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 8, in <module>
+IndexError: index 3 is out of bounds for axis 0 with size 3"
+Numpy,Applied patterns and advanced,"Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)
+Print the result.","# Author: Stefan van der Walt
+
+Z = np.arange(1,15,dtype=np.uint32)
+R = stride_tricks.as_strided(Z,(11,4),(4,4))
+print(R)
+
+# Author: Jeff Luo (@Jeff1999)
+
+Z = np.arange(1, 15, dtype=np.uint32)
+print(sliding_window_view(Z, window_shape=4))",87,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 5, in <module>
+NameError: name 'stride_tricks' is not defined"
+Numpy,Applied patterns and advanced,"Consider 2 sets of points P0,P1 describing lines (2d) and a point p, how to compute distance from p to each line i (P0[i],P1[i])? (★★★)
+Print the result.","P0 = np.random.uniform(-10,10,(10,2))
+P1 = np.random.uniform(-10,10,(10,2))
+p  = np.random.uniform(-10,10,( 1,2))
+
+def distance_faster(P0,P1,p):
+    #Author: Hemanth Pasupuleti
+    #Reference: https://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
+
+    v = P1- P0 
+    v[:,[0,1]] = v[:,[1,0]]
+    v[:,1]*=-1 
+    norm = np.linalg.norm(v,axis=1)   
+    r = P0 - p
+    d = np.abs(np.einsum(""ij,ij->i"",r,v)) / norm 
+
+    return d
+
+print(distance_faster(P0, P1, p))
+
+##--------------- OR ---------------##
+def distance_slower(P0, P1, p):
+    T = P1 - P0
+    L = (T**2).sum(axis=1)
+    U = -((P0[:,0]-p[...,0])*T[:,0] + (P0[:,1]-p[...,1])*T[:,1]) / L
+    U = U.reshape(len(U),1)
+    D = P0 + U*T - p
+    return np.sqrt((D**2).sum(axis=1))
+
+print(distance_slower(P0, P1, p))",88,"[ 5.21264871  0.91821451 11.97305104 10.32796073  4.15130569 10.12362124
+  4.91114794  2.40977618  7.81475319 14.88610514]
+[ 5.21264871  0.91821451 11.97305104 10.32796073  4.15130569 10.12362124
+  4.91114794  2.40977618  7.81475319 14.88610514]"
+Numpy,Applied patterns and advanced,"Create a band matrix with main diagonal d0 and first upper/lower diagonals d1 using vectorized assignment (★★★)
+Print the result.","n = 6
+d0 = 5*np.ones(n)
+d1 = -1*np.ones(n-1)
+M = np.zeros((n,n))
+np.fill_diagonal(M, d0)
+np.fill_diagonal(M[:-1,1:], d1)
+np.fill_diagonal(M[1:,:-1], d1)
+print(M)",88,"[[ 5. -1.  0.  0.  0.  0.]
+ [-1.  5. -1.  0.  0.  0.]
+ [ 0. -1.  5. -1.  0.  0.]
+ [ 0.  0. -1.  5. -1.  0.]
+ [ 0.  0.  0. -1.  5. -1.]
+ [ 0.  0.  0.  0. -1.  5.]]"
+Numpy,Applied patterns and advanced,"Compute the pairwise Euclidean distance matrix between rows of X (n,d) without explicit Python loops (★★★)
+Print the result.","X = np.random.rand(6, 4)
+diff = X[:, None, :] - X[None, :, :]
+D = np.sqrt(np.sum(diff*diff, axis=-1))
+print(D)",88,"[[0.         1.09438528 0.56646931 0.56897808 0.63348327 0.89125923]
+ [1.09438528 0.         0.97535657 1.28860571 0.62527779 0.9975922 ]
+ [0.56646931 0.97535657 0.         0.32903309 0.47350788 0.48830903]
+ [0.56897808 1.28860571 0.32903309 0.         0.75203097 0.665604  ]
+ [0.63348327 0.62527779 0.47350788 0.75203097 0.         0.7865064 ]
+ [0.89125923 0.9975922  0.48830903 0.665604   0.7865064  0.        ]]"
+Numpy,Applied patterns and advanced,"Apply a 2D affine transform (3x3 homogeneous) to an array of 2D points (★★★)
+Print the result.","pts = np.random.rand(5, 2)
+T = np.array([[1.2, 0.2, 0.5],
+              [-0.1, 0.9, 0.1],
+              [0.0, 0.0, 1.0]])
+H = np.c_[pts, np.ones(len(pts))]
+out = (H @ T.T)[:, :2]
+print(out)",88,"[[0.79905518 0.59692083]
+ [0.77948877 0.21893996]
+ [1.58186217 0.79577471]
+ [1.13056851 0.27376056]
+ [0.92238101 0.90604277]]"
+Numpy,Indexing and selection,"Replace each element by its rank within the row (1=smallest) (★★★)
+Print the result.","Z = np.random.rand(4, 6)
+order = np.argsort(Z, axis=1)
+ranks = np.empty_like(order)
+ranks[np.arange(Z.shape[0])[:, None], order] = np.arange(Z.shape[1])
+print(ranks + 1)",88,"[[4 2 3 6 1 5]
+ [4 2 3 1 6 5]
+ [5 2 6 3 1 4]
+ [3 5 4 6 2 1]]"
+Numpy,Applied patterns and advanced,"Create a 2D array subclass such that Z[i,j] == Z[j,i] (★★★)
+Print the result.","# Author: Eric O. Lebigot
+# Note: only works for 2d array and value setting using indices
+
+class Symetric(np.ndarray):
+    def __setitem__(self, index, value):
+        i,j = index
+        super(Symetric, self).__setitem__((i,j), value)
+        super(Symetric, self).__setitem__((j,i), value)
+
+def symetric(Z):
+    return np.asarray(Z + Z.T - np.diag(Z.diagonal())).view(Symetric)
+
+S = symetric(np.random.randint(0,10,(5,5)))
+S[2,3] = 42
+print(S)",88,"[[ 5 11  3  6  8]
+ [11  7  1 10  6]
+ [ 3  1  2 42  8]
+ [ 6 10 42  2  4]
+ [ 8  6  8  4  8]]"
+Numpy,Applied patterns and advanced,"Run-length encode a 1D integer array (values and counts) without Python loops over elements (★★★)
+Print the result.","a = np.random.randint(0, 4, 30)
+starts = np.r_[0, 1 + np.flatnonzero(a[1:] != a[:-1])]
+values = a[starts]
+counts = np.diff(np.r_[starts, a.size])
+print(values, counts)",88,[0 3 0 3 2 0 2 1 2 1 2 3 2 1 3 1 0 1 2 0 2 3 2 3] [1 1 1 2 2 2 1 1 1 1 1 2 1 1 1 1 2 2 1 1 1 1 1 1]
+Numpy,Applied patterns and advanced,"Consider an arbitrary array, write a function that extracts a subpart with a fixed shape and centered on a given element (pad with a `fill` value when necessary) (★★★)
+Print the result.","# Author: Nicolas Rougier
+
+Z = np.random.randint(0,10,(10,10))
+shape = (5,5)
+fill  = 0
+position = (1,1)
+
+R = np.ones(shape, dtype=Z.dtype)*fill
+P  = np.array(list(position)).astype(int)
+Rs = np.array(list(R.shape)).astype(int)
+Zs = np.array(list(Z.shape)).astype(int)
+
+R_start = np.zeros((len(shape),)).astype(int)
+R_stop  = np.array(list(shape)).astype(int)
+Z_start = (P-Rs//2)
+Z_stop  = (P+Rs//2)+Rs%2
+
+R_start = (R_start - np.minimum(Z_start,0)).tolist()
+Z_start = (np.maximum(Z_start,0)).tolist()
+R_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()
+Z_stop = (np.minimum(Z_stop,Zs)).tolist()
+
+r = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])
+z = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])
+R[r] = Z[z]
+print(Z)
+print(R)",88,"[[1 1 0 2 8 6 3 5 3 5]
+ [0 6 1 9 9 2 3 5 7 7]
+ [0 1 9 9 0 5 6 8 9 4]
+ [3 7 4 5 6 0 9 8 1 3]
+ [1 9 7 1 4 4 5 9 3 4]
+ [8 8 8 8 4 4 2 5 9 9]
+ [7 7 3 0 7 7 0 4 5 2]
+ [4 5 7 6 9 0 2 9 1 9]
+ [1 9 9 0 3 8 5 5 5 3]
+ [6 9 7 4 5 8 0 4 6 5]]
+[[0 0 0 0 0]
+ [0 1 1 0 2]
+ [0 0 6 1 9]
+ [0 0 1 9 9]
+ [0 3 7 4 5]]"
+Numpy,Indexing and selection,"Turn each row into a binary mask of its top-2 values (1 for top-2 else 0) (★★★)
+Print the result.","Z = np.random.rand(5, 6)
+k = 2
+idx = np.argpartition(Z, -k, axis=1)[:, -k:]
+mask = np.zeros_like(Z, dtype=int)
+mask[np.arange(Z.shape[0])[:, None], idx] = 1
+print(mask)",88,"[[0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [1 0 0 1 0 0]
+ [1 1 0 0 0 0]
+ [0 0 0 0 1 1]]"
+Numpy,Applied patterns and advanced,"Considering a path described by two vectors (X,Y), how to sample it using equidistant samples (★★★)?
+Print the result.","# Author: Bas Swinckels
+
+phi = np.arange(0, 10*np.pi, 0.1)
+a = 1
+x = a*phi*np.cos(phi)
+y = a*phi*np.sin(phi)
+
+dr = (np.diff(x)**2 + np.diff(y)**2)**.5 # segment lengths
+r = np.zeros_like(x)
+r[1:] = np.cumsum(dr)                # integrate path
+r_int = np.linspace(0, r.max(), 200) # regular spaced path
+x_int = np.interp(r_int, r, x)       # integrate path
+y_int = np.interp(r_int, r, y)",88,
+Numpy,Applied patterns and advanced,"Rotate a 2D array by 90 degrees k times without np.rot90 (★★★)
+Print the result.","Z = np.arange(12).reshape(3,4)
+k = 1
+rot = np.transpose(Z, (1,0))[:, ::-1]
+if k % 4 == 0:
+    R = Z
+elif k % 4 == 1:
+    R = rot
+elif k % 4 == 2:
+    R = Z[::-1, ::-1]
+else:
+    R = np.transpose(Z[::-1, :])
+print(R)",88,"[[ 8  4  0]
+ [ 9  5  1]
+ [10  6  2]
+ [11  7  3]]"
+Numpy,Applied patterns and advanced,"Compute a matrix rank (★★★)
+Print the result.","# Author: Stefan van der Walt
+
+Z = np.random.uniform(0,1,(10,10))
+U, S, V = np.linalg.svd(Z) # Singular Value Decomposition
+threshold = len(S) * S.max() * np.finfo(S.dtype).eps
+rank = np.sum(S > threshold)
+print(rank)
+
+# alternative solution:
+# Author: Jeff Luo (@Jeff1999)
+
+rank = np.linalg.matrix_rank(Z)
+print(rank)",89,"10
+10"
+Numpy,Applied patterns and advanced,"Compute bootstrapped 95% confidence intervals for the mean of a 1D array X (i.e., resample the elements of an array with replacement N times, compute the mean of each sample, and then compute percentiles over the means). (★★★)
+Print the result.","# Author: Jessica B. Hamrick
+
+X = np.random.randn(100) # random 1D array
+N = 1000 # number of bootstrap samples
+idx = np.random.randint(0, X.size, (N, X.size))
+means = X[idx].mean(axis=1)
+confint = np.percentile(means, [2.5, 97.5])
+print(confint)",90,[-0.1639379   0.22175557]
+Numpy,Vectorization and broadcasting,"Consider a large vector Z, compute Z to the power of 3 using 3 different methods (★★★)
+Print the result.","# Author: Ryan G.
+
+x = np.random.rand(int(5e7))
+
+%timeit np.power(x,3)
+%timeit x*x*x
+%timeit np.einsum('i,i,i->i',x,x,x)",90,"[ERROR] File ""<string>"", line 6
+    %timeit np.power(x,3)
+    ^
+SyntaxError: invalid syntax"
+Numpy,Applied patterns and advanced,"For points X (n,d), find indices of k nearest neighbors for each point (self excluded) (★★★)
+Print the result.","X = np.random.rand(8, 3)
+diff = X[:, None, :] - X[None, :, :]
+D2 = np.sum(diff*diff, axis=-1)
+np.fill_diagonal(D2, np.inf)
+k = 2
+idx = np.argpartition(D2, k, axis=1)[:, :k]
+print(idx)",90,"[[1 5]
+ [0 5]
+ [4 7]
+ [1 5]
+ [2 7]
+ [0 1]
+ [7 5]
+ [0 1]]"
+Numpy,Indexing and selection,"Find the indices of the top-k values per row of a 2D array using partial sorting (★★★)
+Print the result.","Z = np.random.rand(5, 10)
+k = 3
+idx = np.argpartition(Z, -k, axis=1)[:, -k:]
+# sort the top-k indices by actual values descending
+rows = np.arange(Z.shape[0])[:, None]
+idx_sorted = idx[rows, np.argsort(Z[rows, idx], axis=1)[:, ::-1]]
+print(idx_sorted)",90,"[[4 0 2]
+ [2 7 6]
+ [2 7 4]
+ [0 6 3]
+ [9 6 3]]"
+Numpy,Vectorization and broadcasting,"Consider a 16x16 array, how to get the block-sum (block size is 4x4)? (★★★)
+Print the result.","# Author: Robert Kern
+
+Z = np.ones((16,16))
+k = 4
+S = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),
+                                       np.arange(0, Z.shape[1], k), axis=1)
+print(S)
+
+# alternative solution:
+# Author: Sebastian Wallkötter (@FirefoxMetzger)
+
+Z = np.ones((16,16))
+k = 4
+
+windows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))
+S = windows[::k, ::k, ...].sum(axis=(-2, -1))
+
+# alternative solution (by @Gattocrucco)
+S = Z.reshape(4, 4, 4, 4).sum((1, 3))",90,"[[16. 16. 16. 16.]
+ [16. 16. 16. 16.]
+ [16. 16. 16. 16.]
+ [16. 16. 16. 16.]]"
+Numpy,Applied patterns and advanced,"Implement 2D valid convolution via sliding windows and tensordot (★★★)
+Print the result.","from numpy.lib.stride_tricks import sliding_window_view
+X = np.arange(7*7).reshape(7,7)
+K = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])
+W = sliding_window_view(X, K.shape)
+Y = np.tensordot(W, K, axes=K.ndim)
+print(Y)",90,"[[-6 -6 -6 -6 -6]
+ [-6 -6 -6 -6 -6]
+ [-6 -6 -6 -6 -6]
+ [-6 -6 -6 -6 -6]
+ [-6 -6 -6 -6 -6]]"
+Numpy,Applied patterns and advanced,"Build a block-diagonal matrix from a list of 2D arrays without external libraries (★★★)
+Print the result.","arrays = [np.ones((2,3)), 2*np.ones((1,2)), 3*np.ones((3,1))]
+R = sum(a.shape[0] for a in arrays)
+C = sum(a.shape[1] for a in arrays)
+out = np.zeros((R, C))
+ri = ci = 0
+for a in arrays:
+    r, c = a.shape
+    out[ri:ri+r, ci:ci+c] = a
+    ri += r; ci += c
+print(out)",90,"[[1. 1. 1. 0. 0. 0.]
+ [1. 1. 1. 0. 0. 0.]
+ [0. 0. 0. 2. 2. 0.]
+ [0. 0. 0. 0. 0. 3.]
+ [0. 0. 0. 0. 0. 3.]
+ [0. 0. 0. 0. 0. 3.]]"
+Numpy,Applied patterns and advanced,"Compute the Jaccard distance matrix for a binary matrix (rows are sets) (★★★)
+Print the result.","B = (np.random.rand(6, 8) > 0.6).astype(int)
+inter = (B[:, None, :] & B[None, :, :]).sum(-1)
+union = (B[:, None, :] | B[None, :, :]).sum(-1)
+J = 1 - inter / np.where(union==0, 1, union)
+print(J)",90,"[[0.         0.75       0.4        0.75       1.         1.        ]
+ [0.75       0.         0.83333333 1.         0.66666667 0.83333333]
+ [0.4        0.83333333 0.         0.83333333 1.         0.75      ]
+ [0.75       1.         0.83333333 0.         0.66666667 0.83333333]
+ [1.         0.66666667 1.         0.66666667 0.         0.6       ]
+ [1.         0.83333333 0.75       0.83333333 0.6        0.        ]]"
+Numpy,Applied patterns and advanced,"Compute the Khatri-Rao product (column-wise Kronecker) of two matrices with the same number of columns (★★★)
+Print the result.","A = np.array([[1,2],[3,4],[5,6]])
+B = np.array([[7,8],[9,10]])
+# result has shape (A_rows*B_rows, n_cols)
+KR = (A[:, None, :] * B[None, :, :]).reshape(A.shape[0]*B.shape[0], A.shape[1])
+print(KR)",90,"[[ 7 16]
+ [ 9 20]
+ [21 32]
+ [27 40]
+ [35 48]
+ [45 60]]"
+Numpy,Applied patterns and advanced,"Sample categories according to row-wise probability matrix P (rows sum to 1) (★★★)
+Print the result.","P = np.random.dirichlet(np.ones(5), size=10)
+u = np.random.rand(P.shape[0], 1)
+cs = np.cumsum(P, axis=1)
+samples = (u < cs).argmax(axis=1)
+print(samples)",90,[0 3 4 4 2 0 0 2 1 4]
+Numpy,Applied patterns and advanced,"Consider 2 sets of points P0,P1 describing lines (2d) and a set of points P, how to compute distance from each point j (P[j]) to each line i (P0[i],P1[i])? (★★★)
+Print the result.","# Author: Italmassov Kuanysh
+
+# based on distance function from previous question
+P0 = np.random.uniform(-10, 10, (10,2))
+P1 = np.random.uniform(-10,10,(10,2))
+p = np.random.uniform(-10, 10, (10,2))
+print(np.array([distance(P0,P1,p_i) for p_i in p]))
+
+# Author: Yang Wu (Broadcasting)
+def distance_points_to_lines(p: np.ndarray, p_1: np.ndarray, p_2: np.ndarray) -> np.ndarray:
+    x_0, y_0 = p.T  # Shape -> (n points, )
+    x_1, y_1 = p_1.T  # Shape -> (n lines, )
+    x_2, y_2 = p_2.T  # Shape -> (n lines, )
+
+    # Displacement vector coordinates from p_1 -> p_2
+    dx = x_2 - x_1  # Shape -> (n lines, )
+    dy = y_2 - y_1  # Shape -> (n lines, )
+
+    # The 'cross product' term
+    cross_term = x_2 * y_1 - y_2 * x_1  # Shape -> (n lines, )
+
+    # Broadcast x_0, y_0 (n points, 1) and dx, dy, cross_term (1, n lines) -> (n points, n lines)
+    numerator = np.abs(
+        dy[np.newaxis, :] * x_0[:, np.newaxis]
+        - dx[np.newaxis, :] * y_0[:, np.newaxis]
+        + cross_term[np.newaxis, :]
+    )
+    denominator = np.sqrt(dx**2 + dy**2)  # Shape -> (n lines, )
+
+    # Shape (n points, n lines) / (1, n_lines) -> (n points, n lines)
+    return numerator / denominator[np.newaxis, :]
+
+distance_points_to_lines(p, P0, P1)",90,"[ERROR] Traceback (most recent call last):
+  File ""<string>"", line 8, in <module>
+NameError: name 'distance' is not defined. Did you mean: 'isinstance'?"
+Numpy,Indexing and selection,"Considering a 10x3 matrix, extract rows with unequal values (e.g. [2,2,3]) (★★★)
+Print the result.","# Author: Robert Kern
+
+Z = np.random.randint(0,5,(10,3))
+print(Z)
+# solution for arrays of all dtypes (including string arrays and record arrays)
+E = np.all(Z[:,1:] == Z[:,:-1], axis=1)
+U = Z[~E]
+print(U)
+# soluiton for numerical arrays only, will work for any number of columns in Z
+U = Z[Z.max(axis=1) != Z.min(axis=1),:]
+print(U)",90,"[[0 3 2]
+ [3 3 0]
+ [0 0 1]
+ [0 0 0]
+ [0 3 4]
+ [2 3 4]
+ [0 1 2]
+ [0 4 2]
+ [0 0 1]
+ [4 4 0]]
+[[0 3 2]
+ [3 3 0]
+ [0 0 1]
+ [0 3 4]
+ [2 3 4]
+ [0 1 2]
+ [0 4 2]
+ [0 0 1]
+ [4 4 0]]
+[[0 3 2]
+ [3 3 0]
+ [0 0 1]
+ [0 3 4]
+ [2 3 4]
+ [0 1 2]
+ [0 4 2]
+ [0 0 1]
+ [4 4 0]]"
+Numpy,Vectorization and broadcasting,"Considering 2 vectors A & B, write the einsum equivalent of inner, outer, sum, and mul function (★★★)
+Print the result.","# Author: Alex Riley
+# Make sure to read: http://ajcr.net/Basic-guide-to-einsum/
+
+A = np.random.uniform(0,1,10)
+B = np.random.uniform(0,1,10)
+
+np.einsum('i->', A)       # np.sum(A)
+np.einsum('i,i->i', A, B) # A * B
+np.einsum('i,i', A, B)    # np.inner(A, B)
+np.einsum('i,j->ij', A, B)    # np.outer(A, B)",91,
+Numpy,Applied patterns and advanced,"Convert a vector of ints into a matrix binary representation (★★★)
+Print the result.","# Author: Warren Weckesser
+
+I = np.array([0, 1, 2, 3, 15, 16, 32, 64, 128])
+B = ((I.reshape(-1,1) & (2**np.arange(8))) != 0).astype(int)
+print(B[:,::-1])
+
+# Author: Daniel T. McDonald
+
+I = np.array([0, 1, 2, 3, 15, 16, 32, 64, 128], dtype=np.uint8)
+print(np.unpackbits(I[:, np.newaxis], axis=1))",92,"[[0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 1]
+ [0 0 0 0 0 0 1 0]
+ [0 0 0 0 0 0 1 1]
+ [0 0 0 0 1 1 1 1]
+ [0 0 0 1 0 0 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0]
+ [1 0 0 0 0 0 0 0]]
+[[0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 1]
+ [0 0 0 0 0 0 1 0]
+ [0 0 0 0 0 0 1 1]
+ [0 0 0 0 1 1 1 1]
+ [0 0 0 1 0 0 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0]
+ [1 0 0 0 0 0 0 0]]"
+Numpy,Applied patterns and advanced,"Given a two dimensional array, how to extract unique rows? (★★★)
+Print the result.","# Author: Jaime Fernández del Río
+
+Z = np.random.randint(0,2,(6,3))
+T = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))
+_, idx = np.unique(T, return_index=True)
+uZ = Z[idx]
+print(uZ)
+
+# Author: Andreas Kouzelis
+# NumPy >= 1.13
+uZ = np.unique(Z, axis=0)
+print(uZ)",92,"[[0 0 0]
+ [0 1 0]
+ [1 0 0]
+ [1 0 1]
+ [1 1 1]]
+[[0 0 0]
+ [0 1 0]
+ [1 0 0]
+ [1 0 1]
+ [1 1 1]]"
+Numpy,Vectorization and broadcasting,"How to get the n largest values of an array (★★★)
+Print the result.","Z = np.arange(10000)
+np.random.shuffle(Z)
+n = 5
+
+# Slow
+print (Z[np.argsort(Z)[-n:]])
+
+# Fast
+print (Z[np.argpartition(-Z,n)[:n]])",92,"[9995 9996 9997 9998 9999]
+[9999 9998 9997 9996 9995]"
+Numpy,Applied patterns and advanced,"Consider a set of 10 triplets describing 10 triangles (with shared vertices), find the set of unique line segments composing all the  triangles (★★★)
+Print the result.","# Author: Nicolas P. Rougier
+
+faces = np.random.randint(0,100,(10,3))
+F = np.roll(faces.repeat(2,axis=1),-1,axis=1)
+F = F.reshape(len(F)*3,2)
+F = np.sort(F,axis=1)
+G = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )
+G = np.unique(G)
+print(G)",93,"[( 1,  8) ( 1, 52) ( 5, 16) ( 5, 34) ( 7, 75) ( 7, 83) ( 8, 52) ( 9, 31)
+ ( 9, 69) (15, 20) (15, 48) (16, 34) (16, 79) (16, 90) (20, 48) (23, 39)
+ (23, 59) (31, 69) (35, 80) (35, 94) (36, 57) (36, 87) (39, 59) (52, 56)
+ (52, 75) (56, 75) (57, 87) (75, 83) (79, 90) (80, 94)]"
+Numpy,Applied patterns and advanced,"Consider a set of p matrices with shape (n,n) and a set of p vectors with shape (n,1). How to compute the sum of of the p matrix products at once? (result has shape (n,1)) (★★★)
+Print the result.","# Author: Stefan van der Walt
+
+p, n = 10, 20
+M = np.ones((p,n,n))
+V = np.ones((p,n,1))
+S = np.tensordot(M, V, axes=[[0, 2], [0, 1]])
+print(S)
+
+# It works, because:
+# M is (p,n,n)
+# V is (p,n,1)
+# Thus, summing over the paired axes 0 and 0 (of M and V independently),
+# and 2 and 1, to remain with a (n,1) vector.",94,"[[200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]
+ [200.]]"
+Numpy,Applied patterns and advanced,"How to implement the Game of Life using numpy arrays? (★★★)
+Print the result.","# Author: Nicolas Rougier
+
+def iterate(Z):
+    # Count neighbours
+    N = (Z[0:-2,0:-2] + Z[0:-2,1:-1] + Z[0:-2,2:] +
+         Z[1:-1,0:-2]                + Z[1:-1,2:] +
+         Z[2:  ,0:-2] + Z[2:  ,1:-1] + Z[2:  ,2:])
+
+    # Apply rules
+    birth = (N==3) & (Z[1:-1,1:-1]==0)
+    survive = ((N==2) | (N==3)) & (Z[1:-1,1:-1]==1)
+    Z[...] = 0
+    Z[1:-1,1:-1][birth | survive] = 1
+    return Z
+
+Z = np.random.randint(0,2,(50,50))
+for i in range(100): Z = iterate(Z)
+print(Z)",95,"[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 1 1 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]"
+Numpy,Applied patterns and advanced,"Given an integer n and a 2D array X, select from X the rows which can be interpreted as draws from a multinomial distribution with n degrees, i.e., the rows which only contain integers and which sum to n. (★★★)
+Print the result.","# Author: Evgeni Burovski
+
+X = np.asarray([[1.0, 0.0, 3.0, 8.0],
+                [2.0, 0.0, 1.0, 1.0],
+                [1.5, 2.5, 1.0, 0.0]])
+n = 4
+M = np.logical_and.reduce(np.mod(X, 1) == 0, axis=-1)
+M &= (X.sum(axis=-1) == n)
+print(X[M])",97,[[2. 0. 1. 1.]]
+Numpy,Indexing and selection,"Consider two arrays A and B of shape (8,3) and (2,2). How to find rows of A that contain elements of each row of B regardless of the order of the elements in B? (★★★)
+Print the result.","# Author: Gabe Schwartz
+
+A = np.random.randint(0,5,(8,3))
+B = np.random.randint(0,5,(2,2))
+
+C = (A[..., np.newaxis, np.newaxis] == B)
+rows = np.where(C.any((3,1)).all(1))[0]
+print(rows)",100,[4 5]
+Numpy,Core array literacy,"Create a 3x3 matrix filled with True (★☆☆)
+Print the result.","Z = np.ones((3,3), dtype=bool); print(Z)",12,"[[ True  True  True]
+ [ True  True  True]
+ [ True  True  True]]"
+Numpy,Core array literacy,"Create a null vector of size 10 but the fifth value which is 1 (★☆☆)
+Print the result.","Z = np.zeros(10)
+Z[4] = 1
+print(Z)",12,[0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]
+Numpy,Core array literacy,"Create a vector from 0 to 10 with step 0.5 (★☆☆)
+Print the result.","Z = np.arange(0, 10.5, 0.5); print(Z)",12,"[ 0.   0.5  1.   1.5  2.   2.5  3.   3.5  4.   4.5  5.   5.5  6.   6.5
+  7.   7.5  8.   8.5  9.   9.5 10. ]"
+Numpy,Core array literacy,"Create a vector of integers 0..9 with dtype int32 (★☆☆)
+Print the result.","Z = np.arange(10, dtype=np.int32); print(Z)",12,[0 1 2 3 4 5 6 7 8 9]
+Numpy,Applied patterns and advanced,"Given a sorted array C that corresponds to a bincount, how to produce an array A such that np.bincount(A) == C? (★★★)
+Print the result.","# Author: Jaime Fernández del Río
+
+C = np.bincount([1,1,2,3,4,4,6])
+A = np.repeat(np.arange(len(C)), C)
+print(A)",85,[1 1 2 3 4 4 6]
+Numpy,Core array literacy,"Create a checkerboard 8x8 matrix using the tile function (★☆☆)
+Print the result.","Z = np.tile( np.array([[0,1],[1,0]]), (4,4))
+print(Z)",20,"[[0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]]"
+Numpy,Vectorization and broadcasting,"Standardize each column of a 2D array (zero mean, unit variance) safely (★★★)
+Print the result.","Z = np.random.randn(5, 4)
+mu = Z.mean(axis=0, keepdims=True)
+sd = Z.std(axis=0, ddof=0, keepdims=True)
+Zz = (Z - mu) / np.where(sd==0, 1, sd)
+print(Zz.mean(0), Zz.std(0))",84,[-3.33066907e-17  4.99600361e-17  1.33226763e-16 -4.44089210e-17] [1. 1. 1. 1.]
+Numpy,Indexing and selection,"Create random vector of size 10 and replace the maximum value by 0 (★★☆)
+Print the result.","Z = np.random.random(10)
+Z[Z.argmax()] = 0
+print(Z)",54,"[0.66063364 0.79044362 0.54555333 0.04633374 0.19438754 0.75637858
+ 0.2545503  0.90759047 0.         0.09505246]"
+Numpy,Vectorization and broadcasting,"Sum each column of a 3x3 matrix (★☆☆)
+Print the result.","Z = np.arange(9).reshape(3,3); print(Z.sum(axis=0))",16,[ 9 12 15]
+Numpy,Core array literacy,Print the numpy version and the configuration (★☆☆),"print(np.__version__) 
+np.show_config()",12,"2.4.2
+Build Dependencies:
+  blas:
+    detection method: pkgconfig
+    found: true
+    include directory: /opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include
+    lib directory: /opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib
+    name: scipy-openblas
+    openblas configuration: OpenBLAS 0.3.31.dev  USE64BITINT DYNAMIC_ARCH NO_AFFINITY
+      Haswell MAX_THREADS=64
+    pc file directory: /project/.openblas
+    version: 0.3.31.dev
+  lapack:
+    detection method: pkgconfig
+    found: true
+    include directory: /opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include
+    lib directory: /opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib
+    name: scipy-openblas
+    openblas configuration: OpenBLAS 0.3.31.dev  USE64BITINT DYNAMIC_ARCH NO_AFFINITY
+      Haswell MAX_THREADS=64
+    pc file directory: /project/.openblas
+    version: 0.3.31.dev
+Compilers:
+  c:
+    commands: cc
+    linker: ld.bfd
+    name: gcc
+    version: 14.2.1
+  c++:
+    commands: c++
+    linker: ld.bfd
+    name: gcc
+    version: 14.2.1
+  cython:
+    commands: cython
+    linker: cython
+    name: cython
+    version: 3.2.4
+Machine Information:
+  build:
+    cpu: x86_64
+    endian: little
+    family: x86_64
+    system: linux
+  host:
+    cpu: x86_64
+    endian: little
+    family: x86_64
+    system: linux
+Python Information:
+  path: /tmp/build-env-jif3r6om/bin/python
+  version: '3.12'
+SIMD Extensions:
+  baseline:
+  - X86_V2
+  found:
+  - X86_V3
+  - X86_V4
+  - AVX512_ICL
+  not found:
+  - AVX512_SPR"
+Numpy,Applied patterns and advanced,"How to get the dates of yesterday, today and tomorrow? (★☆☆)
+Print the result.","yesterday = np.datetime64('today') - np.timedelta64(1)
+today     = np.datetime64('today')
+tomorrow  = np.datetime64('today') + np.timedelta64(1)",34,
+Numpy,Core array literacy,"Import only the `arange` function as `ar` (★☆☆)
+Print the result.",from numpy import arange as ar,10,
+Numpy,Core array literacy,"Convert a list of lists to a numpy array (★☆☆)
+Print the result.","Z = np.array([[1,2],[3,4]]); print(Z)",10,"[[1 2]
+ [3 4]]"
+Numpy,Core array literacy,"Create a vector of ones of size 10 (★☆☆)
+Print the result.",Z = np.ones(10); print(Z),10,[1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+Numpy,Core array literacy,"Import the numpy package under the name `np` (★☆☆)
+Print the result.",import numpy as np,10,
+Numpy,Core array literacy,"Create a null vector of size 10 (★☆☆)
+Print the result.","Z = np.zeros(10)
+print(Z)",10,[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+Numpy,Core array literacy,"Create a 3x3 identity matrix (★☆☆)
+Print the result.","Z = np.eye(3)
+print(Z)",12,"[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]"
+Numpy,Core array literacy,"Create a vector with values ranging from 10 to 49 (★☆☆)
+Print the result.","Z = np.arange(10,50)
+print(Z)",12,"[10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
+ 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49]"
+Numpy,Core array literacy,"Cast an integer array to float32 (★☆☆)
+Print the result.",Z = np.arange(5); print(Z.astype(np.float32)),12,[0. 1. 2. 3. 4.]
+Numpy,Core array literacy,"Set elements 3..7 of a zero vector to 5 (★☆☆)
+Print the result.",Z = np.zeros(10); Z[3:8] = 5; print(Z),12,[0. 0. 0. 5. 5. 5. 5. 5. 0. 0.]
+Numpy,Indexing and selection,"Create mask for multiples of 3 from 0..29 (★☆☆)
+Print the result.",Z = np.arange(30); print(Z % 3 == 0),12,"[ True False False  True False False  True False False  True False False
+  True False False  True False False  True False False  True False False
+  True False False  True False False]"
+Numpy,Core array literacy,"Reverse a vector (first element becomes last) (★☆☆)
+Print the result.","Z = np.arange(50)
+Z = Z[::-1]
+print(Z)",12,"[49 48 47 46 45 44 43 42 41 40 39 38 37 36 35 34 33 32 31 30 29 28 27 26
+ 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2
+  1  0]"
+Numpy,Vectorization and broadcasting,"Compute cumulative sum of a vector 0..4 (★☆☆)
+Print the result.",Z = np.arange(5); print(np.cumsum(Z)),14,[ 0  1  3  6 10]
+Numpy,Vectorization and broadcasting,"Sort a random vector of size 10 in-place (★☆☆)
+Print the result.",Z = np.random.random(10); Z.sort(); print(Z),14,"[0.0258762  0.18621817 0.29411985 0.30254315 0.41550968 0.45174497
+ 0.5312839  0.53241641 0.62399452 0.65391156]"
+Numpy,Indexing and selection,"Create a mask of values > 0.5 in a random 3x3 array (★☆☆)
+Print the result.","Z = np.random.random((3,3)); print(Z > 0.5)",16,"[[False  True False]
+ [False  True  True]
+ [ True  True False]]"
+Numpy,Indexing and selection,"Compute the trace of a 4x4 random matrix (★☆☆)
+Print the result.","Z = np.random.random((4,4)); print(np.trace(Z))",18,1.0502694024089547
+Numpy,Core array literacy,"Stack two 2x2 arrays vertically and horizontally (★☆☆)
+Print the result.","a = np.ones((2,2)); b = np.zeros((2,2)); print(np.vstack([a,b])); print(np.hstack([a,b]))",20,"[[1. 1.]
+ [1. 1.]
+ [0. 0.]
+ [0. 0.]]
+[[1. 1. 0. 0.]
+ [1. 1. 0. 0.]]"
+Numpy,Applied patterns and advanced,"Multiply a 5x3 matrix by a 3x2 matrix (real matrix product) (★☆☆)
+Print the result.","Z = np.matmul(np.ones((5, 3)), np.ones((3, 2)))
+print(Z)
+
+# Alternative solution, in Python 3.5 and above
+Z = np.ones((5,3)) @ np.ones((3,2))
+print(Z)",26,"[[3. 3.]
+ [3. 3.]
+ [3. 3.]
+ [3. 3.]
+ [3. 3.]]
+[[3. 3.]
+ [3. 3.]
+ [3. 3.]
+ [3. 3.]
+ [3. 3.]]"
+Numpy,Vectorization and broadcasting,"How to round away from zero a float array ? (★☆☆)
+Print the result.","# Author: Charles R Harris
+
+Z = np.random.uniform(-10,+10,10)
+print(np.copysign(np.ceil(np.abs(Z)), Z))
+
+# More readable but less efficient
+print(np.where(Z>0, np.ceil(Z), np.floor(Z)))",30,"[ 1.  7.  5.  5. -6. -9.  3. -5. -1. -8.]
+[ 1.  7.  5.  5. -6. -9.  3. -5. -1. -8.]"
+Numpy,Indexing and selection,"How to find common values between two arrays? (★☆☆)
+Print the result.","Z1 = np.random.randint(0,10,10)
+Z2 = np.random.randint(0,10,10)
+print(np.intersect1d(Z1,Z2))",30,[0 4 7]
+Numpy,Core array literacy,"Create a vector of size 10 with values ranging from 0 to 1, both excluded (★★☆)
+Print the result.","Z = np.linspace(0,1,11,endpoint=False)[1:]
+print(Z)",46,"[0.09090909 0.18181818 0.27272727 0.36363636 0.45454545 0.54545455
+ 0.63636364 0.72727273 0.81818182 0.90909091]"
