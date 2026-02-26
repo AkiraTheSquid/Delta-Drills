@@ -95,6 +95,28 @@ async function supabaseGetSession() {
   return data?.session || null;
 }
 
+// --- Session sync (deployed) ---
+
+(async () => {
+  try {
+    const session = await supabaseGetSession();
+    if (session?.access_token) {
+      if (typeof setAuthState === "function") {
+        setAuthState(session.access_token, session.user?.email || "");
+      }
+    } else if (localStorage.getItem("auth_token") === "supabase_session") {
+      if (typeof setAuthState === "function") {
+        setAuthState("", "");
+      } else {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_email");
+      }
+    }
+  } catch (e) {
+    console.warn("Supabase session sync failed:", e);
+  }
+})();
+
 // --- Practice state persistence (Supabase) ---
 
 async function loadPracticeStateFromSupabase(email) {
