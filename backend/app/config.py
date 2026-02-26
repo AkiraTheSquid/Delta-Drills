@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     openai_model: str | None = None
     mathpix_app_id: str | None = None
     mathpix_app_key: str | None = None
+    supabase_url: str = "https://qaxtcaoydbpigomnfjpl.supabase.co"
+    supabase_service_role_key: str = ""
+    user_data_dir: str = ""  # Override for deployed envs (e.g. /data/user_data on Fly.io)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

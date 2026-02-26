@@ -1,0 +1,18 @@
+# Exclude everything by default, then whitelist what the backend needs
+*
+
+# Backend application
+!backend/
+backend/.venv
+backend/user_data
+backend/uvicorn.log
+
+# Question CSVs (loaded at startup)
+!csv files of problems/
+
+# Question JSON
+!questions.json
+
+# Root-level scripts imported by backend
+!split_LADR4e_chapters.py
+!glossary_to_csv.py

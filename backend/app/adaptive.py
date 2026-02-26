@@ -109,8 +109,13 @@ class UserPracticeState:
 # ---------------------------------------------------------------------------
 _user_states: Dict[str, UserPracticeState] = {}
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "user_data"
-DATA_DIR.mkdir(exist_ok=True)
+from app.config import settings as _settings
+DATA_DIR = (
+    Path(_settings.user_data_dir)
+    if _settings.user_data_dir
+    else Path(__file__).resolve().parent.parent / "user_data"
+)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def _state_file(user_id: str) -> Path:
