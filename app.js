@@ -204,7 +204,7 @@ signupForm.addEventListener("submit", async (event) => {
 
 // --- Account settings ---
 
-accountForm.addEventListener("submit", (event) => {
+accountForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const apiBase = document.getElementById("account-api-base").value.trim();
   const openaiKey = document.getElementById("account-openai-key").value.trim();
@@ -221,8 +221,14 @@ accountForm.addEventListener("submit", (event) => {
   localStorage.setItem("account_openai_key", openaiKey);
   localStorage.setItem("account_mathpix_id", mathpixId);
   localStorage.setItem("account_mathpix_key", mathpixKey);
-  accountMessage.textContent = "Saved locally in this browser.";
-  setTimeout(() => (accountMessage.textContent = ""), 1500);
+
+  if (typeof saveUserSettingsToSupabase === "function" && authEmail) {
+    const saved = await saveUserSettingsToSupabase(authEmail, openaiKey);
+    accountMessage.textContent = saved ? "Saved to your account." : "Saved locally in this browser.";
+  } else {
+    accountMessage.textContent = "Saved locally in this browser.";
+  }
+  setTimeout(() => (accountMessage.textContent = ""), 2000);
 });
 
 // Load saved account settings into form

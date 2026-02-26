@@ -95,6 +95,39 @@ async function supabaseGetSession() {
   return data?.session || null;
 }
 
+// --- User settings persistence (Supabase) ---
+
+async function saveUserSettingsToSupabase(email, openaiKey) {
+  const sb = getSupabaseClient();
+  if (!sb || !email) return false;
+  const { error } = await sb
+    .from("user_settings")
+    .upsert(
+      { user_email: email, openai_api_key: openaiKey, updated_at: new Date().toISOString() },
+      { onConflict: "user_email" }
+    );
+  if (error) {
+    console.error("Failed to save user settings to Supabase:", error);
+    return false;
+  }
+  return true;
+}
+
+async function loadUserSettingsFromSupabase(email) {
+  const sb = getSupabaseClient();
+  if (!sb || !email) return null;
+  const { data, error } = await sb
+    .from("user_settings")
+    .select("openai_api_key")
+    .eq("user_email", email)
+    .maybeSingle();
+  if (error) {
+    console.error("Failed to load user settings from Supabase:", error);
+    return null;
+  }
+  return data?.openai_api_key || null;
+}
+
 // --- Session sync (deployed) ---
 
 (async () => {
@@ -103,6 +136,16 @@ async function supabaseGetSession() {
     if (session?.access_token) {
       if (typeof setAuthState === "function") {
         setAuthState(session.access_token, session.user?.email || "");
+      }
+      // Populate the OpenAI key field from Supabase user_settings
+      const email = session.user?.email || "";
+      if (email) {
+        const key = await loadUserSettingsFromSupabase(email);
+        if (key) {
+          localStorage.setItem("account_openai_key", key);
+          const keyInput = document.getElementById("account-openai-key");
+          if (keyInput) keyInput.value = key;
+        }
       }
     } else if (localStorage.getItem("auth_token") === "supabase_session") {
       if (typeof setAuthState === "function") {
