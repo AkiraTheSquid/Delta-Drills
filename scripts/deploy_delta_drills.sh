@@ -83,7 +83,12 @@ fi
 
 info "Merging main into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
-git -C "$DEPLOY_DIR" merge main --no-edit
+if ! git -C "$DEPLOY_DIR" merge main --no-edit -X theirs; then
+  warn "Merge conflict detected — aborting and retrying with a clean worktree..."
+  git -C "$DEPLOY_DIR" merge --abort || true
+  git -C "$DEPLOY_DIR" reset --hard
+  git -C "$DEPLOY_DIR" merge main --no-edit -X theirs
+fi
 
 # Remove backend/ and Fly.io config from deploy branch — Vercel serves frontend only
 DEPLOY_REMOVED=0
