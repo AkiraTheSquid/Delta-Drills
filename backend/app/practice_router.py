@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import logging
 import random
-from pathlib import Path
 from typing import List
 
 from openai import OpenAI
@@ -57,46 +56,34 @@ from app.questions import (
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# ChatGPT module helper — replicates ChatGPT.py's key-loading and API-call
-# algorithm so endpoints can run in parallel without shared file I/O.
+# ChatGPT module helper
 # ---------------------------------------------------------------------------
 
-_CHATGPT_DIR = Path(__file__).parent.parent.parent / "chatgpt"
-
-
-def _load_chatgpt_api_key() -> str:
-    """Load the OpenAI API key using ChatGPT.py's priority chain."""
+def _load_chatgpt_api_key(user: "User") -> str:
+    """
+    Load the OpenAI API key for the given user from the local PostgreSQL users table.
+    Falls back to the OPENAI_API_KEY env var or backend .env setting.
+    """
     import os
+    if user.openai_api_key:
+        return user.openai_api_key
     key = os.environ.get("OPENAI_API_KEY", "").strip()
     if key:
         return key
-    for name in ("api_key.txt", ".openai_key"):
-        p = _CHATGPT_DIR / name
-        if p.is_file():
-            content = p.read_text(encoding="utf-8").strip()
-            if content:
-                return content
-    env_p = _CHATGPT_DIR / ".env"
-    if env_p.is_file():
-        for line in env_p.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.split("=")[0].strip() == "OPENAI_API_KEY":
-                value = "=".join(line.split("=")[1:]).strip().strip('"').strip("'")
-                if value:
-                    return value
-    raise ValueError("No OpenAI API key found in chatgpt directory.")
+    from app.config import settings
+    if settings.openai_api_key:
+        return settings.openai_api_key
+    raise ValueError(f"No OpenAI API key set for user '{user.email}'. Add it via the API settings.")
 
 
-def _call_chatgpt(prompt: str, model: str) -> str:
+def _call_chatgpt(prompt: str, model: str, user: "User" = None) -> str:
     """
     Call OpenAI using ChatGPT.py's algorithm:
       1. Try the Responses API first.
       2. Fall back to Chat Completions.
     Temperature 1 matches ChatGPT.py's default.
     """
-    api_key = _load_chatgpt_api_key()
+    api_key = _load_chatgpt_api_key(user)
     client = OpenAI(api_key=api_key)
     try:
         resp = client.responses.create(model=model, input=prompt, temperature=1)
@@ -257,7 +244,7 @@ def submit_answer(
         "Does the student's code correctly implement the concept? Reply 1 or 0 only."
     )
     try:
-        raw = _call_chatgpt(judge_prompt, model="gpt-4o-mini").strip()
+        raw = _call_chatgpt(judge_prompt, model="gpt-4o-mini", user=user).strip()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -440,7 +427,7 @@ def ai_explanation(
         "4. Any tips or insights worth noting about this type of problem"
     )
     try:
-        explanation = _call_chatgpt(prompt, model="gpt-4o")
+        explanation = _call_chatgpt(prompt, model="gpt-4o", user=user)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -452,6 +439,7 @@ def ai_explanation(
 @router.post("/ai-judge", response_model=AIJudgeResponse)
 def ai_judge(
     payload: AIExplanationRequest,
+    user: User = Depends(get_current_user),
 ) -> AIJudgeResponse:
     """
     Binary correctness judge. Outputs '1' if the student's solution demonstrates
@@ -479,7 +467,7 @@ def ai_judge(
         "Does the student's code correctly implement the concept? Reply 1 or 0 only."
     )
     try:
-        raw = _call_chatgpt(prompt, model="gpt-4o-mini").strip()
+        raw = _call_chatgpt(prompt, model="gpt-4o-mini", user=user).strip()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,

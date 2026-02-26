@@ -1,3 +1,7 @@
+-- Auth and job tables for the deployed backend (Fly.io).
+-- These mirror the local PostgreSQL schema so the FastAPI backend
+-- can use Supabase PostgreSQL as its database in production.
+
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS users (

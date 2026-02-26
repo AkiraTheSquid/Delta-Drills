@@ -85,15 +85,39 @@ info "Merging main into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
 git -C "$DEPLOY_DIR" merge main --no-edit
 
+# Remove backend/ and Fly.io config from deploy branch — Vercel serves frontend only
+DEPLOY_REMOVED=0
+for item in backend/ Dockerfile fly.toml; do
+  if git -C "$DEPLOY_DIR" ls-files --error-unmatch "$item" >/dev/null 2>&1; then
+    git -C "$DEPLOY_DIR" rm -rf "$item"
+    DEPLOY_REMOVED=1
+  fi
+done
+if [ "$DEPLOY_REMOVED" -eq 1 ]; then
+  info "Removing backend/Dockerfile/fly.toml from deploy branch (frontend only)..."
+  git -C "$DEPLOY_DIR" commit -m "chore: remove backend and Fly.io config from deploy branch"
+fi
+
 # --- Step 5: Push deploy to origin (triggers Vercel) ---
 
 info "Pushing deploy to origin..."
 git -C "$DEPLOY_DIR" push origin deploy
 
+# --- Step 6: Deploy backend to Fly.io ---
+
+FLYCTL="${HOME}/.fly/bin/flyctl"
+if [ -f "$FLYCTL" ] || command -v flyctl >/dev/null 2>&1; then
+  FLYCTL="${FLYCTL:-flyctl}"
+  info "Deploying backend to Fly.io..."
+  (cd "$REPO_DIR" && "$FLYCTL" deploy --ha=false)
+else
+  warn "flyctl not found — skipping Fly.io deploy."
+  warn "Install: curl -L https://fly.io/install.sh | sh"
+fi
+
 echo ""
 echo -e "${GREEN}======================================${NC}"
 echo -e "${GREEN}  Deploy complete!${NC}"
-echo -e "${GREEN}  Vercel will auto-deploy from the${NC}"
-echo -e "${GREEN}  deploy branch.${NC}"
-echo -e "${GREEN}  ${VERCEL_URL}${NC}"
+echo -e "${GREEN}  Vercel:  ${VERCEL_URL}${NC}"
+echo -e "${GREEN}  Backend: https://delta-drills-backend.fly.dev${NC}"
 echo -e "${GREEN}======================================${NC}"

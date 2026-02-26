@@ -14,6 +14,9 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    openai_api_key = Column(Text, nullable=True)
+    mathpix_app_id = Column(Text, nullable=True)
+    mathpix_app_key = Column(Text, nullable=True)
 
     jobs = relationship("Job", back_populates="user", cascade="all, delete-orphan")
 
