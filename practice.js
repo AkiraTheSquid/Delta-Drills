@@ -783,7 +783,7 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
-  if (practiceMode === "backend") {
+  if (practiceMode === "backend" || practiceMode === "supabase") {
     aiExplanationSection.classList.remove("hidden");
     aiExplanationText.textContent = "Loading explanation...";
     fetchAIExplanation(q.question_text, solCode, userCode, actualOutput, expectedOutput);
