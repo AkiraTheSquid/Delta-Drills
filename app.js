@@ -113,7 +113,7 @@ loginForm.addEventListener("submit", async (event) => {
       const data = await supabaseSignIn(email, password);
       loginMessage.textContent = "Logged in!";
       loginForm.reset();
-      setAuthState(data.session?.access_token || "supabase_session", email);
+      setAuthState(data.session?.access_token || "", email);
     } else {
       // Fallback to local backend
       const response = await fetch(`${API_BASE}/auth/login`, {
@@ -179,7 +179,7 @@ signupForm.addEventListener("submit", async (event) => {
       }
       signupMessage.textContent = "Account created!";
       signupForm.reset();
-      setAuthState(data.session?.access_token || "supabase_session", email);
+      setAuthState(data.session?.access_token || "", email);
     } else {
       // Fallback to local backend
       const response = await fetch(`${API_BASE}/auth/signup`, {
