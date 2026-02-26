@@ -1,18 +1,20 @@
 from datetime import datetime, timedelta
-from functools import lru_cache
 from typing import Any
+import json
+import secrets
+import urllib.request
+import urllib.error
+from uuid import UUID
 
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from uuid import UUID
 
 from app.config import settings
 from app.db import get_db
 from app.models import User
-import secrets
 
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -33,28 +35,33 @@ def create_access_token(subject: str) -> str:
     return jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
 
 
-@lru_cache(maxsize=1)
-def _supabase_jwk_client() -> jwt.PyJWKClient:
-    jwks_url = f"{settings.supabase_url}/auth/v1/keys"
-    return jwt.PyJWKClient(jwks_url)
-
-
 def _decode_supabase_token(token: str) -> dict[str, Any]:
+    """
+    Validate a Supabase user JWT by calling the Supabase /auth/v1/user endpoint.
+    Returns a dict with 'sub' (user UUID) and 'email'.
+    """
+    url = f"{settings.supabase_url}/auth/v1/user"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "apikey": settings.supabase_service_role_key,
+        },
+    )
     try:
-        signing_key = _supabase_jwk_client().get_signing_key_from_jwt(token)
-        payload = jwt.decode(
-            token,
-            signing_key.key,
-            algorithms=["RS256"],
-            options={"verify_aud": False},
-        )
-    except jwt.PyJWTError as exc:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as exc:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token") from exc
-    issuer = payload.get("iss")
-    expected_issuer = f"{settings.supabase_url}/auth/v1"
-    if issuer != expected_issuer:
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token") from exc
+
+    user_id = data.get("id", "")
+    email = (data.get("email") or "").lower().strip()
+    if not user_id or not email:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    return payload
+
+    return {"sub": user_id, "email": email}
 
 
 def get_current_user(
