@@ -255,6 +255,42 @@
   top: 12px;
 }
 
+/* EWMA Accuracy Bar */
+.ewma-accuracy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.ewma-accuracy-label {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  flex: 1;
+}
+
+.ewma-accuracy-track {
+  width: 140px !important;
+  flex-shrink: 0;
+}
+
+.ewma-accuracy-fill {
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ewma-accuracy-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  min-width: 44px;
+  text-align: right;
+}
+
 /* Submit Button */
 .practice-submit-btn {
   width: 100%;

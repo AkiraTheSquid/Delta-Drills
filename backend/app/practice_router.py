@@ -318,6 +318,7 @@ def submit_feedback(
     return FeedbackResponse(
         success=True,
         target_difficulty_after=attempt.target_difficulty_after or 0.0,
+        p_after=attempt.p_after or 0.0,
     )
 
 

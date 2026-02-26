@@ -43,6 +43,7 @@ class FeedbackRequest(BaseModel):
 class FeedbackResponse(BaseModel):
     success: bool
     target_difficulty_after: float
+    p_after: float = 0.0   # EWMA correctness rate (0–1) after this attempt
 
 
 class OverrideAttemptRequest(BaseModel):
