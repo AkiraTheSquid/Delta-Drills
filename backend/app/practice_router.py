@@ -18,6 +18,9 @@ from typing import List
 from openai import OpenAI
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+from app.db import get_db
 
 from app.adaptive import (
     apply_feedback,
@@ -59,14 +62,24 @@ logger = logging.getLogger(__name__)
 # ChatGPT module helper
 # ---------------------------------------------------------------------------
 
-def _load_chatgpt_api_key(user: "User") -> str:
+def _load_chatgpt_api_key(user: "User", db: Session | None = None) -> str:
     """
-    Load the OpenAI API key for the given user from the local PostgreSQL users table.
-    Falls back to the OPENAI_API_KEY env var or backend .env setting.
+    Load the OpenAI API key for the given user.
+    Checks (in order): users.openai_api_key, user_settings table, OPENAI_API_KEY env var, settings.
     """
     import os
     if user.openai_api_key:
         return user.openai_api_key
+    if db is not None:
+        try:
+            row = db.execute(
+                text("SELECT openai_api_key FROM user_settings WHERE user_email = :email"),
+                {"email": user.email},
+            ).fetchone()
+            if row and row[0]:
+                return row[0]
+        except Exception:
+            pass
     key = os.environ.get("OPENAI_API_KEY", "").strip()
     if key:
         return key
@@ -76,14 +89,14 @@ def _load_chatgpt_api_key(user: "User") -> str:
     raise ValueError(f"No OpenAI API key set for user '{user.email}'. Add it via the API settings.")
 
 
-def _call_chatgpt(prompt: str, model: str, user: "User" = None) -> str:
+def _call_chatgpt(prompt: str, model: str, user: "User" = None, db: Session | None = None) -> str:
     """
     Call OpenAI using ChatGPT.py's algorithm:
       1. Try the Responses API first.
       2. Fall back to Chat Completions.
     Temperature 1 matches ChatGPT.py's default.
     """
-    api_key = _load_chatgpt_api_key(user)
+    api_key = _load_chatgpt_api_key(user, db)
     client = OpenAI(api_key=api_key)
     try:
         resp = client.responses.create(model=model, input=prompt, temperature=1)
@@ -399,6 +412,7 @@ def run_code_endpoint(
 def ai_explanation(
     payload: AIExplanationRequest,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ) -> AIExplanationResponse:
     """
     Generate an AI explanation using the ChatGPT module algorithm.
@@ -427,7 +441,7 @@ def ai_explanation(
         "4. Any tips or insights worth noting about this type of problem"
     )
     try:
-        explanation = _call_chatgpt(prompt, model="gpt-4o", user=user)
+        explanation = _call_chatgpt(prompt, model="gpt-4o", user=user, db=db)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -440,6 +454,7 @@ def ai_explanation(
 def ai_judge(
     payload: AIExplanationRequest,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ) -> AIJudgeResponse:
     """
     Binary correctness judge. Outputs '1' if the student's solution demonstrates
@@ -467,7 +482,7 @@ def ai_judge(
         "Does the student's code correctly implement the concept? Reply 1 or 0 only."
     )
     try:
-        raw = _call_chatgpt(prompt, model="gpt-4o-mini", user=user).strip()
+        raw = _call_chatgpt(prompt, model="gpt-4o-mini", user=user, db=db).strip()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,

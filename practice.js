@@ -761,7 +761,15 @@ async function fetchAIJudge(questionText, solCode, userCode, actualOutput, expec
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   const userCode = codeEditor.value;
-  const result = await PracticeAPI.submitAnswer(q.question_id, userCode);
+  practiceSubmitBtn.disabled = true;
+  let result;
+  try {
+    result = await PracticeAPI.submitAnswer(q.question_id, userCode);
+  } catch (err) {
+    outputArea.textContent = "Submit failed: " + err.message;
+    practiceSubmitBtn.disabled = false;
+    return;
+  }
 
   const solCode = q.solution_code || result.solution_code || "";
   const actualOutput = result.actual_output || "";
