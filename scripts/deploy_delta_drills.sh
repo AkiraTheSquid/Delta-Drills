@@ -21,7 +21,11 @@ VERCEL_URL="https://delta-drills.vercel.app"
 # same file but the deploy branch may have additions that haven't landed in main.
 # See scripts/STORAGE-ARCHITECTURE.txt for the full pattern.
 DEPLOY_PROTECTED_FILES=(
-  "supabase-practice.js"
+  # Add truly deploy-only files here — files that exist only in deploy and
+  # have no equivalent in main. Do NOT add files that are actively maintained
+  # in main (like supabase-practice.js), as the protection would block main's
+  # changes from reaching deploy.
+  # See scripts/STORAGE-ARCHITECTURE.txt for the full pattern.
 )
 
 RED='\033[0;31m'
