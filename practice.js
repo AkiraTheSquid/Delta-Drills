@@ -188,6 +188,18 @@ function getTargetDifficultyFromAdaptiveState(subtopic) {
   }
 }
 
+function getEwmaFromAdaptiveState(subtopic) {
+  if (!adaptiveStateJson || !subtopic) return null;
+  try {
+    const state = JSON.parse(adaptiveStateJson);
+    const subState = state?.subtopic_states?.[subtopic];
+    const value = subState?.p;
+    return Number.isFinite(value) ? value : null;
+  } catch (_err) {
+    return null;
+  }
+}
+
 // --- Progress persistence (question count, etc.) ---
 
 const getPracticeStorageKey = () => {
@@ -413,6 +425,10 @@ const targetDifficultyMarkerNew = document.getElementById("target-difficulty-mar
 const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
 const practiceSubmitBtn = document.getElementById("practice-submit-btn");
+const ewmaAccuracy = document.getElementById("ewma-accuracy");
+const ewmaAccuracyLabel = document.getElementById("ewma-accuracy-label");
+const ewmaAccuracyFill = document.getElementById("ewma-accuracy-fill");
+const ewmaAccuracyValue = document.getElementById("ewma-accuracy-value");
 const practiceFeedbackArea = document.getElementById("practice-feedback-area");
 const resultBadge = document.getElementById("result-badge");
 const overrideRow = document.getElementById("override-row");
@@ -542,6 +558,8 @@ function renderQuestion(q, count) {
   practiceSubmitArea.classList.remove("hidden");
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
+  ewmaAccuracy.classList.add("hidden");
+  ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
 
   // Reset AI explanation
@@ -675,6 +693,24 @@ function showNextProblemButton() {
   nextProblemBtn.classList.remove("hidden");
 }
 
+function shortSubtopicName(subtopic) {
+  if (!subtopic) return subtopic;
+  const colon = subtopic.indexOf(": ");
+  return colon >= 0 ? subtopic.slice(colon + 2) : subtopic;
+}
+
+function showEwmaAccuracy(p, subtopic) {
+  if (!Number.isFinite(p)) return;
+  const pct = Math.round(p * 1000) / 10; // one decimal place
+  ewmaAccuracyLabel.textContent = shortSubtopicName(subtopic) + " accuracy";
+  ewmaAccuracyValue.textContent = pct.toFixed(1) + "%";
+  ewmaAccuracy.classList.remove("hidden");
+  // Trigger CSS transition by setting width after a microtask
+  requestAnimationFrame(() => {
+    ewmaAccuracyFill.style.width = pct + "%";
+  });
+}
+
 function applyPendingFeedbackState(pending) {
   practiceSubmitArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("hidden");
@@ -682,6 +718,9 @@ function applyPendingFeedbackState(pending) {
   overrideRow.classList.add("hidden");
   showNextProblemButton();
   setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
+  if (Number.isFinite(pending.pAfter)) {
+    showEwmaAccuracy(pending.pAfter, pending.subtopic);
+  }
 }
 
 // --- AI helpers ---
@@ -821,6 +860,10 @@ feedbackButtons.forEach((btn) => {
       ? backendTarget
       : (getTargetDifficultyFromAdaptiveState(q.subtopic) ?? oldTarget);
 
+    const pAfter = Number.isFinite(response?.p_after)
+      ? response.p_after
+      : getEwmaFromAdaptiveState(q.subtopic);
+
     if (!practiceProgress.completedQuestionIds.includes(q.question_id)) {
       practiceProgress.completedQuestionIds.push(q.question_id);
     }
@@ -829,6 +872,9 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
+    if (Number.isFinite(pAfter)) {
+      showEwmaAccuracy(pAfter, q.subtopic);
+    }
 
     practiceProgress.pendingFeedback = {
       questionId: q.question_id,
@@ -836,6 +882,7 @@ feedbackButtons.forEach((btn) => {
       oldTarget,
       newTarget,
       correct: !!practiceProgress.lastResultCorrect,
+      pAfter,
     };
     savePracticeProgress(practiceProgress);
   });
@@ -850,6 +897,8 @@ nextProblemBtn.addEventListener("click", async () => {
   // Reset to pre-submit state (ready for next question)
   practiceSubmitArea.classList.remove("hidden");
   practiceFeedbackArea.classList.add("hidden");
+  ewmaAccuracy.classList.add("hidden");
+  ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
 
   // Reset code editor
