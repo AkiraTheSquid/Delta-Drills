@@ -223,7 +223,7 @@ accountForm.addEventListener("submit", async (event) => {
   localStorage.setItem("account_mathpix_key", mathpixKey);
 
   if (typeof saveUserSettingsToSupabase === "function" && authEmail) {
-    const saved = await saveUserSettingsToSupabase(authEmail, openaiKey);
+    const saved = await saveUserSettingsToSupabase(authEmail, openaiKey, mathpixId, mathpixKey);
     accountMessage.textContent = saved ? "Saved to your account." : "Saved locally in this browser.";
   } else {
     accountMessage.textContent = "Saved locally in this browser.";

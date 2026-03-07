@@ -97,13 +97,19 @@ async function supabaseGetSession() {
 
 // --- User settings persistence (Supabase) ---
 
-async function saveUserSettingsToSupabase(email, openaiKey) {
+async function saveUserSettingsToSupabase(email, openaiKey, mathpixAppId, mathpixAppKey) {
   const sb = getSupabaseClient();
   if (!sb || !email) return false;
   const { error } = await sb
     .from("user_settings")
     .upsert(
-      { user_email: email, openai_api_key: openaiKey, updated_at: new Date().toISOString() },
+      {
+        user_email: email,
+        openai_api_key: openaiKey,
+        mathpix_app_id: mathpixAppId || null,
+        mathpix_app_key: mathpixAppKey || null,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: "user_email" }
     );
   if (error) {
@@ -118,14 +124,14 @@ async function loadUserSettingsFromSupabase(email) {
   if (!sb || !email) return null;
   const { data, error } = await sb
     .from("user_settings")
-    .select("openai_api_key")
+    .select("openai_api_key, mathpix_app_id, mathpix_app_key")
     .eq("user_email", email)
     .maybeSingle();
   if (error) {
     console.error("Failed to load user settings from Supabase:", error);
     return null;
   }
-  return data?.openai_api_key || null;
+  return data || null;
 }
 
 // --- Session sync (deployed) ---
@@ -137,14 +143,24 @@ async function loadUserSettingsFromSupabase(email) {
       if (typeof setAuthState === "function") {
         setAuthState(session.access_token, session.user?.email || "");
       }
-      // Populate the OpenAI key field from Supabase user_settings
+      // Populate account settings fields from Supabase user_settings
       const email = session.user?.email || "";
       if (email) {
-        const key = await loadUserSettingsFromSupabase(email);
-        if (key) {
-          localStorage.setItem("account_openai_key", key);
-          const keyInput = document.getElementById("account-openai-key");
-          if (keyInput) keyInput.value = key;
+        const settings = await loadUserSettingsFromSupabase(email);
+        if (settings?.openai_api_key) {
+          localStorage.setItem("account_openai_key", settings.openai_api_key);
+          const el = document.getElementById("account-openai-key");
+          if (el) el.value = settings.openai_api_key;
+        }
+        if (settings?.mathpix_app_id) {
+          localStorage.setItem("account_mathpix_id", settings.mathpix_app_id);
+          const el = document.getElementById("account-mathpix-id");
+          if (el) el.value = settings.mathpix_app_id;
+        }
+        if (settings?.mathpix_app_key) {
+          localStorage.setItem("account_mathpix_key", settings.mathpix_app_key);
+          const el = document.getElementById("account-mathpix-key");
+          if (el) el.value = settings.mathpix_app_key;
         }
       }
     } else if (localStorage.getItem("auth_token") === "supabase_session") {
