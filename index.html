@@ -7,8 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles/variables.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/layout.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/stats.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
   <link rel="stylesheet" href="practice.css" />
+  <link rel="stylesheet" href="practice/bars.css" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -176,8 +182,18 @@
               </label>
             </div>
             <div class="timer-controls hidden" id="timer-controls">
-              <button class="timer-play-btn" id="timer-play-btn" type="button">&#9654;</button>
-              <div class="timer-display" id="timer-display">00:10</div>
+              <input
+                class="timer-input"
+                id="timer-input"
+                type="text"
+                inputmode="numeric"
+                value="00:10"
+                aria-label="Timer duration"
+              />
+            </div>
+            <div class="question-meta-top hidden" id="question-meta-top">
+              <span class="subtopic-label" id="subtopic-label"></span>
+              <span class="difficulty-label" id="difficulty-label"></span>
             </div>
           </div>
 
@@ -213,16 +229,27 @@
               </button>
             </div>
             <div class="ewma-accuracy hidden" id="ewma-accuracy">
-              <div class="ewma-accuracy-label" id="ewma-accuracy-label">Accuracy</div>
+              <div class="bar-header-row">
+                <div class="ewma-accuracy-label" id="ewma-accuracy-label">Accuracy</div>
+                <div class="ewma-accuracy-value" id="ewma-accuracy-value">0%</div>
+              </div>
               <div class="stats-bar-track ewma-accuracy-track">
                 <div class="stats-bar-fill ewma-accuracy-fill" id="ewma-accuracy-fill" style="width:0%"></div>
+                <div class="target-difficulty-delta hidden" id="ewma-accuracy-delta"></div>
+                <div class="target-difficulty-marker" id="ewma-accuracy-marker-old">
+                  <div class="target-difficulty-line"></div>
+                </div>
+                <div class="target-difficulty-marker hidden" id="ewma-accuracy-marker-new">
+                  <div class="target-difficulty-line"></div>
+                </div>
               </div>
-              <div class="ewma-accuracy-value" id="ewma-accuracy-value">0%</div>
             </div>
             <div class="question-meta-row">
-              <span class="subtopic-label" id="subtopic-label"></span>
               <div class="target-difficulty" id="target-difficulty">
-                <div class="target-difficulty-title" id="target-difficulty-title">Old target difficulty = 0.0</div>
+                <div class="bar-header-row">
+                  <div class="target-difficulty-title" id="target-difficulty-title">Target difficulty</div>
+                  <div class="target-difficulty-value" id="target-difficulty-value">Old 0.0</div>
+                </div>
                 <div class="stats-bar-track target-difficulty-track">
                   <div class="stats-bar-fill" id="target-difficulty-fill"></div>
                   <div class="target-difficulty-delta hidden" id="target-difficulty-delta"></div>
@@ -236,7 +263,6 @@
                   </div>
                 </div>
               </div>
-              <span class="difficulty-label" id="difficulty-label"></span>
             </div>
             <div class="solution-section">
               <div class="solution-label">Solution</div>
@@ -434,7 +460,28 @@ np.random.seed(0)
   <script src="app.js?v=2"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js"></script>
+  <script src="practice/config.js"></script>
+  <script src="practice/mode.js"></script>
+  <script src="practice/questions.js"></script>
+  <script src="practice/engine.js"></script>
+  <script src="practice/adaptive.js"></script>
+  <script src="practice/storage.js"></script>
+  <script src="practice/dom.js"></script>
+  <script src="practice/bars.js"></script>
+  <script src="practice/ui.js"></script>
+  <script src="practice/ai.js"></script>
+  <script src="practice/api.js"></script>
+  <script src="practice/timer.js"></script>
+  <script src="practice/runner.js"></script>
+  <script src="practice/events.js"></script>
+  <script src="practice/init.js"></script>
   <script src="practice.js?v=4"></script>
+  <script src="stats/dom.js"></script>
+  <script src="stats/weights.js"></script>
+  <script src="stats/data.js"></script>
+  <script src="stats/render.js"></script>
+  <script src="stats/graph.js"></script>
+  <script src="stats/init.js"></script>
   <script src="stats.js?v=6"></script>
 </body>
 </html>

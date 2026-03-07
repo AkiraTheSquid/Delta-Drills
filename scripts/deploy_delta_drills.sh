@@ -16,6 +16,14 @@ REPO_DIR="/home/stellar-thread/Applications/Delta-Drills-Local"
 DEPLOY_DIR="/home/stellar-thread/Applications/Delta-Drills-Deployed"
 VERCEL_URL="https://delta-drills.vercel.app"
 
+# Files whose deployed version must never be overwritten by a merge from main.
+# These files implement Supabase storage for the deployed app; main carries the
+# same file but the deploy branch may have additions that haven't landed in main.
+# See scripts/STORAGE-ARCHITECTURE.txt for the full pattern.
+DEPLOY_PROTECTED_FILES=(
+  "supabase-practice.js"
+)
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -83,24 +91,54 @@ fi
 
 info "Merging main into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
+
+# Save deploy-protected files before the merge so they can be restored if main overwrites them
+for _f in "${DEPLOY_PROTECTED_FILES[@]}"; do
+  git -C "$DEPLOY_DIR" show HEAD:"$_f" > "/tmp/deploy-protect-$(basename "$_f")" 2>/dev/null || true
+done
+
 if ! git -C "$DEPLOY_DIR" merge main --no-edit -X theirs; then
-  warn "Merge conflict detected — aborting and retrying with a clean worktree..."
-  git -C "$DEPLOY_DIR" merge --abort || true
-  git -C "$DEPLOY_DIR" reset --hard
-  git -C "$DEPLOY_DIR" merge main --no-edit -X theirs
+  warn "Merge conflicts detected — resolving backend modify/delete conflicts..."
+  while read -r f; do
+    case "$f" in
+      backend/*|Dockerfile|fly.toml|"mathpix processor"/*)
+        git -C "$DEPLOY_DIR" rm -f "$f" 2>/dev/null || true ;;
+      *)
+        git -C "$DEPLOY_DIR" checkout --theirs "$f"
+        git -C "$DEPLOY_DIR" add "$f" ;;
+    esac
+  done < <(git -C "$DEPLOY_DIR" ls-files --unmerged | awk '{print $NF}' | sort -u)
+  git -C "$DEPLOY_DIR" commit --no-edit
+fi
+
+# Restore any deploy-protected files that the merge may have changed back to the main version
+_PROTECTED_RESTORED=0
+for _f in "${DEPLOY_PROTECTED_FILES[@]}"; do
+  _tmp="/tmp/deploy-protect-$(basename "$_f")"
+  [ -f "$_tmp" ] || continue
+  if ! diff -q "$_tmp" "$DEPLOY_DIR/$_f" >/dev/null 2>&1; then
+    cp "$_tmp" "$DEPLOY_DIR/$_f"
+    git -C "$DEPLOY_DIR" add "$_f"
+    _PROTECTED_RESTORED=1
+    warn "Restored deploy-protected file: $_f"
+  fi
+  rm -f "$_tmp"
+done
+if [ "$_PROTECTED_RESTORED" -eq 1 ]; then
+  git -C "$DEPLOY_DIR" commit -m "chore: restore deploy-protected Supabase storage files after merge"
 fi
 
 # Remove backend/ and Fly.io config from deploy branch — Vercel serves frontend only
 DEPLOY_REMOVED=0
-for item in backend/ Dockerfile fly.toml; do
+for item in backend/ Dockerfile fly.toml "mathpix processor/"; do
   if git -C "$DEPLOY_DIR" ls-files --error-unmatch "$item" >/dev/null 2>&1; then
     git -C "$DEPLOY_DIR" rm -rf "$item"
     DEPLOY_REMOVED=1
   fi
 done
 if [ "$DEPLOY_REMOVED" -eq 1 ]; then
-  info "Removing backend/Dockerfile/fly.toml from deploy branch (frontend only)..."
-  git -C "$DEPLOY_DIR" commit -m "chore: remove backend and Fly.io config from deploy branch"
+  info "Removing backend, Fly.io config, and local-only tools from deploy branch (frontend only)..."
+  git -C "$DEPLOY_DIR" commit -m "chore: remove backend, Fly.io config, and local-only tools from deploy branch"
 fi
 
 # --- Step 5: Push deploy to origin (triggers Vercel) ---

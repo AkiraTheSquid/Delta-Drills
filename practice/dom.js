@@ -1,0 +1,42 @@
+/* ================================================================
+   PRACTICE DOM — element references
+   ================================================================ */
+
+const timedModeToggle = document.getElementById("timed-mode-toggle");
+const timerControls = document.getElementById("timer-controls");
+const timerInput = document.getElementById("timer-input");
+const questionMetaTop = document.getElementById("question-meta-top");
+const questionNumber = document.getElementById("question-number");
+const questionText = document.getElementById("question-text");
+const subtopicLabel = document.getElementById("subtopic-label");
+const difficultyLabel = document.getElementById("difficulty-label");
+const targetDifficultyTitle = document.getElementById("target-difficulty-title");
+const targetDifficultyFill = document.getElementById("target-difficulty-fill");
+const targetDifficultyDelta = document.getElementById("target-difficulty-delta");
+const targetDifficultyMarkerOld = document.getElementById("target-difficulty-marker-old");
+const targetDifficultyNumberOld = document.getElementById("target-difficulty-number-old");
+const targetDifficultyMarkerNew = document.getElementById("target-difficulty-marker-new");
+const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
+const targetDifficultyValue = document.getElementById("target-difficulty-value");
+const practiceSubmitArea = document.getElementById("practice-submit-area");
+const practiceSubmitBtn = document.getElementById("practice-submit-btn");
+const ewmaAccuracy = document.getElementById("ewma-accuracy");
+const ewmaAccuracyLabel = document.getElementById("ewma-accuracy-label");
+const ewmaAccuracyFill = document.getElementById("ewma-accuracy-fill");
+const ewmaAccuracyValue = document.getElementById("ewma-accuracy-value");
+const ewmaAccuracyDelta = document.getElementById("ewma-accuracy-delta");
+const ewmaAccuracyMarkerOld = document.getElementById("ewma-accuracy-marker-old");
+const ewmaAccuracyMarkerNew = document.getElementById("ewma-accuracy-marker-new");
+const practiceFeedbackArea = document.getElementById("practice-feedback-area");
+const resultBadge = document.getElementById("result-badge");
+const overrideRow = document.getElementById("override-row");
+const overrideCorrectBtn = document.getElementById("override-correct-btn");
+const nextProblemBtn = document.getElementById("next-problem-btn");
+const solutionCode = document.getElementById("solution-code");
+const aiExplanationSection = document.getElementById("ai-explanation-section");
+const aiExplanationText = document.getElementById("ai-explanation-text");
+const codeEditor = document.getElementById("code-editor");
+const runBtn = document.getElementById("run-btn");
+const outputArea = document.getElementById("output-area");
+const feedbackPrompt = document.getElementById("feedback-prompt");
+const feedbackButtons = document.querySelectorAll(".feedback-btn");
