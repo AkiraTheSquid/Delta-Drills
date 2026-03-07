@@ -45,6 +45,7 @@ const PracticeAPI = {
         this.currentQuestion = {
           question_id: q.id,
           question_text: q.question_text,
+          topic: q.topic || "",
           subtopic: q.subtopic,
           difficulty: q.difficulty_score,
           expected_output: q.expected_output,
