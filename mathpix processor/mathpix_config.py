@@ -1,19 +1,30 @@
 # Mathpix API Configuration
 # Get your credentials from: https://accounts.mathpix.com/
+# Credentials are loaded from (in order):
+#   1. Environment variables MATHPIX_APP_ID / MATHPIX_APP_KEY
+#   2. ~/secrets/delta-drills/keys.json
 
+import json
 import os
+from pathlib import Path
+
+_SECRETS_FILE = Path.home() / "secrets" / "delta-drills" / "keys.json"
 
 
-def _env_or_default(name, default_value):
-    value = os.environ.get(name)
-    if value and value.strip():
-        return value.strip()
-    return default_value
+def _load_credential(env_var: str, secrets_key: str) -> str:
+    value = os.environ.get(env_var, "").strip()
+    if value:
+        return value
+    try:
+        with open(_SECRETS_FILE) as f:
+            data = json.load(f)
+        return (data.get(secrets_key) or "").strip()
+    except (FileNotFoundError, json.JSONDecodeError):
+        return ""
 
 
-# You need to set both of these values:
-MATHPIX_APP_ID = _env_or_default("MATHPIX_APP_ID", "seth_spersonalsnips_e8fea9_996429")  # Your Mathpix App ID
-MATHPIX_APP_KEY = _env_or_default("MATHPIX_APP_KEY", "fa9647d163bac68dad31a136bdd4c23027e5a52325f6eb0221dfea792e501d26")
+MATHPIX_APP_ID = _load_credential("MATHPIX_APP_ID", "mathpix_app_id")
+MATHPIX_APP_KEY = _load_credential("MATHPIX_APP_KEY", "mathpix_app_key")
 
 # API endpoint (usually doesn't need to change)
 MATHPIX_URL = "https://api.mathpix.com"
@@ -33,10 +44,10 @@ def get_credentials():
     Returns the Mathpix credentials.
     Raises an exception if credentials are not properly configured.
     """
-    if MATHPIX_APP_ID == "your-app-id-here":
+    if not MATHPIX_APP_ID or not MATHPIX_APP_KEY:
         raise Exception(
-            "Please update MATHPIX_APP_ID in mathpix_config.py with your actual app ID.\n"
-            "Get your credentials from: https://accounts.mathpix.com/"
+            f"Mathpix credentials not found.\n"
+            f"Set MATHPIX_APP_ID/MATHPIX_APP_KEY env vars or add them to {_SECRETS_FILE}"
         )
     
     return {
