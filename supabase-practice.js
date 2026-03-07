@@ -114,9 +114,9 @@ async function saveUserSettingsToSupabase(email, openaiKey, mathpixAppId, mathpi
     );
   if (error) {
     console.error("Failed to save user settings to Supabase:", error);
-    return false;
+    return { ok: false, error: error.message || "Unknown error" };
   }
-  return true;
+  return { ok: true };
 }
 
 async function loadUserSettingsFromSupabase(email) {
