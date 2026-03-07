@@ -14,7 +14,7 @@ function renderQuestion(q, count) {
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
   questionText.textContent = q.question_text;
-  subtopicLabel.textContent = q.subtopic;
+  subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   questionMetaTop.classList.add("hidden");
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
