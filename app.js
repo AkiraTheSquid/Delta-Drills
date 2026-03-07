@@ -223,10 +223,14 @@ accountForm.addEventListener("submit", async (event) => {
   localStorage.setItem("account_mathpix_key", mathpixKey);
 
   if (typeof saveUserSettingsToSupabase === "function" && authEmail) {
-    const saved = await saveUserSettingsToSupabase(authEmail, openaiKey, mathpixId, mathpixKey);
-    accountMessage.textContent = saved ? "Saved to your account." : "Saved locally in this browser.";
+    const result = await saveUserSettingsToSupabase(authEmail, openaiKey, mathpixId, mathpixKey);
+    if (result?.ok) {
+      accountMessage.textContent = "Saved to your account.";
+    } else {
+      accountMessage.textContent = `Error saving to account: ${result?.error || "unknown"}`;
+    }
   } else {
-    accountMessage.textContent = "Saved locally in this browser.";
+    accountMessage.textContent = "Saved to browser only (not logged in to Supabase).";
   }
   setTimeout(() => (accountMessage.textContent = ""), 2000);
 });
