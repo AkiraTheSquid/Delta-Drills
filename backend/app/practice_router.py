@@ -68,9 +68,9 @@ def _load_chatgpt_api_key(user: "User", db: Session | None = None) -> str:
     Checks (in order): users.openai_api_key, user_settings table, OPENAI_API_KEY env var, settings.
     """
     import os
-    if user.openai_api_key:
+    if user is not None and user.openai_api_key:
         return user.openai_api_key
-    if db is not None:
+    if user is not None and db is not None:
         try:
             row = db.execute(
                 text("SELECT openai_api_key FROM user_settings WHERE user_email = :email"),
@@ -86,7 +86,7 @@ def _load_chatgpt_api_key(user: "User", db: Session | None = None) -> str:
     from app.config import settings
     if settings.openai_api_key:
         return settings.openai_api_key
-    raise ValueError(f"No OpenAI API key set for user '{user.email}'. Add it via the API settings.")
+    raise ValueError("No OpenAI API key available.")
 
 
 def _call_chatgpt(prompt: str, model: str, user: "User" = None, db: Session | None = None) -> str:
