@@ -455,14 +455,13 @@ def ai_explanation(
 @router.post("/ai-judge", response_model=AIJudgeResponse)
 def ai_judge(
     payload: AIExplanationRequest,
-    user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
 ) -> AIJudgeResponse:
     """
     Binary correctness judge. Outputs '1' if the student's solution demonstrates
     the right core concept, '0' if it does not.
     Model: gpt-4o-mini (fast — should resolve before the explanation).
     Uses AI judgment instead of output comparison.
+    No auth required — uses server-level OPENAI_API_KEY.
     """
     prompt = (
         "You are a strict but fair NumPy instructor checking conceptual understanding.\n\n"
@@ -484,7 +483,7 @@ def ai_judge(
         "Does the student's code correctly implement the concept? Reply 1 or 0 only."
     )
     try:
-        raw = _call_chatgpt(prompt, model="gpt-4o-mini", user=user, db=db).strip()
+        raw = _call_chatgpt(prompt, model="gpt-4o-mini").strip()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
