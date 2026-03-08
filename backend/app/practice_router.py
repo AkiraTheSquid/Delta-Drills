@@ -211,6 +211,7 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         solution_code=question.answer_code,
         is_cold_start=sub_state.n < len(COLD_START_TARGETS),
         subtopic_n=sub_state.n,
+        p_current=sub_state.p if sub_state.n > 0 else None,
     )
 
 

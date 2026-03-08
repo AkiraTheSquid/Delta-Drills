@@ -42,8 +42,12 @@ function renderQuestion(q, count) {
   showFeedbackButtons();
   questionMetaTop.classList.add("hidden");
 
-  // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial)
-  ewmaAccuracyPBefore = getEwmaFromAdaptiveState(q.subtopic);
+  // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
+  // Backend mode: use p_current from the question response (adaptiveStateJson is null).
+  // Pyodide mode: read from the adaptive state JSON.
+  ewmaAccuracyPBefore = Number.isFinite(q.p_current)
+    ? q.p_current
+    : getEwmaFromAdaptiveState(q.subtopic);
   showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
 
   // Reset AI explanation

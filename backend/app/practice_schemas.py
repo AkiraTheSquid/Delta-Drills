@@ -24,6 +24,7 @@ class NextQuestionResponse(BaseModel):
     solution_code: str
     is_cold_start: bool = False
     subtopic_n: int = 0  # number of completed questions in this subtopic before this one
+    p_current: float | None = None  # EWMA accuracy for this subtopic at question time (0–1)
 
 
 class SubmitRequest(BaseModel):
