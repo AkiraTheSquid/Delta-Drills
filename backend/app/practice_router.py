@@ -413,8 +413,6 @@ def run_code_endpoint(
 @router.post("/ai-explanation", response_model=AIExplanationResponse)
 def ai_explanation(
     payload: AIExplanationRequest,
-    user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
 ) -> AIExplanationResponse:
     """
     Generate an AI explanation using the ChatGPT module algorithm.
@@ -443,7 +441,7 @@ def ai_explanation(
         "4. Any tips or insights worth noting about this type of problem"
     )
     try:
-        explanation = _call_chatgpt(prompt, model="gpt-4o", user=user, db=db)
+        explanation = _call_chatgpt(prompt, model="gpt-4o")
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
