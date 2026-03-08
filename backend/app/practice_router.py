@@ -202,6 +202,7 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
     return NextQuestionResponse(
         question_id=question.id,
         question_text=question.question_text,
+        topic=question.topic,
         subtopic=question.subtopic,
         difficulty=question.difficulty_score,
         target_difficulty=target_diff,

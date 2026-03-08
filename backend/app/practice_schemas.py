@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 class NextQuestionResponse(BaseModel):
     question_id: int
     question_text: str
+    topic: str
     subtopic: str
     difficulty: float
     target_difficulty: float
