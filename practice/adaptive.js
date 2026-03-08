@@ -60,6 +60,35 @@ function getTargetDifficultyFromAdaptiveState(subtopic) {
   }
 }
 
+// Returns true if the subtopic is still in the cold-start calibration phase (n < 3).
+function isColdStart(subtopic, overrideN) {
+  const n = Number.isFinite(overrideN) ? overrideN : (() => {
+    if (!adaptiveStateJson || !subtopic) return 0;
+    try {
+      const state = JSON.parse(adaptiveStateJson);
+      return state?.subtopic_states?.[subtopic]?.n ?? 0;
+    } catch (_err) {
+      return 0;
+    }
+  })();
+  return n < 3;
+}
+
+// Returns the 1-based index of the current cold-start question (1, 2, or 3).
+function coldStartIndex(subtopic, overrideN) {
+  if (!isColdStart(subtopic, overrideN)) return null;
+  const n = Number.isFinite(overrideN) ? overrideN : (() => {
+    if (!adaptiveStateJson || !subtopic) return 0;
+    try {
+      const state = JSON.parse(adaptiveStateJson);
+      return state?.subtopic_states?.[subtopic]?.n ?? 0;
+    } catch (_err) {
+      return 0;
+    }
+  })();
+  return n + 1;
+}
+
 function getEwmaFromAdaptiveState(subtopic) {
   if (!adaptiveStateJson || !subtopic) return null;
   try {

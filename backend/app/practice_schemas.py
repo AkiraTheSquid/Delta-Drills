@@ -22,6 +22,8 @@ class NextQuestionResponse(BaseModel):
     target_difficulty: float
     expected_output: str
     solution_code: str
+    is_cold_start: bool = False
+    subtopic_n: int = 0  # number of completed questions in this subtopic before this one
 
 
 class SubmitRequest(BaseModel):

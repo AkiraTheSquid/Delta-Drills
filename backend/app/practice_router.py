@@ -199,6 +199,7 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
     # 4. Pre-compute expected output
     expected_output = question.expected_output or _run_and_get_expected_output(question.answer_code)
 
+    from app.adaptive import COLD_START_TARGETS
     return NextQuestionResponse(
         question_id=question.id,
         question_text=question.question_text,
@@ -208,6 +209,8 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         target_difficulty=target_diff,
         expected_output=expected_output,
         solution_code=question.answer_code,
+        is_cold_start=sub_state.n < len(COLD_START_TARGETS),
+        subtopic_n=sub_state.n,
     )
 
 
