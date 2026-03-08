@@ -17,6 +17,17 @@ function renderQuestion(q, count) {
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   questionMetaTop.classList.add("hidden");
+
+  // Cold-start calibration badge
+  const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
+  const coldStart = q.is_cold_start ?? isColdStart(q.subtopic, overrideN);
+  const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
+  if (coldStart && csIndex) {
+    coldStartLabel.textContent = `Calibrating — ${csIndex} of 3`;
+    coldStartBadge.classList.remove("hidden");
+  } else {
+    coldStartBadge.classList.add("hidden");
+  }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   solutionCode.textContent = q.solution_code;
   overrideRow.classList.add("hidden");
