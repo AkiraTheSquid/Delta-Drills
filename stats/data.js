@@ -8,6 +8,8 @@ const calcDiffMult = (p) => {
 };
 
 const buildAreas = (items, weights) => {
+  const normalizedWeights = normalizeWeights(weights);
+  const resolved = buildResolvedWeightState(items, normalizedWeights);
   // Group subtopics by topic
   const topicMap = new Map();
   items.forEach((item) => {
@@ -23,36 +25,27 @@ const buildAreas = (items, weights) => {
 
   topicMap.forEach((subtopics, topicName) => {
     const n = subtopics.length;
-
-    // Server-derived topic weight (sum of the uniform per-subtopic weights)
-    const serverTopicWeight = subtopics.reduce((s, st) => s + st.weight, 0);
-
-    // Custom topic weight (percentage, e.g. 70 for 70%)
-    const customTopicPct = weights.topics[topicName];
-    const topicWeightFraction = customTopicPct != null ? customTopicPct / 100 : serverTopicWeight;
-    const topicDisplayPct =
-      customTopicPct != null ? customTopicPct : Math.round(serverTopicWeight * 100);
-
-    const defaultSubSharePct = n > 0 ? 100 / n : 100;
+    const topicWeightFraction = resolved.topicWeights[topicName] || 0;
+    const topicDisplayPct = Math.round(topicWeightFraction * 100);
+    const topicEnabled = isTopicEnabled(topicName, normalizedWeights);
 
     const subareas = subtopics
       .slice()
       .sort((a, b) => b.gradient - a.gradient)
       .map((st) => {
-        const customSubPct = weights.subtopics[st.subtopic];
-        const subShareFraction = customSubPct != null ? customSubPct / 100 : 1 / (n || 1);
-        const subDisplayPct =
-          customSubPct != null ? customSubPct : Math.round(defaultSubSharePct);
-
-        // Recalculate gradient with possibly-overridden weights
-        const effectiveWeight = topicWeightFraction * subShareFraction;
+        const enabled = isSubtopicEnabled(st.subtopic, topicName, normalizedWeights);
+        const subShareFraction = resolved.subtopicShares[st.subtopic] || 0;
+        const subDisplayPct = Math.round(subShareFraction * 100);
+        const effectiveWeight = resolved.effectiveWeights[st.subtopic] || 0;
         const gradient = effectiveWeight * st.learning_rate;
 
         return {
           id: st.subtopic,
           label: st.label,
           topicName,
+          enabled,
           weightShare: subShareFraction,
+          effectiveWeight,
           displayPct: subDisplayPct,
           currentScore: Math.min(100, st.baseline),
           learningRate: st.learning_rate,
@@ -77,6 +70,7 @@ const buildAreas = (items, weights) => {
       id: topicName.toLowerCase().replace(/\s+/g, "-"),
       rank: rank++,
       area: topicName,
+      enabled: topicEnabled,
       weight: topicWeightFraction,
       displayPct: topicDisplayPct,
       currentScore: Math.min(100, avgBaseline),

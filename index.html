@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Delta Drills v1.0.10</title>
+  <title>Delta Drills v1.0.11</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="styles/components.css" />
   <link rel="stylesheet" href="styles/stats.css" />
   <link rel="stylesheet" href="styles/responsive.css" />
-  <link rel="stylesheet" href="practice.css" />
-  <link rel="stylesheet" href="practice/bars.css" />
+  <link rel="stylesheet" href="practice.css?v=7" />
+  <link rel="stylesheet" href="practice/bars.css?v=6" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="logo">Delta Drills <span class="version-tag">v1.0.10</span></div>
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.11</span></div>
     <nav class="tabs">
       <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
       <button class="tab auth-only" data-tab="split-tool" type="button">Split Tool</button>
@@ -208,6 +208,11 @@
 
           <!-- Question Text -->
           <div class="question-text" id="question-text"></div>
+          <div class="question-visual hidden" id="question-visual">
+            <div class="question-visual-label">Target Image</div>
+            <div class="question-visual-note" id="question-visual-note">Loading image preview...</div>
+            <canvas class="question-visual-canvas hidden" id="question-visual-canvas"></canvas>
+          </div>
 
           <!-- Submit Area (pre-submission) -->
           <div id="practice-submit-area">
@@ -292,6 +297,11 @@ np.random.seed(0)
           <button class="primary run-btn" id="run-btn" type="button">Run</button>
           <div class="output-header">Output</div>
           <pre class="output-area" id="output-area"></pre>
+          <div class="output-visual hidden" id="output-visual">
+            <div class="output-visual-label">Output Image</div>
+            <div class="output-visual-note" id="output-visual-note">Rendered from `solve()`.</div>
+            <canvas class="output-visual-canvas hidden" id="output-visual-canvas"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -460,34 +470,35 @@ np.random.seed(0)
 
   <footer class="footer">
     <span>&copy; Delta Labs</span>
-    <span class="version-tag">v1.0.10</span>
+    <span class="version-tag">v1.0.11</span>
   </footer>
 
   <script src="app.js?v=2"></script>
   <script src="split-tool.js"></script>
-  <script src="supabase-practice.js"></script>
-  <script src="practice/config.js"></script>
-  <script src="practice/mode.js"></script>
-  <script src="practice/questions.js"></script>
-  <script src="practice/engine.js"></script>
-  <script src="practice/adaptive.js"></script>
-  <script src="practice/storage.js"></script>
-  <script src="practice/dom.js"></script>
-  <script src="practice/bars.js"></script>
-  <script src="practice/ui.js"></script>
-  <script src="practice/ai.js"></script>
-  <script src="practice/api.js"></script>
-  <script src="practice/timer.js"></script>
-  <script src="practice/runner.js"></script>
-  <script src="practice/events.js"></script>
-  <script src="practice/init.js"></script>
+  <script src="supabase-practice.js?v=6"></script>
+  <script src="practice/config.js?v=6"></script>
+  <script src="practice/mode.js?v=6"></script>
+  <script src="practice/questions.js?v=15"></script>
+  <script src="practice/engine.js?v=6"></script>
+  <script src="practice/adaptive.js?v=7"></script>
+  <script src="practice/storage.js?v=6"></script>
+  <script src="practice/dom.js?v=7"></script>
+  <script src="practice/bars.js?v=6"></script>
+  <script src="practice/visuals.js?v=12"></script>
+  <script src="practice/ui.js?v=6"></script>
+  <script src="practice/ai.js?v=6"></script>
+  <script src="practice/api.js?v=9"></script>
+  <script src="practice/timer.js?v=6"></script>
+  <script src="practice/runner.js?v=8"></script>
+  <script src="practice/events.js?v=6"></script>
+  <script src="practice/init.js?v=12"></script>
   <script src="practice.js?v=4"></script>
-  <script src="stats/dom.js"></script>
-  <script src="stats/weights.js"></script>
-  <script src="stats/data.js"></script>
-  <script src="stats/render.js"></script>
-  <script src="stats/graph.js"></script>
-  <script src="stats/init.js"></script>
-  <script src="stats.js?v=6"></script>
+  <script src="stats/dom.js?v=8"></script>
+  <script src="stats/weights.js?v=9"></script>
+  <script src="stats/data.js?v=9"></script>
+  <script src="stats/render.js?v=9"></script>
+  <script src="stats/graph.js?v=8"></script>
+  <script src="stats/init.js?v=8"></script>
+  <script src="stats.js?v=8"></script>
 </body>
 </html>

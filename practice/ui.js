@@ -14,6 +14,10 @@ function renderQuestion(q, count) {
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
   questionText.textContent = q.question_text;
+  renderQuestionVisual(q);
+  codeEditor.value =
+    q.starter_code ||
+    "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   questionMetaTop.classList.add("hidden");

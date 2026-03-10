@@ -33,6 +33,11 @@ const switchTab = (tabName) => {
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
+  if (tabName === "practice" && typeof refreshPracticeQuestionForPreferences === "function") {
+    refreshPracticeQuestionForPreferences().catch((err) => {
+      console.warn("[practice] failed to refresh preferences:", err);
+    });
+  }
 };
 
 tabs.forEach((t) => {

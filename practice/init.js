@@ -4,6 +4,11 @@
 
 function syncCurrentQuestion() {
   if (practiceProgress.currentQuestion) {
+    if (!isPracticeQuestionAllowed(practiceProgress.currentQuestion)) {
+      practiceProgress.currentQuestion = null;
+      practiceProgress.currentQuestionId = null;
+      return;
+    }
     PracticeAPI.currentQuestion = practiceProgress.currentQuestion;
     return;
   }
@@ -14,8 +19,35 @@ function syncCurrentQuestion() {
   PracticeAPI.currentQuestion = practiceQuestionPool[practiceQuestionIndex];
 }
 
+function invalidateLegacyBackendQuestion() {
+  if (practiceMode !== "backend" || !practiceProgress.currentQuestion) return;
+
+  // Backend responses now always include `p_current` (nullable). Older cached
+  // questions may omit it entirely, which suppresses the accuracy delta after a
+  // reload because renderQuestion can't recover the pre-answer EWMA.
+  if (!Object.prototype.hasOwnProperty.call(practiceProgress.currentQuestion, "p_current")) {
+    practiceProgress.currentQuestion = null;
+    practiceProgress.currentQuestionId = null;
+    practiceProgress.pendingFeedback = null;
+    return;
+  }
+
+  // Visual questions now depend on structured test-case metadata for image
+  // preview rendering. Older cached backend questions may have the image flag
+  // but not the canonical visual setup data, which leads to broken previews.
+  if (practiceProgress.currentQuestion.supports_visual_output) {
+    // Visual questions are especially sensitive to stale cached artifacts.
+    // Force a fresh backend fetch rather than trusting any restored copy.
+    practiceProgress.currentQuestion = null;
+    practiceProgress.currentQuestionId = null;
+    practiceProgress.pendingFeedback = null;
+    return;
+  }
+}
+
 const initPractice = async () => {
   detectPracticeMode();
+  await loadQuestionsBank();
 
   // For supabase/local modes, load engine + questions + state
   if (practiceMode !== "backend") {
@@ -23,8 +55,20 @@ const initPractice = async () => {
     if (pyodide) {
       await loadPracticeEngine(pyodide);
     }
-    await loadQuestionsBank();
     await loadAdaptiveState();
+  }
+
+  if (practiceProgress.currentQuestion) {
+    practiceProgress.currentQuestion = hydrateSavedPracticeQuestionFromBank(
+      practiceProgress.currentQuestion
+    );
+    if (practiceProgress.currentQuestion) {
+      if (practiceProgress.currentQuestion._artifactChanged) {
+        practiceProgress.pendingFeedback = null;
+        practiceProgress.lastResultCorrect = null;
+      }
+      practiceProgress.currentQuestionId = practiceProgress.currentQuestion.question_id;
+    }
   }
 
   // Enrich stale saved question with topic/subtopic from the current questions bank.
@@ -47,6 +91,8 @@ const initPractice = async () => {
     }
   }
 
+  invalidateLegacyBackendQuestion();
+
   syncCurrentQuestion();
 
   if (practiceProgress.currentQuestion) {
@@ -58,3 +104,32 @@ const initPractice = async () => {
   savePracticeProgress(practiceProgress);
   renderQuestion(nextQ, practiceQuestionCount);
 };
+
+async function refreshPracticeQuestionForPreferences() {
+  await loadQuestionsBank();
+  if (practiceProgress.currentQuestion) {
+    practiceProgress.currentQuestion = hydrateSavedPracticeQuestionFromBank(
+      practiceProgress.currentQuestion
+    );
+    if (practiceProgress.currentQuestion) {
+      practiceProgress.currentQuestionId = practiceProgress.currentQuestion.question_id;
+    }
+  }
+  if (practiceProgress.currentQuestion && isPracticeQuestionAllowed(practiceProgress.currentQuestion)) {
+    savePracticeProgress(practiceProgress);
+    renderQuestion(practiceProgress.currentQuestion, practiceQuestionCount);
+    return;
+  }
+  practiceProgress.currentQuestion = null;
+  practiceProgress.currentQuestionId = null;
+  savePracticeProgress(practiceProgress);
+  if (document.getElementById("page-practice")?.classList.contains("hidden")) return;
+  try {
+    const nextQ = await PracticeAPI.getNextQuestion();
+    renderQuestion(nextQ, practiceQuestionCount);
+  } catch (err) {
+    questionText.textContent = err.message || "No enabled practice sections.";
+    practiceSubmitArea.classList.add("hidden");
+    practiceFeedbackArea.classList.add("hidden");
+  }
+}
