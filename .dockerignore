@@ -1,18 +1,48 @@
-# Exclude everything by default, then whitelist what the backend needs
+# Exclude everything by default, then whitelist only the files needed for Fly
 *
 
-# Backend application
-!backend/
-backend/.venv
-backend/user_data
-backend/uvicorn.log
+# Backend application and schema
+!This-Directory-Only/backend/
+This-Directory-Only/backend/.env
+This-Directory-Only/backend/.venv/
+This-Directory-Only/backend/user_data/
+This-Directory-Only/backend/uvicorn.log
 
-# Question CSVs (loaded at startup)
-!csv files of problems/
+# Runtime tool code needed by auto-TOC jobs
+!This-Directory-Only/chatgpt/
+This-Directory-Only/chatgpt/api_key.txt
+This-Directory-Only/chatgpt/completion_state.txt
+This-Directory-Only/chatgpt/day_token_limit_reached
+This-Directory-Only/chatgpt/Minute_Token_limit_reached.txt
+This-Directory-Only/chatgpt/output.txt
+This-Directory-Only/chatgpt/output.meta.json
+This-Directory-Only/chatgpt/prompt.txt
+This-Directory-Only/chatgpt/tokens_within_min.txt
+This-Directory-Only/chatgpt/usage.md
+This-Directory-Only/chatgpt/prompts/
+This-Directory-Only/chatgpt/outputs/
+This-Directory-Only/chatgpt/logprobs/
+This-Directory-Only/chatgpt/function_mode_requests.jsonl
+This-Directory-Only/chatgpt/function_mode_repair_requests.jsonl
+This-Directory-Only/chatgpt/function_mode_validation_failures.jsonl
+This-Directory-Only/chatgpt/function_mode_broken_ids.json
+This-Directory-Only/chatgpt/function_mode_deleted_ids.json
+This-Directory-Only/chatgpt/function_mode_overrides.jsonl
+This-Directory-Only/chatgpt/function_mode_overrides_round2.jsonl
+This-Directory-Only/chatgpt/function_mode_rejected.jsonl
+This-Directory-Only/chatgpt/function_mode_rejected_round2.jsonl
+This-Directory-Only/chatgpt/validator_health.txt
 
-# Question JSON
-!questions.json
+!This-Directory-Only/mathpix processor/
+This-Directory-Only/mathpix processor/completion_state.txt
+This-Directory-Only/mathpix processor/destination_for_md_file.txt
+This-Directory-Only/mathpix processor/pdf_path_convert.txt
 
-# Root-level scripts imported by backend
-!split_LADR4e_chapters.py
-!glossary_to_csv.py
+# Config and data files the backend loads at startup/runtime
+!This-Directory-Only/csv files of problems/
+!This-Directory-Only/fly.toml
+!This-Directory-Only/Dockerfile
+
+# Shared scripts imported by backend processing
+!Local_Deployed_Shared/glossary_to_csv.py
+!Local_Deployed_Shared/split_LADR4e_chapters.py

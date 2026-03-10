@@ -119,7 +119,14 @@ FLYCTL="${HOME}/.fly/bin/flyctl"
 if [ -f "$FLYCTL" ] || command -v flyctl >/dev/null 2>&1; then
   FLYCTL="${FLYCTL:-flyctl}"
   info "Deploying backend to Fly.io..."
-  (cd "$REPO_THIS_DIR" && "$FLYCTL" deploy --ha=false)
+  (
+    cd "$REPO_DIR" && \
+    "$FLYCTL" deploy . \
+      --config "$REPO_THIS_DIR/fly.toml" \
+      --dockerfile "$REPO_THIS_DIR/Dockerfile" \
+      --ignorefile "$REPO_DIR/.dockerignore" \
+      --ha=false
+  )
 else
   warn "flyctl not found — skipping Fly.io deploy."
   warn "Install: curl -L https://fly.io/install.sh | sh"
