@@ -7,10 +7,17 @@ const loadAndRenderStats = async () => {
     statsTableBody.innerHTML =
       '<tr><td colspan="9" style="text-align:center;padding:1.5rem;color:var(--color-muted)">Loading…</td></tr>';
   }
-  const data = await fetchAndBuild();
-  statsData = data || [];
-  renderStatsTable();
-  renderAdvancedTable();
+  try {
+    const data = await fetchAndBuild();
+    statsData = data || [];
+    renderStatsTable();
+    renderAdvancedTable();
+  } catch (err) {
+    console.warn("[stats] failed to load:", err);
+    statsData = [];
+    renderStatsTable();
+    renderAdvancedTable();
+  }
 };
 
 const showStatsPanel = (target = "areas") => {
@@ -23,6 +30,11 @@ const showStatsPanel = (target = "areas") => {
     panel.hidden = !isActive;
     panel.style.display = isActive ? "block" : "none";
   });
+};
+
+const shouldAutoRefreshStats = () => {
+  const page = document.getElementById("page-statistics");
+  return !statsData.length || !!page && !page.classList.contains("hidden");
 };
 
 const initStats = () => {
@@ -45,4 +57,13 @@ const initStats = () => {
   loadAndRenderStats();
   showStatsPanel("areas");
   initGraphControls();
+
+  // Practice state and auth can finish initializing after the first stats
+  // render. Refresh when those sources become available.
+  window.addEventListener("delta:adaptive-state-changed", () => {
+    if (shouldAutoRefreshStats()) loadAndRenderStats();
+  });
+  window.addEventListener("delta:auth-state-changed", () => {
+    if (shouldAutoRefreshStats()) loadAndRenderStats();
+  });
 };
