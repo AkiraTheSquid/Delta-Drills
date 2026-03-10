@@ -2,8 +2,7 @@
    PRACTICE VISUALS — target image rendering for visual exercises
    ================================================================ */
 
-const ARENA_NUMBERS_PATH =
-  "ARENA_3.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy";
+const ARENA_NUMBERS_PATH = "/delta_numbers.npy";
 const DELTA_VISUAL_DEBUG = true;
 let deltaVisualDebugReportTimer = null;
 let deltaVisualDebugLastSignature = "";
