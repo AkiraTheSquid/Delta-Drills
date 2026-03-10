@@ -1,0 +1,86 @@
+DELTA DRILLS — LOCAL VS DEPLOYED STORAGE ARCHITECTURE
+======================================================
+
+OVERVIEW
+--------
+The app has two storage modes depending on where it runs:
+
+  LOCAL (main branch, localhost)
+    - Practice state: localStorage
+    - API keys (OpenAI, Mathpix): stored in ~/secrets/delta-drills/keys.json
+      and the local PostgreSQL users table
+    - Auth: admin email + local FastAPI backend (JWT)
+    - practiceMode = "backend"
+
+  DEPLOYED (deploy branch, delta-drills.vercel.app)
+    - Practice state: Supabase (practice_user_state table)
+    - API keys (OpenAI): Supabase user_settings table, loaded on session init
+    - Auth: Supabase Auth (non-admin users use Pyodide engine)
+    - practiceMode = "supabase" (non-admin) or "backend" (admin on localhost)
+
+
+THE SUPABASE BOUNDARY FILE
+--------------------------
+supabase-practice.js is the single file responsible for all Supabase storage.
+It lives in BOTH branches with identical content, but its functions are no-ops
+when practiceMode != "supabase" or when getSupabaseClient() returns null.
+
+All Supabase storage functions (save/load practice state, save/load user
+settings, etc.) belong in supabase-practice.js.
+
+
+HOW deploy_delta_drills.sh HANDLES THIS
+----------------------------------------
+The repo now has an explicit filesystem split:
+
+  Delta-Drills-Local/
+    - This-Directory-Only/
+    - Local_Deployed_Shared/
+
+  Delta-Drills-Deployed/
+    - This-Directory-Only/
+    - Local_Deployed_Shared/
+
+deploy_delta_drills.sh no longer merges the whole repo into the deploy branch.
+Instead it syncs only:
+
+  Delta-Drills-Local/Local_Deployed_Shared/
+    -> Delta-Drills-Deployed/Local_Deployed_Shared/
+
+The root-level paths remain available as symlinks for compatibility, but the
+deployment boundary is now the Local_Deployed_Shared directory.
+
+
+RULES FOR ADDING NEW FEATURES
+------------------------------
+1. New Supabase storage functions → add to supabase-practice.js in MAIN.
+   Use getSupabaseClient() null checks so the function degrades gracefully
+   on localhost. Example pattern:
+
+     async function saveXToSupabase(email, data) {
+       const sb = getSupabaseClient();
+       if (!sb || !email) return false;
+       const { error } = await sb.from("table").upsert(...);
+       return !error;
+     }
+
+2. Shared files (app.js, practice.js, etc.) that call Supabase functions
+   should use typeof guards so they work in both modes:
+
+     if (typeof saveXToSupabase === "function") {
+       await saveXToSupabase(authEmail, data);
+     }
+
+3. If you make an environment-specific change, put it under This-Directory-Only/ instead of
+   editing a shared file in place.
+
+4. Never put Supabase credentials (service_role key, JWT secret) in any
+   frontend file. The anon key in supabase-practice.js is public/safe.
+   Backend secrets live in Fly.io secrets only.
+
+
+LAYOUT MAINTENANCE
+------------------
+Use scripts/refresh_split_layout.py after moving a top-level file into
+This-Directory-Only/ or Local_Deployed_Shared/. That helper enforces the
+strict root split for either worktree.
