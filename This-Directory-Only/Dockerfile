@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy only the split-layout files the backend uses at runtime
 COPY This-Directory-Only/backend ./This-Directory-Only/backend
 COPY This-Directory-Only/chatgpt ./This-Directory-Only/chatgpt
-COPY This-Directory-Only/mathpix processor ./This-Directory-Only/mathpix processor
-COPY This-Directory-Only/csv files of problems ./This-Directory-Only/csv files of problems
+COPY ["This-Directory-Only/mathpix processor", "./This-Directory-Only/mathpix processor"]
+COPY ["This-Directory-Only/csv files of problems", "./This-Directory-Only/csv files of problems"]
 COPY Local_Deployed_Shared/glossary_to_csv.py ./Local_Deployed_Shared/glossary_to_csv.py
 COPY Local_Deployed_Shared/split_LADR4e_chapters.py ./Local_Deployed_Shared/split_LADR4e_chapters.py
 
