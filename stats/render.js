@@ -43,7 +43,12 @@ const renderStatsTable = () => {
         <button class="stats-toggle" type="button" data-area-toggle="${area.id}">▸</button>
       </td>
       <td class="stats-col-check">
-        <input type="checkbox" class="stats-check" checked />
+        <input
+          type="checkbox"
+          class="stats-check"
+          data-topic-check="${area.area}"
+          ${area.enabled ? "checked" : ""}
+        />
       </td>
       <td>${area.rank}</td>
       <td class="stats-col-area">${area.area}</td>
@@ -82,7 +87,13 @@ const renderStatsTable = () => {
       subRow.innerHTML = `
         <td class="stats-col-toggle"></td>
         <td class="stats-col-check">
-          <input type="checkbox" class="stats-check" checked />
+          <input
+            type="checkbox"
+            class="stats-check"
+            data-subtopic-check="${sub.id}"
+            data-parent-topic="${area.area}"
+            ${sub.enabled ? "checked" : ""}
+          />
         </td>
         <td>${area.rank}.${index + 1}</td>
         <td class="stats-col-area stats-subarea">${sub.label}</td>
@@ -156,7 +167,7 @@ const renderStatsTable = () => {
       }
     });
 
-    input.addEventListener("change", () => {
+    input.addEventListener("change", async () => {
       const val = Math.max(0, Number(input.value) || 0);
       input.value = val;
       fitInputWidth(input);
@@ -177,7 +188,63 @@ const renderStatsTable = () => {
       if (rawSubtopicsCache) {
         statsData = buildAreas(rawSubtopicsCache, weights);
         renderStatsTable();
+        renderAdvancedTable();
         pushWeightsToBackend(statsData);
+      }
+      if (typeof syncAdaptiveWeightsToPracticePreferences === "function") {
+        await syncAdaptiveWeightsToPracticePreferences();
+      }
+    });
+  });
+
+  statsTableBody.querySelectorAll("[data-topic-check]").forEach((input) => {
+    input.addEventListener("change", async () => {
+      const topicName = input.dataset.topicCheck;
+      const checked = input.checked;
+      let weights = setTopicEnabled(topicName, checked);
+
+      if (rawSubtopicsCache) {
+        rawSubtopicsCache
+          .filter((item) => (item.topic || item.subtopic.split(":")[0].trim()) === topicName)
+          .forEach((item) => {
+            weights = setSubtopicEnabled(item.subtopic, checked, weights);
+          });
+      }
+
+      saveWeights(weights);
+
+      if (rawSubtopicsCache) {
+        statsData = buildAreas(rawSubtopicsCache, weights);
+        renderStatsTable();
+        renderAdvancedTable();
+        pushWeightsToBackend(statsData);
+      }
+      if (typeof syncAdaptiveWeightsToPracticePreferences === "function") {
+        await syncAdaptiveWeightsToPracticePreferences();
+      }
+    });
+  });
+
+  statsTableBody.querySelectorAll("[data-subtopic-check]").forEach((input) => {
+    input.addEventListener("change", async () => {
+      const subtopicId = input.dataset.subtopicCheck;
+      const topicName = input.dataset.parentTopic;
+      let weights = setSubtopicEnabled(subtopicId, input.checked);
+
+      if (input.checked && !isTopicEnabled(topicName, weights)) {
+        weights = setTopicEnabled(topicName, true, weights);
+      }
+
+      saveWeights(weights);
+
+      if (rawSubtopicsCache) {
+        statsData = buildAreas(rawSubtopicsCache, weights);
+        renderStatsTable();
+        renderAdvancedTable();
+        pushWeightsToBackend(statsData);
+      }
+      if (typeof syncAdaptiveWeightsToPracticePreferences === "function") {
+        await syncAdaptiveWeightsToPracticePreferences();
       }
     });
   });
@@ -217,7 +284,7 @@ const renderAdvancedTable = () => {
         <button class="stats-toggle" type="button" data-adv-toggle="${area.id}">▸</button>
       </td>
       <td class="stats-col-check">
-        <input type="checkbox" class="stats-check" checked />
+        <input type="checkbox" class="stats-check" disabled ${area.enabled ? "checked" : ""} />
       </td>
       <td class="stats-col-rank">${area.rank}</td>
       <td class="stats-col-area">${area.area}</td>
@@ -253,7 +320,7 @@ const renderAdvancedTable = () => {
       subRow.innerHTML = `
         <td class="stats-col-toggle"></td>
         <td class="stats-col-check">
-          <input type="checkbox" class="stats-check" checked />
+          <input type="checkbox" class="stats-check" disabled ${sub.enabled ? "checked" : ""} />
         </td>
         <td class="stats-col-rank">${area.rank}.${index + 1}</td>
         <td class="stats-col-area stats-subarea">${sub.label}</td>

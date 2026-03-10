@@ -25,6 +25,14 @@ class NextQuestionResponse(BaseModel):
     is_cold_start: bool = False
     subtopic_n: int = 0  # number of completed questions in this subtopic before this one
     p_current: float | None = None  # EWMA accuracy for this subtopic at question time (0–1)
+    primary_library: str = "python"
+    task_type: str = "stdout_prediction"
+    expected_artifact_type: str = "stdout"
+    supports_visual_output: bool = False
+    function_name: str | None = None
+    starter_code: str | None = None
+    test_cases: list[dict] = Field(default_factory=list)
+    submission_mode: str = "stdout"
 
 
 class SubmitRequest(BaseModel):
@@ -32,11 +40,17 @@ class SubmitRequest(BaseModel):
     user_code: str
 
 
+class LocalEvalSubmitRequest(BaseModel):
+    question_id: int
+    correct: bool
+
+
 class SubmitResponse(BaseModel):
     correct: bool
     actual_output: str
     expected_output: str
     solution_code: str
+    failed_tests: list[dict] = Field(default_factory=list)
 
 
 class FeedbackRequest(BaseModel):
@@ -99,3 +113,12 @@ class AIExplanationResponse(BaseModel):
 
 class AIJudgeResponse(BaseModel):
     verdict: str  # "0" = incorrect, "1" = correct
+
+
+class VisualDebugRequest(BaseModel):
+    payload: dict = Field(default_factory=dict)
+
+
+class VisualDebugResponse(BaseModel):
+    success: bool
+    latest: dict = Field(default_factory=dict)

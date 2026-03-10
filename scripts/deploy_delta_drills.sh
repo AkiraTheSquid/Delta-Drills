@@ -61,15 +61,16 @@ fi
 
 # --- Step 2: Export question bank ---
 
-info "Exporting question bank to questions.json..."
+info "Exporting question bank artifacts..."
 python3 "$REPO_DIR/scripts/export_questions_json.py"
+python3 "$REPO_DIR/scripts/extract_arena_prereqs.py"
 
-# If the export created/updated questions.json, stage and commit it
-if ! git -C "$REPO_DIR" diff --quiet -- questions.json 2>/dev/null || \
-   git -C "$REPO_DIR" ls-files --others --exclude-standard -- questions.json | grep -q .; then
-  info "questions.json updated — auto-committing..."
-  git -C "$REPO_DIR" add questions.json
-  git -C "$REPO_DIR" commit -m "chore: update questions.json for deploy"
+# If the export created/updated generated artifacts, stage and commit them
+if ! git -C "$REPO_DIR" diff --quiet -- questions.json questions_structured.json arena_prereqs_structured.json 2>/dev/null || \
+   git -C "$REPO_DIR" ls-files --others --exclude-standard -- questions.json questions_structured.json arena_prereqs_structured.json | grep -q .; then
+  info "Question artifacts updated — auto-committing..."
+  git -C "$REPO_DIR" add questions.json questions_structured.json arena_prereqs_structured.json
+  git -C "$REPO_DIR" commit -m "chore: update question artifacts for deploy"
 fi
 
 # --- Step 3: Push main to origin ---

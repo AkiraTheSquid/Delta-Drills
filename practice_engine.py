@@ -69,6 +69,7 @@ class SubtopicState:
 @dataclass
 class UserPracticeState:
     user_id: str
+    custom_weights: Dict[str, float] = field(default_factory=dict)
     subtopic_states: Dict[str, SubtopicState] = field(default_factory=dict)
     pending_attempt: Optional[AttemptRecord] = None
 
@@ -85,6 +86,7 @@ class UserPracticeState:
 def state_to_dict(state: UserPracticeState) -> dict:
     data = {
         "user_id": state.user_id,
+        "custom_weights": state.custom_weights,
         "pending_attempt": asdict(state.pending_attempt) if state.pending_attempt else None,
         "subtopic_states": {},
     }
@@ -103,6 +105,7 @@ def state_to_dict(state: UserPracticeState) -> dict:
 
 def state_from_dict(data: dict) -> UserPracticeState:
     state = UserPracticeState(user_id=data["user_id"])
+    state.custom_weights = data.get("custom_weights") or {}
     if data.get("pending_attempt"):
         pa = data["pending_attempt"]
         state.pending_attempt = AttemptRecord(
@@ -317,8 +320,12 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
         if not remaining:
             continue
 
+        effective_weight = user_state.custom_weights.get(st_name, weight)
+        if effective_weight <= 0:
+            continue
+
         learning_rate = _estimate_learning_rate(sub_state)
-        gradient = weight * learning_rate
+        gradient = effective_weight * learning_rate
         gradients.append((st_name, gradient))
 
     if not gradients:
@@ -330,8 +337,11 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
             sub_state = user_state.get_subtopic_state(st_name)
             available = by_subtopic.get(st_name, [])
             if available:
+                effective_weight = user_state.custom_weights.get(st_name, weight)
+                if effective_weight <= 0:
+                    continue
                 learning_rate = _estimate_learning_rate(sub_state)
-                gradients.append((st_name, weight * learning_rate))
+                gradients.append((st_name, effective_weight * learning_rate))
 
     if not gradients:
         return None
@@ -402,6 +412,11 @@ class EngineAPI:
             "question": q,
             "state": state_to_json(state),
         })
+
+    def set_custom_weights(self, state_json: str, weights_json: str) -> str:
+        state = state_from_json(state_json)
+        state.custom_weights = json.loads(weights_json)
+        return state_to_json(state)
 
     def submit_answer(self, state_json: str, question_id: int, subtopic: str,
                       difficulty_score: int, correct: bool) -> str:

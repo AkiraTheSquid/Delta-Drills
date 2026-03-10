@@ -10,6 +10,7 @@ Runs user-submitted code in a subprocess with:
 
 from __future__ import annotations
 
+import json
 import logging
 import subprocess
 import sys
@@ -20,6 +21,14 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT_SECONDS = 5
+ARENA_NUMBERS_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "ARENA_3.0-main"
+    / "chapter0_fundamentals"
+    / "exercises"
+    / "part0_prereqs"
+    / "numbers.npy"
+)
 
 # Preamble injected before user code to ensure numpy (and einops) are available
 # and results are reproducible. einops import is guarded so numpy/einsum problems
@@ -27,11 +36,25 @@ DEFAULT_TIMEOUT_SECONDS = 5
 CODE_PREAMBLE = (
     "import numpy as np\n"
     "np.random.seed(0)\n"
+    "_delta_einsum = None\n"
     "try:\n"
     "    import einops\n"
-    "    from einops import rearrange, reduce, repeat\n"
+    "    from einops import einsum as _delta_einsum, rearrange, reduce, repeat\n"
     "except ImportError:\n"
     "    pass\n"
+    "def einsum(*args):\n"
+    "    if _delta_einsum is not None:\n"
+    "        return _delta_einsum(*args)\n"
+    "    if len(args) < 2:\n"
+    "        raise TypeError('einsum expects one or more arrays plus a pattern string')\n"
+    "    *arrays, pattern = args\n"
+    "    return np.einsum(pattern.replace(' ', ''), *arrays)\n"
+    f"try:\n"
+    f"    arr = np.load(r'{ARENA_NUMBERS_PATH.as_posix()}')\n"
+    f"except Exception:\n"
+    f"    pass\n"
+    "def display_array_as_img(*args, **kwargs):\n"
+    "    return None\n"
 )
 
 
@@ -40,6 +63,14 @@ class ExecutionResult:
     stdout: str
     stderr: str
     success: bool
+
+
+@dataclass
+class TestCaseResult:
+    passed: bool
+    actual: str
+    expected: str
+    error: str = ""
 
 
 def run_code(code: str, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> ExecutionResult:
@@ -143,3 +174,76 @@ def compare_output(actual: str, expected_code: str, timeout: int = DEFAULT_TIMEO
     # Exact match after stripping whitespace
     match = actual_stripped == expected_output
     return match, actual_stripped, expected_output
+
+
+def run_function_tests(
+    user_code: str,
+    test_cases: list[dict],
+    timeout: int = DEFAULT_TIMEOUT_SECONDS,
+) -> tuple[list[TestCaseResult], ExecutionResult]:
+    payload = json.dumps(test_cases)
+    harness = f"""
+import json
+import numpy as np
+
+def _delta_to_jsonable(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, tuple):
+        return [_delta_to_jsonable(v) for v in value]
+    if isinstance(value, list):
+        return [_delta_to_jsonable(v) for v in value]
+    if isinstance(value, dict):
+        return {{k: _delta_to_jsonable(v) for k, v in value.items()}}
+    return value
+
+def _delta_equal(a, b):
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return np.array_equal(np.asarray(a), np.asarray(b))
+    return a == b
+
+_delta_results = []
+{user_code}
+for _delta_case in json.loads({payload!r}):
+    try:
+        if _delta_case.get("setup_code"):
+            exec(_delta_case["setup_code"], globals())
+        _delta_actual = eval(_delta_case["call"], globals())
+        _delta_expected_setup = _delta_case.get("expected_setup_code") or _delta_case.get("setup_code")
+        if _delta_expected_setup:
+            exec(_delta_expected_setup, globals())
+        _delta_expected = eval(_delta_case["expected_expr"], globals())
+        _delta_results.append({{
+            "passed": _delta_equal(_delta_actual, _delta_expected),
+            "actual": repr(_delta_to_jsonable(_delta_actual)),
+            "expected": repr(_delta_to_jsonable(_delta_expected)),
+            "error": "",
+        }})
+    except Exception as _delta_exc:
+        _delta_results.append({{
+            "passed": False,
+            "actual": "",
+            "expected": "",
+            "error": f"{{type(_delta_exc).__name__}}: {{_delta_exc}}",
+        }})
+print("__DELTA_TESTS__" + json.dumps(_delta_results))
+"""
+    execution = run_code(harness, timeout=timeout)
+    marker = "__DELTA_TESTS__"
+    results: list[TestCaseResult] = []
+    if marker in execution.stdout:
+        prefix, _, suffix = execution.stdout.partition(marker)
+        execution.stdout = prefix.rstrip()
+        try:
+            parsed = json.loads(suffix.strip())
+            results = [TestCaseResult(**item) for item in parsed]
+        except Exception as exc:
+            results = [TestCaseResult(passed=False, actual="", expected="", error=f"Invalid test payload: {exc}")]
+    elif not execution.success:
+        error_text = execution.stderr.strip() or execution.stdout.strip() or "Test harness execution failed."
+        results = [TestCaseResult(passed=False, actual="", expected="", error=error_text)]
+    elif execution.success:
+        results = [TestCaseResult(passed=False, actual="", expected="", error="Missing test results.")]
+    return results, execution

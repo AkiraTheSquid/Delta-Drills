@@ -31,7 +31,7 @@ from app.adaptive import (
     save_user_state,
 )
 from app.auth import get_current_user
-from app.code_runner import ExecutionResult, run_code
+from app.code_runner import ExecutionResult, run_code, run_function_tests
 from app.models import User
 from app.practice_schemas import (
     AIExplanationRequest,
@@ -41,12 +41,15 @@ from app.practice_schemas import (
     CodeRunResponse,
     FeedbackRequest,
     FeedbackResponse,
+    LocalEvalSubmitRequest,
     NextQuestionResponse,
     OverrideAttemptRequest,
     OverrideAttemptResponse,
     SubtopicStatsResponse,
     SubmitRequest,
     SubmitResponse,
+    VisualDebugRequest,
+    VisualDebugResponse,
     WeightsUpdateRequest,
 )
 from app.prioritization import select_next_subtopic, get_subtopic_weights
@@ -57,6 +60,7 @@ from app.questions import (
 )
 
 logger = logging.getLogger(__name__)
+_latest_visual_debug_by_user: dict[str, dict] = {}
 
 # ---------------------------------------------------------------------------
 # ChatGPT module helper
@@ -197,7 +201,11 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
     save_user_state(user_id)
 
     # 4. Pre-compute expected output
-    expected_output = question.expected_output or _run_and_get_expected_output(question.answer_code)
+    expected_output = (
+        question.expected_output
+        if question.supports_visual_output
+        else (question.expected_output or _run_and_get_expected_output(question.answer_code))
+    )
 
     from app.adaptive import COLD_START_TARGETS
     return NextQuestionResponse(
@@ -212,6 +220,14 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         is_cold_start=sub_state.n < len(COLD_START_TARGETS),
         subtopic_n=sub_state.n,
         p_current=sub_state.p if sub_state.n > 0 else None,
+        primary_library=question.primary_library,
+        task_type=question.task_type,
+        expected_artifact_type=question.expected_artifact_type,
+        supports_visual_output=question.supports_visual_output,
+        function_name=question.function_name,
+        starter_code=question.starter_code,
+        test_cases=question.test_cases,
+        submission_mode=question.submission_mode,
     )
 
 
@@ -241,34 +257,48 @@ def submit_answer(
     # Use pre-computed expected output from CSV, fall back to running code
     expected_output = question.expected_output or _run_and_get_expected_output(question.answer_code)
 
-    # AI judge always determines correctness (no output comparison)
-    judge_prompt = (
-        "You are a strict but fair NumPy instructor checking conceptual understanding.\n\n"
-        "CRITICAL: The student's output will differ from the canonical solution's output because "
-        "they use different test data or print different things. Do NOT compare outputs. "
-        "Judge ONLY whether the student's CODE correctly implements the algorithm or formula "
-        "stated in the question.\n\n"
-        "However, use the student's actual output to catch clear failures: if it shows an "
-        "error, a traceback, or is completely empty/blank when output was expected, return 0. "
-        "If the expected output is empty, do NOT penalize empty student output.\n\n"
-        "Output ONLY the single digit 1 (correct) or 0 (incorrect). No other text.\n\n"
-        "---\n"
-        f"QUESTION:\n{question.question_text}\n\n"
-        f"EXPECTED OUTPUT:\n{expected_output}\n\n"
-        f"STUDENT'S CODE:\n{payload.user_code}\n\n"
-        f"STUDENT'S ACTUAL OUTPUT:\n{actual_output}\n\n"
-        f"CANONICAL SOLUTION (reference only):\n{question.answer_code}\n"
-        "---\n\n"
-        "Does the student's code correctly implement the concept? Reply 1 or 0 only."
-    )
-    try:
-        raw = _call_chatgpt(judge_prompt, model="gpt-4o-mini", user=user).strip()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"AI judge error: {e}",
+    failed_tests: list[dict] = []
+    if question.submission_mode == "function" and question.test_cases:
+        test_results, test_execution = run_function_tests(payload.user_code, question.test_cases)
+        correct = all(result.passed for result in test_results)
+        if test_execution.stdout.strip():
+            actual_output = test_execution.stdout.strip()
+        elif test_execution.stderr.strip():
+            actual_output = test_execution.stderr.strip()
+        failed_tests = [
+            {"actual": result.actual, "expected": result.expected, "error": result.error}
+            for result in test_results
+            if not result.passed
+        ]
+    else:
+        # AI judge always determines correctness (no output comparison)
+        judge_prompt = (
+            "You are a strict but fair NumPy instructor checking conceptual understanding.\n\n"
+            "CRITICAL: The student's output will differ from the canonical solution's output because "
+            "they use different test data or print different things. Do NOT compare outputs. "
+            "Judge ONLY whether the student's CODE correctly implements the algorithm or formula "
+            "stated in the question.\n\n"
+            "However, use the student's actual output to catch clear failures: if it shows an "
+            "error, a traceback, or is completely empty/blank when output was expected, return 0. "
+            "If the expected output is empty, do NOT penalize empty student output.\n\n"
+            "Output ONLY the single digit 1 (correct) or 0 (incorrect). No other text.\n\n"
+            "---\n"
+            f"QUESTION:\n{question.question_text}\n\n"
+            f"EXPECTED OUTPUT:\n{expected_output}\n\n"
+            f"STUDENT'S CODE:\n{payload.user_code}\n\n"
+            f"STUDENT'S ACTUAL OUTPUT:\n{actual_output}\n\n"
+            f"CANONICAL SOLUTION (reference only):\n{question.answer_code}\n"
+            "---\n\n"
+            "Does the student's code correctly implement the concept? Reply 1 or 0 only."
         )
-    correct = "1" in raw
+        try:
+            raw = _call_chatgpt(judge_prompt, model="gpt-4o-mini", user=user).strip()
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"AI judge error: {e}",
+            )
+        correct = "1" in raw
 
     # Record the attempt (will be finalized when feedback is provided)
     record_attempt(
@@ -285,7 +315,38 @@ def submit_answer(
         actual_output=actual_output,
         expected_output=expected_output,
         solution_code=question.answer_code,
+        failed_tests=failed_tests,
     )
+
+
+@router.post("/submit-local-eval", response_model=OverrideAttemptResponse)
+def submit_local_eval(
+    payload: LocalEvalSubmitRequest,
+    user: User = Depends(get_current_user),
+) -> OverrideAttemptResponse:
+    """
+    Record an attempt that was graded locally in the frontend (e.g. Pyodide)
+    so backend feedback can still apply to the pending attempt.
+    """
+    user_id = str(user.id)
+    user_state = get_user_state(user_id)
+
+    question = get_question_by_id(payload.question_id)
+    if question is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found",
+        )
+
+    record_attempt(
+        user_state=user_state,
+        question_id=question.id,
+        subtopic=question.subtopic,
+        difficulty_score=question.difficulty_score,
+        correct=payload.correct,
+    )
+    save_user_state(user_id)
+    return OverrideAttemptResponse(success=True)
 
 
 @router.post("/feedback", response_model=FeedbackResponse)
@@ -325,6 +386,27 @@ def submit_feedback(
         target_difficulty_after=attempt.target_difficulty_after or 0.0,
         p_after=attempt.p_after or 0.0,
     )
+
+
+@router.post("/visual-debug", response_model=VisualDebugResponse)
+def submit_visual_debug(
+    payload: VisualDebugRequest,
+    user: User = Depends(get_current_user),
+) -> VisualDebugResponse:
+    user_id = str(user.id)
+    latest = dict(payload.payload or {})
+    _latest_visual_debug_by_user[user_id] = latest
+    logger.info("visual_debug user=%s payload=%s", user_id, latest)
+    return VisualDebugResponse(success=True, latest=latest)
+
+
+@router.get("/visual-debug", response_model=VisualDebugResponse)
+def get_visual_debug(
+    user: User = Depends(get_current_user),
+) -> VisualDebugResponse:
+    user_id = str(user.id)
+    latest = _latest_visual_debug_by_user.get(user_id, {})
+    return VisualDebugResponse(success=True, latest=latest)
 
 
 @router.post("/override", response_model=OverrideAttemptResponse)

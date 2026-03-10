@@ -4,8 +4,51 @@
 
 let pyodideInstance = null;
 let pyodideLoading = false;
+let pyodidePackagePromise = null;
+let arenaNumbersPromise = null;
 
 const normalizeOutput = (value) => (value || "").replace(/\r\n/g, "\n").trim();
+
+function hideOutputVisual() {
+  outputVisual.classList.add("hidden");
+  outputVisualCanvas.classList.add("hidden");
+  outputVisualNote.textContent = "";
+  const ctx = outputVisualCanvas.getContext("2d");
+  ctx.clearRect(0, 0, outputVisualCanvas.width || 1, outputVisualCanvas.height || 1);
+}
+
+async function renderRunOutputVisual(pyodide, question) {
+  if (!question?.supports_visual_output || question?.submission_mode !== "function") {
+    hideOutputVisual();
+    return;
+  }
+  try {
+    const payload = await pyodide.runPythonAsync(`
+import json
+import numpy as np
+
+def _delta_to_jsonable(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, tuple):
+        return [_delta_to_jsonable(v) for v in value]
+    if isinstance(value, list):
+        return [_delta_to_jsonable(v) for v in value]
+    return value
+
+_delta_output_value = solve()
+json.dumps(_delta_to_jsonable(_delta_output_value))
+`);
+    const parsed = JSON.parse(payload);
+    window.renderDeltaArrayToCanvas(outputVisualCanvas, parsed);
+    outputVisual.classList.remove("hidden");
+    outputVisualNote.textContent = "Rendered from solve().";
+  } catch (err) {
+    hideOutputVisual();
+  }
+}
 
 async function initPyodide() {
   if (pyodideInstance) return pyodideInstance;
@@ -28,18 +71,86 @@ async function initPyodide() {
   return pyodideInstance;
 }
 
+async function ensurePyodidePracticePackages({ needsEinops = false } = {}) {
+  const pyodide = await initPyodide();
+  if (!pyodide) return null;
+  if (!needsEinops || pyodide.__deltaEinopsReady) return pyodide;
+  if (!pyodidePackagePromise) {
+    pyodidePackagePromise = (async () => {
+      await pyodide.loadPackage("micropip");
+      await pyodide.runPythonAsync(`
+import micropip
+await micropip.install("einops")
+import einops
+`);
+      pyodide.__deltaEinopsReady = true;
+    })().catch((err) => {
+      pyodidePackagePromise = null;
+      throw err;
+    });
+  }
+  await pyodidePackagePromise;
+  return pyodide;
+}
+
+async function ensureArenaNumbersInPyodide() {
+  const pyodide = await initPyodide();
+  if (!pyodide) return null;
+  if (pyodide.__deltaArenaNumbersReady) return pyodide;
+  if (!arenaNumbersPromise) {
+    arenaNumbersPromise = (async () => {
+      const res = await fetch(ARENA_NUMBERS_PATH);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch ${ARENA_NUMBERS_PATH}`);
+      }
+      const bytes = new Uint8Array(await res.arrayBuffer());
+      pyodide.FS.writeFile("/delta_numbers.npy", bytes);
+      pyodide.__deltaArenaNumbersReady = true;
+    })().catch((err) => {
+      arenaNumbersPromise = null;
+      throw err;
+    });
+  }
+  await arenaNumbersPromise;
+  return pyodide;
+}
+
+async function buildPyodidePreamble(question = PracticeAPI?.currentQuestion) {
+  const needsEinops = questionNeedsEinops(question);
+  const needsArenaArray = questionNeedsArenaArray(question);
+  await ensurePyodidePracticePackages({ needsEinops });
+  if (needsArenaArray) {
+    await ensureArenaNumbersInPyodide();
+  }
+
+  return `
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+import numpy as np
+np.random.seed(0)
+${needsEinops ? "import einops\nfrom einops import einsum, rearrange, reduce, repeat" : ""}
+def display_array_as_img(*args, **kwargs):
+    return None
+${needsArenaArray ? "arr = np.load('/delta_numbers.npy')" : ""}
+`;
+}
+
 runBtn.addEventListener("click", async () => {
   runBtn.disabled = true;
   runBtn.textContent = "Running...";
   outputArea.textContent = "";
+  hideOutputVisual();
 
   try {
     let actualOutput = "";
     let runFailed = false;
 
-    let useLocalPyodide = practiceMode !== "backend";
+    let useLocalPyodide =
+      practiceMode !== "backend" || questionNeedsEinops(PracticeAPI?.currentQuestion);
 
-    if (practiceMode === "backend") {
+    if (practiceMode === "backend" && !useLocalPyodide) {
       try {
         const res = await apiFetch("/api/practice/run-code", {
           method: "POST",
@@ -77,15 +188,8 @@ runBtn.addEventListener("click", async () => {
         return;
       }
 
-      // Redirect stdout to capture print output
-      pyodide.runPython(`
-import sys
-from io import StringIO
-sys.stdout = StringIO()
-sys.stderr = StringIO()
-import numpy as np
-np.random.seed(0)
-`);
+      const preamble = await buildPyodidePreamble(PracticeAPI?.currentQuestion);
+      pyodide.runPython(preamble);
 
       try {
         pyodide.runPython(codeEditor.value);
@@ -98,10 +202,14 @@ np.random.seed(0)
           runFailed = true;
         }
         outputArea.textContent = output || "(No output)";
+        if (!runFailed) {
+          await renderRunOutputVisual(pyodide, PracticeAPI?.currentQuestion);
+        }
       } catch (pyErr) {
         const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));
         outputArea.textContent = stderr || pyErr.message;
         runFailed = true;
+        hideOutputVisual();
       } finally {
         // Reset stdout/stderr
         pyodide.runPython(`

@@ -4,33 +4,54 @@
 
 let adaptiveStateJson = null; // JSON string of UserPracticeState
 
+async function syncAdaptiveWeightsToPracticePreferences() {
+  if (!adaptiveStateJson || typeof buildEffectiveWeightsFromSubtopics !== "function") return;
+
+  const bank = await loadQuestionsBank();
+  const pyodide = await initPyodide();
+  if (!bank || !pyodide || !practiceEngineLoaded) return;
+
+  const descriptors = bank.map((q) => ({ topic: q.topic || "", subtopic: q.subtopic }));
+  const effectiveWeights = buildEffectiveWeightsFromSubtopics(descriptors);
+  const api = pyodide.globals.get("engine_api");
+  adaptiveStateJson = api.set_custom_weights(adaptiveStateJson, JSON.stringify(effectiveWeights));
+  await saveAdaptiveState();
+}
+
 async function loadAdaptiveState() {
   const email = typeof authEmail === "string" && authEmail.trim() ? authEmail.trim() : "guest";
+  let loadedExistingState = false;
 
   if (practiceMode === "supabase") {
     const sbState = await loadPracticeStateFromSupabase(email);
     if (sbState) {
       adaptiveStateJson = JSON.stringify(sbState);
-      return;
+      loadedExistingState = true;
     }
   }
 
   // Try localStorage
   const localKey = `adaptive_state_${email}`;
-  const saved = localStorage.getItem(localKey);
-  if (saved) {
-    adaptiveStateJson = saved;
-    return;
+  if (!loadedExistingState) {
+    const saved = localStorage.getItem(localKey);
+    if (saved) {
+      adaptiveStateJson = saved;
+      loadedExistingState = true;
+    }
   }
 
   // Init fresh state via engine
-  const pyodide = await initPyodide();
-  if (pyodide && practiceEngineLoaded) {
-    const api = pyodide.globals.get("engine_api");
-    adaptiveStateJson = api.init_state(email);
-  } else {
-    adaptiveStateJson = null;
+  if (!loadedExistingState) {
+    const pyodide = await initPyodide();
+    if (pyodide && practiceEngineLoaded) {
+      const api = pyodide.globals.get("engine_api");
+      adaptiveStateJson = api.init_state(email);
+    } else {
+      adaptiveStateJson = null;
+    }
   }
+
+  await syncAdaptiveWeightsToPracticePreferences();
 }
 
 async function saveAdaptiveState() {

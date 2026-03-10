@@ -125,6 +125,8 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
             continue
 
         weight = _get_weight(user_state, st_name, uniform_weight)
+        if weight <= 0:
+            continue
         learning_rate = _estimate_learning_rate(sub_state)
         gradient = weight * learning_rate
         gradients.append((st_name, gradient))
@@ -138,6 +140,8 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
             available = get_questions_by_subtopic(st_name)
             if available:
                 weight = _get_weight(user_state, st_name, uniform_weight)
+                if weight <= 0:
+                    continue
                 learning_rate = _estimate_learning_rate(sub_state)
                 gradients.append((st_name, weight * learning_rate))
 
