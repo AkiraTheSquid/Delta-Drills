@@ -23,6 +23,8 @@ REPO_SHARED_DIR="$REPO_DIR/Local_Deployed_Shared"
 DEPLOY_SHARED_DIR="$DEPLOY_DIR/Local_Deployed_Shared"
 REFRESH_SPLIT_SCRIPT="$REPO_THIS_DIR/scripts/refresh_split_layout.py"
 VERCEL_URL="https://delta-drills.vercel.app"
+VERCEL_PROJECT="delta-drills"
+VERCEL_SCOPE="seth-gibsons-projects"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -104,7 +106,7 @@ info "Syncing Local_Deployed_Shared into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
 mkdir -p "$DEPLOY_SHARED_DIR" "$DEPLOY_DIR/This-Directory-Only"
 auto_commit_if_dirty "$DEPLOY_DIR" "chore: checkpoint deploy worktree before shared sync"
-rsync -a --delete "$REPO_SHARED_DIR"/ "$DEPLOY_SHARED_DIR"/
+rsync -a --delete --exclude '.vercel/' "$REPO_SHARED_DIR"/ "$DEPLOY_SHARED_DIR"/
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$DEPLOY_DIR"
 auto_commit_if_dirty "$DEPLOY_DIR" "chore: sync shared deploy payload"
 
@@ -112,6 +114,24 @@ auto_commit_if_dirty "$DEPLOY_DIR" "chore: sync shared deploy payload"
 
 info "Pushing deploy to origin..."
 git -C "$DEPLOY_DIR" push origin deploy
+
+# --- Step 5b: Deploy frontend to Vercel from Local_Deployed_Shared ---
+
+if command -v vercel >/dev/null 2>&1; then
+  info "Deploying frontend to Vercel from Local_Deployed_Shared..."
+  if [ ! -f "$DEPLOY_SHARED_DIR/.vercel/project.json" ]; then
+    (
+      cd "$DEPLOY_SHARED_DIR" && \
+      vercel link --yes --project "$VERCEL_PROJECT" --scope "$VERCEL_SCOPE"
+    )
+  fi
+  (
+    cd "$DEPLOY_SHARED_DIR" && \
+    vercel deploy --prod --yes --scope "$VERCEL_SCOPE"
+  )
+else
+  warn "Vercel CLI not found — relying on Git-connected Vercel deploy."
+fi
 
 # --- Step 6: Deploy backend to Fly.io ---
 

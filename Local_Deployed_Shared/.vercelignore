@@ -1,0 +1,27 @@
+__pycache__/
+.vercel/
+books/
+ARENA_3.0-main/
+Master the Boards USMLE Step 3 (Master the Boards) (Conrad Fischer) (Z-Library)_chapters/
+README.md
+CLI-REFERENCE.md
+ChatGPT.py
+ChatGPT_batch.py
+ChatGPT_batch_without_batch_param.py
+build_function_bank.py
+build_function_mode_repair_requests.py
+build_function_mode_requests.py
+delta_paths.py
+export_questions_json.py
+function_mode_batch.py
+function_mode_quality_check_system.txt
+function_mode_quality_fix_system.txt
+function_mode_repair_system.txt
+glossary_to_csv.py
+mathpix_config.py
+mathpix_processor.py
+split_LADR4e_chapters.py
+test_function_validator.py
+validate_function_bank.py
+questions_structured.json
+arena_prereqs_structured.json
