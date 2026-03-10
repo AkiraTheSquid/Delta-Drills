@@ -64,6 +64,11 @@ const setAuthState = (token, email) => {
     switchTab("login");
   }
   updateTabVisibility();
+  window.dispatchEvent(
+    new CustomEvent("delta:auth-state-changed", {
+      detail: { token: authToken, email: authEmail },
+    })
+  );
 };
 
 logoutButton.addEventListener("click", () => {
@@ -75,12 +80,37 @@ accountLogout.addEventListener("click", () => {
   setAuthState("", "");
 });
 
-const apiFetch = async (path, options = {}) => {
+const maybeRefreshSupabaseAuth = async () => {
+  if (isLocalHost || typeof supabaseGetSession !== "function") return false;
+  try {
+    const session = await supabaseGetSession();
+    const refreshedToken = session?.access_token || "";
+    const refreshedEmail = session?.user?.email || authEmail || "";
+    if (!refreshedToken) {
+      if (authToken) setAuthState("", "");
+      return false;
+    }
+    if (refreshedToken === authToken) return false;
+    setAuthState(refreshedToken, refreshedEmail);
+    return true;
+  } catch (err) {
+    console.warn("Supabase session refresh failed:", err);
+    return false;
+  }
+};
+
+const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   const headers = options.headers ? { ...options.headers } : {};
   if (authToken) {
     headers.Authorization = `Bearer ${authToken}`;
   }
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (response.status === 401 && allowSessionRefresh) {
+    const refreshed = await maybeRefreshSupabaseAuth();
+    if (refreshed && authToken) {
+      return apiFetch(path, options, false);
+    }
+  }
   return response;
 };
 

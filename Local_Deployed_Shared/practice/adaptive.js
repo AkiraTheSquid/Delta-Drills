@@ -4,6 +4,14 @@
 
 let adaptiveStateJson = null; // JSON string of UserPracticeState
 
+function emitAdaptiveStateChanged() {
+  window.dispatchEvent(
+    new CustomEvent("delta:adaptive-state-changed", {
+      detail: { hasState: typeof adaptiveStateJson === "string" && !!adaptiveStateJson },
+    })
+  );
+}
+
 async function syncAdaptiveWeightsToPracticePreferences() {
   if (!adaptiveStateJson || typeof buildEffectiveWeightsFromSubtopics !== "function") return;
 
@@ -52,6 +60,7 @@ async function loadAdaptiveState() {
   }
 
   await syncAdaptiveWeightsToPracticePreferences();
+  emitAdaptiveStateChanged();
 }
 
 async function saveAdaptiveState() {
@@ -67,6 +76,7 @@ async function saveAdaptiveState() {
     const stateObj = JSON.parse(adaptiveStateJson);
     await savePracticeStateToSupabase(email, stateObj);
   }
+  emitAdaptiveStateChanged();
 }
 
 function getTargetDifficultyFromAdaptiveState(subtopic) {
