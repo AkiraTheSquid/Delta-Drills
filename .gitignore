@@ -10,3 +10,33 @@ __pycache__/
 chatgpt/api_key.txt
 backend/uvicorn.log
 frontend.log
+This-Directory-Only/backend/user_data/
+This-Directory-Only/storage/
+This-Directory-Only/backend/.env
+This-Directory-Only/backend/.venv/
+This-Directory-Only/backend/uvicorn.log
+This-Directory-Only/chatgpt/api_key.txt
+This-Directory-Only/chatgpt/completion_state.txt
+This-Directory-Only/chatgpt/day_token_limit_reached
+This-Directory-Only/chatgpt/Minute_Token_limit_reached.txt
+This-Directory-Only/chatgpt/output.txt
+This-Directory-Only/chatgpt/output.meta.json
+This-Directory-Only/chatgpt/prompt.txt
+This-Directory-Only/chatgpt/tokens_within_min.txt
+This-Directory-Only/chatgpt/usage.md
+This-Directory-Only/chatgpt/prompts/
+This-Directory-Only/chatgpt/outputs/
+This-Directory-Only/chatgpt/logprobs/
+This-Directory-Only/chatgpt/function_mode_requests.jsonl
+This-Directory-Only/chatgpt/function_mode_repair_requests.jsonl
+This-Directory-Only/chatgpt/function_mode_validation_failures.jsonl
+This-Directory-Only/chatgpt/function_mode_broken_ids.json
+This-Directory-Only/chatgpt/function_mode_deleted_ids.json
+This-Directory-Only/chatgpt/function_mode_overrides.jsonl
+This-Directory-Only/chatgpt/function_mode_overrides_round2.jsonl
+This-Directory-Only/chatgpt/function_mode_rejected.jsonl
+This-Directory-Only/chatgpt/function_mode_rejected_round2.jsonl
+This-Directory-Only/chatgpt/validator_health.txt
+This-Directory-Only/mathpix processor/completion_state.txt
+This-Directory-Only/mathpix processor/destination_for_md_file.txt
+This-Directory-Only/mathpix processor/pdf_path_convert.txt
