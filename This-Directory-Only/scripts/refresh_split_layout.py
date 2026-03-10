@@ -8,6 +8,7 @@ from pathlib import Path
 SHARED_DIRNAME = "Local_Deployed_Shared"
 THIS_DIRNAME = "This-Directory-Only"
 ALLOWED_ROOT_NAMES = {".git", ".gitignore", ".dockerignore", ".vercel", SHARED_DIRNAME, THIS_DIRNAME}
+ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
 
 def main() -> None:
@@ -29,8 +30,10 @@ def main() -> None:
 
     for directory in (shared_dir, env_dir):
         for child in sorted(directory.iterdir(), key=lambda item: item.name):
-            if child.name in {".git", ".gitignore", ".dockerignore", ".vercel"}:
+            if child.name == ".git":
                 raise RuntimeError(f"Hidden repo metadata must stay at root, not under split dirs: {child}")
+            if child.name.startswith(".") and child.name not in ALLOWED_SPLIT_METADATA_NAMES:
+                raise RuntimeError(f"Unexpected hidden metadata inside split dir: {child}")
 
     for child in root.iterdir():
         if child.name in ALLOWED_ROOT_NAMES:
