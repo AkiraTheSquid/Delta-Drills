@@ -35,6 +35,26 @@ info()  { echo -e "${GREEN}[deploy]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[warn]${NC} $*"; }
 error() { echo -e "${RED}[error]${NC} $*"; }
 
+verify_vercel_frontend() {
+  local url="$1"
+  local attempts="${2:-10}"
+  local delay_seconds="${3:-3}"
+  local attempt
+  local status
+
+  for attempt in $(seq 1 "$attempts"); do
+    status="$(curl -s -o /dev/null -w '%{http_code}' "$url" || true)"
+    if [ "$status" = "200" ]; then
+      info "Verified Vercel frontend is serving at $url"
+      return 0
+    fi
+    warn "Vercel frontend check attempt $attempt/$attempts returned HTTP $status for $url"
+    sleep "$delay_seconds"
+  done
+
+  return 1
+}
+
 auto_commit_if_dirty() {
   local repo_dir="$1"
   local message="$2"
@@ -129,6 +149,17 @@ if command -v vercel >/dev/null 2>&1; then
     cd "$DEPLOY_SHARED_DIR" && \
     vercel deploy --prod --yes --scope "$VERCEL_SCOPE"
   )
+  if ! verify_vercel_frontend "$VERCEL_URL" 10 3; then
+    warn "Primary Vercel alias did not serve successfully after deploy; retrying one forced frontend deploy..."
+    (
+      cd "$DEPLOY_SHARED_DIR" && \
+      vercel deploy --prod --yes --force --scope "$VERCEL_SCOPE"
+    )
+    verify_vercel_frontend "$VERCEL_URL" 10 3 || {
+      error "Vercel deploy completed, but $VERCEL_URL is still not serving the app."
+      exit 1
+    }
+  fi
 else
   warn "Vercel CLI not found — relying on Git-connected Vercel deploy."
 fi
