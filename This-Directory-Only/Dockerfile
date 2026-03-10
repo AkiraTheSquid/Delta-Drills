@@ -15,7 +15,10 @@ COPY This-Directory-Only/backend ./This-Directory-Only/backend
 COPY This-Directory-Only/chatgpt ./This-Directory-Only/chatgpt
 COPY ["This-Directory-Only/mathpix processor", "./This-Directory-Only/mathpix processor"]
 COPY ["This-Directory-Only/csv files of problems", "./This-Directory-Only/csv files of problems"]
+COPY Local_Deployed_Shared/ChatGPT.py ./Local_Deployed_Shared/ChatGPT.py
 COPY Local_Deployed_Shared/glossary_to_csv.py ./Local_Deployed_Shared/glossary_to_csv.py
+COPY Local_Deployed_Shared/mathpix_config.py ./Local_Deployed_Shared/mathpix_config.py
+COPY Local_Deployed_Shared/mathpix_processor.py ./Local_Deployed_Shared/mathpix_processor.py
 COPY Local_Deployed_Shared/split_LADR4e_chapters.py ./Local_Deployed_Shared/split_LADR4e_chapters.py
 
 # Persistent volume mount point — Fly.io mounts /data here

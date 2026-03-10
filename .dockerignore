@@ -44,5 +44,8 @@ This-Directory-Only/mathpix processor/pdf_path_convert.txt
 !This-Directory-Only/Dockerfile
 
 # Shared scripts imported by backend processing
+!Local_Deployed_Shared/ChatGPT.py
 !Local_Deployed_Shared/glossary_to_csv.py
+!Local_Deployed_Shared/mathpix_config.py
+!Local_Deployed_Shared/mathpix_processor.py
 !Local_Deployed_Shared/split_LADR4e_chapters.py

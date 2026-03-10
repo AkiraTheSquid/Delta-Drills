@@ -18,8 +18,9 @@ except Exception:  # pragma: no cover - fallback for environments without pypdf
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 THIS_DIR_ONLY = REPO_ROOT / "This-Directory-Only"
-CHATGPT_DIR = THIS_DIR_ONLY / "chatgpt"
-MATHPIX_DIR = THIS_DIR_ONLY / "mathpix processor"
+CHATGPT_CODE_DIR = THIS_DIR_ONLY / "chatgpt"
+CHATGPT_SCRIPT = SCRIPT_DIR / "ChatGPT.py"
+MATHPIX_SCRIPT = SCRIPT_DIR / "mathpix_processor.py"
 
 
 def _read_pdf_page_texts(pdf_path: Path, max_chars: int, page_window: tuple[int, int] | None) -> list[tuple[int, str]]:
@@ -100,9 +101,11 @@ def _find_title_page_indices(
 
 
 def _run_chatgpt(prompt: str, model: str | None = None, label: str | None = None) -> str:
-    if not CHATGPT_DIR.exists():
-        raise FileNotFoundError(f"ChatGPT folder not found: {CHATGPT_DIR}")
-    runtime_dir = Path(os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", str(CHATGPT_DIR))).expanduser().resolve()
+    if not CHATGPT_SCRIPT.exists():
+        raise FileNotFoundError(f"ChatGPT.py not found: {CHATGPT_SCRIPT}")
+    if not CHATGPT_CODE_DIR.exists():
+        raise FileNotFoundError(f"ChatGPT code/config folder not found: {CHATGPT_CODE_DIR}")
+    runtime_dir = Path(os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", str(CHATGPT_CODE_DIR))).expanduser().resolve()
     runtime_dir.mkdir(parents=True, exist_ok=True)
     prompt_path = runtime_dir / "prompt.txt"
     output_path = runtime_dir / "output.txt"
@@ -115,10 +118,11 @@ def _run_chatgpt(prompt: str, model: str | None = None, label: str | None = None
     env = os.environ.copy()
     if model:
         env["OPENAI_MODEL"] = model
+    env["DELTA_CHATGPT_CODE_DIR"] = str(CHATGPT_CODE_DIR)
 
     result = subprocess.run(
-        [sys.executable, str(CHATGPT_DIR / "ChatGPT.py")],
-        cwd=str(CHATGPT_DIR),
+        [sys.executable, str(CHATGPT_SCRIPT)],
+        cwd=str(SCRIPT_DIR),
         env=env,
         check=False,
     )
@@ -189,13 +193,12 @@ def _make_glossary_pdf(pdf_path: Path, start_page: int, end_page: int, out_dir: 
 
 
 def _run_mathpix(pdf_path: Path, out_dir: Path, timeout: int) -> Path:
-    processor = MATHPIX_DIR / "mathpix_processor.py"
-    if not processor.exists():
-        raise FileNotFoundError(f"mathpix_processor.py not found: {processor}")
+    if not MATHPIX_SCRIPT.exists():
+        raise FileNotFoundError(f"mathpix_processor.py not found: {MATHPIX_SCRIPT}")
     out_dir.mkdir(parents=True, exist_ok=True)
     cmd = [
         sys.executable,
-        str(processor),
+        str(MATHPIX_SCRIPT),
         "pdf",
         str(pdf_path),
         "--out",
@@ -203,7 +206,7 @@ def _run_mathpix(pdf_path: Path, out_dir: Path, timeout: int) -> Path:
         "--timeout",
         str(timeout),
     ]
-    result = subprocess.run(cmd, cwd=str(MATHPIX_DIR), check=False)
+    result = subprocess.run(cmd, cwd=str(SCRIPT_DIR), check=False)
     if result.returncode != 0:
         raise RuntimeError(f"mathpix_processor.py failed with exit code {result.returncode}")
     md_path = out_dir / (pdf_path.stem + ".md")
