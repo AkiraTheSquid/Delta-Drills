@@ -172,7 +172,7 @@ const renderStatsTable = () => {
       input.value = val;
       fitInputWidth(input);
 
-      const weights = loadWeights();
+      let weights = loadWeights();
       const topicKey = input.dataset.weightTopic;
       const subtopicKey = input.dataset.weightSubtopic;
 
@@ -182,7 +182,7 @@ const renderStatsTable = () => {
         weights.subtopics[subtopicKey] = val;
       }
 
-      saveWeights(weights);
+      weights = await persistWeights(weights);
 
       // Rebuild from cache (no re-fetch) and re-render
       if (rawSubtopicsCache) {
@@ -211,7 +211,7 @@ const renderStatsTable = () => {
           });
       }
 
-      saveWeights(weights);
+      weights = await persistWeights(weights);
 
       if (rawSubtopicsCache) {
         statsData = buildAreas(rawSubtopicsCache, weights);
@@ -235,7 +235,7 @@ const renderStatsTable = () => {
         weights = setTopicEnabled(topicName, true, weights);
       }
 
-      saveWeights(weights);
+      weights = await persistWeights(weights);
 
       if (rawSubtopicsCache) {
         statsData = buildAreas(rawSubtopicsCache, weights);
