@@ -14,14 +14,14 @@ def get_chatgpt_code_dir() -> Path:
     configured = os.environ.get("DELTA_CHATGPT_CODE_DIR", "").strip()
     if configured:
         return Path(configured).expanduser().resolve()
-    return (THIS_DIR_ONLY / "chatgpt").resolve()
+    return (SHARED_DIR / "chatgpt").resolve()
 
 
 def get_chatgpt_runtime_dir() -> Path:
     configured = os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", "").strip()
     if configured:
         return Path(configured).expanduser().resolve()
-    return get_chatgpt_code_dir()
+    return (THIS_DIR_ONLY / "chatgpt").resolve()
 
 
 def get_backend_python() -> Path:
