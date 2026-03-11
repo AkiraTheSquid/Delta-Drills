@@ -1,0 +1,23 @@
+[0;32m[deploy][0m Writing deploy log to /home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/logs/deploy_delta_drills-20260311-165604.txt
+[0;32m[deploy][0m Checking for uncommitted changes on main...
+Already on 'main'
+M	Local_Deployed_Shared/delta_paths.py
+M	Local_Deployed_Shared/glossary_to_csv.py
+M	This-Directory-Only/chatgpt/ChatGPT.py
+M	This-Directory-Only/chatgpt/ChatGPT_batch.py
+M	This-Directory-Only/chatgpt/ChatGPT_batch_without_batch_param.py
+M	This-Directory-Only/chatgpt/function_mode_batch.py
+M	This-Directory-Only/fly.toml
+M	This-Directory-Only/scripts/deploy_delta_drills.sh
+Your branch is up to date with 'origin/main'.
+[1;33m[warn][0m Uncommitted changes detected in /home/stellar-thread/Applications/Delta-Drills-Local — auto-committing all files:
+ M Local_Deployed_Shared/delta_paths.py
+ M Local_Deployed_Shared/glossary_to_csv.py
+ M This-Directory-Only/chatgpt/ChatGPT.py
+ M This-Directory-Only/chatgpt/ChatGPT_batch.py
+ M This-Directory-Only/chatgpt/ChatGPT_batch_without_batch_param.py
+ M This-Directory-Only/chatgpt/function_mode_batch.py
+ M This-Directory-Only/fly.toml
+ M This-Directory-Only/scripts/deploy_delta_drills.sh
+?? Local_Deployed_Shared/chatgpt/
+?? This-Directory-Only/logs/

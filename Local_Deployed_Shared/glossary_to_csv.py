@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from delta_paths import get_chatgpt_code_dir, get_chatgpt_runtime_dir
 
 try:
     # Prefer pypdf (modern), falls back to PyPDF2 if needed
@@ -18,7 +19,8 @@ except Exception:  # pragma: no cover - fallback for environments without pypdf
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 THIS_DIR_ONLY = REPO_ROOT / "This-Directory-Only"
-CHATGPT_CODE_DIR = THIS_DIR_ONLY / "chatgpt"
+CHATGPT_CODE_DIR = get_chatgpt_code_dir()
+CHATGPT_RUNTIME_DIR = get_chatgpt_runtime_dir()
 CHATGPT_SCRIPT = SCRIPT_DIR / "ChatGPT.py"
 MATHPIX_SCRIPT = SCRIPT_DIR / "mathpix_processor.py"
 
@@ -105,7 +107,7 @@ def _run_chatgpt(prompt: str, model: str | None = None, label: str | None = None
         raise FileNotFoundError(f"ChatGPT.py not found: {CHATGPT_SCRIPT}")
     if not CHATGPT_CODE_DIR.exists():
         raise FileNotFoundError(f"ChatGPT code/config folder not found: {CHATGPT_CODE_DIR}")
-    runtime_dir = Path(os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", str(CHATGPT_CODE_DIR))).expanduser().resolve()
+    runtime_dir = Path(os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", str(CHATGPT_RUNTIME_DIR))).expanduser().resolve()
     runtime_dir.mkdir(parents=True, exist_ok=True)
     prompt_path = runtime_dir / "prompt.txt"
     output_path = runtime_dir / "output.txt"
@@ -119,6 +121,7 @@ def _run_chatgpt(prompt: str, model: str | None = None, label: str | None = None
     if model:
         env["OPENAI_MODEL"] = model
     env["DELTA_CHATGPT_CODE_DIR"] = str(CHATGPT_CODE_DIR)
+    env["DELTA_CHATGPT_RUNTIME_DIR"] = str(runtime_dir)
 
     result = subprocess.run(
         [sys.executable, str(CHATGPT_SCRIPT)],

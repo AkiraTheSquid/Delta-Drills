@@ -22,6 +22,9 @@ REPO_THIS_DIR="$REPO_DIR/This-Directory-Only"
 REPO_SHARED_DIR="$REPO_DIR/Local_Deployed_Shared"
 DEPLOY_SHARED_DIR="$DEPLOY_DIR/Local_Deployed_Shared"
 REFRESH_SPLIT_SCRIPT="$REPO_THIS_DIR/scripts/refresh_split_layout.py"
+LOG_DIR="$REPO_THIS_DIR/logs"
+TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
+LOG_FILE="$LOG_DIR/deploy_delta_drills-$TIMESTAMP.txt"
 VERCEL_URL="https://delta-drills.vercel.app"
 VERCEL_PROJECT="delta-drills"
 VERCEL_SCOPE="seth-gibsons-projects"
@@ -34,6 +37,11 @@ NC='\033[0m' # No Color
 info()  { echo -e "${GREEN}[deploy]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[warn]${NC} $*"; }
 error() { echo -e "${RED}[error]${NC} $*"; }
+
+mkdir -p "$LOG_DIR"
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+info "Writing deploy log to $LOG_FILE"
 
 verify_vercel_frontend() {
   local url="$1"
