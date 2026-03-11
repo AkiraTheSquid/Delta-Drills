@@ -15,6 +15,7 @@ This-Directory-Only/storage/
 This-Directory-Only/backend/.env
 This-Directory-Only/backend/.venv/
 This-Directory-Only/backend/uvicorn.log
+This-Directory-Only/logs/
 This-Directory-Only/chatgpt/api_key.txt
 This-Directory-Only/chatgpt/completion_state.txt
 This-Directory-Only/chatgpt/day_token_limit_reached

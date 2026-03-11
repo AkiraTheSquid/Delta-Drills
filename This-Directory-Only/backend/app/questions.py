@@ -33,6 +33,7 @@ from __future__ import annotations
 import csv
 import logging
 import re
+from threading import Lock
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -78,6 +79,8 @@ _questions_by_id: Dict[int, Question] = {}
 _questions_by_subtopic: Dict[str, List[Question]] = {}
 _subtopics: List[str] = []
 _subtopic_to_topic: Dict[str, str] = {}  # "Numpy: Core array literacy" -> "Numpy"
+_questions_loaded = False
+_load_lock = Lock()
 
 # Manual curation: remove questions that are effectively copy/paste of the prompt.
 _CURATED_EXCLUDED_IDS = {9, 20, 21, 33, 39, 44, 45, 57, 88, 161, 188, 203, 221, 222, 223, 226}
@@ -449,7 +452,7 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
     If csv_path is given (e.g. in tests), only that file is loaded using
     the numpy CSV layout (2 empty header rows).
     """
-    global _questions, _questions_by_id, _questions_by_subtopic, _subtopics, _subtopic_to_topic
+    global _questions, _questions_by_id, _questions_by_subtopic, _subtopics, _subtopic_to_topic, _questions_loaded
 
     questions: List[Question] = []
 
@@ -478,6 +481,19 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
         len(questions),
         len(_subtopics),
     )
+    _questions_loaded = True
+
+
+def ensure_questions_loaded() -> None:
+    global _questions_loaded
+
+    if _questions_loaded:
+        return
+
+    with _load_lock:
+        if _questions_loaded:
+            return
+        load_questions()
 
 
 # ---------------------------------------------------------------------------
@@ -485,25 +501,31 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
 # ---------------------------------------------------------------------------
 
 def get_all_questions() -> List[Question]:
+    ensure_questions_loaded()
     return _questions
 
 
 def get_question_by_id(qid: int) -> Optional[Question]:
+    ensure_questions_loaded()
     return _questions_by_id.get(qid)
 
 
 def get_questions_by_subtopic(subtopic: str) -> List[Question]:
+    ensure_questions_loaded()
     return _questions_by_subtopic.get(subtopic, [])
 
 
 def get_subtopics() -> List[str]:
+    ensure_questions_loaded()
     return list(_subtopics)
 
 
 def get_questions_by_subtopic_and_difficulty(subtopic: str, difficulty_label: str) -> List[Question]:
+    ensure_questions_loaded()
     return [q for q in _questions_by_subtopic.get(subtopic, []) if q.difficulty_label == difficulty_label]
 
 
 def get_topic_for_subtopic(subtopic: str) -> str:
     """Return the topic name for a given subtopic key (e.g. 'Numpy' for 'Numpy: Core array literacy')."""
+    ensure_questions_loaded()
     return _subtopic_to_topic.get(subtopic, subtopic.split(":")[0] if ":" in subtopic else "")

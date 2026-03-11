@@ -17,7 +17,6 @@ from app.job_artifacts import capture_auto_toc_artifacts
 from app.models import Chapter, Job, JobArtifact, User
 from app.practice_router import router as practice_router
 from app.processing import run_auto_toc, split_chapters
-from app.questions import load_questions
 from app.schemas import ChapterOut, JobArtifactOut, JobOut, Token, UserCreate, UserLogin
 from app.storage import job_chapters_dir, job_input_path, job_root
 
@@ -26,11 +25,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="PDF Split Tool Backend", version="0.1.0")
-
-# ---------------------------------------------------------------------------
-# Practice question bank — load CSV into memory on startup
-# ---------------------------------------------------------------------------
-load_questions()
 
 # ---------------------------------------------------------------------------
 # Practice endpoints (adaptive learning)

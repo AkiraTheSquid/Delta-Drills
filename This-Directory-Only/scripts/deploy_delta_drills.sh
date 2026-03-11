@@ -66,12 +66,24 @@ verify_vercel_frontend() {
 auto_commit_if_dirty() {
   local repo_dir="$1"
   local message="$2"
+  local status_output
+  local tracked_changes
+  local untracked_changes
 
-  if ! git -C "$repo_dir" diff --quiet || ! git -C "$repo_dir" diff --cached --quiet || \
-     git -C "$repo_dir" ls-files --others --exclude-standard | grep -q .; then
+  status_output="$(git -C "$repo_dir" status --short)"
+  tracked_changes="$(printf '%s\n' "$status_output" | grep -v '^?? ' | grep -v 'This-Directory-Only/logs/' || true)"
+  untracked_changes="$(git -C "$repo_dir" ls-files --others --exclude-standard | grep -v '^This-Directory-Only/logs/' || true)"
+
+  if [ -n "$tracked_changes" ] || [ -n "$untracked_changes" ]; then
     warn "Uncommitted changes detected in $repo_dir — auto-committing all files:"
-    git -C "$repo_dir" status --short
-    git -C "$repo_dir" add -A
+    printf '%s\n' "$status_output"
+    while IFS= read -r line; do
+      [ -n "$line" ] || continue
+      case "$line" in
+        *"This-Directory-Only/logs/"*) continue ;;
+      esac
+      git -C "$repo_dir" add -A -- "${line:3}"
+    done <<< "$status_output"
     if ! git -C "$repo_dir" diff --cached --quiet; then
       git -C "$repo_dir" commit -m "$message"
     fi
