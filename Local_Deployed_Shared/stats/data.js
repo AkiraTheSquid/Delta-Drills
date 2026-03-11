@@ -184,7 +184,6 @@ const fetchAndBuild = async () => {
     return buildAreas(items, loadWeights());
   };
 
-  if (practiceMode === "supabase") return adaptiveFallback();
   if (typeof apiFetch !== "function" || !authToken) return adaptiveFallback();
 
   let items;

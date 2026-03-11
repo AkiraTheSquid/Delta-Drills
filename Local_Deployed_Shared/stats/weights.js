@@ -35,30 +35,6 @@ const saveWeights = (w) => {
   localStorage.setItem(WEIGHTS_KEY, JSON.stringify(normalizeWeights(w)));
 };
 
-async function hydrateWeightsFromSupabase() {
-  if (practiceMode !== "supabase" || !authEmail || typeof loadPracticePreferencesFromSupabase !== "function") {
-    return loadWeights();
-  }
-  try {
-    const prefs = await loadPracticePreferencesFromSupabase(authEmail);
-    if (!prefs || typeof prefs !== "object") return loadWeights();
-    const normalized = normalizeWeights(prefs.weights);
-    saveWeights(normalized);
-    return normalized;
-  } catch (_) {
-    return loadWeights();
-  }
-}
-
-async function persistWeights(weights) {
-  const normalized = normalizeWeights(weights);
-  saveWeights(normalized);
-  if (practiceMode === "supabase" && authEmail && typeof savePracticePreferencesToSupabase === "function") {
-    await savePracticePreferencesToSupabase(authEmail, { weights: normalized });
-  }
-  return normalized;
-}
-
 const isTopicEnabled = (topicName, weights = loadWeights()) => weights.topicEnabled[topicName] !== false;
 
 const isSubtopicEnabled = (subtopicId, topicName, weights = loadWeights()) => {
@@ -161,7 +137,6 @@ const buildResolvedWeightState = (subtopics, weights = loadWeights()) => {
 };
 
 const pushWeightsToBackend = async (areas) => {
-  if (practiceMode === "supabase") return;
   if (typeof apiFetch !== "function" || !authToken) return;
 
   const weights = {};

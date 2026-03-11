@@ -134,41 +134,6 @@ async function loadUserSettingsFromSupabase(email) {
   return data || null;
 }
 
-async function savePracticePreferencesToSupabase(email, preferences) {
-  const sb = getSupabaseClient();
-  if (!sb || !email) return { ok: false, error: "Supabase not available" };
-  const { error } = await sb
-    .from("user_settings")
-    .upsert(
-      {
-        user_email: email,
-        practice_preferences: preferences || {},
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_email" }
-    );
-  if (error) {
-    console.error("Failed to save practice preferences to Supabase:", error);
-    return { ok: false, error: error.message || "Unknown error" };
-  }
-  return { ok: true };
-}
-
-async function loadPracticePreferencesFromSupabase(email) {
-  const sb = getSupabaseClient();
-  if (!sb || !email) return null;
-  const { data, error } = await sb
-    .from("user_settings")
-    .select("practice_preferences")
-    .eq("user_email", email)
-    .maybeSingle();
-  if (error) {
-    console.error("Failed to load practice preferences from Supabase:", error);
-    return null;
-  }
-  return data?.practice_preferences || null;
-}
-
 // --- Session sync (deployed) ---
 
 (async () => {

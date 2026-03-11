@@ -8,7 +8,6 @@ const loadAndRenderStats = async () => {
       '<tr><td colspan="9" style="text-align:center;padding:1.5rem;color:var(--color-muted)">Loading…</td></tr>';
   }
   try {
-    await hydrateWeightsFromSupabase();
     const data = await fetchAndBuild();
     statsData = data || [];
     renderStatsTable();
@@ -55,6 +54,7 @@ const initStats = () => {
   });
 
   renderStatsTable();
+  loadAndRenderStats();
   showStatsPanel("areas");
   initGraphControls();
 
@@ -66,8 +66,4 @@ const initStats = () => {
   window.addEventListener("delta:auth-state-changed", () => {
     if (shouldAutoRefreshStats()) loadAndRenderStats();
   });
-
-  if (document.getElementById("page-statistics") && !document.getElementById("page-statistics").classList.contains("hidden")) {
-    loadAndRenderStats();
-  }
 };
