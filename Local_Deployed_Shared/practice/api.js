@@ -65,6 +65,7 @@ const PracticeAPI = {
       const resultJson = api.next_question(adaptiveStateJson, JSON.stringify(eligibleBank));
       const result = JSON.parse(resultJson);
       adaptiveStateJson = result.state;
+      await saveAdaptiveState();
 
       if (result.question) {
         const q = result.question;
@@ -164,6 +165,7 @@ const PracticeAPI = {
           this.currentQuestion.difficulty || 50,
           correct
         );
+        await saveAdaptiveState();
       }
 
       if (practiceMode === "backend" && requiresLocalPyodide) {
@@ -245,6 +247,17 @@ json.dumps(_delta_results)
       if (practiceMode === "backend" && requiresLocalPyodide) {
         await this.recordLocalEval(questionId, correct);
       }
+      if (practiceEngineLoaded && adaptiveStateJson) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.submit_answer(
+          adaptiveStateJson,
+          this.currentQuestion.question_id,
+          this.currentQuestion.subtopic,
+          this.currentQuestion.difficulty || 50,
+          correct
+        );
+        await saveAdaptiveState();
+      }
       return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
     }
     try {
@@ -264,6 +277,7 @@ json.dumps(_delta_results)
         this.currentQuestion.difficulty || 50,
         correct
       );
+      await saveAdaptiveState();
     }
 
     if (practiceMode === "backend" && requiresLocalPyodide) {
