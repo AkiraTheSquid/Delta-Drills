@@ -42,17 +42,17 @@ vercel env pull --scope team_eGrwrqNQ97xD8TJZdXfhStdf
 
 ### Deployment workflow
 
-Vercel auto-deploys from the `deploy` branch via GitHub integration. You do NOT need `vercel deploy` manually. The flow is:
+`deploy_delta_drills` is the canonical deploy command on this machine. `/usr/local/bin/deploy_delta_drills` points to `/home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/scripts/deploy_delta_drills.sh`.
 
-1. `deploy_delta_drills` (system command) pushes the `deploy` branch
-2. GitHub webhook triggers Vercel
-3. Vercel builds and deploys automatically
+That script syncs `Local_Deployed_Shared/` into the deploy worktree, pushes the `deploy` branch, and also runs `vercel deploy --prod` from `Delta-Drills-Deployed/Local_Deployed_Shared` when the Vercel CLI is available.
+
+The deploy-worktree copy of `deploy_delta_drills.sh` is only a forwarding wrapper to the canonical script above.
 
 If you need to trigger a manual deployment:
 ```bash
-# From the deploy worktree
-cd /home/stellar-thread/Applications/Delta-Drills-Deployed
-vercel --prod --scope team_eGrwrqNQ97xD8TJZdXfhStdf
+# From the deployed frontend directory
+cd /home/stellar-thread/Applications/Delta-Drills-Deployed/Local_Deployed_Shared
+vercel deploy --prod --scope team_eGrwrqNQ97xD8TJZdXfhStdf
 ```
 
 ### Linking (interactive only)
@@ -163,7 +163,7 @@ supabase link --project-ref qaxtcaoydbpigomnfjpl
 |------|------|
 | Main worktree | `/home/stellar-thread/Applications/Delta-Drills-Local` (branch: `main`) |
 | Deploy worktree | `/home/stellar-thread/Applications/Delta-Drills-Deployed` (branch: `deploy`) |
-| Deploy command | `/usr/local/bin/deploy_delta_drills` (symlink to `scripts/deploy_delta_drills.sh`) |
+| Deploy command | `/usr/local/bin/deploy_delta_drills` -> `/home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/scripts/deploy_delta_drills.sh` |
 | Supabase config | `supabase/config.toml` |
 | Supabase migrations | `supabase/migrations/` |
 | Vercel config | `.vercel/` (created after `vercel link`) |
