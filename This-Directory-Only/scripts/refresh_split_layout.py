@@ -7,7 +7,15 @@ from pathlib import Path
 
 SHARED_DIRNAME = "Local_Deployed_Shared"
 THIS_DIRNAME = "This-Directory-Only"
-ALLOWED_ROOT_NAMES = {".git", ".gitignore", ".dockerignore", ".vercel", SHARED_DIRNAME, THIS_DIRNAME}
+ALLOWED_ROOT_NAMES = {
+    ".git",
+    ".gitignore",
+    ".dockerignore",
+    ".vercel",
+    "index.html",
+    SHARED_DIRNAME,
+    THIS_DIRNAME,
+}
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
 

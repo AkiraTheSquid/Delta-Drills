@@ -13,3 +13,8 @@ To update the deploy worktree, run:
 ```
 /usr/local/bin/deploy_delta_drills
 ```
+
+Canonical implementation:
+`/home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/scripts/deploy_delta_drills.sh`
+
+The copy under the deploy worktree is only a forwarding wrapper and should not be edited directly.
