@@ -99,10 +99,7 @@ async function ensureArenaNumbersInPyodide() {
   if (pyodide.__deltaArenaNumbersReady) return pyodide;
   if (!arenaNumbersPromise) {
     arenaNumbersPromise = (async () => {
-      const res = await fetch(ARENA_NUMBERS_PATH);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch ${ARENA_NUMBERS_PATH}`);
-      }
+      const res = await fetchArenaNumbersAsset();
       const bytes = new Uint8Array(await res.arrayBuffer());
       pyodide.FS.writeFile("/delta_numbers.npy", bytes);
       pyodide.__deltaArenaNumbersReady = true;
