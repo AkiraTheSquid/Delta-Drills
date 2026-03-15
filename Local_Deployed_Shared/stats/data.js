@@ -197,7 +197,7 @@ const fetchAndBuild = async () => {
 
   rawSubtopicsCache = items;
   const areas = buildAreas(items, loadWeights());
-  // Push weights to backend on initial load so stored custom weights take effect
-  await pushWeightsToBackend(areas);
+  // Don't block stats rendering on a best-effort weight sync.
+  pushWeightsToBackend(areas);
   return areas;
 };

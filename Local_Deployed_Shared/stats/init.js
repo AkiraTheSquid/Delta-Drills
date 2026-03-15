@@ -2,22 +2,44 @@
    STATS INIT — bootstrap
    ================================================================ */
 
+let statsLoadedOnce = false;
+let statsNeedsRefresh = true;
+let statsLoadPromise = null;
+let statsRefreshScheduled = false;
+
+const renderStatsLoadingState = () => {
+  if (!statsTableBody || statsData.length) return;
+  statsTableBody.innerHTML =
+    '<tr><td colspan="9" style="text-align:center;padding:1.5rem;color:var(--color-muted)">Loading…</td></tr>';
+};
+
 const loadAndRenderStats = async () => {
-  if (statsTableBody) {
-    statsTableBody.innerHTML =
-      '<tr><td colspan="9" style="text-align:center;padding:1.5rem;color:var(--color-muted)">Loading…</td></tr>';
-  }
-  try {
-    const data = await fetchAndBuild();
-    statsData = data || [];
-    renderStatsTable();
-    renderAdvancedTable();
-  } catch (err) {
-    console.warn("[stats] failed to load:", err);
-    statsData = [];
-    renderStatsTable();
-    renderAdvancedTable();
-  }
+  if (statsLoadPromise) return statsLoadPromise;
+
+  renderStatsLoadingState();
+  statsLoadPromise = (async () => {
+    try {
+      const data = await fetchAndBuild();
+      statsData = data || [];
+      statsLoadedOnce = true;
+      statsNeedsRefresh = false;
+      renderStatsTable();
+      renderAdvancedTable();
+      return statsData;
+    } catch (err) {
+      console.warn("[stats] failed to load:", err);
+      if (!statsLoadedOnce) {
+        statsData = [];
+        renderStatsTable();
+        renderAdvancedTable();
+      }
+      return statsData;
+    } finally {
+      statsLoadPromise = null;
+    }
+  })();
+
+  return statsLoadPromise;
 };
 
 const showStatsPanel = (target = "areas") => {
@@ -34,7 +56,17 @@ const showStatsPanel = (target = "areas") => {
 
 const shouldAutoRefreshStats = () => {
   const page = document.getElementById("page-statistics");
-  return !statsData.length || !!page && !page.classList.contains("hidden");
+  return !!page && !page.classList.contains("hidden");
+};
+
+const scheduleStatsRefresh = () => {
+  if (!statsNeedsRefresh && statsLoadedOnce) return;
+  if (statsRefreshScheduled) return;
+  statsRefreshScheduled = true;
+  window.setTimeout(() => {
+    statsRefreshScheduled = false;
+    loadAndRenderStats();
+  }, 0);
 };
 
 const initStats = () => {
@@ -49,21 +81,29 @@ const initStats = () => {
   document.querySelectorAll(".tab[data-tab='statistics']").forEach((tab) => {
     tab.addEventListener("click", () => {
       showStatsPanel("areas");
-      loadAndRenderStats();
+      if (statsLoadedOnce) {
+        renderStatsTable();
+        renderAdvancedTable();
+      } else {
+        renderStatsLoadingState();
+      }
+      scheduleStatsRefresh();
     });
   });
 
-  renderStatsTable();
-  loadAndRenderStats();
+  renderStatsLoadingState();
   showStatsPanel("areas");
   initGraphControls();
+  scheduleStatsRefresh();
 
   // Practice state and auth can finish initializing after the first stats
   // render. Refresh when those sources become available.
   window.addEventListener("delta:adaptive-state-changed", () => {
-    if (shouldAutoRefreshStats()) loadAndRenderStats();
+    statsNeedsRefresh = true;
+    if (shouldAutoRefreshStats()) scheduleStatsRefresh();
   });
   window.addEventListener("delta:auth-state-changed", () => {
-    if (shouldAutoRefreshStats()) loadAndRenderStats();
+    statsNeedsRefresh = true;
+    if (shouldAutoRefreshStats()) scheduleStatsRefresh();
   });
 };
