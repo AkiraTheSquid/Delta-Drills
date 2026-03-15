@@ -97,6 +97,16 @@ const buildItemsFromAdaptiveState = async () => {
 const buildAreas = (items, weights) => {
   const normalizedWeights = normalizeWeights(weights);
   const resolved = buildResolvedWeightState(items, normalizedWeights);
+  const getTopicDisplayPct = (topicName) => {
+    const configured = normalizedWeights.topics[topicName];
+    if (Number.isFinite(configured)) return configured;
+    return Math.round((resolved.topicWeights[topicName] || 0) * 100);
+  };
+  const getSubtopicDisplayPct = (subtopicId) => {
+    const configured = normalizedWeights.subtopics[subtopicId];
+    if (Number.isFinite(configured)) return configured;
+    return Math.round((resolved.subtopicShares[subtopicId] || 0) * 100);
+  };
   // Group subtopics by topic
   const topicMap = new Map();
   items.forEach((item) => {
@@ -113,7 +123,7 @@ const buildAreas = (items, weights) => {
   topicMap.forEach((subtopics, topicName) => {
     const n = subtopics.length;
     const topicWeightFraction = resolved.topicWeights[topicName] || 0;
-    const topicDisplayPct = Math.round(topicWeightFraction * 100);
+    const topicDisplayPct = getTopicDisplayPct(topicName);
     const topicEnabled = isTopicEnabled(topicName, normalizedWeights);
 
     const subareas = subtopics
@@ -122,7 +132,7 @@ const buildAreas = (items, weights) => {
       .map((st) => {
         const enabled = isSubtopicEnabled(st.subtopic, topicName, normalizedWeights);
         const subShareFraction = resolved.subtopicShares[st.subtopic] || 0;
-        const subDisplayPct = Math.round(subShareFraction * 100);
+        const subDisplayPct = getSubtopicDisplayPct(st.subtopic);
         const effectiveWeight = resolved.effectiveWeights[st.subtopic] || 0;
         const gradient = effectiveWeight * st.learning_rate;
 
