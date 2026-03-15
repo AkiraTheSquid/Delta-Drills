@@ -7,6 +7,37 @@ const DELTA_VISUAL_DEBUG = true;
 let deltaVisualDebugReportTimer = null;
 let deltaVisualDebugLastSignature = "";
 
+function getArenaNumbersPathCandidates() {
+  const currentDir = window.location.pathname.replace(/[^/]*$/, "");
+  return Array.from(new Set([
+    ARENA_NUMBERS_PATH,
+    `${currentDir}delta_numbers.npy`,
+    "/Local_Deployed_Shared/delta_numbers.npy",
+    "delta_numbers.npy",
+  ]));
+}
+
+async function fetchArenaNumbersAsset() {
+  const candidates = getArenaNumbersPathCandidates();
+  let lastError = null;
+
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { cache: "no-store" });
+      if (!response.ok) {
+        lastError = new Error(`Failed to fetch ${path} (${response.status})`);
+        continue;
+      }
+      setVisualDebug({ arenaNumbersPath: path });
+      return response;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error(`Failed to fetch ${ARENA_NUMBERS_PATH}`);
+}
+
 function scheduleVisualDebugReport() {
   if (practiceMode !== "backend") return;
   const payload = window.__deltaLastVisualDebug || {};
