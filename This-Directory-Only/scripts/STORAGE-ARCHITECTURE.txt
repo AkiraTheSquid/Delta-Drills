@@ -50,6 +50,12 @@ Instead it syncs only:
 The root-level paths remain available as symlinks for compatibility, but the
 deployment boundary is now the Local_Deployed_Shared directory.
 
+IMPORTANT:
+Delta-Drills-Local/Local_Deployed_Shared/ and
+Delta-Drills-Deployed/Local_Deployed_Shared/ must remain identical.
+Do not treat the deployed copy as a separate frontend. Edit the local shared
+copy and let deploy_delta_drills.sh sync it across.
+
 
 RULES FOR ADDING NEW FEATURES
 ------------------------------

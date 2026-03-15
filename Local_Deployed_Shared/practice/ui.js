@@ -2,6 +2,13 @@
    PRACTICE UI — rendering + feedback widgets
    ================================================================ */
 
+function isCalibrationQuestion(q) {
+  if (!q) return false;
+  if (typeof q.is_cold_start === "boolean") return q.is_cold_start;
+  const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
+  return isColdStart(q.subtopic, overrideN);
+}
+
 function renderQuestion(q, count) {
   if (curatedExcludedIds.has(q.question_id)) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
@@ -24,10 +31,14 @@ function renderQuestion(q, count) {
 
   // Cold-start calibration badge
   const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
-  const coldStart = q.is_cold_start ?? isColdStart(q.subtopic, overrideN);
+  const coldStart = isCalibrationQuestion(q);
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
   if (coldStart && csIndex) {
     coldStartLabel.textContent = `Calibrating — ${csIndex} of 3`;
+    if (coldStartNote) {
+      coldStartNote.textContent =
+        "First 3 questions use fixed difficulties to calibrate your level. The next difficulty is preset during calibration, so the usual accuracy bar is hidden until calibration finishes.";
+    }
     coldStartBadge.classList.remove("hidden");
   } else {
     coldStartBadge.classList.add("hidden");
@@ -52,7 +63,12 @@ function renderQuestion(q, count) {
   ewmaAccuracyPBefore = Number.isFinite(q.p_current)
     ? q.p_current
     : getEwmaFromAdaptiveState(q.subtopic);
-  showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
+  if (coldStart) {
+    ewmaAccuracy.classList.add("hidden");
+    ewmaAccuracyValue.textContent = "";
+  } else {
+    showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
+  }
 
   // Reset AI explanation
   aiExplanationSection.classList.add("hidden");

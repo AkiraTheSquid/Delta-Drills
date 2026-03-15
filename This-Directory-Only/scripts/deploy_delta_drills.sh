@@ -42,6 +42,8 @@ mkdir -p "$LOG_DIR"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 info "Writing deploy log to $LOG_FILE"
+info "Shared frontend source of truth: $REPO_SHARED_DIR"
+info "Deploy sync target (must be identical after sync): $DEPLOY_SHARED_DIR"
 
 verify_vercel_frontend() {
   local url="$1"

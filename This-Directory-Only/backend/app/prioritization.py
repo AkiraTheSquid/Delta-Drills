@@ -32,8 +32,10 @@ COLD_START_MIN_QUESTIONS: int = len(COLD_START_TARGETS)
 # are bounded by [-100, 100]; 200 is safely above that ceiling).
 COLD_START_PRIORITY_LR: float = 200.0
 
-# TEMP: staleness review — remove with TEMP_staleness_review_REMOVE_LATER/
-ENABLE_STALENESS_REVIEW: bool = True
+# TEMP: staleness review — disabled because it overrides the documented
+# gradient-based selector and makes localhost behavior appear inconsistent
+# with the Statistics page.
+ENABLE_STALENESS_REVIEW: bool = False
 
 if ENABLE_STALENESS_REVIEW:
     from app.TEMP_staleness_review_REMOVE_LATER.staleness import get_staleness_override
