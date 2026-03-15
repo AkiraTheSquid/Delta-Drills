@@ -56,6 +56,7 @@ feedbackButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const feedback = btn.dataset.feedback;
     const q = PracticeAPI.currentQuestion;
+    const calibrationQuestion = typeof isCalibrationQuestion === "function" && isCalibrationQuestion(q);
     const oldTarget = Number.isFinite(practiceProgress.currentTargetDifficulty)
       ? practiceProgress.currentTargetDifficulty
       : getTargetDifficultyForQuestion(q);
@@ -80,8 +81,10 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
-    if (Number.isFinite(pAfter)) {
+    if (!calibrationQuestion && Number.isFinite(pAfter)) {
       showEwmaAccuracy(pBefore, pAfter, q.subtopic);
+    } else {
+      ewmaAccuracy.classList.add("hidden");
     }
 
     practiceProgress.pendingFeedback = {

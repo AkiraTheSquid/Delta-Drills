@@ -10,8 +10,31 @@ const calcDiffMult = (p) => {
 const COLD_START_TARGETS = [25, 50, 75];
 const COLD_START_PRIORITY_LR = 200;
 
+const parseFiniteNumber = (value) => {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return null;
+};
+
+const getAnsweredCountFromState = (subState) => {
+  const direct =
+    parseFiniteNumber(subState?.n) ??
+    parseFiniteNumber(subState?.questions_answered) ??
+    parseFiniteNumber(subState?.questionsAnswered) ??
+    parseFiniteNumber(subState?.attempt_count) ??
+    parseFiniteNumber(subState?.attemptCount);
+  if (direct != null) return Math.max(0, Math.round(direct));
+
+  if (Array.isArray(subState?.history)) return subState.history.length;
+  if (Array.isArray(subState?.attempts)) return subState.attempts.length;
+  return 0;
+};
+
 const estimateLearningRateFromState = (subState) => {
-  const n = Number.isFinite(subState?.n) ? subState.n : 0;
+  const n = getAnsweredCountFromState(subState);
   const history = Array.isArray(subState?.history) ? subState.history : [];
   if (n < COLD_START_TARGETS.length || history.length < 2) {
     return COLD_START_PRIORITY_LR;
@@ -66,12 +89,12 @@ const buildItemsFromAdaptiveState = async () => {
   descriptorList.forEach((entry) => {
     const subState = state?.subtopic_states?.[entry.subtopic] || {};
     const learningRate = estimateLearningRateFromState(subState);
-    const questionsAnswered = Number.isFinite(subState?.n) ? subState.n : 0;
-    const baseline = Number.isFinite(subState?.baseline) ? subState.baseline : 0;
-    const p = Number.isFinite(subState?.p) ? subState.p : 0.5;
-    const currentDifficulty = Number.isFinite(subState?.target_difficulty)
-      ? subState.target_difficulty
-      : (questionsAnswered < COLD_START_TARGETS.length ? COLD_START_TARGETS[questionsAnswered] : 25);
+    const questionsAnswered = getAnsweredCountFromState(subState);
+    const baseline = parseFiniteNumber(subState?.baseline) ?? 0;
+    const p = parseFiniteNumber(subState?.p) ?? 0.5;
+    const targetDifficulty = parseFiniteNumber(subState?.target_difficulty);
+    const currentDifficulty =
+      targetDifficulty ?? (questionsAnswered < COLD_START_TARGETS.length ? COLD_START_TARGETS[questionsAnswered] : 25);
     const weight =
       state?.custom_weights && Number.isFinite(state.custom_weights[entry.subtopic])
         ? state.custom_weights[entry.subtopic]
@@ -157,11 +180,15 @@ const buildAreas = (items, weights) => {
 
     const topicSolved = subtopics.reduce((s, st) => s + st.questions_answered, 0);
     const avgBaseline = n ? subtopics.reduce((s, st) => s + st.baseline, 0) / n : 0;
-    const avgLr = n ? subtopics.reduce((s, st) => s + st.learning_rate, 0) / n : 0;
-    const topicDelta = subareas.length > 0 ? Math.max(...subareas.map((s) => s.delta)) : 0;
-    const avgP = n ? subtopics.reduce((s, st) => s + st.p, 0) / n : 0;
-    const avgTargetDiff =
-      n ? subtopics.reduce((s, st) => s + st.current_difficulty, 0) / n : 0;
+    const prioritySubarea =
+      subareas.find((sub) => sub.enabled) ||
+      subareas[0] || {
+        learningRate: 0,
+        delta: 0,
+        p: 0.5,
+        targetDifficulty: 25,
+        difficultyMultiplier: calcDiffMult(0.5),
+      };
 
     areas.push({
       id: topicName.toLowerCase().replace(/\s+/g, "-"),
@@ -171,12 +198,12 @@ const buildAreas = (items, weights) => {
       weight: topicWeightFraction,
       displayPct: topicDisplayPct,
       currentScore: Math.min(100, avgBaseline),
-      learningRate: avgLr,
+      learningRate: prioritySubarea.learningRate,
       solved: topicSolved,
       subareas,
-      p: avgP,
-      targetDifficulty: avgTargetDiff,
-      difficultyMultiplier: calcDiffMult(avgP),
+      p: prioritySubarea.p,
+      targetDifficulty: prioritySubarea.targetDifficulty,
+      difficultyMultiplier: prioritySubarea.difficultyMultiplier,
     });
   });
 

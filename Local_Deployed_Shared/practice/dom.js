@@ -40,6 +40,7 @@ const aiExplanationSection = document.getElementById("ai-explanation-section");
 const aiExplanationText = document.getElementById("ai-explanation-text");
 const coldStartBadge = document.getElementById("cold-start-badge");
 const coldStartLabel = document.getElementById("cold-start-label");
+const coldStartNote = document.getElementById("cold-start-note");
 const codeEditor = document.getElementById("code-editor");
 const runBtn = document.getElementById("run-btn");
 const outputArea = document.getElementById("output-area");
