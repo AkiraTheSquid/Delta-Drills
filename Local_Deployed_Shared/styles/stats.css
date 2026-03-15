@@ -116,7 +116,7 @@
 }
 
 .stats-col-weight {
-  width: 130px;
+  width: 150px;
 }
 
 .stats-col-solved {
@@ -138,8 +138,9 @@
   text-align: left;
   -moz-appearance: textfield;
   cursor: text;
-  padding: 0;
-  min-width: 1ch;
+  padding: 2px 8px 2px 4px;
+  min-width: 4ch;
+  border-radius: 4px 4px 0 0;
 }
 
 .weight-input::-webkit-outer-spin-button,
@@ -151,6 +152,7 @@
 .weight-input:focus {
   outline: none;
   border-bottom-color: rgba(80, 129, 255, 0.8);
+  background: rgba(80, 129, 255, 0.12);
 }
 
 .weight-input:hover {

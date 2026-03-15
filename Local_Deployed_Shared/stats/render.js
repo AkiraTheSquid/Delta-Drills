@@ -7,7 +7,7 @@ const openAreasAdv = new Set();
 
 // Sets a number input's width to exactly fit its digit count
 const fitInputWidth = (input) => {
-  input.style.width = Math.max(1, String(input.value).length) + "ch";
+  input.style.width = Math.max(4, String(input.value).length + 1.5) + "ch";
 };
 
 const renderStatsTable = () => {
@@ -153,11 +153,31 @@ const renderStatsTable = () => {
 
   // --- Editable weight inputs ---
   statsTableBody.querySelectorAll(".weight-input").forEach((input) => {
+    let selectOnMouseUp = false;
+
     // Size the input to exactly fit its current digits
     fitInputWidth(input);
 
     // Resize as the user types
     input.addEventListener("input", () => fitInputWidth(input));
+
+    input.addEventListener("focus", () => {
+      selectOnMouseUp = true;
+      window.setTimeout(() => {
+        input.select();
+      }, 0);
+    });
+
+    input.addEventListener("mouseup", (e) => {
+      if (!selectOnMouseUp) return;
+      e.preventDefault();
+      input.select();
+      selectOnMouseUp = false;
+    });
+
+    input.addEventListener("blur", () => {
+      selectOnMouseUp = false;
+    });
 
     // Enter blurs without doing anything else (prevents toggle button activation)
     input.addEventListener("keydown", (e) => {
