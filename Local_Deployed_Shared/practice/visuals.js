@@ -101,13 +101,45 @@ function stripDisplayCalls(code) {
     .join("\n");
 }
 
+function extractStarterSetupCode(code) {
+  if (!code) return "";
+  const lines = [];
+  for (const line of code.split("\n")) {
+    if (/^\s*def\s+solve\s*\(/.test(line)) break;
+    if (/^\s*print\s*\(\s*solve\s*\(\s*\)\s*\)\s*$/.test(line)) continue;
+    lines.push(line);
+  }
+  return lines.join("\n").trim();
+}
+
+function augmentVisualSetupCode(setupCode, resultExpr) {
+  const setupLines = (setupCode || "").trim();
+  const needsHwcs = /\bhwcs\b/.test(resultExpr || "");
+  const definesHwcs = /\bhwcs\s*=/.test(setupLines);
+  const definesArr = /\barr\s*=/.test(setupLines);
+  const definesB = /\bb\s*=/.test(setupLines);
+
+  if (needsHwcs && !definesHwcs && definesArr) {
+    const hwcsLine = definesB ? "hwcs = arr[:b]" : "hwcs = arr";
+    return [setupLines, hwcsLine].filter(Boolean).join("\n");
+  }
+
+  return setupLines;
+}
+
 function getVisualExecutionPlan(question) {
   const testCase = Array.isArray(question?.test_cases) ? question.test_cases[0] : null;
+  const starterSetupCode = extractStarterSetupCode(question?.starter_code || "");
   if (testCase?.expected_expr) {
+    const setupCode = [
+      starterSetupCode,
+      testCase.setup_code || "",
+      testCase.expected_setup_code || "",
+    ]
+      .filter(Boolean)
+      .join("\n");
     return {
-      setupCode: [testCase.setup_code || "", testCase.expected_setup_code || ""]
-        .filter(Boolean)
-        .join("\n"),
+      setupCode: augmentVisualSetupCode(setupCode, testCase.expected_expr),
       resultExpr: testCase.expected_expr,
     };
   }
@@ -116,7 +148,10 @@ function getVisualExecutionPlan(question) {
   const variableName = extractVisualVariableName(solutionCode);
   if (!variableName) return null;
   return {
-    setupCode: stripDisplayCalls(solutionCode),
+    setupCode: augmentVisualSetupCode(
+      [starterSetupCode, stripDisplayCalls(solutionCode)].filter(Boolean).join("\n"),
+      variableName
+    ),
     resultExpr: variableName,
   };
 }
