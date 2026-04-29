@@ -374,40 +374,6 @@
     }
   },
   {
-    "id": 13,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-    },
-    "curriculum": {
-      "topic": "Numpy",
-      "subtopic": "Core array literacy",
-      "subtopic_key": "Numpy: Core array literacy",
-      "difficulty_score": 26,
-      "difficulty_label": "easy"
-    },
-    "exercise": {
-      "question_text": "Consider a (6,7,8) shape array, what is the index (x,y,z) of the 100th element? (★☆☆)\nPrint the result.",
-      "task_type": "stdout_prediction",
-      "language": "python",
-      "primary_library": "numpy",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
-      "test_cases": [
-        {
-          "setup_code": "",
-          "call": "solve()",
-          "expected_expr": "np.unravel_index(99,(6,7,8))"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "print(np.unravel_index(99,(6,7,8)))",
-      "expected_output": "(np.int64(1), np.int64(5), np.int64(3))",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
     "id": 14,
     "source": {
       "type": "csv",
@@ -1564,40 +1530,6 @@
     }
   },
   {
-    "id": 54,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-    },
-    "curriculum": {
-      "topic": "Numpy",
-      "subtopic": "Core array literacy",
-      "subtopic_key": "Numpy: Core array literacy",
-      "difficulty_score": 12,
-      "difficulty_label": "easy"
-    },
-    "exercise": {
-      "question_text": "Convert degrees to radians for [0,90,180] (★☆☆)\nPrint the result.",
-      "task_type": "stdout_prediction",
-      "language": "python",
-      "primary_library": "numpy",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
-      "test_cases": [
-        {
-          "setup_code": "",
-          "call": "solve()",
-          "expected_expr": "np.deg2rad([0,90,180])"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "print(np.deg2rad([0,90,180]))",
-      "expected_output": "[0.         1.57079633 3.14159265]",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
     "id": 55,
     "source": {
       "type": "csv",
@@ -1627,40 +1559,6 @@
       "submission_mode": "function",
       "canonical_solution": "Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')\nprint(Z)",
       "expected_output": "['2016-07-01' '2016-07-02' '2016-07-03' '2016-07-04' '2016-07-05'\n '2016-07-06' '2016-07-07' '2016-07-08' '2016-07-09' '2016-07-10'\n '2016-07-11' '2016-07-12' '2016-07-13' '2016-07-14' '2016-07-15'\n '2016-07-16' '2016-07-17' '2016-07-18' '2016-07-19' '2016-07-20'\n '2016-07-21' '2016-07-22' '2016-07-23' '2016-07-24' '2016-07-25'\n '2016-07-26' '2016-07-27' '2016-07-28' '2016-07-29' '2016-07-30'\n '2016-07-31']",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
-    "id": 56,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-    },
-    "curriculum": {
-      "topic": "Numpy",
-      "subtopic": "Core array literacy",
-      "subtopic_key": "Numpy: Core array literacy",
-      "difficulty_score": 42,
-      "difficulty_label": "easy"
-    },
-    "exercise": {
-      "question_text": "Consider a generator function that generates 10 integers and use it to build an array (★☆☆)\nPrint the result.",
-      "task_type": "function_impl",
-      "language": "python",
-      "primary_library": "numpy",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None",
-      "test_cases": [
-        {
-          "setup_code": "import numpy as np",
-          "call": "solve()",
-          "expected_expr": "np.fromiter(range(10), dtype=float, count=-1)"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "def generate():\n    for x in range(10):\n        yield x\nZ = np.fromiter(generate(),dtype=float,count=-1)\nprint(Z)",
-      "expected_output": "[0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5678,74 +5576,6 @@
     }
   },
   {
-    "id": 178,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-    },
-    "curriculum": {
-      "topic": "Numpy",
-      "subtopic": "Applied patterns and advanced",
-      "subtopic_key": "Numpy: Applied patterns and advanced",
-      "difficulty_score": 87,
-      "difficulty_label": "hard"
-    },
-    "exercise": {
-      "question_text": "Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)\nPrint the result.",
-      "task_type": "stdout_prediction",
-      "language": "python",
-      "primary_library": "numpy",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\n\ndef solve():\n    return sliding_window_view(np.arange(1, 15, dtype=np.uint32), window_shape=4)",
-      "test_cases": [
-        {
-          "setup_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(1,15,dtype=np.uint32)",
-          "call": "solve()",
-          "expected_expr": "sliding_window_view(Z, window_shape=4)"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "# Author: Stefan van der Walt\n\nZ = np.arange(1,15,dtype=np.uint32)\nR = stride_tricks.as_strided(Z,(11,4),(4,4))\nprint(R)\n\n# Author: Jeff Luo (@Jeff1999)\n\nZ = np.arange(1, 15, dtype=np.uint32)\nprint(sliding_window_view(Z, window_shape=4))",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 5, in <module>\nNameError: name 'stride_tricks' is not defined",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
-    "id": 179,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-    },
-    "curriculum": {
-      "topic": "Numpy",
-      "subtopic": "Applied patterns and advanced",
-      "subtopic_key": "Numpy: Applied patterns and advanced",
-      "difficulty_score": 88,
-      "difficulty_label": "hard"
-    },
-    "exercise": {
-      "question_text": "Consider 2 sets of points P0,P1 describing lines (2d) and a point p, how to compute distance from p to each line i (P0[i],P1[i])? (★★★)\nPrint the result.",
-      "task_type": "tensor_expression",
-      "language": "python",
-      "primary_library": "einops.einsum",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\nP0 = np.random.uniform(-10,10,(10,2))\nP1 = np.random.uniform(-10,10,(10,2))\np  = np.random.uniform(-10,10,(1,2))\n\ndef solve():\n    # Write your solution here\n    return None",
-      "test_cases": [
-        {
-          "setup_code": "P0 = np.array([[0, 0], [1, 1]])\nP1 = np.array([[1, 0], [0, 1]])\np = np.array([[0.5, 0.5]])",
-          "call": "solve()",
-          "expected_expr": "np.array([0.5, 0.5])"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "P0 = np.random.uniform(-10,10,(10,2))\nP1 = np.random.uniform(-10,10,(10,2))\np  = np.random.uniform(-10,10,( 1,2))\n\ndef distance_faster(P0,P1,p):\n    #Author: Hemanth Pasupuleti\n    #Reference: https://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html\n\n    v = P1- P0 \n    v[:,[0,1]] = v[:,[1,0]]\n    v[:,1]*=-1 \n    norm = np.linalg.norm(v,axis=1)   \n    r = P0 - p\n    d = np.abs(np.einsum(\"ij,ij->i\",r,v)) / norm \n\n    return d\n\nprint(distance_faster(P0, P1, p))\n\n##--------------- OR ---------------##\ndef distance_slower(P0, P1, p):\n    T = P1 - P0\n    L = (T**2).sum(axis=1)\n    U = -((P0[:,0]-p[...,0])*T[:,0] + (P0[:,1]-p[...,1])*T[:,1]) / L\n    U = U.reshape(len(U),1)\n    D = P0 + U*T - p\n    return np.sqrt((D**2).sum(axis=1))\n\nprint(distance_slower(P0, P1, p))",
-      "expected_output": "[ 5.21264871  0.91821451 11.97305104 10.32796073  4.15130569 10.12362124\n  4.91114794  2.40977618  7.81475319 14.88610514]\n[ 5.21264871  0.91821451 11.97305104 10.32796073  4.15130569 10.12362124\n  4.91114794  2.40977618  7.81475319 14.88610514]",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
     "id": 180,
     "source": {
       "type": "csv",
@@ -8976,40 +8806,6 @@
     }
   },
   {
-    "id": 281,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/einsum_problems.csv"
-    },
-    "curriculum": {
-      "topic": "Einsum",
-      "subtopic": "Vectorization and broadcasting",
-      "subtopic_key": "Einsum: Vectorization and broadcasting",
-      "difficulty_score": 50,
-      "difficulty_label": "medium"
-    },
-    "exercise": {
-      "question_text": "Take a vector v of shape (d) and \"repeat\" it n times to create a matrix of shape (n, d).\nUse numpy (imported as np). Use the exact inputs below and print the result.\nv = np.arange(1, 3)\nn = 2",
-      "task_type": "tensor_expression",
-      "language": "python",
-      "primary_library": "einops.einsum",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve():\n    v = np.arange(1, 3)\n    n = 2\n    # Write your solution here\n    return None\n\n",
-      "test_cases": [
-        {
-          "setup_code": "v = np.arange(1, 3)\nn = 2",
-          "call": "solve()",
-          "expected_expr": "np.tile(v, (n, 1))"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "einsum(v, 'd -> n d', n=n)",
-      "expected_output": "[[1 2]\n [1 2]]",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
     "id": 282,
     "source": {
       "type": "csv",
@@ -9855,40 +9651,6 @@
       "submission_mode": "function",
       "canonical_solution": "einsum(v, M, v, 'i, i j, j ->')",
       "expected_output": "27",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
-    }
-  },
-  {
-    "id": 307,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/einsum_problems.csv"
-    },
-    "curriculum": {
-      "topic": "Einsum",
-      "subtopic": "Indexing and selection",
-      "subtopic_key": "Einsum: Indexing and selection",
-      "difficulty_score": 70,
-      "difficulty_label": "hard"
-    },
-    "exercise": {
-      "question_text": "Create an identity-like batch: given a vector of scales s (shape b), create a batch of diagonal matrices (b, n, n).\nUse numpy (imported as np). Use the exact inputs below and print the result.\ns = np.arange(1, 3)\nn = 2",
-      "task_type": "tensor_expression",
-      "language": "python",
-      "primary_library": "einops.einsum",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve():\n    s = np.arange(1, 3)\n    n = 2\n    # Write your solution here\n    return None\n",
-      "test_cases": [
-        {
-          "setup_code": "s = np.arange(1, 3)\nn = 2",
-          "call": "solve()",
-          "expected_expr": "np.einsum('b, i j -> b i j', s, np.eye(n))"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "einsum(s, torch.eye(n), 'b, i j -> b i j')",
-      "expected_output": "[[[1 0]\n  [0 1]]\n\n [[2 0]\n  [0 2]]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -11874,40 +11636,6 @@
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
-    }
-  },
-  {
-    "id": 366,
-    "source": {
-      "type": "csv",
-      "path": "This-Directory-Only/csv files of problems/einops_problems.csv"
-    },
-    "curriculum": {
-      "topic": "Einops",
-      "subtopic": "Deep Learning",
-      "subtopic_key": "Einops: Deep Learning",
-      "difficulty_score": 30,
-      "difficulty_label": "easy"
-    },
-    "exercise": {
-      "question_text": "1D max pooling over time with window=3 (no overlap).",
-      "task_type": "tensor_transform",
-      "language": "python",
-      "primary_library": "einops",
-      "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ndef solve():\n    seq = np.arange(2 * 12 * 3).reshape(2, 12, 3)\n    return einops.reduce(seq, 'b c (t w) -> b c t', 'max', w=3)\n",
-      "test_cases": [
-        {
-          "setup_code": "seq = np.arange(2 * 12 * 3).reshape(2, 12, 3)",
-          "call": "solve()",
-          "expected_expr": "einops.reduce(seq, 'b c (t w) -> b c t', 'max', w=3)"
-        }
-      ],
-      "submission_mode": "function",
-      "canonical_solution": "einops.reduce(x_seq, 'b c (t w) -> b c t', 'max', w=3)",
-      "expected_output": "",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
     }
   },
   {

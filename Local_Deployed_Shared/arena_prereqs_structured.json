@@ -396,43 +396,6 @@
     }
   },
   {
-    "id": 13,
-    "source": {
-      "type": "ipynb",
-      "path": "Local_Deployed_Shared/ARENA_3.0-main/chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises.ipynb",
-      "cell_index": 64
-    },
-    "curriculum": {
-      "topic": "Einops",
-      "section": "Einops",
-      "title": "(B3) temperature normalized"
-    },
-    "exercise": {
-      "task_type": "function_impl",
-      "language": "python",
-      "primary_library": "einops",
-      "function_names": [
-        "temperatures_normalized"
-      ],
-      "variable_name": null,
-      "prompt_markdown": "#### (B3) temperature normalized\nLastly, you need to subtract the average and divide by the standard deviation. Note that you can pass `t.std` into the `einops.reduce` function to return the std dev of the values you're reducing over.",
-      "starter_code": "def temperatures_normalized(temps: Tensor) -> Tensor:\n    \"\"\"For each day, subtract the weekly average and divide by the weekly standard deviation.\n\n    temps: as above\n\n    Pass t.std to reduce.\n    \"\"\"\n    raise NotImplementedError()\n\n\nexpected = [-0.333, 0.249, -0.915, 1.995, -0.333, 0.249, -0.915, -0.894, 0.224, 1.342, 0.224, -0.224, -1.565, 0.894]\nactual = temperatures_normalized(temps)\nassert_all_close(actual, t.tensor(expected))",
-      "canonical_solution": "def temperatures_normalized(temps: Tensor) -> Tensor:\n    \"\"\"For each day, subtract the weekly average and divide by the weekly standard deviation.\n\n    temps: as above\n\n    Pass t.std to reduce.\n    \"\"\"\n    avg = einops.reduce(temps, \"(w 7) -> w\", \"mean\")\n    std = einops.reduce(temps, \"(h 7) -> h\", t.std)\n    return (temps - einops.repeat(avg, \"w -> (w 7)\")) / einops.repeat(std, \"w -> (w 7)\")",
-      "expected_artifact_type": "function",
-      "supports_visual_output": false,
-      "render_helper": null,
-      "runtime_dependencies": [
-        "arena_test_helpers",
-        "einops",
-        "torch"
-      ],
-      "runtime_unmet_dependencies": [
-        "arena_test_helpers",
-        "torch"
-      ]
-    }
-  },
-  {
     "id": 14,
     "source": {
       "type": "ipynb",
@@ -922,7 +885,7 @@
         "einsum_outer"
       ],
       "variable_name": null,
-      "prompt_markdown": "### Exercises - einsum\n> ```yaml\n> Difficulty: \ud83d\udd34\ud83d\udd34\u26aa\u26aa\u26aa\n> Importance: \ud83d\udd35\ud83d\udd35\ud83d\udd35\ud83d\udd35\u26aa\n>\n> You should spend up to 15-20 minutes on these exercises collectively.\n> If you think you get the general idea, then you can skip to the next section.\n> ```\nIn the following exercises, you'll write simple functions using `einsum` which replicate the functionality of standard NumPy functions: trace, matrix multiplication, inner and outer products. We've also included some test functions which you should run.\nNote - this version of einsum will require that you include `->`, even if you're summing to a scalar (i.e. the right hand side of your string expression is empty).",
+      "prompt_markdown": "### Exercises - einsum\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 15-20 minutes on these exercises collectively.\n> If you think you get the general idea, then you can skip to the next section.\n> ```\nIn the following exercises, you'll write simple functions using `einsum` which replicate the functionality of standard NumPy functions: trace, matrix multiplication, inner and outer products. We've also included some test functions which you should run.\nNote - this version of einsum will require that you include `->`, even if you're summing to a scalar (i.e. the right hand side of your string expression is empty).",
       "starter_code": "def einsum_trace(mat: np.ndarray):\n    \"\"\"\n    Returns the same as `np.trace`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mv(mat: np.ndarray, vec: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat` is a 2D array and `vec` is 1D.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mm(mat1: np.ndarray, mat2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat1` and `mat2` are both 2D arrays.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_inner(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.inner`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_outer(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.outer`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_einsum_trace(einsum_trace)\ntests.test_einsum_mv(einsum_mv)\ntests.test_einsum_mm(einsum_mm)\ntests.test_einsum_inner(einsum_inner)\ntests.test_einsum_outer(einsum_outer)",
       "canonical_solution": "def einsum_trace(mat: np.ndarray):\n    return einops.einsum(mat, \"i i ->\")\n\n\ndef einsum_mv(mat: np.ndarray, vec: np.ndarray):\n    return einops.einsum(mat, vec, \"i j, j -> i\")\n\n\ndef einsum_mm(mat1: np.ndarray, mat2: np.ndarray):\n    return einops.einsum(mat1, mat2, \"i j, j k -> i k\")\n\n\ndef einsum_inner(vec1: np.ndarray, vec2: np.ndarray):\n    return einops.einsum(vec1, vec2, \"i, i ->\")\n\n\ndef einsum_outer(vec1: np.ndarray, vec2: np.ndarray):\n    return einops.einsum(vec1, vec2, \"i, j -> i j\")",
       "expected_artifact_type": "function",
