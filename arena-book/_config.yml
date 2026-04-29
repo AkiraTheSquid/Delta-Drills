@@ -1,0 +1,36 @@
+title: ARENA Curriculum
+author: Delta Drills
+logo: ""
+copyright: "ARENA / LISA — content licensed by upstream authors"
+
+execute:
+  execute_notebooks: "off"
+
+only_build_toc_files: true
+
+repository:
+  url: https://github.com/callummcdougall/ARENA_3.0
+  branch: main
+  path_to_book: ""
+
+html:
+  favicon: ""
+  use_repository_button: true
+  use_issues_button: false
+  use_edit_page_button: false
+  home_page_in_navbar: true
+  baseurl: ""
+  extra_navbar: |
+    <a href="/">← Back to Delta Drills</a>
+
+launch_buttons:
+  notebook_interface: "classic"
+  colab_url: "https://colab.research.google.com"
+  thebe: false
+
+sphinx:
+  config:
+    html_show_copyright: false
+    html_last_updated_fmt: "%b %d, %Y"
+    nb_execution_mode: "off"
+    suppress_warnings: ["mystnb.unknown_mime_type"]
