@@ -22,7 +22,7 @@ ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of AREN
 ## Data & External Dependencies
 - DOM: `#arena-problem-list`, `#arena-problem-detail`, `#arena-chapter-filter`, `#arena-problem-count` (all in `index.html` under `page-arena`).
 - Globals: writes `window.ARENA_STAGE1_PROBLEMS` (manifest); reads it (stage1, plus `stats/predicted.js`).
-- Notebook/lesson hrefs are relative deploy paths beginning with `ARENA_4.0-main/...`. After the root restructure, the actual files live under `content/ARENA_4.0-main/...` — the ARENA tab's external launch links may need rewriting at deploy time or a path-rewrite layer; the data shape itself is stable.
+- Notebook/lesson hrefs are relative deploy paths beginning with `content/ARENA_4.0-main/...` (and `content/ARENA_3.0-main/...` for the 3.0 backup). These match the on-disk layout after the `c821f86` restructure.
 
 ## How It Works (Flow)
 1. `index.html` loads `arena/manifest.js` which registers `window.ARENA_STAGE1_PROBLEMS` (24 entries built from `ARENA_CURRICULUM` × `buildArenaProblem`).
@@ -44,12 +44,10 @@ ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of AREN
 - **Replace placeholder readiness with real per-user scores**: swap `placeholderScore` and the `RICH_SECTIONS` `readinessScore` overrides with values pulled from Delta Drills skill state. Keep `labelForScore` or replace it with a richer mapping.
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
-- **Notebook/lesson paths broken after root restructure** — `ACTIVE`
-  - When it happens: ARENA folders moved from `Local_Deployed_Shared/ARENA_4.0-main/` to `Local_Deployed_Shared/content/ARENA_4.0-main/` in commit `c821f86`, but `manifest.js` paths still start with `ARENA_4.0-main/...`.
-  - Symptom: clicking "Open exercise notebook file" or "Open lesson markdown" in the ARENA detail panel 404s when served from the deploy.
-  - Root cause: the manifest still uses pre-restructure relative paths.
-  - Prevention/fix: either (a) prefix paths with `content/` in the curriculum spec, (b) add a Vercel rewrite from `/ARENA_4.0-main/*` → `/content/ARENA_4.0-main/*`, or (c) add a build step that copies ARENA assets back to deploy root. Choice depends on `.vercelignore` strategy.
-  - Status: `ACTIVE`. Predicted course scores tab is unaffected — it doesn't use the paths.
+- **Notebook/lesson paths broken after root restructure** — `RESOLVED`
+  - When it happened: ARENA folders moved from `Local_Deployed_Shared/ARENA_4.0-main/` to `Local_Deployed_Shared/content/ARENA_4.0-main/` in commit `c821f86`, but `manifest.js` paths still started with `ARENA_4.0-main/...`. Combined with the `vercel.json` catch-all rewrite to `index.html`, every "Open notebook" / "Open lesson" link silently opened the SPA shell instead of the file.
+  - Prevention/fix: prefixed every `notebookPath` and `lessonPath` in `ARENA_CURRICULUM` with `content/`, and updated the `backupNotebookPath` regex from `/^ARENA_4\.0-main/` to `/^content\/ARENA_4\.0-main/` so the 4.0 → 3.0 swap still produces a valid path. All 24 entries now point to files that exist on disk under the new layout. `watch.py` does not yet check on-disk existence (paths are deploy-relative, not repo-relative), so a future move would not be caught automatically — keep that in mind if the curriculum is reorganized again.
+  - Status: `RESOLVED` 2026-04-29.
 
 - **Missing chapter default crashes builder** — `RESOLVED` (guard not added; relying on convention)
   - When it happens: someone adds a curriculum entry with a new `chapter` key without registering it in `ARENA_CHAPTER_DEFAULTS`.
@@ -58,5 +56,6 @@ ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of AREN
   - Status: `RESOLVED` via `watch.py` invariant.
 
 ## Recent Changes
+- 2026-04-29: Fixed broken ARENA tab launch links by prefixing every `notebookPath`/`lessonPath` in `ARENA_CURRICULUM` with `content/` so they match the post-restructure on-disk layout. Verified all 24 notebooks resolve to files that exist.
 - 2026-04-29: Expanded `manifest.js` from 4 entries to the full ARENA curriculum (24 sections across chapters 0–3). Replaced the literal-array form with `ARENA_CURRICULUM` × `buildArenaProblem`. Hand-crafted data for the original 4 entries preserved in `RICH_SECTIONS`. Both the ARENA tab and the Predicted course scores stats sub-tab now show the full curriculum.
 - 2026-04-27: Initial doc created.
