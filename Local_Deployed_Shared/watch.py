@@ -119,14 +119,37 @@ def check_invariants():
         'buildIncludeControl(course.id, "list")',
         'buildIncludeControl(course.id, "detail")',
         # Chapter-sections modal: open/close logic, modal classnames, and
-        # the Interpretability section data the modal renders.
+        # one representative section title per chapter so the modal data
+        # cannot silently regress on any chapter.
         "openChapterModal",
         "closeChapterModal",
         "chapter-modal-backdrop",
+        # Chapter 0 — Fundamentals (color #DC2626).
+        "Prerequisites",
+        "Ray Tracing",
+        "VAEs & GANs",
+        "#DC2626",
+        # Chapter 1 — Transformer Interpretability (color #D97706).
         "Transformers from Scratch",
         "Intro to Mech Interp",
         "OthelloGPT",
         "Monthly Algorithmic Problems",
+        "#D97706",
+        # Chapter 2 — Reinforcement Learning (color #059669).
+        "Intro to RL",
+        "DQN & VPG",
+        "RLHF",
+        "#059669",
+        # Chapter 3 — LLM Evaluations (color #2563EB).
+        "Intro to Evals",
+        "Dataset Generation",
+        "LLM Agents",
+        "#2563EB",
+        # Chapter 4 — Alignment Science (color #4F46E5).
+        "Emergent Misalignment",
+        "Science of Misalignment",
+        "Investigator Agents",
+        "#4F46E5",
     ):
         assert needle in courses_js, f"courses.js missing required content: {needle}"
 

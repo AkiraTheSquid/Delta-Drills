@@ -21,6 +21,15 @@ const ARENA_DETAIL = {
       image: "https://images.squarespace-cdn.com/content/v1/67e146e032bcbc72c7a584bf/1742816993533-HAYMCMMHWW9WDNPN4A9J/funda.png?format=1500w",
       body:
         "Coding best practices, PyTorch fluency, and building your own CNNs and ResNets from scratch. The levelling chapter — everyone leaves on the same page so the rest of the programme can move.",
+      color: "#DC2626",
+      sections: [
+        { number: "0.0", title: "Prerequisites", desc: "Essential PyTorch basics, einops/einsum libraries, and tensor manipulation fundamentals." },
+        { number: "0.1", title: "Ray Tracing", desc: "Learn batched operations and linear algebra by rendering 3D meshes with raytracing." },
+        { number: "0.2", title: "CNNs & ResNets", desc: "Build neural networks from scratch, from MNIST classifiers to ResNets for CIFAR-10." },
+        { number: "0.3", title: "Optimization", desc: "Implement SGD, RMSprop & Adam optimizers, and use Weights & Biases for experiment tracking." },
+        { number: "0.4", title: "Backpropagation", desc: "Build your own autograd system from scratch and train MLPs with custom backpropagation." },
+        { number: "0.5", title: "VAEs & GANs", desc: "Implement GANs and VAEs, foundational architectures for generative image models." },
+      ],
     },
     {
       title: "Chapter 1 — Transformer Interpretability",
@@ -49,18 +58,40 @@ const ARENA_DETAIL = {
       image: "https://images.squarespace-cdn.com/content/v1/67e146e032bcbc72c7a584bf/1742816993544-BJGSRE009Z30UYTZYOPJ/rl.png?format=1500w",
       body:
         "RL fundamentals — agents, environments, accumulated reward — with experiments in OpenAI Gym. Then layer on Reinforcement Learning from Human Feedback (RLHF) and apply it to the transformer you trained earlier.",
+      color: "#059669",
+      sections: [
+        { number: "2.1", title: "Intro to RL", desc: "RL fundamentals: MDPs, policies, value functions, and multi-armed bandits." },
+        { number: "2.2", title: "DQN & VPG", desc: "Implement DQN and Vanilla Policy Gradient for CartPole and beyond." },
+        { number: "2.3", title: "PPO", desc: "Build a PPO agent from scratch and train it to master CartPole." },
+        { number: "2.4", title: "RLHF", desc: "Implement RLHF end-to-end, applying PPO to language model finetuning." },
+      ],
     },
     {
       title: "Chapter 3 — LLM Evaluations",
       image: "https://images.squarespace-cdn.com/content/v1/67e146e032bcbc72c7a584bf/1742816993549-I095YBYX350KH88I5Z8V/evals.jpeg?format=1500w",
       body:
         "Build a multiple-choice benchmark from scratch and use it to evaluate current frontier models. Then move on to LM agents — how to construct them and how to measure their behaviour.",
+      color: "#2563EB",
+      sections: [
+        { number: "3.1", title: "Intro to Evals", desc: "Design threat models and specifications for evaluating model properties." },
+        { number: "3.2", title: "Dataset Generation", desc: "Use LLMs to generate and refine high-quality evaluation datasets." },
+        { number: "3.3", title: "Running Evals with Inspect", desc: "Run standardised LLM evaluations using UK AISI's Inspect library." },
+        { number: "3.4", title: "LLM Agents", desc: "Build LLM agents with scaffolding to play Wikipedia Racing and other tasks." },
+      ],
     },
     {
       title: "Chapter 4 — Alignment Science",
       image: "https://images.squarespace-cdn.com/content/v1/67e146e032bcbc72c7a584bf/bbd568c4-e04d-4920-8edd-e5cfebb7bb96/science+of+misalignment.png?format=1500w",
       body:
         "A bucket for AI safety topics that don't fit cleanly into interpretability or evals — emergent misalignment, LLM psychology, the science of misalignment. The frontier of what alignment researchers at labs like Anthropic actually work on.",
+      color: "#4F46E5",
+      sections: [
+        { number: "4.1", title: "Emergent Misalignment", desc: "Study emergent misalignment in finetuned models." },
+        { number: "4.2", title: "Science of Misalignment", desc: "Two case studies in black-box investigation to understand and characterize seemingly misaligned behaviour." },
+        { number: "4.3", title: "Interpreting Reasoning Models", desc: "Apply interpretability techniques to chain-of-thought reasoning models." },
+        { number: "4.4", title: "LLM Psychology & Persona Vectors", desc: "Explore persona vectors and psychological properties of language models." },
+        { number: "4.5", title: "Investigator Agents", desc: "Use AI agents for investigating model behaviours (including petri & bloom)." },
+      ],
     },
     {
       title: "Capstone Project",
