@@ -56,4 +56,5 @@
 ## Recent Changes
 - 2026-04-29: Added `courses.css` for the new Courses tab (search input + course-card grid). Linked in `index.html` after `arena.css`.
 - 2026-04-29: Extended `courses.css` with the per-course article/detail view — back button, hero block, intro paragraph, and alternating-side chapter rows with squarespace-hosted illustrations. Includes a 720px-wide responsive collapse to a single column.
+- 2026-04-29: Added chapter-sections modal styling to `courses.css` (`.chapter-modal-backdrop`, `.chapter-modal`, `.chapter-modal-header/-content/-close`, `.section-item`, `.section-number/-info/-title/-desc`, plus `.course-chapter-clickable` hover/focus state and `body.modal-open` scroll lock). Section number color is themable per chapter via `--section-number-color` set inline by JS (falls back to `--accent`). Modal uses neutral `rgba(0,0,0,...)` for backdrop/shadow because they are scrim layers, not brand surfaces — no token exists for these and one would be misleading.
 - 2026-04-27: Initial doc created.

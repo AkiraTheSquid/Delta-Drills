@@ -27,6 +27,22 @@ const ARENA_DETAIL = {
       image: "https://images.squarespace-cdn.com/content/v1/67e146e032bcbc72c7a584bf/1742816993539-C7YP4RWTUQB9JIUAJX1W/mechinterp.png?format=1500w",
       body:
         "Build and train your own transformer, then take it apart. Covers mechanistic interpretability — circuits, attention heads, and the techniques pioneered by Anthropic's transformer-circuits work and Neel Nanda.",
+      color: "#D97706",
+      sections: [
+        { number: "1.1", title: "Transformers from Scratch", desc: "Build a transformer from scratch and load pretrained GPT-2 weights." },
+        { number: "1.2", title: "Intro to Mech Interp", desc: "Learn TransformerLens to extract activations, apply hooks & find important attention heads." },
+        { number: "1.3.1", title: "Linear Probes", desc: "Train linear probes to detect deception in a model playing the game Coup." },
+        { number: "1.3.2", title: "Function Vectors & Model Steering", desc: "Steer model behaviour using activation interventions and the nnsight library." },
+        { number: "1.3.3", title: "Interpretability with SAEs", desc: "Use SAEs to decompose LLM activation space, monitor cognition & steer behaviour." },
+        { number: "1.3.4", title: "Activation Oracles", desc: "Implement activation oracles to reveal hidden knowledge and uncover forward-predictions." },
+        { number: "1.4.1", title: "Indirect Object Identification", desc: "Reverse-engineer the IOI circuit in GPT-2 small following 'Interpretability in the Wild'." },
+        { number: "1.4.2", title: "SAE Circuits", desc: "Apply SAEs to circuit analysis, decomposing computations and tracing features through layers." },
+        { number: "1.5.1", title: "Balanced Bracket Classifier", desc: "Reverse-engineer the algorithm learned by a bracket-balancing transformer." },
+        { number: "1.5.2", title: "Grokking & Modular Arithmetic", desc: "Discover Fourier circuits in modular arithmetic models and observe grokking in action." },
+        { number: "1.5.3", title: "OthelloGPT", desc: "Investigate emergent world representations in a GPT model trained on Othello games." },
+        { number: "1.5.4", title: "Superposition & SAEs", desc: "Replicate Anthropic's superposition paper and train SAEs to recover features." },
+        { number: "", title: "Monthly Algorithmic Problems", desc: "7 algorithmic challenges to test your interpretability skills in hackathon format." },
+      ],
     },
     {
       title: "Chapter 2 — Reinforcement Learning",
@@ -315,7 +331,107 @@ const buildIncludeControl = (courseId, scope) => {
 
     row.appendChild(img);
     row.appendChild(body);
+
+    if (Array.isArray(chapter.sections) && chapter.sections.length) {
+      row.classList.add("course-chapter-clickable");
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+      row.setAttribute("aria-haspopup", "dialog");
+      row.setAttribute("aria-label", `${chapter.title} — view sections`);
+      row.addEventListener("click", () => openChapterModal(chapter));
+      row.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openChapterModal(chapter);
+        }
+      });
+    }
     return row;
+  };
+
+  let activeModal = null;
+
+  const closeChapterModal = () => {
+    if (!activeModal) return;
+    document.removeEventListener("keydown", onModalKeydown);
+    activeModal.remove();
+    activeModal = null;
+    document.body.classList.remove("modal-open");
+  };
+
+  const onModalKeydown = (e) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeChapterModal();
+    }
+  };
+
+  const openChapterModal = (chapter) => {
+    closeChapterModal();
+    const backdrop = document.createElement("div");
+    backdrop.className = "chapter-modal-backdrop";
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) closeChapterModal();
+    });
+
+    const modal = document.createElement("div");
+    modal.className = "chapter-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "chapter-modal-title");
+    if (chapter.color) modal.style.setProperty("--section-number-color", chapter.color);
+
+    const header = document.createElement("div");
+    header.className = "chapter-modal-header";
+    const heading = document.createElement("h3");
+    heading.id = "chapter-modal-title";
+    heading.textContent = (chapter.title || "").replace(/^Chapter \d+ — /, "") || chapter.title;
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "chapter-modal-close";
+    close.setAttribute("aria-label", "Close");
+    close.textContent = "×";
+    close.addEventListener("click", closeChapterModal);
+    header.appendChild(heading);
+    header.appendChild(close);
+
+    const content = document.createElement("div");
+    content.className = "chapter-modal-content";
+    chapter.sections.forEach((s) => content.appendChild(buildSectionItem(s)));
+
+    modal.appendChild(header);
+    modal.appendChild(content);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+    document.body.classList.add("modal-open");
+    document.addEventListener("keydown", onModalKeydown);
+    close.focus();
+    activeModal = backdrop;
+  };
+
+  const buildSectionItem = (section) => {
+    const item = document.createElement("div");
+    item.className = "section-item";
+    item.setAttribute("role", "listitem");
+
+    const num = document.createElement("span");
+    num.className = "section-number";
+    num.textContent = section.number || "";
+
+    const info = document.createElement("div");
+    info.className = "section-info";
+    const t = document.createElement("div");
+    t.className = "section-title";
+    t.textContent = section.title;
+    const d = document.createElement("div");
+    d.className = "section-desc";
+    d.textContent = section.desc;
+    info.appendChild(t);
+    info.appendChild(d);
+
+    item.appendChild(num);
+    item.appendChild(info);
+    return item;
   };
 
   input.addEventListener("input", (e) => renderList(e.target.value));

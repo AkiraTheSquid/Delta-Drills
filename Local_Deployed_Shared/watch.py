@@ -118,6 +118,15 @@ def check_invariants():
         "Include course for study?",
         'buildIncludeControl(course.id, "list")',
         'buildIncludeControl(course.id, "detail")',
+        # Chapter-sections modal: open/close logic, modal classnames, and
+        # the Interpretability section data the modal renders.
+        "openChapterModal",
+        "closeChapterModal",
+        "chapter-modal-backdrop",
+        "Transformers from Scratch",
+        "Intro to Mech Interp",
+        "OthelloGPT",
+        "Monthly Algorithmic Problems",
     ):
         assert needle in courses_js, f"courses.js missing required content: {needle}"
 
