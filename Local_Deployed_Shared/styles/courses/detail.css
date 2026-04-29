@@ -138,17 +138,17 @@
 
 .course-chapter-clickable {
   cursor: pointer;
-  transition: border-color 0.15s ease, transform 0.05s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 
 .course-chapter-clickable:hover {
-  border-color: var(--accent);
+  border-color: var(--chapter-color, var(--accent));
 }
 
 .course-chapter-clickable:focus-visible {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-dark);
+  border-color: var(--chapter-color, var(--accent));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--chapter-color, var(--accent-dark)) 45%, transparent);
 }
 
 .course-chapter-clickable:active {

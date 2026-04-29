@@ -369,6 +369,7 @@ const buildIncludeControl = (courseId, scope) => {
       row.setAttribute("role", "button");
       row.setAttribute("aria-haspopup", "dialog");
       row.setAttribute("aria-label", `${chapter.title} — view sections`);
+      if (chapter.color) row.style.setProperty("--chapter-color", chapter.color);
       row.addEventListener("click", () => openChapterModal(chapter));
       row.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
