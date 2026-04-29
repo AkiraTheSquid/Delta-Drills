@@ -55,6 +55,12 @@ _ARANGE_RESHAPE_RX = re.compile(
 _ARANGE_RESHAPE3_RX = re.compile(
     r"np\.arange\(\s*(-?\d+)\s*\)\.reshape\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)"
 )
+_ARANGE2_RESHAPE_RX = re.compile(
+    r"np\.arange\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\.reshape\(\s*(\d+)\s*,\s*(\d+)\s*\)"
+)
+_ARANGE_EXPR_RESHAPE_RX = re.compile(
+    r"np\.arange\(\s*([^()]+?)\s*\)\.reshape\(\s*([^()]+)\s*\)"
+)
 _INDICES_RX = re.compile(r"np\.indices\(\s*\(([^()]+)\)\s*\)")
 _ARRAY_LITERAL_RX = re.compile(r"np\.array\(\s*\[([^\[\]]+)\]\s*\)")
 _RANDINT_RX = re.compile(r"np\.random\.randint\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*\(([^()]+)\)\s*\)")
@@ -65,7 +71,9 @@ _ARANGE_RX = re.compile(r"np\.arange\(([^()]+)\)")
 _LINSPACE_RX = re.compile(r"np\.linspace\(([^()]+)\)")
 _SHAPE_FUNCS = ("zeros", "ones", "full", "empty")
 _ZEROSY_RX = re.compile(r"np\.(" + "|".join(_SHAPE_FUNCS) + r")\(\s*\(([^()]+)\)([^)]*)\)")
+_ZEROSY_SCALAR_RX = re.compile(r"np\.(" + "|".join(_SHAPE_FUNCS) + r")\(\s*(\d+)\s*([,\)])")
 _EYE_RX = re.compile(r"np\.eye\(\s*(\d+)\s*\)")
+_TILE_RX = re.compile(r"np\.tile\(\s*([^,]+?)\s*,\s*\(([^()]+)\)\s*\)")
 
 
 def _bump_int(s: str, delta: int = 1, min_val: int = 1) -> str:
@@ -141,23 +149,33 @@ def _mutate_randn_rand(setup: str) -> list[str]:
 
 
 def _mutate_arange_reshape(setup: str) -> list[str]:
-    """Compound: np.arange(N).reshape(R,C) -> bump R,C and N=R*C consistently."""
+    """Compound: np.arange(N).reshape(R,C) -> bump R,C and N=R*C consistently.
+    Also handles np.arange(start, stop).reshape(R,C). For each, emit a
+    shape-bump candidate and a value-shift candidate (preserves shape, shifts
+    underlying values) so canonical solutions hardcoded for one shape still pass."""
     out = []
     m3 = _ARANGE_RESHAPE3_RX.search(setup)
     if m3:
         a, b, c = int(m3.group(2)), int(m3.group(3)), int(m3.group(4))
         a2, b2, c2 = a + 1, b + 1, c + 1
         n = a2 * b2 * c2
-        repl = f"np.arange({n}).reshape({a2},{b2},{c2})"
-        out.append(setup[: m3.start()] + repl + setup[m3.end() :])
+        out.append(setup[: m3.start()] + f"np.arange({n}).reshape({a2},{b2},{c2})" + setup[m3.end() :])
+        out.append(setup[: m3.start()] + f"np.arange({1},{a*b*c+1}).reshape({a},{b},{c})" + setup[m3.end() :])
+        return out
+    m2 = _ARANGE2_RESHAPE_RX.search(setup)
+    if m2:
+        start, stop, r, c = int(m2.group(1)), int(m2.group(2)), int(m2.group(3)), int(m2.group(4))
+        r2, c2 = r + 1, c + 1
+        out.append(setup[: m2.start()] + f"np.arange({start},{start + r2 * c2}).reshape({r2},{c2})" + setup[m2.end() :])
+        out.append(setup[: m2.start()] + f"np.arange({start + 1},{stop + 1}).reshape({r},{c})" + setup[m2.end() :])
         return out
     m = _ARANGE_RESHAPE_RX.search(setup)
     if not m:
         return out
     r, c = int(m.group(2)), int(m.group(3))
     r2, c2 = r + 1, c + 1
-    repl = f"np.arange({r2 * c2}).reshape({r2},{c2})"
-    out.append(setup[: m.start()] + repl + setup[m.end() :])
+    out.append(setup[: m.start()] + f"np.arange({r2 * c2}).reshape({r2},{c2})" + setup[m.end() :])
+    out.append(setup[: m.start()] + f"np.arange({1},{r * c + 1}).reshape({r},{c})" + setup[m.end() :])
     return out
 
 
@@ -203,34 +221,70 @@ def _mutate_array_literal(setup: str) -> list[str]:
     return [setup[: m.start()] + f"np.array([{new_inner}])" + setup[m.end() :]]
 
 
+def _mutate_arange_expr_reshape(setup: str) -> list[str]:
+    """np.arange(<expr>).reshape(<dims>) where expr is arithmetic (e.g. 4*6, b*t).
+    Bump each int-literal dim by 1; recompute arange size as product of new dims.
+    Skipped when reshape dims contain non-int (variable, -1) — value-shift only then."""
+    if (_ARANGE_RESHAPE_RX.search(setup) or _ARANGE_RESHAPE3_RX.search(setup)
+        or _ARANGE2_RESHAPE_RX.search(setup)):
+        return []
+    m = _ARANGE_EXPR_RESHAPE_RX.search(setup)
+    if not m:
+        return []
+    expr, dims_str = m.group(1), m.group(2)
+    parts = [p.strip() for p in dims_str.split(",")]
+    out = []
+    try:
+        dims = [int(p) for p in parts]
+        new_dims = [d + 1 for d in dims]
+        new_size = 1
+        for d in new_dims:
+            new_size *= d
+        out.append(setup[: m.start()] + f"np.arange({new_size}).reshape({','.join(str(d) for d in new_dims)})" + setup[m.end() :])
+    except ValueError:
+        pass
+    # Value-shift: preserve shape, shift values up by 1
+    out.append(setup[: m.start()] + f"np.arange(1, 1 + ({expr})).reshape({dims_str})" + setup[m.end() :])
+    return out
+
+
 def _mutate_arange(setup: str) -> list[str]:
     out = []
-    if _ARANGE_RESHAPE_RX.search(setup) or _ARANGE_RESHAPE3_RX.search(setup):
-        # Handled by _mutate_arange_reshape; don't mutate arange alone here.
+    if (_ARANGE_RESHAPE_RX.search(setup) or _ARANGE_RESHAPE3_RX.search(setup)
+        or _ARANGE2_RESHAPE_RX.search(setup) or _ARANGE_EXPR_RESHAPE_RX.search(setup)):
+        # Handled by _mutate_arange_reshape / _mutate_arange_expr_reshape.
         return out
     m = _ARANGE_RX.search(setup)
     if not m:
         return out
     args = m.group(1)
     parts = [p.strip() for p in args.split(",")]
-    if len(parts) == 1:
-        new_args = _bump_int(args, delta=1)
-    elif len(parts) == 2:
-        # arange(start, stop) -> bump stop
+    positional = [p for p in parts if "=" not in p]
+    kwargs = [p for p in parts if "=" in p]
+    if len(positional) == 1:
         try:
-            new_stop = int(parts[1]) + 1
-            new_args = f"{parts[0]},{new_stop}"
+            n = int(positional[0])
         except ValueError:
             return out
-    elif len(parts) == 3:
+        # Strategy 1: extend by one
+        out.append(setup[: m.start()] + f"np.arange({','.join([str(n + 1)] + kwargs)})" + setup[m.end() :])
+        # Strategy 2: value-shift (same length, shifted start) — softer for canonical
+        out.append(setup[: m.start()] + f"np.arange({','.join([str(2), str(n + 2)] + kwargs)})" + setup[m.end() :])
+    elif len(positional) == 2:
         try:
-            new_stop = int(parts[1]) + int(parts[2])
-            new_args = f"{parts[0]},{new_stop},{parts[2]}"
+            start, stop = int(positional[0]), int(positional[1])
         except ValueError:
             return out
-    else:
-        return out
-    out.append(setup[: m.start()] + f"np.arange({new_args})" + setup[m.end() :])
+        out.append(setup[: m.start()] + f"np.arange({','.join([str(start), str(stop + 1)] + kwargs)})" + setup[m.end() :])
+        # Value-shift: keep length, shift both
+        length = stop - start
+        out.append(setup[: m.start()] + f"np.arange({','.join([str(start + 2), str(start + 2 + length)] + kwargs)})" + setup[m.end() :])
+    elif len(positional) == 3:
+        try:
+            start, stop, step = int(positional[0]), int(positional[1]), int(positional[2])
+        except ValueError:
+            return out
+        out.append(setup[: m.start()] + f"np.arange({','.join([str(start), str(stop + step), str(step)] + kwargs)})" + setup[m.end() :])
     return out
 
 
@@ -251,14 +305,20 @@ def _mutate_linspace(setup: str) -> list[str]:
 
 
 def _mutate_zerosy(setup: str) -> list[str]:
+    out = []
     m = _ZEROSY_RX.search(setup)
-    if not m:
-        return []
-    func, dims, tail = m.group(1), m.group(2), m.group(3)
-    new_dims = _bump_tuple_dims(dims, (1, 1, 1, 1))
-    if new_dims == dims:
-        return []
-    return [setup[: m.start()] + f"np.{func}(({new_dims}){tail})" + setup[m.end() :]]
+    if m:
+        func, dims, tail = m.group(1), m.group(2), m.group(3)
+        new_dims = _bump_tuple_dims(dims, (1, 1, 1, 1))
+        if new_dims != dims:
+            out.append(setup[: m.start()] + f"np.{func}(({new_dims}){tail})" + setup[m.end() :])
+        return out
+    # Scalar variant: np.zeros(10), np.ones(5, dtype=int), etc.
+    m2 = _ZEROSY_SCALAR_RX.search(setup)
+    if m2:
+        func, n, sep = m2.group(1), m2.group(2), m2.group(3)
+        out.append(setup[: m2.start()] + f"np.{func}({int(n) + 1}{sep}" + setup[m2.end() :])
+    return out
 
 
 def _mutate_eye(setup: str) -> list[str]:
@@ -267,6 +327,17 @@ def _mutate_eye(setup: str) -> list[str]:
         return []
     n = int(m.group(1))
     return [setup[: m.start()] + f"np.eye({n + 1})" + setup[m.end() :]]
+
+
+def _mutate_tile(setup: str) -> list[str]:
+    m = _TILE_RX.search(setup)
+    if not m:
+        return []
+    arr_arg, dims = m.group(1), m.group(2)
+    new_dims = _bump_tuple_dims(dims, (1, 1, 1))
+    if new_dims == dims:
+        return []
+    return [setup[: m.start()] + f"np.tile({arr_arg}, ({new_dims}))" + setup[m.end() :]]
 
 
 def _mutate_npload(setup: str) -> list[str]:
@@ -295,11 +366,13 @@ MUTATORS = (
     _mutate_rand_tuple,
     _mutate_randn_rand,
     _mutate_arange_reshape,
+    _mutate_arange_expr_reshape,
     _mutate_arange,
     _mutate_linspace,
     _mutate_zerosy,
     _mutate_indices,
     _mutate_eye,
+    _mutate_tile,
     _mutate_array_literal,
     _mutate_npload,
     _mutate_seed_only,
@@ -384,7 +457,10 @@ def main() -> None:
     skip_reasons = Counter(r for _, r in skipped)
     for reason, count in skip_reasons.most_common():
         print(f"  {count:4d}  {reason}")
+    debug_path = OUTPUT_PATH.parent / "function_mode_test_cases_extra.skipped.tsv"
+    debug_path.write_text("\n".join(f"{qid}\t{reason}" for qid, reason in skipped) + "\n", encoding="utf-8")
     print(f"Wrote {OUTPUT_PATH}")
+    print(f"Wrote {debug_path}")
 
 
 if __name__ == "__main__":
