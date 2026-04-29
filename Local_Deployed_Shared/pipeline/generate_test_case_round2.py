@@ -294,10 +294,13 @@ MUTATORS = (
     _mutate_randint,
     _mutate_rand_tuple,
     _mutate_randn_rand,
+    _mutate_arange_reshape,
     _mutate_arange,
     _mutate_linspace,
     _mutate_zerosy,
+    _mutate_indices,
     _mutate_eye,
+    _mutate_array_literal,
     _mutate_npload,
     _mutate_seed_only,
 )
