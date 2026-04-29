@@ -1,0 +1,138 @@
+/* Courses tab — chapter sections modal (pure-information dialog).
+   Section number badge color is themed per chapter via the inline
+   --section-number-color CSS variable set by courses.js on .chapter-modal. */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.chapter-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+  animation: chapter-modal-fade 0.12s ease-out;
+}
+
+@keyframes chapter-modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.chapter-modal {
+  width: 100%;
+  max-width: 640px;
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.chapter-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chapter-modal-close {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-family: inherit;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.chapter-modal-close:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.chapter-modal-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.chapter-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.section-number {
+  flex-shrink: 0;
+  min-width: 44px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--section-number-color, var(--accent));
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  line-height: 1.3;
+}
+
+.section-number:empty {
+  display: none;
+}
+
+.section-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}

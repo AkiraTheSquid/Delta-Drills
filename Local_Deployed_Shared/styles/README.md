@@ -21,7 +21,7 @@
 - `responsive.css`: viewport-based overrides; loaded last so its rules win.
 - `arena.css`: ARENA tab styling.
 - `stats.css`: Statistics tab styling.
-- `courses.css`: Courses tab — search input + result card styling. Added 2026-04-29.
+- `courses/`: Courses tab — split into five fragments (`list.css`, `include.css`, `detail.css`, `modal.css`, `responsive.css`) so no single file gets bloated. See `courses/README.md`.
 - `practice/`: subfolder for practice-tab CSS fragments.
 
 ## Data & External Dependencies
@@ -30,12 +30,12 @@
 - Logo URLs referenced from JS (e.g. `learn.arena.education/static/images/arena-logo.png` for the Courses ARENA card) are styled by `.course-card-logo` here.
 
 ## How It Works (Flow)
-1. `index.html` loads stylesheets in this order: variables → base → layout → components → stats → arena → courses → responsive (then practice CSS separately).
+1. `index.html` loads stylesheets in this order: variables → base → layout → components → stats → arena → courses/list → courses/include → courses/detail → courses/modal → courses/responsive → responsive (then practice CSS separately).
 2. The order matters — `responsive.css` and feature stylesheets must come after the tokens and base layer so their selectors override correctly.
 3. Each feature CSS file scopes its rules with a feature-prefixed class (`.arena-*`, `.stats-*`, `.courses-*`, `.course-card-*`) to avoid collisions.
 
 ## Invariants & Constraints
-- New feature stylesheets must reference colors via CSS variables from `variables.css` — never hardcode hex values. Watch enforces this on token-first files (currently `courses.css`); legacy `arena.css` and `stats.css` predate the rule and are exempt until refactored.
+- New feature stylesheets must reference colors via CSS variables from `variables.css` — never hardcode hex values. Watch enforces this on token-first files (currently every `courses/*.css` fragment); legacy `arena.css` and `stats.css` predate the rule and are exempt until refactored.
 - `variables.css` must be the first stylesheet linked in `index.html`, and `responsive.css` must be linked after `components.css` and after every feature stylesheet so its overrides win.
 - Feature class prefixes must stay unique per tab (e.g. `.courses-*` for the Courses page, `.arena-*` for ARENA) to keep concerns isolated.
 - Do not reintroduce a global selector that overrides the tabs nav layout — that lives in `layout.css` and is fragile.
@@ -57,4 +57,5 @@
 - 2026-04-29: Added `courses.css` for the new Courses tab (search input + course-card grid). Linked in `index.html` after `arena.css`.
 - 2026-04-29: Extended `courses.css` with the per-course article/detail view — back button, hero block, intro paragraph, and alternating-side chapter rows with squarespace-hosted illustrations. Includes a 720px-wide responsive collapse to a single column.
 - 2026-04-29: Added chapter-sections modal styling to `courses.css` (`.chapter-modal-backdrop`, `.chapter-modal`, `.chapter-modal-header/-content/-close`, `.section-item`, `.section-number/-info/-title/-desc`, plus `.course-chapter-clickable` hover/focus state and `body.modal-open` scroll lock). Section number color is themable per chapter via `--section-number-color` set inline by JS (falls back to `--accent`). Modal uses neutral `rgba(0,0,0,...)` for backdrop/shadow because they are scrim layers, not brand surfaces — no token exists for these and one would be misleading.
+- 2026-04-29: Split monolithic `courses.css` (~452 LOC, YELLOW) into the `courses/` subfolder with five focused fragments (`list.css`, `include.css`, `detail.css`, `modal.css`, `responsive.css`). All five linked individually in `index.html` between `arena.css` and `responsive.css`. Parent `watch.py` updated for the new layout; `courses/watch.py` enforces the per-fragment selector ownership contract so future edits don't smear concerns across files.
 - 2026-04-27: Initial doc created.

@@ -1,0 +1,40 @@
+/* Courses tab — narrow-viewport overrides (≤720px). Loaded last among the
+   courses fragments so its rules win over list/include/detail/modal. */
+
+@media (max-width: 720px) {
+  .course-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .course-chapter,
+  .course-chapter-right {
+    grid-template-columns: 1fr;
+  }
+
+  .course-chapter-right .course-chapter-img {
+    order: 0;
+  }
+
+  .course-chapter-img {
+    aspect-ratio: 16 / 9;
+  }
+
+  .course-card {
+    flex-wrap: wrap;
+  }
+
+  .course-include-list {
+    margin-left: 0;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .course-include-detail {
+    margin-left: 0;
+    align-self: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+}

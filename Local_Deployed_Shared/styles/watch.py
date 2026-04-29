@@ -20,7 +20,15 @@ REQUIRED_CSS = [
     "responsive.css",
     "stats.css",
     "arena.css",
-    "courses.css",
+    # courses tab is split into a sub-folder so each fragment stays small.
+    # Order here mirrors the link order in index.html: list → include →
+    # detail → modal → responsive (responsive must be last so its
+    # ≤720px overrides win).
+    "courses/list.css",
+    "courses/include.css",
+    "courses/detail.css",
+    "courses/modal.css",
+    "courses/responsive.css",
 ]
 REQUIRED_TOKENS = (
     "--bg", "--surface", "--card", "--text",
@@ -81,16 +89,39 @@ def check_invariants():
             assert names.index("responsive.css") > names.index("components.css"), (
                 "responsive.css must be linked after components.css so its rules win"
             )
-        if "courses.css" in names and "responsive.css" in names:
-            assert names.index("courses.css") < names.index("responsive.css"), (
-                "courses.css must be linked before responsive.css"
-            )
+        # Every courses/* fragment must be linked before responsive.css so the
+        # global narrow-viewport overrides win over the courses-specific ones.
+        # The courses/responsive.css fragment scopes its overrides to courses
+        # selectors only, so the relative order between courses/responsive.css
+        # and the global responsive.css does not matter — both must come after
+        # the four non-responsive courses fragments.
+        if "responsive.css" in names:
+            for fname in [n for n in names if n.startswith("courses/")]:
+                if fname == "courses/responsive.css":
+                    continue
+                assert names.index(fname) < names.index("responsive.css"), (
+                    f"{fname} must be linked before responsive.css"
+                )
+            for fname in ("courses/list.css", "courses/include.css", "courses/detail.css", "courses/modal.css"):
+                if fname in names and "courses/responsive.css" in names:
+                    assert names.index(fname) < names.index("courses/responsive.css"), (
+                        f"{fname} must be linked before courses/responsive.css so its overrides win"
+                    )
 
     # Newly-added feature stylesheets must reach for design tokens, not raw hex
     # colors. Legacy files (arena.css, stats.css) predate this rule and are not
     # enforced here — only files added under the token-first convention.
+    # rgba() neutral overlays in modal.css (backdrop scrim, drop shadow) are
+    # not brand surfaces and have no token equivalent; the regex matches '#'
+    # literals only, so rgba/hsla pass through.
     hex_re = re.compile(r"#[0-9a-fA-F]{3,8}\b")
-    token_first_files = ("courses.css",)
+    token_first_files = (
+        "courses/list.css",
+        "courses/include.css",
+        "courses/detail.css",
+        "courses/modal.css",
+        "courses/responsive.css",
+    )
     for fname in token_first_files:
         text = _read(os.path.join(HERE, fname))
         stripped = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
