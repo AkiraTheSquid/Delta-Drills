@@ -3,6 +3,7 @@
    ================================================================ */
 
 const ARENA_NUMBERS_PATH = "/delta_numbers.npy";
+const ARENA_NUMBERS_PNG_PATH = "/numbers_stacked.png";
 const DELTA_VISUAL_DEBUG = true;
 let deltaVisualDebugReportTimer = null;
 let deltaVisualDebugLastSignature = "";
@@ -36,6 +37,53 @@ async function fetchArenaNumbersAsset() {
   }
 
   throw lastError || new Error(`Failed to fetch ${ARENA_NUMBERS_PATH}`);
+}
+
+function getArenaNumbersPngCandidates(question) {
+  const currentDir = window.location.pathname.replace(/[^/]*$/, "");
+  const explicit = question?.fallback_image_url;
+  return Array.from(new Set([
+    explicit,
+    ARENA_NUMBERS_PNG_PATH,
+    `${currentDir}numbers_stacked.png`,
+    "/Local_Deployed_Shared/numbers_stacked.png",
+    "numbers_stacked.png",
+  ].filter(Boolean)));
+}
+
+function drawImageToCanvas(canvasEl, img) {
+  const ctx = canvasEl.getContext("2d");
+  canvasEl.width = img.naturalWidth || img.width;
+  canvasEl.height = img.naturalHeight || img.height;
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  ctx.drawImage(img, 0, 0);
+  canvasEl.classList.remove("hidden");
+}
+
+function loadImageFromCandidates(candidates) {
+  return new Promise((resolve, reject) => {
+    const remaining = [...candidates];
+    function tryNext() {
+      if (!remaining.length) {
+        reject(new Error("No fallback image candidate succeeded."));
+        return;
+      }
+      const path = remaining.shift();
+      const img = new Image();
+      img.onload = () => resolve({ img, path });
+      img.onerror = () => tryNext();
+      img.src = path;
+    }
+    tryNext();
+  });
+}
+
+async function renderFallbackImage(question) {
+  const candidates = getArenaNumbersPngCandidates(question);
+  const { img, path } = await loadImageFromCandidates(candidates);
+  drawImageToCanvas(questionVisualCanvas, img);
+  setVisualDebug({ fallbackImagePath: path, fallbackImageRendered: true });
+  return path;
 }
 
 function scheduleVisualDebugReport() {
@@ -369,7 +417,14 @@ json.dumps(_delta_result.tolist())
     questionVisualNote.textContent = "Reference image generated from the canonical solution.";
   } catch (err) {
     setVisualDebug({ rendered: false, error: err.message || String(err) });
-    questionVisualNote.textContent = "Unable to render image preview: " + err.message;
+    try {
+      await renderFallbackImage(question);
+      questionVisualNote.textContent =
+        "Live preview unavailable; showing static reference image of the source data.";
+    } catch (fallbackErr) {
+      setVisualDebug({ fallbackImageError: fallbackErr.message || String(fallbackErr) });
+      questionVisualNote.textContent = "Unable to render image preview: " + err.message;
+    }
   }
 }
 

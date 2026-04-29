@@ -1348,7 +1348,7 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Consider a generator function that generates 10 integers and use it to build an array (★☆☆)",
+    "question_text": "Consider a generator function that generates 10 integers and use it to build an array (★☆☆)\nPrint the result.",
     "answer_code": "def generate():\n    for x in range(10):\n        yield x\nZ = np.fromiter(generate(),dtype=float,count=-1)\nprint(Z)",
     "difficulty_score": 42,
     "difficulty_label": "easy",
@@ -1572,7 +1572,7 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Make an array immutable (read-only) (★★☆)",
+    "question_text": "Make an array immutable (read-only) (★★☆)\nPrint the result.",
     "answer_code": "Z = np.zeros(10)\nZ.flags.writeable = False\nZ[0] = 1",
     "difficulty_score": 56,
     "difficulty_label": "medium",
@@ -1792,6 +1792,34 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 73,
+    "topic": "Numpy",
+    "subtopic": "Indexing and selection",
+    "subtopic_key": "Numpy: Indexing and selection",
+    "question_text": "What is the equivalent of enumerate for numpy arrays? (★★☆)\nPrint the result.",
+    "answer_code": "Z = np.arange(9).reshape(3,3)\nfor index, value in np.ndenumerate(Z):\n    print(index, value)\nfor index in np.ndindex(Z.shape):\n    print(index, Z[index])",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "(0, 0) 0\n(0, 1) 1\n(0, 2) 2\n(1, 0) 3\n(1, 1) 4\n(1, 2) 5\n(2, 0) 6\n(2, 1) 7\n(2, 2) 8\n(0, 0) 0\n(0, 1) 1\n(0, 2) 2\n(1, 0) 3\n(1, 1) 4\n(1, 2) 5\n(2, 0) 6\n(2, 1) 7\n(2, 2) 8",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "Z = np.arange(9).reshape(3, 3)",
+        "call": "solve()",
+        "expected_expr": "list(np.ndenumerate(Z))"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 74,
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
@@ -1951,6 +1979,34 @@
         "setup_code": "Z = np.array([[1,2,3],[1,2,3],[2,3,4]])\nU = np.unique(Z, axis=0)",
         "call": "solve()",
         "expected_expr": "U"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 80,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "Min-max scale a vector to the [0,1] interval. (★★☆)\nPrint the result.",
+    "answer_code": "Z = np.random.rand(10)\nZ = (Z - Z.min()) / (Z.ptp())\nprint(Z)",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nAttributeError: 'numpy.ndarray' object has no attribute 'ptp'",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nZ = np.random.rand(10)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "Z = np.random.rand(10)",
+        "call": "solve()",
+        "expected_expr": "(Z - Z.min()) / (Z.max() - Z.min())"
       }
     ],
     "submission_mode": "function",
@@ -2832,7 +2888,7 @@
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Create an array class that has a name attribute (★★☆)",
+    "question_text": "Create an array class that has a name attribute (★★☆)\nPrint the result.",
     "answer_code": "class NamedArray(np.ndarray):\n    def __new__(cls, array, name=\"no name\"):\n        obj = np.asarray(array).view(cls)\n        obj.name = name\n        return obj\n    def __array_finalize__(self, obj):\n        if obj is None: return\n        self.name = getattr(obj, 'name', \"no name\")\n\nZ = NamedArray(np.arange(10), \"range_10\")\nprint (Z.name)",
     "difficulty_score": 62,
     "difficulty_label": "medium",
@@ -3164,6 +3220,34 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 125,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "How to read the following file? (★★☆)\n1, 2, 3, 4, 5\n6,  ,  , 7, 8\n ,  , 9,10,11\nPrint the result.",
+    "answer_code": "from io import StringIO\n\n# Fake file\ns = StringIO('''1, 2, 3, 4, 5\n\n                6,  ,  , 7, 8\n\n                 ,  , 9,10,11\n''')\nZ = np.genfromtxt(s, delimiter=',', dtype=np.int)\nprint(Z)",
+    "difficulty_score": 64,
+    "difficulty_label": "medium",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 11, in <module>\n  File \"/home/stellar-thread/Applications/pdf-split-tool/backend/.venv/lib/python3.12/site-packages/numpy/__init__.py\", line 775, in __getattr__\n    raise AttributeError(__former_attrs__[attr], name=None)\nAttributeError: module 'numpy' has no attribute 'int'.\n`np.int` was a deprecated alias for the builtin `int`. To avoid this error in existing code, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.\nThe aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:\n    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nfrom io import StringIO\n\ns = StringIO('1, 2, 3, 4, 5\\n6,  ,  , 7, 8\\n ,  , 9,10,11\\n')\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "from io import StringIO\ns = StringIO('1, 2, 3, 4, 5\\n6,  ,  , 7, 8\\n ,  , 9,10,11\\n')",
+        "call": "solve()",
+        "expected_expr": "np.genfromtxt(s, delimiter=',', dtype=int, filling_values=0)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 126,
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
@@ -3196,7 +3280,7 @@
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Consider a random vector with shape (10,2) representing coordinates, find point by point distances (★★☆)",
+    "question_text": "Consider a random vector with shape (100,2) representing coordinates, find point by point distances (★★☆)\nPrint the result.",
     "answer_code": "Z = np.random.random((10,2))\nX,Y = np.atleast_2d(Z[:,0], Z[:,1])\nD = np.sqrt( (X-X.T)**2 + (Y-Y.T)**2)\nprint(D)\n\n# Much faster with scipy\nimport scipy\n# Thanks Gavin Heverly-Coulson (#issue 1)\nimport scipy.spatial\n\nZ = np.random.random((10,2))\nD = scipy.spatial.distance.cdist(Z,Z)\nprint(D)",
     "difficulty_score": 66,
     "difficulty_label": "medium",
@@ -3463,6 +3547,34 @@
         "setup_code": "# Author: Eelco Hoogendoorn\nA = np.arange(25).reshape(5,5)\nA[[0,1]] = A[[1,0]]",
         "call": "solve()",
         "expected_expr": "A"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 137,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Considering a one-dimensional vector D, how to compute means of subsets of D using a vector S of same size describing subset  indices? (★★★)\nPrint the result.",
+    "answer_code": "# Author: Jaime Fernández del Río\n\nD = np.random.uniform(0,1,100)\nS = np.random.randint(0,10,100)\nD_sums = np.bincount(S, weights=D)\nD_counts = np.bincount(S)\nD_means = D_sums / D_counts\nprint(D_means)\n\n# Pandas solution as a reference due to more intuitive code\nimport pandas as pd\nprint(pd.Series(D).groupby(S).mean())",
+    "difficulty_score": 80,
+    "difficulty_label": "hard",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\nModuleNotFoundError: No module named 'pandas'",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nD = np.random.uniform(0, 1, 100)\nS = np.random.randint(0, 10, 100)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "D = np.random.uniform(0, 1, 100)\nS = np.random.randint(0, 10, 100)",
+        "call": "solve()",
+        "expected_expr": "np.bincount(S, weights=D) / np.bincount(S)"
       }
     ],
     "submission_mode": "function",
@@ -4232,7 +4344,7 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "How to compute averages using a sliding window over an array? (★★★)",
+    "question_text": "How to compute averages using a sliding window over an array? (★★★)\nPrint the result.",
     "answer_code": "# Author: Jaime Fernández del Río\n\ndef moving_average(a, n=3) :\n    ret = np.cumsum(a, dtype=float)\n    ret[n:] = ret[n:] - ret[:-n]\n    return ret[n - 1:] / n\nZ = np.arange(20)\nprint(moving_average(Z, n=3))\n\n# Author: Jeff Luo (@Jeff1999)\n# make sure your NumPy >= 1.20.0\n\nfrom numpy.lib.stride_tricks import sliding_window_view\n\nZ = np.arange(20)\nprint(sliding_window_view(Z, window_shape=3).mean(axis=-1))",
     "difficulty_score": 86,
     "difficulty_label": "hard",
@@ -4247,6 +4359,34 @@
         "setup_code": "import numpy as np\nZ = np.arange(20)",
         "call": "solve()",
         "expected_expr": "np.mean(np.lib.stride_tricks.sliding_window_view(Z, window_shape=3), axis=-1)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 167,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Extract all the contiguous 3x3 blocks from a random 10x10 matrix (★★★)\nPrint the result.",
+    "answer_code": "# Author: Chris Barker\n\nZ = np.random.randint(0,5,(10,10))\nn = 3\ni = 1 + (Z.shape[0]-3)\nj = 1 + (Z.shape[1]-3)\nC = stride_tricks.as_strided(Z, shape=(i, j, n, n), strides=Z.strides + Z.strides)\nprint(C)\n\n# Author: Jeff Luo (@Jeff1999)\n\nZ = np.random.randint(0,5,(10,10))\nprint(sliding_window_view(Z, window_shape=(3, 3)))",
+    "difficulty_score": 86,
+    "difficulty_label": "hard",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nNameError: name 'stride_tricks' is not defined",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\n\nZ = np.random.randint(0, 5, (10, 10))\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nZ = np.random.randint(0, 5, (10, 10))",
+        "call": "solve()",
+        "expected_expr": "sliding_window_view(Z, window_shape=(3, 3))"
       }
     ],
     "submission_mode": "function",
@@ -4331,6 +4471,34 @@
         "setup_code": "Z = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\nZ[inds] = np.take(col_means, inds[1])",
         "call": "solve()",
         "expected_expr": "Z"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 171,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Given an arbitrary number of vectors, build the cartesian product (every combination of every item) (★★★)\nPrint the result.",
+    "answer_code": "# Author: Stefan Van der Walt\n\ndef cartesian(arrays):\n    arrays = [np.asarray(a) for a in arrays]\n    shape = (len(x) for x in arrays)\n\n    ix = np.indices(shape, dtype=int)\n    ix = ix.reshape(len(arrays), -1).T\n\n    for n, arr in enumerate(arrays):\n        ix[:, n] = arrays[n][ix[:, n]]\n\n    return ix\n\nprint (cartesian(([1, 2, 3], [4, 5], [6, 7])))",
+    "difficulty_score": 86,
+    "difficulty_label": "hard",
+    "expected_output": "[[1 4 6]\n [1 4 7]\n [1 5 6]\n [1 5 7]\n [2 4 6]\n [2 4 7]\n [2 5 6]\n [2 5 7]\n [3 4 6]\n [3 4 7]\n [3 5 6]\n [3 5 7]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\narrays = [np.array([1, 2, 3]), np.array([4, 5]), np.array([6, 7])]\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arrays = [np.array([1, 2, 3]), np.array([4, 5]), np.array([6, 7])]\n_expected = np.stack(np.meshgrid(*arrays, indexing='ij'), axis=-1).reshape(-1, len(arrays))",
+        "call": "solve()",
+        "expected_expr": "_expected"
       }
     ],
     "submission_mode": "function",
@@ -4428,7 +4596,7 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Consider a one-dimensional array Z, build a two-dimensional array whose first row is (Z[0],Z[1],Z[2]) and each subsequent row is shifted by 1 (last row should be (Z[-3],Z[-2],Z[-1]).",
+    "question_text": "Consider a one-dimensional array Z, build a two-dimensional array whose first row is (Z[0],Z[1],Z[2]) and each subsequent row is  shifted by 1 (last row should be (Z[-3],Z[-2],Z[-1]) (★★★)\nPrint the result.",
     "answer_code": "# Author: Joe Kington / Erik Rigtorp\nfrom numpy.lib import stride_tricks\n\ndef rolling(a, window):\n    shape = (a.size - window + 1, window)\n    strides = (a.strides[0], a.strides[0])\n    return stride_tricks.as_strided(a, shape=shape, strides=strides)\nZ = rolling(np.arange(10), 3)\nprint(Z)\n\n# Author: Jeff Luo (@Jeff1999)\n\nZ = np.arange(10)\nprint(sliding_window_view(Z, window_shape=3))",
     "difficulty_score": 86,
     "difficulty_label": "hard",
@@ -4480,11 +4648,39 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 177,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "Vectorized value mapping: replace values in a 1D array using a mapping dict {old:new} (★★★)\nPrint the result.",
+    "answer_code": "a = np.array([1,2,3,2,1,0])\nmapping = {0:9, 1:8, 2:7}\nmax_key = max(mapping.keys())\ntable = np.arange(max_key+1)\nfor k,v in mapping.items():\n    table[k] = v\nout = table[a]\nprint(out)",
+    "difficulty_score": 86,
+    "difficulty_label": "hard",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nIndexError: index 3 is out of bounds for axis 0 with size 3",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\na = np.array([1, 2, 3, 2, 1, 0])\nmapping = {0: 9, 1: 8, 2: 7, 3: 6}\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "a = np.array([1, 2, 3, 2, 1, 0])\nmapping = {0: 9, 1: 8, 2: 7, 3: 6}\n_table = np.arange(max(mapping) + 1)\nfor _k, _v in mapping.items():\n    _table[_k] = _v",
+        "call": "solve()",
+        "expected_expr": "_table[a]"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 178,
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)",
+    "question_text": "Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)\nPrint the result.",
     "answer_code": "# Author: Stefan van der Walt\n\nZ = np.arange(1,15,dtype=np.uint32)\nR = stride_tricks.as_strided(Z,(11,4),(4,4))\nprint(R)\n\n# Author: Jeff Luo (@Jeff1999)\n\nZ = np.arange(1, 15, dtype=np.uint32)\nprint(sliding_window_view(Z, window_shape=4))",
     "difficulty_score": 87,
     "difficulty_label": "hard",
@@ -4512,7 +4708,7 @@
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Consider 2 sets of points P0,P1 describing lines (2d) and a point p, how to compute distance from p to each line i (P0[i],P1[i])? (★★★)",
+    "question_text": "Consider 2 sets of points P0,P1 describing lines (2d) and a point p, how to compute distance from p to each line i (P0[i],P1[i])? (★★★)\nPrint the result.",
     "answer_code": "P0 = np.random.uniform(-10,10,(10,2))\nP1 = np.random.uniform(-10,10,(10,2))\np  = np.random.uniform(-10,10,( 1,2))\n\ndef distance_faster(P0,P1,p):\n    #Author: Hemanth Pasupuleti\n    #Reference: https://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html\n\n    v = P1- P0 \n    v[:,[0,1]] = v[:,[1,0]]\n    v[:,1]*=-1 \n    norm = np.linalg.norm(v,axis=1)   \n    r = P0 - p\n    d = np.abs(np.einsum(\"ij,ij->i\",r,v)) / norm \n\n    return d\n\nprint(distance_faster(P0, P1, p))\n\n##--------------- OR ---------------##\ndef distance_slower(P0, P1, p):\n    T = P1 - P0\n    L = (T**2).sum(axis=1)\n    U = -((P0[:,0]-p[...,0])*T[:,0] + (P0[:,1]-p[...,1])*T[:,1]) / L\n    U = U.reshape(len(U),1)\n    D = P0 + U*T - p\n    return np.sqrt((D**2).sum(axis=1))\n\nprint(distance_slower(P0, P1, p))",
     "difficulty_score": 88,
     "difficulty_label": "hard",
@@ -4648,6 +4844,34 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 184,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Create a 2D array subclass such that Z[i,j] == Z[j,i] (★★★)\nPrint the result.",
+    "answer_code": "# Author: Eric O. Lebigot\n# Note: only works for 2d array and value setting using indices\n\nclass Symetric(np.ndarray):\n    def __setitem__(self, index, value):\n        i,j = index\n        super(Symetric, self).__setitem__((i,j), value)\n        super(Symetric, self).__setitem__((j,i), value)\n\ndef symetric(Z):\n    return np.asarray(Z + Z.T - np.diag(Z.diagonal())).view(Symetric)\n\nS = symetric(np.random.randint(0,10,(5,5)))\nS[2,3] = 42\nprint(S)",
+    "difficulty_score": 88,
+    "difficulty_label": "hard",
+    "expected_output": "[[ 5 11  3  6  8]\n [11  7  1 10  6]\n [ 3  1  2 42  8]\n [ 6 10 42  2  4]\n [ 8  6  8  4  8]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nZ = np.arange(25).reshape(5, 5)\nZ = Z + Z.T - np.diag(np.diag(Z))\ni, j, v = 2, 3, 42\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "Z = np.arange(25).reshape(5, 5)\nZ = Z + Z.T - np.diag(np.diag(Z))\ni, j, v = 2, 3, 42\n_expected = Z.copy()\n_expected[i, j] = v\n_expected[j, i] = v",
+        "call": "solve()",
+        "expected_expr": "_expected"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 185,
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
@@ -4732,6 +4956,34 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 189,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Rotate a 2D array by 90 degrees k times without np.rot90 (★★★)\nPrint the result.",
+    "answer_code": "Z = np.arange(12).reshape(3,4)\nk = 1\nrot = np.transpose(Z, (1,0))[:, ::-1]\nif k % 4 == 0:\n    R = Z\nelif k % 4 == 1:\n    R = rot\nelif k % 4 == 2:\n    R = Z[::-1, ::-1]\nelse:\n    R = np.transpose(Z[::-1, :])\nprint(R)",
+    "difficulty_score": 88,
+    "difficulty_label": "hard",
+    "expected_output": "[[ 8  4  0]\n [ 9  5  1]\n [10  6  2]\n [11  7  3]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nZ = np.arange(12).reshape(3, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "Z = np.arange(12).reshape(3, 4)",
+        "call": "solve()",
+        "expected_expr": "Z.T[::-1]"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 190,
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
@@ -4779,6 +5031,34 @@
         "setup_code": "# Author: Jessica B. Hamrick\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\nconfint = np.percentile(means, [2.5, 97.5])",
         "call": "solve()",
         "expected_expr": "confint"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 192,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "Consider a large vector Z, compute Z to the power of 3 using 3 different methods (★★★)\nPrint the result.",
+    "answer_code": "# Author: Ryan G.\n\nx = np.random.rand(int(5e7))\n\n%timeit np.power(x,3)\n%timeit x*x*x\n%timeit np.einsum('i,i,i->i',x,x,x)",
+    "difficulty_score": 90,
+    "difficulty_label": "hard",
+    "expected_output": "[ERROR] File \"<string>\", line 6\n    %timeit np.power(x,3)\n    ^\nSyntaxError: invalid syntax",
+    "language": "python",
+    "primary_library": "einops.einsum",
+    "task_type": "tensor_expression",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nx = np.arange(10, dtype=float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x = np.arange(10, dtype=float)",
+        "call": "solve()",
+        "expected_expr": "np.power(x, 3)"
       }
     ],
     "submission_mode": "function",
@@ -4900,6 +5180,34 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
+    "id": 197,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Build a block-diagonal matrix from a list of 2D arrays without external libraries (★★★)\nPrint the result.",
+    "answer_code": "arrays = [np.ones((2,3)), 2*np.ones((1,2)), 3*np.ones((3,1))]\nR = sum(a.shape[0] for a in arrays)\nC = sum(a.shape[1] for a in arrays)\nout = np.zeros((R, C))\nri = ci = 0\nfor a in arrays:\n    r, c = a.shape\n    out[ri:ri+r, ci:ci+c] = a\n    ri += r; ci += c\nprint(out)",
+    "difficulty_score": 90,
+    "difficulty_label": "hard",
+    "expected_output": "[[1. 1. 1. 0. 0. 0.]\n [1. 1. 1. 0. 0. 0.]\n [0. 0. 0. 2. 2. 0.]\n [0. 0. 0. 0. 0. 3.]\n [0. 0. 0. 0. 0. 3.]\n [0. 0. 0. 0. 0. 3.]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\narrays = [np.ones((2, 3)), 2 * np.ones((1, 2)), 3 * np.ones((3, 1))]\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arrays = [np.ones((2, 3)), 2 * np.ones((1, 2)), 3 * np.ones((3, 1))]\n_R = sum(a.shape[0] for a in arrays)\n_C = sum(a.shape[1] for a in arrays)\n_out = np.zeros((_R, _C))\n_ri = 0\n_ci = 0\nfor _a in arrays:\n    _r, _c = _a.shape\n    _out[_ri:_ri + _r, _ci:_ci + _c] = _a\n    _ri += _r\n    _ci += _c",
+        "call": "solve()",
+        "expected_expr": "_out"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
     "id": 198,
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
@@ -4975,6 +5283,34 @@
         "setup_code": "P = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\nsamples = (u < cs).argmax(axis=1)",
         "call": "solve()",
         "expected_expr": "samples"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 201,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Consider 2 sets of points P0,P1 describing lines (2d) and a set of points P, how to compute distance from each point j (P[j]) to each line i (P0[i],P1[i])? (★★★)\nPrint the result.",
+    "answer_code": "# Author: Italmassov Kuanysh\n\n# based on distance function from previous question\nP0 = np.random.uniform(-10, 10, (10,2))\nP1 = np.random.uniform(-10,10,(10,2))\np = np.random.uniform(-10, 10, (10,2))\nprint(np.array([distance(P0,P1,p_i) for p_i in p]))\n\n# Author: Yang Wu (Broadcasting)\ndef distance_points_to_lines(p: np.ndarray, p_1: np.ndarray, p_2: np.ndarray) -> np.ndarray:\n    x_0, y_0 = p.T  # Shape -> (n points, )\n    x_1, y_1 = p_1.T  # Shape -> (n lines, )\n    x_2, y_2 = p_2.T  # Shape -> (n lines, )\n\n    # Displacement vector coordinates from p_1 -> p_2\n    dx = x_2 - x_1  # Shape -> (n lines, )\n    dy = y_2 - y_1  # Shape -> (n lines, )\n\n    # The 'cross product' term\n    cross_term = x_2 * y_1 - y_2 * x_1  # Shape -> (n lines, )\n\n    # Broadcast x_0, y_0 (n points, 1) and dx, dy, cross_term (1, n lines) -> (n points, n lines)\n    numerator = np.abs(\n        dy[np.newaxis, :] * x_0[:, np.newaxis]\n        - dx[np.newaxis, :] * y_0[:, np.newaxis]\n        + cross_term[np.newaxis, :]\n    )\n    denominator = np.sqrt(dx**2 + dy**2)  # Shape -> (n lines, )\n\n    # Shape (n points, n lines) / (1, n_lines) -> (n points, n lines)\n    return numerator / denominator[np.newaxis, :]\n\ndistance_points_to_lines(p, P0, P1)",
+    "difficulty_score": 90,
+    "difficulty_label": "hard",
+    "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nNameError: name 'distance' is not defined. Did you mean: 'isinstance'?",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nnp.random.seed(0)\nP0 = np.random.uniform(-10, 10, (5, 2))\nP1 = np.random.uniform(-10, 10, (5, 2))\nP  = np.random.uniform(-10, 10, (5, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "np.random.seed(0)\nP0 = np.random.uniform(-10, 10, (5, 2))\nP1 = np.random.uniform(-10, 10, (5, 2))\nP  = np.random.uniform(-10, 10, (5, 2))\n_dx = P1[:, 0] - P0[:, 0]\n_dy = P1[:, 1] - P0[:, 1]\n_cross = P1[:, 0] * P0[:, 1] - P1[:, 1] * P0[:, 0]\n_num = np.abs(_dy[None, :] * P[:, 0, None] - _dx[None, :] * P[:, 1, None] + _cross[None, :])\n_den = np.sqrt(_dx ** 2 + _dy ** 2)\n_expected = _num / _den[None, :]",
+        "call": "solve()",
+        "expected_expr": "_expected"
       }
     ],
     "submission_mode": "function",
@@ -5115,6 +5451,62 @@
         "setup_code": "# Author: Nicolas P. Rougier\nfaces = np.random.randint(0,100,(10,3))\nF = np.roll(faces.repeat(2,axis=1),-1,axis=1)\nF = F.reshape(len(F)*3,2)\nF = np.sort(F,axis=1)\nG = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )\nG = np.unique(G)",
         "call": "solve()",
         "expected_expr": "G"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 208,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "Consider a set of p matrices with shape (n,n) and a set of p vectors with shape (n,1). How to compute the sum of of the p matrix products at once? (result has shape (n,1)) (★★★)\nPrint the result.",
+    "answer_code": "# Author: Stefan van der Walt\n\np, n = 10, 20\nM = np.ones((p,n,n))\nV = np.ones((p,n,1))\nS = np.tensordot(M, V, axes=[[0, 2], [0, 1]])\nprint(S)\n\n# It works, because:\n# M is (p,n,n)\n# V is (p,n,1)\n# Thus, summing over the paired axes 0 and 0 (of M and V independently),\n# and 2 and 1, to remain with a (n,1) vector.",
+    "difficulty_score": 94,
+    "difficulty_label": "hard",
+    "expected_output": "[[200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]\n [200.]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "stdout_prediction",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\np, n = 10, 20\nM = np.ones((p, n, n))\nV = np.ones((p, n, 1))\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "p, n = 10, 20\nM = np.ones((p, n, n))\nV = np.ones((p, n, 1))",
+        "call": "solve()",
+        "expected_expr": "np.tensordot(M, V, axes=[[0, 2], [0, 1]])"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+  },
+  {
+    "id": 209,
+    "topic": "Numpy",
+    "subtopic": "Applied patterns and advanced",
+    "subtopic_key": "Numpy: Applied patterns and advanced",
+    "question_text": "How to implement the Game of Life using numpy arrays? (★★★)\nPrint the result.",
+    "answer_code": "# Author: Nicolas Rougier\n\ndef iterate(Z):\n    # Count neighbours\n    N = (Z[0:-2,0:-2] + Z[0:-2,1:-1] + Z[0:-2,2:] +\n         Z[1:-1,0:-2]                + Z[1:-1,2:] +\n         Z[2:  ,0:-2] + Z[2:  ,1:-1] + Z[2:  ,2:])\n\n    # Apply rules\n    birth = (N==3) & (Z[1:-1,1:-1]==0)\n    survive = ((N==2) | (N==3)) & (Z[1:-1,1:-1]==1)\n    Z[...] = 0\n    Z[1:-1,1:-1][birth | survive] = 1\n    return Z\n\nZ = np.random.randint(0,2,(50,50))\nfor i in range(100): Z = iterate(Z)\nprint(Z)",
+    "difficulty_score": 95,
+    "difficulty_label": "hard",
+    "expected_output": "[[0 0 0 ... 0 0 0]\n [0 0 0 ... 0 0 0]\n [0 1 1 ... 0 0 0]\n ...\n [0 0 0 ... 0 0 0]\n [0 0 0 ... 0 0 0]\n [0 0 0 ... 0 0 0]]",
+    "language": "python",
+    "primary_library": "numpy",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\nnp.random.seed(0)\nZ = np.random.randint(0, 2, (50, 50))\niterations = 10\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "np.random.seed(0)\nZ = np.random.randint(0, 2, (50, 50))\niterations = 10\n\ndef _life_step(z):\n    N = (z[0:-2, 0:-2] + z[0:-2, 1:-1] + z[0:-2, 2:] +\n         z[1:-1, 0:-2]                 + z[1:-1, 2:] +\n         z[2:  , 0:-2] + z[2:  , 1:-1] + z[2:  , 2:])\n    birth = (N == 3) & (z[1:-1, 1:-1] == 0)\n    survive = ((N == 2) | (N == 3)) & (z[1:-1, 1:-1] == 1)\n    out = np.zeros_like(z)\n    out[1:-1, 1:-1][birth | survive] = 1\n    return out\n\n_Z = Z.copy()\nfor _ in range(iterations):\n    _Z = _life_step(_Z)\n_expected = _Z",
+        "call": "solve()",
+        "expected_expr": "_expected"
       }
     ],
     "submission_mode": "function",
@@ -7004,7 +7396,7 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "Take a vector v of shape (d) and \"repeat\" it n times to create a matrix of shape (n, d). Use numpy (imported as np).",
+    "question_text": "Take a vector v of shape (d) and \"repeat\" it n times to create a matrix of shape (n, d).\nUse numpy (imported as np). Use the exact inputs below and print the result.\nv = np.arange(1, 3)\nn = 2",
     "answer_code": "einsum(v, 'd -> n d', n=n)",
     "difficulty_score": 50,
     "difficulty_label": "medium",
@@ -7256,7 +7648,7 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Take any tensor X of any dimensionality and sum every single element into a single scalar. Use numpy (imported as np).",
+    "question_text": "Take any tensor X of any dimensionality and sum every single element into a single scalar.\nUse numpy (imported as np). Use the exact inputs below and print the result.\nX = np.arange(1, 5).reshape((2, 2))",
     "answer_code": "einsum(X, '... ->')",
     "difficulty_score": 15,
     "difficulty_label": "easy",
@@ -7732,7 +8124,7 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "Create an identity-like batch: given a vector of scales s (shape b), create a batch of diagonal matrices (b, n, n).\nUse numpy (imported as np). Use the exact inputs below and return the result.\ns = np.arange(1, 3)\nn = 2",
+    "question_text": "Create an identity-like batch: given a vector of scales s (shape b), create a batch of diagonal matrices (b, n, n).\nUse numpy (imported as np). Use the exact inputs below and print the result.\ns = np.arange(1, 3)\nn = 2",
     "answer_code": "einsum(s, torch.eye(n), 'b, i j -> b i j')",
     "difficulty_score": 70,
     "difficulty_label": "hard",
@@ -7900,7 +8292,7 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Space-to-depth with p1=p2=2 (b c h w -> b (c*4) h/2 w/2).",
+    "question_text": "Space-to-depth with block size 2 on a BCHW batch: pack each non-overlapping 2x2 spatial block into the channel dim. H and W halve; channels grow 4x. Use einops.rearrange with named factors p1 and p2.",
     "answer_code": "einops.rearrange(arr, 'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=2, p2=2)",
     "difficulty_score": 40,
     "difficulty_label": "medium",
@@ -7981,6 +8373,34 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 316,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Split bbox predictions into 4 variables (x,y,w,h).",
+    "answer_code": "bbox_x, bbox_y, bbox_w, bbox_h = einops.rearrange(x, 'b (coord bbox) h w -> coord b bbox h w', coord=4)",
+    "difficulty_score": 35,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx = np.arange(2 * 8 * 3 * 3).reshape(2, 8, 3, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x = np.arange(2 * 8 * 3 * 3).reshape(2, 8, 3, 3)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(x, 'b (coord bbox) h w -> coord b bbox h w', coord=4)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 317,
     "topic": "Einops",
     "subtopic": "Repeat",
@@ -8041,7 +8461,7 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Convert batch-first images (b c h w) to NHWC (b h w c).",
+    "question_text": "Convert a batch of channels-first images (BCHW) to channels-last layout (NHWC).",
     "answer_code": "einops.rearrange(arr, 'b c h w -> b h w c')",
     "difficulty_score": 20,
     "difficulty_label": "easy",
@@ -8181,7 +8601,7 @@
     "topic": "Einops",
     "subtopic": "Reduce",
     "subtopic_key": "Einops: Reduce",
-    "question_text": "2x2 average pooling on a batch (b c h w -> b c h/2 w/2).",
+    "question_text": "2x2 non-overlapping average pooling on a BCHW batch — output H and W are half the input. Use named factors h2 and w2 for the pooling window.",
     "answer_code": "einops.reduce(arr, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)",
     "difficulty_score": 35,
     "difficulty_label": "easy",
@@ -8237,7 +8657,7 @@
     "topic": "Einops",
     "subtopic": "Reduce",
     "subtopic_key": "Einops: Reduce",
-    "question_text": "Reduce over channels with max (b h w c -> b h w).",
+    "question_text": "Per-pixel max across the channel axis of a BHWC batch (output is BHW).",
     "answer_code": "einops.reduce(arr, 'b h w c -> b h w', 'max')",
     "difficulty_score": 20,
     "difficulty_label": "easy",
@@ -8490,7 +8910,7 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Roll color channel into batch (h w c -> (c) h w).",
+    "question_text": "Promote the channel axis of a single HWC image to the leading position (channels-first / CHW).",
     "answer_code": "einops.rearrange(img, 'h w c -> c h w')",
     "difficulty_score": 20,
     "difficulty_label": "easy",
@@ -8576,7 +8996,7 @@
     "topic": "Einops",
     "subtopic": "Repeat",
     "subtopic_key": "Einops: Repeat",
-    "question_text": "Broadcast class embeddings across time: (b d) -> (b t d) given t.",
+    "question_text": "Given a (batch, dim) class-embedding tensor 'cls' and an integer t, broadcast each embedding across t time steps to produce shape (batch, t, dim).",
     "answer_code": "einops.repeat(cls, 'b d -> b t d', t=t)",
     "difficulty_score": 25,
     "difficulty_label": "easy",
@@ -8685,6 +9105,62 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 342,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Flatten batch and height then restore (b h w c -> (b*h) w c -> b h w c).",
+    "answer_code": "tmp = einops.rearrange(arr, 'b h w c -> (b h) w c'); einops.rearrange(tmp, '(b h) w c -> b h w c', b=b, h=h)",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\nb, h = 2, 3\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\nb, h = 2, 3\ntmp = einops.rearrange(arr, 'b h w c -> (b h) w c')",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(tmp, '(b h) w c -> b h w c', b=b, h=h)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 343,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Depth-to-space inverse with p1=p2=2 (b (c*4) h w -> b c 2h 2w).",
+    "answer_code": "einops.rearrange(arr, 'b (c p1 p2) h w -> b c (h p1) (w p2)', p1=2, p2=2)",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 12 * 3 * 4).reshape(2, 12, 3, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arr = np.arange(2 * 12 * 3 * 4).reshape(2, 12, 3, 4)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(arr, 'b (c p1 p2) h w -> b c (h p1) (w p2)', p1=2, p2=2)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 344,
     "topic": "Einops",
     "subtopic": "Rearrange",
@@ -8718,7 +9194,7 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Bring color first for the batch (b h w c -> b c h w).",
+    "question_text": "Convert a batch of NHWC images to channels-first BCHW.",
     "answer_code": "einops.rearrange(arr, 'b h w c -> b c h w')",
     "difficulty_score": 15,
     "difficulty_label": "easy",
@@ -8855,6 +9331,34 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 350,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Transpose each 2x2 patch in an image (h w c -> h w c).",
+    "answer_code": "einops.rearrange(img, '(h p1) (w p2) c -> (w p1) (h p2) c', p1=2, p2=2)",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimg = np.arange(4 * 6 * 3).reshape(4, 6, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "img = np.arange(4 * 6 * 3).reshape(4, 6, 3)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 351,
     "topic": "Einops",
     "subtopic": "Repeat",
@@ -8908,6 +9412,62 @@
     "submission_mode": "function",
     "expected_artifact_type": "image",
     "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 353,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Merge chunked sequence back ((b n p d) -> (b (n*p) d)).",
+    "answer_code": "einops.rearrange(seq_chunks, 'b n p d -> b (n p) d')",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nseq_chunks = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "seq_chunks = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(seq_chunks, 'b n p d -> b (n p) d')"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 354,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Compute per-image spatial min then broadcast subtract (b h w c).",
+    "answer_code": "mn = einops.reduce(arr, 'b h w c -> b () () c', 'min'); arr - mn",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\nmn = einops.reduce(arr, 'b h w c -> b 1 1 c', 'min')",
+        "call": "solve()",
+        "expected_expr": "arr - mn"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9050,6 +9610,34 @@
     "submission_mode": "function",
     "expected_artifact_type": "image",
     "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 360,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Insert singleton channel axis (h w -> 1 h w) and remove it back.",
+    "answer_code": "y = einops.rearrange(x2d, 'h w -> () h w'); einops.rearrange(y, '() h w -> h w')",
+    "difficulty_score": 20,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx2d = np.arange(3 * 4).reshape(3, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x2d = np.arange(3 * 4).reshape(3, 4)\ny = einops.rearrange(x2d, 'h w -> 1 h w')",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(y, '1 h w -> h w')"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9335,6 +9923,34 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 371,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Unpack subgrids back from batch to spatial dims (inverse of previous).",
+    "answer_code": "einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=2, ws=2)",
+    "difficulty_score": 35,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ny = np.arange(8 * 3 * 2 * 2).reshape(8, 3, 2, 2)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "y = np.arange(8 * 3 * 2 * 2).reshape(8, 3, 2, 2)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=2, ws=2)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 372,
     "topic": "Einops",
     "subtopic": "Deep Learning",
@@ -9419,6 +10035,34 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 375,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Temporal downsample by factor 2, keep batch and channels.",
+    "answer_code": "einops.rearrange(x_seq, 'b c (t 2) -> b c t')",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx_seq = np.arange(2 * 3 * 8).reshape(2, 3, 8).astype(float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x_seq = np.arange(2 * 3 * 8).reshape(2, 3, 8).astype(float)",
+        "call": "solve()",
+        "expected_expr": "einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 376,
     "topic": "Einops",
     "subtopic": "Rearrange",
@@ -9443,6 +10087,62 @@
     "submission_mode": "function",
     "expected_artifact_type": "image",
     "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 377,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Integrate einops layer: max-pool+flatten in torch Sequential.",
+    "answer_code": "Reduce('b c (h 2) (w 2) -> b (c h w)', 'max')",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx = np.arange(2 * 3 * 4 * 4).reshape(2, 3, 4, 4).astype(float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x = np.arange(2 * 3 * 4 * 4).reshape(2, 3, 4, 4).astype(float)",
+        "call": "solve()",
+        "expected_expr": "einops.reduce(x, 'b c (h two1) (w two2) -> b (c h w)', 'max', two1=2, two2=2)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 378,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "1D average pooling over time with window=4 (no overlap).",
+    "answer_code": "einops.reduce(x_seq, 'b c (t w) -> b c t', 'mean', w=4)",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx_seq = np.arange(2 * 3 * 12).reshape(2, 3, 12).astype(float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "x_seq = np.arange(2 * 3 * 12).reshape(2, 3, 12).astype(float)",
+        "call": "solve()",
+        "expected_expr": "einops.reduce(x_seq, 'b c (t w) -> b c t', 'mean', w=4)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9591,7 +10291,7 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Merge heads: (b h t d) -> (b t (h*d)).",
+    "question_text": "Merge attention heads back into the feature axis: from (batch, num_heads, time, head_dim) to (batch, time, num_heads*head_dim). Input variable is x_heads, with the heads axis named nh.",
     "answer_code": "einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')",
     "difficulty_score": 30,
     "difficulty_label": "easy",
@@ -9755,6 +10455,34 @@
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
   {
+    "id": 390,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Unflatten back to 2D given h and w ((c (h*w)) -> (c h w)).",
+    "answer_code": "einops.rearrange(flat, 'c (h w) -> c h w', h=h, w=w)",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nh, w = 3, 4\nflat = np.arange(5 * h * w).reshape(5, h * w)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "h, w = 3, 4\nflat = np.arange(5 * h * w).reshape(5, h * w)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(flat, 'c (h w) -> c h w', h=h, w=w)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
     "id": 391,
     "topic": "Einops",
     "subtopic": "Rearrange",
@@ -9803,6 +10531,34 @@
         "call": "solve()",
         "expected_expr": "arr1",
         "expected_setup_code": "arr1 = einops.rearrange(arr, 'b c h w -> c (b h) w')"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 393,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Group channels into pairs and expose pair dimension first (c even).",
+    "answer_code": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)",
+    "difficulty_score": 35,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimg = np.arange(6 * 4 * 5).reshape(6, 4, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "img = np.arange(6 * 4 * 5).reshape(6, 4, 5)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
       }
     ],
     "submission_mode": "function",
@@ -9873,7 +10629,7 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Split heads: (b t (h*d)) -> (b h t d) for h=8.",
+    "question_text": "Split the feature axis of a (batch, time, nh*d) tensor into 8 attention heads, exposing heads as a separate axis right after batch. Input variable is x_seq2.",
     "answer_code": "einops.rearrange(x_seq2, 'b t (nh d) -> b nh t d', nh=8)",
     "difficulty_score": 35,
     "difficulty_label": "easy",
@@ -10057,6 +10813,62 @@
         "call": "solve()",
         "expected_expr": "img - mx",
         "expected_setup_code": "mx = einops.reduce(img, 'h w c -> () w c', 'max')"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 403,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Split width by factor 4 then swap the subfactor with height.",
+    "answer_code": "einops.rearrange(arr, 'b h (w w4) c -> b (w4 h) w c', w4=4)",
+    "difficulty_score": 35,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 3 * 8 * 5).reshape(2, 3, 8, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "arr = np.arange(2 * 3 * 8 * 5).reshape(2, 3, 8, 5)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(arr, 'b h (w w4) c -> b (w4 h) w c', w4=4)"
+      }
+    ],
+    "submission_mode": "function",
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
+  },
+  {
+    "id": 404,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Extract non-overlapping 4x4 patches: (c h w) -> ((h/4*w/4) c 4 4).",
+    "answer_code": "einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=4, p2=4)",
+    "difficulty_score": 45,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "einops",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimg = np.arange(3 * 8 * 8).reshape(3, 8, 8)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "test_cases": [
+      {
+        "setup_code": "img = np.arange(3 * 8 * 8).reshape(3, 8, 8)",
+        "call": "solve()",
+        "expected_expr": "einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=4, p2=4)"
       }
     ],
     "submission_mode": "function",

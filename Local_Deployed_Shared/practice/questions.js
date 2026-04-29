@@ -8,7 +8,7 @@ let questionsBankJson = null; // JSON string for passing to Pyodide engine
 async function loadQuestionsBank() {
   if (questionsBank) return questionsBank;
   try {
-    const res = await fetch(`questions.json?v=20260310i`, { cache: "no-store" });
+    const res = await fetch(`questions.json?v=20260428-rewrite`, { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     questionsBank = await res.json();
     questionsBank = questionsBank.filter((q) => !curatedExcludedIds.has(q.id));

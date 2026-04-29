@@ -1,0 +1,208 @@
+My product goals and preferences for the ARENA + Delta Drills integration
+
+Canonical product surface
+
+I want Delta Drills to be the main product surface and the source of truth for:
+
+- user progress
+- user-specific skill estimates
+- prerequisite routing
+- reflections on problem difficulty
+- drill recommendations after solving a problem
+
+Core product goal
+
+I want users to be able to work on specific ARENA problems with extremely low friction.
+
+I do not want users to:
+
+- open giant notebooks
+- scroll through a long page to find the right exercise
+- manually piece together what to do next
+
+Instead, I want Delta Drills to:
+
+- determine that the user is ready for a specific ARENA problem
+- bring the user to a dedicated Delta Drills problem page
+- let the user click a button that opens the solving workspace for that exact problem
+- capture the result when they solve it
+- send that data back into Delta Drills immediately
+- update the user’s skill model across all relevant subskills
+- then optionally route the user into targeted drills related to that problem
+
+Main UX preference
+
+When Delta Drills decides a user is ready for a problem, I want the user to land on a dedicated Delta Drills problem page.
+
+That page should show:
+
+- the specific problem
+- the prerequisite concepts
+- the user’s estimated readiness / score for that problem
+- a button to open the solving workspace
+- a button to study prerequisites if needed
+- a way to return from the notebook solving flow back into Delta Drills
+
+I want the transition from:
+
+recommended problem -> solving workspace -> completion -> next recommended action
+
+to be extremely streamlined.
+
+Notebook / workspace preference
+
+I want the user to be able to click a link or button in Delta Drills that opens the exact notebook page for the problem in JupyterLab.
+
+The user should solve the problem there.
+
+Then, when the user solves the problem on that notebook page, I want the system to send data back to Delta Drills, including:
+
+- which problem was solved
+- which user solved it
+- whether the solve was successful
+- how difficult the user said it was:
+  - easy
+  - medium
+  - difficult
+- optionally what parts of the problem tripped them up
+
+I want this to be:
+
+- user-specific
+- immediate or very low friction
+- tightly integrated with my existing PostgreSQL-backed data model
+
+I do not want the notebook solving flow to be isolated from the main app.
+
+Data / telemetry preference
+
+I want Delta Drills to know how the user performed on each problem across the board.
+
+When a user solves a problem, I want that event to be sent back into Delta Drills so that the system can update the user model.
+
+Each problem can affect multiple subskills, such as:
+
+- calculus
+- NumPy
+- PyTorch
+- broadcasting
+- einops
+- einsum
+- and finer-grained subskills within those areas
+
+I want the problem completion data to propagate to all relevant skills using the existing weighting / prioritization logic in Delta Drills.
+
+I care about:
+
+- objective completion data
+- self-reported difficulty
+- subskill-specific follow-up routing
+
+Reflection / self-report preference
+
+I want users to be able to report:
+
+- whether the problem was easy, medium, or difficult
+- what parts of the problem tripped them up
+- whether they felt ready or not
+
+I want this reflection data to be stored and used to update the user’s skill model.
+
+So Delta Drills should incorporate both:
+
+- actual solve outcomes
+- subjective self-report data
+
+Return-to-app workflow preference
+
+After or during work in the notebook page, I want there to be multiple return paths back into Delta Drills.
+
+Return option 1
+
+A button or link that brings the user back to the main app and marks the problem result / reflection data for that user.
+
+Return option 2
+
+A button or link that brings the user back to Delta Drills and opens or queues a specific drill set related to that exact problem.
+
+That drill set should be based on the problem’s weighted skill profile, such as the specific combination of:
+
+- calculus
+- PyTorch
+- broadcasting
+- other subskills relevant to that problem
+
+So if a problem emphasizes a certain mixture of subskills, I want the "practice related drills" action to return the user to Delta Drills and target that specific combination.
+
+In other words:
+
+- the problem should have a weighted skill signature
+- that signature should be usable to launch focused follow-up drills in Delta Drills
+
+Content structure preference
+
+I want the ARENA curriculum to be broken into specific problem-level units.
+
+Each problem should have:
+
+- a stable ID
+- prerequisite tags
+- skill-weight mappings
+- a direct way to launch the solving environment
+- a way to record user-specific outcome data
+- a way to route back into targeted practice
+
+I do not want Delta Drills to reference giant notebooks in a vague way.
+I want it to target precise, individual problems.
+
+Product architecture preference
+
+I want Delta Drills to control:
+
+- routing
+- readiness
+- progress tracking
+- reflections
+- prerequisite study recommendations
+- drill recommendations after problem completion
+
+The notebook or JupyterLab page should mainly be the solving surface.
+
+Delta Drills should remain the canonical layer for:
+
+- what problem the user should do
+- why they are being shown that problem
+- how their result affects their skill model
+- what they should practice next
+
+Practical preference
+
+I want a solution that is ambitious but still practical.
+
+I want:
+
+- a streamlined user flow
+- strong user-specific data integration
+- low-friction movement between Delta Drills and the notebook solving environment
+- the ability to update the user’s global skill model and targeted drill recommendations after each solve
+
+I am okay with using notebook infrastructure like JupyterLab, but I want the integration to feel productized rather than disconnected.
+
+Long-term ideal
+
+Delta Drills should become a system that:
+
+- tracks users across many fine-grained subskills
+- recommends ARENA problems when users are ready
+- routes them directly to the exact problem with very low friction
+- records solve success and self-reported difficulty
+- updates the user’s global skill model
+- lets the user return immediately into targeted drills for the exact combination of skills used in that problem
+
+Short version for Codex
+
+I want Delta Drills to be the canonical app layer for ARENA-based problems. Each ARENA problem should become a stable problem-level unit with prerequisites, skill weights, and a direct launch path into JupyterLab. When the user solves the problem in JupyterLab, that result should be sent back into Delta Drills along with user-specific reflection data such as whether the problem was easy, medium, or difficult. Delta Drills should then update the user’s skill model across all relevant subskills and provide return links/buttons back into the app, including one option that launches targeted drills based on that problem’s weighted combination of skills. The whole flow should be extremely streamlined and low friction.
+
+Optional next step
+
+If useful, this can be compressed further into a short engineering requirements block for implementation planning.

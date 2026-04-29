@@ -64,8 +64,7 @@ function renderQuestion(q, count) {
     ? q.p_current
     : getEwmaFromAdaptiveState(q.subtopic);
   if (coldStart) {
-    ewmaAccuracy.classList.add("hidden");
-    ewmaAccuracyValue.textContent = "";
+    showEwmaAccuracyCalibration(q.subtopic);
   } else {
     showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
   }

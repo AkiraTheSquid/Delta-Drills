@@ -24,6 +24,7 @@ DEFAULT_TIMEOUT_SECONDS = 5
 ARENA_NUMBERS_PATH = (
     Path(__file__).resolve().parents[3]
     / "Local_Deployed_Shared"
+    / "content"
     / "ARENA_3.0-main"
     / "chapter0_fundamentals"
     / "exercises"

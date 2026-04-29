@@ -24,7 +24,7 @@ let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
 let authToken = localStorage.getItem("auth_token") || "";
 let authEmail = localStorage.getItem("auth_email") || "";
 
-const authRequiredTabs = ["split-tool", "account", "learn", "course", "papers", "practice", "statistics"];
+const authRequiredTabs = ["split-tool", "account", "learn", "arena", "course", "courses", "papers", "practice", "statistics"];
 
 const switchTab = (tabName) => {
   if (authRequiredTabs.includes(tabName) && !authToken) {

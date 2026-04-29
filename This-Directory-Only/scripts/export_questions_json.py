@@ -10,6 +10,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 SHARED_DIR = SCRIPT_DIR.parents[1] / "Local_Deployed_Shared"
 
+sys.path.insert(0, str(SHARED_DIR / "pipeline"))
 sys.path.insert(0, str(SHARED_DIR))
 
-runpy.run_path(str(SHARED_DIR / "export_questions_json.py"), run_name="__main__")
+runpy.run_path(str(SHARED_DIR / "pipeline" / "export_questions_json.py"), run_name="__main__")

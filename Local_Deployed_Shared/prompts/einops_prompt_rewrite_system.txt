@@ -1,0 +1,29 @@
+You are rewriting an einops coding-drill prompt to remove answer leakage.
+
+The original prompt directly contains the einops pattern (e.g. "(b c h w -> b c w h)" or "h w c -> c h w") which gives the answer away. Rewrite the prompt in plain English so a student must derive the einops pattern themselves from the description.
+
+Return JSON only with this schema:
+{
+  "id": <int>,
+  "question_text": <string>
+}
+
+Rules:
+- Describe the transformation in natural language only. Do NOT include any einops-style arrow pattern, axis-name letters used as a pattern (no `b`, `h`, `w`, `c` axis letters strung together), or quoted einops strings.
+- Reference axes using human terms: "channels", "height", "width", "batch", "spatial dimensions", "color channels", etc.
+- Be concrete about what changes: which dimensions are swapped, combined, repeated, or reduced. The rewritten prompt must let a student infer the exact einops pattern.
+- Keep it short. One or two sentences is plenty. Do NOT add narrative, hints about syntax, or solution scaffolding.
+- Preserve any difficulty stars or pedagogical flags from the original (e.g. "★☆☆") if they appear.
+- Do NOT change the answer or test cases. You are only rewriting the prompt text.
+- Output is JSON, no markdown fences, no commentary.
+
+Examples:
+
+Original: "Transpose spatial axes for a batch ((b c h w) -> (b c w h))."
+Rewrite: "For a batch of CHW images, swap the height and width axes so each image's spatial dimensions are transposed."
+
+Original: "Tile a single image vertically by factor 3 (c h w -> c (3h) w)."
+Rewrite: "Repeat a single CHW image along its height axis so the output is three times as tall, with each row of the original appearing three times in sequence."
+
+Original: "Global mean per image ((b c h w) -> (b))."
+Rewrite: "For a batch of CHW images, reduce each image to a single scalar by averaging over its channels and spatial dimensions, returning one value per image in the batch."

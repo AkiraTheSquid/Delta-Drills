@@ -33,7 +33,7 @@ def run_auto_toc(
     mathpix_app_id: str | None = None,
     mathpix_app_key: str | None = None,
 ) -> Path:
-    script = SHARED_DIR / "glossary_to_csv.py"
+    script = SHARED_DIR / "tools" / "glossary_to_csv.py"
     if not script.exists():
         raise FileNotFoundError(f"glossary_to_csv.py not found: {script}")
 

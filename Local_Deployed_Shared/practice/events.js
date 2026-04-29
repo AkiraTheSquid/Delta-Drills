@@ -61,7 +61,13 @@ feedbackButtons.forEach((btn) => {
       ? practiceProgress.currentTargetDifficulty
       : getTargetDifficultyForQuestion(q);
     const pBefore = ewmaAccuracyPBefore;
-    const response = await PracticeAPI.sendFeedback(q.question_id, feedback);
+    let response;
+    try {
+      response = await PracticeAPI.sendFeedback(q.question_id, feedback);
+    } catch (err) {
+      outputArea.textContent = "Feedback failed: " + err.message;
+      return;
+    }
     const backendTarget = Number.isFinite(response?.target_difficulty_after)
       ? response.target_difficulty_after
       : null;
@@ -84,7 +90,7 @@ feedbackButtons.forEach((btn) => {
     if (!calibrationQuestion && Number.isFinite(pAfter)) {
       showEwmaAccuracy(pBefore, pAfter, q.subtopic);
     } else {
-      ewmaAccuracy.classList.add("hidden");
+      showEwmaAccuracyCalibration(q.subtopic);
     }
 
     practiceProgress.pendingFeedback = {

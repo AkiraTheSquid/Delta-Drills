@@ -19,6 +19,7 @@ REPO_DIR = Path(__file__).resolve().parents[2]
 SHARED_DIR = REPO_DIR / "Local_Deployed_Shared"
 NOTEBOOK_PATH = (
     SHARED_DIR
+    / "content"
     / "ARENA_3.0-main"
     / "chapter0_fundamentals"
     / "exercises"

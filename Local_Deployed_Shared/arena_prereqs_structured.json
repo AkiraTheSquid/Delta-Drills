@@ -22,7 +22,12 @@
       "canonical_solution": "arr1 = einops.rearrange(arr, \"b c h w -> c (b h) w\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -48,7 +53,12 @@
       "canonical_solution": "arr2 = einops.repeat(arr[0], \"c h w -> c (2 h) w\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -74,7 +84,12 @@
       "canonical_solution": "arr3 = einops.repeat(arr[0:2], \"b c h w -> c (b h) (2 w)\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -100,7 +115,12 @@
       "canonical_solution": "arr4 = einops.repeat(arr[0], \"c h w -> c (h 2) w\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -126,7 +146,12 @@
       "canonical_solution": "arr5 = einops.rearrange(arr[0], \"c h w -> h (c w)\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -152,7 +177,12 @@
       "canonical_solution": "arr6 = einops.rearrange(arr, \"(b1 b2) c h w -> c (b1 h) (b2 w)\", b1=2)",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -178,7 +208,12 @@
       "canonical_solution": "arr7 = einops.rearrange(arr[1], \"c h w -> c w h\")",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -204,7 +239,12 @@
       "canonical_solution": "arr8 = einops.reduce(arr, \"(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)\", \"max\", h2=2, w2=2, b1=2)",
       "expected_artifact_type": "image",
       "supports_visual_output": true,
-      "render_helper": "display_array_as_img"
+      "render_helper": "display_array_as_img",
+      "runtime_dependencies": [
+        "arena_arr",
+        "einops"
+      ],
+      "runtime_unmet_dependencies": []
     }
   },
   {
@@ -232,7 +272,16 @@
       "canonical_solution": "def rearrange_1() -> Tensor:\n    \"\"\"Return the following tensor using only t.arange and einops.rearrange:\n\n    [[3, 4],\n     [5, 6],\n     [7, 8]]\n    \"\"\"\n    return einops.rearrange(t.arange(3, 9), \"(h w) -> h w\", h=3, w=2)",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -260,7 +309,16 @@
       "canonical_solution": "def rearrange_2() -> Tensor:\n    \"\"\"Return the following tensor using only t.arange and einops.rearrange:\n\n    [[1, 2, 3],\n     [4, 5, 6]]\n    \"\"\"\n    return einops.rearrange(t.arange(1, 7), \"(h w) -> h w\", h=2, w=3)",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -288,7 +346,16 @@
       "canonical_solution": "def temperatures_average(temps: Tensor) -> Tensor:\n    \"\"\"Return the average temperature for each week.\n\n    temps: a 1D temperature containing temperatures for each day.\n    Length will be a multiple of 7 and the first 7 days are for the first week, second 7 days for the second week, etc.\n\n    You can do this with a single call to reduce.\n    \"\"\"\n    assert len(temps) % 7 == 0\n    return einops.reduce(temps, \"(h 7) -> h\", \"mean\")",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -316,7 +383,16 @@
       "canonical_solution": "def temperatures_differences(temps: Tensor) -> Tensor:\n    \"\"\"For each day, subtract the average for the week the day belongs to.\n\n    temps: as above\n    \"\"\"\n    assert len(temps) % 7 == 0\n    avg = einops.reduce(temps, \"(w 7) -> w\", \"mean\")\n    return temps - einops.repeat(avg, \"w -> (w 7)\")",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -344,7 +420,16 @@
       "canonical_solution": "def temperatures_normalized(temps: Tensor) -> Tensor:\n    \"\"\"For each day, subtract the weekly average and divide by the weekly standard deviation.\n\n    temps: as above\n\n    Pass t.std to reduce.\n    \"\"\"\n    avg = einops.reduce(temps, \"(w 7) -> w\", \"mean\")\n    std = einops.reduce(temps, \"(h 7) -> h\", t.std)\n    return (temps - einops.repeat(avg, \"w -> (w 7)\")) / einops.repeat(std, \"w -> (w 7)\")",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -372,7 +457,15 @@
       "canonical_solution": "def normalize_rows(matrix: Tensor) -> Tensor:\n    \"\"\"Normalize each row of the given 2D matrix.\n\n    matrix: a 2D tensor of shape (m, n).\n\n    Returns: a tensor of the same shape where each row is divided by its l2 norm.\n    \"\"\"\n    row_norms = matrix.norm(dim=1, keepdim=True)  # keepdim=True\n    return matrix / row_norms",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -400,7 +493,15 @@
       "canonical_solution": "def cos_sim_matrix(matrix: Tensor) -> Tensor:\n    \"\"\"Return the cosine similarity matrix for each pair of rows of the given matrix.\n\n    matrix: shape (m, n)\n    \"\"\"\n    matrix_normalized = normalize_rows(matrix)\n    return matrix_normalized @ matrix_normalized.T",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -428,7 +529,15 @@
       "canonical_solution": "def sample_distribution(probs: Tensor, n: int) -> Tensor:\n    \"\"\"Return n random samples from probs, where probs is a normalized probability distribution.\n\n    probs: shape (k,) where probs[i] is the probability of event i occurring.\n    n: number of random samples\n\n    Return: shape (n,) where out[i] is an integer indicating which event was sampled.\n\n    Use t.rand and t.cumsum to do this without any explicit loops.\n    \"\"\"\n    assert abs(probs.sum() - 1.0) < 0.001\n    assert (probs >= 0).all()\n    return (t.rand(n, 1) > t.cumsum(probs, dim=0)).sum(dim=-1)",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -456,7 +565,13 @@
       "canonical_solution": "def classifier_accuracy(scores: Tensor, true_classes: Tensor) -> Tensor:\n    \"\"\"Return the fraction of inputs for which the maximum score corresponds to the true class for that input.\n\n    scores: shape (batch, n_classes). A higher score[b, i] means that the classifier thinks class i is more likely.\n    true_classes: shape (batch, ). true_classes[b] is an integer from [0...n_classes).\n\n    Use t.argmax.\n    \"\"\"\n    assert true_classes.max() < scores.shape[1]\n    return (scores.argmax(dim=1) == true_classes).float().mean()",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "torch"
+      ]
     }
   },
   {
@@ -484,7 +599,13 @@
       "canonical_solution": "def total_price_indexing(prices: Tensor, items: Tensor) -> float:\n    \"\"\"Given prices for each kind of item and a tensor of items purchased, return the total price.\n\n    prices: shape (k, ). prices[i] is the price of the ith item.\n    items: shape (n, ). A 1D tensor where each value is an item index from [0..k).\n\n    Use integer array indexing. The below document describes this for NumPy but it's the same in PyTorch:\n\n    https://numpy.org/doc/stable/user/basics.indexing.html#integer-array-indexing\n    \"\"\"\n    assert items.max() < prices.shape[0]\n    return prices[items].sum().item()",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "torch"
+      ]
     }
   },
   {
@@ -512,7 +633,13 @@
       "canonical_solution": "def total_price_gather(prices: Tensor, items: Tensor) -> float:\n    \"\"\"Compute the same as total_price_indexing, but use torch.gather.\"\"\"\n    assert items.max() < prices.shape[0]\n    return prices.gather(0, items).sum().item()",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "torch"
+      ]
     }
   },
   {
@@ -540,7 +667,15 @@
       "canonical_solution": "def integer_array_indexing(matrix: Tensor, coords: Tensor) -> Tensor:\n    \"\"\"Return the values at each coordinate using integer array indexing.\n\n    For details on integer array indexing, see:\n    https://numpy.org/doc/stable/user/basics.indexing.html#integer-array-indexing\n\n    matrix: shape (d_0, d_1, ..., d_n)\n    coords: shape (batch, n)\n\n    Return: (batch, )\n    \"\"\"\n    return matrix[tuple(coords.T)]",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -568,7 +703,17 @@
       "canonical_solution": "def batched_logsumexp(matrix: Tensor) -> Tensor:\n    \"\"\"For each row of the matrix, compute log(sum(exp(row))) in a numerically stable way.\n\n    matrix: shape (batch, n)\n\n    Return: (batch, ). For each i, out[i] = log(sum(exp(matrix[i]))).\n\n    Do this without using PyTorch's logsumexp function.\n\n    A couple useful blogs about this function:\n    - https://leimao.github.io/blog/LogSumExp/\n    - https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/\n    \"\"\"\n    C = matrix.max(dim=-1).values\n    exps = t.exp(matrix - einops.rearrange(C, \"n -> n 1\"))\n    return C + t.log(t.sum(exps, dim=-1))",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "math",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -596,7 +741,15 @@
       "canonical_solution": "def batched_softmax(matrix: Tensor) -> Tensor:\n    \"\"\"For each row of the matrix, compute softmax(row).\n\n    Do this without using PyTorch's softmax function.\n    Instead, use the definition of softmax: https://en.wikipedia.org/wiki/Softmax_function\n\n    matrix: shape (batch, n)\n\n    Return: (batch, n). For each i, out[i] should sum to 1.\n    \"\"\"\n    exp = matrix.exp()\n    return exp / exp.sum(dim=-1, keepdim=True)",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -624,7 +777,15 @@
       "canonical_solution": "def batched_logsoftmax(matrix: Tensor) -> Tensor:\n    \"\"\"Compute log(softmax(row)) for each row of the matrix.\n\n    matrix: shape (batch, n)\n\n    Return: (batch, n).\n\n    Do this without using PyTorch's logsoftmax function.\n    For each row, subtract the maximum first to avoid overflow if the row contains large values.\n    \"\"\"\n    C = matrix.max(dim=1, keepdim=True).values\n    return matrix - C - (matrix - C).exp().sum(dim=1, keepdim=True).log()",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -652,7 +813,17 @@
       "canonical_solution": "def batched_cross_entropy_loss(logits: Tensor, true_labels: Tensor) -> Tensor:\n    \"\"\"Compute the cross entropy loss for each example in the batch.\n\n    logits: shape (batch, classes). logits[i][j] is the unnormalized prediction for example i and class j.\n    true_labels: shape (batch, ). true_labels[i] is an integer index representing the true class for example i.\n\n    Return: shape (batch, ). out[i] is the loss for example i.\n\n    Hint: convert the logits to log-probabilities using your batched_logsoftmax from above.\n    Then the loss for an example is just the negative of the log-probability that the model assigned to the true class. Use torch.gather to perform the indexing.\n    \"\"\"\n    assert logits.shape[0] == true_labels.shape[0]\n    assert true_labels.max() < logits.shape[1]\n    logprobs = batched_logsoftmax(logits)\n    indices = einops.rearrange(true_labels, \"n -> n 1\")\n    pred_at_index = logprobs.gather(1, indices)\n    return -einops.rearrange(pred_at_index, \"n 1 -> n\")",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "math",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -680,7 +851,15 @@
       "canonical_solution": "def collect_rows(matrix: Tensor, row_indexes: Tensor) -> Tensor:\n    \"\"\"Return a 2D matrix whose rows are taken from the input matrix in order according to row_indexes.\n\n    matrix: shape (m, n)\n    row_indexes: shape (k,). Each value is an integer in [0..m).\n\n    Return: shape (k, n). out[i] is matrix[row_indexes[i]].\n    \"\"\"\n    assert row_indexes.max() < matrix.shape[0]\n    return matrix[row_indexes]",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -708,7 +887,15 @@
       "canonical_solution": "def collect_columns(matrix: Tensor, column_indexes: Tensor) -> Tensor:\n    \"\"\"Return a 2D matrix whose columns are taken from the input matrix in order according to column_indexes.\n\n    matrix: shape (m, n)\n    column_indexes: shape (k,). Each value is an integer in [0..n).\n\n    Return: shape (m, k). out[:, i] is matrix[:, column_indexes[i]].\n    \"\"\"\n    assert column_indexes.max() < matrix.shape[1]\n    return matrix[:, column_indexes]",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers",
+        "torch"
+      ]
     }
   },
   {
@@ -721,7 +908,7 @@
     "curriculum": {
       "topic": "Einsum",
       "section": "Einsum",
-      "title": "einsum_trace"
+      "title": "einsum: trace, mv, mm, inner, outer"
     },
     "exercise": {
       "task_type": "function_impl",
@@ -735,12 +922,20 @@
         "einsum_outer"
       ],
       "variable_name": null,
-      "prompt_markdown": "### Exercises - einsum\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 15-20 minutes on these exercises collectively.\n> If you think you get the general idea, then you can skip to the next section.\n> ```\nIn the following exercises, you'll write simple functions using `einsum` which replicate the functionality of standard NumPy functions: trace, matrix multiplication, inner and outer products. We've also included some test functions which you should run.\nNote - this version of einsum will require that you include `->`, even if you're summing to a scalar (i.e. the right hand side of your string expression is empty).",
+      "prompt_markdown": "### Exercises - einsum\n> ```yaml\n> Difficulty: \ud83d\udd34\ud83d\udd34\u26aa\u26aa\u26aa\n> Importance: \ud83d\udd35\ud83d\udd35\ud83d\udd35\ud83d\udd35\u26aa\n>\n> You should spend up to 15-20 minutes on these exercises collectively.\n> If you think you get the general idea, then you can skip to the next section.\n> ```\nIn the following exercises, you'll write simple functions using `einsum` which replicate the functionality of standard NumPy functions: trace, matrix multiplication, inner and outer products. We've also included some test functions which you should run.\nNote - this version of einsum will require that you include `->`, even if you're summing to a scalar (i.e. the right hand side of your string expression is empty).",
       "starter_code": "def einsum_trace(mat: np.ndarray):\n    \"\"\"\n    Returns the same as `np.trace`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mv(mat: np.ndarray, vec: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat` is a 2D array and `vec` is 1D.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mm(mat1: np.ndarray, mat2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat1` and `mat2` are both 2D arrays.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_inner(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.inner`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_outer(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.outer`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_einsum_trace(einsum_trace)\ntests.test_einsum_mv(einsum_mv)\ntests.test_einsum_mm(einsum_mm)\ntests.test_einsum_inner(einsum_inner)\ntests.test_einsum_outer(einsum_outer)",
-      "canonical_solution": null,
+      "canonical_solution": "def einsum_trace(mat: np.ndarray):\n    return einops.einsum(mat, \"i i ->\")\n\n\ndef einsum_mv(mat: np.ndarray, vec: np.ndarray):\n    return einops.einsum(mat, vec, \"i j, j -> i\")\n\n\ndef einsum_mm(mat1: np.ndarray, mat2: np.ndarray):\n    return einops.einsum(mat1, mat2, \"i j, j k -> i k\")\n\n\ndef einsum_inner(vec1: np.ndarray, vec2: np.ndarray):\n    return einops.einsum(vec1, vec2, \"i, i ->\")\n\n\ndef einsum_outer(vec1: np.ndarray, vec2: np.ndarray):\n    return einops.einsum(vec1, vec2, \"i, j -> i j\")",
       "expected_artifact_type": "function",
       "supports_visual_output": false,
-      "render_helper": null
+      "render_helper": null,
+      "runtime_dependencies": [
+        "arena_test_helpers",
+        "einops",
+        "numpy"
+      ],
+      "runtime_unmet_dependencies": [
+        "arena_test_helpers"
+      ]
     }
   }
 ]
