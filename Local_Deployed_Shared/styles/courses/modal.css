@@ -87,6 +87,28 @@ body.modal-open {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.chapter-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chapter-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chapter-modal-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.chapter-modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  background-clip: padding-box;
 }
 
 .section-item {
