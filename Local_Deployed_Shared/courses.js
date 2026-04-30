@@ -23,12 +23,12 @@ const ARENA_DETAIL = {
         "Coding best practices, PyTorch fluency, and building your own CNNs and ResNets from scratch. The levelling chapter — everyone leaves on the same page so the rest of the programme can move.",
       color: "#DC2626",
       sections: [
-        { number: "0.0", title: "Prerequisites", desc: "Essential PyTorch basics, einops/einsum libraries, and tensor manipulation fundamentals." },
-        { number: "0.1", title: "Ray Tracing", desc: "Learn batched operations and linear algebra by rendering 3D meshes with raytracing." },
-        { number: "0.2", title: "CNNs & ResNets", desc: "Build neural networks from scratch, from MNIST classifiers to ResNets for CIFAR-10." },
-        { number: "0.3", title: "Optimization", desc: "Implement SGD, RMSprop & Adam optimizers, and use Weights & Biases for experiment tracking." },
-        { number: "0.4", title: "Backpropagation", desc: "Build your own autograd system from scratch and train MLPs with custom backpropagation." },
-        { number: "0.5", title: "VAEs & GANs", desc: "Implement GANs and VAEs, foundational architectures for generative image models." },
+        { number: "0.0", title: "Prerequisites", desc: "Essential PyTorch basics, einops/einsum libraries, and tensor manipulation fundamentals.", url: "/arena-book/chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises.html" },
+        { number: "0.1", title: "Ray Tracing", desc: "Learn batched operations and linear algebra by rendering 3D meshes with raytracing.", url: "/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.html" },
+        { number: "0.2", title: "CNNs & ResNets", desc: "Build neural networks from scratch, from MNIST classifiers to ResNets for CIFAR-10.", url: "/arena-book/chapter0_fundamentals/exercises/part2_cnns/0.2_CNNs_%26_ResNets_exercises.html" },
+        { number: "0.3", title: "Optimization", desc: "Implement SGD, RMSprop & Adam optimizers, and use Weights & Biases for experiment tracking.", url: "/arena-book/chapter0_fundamentals/exercises/part3_optimization/0.3_Optimization_exercises.html" },
+        { number: "0.4", title: "Backpropagation", desc: "Build your own autograd system from scratch and train MLPs with custom backpropagation.", url: "/arena-book/chapter0_fundamentals/exercises/part4_backprop/0.4_Backprop_exercises.html" },
+        { number: "0.5", title: "VAEs & GANs", desc: "Implement GANs and VAEs, foundational architectures for generative image models.", url: "/arena-book/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_%26_GANs_exercises.html" },
       ],
     },
     {
@@ -39,16 +39,16 @@ const ARENA_DETAIL = {
       color: "#D97706",
       sections: [
         { number: "1.1", title: "Transformers from Scratch", desc: "Build a transformer from scratch and load pretrained GPT-2 weights." },
-        { number: "1.2", title: "Intro to Mech Interp", desc: "Learn TransformerLens to extract activations, apply hooks & find important attention heads." },
+        { number: "1.2", title: "Intro to Mech Interp", desc: "Learn TransformerLens to extract activations, apply hooks & find important attention heads.", url: "/arena-book/chapter1_transformer_interp/exercises/part2_intro_to_mech_interp/1.2_Intro_to_Mech_Interp_exercises.html" },
         { number: "1.3.1", title: "Linear Probes", desc: "Train linear probes to detect deception in a model playing the game Coup." },
         { number: "1.3.2", title: "Function Vectors & Model Steering", desc: "Steer model behaviour using activation interventions and the nnsight library." },
-        { number: "1.3.3", title: "Interpretability with SAEs", desc: "Use SAEs to decompose LLM activation space, monitor cognition & steer behaviour." },
+        { number: "1.3.3", title: "Interpretability with SAEs", desc: "Use SAEs to decompose LLM activation space, monitor cognition & steer behaviour.", url: "/arena-book/chapter1_transformer_interp/exercises/part32_interp_with_saes/1.3.2_Interpretability_with_SAEs_exercises.html" },
         { number: "1.3.4", title: "Activation Oracles", desc: "Implement activation oracles to reveal hidden knowledge and uncover forward-predictions." },
         { number: "1.4.1", title: "Indirect Object Identification", desc: "Reverse-engineer the IOI circuit in GPT-2 small following 'Interpretability in the Wild'." },
         { number: "1.4.2", title: "SAE Circuits", desc: "Apply SAEs to circuit analysis, decomposing computations and tracing features through layers." },
         { number: "1.5.1", title: "Balanced Bracket Classifier", desc: "Reverse-engineer the algorithm learned by a bracket-balancing transformer." },
         { number: "1.5.2", title: "Grokking & Modular Arithmetic", desc: "Discover Fourier circuits in modular arithmetic models and observe grokking in action." },
-        { number: "1.5.3", title: "OthelloGPT", desc: "Investigate emergent world representations in a GPT model trained on Othello games." },
+        { number: "1.5.3", title: "OthelloGPT", desc: "Investigate emergent world representations in a GPT model trained on Othello games.", url: "/arena-book/chapter1_transformer_interp/exercises/part53_othellogpt/1.5.3_OthelloGPT_exercises.html" },
         { number: "1.5.4", title: "Superposition & SAEs", desc: "Replicate Anthropic's superposition paper and train SAEs to recover features." },
         { number: "", title: "Monthly Algorithmic Problems", desc: "7 algorithmic challenges to test your interpretability skills in hackathon format." },
       ],
@@ -60,10 +60,10 @@ const ARENA_DETAIL = {
         "RL fundamentals — agents, environments, accumulated reward — with experiments in OpenAI Gym. Then layer on Reinforcement Learning from Human Feedback (RLHF) and apply it to the transformer you trained earlier.",
       color: "#059669",
       sections: [
-        { number: "2.1", title: "Intro to RL", desc: "RL fundamentals: MDPs, policies, value functions, and multi-armed bandits." },
-        { number: "2.2", title: "DQN & VPG", desc: "Implement DQN and Vanilla Policy Gradient for CartPole and beyond." },
-        { number: "2.3", title: "PPO", desc: "Build a PPO agent from scratch and train it to master CartPole." },
-        { number: "2.4", title: "RLHF", desc: "Implement RLHF end-to-end, applying PPO to language model finetuning." },
+        { number: "2.1", title: "Intro to RL", desc: "RL fundamentals: MDPs, policies, value functions, and multi-armed bandits.", url: "/arena-book/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html" },
+        { number: "2.2", title: "DQN & VPG", desc: "Implement DQN and Vanilla Policy Gradient for CartPole and beyond.", url: "/arena-book/chapter2_rl/exercises/part21_dqn/2.2.1_Deep_Q_Networks_exercises.html" },
+        { number: "2.3", title: "PPO", desc: "Build a PPO agent from scratch and train it to master CartPole.", url: "/arena-book/chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises.html" },
+        { number: "2.4", title: "RLHF", desc: "Implement RLHF end-to-end, applying PPO to language model finetuning.", url: "/arena-book/chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises.html" },
       ],
     },
     {
@@ -73,10 +73,10 @@ const ARENA_DETAIL = {
         "Build a multiple-choice benchmark from scratch and use it to evaluate current frontier models. Then move on to LM agents — how to construct them and how to measure their behaviour.",
       color: "#2563EB",
       sections: [
-        { number: "3.1", title: "Intro to Evals", desc: "Design threat models and specifications for evaluating model properties." },
-        { number: "3.2", title: "Dataset Generation", desc: "Use LLMs to generate and refine high-quality evaluation datasets." },
-        { number: "3.3", title: "Running Evals with Inspect", desc: "Run standardised LLM evaluations using UK AISI's Inspect library." },
-        { number: "3.4", title: "LLM Agents", desc: "Build LLM agents with scaffolding to play Wikipedia Racing and other tasks." },
+        { number: "3.1", title: "Intro to Evals", desc: "Design threat models and specifications for evaluating model properties.", url: "/arena-book/chapter3_llm_evals/exercises/part1_intro_to_evals/3.1_Intro_to_Evals_exercises.html" },
+        { number: "3.2", title: "Dataset Generation", desc: "Use LLMs to generate and refine high-quality evaluation datasets.", url: "/arena-book/chapter3_llm_evals/exercises/part2_dataset_generation/3.2_Dataset_Generation_exercises.html" },
+        { number: "3.3", title: "Running Evals with Inspect", desc: "Run standardised LLM evaluations using UK AISI's Inspect library.", url: "/arena-book/chapter3_llm_evals/exercises/part3_running_evals_with_inspect/3.3_Running_Evals_with_Inspect_exercises.html" },
+        { number: "3.4", title: "LLM Agents", desc: "Build LLM agents with scaffolding to play Wikipedia Racing and other tasks.", url: "/arena-book/chapter3_llm_evals/exercises/part4_llm_agents/3.4_LLM_Agents_exercises.html" },
       ],
     },
     {
@@ -442,9 +442,16 @@ const buildIncludeControl = (courseId, scope) => {
   };
 
   const buildSectionItem = (section) => {
-    const item = document.createElement("div");
-    item.className = "section-item";
+    const item = document.createElement(section.url ? "a" : "div");
+    item.className = section.url ? "section-item section-item-link" : "section-item";
     item.setAttribute("role", "listitem");
+    if (section.url) {
+      item.href = section.url;
+      item.setAttribute(
+        "aria-label",
+        `Open ${section.number ? section.number + " " : ""}${section.title} in the curriculum book`,
+      );
+    }
 
     const num = document.createElement("span");
     num.className = "section-number";
