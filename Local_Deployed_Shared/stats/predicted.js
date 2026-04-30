@@ -88,7 +88,7 @@ const renderPredictedTable = () => {
           <div class="stats-bar-track">
             <div class="stats-bar-fill" style="width: ${ch.avgScore}%"></div>
           </div>
-          <span class="stats-bar-value">${ch.avgScore.toFixed(0)}/100</span>
+          <span class="stats-bar-value">${ch.avgScore.toFixed(0)}%</span>
         </div>
       </td>
       <td class="stats-col-solved">${ch.problems.length}</td>
@@ -98,7 +98,7 @@ const renderPredictedTable = () => {
           <div class="stats-bar-track">
             <div class="stats-bar-fill stats-bar-fill-delta" style="width: ${gap}%"></div>
           </div>
-          <span class="stats-bar-value">${gap.toFixed(0)}</span>
+          <span class="stats-bar-value">${gap.toFixed(0)}%</span>
         </div>
       </td>
     `;
@@ -124,7 +124,7 @@ const renderPredictedTable = () => {
             <div class="stats-bar-track">
               <div class="stats-bar-fill" style="width: ${score}%"></div>
             </div>
-            <span class="stats-bar-value">${score.toFixed(0)}/100</span>
+            <span class="stats-bar-value">${score.toFixed(0)}%</span>
           </div>
         </td>
         <td class="stats-col-solved">${(p.skillWeights || []).length}</td>
@@ -134,7 +134,7 @@ const renderPredictedTable = () => {
             <div class="stats-bar-track">
               <div class="stats-bar-fill stats-bar-fill-delta" style="width: ${subGap}%"></div>
             </div>
-            <span class="stats-bar-value">${subGap.toFixed(0)}</span>
+            <span class="stats-bar-value">${subGap.toFixed(0)}%</span>
           </div>
         </td>
       `;

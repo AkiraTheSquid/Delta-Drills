@@ -30,7 +30,7 @@ const ARENA_CHAPTER_DEFAULTS = {
     ],
   },
   chapter1_transformer_interp: {
-    label: "Transformer Interp",
+    label: "Transformer Interpretability",
     prerequisiteTags: ["Transformer architecture", "PyTorch", "TransformerLens", "Probing"],
     skillWeights: [
       { skill: "Transformers", weight: 0.35 },
@@ -50,7 +50,7 @@ const ARENA_CHAPTER_DEFAULTS = {
     ],
   },
   chapter3_llm_evals: {
-    label: "LLM Evals",
+    label: "LLM Evaluations",
     prerequisiteTags: ["Python fluency", "Prompting", "Evaluation design", "Statistics"],
     skillWeights: [
       { skill: "LLM evals", weight: 0.35 },
