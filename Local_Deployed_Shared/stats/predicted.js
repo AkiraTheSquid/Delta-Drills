@@ -31,16 +31,19 @@ const buildPredictedAreas = () => {
     byChapter.get(key).problems.push(p);
   });
 
-  // Build area-shaped rows. Sort chapters by avg readiness ASC
-  // (lowest readiness = highest study priority = rank 1).
-  const chapters = Array.from(byChapter.values()).map((ch) => {
+  // Curriculum-order rows (no ranking — students go through ARENA
+  // sequentially, so chapter 0 → 3 reflects the actual study order).
+  return Array.from(byChapter.values()).map((ch) => {
     const scores = ch.problems.map((p) => Number(p.readinessScore) || 0);
     const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-    return { ...ch, avgScore };
+    const chapterNumber = (ch.id.match(/chapter(\d+)/) || [])[1] || "";
+    return { ...ch, avgScore, chapterNumber };
   });
-  chapters.sort((a, b) => a.avgScore - b.avgScore);
-  chapters.forEach((ch, i) => (ch.rank = i + 1));
-  return chapters;
+};
+
+const sectionNumber = (problem) => {
+  const label = problem.sectionLabel || "";
+  return label.split(/\s+/)[0] || "";
 };
 
 const topSkillLabel = (problem) => {
@@ -80,7 +83,7 @@ const renderPredictedTable = () => {
       <td class="stats-col-check">
         <input type="checkbox" class="stats-check" checked />
       </td>
-      <td>${ch.rank}</td>
+      <td>${ch.chapterNumber}</td>
       <td class="stats-col-area">${ch.label}</td>
       <td class="stats-col-weight">${ch.problems.length} prob.</td>
       <td class="stats-col-score">
@@ -110,13 +113,13 @@ const renderPredictedTable = () => {
       const subRow = document.createElement("tr");
       subRow.className = "stats-row stats-subrow hidden";
       subRow.dataset.predSubareaFor = ch.id;
-      const sectionTitle = `${p.sectionLabel || ""}${p.title ? " — " + p.title : ""}`.trim();
+      const sectionTitle = p.title || p.sectionLabel || "";
       subRow.innerHTML = `
         <td class="stats-col-toggle"></td>
         <td class="stats-col-check">
           <input type="checkbox" class="stats-check" checked />
         </td>
-        <td>${ch.rank}.${index + 1}</td>
+        <td>${sectionNumber(p)}</td>
         <td class="stats-col-area stats-subarea">${sectionTitle}</td>
         <td class="stats-col-weight">${p.readinessLabel || "—"}</td>
         <td class="stats-col-score">
