@@ -142,6 +142,16 @@ else
   warn "Supabase CLI/config not found — skipping Supabase deploy."
 fi
 
+# --- Step 3c: Build the ARENA Jupyter Book ---
+
+if [ -d "$REPO_DIR/arena-book" ]; then
+  info "Building ARENA Jupyter Book..."
+  bash "$REPO_THIS_DIR/scripts/build_arena_book.sh"
+  auto_commit_if_dirty "$REPO_DIR" "chore: refresh arena-book build output"
+else
+  warn "arena-book/ not found — skipping Book build."
+fi
+
 # --- Step 4: Sync the shared subtree into the deploy worktree ---
 
 info "Syncing Local_Deployed_Shared into deploy branch..."
