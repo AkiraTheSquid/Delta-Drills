@@ -1,17 +1,17 @@
 # arena
 
 ## Purpose
-ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of ARENA curriculum sections (chapters 0–3, 24 entries) and the UI that renders them on the ARENA tab. Other tabs (notably the Predicted course scores stats sub-tab) read this same registry as their source of truth — so when the curriculum coverage or per-section data changes, only this folder needs to change.
+ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of ARENA curriculum sections (ARENA 5.0, chapters 0–4, 32 entries) and the UI that renders them on the ARENA tab. Other tabs (notably the Predicted course scores stats sub-tab) read this same registry as their source of truth — so when the curriculum coverage or per-section data changes, only this folder needs to change.
 
 ## Owns
-- The full curriculum spec: every ARENA section across chapters 0–3, with chapter label, section label, title, notebook path, lesson page path, placeholder readiness score, prerequisite tags, and weighted skill profile.
+- The full curriculum spec: every ARENA 5.0 section across chapters 0–4, with chapter label, section label, title, notebook path, lesson page path, placeholder readiness score, prerequisite tags, and weighted skill profile.
 - The hand-crafted overrides for the original 4 entries (`RICH_SECTIONS` in `manifest.js`) — preserved verbatim so existing curated data isn't lost when the registry is re-synthesized.
 - The `window.ARENA_STAGE1_PROBLEMS` global — the runtime contract every consumer depends on.
 - The ARENA tab UI on `page-arena`: chapter filter, problem list sidebar, detail panel with summary, prerequisite chips, weighted skill cards, launch action links, and metadata grid.
 
 ## Does NOT own
 - The Predicted course scores stats sub-tab UI — that lives in `stats/predicted.js` and only *consumes* `window.ARENA_STAGE1_PROBLEMS`.
-- The ARENA notebook content itself — those `.ipynb` files live under `content/ARENA_4.0-main/` after the recent root restructure.
+- The ARENA notebook content itself — those `.ipynb` files live under `content/ARENA_5.0-main/` (ARENA 4.0 and 3.0 trees are still on disk for archival reference).
 - Per-user readiness scoring math — every `readinessScore` here is a placeholder until Delta Drills can compute user-specific scores.
 - ARENA tab styling — see `styles/arena.css`.
 
@@ -22,13 +22,13 @@ ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of AREN
 ## Data & External Dependencies
 - DOM: `#arena-problem-list`, `#arena-problem-detail`, `#arena-chapter-filter`, `#arena-problem-count` (all in `index.html` under `page-arena`).
 - Globals: writes `window.ARENA_STAGE1_PROBLEMS` (manifest); reads it (stage1, plus `stats/predicted.js`).
-- Notebook/lesson hrefs are relative deploy paths beginning with `content/ARENA_4.0-main/...` (and `content/ARENA_3.0-main/...` for the 3.0 backup). These match the on-disk layout after the `c821f86` restructure.
+- Notebook/lesson hrefs are relative deploy paths beginning with `content/ARENA_5.0-main/...`. The legacy "backup notebook" link is currently disabled (`backupNotebookPath: null` for all entries) — the ARENA 4.0/3.0 trees remain on disk for archival reference but aren't surfaced in the UI.
 
 ## How It Works (Flow)
-1. `index.html` loads `arena/manifest.js` which registers `window.ARENA_STAGE1_PROBLEMS` (24 entries built from `ARENA_CURRICULUM` × `buildArenaProblem`).
+1. `index.html` loads `arena/manifest.js` which registers `window.ARENA_STAGE1_PROBLEMS` (32 entries built from `ARENA_CURRICULUM` × `buildArenaProblem`).
 2. `index.html` loads `arena/stage1.js`. Its IIFE checks for the four ARENA tab DOM nodes, populates the chapter filter from unique `chapterId`/`chapterLabel` pairs, and renders the problem list + detail panel for the first problem.
 3. User clicks a problem card → `renderDetail` rewrites the detail HTML with summary, prereq chips, skill cards, launch links, and metadata.
-4. Independently, `stats/predicted.js` reads `window.ARENA_STAGE1_PROBLEMS` lazily when the Predicted course scores sub-tab is rendered, groups by chapter, and renders the stats-style table.
+4. Independently, `stats/predicted.js` reads `window.ARENA_STAGE1_PROBLEMS` lazily when the Predicted course scores sub-tab is rendered, groups by chapter and subsection, and renders the stats-style tree.
 
 ## Invariants & Constraints
 - `window.ARENA_STAGE1_PROBLEMS` is the public contract. Every entry MUST have `id`, `chapterId`, `chapterLabel`, `sectionLabel`, `title`, `summary`, `readinessScore`, `readinessLabel`, `readinessNote`, `prerequisiteTags`, `skillWeights`, `lessonPath`, `notebookPath`, `backupNotebookPath`, `launchPath`, `executionMode`. Removing or renaming any field breaks the ARENA detail panel and/or `stats/predicted.js`.
@@ -56,6 +56,7 @@ ARENA Stage-1 problem registry for Delta Drills. Owns the canonical list of AREN
   - Status: `RESOLVED` via `watch.py` invariant.
 
 ## Recent Changes
+- 2026-05-14: Migrated registry from ARENA 4.0 to ARENA 5.0. Added `chapter4_alignment_science` (5 entries: 4.1–4.5). Restructured chapter 1 to the 5.0 layout: replaced 4.0's combined sections with 1.3.1 Linear Probes, 1.3.2 Function Vectors, 1.3.3 Interp with SAEs (renumbered), 1.3.4 Activation Oracles (NEW), 1.4.2 SAE Circuits (NEW), 1.5.4 Superposition (renumbered). All 32 `notebookPath`/`lessonPath` entries point to real files under `content/ARENA_5.0-main/`. Switched chapter 1 entries from `infrastructure/master_files/master_*.ipynb` to per-section `part*/` notebooks. Disabled the legacy "3.0 backup notebook" link by setting `backupNotebookPath: null` in `buildArenaProblem`. `watch.py` updated: expects chapter 4 and ≥32 entries.
 - 2026-04-29: Fixed broken ARENA tab launch links by prefixing every `notebookPath`/`lessonPath` in `ARENA_CURRICULUM` with `content/` so they match the post-restructure on-disk layout. Verified all 24 notebooks resolve to files that exist.
 - 2026-04-29: Expanded `manifest.js` from 4 entries to the full ARENA curriculum (24 sections across chapters 0–3). Replaced the literal-array form with `ARENA_CURRICULUM` × `buildArenaProblem`. Hand-crafted data for the original 4 entries preserved in `RICH_SECTIONS`. Both the ARENA tab and the Predicted course scores stats sub-tab now show the full curriculum.
 - 2026-04-27: Initial doc created.

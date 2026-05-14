@@ -20,6 +20,7 @@ EXPECTED_CHAPTERS = [
     'chapter1_transformer_interp',
     'chapter2_rl',
     'chapter3_llm_evals',
+    'chapter4_alignment_science',
 ]
 
 # Public contract — every problem object must have these fields, since
@@ -91,8 +92,8 @@ def check_invariants():
     entries = re.findall(r'\{\s*id:\s*"([^"]+)"', manifest)
     assert len(entries) == len(set(entries)), \
         f"duplicate ids in ARENA_CURRICULUM: {[e for e in entries if entries.count(e) > 1]}"
-    assert len(entries) >= 24, \
-        f"expected at least 24 curriculum entries, found {len(entries)}"
+    assert len(entries) >= 32, \
+        f"expected at least 32 curriculum entries, found {len(entries)}"
 
 
 # ── Run all checks ────────────────────────────
