@@ -15,6 +15,12 @@ ALLOWED_ROOT_NAMES = {
     "index.html",
     SHARED_DIRNAME,
     THIS_DIRNAME,
+    # Dev-only top-level resources (not deployed to Vercel; live at root for
+    # build tooling and reference). Added 2026-05-23.
+    "arena-book",            # Jupyter Book source — built by build_arena_book.sh
+    "arena-book-colab",      # Colab-rendered ARENA chapters (archival)
+    "arena-procedural-drills",  # iter-5 atom-level procedural drill drafts
+    "concept-graph",         # top-level concept-graph workspace (separate from Local_Deployed_Shared/concept-graph)
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
