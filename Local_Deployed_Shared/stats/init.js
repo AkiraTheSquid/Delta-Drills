@@ -25,6 +25,7 @@ const loadAndRenderStats = async () => {
       statsNeedsRefresh = false;
       renderStatsTable();
       renderAdvancedTable();
+      renderPredictedTable();
       return statsData;
     } catch (err) {
       console.warn("[stats] failed to load:", err);
@@ -32,6 +33,7 @@ const loadAndRenderStats = async () => {
         statsData = [];
         renderStatsTable();
         renderAdvancedTable();
+        renderPredictedTable();
       }
       return statsData;
     } finally {
@@ -74,6 +76,10 @@ const initStats = () => {
     tab.addEventListener("click", () => {
       const target = tab.dataset.statsTab;
       showStatsPanel(target);
+      // Predicted table is sourced from the ARENA registry, not the stats
+      // backend — render it on demand so it's populated even when the
+      // stats fetch hasn't completed.
+      if (target === "predicted") renderPredictedTable();
     });
   });
 
@@ -84,6 +90,7 @@ const initStats = () => {
       if (statsLoadedOnce) {
         renderStatsTable();
         renderAdvancedTable();
+        renderPredictedTable();
       } else {
         renderStatsLoadingState();
       }
@@ -99,6 +106,10 @@ const initStats = () => {
   // Practice state and auth can finish initializing after the first stats
   // render. Refresh when those sources become available.
   window.addEventListener("delta:adaptive-state-changed", () => {
+    statsNeedsRefresh = true;
+    if (shouldAutoRefreshStats()) scheduleStatsRefresh();
+  });
+  window.addEventListener("delta:practice-state-changed", () => {
     statsNeedsRefresh = true;
     if (shouldAutoRefreshStats()) scheduleStatsRefresh();
   });

@@ -3,6 +3,9 @@
    ================================================================ */
 
 const ARENA_NUMBERS_PATH = "/delta_numbers.npy";
+const ARENA_SOURCE_NUMBERS_PATH =
+  "/content/ARENA_5.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy";
+const ARENA_NUMBERS_PNG_PATH = "/numbers_stacked.png";
 const DELTA_VISUAL_DEBUG = true;
 let deltaVisualDebugReportTimer = null;
 let deltaVisualDebugLastSignature = "";
@@ -10,10 +13,15 @@ let deltaVisualDebugLastSignature = "";
 function getArenaNumbersPathCandidates() {
   const currentDir = window.location.pathname.replace(/[^/]*$/, "");
   return Array.from(new Set([
+    ARENA_SOURCE_NUMBERS_PATH,
     ARENA_NUMBERS_PATH,
     `${currentDir}delta_numbers.npy`,
+    `${currentDir}numbers.npy`,
     "/Local_Deployed_Shared/delta_numbers.npy",
+    "/Local_Deployed_Shared/content/ARENA_5.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy",
+    "/Local_Deployed_Shared/content/ARENA_4.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy",
     "delta_numbers.npy",
+    "numbers.npy",
   ]));
 }
 
@@ -36,6 +44,53 @@ async function fetchArenaNumbersAsset() {
   }
 
   throw lastError || new Error(`Failed to fetch ${ARENA_NUMBERS_PATH}`);
+}
+
+function getArenaNumbersPngCandidates(question) {
+  const currentDir = window.location.pathname.replace(/[^/]*$/, "");
+  const explicit = question?.fallback_image_url;
+  return Array.from(new Set([
+    explicit,
+    ARENA_NUMBERS_PNG_PATH,
+    `${currentDir}numbers_stacked.png`,
+    "/Local_Deployed_Shared/numbers_stacked.png",
+    "numbers_stacked.png",
+  ].filter(Boolean)));
+}
+
+function drawImageToCanvas(canvasEl, img) {
+  const ctx = canvasEl.getContext("2d");
+  canvasEl.width = img.naturalWidth || img.width;
+  canvasEl.height = img.naturalHeight || img.height;
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  ctx.drawImage(img, 0, 0);
+  canvasEl.classList.remove("hidden");
+}
+
+function loadImageFromCandidates(candidates) {
+  return new Promise((resolve, reject) => {
+    const remaining = [...candidates];
+    function tryNext() {
+      if (!remaining.length) {
+        reject(new Error("No fallback image candidate succeeded."));
+        return;
+      }
+      const path = remaining.shift();
+      const img = new Image();
+      img.onload = () => resolve({ img, path });
+      img.onerror = () => tryNext();
+      img.src = path;
+    }
+    tryNext();
+  });
+}
+
+async function renderFallbackImage(question) {
+  const candidates = getArenaNumbersPngCandidates(question);
+  const { img, path } = await loadImageFromCandidates(candidates);
+  drawImageToCanvas(questionVisualCanvas, img);
+  setVisualDebug({ fallbackImagePath: path, fallbackImageRendered: true });
+  return path;
 }
 
 function scheduleVisualDebugReport() {
@@ -219,10 +274,23 @@ function renderArrayToCanvas(canvasEl, arrayData) {
     return out;
   }
 
+  // Pick (rows, cols) for a batch of N sub-images. Prefer an exact
+  // factor pair closest to square (e.g. 8 → 2×4, 6 → 2×3, 12 → 3×4) so
+  // composite batch sizes tile with no empty cells. Falls back to a
+  // ceil(√N) padded grid only when N is prime — a 1×N strip would look
+  // worse than a few empty cells.
+  function gridDimsForBatch(n) {
+    if (n <= 1) return { rows: 1, cols: 1 };
+    for (let r = Math.floor(Math.sqrt(n)); r >= 2; r -= 1) {
+      if (n % r === 0) return { rows: r, cols: n / r };
+    }
+    const cols = Math.ceil(Math.sqrt(n));
+    return { rows: Math.ceil(n / cols), cols };
+  }
+
   function tileBatchImages(batch) {
     const batchSize = batch.length;
-    const cols = Math.ceil(Math.sqrt(batchSize));
-    const rows = Math.ceil(batchSize / cols);
+    const { rows, cols } = gridDimsForBatch(batchSize);
     const height = batch[0].length;
     const width = batch[0][0].length;
     const channels = Array.isArray(batch[0][0][0]) ? batch[0][0][0].length : 1;
@@ -249,7 +317,22 @@ function renderArrayToCanvas(canvasEl, arrayData) {
   function normalizeForDisplay(value) {
     const shape = inferShape(value);
     setVisualDebug({ rawShape: shape });
-    if (shape.length === 2) return value;
+    // Guard against payloads that aren't actually images even when the
+    // question metadata claims they are (e.g. a flat per-batch feature
+    // vector with shape like [2, 16875] — renders as a 16875×2 strip,
+    // which the browser shrinks into a meaningless coloured blob).
+    // Reject 2D shapes with extreme aspect ratios or absurd pixel counts.
+    if (shape.length === 2) {
+      const [a, b] = shape;
+      const aspect = Math.max(a, b) / Math.max(1, Math.min(a, b));
+      const pixelCount = a * b;
+      if (aspect > 32 || pixelCount > 4_000_000) {
+        throw new Error(
+          `Output shape (${a}, ${b}) doesn't look like an image (aspect ${aspect.toFixed(0)}:1, ${pixelCount} px). Probably a feature vector — verify via the test cases instead.`
+        );
+      }
+      return value;
+    }
     if (shape.length === 3) {
       if (shape[0] === 1 || shape[0] === 3 || shape[0] === 4) return chwToHwc(value);
       return value;
@@ -369,7 +452,14 @@ json.dumps(_delta_result.tolist())
     questionVisualNote.textContent = "Reference image generated from the canonical solution.";
   } catch (err) {
     setVisualDebug({ rendered: false, error: err.message || String(err) });
-    questionVisualNote.textContent = "Unable to render image preview: " + err.message;
+    try {
+      await renderFallbackImage(question);
+      questionVisualNote.textContent =
+        "Live preview unavailable; showing static reference image of the source data.";
+    } catch (fallbackErr) {
+      setVisualDebug({ fallbackImageError: fallbackErr.message || String(fallbackErr) });
+      questionVisualNote.textContent = "Unable to render image preview: " + err.message;
+    }
   }
 }
 

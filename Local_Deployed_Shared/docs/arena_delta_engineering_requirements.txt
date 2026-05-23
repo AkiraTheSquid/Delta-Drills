@@ -1,0 +1,374 @@
+ARENA + Delta Drills integration: engineering requirements
+
+Purpose
+
+This document translates the product-preference note into implementation-oriented requirements.
+
+Related source document
+
+- /home/stellar-thread/Applications/Delta-Drills-Local/Local_Deployed_Shared/arena_delta_product_preferences.txt
+
+System role split
+
+Delta Drills is the canonical application layer.
+JupyterLab or another notebook solving environment is the solving surface.
+
+Delta Drills is the source of truth for:
+
+- user progress
+- user-specific skill estimates
+- prerequisite routing
+- reflections and self-reported difficulty
+- post-problem drill recommendations
+- problem readiness decisions
+
+The notebook environment is responsible primarily for:
+
+- opening the exact solving workspace for a specific problem
+- letting the user work on that problem
+- returning completion and reflection data to Delta Drills
+
+Primary product requirement
+
+Users must be able to move from recommendation to exact problem-solving workspace with very low friction, and the result of that work must flow back into Delta Drills immediately or near-immediately.
+
+Core architecture requirement
+
+The integration unit must be the individual ARENA problem, not the notebook as a whole.
+
+Each ARENA problem must be represented in Delta Drills as a stable problem-level object with metadata and routing hooks.
+
+Required problem-level data model
+
+Each ARENA problem should have, at minimum:
+
+- stable problem ID
+- human-readable title
+- curriculum location
+- source notebook reference
+- direct launch path into the solving environment
+- prerequisite tags
+- weighted skill mapping
+- optional difficulty metadata
+- optional problem description or excerpt
+- follow-up drill routing metadata
+
+Recommended additional fields
+
+- chapter ID
+- section ID
+- notebook cell anchor or problem anchor if available
+- browser-safe flag
+- execution-mode flag
+- version or content hash
+- estimated solve time
+- recommended readiness threshold
+
+Execution-mode requirement
+
+The system should support multiple execution modes per problem, such as:
+
+- JupyterLab
+- JupyterLite
+- read-only content page
+- external fallback such as Colab or hosted notebook
+
+Delta Drills should choose or expose the right solving path per problem without treating all ARENA problems as equivalent.
+
+Required user flow
+
+1. Delta Drills estimates that the user is ready for a specific problem.
+2. Delta Drills routes the user to a dedicated problem page.
+3. The problem page displays problem metadata, prerequisites, readiness, and launch actions.
+4. The user opens the solving workspace for the exact problem.
+5. The user solves or attempts the problem.
+6. The solving flow captures completion outcome and reflection data.
+7. That event is sent back into Delta Drills for the correct user and problem.
+8. Delta Drills updates the user model across relevant subskills.
+9. Delta Drills offers the next recommended action, including targeted drills if appropriate.
+
+Dedicated Delta Drills problem page requirements
+
+Each problem page should display:
+
+- problem title
+- problem summary
+- prerequisite concepts
+- user readiness estimate
+- weighted skill profile or a simplified summary of it
+- launch button for the solving workspace
+- study-prerequisites action
+- return-to-app action
+- optional launch-related status, such as available execution mode
+
+Completion event requirement
+
+When a user completes or exits a problem workflow, Delta Drills should be able to record a problem event with fields such as:
+
+- user ID
+- problem ID
+- timestamp
+- attempt status
+- solve success or failure
+- self-reported difficulty: easy, medium, or difficult
+- optional free-text reflection
+- optional structured "what tripped you up" tags
+- execution environment used
+
+Recommended additional telemetry
+
+- time spent
+- number of launches
+- number of returns
+- whether the user felt ready before starting
+- whether the user requested prerequisite study before solving
+
+Skill-model update requirement
+
+A completed problem must be able to update multiple skills and subskills.
+
+The update path should:
+
+- use the problem’s weighted skill signature
+- combine objective completion data with self-report data
+- propagate updates into all relevant subskills
+- feed the existing Delta Drills prioritization and drill-routing logic
+
+This means the problem model must support many-to-many relationships between:
+
+- problems and skills
+- users and problem outcomes
+- users and subskill estimates
+
+Return-path requirements
+
+The solving environment must provide explicit return paths back into Delta Drills.
+
+Required return path A:
+
+- return to the main app
+- mark or queue the problem result
+- record reflection data
+
+Required return path B:
+
+- return to Delta Drills
+- open or queue a targeted drill set derived from the problem’s weighted skill signature
+
+The targeted drill launch must support mixed-skill follow-up, not only a single topic.
+
+Integration requirement
+
+The notebook solving flow must not be isolated from the main app.
+
+There must be a defined integration mechanism so that Delta Drills can:
+
+- launch a problem-specific solving session
+- identify the current user
+- identify the exact problem
+- receive completion/reflection data back
+- route the user to a next action
+
+Possible implementation patterns include:
+
+- signed launch URLs
+- callback URLs
+- session tokens
+- server-side solve-event APIs
+- client-side return links with authenticated event submission
+
+Data storage requirement
+
+Problem metadata and problem outcomes should integrate with the existing PostgreSQL-backed Delta Drills model.
+
+Minimum persistent entities likely needed
+
+- arena_problems
+- arena_problem_skill_weights
+- arena_problem_prerequisites
+- user_problem_attempts
+- user_problem_reflections
+- problem_launch_sessions
+
+Optional supporting entities
+
+- problem_execution_modes
+- problem_content_versions
+- problem_followup_drill_profiles
+- reflection_tags
+
+Readiness requirement
+
+Delta Drills should decide whether a user is ready for a problem based on the user’s current estimated skill state and the problem’s prerequisite and skill-weight metadata.
+
+The readiness model should be able to:
+
+- gate access softly or strongly
+- explain why a problem is recommended
+- explain which prerequisites are missing
+- recommend prerequisite drills when readiness is insufficient
+
+Problem-ingestion requirement
+
+ARENA content should be decomposed into problem-level units rather than referenced as vague notebook blobs.
+
+The ingestion pipeline should eventually support:
+
+- extracting stable problem identities
+- mapping problems to prerequisite tags
+- mapping problems to weighted skills
+- attaching launch paths for exact problem entry points
+
+If automatic extraction is unreliable, a curated manifest is acceptable.
+
+Non-goals
+
+The first implementation does not need to:
+
+- make every ARENA notebook fully executable in-browser
+- replace Delta Drills as the canonical product surface
+- treat whole notebooks as the primary learning unit
+
+Practical implementation direction
+
+The first usable version should prioritize:
+
+- problem-level manifests
+- dedicated Delta Drills problem pages
+- low-friction launch into the solving environment
+- user-specific completion and reflection capture
+- weighted skill propagation back into the Delta Drills model
+- targeted follow-up drill routing
+
+Staged implementation and test checkpoints
+
+The implementation should be organized into stages so that the integration can be tested incrementally from the product surface, not only at the lowest technical layer.
+
+Low-level setup stages do not need to be exposed as formal user-facing checkpoints. However, once the system reaches visible workflow milestones, each stage should end in a testable state that can be inspected manually in Delta Drills and in the notebook environment.
+
+Suggested staging model
+
+Stage 1: Problem registry and Delta Drills problem pages
+
+Goal:
+
+- represent a small curated subset of ARENA problems as stable problem-level objects in Delta Drills
+- render dedicated Delta Drills problem pages for those problems
+
+What should exist by the end of this stage:
+
+- problem manifest or database records for a small starter set
+- stable problem IDs
+- prerequisite tags
+- weighted skill mappings
+- dedicated Delta Drills problem pages
+- visible readiness or placeholder readiness display
+- launch button placeholders even if full solve capture is not ready yet
+
+What should be testable at the end of this stage:
+
+- manually browse recommended or listed ARENA problems inside Delta Drills
+- open a dedicated problem page
+- inspect the displayed prerequisites, skill information, and launch path metadata
+- verify that the problem unit is precise rather than a vague notebook reference
+
+Stage 2: Exact launch into solving workspace
+
+Goal:
+
+- make Delta Drills launch the exact notebook or notebook location for a specific problem
+
+What should exist by the end of this stage:
+
+- working launch flow from Delta Drills problem page into JupyterLab or the chosen solving surface
+- user-preserving or session-preserving launch context
+- exact problem-level routing into the notebook workspace where feasible
+
+What should be testable at the end of this stage:
+
+- click from Delta Drills into the solving workspace for a specific problem
+- confirm that the opened workspace corresponds to the intended exact problem
+- inspect whether the transition feels low friction
+- verify that the user can move from app page to notebook page reliably
+
+Stage 3: Return path and completion capture
+
+Goal:
+
+- allow the solving flow to send result data back into Delta Drills for the correct user and problem
+
+What should exist by the end of this stage:
+
+- a return mechanism from notebook to Delta Drills
+- solve outcome recording
+- self-reported difficulty capture
+- user/problem association for captured events
+
+What should be testable at the end of this stage:
+
+- solve or simulate completion of a problem from the notebook side
+- trigger the return-to-app path
+- verify in Delta Drills that the attempt was recorded for the correct problem and user
+- verify that difficulty/reflection data is stored if entered
+
+Stage 4: Skill-model update and recommended next action
+
+Goal:
+
+- propagate problem results into the Delta Drills skill model and next-step routing
+
+What should exist by the end of this stage:
+
+- weighted multi-skill update logic connected to problem outcomes
+- readiness changes after completion
+- next recommended action in Delta Drills after return
+- targeted drill recommendation path
+
+What should be testable at the end of this stage:
+
+- complete a problem and observe resulting skill-model changes
+- inspect whether the problem updates the expected subskills
+- verify that Delta Drills can recommend a relevant next action
+- verify that the follow-up drill option reflects the problem’s weighted skill signature
+
+Stage 5: Prerequisite-aware routing and broader content expansion
+
+Goal:
+
+- expand beyond a tiny pilot set and make prerequisite-aware routing meaningful across a larger portion of ARENA content
+
+What should exist by the end of this stage:
+
+- broader problem coverage
+- prerequisite study recommendations tied to readiness
+- stronger recommendation logic for when to route users to problems versus drills
+
+What should be testable at the end of this stage:
+
+- inspect multiple problems with different prerequisite profiles
+- verify that underprepared users are routed to prerequisite study or drills
+- verify that ready users are routed directly to the problem page and solving workspace
+
+Stage planning requirement
+
+For stages 1 through 5, each stage should end in a manually testable product slice. The implementation should not wait until the full architecture is complete before exposing a visible end-to-end checkpoint.
+
+Manual test preference
+
+For the higher-level stages, each stage should support hands-on verification by:
+
+- opening the Delta Drills problem page
+- launching the notebook or solving workspace
+- inspecting the exact problem context there
+- using the return path back into Delta Drills
+- confirming that recorded state and recommendations changed as expected
+
+Long-term success criteria
+
+The integration is successful if:
+
+- Delta Drills can recommend exact ARENA problems based on readiness
+- users can launch those problems with low friction
+- solve outcomes and self-reports flow back into Delta Drills reliably
+- user skill estimates update across multiple subskills
+- the system can recommend targeted follow-up drills based on the solved problem’s weighted skill signature

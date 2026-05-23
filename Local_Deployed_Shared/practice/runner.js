@@ -112,6 +112,11 @@ async function ensureArenaNumbersInPyodide() {
   return pyodide;
 }
 
+// Runtime contract for the in-browser Pyodide preamble is documented in
+// practice/RUNTIME_CONTRACT.md. Per-question dependency declarations live in
+// `runtime_dependencies` / `runtime_unmet_dependencies` on each question entry
+// in arena_prereqs_structured.json. Keep this function in sync with that doc
+// when adding/removing injected globals.
 async function buildPyodidePreamble(question = PracticeAPI?.currentQuestion) {
   const needsEinops = questionNeedsEinops(question);
   const needsArenaArray = questionNeedsArenaArray(question);
@@ -119,6 +124,13 @@ async function buildPyodidePreamble(question = PracticeAPI?.currentQuestion) {
   if (needsArenaArray) {
     await ensureArenaNumbersInPyodide();
   }
+
+  // Pull fixtures from the test's setup_code so user code sees variables
+  // defined by the question (e.g. hwcs, list_of_tensors). Skip
+  // expected_setup_code on purpose — that block constructs the canonical
+  // answer and would let `solve()` cheat by reading it.
+  const testCase = Array.isArray(question?.test_cases) ? question.test_cases[0] : null;
+  const testSetup = (testCase?.setup_code || "").trim();
 
   return `
 import sys
@@ -131,6 +143,7 @@ ${needsEinops ? "import einops\nfrom einops import einsum, rearrange, reduce, re
 def display_array_as_img(*args, **kwargs):
     return None
 ${needsArenaArray ? "arr = np.load('/delta_numbers.npy')" : ""}
+${testSetup}
 `;
 }
 

@@ -1,0 +1,288 @@
+/* ================================================================
+   ARENA UNLOCK PAGE — in-page view swap (not an overlay)
+
+   This stylesheet styles the unlock view that replaces .practice-container
+   inside #page-practice when an ARENA exercise crosses its prereq
+   thresholds. The header / tabs / footer stay visible because they live
+   outside #page-practice. The unlock view IS the practice tab content
+   for the moment — it is not a popup, modal, or overlay.
+
+   Controller: practice/arena-unlock.js. Mount: <div id="arena-unlock-page">
+   sibling of .practice-container inside #page-practice (see index.html).
+
+   This file is intentionally separate from practice.css so the unlock
+   view can be removed cleanly when the concept graph backend ships
+   (delete this file + practice/arena-unlock.js + the index.html mount
+   + the events.js call — no surgical edits to practice.css required).
+   ================================================================ */
+
+.arena-unlock-page {
+  width: 100%;
+  min-height: calc(100vh - 200px); /* roughly: viewport minus header + footer */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.arena-unlock-page.hidden {
+  display: none;
+}
+
+.arena-unlock-card {
+  width: min(880px, 100%);
+  padding: 28px 32px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(95, 201, 132, 0.55);
+  background: linear-gradient(180deg, rgba(28, 36, 60, 0.85), rgba(20, 26, 44, 0.85));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--white, #f4f4f7);
+}
+
+.arena-unlock-banner {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(95, 201, 132, 0.95);
+}
+
+.arena-unlock-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--white, #f4f4f7);
+}
+
+.arena-unlock-sub {
+  font-size: 14px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.72));
+  line-height: 1.5;
+}
+
+.arena-unlock-why {
+  font-size: 12px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.62));
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.45;
+}
+
+.arena-unlock-heading-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.arena-unlock-heading-label {
+  font-size: 11px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.6));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.arena-unlock-heading {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  color: var(--white, #f4f4f7);
+  word-break: break-word;
+}
+
+.arena-unlock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.arena-unlock-btn {
+  padding: 10px 16px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.arena-unlock-colab-btn {
+  text-decoration: none;
+}
+
+.arena-unlock-placeholder {
+  font-size: 12px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  padding: 10px 12px;
+  border-left: 2px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0 8px 8px 0;
+}
+
+.arena-unlock-placeholder.hidden {
+  display: none;
+}
+
+.arena-unlock-continue-row {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.arena-unlock-continue-btn {
+  padding: 11px 22px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.arena-unlock-stuck-hint {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f4a55a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(244, 165, 90, 0.08);
+  border: 1px solid rgba(244, 165, 90, 0.45);
+}
+
+.arena-unlock-stuck-hint.hidden {
+  display: none;
+}
+
+.arena-unlock-rating {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.arena-unlock-rating-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.arena-unlock-rating-stage.hidden {
+  display: none;
+}
+
+.arena-unlock-rating-prompt {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white, #f4f4f7);
+}
+
+.arena-unlock-choice-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.arena-unlock-choice-btn {
+  flex: 1 1 0;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  line-height: 1.3;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--white, #f4f4f7);
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+}
+
+.arena-unlock-choice-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.arena-unlock-choice-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+}
+
+.arena-unlock-choice-mark {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.arena-unlock-choice-main {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.arena-unlock-choice-sub {
+  font-size: 12px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+}
+
+/* Green tiers — three "correct" outcomes, brighter for higher boost. */
+.arena-unlock-choice--best {
+  background: rgba(95, 201, 132, 0.22);
+  border-color: rgba(95, 201, 132, 0.70);
+}
+.arena-unlock-choice--best:hover:not(:disabled) { background: rgba(95, 201, 132, 0.32); }
+
+.arena-unlock-choice--good {
+  background: rgba(95, 201, 132, 0.14);
+  border-color: rgba(95, 201, 132, 0.50);
+}
+.arena-unlock-choice--good:hover:not(:disabled) { background: rgba(95, 201, 132, 0.24); }
+
+.arena-unlock-choice--okay {
+  background: rgba(95, 201, 132, 0.08);
+  border-color: rgba(95, 201, 132, 0.35);
+}
+.arena-unlock-choice--okay:hover:not(:disabled) { background: rgba(95, 201, 132, 0.18); }
+
+/* Red tier — looked up solution. */
+.arena-unlock-choice--bad {
+  background: rgba(231, 96, 96, 0.16);
+  border-color: rgba(231, 96, 96, 0.55);
+}
+.arena-unlock-choice--bad:hover:not(:disabled) { background: rgba(231, 96, 96, 0.28); }
+
+.arena-unlock-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Per-subtopic animated bar. Re-uses .ewma-accuracy from practice/bars.css
+   for the surface chrome (label / value row + track), so the visuals stay
+   in lockstep with the singleton bar in the regular practice flow. */
+.arena-unlock-bar-row {
+  margin-bottom: 0; /* override .ewma-accuracy's 14px when stacked here */
+}
+
+@media (max-width: 720px) {
+  /* On narrow viewports the four choice buttons can't fit one row; wrap
+     to a 2×2 grid (each button grows to half-width via flex: 1 1 45%). */
+  .arena-unlock-choice-btn {
+    flex: 1 1 45%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .arena-unlock-page {
+    padding: 20px 12px;
+  }
+  .arena-unlock-card {
+    padding: 22px 20px 18px;
+    border-radius: 14px;
+  }
+  .arena-unlock-title {
+    font-size: 22px;
+  }
+}

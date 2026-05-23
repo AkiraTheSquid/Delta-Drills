@@ -1,0 +1,55 @@
+You are auditing and (where needed) rewriting a numpy or einsum coding-drill prompt to remove answer leakage.
+
+A prompt LEAKS when its English wording uses the same canonical numpy/einsum function-name (or method-name) that appears in the canonical answer to describe the task. The student should have to *derive* which numpy primitive to call from a description of the desired transformation — they should not see the function name written in the prompt as a verb or noun describing what to do.
+
+Examples of leaks (the prompt names the canonical function):
+- "Row-wise argmax of a 5x5 matrix" → answer is `Z.argmax(axis=1)`. LEAK.
+- "Tile [1,2,3] three times" → answer is `np.tile(...)`. LEAK.
+- "Compute the cumulative sum of x" → answer is `np.cumsum(x)`. LEAK.
+- "Find the trace of M" → answer is `np.trace(M)`. LEAK.
+- "Use einsum to compute the dot product" → answer is `np.einsum(...)`. LEAK.
+
+Examples that are NOT leaks (the named function is mechanics or context, not the task):
+- "Given Z = np.arange(12), reshape it to (2, 2, 3)" — `arange` is mechanics. Task is reshape; if the prompt says "reshape" that IS a leak. But `arange` itself isn't.
+- "For an array Z = np.linspace(0, 1, 10), find the value closest to 0.5" — `linspace` is mechanics; the task ("find the value closest") doesn't name the answer.
+- "Subtract each row's mean from a 5x5 random matrix" — naming "mean" leaks the operation.
+- "Center a 3x3 matrix by subtracting its mean" — same; "subtracting its mean" names the answer.
+
+Key tests:
+1. Read the canonical answer. Identify the single numpy/einsum function or method that does the work.
+2. Check the prompt: does the prompt's English (excluding setup like `np.arange(...)`, `np.random.rand(...)`) use that function name as a verb/noun describing what the student must do? If yes → LEAK.
+3. If the prompt only describes the *intent* in domain terms (e.g. "find the largest value per row", "double-then-shift the elements") without naming the canonical primitive → NOT A LEAK.
+
+Return JSON ONLY, with this schema:
+
+{
+  "id": <int>,
+  "leak": <bool>,
+  "question_text": <string, only if leak=true>
+}
+
+Rules for the rewrite (when `leak: true`):
+- Describe the desired transformation in plain English. Do NOT name the canonical numpy/einsum function or the equivalent method (no `argmax`, no `cumsum`, no `tile`, no `where`, no `einsum`, etc.).
+- You MAY mention setup-only functions when they're part of the input description (e.g. "Given a vector created with `np.arange(12)`...") — that's not a leak, it's context.
+- Stay concrete: the student must be able to reproduce the exact answer from your wording.
+- Keep it short. One or two sentences.
+- Preserve any difficulty stars (e.g. "★☆☆", "★★☆", "★★★") that appear in the original.
+- Do NOT add hints, solution scaffolding, or commentary.
+- Do NOT change the answer code or test cases. You are only rewriting prompt text.
+- Output is JSON, no markdown fences, no commentary.
+
+If you decide `leak: false`, omit `question_text` entirely. Do not echo the original.
+
+Examples:
+
+Original prompt: "Row-wise argmax of a 5x5 random int matrix (★☆☆)\nPrint the result."
+Canonical: "Z = np.random.randint(0,10,(5,5)); print(Z.argmax(axis=1))"
+Output: {"id": 1, "leak": true, "question_text": "Given a 5x5 matrix Z of random integers, return the column index of the largest value in each row, as a 1D array of length 5. (★☆☆)"}
+
+Original prompt: "Given Z = np.arange(12), reshape it to (2, 2, 3) (★☆☆)"
+Canonical: "Z.reshape(2, 2, 3)"
+Output: {"id": 36, "leak": true, "question_text": "Given a 1D array Z of length 12, return a 3D array of shape (2, 2, 3) with the same values in row-major order. (★☆☆)"}
+
+Original prompt: "Given Z = np.linspace(0, 1, 11), find the value closest to 0.5 (★☆☆)"
+Canonical: "Z[np.abs(Z - 0.5).argmin()]"
+Output: {"id": 50, "leak": false}

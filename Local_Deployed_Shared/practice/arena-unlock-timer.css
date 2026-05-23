@@ -1,0 +1,105 @@
+/* ================================================================
+   ARENA UNLOCK TIMER — stopwatch + target time inside the unlock card
+
+   Mount: <div id="arena-unlock-timer"> inside the .arena-unlock-card.
+   Controller: practice/arena-unlock-timer.js.
+
+   Kept in its own file so the timer can be removed without touching
+   arena-unlock.css when the real concept-graph flow ships.
+   ================================================================ */
+
+.arena-unlock-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.arena-unlock-timer-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arena-unlock-timer-elapsed {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--white, #f4f4f7);
+  line-height: 1;
+}
+
+.arena-unlock-timer--over .arena-unlock-timer-elapsed {
+  color: #f4a55a;
+}
+
+.arena-unlock-timer-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.arena-unlock-timer-btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white, #f4f4f7);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.arena-unlock-timer-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.arena-unlock-timer-btn[hidden] { display: none; }
+
+.arena-unlock-timer-start {
+  background: rgba(95, 201, 132, 0.18);
+  border-color: rgba(95, 201, 132, 0.55);
+}
+.arena-unlock-timer-start:hover { background: rgba(95, 201, 132, 0.32); }
+
+.arena-unlock-timer-hint {
+  font-size: 11px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.55));
+  line-height: 1.4;
+  min-height: 14px;
+}
+
+/* Persisted-preference toggles that sit to the right of the timer controls.
+   - auto-submit-wrong: read by arena-unlock.js inside the onOver callback.
+   - auto-start:        read by arena-unlock-timer.js inside resetForExercise. */
+.arena-unlock-timer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.arena-unlock-timer-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white, #f4f4f7);
+}
+
+.arena-unlock-timer-toggle input[type=checkbox] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: rgba(95, 201, 132, 0.8);
+}

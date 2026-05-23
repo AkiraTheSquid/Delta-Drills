@@ -2,6 +2,10 @@
    PRACTICE API — backend / supabase / local routing
    ================================================================ */
 
+function emitPracticeStateChanged() {
+  window.dispatchEvent(new CustomEvent("delta:practice-state-changed"));
+}
+
 const PracticeAPI = {
   currentQuestion: practiceQuestionPool[0],
 
@@ -28,6 +32,7 @@ const PracticeAPI = {
   },
 
   async getNextQuestion() {
+    await loadQuestionsSourceIndex();
     if (practiceMode === "backend") {
       // Admin on localhost — use backend API
       const res = await apiFetch("/api/practice/next-question");
@@ -301,7 +306,9 @@ json.dumps(_delta_results)
         const detail = await res.text();
         throw new Error(detail || "Failed to send feedback.");
       }
-      return await res.json();
+      const response = await res.json();
+      emitPracticeStateChanged();
+      return response;
     }
 
     // supabase/local — apply feedback in Pyodide engine
@@ -311,6 +318,7 @@ json.dumps(_delta_results)
       adaptiveStateJson = api.send_feedback(adaptiveStateJson, feedback);
       await saveAdaptiveState();
     }
+    emitPracticeStateChanged();
     return { success: true };
   },
 
@@ -328,7 +336,9 @@ json.dumps(_delta_results)
         const detail = await res.text();
         throw new Error(detail || "Failed to override attempt.");
       }
-      return await res.json();
+      const response = await res.json();
+      emitPracticeStateChanged();
+      return response;
     }
 
     const pyodide = await initPyodide();
@@ -337,6 +347,7 @@ json.dumps(_delta_results)
       adaptiveStateJson = api.override_attempt(adaptiveStateJson, questionId, true);
       await saveAdaptiveState();
     }
+    emitPracticeStateChanged();
     return;
   },
 };

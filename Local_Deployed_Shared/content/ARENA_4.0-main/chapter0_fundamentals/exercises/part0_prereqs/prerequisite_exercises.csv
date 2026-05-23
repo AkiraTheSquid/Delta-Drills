@@ -1,0 +1,34 @@
+P#,Topic,Question,Starter code,Answer,Difficulty
+3002,Broadcasting,"Return [[3, 4], [5, 6], [7, 8]] using t.arange and einops.rearrange.",rearrange_1(),"einops.rearrange(t.arange(3, 9), '(h w) -> h w', h=3, w=2)",20
+3003,Broadcasting,"Return [[1, 2, 3], [4, 5, 6]] using t.arange and einops.rearrange.",rearrange_2(),"einops.rearrange(t.arange(1, 7), '(h w) -> h w', h=2, w=3)",20
+3004,Broadcasting,"Return average temperature per week from a 1D daily tensor.",temperatures_average(temps),"einops.reduce(temps, '(h 7) -> h', 'mean')",30
+3005,Broadcasting,"Subtract each week's average from its days (broadcast correctly).",temperatures_differences(temps),"temps - einops.repeat(einops.reduce(temps, '(w 7) -> w', 'mean'), 'w -> (w 7)')",40
+3006,Broadcasting,"Normalize daily temps by weekly mean and std (broadcast correctly).",temperatures_normalized(temps),"(temps - einops.repeat(einops.reduce(temps, '(w 7) -> w', 'mean'), 'w -> (w 7)')) / einops.repeat(einops.reduce(temps, '(h 7) -> h', t.std), 'w -> (w 7)')",45
+3007,Broadcasting,"Normalize each row of a matrix by its L2 norm (broadcast divide).",normalize_rows(matrix),"matrix / matrix.norm(dim=1, keepdim=True)",30
+3008,Broadcasting,"Compute pairwise cosine similarity between rows of a matrix.",cos_sim_matrix(matrix),"(matrix / matrix.norm(dim=1, keepdim=True)) @ (matrix / matrix.norm(dim=1, keepdim=True)).T",40
+3009,Broadcasting,"Sample n indices from categorical probs using t.rand and t.cumsum.","sample_distribution(probs,n)","(t.rand(n, 1) > t.cumsum(probs, dim=0)).sum(dim=-1)",50
+3010,Broadcasting,"Compute accuracy: fraction where argmax(scores) equals true class.","classifier_accuracy(scores,true_classes)","(scores.argmax(dim=1) == true_classes).float().mean()",25
+3011,Broadcasting,"Total price via integer array indexing with item indices.","total_price_indexing(prices,items)","prices[items].sum().item()",30
+3012,Broadcasting,"Gather along dim=1: out[i][j] = matrix[i][indexes[i][j]].","gather_2d(matrix,indexes)","matrix.gather(1, indexes)",45
+3013,Broadcasting,"Total price via torch.gather over prices and items.","total_price_gather(prices,items)","prices.gather(0, items).sum().item()",35
+3014,Broadcasting,"Integer array indexing at provided coordinates for 2D/3D tensors.","integer_array_indexing(matrix,coords)","matrix[tuple(coords.T)]",40
+3015,Broadcasting,"Compute row-wise logsumexp stably without built-in logsumexp.",batched_logsumexp(matrix),"C = matrix.max(dim=-1).values; C + t.log(t.exp(matrix - C.unsqueeze(1)).sum(dim=-1))",60
+3016,Broadcasting,"Compute row-wise softmax without torch.softmax.",batched_softmax(matrix),"exp = matrix.exp(); exp / exp.sum(dim=-1, keepdim=True)",45
+3017,Broadcasting,"Compute row-wise logsoftmax without torch.logsoftmax (use max for stability).",batched_logsoftmax(matrix),"C = matrix.max(dim=1, keepdim=True).values; matrix - C - (matrix - C).exp().sum(dim=1, keepdim=True).log()",55
+3018,Broadcasting,"Per-example cross entropy using logsoftmax and gather.","batched_cross_entropy_loss(logits,labels)","logprobs = batched_logsoftmax(logits); -logprobs.gather(1, labels.view(-1,1)).squeeze(1)",60
+3019,Broadcasting,"Collect rows by index list into new matrix.","collect_rows(matrix,row_indexes)","matrix[row_indexes]",25
+3020,Broadcasting,"Collect columns by index list into new matrix.","collect_columns(matrix,column_indexes)","matrix[:, column_indexes]",25
+3021,Einsum,"Compute matrix trace via einsum.",einsum_trace(A),"einops.einsum(A, 'i i ->')",30
+3022,Einsum,"Matrix-vector multiply via einsum.","einsum_mv(A,b)","einops.einsum(A, b, 'i j, j -> i')",35
+3023,Einsum,"Matrix-matrix multiply via einsum.","einsum_mm(C,D)","einops.einsum(C, D, 'i k, k j -> i j')",40
+3024,Einsum,"Vector inner product via einsum.","einsum_inner(v1,v2)","einops.einsum(v1, v2, 'i, i ->')",30
+3025,Einsum,"Vector outer product via einsum.","einsum_outer(v1,v2)","einops.einsum(v1, v2, 'i, j -> i j')",35
+3026,Einops,"Column-stacking: stack all digits vertically (batches stacked along height).",display_array_as_img(arr1):,"arr1 = einops.rearrange(arr, 'b c h w -> c (b h) w'); display_array_as_img(arr1)",35
+3027,Einops,"Column-stacking and copying: take first digit and copy along rows.",display_array_as_img(arr2):,"arr2 = einops.repeat(arr[0], 'c h w -> c (2 h) w'); display_array_as_img(arr2)",35
+3028,Einops,"Row-stacking and double-copying: stack first 2 digits and copy columns.",display_array_as_img(arr3):,"arr3 = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'); display_array_as_img(arr3)",40
+3029,Einops,"Stretching: stretch a single image vertically by factor 2.",display_array_as_img(arr4):,"arr4 = einops.repeat(arr[0], 'c h w -> c (h 2) w'); display_array_as_img(arr4)",30
+3030,Einops,"Split channels: split RGB channels and stack horizontally (2D output).",display_array_as_img(arr5):,"arr5 = einops.rearrange(arr[0], 'c h w -> h (c w)'); display_array_as_img(arr5)",35
+3031,Einops,"Stack into rows & cols: arrange digits into grid by b1,b2.",display_array_as_img(arr6):,"arr6 = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2); display_array_as_img(arr6)",45
+3032,Einops,"Transpose: swap height and width of a single image.",display_array_as_img(arr7):,"arr7 = einops.rearrange(arr[1], 'c h w -> c w h'); display_array_as_img(arr7)",30
+3033,Einops,"Shrinking (max pooling): downsample with 2x2 pooling then grid.",display_array_as_img(arr8):,"arr8 = einops.reduce(arr, '(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)', 'max', h2=2, w2=2, b1=2); display_array_as_img(arr8)",45
+

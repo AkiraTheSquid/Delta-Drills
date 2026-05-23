@@ -34,6 +34,16 @@ practiceSubmitBtn.addEventListener("click", async () => {
     aiExplanationText.textContent = "Loading explanation...";
     fetchAIExplanation(q.question_text, solCode, userCode, actualOutput, expectedOutput);
   }
+
+  // NOTE: ARENA unlock interstitial does NOT fire on Submit — student
+  // needs to see feedback + give a difficulty rating first. The unlock
+  // pops on the Next-problem click (handler below). We do, however,
+  // warm the backend subtopic-score cache here in the background so
+  // the Next-problem click can evaluate gates instantly without a
+  // network round-trip.
+  if (window.ArenaUnlock && typeof window.ArenaUnlock.refreshScores === "function") {
+    window.ArenaUnlock.refreshScores().catch(() => {});
+  }
 });
 
 overrideCorrectBtn.addEventListener("click", async () => {
@@ -61,7 +71,13 @@ feedbackButtons.forEach((btn) => {
       ? practiceProgress.currentTargetDifficulty
       : getTargetDifficultyForQuestion(q);
     const pBefore = ewmaAccuracyPBefore;
-    const response = await PracticeAPI.sendFeedback(q.question_id, feedback);
+    let response;
+    try {
+      response = await PracticeAPI.sendFeedback(q.question_id, feedback);
+    } catch (err) {
+      outputArea.textContent = "Feedback failed: " + err.message;
+      return;
+    }
     const backendTarget = Number.isFinite(response?.target_difficulty_after)
       ? response.target_difficulty_after
       : null;
@@ -84,7 +100,7 @@ feedbackButtons.forEach((btn) => {
     if (!calibrationQuestion && Number.isFinite(pAfter)) {
       showEwmaAccuracy(pBefore, pAfter, q.subtopic);
     } else {
-      ewmaAccuracy.classList.add("hidden");
+      showEwmaAccuracyCalibration(q.subtopic);
     }
 
     practiceProgress.pendingFeedback = {
@@ -100,7 +116,7 @@ feedbackButtons.forEach((btn) => {
   });
 });
 
-nextProblemBtn.addEventListener("click", async () => {
+const _loadNextPracticeQuestion = async () => {
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
   practiceProgress.currentTargetDifficulty = null;
@@ -124,4 +140,16 @@ nextProblemBtn.addEventListener("click", async () => {
   practiceProgress.questionCount = nextCount;
   savePracticeProgress(practiceProgress);
   renderQuestion(nextQ, nextCount);
+};
+
+nextProblemBtn.addEventListener("click", async () => {
+  // ARENA unlock interstitial — show a card for the next-just-unlocked
+  // ARENA exercise before loading the next Delta Drills question. The
+  // interstitial's Continue button calls _loadNextPracticeQuestion.
+  // Returns false (and we fall through to the normal flow) when there
+  // is no newly-unlocked exercise waiting. tryShow is async — must await.
+  if (window.ArenaUnlock && typeof window.ArenaUnlock.tryShow === "function") {
+    if (await window.ArenaUnlock.tryShow(_loadNextPracticeQuestion)) return;
+  }
+  await _loadNextPracticeQuestion();
 });

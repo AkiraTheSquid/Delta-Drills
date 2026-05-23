@@ -128,6 +128,21 @@ function cancelEwmaAnimation() {
   }
 }
 
+function showEwmaAccuracyCalibration(subtopic) {
+  cancelEwmaAnimation();
+  ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
+  ewmaAccuracyDelta.classList.add("hidden");
+  ewmaAccuracyDelta.classList.remove("up", "down");
+  ewmaAccuracyDelta.style.width = "0%";
+  ewmaAccuracyDelta.style.left = "0%";
+  ewmaAccuracyMarkerOld.style.left = "0%";
+  ewmaAccuracyMarkerNew.classList.add("hidden");
+  ewmaAccuracyMarkerNew.style.left = "0%";
+  ewmaAccuracyFill.style.width = "0%";
+  ewmaAccuracyValue.textContent = "Accuracy appears after calibration";
+  ewmaAccuracy.classList.remove("hidden");
+}
+
 // Initial state shown after submit (mirrors setTargetDifficultyInitial).
 function showEwmaAccuracyInitial(p, subtopic) {
   cancelEwmaAnimation();
@@ -135,13 +150,18 @@ function showEwmaAccuracyInitial(p, subtopic) {
   // never leaks through, regardless of whether we show the bar.
   ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
   ewmaAccuracyDelta.classList.add("hidden");
+  ewmaAccuracyDelta.classList.remove("up", "down");
   ewmaAccuracyDelta.style.width = "0%";
+  ewmaAccuracyDelta.style.left = "0%";
+  ewmaAccuracyMarkerOld.style.left = "0%";
   ewmaAccuracyMarkerNew.classList.add("hidden");
+  ewmaAccuracyMarkerNew.style.left = "0%";
   if (!Number.isFinite(p)) {
-    // No history yet — keep the bar hidden and clear any stale values.
-    ewmaAccuracyValue.textContent = "";
+    // No history yet — show an explicit placeholder state instead of leaving
+    // the widget looking broken or inheriting stale marker positions.
+    ewmaAccuracyValue.textContent = "No prior accuracy yet";
     ewmaAccuracyFill.style.width = "0%";
-    ewmaAccuracy.classList.add("hidden");
+    ewmaAccuracy.classList.remove("hidden");
     return;
   }
   const pct = Math.round(p * 1000) / 10;
@@ -164,10 +184,13 @@ function showEwmaAccuracy(pBefore, pAfter, subtopic) {
   if (!Number.isFinite(pBefore)) {
     ewmaAccuracyMarkerOld.style.left = "0%";
     ewmaAccuracyMarkerNew.classList.add("hidden");
+    ewmaAccuracyMarkerNew.style.left = "0%";
     ewmaAccuracyDelta.classList.add("hidden");
+    ewmaAccuracyDelta.classList.remove("up", "down");
     ewmaAccuracyDelta.style.width = "0%";
+    ewmaAccuracyDelta.style.left = "0%";
     ewmaAccuracyFill.style.width = "0%";
-    ewmaAccuracyValue.textContent = "0.0%";
+    ewmaAccuracyValue.textContent = "Old 0.0% → New 0.0%";
     const start = performance.now();
     const duration = 900;
     const tick = (now) => {
@@ -233,7 +256,7 @@ function showEwmaAccuracy(pBefore, pAfter, subtopic) {
 function setEwmaAccuracyFinal(pBefore, pAfter, subtopic) {
   if (!Number.isFinite(pAfter)) return;
   const newPct = Math.round(pAfter * 1000) / 10;
-  const oldPct = Number.isFinite(pBefore) ? Math.round(pBefore * 1000) / 10 : newPct;
+  const oldPct = Number.isFinite(pBefore) ? Math.round(pBefore * 1000) / 10 : 0;
   const diff = Math.abs(newPct - oldPct);
   ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
   ewmaAccuracyValue.textContent = `Old ${oldPct.toFixed(1)}% → New ${newPct.toFixed(1)}%`;

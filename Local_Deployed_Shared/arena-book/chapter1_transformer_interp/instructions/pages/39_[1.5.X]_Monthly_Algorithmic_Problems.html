@@ -1,0 +1,1016 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Monthly Algorithmic Problems &#8212; ARENA Curriculum</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter1_transformer_interp/instructions/pages/39_[1.5.X]_Monthly_Algorithmic_Problems';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Apr 30, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ARENA Curriculum</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    ARENA Curriculum
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter 0 — Fundamentals</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises.html">[0.0] - Prerequisites (exercises)</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.html">[0.1] - Ray Tracing (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part2_cnns/0.2_CNNs_%26_ResNets_exercises.html">[0.2] - CNNs &amp; ResNets (exercises)</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part3_optimization/0.3_Optimization_exercises.html">[0.3] Optimization &amp; Hyperparameters (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part4_backprop/0.4_Backprop_exercises.html">[0.4] - Build Your Own Backpropagation Framework (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_%26_GANs_exercises.html">[0.5] - VAEs &amp; GANs (exercises)</a></li>
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter 1 — Transformer Interpretability</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises.html">[1.1] - Transformers from scratch (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part2_intro_to_mech_interp/1.2_Intro_to_Mech_Interp_exercises.html">[1.2] Intro to Mechanistic Interpretability: TransformerLens &amp; induction circuits (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part31_linear_probes/1.3.1_Linear_Probes_exercises.html">[1.3.1] Linear Probes (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part32_function_vectors_and_model_steering/1.3.2_Function_Vectors_%26_Model_Steering_exercises.html">[1.3.2] Function Vectors &amp; Model Steering (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_exercises.html">[1.3.3] Interpretability with SAEs (exercises)</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part34_activation_oracles/1.3.4_Activation_Oracles_exercises.html">[1.3.4] Activation Oracles (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part41_indirect_object_identification/1.4.1_Indirect_Object_Identification_exercises.html">[1.4.1] Indirect Object Identification (exercises)</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.html">[1.4.2] SAE Circuits (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part51_balanced_bracket_classifier/1.5.1_Balanced_Bracket_Classifier_exercises.html">[1.5.1] Balanced Bracket Classifier (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part52_grokking_and_modular_arithmetic/1.5.2_Grokking_%26_Modular_Arithmetic_exercises.html">[1.5.2] Grokking and Modular Arithmetic (exercises)</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part53_othellogpt/1.5.3_OthelloGPT_exercises.html">[1.5.3] OthelloGPT (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../exercises/part54_toy_models_of_superposition_and_saes/1.5.4_Toy_Models_of_Superposition_%26_SAEs_exercises.html">[1.5.4] Toy Models of Superposition &amp; Sparse Autoencoders (exercises)</a></li>
+
+
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter 2 — Reinforcement Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises.html">[2.3] - PPO (exercises)</a></li>
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises.html">[2.4] - RLHF (exercises)</a></li>
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter 3 — LLM Evaluations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter3_llm_evals/exercises/part1_intro_to_evals/3.1_Intro_to_Evals_exercises.html">[3.1] Intro to Evals (exercises)</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter3_llm_evals/exercises/part2_dataset_generation/3.2_Dataset_Generation_exercises.html">[3.2] - Dataset Generation (exercises)</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter3_llm_evals/exercises/part3_running_evals_with_inspect/3.3_Running_Evals_with_Inspect_exercises.html">[3.3] Running Evals with Inspect (exercises)</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter3_llm_evals/exercises/part4_llm_agents/3.4_LLM_Agents_exercises.html">[3.4] - LLM Agents (exercises)</a></li>
+
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter 4 — Alignment Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter4_alignment_science/exercises/part1_emergent_misalignment/4.1_Emergent_Misalignment_exercises.html">[4.1] Emergent Misalignment (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter4_alignment_science/exercises/part2_science_of_misalignment/4.2_Science_of_Misalignment_exercises.html">[4.2] Science of Misalignment (exercises)</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_exercises.html">[4.3] Interpreting Reasoning: Thought Anchors (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter4_alignment_science/exercises/part4_persona_vectors/4.4_LLM_Psychology_%26_Persona_Vectors_exercises.html">[4.4] LLM Psychology &amp; Persona Vectors (exercises)</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../chapter4_alignment_science/exercises/part5_investigator_agents/4.5_Investigator_Agents_exercises.html">[4.5] Investigator Agents (exercises)</a></li>
+
+
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/callummcdougall/ARENA_3.0" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/chapter1_transformer_interp/instructions/pages/39_[1.5.X]_Monthly_Algorithmic_Problems.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Monthly Algorithmic Problems</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Monthly Algorithmic Problems</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-problems">Available Problems</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#what-counts-as-a-solution">What counts as a solution?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#palindromes-july-2023">Palindromes (July 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colab-problem-solutions">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-dataset">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model">Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#first-unique-character-august-2023">First Unique Character (August 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difficulty">Difficulty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#digit-sum-september-2023">4-Digit Sum (September 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Difficulty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sorted-list-october-2023">Sorted List (October 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sum-november-2023">Cumulative Sum (November 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#caesar-cipher-january-2024">Caesar Cipher (January 2024)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#trigrams-november-2024">Trigrams (November 2024)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colab-problem">Colab: problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Model</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="monthly-algorithmic-problems">
+<h1>Monthly Algorithmic Problems<a class="headerlink" href="#monthly-algorithmic-problems" title="Link to this heading">#</a></h1>
+<p>This is the homepage for the ARENA Monthly Algorithmic Problems sequence. These challenges were designed in the spirit of <a class="reference external" href="https://www.lesswrong.com/posts/KSHqLzQscwJnv44T8/eis-vii-a-challenge-for-mechanists">Stephen Casper’s challenges</a>, but with the more specific aim of working well in the context of the rest of the ARENA material, and helping people put into practice all the things they’ve learned so far.</p>
+<img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/alg-combined.png" width="340">
+<p>These are a series of 7 algorithmic problems, run periodically between mid 2023 and late 2024. They are designed to test some of the skills and tools you’ll have gathered during the rest of this section. Note that these are better thought of as fun challenges / hackathon-type problems, as opposed to opportunities to learn about specific topics or tools, so we recommend not attempting them while you’re working through the ARENA material during any kind of structured program (except as a hackathon).</p>
+<section id="available-problems">
+<h2>Available Problems<a class="headerlink" href="#available-problems" title="Link to this heading">#</a></h2>
+<p>Each problem below includes both a problem description and detailed solutions. The problems are listed in reverse chronological order (newest first).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Problem</p></th>
+<th class="head"><p>Date</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Colab Links</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Trigrams</strong></p></td>
+<td><p>Nov 2024</p></td>
+<td><p>Predict the next token in sequences containing special trigram patterns</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1H32sDqaS4NjJxbo-QuqeR2X0uQoSJC7G">problem</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Caesar Cipher</strong></p></td>
+<td><p>Jan 2024</p></td>
+<td><p>Decode sequences encrypted with a Caesar cipher</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1pW1qAd52uwf2TImMVqpGm5SG2OtjE35o">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1xyE3VpPB5w1UVXWXcjE1uOoow1EZ3LJK">solutions</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Cumulative Sum</strong></p></td>
+<td><p>Nov 2023</p></td>
+<td><p>Compute running cumulative sums of sequences</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1g2nHKXPJdK0Te2evJVxMlOy-4JQS7X9H">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1E3J_SnhNxq-0FUtzSPHEAglWI2R80RsN">solutions</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Sorted List</strong></p></td>
+<td><p>Oct 2023</p></td>
+<td><p>Determine if a sequence of numbers is sorted</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1iGhpcNJvtuGvfgoHx3xq-HGjE-NR-pBf">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1IBNm5z2KiDv8vPXmXy7OyILZ1CXpTF01">solutions</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>4-Digit Sum</strong></p></td>
+<td><p>Sep 2023</p></td>
+<td><p>Add two 4-digit numbers together</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1NKFBTH3L4el6TpPx7aPHw8Q4lJ_zDhEv">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1y9_p14d7RLvkwx9BtPnZ11JlZHi4xhTN">solutions</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>First Unique Character</strong></p></td>
+<td><p>Aug 2023</p></td>
+<td><p>Find the first unique character in a string</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/15huO8t1io2oYuLdszyjhMhrPF3WiWhf1">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1E22t3DP5F_MEDNepARlrZy-5w7bv0_8G">solutions</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Palindromes</strong></p></td>
+<td><p>Jul 2023</p></td>
+<td><p>Classify whether a sequence is a palindrome</p></td>
+<td><p><a class="reference external" href="https://colab.research.google.com/drive/1qTUBj16kp6ZOCEBJefCKdzXvBsU1S-yz">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1Qy4owdsx309WkZer85-1fBN38GvuQ_xD">solutions</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="prerequisites">
+<h1>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h1>
+<p>The following ARENA material should be considered essential for all problems:</p>
+<ul class="simple">
+<li><p><strong>[1.1] Transformer from scratch</strong> (sections 1-3)</p></li>
+<li><p><strong>[1.2] Intro to Mech Interp</strong> (sections 1-3)</p></li>
+</ul>
+<p>The following material isn’t essential, but is recommended:</p>
+<ul class="simple">
+<li><p><strong>[1.2] Intro to Mech Interp</strong> (section 4)</p></li>
+<li><p><strong>[1.5.1] Balanced Bracket Classifier</strong> (all sections)</p></li>
+</ul>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="motivation">
+<h1>Motivation<a class="headerlink" href="#motivation" title="Link to this heading">#</a></h1>
+<p>Neel Nanda’s post <a class="reference external" href="https://www.lesswrong.com/posts/ejtFsvyhRkMofKAFy/200-cop-in-mi-interpreting-algorithmic-problems">200 COP in MI: Interpreting Algorithmic Problems</a> does a good job explaining the motivation behind solving algorithmic problems such as these. I’d strongly recommend reading the whole post, because it also gives some high-level advice for approaching such problems.</p>
+<p>The main purpose of these challenges isn’t to break new ground in mech interp, rather they’re designed to help you practice using &amp; develop better understanding for standard MI tools (e.g. interpreting attention, direct logit attribution), and more generally working with libraries like TransformerLens.</p>
+<p>Also, they’re hopefully pretty fun, because why shouldn’t we have some fun while we’re learning?</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="what-counts-as-a-solution">
+<h1>What counts as a solution?<a class="headerlink" href="#what-counts-as-a-solution" title="Link to this heading">#</a></h1>
+<p>Going through the exercises in <strong>[1.5.1] Balanced Bracket Classifier</strong> should give you a good idea of what a full solution looks like. In particular, I’d expect you to:</p>
+<ul class="simple">
+<li><p>Describe a mechanism for how the model solves the task, in the form of the QK and OV circuits of various attention heads (and possibly any other mechanisms the model uses, e.g. the direct path, or nonlinear effects from layernorm)</p></li>
+<li><p>Provide evidence for your mechanism, e.g. with tools like attention plots, targeted ablation / patching, or direct logit attribution</p></li>
+<li><p>(Optional) Include additional detail, e.g. identifying the linear subspaces that the model uses for certain forms of information transmission, or using your understanding of the model’s behaviour to construct adversarial examples</p></li>
+</ul>
+<p>=== NEW CHAPTER ===</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="palindromes-july-2023">
+<h1>Palindromes (July 2023)<a class="headerlink" href="#palindromes-july-2023" title="Link to this heading">#</a></h1>
+<section id="colab-problem-solutions">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1qTUBj16kp6ZOCEBJefCKdzXvBsU1S-yz">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1Qy4owdsx309WkZer85-1fBN38GvuQ_xD">solutions</a><a class="headerlink" href="#colab-problem-solutions" title="Link to this heading">#</a></h2>
+<p>This marks the first of the (hopefully sequence of) monthly mechanistic interpretability challenges. I designed them in the spirit of <a class="reference external" href="https://www.lesswrong.com/posts/KSHqLzQscwJnv44T8/eis-vii-a-challenge-for-mechanists">Stephen Casper’s challenges</a>, but with the more specific aim of working well in the context of the rest of the ARENA material, and helping people put into practice all the things they’ve learned so far.</p>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/zoom.png" width="350">
+</section>
+<section id="task-dataset">
+<h2>Task &amp; Dataset<a class="headerlink" href="#task-dataset" title="Link to this heading">#</a></h2>
+<p>Each sequence in the dataset looks like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">start_token</span><span class="p">,</span> <span class="n">a_1</span><span class="p">,</span> <span class="n">a_2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">a_N</span><span class="p">,</span> <span class="n">end_token</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">start_token</span> <span class="pre">=</span> <span class="pre">31</span></code>, <code class="docutils literal notranslate"><span class="pre">end_token</span> <span class="pre">=</span> <span class="pre">32</span></code>, and each value <code class="docutils literal notranslate"><span class="pre">a_i</span></code> is a value in the range <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">30]</span></code> inclusive.</p>
+<p>Each sequence has a corresponding label, which is <code class="docutils literal notranslate"><span class="pre">1</span></code> if the sequence is a palindrome (i.e. <code class="docutils literal notranslate"><span class="pre">(a_1,</span> <span class="pre">a_2,</span> <span class="pre">...,</span> <span class="pre">a_N)</span> <span class="pre">==</span> <span class="pre">(a_N,</span> <span class="pre">...,</span> <span class="pre">a_2,</span> <span class="pre">a_1)</span></code>), and <code class="docutils literal notranslate"><span class="pre">0</span></code> otherwise. The model has been trained to classify each sequence according to this label.</p>
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading">#</a></h2>
+<p>The model is a 2-layer transformer with 2 attention heads, and causal attention. It includes layernorm, but no MLP layers.</p>
+</section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Make sure exercises are in the path</span>
+<span class="n">chapter</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;chapter1_transformer_interp&quot;</span>
+<span class="n">exercises_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">chapter</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s2">/exercises&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="n">section_dir</span> <span class="o">=</span> <span class="n">exercises_dir</span> <span class="o">/</span> <span class="s2">&quot;monthly_algorithmic_problems&quot;</span> <span class="o">/</span> <span class="s2">&quot;july23_palindromes&quot;</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">exercises_dir</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exercises_dir</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">monthly_algorithmic_problems.july23_palindromes.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">PalindromeDataset</span><span class="p">,</span> <span class="n">display_seq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">monthly_algorithmic_problems.july23_palindromes.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotly_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hist</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">imshow</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;mps&#39;</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">mps</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="first-unique-character-august-2023">
+<h1>First Unique Character (August 2023)<a class="headerlink" href="#first-unique-character-august-2023" title="Link to this heading">#</a></h1>
+<section id="id1">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/15huO8t1io2oYuLdszyjhMhrPF3WiWhf1">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1E22t3DP5F_MEDNepARlrZy-5w7bv0_8G">solutions</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>This post is the second in the sequence of monthly mechanistic interpretability challenges.</p>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/writer.png" width="350">
+</section>
+<section id="difficulty">
+<h2>Difficulty<a class="headerlink" href="#difficulty" title="Link to this heading">#</a></h2>
+<p>This problem is a step up in difficulty to the July problem. The algorithmic problem is of a similar flavour, and the model architecture is very similar (the main difference is that this model has 3 attention heads per layer, instead of 2).</p>
+</section>
+<section id="id2">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>The algorithmic task is as follows: the model is presented with a sequence of characters, and for each character it has to correctly identify the first character in the sequence (up to and including the current character) which is unique up to that point.</p>
+<p>The null character <code class="docutils literal notranslate"><span class="pre">&quot;?&quot;</span></code> has two purposes:</p>
+<ul class="simple">
+<li><p>In the input, it’s used as the start character (because it’s often helpful for interp to have a constant start character, to act as a “rest position”).</p></li>
+<li><p>In the output, it’s also used as the start character, <strong>and</strong> to represent the classification “no unique character exists”.</p></li>
+</ul>
+<p>Here is an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Seq = ?acbba, Target = ?aaaac
+Seq = ?cbcbc, Target = ?ccb??
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Model<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>The model is a 2-layer transformer with 3 attention heads, and causal attention. It includes layernorm, but no MLP layers.</p>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="digit-sum-september-2023">
+<h1>4-Digit Sum (September 2023)<a class="headerlink" href="#digit-sum-september-2023" title="Link to this heading">#</a></h1>
+<section id="id4">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1NKFBTH3L4el6TpPx7aPHw8Q4lJ_zDhEv">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1y9_p14d7RLvkwx9BtPnZ11JlZHi4xhTN">solutions</a><a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/machines.png" width="350">
+</section>
+<section id="id5">
+<h2>Difficulty<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>This problem is probably a step up in difficulty from the August problem. The solution is more involved, and may require different / more creative interpretability approaches.</p>
+</section>
+<section id="id6">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>The model takes in a sequence of 11 tokens: 4 digits, a <code class="docutils literal notranslate"><span class="pre">+</span></code> sign, 4 digits, an <code class="docutils literal notranslate"><span class="pre">=</span></code> sign, and then 1 token representing the first digit of the sum. The model outputs the next 4 characters of the sum (one for each of the last 4 positions). In other words, the model is trained to add up 2 4-digit numbers.</p>
+<p>Note that the input is given in “little-endian” format (i.e. the units digit is first, then the tens digit, etc). Same for the output. This is because it makes the model easier to train.</p>
+<p>Here is an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Input:  1234 + 5678 = ?
+Output: ????0
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2>Model<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<p>The model is a 3-layer transformer with 3 attention heads, and causal attention. It includes layernorm, but no MLP layers.</p>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="sorted-list-october-2023">
+<h1>Sorted List (October 2023)<a class="headerlink" href="#sorted-list-october-2023" title="Link to this heading">#</a></h1>
+<section id="id8">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1iGhpcNJvtuGvfgoHx3xq-HGjE-NR-pBf">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1IBNm5z2KiDv8vPXmXy7OyILZ1CXpTF01">solutions</a><a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/sorted-problem.png" width="350">
+</section>
+<section id="id9">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>Each sequence in the dataset consists of:</p>
+<ul class="simple">
+<li><p>A start token <code class="docutils literal notranslate"><span class="pre">[</span></code></p></li>
+<li><p>A sequence of 10 numbers (this will include repeats, if <code class="docutils literal notranslate"><span class="pre">d_vocab</span> <span class="pre">&lt;</span> <span class="pre">10</span></code>)</p></li>
+<li><p>An end token <code class="docutils literal notranslate"><span class="pre">]</span></code></p></li>
+</ul>
+<p>The model is trained to output 1 (i.e. “sorted”) at the position after the end token if the 10 numbers are in ascending order, and 0 (i.e. “unsorted”) otherwise.</p>
+</section>
+<section id="id10">
+<h2>Model<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<p>The model is a 1-layer transformer with 3 attention heads, and causal attention. It includes layernorm, but no MLP layers.</p>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="cumulative-sum-november-2023">
+<h1>Cumulative Sum (November 2023)<a class="headerlink" href="#cumulative-sum-november-2023" title="Link to this heading">#</a></h1>
+<section id="id11">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1g2nHKXPJdK0Te2evJVxMlOy-4JQS7X9H">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1E3J_SnhNxq-0FUtzSPHEAglWI2R80RsN">solutions</a><a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/cumsum2.png" width="350">
+</section>
+<section id="id12">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<p>The model takes in a sequence of digits from 0 to 9 (randomly sampled), and at each sequence position it outputs the cumulative sum of the digits up to and including that position, mod 10.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span><span class="p">:</span>  <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="n">Output</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h2>Model<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
+<p>The model is a 2-layer transformer with 3 attention heads in layer 0 and 2 attention heads in layer 1, and causal attention. It includes MLPs and layernorm.</p>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="caesar-cipher-january-2024">
+<h1>Caesar Cipher (January 2024)<a class="headerlink" href="#caesar-cipher-january-2024" title="Link to this heading">#</a></h1>
+<section id="id14">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1pW1qAd52uwf2TImMVqpGm5SG2OtjE35o">problem</a> | <a class="reference external" href="https://colab.research.google.com/drive/1xyE3VpPB5w1UVXWXcjE1uOoow1EZ3LJK">solutions</a><a class="headerlink" href="#id14" title="Link to this heading">#</a></h2>
+<img src="https://raw.githubusercontent.com/callummcdougall/computational-thread-art/master/example_images/misc/padlock.png" width="350">
+</section>
+<section id="id15">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
+<p>In a Caesar cipher, all the letters in the plaintext are shifted by some fixed number of positions in the alphabet. For example, if the shift is 3, then A becomes D, B becomes E, etc.</p>
+<p>Each sequence in the dataset is a string of characters, where the first 2 characters represent the shift key (just duplicated characters, e.g. <code class="docutils literal notranslate"><span class="pre">AA</span></code> for shift 0, <code class="docutils literal notranslate"><span class="pre">BB</span></code> for shift 1, etc), and the rest of the characters are the encoded message. The model’s task is to output the decoded message.</p>
+</section>
+<section id="id16">
+<h2>Model<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<p>The model is a 1-layer transformer with 1 attention head, and causal attention. It includes layernorm, but no MLP layers.</p>
+<p>=== NEW CHAPTER ===</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="trigrams-november-2024">
+<h1>Trigrams (November 2024)<a class="headerlink" href="#trigrams-november-2024" title="Link to this heading">#</a></h1>
+<section id="colab-problem">
+<h2>Colab: <a class="reference external" href="https://colab.research.google.com/drive/1H32sDqaS4NjJxbo-QuqeR2X0uQoSJC7G">problem</a><a class="headerlink" href="#colab-problem" title="Link to this heading">#</a></h2>
+<img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/trigrams.png" width="350">
+</section>
+<section id="id17">
+<h2>Task &amp; Dataset<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
+<p>The dataset consists of sequences sampled from a known set of “trigrams” (3-character sequences) which appear with some probability greater than baseline. The model’s task is to predict the next character given the previous characters.</p>
+<p>More specifically:</p>
+<ul class="simple">
+<li><p>There are 53 tokens: 26 letters A-Z, 26 letters a-z, and a start token</p></li>
+<li><p>The dataset contains trigrams of the form <code class="docutils literal notranslate"><span class="pre">(A,</span> <span class="pre">a,</span> <span class="pre">b)</span></code> where <code class="docutils literal notranslate"><span class="pre">b</span></code> always follows <code class="docutils literal notranslate"><span class="pre">Aa</span></code></p></li>
+<li><p>Sequences are mostly randomly sampled characters, except the special trigrams appear with probability ~5%</p></li>
+</ul>
+</section>
+<section id="id18">
+<h2>Model<a class="headerlink" href="#id18" title="Link to this heading">#</a></h2>
+<p>The model is a 2-layer transformer with 3 attention heads per layer, and causal attention. It includes layernorm, but no MLP layers.</p>
+<p>The model has been trained to predict the next token at each position in the sequence.</p>
+<p><strong>Note:</strong> Solutions for this problem are not yet available.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter1_transformer_interp/instructions/pages"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Monthly Algorithmic Problems</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-problems">Available Problems</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#what-counts-as-a-solution">What counts as a solution?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#palindromes-july-2023">Palindromes (July 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colab-problem-solutions">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-dataset">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model">Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#first-unique-character-august-2023">First Unique Character (August 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difficulty">Difficulty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#digit-sum-september-2023">4-Digit Sum (September 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Difficulty</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#sorted-list-october-2023">Sorted List (October 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-sum-november-2023">Cumulative Sum (November 2023)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#caesar-cipher-january-2024">Caesar Cipher (January 2024)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Colab: problem | solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#trigrams-november-2024">Trigrams (November 2024)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colab-problem">Colab: problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Task &amp; Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Model</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Delta Drills
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 30, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+EWMA now, DAG later: preservation plan
+
+Purpose
+
+This document describes what the system must preserve now if Delta Drills ships
+course sequencing and adaptive practice using the current EWMA-based algorithm,
+while leaving room for a later graph-backed prerequisite system.
+
+Main conclusion
+
+The current EWMA-based adaptive engine and a future DAG-based curriculum engine
+are not architecturally opposed.
+
+They solve different problems:
+
+- EWMA handles short-horizon adaptation
+- DAG handles prerequisite structure and unlock order
+
+Recommended long-term architecture
+
+1. The DAG determines which concepts or problems are unlocked.
+2. EWMA determines which unlocked area most needs practice right now.
+3. Difficulty targeting chooses the right problem instance within that area.
+
+The immediate goal is therefore not to implement the full DAG first.
+The immediate goal is to avoid baking in data-model assumptions that make a DAG
+upgrade expensive later.
+
+
+What EWMA already does well
+
+The current adaptive engine is already a coherent controller for a flat bank:
+
+- it maintains per-subtopic running state
+- it tracks recent performance trends
+- it adjusts target difficulty
+- it prioritizes among subtopics using weight x learning-rate
+
+This is useful right now for:
+
+- repetition
+- easier vs harder next-problem decisions
+- reacting to recent success or failure
+- personalization inside a course unit or subtopic
+
+This should be kept.
+
+
+What a DAG would add later
+
+A future concept DAG would add capabilities the current EWMA selector does not
+have:
+
+- explicit prerequisites
+- concept unlock order
+- readiness explanations
+- bridge sequencing from atomic to composite concepts
+- multi-concept gating for ARENA problems
+
+This means the future DAG should sit above the EWMA selector, not replace it.
+
+
+What must be preserved now
+
+The following fields or concepts should exist now, even if some are only rough
+or partially populated.
+
+Problem identity
+
+- stable problem ID
+- stable course ID
+- stable unit or lesson ID
+- stable source reference
+  - notebook path
+  - curriculum chapter/section
+  - optional anchor/cell reference
+
+Problem metadata
+
+- human-readable title
+- short summary or prompt text
+- topic
+- subtopic
+- difficulty_score
+- estimated solve time, if known
+- problem mode
+  - syntax
+  - composition
+  - procedural
+  - debug
+
+Concept metadata
+
+- concept tags per problem
+  - even if hand-authored and rough
+- optional prerequisite tag list per problem
+  - even if incomplete
+- optional weighted skill signature
+  - concept -> weight
+
+Sequencing metadata
+
+- explicit course order fields
+  - unit_index
+  - lesson_index
+  - problem_index
+- optional "soft gate" metadata
+  - recommended readiness threshold
+  - minimum prior score
+
+Attempt / telemetry metadata
+
+- user ID
+- problem ID
+- timestamp
+- correctness / grade
+- self-reported difficulty or confidence
+- actual difficulty served
+- concept or skill snapshot used at selection time, if practical
+
+
+What must not be hard-coded now
+
+Avoid these assumptions in new code:
+
+- subtopic is the only schedulable unit
+- each problem belongs to exactly one skill
+- course order is enough to express readiness
+- difficulty is the only meaningful problem dimension
+- all problems inside a subtopic are interchangeable
+
+These assumptions are acceptable as temporary UI simplifications, but should
+not become the canonical data model.
+
+
+Minimum viable schema for "EWMA now, DAG later"
+
+Each problem should support at least:
+
+- id
+- title
+- topic
+- subtopic
+- difficulty_score
+- course_id
+- unit_id
+- lesson_id
+- problem_index
+- concept_tags: list[str]
+- prerequisite_tags: list[str]
+- problem_type: str
+- source_ref: str
+
+Recommended extension:
+
+- weighted_skills: list[{concept_id, weight}]
+- readiness_threshold: float
+- launch_ref: str
+- estimated_minutes: int
+
+
+Recommended implementation phases
+
+Phase 1: ship with EWMA + authored course order
+
+- use existing EWMA adaptive logic
+- constrain selection to the active course or unit
+- use authored lesson order as the only unlock mechanism
+- use problem metadata fields above
+
+Phase 2: add light prerequisite metadata
+
+- populate concept_tags
+- populate prerequisite_tags for the most important course problems
+- expose "study prerequisites" and "related drills" flows
+
+Phase 3: add graph-backed unlocking
+
+- load concept graph
+- compute unlocked concepts/problems from prerequisite mastery
+- filter candidate set through graph readiness
+- keep EWMA for ranking and difficulty targeting inside unlocked set
+
+
+Design rule
+
+If forced to choose between:
+
+- writing a perfect DAG now
+- preserving enough metadata to support one later
+
+choose the second.
+
+The system should ship with:
+
+- good stable IDs
+- reusable problem metadata
+- rough concept tagging
+- existing EWMA adaptation
+
+That keeps the current implementation practical while preserving a clean path to
+graph-backed curriculum sequencing later.
