@@ -1,0 +1,37 @@
+{
+  "exercise_id": "0_3_7",
+  "title": "rewrite training loop with wandb",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_7_exercise-rewrite-training-loop-with-wandb.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 7,
+  "difficulty": 2,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "dataclass-training-args", "role": "core", "evidence": "@dataclass class WandbResNetFinetuningArgs(ResNetFinetuningArgs): wandb_project, wandb_name — extends parent dataclass with wandb fields"},
+    {"id": "trainer-class-skeleton", "role": "core", "evidence": "WandbResNetFinetuner defines pre_training_setup, training_step, evaluate, train — the canonical 4-method lifecycle"},
+    {"id": "trainer-subclass-extend", "role": "core", "evidence": "class WandbResNetFinetuner(ResNetFinetuner): ... def pre_training_setup(self): super().pre_training_setup() — markdown: 'we don't need to rewrite our __init__ method, it'll be the same as for ResNetFinetuner'"},
+    {"id": "cross-entropy-classification-loss", "role": "core", "evidence": "loss = F.cross_entropy(logits, labels) inside training_step"},
+    {"id": "argmax-accuracy-eval", "role": "core", "evidence": "total_correct += (logits.argmax(dim=1) == labels).sum().item() inside evaluate"},
+    {"id": "tqdm-postfix-metrics", "role": "core", "evidence": "pbar = tqdm(self.train_loader, desc='Training'); pbar.set_postfix(loss=f'{loss:.3f}', ex_seen=...)"},
+    {"id": "loss-item-scalar-extract", "role": "core", "evidence": "wandb.log({'loss': loss.item()}, step=self.examples_seen) — must extract Python float for JSON serialization"},
+    {"id": "wandb-init-run", "role": "core", "evidence": "wandb.init(project=self.args.wandb_project, name=self.args.wandb_name, config=self.args)"},
+    {"id": "wandb-log-step", "role": "core", "evidence": "wandb.log({'loss': loss.item()}, step=self.examples_seen) and wandb.log({'accuracy': accuracy}, step=self.examples_seen)"},
+    {"id": "wandb-watch-model", "role": "core", "evidence": "wandb.watch(self.model.out_layers[-1], log='all', log_freq=50) — markdown: 'be careful of the log_freq value - you want to make sure you're logging more than once per epoch'"},
+    {"id": "wandb-finish", "role": "core", "evidence": "wandb.finish() at the end of train()"},
+    {"id": "examples-seen-step-axis", "role": "core", "evidence": "self.examples_seen += imgs.shape[0]; wandb.log(..., step=self.examples_seen) — markdown: 'tracking self.examples_seen and passing this as the step argument ... easier to compare across different runs with e.g. different batch sizes'"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "logits = self.model(imgs); loss = F.cross_entropy(logits, labels); loss.backward(); self.optimizer.step(); self.optimizer.zero_grad() — the canonical 5-line body inside training_step"},
+    {"id": "validation-no-grad", "role": "core", "evidence": "@t.inference_mode() decorator on evaluate; total_correct/total_samples accumulation pattern"},
+    {"id": "train-eval-mode-branch", "role": "core", "evidence": "self.model.train() in train(); self.model.eval() at top of evaluate()"},
+    {"id": "tensor-to-device", "role": "core", "evidence": "imgs, labels = imgs.to(device), labels.to(device) — both in training_step and evaluate"},
+    {"id": "backward-on-scalar-loss", "role": "core", "evidence": "loss.backward() inside training_step"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "freeze-requires-grad", "reason": "Speculative seed tag for the implied ResNetFinetuner parent — we don't see the parent class body, and the subclass code shown does not call requires_grad=False. Removing because no evidence in the cells."},
+    {"id": "dataloader-batching", "reason": "DataLoader is presumably set up in the parent ResNetFinetuner.__init__, but no DataLoader construction appears in the cells we have for 0_3_7. The subclass inherits self.train_loader/self.test_loader but doesn't construct them."}
+  ],
+  "notes": "17 atoms — slightly above seed prediction of 16. The wandb cluster (init/log/watch/finish/examples-seen) fires fully; the training-loop spine (training-step-cycle/validation-no-grad/train-eval-mode-branch/tensor-to-device) fires too because the subclass overrides training_step and evaluate. Two FPs are both 'inherited-but-not-shown' atoms — keeping the tagging conservative to the visible code only."
+}

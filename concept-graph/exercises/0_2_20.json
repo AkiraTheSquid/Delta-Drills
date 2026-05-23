@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_2_20",
+  "title": "implement padding",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_20_exercise-implement-padding.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 20,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-padding-zero", "role": "core", "evidence": "pad1d: output = x.new_full(size=(B, C, left+W+right), fill_value=pad_value); output[..., left:left+W] = x — allocate fresh tensor filled with pad_value, copy input into the middle. pad2d does the 2D version."}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "broadcasting-rules", "reason": "seed predicted broadcasting for exercise 20 but pad1d/pad2d are pure indexed-copy operations; no broadcasting fires"}
+  ],
+  "notes": "1-atom exercise — the most concentrated atom firing yet. pad1d and pad2d are essentially the same atom at two arities; both are pure indexed-copy with new_full. Note the gotcha called out in the hint dropdown: '[..., left:-right]' fails when right=0 — pedagogically important but not an atom on its own. Below the 4-7 band but appropriate for a deliberately-isolated foundational utility."
+}

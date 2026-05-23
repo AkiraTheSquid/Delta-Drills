@@ -1,0 +1,52 @@
+You are auditing a rewritten coding-drill prompt for ANSWER LEAKAGE and FAITHFULNESS to the original task.
+
+You will be given:
+- the ORIGINAL prompt
+- the REWRITTEN prompt (an expanded version produced by another model)
+- the CANONICAL ANSWER (the code that solves the task)
+- the SETUP_CODE (input fixture)
+
+Your job: return PASS or FAIL on the rewrite, with reasons.
+
+Return JSON ONLY with this schema:
+{
+  "verdict": "pass" | "fail",
+  "reasons": [<string>, ...]
+}
+
+A rewrite FAILS if ANY of these is true:
+
+F1. **Names the canonical function.** The rewrite mentions any numpy/einops function name that appears as the load-bearing call in the canonical answer (e.g. answer is `np.argmax(...)` and rewrite says "argmax", "argmaximum", "the largest-index function"). Setup-only function names like `arange`, `linspace`, `random.rand` used for input construction are OK. Plain-English domain terms like "the largest value", "the index of the maximum", "the smallest element", "rotate", "transpose", "stretch", "stack", "grid", "tile" are NOT function names — they are task descriptions and DO NOT trigger F1. Only flag F1 if the rewrite uses the literal function identifier (or a trivial alias like "argument-max" for argmax).
+
+F2. **Contains an einops pattern.** The rewrite quotes an einops arrow string (e.g. `'b c h w -> b h w c'`) or strings of single-letter axes (e.g. "b h w c", "c (h 2) w") that give the pattern away. NOTE: describing an OUTPUT SHAPE TUPLE in plain words is REQUIRED — phrases like "output shape (channels, 2*height, width)" or "shape (batch, height*width, channels)" are NOT leaks; they are the required output spec. Only flag F2 if the rewrite uses raw einops syntax (quoted arrow strings, parenthesized axis-letter groups, or single-letter axis identifiers).
+
+F3. **Mismatched axis order.** The rewrite describes the input or output shape in an order that does not match the canonical pattern / setup_code shape. (e.g. answer pattern is `b c h w` but rewrite says "(batch, height, channels, width)".)
+
+F4. **Drops a transformation step.** The canonical answer performs N operations (pool + tile, split + move, stack + concatenate, etc.) but the rewrite describes only some of them. Before flagging F4, you MUST: (a) re-read the canonical answer end-to-end, (b) list every distinct operation it performs, (c) confirm the rewrite covers each one. If the canonical answer is a single call (e.g. just `np.linalg.det(C)` or `arr - reduce(arr, ..., 'mean')`), the rewrite need only describe that one operation — do not invent missing steps that aren't in the canonical.
+
+F5. **Wrong indexing semantics.** The canonical answer indexes `arr[0]` etc. and the rewrite mislabels what that selects relative to the setup_code's shape.
+
+F6. **Adds technique hints.** The rewrite uses phrases like "efficient", "without sorting", "in O(n)", "vectorized", "single pass", "partial sort", "no explicit loop" that point to a specific implementation strategy.
+
+F7. **Hallucinates difficulty stars or output suffix.** The rewrite adds "(★☆☆)"/"(★★☆)"/"(★★★)" or "\nPrint the result." when the original has neither. (Conversely, dropping them when the original has them is also a fail.)
+
+F8. **Cannot derive the answer.** A student who has knowledge of numpy/einops but has never seen the original prompt should be able to derive the canonical answer from the rewrite alone. If essential context (input shape, output shape, what the transformation does) is missing such that the answer is ambiguous, FAIL.
+
+If NONE of F1-F8 applies, verdict is "pass" with reasons=["clean"].
+
+Examples:
+
+ORIGINAL: "Replace NaNs with zero"
+REWRITE: "Given a 1D float array Z that may contain NaN entries, return a copy where every NaN has been substituted with 0.0 and every finite value is left unchanged."
+ANSWER: "np.nan_to_num(Z, nan=0.0)"
+Output: {"verdict": "pass", "reasons": ["clean"]}
+
+ORIGINAL: "Row-wise argmax"
+REWRITE: "Compute the row-wise argmax of Z by finding the index of the maximum value in each row."
+ANSWER: "Z.argmax(axis=1)"
+Output: {"verdict": "fail", "reasons": ["F1: rewrite says 'argmax', which is the canonical function name"]}
+
+ORIGINAL: "Downsample with 2x2 pooling then grid."
+REWRITE: "Perform 2x2 max pooling on each image. Output shape (channels, new_h, new_w) where new_h = h/2."
+ANSWER: "einops.reduce(arr, '(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)', 'max', h2=2, w2=2, b1=2)"
+Output: {"verdict": "fail", "reasons": ["F4: canonical answer pools AND tiles the batch into a (b1, b2) grid, but rewrite only describes pooling — the output shape is (c, b1*h_new, b2*w_new), not (c, new_h, new_w)"]}

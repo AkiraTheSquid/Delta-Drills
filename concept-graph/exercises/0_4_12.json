@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_4_12",
+  "title": "reshape",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_12_exercise-reshape.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 12,
+  "difficulty": 2,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "reshape-back", "role": "core", "evidence": "return np.reshape(grad_out, x.shape) — reshape grad_out back to original input shape (inverse reshape)"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def reshape_back(grad_out: Arr, out: Arr, x: Arr, new_shape: tuple) -> Arr — signature now extended with a kwarg-like positional new_shape"},
+    {"id": "kwargs-pass-through-recipe", "role": "core", "evidence": "Markdown explicitly warns 'Depending how you wrote wrap_forward_fn and backprop, you might need to go back and adjust them to handle this — if you're failing tests but think your implementation is correct, we recommend you go back to these functions and check them' — the failure mode where new_shape isn't threaded via Recipe.kwargs"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "reshape = wrap_forward_fn(np.reshape); BACK_FUNCS.add_back_func(np.reshape, 0, reshape_back)"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "reshape = wrap_forward_fn(np.reshape)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5 atoms — under seed prediction of 6. First exercise where the kwargs-pass-through failure mode is explicitly flagged (new_shape positional in np.reshape but flows as a kwarg/positional that needs Recipe round-trip)."
+}

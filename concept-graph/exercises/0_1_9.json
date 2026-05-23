@@ -1,0 +1,33 @@
+{
+  "exercise_id": "0_1_9",
+  "title": "bonus — add lighting (Lambertian)",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_9_exercise-bonus-add-lighting.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 9,
+  "difficulty": 5,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "triangle-barycentric", "role": "core", "evidence": "same Moller-Trumbore matrix+inside-test as 0_1_6/8; still the geometric backbone"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "same double-repeat for (NR, NT) batch as 0_1_6/8"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "t.stack([-D, B - A, C - A], dim=-1) for the 3x3 system"},
+    {"id": "singular-matrix-mask-trick", "role": "core", "evidence": "same det/eye-replacement/AND-out pattern"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "t.linalg.solve on (NR, NT, 3, 3)"},
+    {"id": "inf-masking", "role": "core", "evidence": "s[~intersects] = float('inf') — needed for the s.min(dim=-1) call to skip non-hits"},
+    {"id": "tensor-to-device", "role": "core", "evidence": "triangles.to(device), rays.to(device), light.to(device), and .cpu() return; device-aware throughout"},
+    {"id": "device-consistent-construct", "role": "core", "evidence": "t.eye(3).to(device); light.to(device) — both inline helpers moved to match GPU operands"},
+    {"id": "cross-product-normal", "role": "core", "evidence": "normals = t.cross(triangles[:, 2] - triangles[:, 0], triangles[:, 1] - triangles[:, 0], dim=1) — surface normals via cross-product; help dropdown teaches this directly"},
+    {"id": "vector-normalize-keepdim", "role": "core", "evidence": "normals /= normals.norm(dim=1, keepdim=True) — unit-normalize batch of normals; keepdim preserves broadcast"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(normals, light.to(device), 'nt dims, dims -> nt') — dot product of each normal with the light vector via einsum"},
+    {"id": "where-clip-negative", "role": "core", "evidence": "t.where(intensity_per_triangle > 0, intensity_per_triangle, 0.0) — clip backward-facing normals to zero; AND a second t.where(closest_distances.isfinite(), intensity, 0.0) for no-hit pixels; help dropdown teaches both"},
+    {"id": "index-by-tensor", "role": "core", "evidence": "intensity_per_triangle_signed[closest_triangles_for_each_ray] — gather per-ray intensity from per-triangle intensity via int-tensor indices returned by s.min(dim=-1)"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular — same 5-way AND as 0_1_5/6/8"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "einops-reduce-min", "reason": "0_1_6 used einops.reduce(s, 'NR NT -> NR', 'min'); this exercise switched to s.min(dim=-1) because it needs BOTH the values and indices (the indices feed index-by-tensor for per-ray triangle lookup). The semantically-similar atom is different: it's torch.Tensor.min returning (vals, idx), not a reduce"}
+  ],
+  "notes": "14 atoms — by far the densest exercise of part1, as expected for a 5-star bonus that composes essentially every atom in the vocab. The genuine new content is the lighting computation: cross-product-normal + vector-normalize-keepdim + einsum-contraction + where-clip-negative + index-by-tensor. The switch from einops.reduce to s.min(dim=-1) is structurally important — the exercise needs gather indices to look up per-triangle intensity by closest triangle. Possible NEW atom: 'tensor-min-with-indices' (Tensor.min(dim) returns (vals, idx) — qualitatively different from a pure reduce). Not promoting yet; flag for cross-chapter recurrence (attention argmax, top-k will revisit). cuda-empty-cache only fires in the driver loop (not in lambert function body), so I omitted it here."
+}

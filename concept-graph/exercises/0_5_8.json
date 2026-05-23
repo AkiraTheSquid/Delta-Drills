@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_5_8",
+  "title": "minimal 1D transposed convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_8_exercise-minimal-1d-transposed-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 8,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "convT-as-flipped-padded-conv", "role": "core", "evidence": "x_mod = pad1d(x, left=kernel_width - 1, right=kernel_width - 1, pad_value=0); weights_mod = einops.rearrange(weights.flip(-1), 'i o w -> o i w'); return conv1d_minimal(x_mod, weights_mod) — exact 'pad by (k-1) then flip kernel then conv' identity"},
+    {"id": "convT-kernel-axis-swap", "role": "core", "evidence": "einops.rearrange(weights.flip(-1), 'i o w -> o i w') — explicit (in, out, k) -> (out, in, k) axis swap after flip; markdown: 'in our convolutions we assumed the kernel had shape (out_channels, in_channels, kernel_width). Here, the order is different: in_channels comes before out_channels'"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "pad1d(x, left=kernel_width - 1, right=kernel_width - 1, pad_value=0) — zero-padding by (k-1) on each side; the part2 pad1d primitive reused directly"},
+    {"id": "conv-windowing-1d", "role": "core", "evidence": "return conv1d_minimal(x_mod, weights_mod) — the part2 conv1d_minimal (as_strided windowing) is the actual workhorse"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "4 atoms — slightly under seed prediction of 5. The introduction to transposed convolutions: introduces the two §6 atoms convT-as-flipped-padded-conv and convT-kernel-axis-swap together. Reuses pad1d (conv-padding-zero) and conv1d_minimal (conv-windowing-1d) from part2 — clean 4-atom implementation of the foundational convT identity."
+}

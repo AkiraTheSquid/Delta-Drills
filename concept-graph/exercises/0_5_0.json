@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_5_0",
+  "title": "implement autoencoder",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_0_exercise-implement-autoencoder.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 0,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "encoder-decoder-symmetric", "role": "core", "evidence": "self.encoder = Sequential(Conv2d(1,16,4,s=2,p=1), ReLU(), Conv2d(16,32,4,s=2,p=1), ...) mirrored by self.decoder = nn.Sequential(..., ConvTranspose2d(32,16,4,s=2,p=1), ReLU(), ConvTranspose2d(16,1,4,s=2,p=1)) — exact symmetric stride-2 downsample/upsample with reversed channel counts"},
+    {"id": "bottleneck-latent-projection", "role": "core", "evidence": "Encoder ends with Rearrange('b c h w -> b (c h w)'), Linear(7*7*32, hidden_dim_size), ReLU(), Linear(hidden_dim_size, latent_dim_size); decoder begins with Linear(latent_dim_size, hidden_dim_size), ReLU(), Linear(hidden_dim_size, 7*7*32)"},
+    {"id": "rearrange-as-sequential-layer", "role": "core", "evidence": "Rearrange('b c h w -> b (c h w)') and Rearrange('b (c h w) -> b c h w', c=32, h=7, w=7) embedded inline as Sequential layers; markdown explicitly demos 'einops.layers.torch.Rearrange ... can be used inside things like Sequential'"},
+    {"id": "no-relu-on-final-layer", "role": "core", "evidence": "Decoder ends with bare ConvTranspose2d(16, 1, 4, stride=2, padding=1) — no ReLU after; markdown explicitly: 'we don't include a ReLU in the very last layer of the decoder or generator'"},
+    {"id": "nn-module-subclass", "role": "incidental", "evidence": "class Autoencoder(nn.Module): super().__init__()"},
+    {"id": "module-composition", "role": "incidental", "evidence": "self.encoder/self.decoder built from Sequential of Conv2d/Linear/ReLU/Rearrange/ConvTranspose2d submodules"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — matches seed prediction of 6. The foundation exercise of part5: establishes encoder-decoder-symmetric, bottleneck-latent-projection, rearrange-as-sequential-layer, no-relu-on-final-layer — all four §1 atoms fire here at their introduction. No training loop yet."
+}

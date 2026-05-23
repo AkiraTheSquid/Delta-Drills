@@ -1,0 +1,29 @@
+{
+  "exercise_id": "0_1_8",
+  "title": "use GPUs",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_8_exercise-use-gpus.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 8,
+  "difficulty": 1,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "tensor-to-device", "role": "core", "evidence": "triangles = triangles.to(device); rays = rays.to(device); ... return einops.reduce(...).cpu() — the entire point of the exercise is the .to('cuda')/.cpu() round-trip"},
+    {"id": "device-consistent-construct", "role": "core", "evidence": "mat[is_singular] = t.eye(3).to(device) — the t.eye(3) helper must be moved to GPU to match the operands; this is the gotcha the exercise teaches"},
+    {"id": "cuda-empty-cache", "role": "incidental", "evidence": "raytrace_mesh_video driver still calls t.cuda.empty_cache(); now meaningful because actual GPU memory is being allocated each frame"},
+    {"id": "triangle-barycentric", "role": "core", "evidence": "same Moller-Trumbore as 0_1_6 — the exercise is a wholesale copy of raytrace_mesh with device-management threaded through"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "same double-repeat for (NR, NT) batch as 0_1_6"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "t.stack([-D, B - A, C - A], dim=-1) — same as 0_1_6"},
+    {"id": "singular-matrix-mask-trick", "role": "core", "evidence": "same det/is_singular/eye-replacement/AND-out pattern as 0_1_5 and 0_1_6, with the eye now device-aware"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "t.linalg.solve on (NR, NT, 3, 3) — same as 0_1_6"},
+    {"id": "einops-reduce-min", "role": "core", "evidence": "einops.reduce(s, 'NR NT -> NR', 'min').cpu() — same min reduce, with .cpu() appended"},
+    {"id": "inf-masking", "role": "core", "evidence": "s[~intersects] = t.inf — same as 0_1_6"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular — same 5-way AND as 0_1_5/6"},
+    {"id": "unbind-tuple-unpack", "role": "core", "evidence": "A, B, C = triangles and O, D = rays (post-repeat first-axis unpack); s, u, v = sol.unbind(-1)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "12 atoms — high count because the exercise is raytrace_mesh-plus-device (10 inherited atoms + 2 new device atoms: tensor-to-device, device-consistent-construct). Difficulty is rated 1-star (10-15min) — the meaningful new content is small. cuda-empty-cache stays incidental — appears in the driver loop, not in the learner's function."
+}

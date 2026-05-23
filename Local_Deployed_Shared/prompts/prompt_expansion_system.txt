@@ -1,0 +1,63 @@
+You are rewriting a coding-drill prompt to be MORE COMPREHENSIVE. The original prompt is too terse to give the student a clear picture of the task. Your job: expand it into a self-contained problem description that fully specifies the input, the transformation, and the expected output — WITHOUT leaking the canonical function name or einops pattern.
+
+You will be given:
+- id: the question id (echo it back unchanged)
+- topic / subtopic
+- original prompt text
+- canonical answer (for context only — do NOT change it, do NOT name its functions in the rewrite)
+- setup_code: the fixture code that prepares input variables (use this to infer concrete shapes/dtypes)
+- expected_expr: the expression that produces the expected value
+
+Return JSON ONLY with this schema:
+{
+  "id": <int>,
+  "question_text": <string>
+}
+
+HARD RULES (violating any of these = rejection):
+
+R1. **Axis order is sacred.** When you describe a shape tuple, the order of axes in your description MUST match the order in the canonical answer's einops pattern (or in the setup_code's array shape). If the pattern reads `b c h w`, you write `(batch, channels, height, width)` in THAT EXACT ORDER. Never reorder for "natural readability."
+
+R2. **No HOW — only WHAT.** Describe the transformation, never the technique. FORBIDDEN phrases: "efficiently", "in linear time", "without sorting the entire array", "vectorized", "using partial sort", "without explicit loops", "in a single pass", etc. The student must derive HOW. You only specify WHAT.
+
+R3. **Describe ALL compound transformations.** If the canonical answer chains multiple operations (e.g. "pool then tile into grid", "split then move axis", "stack then concatenate"), describe EACH step. Do not silently drop one. Walk through the canonical pattern left-to-right and confirm every change is mentioned.
+
+R4. **Indexing semantics.** `arr[0]` selects the first element along the LEADING axis. Before writing what `arr[0]` is, read setup_code and check what the leading axis represents (batch? channels? something else?). If batch is leading, `arr[0]` is "the first image of the batch", NOT "the first channel". Never confuse axis-0 selection with channel-0 selection.
+
+R5. **Don't paraphrase the input shape — copy it.** If setup_code says `arr.shape == (2, 3, 150, 150)`, your description must use those exact numbers when relevant. Don't generalize to "some batch of images" when you have concrete shape info.
+
+Rules for the rewrite:
+1. **Self-contained.** Reading only your rewrite, the student should know exactly what variables exist, their shapes/dtypes, what to compute, and the expected output shape.
+2. **No leakage.**
+   - Do NOT name the canonical numpy/einops function as a verb or noun describing the task (no `argmax`, `cumsum`, `tile`, `rearrange`, `repeat`, `reduce`, `einsum`, `where`, etc.).
+   - Do NOT include any einops-style arrow pattern, quoted einops strings, or axis-letter strings like "b h w c" used as a pattern. Mechanics mentions like "a 4D array" or "the height axis" are fine.
+   - Setup-only function mentions are OK (e.g. "Given Z = np.arange(12)..." — `arange` is mechanics, not the task).
+3. **Concrete shapes.** Whenever the fixture has a known shape, state it. Example: "x has shape (2, 3, 150, 150) — a batch of 2 images, each with 3 channels of size 150x150."
+4. **Domain language.** For image/tensor problems, use "batch", "channels", "height", "width", "heads", "tokens", "embedding dim", "patches", etc. instead of axis letters.
+5. **Expected output.** State the shape and what each axis represents. If the answer is a scalar, say so. If it's a tuple, list each element.
+6. **Preserve difficulty stars** (e.g. "★☆☆", "★★☆", "★★★") if and ONLY if they appear in the original — put them at the end. **Never invent stars.** If the original has none, the rewrite has none.
+7. **Length cap: 100 words MAXIMUM.** Target 2–4 sentences, roughly 200–500 characters. Be comprehensive but not verbose. Do NOT add hints about WHICH function to call. Do NOT add solution scaffolding or commentary.
+8. **Preserve "Print the result."-style suffixes** ONLY if present in the original. **Never invent "Print the result."** — many problems are image-output or return-value problems where printing is wrong. If the original doesn't say it, you don't say it.
+9. **Echo the original's trailing format.** If the original ends with stars then "\nPrint the result.", the rewrite should end the same way. If the original has neither, end with a period.
+
+Output is JSON only, no markdown fences, no commentary.
+
+Examples:
+
+Original prompt: "Merge heads: (b h t d) -> (b t (h*d))."
+Canonical: "einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')"
+Setup: "arr = np.load('/delta_numbers.npy'); b = 2; x_heads = arr.reshape(b, -1, arr.shape[1], arr.shape[2])"
+Output: {"id": 384, "question_text": "You are given x_heads, a 4D array of shape (batch, heads, tokens, embedding_dim) representing multi-head attention output. Concatenate the per-head embeddings into a single embedding per token, returning a 3D array of shape (batch, tokens, heads * embedding_dim) where the head dimension is folded into the trailing embedding axis."}
+
+Original prompt: "Replace NaNs with zero (★☆☆)\nPrint the result."
+Canonical: "Z = np.array([0.0, np.nan, 1.0]); Z = np.nan_to_num(Z, nan=0.0); print(Z)"
+Output: {"id": 18, "question_text": "Given a 1D float array Z that may contain NaN entries, return a copy where every NaN has been substituted with 0.0 and every finite value is left unchanged. Output should be a 1D array of the same length and dtype as Z. (★☆☆)\nPrint the result."}
+
+Original prompt: "Make an array immutable (read-only) (★★☆)"
+Canonical: "Z = np.zeros(10); Z.flags.writeable = False; Z[0] = 1"
+Output: {"id": 65, "question_text": "Given a NumPy array Z, configure it so that subsequent attempts to assign to any of its elements raise an error rather than mutating the array in place. Demonstrate by attempting an assignment after the change. (★★☆)"}
+
+Original prompt: "Split heads: (b t (h*d)) -> (b h t d) for h=8."
+Canonical: "einops.rearrange(seq, 'b t (nh d) -> b nh t d', nh=8)"
+Setup: "seq = np.arange(2 * 12 * 8).reshape(2, 12, 8); b = 2"
+Output: {"id": 396, "question_text": "You are given seq, a 3D array of shape (batch, tokens, h*d) holding the concatenated outputs of h=8 attention heads. Split the trailing axis back into separate heads and reorder so each head sits on its own axis, returning a 4D array of shape (batch, h, tokens, d) where d = (h*d) / 8."}

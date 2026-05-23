@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_2_10",
+  "title": "verify your model's predictions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_10_exercise-verify-your-model-s-predictions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 10,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "validation-no-grad", "role": "core", "evidence": "@t.inference_mode() decorator on predict(); explicit no-gradient inference pass"},
+    {"id": "train-eval-mode-branch", "role": "core", "evidence": "model.eval() called inside predict — switches batchnorm to use running stats; the exercise comment explicitly says 'if your model is predicting roughly the same percentage for every category, the weights are randomly initialized'"},
+    {"id": "topk-predictions", "role": "core", "evidence": "logits.softmax(dim=-1).max(dim=-1) returns (max_probs, predicted_indices) — top-1 prediction (the seed atom is named topk but the exercise uses k=1 via .max which returns the same tuple shape)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Inference-only exercise — 3 atoms, all from the eval/inference cluster. topk-predictions matches loosely (it's .max(dim=-1) not .topk) but the conceptual atom — converting logits to a ranked prediction — is identical. First firing of train-eval-mode-branch confirms it's real (BatchNorm running stats need eval mode to behave correctly)."
+}

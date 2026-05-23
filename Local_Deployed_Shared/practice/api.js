@@ -32,6 +32,7 @@ const PracticeAPI = {
   },
 
   async getNextQuestion() {
+    await loadQuestionsSourceIndex();
     if (practiceMode === "backend") {
       // Admin on localhost — use backend API
       const res = await apiFetch("/api/practice/next-question");

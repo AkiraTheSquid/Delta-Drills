@@ -1,0 +1,24 @@
+{
+  "exercise_id": "0_4_2",
+  "title": "implement both multiply_back functions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_2_exercise-implement-both-multiply-back-functions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 2,
+  "difficulty": 3,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "multiply-back", "role": "core", "evidence": "return unbroadcast(y * grad_out, x) — exactly the canonical multiply-back identity dL/dx = unbroadcast(y * grad_out, x)"},
+    {"id": "arg-position-back-functions", "role": "core", "evidence": "Two separately-defined functions multiply_back0 (for arg 0 = x) and multiply_back1 (for arg 1 = y); markdown explicitly contrasts symmetric-vs-asymmetric inputs (division as the counterexample)"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def multiply_back0(grad_out: Arr, out: Arr, x: Arr, y: Arr | float) -> Arr — same (grad_out, out, x, ...) signature now extended to multi-arg case"},
+    {"id": "chain-rule-elementwise", "role": "core", "evidence": "Hint derives dL/dx = dL/d(xy) · y via elementwise chain rule, noting the sum over indices collapses because partial of x_b·y_b wrt x_b is zero except on the diagonal"},
+    {"id": "unbroadcast-pattern", "role": "core", "evidence": "Solution wraps with unbroadcast(y * grad_out, x) to handle broadcasting in the forward multiply"},
+    {"id": "coerce-float-arg-to-array", "role": "core", "evidence": "if not isinstance(y, Arr): y = np.array(y) — provided as scaffold at top of each multiply_back function; markdown: 'work when one of the inputs is a float'"},
+    {"id": "broadcasting-rules", "role": "incidental", "evidence": "Underlies the unbroadcast call — multiply_back must handle broadcasted multiplies; not explicitly written but assumed throughout"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "7 atoms — exactly matches seed prediction of 6 (plus broadcasting-rules incidental). The first binary backward exercise; introduces arg-position split (back0/back1), unbroadcast integration, and float-coercion scaffold."
+}

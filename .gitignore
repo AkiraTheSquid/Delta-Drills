@@ -42,3 +42,13 @@ This-Directory-Only/mathpix processor/completion_state.txt
 This-Directory-Only/mathpix processor/destination_for_md_file.txt
 This-Directory-Only/mathpix processor/pdf_path_convert.txt
 Local_Deployed_Shared/arena-book/
+
+Local_Deployed_Shared/content/ARENA_5.0-main/
+
+arena-book/_build/
+
+Local_Deployed_Shared/arena-book/_static/
+
+# Auto-added 2026-05-23 — exclude ephemeral / OS bookkeeping
+.directory
+This-Directory-Only/Temporary adjust to have output only/

@@ -1,0 +1,26 @@
+{
+  "exercise_id": "0_5_2",
+  "title": "build your VAE",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_2_exercise-build-your-vae.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 2,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "encoder-decoder-symmetric", "role": "core", "evidence": "VAE encoder Conv2d(1,16,4,s=2,p=1) -> Conv2d(16,32,4,s=2,p=1) mirrored by decoder ConvTranspose2d(32,16,4,s=2,p=1) -> ConvTranspose2d(16,1,4,s=2,p=1) — same symmetric structure as Autoencoder"},
+    {"id": "bottleneck-latent-projection", "role": "core", "evidence": "Encoder: Rearrange flatten -> Linear(7*7*32, hidden_dim_size) -> ReLU -> Linear(hidden_dim_size, latent_dim_size*2); decoder mirror: Linear(latent_dim_size, hidden_dim_size) -> ReLU -> Linear(hidden_dim_size, 7*7*32)"},
+    {"id": "rearrange-as-sequential-layer", "role": "core", "evidence": "Rearrange('b c h w -> b (c h w)') and Rearrange('b (c h w) -> b c h w', c=32, h=7, w=7) plus the VAE-specific Rearrange('b (n latent_dim) -> n b latent_dim', n=2) all inside Sequential"},
+    {"id": "no-relu-on-final-layer", "role": "core", "evidence": "Decoder ends with bare ConvTranspose2d(16, 1, 4, stride=2, padding=1) — no activation after"},
+    {"id": "mu-logsigma-encoder-head", "role": "core", "evidence": "Final encoder Linear has out_features = latent_dim_size * 2, followed by Rearrange('b (n latent_dim) -> n b latent_dim', n=2) to split into (mu, logsigma); sample_latent_vector unpacks: mu, logsigma = self.encoder(x)"},
+    {"id": "reparameterization-trick", "role": "core", "evidence": "sample_latent_vector: mu, logsigma = self.encoder(x); sigma = t.exp(logsigma); z = mu + sigma * t.randn_like(sigma) — exact reparam formula z = mu + sigma * eps"},
+    {"id": "randn-like-noise-source", "role": "core", "evidence": "z = mu + sigma * t.randn_like(sigma) — standard-normal noise matching sigma's shape/dtype/device"},
+    {"id": "nn-module-subclass", "role": "incidental", "evidence": "class VAE(nn.Module): super().__init__()"},
+    {"id": "module-composition", "role": "incidental", "evidence": "Encoder/decoder built from Sequential of Conv2d/Linear/ReLU/Rearrange/ConvTranspose2d submodules"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "9 atoms — matches seed prediction. The VAE architecture exercise: same §1 4-atom skeleton as 0_5_0, plus three §2 atoms (mu-logsigma head, reparam trick, randn-like noise). The defining VAE-vs-AE structural delta is just the *2 doubled Linear plus the Rearrange split and the reparam line in sample_latent_vector."
+}

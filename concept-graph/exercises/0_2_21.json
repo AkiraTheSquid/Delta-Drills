@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_2_21",
+  "title": "implement 1D convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_21_exercise-implement-1d-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 21,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "ow = 1 + (w - kw) // stride — full formula with stride; padding accounted for by pre-padding x rather than entering the formula"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "s_b, s_ic, s_w = x_padded.stride() — uses padded tensor's strides (which after pad are contiguous again because new_full allocates fresh)"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x_strided = x_padded.as_strided(size=(b, ic, ow, kw), stride=(s_b, s_ic, s_w * stride, s_w))"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x_strided, weights, 'b ic ow kw, oc ic kw -> b oc ow')"},
+    {"id": "conv-windowing-1d", "role": "core", "evidence": "extends 0_2_18 conv1d_minimal with stride and padding"},
+    {"id": "conv-channel-sum", "role": "core", "evidence": "ic contracted in einsum"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "x_padded = pad1d(x, left=padding, right=padding, pad_value=0) — first line of function; hint explicitly says 'replace x with the padded version of x so you don't have to worry about padding in the formula'"},
+    {"id": "conv-stride-downsample", "role": "core", "evidence": "stride is a kwarg; new stride in as_strided is (s_w * stride) for the window-position dim — exactly the 'skip by stride elements between windows' trick shown in the hint diagram"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8-atom exercise — densest conv exercise. First firing of conv-padding-zero and conv-stride-downsample as load-bearing (both were anticipated by the seed). The composition 'pre-pad-then-window-then-stride' is the canonical full-conv recipe — all four conv-mechanics atoms (output-shape, windowing, channel-sum, padding) plus stride co-fire."
+}

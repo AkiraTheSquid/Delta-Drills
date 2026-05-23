@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_2_6",
+  "title": "implement AveragePool",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_6_exercise-implement-averagepool.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 6,
+  "difficulty": 1,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class AveragePool(nn.Module): with only forward (no __init__/Parameter — pure reduction)"},
+    {"id": "avgpool-reduce", "role": "core", "evidence": "solution: return t.mean(x, dim=(2, 3)) — global average pool over spatial H,W dims, collapsing (B,C,H,W) -> (B,C)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "broadcasting-rules", "reason": "seed predicted broadcasting for exercise 6 but global avg pool is a pure reduction over named dims, no broadcasting involved"}
+  ],
+  "notes": "Trivial 2-atom Module — same shape as ReLU (no params, no extra_repr). Confirms avgpool-reduce as load-bearing and confirms it really is the *global* avg pool variant (collapses spatial dims entirely to feed into the final Linear of a ResNet), not a sliding-window avgpool."
+}

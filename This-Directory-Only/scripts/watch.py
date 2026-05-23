@@ -23,6 +23,10 @@ PIPELINE_WRAPPERS = (
     'validate_function_bank.py',
 )
 
+LONG_RUNNING_PY_SCRIPTS = (
+    'watch_delta_drills_dev.py',
+)
+
 SHELL_SCRIPTS = (
     'deploy_delta_drills.sh',
     'deploy_delta_drills_local.sh',
@@ -72,6 +76,12 @@ def check_public_api():
         assert os.path.isfile(target), (
             f'{name} delegates to Local_Deployed_Shared/pipeline/{name} which does not exist'
         )
+
+    for name in LONG_RUNNING_PY_SCRIPTS:
+        path = os.path.join(HERE, name)
+        assert os.path.isfile(path), f'python script missing: {name}'
+        text = _read(path)
+        assert 'watching Chrome debug port' in text, f'{name} missing isolation watcher docstring'
 
 
 def check_invariants():

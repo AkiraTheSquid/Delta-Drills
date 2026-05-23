@@ -1,0 +1,30 @@
+{
+  "exercise_id": "0_4_9",
+  "title": "implement backprop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_9_exercise-implement-backprop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 9,
+  "difficulty": 5,
+  "importance": 5,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "backprop-pop-outgrad-loop", "role": "core", "evidence": "for node in sorted_computational_graph(end_node): outgrad = grads.pop(node); if node.is_leaf: ...; else: for argnum, parent in node.recipe.parents.items(): ... — the canonical reverse-topo iterate + pop + dispatch loop"},
+    {"id": "dispatch-back-fn-from-recipe", "role": "core", "evidence": "back_fn = BACK_FUNCS.get_back_func(node.recipe.func, argnum) — lookup by (forward_fn, argnum) inside the loop body"},
+    {"id": "back-fn-call-with-recipe-args", "role": "core", "evidence": "in_grad = back_fn(outgrad, node.array, *node.recipe.args, **node.recipe.kwargs) — exact call shape (outgrad, cached-out=node.array, *args, **kwargs)"},
+    {"id": "grads-dict-accumulate-parents", "role": "core", "evidence": "grads[parent] = in_grad if (parent not in grads) else grads[parent] + in_grad — accumulate-into-dict-keyed-by-tensor pattern; flagged by test_backprop_requires_grad_sum"},
+    {"id": "end-grad-default-ones-like", "role": "core", "evidence": "end_grad_arr = np.ones_like(end_node.array) if end_grad is None else end_grad.array — default-to-ones when not supplied"},
+    {"id": "sorted-computational-graph", "role": "core", "evidence": "for node in sorted_computational_graph(end_node) — driver loop uses the reverse-topo iterator from 0_4_8"},
+    {"id": "leaf-tensor-condition", "role": "core", "evidence": "if node.is_leaf: if node.requires_grad: node.grad = ... — leaf-only branch sets .grad rather than just propagating"},
+    {"id": "grad-accumulate-on-leaf", "role": "core", "evidence": "node.grad = Tensor(outgrad) if node.grad is None else node.grad + outgrad — create-on-first-hit-else-add for leaf accumulation"},
+    {"id": "tensor-wraps-ndarray", "role": "core", "evidence": "node.grad = Tensor(outgrad) — wraps the numpy outgrad into a Tensor before assigning to .grad"},
+    {"id": "recipe-dataclass", "role": "core", "evidence": "node.recipe.func, node.recipe.parents, node.recipe.args, node.recipe.kwargs — every field of Recipe read inside the loop"},
+    {"id": "parents-dict-by-argidx", "role": "core", "evidence": "for argnum, parent in node.recipe.parents.items() — dict iteration explicitly uses (argnum, parent) tuples"},
+    {"id": "backward-func-lookup", "role": "core", "evidence": "BACK_FUNCS.get_back_func(node.recipe.func, argnum) — the lookup table from 0_4_4 used to resolve back_fn"},
+    {"id": "get-children-callable-param", "role": "incidental", "evidence": "sorted_computational_graph internally calls topological_sort(tensor, get_parents) — the get_children callable is wired in via get_parents in the helper"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "13 atoms — slightly under seed prediction of 14. The single most conceptually important exercise in part 4 (per markdown header). Composes the entire §6 backprop loop with the §4 Tensor/Recipe data model and the §5 BackwardFuncLookup dispatcher — the synthesis exercise where all prior atoms earn their keep."
+}

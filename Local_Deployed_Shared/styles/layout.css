@@ -6,6 +6,9 @@
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .logo {
@@ -40,6 +43,10 @@
   align-items: center;
   border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
+}
+
+.tab[hidden] {
+  display: none !important;
 }
 
 .tab:hover {

@@ -31,7 +31,9 @@ CSV layouts:
 from __future__ import annotations
 
 import csv
+import json
 import logging
+import os
 import re
 from threading import Lock
 from dataclasses import dataclass, field
@@ -40,7 +42,8 @@ from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-_CSV_DIR = Path(__file__).resolve().parents[3] / "This-Directory-Only" / "csv files of problems"
+_THIS_DIR_ONLY = Path(__file__).resolve().parents[3] / "This-Directory-Only"
+_CSV_DIR = _THIS_DIR_ONLY / "csv files of problems"
 NUMPY_CSV_PATH = _CSV_DIR / "Export of numpy problems with outputs.csv"
 EINSUM_CSV_PATH = _CSV_DIR / "einsum_problems.csv"
 # Prefer the pre-computed-outputs version; fall back to the base CSV
@@ -49,6 +52,76 @@ EINOPS_CSV_PATH = (
     if (_CSV_DIR / "einops_problems_with_outputs.csv").exists()
     else _CSV_DIR / "einops_problems.csv"
 )
+
+
+def _chatgpt_runtime_dir() -> Path:
+    configured = os.environ.get("DELTA_CHATGPT_RUNTIME_DIR", "").strip()
+    if configured:
+        return Path(configured).expanduser().resolve()
+    return (_THIS_DIR_ONLY / "chatgpt").resolve()
+
+
+def _load_jsonl_overrides(filename: str) -> Dict[int, dict]:
+    path = _chatgpt_runtime_dir() / filename
+    if not path.exists():
+        return {}
+    overrides: Dict[int, dict] = {}
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            record = json.loads(line)
+            overrides[int(record["id"])] = record
+    except (OSError, json.JSONDecodeError, KeyError, ValueError) as exc:
+        logger.warning("Failed to load %s: %s", filename, exc)
+        return {}
+    return overrides
+
+
+def _load_function_overrides() -> Dict[int, dict]:
+    """Per-id override records produced by the AI quality-fix pipeline.
+
+    Files are merged in order, with later files winning for any id collision.
+    ``function_mode_overrides.jsonl`` is the round-1 quality-fix output,
+    ``function_mode_overrides_round2.jsonl`` and ``_round3.jsonl`` are
+    follow-up manual repairs of validator-flagged failures.
+    ``einops_prompt_rewrite_overrides.jsonl`` is layered last so its
+    question_text rewrites win, while preserving starter/test fields from
+    the earlier rounds.
+    """
+    base = _load_jsonl_overrides("function_mode_overrides.jsonl")
+    for layer_name in (
+        "function_mode_overrides_round2.jsonl",
+        "function_mode_overrides_round3.jsonl",
+        "einops_prompt_rewrite_overrides.jsonl",
+        "numpy_einsum_prompt_rewrite_overrides.jsonl",
+        "prompt_expansion_overrides.jsonl",
+        "difficulty_overrides.jsonl",
+    ):
+        layer = _load_jsonl_overrides(layer_name)
+        for qid, record in layer.items():
+            merged = dict(base.get(qid, {}))
+            merged.update(record)
+            base[qid] = merged
+    return base
+
+
+def _load_id_set(filename: str) -> set[int]:
+    path = _chatgpt_runtime_dir() / filename
+    if not path.exists():
+        return set()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("Failed to load %s: %s", filename, exc)
+        return set()
+    if not isinstance(data, list):
+        return set()
+    try:
+        return {int(item) for item in data}
+    except (TypeError, ValueError):
+        return set()
 
 
 @dataclass
@@ -301,6 +374,84 @@ def _derive_test_case(answer_code: str, question_text: str, primary_library: str
     return "\n".join(steps[:-1]), last
 
 
+def compose_full_solution(starter_code: str | None, answer_code: str) -> str:
+    """Render a paste-ready full solution: starter imports + fixtures, with
+    the ``def solve(): …`` stub replaced by the function-form answer.
+
+    Users want to select-all and paste a working file, not stitch a snippet
+    into the existing editor body. Returning the complete script lets them
+    do exactly that and submit it as-is.
+    """
+    answer_func = wrap_answer_as_function(answer_code)
+    if not answer_func:
+        return starter_code or ""
+    if not starter_code:
+        return f"{answer_func}\n\nprint(solve())\n"
+    # Match the `def solve(...):` line plus its indented body. The body ends
+    # at the next blank-or-non-indented top-level statement (typically
+    # `print(solve())`).
+    pattern = re.compile(
+        r"^def\s+solve\s*\([^)]*\)\s*:\s*\n(?:[ \t]+[^\n]*\n|[ \t]*\n)*",
+        re.MULTILINE,
+    )
+    match = pattern.search(starter_code)
+    if not match:
+        return f"{starter_code.rstrip()}\n\n{answer_func}\n\nprint(solve())\n"
+    return starter_code[: match.start()] + answer_func + "\n\n" + starter_code[match.end():]
+
+
+def wrap_answer_as_function(answer_code: str) -> str:
+    """Render answer_code as a paste-ready ``def solve(): …`` block.
+
+    The CSV / override answer_code is often a bare top-level expression or
+    assignment (e.g. ``einops.rearrange(img, 'h w c -> c h w')`` or
+    ``arr4 = einops.repeat(...)``). The starter is a function stub, so a raw
+    paste mismatches indentation and produces no return value. Wrapping at
+    display time lets the user select-all + paste the solution into the
+    editor and submit it as-is — without changing the stored ``answer_code``
+    used by the AI judge or the grader.
+    """
+    text = (answer_code or "").strip()
+    if not text:
+        return text
+    if text.lstrip().startswith("def solve("):
+        return text
+    # Drop any display_array_as_img(...) side-effect calls.
+    cleaned = re.sub(r";?\s*display_array_as_img\([^)]*\)", "", text).strip()
+    if not cleaned:
+        return text
+    # Split on `;` and newlines while preserving statement order.
+    stmts = [s.strip() for s in re.split(r";|\n", cleaned) if s.strip()]
+    if not stmts:
+        return text
+    *body, last = stmts
+    # `print(EXPR)` as the trailing statement: the starter wraps `print(solve())`
+    # already, so return EXPR so stdout matches the canonical.
+    print_match = re.match(r"^\s*print\s*\((.*)\)\s*$", last, flags=re.DOTALL)
+    if print_match:
+        last = print_match.group(1).strip()
+    last_assign = re.match(r"^\s*([A-Za-z_]\w*)\s*=\s*(.+)$", last)
+    if last_assign and not last.startswith(("if ", "for ", "while ")):
+        return_expr = last_assign.group(2).strip()
+        body_block = "".join(f"    {s}\n" for s in body)
+        return f"def solve():\n{body_block}    return {return_expr}"
+    body_block = "".join(f"    {s}\n" for s in body)
+    return f"def solve():\n{body_block}    return {last}"
+
+
+def _derive_starter_docstring(question_text: str, task_type: str | None) -> str:
+    if not question_text:
+        base = "Implement the requested computation and return the result."
+    else:
+        cleaned = re.sub(r"\s*\(★[★☆]+\)", "", question_text).strip()
+        cleaned = re.sub(r"\n?\s*Print the result\.?\s*$", "", cleaned, flags=re.IGNORECASE).strip()
+        first_line = cleaned.splitlines()[0].rstrip(".")
+        base = f"{first_line}."
+    if task_type == "image_transform":
+        return f"{base}\n\n    Return the resulting numpy array."
+    return f"{base}\n\n    Return the value the prompt asks for."
+
+
 def _derive_function_payload(
     question_text: str,
     answer_code: str,
@@ -317,25 +468,20 @@ def _derive_function_payload(
         answer_code,
         "",
     )
+    docstring = _derive_starter_docstring(question_text, task_type)
 
     if task_type == "image_transform":
         fixture_setup = _extract_prompt_setup_code(question_text) or _infer_default_fixture_setup(
             question_text, answer_code, primary_library
         )
         visual_setup, visual_expr = _derive_test_case(answer_code, question_text, primary_library)
-        variable_name = _extract_display_variable(answer_code)
-        placeholder = (
-            f"    # Write your solution here - define {variable_name}\n"
-            if variable_name
-            else "    # Write your solution here\n"
-        )
         top_level_setup = f"{fixture_setup}\n\n" if fixture_setup else ""
         starter_code = (
             f"{import_line}\n\n"
             f"{top_level_setup}"
             "def solve():\n"
-            f"{placeholder}"
-            "    return None\n\n"
+            f'    """{docstring}"""\n'
+            "    raise NotImplementedError()\n\n\n"
             "print(solve())\n"
         )
         test_case = {
@@ -349,18 +495,22 @@ def _derive_function_payload(
         return "solve", starter_code, test_cases, "function"
 
     setup_code, expected_expr = _derive_test_case(answer_code, question_text, primary_library)
-    if not setup_code:
-        setup_code = _extract_prompt_setup_code(question_text) or _infer_default_fixture_setup(question_text, answer_code, primary_library)
-    top_level_setup = f"{setup_code}\n\n" if setup_code else ""
+    # Legitimate fixtures only — never leak the answer's setup into the starter.
+    fixture_setup = (
+        _extract_prompt_setup_code(question_text)
+        or _infer_default_fixture_setup(question_text, answer_code, primary_library)
+    )
+    top_level_setup = f"{fixture_setup}\n\n" if fixture_setup else ""
     starter_code = (
         f"{import_line}\n\n"
         f"{top_level_setup}"
         "def solve():\n"
-        + "\n    # Write your solution here\n"
-        + "    return None\n\n"
-        + "print(solve())\n"
+        f'    """{docstring}"""\n'
+        "    raise NotImplementedError()\n\n\n"
+        "print(solve())\n"
     )
-    test_cases = [{"setup_code": setup_code, "call": "solve()", "expected_expr": expected_expr or "None"}]
+    # Grader still uses the derived setup so expected_expr resolves to the canonical value.
+    test_cases = [{"setup_code": setup_code or fixture_setup, "call": "solve()", "expected_expr": expected_expr or "None"}]
     return "solve", starter_code, test_cases, "function"
 
 
@@ -369,15 +519,28 @@ def _load_csv_into(
     questions: List[Question],
     start_id: int,
     skip_rows: int = 0,
+    overrides: Optional[Dict[int, dict]] = None,
+    deleted_ids: Optional[set[int]] = None,
+    broken_ids: Optional[set[int]] = None,
 ) -> int:
     """
     Load questions from a single CSV file into the provided list.
     Subtopics are stored as "{Topic}: {Subtopic}" for uniqueness.
     Returns the next available ID after loading.
+
+    `overrides` / `deleted_ids` / `broken_ids` come from the AI quality-fix
+    pipeline (see _load_function_overrides / _load_id_set). Override fields
+    (function_name, starter_code, test_cases, submission_mode) replace the
+    CSV-derived values when present. IDs in the deleted/broken sets are
+    skipped entirely.
     """
     if not path.exists():
         logger.warning("Questions CSV not found at %s — skipping", path)
         return start_id
+
+    overrides = overrides or {}
+    deleted_ids = deleted_ids or set()
+    broken_ids = broken_ids or set()
 
     idx = start_id
     with path.open("r", encoding="utf-8") as f:
@@ -398,7 +561,7 @@ def _load_csv_into(
             if not question_text or not subtopic_raw:
                 idx += 1
                 continue
-            if qid in _CURATED_EXCLUDED_IDS:
+            if qid in _CURATED_EXCLUDED_IDS or qid in deleted_ids or qid in broken_ids:
                 idx += 1
                 continue
 
@@ -414,6 +577,28 @@ def _load_csv_into(
                 question_text, answer_code, primary_library, task_type
             )
 
+            override = overrides.get(qid)
+            # Default visual-output flags from inferred task_type; an override
+            # can flip them per-id without changing the rest of the pipeline.
+            expected_artifact_type = "image" if task_type == "image_transform" else "stdout"
+            supports_visual_output = task_type == "image_transform"
+            if override:
+                function_name = override.get("function_name", function_name)
+                starter_code = override.get("starter_code", starter_code)
+                test_cases = override.get("test_cases", test_cases)
+                submission_mode = override.get("submission_mode", submission_mode)
+                question_text = override.get("question_text", question_text)
+                if "expected_artifact_type" in override:
+                    expected_artifact_type = override["expected_artifact_type"]
+                if "supports_visual_output" in override:
+                    supports_visual_output = bool(override["supports_visual_output"])
+                if "difficulty_score" in override:
+                    try:
+                        difficulty_score = int(override["difficulty_score"])
+                        difficulty_label = _classify_difficulty(question_text, difficulty_score)
+                    except (TypeError, ValueError):
+                        pass
+
             questions.append(
                 Question(
                     id=qid,
@@ -426,8 +611,8 @@ def _load_csv_into(
                     expected_output=expected_output,
                     primary_library=primary_library,
                     task_type=task_type,
-                    expected_artifact_type="image" if task_type == "image_transform" else "stdout",
-                    supports_visual_output=task_type == "image_transform",
+                    expected_artifact_type=expected_artifact_type,
+                    supports_visual_output=supports_visual_output,
                     function_name=function_name,
                     starter_code=starter_code,
                     test_cases=test_cases,
@@ -456,13 +641,34 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
 
     questions: List[Question] = []
 
+    overrides = _load_function_overrides()
+    deleted_ids = _load_id_set("function_mode_deleted_ids.json")
+    broken_ids = _load_id_set("function_mode_broken_ids.json")
+    if overrides or deleted_ids or broken_ids:
+        logger.info(
+            "AI overrides applied: %d records, %d deleted, %d broken",
+            len(overrides), len(deleted_ids), len(broken_ids),
+        )
+
     if csv_path is not None:
         # Legacy / test path — single CSV, numpy layout
-        _load_csv_into(csv_path, questions, start_id=1, skip_rows=2)
+        _load_csv_into(
+            csv_path, questions, start_id=1, skip_rows=2,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
     else:
-        next_id = _load_csv_into(NUMPY_CSV_PATH, questions, start_id=1, skip_rows=2)
-        next_id = _load_csv_into(EINSUM_CSV_PATH, questions, start_id=next_id, skip_rows=0)
-        _load_csv_into(EINOPS_CSV_PATH, questions, start_id=next_id, skip_rows=0)
+        next_id = _load_csv_into(
+            NUMPY_CSV_PATH, questions, start_id=1, skip_rows=2,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
+        next_id = _load_csv_into(
+            EINSUM_CSV_PATH, questions, start_id=next_id, skip_rows=0,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
+        _load_csv_into(
+            EINOPS_CSV_PATH, questions, start_id=next_id, skip_rows=0,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
 
     _questions = questions
     _questions_by_id = {q.id: q for q in questions}

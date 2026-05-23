@@ -1,0 +1,37 @@
+{
+  "exercise_id": "0_5_7",
+  "title": "implement GAN training loop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_7_exercise-implement-gan-training-loop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 7,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "bce-log-loss-real-fake", "role": "core", "evidence": "lossD = -(t.log(D_x).mean() + t.log(1 - D_G_z).mean()) — explicit manual log form (not BCELoss), the discriminator's minimax term"},
+    {"id": "generator-loss-fool-discriminator", "role": "core", "evidence": "lossG = -(t.log(D_G_z).mean()) — non-saturating generator loss (uses -log(D(G(z))) not -log(1-D(G(z))))"},
+    {"id": "detach-stop-gradient-trick", "role": "core", "evidence": "lossD = self.training_step_discriminator(img_real, img_fake.detach()) — markdown: 'pass in the real image and the detached fake image i.e. img.detach() ... because you're training the discriminator to tell real from fake, and you don't want gradients propagating back to the generator'"},
+    {"id": "two-optimizers-alternating-step", "role": "core", "evidence": "self.optG = t.optim.Adam(self.model.netG.parameters(), ...); self.optD = t.optim.Adam(self.model.netD.parameters(), ...); training loop calls training_step_discriminator then training_step_generator each iteration — each has its own zero_grad/backward/step cycle"},
+    {"id": "noise-batch-from-latent", "role": "core", "evidence": "noise = t.randn(self.args.batch_size, self.args.latent_dim_size).to(device); img_fake = self.model.netG(noise) — fresh random latent batch per training iteration"},
+    {"id": "clip-grad-norm-pre-step", "role": "core", "evidence": "if self.args.clip_grad_norm is not None: nn.utils.clip_grad_norm_(self.model.netD.parameters(), self.args.clip_grad_norm); same for netG; called between loss.backward() and optD.step()/optG.step()"},
+    {"id": "randn-like-noise-source", "role": "core", "evidence": "noise = t.randn(self.args.batch_size, self.args.latent_dim_size).to(device) — same conceptual atom as VAE eps: generate standard-normal noise of specified shape; markdown: 'fake image should be created from random noise t.randn(batch_size, latent_dim_size)'"},
+    {"id": "dcgan-wrapper-netG-netD", "role": "core", "evidence": "self.model.netD(img_real), self.model.netD(img_fake), self.model.netG(noise) — explicit netG/netD wrapper-attribute access; no model.forward() ever called"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "self.optD.zero_grad(); ... lossD.backward(); self.optD.step() — and same triple for G; full forward/backward/step cycle"},
+    {"id": "dataclass-training-args", "role": "core", "evidence": "@dataclass class DCGANArgs: latent_dim_size=100, hidden_channels=field(default_factory=lambda: [128,256,512]), batch_size=64, epochs=3, lr=0.0002, betas=(0.5,0.999), clip_grad_norm=1.0, use_wandb=False"},
+    {"id": "log-samples-eval-callback", "role": "core", "evidence": "@t.inference_mode() log_samples method on Trainer; called every args.log_every_n_steps; generates samples from random noise and logs as wandb.Image"},
+    {"id": "wandb-init-run", "role": "core", "evidence": "if self.args.use_wandb: wandb.init(project=self.args.wandb_project, name=self.args.wandb_name)"},
+    {"id": "wandb-log-step", "role": "core", "evidence": "wandb.log(dict(lossD=lossD), step=self.step) inside training_step_discriminator; wandb.log(dict(lossG=lossG), step=self.step) inside training_step_generator"},
+    {"id": "wandb-finish", "role": "core", "evidence": "if self.args.use_wandb: wandb.finish() at end of train()"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on log_samples"},
+    {"id": "tqdm-postfix-metrics", "role": "core", "evidence": "progress_bar = tqdm(self.trainloader, total=len(self.trainloader), ascii=True); progress_bar.set_description(f'{epoch=}, {lossD=:.4f}, {lossG=:.4f}, batches={self.step}')"},
+    {"id": "tensor-to-device", "role": "incidental", "evidence": "noise = t.randn(...).to(device); img_real = img_real.to(device)"},
+    {"id": "dataloader-batching", "role": "incidental", "evidence": "self.trainloader = DataLoader(self.trainset, batch_size=args.batch_size, shuffle=True, num_workers=8)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "model-train-eval-toggle-around-sample", "reason": "Seed predicted netG.eval()/.train() around log_samples for GANs, but the actual solution log_samples doesn't toggle — model is constructed with .train() in __init__ and the @t.inference_mode() decorator handles the no-grad/dropout semantics for sampling without an explicit eval() call."}
+  ],
+  "notes": "18 atoms — above seed prediction of 13. The densest exercise in part5 and the §4 GAN-training capstone: all 6 §4 atoms fire (BCE-log, generator-non-saturating, detach, two-opt, noise-batch, clip-grad) plus randn-like reuse + dcgan-wrapper + full training/wandb/tqdm cluster. Seed undercounted by 5 — missed the wandb cluster + tqdm + inference-mode + incidentals. One FP: model-train-eval-toggle-around-sample (not done explicitly here)."
+}

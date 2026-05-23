@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_2_15",
+  "title": "matrix-vector multiplication",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_15_exercise-matrix-vector-multiplication.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 15,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "matvec", "role": "core", "evidence": "as_strided_mv(mat, vec) — implements torch.matmul for the matrix-vector case from scratch"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "strideV = vec.stride() — explicit warning in 'Help - passing first test failing second' that the input may itself be non-contiguous, so must use original stride not assume 1"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "vec_expanded = vec.as_strided(mat.shape, (0, strideV[0])) — strided view to broadcast the vector"},
+    {"id": "stride-zero-broadcast", "role": "core", "evidence": "stride (0, strideV[0]) makes vec_expanded[i, j] = vec[j] — stride 0 in dim 0 = no-copy broadcast over rows; exercise text says 'use the second-last example... the one that involved a stride of zero'"},
+    {"id": "broadcasting-rules", "role": "incidental", "evidence": "(mat * vec_expanded).sum(dim=1) — but the broadcast is implemented manually via as_strided, not via PyTorch's automatic broadcasting, so this atom is conceptually incidental"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5-atom strided exercise that is the canonical no-copy broadcast lesson. Note: the matmul-via-strides approach REPLACES PyTorch's broadcasting with explicit stride-0 — so listing broadcasting-rules feels false-positive-ish, but the conceptual atom (size-1/stride-0 = stretch) is the same skill. Marked incidental to capture this tension."
+}

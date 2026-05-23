@@ -82,11 +82,92 @@ def check_invariants():
     # silently breaks navigation (clicking the tab hides every page).
     index_html = _read(os.path.join(HERE, "index.html"))
     app_js = _read(os.path.join(HERE, "app.js"))
-    expected_tabs = ("split-tool", "account", "learn", "arena", "course", "courses", "papers", "practice", "statistics")
+    # learn / arena / course / papers tabs were removed from the SPA before
+    # this session; keep this list aligned with the actual tab buttons in
+    # index.html (and authRequiredTabs in app.js).
+    expected_tabs = ("split-tool", "account", "courses", "practice", "targeted-practice", "statistics")
+    # page-targeted-practice and page-statistics live in -dom.js modules
+    # (extracted from index.html to keep it under the per-file LOC ceiling);
+    # check those source files for the mount instead of index.html.
+    runtime_mounts = {
+        "targeted-practice": os.path.join(HERE, "targeted-practice", "targeted-practice-dom.js"),
+        "statistics": os.path.join(HERE, "stats", "stats-dom.js"),
+    }
     for tab in expected_tabs:
         assert f'data-tab="{tab}"' in index_html, f'index.html missing tab button data-tab="{tab}"'
-        assert f'id="page-{tab}"' in index_html, f'index.html missing <main id="page-{tab}">'
+        mount_src = runtime_mounts.get(tab, index_html)
+        if isinstance(mount_src, str) and mount_src != index_html:
+            mount_src = _read(mount_src)
+        assert f'id="page-{tab}"' in mount_src, (
+            f'<main id="page-{tab}"> missing — checked '
+            f'{"runtime DOM module" if tab in runtime_mounts else "index.html"}'
+        )
         assert f'"{tab}"' in app_js, f'app.js authRequiredTabs missing "{tab}"'
+
+    # The Targeted Practice tab must sit between Practice and Statistics in
+    # the nav. Order matters because the keyboard tab-cycle and the user's
+    # mental model both follow left-to-right ordering.
+    practice_pos = index_html.find('data-tab="practice"')
+    targeted_pos = index_html.find('data-tab="targeted-practice"')
+    stats_pos = index_html.find('data-tab="statistics"')
+    assert -1 not in (practice_pos, targeted_pos, stats_pos), "missing one of practice/targeted-practice/statistics tabs"
+    assert practice_pos < targeted_pos < stats_pos, (
+        "tab order changed — Targeted Practice must sit between Practice and Statistics"
+    )
+
+    # The global Targeted Practice mode banner (#tp-banner) must live OUTSIDE
+    # any <main> (it's a global indicator that persists across tab switches).
+    # Cheap proxy: the banner element appears before the first real <main ...>
+    # tag (skip HTML comments by matching `<main ` with trailing space).
+    import re as _re
+    banner_pos = index_html.find('id="tp-banner"')
+    m = _re.search(r'<main\s', index_html)
+    main_pos = m.start() if m else -1
+    assert banner_pos != -1, "index.html missing #tp-banner global indicator"
+    assert main_pos != -1 and banner_pos < main_pos, (
+        "#tp-banner moved inside/after <main> — banner must stay above all pages"
+    )
+
+    # The banner's child elements + script/stylesheet links must stay in
+    # index.html. Page-mount ids (#page-targeted-practice, #page-statistics,
+    # #arena-unlock-page, #arena-unlock-continue-btn) live in the -dom.js
+    # extraction modules — those are checked above + in the per-folder
+    # watch.py scripts.
+    for needle in (
+        'id="tp-banner-meta"',
+        'id="tp-banner-end"',
+        'href="targeted-practice/targeted-practice.css',
+        'src="targeted-practice/targeted-practice-dom.js',
+        'src="targeted-practice/targeted-practice.js',
+        'src="stats/stats-dom.js',
+        'src="practice/arena-unlock-dom.js',
+    ):
+        assert needle in index_html, f"index.html missing required marker: {needle}"
+
+    # Script load order — targeted-practice.js needs these to be already
+    # evaluated. Most have const/let top-level bindings that ARE visible
+    # cross-script but only after their <script> tag has executed.
+    def _script_offset(needle):
+        m = _re.search(rf'<script\s+src="{_re.escape(needle)}', index_html)
+        return m.start() if m else -1
+
+    tp_pos = _script_offset('targeted-practice/targeted-practice.js')
+    assert tp_pos != -1, 'index.html missing <script src="targeted-practice/targeted-practice.js">'
+    for dep in (
+        'app.js',
+        'arena/manifest.js',
+        'arena/exercises.js',
+        'stats/predicted-links.js',
+        'stats/predicted-prereqs-temp.js',
+        'practice/arena-unlock.js',
+    ):
+        dep_pos = _script_offset(dep)
+        assert dep_pos != -1, f"index.html missing dep script: {dep}"
+        assert dep_pos < tp_pos, (
+            f"load-order broken: {dep} must come before targeted-practice.js "
+            "(targeted-practice's catalog + ArenaUnlock.showFor handoff reads "
+            "globals defined by these files)"
+        )
 
     # Courses page contract: the search input, results container, list-view
     # and detail-view shells that courses.js queries by id must remain in

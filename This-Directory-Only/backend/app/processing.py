@@ -13,10 +13,13 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 THIS_DIR_ONLY = REPO_ROOT / "This-Directory-Only"
 SHARED_DIR = REPO_ROOT / "Local_Deployed_Shared"
 PROJECT_ROOT = THIS_DIR_ONLY
+SHARED_TOOLS_DIR = SHARED_DIR / "tools"
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 if str(SHARED_DIR) not in sys.path:
     sys.path.append(str(SHARED_DIR))
+if str(SHARED_TOOLS_DIR) not in sys.path:
+    sys.path.append(str(SHARED_TOOLS_DIR))
 
 try:
     from split_LADR4e_chapters import read_exercise_sections, split_pdf_by_exercises

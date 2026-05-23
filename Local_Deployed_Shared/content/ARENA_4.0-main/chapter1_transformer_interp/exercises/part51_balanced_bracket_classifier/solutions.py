@@ -41,7 +41,7 @@ MAIN = __name__ == "__main__"
 
 if MAIN:
     VOCAB = "()"
-
+    
     cfg = HookedTransformerConfig(
         n_ctx=42,
         d_model=56,
@@ -57,9 +57,9 @@ if MAIN:
         device=device,
         use_hook_tokens=True,
     )
-
+    
     model = HookedTransformer(cfg).eval()
-
+    
     state_dict = t.load(section_dir / "brackets_model_state_dict.pt", map_location=device)
     model.load_state_dict(state_dict)
 
@@ -67,21 +67,20 @@ if MAIN:
 
 if MAIN:
     tokenizer = SimpleTokenizer("()")
-
+    
     # Examples of tokenization
     # (the second one applies padding, since the sequences are of different lengths)
     print(tokenizer.tokenize("()"))
     print(tokenizer.tokenize(["()", "()()"]))
-
+    
     # Dictionaries mapping indices to tokens and vice versa
     print(tokenizer.i_to_t)
     print(tokenizer.t_to_i)
-
+    
     # Examples of decoding (all padding tokens are removed)
     print(tokenizer.decode(t.tensor([[0, 3, 4, 2, 1, 1]])))
 
 # %%
-
 
 def add_perma_hooks_to_mask_pad_tokens(
     model: HookedTransformer, pad_token: int
@@ -121,7 +120,7 @@ if MAIN:
         data_tuples = json.load(f)
         print(f"loaded {len(data_tuples)} examples, using {N_SAMPLES}")
         data_tuples = data_tuples[:N_SAMPLES]
-
+    
     data = BracketsDataset(data_tuples).to(device)
     data_mini = BracketsDataset(data_tuples[:100]).to(device)
 
@@ -139,24 +138,16 @@ if MAIN:
 
 if MAIN:
     # Define and tokenize examples
-    examples = [
-        "()()",
-        "(())",
-        "))((",
-        "()",
-        "((()()()()))",
-        "(()()()(()(())()",
-        "()(()(((())())()))",
-    ]
+    examples = ["()()", "(())", "))((", "()", "((()()()()))", "(()()()(()(())()", "()(()(((())())()))"]
     labels = [True, True, False, True, True, False, True]
     toks = tokenizer.tokenize(examples)
-
+    
     # Get output logits for the 0th sequence position (i.e. the [start] token)
     logits = model(toks)[:, 0]
-
+    
     # Get the probabilities via softmax, then get the balanced probability (which is the second element)
     prob_balanced = logits.softmax(-1)[:, 1]
-
+    
     # Display output
     print(
         "Model confidence:\n"
@@ -169,7 +160,6 @@ if MAIN:
     )
 
 # %%
-
 
 def run_model_on_data(
     model: HookedTransformer, data: BracketsDataset, batch_size: int = 200
@@ -191,7 +181,6 @@ if MAIN:
     print(f"\nModel got {n_correct} out of {len(data)} training examples correct!")
 
 # %%
-
 
 def is_balanced_forloop(parens: str) -> bool:
     """
@@ -216,7 +205,6 @@ if MAIN:
     print("All tests for `is_balanced_forloop` passed!")
 
 # %%
-
 
 def is_balanced_vectorized(tokens: Float[Tensor, "seq_len"]) -> bool:
     """
@@ -245,7 +233,6 @@ if MAIN:
 
 # %%
 
-
 def get_post_final_ln_dir(model: HookedTransformer) -> Float[Tensor, "d_model"]:
     """
     Returns the direction in which final_ln_output[0, :] should point to maximize P(unbalanced)
@@ -257,7 +244,6 @@ if MAIN:
     tests.test_get_post_final_ln_dir(get_post_final_ln_dir, model)
 
 # %%
-
 
 def get_activations(
     model: HookedTransformer, toks: Int[Tensor, "batch seq"], names: list[str]
@@ -340,7 +326,6 @@ if MAIN:
 
 # %%
 
-
 def get_pre_final_ln_dir(
     model: HookedTransformer, data: BracketsDataset
 ) -> Float[Tensor, "d_model"]:
@@ -360,7 +345,6 @@ if MAIN:
     tests.test_get_pre_final_ln_dir(get_pre_final_ln_dir, model, data_mini)
 
 # %%
-
 
 def get_out_by_components(
     model: HookedTransformer, data: BracketsDataset
@@ -404,10 +388,10 @@ if MAIN:
     biases = model.b_O.sum(0)
     out_by_components = get_out_by_components(model, data)
     summed_terms = out_by_components.sum(dim=0) + biases
-
+    
     final_ln_input_name, final_ln_output_name = LN_hook_names(model.ln_final)
     final_ln_input = get_activation(model, data.toks, final_ln_input_name)
-
+    
     t.testing.assert_close(summed_terms, final_ln_input)
     print("Tests passed!")
 
@@ -428,13 +412,12 @@ if MAIN:
     out_by_component_in_unbalanced_dir -= (
         out_by_component_in_unbalanced_dir[:, data.isbal].mean(dim=1).unsqueeze(1)
     )
-
+    
     tests.test_out_by_component_in_unbalanced_dir(out_by_component_in_unbalanced_dir, model, data)
-
+    
     plotly_utils.hists_per_comp(out_by_component_in_unbalanced_dir, data, xaxis_range=[-10, 20])
 
 # %%
-
 
 def is_balanced_vectorized_return_both(
     toks: Int[Tensor, "batch seq"],
@@ -466,7 +449,7 @@ if MAIN:
         "just total elevation failure": ~negative_failure & total_elevation_failure,
         "balanced": ~negative_failure & ~total_elevation_failure,
     }
-
+    
     plotly_utils.plot_failure_types_scatter(
         h20_in_unbalanced_dir, h21_in_unbalanced_dir, failure_types_dict, data
     )
@@ -493,7 +476,6 @@ if MAIN:
 
 # %%
 
-
 def get_attn_probs(
     model: HookedTransformer, data: BracketsDataset, layer: int, head: int
 ) -> Tensor:
@@ -511,7 +493,7 @@ if MAIN:
 if MAIN:
     attn_probs_20 = get_attn_probs(model, data, 2, 0)  # [batch seqQ seqK]
     attn_probs_20_open_query0 = attn_probs_20[data.starts_open].mean(0)[0]
-
+    
     bar(
         attn_probs_20_open_query0,
         title="Avg Attention Probabilities for query 0, first token '(', head 2.0",
@@ -521,7 +503,6 @@ if MAIN:
     )
 
 # %%
-
 
 def get_WOV(model: HookedTransformer, layer: int, head: int) -> Float[Tensor, "d_model d_model"]:
     """
@@ -561,14 +542,12 @@ if MAIN:
     out_by_component_in_pre_20_unbalanced_dir -= out_by_component_in_pre_20_unbalanced_dir[
         :, data.isbal
     ].mean(-1, True)
-
+    
     tests.test_out_by_component_in_pre_20_unbalanced_dir(
         out_by_component_in_pre_20_unbalanced_dir, model, data
     )
-
-    plotly_utils.hists_per_comp(
-        out_by_component_in_pre_20_unbalanced_dir, data, xaxis_range=(-5, 12)
-    )
+    
+    plotly_utils.hists_per_comp(out_by_component_in_pre_20_unbalanced_dir, data, xaxis_range=(-5, 12))
 
 # %%
 
@@ -578,7 +557,6 @@ if MAIN:
     )
 
 # %%
-
 
 def get_out_by_neuron(
     model: HookedTransformer, data: BracketsDataset, layer: int, seq: int | None = None
@@ -644,7 +622,6 @@ if MAIN:
 
 # %%
 
-
 def get_out_by_neuron_in_20_dir_less_memory(
     model: HookedTransformer, data: BracketsDataset, layer: int
 ) -> Float[Tensor, "batch neurons"]:
@@ -681,12 +658,11 @@ if MAIN:
         neurons_in_unbalanced_dir = get_out_by_neuron_in_20_dir_less_memory(model, data, layer)[
             utils.to_numpy(data.starts_open), :
         ]
-
+    
         # Plot neurons' activations
         plotly_utils.plot_neurons(neurons_in_unbalanced_dir, model, data, failure_types_dict, layer)
 
 # %%
-
 
 def get_q_and_k_for_given_input(
     model: HookedTransformer,
@@ -766,7 +742,6 @@ if MAIN:
 
 # %%
 
-
 def hook_fn_display_attn_patterns_for_single_query(
     pattern: Float[Tensor, "batch heads seqQ seqK"],
     hook: HookPoint,
@@ -799,7 +774,6 @@ if MAIN:
 
 # %%
 
-
 def embedding(
     model: HookedTransformer, tokenizer: SimpleTokenizer, char: str
 ) -> Float[Tensor, "d_model"]:
@@ -820,7 +794,6 @@ if MAIN:
     print(f"Cosine similarity: {t.cosine_similarity(v_L, v_R, dim=0).item():.4f}")
 
 # %%
-
 
 def cos_sim_with_MLP_weights(
     model: HookedTransformer, v: Float[Tensor, "d_model"], layer: int
@@ -868,26 +841,23 @@ if MAIN:
 
 if MAIN:
     adversarial_examples = ["()", "(())", "))"]
-
+    
+    
     def tallest_balanced_bracket(length: int) -> str:
         return "".join(["(" for _ in range(length)] + [")" for _ in range(length)])
-
+    
+    
     i_max = 30
     adversarial_examples.append(
-        tallest_balanced_bracket(i_max // 2)
-        + ")("
-        + tallest_balanced_bracket((40 - i_max) // 2 - 1)
+        tallest_balanced_bracket(i_max // 2) + ")(" + tallest_balanced_bracket((40 - i_max) // 2 - 1)
     )
-
+    
     m = max(len(ex) for ex in adversarial_examples)
     toks = tokenizer.tokenize(adversarial_examples)
     probs = model(toks)[:, 0].softmax(-1)[:, 1]
     print(
         "\n".join(
-            [
-                f"{ex:{m}} -> {p:.4%} balanced confidence"
-                for (ex, p) in zip(adversarial_examples, probs)
-            ]
+            [f"{ex:{m}} -> {p:.4%} balanced confidence" for (ex, p) in zip(adversarial_examples, probs)]
         )
     )
 

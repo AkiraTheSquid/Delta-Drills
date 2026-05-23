@@ -1,0 +1,29 @@
+{
+  "exercise_id": "0_3_1",
+  "title": "implement SGD",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_1_exercise-implement-sgd.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 1,
+  "difficulty": 4,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "self.params = list(params) — comment: 'turn params into a list (it might be a generator, so iterating over it empties it)'"},
+    {"id": "optimizer-state-tensor-buffers", "role": "core", "evidence": "self.b = [t.zeros_like(p) for p in self.params] — per-parameter momentum buffer allocation at init"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for param in self.params: param.grad = None — explicit markdown discussion of why None vs zeros is the standard"},
+    {"id": "param-grad-access", "role": "core", "evidence": "g = theta.grad inside the step loop"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "theta -= self.lr * g  # inplace operation, to modify params — solution comment explicitly calls this out"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "b.copy_(self.mu * b + g)  # this does need to be inplace, since we're modifying the value in `self.b` — solution comment explicitly calls this out"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on step; markdown notes 'we've added the torch.inference_mode decorator to the step method'"},
+    {"id": "weight-decay-l2-add", "role": "core", "evidence": "if self.lmda != 0: g = g + self.lmda * theta — fold lambda*theta into the gradient (L2-style); pseudocode line 'g_t <- g_t + lambda*theta_{t-1}'"},
+    {"id": "momentum-buffer-update", "role": "core", "evidence": "b.copy_(self.mu * b + g); g = b — pseudocode line 'b_t <- mu*b_{t-1} + g_t'"},
+    {"id": "conditional-hparam-branch", "role": "core", "evidence": "if self.lmda != 0: ... and if self.mu != 0: ... — pseudocode 'if lambda != 0' / 'if mu != 0' both implemented as conditional shortcuts"},
+    {"id": "pseudocode-to-code-translate", "role": "core", "evidence": "Markdown gives LaTeX pseudocode block (b_t <- mu*b_{t-1} + g_t etc.) and the exercise is to translate it line-by-line into tensor ops"},
+    {"id": "optimizer-repr-string", "role": "core", "evidence": "def __repr__(self): return f'SGD(lr={self.lr}, momentum={self.mu}, weight_decay={self.lmda})' — provided in template, used in tests"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "12 atoms — matches seed prediction of 12 exactly. The canonical 'optimizer-impl spine': all 7 plumbing atoms + 3 math atoms + 1 conditional + 1 meta (pseudocode-to-code). Comments in the solution literally call out the two inplace distinctions (buffer-copy_-inplace vs inplace-param-update) which is the most subtle aspect of all four optimizer-impl exercises."
+}

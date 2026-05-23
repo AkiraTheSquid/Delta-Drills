@@ -32,15 +32,6 @@ COLD_START_MIN_QUESTIONS: int = len(COLD_START_TARGETS)
 # are bounded by [-100, 100]; 200 is safely above that ceiling).
 COLD_START_PRIORITY_LR: float = 200.0
 
-# TEMP: staleness review — disabled because it overrides the documented
-# gradient-based selector and makes localhost behavior appear inconsistent
-# with the Statistics page.
-ENABLE_STALENESS_REVIEW: bool = False
-
-if ENABLE_STALENESS_REVIEW:
-    from app.TEMP_staleness_review_REMOVE_LATER.staleness import get_staleness_override
-
-
 def _estimate_learning_rate(state: SubtopicState) -> float:
     """
     EWMA learning-rate estimate for a single subtopic.
@@ -103,13 +94,6 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
     subtopics = get_subtopics()
     if not subtopics:
         return None
-
-    # TEMP: staleness review override
-    if ENABLE_STALENESS_REVIEW:
-        available = [st for st in subtopics if get_questions_by_subtopic(st)]
-        override = get_staleness_override(user_state, available)
-        if override is not None:
-            return override
 
     num_subtopics = len(subtopics)
     uniform_weight = 1.0 / num_subtopics

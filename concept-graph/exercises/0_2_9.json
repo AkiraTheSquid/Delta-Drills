@@ -1,0 +1,27 @@
+{
+  "exercise_id": "0_2_9",
+  "title": "implement ResNet34",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_9_exercise-implement-resnet34.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 9,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class ResNet34(nn.Module): with __init__ + super + forward"},
+    {"id": "module-composition", "role": "core", "evidence": "self.in_layers, self.residual_layers, self.out_layers — three Sequential containers wired together"},
+    {"id": "resnet-stem", "role": "core", "evidence": "self.in_layers = Sequential(Conv2d(3, 64, kernel_size=7, stride=2, padding=3), BatchNorm2d(64), ReLU(), MaxPool2d(kernel_size=3, stride=2, padding=1)) — exactly the canonical stem"},
+    {"id": "block-group-stack", "role": "core", "evidence": "for i in range(len(n_blocks_per_group)): residual_layers.append(BlockGroup(...)); self.residual_layers = Sequential(*residual_layers) — 4 BlockGroups stacked"},
+    {"id": "avgpool-reduce", "role": "core", "evidence": "self.out_layers = Sequential(AveragePool(), Linear(out_features_per_group[-1], n_classes)) — global avg pool before final classifier"},
+    {"id": "relu-elementwise-max", "role": "incidental", "evidence": "ReLU() composed into the stem; not implemented here"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "state-dict-load", "reason": "seed predicted load_state_dict for exercise 9 but the weight-copying is done in the next exercise (0_2_10 / 0_2_11); here the learner just builds the architecture and compares parameter counts"},
+    {"id": "tensor-reshape-view", "reason": "no reshape/view in the ResNet34 forward — AveragePool collapses spatial dims via mean so Linear can ingest (B,C) directly"},
+    {"id": "batchnorm-running-stats", "reason": "BatchNorm2d is composed in but its internals (running stats) belong to 0_2_5; here it's just a Module being instantiated"}
+  ],
+  "notes": "Capstone architecture exercise: 6 atoms. resnet-stem fires for the first (and only) time — singleton confirmed. This is the assembly point where module-composition + block-group-stack + resnet-stem + avgpool-reduce all converge. Parameter-count matching is mentioned as a debugging skill but isn't a separate atom."
+}

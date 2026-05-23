@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_2_11",
+  "title": "prepare ResNet for feature extraction",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_11_exercise-prepare-resnet-for-feature-extraction.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 11,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "state-dict-load", "role": "core", "evidence": "my_resnet = copy_weights(my_resnet, pretrained_resnet) — copies weights from torchvision ResNet34 into the custom implementation via state_dict key remapping"},
+    {"id": "freeze-requires-grad", "role": "core", "evidence": "my_resnet.requires_grad_(False) — freeze ALL parameters before swapping the head"},
+    {"id": "replace-final-head", "role": "core", "evidence": "my_resnet.out_layers[-1] = Linear(my_resnet.out_features_per_group[-1], n_classes) — replace the final Linear with a new one (which is requires_grad=True by default, unfreezing only the head)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "train-eval-mode-branch", "reason": "seed predicted this for exercise 11 but no .train()/.eval() flip happens here — that's done inside the training loop in 0_2_12; this exercise is pure model preparation"}
+  ],
+  "notes": "Cleanly demonstrates the transfer-learning triplet: load -> freeze -> swap-head. 3-atom exercise; all three atoms are singletons in the seed (one exercise each) which is correct — these only appear together at this canonical setup point. Subtle: replace-final-head implicitly unfreezes because new Modules default to requires_grad=True; worth noting in the atom definition if it gets accepted."
+}

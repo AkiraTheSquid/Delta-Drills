@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_2_7",
+  "title": "implement ResidualBlock",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_7_exercise-implement-residualblock.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 7,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class ResidualBlock(nn.Module): with __init__ + super + forward"},
+    {"id": "module-composition", "role": "core", "evidence": "self.left = Sequential(Conv2d, BatchNorm2d, ReLU, Conv2d, BatchNorm2d); self.right = nn.Identity() or Sequential(Conv2d, BatchNorm2d); self.relu = ReLU()"},
+    {"id": "residual-skip-add", "role": "core", "evidence": "forward: x_left = self.left(x); x_right = self.right(x); return self.relu(x_left + x_right) — the defining ResNet pattern"},
+    {"id": "1x1-conv-channel-reshape", "role": "core", "evidence": "right branch when shapes mismatch: Conv2d(in_feats, out_feats, kernel_size=1, stride=first_stride) — 1x1 conv used purely to match channel count + downsample, no spatial mixing"},
+    {"id": "conv-stride-downsample", "role": "core", "evidence": "first_stride > 1 on the left's first Conv2d AND on the right branch's 1x1 conv; the exercise explicitly hinges on whether is_shape_preserving = (first_stride==1 and in_feats==out_feats)"},
+    {"id": "relu-elementwise-max", "role": "incidental", "evidence": "ReLU() used inside the Sequential and after the add, composed not implemented"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "broadcasting-rules", "reason": "seed predicted this for exercise 7 but the skip-add is a pure same-shape elementwise add (left/right branches are shape-matched by construction); no broadcasting fires"}
+  ],
+  "notes": "Densest architecture exercise so far: 6 atoms. First exercise where residual-skip-add, 1x1-conv-channel-reshape, and conv-stride-downsample all co-fire — these three form a tight ResNet 'downsampling block' cluster. The shape-preserving vs downsampling branching is the genuine pedagogical content."
+}

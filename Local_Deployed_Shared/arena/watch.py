@@ -10,7 +10,7 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-JS_FILES = ['manifest.js', 'stage1.js']
+JS_FILES = ['manifest.js', 'stage1.js', 'exercises.js']
 
 # Curriculum spec must declare these chapter keys, and each must have a
 # matching ARENA_CHAPTER_DEFAULTS entry — otherwise buildArenaProblem
@@ -58,9 +58,26 @@ def check_public_api():
     assert 'buildArenaProblem' in manifest, \
         "manifest.js must define buildArenaProblem"
 
+    # NOTE: stage1.js is kept on disk but NOT loaded by index.html anymore —
+    # the dedicated ARENA tab was removed 2026-05-16. These assertions exist
+    # so the file's contract stays internally consistent in case it's
+    # re-attached later. See README "Recent Changes" 2026-05-16.
     stage1 = _read(os.path.join(HERE, 'stage1.js'))
     assert 'window.ARENA_STAGE1_PROBLEMS' in stage1, \
         "stage1.js must consume window.ARENA_STAGE1_PROBLEMS"
+    assert 'ARENA_EXERCISES_BY_NOTEBOOK' in stage1, \
+        "stage1.js must consume window.ARENA_EXERCISES_BY_NOTEBOOK"
+    assert 'computeArenaReadiness' in stage1, \
+        "stage1.js must consume window.computeArenaReadiness for per-exercise pills"
+
+    exercises = _read(os.path.join(HERE, 'exercises.js'))
+    assert 'window.ARENA_EXERCISES_BY_NOTEBOOK' in exercises, \
+        "exercises.js must expose window.ARENA_EXERCISES_BY_NOTEBOOK"
+
+    assert 'window.computeArenaReadiness' in manifest, \
+        "manifest.js must expose window.computeArenaReadiness for predicted-scores + arena-tab consumers"
+    assert 'ARENA_SKILL_TO_TOPIC_ALIASES' in manifest, \
+        "manifest.js must define ARENA_SKILL_TO_TOPIC_ALIASES (skill→topic mapping for readiness compute)"
 
     # Every required problem field must be referenced somewhere in
     # the manifest (either set by the builder or the rich-overrides).
@@ -94,6 +111,55 @@ def check_invariants():
         f"duplicate ids in ARENA_CURRICULUM: {[e for e in entries if entries.count(e) > 1]}"
     assert len(entries) >= 32, \
         f"expected at least 32 curriculum entries, found {len(entries)}"
+
+    # ── exercises.js (auto-generated catalog) invariants ──────────
+    # The catalog is the source of truth for the Targeted Practice search.
+    # We can't import JS, but it's a JSON-ish literal — strip the JS prologue
+    # and parse the assignment value as JSON to validate shape.
+    import json
+    exercises_raw = _read(os.path.join(HERE, 'exercises.js'))
+
+    # Line 1 must still carry the auto-generator marker. Manual edits would
+    # silently drift from the script's output — targeted-practice catalog
+    # would still work, but the next deploy would clobber the edits.
+    first_line = exercises_raw.splitlines()[0]
+    assert 'AUTO-GENERATED' in first_line, (
+        "exercises.js line 1 lost the AUTO-GENERATED marker — someone may "
+        "have hand-edited this file. Re-run extract_arena_exercises.py instead."
+    )
+
+    # Pull the object literal after `window.ARENA_EXERCISES_BY_NOTEBOOK = `.
+    body_match = re.search(
+        r'window\.ARENA_EXERCISES_BY_NOTEBOOK\s*=\s*(\{.*?\});\s*$',
+        exercises_raw, re.DOTALL,
+    )
+    assert body_match, "exercises.js: couldn't locate ARENA_EXERCISES_BY_NOTEBOOK literal"
+    catalog = json.loads(body_match.group(1))
+    assert isinstance(catalog, dict) and catalog, "ARENA_EXERCISES_BY_NOTEBOOK is empty"
+
+    # Every value must be a list; every entry inside must be a dict with
+    # exactly the {title, anchor} keys the targeted-practice flattener
+    # expects (an extra key is fine; missing keys break the search).
+    bad_entries = []
+    for nbpath, exs in catalog.items():
+        if not isinstance(exs, list):
+            bad_entries.append(f"{nbpath}: value is not a list")
+            continue
+        for i, ex in enumerate(exs):
+            if not isinstance(ex, dict) or 'title' not in ex or 'anchor' not in ex:
+                bad_entries.append(f"{nbpath}[{i}]: missing title/anchor")
+    assert not bad_entries, "exercises.js shape violations: " + "; ".join(bad_entries[:5])
+
+    # Every notebookPath in the catalog should correspond to a problem in
+    # ARENA_CURRICULUM — otherwise the targeted-practice readiness lookup
+    # (which keys problemsByPath by notebookPath) returns null and shows
+    # an empty bar for that exercise.
+    curriculum_paths = set(re.findall(r'notebookPath:\s*"([^"]+)"', manifest))
+    orphan_paths = [p for p in catalog.keys() if p not in curriculum_paths]
+    assert not orphan_paths, (
+        "exercises.js notebooks with no matching ARENA_CURRICULUM entry "
+        f"(targeted-practice readiness will be null): {orphan_paths[:3]}"
+    )
 
 
 # ── Run all checks ────────────────────────────

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:y="http://www.yworks.com/xml/graphml"
+         xmlns:yed="http://www.yworks.com/xml/yed/3"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+  <key for="node" id="d_id" attr.name="id" attr.type="string"/>
+  <key for="node" id="d_label" attr.name="label" attr.type="string"/>
+  <key for="node" id="d_definition" attr.name="definition" attr.type="string"/>
+  <key for="node" id="d_domain" attr.name="domain" attr.type="string"/>
+  <key for="node" id="d_status" attr.name="status" attr.type="string"/>
+  <key for="node" id="d_dd_coverage" attr.name="dd_coverage" attr.type="string"/>
+  <key for="node" id="d_part" attr.name="arena_part" attr.type="int"/>
+  <key for="node" id="d_group" attr.name="group" attr.type="string"/>
+  <key for="node" id="d6" yfiles.type="nodegraphics"/>
+  <key for="edge" id="d_kind" attr.name="kind" attr.type="string"/>
+  <key for="edge" id="d_status" attr.name="status" attr.type="string"/>
+  <key for="edge" id="d_evidence" attr.name="evidence" attr.type="string"/>
+  <key for="edge" id="d10" yfiles.type="edgegraphics"/>
+  <graph id="G" edgedefault="directed">
+    <node id="part_1">
+      <data key="d_id">part_1</data>
+      <data key="d_label">Part 1 — Ray Tracing</data>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="80.0" width="240.0" x="0.0" y="0.0"/>
+          <y:Fill color="#CAEAF7" transparent="false"/>
+          <y:BorderStyle color="#2A2A2A" raised="false" type="line" width="2.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="18" fontStyle="bold" textColor="#000000" hasBackgroundColor="false" hasLineColor="false" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" verticalTextPosition="bottom" visible="true">Part 1 — Ray Tracing
+(27 atoms)</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="part_2">
+      <data key="d_id">part_2</data>
+      <data key="d_label">Part 2 — CNNs / ResNets</data>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="80.0" width="240.0" x="0.0" y="0.0"/>
+          <y:Fill color="#F7CAE8" transparent="false"/>
+          <y:BorderStyle color="#2A2A2A" raised="false" type="line" width="2.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="18" fontStyle="bold" textColor="#000000" hasBackgroundColor="false" hasLineColor="false" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" verticalTextPosition="bottom" visible="true">Part 2 — CNNs / ResNets
+(38 atoms)</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="part_3">
+      <data key="d_id">part_3</data>
+      <data key="d_label">Part 3 — Optimization / DDP</data>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="80.0" width="240.0" x="0.0" y="0.0"/>
+          <y:Fill color="#D5F7CA" transparent="false"/>
+          <y:BorderStyle color="#2A2A2A" raised="false" type="line" width="2.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="18" fontStyle="bold" textColor="#000000" hasBackgroundColor="false" hasLineColor="false" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" verticalTextPosition="bottom" visible="true">Part 3 — Optimization / DDP
+(62 atoms)</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="part_4">
+      <data key="d_id">part_4</data>
+      <data key="d_label">Part 4 — Backprop from Scratch</data>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="80.0" width="240.0" x="0.0" y="0.0"/>
+          <y:Fill color="#D7F7CA" transparent="false"/>
+          <y:BorderStyle color="#2A2A2A" raised="false" type="line" width="2.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="18" fontStyle="bold" textColor="#000000" hasBackgroundColor="false" hasLineColor="false" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" verticalTextPosition="bottom" visible="true">Part 4 — Backprop from Scratch
+(54 atoms)</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="part_5">
+      <data key="d_id">part_5</data>
+      <data key="d_label">Part 5 — VAEs / GANs</data>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="80.0" width="240.0" x="0.0" y="0.0"/>
+          <y:Fill color="#E7CAF7" transparent="false"/>
+          <y:BorderStyle color="#2A2A2A" raised="false" type="line" width="2.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="18" fontStyle="bold" textColor="#000000" hasBackgroundColor="false" hasLineColor="false" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" verticalTextPosition="bottom" visible="true">Part 5 — VAEs / GANs
+(32 atoms)</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <edge id="se0" source="part_1" target="part_2">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">3 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.6"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">3</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se1" source="part_1" target="part_3">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">1 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="1.5"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">1</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se2" source="part_1" target="part_4">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">2 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.1"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">2</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se3" source="part_2" target="part_1">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">2 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.1"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">2</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se4" source="part_2" target="part_3">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">13 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="8.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">13</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se5" source="part_2" target="part_4">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">3 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.6"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">3</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se6" source="part_2" target="part_5">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">12 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="7.5"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">12</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se7" source="part_3" target="part_4">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">3 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.6"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">3</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se8" source="part_3" target="part_5">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">2 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="2.1"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">2</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="se9" source="part_5" target="part_2">
+      <data key="d_kind">summary</data>
+      <data key="d_status">accepted</data>
+      <data key="d_evidence">1 underlying edges</data>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#222222" type="line" width="1.5"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="14" fontStyle="bold" textColor="#000000" hasLineColor="false" preferredPlacement="anywhere" ratio="0.5" visible="true">1</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+  </graph>
+</graphml>

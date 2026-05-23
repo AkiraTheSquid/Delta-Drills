@@ -75,6 +75,10 @@ def classify_difficulty(question_text: str, numeric_score: int) -> str:
 def infer_primary_library(topic: str, question_text: str, answer_code: str) -> str:
     topic_lower = topic.lower()
     blob = f"{question_text}\n{answer_code}".lower()
+    # Topic wins for numpy problems — answers may mention np.einsum without
+    # being einops.einsum problems (np.einsum and einops.einsum are different).
+    if topic_lower == "numpy":
+        return "numpy"
     if "einops" in topic_lower or "einops" in blob:
         return "einops"
     if "einsum" in topic_lower or "einsum" in blob:
@@ -201,7 +205,25 @@ def infer_default_fixture_setup(question_text: str, answer_code: str, primary_li
     blob = f"{question_text}\n{answer_code}"
     needs_float = requires_float_fixture(answer_code)
     if primary_library in {"einops", "einops.einsum"}:
-        uses_nhwc = "b h w c" in blob or "NHWC" in question_text
+        # delta_numbers.npy is stored channels-first (N, C, H, W). Only convert
+        # to (N, H, W, C) when the einops pattern's INPUT side names axes as
+        # HWC-like (e.g. 'h w c', 'h w ch', 'b h w c', '(r nc) h w ch').
+        # Do NOT use question_text or RHS-only matches — conversion problems
+        # like "BCHW → NHWC" have HWC on the output side but need raw BCHW.
+        def _input_is_hwc(code: str) -> bool:
+            # HWC = h axis appears before w which appears before c (or ch),
+            # even when other tokens like (two h) or (w w2) sit between them.
+            for m in re.finditer(r"['\"]([^'\"]*?)\s*->\s*([^'\"]*?)['\"]", code):
+                tokens = re.sub(r"[()]", " ", m.group(1)).split()
+                h_idx = next((i for i, t in enumerate(tokens) if t == "h"), None)
+                w_idx = next((i for i, t in enumerate(tokens) if t == "w"), None)
+                c_idx = next((i for i, t in enumerate(tokens) if t in ("c", "ch")), None)
+                if None in (h_idx, w_idx, c_idx):
+                    continue
+                if h_idx < w_idx < c_idx:
+                    return True
+            return False
+        uses_nhwc = _input_is_hwc(answer_code)
         required_arr_batch = infer_required_arr_batch(question_text, answer_code)
         if "arr" in blob or "img" in blob:
             if required_arr_batch and required_arr_batch > 0:
@@ -241,7 +263,25 @@ def infer_default_fixture_setup(question_text: str, answer_code: str, primary_li
         if "patches" in blob:
             lines.append("h = 2")
             lines.append("w = 3")
-            lines.append("patches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)")
+            # Pick fixture layout based on where the channel axis sits in the
+            # einops pattern: '(h w) c p1 p2' → channels-first; '(h w) p1 p2 c'
+            # → channels-last. Mismatched fixtures pass tests numerically but
+            # are visually meaningless.
+            patches_pattern_lhs = ""
+            for m in re.finditer(r"['\"]([^'\"]*?)\s*->\s*[^'\"]*?['\"]", answer_code):
+                lhs_clean = re.sub(r"[()]", " ", m.group(1)).split()
+                if "p1" in lhs_clean and "p2" in lhs_clean and "c" in lhs_clean:
+                    patches_pattern_lhs = lhs_clean
+                    break
+            if patches_pattern_lhs:
+                c_pos = patches_pattern_lhs.index("c")
+                p1_pos = patches_pattern_lhs.index("p1")
+                if c_pos < p1_pos:
+                    lines.append("patches = np.arange(h * w * 3 * 2 * 2).reshape(h * w, 3, 2, 2)")
+                else:
+                    lines.append("patches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)")
+            else:
+                lines.append("patches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)")
         if re.search(r"\bx\b", blob):
             lines.append("x = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)")
         if "hs" in blob:
@@ -374,6 +414,8 @@ def load_function_overrides() -> dict[int, dict]:
         "function_mode_overrides_round3.jsonl",
         "einops_prompt_rewrite_overrides.jsonl",
         "numpy_einsum_prompt_rewrite_overrides.jsonl",
+        "prompt_expansion_overrides.jsonl",
+        "difficulty_overrides.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
@@ -470,6 +512,14 @@ def load_questions() -> list[dict]:
                 starter_code = override.get("starter_code", starter_code)
                 test_cases = override.get("test_cases", test_cases)
                 submission_mode = override.get("submission_mode", submission_mode)
+                question_text = override.get("question_text", question_text)
+                answer_code = override.get("answer_code", answer_code)
+                if "difficulty_score" in override:
+                    try:
+                        difficulty_score = int(override["difficulty_score"])
+                        difficulty_label = classify_difficulty(question_text, difficulty_score)
+                    except (TypeError, ValueError):
+                        pass
             expected_artifact_type = "image" if task_type == "image_transform" else "stdout"
 
             questions.append(

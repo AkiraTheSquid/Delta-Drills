@@ -8,6 +8,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - The Pyodide runtime contract and preamble (see `RUNTIME_CONTRACT.md`).
 - Image rendering for visual exercises, including the static PNG fallback.
 - Adaptive question selection, timing, and progress storage scoped to the practice flow.
+- Imported-helper display for practice questions. The UI reads each starter code block and shows the imported names above the editor.
 
 ## Does NOT own
 - Question authoring or curation — lives in `../arena_prereqs_structured.json` and the ARENA source dirs.
@@ -30,12 +31,14 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - `questions.js`: client-side question caching/normalization.
 - `storage.js`: progress / streak persistence.
 - `timer.js`, `bars.js`, `bars.css`: per-question timer and progress bars.
+- `arena-unlock.js`, `arena-unlock.css`: ARENA UNLOCK INTERSTITIAL — full-viewport overlay that takes over the screen between practice questions when an ARENA exercise crosses its per-subtopic prereq thresholds. Mount point `<div id="arena-unlock-overlay">` lives at body level in `index.html` (not inside `page-practice`) so the takeover escapes any layout/overflow trap. Controller exposes `window.ArenaUnlock.tryShow(onContinue)`; `events.js#nextProblemBtn` calls it before loading the next question and passes `_loadNextPracticeQuestion` as the Continue callback. Reads its data via `window.ARENA_PREREQS_TEMP_*` (defined in `stats/predicted-prereqs-temp.js`); the underlying concept-graph data source is scaffold-only and will be replaced, but this unlock UI is permanent.
 - `config.js`: feature flags and tunables.
 - `RUNTIME_CONTRACT.md`: declarative contract of what the Pyodide preamble injects; consumed by per-question `runtime_dependencies` arrays.
 
 ## Data & External Dependencies
 - **Question schema**: `arena_prereqs_structured.json` (sibling); per-entry fields include `starter_code`, `canonical_solution`, `runtime_dependencies`, `runtime_unmet_dependencies`, `supports_visual_output`, `expected_artifact_type`.
-- **ARENA source data**: `../delta_numbers.npy` (mirrored to Pyodide FS), `../numbers_stacked.png` (static fallback).
+- **Notebook helpers panel**: practice questions now show clickable excerpts pulled from the source ARENA notebook, not the editable starter stub. Click a pill to expand the exact notebook line(s). For prereq exercises this includes setup lines like `arr = np.load(section_dir / "numbers.npy")` and the actual notebook import block when it matters. Array pills also render the real `numbers.npy` data from `content/ARENA_5.0-main/...` so the user can inspect the source tensor itself.
+- **ARENA source data**: `../content/ARENA_5.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy`, `../delta_numbers.npy` (mirrored to Pyodide FS), `../numbers_stacked.png` (static fallback).
 - **Pyodide** (CDN): numpy + micropip + einops loaded at runtime.
 - **Backend**: `/api/practice/run-code`, `/api/practice/visual-debug`.
 - **Supabase**: progress / streaks via `../supabase-practice.js`.
@@ -50,7 +53,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 ## Invariants & Constraints
 - The Pyodide preamble in `runner.js` is the **single source of truth** for in-browser injected globals; `RUNTIME_CONTRACT.md` and per-question `runtime_dependencies` must stay in sync.
 - Image visuals must degrade gracefully — never leave a blank canvas. Catch path in `visuals.js` must end in either rendered canvas or text note.
-- `numbers_stacked.png` and `delta_numbers.npy` must remain at sibling-of-folder served paths; multi-path candidate lookup tolerates moves but `/Local_Deployed_Shared/...` is the canonical path.
+- `numbers_stacked.png`, `delta_numbers.npy`, and the ARENA `numbers.npy` source file must remain at served paths; multi-path candidate lookup tolerates moves but `/content/ARENA_5.0-main/...` is the canonical source path for prereq notebook data.
 - Never inject runtime globals silently without updating both `RUNTIME_CONTRACT.md` and the JSON probes that derive `runtime_dependencies`.
 - AI-judged grading must not rely on `assert_*` helpers being injected — those are not in the in-browser contract.
 
@@ -83,5 +86,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-05-19 (ARENA unlock interstitial — full-viewport overlay module): Added `practice/arena-unlock.js` + `practice/arena-unlock.css` as a self-contained module. When the student clicks "Next problem" in the practice flow, `events.js` now calls `window.ArenaUnlock.tryShow(_loadNextPracticeQuestion)` first; if any ARENA 0.0 exercise has just crossed its per-subtopic prereq thresholds (AND-logic across every `{topic, subtopic, minPct}` entry — no averaging), the overlay takes over the whole viewport (`position: fixed; inset: 0; z-index: 9000;` + `body.arena-unlock-open` scroll-lock) showing: the exercise title, a "Cleared: ..." why-met recap, a code block with the exact heading (Ctrl+F target), Show hint / Show answer scaffolding buttons (placeholders for now), `Open in Colab ↗` (auto-copies heading), and `Continue to next question →` (calls the original load-next handler). The overlay DOM lives at body level in `index.html` (`<div id="arena-unlock-overlay">`), not inside `page-practice`, so the takeover is independent of any page's layout. Each unlocked exercise is shown once per student (tracked in `localStorage.arena_prereqs_temp_shown`). Underlying concept-graph data is still the temp scaffold in `stats/predicted-prereqs-temp.js`; only the labels change when the real graph ships. `watch.py` invariants assert the overlay DOM + body class + CSS selectors are wired.
 - 2026-04-28: Added `RUNTIME_CONTRACT.md`, `numbers_stacked.png` fallback, `runtime_dependencies` annotations on all 27 prereq questions; fixed id-27 einsum canonical solution.
+- 2026-05-13: Added an imported-helpers panel above the practice editor so the page shows the code's real imports without the source-notebook block.
 - 2026-04-27: Initial doc created.

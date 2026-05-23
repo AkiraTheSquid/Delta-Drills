@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_2_12",
+  "title": "write training loop for feature extraction",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_12_exercise-write-training-loop-for-feature-extraction.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 12,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "dataloader-batching", "role": "core", "evidence": "trainloader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True); testloader with shuffle=False"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "logits=model(imgs); loss=F.cross_entropy(logits,labels); loss.backward(); optimizer.step(); optimizer.zero_grad()"},
+    {"id": "validation-no-grad", "role": "core", "evidence": "model.eval() pass over testloader to compute accuracy each epoch (no_grad/inference_mode implied)"},
+    {"id": "train-eval-mode-branch", "role": "core", "evidence": "model.train() before train loop, model.eval() before val loop — explicit in exercise text: 'now that we're working with batchnorm, you'll have to call model.train() and model.eval()'"},
+    {"id": "freeze-requires-grad", "role": "incidental", "evidence": "optimizer = t.optim.Adam(model.out_layers[-1].parameters(), lr=...) — exercise notes 'you have the option of passing just a subset of parameters'; the freeze happens upstream in 0_2_11 but it matters here"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Training-infra capstone: 5 atoms. First exercise where train-eval-mode-branch is truly load-bearing (the exercise explicitly says batchnorm requires it). Recombines all training atoms with the transfer-learning twist (only head params optimized). Worth noting: the optimizer-on-subset pattern (model.out_layers[-1].parameters()) is a distinct sub-skill that could be its own atom but recurs only once so far — leaving as folded into freeze-requires-grad."
+}

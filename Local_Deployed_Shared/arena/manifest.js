@@ -313,3 +313,72 @@ const buildArenaProblem = (entry) => {
 };
 
 window.ARENA_STAGE1_PROBLEMS = ARENA_CURRICULUM.map(buildArenaProblem);
+
+// ── Per-exercise readiness compute ──────────────────────────────────
+// Maps an ARENA skill name (e.g., "NumPy", "Einops") to a topic name in
+// the question bank. Skills without a matching topic in the bank fall
+// back to the section's placeholder readinessScore.
+const ARENA_SKILL_TO_TOPIC_ALIASES = {
+  numpy: "Numpy",
+  einops: "Einops",
+  einsum: "Einsum",
+  broadcasting: "Numpy",
+  "tensor shapes": "Numpy",
+};
+
+const _arenaTopicSubtopicsCache = { built: false, byTopic: new Map() };
+
+const _buildTopicSubtopicIndex = () => {
+  if (_arenaTopicSubtopicsCache.built) return _arenaTopicSubtopicsCache.byTopic;
+  const bank = (typeof questionsBank !== "undefined" && Array.isArray(questionsBank)) ? questionsBank : null;
+  if (!bank) return _arenaTopicSubtopicsCache.byTopic;
+  bank.forEach((q) => {
+    if (!q?.topic || !q?.subtopic) return;
+    const key = String(q.topic).toLowerCase();
+    if (!_arenaTopicSubtopicsCache.byTopic.has(key)) {
+      _arenaTopicSubtopicsCache.byTopic.set(key, new Set());
+    }
+    _arenaTopicSubtopicsCache.byTopic.get(key).add(q.subtopic);
+  });
+  _arenaTopicSubtopicsCache.built = _arenaTopicSubtopicsCache.byTopic.size > 0;
+  return _arenaTopicSubtopicsCache.byTopic;
+};
+
+const _readAdaptiveState = () => {
+  if (typeof adaptiveStateJson !== "string" || !adaptiveStateJson) return null;
+  try {
+    return JSON.parse(adaptiveStateJson);
+  } catch (_) {
+    return null;
+  }
+};
+
+window.computeArenaReadiness = (skillWeights, fallbackScore) => {
+  const fallback = Number.isFinite(Number(fallbackScore)) ? Number(fallbackScore) : 0;
+  if (!Array.isArray(skillWeights) || !skillWeights.length) return fallback;
+  const state = _readAdaptiveState();
+  if (!state || !state.subtopic_states) return fallback;
+  const topicIndex = _buildTopicSubtopicIndex();
+  if (!topicIndex.size) return fallback;
+
+  let weightedSum = 0;
+  let weightUsed = 0;
+  skillWeights.forEach(({ skill, weight }) => {
+    if (!skill || !Number.isFinite(weight)) return;
+    const skillKey = String(skill).toLowerCase();
+    const topicName = ARENA_SKILL_TO_TOPIC_ALIASES[skillKey] || skill;
+    const subtopics = topicIndex.get(String(topicName).toLowerCase());
+    if (!subtopics || !subtopics.size) return;
+    const baselines = [];
+    subtopics.forEach((sub) => {
+      const b = Number(state.subtopic_states[sub]?.baseline);
+      if (Number.isFinite(b)) baselines.push(b);
+    });
+    if (!baselines.length) return;
+    const avg = baselines.reduce((s, x) => s + x, 0) / baselines.length;
+    weightedSum += avg * weight;
+    weightUsed += weight;
+  });
+  if (weightUsed <= 0) return fallback;
+  return weightedSum / weightUsed;
+};

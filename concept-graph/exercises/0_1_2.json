@@ -1,0 +1,27 @@
+{
+  "exercise_id": "0_1_2",
+  "title": "implement intersect_rays_1d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_2_exercise-implement-intersect-rays-1d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 2,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "same R(u)=O+uD form as 0_1_1; here it's reused not introduced"},
+    {"id": "segment-line-intersect-2d", "role": "core", "evidence": "same 2x2 system as 0_1_1 but now batched across (nrays, nsegments); the geometry is load-bearing"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "einops.repeat(rays, 'nrays p d -> nrays nsegments p d', nsegments=NS) — canonical pair-every-with-every"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "mat = t.stack([D, L_1 - L_2], dim=-1) — same as 0_1_1 but now over batched (NR, NS, 2) operands"},
+    {"id": "singular-matrix-mask-trick", "role": "core", "evidence": "dets = t.linalg.det(mat); is_singular = dets.abs() < 1e-8; mat[is_singular] = t.eye(2); ... & ~is_singular — exercise markdown spells out the trick step-by-step"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "sol = t.linalg.solve(mat, vec) on (NR, NS, 2, 2) and (NR, NS, 2) — the batched form replacing the try/except of 0_1_1"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(u >= 0) & (v >= 0) & (v <= 1) & ~is_singular — four predicates ANDed together"},
+    {"id": "any-reduce-axis", "role": "core", "evidence": ".any(dim=-1) reduces (nrays, nsegments) bool to (nrays,); markdown explicitly directs use of t.any"},
+    {"id": "broadcasting-rules", "role": "incidental", "evidence": "help dropdown explicitly notes mat[is_singular] = t.eye(2) relies on (2,2) broadcasting to (N,2,2)"},
+    {"id": "slice-view-mutation", "role": "incidental", "evidence": "rays = rays[..., :2] / segments = segments[..., :2] discard the z dim via basic indexing; also mat[is_singular] = ... is the assignment form"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Densest early exercise: 10 atoms. The 'replace singular with identity' trick is named in the exercise text and is the singular pedagogical climax. unbind-tuple-unpack is not used — the solution uses indexed slicing (rays[:, :, 0], rays[:, :, 1]) instead of unpacking, so I omitted it (seed predicted it). einops-reduce-min not used — exercise reduces with t.any, not einops.reduce."
+}

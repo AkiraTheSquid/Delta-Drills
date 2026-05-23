@@ -24,7 +24,7 @@ let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
 let authToken = localStorage.getItem("auth_token") || "";
 let authEmail = localStorage.getItem("auth_email") || "";
 
-const authRequiredTabs = ["split-tool", "account", "learn", "arena", "course", "courses", "papers", "practice", "statistics"];
+const authRequiredTabs = ["split-tool", "account", "courses", "practice", "targeted-practice", "statistics"];
 
 const switchTab = (tabName) => {
   if (authRequiredTabs.includes(tabName) && !authToken) {
@@ -56,7 +56,7 @@ const setAuthState = (token, email) => {
     localStorage.setItem("auth_token", authToken);
     localStorage.setItem("auth_email", authEmail);
     authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
-    switchTab("split-tool");
+    switchTab("practice");
   } else {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_email");
@@ -245,6 +245,7 @@ accountForm.addEventListener("submit", async (event) => {
   const openaiKey = document.getElementById("account-openai-key").value.trim();
   const mathpixId = document.getElementById("account-mathpix-id").value.trim();
   const mathpixKey = document.getElementById("account-mathpix-key").value.trim();
+  const githubUsername = document.getElementById("account-github-username").value.trim();
 
   if (apiBase) {
     localStorage.setItem("api_base", apiBase);
@@ -256,6 +257,8 @@ accountForm.addEventListener("submit", async (event) => {
   localStorage.setItem("account_openai_key", openaiKey);
   localStorage.setItem("account_mathpix_id", mathpixId);
   localStorage.setItem("account_mathpix_key", mathpixKey);
+  if (githubUsername) localStorage.setItem("account_github_username", githubUsername);
+  else localStorage.removeItem("account_github_username");
 
   if (typeof saveUserSettingsToSupabase === "function" && authEmail) {
     const result = await saveUserSettingsToSupabase(authEmail, openaiKey, mathpixId, mathpixKey);
@@ -275,16 +278,18 @@ const savedApiBase = localStorage.getItem("api_base") || "";
 const savedOpenai = localStorage.getItem("account_openai_key") || "";
 const savedMathpixId = localStorage.getItem("account_mathpix_id") || "";
 const savedMathpixKey = localStorage.getItem("account_mathpix_key") || "";
+const savedGithubUsername = localStorage.getItem("account_github_username") || "";
 document.getElementById("account-api-base").value = savedApiBase;
 document.getElementById("account-openai-key").value = savedOpenai;
 document.getElementById("account-mathpix-id").value = savedMathpixId;
 document.getElementById("account-mathpix-key").value = savedMathpixKey;
+document.getElementById("account-github-username").value = savedGithubUsername;
 
 // --- Initial state ---
 
 if (authToken) {
   authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
-  switchTab("split-tool");
+  switchTab("practice");
 } else {
   switchTab("how-it-works");
 }

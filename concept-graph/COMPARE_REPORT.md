@@ -1,0 +1,543 @@
+# Concept graph & prereq DAG comparison
+Comparison between our hand-authored graph and a blind second pass.
+## Concept edges
+- Mine: **170** edges. Theirs: **287** edges.
+- Full agreement (same `(from, to, kind)`): **45** (26% of mine, 16% of theirs)
+- Same pair, different kind: **16**
+- Only mine: **90**
+- Only theirs: **207**
+- Direction-flips (we both have a link but disagree on direction): **19**
+
+### Direction-flips (highest-signal disagreements)
+- `all-reduce-compose → all-reduce-grad-sync` (mine) vs `all-reduce-grad-sync → all-reduce-compose` (theirs)
+- `backward-on-scalar-loss → training-step-cycle` (mine) vs `training-step-cycle → backward-on-scalar-loss` (theirs)
+- `box-array-to-tensor-with-recipe → wrap-forward-fn-generic` (mine) vs `wrap-forward-fn-generic → box-array-to-tensor-with-recipe` (theirs)
+- `clip-grad-norm-pre-step → two-optimizers-alternating-step` (mine) vs `two-optimizers-alternating-step → clip-grad-norm-pre-step` (theirs)
+- `coerce-float-arg-to-array → multiply-back` (mine) vs `multiply-back → coerce-float-arg-to-array` (theirs)
+- `dataclass-training-args → trainer-class-skeleton` (mine) vs `trainer-class-skeleton → dataclass-training-args` (theirs)
+- `dfs-three-set-toposort → sorted-computational-graph` (mine) vs `sorted-computational-graph → dfs-three-set-toposort` (theirs)
+- `end-grad-default-ones-like → backprop-pop-outgrad-loop` (mine) vs `backprop-pop-outgrad-loop → end-grad-default-ones-like` (theirs)
+- `generator-loss-fool-discriminator → two-optimizers-alternating-step` (mine) vs `two-optimizers-alternating-step → generator-loss-fool-discriminator` (theirs)
+- `grads-dict-accumulate-parents → backprop-pop-outgrad-loop` (mine) vs `backprop-pop-outgrad-loop → grads-dict-accumulate-parents` (theirs)
+- `kl-divergence-gaussian-closed-form → elbo-loss-sum-with-beta` (mine) vs `elbo-loss-sum-with-beta → kl-divergence-gaussian-closed-form` (theirs)
+- `logsumexp-cross-entropy → cross-entropy-classification-loss` (mine) vs `cross-entropy-classification-loss → logsumexp-cross-entropy` (theirs)
+- `maxpool-reduce → avgpool-reduce` (mine) vs `avgpool-reduce → maxpool-reduce` (theirs)
+- `mse-reconstruction-loss → elbo-loss-sum-with-beta` (mine) vs `elbo-loss-sum-with-beta → mse-reconstruction-loss` (theirs)
+- `optimizer-class-dispatch → optimizer-loop-on-tensor` (mine) vs `optimizer-loop-on-tensor → optimizer-class-dispatch` (theirs)
+- `rank-world-size-args → init-process-group-nccl` (mine) vs `init-process-group-nccl → rank-world-size-args` (theirs)
+- `residual-skip-add → block-group-stack` (mine) vs `block-group-stack → residual-skip-add` (theirs)
+- `sweep-hparam-distribution → sweep-config-dict` (mine) vs `sweep-config-dict → sweep-hparam-distribution` (theirs)
+- `unbox-args-tensor-to-array → wrap-forward-fn-generic` (mine) vs `wrap-forward-fn-generic → unbox-args-tensor-to-array` (theirs)
+
+### Same pair, different kind
+- `arg-position-back-functions → backward-fn-signature` — mine: ['uses'], theirs: ['refines']
+- `broadcast-initial-weights → broadcast-source-fanout` — mine: ['is-a'], theirs: ['uses']
+- `cycle-detection-temp-set → dfs-three-set-toposort` — mine: ['uses'], theirs: ['part-of']
+- `device-consistent-construct → tensor-to-device` — mine: ['refines'], theirs: ['uses']
+- `einops-rearrange-flatten → tensor-reshape-view` — mine: ['uses'], theirs: ['refines']
+- `fractional-stride-zero-insertion → convT-as-flipped-padded-conv` — mine: ['part-of'], theirs: ['uses']
+- `functional-module-wrap → nn-module-subclass` — mine: ['refines'], theirs: ['uses']
+- `matvec → matmul-2d` — mine: ['refines'], theirs: ['is-a']
+- `module-base-class-custom → nn-module-subclass` — mine: ['is-a'], theirs: ['alternative-to']
+- `module-composition → nn-module-subclass` — mine: ['part-of'], theirs: ['uses']
+- `momentum-buffer-update → optimizer-state-tensor-buffers` — mine: ['part-of'], theirs: ['uses']
+- `mu-logsigma-encoder-head → bottleneck-latent-projection` — mine: ['part-of'], theirs: ['refines']
+- `non-diff-fn-wrap → wrap-forward-fn-generic` — mine: ['alternative-to'], theirs: ['uses']
+- `padding-amount-formula-convT → convT-as-flipped-padded-conv` — mine: ['part-of'], theirs: ['uses']
+- `param-group-dict-list → optimizer-init-params-list` — mine: ['part-of'], theirs: ['refines']
+- `weight-decay-decoupled → weight-decay-l2-add` — mine: ['refines'], theirs: ['alternative-to']
+
+### Edges only in MINE (candidates for review — possible over-reach)
+- `1x1-conv-channel-reshape → conv-stride-downsample` [refines]
+- `add-sub-div-back-lambdas → backward-fn-signature` [is-a]
+- `all-reduce-eval-metrics → all-reduce-grad-sync` [is-a]
+- `all-reduce-grad-sync → reduce-gather-sum` [is-a]
+- `any-reduce-axis → broadcasting-rules` [uses]
+- `arange-fancy-index-cross-entropy → cross-entropy-classification-loss` [uses]
+- `argmax-accuracy-eval → cross-entropy-classification-loss` [uses]
+- `as-strided-windowing → stride-zero-broadcast` [uses]
+- `back-fn-call-with-recipe-args → dispatch-back-fn-from-recipe` [uses]
+- `backward-func-lookup → recipe-dataclass` [part-of]
+- `bce-log-loss-real-fake → generator-loss-fool-discriminator` [part-of]
+- `buffer-copy_-inplace → training-step-cycle` [uses]
+- `channel-list-reverse-build → convtranspose-bn-activation-block` [part-of]
+- `conditional-hparam-branch → hparam-precedence-merge` [uses]
+- `conv-windowing-1d → diagonal-via-strides` [uses]
+- `convT-init-uniform-by-kernel → convT-as-flipped-padded-conv` [part-of]
+- `convT-kernel-axis-swap → convT-as-flipped-padded-conv` [part-of]
+- `cross-entropy-classification-loss → backward-on-scalar-loss` [uses]
+- `dataclasses-replace-args → dataclass-training-args` [uses]
+- `dcgan-normal-init-002 → nn-module-subclass` [uses]
+- `dcgan-wrapper-netG-netD → nn-module-subclass` [uses]
+- `detach-clone-snapshot → training-step-cycle` [uses]
+- `detach-stop-gradient-trick → generator-loss-fool-discriminator` [uses]
+- `discriminator-classifier-head → conv-leakyrelu-block-discriminator` [part-of]
+- `dist-send-recv-pair → per-rank-cuda-device` [uses]
+- `distributed-sampler-shard → per-rank-cuda-device` [uses]
+- `einops-reduce-min → broadcasting-rules` [uses]
+- `einsum-contraction → broadcasting-rules` [uses]
+- `ema-first-moment → momentum-buffer-update` [refines]
+- `ema-second-moment → optimizer-state-tensor-buffers` [part-of]
+- `examples-seen-step-axis → training-step-cycle` [uses]
+- `exp-back → backward-fn-signature` [is-a]
+- `freeze-requires-grad → nn-module-subclass` [uses]
+- `generator-project-and-reshape → convtranspose-bn-activation-block` [part-of]
+- `get-children-callable-param → module-base-class-custom` [uses]
+- `getitem-back-add-at → backward-fn-signature` [is-a]
+- `grad-expressed-in-out → chain-rule-elementwise` [uses]
+- `holdout-data-one-per-class → training-step-cycle` [uses]
+- `hparam-precedence-merge → dataclass-training-args` [uses]
+- `index-by-tensor → boolean-mask-combine` [alternative-to]
+- `inference-mode-step → validation-no-grad` [refines]
+- `inplace-param-update → optimizer-loop-on-tensor` [uses]
+- `leaf-tensor-condition → requires-grad-propagation` [uses]
+- `linear-affine-on-custom-tensor → parameter-wrap-around-tensor` [uses]
+- `log-back → backward-fn-signature` [is-a]
+- `log-samples-eval-callback → training-step-cycle` [uses]
+- `loss-item-scalar-extract → training-step-cycle` [part-of]
+- `manual-chain-forward-and-back → requires-grad-propagation` [uses]
+- `matmul-2d → broadcasting-rules` [uses]
+- `matmul-2d → einsum-contraction` [refines]
+- `matmul-back-transpose-pair → backward-fn-signature` [is-a]
+- `max-back-tied-half → backward-fn-signature` [is-a]
+- `model-save-state-dict → trainer-class-skeleton` [part-of]
+- `module-extra-repr → module-composition` [uses]
+- `mp-spawn-workers → per-rank-cuda-device` [uses]
+- `multiply-back → backward-fn-signature` [is-a]
+- `negative-back → backward-fn-signature` [is-a]
+- `nn-parameter-wrap → nn-module-subclass` [part-of]
+- `noise-batch-from-latent → randn-like-noise-source` [is-a]
+- `optimizer-loop-on-tensor → optimizer-init-params-list` [uses]
+- `permute-back-argsort → backward-fn-signature` [is-a]
+- `rank0-only-side-effects → per-rank-cuda-device` [uses]
+- `rearrange-as-sequential-layer → nn-module-subclass` [refines]
+- `register-back-fn-after-wrap → recipe-dataclass` [uses]
+- `register-buffer → nn-parameter-wrap` [alternative-to]
+- `reparameterization-trick → bottleneck-latent-projection` [part-of]
+- `reshape-back → backward-fn-signature` [is-a]
+- `rotation-matrix-3d → cross-product-normal` [uses]
+- `rotation-matrix-3d → vector-normalize-keepdim` [uses]
+- `sgd-vanilla-from-scratch → optimizer-loop-on-tensor` [refines]
+- `sorted-computational-graph → recipe-dataclass` [uses]
+- `state-dict-load → module-composition` [uses]
+- `step-counter-increment → optimizer-state-tensor-buffers` [part-of]
+- `sum-and-broadcast-duality → unbroadcast-pattern` [uses]
+- `sum-back-expand-broadcast → backward-fn-signature` [is-a]
+- `sweep-agent-launch → sweep-hparam-distribution` [uses]
+- `sweep-config-dict → wandb-init-run` [uses]
+- `t-stack-trajectory → training-step-cycle` [uses]
+- `topk-predictions → matmul-2d` [uses]
+- `tqdm-postfix-metrics → training-step-cycle` [uses]
+- `two-optimizers-alternating-step → optimizer-loop-on-tensor` [alternative-to]
+- `validation-no-grad → training-step-cycle` [part-of]
+- `wandb-config-into-args → wandb-init-run` [uses]
+- `wandb-finish → wandb-log-step` [uses]
+- `wandb-log-step → wandb-config-into-args` [uses]
+- `wandb-watch-model → wandb-log-step` [uses]
+- `weight-decay-l2-add → inplace-param-update` [uses]
+- `where-clip-negative → inf-masking` [alternative-to]
+- `wrap-forward-fn-generic → recipe-dataclass` [uses]
+- `zero-grad-set-none → param-grad-access` [uses]
+
+### Edges only in THEIRS (candidates I missed)
+- `1x1-conv-channel-reshape → conv-kernel-shape` [uses]
+- `1x1-conv-channel-reshape → conv-windowing-2d` [refines]
+- `add-sub-div-back-lambdas → arg-position-back-functions` [uses]
+- `add-sub-div-back-lambdas → coerce-float-arg-to-array` [uses]
+- `add-sub-div-back-lambdas → unbroadcast-pattern` [uses]
+- `all-reduce-compose → broadcast-source-fanout` [uses]
+- `all-reduce-compose → reduce-gather-sum` [uses]
+- `all-reduce-eval-metrics → all-reduce-compose` [uses]
+- `all-reduce-grad-sync → reduce-op-mean-divide` [uses]
+- `any-reduce-axis → boolean-mask-combine` [uses]
+- `arange-fancy-index-cross-entropy → index-by-tensor` [uses]
+- `arange-fancy-index-cross-entropy → logsumexp-cross-entropy` [part-of]
+- `argmax-accuracy-eval → topk-predictions` [refines]
+- `avgpool-reduce → as-strided-windowing` [uses]
+- `back-fn-call-with-recipe-args → backward-fn-signature` [uses]
+- `back-fn-call-with-recipe-args → recipe-dataclass` [uses]
+- `backprop-pop-outgrad-loop → dispatch-back-fn-from-recipe` [uses]
+- `backprop-pop-outgrad-loop → grad-accumulate-on-leaf` [uses]
+- `backward-func-lookup → arg-position-back-functions` [uses]
+- `batchnorm-affine-params → nn-parameter-wrap` [uses]
+- `batchnorm-running-stats → register-buffer` [uses]
+- `bce-log-loss-real-fake → discriminator-classifier-head` [uses]
+- `bce-log-loss-real-fake → noise-batch-from-latent` [uses]
+- `bias-correction-divide → ema-first-moment` [uses]
+- `bias-correction-divide → ema-second-moment` [uses]
+- `block-group-stack → module-composition` [uses]
+- `bn-weight-bias-init-pattern → dcgan-normal-init-002` [uses]
+- `boolean-mask-combine → broadcasting-rules` [uses]
+- `bottleneck-latent-projection → einops-rearrange-flatten` [uses]
+- `box-array-to-tensor-with-recipe → parents-dict-by-argidx` [uses]
+- `box-array-to-tensor-with-recipe → recipe-dataclass` [uses]
+- `box-array-to-tensor-with-recipe → requires-grad-propagation` [uses]
+- `box-array-to-tensor-with-recipe → tensor-wraps-ndarray` [uses]
+- `broadcast-source-fanout → rank-world-size-args` [uses]
+- `buffer-copy_-inplace → optimizer-state-tensor-buffers` [uses]
+- `chain-rule-elementwise → backward-fn-signature` [uses]
+- `channel-list-reverse-build → dcgan-wrapper-netG-netD` [uses]
+- `coerce-float-arg-to-array → unbroadcast-pattern` [uses]
+- `conditional-hparam-branch → momentum-buffer-update` [uses]
+- `conditional-hparam-branch → weight-decay-l2-add` [uses]
+- `conv-channel-sum → conv-kernel-shape` [uses]
+- `conv-channel-sum → einsum-contraction` [uses]
+- `conv-leakyrelu-block-discriminator → batchnorm-affine-params` [uses]
+- `conv-leakyrelu-block-discriminator → dcgan-wrapper-netG-netD` [part-of]
+- `conv-output-shape → conv-padding-zero` [uses]
+- `conv-output-shape → conv-stride-downsample` [uses]
+- `conv-padding-zero → tensor-zeros-init` [uses]
+- `conv-stride-downsample → as-strided-windowing` [uses]
+- `conv-windowing-1d → conv-channel-sum` [uses]
+- `conv-windowing-1d → conv-output-shape` [uses]
+- `conv-windowing-2d → conv-output-shape` [uses]
+- `convT-as-flipped-padded-conv → conv-padding-zero` [uses]
+- `convT-init-uniform-by-kernel → convT-kernel-axis-swap` [uses]
+- `convT-kernel-axis-swap → conv-kernel-shape` [uses]
+- `convT-kernel-axis-swap → einops-rearrange-flatten` [uses]
+- `convtranspose-bn-activation-block → batchnorm-affine-params` [uses]
+- `convtranspose-bn-activation-block → dcgan-wrapper-netG-netD` [part-of]
+- `convtranspose-bn-activation-block → relu-elementwise-max` [uses]
+- `cuda-empty-cache → tensor-to-device` [uses]
+- `dataclasses-replace-args → wandb-config-into-args` [alternative-to]
+- `dcgan-normal-init-002 → module-modules-iter-isinstance-dispatch` [uses]
+- `dcgan-wrapper-netG-netD → module-composition` [uses]
+- `detach-clone-snapshot → inplace-param-update` [uses]
+- `detach-stop-gradient-trick → bce-log-loss-real-fake` [uses]
+- `dfs-three-set-toposort → get-children-callable-param` [uses]
+- `diagonal-via-strides → contiguous-layout` [uses]
+- `discriminator-classifier-head → einops-rearrange-flatten` [uses]
+- `dispatch-back-fn-from-recipe → parents-dict-by-argidx` [uses]
+- `distributed-sampler-shard → dataloader-batching` [uses]
+- `distributed-sampler-shard → rank-world-size-args` [uses]
+- `einops-reduce-min → inf-masking` [uses]
+- `ema-first-moment → buffer-copy_-inplace` [uses]
+- `ema-second-moment → buffer-copy_-inplace` [uses]
+- `encoder-decoder-symmetric → conv-stride-downsample` [uses]
+- `encoder-decoder-symmetric → convT-as-flipped-padded-conv` [uses]
+- `examples-seen-step-axis → dataloader-batching` [uses]
+- `exp-back → chain-rule-elementwise` [is-a]
+- `exp-back → grad-expressed-in-out` [uses]
+- `fractional-stride-zero-insertion → slice-view-mutation` [uses]
+- `fractional-stride-zero-insertion → tensor-zeros-init` [uses]
+- `freeze-requires-grad → nn-parameter-wrap` [uses]
+- `functional-module-wrap → nn-parameter-wrap` [uses]
+- `generator-loss-fool-discriminator → discriminator-classifier-head` [uses]
+- `generator-loss-fool-discriminator → noise-batch-from-latent` [uses]
+- `generator-project-and-reshape → bottleneck-latent-projection` [refines]
+- `generator-project-and-reshape → rearrange-as-sequential-layer` [uses]
+- `getitem-back-add-at → index-by-tensor` [uses]
+- `grad-expressed-in-out → backward-fn-signature` [uses]
+- `grads-dict-accumulate-parents → parents-dict-by-argidx` [uses]
+- `holdout-data-one-per-class → dataloader-batching` [uses]
+- `holdout-data-one-per-class → t-stack-trajectory` [uses]
+- `hparam-precedence-merge → param-group-dict-list` [uses]
+- `inplace-op-unsafe-warning → recipe-dataclass` [uses]
+- `inplace-param-update → inference-mode-step` [uses]
+- `inplace-param-update → param-grad-access` [uses]
+- `is-differentiable-flag → wrap-forward-fn-generic` [part-of]
+- `kaiming-uniform-init → nn-parameter-wrap` [uses]
+- `kl-divergence-gaussian-closed-form → mu-logsigma-encoder-head` [uses]
+- `leaf-tensor-condition → recipe-dataclass` [uses]
+- `linalg-solve-batched → broadcasting-rules` [uses]
+- `linear-affine-on-custom-tensor → matmul-2d` [uses]
+- `linear-affine-on-custom-tensor → module-base-class-custom` [uses]
+- `linear-affine-on-custom-tensor → parameter-subclass-of-tensor` [uses]
+- `log-back → chain-rule-elementwise` [is-a]
+- `log-samples-eval-callback → holdout-data-one-per-class` [uses]
+- `log-samples-eval-callback → model-train-eval-toggle-around-sample` [uses]
+- `log-samples-eval-callback → wandb-log-step` [uses]
+- `logsumexp-cross-entropy → arange-fancy-index-cross-entropy` [uses]
+- `logsumexp-cross-entropy → exp-back` [uses]
+- `manual-chain-forward-and-back → backward-fn-signature` [uses]
+- `manual-chain-forward-and-back → chain-rule-elementwise` [uses]
+- `max-back-tied-half → chain-rule-elementwise` [is-a]
+- `max-back-tied-half → unbroadcast-pattern` [uses]
+- `maxpool-reduce → as-strided-windowing` [uses]
+- `model-save-state-dict → rank0-only-side-effects` [uses]
+- `model-train-eval-toggle-around-sample → train-eval-mode-branch` [refines]
+- `module-extra-repr → nn-module-subclass` [uses]
+- `momentum-buffer-update → buffer-copy_-inplace` [uses]
+- `mp-spawn-workers → rank-world-size-args` [uses]
+- `mse-reconstruction-loss → encoder-decoder-symmetric` [uses]
+- `multiply-back → chain-rule-elementwise` [is-a]
+- `multiply-back → unbroadcast-pattern` [uses]
+- `negative-back → chain-rule-elementwise` [is-a]
+- `nested-param-group-loop → hparam-precedence-merge` [uses]
+- `nested-param-group-loop → params-iterable-vs-groups` [uses]
+- `no-relu-on-final-layer → relu-elementwise-max` [alternative-to]
+- `noise-batch-from-latent → tensor-to-device` [uses]
+- `non-diff-fn-wrap → is-differentiable-flag` [uses]
+- `optimizer-class-dispatch → optimizer-init-params-list` [uses]
+- `optimizer-loop-on-tensor → backward-on-scalar-loss` [uses]
+- `optimizer-loop-on-tensor → detach-clone-snapshot` [uses]
+- `optimizer-loop-on-tensor → requires-grad-leaf-assert` [uses]
+- `optimizer-loop-on-tensor → t-stack-trajectory` [uses]
+- `optimizer-repr-string → tqdm-postfix-metrics` [uses]
+- `optimizer-state-tensor-buffers → optimizer-init-params-list` [uses]
+- `parameter-wrap-around-tensor → tensor-wraps-ndarray` [uses]
+- `params-iterable-vs-groups → param-group-dict-list` [uses]
+- `per-rank-cuda-device → tensor-to-device` [uses]
+- `permute-back-argsort → tensor-reshape-view` [uses]
+- `pseudocode-to-code-translate → bias-correction-divide` [uses]
+- `pseudocode-to-code-translate → momentum-buffer-update` [uses]
+- `pseudocode-to-code-translate → sqrt-eps-stabilize` [uses]
+- `randn-like-noise-source → device-consistent-construct` [uses]
+- `rank0-only-side-effects → rank-world-size-args` [uses]
+- `rearrange-as-sequential-layer → einops-rearrange-flatten` [uses]
+- `rearrange-as-sequential-layer → module-composition` [uses]
+- `recipe-dataclass → tensor-wraps-ndarray` [part-of]
+- `reduce-gather-sum → rank-world-size-args` [uses]
+- `register-back-fn-after-wrap → backward-func-lookup` [uses]
+- `register-back-fn-after-wrap → wrap-forward-fn-generic` [uses]
+- `register-buffer → nn-module-subclass` [uses]
+- `reparameterization-trick → mu-logsigma-encoder-head` [uses]
+- `requires-grad-leaf-assert → leaf-tensor-condition` [uses]
+- `requires-grad-propagation → grad-tracking-global-toggle` [uses]
+- `requires-grad-propagation → is-differentiable-flag` [uses]
+- `reshape-back → tensor-reshape-view` [uses]
+- `residual-skip-add → 1x1-conv-channel-reshape` [uses]
+- `resnet-stem → batchnorm-affine-params` [uses]
+- `resnet-stem → conv-stride-downsample` [uses]
+- `resnet-stem → maxpool-reduce` [uses]
+- `resnet-stem → relu-elementwise-max` [uses]
+- `rotation-matrix-3d → matmul-2d` [uses]
+- `segment-line-intersect-2d → linalg-solve-batched` [uses]
+- `sgd-vanilla-from-scratch → grad-accumulate-on-leaf` [uses]
+- `sgd-vanilla-from-scratch → no-grad-context-mgr-update` [uses]
+- `sgd-vanilla-from-scratch → zero-grad-set-none` [uses]
+- `singular-matrix-mask-trick → boolean-mask-combine` [uses]
+- `singular-matrix-mask-trick → try-except-solve` [alternative-to]
+- `slice-view-mutation → contiguous-layout` [uses]
+- `sorted-computational-graph → parents-dict-by-argidx` [uses]
+- `state-dict-load → nn-module-subclass` [uses]
+- `step-counter-increment → optimizer-init-params-list` [uses]
+- `stride-zero-broadcast → broadcasting-rules` [refines]
+- `sum-and-broadcast-duality → broadcasting-rules` [uses]
+- `sum-back-expand-broadcast → sum-and-broadcast-duality` [uses]
+- `sweep-agent-launch → sweep-config-dict` [uses]
+- `t-stack-trajectory → stack-vs-cat` [uses]
+- `tensor-reshape-view → contiguous-layout` [uses]
+- `tensor-wraps-ndarray → recipe-dataclass` [uses]
+- `time-stage-instrumentation → all-reduce-grad-sync` [uses]
+- `time-stage-instrumentation → wandb-log-step` [uses]
+- `topk-predictions → cross-entropy-classification-loss` [uses]
+- `tqdm-postfix-metrics → loss-item-scalar-extract` [uses]
+- `train-eval-mode-branch → nn-module-subclass` [uses]
+- `trainer-class-skeleton → dataloader-batching` [uses]
+- `trainer-class-skeleton → validation-no-grad` [uses]
+- `training-step-cycle → cross-entropy-classification-loss` [uses]
+- `training-step-cycle → zero-grad-set-none` [uses]
+- `triangle-barycentric → boolean-mask-combine` [uses]
+- `triangle-barycentric → cross-product-normal` [uses]
+- `two-optimizers-alternating-step → bce-log-loss-real-fake` [uses]
+- `two-optimizers-alternating-step → dcgan-wrapper-netG-netD` [uses]
+- `two-optimizers-alternating-step → detach-stop-gradient-trick` [uses]
+- `two-optimizers-alternating-step → training-step-cycle` [refines]
+- `validation-no-grad → argmax-accuracy-eval` [uses]
+- `validation-no-grad → train-eval-mode-branch` [uses]
+- `vector-normalize-keepdim → broadcasting-rules` [uses]
+- `wandb-config-into-args → sweep-agent-launch` [uses]
+- `wandb-finish → wandb-init-run` [uses]
+- `wandb-init-run → dataclass-training-args` [uses]
+- … 7 more
+
+---
+## Derived prereq DAG
+- Mine: **211** edges. Theirs: **290** edges.
+- Agree (same `(from, to)`): **67** (32% of mine, 23% of theirs)
+- Only mine: **120**
+- Only theirs: **199**
+- Direction-flips: **24**
+
+### Prereq direction-flips
+- `all-reduce-grad-sync → all-reduce-compose` (mine) vs `all-reduce-compose → all-reduce-grad-sync` (theirs)
+- `any-reduce-axis → boolean-mask-combine` (mine) vs `boolean-mask-combine → any-reduce-axis` (theirs)
+- `backprop-pop-outgrad-loop → end-grad-default-ones-like` (mine) vs `end-grad-default-ones-like → backprop-pop-outgrad-loop` (theirs)
+- `backprop-pop-outgrad-loop → grads-dict-accumulate-parents` (mine) vs `grads-dict-accumulate-parents → backprop-pop-outgrad-loop` (theirs)
+- `block-group-stack → residual-skip-add` (mine) vs `residual-skip-add → block-group-stack` (theirs)
+- `conv-output-shape → conv-padding-zero` (mine) vs `conv-padding-zero → conv-output-shape` (theirs)
+- `conv-output-shape → conv-stride-downsample` (mine) vs `conv-stride-downsample → conv-output-shape` (theirs)
+- `elbo-loss-sum-with-beta → kl-divergence-gaussian-closed-form` (mine) vs `kl-divergence-gaussian-closed-form → elbo-loss-sum-with-beta` (theirs)
+- `elbo-loss-sum-with-beta → mse-reconstruction-loss` (mine) vs `mse-reconstruction-loss → elbo-loss-sum-with-beta` (theirs)
+- `grad-expressed-in-out → backward-fn-signature` (mine) vs `backward-fn-signature → grad-expressed-in-out` (theirs)
+- `init-process-group-nccl → rank-world-size-args` (mine) vs `rank-world-size-args → init-process-group-nccl` (theirs)
+- `maxpool-reduce → avgpool-reduce` (mine) vs `avgpool-reduce → maxpool-reduce` (theirs)
+- `multiply-back → coerce-float-arg-to-array` (mine) vs `coerce-float-arg-to-array → multiply-back` (theirs)
+- `optimizer-loop-on-tensor → optimizer-class-dispatch` (mine) vs `optimizer-class-dispatch → optimizer-loop-on-tensor` (theirs)
+- `segment-line-intersect-2d → linalg-solve-batched` (mine) vs `linalg-solve-batched → segment-line-intersect-2d` (theirs)
+- `sorted-computational-graph → dfs-three-set-toposort` (mine) vs `dfs-three-set-toposort → sorted-computational-graph` (theirs)
+- `sweep-config-dict → sweep-hparam-distribution` (mine) vs `sweep-hparam-distribution → sweep-config-dict` (theirs)
+- `tensor-wraps-ndarray → recipe-dataclass` (mine) vs `recipe-dataclass → tensor-wraps-ndarray` (theirs)
+- `trainer-class-skeleton → dataclass-training-args` (mine) vs `dataclass-training-args → trainer-class-skeleton` (theirs)
+- `training-step-cycle → backward-on-scalar-loss` (mine) vs `backward-on-scalar-loss → training-step-cycle` (theirs)
+- `two-optimizers-alternating-step → clip-grad-norm-pre-step` (mine) vs `clip-grad-norm-pre-step → two-optimizers-alternating-step` (theirs)
+- `two-optimizers-alternating-step → generator-loss-fool-discriminator` (mine) vs `generator-loss-fool-discriminator → two-optimizers-alternating-step` (theirs)
+- `wrap-forward-fn-generic → box-array-to-tensor-with-recipe` (mine) vs `box-array-to-tensor-with-recipe → wrap-forward-fn-generic` (theirs)
+- `wrap-forward-fn-generic → unbox-args-tensor-to-array` (mine) vs `unbox-args-tensor-to-array → wrap-forward-fn-generic` (theirs)
+
+### Prereqs only in MINE (sample)
+- `all-reduce-grad-sync → all-reduce-eval-metrics`
+- `backward-fn-signature → add-sub-div-back-lambdas`
+- `backward-fn-signature → exp-back`
+- `backward-fn-signature → getitem-back-add-at`
+- `backward-fn-signature → log-back`
+- `backward-fn-signature → matmul-back-transpose-pair`
+- `backward-fn-signature → max-back-tied-half`
+- `backward-fn-signature → multiply-back`
+- `backward-fn-signature → negative-back`
+- `backward-fn-signature → permute-back-argsort`
+- `backward-fn-signature → reshape-back`
+- `backward-fn-signature → sum-back-expand-broadcast`
+- `backward-on-scalar-loss → bce-log-loss-real-fake`
+- `backward-on-scalar-loss → cross-entropy-classification-loss`
+- `backward-on-scalar-loss → mse-reconstruction-loss`
+- `batchnorm-affine-params → batchnorm-running-stats`
+- `batchnorm-running-stats → train-eval-mode-branch`
+- `boolean-mask-combine → index-by-tensor`
+- `bottleneck-latent-projection → module-composition`
+- `broadcasting-rules → any-reduce-axis`
+- `broadcasting-rules → einops-reduce-min`
+- `broadcasting-rules → einsum-contraction`
+- `broadcasting-rules → matmul-2d`
+- `chain-rule-elementwise → grad-expressed-in-out`
+- `conv-channel-sum → conv-output-shape`
+- `conv-kernel-shape → conv-output-shape`
+- `conv-leakyrelu-block-discriminator → discriminator-classifier-head`
+- `conv-padding-zero → convtranspose-bn-activation-block`
+- `conv-stride-downsample → 1x1-conv-channel-reshape`
+- `conv-windowing-2d → conv-channel-sum`
+- `conv-windowing-2d → conv-kernel-shape`
+- `conv-windowing-2d → maxpool-reduce`
+- `convT-as-flipped-padded-conv → convT-init-uniform-by-kernel`
+- `convT-as-flipped-padded-conv → convT-kernel-axis-swap`
+- `convtranspose-bn-activation-block → channel-list-reverse-build`
+- `convtranspose-bn-activation-block → generator-project-and-reshape`
+- `cross-entropy-classification-loss → arange-fancy-index-cross-entropy`
+- `cross-entropy-classification-loss → argmax-accuracy-eval`
+- `cross-product-normal → rotation-matrix-3d`
+- `dataclass-training-args → dataclasses-replace-args`
+- `dataclass-training-args → hparam-precedence-merge`
+- `diagonal-via-strides → as-strided-windowing`
+- `diagonal-via-strides → conv-windowing-1d`
+- `dispatch-back-fn-from-recipe → back-fn-call-with-recipe-args`
+- `einops-repeat-broadcast → stack-vs-cat`
+- `einsum-contraction → matmul-2d`
+- `ema-first-moment → ema-second-moment`
+- `generator-loss-fool-discriminator → bce-log-loss-real-fake`
+- `generator-loss-fool-discriminator → detach-stop-gradient-trick`
+- `hparam-precedence-merge → conditional-hparam-branch`
+- `inf-masking → where-clip-negative`
+- `inplace-op-unsafe-warning → wrap-forward-fn-generic`
+- `inplace-param-update → weight-decay-l2-add`
+- `linspace-out-param → ray-parametric-form`
+- `matmul-2d → topk-predictions`
+- `module-base-class-custom → get-children-callable-param`
+- `module-composition → batchnorm-affine-params`
+- `module-composition → module-extra-repr`
+- `module-composition → state-dict-load`
+- `momentum-buffer-update → ema-first-moment`
+- `nn-module-subclass → dcgan-normal-init-002`
+- `nn-module-subclass → dcgan-wrapper-netG-netD`
+- `nn-module-subclass → freeze-requires-grad`
+- `nn-module-subclass → kaiming-uniform-init`
+- `nn-module-subclass → nn-parameter-wrap`
+- `nn-module-subclass → no-relu-on-final-layer`
+- `nn-module-subclass → rearrange-as-sequential-layer`
+- `nn-parameter-wrap → params-iterable-vs-groups`
+- `nn-parameter-wrap → register-buffer`
+- `optimizer-class-dispatch → optimizer-repr-string`
+- `optimizer-class-dispatch → pseudocode-to-code-translate`
+- `optimizer-init-params-list → optimizer-loop-on-tensor`
+- `optimizer-loop-on-tensor → inplace-param-update`
+- `optimizer-loop-on-tensor → sgd-vanilla-from-scratch`
+- `optimizer-state-tensor-buffers → ema-second-moment`
+- `optimizer-state-tensor-buffers → step-counter-increment`
+- `param-grad-access → requires-grad-leaf-assert`
+- `param-grad-access → zero-grad-set-none`
+- `param-group-dict-list → nested-param-group-loop`
+- `parameter-wrap-around-tensor → linear-affine-on-custom-tensor`
+- … 40 more
+
+### Prereqs only in THEIRS (sample)
+- `1x1-conv-channel-reshape → residual-skip-add`
+- `all-reduce-compose → all-reduce-eval-metrics`
+- `all-reduce-grad-sync → time-stage-instrumentation`
+- `arange-fancy-index-cross-entropy → logsumexp-cross-entropy`
+- `arg-position-back-functions → add-sub-div-back-lambdas`
+- `arg-position-back-functions → backward-func-lookup`
+- `argmax-accuracy-eval → validation-no-grad`
+- `as-strided-windowing → avgpool-reduce`
+- `as-strided-windowing → conv-stride-downsample`
+- `as-strided-windowing → maxpool-reduce`
+- `backward-fn-signature → back-fn-call-with-recipe-args`
+- `backward-fn-signature → chain-rule-elementwise`
+- `backward-fn-signature → manual-chain-forward-and-back`
+- `backward-func-lookup → register-back-fn-after-wrap`
+- `backward-on-scalar-loss → backward-fn-signature`
+- `backward-on-scalar-loss → optimizer-loop-on-tensor`
+- `batchnorm-affine-params → conv-leakyrelu-block-discriminator`
+- `batchnorm-affine-params → convtranspose-bn-activation-block`
+- `batchnorm-affine-params → resnet-stem`
+- `bce-log-loss-real-fake → detach-stop-gradient-trick`
+- `bce-log-loss-real-fake → two-optimizers-alternating-step`
+- `bias-correction-divide → pseudocode-to-code-translate`
+- `boolean-mask-combine → singular-matrix-mask-trick`
+- `boolean-mask-combine → triangle-barycentric`
+- `boolean-mask-combine → where-clip-negative`
+- `bottleneck-latent-projection → generator-project-and-reshape`
+- `broadcast-source-fanout → all-reduce-compose`
+- `broadcasting-rules → boolean-mask-combine`
+- `broadcasting-rules → linalg-solve-batched`
+- `broadcasting-rules → sum-and-broadcast-duality`
+- `broadcasting-rules → vector-normalize-keepdim`
+- `buffer-copy_-inplace → ema-first-moment`
+- `buffer-copy_-inplace → ema-second-moment`
+- `buffer-copy_-inplace → momentum-buffer-update`
+- `chain-rule-elementwise → exp-back`
+- `chain-rule-elementwise → log-back`
+- `chain-rule-elementwise → manual-chain-forward-and-back`
+- `chain-rule-elementwise → max-back-tied-half`
+- `chain-rule-elementwise → multiply-back`
+- `chain-rule-elementwise → negative-back`
+- `coerce-float-arg-to-array → add-sub-div-back-lambdas`
+- `contiguous-layout → diagonal-via-strides`
+- `contiguous-layout → slice-view-mutation`
+- `contiguous-layout → tensor-reshape-view`
+- `conv-channel-sum → conv-windowing-1d`
+- `conv-kernel-shape → 1x1-conv-channel-reshape`
+- `conv-kernel-shape → conv-channel-sum`
+- `conv-kernel-shape → convT-kernel-axis-swap`
+- `conv-output-shape → conv-windowing-1d`
+- `conv-output-shape → conv-windowing-2d`
+- `conv-padding-zero → convT-as-flipped-padded-conv`
+- `conv-stride-downsample → encoder-decoder-symmetric`
+- `conv-stride-downsample → resnet-stem`
+- `conv-windowing-2d → 1x1-conv-channel-reshape`
+- `convT-as-flipped-padded-conv → encoder-decoder-symmetric`
+- `convT-kernel-axis-swap → convT-init-uniform-by-kernel`
+- `cross-entropy-classification-loss → topk-predictions`
+- `cross-entropy-classification-loss → training-step-cycle`
+- `cross-product-normal → triangle-barycentric`
+- `dataclass-training-args → wandb-init-run`
+- `dataloader-batching → distributed-sampler-shard`
+- `dataloader-batching → examples-seen-step-axis`
+- `dataloader-batching → holdout-data-one-per-class`
+- `dataloader-batching → trainer-class-skeleton`
+- `dcgan-normal-init-002 → bn-weight-bias-init-pattern`
+- `dcgan-wrapper-netG-netD → channel-list-reverse-build`
+- `dcgan-wrapper-netG-netD → conv-leakyrelu-block-discriminator`
+- `dcgan-wrapper-netG-netD → convtranspose-bn-activation-block`
+- `dcgan-wrapper-netG-netD → two-optimizers-alternating-step`
+- `detach-clone-snapshot → optimizer-loop-on-tensor`
+- `detach-stop-gradient-trick → two-optimizers-alternating-step`
+- `device-consistent-construct → randn-like-noise-source`
+- `discriminator-classifier-head → bce-log-loss-real-fake`
+- `discriminator-classifier-head → generator-loss-fool-discriminator`
+- `dispatch-back-fn-from-recipe → backprop-pop-outgrad-loop`
+- `einops-rearrange-flatten → bottleneck-latent-projection`
+- `einops-rearrange-flatten → convT-kernel-axis-swap`
+- `einops-rearrange-flatten → discriminator-classifier-head`
+- `einops-rearrange-flatten → rearrange-as-sequential-layer`
+- `einsum-contraction → conv-channel-sum`
+- … 119 more

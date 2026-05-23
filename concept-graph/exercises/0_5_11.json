@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_5_11",
+  "title": "transposed conv module",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_11_exercise-transposed-conv-module.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 11,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "convT-init-uniform-by-kernel", "role": "core", "evidence": "sf = 1 / (self.out_channels * self.kernel_size[0] * self.kernel_size[1]) ** 0.5; self.weight = nn.Parameter(sf * (2 * t.rand(in_channels, out_channels, *self.kernel_size) - 1)) — uniform [-sf, sf] with k = 1 / (out_channels * kH * kW); markdown: 'PyTorch's standard behaviour for convolutional transpose layers'"},
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class ConvTranspose2d(nn.Module): super().__init__() with full __init__/forward/extra_repr trio"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "self.weight = nn.Parameter(sf * (2 * t.rand(in_channels, out_channels, *self.kernel_size) - 1)) — wrap the init tensor in nn.Parameter"},
+    {"id": "module-extra-repr", "role": "core", "evidence": "def extra_repr(self) -> str: keys = ['in_channels', 'out_channels', 'kernel_size', 'stride', 'padding']; return ', '.join([f'{key}={getattr(self, key)}' for key in keys])"},
+    {"id": "convT-kernel-axis-swap", "role": "incidental", "evidence": "self.weight shape (in_channels, out_channels, *kernel_size) reflects the convT (i, o, k...) convention from 0_5_8/9/10; passed straight through to conv_transpose2d which does the rearrange internally"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5 atoms — exactly matches seed prediction of 5. The module-wrap exercise: introduces convT-init-uniform-by-kernel (the part5-specific fan-out init) plus reuses three pytorch-module-mechanics atoms (nn-module-subclass, nn-parameter-wrap, module-extra-repr) from part2. The (i,o,*k) shape convention shows up here as an incidental — the kernel is allocated in convT shape but the axis swap happens inside conv_transpose2d (defined in 0_5_10)."
+}

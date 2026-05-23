@@ -17,11 +17,14 @@ REQUIRED_JS = [
     "runner.js", "visuals.js", "ui.js", "ai.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
     "bars.js", "config.js",
+    "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
+    "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
 ]
 REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [
     os.path.join(SHARED, "delta_numbers.npy"),
     os.path.join(SHARED, "numbers_stacked.png"),
+    os.path.join(SHARED, "questions_structured.json"),
     os.path.join(SHARED, "arena_prereqs_structured.json"),
 ]
 
@@ -51,14 +54,80 @@ def check_public_api():
     assert "buildPyodidePreamble" in runner, "runner.js missing buildPyodidePreamble"
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
 
+    ui_js = _read(os.path.join(HERE, "ui.js"))
+    assert "renderQuestionImports" in ui_js, "ui.js missing imports renderer"
+
     visuals = _read(os.path.join(HERE, "visuals.js"))
     assert "renderQuestionVisual" in visuals, "visuals.js missing renderQuestionVisual"
     assert "renderFallbackImage" in visuals, "visuals.js missing PNG fallback (renderFallbackImage)"
     assert "getArenaNumbersPngCandidates" in visuals, "visuals.js missing PNG candidate resolver"
 
-    questions_path = os.path.join(SHARED, "arena_prereqs_structured.json")
+    unlock = _read(os.path.join(HERE, "arena-unlock.js"))
+    for needle in (
+        "window.ArenaUnlock", "tryShow",
+        # showFor is the manual-launch API consumed by the Targeted Practice
+        # "Practice this problem" button. If this drops, the TP review-mode
+        # action button silently no-ops with a console.warn.
+        "showFor",
+        "arena-unlock-page", "arena-unlock-card", "arena-unlock-continue-btn",
+        ".practice-container",  # the view that gets swapped out on show
+    ):
+        assert needle in unlock, f"arena-unlock.js missing required symbol: {needle!r}"
+    # The Colab href must fall back to currentEx.notebookPath so manual
+    # launches from Targeted Practice point at the right notebook, not the
+    # hardcoded 0.0 prereqs notebook used by the auto-unlock flow.
+    assert re.search(r"currentEx[^\n]*notebookPath", unlock), (
+        "arena-unlock.js colabHrefForUnlock lost the currentEx.notebookPath fallback "
+        "— Targeted Practice will land on the wrong Colab notebook"
+    )
+    # The _targetedPractice flag must gate markArenaExerciseShown so manually
+    # launched exercises remain re-practicable from the TP review page.
+    assert "_targetedPractice" in unlock, (
+        "arena-unlock.js no longer honors the _targetedPractice flag "
+        "— Targeted-Practice exercises will get marked one-shot-shown"
+    )
+    # The unlock-page CSS lives in practice/arena-unlock.css (modular — kept
+    # separate from practice.css so the unlock view can be ripped out when
+    # the real concept-graph backend ships without touching the question UI).
+    unlock_css = _read(os.path.join(HERE, "arena-unlock.css"))
+    for needle in (".arena-unlock-page", ".arena-unlock-card", ".arena-unlock-continue-btn"):
+        assert needle in unlock_css, f"arena-unlock.css missing required selector: {needle!r}"
+    # The unlock view used to be authored inline in index.html. It was
+    # extracted into practice/arena-unlock-dom.js (script-eval-time DOM
+    # injection) to keep index.html under the per-file LOC ceiling.
+    # Verify the DOM module still ships the mount + the load order puts
+    # it BEFORE arena-unlock-timer.js and arena-unlock.js (both query the
+    # injected ids at IIFE-eval time).
+    dom_mount = _read(os.path.join(HERE, "arena-unlock-dom.js"))
+    assert 'id="arena-unlock-page"' in dom_mount, (
+        "arena-unlock-dom.js no longer injects #arena-unlock-page — the "
+        "interstitial mount is the controller's hard dependency"
+    )
+    assert "page-practice" in dom_mount, (
+        "arena-unlock-dom.js must mount into #page-practice "
+        "(so the in-tab view swap with .practice-container works)"
+    )
+    index_html = _read(os.path.join(os.path.dirname(HERE), "index.html"))
+    dom_pos = index_html.find('src="practice/arena-unlock-dom.js')
+    timer_pos = index_html.find('src="practice/arena-unlock-timer.js')
+    ctrl_pos = index_html.find('src="practice/arena-unlock.js')
+    assert dom_pos != -1, 'index.html missing <script src="practice/arena-unlock-dom.js">'
+    assert timer_pos != -1, 'index.html missing <script src="practice/arena-unlock-timer.js">'
+    assert ctrl_pos != -1, 'index.html missing <script src="practice/arena-unlock.js">'
+    assert dom_pos < timer_pos and dom_pos < ctrl_pos, (
+        "arena-unlock-dom.js must load BEFORE arena-unlock-timer.js and "
+        "arena-unlock.js — those controllers query the injected ids at "
+        "IIFE-eval time and would silently no-op otherwise"
+    )
+    events_js = _read(os.path.join(HERE, "events.js"))
+    assert "ArenaUnlock" in events_js, "events.js no longer routes through ArenaUnlock.tryShow"
+    assert "_loadNextPracticeQuestion" in events_js, "events.js missing _loadNextPracticeQuestion helper"
+
+    questions_path = os.path.join(SHARED, "questions_structured.json")
     data = json.loads(_read(questions_path))
-    assert isinstance(data, list) and data, "arena_prereqs_structured.json is empty or not a list"
+    assert isinstance(data, list) and data, "questions_structured.json is empty or not a list"
+    sample = next((q for q in data if q.get("exercise", {}).get("function_name")), None)
+    assert sample is not None, "questions_structured.json has no function-backed practice questions"
 
 
 # ── Invariant checks ──────────────────────────

@@ -1,0 +1,30 @@
+{
+  "exercise_id": "0_5_1",
+  "title": "write autoencoder training loop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_1_exercise-write-autoencoder-training-loop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 1,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "mse-reconstruction-loss", "role": "core", "evidence": "img_reconstructed = self.model(img); loss = nn.MSELoss()(img, img_reconstructed)"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "loss = nn.MSELoss()(img, img_reconstructed); loss.backward(); self.optimizer.step(); self.optimizer.zero_grad()"},
+    {"id": "log-samples-eval-callback", "role": "core", "evidence": "@t.inference_mode() log_samples(self): output = self.model(HOLDOUT_DATA); wandb.log({'images': [wandb.Image(arr) for arr in output.cpu().numpy()]}, step=self.step); called every args.log_every_n_steps"},
+    {"id": "holdout-data-one-per-class", "role": "core", "evidence": "HOLDOUT_DATA constructed at top of notebook: dict iterating testset DataLoader keeping one image per MNIST class, then t.stack into (10,1,28,28) tensor; used in log_samples"},
+    {"id": "dataclass-training-args", "role": "core", "evidence": "@dataclass class AutoencoderArgs: latent_dim_size=5, hidden_dim_size=128, batch_size=512, epochs=10, lr=1e-3, betas=(0.5,0.999), use_wandb=True, log_every_n_steps=250"},
+    {"id": "wandb-init-run", "role": "core", "evidence": "if self.args.use_wandb: wandb.init(project=self.args.wandb_project, name=self.args.wandb_name); wandb.watch(self.model)"},
+    {"id": "wandb-log-step", "role": "core", "evidence": "wandb.log(dict(loss=loss), step=self.step) inside training_step"},
+    {"id": "wandb-watch-model", "role": "core", "evidence": "wandb.watch(self.model) inside train()"},
+    {"id": "wandb-finish", "role": "core", "evidence": "if self.args.use_wandb: wandb.finish() at end of train()"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on log_samples"},
+    {"id": "tqdm-postfix-metrics", "role": "core", "evidence": "progress_bar = tqdm(self.trainloader, ascii=True); progress_bar.set_description(f'{epoch=:02d}, {loss=:.4f}, step={self.step:05d}')"},
+    {"id": "dataloader-batching", "role": "incidental", "evidence": "self.trainloader = DataLoader(self.trainset, batch_size=args.batch_size, shuffle=True)"},
+    {"id": "tensor-to-device", "role": "incidental", "evidence": "img = img.to(device) inside train loop"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "13 atoms — above seed prediction of 7. Seed undercounted by 6 — missed wandb cluster (init/watch/finish), inference-mode-step, tqdm-postfix-metrics, and incidental dataloader-batching/tensor-to-device that fire in the training loop. The first generative training scaffold: MSE + log_samples + holdout + dataclass-args, all firing here at introduction."
+}

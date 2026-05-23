@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_1_0",
+  "title": "implement make_rays_1d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_0_exercise-implement-make-rays-1d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 0,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "tensor-zeros-init", "role": "core", "evidence": "rays = t.zeros((num_pixels, 2, 3), dtype=t.float32) — preallocate, then fill via slice assignment"},
+    {"id": "linspace-out-param", "role": "core", "evidence": "t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1]) — explicit Tip cell calls out out= kwarg as the lesson"},
+    {"id": "slice-view-mutation", "role": "core", "evidence": "rays[:, 1, 0] = 1 and the rays[:, 1, 1] view target of linspace; Tip explains 'basic indexing returns a view that shares storage'"},
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "intro markdown defines R(u)=O+uD; here the learner only fills in O=(0,0,0) and a D pointing at x=1 — no math on the form itself"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "First tagged part1 exercise. Cleanest possible 'preallocate + view-fill' triplet (zeros-init + linspace-out + slice-view-mutation). The Tip cell is unusually explicit about which atoms are being taught — it names out= and view-mutation directly. ray-parametric-form is marked incidental because the exercise is mechanical (set last dim to ramp, set first dim to 1) rather than reasoning about the parametric form."
+}

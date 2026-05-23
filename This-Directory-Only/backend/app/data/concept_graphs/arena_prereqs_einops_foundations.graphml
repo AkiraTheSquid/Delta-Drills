@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd"><key id="d0" for="node" yfiles.type="nodegraphics" /><key id="d1" for="edge" yfiles.type="edgegraphics" /><key id="d2" for="node" attr.name="description" attr.type="string" /><key id="d3" for="edge" attr.name="rationale" attr.type="string" /><graph edgedefault="directed" id="arena-prereqs-einops-foundations"><node id="einops.axis-semantics"><data key="d2">Axis semantics and shape vocabulary
+topic=Einops
+subtopic=Foundations
+tier=core
+kind=knowledge
+tags=axis naming, shape reasoning, rearrange
+description=Understand what each axis symbol refers to and preserve the same elements while changing layout.</data><data key="d0"><y:ShapeNode><y:Geometry height="64.0" width="220.0" x="0.0" y="0.0" /><y:Fill color="#9FD0FF" transparent="false" /><y:BorderStyle color="#2E3440" type="line" width="1.0" /><y:NodeLabel>Axis semantics and shape vocabulary
+[Einops / Foundations]
+core · knowledge</y:NodeLabel><y:Shape type="roundrectangle" /></y:ShapeNode></data></node><node id="einops.axis-permutation"><data key="d2">Axis permutation
+topic=Einops
+subtopic=Rearrange
+tier=core
+kind=skill
+tags=transpose, layout swap, rearrange
+description=Reorder existing axes without composing or splitting them.</data><data key="d0"><y:ShapeNode><y:Geometry height="64.0" width="220.0" x="0.0" y="0.0" /><y:Fill color="#7ED6A8" transparent="false" /><y:BorderStyle color="#2E3440" type="line" width="1.0" /><y:NodeLabel>Axis permutation
+[Einops / Rearrange]
+core · skill</y:NodeLabel><y:Shape type="roundrectangle" /></y:ShapeNode></data></node><node id="einops.axis-composition"><data key="d2">Axis composition and decomposition
+topic=Einops
+subtopic=Rearrange
+tier=core
+kind=skill
+tags=factorization, grouping, reshaping
+description=Merge axes into grouped dimensions or split grouped dimensions back into factors.</data><data key="d0"><y:ShapeNode><y:Geometry height="64.0" width="220.0" x="0.0" y="0.0" /><y:Fill color="#7ED6A8" transparent="false" /><y:BorderStyle color="#2E3440" type="line" width="1.0" /><y:NodeLabel>Axis composition and decomposition
+[Einops / Rearrange]
+core · skill</y:NodeLabel><y:Shape type="roundrectangle" /></y:ShapeNode></data></node><node id="einops.layout-conversion"><data key="d2">Image layout conversion
+topic=Einops
+subtopic=Rearrange
+tier=core
+kind=skill
+tags=BCHW, BHWC, CHW, HWC
+description=Convert among BCHW, BHWC, HWC, and CHW style layouts while preserving image content.</data><data key="d0"><y:ShapeNode><y:Geometry height="64.0" width="220.0" x="0.0" y="0.0" /><y:Fill color="#7ED6A8" transparent="false" /><y:BorderStyle color="#2E3440" type="line" width="1.0" /><y:NodeLabel>Image layout conversion
+[Einops / Rearrange]
+core · skill</y:NodeLabel><y:Shape type="roundrectangle" /></y:ShapeNode></data></node><node id="einops.grid-patching"><data key="d2">Grid and patch rearrangements
+topic=Einops
+subtopic=Rearrange
+tier=supplemental
+kind=strategy
+tags=patches, space-to-depth, image grids
+description=Use composition plus permutation to build image grids, patches, and space-to-depth style transformations.</data><data key="d0"><y:ShapeNode><y:Geometry height="64.0" width="220.0" x="0.0" y="0.0" /><y:Fill color="#D8D8D8" transparent="false" /><y:BorderStyle color="#2E3440" type="line" width="1.0" /><y:NodeLabel>Grid and patch rearrangements
+[Einops / Rearrange]
+supplemental · strategy</y:NodeLabel><y:Shape type="roundrectangle" /></y:ShapeNode></data></node><edge id="e1" source="einops.axis-semantics" target="einops.axis-permutation"><data key="d3">weight=0.95
+confidence=1.0
+hard_gate=True
+rationale=Students need to know what each axis means before reordering them.</data><data key="d1"><y:PolyLineEdge><y:LineStyle color="#3A7AFE" type="line" width="1.5" /><y:Arrows source="none" target="standard" /><y:EdgeLabel>hard
+w=0.95</y:EdgeLabel></y:PolyLineEdge></data></edge><edge id="e2" source="einops.axis-semantics" target="einops.axis-composition"><data key="d3">weight=0.95
+confidence=1.0
+hard_gate=True
+rationale=Axis grouping and splitting depend on reliable shape vocabulary.</data><data key="d1"><y:PolyLineEdge><y:LineStyle color="#3A7AFE" type="line" width="1.5" /><y:Arrows source="none" target="standard" /><y:EdgeLabel>hard
+w=0.95</y:EdgeLabel></y:PolyLineEdge></data></edge><edge id="e3" source="einops.axis-permutation" target="einops.layout-conversion"><data key="d3">weight=0.9
+confidence=0.95
+hard_gate=True
+rationale=Layout conversion is a concrete application of axis reordering.</data><data key="d1"><y:PolyLineEdge><y:LineStyle color="#3A7AFE" type="line" width="1.5" /><y:Arrows source="none" target="standard" /><y:EdgeLabel>hard
+w=0.90</y:EdgeLabel></y:PolyLineEdge></data></edge><edge id="e4" source="einops.axis-composition" target="einops.grid-patching"><data key="d3">weight=0.9
+confidence=0.9
+hard_gate=True
+rationale=Patch and grid problems require splitting and regrouping spatial axes.</data><data key="d1"><y:PolyLineEdge><y:LineStyle color="#3A7AFE" type="line" width="1.5" /><y:Arrows source="none" target="standard" /><y:EdgeLabel>hard
+w=0.90</y:EdgeLabel></y:PolyLineEdge></data></edge><edge id="e5" source="einops.axis-permutation" target="einops.grid-patching"><data key="d3">weight=0.7
+confidence=0.85
+hard_gate=False
+rationale=Many grid tasks also involve moving the new axes into a usable order.</data><data key="d1"><y:PolyLineEdge><y:LineStyle color="#A06CD5" type="dashed" width="1.5" /><y:Arrows source="none" target="standard" /><y:EdgeLabel>soft
+w=0.70</y:EdgeLabel></y:PolyLineEdge></data></edge></graph></graphml>

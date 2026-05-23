@@ -48,17 +48,17 @@ MAIN = __name__ == "__main__"
 if MAIN:
     model = LanguageModel("EleutherAI/gpt-j-6b", device_map="auto", torch_dtype=t.bfloat16)
     tokenizer = model.tokenizer
-
+    
     N_HEADS = model.config.n_head
     N_LAYERS = model.config.n_layer
     D_MODEL = model.config.n_embd
     D_HEAD = D_MODEL // N_HEADS
-
+    
     print(f"Number of heads: {N_HEADS}")
     print(f"Number of layers: {N_LAYERS}")
     print(f"Model dimension: {D_MODEL}")
     print(f"Head dimension: {D_HEAD}\n")
-
+    
     print("Entire config: ", model.config)
 
 # %%
@@ -67,14 +67,14 @@ if MAIN:
     # Calling tokenizer returns a dictionary, containing input ids & other data.
     # If returned as a tensor, then by default it will have a batch dimension.
     print(tokenizer("This must be Thursday", return_tensors="pt"))
-
+    
     # Decoding a list of integers, into a concatenated string.
     print(tokenizer.decode([40, 1239, 714, 651, 262, 8181, 286, 48971, 12545, 13]))
-
+    
     # Using batch decode, on both 1D and 2D input.
     print(tokenizer.batch_decode([4711, 2456, 481, 307, 6626, 510]))
     print(tokenizer.batch_decode([[1212, 6827, 481, 307, 1978], [2396, 481, 428, 530]]))
-
+    
     # Split sentence into tokens (note we see the special Ġ character in place of prepended spaces).
     print(tokenizer.tokenize("This sentence will be tokenized"))
 
@@ -122,14 +122,13 @@ if MAIN:
 
 # %%
 
-
 def generate_antonym_dataset(N: int):
     """
     Generates 100 pairs of antonyms, in the form of a list of 2-tuples.
     """
-    assert (
-        os.environ.get("OPENAI_API_KEY", None) is not None
-    ), "Please set your API key before running this function!"
+    assert os.environ.get("OPENAI_API_KEY", None) is not None, (
+        "Please set your API key before running this function!"
+    )
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
@@ -162,7 +161,6 @@ if MAIN:
     print(ANTONYM_PAIRS[:10])
 
 # %%
-
 
 class ICLSequence:
     """
@@ -206,7 +204,6 @@ if MAIN:
 
 # %%
 
-
 class ICLDataset:
     """
     Dataset to create antonym pair prompts, in ICL task format. We use random seeds for consistency
@@ -236,9 +233,9 @@ class ICLDataset:
         seed: int = 0,
         corrupted: bool = False,
     ):
-        assert n_prepended + 1 <= len(
-            word_pairs
-        ), "Not enough antonym pairs in dataset to create prompt."
+        assert n_prepended + 1 <= len(word_pairs), (
+            "Not enough antonym pairs in dataset to create prompt."
+        )
 
         self.word_pairs = word_pairs
         self.word_list = [word for word_pair in word_pairs for word in word_pair]
@@ -291,31 +288,29 @@ class ICLDataset:
     def __getitem__(self, idx: int):
         return self.seqs[idx]
 
-
 # %%
 
 if MAIN:
     dataset = ICLDataset(ANTONYM_PAIRS, size=10, n_prepended=2, corrupted=False)
-
+    
     table = Table("Prompt", "Correct completion")
     for seq, completion in zip(dataset.seqs, dataset.completions):
         table.add_row(str(seq), repr(completion))
-
+    
     rprint(table)
 
 # %%
 
 if MAIN:
     dataset = ICLDataset(ANTONYM_PAIRS, size=10, n_prepended=2, corrupted=True)
-
+    
     table = Table("Prompt", "Correct completion")
     for seq, completions in zip(dataset.seqs, dataset.completions):
         table.add_row(str(seq), repr(completions))
-
+    
     rprint(table)
 
 # %%
-
 
 def calculate_h(
     model: LanguageModel, dataset: ICLDataset, layer: int = -1
@@ -353,7 +348,6 @@ if MAIN:
     tests.test_calculate_h(calculate_h, model)
 
 # %%
-
 
 def display_model_completions_on_antonyms(
     model: LanguageModel,
@@ -397,7 +391,6 @@ if MAIN:
     display_model_completions_on_antonyms(model, dataset, model_completions)
 
 # %%
-
 
 def intervene_with_h(
     model: LanguageModel,
@@ -453,20 +446,19 @@ if MAIN:
     layer = 12
     dataset = ICLDataset(ANTONYM_PAIRS, size=20, n_prepended=3, seed=0)
     zero_shot_dataset = ICLDataset(ANTONYM_PAIRS, size=20, n_prepended=0, seed=1)
-
+    
     # Run previous function to get h-vector
     h = calculate_h(model, dataset, layer=layer)[1]
-
+    
     # Run new function to intervene with h-vector
     completions_zero_shot, completions_intervention = intervene_with_h(
         model, zero_shot_dataset, h, layer=layer
     )
-
+    
     print("Zero-shot completions: ", completions_zero_shot)
     print("Completions with intervention: ", completions_intervention)
 
 # %%
-
 
 def display_model_completions_on_h_intervention(
     dataset: ICLDataset,
@@ -504,7 +496,6 @@ if MAIN:
     )
 
 # %%
-
 
 def calculate_h_and_intervene(
     model: LanguageModel,
@@ -564,7 +555,6 @@ if MAIN:
 
 # %%
 
-
 def calculate_h_and_intervene_logprobs(
     model: LanguageModel,
     dataset: ICLDataset,
@@ -614,9 +604,7 @@ def calculate_h_and_intervene_logprobs(
 
     return clean_logprobs, intervene_logprobs
 
-
 # %%
-
 
 def display_model_logprobs_on_h_intervention(
     dataset: ICLDataset,
@@ -662,7 +650,6 @@ if MAIN:
     )
 
 # %%
-
 
 def calculate_fn_vectors_and_intervene(
     model: LanguageModel,
@@ -738,18 +725,19 @@ def calculate_fn_vectors_and_intervene(
     # Return mean effect of intervention, over the batch dimension
     return logprobs_diff.mean(dim=-1)
 
-
 # %%
 
 if MAIN:
     dataset = ICLDataset(ANTONYM_PAIRS, size=8, n_prepended=2)
-
+    
+    
     def batch_process_layers(n_layers, batch_size):
         for i in range(0, n_layers, batch_size):
             yield range(n_layers)[i : i + batch_size]
-
+    
+    
     results = t.empty((0, N_HEADS), device=device)
-
+    
     # If this fails to run, you should reduce the batch size so the forward passes are split up more, or
     # reduce dataset size
     for layers in batch_process_layers(N_LAYERS, batch_size=4):
@@ -759,7 +747,7 @@ if MAIN:
             [results, calculate_fn_vectors_and_intervene(model, dataset, layers).to(device)]
         )
         print(f"... finished in {time.time() - t0:.2f} seconds.\n")
-
+    
     imshow(
         results.T,
         title="Average indirect effect of function-vector intervention on antonym task",
@@ -770,7 +758,6 @@ if MAIN:
     )
 
 # %%
-
 
 def calculate_fn_vector(
     model: LanguageModel,
@@ -829,7 +816,6 @@ if MAIN:
 
 # %%
 
-
 def intervene_with_fn_vector(
     model: LanguageModel,
     word: str,
@@ -880,14 +866,13 @@ def intervene_with_fn_vector(
     )
     return completion, completion_intervention
 
-
 # %%
 
 if MAIN:
     # Remove word from our pairs, so it can be a holdout
     word = "light"
     _ANTONYM_PAIRS = [pair for pair in ANTONYM_PAIRS if word not in pair]
-
+    
     # Define our dataset, and the attention heads we'll use
     dataset = ICLDataset(_ANTONYM_PAIRS, size=20, n_prepended=5)
     head_list = [
@@ -902,10 +887,10 @@ if MAIN:
         (15, 5),
         (16, 14),
     ]
-
+    
     # Extract the function vector
     fn_vector = calculate_fn_vector(model, dataset, head_list)
-
+    
     # Intervene with the function vector
     completion, completion_intervention = intervene_with_fn_vector(
         model,
@@ -915,7 +900,7 @@ if MAIN:
         prompt_template='The word "{x}" means',
         n_tokens=40,
     )
-
+    
     table = Table("No intervention", "intervention")
     table.add_row(repr(completion), repr(completion_intervention))
     rprint(table)
@@ -925,10 +910,10 @@ if MAIN:
 if MAIN:
     with open(section_dir / "data/country_capital_pairs.txt", "r", encoding="utf-8") as f:
         COUNTRY_CAPITAL_PAIRS = [line.split() for line in f.readlines()]
-
+    
     country = "Netherlands"
     _COUNTRY_CAPITAL_PAIRS = [pair for pair in COUNTRY_CAPITAL_PAIRS if pair[0] != country]
-
+    
     dataset = ICLDataset(_COUNTRY_CAPITAL_PAIRS, size=20, n_prepended=5, bidirectional=False)
     head_list = [
         (8, 0),
@@ -942,9 +927,9 @@ if MAIN:
         (15, 5),
         (16, 14),
     ]
-
+    
     fn_vector = calculate_fn_vector(model, dataset, head_list)
-
+    
     # Intervene with the function vector
     completion, completion_intervention = intervene_with_fn_vector(
         model=model,
@@ -954,7 +939,7 @@ if MAIN:
         prompt_template="When you think of {x},",
         n_tokens=40,
     )
-
+    
     table = Table("No intervention", "intervention")
     table.add_row(repr(completion), repr(completion_intervention))
     rprint(table)
@@ -964,7 +949,7 @@ if MAIN:
 if MAIN:
     gpt2_xl = LanguageModel("gpt2-xl", device_map="auto", torch_dtype=t.bfloat16)
     tokenizer = gpt2_xl.tokenizer
-
+    
     REMOTE = False
     # If you are using gpt2_xl, set REMOTE = False as gpt2_xl is not hosted remotely by nnsight. You can
     # set REMOTE = True for a remotely hosted model here (https://nnsight.net/status/)
@@ -1026,12 +1011,12 @@ def calculate_and_apply_steering_vector(
     # and check they're all the same
     act_add_layers, act_add_coeffs, act_add_prompts = zip(*activation_additions)
     act_add_seq_lens = [len(tokenizer.tokenize(p)) for p in act_add_prompts]
-    assert (
-        len(set(act_add_seq_lens)) == 1
-    ), "All activation addition prompts must be the same length."
-    assert act_add_seq_lens[0] <= len(
-        tokenizer.tokenize(prompt)
-    ), "All act_add prompts should be shorter than original prompt."
+    assert len(set(act_add_seq_lens)) == 1, (
+        "All activation addition prompts must be the same length."
+    )
+    assert act_add_seq_lens[0] <= len(tokenizer.tokenize(prompt)), (
+        "All act_add prompts should be shorter than original prompt."
+    )
 
     # Get the prompts we'll intervene on (unsteered and steered)
     steered_prompts = [prompt for _ in range(n_comparisons)]
@@ -1068,7 +1053,6 @@ def calculate_and_apply_steering_vector(
 
     return unsteered_completions, steered_completions
 
-
 # %%
 
 if MAIN:
@@ -1080,7 +1064,7 @@ if MAIN:
         n_comparisons=3,
         use_bos=True,
     )
-
+    
     table = Table("Unsteered", "Steered", title="Completions", show_lines=True)
     for usc, sc in zip(unsteered_completions, steered_completions):
         table.add_row(usc, sc)
@@ -1100,7 +1084,7 @@ if MAIN:
         n_comparisons=3,
         use_bos=False,
     )
-
+    
     table = Table("Unsteered", "Steered", title="Completions", show_lines=True)
     for usc, sc in zip(unsteered_completions, steered_completions):
         table.add_row(usc, sc)
@@ -1120,7 +1104,7 @@ if MAIN:
         n_comparisons=3,
         use_bos=False,
     )
-
+    
     table = Table("Unsteered", "Steered", title="Completions", show_lines=True)
     for usc, sc in zip(unsteered_completions, steered_completions):
         table.add_row(usc, sc)

@@ -50,6 +50,32 @@
     </div>
   `;
 
+  const exerciseRegistry = (window.ARENA_EXERCISES_BY_NOTEBOOK && typeof window.ARENA_EXERCISES_BY_NOTEBOOK === "object")
+    ? window.ARENA_EXERCISES_BY_NOTEBOOK
+    : {};
+
+  const bookHrefFor = (notebookPath) => {
+    if (typeof notebookPath !== "string") return "";
+    const remapped = notebookPath
+      .replace(/^content\/ARENA_5\.0-main\//, "arena-book/")
+      .replace(/\.ipynb$/, ".html");
+    return encodeURI(remapped);
+  };
+
+  const exerciseScoreFor = (problem) => {
+    const fallback = Number(problem?.readinessScore) || 0;
+    if (typeof window.computeArenaReadiness !== "function") return fallback;
+    const s = window.computeArenaReadiness(problem?.skillWeights, fallback);
+    return Number.isFinite(s) ? s : fallback;
+  };
+
+  const readinessTone = (score) => {
+    if (score >= 75) return "ready";
+    if (score >= 60) return "borderline";
+    if (score >= 45) return "partial";
+    return "needs-prereq";
+  };
+
   const renderDetail = (problem) => {
     if (!problem) {
       detail.innerHTML = '<div class="arena-detail-empty">No ARENA problem matches the current filter.</div>';
@@ -59,6 +85,13 @@
     const notebookHref = encodeURI(problem.notebookPath);
     const lessonHref = encodeURI(problem.lessonPath);
     const backupNotebook = problem.backupNotebookPath ? encodeURI(problem.backupNotebookPath) : "";
+    const bookBase = bookHrefFor(problem.notebookPath);
+    const exercises = Array.isArray(exerciseRegistry[problem.notebookPath])
+      ? exerciseRegistry[problem.notebookPath]
+      : [];
+    const sectionNumber = (problem.sectionLabel || "").trim().split(/\s+/)[0] || problem.id;
+    const exerciseScore = exerciseScoreFor(problem);
+    const exerciseTone = readinessTone(exerciseScore);
 
     detail.innerHTML = `
       <div class="arena-detail-header">
@@ -100,6 +133,23 @@
               : ""
           }
         </div>
+      </div>
+
+      <div class="arena-section">
+        <div class="arena-section-title">Exercises (${exercises.length})</div>
+        ${
+          exercises.length
+            ? `<ol class="arena-exercise-list">${exercises
+                .map(
+                  (ex, idx) => `<li>
+                    <span class="arena-exercise-id">${sectionNumber}.${idx}</span>
+                    <a class="arena-exercise-link" href="${bookBase}#${encodeURIComponent(ex.anchor)}" target="_blank" rel="noreferrer">${ex.title}</a>
+                    <span class="arena-exercise-readiness arena-exercise-readiness--${exerciseTone}" title="Predicted readiness">${exerciseScore.toFixed(0)}%</span>
+                  </li>`
+                )
+                .join("")}</ol>`
+            : '<div class="arena-exercise-empty">No exercises detected in this notebook.</div>'
+        }
       </div>
 
       <div class="arena-section">

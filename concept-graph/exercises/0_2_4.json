@@ -1,0 +1,28 @@
+{
+  "exercise_id": "0_2_4",
+  "title": "implement Conv2d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_4_exercise-implement-conv2d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 4,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-1",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class Conv2d(nn.Module): super().__init__()"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "self.weight = nn.Parameter(...) wrapping the kernel tensor"},
+    {"id": "module-extra-repr", "role": "incidental", "evidence": "exercise asks for an informative extra_repr"},
+    {"id": "kaiming-uniform-init", "role": "core", "evidence": "uniform Kaiming init with bounds +/- 1/sqrt(in_ch * kH * kW); a NEW atom not in the seed vocab"},
+    {"id": "conv-kernel-shape", "role": "core", "evidence": "weight tensor shape is (out_channels, in_channels, kernel_height, kernel_width); a NEW atom not in seed"},
+    {"id": "functional-module-wrap", "role": "core", "evidence": "forward calls t.nn.functional.conv2d on self.weight; the Module is a parameter container only; a NEW atom not in seed"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "module-composition", "reason": "no sub-modules; Conv2d is a leaf module"},
+    {"id": "conv-channel-sum", "reason": "channel summation happens inside t.nn.functional.conv2d, not implemented by learner here — belongs to 0_2_19/22 instead"},
+    {"id": "conv-padding-zero", "reason": "padding is a hyperparameter passed through to F.conv2d, not implemented here — belongs to 0_2_20"},
+    {"id": "conv-windowing-2d", "reason": "F.conv2d does the windowing; learner never sees it at this exercise — belongs to 0_2_19/22"}
+  ],
+  "notes": "First end-to-end tagging pilot. Surfaced 3 missing atoms (kaiming-uniform-init, conv-kernel-shape, functional-module-wrap) and 4 false-positive seed assignments. Suggests the seed 'expected exercises' column was too generous — atoms were assigned wherever the topic appeared in the notebook's overview markdown, not where the exercise actually requires the skill. Recommend re-passing the seed assignments after tagging 2-3 more exercises to confirm the pattern."
+}

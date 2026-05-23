@@ -68,27 +68,19 @@ verify_vercel_frontend() {
 auto_commit_if_dirty() {
   local repo_dir="$1"
   local message="$2"
-  local status_output
-  local tracked_changes
-  local untracked_changes
 
-  status_output="$(git -C "$repo_dir" status --short)"
-  tracked_changes="$(printf '%s\n' "$status_output" | grep -v '^?? ' | grep -v 'This-Directory-Only/logs/' || true)"
-  untracked_changes="$(git -C "$repo_dir" ls-files --others --exclude-standard | grep -v '^This-Directory-Only/logs/' || true)"
+  # Stage everything in one call. `git add -A` respects .gitignore, so the
+  # logs/ dir is already excluded via .gitignore line 18 and we don't need
+  # an explicit pathspec. core.quotePath=false avoids octal-escaping of
+  # non-ASCII filenames (the previous per-line loop choked on emoji-bearing
+  # ARENA notebook filenames and explicit-pathspec attempts hit
+  # 'ignored-files' warnings that exited non-zero under set -e).
+  git -C "$repo_dir" -c core.quotePath=false add -A
 
-  if [ -n "$tracked_changes" ] || [ -n "$untracked_changes" ]; then
-    warn "Uncommitted changes detected in $repo_dir — auto-committing all files:"
-    printf '%s\n' "$status_output"
-    while IFS= read -r line; do
-      [ -n "$line" ] || continue
-      case "$line" in
-        *"This-Directory-Only/logs/"*) continue ;;
-      esac
-      git -C "$repo_dir" add -A -- "${line:3}"
-    done <<< "$status_output"
-    if ! git -C "$repo_dir" diff --cached --quiet; then
-      git -C "$repo_dir" commit -m "$message"
-    fi
+  if ! git -C "$repo_dir" diff --cached --quiet; then
+    warn "Auto-committing dirty changes in $repo_dir"
+    git -C "$repo_dir" -c core.quotePath=false status --short
+    git -C "$repo_dir" commit -m "$message"
   fi
 }
 
@@ -119,6 +111,11 @@ auto_commit_if_dirty "$REPO_DIR" "chore: auto-commit before deploy"
 info "Exporting question bank artifacts..."
 python3 "$REPO_THIS_DIR/scripts/export_questions_json.py"
 python3 "$REPO_THIS_DIR/scripts/extract_arena_prereqs.py"
+python3 "$REPO_THIS_DIR/scripts/extract_arena_exercises.py"
+# split_arena_exercises.py + build_arena_colab_index.py are intentionally NOT
+# run here — see arena/README.md "Recent Changes" 2026-05-16 for why we
+# unwired the per-exercise split-notebook path. The scripts and the
+# arena-book-colab/ tree are kept on disk for archival reference.
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$REPO_DIR"
 
 auto_commit_if_dirty "$REPO_DIR" "chore: update deploy artifacts"

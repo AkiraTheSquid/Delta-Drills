@@ -1,0 +1,164 @@
+{"id": 1, "question_text": "Given a 5x5 matrix Z of random integers, return the index of the largest value in each row as a 1D array. (★☆☆)"}
+{"id": 4, "question_text": "Construct a 5x5 matrix where the values 1, 2, 3, and 4 are placed just below the main diagonal, with all other elements being zero. (★☆☆)"}
+{"id": 5, "question_text": "Given a 3x3 matrix Z, calculate the square root of the sum of the absolute squares of its elements. (★☆☆)"}
+{"id": 6, "question_text": "Given a random vector of length 5, adjust its values so that the total length of the vector equals 1, maintaining the direction of the vector. (★☆☆)"}
+{"id": 7, "question_text": "Given a 5x5 matrix Z of random values, return a new matrix where each element in a row has had the mean of that row subtracted from it. (★☆☆)"}
+{"id": 11, "question_text": "Generate a 4x4 matrix where each element represents its corresponding row index. (★☆☆)"}
+{"id": 12, "question_text": "Given a 1D array Z, modify the array such that all elements with values greater than 3 and less than 8 are negated. (★☆☆)"}
+{"id": 14, "question_text": "Given an array Z, return the distinct elements along with the number of times each element appears in the array. (★☆☆)"}
+{"id": 15, "question_text": "Given a 3x3 matrix Z of random values, return the matrix after adjusting each element by removing the average value of all elements. (★☆☆)"}
+{"id": 24, "question_text": "Given a random vector Z of length 10, set the largest value in the vector to 0 and return the modified vector. (★☆☆)"}
+{"id": 25, "question_text": "Given a 3x3 matrix Z, exchange the positions of the first and last rows. (★☆☆)"}
+{"id": 26, "question_text": "Generate a 10x10 array filled with random values and determine the smallest and largest values in that array. (★☆☆)"}
+{"id": 28, "question_text": "Generate a vector containing 30 random values and calculate the average of those values. (★☆☆)"}
+{"id": 29, "question_text": "Given two 1D arrays x and y with values [0, 1, 2] and [0, 1] respectively, create two 2D arrays that represent the coordinate matrices from these input arrays. (★☆☆)"}
+{"id": 30, "question_text": "Given a 3x3 matrix Z, exchange the positions of the first and last columns and return the modified matrix. (★☆☆)"}
+{"id": 32, "question_text": "Given an array Z, determine if there are any elements that are not a number (NaN) and print the result as a boolean value. (★☆☆)"}
+{"id": 34, "question_text": "Given an array containing the elements [1, 2, 3], create a new array that repeats these elements three times in sequence. (★☆☆)"}
+{"id": 35, "question_text": "Given the array [1, 2, 3], return a new array where each element appears three times in order. (★☆☆)"}
+{"id": 36, "question_text": "Given a 1D array of length 12, return a 3D array with the shape (2, 2, 3) containing the same values. (★☆☆)"}
+{"id": 37, "question_text": "Given two random vectors of length 3, return the scalar value that represents the sum of the products of their corresponding elements. (★☆☆)"}
+{"id": 38, "question_text": "Given a vector Z of 10 random values, return the index of the smallest value in the vector. (★☆☆)"}
+{"id": 40, "question_text": "Given the list [1,2,0,0,4,0], return the positions of all elements that are not zero. (★☆☆)"}
+{"id": 43, "question_text": "Given two arrays a and b, return a new array containing the larger value from each pair of corresponding elements. (★☆☆)"}
+{"id": 47, "question_text": "Construct a 3x3 square matrix where the values along the main diagonal are 1, 2, and 3, while all other elements are zero. (★☆☆)"}
+{"id": 48, "question_text": "Given a vector containing the integers from 0 to 9, modify the elements at odd positions to be -1. (★☆☆)"}
+{"id": 50, "question_text": "Construct a 4x4 square matrix where all the elements on the main diagonal are 2, and all other elements are 0. (★☆☆)"}
+{"id": 51, "question_text": "Given an array Z, calculate the total memory size it occupies in bytes and print the result. (★☆☆)"}
+{"id": 55, "question_text": "Given a date range from July 1, 2016, to July 31, 2016, return all the dates within that month as an array. (★★☆)"}
+{"id": 69, "question_text": "Given a vector x and an array of integers indicating how many times to repeat each corresponding element, return a new vector that contains each element of x repeated according to the specified counts. (★★☆)"}
+{"id": 76, "question_text": "Given a 2D array Z, return two new arrays: one that is a mirror image of Z along the vertical axis and another that is a mirror image along the horizontal axis. (★★☆)"}
+{"id": 78, "question_text": "Given an integer n, create a 2D boolean array where the upper triangular part, including the diagonal, is marked as True and the rest as False. (★★☆)"}
+{"id": 79, "question_text": "Given a 2D array Z, return an array containing only the distinct rows from Z. (★★☆)"}
+{"id": 81, "question_text": "Given a 1D vector created with `np.arange(5)`, replicate it to form a 2D matrix with 4 rows. Then, calculate the average of each column in this matrix. (★★☆)"}
+{"id": 84, "question_text": "Given two arrays A and B of shape (3, 4), combine them into a new array that adds an extra dimension, then calculate the average along that new dimension. (★★☆)"}
+{"id": 85, "question_text": "Given a 2D array Z, return a new array that excludes any rows that contain only zeros. (★★☆)"}
+{"id": 86, "question_text": "Given a binary mask Z, return the coordinates of all elements that are nonzero as a 2D array. (★★☆)"}
+{"id": 87, "question_text": "Given an array of 100 random values between 0 and 1, divide the range into 5 equal intervals and count how many values fall into each interval. (★★☆)"}
+{"id": 90, "question_text": "Given a 2D array Z, create a new array that surrounds Z with a border of -1, where the border is one element wide. (★★☆)"}
+{"id": 94, "question_text": "Given two 4x4 arrays Z and Y of random values, replace the elements in Z with -1 where the corresponding elements in Y are greater than 0.5. (★★☆)"}
+{"id": 95, "question_text": "Given an RGB image represented as a 3D array, convert it to a 2D array representing the grayscale version by applying a specific weighted sum to the color channels. (★★☆)"}
+{"id": 99, "question_text": "Given a 1D array x of length 10, calculate the average of each consecutive triplet of values, returning a new array that contains these averages. (★★☆)"}
+{"id": 101, "question_text": "From a 2D array Z with 10 rows, return k unique rows selected at random. (★★☆)"}
+{"id": 102, "question_text": "Given an array Z of random integers, return the distinct values along with their occurrences, arranged in descending order of the counts. (★★☆)"}
+{"id": 105, "question_text": "Using the provided grid generated from X and Y coordinates, create a 2D array that represents a Gaussian distribution based on the specified parameters for standard deviation and mean. (★★☆)"}
+{"id": 106, "question_text": "Given a matrix X, transform each column so that its mean is zero and its standard deviation is one. (★★☆)"}
+{"id": 107, "question_text": "Given a random 3x3 matrix A and a vector b of length 3, find the vector x that satisfies the equation Ax = b. (★★☆)"}
+{"id": 109, "question_text": "Given a matrix X, return a new matrix where each element in a row has had the average of that row subtracted from it. (★★☆)"}
+{"id": 110, "question_text": "Given a 2D array Z, identify the smallest rectangle that contains all the nonzero entries and return its row and column indices as a tuple of the form (row_min, row_max, col_min, col_max). (★★☆)"}
+{"id": 112, "question_text": "Given a square matrix Z, retain only the elements that are within one position of the main diagonal, setting all other elements to zero. (★★☆)"}
+{"id": 114, "question_text": "Given a vector Z, return the ranks of its elements in a 0-based format by sorting the elements twice. (★★☆)"}
+{"id": 116, "question_text": "Given a 5x5 grid, compute a 2D array where each element represents the sum of the absolute differences from the center coordinates. (★★☆)"}
+{"id": 119, "question_text": "Given a vector Z of 10 random values, return the indices of the three largest elements in descending order. (★★☆)"}
+{"id": 120, "question_text": "Given a 2D array X with some NaN values, replace each NaN in the array with the average of the non-NaN values in its respective column. (★★☆)"}
+{"id": 121, "question_text": "Given two matrices A and B of shape (5, 4), compute the dot product for each pair of corresponding rows and return the result as a 1D array of length 5. (★★☆)"}
+{"id": 126, "question_text": "Given a 2D array Z with shape (4, 6), rearrange it into 2x2 blocks and compute the sum of each block. (★★☆)"}
+{"id": 129, "question_text": "Given a set of points in 2D, find the indices of the two closest points for each point in the set based on Euclidean distance. (★★☆)"}
+{"id": 130, "question_text": "Given a 2D array Z, return the index of the first nonzero element in each row, or -1 for rows that contain only zeros. (★★☆)"}
+{"id": 131, "question_text": "Given a vector of ones, increment each element specified by a second vector of indices, ensuring that repeated indices are handled correctly. (★★★)"}
+{"id": 133, "question_text": "Given an image represented as a 3D array of shape (height, width, 3) with values in the range of 0 to 255, determine the total number of distinct color combinations present in the image. (★★☆)"}
+{"id": 136, "question_text": "Given a 5x5 array A, exchange the positions of the first two rows and return the modified array. (★★★)"}
+{"id": 137, "question_text": "Given a one-dimensional array D and a corresponding index array S, compute the average of the elements in D for each unique index in S. (★★★)"}
+{"id": 140, "question_text": "Given a 2D array A, return the elements along the k-th diagonal, where k can be negative. (★★★)"}
+{"id": 141, "question_text": "Given two 5x5 matrices A and B, compute the diagonal elements of their product. (★★★)"}
+{"id": 142, "question_text": "Identify the indices of rows in a 2D array Z that contain at least one non-finite value, such as NaN or Inf. (★★★)"}
+{"id": 144, "question_text": "Given a 2D array Z with shape (6, 5) and a vector v of length 5, calculate the result of multiplying each row of Z by the vector v, returning a 1D array of length 6. (★★★)"}
+{"id": 145, "question_text": "Given a 1D array, identify the indices of elements that are greater than their immediate neighbors, excluding the first and last elements. (★★★)"}
+{"id": 148, "question_text": "Given a 1D array of random integers, return the indices of the first appearance of each unique value in the order they were originally found. (★★★)"}
+{"id": 152, "question_text": "Given a 2D array Z, return an array where each element at position (i, j) contains the maximum value from the start of the row up to column j for each row. (★★★)"}
+{"id": 153, "question_text": "Given a 2D array Z, scale each row so that its length becomes 1, ensuring that the operation handles rows that may be zero. (★★★)"}
+{"id": 154, "question_text": "Standardize each column of a matrix by subtracting the mean and dividing by the standard deviation, then limit the resulting values to be within the range of -3 to 3. (★★★)"}
+{"id": 167, "question_text": "Given a random 10x10 matrix Z, return all possible 3x3 submatrices that can be formed from it. (★★★)"}
+{"id": 168, "question_text": "Given a 2D array Z of random integers, return the column index of the largest value in each row, breaking ties by selecting the last occurrence. (★★★)"}
+{"id": 170, "question_text": "Given a 2D array Z with some NaN values, replace each NaN in the array with the mean of its respective column. (★★★)"}
+{"id": 172, "question_text": "Given a small matrix Z of integers, determine the most frequently occurring value in each row, resolving ties by selecting the smallest value. (★★★)"}
+{"id": 173, "question_text": "Given a square matrix A and a matrix b with multiple columns, find the solution vector x for the equation Ax = b for each column of b simultaneously. (★★★)"}
+{"id": 174, "question_text": "Given a 2D array Z with an odd number of columns, return the median value from each row as a 1D array. (★★★)"}
+{"id": 176, "question_text": "Given a 2D array Z, extract all overlapping subarrays of shape (2, 4) and return a new array containing the sum of each subarray. (★★★)"}
+{"id": 180, "question_text": "Construct a square matrix of size n with specified values along the main diagonal and the diagonals directly above and below it, using efficient assignment methods. (★★★)"}
+{"id": 186, "question_text": "Given an arbitrary array, implement a function that retrieves a fixed-size subarray centered around a specified element, using a specified fill value for any areas outside the original array. (★★★)"}
+{"id": 189, "question_text": "Given a 2D array Z, return the array rotated by 90 degrees a specified number of times, where the rotation direction is counter-clockwise. (★★★)"}
+{"id": 191, "question_text": "Given a 1D array X, perform resampling with replacement to create multiple samples, calculate the mean for each sample, and then determine the 95% confidence interval for these means using percentiles. (★★★)"}
+{"id": 193, "question_text": "Given an array X of shape (n, d) representing points in a d-dimensional space, return the indices of the k closest points to each point, excluding the point itself. (★★★)"}
+{"id": 194, "question_text": "Given a 2D array Z, return the indices of the k largest values in each row, where k is specified. The output should be sorted in descending order based on the values. (★★★)"}
+{"id": 195, "question_text": "Given a 16x16 array, compute the sum of non-overlapping 4x4 blocks and return the resulting array. (★★★)"}
+{"id": 196, "question_text": "Given a 2D array X and a kernel K, compute the result of applying the kernel to the array using a sliding window approach, ensuring that the kernel only overlaps with valid regions of the array. (★★★)"}
+{"id": 197, "question_text": "Given a list of 2D arrays, create a new 2D array that contains the input arrays along its diagonal, filling the rest with zeros. (★★★)"}
+{"id": 205, "question_text": "Given a two-dimensional array, return an array containing only the distinct rows. (★★★)"}
+{"id": 207, "question_text": "Given a set of 10 triplets representing triangles defined by shared vertices, determine the unique pairs of vertices that form the edges of these triangles. (★★★)"}
+{"id": 216, "question_text": "Given a sorted array C that represents the counts of each integer, return an array A that contains each integer repeated according to its count in C. (★★★)"}
+{"id": 217, "question_text": "Construct an 8x8 matrix that alternates between 0s and 1s in a checkerboard pattern. (★☆☆)"}
+{"id": 218, "question_text": "Given a 2D array Z, transform each column so that it has a mean of zero and a standard deviation of one, handling any columns with zero standard deviation appropriately. (★★★)"}
+{"id": 219, "question_text": "Generate a random vector of size 10 and set the largest element in that vector to zero. (★★☆)"}
+{"id": 237, "question_text": "Given a 4x4 matrix Z of random values, return the sum of the diagonal elements. (★☆☆)"}
+{"id": 238, "question_text": "Given two 2x2 arrays, combine them into a single array by placing one on top of the other and then by placing them side by side. (★☆☆)"}
+{"id": 240, "question_text": "Given a float array Z, return a new array where each element is rounded away from zero. (★☆☆)"}
+{"id": 243, "question_text": "Given two batches of vectors, create a batch of matrices where each element of the first batch is multiplied by every element of the second batch. (★☆☆)"}
+{"id": 244, "question_text": "Given a 2D matrix A, return a new matrix where the rows and columns have been interchanged. (★☆☆)"}
+{"id": 246, "question_text": "Given two 2x2 matrices A and B, calculate their product and return the elements that are located on the main diagonal. (★☆☆)"}
+{"id": 247, "question_text": "Given a 2D array A with shape (2, 2), return a 1D array that contains the sum of each column. (★☆☆)"}
+{"id": 248, "question_text": "Given two matrices X and Y, compute the result of multiplying each row of X with each row of Y, producing a new matrix where each entry corresponds to the product of the respective rows. (★☆☆)"}
+{"id": 249, "question_text": "For a batch of images represented by a 4D array X, compute the sum of the squares of all pixel values for each image. (★☆☆)"}
+{"id": 250, "question_text": "For a 3D array A with shape (2, 2, 2), calculate the similarity between the internal feature vectors for each item in the batch, resulting in a 3D array that captures this relationship. Print the result."}
+{"id": 251, "question_text": "Given a 3D array X of shape (2, 2, 2) and a 1D array v of length 2, apply the vector to each token in the batch by performing a reduction that combines the last dimension of X with the vector, resulting in a 2D array of shape (2, 2). Print the result."}
+{"id": 252, "question_text": "Given a vector x and a 2D matrix W, compute a weighted sum of the matrix's rows based on the vector, and then take the dot product of that result with the vector again. Print the final result. (★☆☆)"}
+{"id": 253, "question_text": "Given two 3D arrays F and G with shape (2, 2, 2), compute the sum of products of corresponding elements across the channel dimension for each spatial location, resulting in a 2D array. Print the result."}
+{"id": 254, "question_text": "Given two 4D arrays S and V with shapes (2, 2, 2, 2), combine them by summing over the dimension representing keys, resulting in a new array with the shape (2, 2, 2, d). Print the result."}
+{"id": 255, "question_text": "Given a 2D array A and a 1D weight vector w, compute the weighted sum of the rows of A, then normalize the result by the sum of the weights. (★☆☆)"}
+{"id": 256, "question_text": "Create a matrix where each element at position (i, j) is the result of multiplying the i-th element of vector v1 by the j-th element of vector v2. Use the provided inputs and print the resulting matrix."}
+{"id": 257, "question_text": "Given a 2x2 array A, return a 1D array containing the elements where the row and column indices match. (★☆☆)"}
+{"id": 258, "question_text": "Given a 2x2 matrix X, compute the result of multiplying the matrix by its transpose to analyze the relationships between its columns. Print the resulting matrix. (★☆☆)"}
+{"id": 259, "question_text": "Given a 2D array X of shape (2, 2) and its mean along the first axis, compute the variance and covariance by contracting the batch dimension of the mean-centered data. Use the provided inputs and print the result."}
+{"id": 260, "question_text": "Given two 2x2 matrices C and D, compute the resulting matrix by summing the products of corresponding elements over the shared inner dimension. Print the result."}
+{"id": 261, "question_text": "Given a 1D array x containing the values from 1 to 2, return a single value that represents the total of all elements in the array. Print the result."}
+{"id": 262, "question_text": "Given a 2x2 matrix A and a 1D vector b, compute the resulting vector by performing a multiplication that combines the rows of the matrix with the elements of the vector. Print the result."}
+{"id": 263, "question_text": "Given Query and Key tensors Q and K with shapes (2, 2, 2, 2), compute the attention scores by comparing these tensors across the batch dimension and returning a new tensor with the appropriate shape. Print the result."}
+{"id": 264, "question_text": "Given three 2x2 matrices A, B, and C, perform a series of matrix multiplications on them in a single operation and return the resulting matrix. (★☆☆)"}
+{"id": 265, "question_text": "Given two batches of 2x2 matrices T and U, compute the product of the inner matrices for each batch item and return the resulting batch of matrices. Print the result."}
+{"id": 266, "question_text": "For a batch of square matrices A, return a 1D array containing the sum of the diagonal elements for each matrix. (★☆☆)"}
+{"id": 267, "question_text": "Given two 2x2 matrices A and B, flatten both matrices and compute the sum of the products of their corresponding elements. (★☆☆)"}
+{"id": 268, "question_text": "Given a batch of 2x2 matrices A and a batch of 2x2 vectors x, compute the result of applying each matrix to its corresponding vector, producing a new array that maintains the batch structure. Print the result."}
+{"id": 269, "question_text": "Given an image represented as a 3D array with shape (2, 2, 2) and a 1D array of weights, combine the channels of the image into a single 2D spatial map using the provided weights. (★☆☆)"}
+{"id": 270, "question_text": "Given two 3D tensors A and B, compute the total sum of the products of their corresponding elements. (★☆☆)"}
+{"id": 271, "question_text": "Given a 4D tensor T with shape (2, 2, 2, 2), rearrange the dimensions so that the color channel, currently in the second position, is moved to the last position. Print the result."}
+{"id": 272, "question_text": "Given a 3D array X representing a sequence of features and a 2D projection matrix M, apply the projection to transform the feature dimension of the sequence and return the resulting array. (★☆☆)"}
+{"id": 273, "question_text": "For a batch of matrices A, return a 2D array where each row contains the diagonal elements of the corresponding matrix. (★☆☆)"}
+{"id": 274, "question_text": "Given a 2D array A, return a 1D array where each element is the sum of the elements in each column of A. (★☆☆)"}
+{"id": 275, "question_text": "Given two 2D arrays A and B, create a new tensor where each element of A is multiplied by every element of B, resulting in a 4D array. (★☆☆)"}
+{"id": 276, "question_text": "Given two 3D arrays A and B, each with shape (2, 2, 2), compute the product of the last two dimensions for each item in the first dimension, resulting in a new array with shape (2, 2, 2). Print the result."}
+{"id": 277, "question_text": "Given a square matrix A, return the sum of the elements that lie on its main diagonal. (★☆☆)"}
+{"id": 278, "question_text": "Given a vector v of size (2), construct a square matrix where each element at position (i, j) is the product of the i-th and j-th elements of v. (★☆☆)"}
+{"id": 279, "question_text": "Given a batch of vectors x with shape (2, 2) and a transformation matrix W with shape (2, 2), compute the result of applying the transformation matrix to each vector in the batch. (★★☆)"}
+{"id": 280, "question_text": "Given a 4D tensor of shape (b, h, s, d), compute the sum across the second dimension to obtain a tensor of shape (b, s, d). Print the result using the provided input. (★☆☆)"}
+{"id": 281, "question_text": "Given a vector v of shape (d), create a matrix by repeating this vector n times, resulting in a matrix of shape (n, d). Use the inputs v = np.arange(1, 3) and n = 2, and print the result."}
+{"id": 282, "question_text": "Given a 3D tensor `data` of shape (b, t, d), compute the average of the values along the second dimension (t) by summing the values and then dividing by the number of elements in that dimension. Use the inputs provided and print the result."}
+{"id": 283, "question_text": "Given input x with shape (b, i), weight matrices W1 with shape (i, h) and W2 with shape (h, o), compute the output of applying both weight matrices to the input in a single operation. (★★☆)"}
+{"id": 284, "question_text": "For a batch of vectors v with shape (b, d), compute the sum of the squares of each vector's elements. Use the provided input below and print the result. v = np.arange(1, 5).reshape((2, 2))"}
+{"id": 285, "question_text": "Given a tensor T with shape (batch, head, seq, dim), rearrange the axes so that the head and seq dimensions are swapped. Print the result using the provided input. (★☆☆)"}
+{"id": 286, "question_text": "Given a query vector q of shape (d) and a memory matrix M of shape (n, d), compute the similarity between q and each row of M, resulting in a 1D array of length n. (★☆☆)"}
+{"id": 287, "question_text": "Given a batch of vectors x with shape (b, d), return a batch of matrices of shape (b, d, d) that represent the interaction between each pair of features for every vector. (★☆☆)"}
+{"id": 288, "question_text": "Given input x with shape (b, t, d) and a weight tensor W with shape (3, d, d), project x into three different spaces simultaneously, resulting in an output with shape (3, b, t, d). Print the result."}
+{"id": 289, "question_text": "Given a 3D tensor X of shape (b, t, d), compute the total for each combination of t and d by aggregating values from all batches. Use the exact inputs below and print the result."}
+{"id": 290, "question_text": "Given a tensor X of any dimensionality, return a single scalar that represents the sum of all its elements. (★☆☆)"}
+{"id": 291, "question_text": "Given an image represented as a 3D array with shape (c, h, w) and a 1D array of scale factors with shape (c), return a new array where each channel of the image is multiplied by its corresponding scale factor. Print the result."}
+{"id": 292, "question_text": "Given two vectors u and v of shapes (m) and (n) respectively, compute their outer product and add the scalar A (broadcasts across the resulting matrix). Use the inputs provided below and print the final result.\nu = np.arange(1, 3)\nv = np.arange(1, 3)\nA = 2"}
+{"id": 293, "question_text": "From a 3D tensor A with shape (b, n, n), return a 1D array containing the first element from each 2D matrix in the batch. (★☆☆)"}
+{"id": 294, "question_text": "Given a weight tensor W of shape (2, 2, 2, 2) and an input tensor X of shape (2, 2, 2), compute a resulting vector by combining these tensors such that the output has shape (2). (★☆☆)"}
+{"id": 295, "question_text": "Given a 4D tensor X with shape (b, c, h, w), compute a single value for each batch item by aggregating all pixel and channel values. (★☆☆)"}
+{"id": 296, "question_text": "Given a 2D array x of shape (t, d), create a 3D array of shape (t, t, d) where each entry at position (i, j) contains the product of the ith and jth vectors from x. (★☆☆)"}
+{"id": 297, "question_text": "Given a batch of matrices B with shape (b, i, j) and a constant matrix M with shape (j, k), compute the result of multiplying each matrix in the batch by the constant matrix. (★☆☆)"}
+{"id": 298, "question_text": "Given two matrices A and B of shape (n, n), calculate the sum of the elements along the main diagonal of their product without explicitly forming the product itself. Use the exact inputs below and print the result."}
+{"id": 299, "question_text": "Given two arrays, queries of shape (b, q, d) and keys of shape (b, k, d), calculate a score matrix that combines these inputs to produce an output of shape (b, q, k). (★☆☆)"}
+{"id": 300, "question_text": "Given a 3D tensor img with shape (c, h, w), return a 2D array that combines the height and width dimensions into a single dimension while preserving the channel dimension. (★☆☆)"}
+{"id": 301, "question_text": "Given two tensors P and Q, both with shape (b, h, n, d), calculate the similarity between the last two dimensions for each combination of the first two dimensions, resulting in a matrix of shape (n, n) for each batch and head. Print the result."}
+{"id": 302, "question_text": "For a 5D tensor v representing video data with dimensions for batch, time, channels, height, and width, compute the average across the time, height, and width dimensions while keeping the batch and channel dimensions intact. Use the inputs provided and print the result."}
+{"id": 303, "question_text": "Given a square matrix A, compute the difference between the matrix and its transpose to obtain the anti-symmetric part. Use the exact inputs below and print the result."}
+{"id": 304, "question_text": "Given a 3D array x with shape (b, t, d) and a 1D weight vector w with shape (d), compute a new array with shape (b, t) by applying the weights along the last dimension of x. Use the exact inputs below and print the result."}
+{"id": 305, "question_text": "In a multi-layer perceptron, compute the product of the hidden states and the output weights, resulting in an array that combines the last dimension of the hidden states with the second dimension of the weights. Use the provided inputs and print the result."}
+{"id": 306, "question_text": "Given a vector v of shape (2) and a matrix M of shape (2, 2), compute the result of the quadratic form involving v and M, which produces a single scalar output. Print the result using the provided inputs. (★☆☆)"}
+{"id": 307, "question_text": "Given a vector of scales s with shape (b,) and an integer n, create a batch of diagonal matrices where each matrix has n rows and n columns, with the diagonal elements corresponding to the values in s. (★☆☆)"}
+{"id": 308, "question_text": "Given a sequence x of shape (t, d), calculate the sum of the products of each token and the token that follows it in the sequence. Use the exact inputs below and print the result."}
+{"id": 309, "question_text": "Given a multi-head tensor x with shape (b, t, h, d) and a head-importance weight w with shape (h), compute a new tensor of shape (b, t, d) that represents the weighted sum of the heads. (★☆☆)"}
+{"id": 310, "question_text": "Given a batch of vectors v with shape (b, d), compute the outer product of each vector with itself and then sum all resulting matrices together. (★☆☆)"}
+{"id": 311, "question_text": "Multiply a 2D matrix A by a vector representing a diagonal matrix, followed by another 2D matrix B, and return the resulting matrix. (★☆☆)"}
+{"id": 312, "question_text": "Given a permutation matrix P of shape (n, n) and a vector v of shape (n), reorder the elements of v according to the structure of P. Use the inputs provided and print the result."}

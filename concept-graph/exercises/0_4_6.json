@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_4_6",
+  "title": "implement multiply_forward",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_6_exercise-implement-multiply-forward.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 6,
+  "difficulty": 4,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "tensor-wraps-ndarray", "role": "core", "evidence": "out = Tensor(out_arr, requires_grad) — wraps the np.multiply result"},
+    {"id": "recipe-dataclass", "role": "core", "evidence": "out.recipe = Recipe(np.multiply, (arg_a, arg_b), {}, parents) — Recipe construction for the binary op"},
+    {"id": "requires-grad-propagation", "role": "core", "evidence": "requires_grad = grad_tracking_enabled and any([isinstance(x, Tensor) and x.requires_grad for x in (a, b)]) — the ANY-over-multiple-inputs OR explicit in the multi-arg case"},
+    {"id": "grad-tracking-global-toggle", "role": "core", "evidence": "Test toggles grad_tracking_enabled = False and asserts b.requires_grad is False"},
+    {"id": "parents-dict-by-argidx", "role": "core", "evidence": "parents = {idx: arr for idx, arr in enumerate([a, b]) if isinstance(arr, Tensor)} — dict-by-arg-idx with Tensor-only filter; markdown hint explicitly warns 'parents should just be a list of the Tensors that were inputs to multiply, so you shouldn't add ints'"},
+    {"id": "box-array-to-tensor-with-recipe", "role": "core", "evidence": "Same compute → Tensor(...) → if requires_grad attach Recipe pattern as 0_4_5, now for binary op"},
+    {"id": "unbox-args-tensor-to-array", "role": "core", "evidence": "arg_a = a.array if isinstance(a, Tensor) else a; arg_b = b.array if isinstance(b, Tensor) else b — the unbox-with-pass-through-scalar idiom, given as scaffold"},
+    {"id": "coerce-float-arg-to-array", "role": "incidental", "evidence": "Markdown explicitly says 'One of the inputs may be an int, so you'll need to deal with this case before calculating out' — handled by the unbox scaffold rather than np.array coercion, but the same scalar-handling concern"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — above seed prediction of 6 (added unbox-args explicitly since it's now scaffolded for both args, and coerce-float as incidental since the scalar-handling concern is the focus). This is the multi-arg generalization of 0_4_5 — Recipe.parents must skip non-Tensor inputs (the key error mode flagged by the test help dropdown)."
+}

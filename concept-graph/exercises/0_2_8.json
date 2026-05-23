@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_2_8",
+  "title": "implement BlockGroup",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_8_exercise-implement-blockgroup.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 8,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class BlockGroup(nn.Module): with __init__ + super + forward"},
+    {"id": "module-composition", "role": "core", "evidence": "self.blocks = Sequential(ResidualBlock(...), *[...]) — ResidualBlock submodules registered via Sequential"},
+    {"id": "block-group-stack", "role": "core", "evidence": "Sequential(ResidualBlock(in_feats, out_feats, first_stride), *[ResidualBlock(out_feats, out_feats) for _ in range(n_blocks - 1)]) — only first block changes stride, rest preserve shape; this IS the atom"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Clean 3-atom exercise — exactly the block-group-stack atom plus the Module-composition spine. The Help dropdown explicitly states the invariant being taught: 'first_stride only applies to first block; after the first block all subsequent blocks have out_feats==in_feats so they get the identity right branch'. Tight scope."
+}

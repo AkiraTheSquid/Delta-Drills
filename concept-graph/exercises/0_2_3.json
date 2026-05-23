@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_2_3",
+  "title": "add a validation loop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_3_exercise-add-a-validation-loop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 3,
+  "difficulty": 3,
+  "importance": 5,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "dataloader-batching", "role": "core", "evidence": "mnist_trainloader = DataLoader(mnist_trainset, batch_size=args.batch_size, shuffle=True); separate testloader with shuffle=False"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "logits=model(imgs); loss=F.cross_entropy(logits,labels); loss.backward(); optimizer.step(); optimizer.zero_grad() — the canonical 5-line cycle"},
+    {"id": "validation-no-grad", "role": "core", "evidence": "exercise text explicitly says 'wrap your forward pass in with t.inference_mode()'; accuracy accumulator computed once per epoch over the full testset"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "train-eval-mode-branch", "reason": "seed predicted this for exercise 3 but SimpleMLP has no batchnorm/dropout so model.train()/model.eval() calls aren't required here — that's first introduced in 0_2_12 (feature extraction with ResNet); the validation loop just uses inference_mode()"}
+  ],
+  "notes": "Training-loop spine exercise — 3 atoms, all training-infra. validation-no-grad is technically inference_mode (a stricter superset of no_grad) but the seed atom definition fits. False positive on train-eval-mode-branch confirms the seed over-tagged on topic mention: the exercise mentions val/eval but doesn't require the .train()/.eval() flip until batchnorm exists."
+}

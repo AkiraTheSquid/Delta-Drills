@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_5_6",
+  "title": "weight initialisation",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_6_exercise-weight-initialisation.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 6,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "dcgan-normal-init-002", "role": "core", "evidence": "if isinstance(module, (ConvTranspose2d, Conv2d, Linear)): nn.init.normal_(module.weight.data, 0.0, 0.02) — DCGAN paper's N(0, 0.02) init on all Conv/ConvTranspose/Linear weights"},
+    {"id": "bn-weight-bias-init-pattern", "role": "core", "evidence": "elif isinstance(module, BatchNorm2d): nn.init.normal_(module.weight.data, 1.0, 0.02); nn.init.constant_(module.bias.data, 0.0) — BN weight ~ N(1, 0.02), bias = 0"},
+    {"id": "module-modules-iter-isinstance-dispatch", "role": "core", "evidence": "for module in model.modules(): if isinstance(module, (ConvTranspose2d, Conv2d, Linear)): ... elif isinstance(module, BatchNorm2d): ... — canonical walk-tree-and-dispatch-by-type pattern"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "3 atoms — exactly matches seed prediction of 3. Three-atom singleton cohort (§5 DCGAN init): all three atoms fire only in this exercise and nowhere else in chapter 0. The whole exercise is one ~6-line function — densely-packed atoms."
+}

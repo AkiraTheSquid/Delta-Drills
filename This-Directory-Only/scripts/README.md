@@ -10,6 +10,7 @@
 - The Jupyter Book build step (`build_arena_book.sh`) and its venv lifecycle.
 - Thin Python launchers that bootstrap `sys.path` and delegate to the real implementations under `Local_Deployed_Shared/pipeline/`.
 - The split-layout invariant check (`refresh_split_layout.py`) that guards the repo-root structure (only `Local_Deployed_Shared/`, `This-Directory-Only/`, and a small allowlist of metadata files at root).
+- The Delta Drills browser isolation watcher (`watch_delta_drills_dev.py`) that keeps the Chrome debug session pinned to the local app and closes stray tabs from unrelated profiles.
 
 ## Does NOT own
 - Pipeline business logic (data extraction, validation, prompt rewriting). That lives in `Local_Deployed_Shared/pipeline/`. Scripts here just `runpy.run_path(...)` into it.
@@ -25,6 +26,7 @@
 - `refresh_split_layout.py`: verifies no unexpected files exist at repo root and prunes stale root-level symlinks. Run by `deploy_delta_drills.sh` against both worktrees.
 - `extract_arena_prereqs.py`: extracts structured exercises (starter code, solutions, image markers) from the ARENA prereqs notebook into `Local_Deployed_Shared/arena_prereqs_structured.json`.
 - `export_questions_json.py`, `build_function_bank.py`, `build_function_mode_requests.py`, `build_function_mode_repair_requests.py`, `validate_function_bank.py`, `test_function_validator.py`: thin `runpy` wrappers that set `sys.path` to include `Local_Deployed_Shared/pipeline/` and `Local_Deployed_Shared/`, then run the matching script in `Local_Deployed_Shared/pipeline/`.
+- `watch_delta_drills_dev.py`: long-running helper launched by `delta_drills_dev`. Polls Chrome's remote-debugging endpoint and closes any tab whose URL is not Delta Drills. This is the guardrail against Delta Note or any other app leaking into the MCP browser session.
 - `EXTRACTION-PIPELINE.md`: design notes for the structured-exercise extraction flow.
 - `STORAGE-ARCHITECTURE.txt`: notes on where artifacts land on disk.
 
@@ -80,6 +82,13 @@
   - Root cause: by design — the split-layout invariant exists to keep root tidy.
   - Prevention/fix: put the file under `This-Directory-Only/` (local-only) or `Local_Deployed_Shared/` (ships). Only update the `ALLOWED_ROOT_NAMES` set if the file legitimately belongs at root.
   - Status: `ACTIVE`.
+
+- **MCP Chrome picks up unrelated tabs** — `RESOLVED`
+  - When it happened: `delta_drills_dev` reused a Chrome profile that already had another app open, so the remote-debug session surfaced Delta Note / other tabs instead of only Delta Drills.
+  - Symptom: `chrome-devtools-mcp` landed on the wrong app or showed stale signed-in state from another workspace.
+  - Root cause: profile/session bleed, not Delta Drills app code.
+  - Prevention/fix: `delta_drills_dev` now uses a dedicated profile under `/tmp/delta_drills_dev_chrome_profile` by default and launches `watch_delta_drills_dev.py` to close any non-Delta-Drills tabs seen on port `9222`.
+  - Status: `RESOLVED` (2026-05-13).
 
 ## Recent Changes
 - 2026-04-30: Added `build_arena_book.sh` and a `Step 3c: Build the ARENA Jupyter Book` block to `deploy_delta_drills.sh`. Output staged to `Local_Deployed_Shared/arena-book/` (gitignored on main, tracked on deploy).

@@ -20,7 +20,7 @@ The contract is declared in two places, which must stay in sync:
 | Name | Condition | Source |
 |---|---|---|
 | `einops`, `einsum`, `rearrange`, `reduce`, `repeat` | `questionNeedsEinops(question)` is true | installed via micropip on first need, then `from einops import …` |
-| `arr` | `questionNeedsArenaArray(question)` is true | `arr = np.load('/delta_numbers.npy')` — loaded into Pyodide's virtual FS |
+| `arr` | `questionNeedsArenaArray(question)` is true | `arr = np.load('/delta_numbers.npy')` — loaded into Pyodide's virtual FS from the ARENA `numbers.npy` source file |
 | Per-question fixtures (`hwcs`, `list_of_tensors`, `img_a`, etc.) | `question.test_cases[0].setup_code` is non-empty | preamble appends `test_cases[0].setup_code` so user code sees the same fixtures the grader uses. **`expected_setup_code` is never injected** — that block constructs the canonical answer and would let `solve()` cheat. |
 
 `questionNeedsEinops` matches `primary_library` ∈ `{einops, einops.einsum}`, `topic` ∈ `{Einops, Einsum}`, or `supports_visual_output: true`.

@@ -1,0 +1,35 @@
+{
+  "exercise_id": "0_3_4",
+  "title": "implement AdamW",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_4_exercise-implement-adamw.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 4,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "self.params = list(params)"},
+    {"id": "optimizer-state-tensor-buffers", "role": "core", "evidence": "self.m = [t.zeros_like(p) for p in self.params]; self.v = [t.zeros_like(p) for p in self.params]"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for p in self.params: p.grad = None"},
+    {"id": "param-grad-access", "role": "core", "evidence": "g = theta.grad inside step"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "theta *= 1 - self.lr * self.lmda  (decoupled WD inplace) and theta -= self.lr * m_hat / (v_hat.sqrt() + self.eps) (main update inplace)"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "m.copy_(self.beta1 * m + (1 - self.beta1) * g); v.copy_(self.beta2 * v + (1 - self.beta2) * g.pow(2))"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on step"},
+    {"id": "step-counter-increment", "role": "core", "evidence": "self.t = 1 init; self.t += 1 after loop"},
+    {"id": "weight-decay-decoupled", "role": "core", "evidence": "theta *= 1 - self.lr * self.lmda — applied directly to theta BEFORE the gradient-based update, not folded into g; this IS the defining change vs Adam (markdown: 'This is a very small modification of the Adam update rule, where we apply weight decay in a different way (by modifying the weights themselves...)')"},
+    {"id": "ema-first-moment", "role": "core", "evidence": "m.copy_(self.beta1 * m + (1 - self.beta1) * g)"},
+    {"id": "ema-second-moment", "role": "core", "evidence": "v.copy_(self.beta2 * v + (1 - self.beta2) * g.pow(2))"},
+    {"id": "bias-correction-divide", "role": "core", "evidence": "m_hat = m / (1 - self.beta1**self.t); v_hat = v / (1 - self.beta2**self.t)"},
+    {"id": "sqrt-eps-stabilize", "role": "core", "evidence": "theta -= self.lr * m_hat / (v_hat.sqrt() + self.eps)"},
+    {"id": "pseudocode-to-code-translate", "role": "core", "evidence": "Markdown gives 8-line LaTeX pseudocode for AdamW; differs from Adam only in placement of weight-decay line"},
+    {"id": "optimizer-repr-string", "role": "core", "evidence": "f'AdamW(lr={self.lr}, beta1={self.beta1}, beta2={self.beta2}, eps={self.eps}, weight_decay={self.lmda})' — provided in template"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "weight-decay-l2-add", "reason": "Seed predicted this for AdamW but the whole point of AdamW is that it DOESN'T use L2-style g += lambda*theta; it uses decoupled decay instead. The Adam-style L2 fold is replaced by weight-decay-decoupled."},
+    {"id": "conditional-hparam-branch", "reason": "Solution applies theta *= 1 - lr*lmda unconditionally (lmda=0 makes it a no-op). No 'if lmda != 0' branch as in SGD/RMSprop/Adam solutions."}
+  ],
+  "notes": "15 atoms tagged + 2 false positives flagged. 1 below seed prediction of 11+conditional. AdamW = Adam's atom set minus weight-decay-l2-add plus weight-decay-decoupled; the solution drops the conditional shortcut on weight decay too (multiplies by 1 unconditionally when lmda=0). The decoupled WD line BEFORE the m/v EMA updates is the conceptual content the exercise tests."
+}

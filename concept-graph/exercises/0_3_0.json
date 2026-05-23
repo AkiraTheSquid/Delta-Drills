@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_3_0",
+  "title": "implement opt_fn_with_sgd",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_0_exercise-implement-opt-fn-with-sgd.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 0,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-loop-on-tensor", "role": "core", "evidence": "optimizer = optim.SGD((xy,), lr=lr, momentum=momentum) — pass (xy,) instead of model.parameters() so SGD steps over a single (x,y) coordinate tensor"},
+    {"id": "requires-grad-leaf-assert", "role": "core", "evidence": "assert xy.requires_grad — the docstring and provided template explicitly do this sanity check before optimizing"},
+    {"id": "detach-clone-snapshot", "role": "core", "evidence": "xy_list = [xy.detach().clone()] ... xy_list.append(xy.detach().clone()) — markdown explicitly warns 'shouldn't store past values like xy_list.append(xy) because then past elements ... will be modified'"},
+    {"id": "backward-on-scalar-loss", "role": "core", "evidence": "fn(xy[0], xy[1]).backward() inside the loop produces gradients into xy.grad"},
+    {"id": "t-stack-trajectory", "role": "core", "evidence": "return t.stack(xy_list) — collapse the per-step snapshots into a single (n_iters+1, 2) trajectory tensor"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "fn(...).backward(); optimizer.step(); optimizer.zero_grad() — the canonical fwd/loss/back/step/zero loop body, applied to a non-model tensor"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — matches seed prediction of 6 exactly. Trivial 'use torch.optim.SGD directly' exercise — no custom optimizer, just the harness. training-step-cycle fires alongside optimizer-loop-on-tensor; they co-fire here because the SGD-on-tensor harness IS a degenerate training step (no model, no loss-to-data binding)."
+}

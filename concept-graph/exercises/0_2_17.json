@@ -1,0 +1,24 @@
+{
+  "exercise_id": "0_2_17",
+  "title": "implement minimal 1D conv (part 1)",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_17_exercise-implement-minimal-1d-conv-part-1.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 17,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-4",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "ow = w - kw + 1 (simplest form of output formula, no padding, no stride)"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "uses x.stride(0) to query stride; explicit warning in comment 'Common error: s_w is always 1 if x wasn't itself created via striding'"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x.as_strided(size=(ow, kw), stride=(s_w, s_w)) — the canonical sliding-window trick"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x_strided, weights, 'ow kw, kw -> ow')"},
+    {"id": "conv-windowing-1d", "role": "core", "evidence": "the whole exercise IS this atom: window-then-einsum to implement conv1d from scratch"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "nn-module-subclass", "reason": "plain function (def conv1d_minimal_simple), not an nn.Module — the simplified version strips out the Module wrapper"}
+  ],
+  "notes": "Validates as-strided-windowing + conv-windowing-1d + einsum-contraction as a load-bearing triplet — they fire together exactly as predicted by the seed. Zero new atoms surfaced (the seed cluster for this exercise was right). conv-channel-sum is correctly absent: this is the 'simplified' version with channels stripped; part 2 (0_2_18) re-adds them and should be where conv-channel-sum appears."
+}

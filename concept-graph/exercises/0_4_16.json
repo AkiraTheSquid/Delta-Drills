@@ -1,0 +1,19 @@
+{
+  "exercise_id": "0_4_16",
+  "title": "functional ReLU",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_16_exercise-functional-relu.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 16,
+  "difficulty": 1,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "relu-elementwise-max", "role": "core", "evidence": "return maximum(x, 0.0) — exactly the 'ReLU = max(x, 0)' identity, defined here over the custom Tensor's maximum"},
+    {"id": "max-back-tied-half", "role": "incidental", "evidence": "Markdown: 'Again, at x = 0 your derivative could reasonably be anything between 0 and 1 inclusive, but we've followed PyTorch in making it 0.5. This means you can just use the maximum function defined above!' — inherits the tied-half backward from 0_4_15 via composition"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "2 atoms — under seed prediction of 5. The exercise body is one line (composition over maximum from 0_4_15); intentionally tiny. max-back-tied-half tagged as incidental because the gradient path goes through it but no code is written for it here."
+}

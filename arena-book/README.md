@@ -3,6 +3,7 @@
 ## Purpose
 - Source for the Jupyter Book that renders ARENA curriculum notebooks as a static, navigable website on Delta Drills' domain.
 - Acts as the front door for the Courses tab — students click an ARENA section in `courses.js`, land on a Book page here, then click "Open in Colab" to run code.
+- Also serves as the notebook target for ARENA course navigation. Practice-page source-link UI was removed; the practice page now focuses on imports shown above the editor.
 
 ## Owns
 - Book configuration (`_config.yml`, `_toc.yml`, `intro.md`).
@@ -62,4 +63,5 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-05-13: Practice-page source notebook block removed; practice now surfaces imported helpers instead.
 - 2026-04-29: Initial scaffold — `_config.yml`, `_toc.yml`, `intro.md`, `requirements.txt`, symlinks for the four ARENA chapters. Phase 1 design: Book on Vercel + Colab launch buttons. Inline-execution backend deferred (see project memory).

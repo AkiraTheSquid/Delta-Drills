@@ -1,0 +1,26 @@
+{
+  "exercise_id": "0_2_5",
+  "title": "implement BatchNorm2d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_5_exercise-implement-batchnorm2d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 5,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-3",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class BatchNorm2d(nn.Module): super().__init__()"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "self.weight = nn.Parameter(t.ones(num_features)); self.bias = nn.Parameter(t.zeros(num_features))"},
+    {"id": "module-extra-repr", "role": "core", "evidence": "extra_repr method required by exercise"},
+    {"id": "batchnorm-running-stats", "role": "core", "evidence": "register_buffer for running_mean/running_var; EMA update: self.running_mean = (1-momentum)*self.running_mean + momentum*mean"},
+    {"id": "batchnorm-affine-params", "role": "core", "evidence": "weight initialized to ones, bias to zeros, applied as x_normed * weight + bias after normalization"},
+    {"id": "train-eval-mode-branch", "role": "core", "evidence": "if self.training: compute batch stats and update running; else: use running stats"},
+    {"id": "broadcasting-rules", "role": "core", "evidence": "reshape (num_features,) -> (1, num_features, 1, 1) to broadcast against (batch, channels, H, W); explicit tip in exercise about broadcasting"},
+    {"id": "tensor-reshape-view", "role": "core", "evidence": "einops.rearrange('channels -> 1 channels 1 1') to make stats broadcastable; reshape via einops"},
+    {"id": "register-buffer", "role": "core", "evidence": "self.register_buffer('running_mean', t.zeros(...)) — non-learnable state that participates in state_dict but not in optimization; a NEW atom not in seed vocab"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Densest exercise so far: 9 atoms in one ~25-line forward. Seed's prediction for this exercise was 100% accurate (no false positives) — the batchnorm cluster was well-scoped. One new atom proposal: register-buffer (distinct from nn-parameter-wrap; for state that should round-trip via state_dict but not be optimized — running stats, attention masks, position encodings, etc). kaiming-uniform-init does NOT appear here (weight=ones, bias=zeros), confirming it's a per-Module choice not a universal pattern."
+}
