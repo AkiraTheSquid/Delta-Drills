@@ -10395,8 +10395,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },

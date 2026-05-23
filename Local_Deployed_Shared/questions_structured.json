@@ -13,7 +13,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 5x5 matrix Z of random integers, return the index of the largest value in each row as a 1D array. (\u2605\u2606\u2606)",
+      "question_text": "Given a 5x5 matrix Z of random integers, return the index of the largest value in each row as a 1D array. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -47,7 +47,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build an 8x8 integer matrix filled with a checkerboard pattern of 0s and 1s, where the top-left entry is 0, entries alternate between 0 and 1 along each row and column, and no two horizontally or vertically adjacent entries share the same value. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build an 8x8 integer matrix filled with a checkerboard pattern of 0s and 1s, where the top-left entry is 0, entries alternate between 0 and 1 along each row and column, and no two horizontally or vertically adjacent entries share the same value. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -81,7 +81,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Define a custom NumPy structured dtype named color that describes an RGBA pixel as four unsigned byte fields, in the order r, g, b, a (each one byte, range 0-255). The result should be a dtype object usable to construct or interpret structured arrays where every element holds the four named color channels. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Define a custom NumPy structured dtype named color that describes an RGBA pixel as four unsigned byte fields, in the order r, g, b, a (each one byte, range 0-255). The result should be a dtype object usable to construct or interpret structured arrays where every element holds the four named color channels. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -115,7 +115,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Construct a 5x5 matrix where the values 1, 2, 3, and 4 are placed just below the main diagonal, with all other elements being zero. (\u2605\u2606\u2606)",
+      "question_text": "Construct a 5x5 matrix where the values 1, 2, 3, and 4 are placed just below the main diagonal, with all other elements being zero. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -149,7 +149,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x3 matrix Z, calculate the square root of the sum of the absolute squares of its elements. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3x3 matrix Z, calculate the square root of the sum of the absolute squares of its elements. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -183,7 +183,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a random vector of length 5, adjust its values so that the total length of the vector equals 1, maintaining the direction of the vector. (\u2605\u2606\u2606)",
+      "question_text": "Given a random vector of length 5, adjust its values so that the total length of the vector equals 1, maintaining the direction of the vector. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -217,7 +217,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 5x5 matrix Z of random values, return a new matrix where each element in a row has had the mean of that row subtracted from it. (\u2605\u2606\u2606)",
+      "question_text": "Given a 5x5 matrix Z of random values, return a new matrix where each element in a row has had the mean of that row subtracted from it. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -251,7 +251,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given rng, a NumPy random Generator seeded with a fixed integer so its output stream is deterministic. Produce a 1D array of length 3 containing the next three uniform floats in [0, 1) drawn from this generator. Because the seed is fixed, running the code repeatedly must yield the exact same three numbers. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given rng, a NumPy random Generator seeded with a fixed integer so its output stream is deterministic. Produce a 1D array of length 3 containing the next three uniform floats in [0, 1) drawn from this generator. Because the seed is fixed, running the code repeatedly must yield the exact same three numbers. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -285,7 +285,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D array of shape (5, 5) filled with random values drawn from the uniform distribution on [0, 1). Rescale Z so that its overall mean becomes 0 and its overall standard deviation becomes 1, computing those statistics across all 25 entries (not per-row or per-column). The result should be a (5, 5) array of the same dtype. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D array of shape (5, 5) filled with random values drawn from the uniform distribution on [0, 1). Rescale Z so that its overall mean becomes 0 and its overall standard deviation becomes 1, computing those statistics across all 25 entries (not per-row or per-column). The result should be a (5, 5) array of the same dtype. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -319,7 +319,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 4x4 2D array where every entry equals its own row index, so each row holds a single repeated integer value and that value equals the row's position from top to bottom. The result must have integer dtype and shape (4, 4). (\u2605\u2606\u2606)",
+      "question_text": "Build a 4x4 2D array where every entry equals its own row index, so each row holds a single repeated integer value and that value equals the row's position from top to bottom. The result must have integer dtype and shape (4, 4). (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -353,7 +353,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D array Z, modify the array such that all elements with values greater than 3 and less than 8 are negated. (\u2605\u2606\u2606)",
+      "question_text": "Given a 1D array Z, modify the array such that all elements with values greater than 3 and less than 8 are negated. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -387,7 +387,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given an array Z, return the distinct elements along with the number of times each element appears in the array. (\u2605\u2606\u2606)",
+      "question_text": "Given an array Z, return the distinct elements along with the number of times each element appears in the array. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -421,7 +421,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x3 matrix Z of random values, return the matrix after adjusting each element by removing the average value of all elements. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3x3 matrix Z of random values, return the matrix after adjusting each element by removing the average value of all elements. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -455,7 +455,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Construct a 5x5 floating-point matrix Z whose entries strictly below the main diagonal are 1.0 and every other entry (the main diagonal itself and everything above it) is 0.0. The result is a 2D array of shape (5, 5) with ones forming a triangle that excludes the diagonal. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Construct a 5x5 floating-point matrix Z whose entries strictly below the main diagonal are 1.0 and every other entry (the main diagonal itself and everything above it) is 0.0. The result is a 2D array of shape (5, 5) with ones forming a triangle that excludes the diagonal. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -489,7 +489,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Starting from a 5x5 array Z filled with ones, surround the existing values with a one-cell-thick border of zeros so the result is a 7x7 array whose outermost row and column on every side contain zeros and whose interior 5x5 region preserves the original ones. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Starting from a 5x5 array Z filled with ones, surround the existing values with a one-cell-thick border of zeros so the result is a 7x7 array whose outermost row and column on every side contain zeros and whose interior 5x5 region preserves the original ones. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -523,7 +523,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D float array of length 3 that originally held a mix of finite floats and at least one NaN, but with every NaN entry already replaced by 0.0. Return Z so it can be inspected; the result must be a NaN-free copy of the original with the same shape, dtype, and ordering of the non-NaN values. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D float array of length 3 that originally held a mix of finite floats and at least one NaN, but with every NaN entry already replaced by 0.0. Return Z so it can be inspected; the result must be a NaN-free copy of the original with the same shape, dtype, and ordering of the non-NaN values. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -557,7 +557,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D complex-valued array of shape (2,) whose two entries each carry a real part and an imaginary part. Produce two separate real-valued arrays of shape (2,): the first contains the real components of each entry, and the second contains the imaginary components. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D complex-valued array of shape (2,) whose two entries each carry a real part and an imaginary part. Produce two separate real-valued arrays of shape (2,): the first contains the real components of each entry, and the second contains the imaginary components. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -591,7 +591,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 3x3 integer matrix containing the values 0 through 8 arranged row by row. For each row, compute the successive differences between adjacent column entries, producing a 2D array of shape (3, 2) where entry (i, j) equals Z[i, j+1] - Z[i, j]. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 3x3 integer matrix containing the values 0 through 8 arranged row by row. For each row, compute the successive differences between adjacent column entries, producing a 2D array of shape (3, 2) where entry (i, j) equals Z[i, j+1] - Z[i, j]. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -625,7 +625,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x4 integer matrix Z whose entries are 0 through 11 in row-major order, return a 1D array of length 12 that lists Z's entries in column-major order (reading down each column from top to bottom, columns ordered left to right). (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given a 3x4 integer matrix Z whose entries are 0 through 11 in row-major order, return a 1D array of length 12 that lists Z's entries in column-major order (reading down each column from top to bottom, columns ordered left to right). (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -659,7 +659,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a random vector Z of length 10, set the largest value in the vector to 0 and return the modified vector. (\u2605\u2606\u2606)",
+      "question_text": "Given a random vector Z of length 10, set the largest value in the vector to 0 and return the modified vector. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -693,7 +693,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x3 integer matrix Z, swap the top row with the bottom row so the row that was on top now sits at the bottom and the row that was at the bottom now sits on top. The middle row stays in place and the contents of each swapped row are kept intact. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3x3 integer matrix Z, swap the top row with the bottom row so the row that was on top now sits at the bottom and the row that was at the bottom now sits on top. The middle row stays in place and the contents of each swapped row are kept intact. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -727,7 +727,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Generate a 10x10 array filled with random values and determine the smallest and largest values in that array. (\u2605\u2606\u2606)",
+      "question_text": "Generate a 10x10 array filled with random values and determine the smallest and largest values in that array. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -761,7 +761,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 10x10 float array whose outer ring (first row, last row, first column, last column) holds 1.0 and whose interior 8x8 block holds 0.0. Return Z as a framed pattern: a solid border of ones surrounding a hollow rectangle of zeros, with the original (10, 10) shape preserved. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 10x10 float array whose outer ring (first row, last row, first column, last column) holds 1.0 and whose interior 8x8 block holds 0.0. Return Z as a framed pattern: a solid border of ones surrounding a hollow rectangle of zeros, with the original (10, 10) shape preserved. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -795,7 +795,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D array of shape (30,) filled with random values drawn from the uniform distribution on [0, 1). Compute the arithmetic mean across all 30 entries and return the result as a single floating-point scalar (sum of the entries divided by 30). (\u2605\u2606\u2606)",
+      "question_text": "You are given Z, a 1D array of shape (30,) filled with random values drawn from the uniform distribution on [0, 1). Compute the arithmetic mean across all 30 entries and return the result as a single floating-point scalar (sum of the entries divided by 30). (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -829,7 +829,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 1D arrays x and y with values [0, 1, 2] and [0, 1] respectively, create two 2D arrays that represent the coordinate matrices from these input arrays. (\u2605\u2606\u2606)",
+      "question_text": "Given two 1D arrays x and y with values [0, 1, 2] and [0, 1] respectively, create two 2D arrays that represent the coordinate matrices from these input arrays. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -863,7 +863,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x3 matrix Z, exchange the positions of the first and last columns and return the modified matrix. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3x3 matrix Z, exchange the positions of the first and last columns and return the modified matrix. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -897,7 +897,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 5x5 floating-point matrix where every entry on or above the main diagonal equals 1.0 and every entry strictly below the main diagonal equals 0.0. The result is the upper-triangular indicator of a 5x5 matrix. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 5x5 floating-point matrix where every entry on or above the main diagonal equals 1.0 and every entry strictly below the main diagonal equals 0.0. The result is the upper-triangular indicator of a 5x5 matrix. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -931,7 +931,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given an array Z, determine if there are any elements that are not a number (NaN) and print the result as a boolean value. (\u2605\u2606\u2606)",
+      "question_text": "Given an array Z, determine if there are any elements that are not a number (NaN) and print the result as a boolean value. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -965,7 +965,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given an array containing the elements [1, 2, 3], create a new array that repeats these elements three times in sequence. (\u2605\u2606\u2606)",
+      "question_text": "Given an array containing the elements [1, 2, 3], create a new array that repeats these elements three times in sequence. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -999,7 +999,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given the array [1, 2, 3], return a new array where each element appears three times in order. (\u2605\u2606\u2606)",
+      "question_text": "Given the array [1, 2, 3], return a new array where each element appears three times in order. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1033,7 +1033,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D array of length 12, return a 3D array with the shape (2, 2, 3) containing the same values. (\u2605\u2606\u2606)",
+      "question_text": "Given a 1D array of length 12, return a 3D array with the shape (2, 2, 3) containing the same values. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1067,7 +1067,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two random vectors of length 3, return the scalar value that represents the sum of the products of their corresponding elements. (\u2605\u2606\u2606)",
+      "question_text": "Given two random vectors of length 3, return the scalar value that represents the sum of the products of their corresponding elements. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1101,7 +1101,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D vector Z of length 10 with arbitrary real entries, return the position of the smallest entry in Z as a single integer index in the range 0 through 9. If the minimum value happens to appear at more than one position, return the index of its first occurrence. (\u2605\u2606\u2606)",
+      "question_text": "Given a 1D vector Z of length 10 with arbitrary real entries, return the position of the smallest entry in Z as a single integer index in the range 0 through 9. If the minimum value happens to appear at more than one position, return the index of its first occurrence. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1135,7 +1135,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D integer sequence with a mix of zero and nonzero entries, return the positions (indices) of every entry that is not zero, in their natural left-to-right order. The result should follow NumPy's convention for reporting nonzero positions of an array. (\u2605\u2606\u2606)",
+      "question_text": "Given a 1D integer sequence with a mix of zero and nonzero entries, return the positions (indices) of every entry that is not zero, in their natural left-to-right order. The result should follow NumPy's convention for reporting nonzero positions of an array. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1169,7 +1169,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given a, a 3D array of shape (2, 3, 4) with arbitrary (uninitialized) contents, and Z, a new array built to match a's shape and dtype but filled entirely with zeros. Return Z.shape so the student can confirm the new array carries the same (2, 3, 4) shape as the source array. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given a, a 3D array of shape (2, 3, 4) with arbitrary (uninitialized) contents, and Z, a new array built to match a's shape and dtype but filled entirely with zeros. Return Z.shape so the student can confirm the new array carries the same (2, 3, 4) shape as the source array. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1203,7 +1203,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build Z, a 3D array of shape (3, 3, 3) filled with random values drawn from the uniform distribution on [0, 1). The result is a single array of that shape and a floating-point dtype. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build Z, a 3D array of shape (3, 3, 3) filled with random values drawn from the uniform distribution on [0, 1). The result is a single array of that shape and a floating-point dtype. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1237,7 +1237,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two arrays a and b, return a new array containing the larger value from each pair of corresponding elements. (\u2605\u2606\u2606)",
+      "question_text": "Given two arrays a and b, return a new array containing the larger value from each pair of corresponding elements. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1271,7 +1271,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 2D integer matrix of shape (3, 3) whose entries, read row by row from top-left to bottom-right, are the consecutive integers 0 through 8 in row-major order, so the smallest value sits in the top-left cell and the largest value sits in the bottom-right cell. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 2D integer matrix of shape (3, 3) whose entries, read row by row from top-left to bottom-right, are the consecutive integers 0 through 8 in row-major order, so the smallest value sits in the top-left cell and the largest value sits in the bottom-right cell. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1305,7 +1305,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Construct a 3x3 square matrix where the values along the main diagonal are 1, 2, and 3, while all other elements are zero. (\u2605\u2606\u2606)",
+      "question_text": "Construct a 3x3 square matrix where the values along the main diagonal are 1, 2, and 3, while all other elements are zero. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1339,7 +1339,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a vector containing the integers from 0 to 9, modify the elements at odd positions to be -1. (\u2605\u2606\u2606)",
+      "question_text": "Given a vector containing the integers from 0 to 9, modify the elements at odd positions to be -1. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1373,7 +1373,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D float array Z, return a new float array of the same shape where each entry has been replaced by the largest integer that is less than or equal to it (so positives lose their fractional part toward zero and negatives are pushed further negative). (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given a 1D float array Z, return a new float array of the same shape where each entry has been replaced by the largest integer that is less than or equal to it (so positives lose their fractional part toward zero and negatives are pushed further negative). (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1407,7 +1407,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Construct a 4x4 square matrix where all the elements on the main diagonal are 2, and all other elements are 0. (\u2605\u2606\u2606)",
+      "question_text": "Construct a 4x4 square matrix where all the elements on the main diagonal are 2, and all other elements are 0. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1441,7 +1441,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 10x10 array Z of zeros (float64), report how much memory the array's data buffer occupies in bytes and print that count, formatted as the string \"<n> bytes\" where <n> is the byte count. Count only the element storage, not Python or array-object overhead. (\u2605\u2606\u2606)",
+      "question_text": "Given a 10x10 array Z of zeros (float64), report how much memory the array's data buffer occupies in bytes and print that count, formatted as the string \"<n> bytes\" where <n> is the byte count. Count only the element storage, not Python or array-object overhead. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1475,7 +1475,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D boolean array of length 4 with a mix of True and False entries. Return the total number of True entries in Z as a single integer count. The answer must reflect how many positions hold True, ignoring False entries entirely. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D boolean array of length 4 with a mix of True and False entries. Return the total number of True entries in Z as a single integer count. The answer must reflect how many positions hold True, ignoring False entries entirely. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1509,7 +1509,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build Z, a 1D floating-point array of shape (5,) containing 5 evenly spaced values that start at 0 and end at 1 inclusive, with equal spacing between consecutive entries. The first entry must be exactly 0.0, the last entry must be exactly 1.0, and entries in between fill in at uniform steps. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build Z, a 1D floating-point array of shape (5,) containing 5 evenly spaced values that start at 0 and end at 1 inclusive, with equal spacing between consecutive entries. The first entry must be exactly 0.0, the last entry must be exactly 1.0, and entries in between fill in at uniform steps. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1543,7 +1543,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a date range from July 1, 2016, to July 31, 2016, return all the dates within that month as an array. (\u2605\u2605\u2606)",
+      "question_text": "Given a date range from July 1, 2016, to July 31, 2016, return all the dates within that month as an array. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1577,7 +1577,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Draw a 1D vector of 10 random floats in [0, 1), then return the same values reordered from smallest to largest. The result has shape (10,) with entries in non-decreasing order. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Draw a 1D vector of 10 random floats in [0, 1), then return the same values reordered from smallest to largest. The result has shape (10,) with entries in non-decreasing order. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1611,7 +1611,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given two length-3 vectors A (all ones) and B (all twos), compute the value of ((A + B) * (-A / 2)) and store the final result in A, performing each intermediate step so that no new arrays are allocated and only A and B hold the working values. The final A should be a length-3 vector. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given two length-3 vectors A (all ones) and B (all twos), compute the value of ((A + B) * (-A / 2)) and store the final result in A, performing each intermediate step so that no new arrays are allocated and only A and B hold the working values. The final A should be a length-3 vector. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1645,7 +1645,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Build a 5x5 matrix Z (shape (rows, cols)) in which every row contains the integers 0 through cols-1 in ascending order, so each row is identical and the column index equals the value stored. The five rows are stacked vertically to form the final 5x5 matrix. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Build a 5x5 matrix Z (shape (rows, cols)) in which every row contains the integers 0 through cols-1 in ascending order, so each row is identical and the column index equals the value stored. The five rows are stacked vertically to form the final 5x5 matrix. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1679,7 +1679,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of the values 0 through 99, a scalar v drawn uniformly from [0, 100), and index, the position in Z whose value is nearest to v in absolute distance. Return Z[index] so that the printed result is the single element of Z that minimizes |Z - v|. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array of the values 0 through 99, a scalar v drawn uniformly from [0, 100), and index, the position in Z whose value is nearest to v in absolute distance. Return Z[index] so that the printed result is the single element of Z that minimizes |Z - v|. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1713,7 +1713,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of shape (10,) containing the values 0 through 9 in order. Produce a single scalar equal to the total of all entries of Z. The output is one integer value, not an array. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array of shape (10,) containing the values 0 through 9 in order. Produce a single scalar equal to the total of all entries of Z. The output is one integer value, not an array. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1747,7 +1747,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Extract the integer part of a random array of positive numbers using 4 different methods (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Extract the integer part of a random array of positive numbers using 4 different methods (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1781,7 +1781,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given A and B, two 1D integer arrays of length 5 with entries in {0, 1}. Report two booleans: first, whether A and B agree elementwise within floating-point tolerance, and second, whether A and B have the same shape and exactly equal values. Print each boolean on its own line. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given A and B, two 1D integer arrays of length 5 with entries in {0, 1}. Report two booleans: first, whether A and B agree elementwise within floating-point tolerance, and second, whether A and B have the same shape and exactly equal values. Print each boolean on its own line. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1815,7 +1815,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given Z, a 1D float vector of length 10 whose entries are all 0.0, mark Z so that any subsequent attempt to assign into it (for example writing Z[0] = 1) raises a ValueError reporting that the assignment destination is read-only. The shape and dtype of Z must stay unchanged. (\u2605\u2605\u2606)",
+      "question_text": "Given Z, a 1D float vector of length 10 whose entries are all 0.0, mark Z so that any subsequent attempt to assign into it (for example writing Z[0] = 1) raises a ValueError reporting that the assignment destination is read-only. The shape and dtype of Z must stay unchanged. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1849,7 +1849,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Consider a random 10x2 matrix representing cartesian coordinates, convert them to polar coordinates (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Consider a random 10x2 matrix representing cartesian coordinates, convert them to polar coordinates (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1883,7 +1883,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given the 1D array Z = np.linspace(-3, 3, 7), apply a ReLU-style clip so every negative entry becomes 0 while non-negative entries are left unchanged. The output keeps the original shape (7,) and dtype. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given the 1D array Z = np.linspace(-3, 3, 7), apply a ReLU-style clip so every negative entry becomes 0 while non-negative entries are left unchanged. The output keeps the original shape (7,) and dtype. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1917,7 +1917,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array, and is_mono, a boolean flag set to True when every consecutive pair in Z satisfies Z[i+1] >= Z[i] (non-decreasing) and False otherwise. Return is_mono as a single boolean value summarizing monotonicity of the whole sequence. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array, and is_mono, a boolean flag set to True when every consecutive pair in Z satisfies Z[i+1] >= Z[i] (non-decreasing) and False otherwise. Return is_mono as a single boolean value summarizing monotonicity of the whole sequence. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1951,7 +1951,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a vector x and an array of integers indicating how many times to repeat each corresponding element, return a new vector that contains each element of x repeated according to the specified counts. (\u2605\u2605\u2606)",
+      "question_text": "Given a vector x and an array of integers indicating how many times to repeat each corresponding element, return a new vector that contains each element of x repeated according to the specified counts. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -1985,7 +1985,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D array of shape (4, 3) containing the integers 0 through 11 in row-major order, along with perm, a 1D array of shape (4,) holding a random permutation of the row indices 0 through 3. Return a (4, 3) array whose rows are the rows of Z reordered according to perm, so each output row is one row of Z taken in the order specified by perm. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D array of shape (4, 3) containing the integers 0 through 11 in row-major order, along with perm, a 1D array of shape (4,) holding a random permutation of the row indices 0 through 3. Return a (4, 3) array whose rows are the rows of Z reordered according to perm, so each output row is one row of Z taken in the order specified by perm. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2019,7 +2019,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given labels, a 1D integer array of length 5 holding class indices in the range 0..K-1, and values, a 1D lookup table of length K indexed by class. Produce a 1D array of length 5 whose i-th entry is the lookup-table value at position labels[i]. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given labels, a 1D integer array of length 5 holding class indices in the range 0..K-1, and values, a 1D lookup table of length K indexed by class. Produce a 1D array of length 5 whose i-th entry is the lookup-table value at position labels[i]. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2053,7 +2053,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Build an 8x8 integer matrix filled with a checkerboard pattern of 0s and 1s, where the top-left entry is 0, entries alternate between 0 and 1 along each row and column, and no two horizontally or vertically adjacent entries share the same value. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Build an 8x8 integer matrix filled with a checkerboard pattern of 0s and 1s, where the top-left entry is 0, entries alternate between 0 and 1 along each row and column, and no two horizontally or vertically adjacent entries share the same value. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2087,7 +2087,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "What is the equivalent of `enumerate` for numpy arrays? Iterate a 3x3 array and return a list of `(index_tuple, value)` pairs. (\u2605\u2605\u2606)",
+      "question_text": "What is the equivalent of `enumerate` for numpy arrays? Iterate a 3x3 array and return a list of `(index_tuple, value)` pairs. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2121,7 +2121,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given the 1D array Z = np.arange(12) (values 0..11), overwrite every third element starting at index 0 with the value -1, leaving all other entries untouched. The result is still a length-12 1D array of integers where the overwritten positions hold -1 and the remaining positions keep their original arange values. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given the 1D array Z = np.arange(12) (values 0..11), overwrite every third element starting at index 0 with the value -1, leaving all other entries untouched. The result is still a length-12 1D array of integers where the overwritten positions hold -1 and the remaining positions keep their original arange values. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2155,7 +2155,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D array of shape (3, 3) containing the integers 0 through 8 in row-major order, and R, the same array rotated 90 degrees counterclockwise about its center. Return R, a (3, 3) array where the original top row becomes the new left column and the original left column becomes the new bottom row. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D array of shape (3, 3) containing the integers 0 through 8 in row-major order, and R, the same array rotated 90 degrees counterclockwise about its center. Return R, a (3, 3) array where the original top row becomes the new left column and the original left column becomes the new bottom row. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2189,7 +2189,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, return two new arrays: one that is a mirror image of Z along the vertical axis and another that is a mirror image along the horizontal axis. (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array Z, return two new arrays: one that is a mirror image of Z along the vertical axis and another that is a mirror image along the horizontal axis. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2223,7 +2223,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D square array of shape (5, 5) containing the integers 0 through 24 in row-major order. Return d, a 1D array of shape (4,) containing the entries that sit one position above the main diagonal of Z, that is the entries Z[i, i+1] for i in 0 through 3, in that order. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D square array of shape (5, 5) containing the integers 0 through 24 in row-major order. Return d, a 1D array of shape (4,) containing the entries that sit one position above the main diagonal of Z, that is the entries Z[i, i+1] for i in 0 through 3, in that order. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2257,7 +2257,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an integer n, create a 2D boolean array where the upper triangular part, including the diagonal, is marked as True and the rest as False. (\u2605\u2605\u2606)",
+      "question_text": "Given an integer n, create a 2D boolean array where the upper triangular part, including the diagonal, is marked as True and the rest as False. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2291,7 +2291,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (3, 3) whose first and second rows happen to be identical. Return a 2D array containing each unique row of Z exactly once, with rows ordered lexicographically and the original column count preserved. (\u2605\u2605\u2606)",
+      "question_text": "You are given Z, a 2D integer array of shape (3, 3) whose first and second rows happen to be identical. Return a 2D array containing each unique row of Z exactly once, with rows ordered lexicographically and the original column count preserved. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2325,7 +2325,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 1D vector Z of length 10 with arbitrary real entries, return a new length-10 vector whose smallest entry is exactly 0.0, whose largest entry is exactly 1.0, and where every other entry is linearly placed between them according to its original value's position in Z's value range (min-max normalisation to the interval [0, 1]). (\u2605\u2605\u2606)",
+      "question_text": "Given a 1D vector Z of length 10 with arbitrary real entries, return a new length-10 vector whose smallest entry is exactly 0.0, whose largest entry is exactly 1.0, and where every other entry is linearly placed between them according to its original value's position in Z's value range (min-max normalisation to the interval [0, 1]). (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2359,7 +2359,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 1D vector created with `np.arange(5)`, replicate it to form a 2D matrix with 4 rows. Then, calculate the average of each column in this matrix. (\u2605\u2605\u2606)",
+      "question_text": "Given a 1D vector created with `np.arange(5)`, replicate it to form a 2D matrix with 4 rows. Then, calculate the average of each column in this matrix. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2393,7 +2393,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given the 2D array Z of shape (rows, cols) = (3, 4) holding the values 0..11 in row-major order, produce R of the same shape whose entry R[i, j] equals the running total along that row from column 0 up to and including column j. Each row is summed independently. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given the 2D array Z of shape (rows, cols) = (3, 4) holding the values 0..11 in row-major order, produce R of the same shape whose entry R[i, j] equals the running total along that row from column 0 up to and including column j. Each row is summed independently. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2427,7 +2427,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Create a structured array with `x` and `y` coordinates covering the [0,1]x[0,1] area (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Create a structured array with `x` and `y` coordinates covering the [0,1]x[0,1] area (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2461,7 +2461,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given two arrays A and B of shape (3, 4), combine them into a new array that adds an extra dimension, then calculate the average along that new dimension. (\u2605\u2605\u2606)",
+      "question_text": "Given two arrays A and B of shape (3, 4), combine them into a new array that adds an extra dimension, then calculate the average along that new dimension. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2495,7 +2495,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array with 4 rows and 3 columns where some rows are entirely zero. Return a 2D array containing only the rows of Z that have at least one nonzero entry, preserving the original column count and the original ordering of the surviving rows. (\u2605\u2605\u2606)",
+      "question_text": "You are given Z, a 2D integer array with 4 rows and 3 columns where some rows are entirely zero. Return a 2D array containing only the rows of Z that have at least one nonzero entry, preserving the original column count and the original ordering of the surviving rows. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2529,7 +2529,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (4, 5) that acts as a binary mask: most entries are 0 and a few are 1. Return coords, a 2D array of shape (k, 2) where k is the number of nonzero entries in Z; each row of coords gives the (row, column) index of one nonzero entry. (\u2605\u2605\u2606)",
+      "question_text": "You are given Z, a 2D integer array of shape (4, 5) that acts as a binary mask: most entries are 0 and a few are 1. Return coords, a 2D array of shape (k, 2) where k is the number of nonzero entries in Z; each row of coords gives the (row, column) index of one nonzero entry. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2563,7 +2563,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an array of 100 random values between 0 and 1, divide the range into 5 equal intervals and count how many values fall into each interval. (\u2605\u2605\u2606)",
+      "question_text": "Given an array of 100 random values between 0 and 1, divide the range into 5 equal intervals and count how many values fall into each interval. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2597,7 +2597,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given a and b, two 1D arrays of equal length 3. Return a single 1D array of length 6 whose entries alternate between a and b starting with a[0], so the result is [a[0], b[0], a[1], b[1], a[2], b[2]]. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given a and b, two 1D arrays of equal length 3. Return a single 1D array of length 6 whose entries alternate between a and b starting with a[0], so the result is [a[0], b[0], a[1], b[1], a[2], b[2]]. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2631,7 +2631,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, create a new array that surrounds Z with a border of -1, where the border is one element wide. (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array Z, create a new array that surrounds Z with a border of -1, where the border is one element wide. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2665,7 +2665,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given n = 10 and p = 3, build a 10x10 floating-point matrix that starts as all zeros and then has exactly p of its 100 entries set to 1, with the p positions chosen uniformly at random without repetition from the full grid. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given n = 10 and p = 3, build a 10x10 floating-point matrix that starts as all zeros and then has exactly p of its 100 entries set to 1, with the p positions chosen uniformly at random without repetition from the full grid. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2699,7 +2699,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given the 2D array Z of shape (3, 3) containing random integers in [0, 10), reorder its rows so that the values in column index 1 are in ascending order from top to bottom. Rows move as whole units; values within a row stay together. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given the 2D array Z of shape (3, 3) containing random integers in [0, 10), reorder its rows so that the values in column index 1 are in ascending order from top to bottom. Rows move as whole units; values within a row stay together. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2733,7 +2733,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given labels, a 1D integer array of length 4 with class IDs in the range 0..K-1, K, the number of distinct classes (here 3), and onehot, a 2D array of shape (4, K) where row i contains a 1.0 in column labels[i] and 0.0 elsewhere. Return onehot so each input label becomes its corresponding one-hot row vector. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given labels, a 1D integer array of length 4 with class IDs in the range 0..K-1, K, the number of distinct classes (here 3), and onehot, a 2D array of shape (4, K) where row i contains a 1.0 in column labels[i] and 0.0 elsewhere. Return onehot so each input label becomes its corresponding one-hot row vector. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2767,7 +2767,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given two 4x4 arrays Z and Y of random values, replace the elements in Z with -1 where the corresponding elements in Y are greater than 0.5. (\u2605\u2605\u2606)",
+      "question_text": "Given two 4x4 arrays Z and Y of random values, replace the elements in Z with -1 where the corresponding elements in Y are greater than 0.5. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2801,7 +2801,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an RGB image represented as a 3D array, convert it to a 2D array representing the grayscale version by applying a specific weighted sum to the color channels. (\u2605\u2605\u2606)",
+      "question_text": "Given an RGB image represented as a 3D array, convert it to a 2D array representing the grayscale version by applying a specific weighted sum to the color channels. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2835,7 +2835,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Build Z, a 1D structured array of length 10 whose dtype has two top-level fields: 'position', itself a nested structure with float fields 'x' and 'y'; and 'color', a nested structure with float fields 'r', 'g', and 'b'. All entries should be zero-initialized. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Build Z, a 1D structured array of length 10 whose dtype has two top-level fields: 'position', itself a nested structure with float fields 'x' and 'y'; and 'color', a nested structure with float fields 'r', 'g', and 'b'. All entries should be zero-initialized. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2869,7 +2869,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D vector of 10 random floats in [0, 1). Rescale Z by a single positive constant so that the resulting vector has Euclidean length equal to 1, i.e. the square root of the sum of its squared entries equals 1. The result has shape (10,) and points in the same direction as Z. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D vector of 10 random floats in [0, 1). Rescale Z by a single positive constant so that the resulting vector has Euclidean length equal to 1, i.e. the square root of the sum of its squared entries equals 1. The result has shape (10,) and points in the same direction as Z. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2903,7 +2903,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 1D vector Z of 10 real numbers and a scalar target z = 0.5, return the single entry of Z whose value is closest to z (the entry whose absolute difference from z is the smallest across the whole vector). (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given a 1D vector Z of 10 real numbers and a scalar target z = 0.5, return the single entry of Z whose value is closest to z (the entry whose absolute difference from z is the smallest across the whole vector). (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2937,7 +2937,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 1D array x of length 10, calculate the average of each consecutive triplet of values, returning a new array that contains these averages. (\u2605\u2605\u2606)",
+      "question_text": "Given a 1D array x of length 10, calculate the average of each consecutive triplet of values, returning a new array that contains these averages. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -2971,7 +2971,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given two 1D float arrays a and b of the same length, where b may contain zero entries, compute the elementwise quotient a / b, but wherever the corresponding entry of b is zero, set that output position to 0 instead of producing inf or nan. The result has the same shape and dtype as a. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given two 1D float arrays a and b of the same length, where b may contain zero entries, compute the elementwise quotient a / b, but wherever the corresponding entry of b is zero, set that output position to 0 instead of producing inf or nan. The result has the same shape and dtype as a. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3005,7 +3005,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (10, 3), k=4, and idx, a 1D array of 4 distinct row indices chosen uniformly at random from 0..9 without replacement. Return Z[idx], a 2D array of shape (4, 3) consisting of the 4 selected rows of Z in the order given by idx. (\u2605\u2605\u2606)",
+      "question_text": "You are given Z, a 2D integer array of shape (10, 3), k=4, and idx, a 1D array of 4 distinct row indices chosen uniformly at random from 0..9 without replacement. Return Z[idx], a 2D array of shape (4, 3) consisting of the 4 selected rows of Z in the order given by idx. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3039,7 +3039,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an array Z of random integers, return the distinct values along with their occurrences, arranged in descending order of the counts. (\u2605\u2605\u2606)",
+      "question_text": "Given an array Z of random integers, return the distinct values along with their occurrences, arranged in descending order of the counts. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3073,7 +3073,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given z, a 1D floating-point array of shape (3,) holding three real-valued logits. Return softmax, a 1D array of the same shape whose entries are non-negative and sum to 1, where each output entry is proportional to the exponential of the corresponding input entry. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given z, a 1D floating-point array of shape (3,) holding three real-valued logits. Return softmax, a 1D array of the same shape whose entries are non-negative and sum to 1, where each output entry is proportional to the exponential of the corresponding input entry. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3107,7 +3107,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For n = 5, build an n x n floating-point permutation matrix: each row and each column contains exactly one 1.0 and the remaining entries are 0.0, with the positions of the 1.0s determined by a uniformly random permutation of {0, 1, ..., n-1}. The result has shape (5, 5). (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "For n = 5, build an n x n floating-point permutation matrix: each row and each column contains exactly one 1.0 and the remaining entries are 0.0, with the positions of the 1.0s determined by a uniformly random permutation of {0, 1, ..., n-1}. The result has shape (5, 5). (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3141,7 +3141,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using the provided grid generated from X and Y coordinates, create a 2D array that represents a Gaussian distribution based on the specified parameters for standard deviation and mean. (\u2605\u2605\u2606)",
+      "question_text": "Using the provided grid generated from X and Y coordinates, create a 2D array that represents a Gaussian distribution based on the specified parameters for standard deviation and mean. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3175,7 +3175,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a matrix X, transform each column so that its mean is zero and its standard deviation is one. (\u2605\u2605\u2606)",
+      "question_text": "Given a matrix X, transform each column so that its mean is zero and its standard deviation is one. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3209,7 +3209,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a random 3x3 matrix A and a vector b of length 3, find the vector x that satisfies the equation Ax = b. (\u2605\u2605\u2606)",
+      "question_text": "Given a random 3x3 matrix A and a vector b of length 3, find the vector x that satisfies the equation Ax = b. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3243,7 +3243,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array X of shape (100, 3) representing 100 observations across 3 columns, return a 3x3 array whose rows give the 25th, 50th, and 75th percentile values for each of the 3 columns (row 0 = 25th percentiles per column, row 1 = medians per column, row 2 = 75th percentiles per column). (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given a 2D array X of shape (100, 3) representing 100 observations across 3 columns, return a 3x3 array whose rows give the 25th, 50th, and 75th percentile values for each of the 3 columns (row 0 = 25th percentiles per column, row 1 = medians per column, row 2 = 75th percentiles per column). (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3277,7 +3277,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a matrix X, return a new matrix where each element in a row has had the average of that row subtracted from it. (\u2605\u2605\u2606)",
+      "question_text": "Given a matrix X, return a new matrix where each element in a row has had the average of that row subtracted from it. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3311,7 +3311,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, identify the smallest rectangle that contains all the nonzero entries and return its row and column indices as a tuple of the form (row_min, row_max, col_min, col_max). (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array Z, identify the smallest rectangle that contains all the nonzero entries and return its row and column indices as a tuple of the form (row_min, row_max, col_min, col_max). (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3345,7 +3345,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Considering two arrays with shape (1,3) and (3,1), how to compute their sum using an iterator? (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Considering two arrays with shape (1,3) and (3,1), how to compute their sum using an iterator? (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3379,7 +3379,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a square matrix Z, retain only the elements that are within one position of the main diagonal, setting all other elements to zero. (\u2605\u2605\u2606)",
+      "question_text": "Given a square matrix Z, retain only the elements that are within one position of the main diagonal, setting all other elements to zero. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3413,7 +3413,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Define a NumPy ndarray subclass called NamedArray that carries an extra name attribute. The constructor takes an input array and an optional name string (default \"no name\"); the resulting object should behave like a normal ndarray while preserving its name through views and slicing. Instantiate it with np.arange(10) and the name \"range_10\". (\u2605\u2605\u2606)",
+      "question_text": "Define a NumPy ndarray subclass called NamedArray that carries an extra name attribute. The constructor takes an input array and an optional name string (default \"no name\"); the resulting object should behave like a normal ndarray while preserving its name through views and slicing. Instantiate it with np.arange(10) and the name \"range_10\". (★★☆)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -3447,7 +3447,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a vector Z, return the ranks of its elements in a 0-based format by sorting the elements twice. (\u2605\u2605\u2606)",
+      "question_text": "Given a vector Z, return the ranks of its elements in a 0-based format by sorting the elements twice. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3481,7 +3481,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D float array of shape (3, 3) whose third column is entirely NaN while the other columns are finite. Return a 1D boolean array of length 3 where entry j is True if column j of Z is filled with NaN values from top to bottom and False otherwise. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D float array of shape (3, 3) whose third column is entirely NaN while the other columns are finite. Return a 1D boolean array of length 3 where entry j is True if column j of Z is filled with NaN values from top to bottom and False otherwise. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3515,7 +3515,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 5x5 grid, compute a 2D array where each element represents the sum of the absolute differences from the center coordinates. (\u2605\u2605\u2606)",
+      "question_text": "Given a 5x5 grid, compute a 2D array where each element represents the sum of the absolute differences from the center coordinates. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3549,7 +3549,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given x, a 1D integer array of shape (7,) containing the values 0 through 6 in order. Return W, a 2D array of shape (5, 3) where each row is a contiguous length-3 window of x starting at successive positions, so W[i] equals x[i:i+3]. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given x, a 1D integer array of shape (7,) containing the values 0 through 6 in order. Return W, a 2D array of shape (5, 3) where each row is a contiguous length-3 window of x starting at successive positions, so W[i] equals x[i:i+3]. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3583,7 +3583,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given X = [0, 1, 2, ..., 7] and Y = X + 0.5, two 1D arrays of length 8. Build the 8x8 Cauchy matrix C with C[i, j] = 1 / (X[i] - Y[j]), then return the determinant of C as a single scalar. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given X = [0, 1, 2, ..., 7] and Y = X + 0.5, two 1D arrays of length 8. Build the 8x8 Cauchy matrix C with C[i, j] = 1 / (X[i] - Y[j]), then return the determinant of C as a single scalar. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3617,7 +3617,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a vector Z of 10 random values, return the indices of the three largest elements in descending order. (\u2605\u2605\u2606)",
+      "question_text": "Given a vector Z of 10 random values, return the indices of the three largest elements in descending order. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3651,7 +3651,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array X with some NaN values, replace each NaN in the array with the average of the non-NaN values in its respective column. (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array X with some NaN values, replace each NaN in the array with the average of the non-NaN values in its respective column. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3685,7 +3685,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given two matrices A and B of shape (5, 4), compute the dot product for each pair of corresponding rows and return the result as a 1D array of length 5. (\u2605\u2605\u2606)",
+      "question_text": "Given two matrices A and B of shape (5, 4), compute the dot product for each pair of corresponding rows and return the result as a 1D array of length 5. (★★☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "numpy",
@@ -3719,7 +3719,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array X of shape (100, 4) representing 100 observations across 4 variables (one per column), return the 4x4 symmetric matrix whose entry [i, j] is the Pearson correlation coefficient between column i and column j of X, with 1.0 along the diagonal. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "Given a 2D array X of shape (100, 4) representing 100 observations across 4 variables (one per column), return the 4x4 symmetric matrix whose entry [i, j] is the Pearson correlation coefficient between column i and column j of X, with 1.0 along the diagonal. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3787,7 +3787,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D float array of shape (4, 5) of random values in [0, 1), idx, a 1D array of length 4 holding the column index of the largest value in each row of Z, and out, a 2D array of shape (4, 5) that is zero everywhere except for a single 1.0 in row i at column idx[i]. Return out. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D float array of shape (4, 5) of random values in [0, 1), idx, a 1D array of length 4 holding the column index of the largest value in each row of Z, and out, a 2D array of shape (4, 5) that is zero everywhere except for a single 1.0 in row i at column idx[i]. Return out. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3821,7 +3821,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given s, a StringIO object holding CSV-formatted text with 3 rows and 5 comma-separated columns of integers, where some entries are blank (whitespace only). Parse it into Z, a 2D integer array of shape (3, 5), with every blank entry replaced by 0. (\u2605\u2605\u2606)",
+      "question_text": "You are given s, a StringIO object holding CSV-formatted text with 3 rows and 5 comma-separated columns of integers, where some entries are blank (whitespace only). Parse it into Z, a 2D integer array of shape (3, 5), with every blank entry replaced by 0. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3855,7 +3855,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z with shape (4, 6), rearrange it into 2x2 blocks and compute the sum of each block. (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array Z with shape (4, 6), rearrange it into 2x2 blocks and compute the sum of each block. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3889,7 +3889,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Consider a random vector with shape (10,2) representing coordinates, find point by point distances (\u2605\u2605\u2606)",
+      "question_text": "Consider a random vector with shape (10,2) representing coordinates, find point by point distances (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3923,7 +3923,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given X, a 2D array of shape (5, 4) whose 5 rows are treated as 4-dimensional vectors. Return the 5x5 cosine-similarity matrix S where S[i, j] equals the dot product of rows i and j of X divided by the product of their Euclidean lengths. The diagonal of S is 1 and S is symmetric. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given X, a 2D array of shape (5, 4) whose 5 rows are treated as 4-dimensional vectors. Return the 5x5 cosine-similarity matrix S where S[i, j] equals the dot product of rows i and j of X divided by the product of their Euclidean lengths. The diagonal of S is 1 and S is symmetric. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3957,7 +3957,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a set of points in 2D, find the indices of the two closest points for each point in the set based on Euclidean distance. (\u2605\u2605\u2606)",
+      "question_text": "Given a set of points in 2D, find the indices of the two closest points for each point in the set based on Euclidean distance. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -3991,7 +3991,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, return the index of the first nonzero element in each row, or -1 for rows that contain only zeros. (\u2605\u2605\u2606)",
+      "question_text": "Given a 2D array Z, return the index of the first nonzero element in each row, or -1 for rows that contain only zeros. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4025,7 +4025,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a vector of ones, increment each element specified by a second vector of indices, ensuring that repeated indices are handled correctly. (\u2605\u2605\u2605)",
+      "question_text": "Given a vector of ones, increment each element specified by a second vector of indices, ensuring that repeated indices are handled correctly. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4059,7 +4059,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "How to accumulate elements of a vector (X) to an array (F) based on an index list (I)? (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "How to accumulate elements of a vector (X) to an array (F) based on an index list (I)? (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4093,7 +4093,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an image represented as a 3D array of shape (height, width, 3) with values in the range of 0 to 255, determine the total number of distinct color combinations present in the image. (\u2605\u2605\u2606)",
+      "question_text": "Given an image represented as a 3D array of shape (height, width, 3) with values in the range of 0 to 255, determine the total number of distinct color combinations present in the image. (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4161,7 +4161,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Considering a four dimensions array, how to get sum over the last two axis at once? (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Considering a four dimensions array, how to get sum over the last two axis at once? (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4195,7 +4195,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 5x5 array A, exchange the positions of the first two rows and return the modified array. (\u2605\u2605\u2605)",
+      "question_text": "Given a 5x5 array A, exchange the positions of the first two rows and return the modified array. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4229,7 +4229,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a one-dimensional array D and a corresponding index array S, compute the average of the elements in D for each unique index in S. (\u2605\u2605\u2605)",
+      "question_text": "Given a one-dimensional array D and a corresponding index array S, compute the average of the elements in D for each unique index in S. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4243,7 +4243,7 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Jaime Fern\u00e1ndez del R\u00edo\n\nD = np.random.uniform(0,1,100)\nS = np.random.randint(0,10,100)\nD_sums = np.bincount(S, weights=D)\nD_counts = np.bincount(S)\nD_means = D_sums / D_counts\nprint(D_means)\n\n# Pandas solution as a reference due to more intuitive code\nimport pandas as pd\nprint(pd.Series(D).groupby(S).mean())",
+      "canonical_solution": "# Author: Jaime Fernández del Río\n\nD = np.random.uniform(0,1,100)\nS = np.random.randint(0,10,100)\nD_sums = np.bincount(S, weights=D)\nD_counts = np.bincount(S)\nD_means = D_sums / D_counts\nprint(D_means)\n\n# Pandas solution as a reference due to more intuitive code\nimport pandas as pd\nprint(pd.Series(D).groupby(S).mean())",
       "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\nModuleNotFoundError: No module named 'pandas'",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -4263,7 +4263,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given the 2D array Z of shape (5, 4) holding the values 0..19 in row-major order, and a length-5 random permutation p of the row indices, reorder the rows of Z according to p, writing the result back into Z so that the array is modified in place. The shape stays (5, 4). (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given the 2D array Z of shape (5, 4) holding the values 0..19 in row-major order, and a length-5 random permutation p of the row indices, reorder the rows of Z according to p, writing the result back into Z so that the array is modified in place. The shape stays (5, 4). (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4297,7 +4297,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (10, 4) holding the values 0..39 in row-major order, m=3, and idx, a 1D array of 3 distinct row indices drawn uniformly without replacement from 0..9. Return Z[idx], a 2D array of shape (3, 4) containing the chosen rows in the order they appear in idx. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D integer array of shape (10, 4) holding the values 0..39 in row-major order, m=3, and idx, a 1D array of 3 distinct row indices drawn uniformly without replacement from 0..9. Return Z[idx], a 2D array of shape (3, 4) containing the chosen rows in the order they appear in idx. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4331,7 +4331,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given A, a 2D array of shape (5, 5) containing the integers 1 through 25 in row-major order, and an integer k (here -2) which may be positive, zero, or negative. Return diag_k, a 1D array containing the entries A[i+|k|, i] when k is negative or A[i, i+k] when k is non-negative, taken along the k-th diagonal of A in order of increasing index. (\u2605\u2605\u2605)",
+      "question_text": "You are given A, a 2D array of shape (5, 5) containing the integers 1 through 25 in row-major order, and an integer k (here -2) which may be positive, zero, or negative. Return diag_k, a 1D array containing the entries A[i+|k|, i] when k is negative or A[i, i+k] when k is non-negative, taken along the k-th diagonal of A in order of increasing index. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4365,7 +4365,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given A and B, two 2D arrays of shape (5, 5) with random entries in [0, 1). Return a 1D array of length 5 whose i-th entry equals the i-th diagonal entry of the matrix product A @ B, i.e. the dot product of row i of A with column i of B. (\u2605\u2605\u2605)",
+      "question_text": "You are given A and B, two 2D arrays of shape (5, 5) with random entries in [0, 1). Return a 1D array of length 5 whose i-th entry equals the i-th diagonal entry of the matrix product A @ B, i.e. the dot product of row i of A with column i of B. (★★★)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "numpy",
@@ -4399,7 +4399,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Identify the indices of rows in a 2D array Z that contain at least one non-finite value, such as NaN or Inf. (\u2605\u2605\u2605)",
+      "question_text": "Identify the indices of rows in a 2D array Z that contain at least one non-finite value, such as NaN or Inf. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4433,7 +4433,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D integer array a, return a new 1D array obtained by collapsing every run of consecutive equal entries down to a single occurrence (keeping the first entry of each run), so that no two adjacent entries in the output are equal. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 1D integer array a, return a new 1D array obtained by collapsing every run of consecutive equal entries down to a single occurrence (keeping the first entry of each run), so that no two adjacent entries in the output are equal. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4467,7 +4467,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z with shape (6, 5) and a vector v of length 5, calculate the result of multiplying each row of Z by the vector v, returning a 1D array of length 6. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z with shape (6, 5) and a vector v of length 5, calculate the result of multiplying each row of Z by the vector v, returning a 1D array of length 6. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4501,7 +4501,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D array, identify the indices of elements that are greater than their immediate neighbors, excluding the first and last elements. (\u2605\u2605\u2605)",
+      "question_text": "Given a 1D array, identify the indices of elements that are greater than their immediate neighbors, excluding the first and last elements. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4535,7 +4535,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given two 1D arrays A and B of equal length n, produce a length-2n array C in which the entries of A and B alternate position by position, so C[2i] is A[i] and C[2i+1] is B[i] for every valid i. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given two 1D arrays A and B of equal length n, produce a length-2n array C in which the entries of A and B alternate position by position, so C[2i] is A[i] and C[2i+1] is B[i] for every valid i. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4569,7 +4569,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D float array of 1000 samples drawn from a standard normal distribution, the scalars lo and hi equal to the 5th and 95th percentiles of Z respectively, and Z_wins, a 1D array of length 1000 obtained by replacing every entry of Z below lo with lo and every entry above hi with hi. Return the tuple (Z_wins.min(), Z_wins.max()). (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 1D float array of 1000 samples drawn from a standard normal distribution, the scalars lo and hi equal to the 5th and 95th percentiles of Z respectively, and Z_wins, a 1D array of length 1000 obtained by replacing every entry of Z below lo with lo and every entry above hi with hi. Return the tuple (Z_wins.min(), Z_wins.max()). (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4603,7 +4603,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D array of random integers, return the indices of the first appearance of each unique value in the order they were originally found. (\u2605\u2605\u2605)",
+      "question_text": "Given a 1D array of random integers, return the indices of the first appearance of each unique value in the order they were originally found. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4637,7 +4637,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given a, a 1D integer array of shape (10,) containing the values 0 through 9 in order, and an integer k (here 3). Return d, a 1D array of length 10 - k whose entries are the result of repeatedly taking pairwise consecutive differences of a a total of k times. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given a, a 1D integer array of shape (10,) containing the values 0 through 9 in order, and an integer k (here 3). Return d, a 1D array of length 10 - k whose entries are the result of repeatedly taking pairwise consecutive differences of a a total of k times. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4671,7 +4671,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given y, a 1D integer label vector of length 5 whose values lie in {0, 1, ..., C-1} where C = y.max() + 1 = 3. Return a 2D integer array of shape (5, 3) whose i-th row is the C-dimensional one-hot indicator of y[i]: a 1 in column y[i] and 0s elsewhere. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given y, a 1D integer label vector of length 5 whose values lie in {0, 1, ..., C-1} where C = y.max() + 1 = 3. Return a 2D integer array of shape (5, 3) whose i-th row is the C-dimensional one-hot indicator of y[i]: a 1 in column y[i] and 0s elsewhere. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4705,7 +4705,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Consider an array of dimension (5,5,3), how to multiply it by an array with dimensions (5,5)? (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Consider an array of dimension (5,5,3), how to multiply it by an array with dimensions (5,5)? (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4739,7 +4739,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, return an array where each element at position (i, j) contains the maximum value from the start of the row up to column j for each row. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, return an array where each element at position (i, j) contains the maximum value from the start of the row up to column j for each row. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4773,7 +4773,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, scale each row so that its length becomes 1, ensuring that the operation handles rows that may be zero. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, scale each row so that its length becomes 1, ensuring that the operation handles rows that may be zero. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4807,7 +4807,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Standardize each column of a matrix by subtracting the mean and dividing by the standard deviation, then limit the resulting values to be within the range of -3 to 3. (\u2605\u2605\u2605)",
+      "question_text": "Standardize each column of a matrix by subtracting the mean and dividing by the standard deviation, then limit the resulting values to be within the range of -3 to 3. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4841,7 +4841,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D array values and a 1D integer array counts of the same length, return a 1D array where each entry values[i] is reproduced counts[i] times in order, reconstructing the original run-length-encoded sequence. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 1D array values and a 1D integer array counts of the same length, return a 1D array where each entry values[i] is reproduced counts[i] times in order, reconstructing the original run-length-encoded sequence. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4875,7 +4875,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given the 2D array Z of shape (6, 7) containing random integers in [0, 5), build the summed-area table (integral image) I of the same shape, where I[i, j] equals the sum of all entries Z[i', j'] with i' <= i and j' <= j (the total of the upper-left rectangle ending at row i and column j). (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given the 2D array Z of shape (6, 7) containing random integers in [0, 5), build the summed-area table (integral image) I of the same shape, where I[i, j] equals the sum of all entries Z[i', j'] with i' <= i and j' <= j (the total of the upper-left rectangle ending at row i and column j). (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4909,7 +4909,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D string array of shape (2, 3) where each row holds a name, a numeric string, and an integer string, and R, a structured record array of length 2 with named fields col1 (8-byte string), col2 (float64), and col3 (int64) populated from the columns of Z. Return R so each row is accessible by field name. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D string array of shape (2, 3) where each row holds a name, a numeric string, and an integer string, and R, a structured record array of length 2 with named fields col1 (8-byte string), col2 (float64), and col3 (int64) populated from the columns of Z. Return R so each row is accessible by field name. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4943,7 +4943,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (5, 8) whose entries are random integers from 0 to 5 inclusive. Return counts, a 1D array of shape (5,) where counts[i] is the number of distinct values that appear in row i of Z. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D integer array of shape (5, 8) whose entries are random integers from 0 to 5 inclusive. Return counts, a 1D array of shape (5,) where counts[i] is the number of distinct values that appear in row i of Z. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -4977,7 +4977,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Consider the vector [1, 2, 3, 4, 5], how to build a new vector with 3 consecutive zeros interleaved between each value? (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Consider the vector [1, 2, 3, 4, 5], how to build a new vector with 3 consecutive zeros interleaved between each value? (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5011,7 +5011,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Construct a lower-triangular matrix whose i-th row contains the first i+1 elements of v (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Construct a lower-triangular matrix whose i-th row contains the first i+1 elements of v (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5045,7 +5045,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D array of shape (5, 3) with non-negative entries. Return a 2D array of the same shape (5, 3) where each row of Z is rescaled by a single positive constant so that its entries sum to 1; for any row whose sum is 0, leave that row as all zeros to avoid division by zero. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D array of shape (5, 3) with non-negative entries. Return a 2D array of the same shape (5, 3) where each row of Z is rescaled by a single positive constant so that its entries sum to 1; for any row whose sum is 0, leave that row as all zeros to avoid division by zero. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5079,7 +5079,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D integer array Z of shape (8, 5), return the subarray containing exactly those rows whose 5 entries are strictly increasing from left to right (each entry strictly greater than the one before it). The result is 2D with shape (k, 5) where k is the number of qualifying rows. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 2D integer array Z of shape (8, 5), return the subarray containing exactly those rows whose 5 entries are strictly increasing from left to right (each entry strictly greater than the one before it). The result is 2D with shape (k, 5) where k is the number of qualifying rows. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5113,7 +5113,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D integer vector c of length n=6, build the n-by-n symmetric Toeplitz matrix T whose entry T[i, j] equals c[|i - j|]. The main diagonal therefore holds c[0], the first off-diagonals hold c[1], and so on out to c[n-1] in the corners. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 1D integer vector c of length n=6, build the n-by-n symmetric Toeplitz matrix T whose entry T[i, j] equals c[|i - j|]. The main diagonal therefore holds c[0], the first off-diagonals hold c[1], and so on out to c[n-1] in the corners. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5147,7 +5147,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given n=6 (the number of nodes), edges, a 2D integer array of shape (4, 2) where each row [u, v] is one undirected edge, and A, a 2D integer array of shape (6, 6) initialized to zero and then updated so that A[u, v] and A[v, u] are both set to 1 for every edge. Return A. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given n=6 (the number of nodes), edges, a 2D integer array of shape (4, 2) where each row [u, v] is one undirected edge, and A, a 2D integer array of shape (6, 6) initialized to zero and then updated so that A[u, v] and A[v, u] are both set to 1 for every edge. Return A. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5181,7 +5181,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of shape (20,) containing the values 0 through 19 in order, and a window size n (here 3). Return a 1D array of length 20 - n + 1 whose i-th entry is the arithmetic mean of the n consecutive entries of Z starting at index i. (\u2605\u2605\u2605)",
+      "question_text": "You are given Z, a 1D integer array of shape (20,) containing the values 0 through 19 in order, and a window size n (here 3). Return a 1D array of length 20 - n + 1 whose i-th entry is the arithmetic mean of the n consecutive entries of Z starting at index i. (★★★)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -5195,7 +5195,7 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Jaime Fern\u00e1ndez del R\u00edo\n\ndef moving_average(a, n=3) :\n    ret = np.cumsum(a, dtype=float)\n    ret[n:] = ret[n:] - ret[:-n]\n    return ret[n - 1:] / n\nZ = np.arange(20)\nprint(moving_average(Z, n=3))\n\n# Author: Jeff Luo (@Jeff1999)\n# make sure your NumPy >= 1.20.0\n\nfrom numpy.lib.stride_tricks import sliding_window_view\n\nZ = np.arange(20)\nprint(sliding_window_view(Z, window_shape=3).mean(axis=-1))",
+      "canonical_solution": "# Author: Jaime Fernández del Río\n\ndef moving_average(a, n=3) :\n    ret = np.cumsum(a, dtype=float)\n    ret[n:] = ret[n:] - ret[:-n]\n    return ret[n - 1:] / n\nZ = np.arange(20)\nprint(moving_average(Z, n=3))\n\n# Author: Jeff Luo (@Jeff1999)\n# make sure your NumPy >= 1.20.0\n\nfrom numpy.lib.stride_tricks import sliding_window_view\n\nZ = np.arange(20)\nprint(sliding_window_view(Z, window_shape=3).mean(axis=-1))",
       "expected_output": "[ 1.  2.  3.  4.  5.  6.  7.  8.  9. 10. 11. 12. 13. 14. 15. 16. 17. 18.]\n[ 1.  2.  3.  4.  5.  6.  7.  8.  9. 10. 11. 12. 13. 14. 15. 16. 17. 18.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -5215,7 +5215,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a random 10x10 matrix Z, return all possible 3x3 submatrices that can be formed from it. (\u2605\u2605\u2605)",
+      "question_text": "Given a random 10x10 matrix Z, return all possible 3x3 submatrices that can be formed from it. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5249,7 +5249,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z of random integers, return the column index of the largest value in each row, breaking ties by selecting the last occurrence. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z of random integers, return the column index of the largest value in each row, breaking ties by selecting the last occurrence. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5283,7 +5283,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given X, a 2D array of shape (6, 5) whose 6 rows are treated as 5-dimensional vectors. Return the 6x6 cosine-similarity matrix S where S[i, j] equals the dot product of rows i and j of X divided by the product of their Euclidean lengths. The diagonal of S is 1 and S is symmetric. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given X, a 2D array of shape (6, 5) whose 6 rows are treated as 5-dimensional vectors. Return the 6x6 cosine-similarity matrix S where S[i, j] equals the dot product of rows i and j of X divided by the product of their Euclidean lengths. The diagonal of S is 1 and S is symmetric. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5317,7 +5317,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z with some NaN values, replace each NaN in the array with the mean of its respective column. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z with some NaN values, replace each NaN in the array with the mean of its respective column. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5351,7 +5351,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a list of 1D vectors of varying lengths, build the cartesian product \u2014 every combination of one element from each vector \u2014 and return it as a 2D array of shape (prod_lens, n_vectors). (\u2605\u2605\u2605)",
+      "question_text": "Given a list of 1D vectors of varying lengths, build the cartesian product — every combination of one element from each vector — and return it as a 2D array of shape (prod_lens, n_vectors). (★★★)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -5385,7 +5385,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a small matrix Z of integers, determine the most frequently occurring value in each row, resolving ties by selecting the smallest value. (\u2605\u2605\u2605)",
+      "question_text": "Given a small matrix Z of integers, determine the most frequently occurring value in each row, resolving ties by selecting the smallest value. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5419,7 +5419,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a square matrix A and a matrix b with multiple columns, find the solution vector x for the equation Ax = b for each column of b simultaneously. (\u2605\u2605\u2605)",
+      "question_text": "Given a square matrix A and a matrix b with multiple columns, find the solution vector x for the equation Ax = b for each column of b simultaneously. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5453,7 +5453,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z with an odd number of columns, return the median value from each row as a 1D array. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z with an odd number of columns, return the median value from each row as a 1D array. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5521,7 +5521,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, extract all overlapping subarrays of shape (2, 4) and return a new array containing the sum of each subarray. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, extract all overlapping subarrays of shape (2, 4) and return a new array containing the sum of each subarray. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5555,7 +5555,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D array `a` and a dict `mapping` of `{old: new}` integer pairs, return a new array with each value replaced by its mapped value (assume keys cover the integer range up to max key). (\u2605\u2605\u2605)",
+      "question_text": "Given a 1D array `a` and a dict `mapping` of `{old: new}` integer pairs, return a new array with each value replaced by its mapped value (assume keys cover the integer range up to max key). (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5589,7 +5589,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Construct a square matrix of size n with specified values along the main diagonal and the diagonals directly above and below it, using efficient assignment methods. (\u2605\u2605\u2605)",
+      "question_text": "Construct a square matrix of size n with specified values along the main diagonal and the diagonals directly above and below it, using efficient assignment methods. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5623,7 +5623,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Compute the pairwise Euclidean distance matrix between rows of X (n,d) without explicit Python loops (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Compute the pairwise Euclidean distance matrix between rows of X (n,d) without explicit Python loops (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5657,7 +5657,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array pts of shape (5, 2) holding 5 points in the plane (each row is an (x, y) pair) and a 3x3 homogeneous transform matrix T, return a (5, 2) array of the transformed points, where each output row is the (x, y) image of the corresponding input point under T applied in homogeneous coordinates. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 2D array pts of shape (5, 2) holding 5 points in the plane (each row is an (x, y) pair) and a 3x3 homogeneous transform matrix T, return a (5, 2) array of the transformed points, where each output row is the (x, y) image of the corresponding input point under T applied in homogeneous coordinates. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5691,7 +5691,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given the 2D array Z of shape (rows, cols) = (4, 6) containing random floats in [0, 1), produce an integer array of the same shape where each entry is replaced by its rank within its row, with 1 assigned to the smallest value in that row and cols (=6) to the largest. Each row is ranked independently. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given the 2D array Z of shape (rows, cols) = (4, 6) containing random floats in [0, 1), produce an integer array of the same shape where each entry is replaced by its rank within its row, with 1 assigned to the smallest value in that row and cols (=6) to the largest. Each row is ranked independently. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5725,7 +5725,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a symmetric 2D array Z and indices `i`, `j` plus a value `v`, return Z with both Z[i, j] and Z[j, i] set to v so the matrix stays symmetric. (\u2605\u2605\u2605)",
+      "question_text": "Given a symmetric 2D array Z and indices `i`, `j` plus a value `v`, return Z with both Z[i, j] and Z[j, i] set to v so the matrix stays symmetric. (★★★)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -5759,7 +5759,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Run-length encode a 1D integer array (values and counts) without Python loops over elements (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Run-length encode a 1D integer array (values and counts) without Python loops over elements (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5793,7 +5793,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given an arbitrary array, implement a function that retrieves a fixed-size subarray centered around a specified element, using a specified fill value for any areas outside the original array. (\u2605\u2605\u2605)",
+      "question_text": "Given an arbitrary array, implement a function that retrieves a fixed-size subarray centered around a specified element, using a specified fill value for any areas outside the original array. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5827,7 +5827,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D float array of shape (5, 6) of random values in [0, 1), k=2, idx, a 2D integer array of shape (5, 2) holding the column indices of the two largest values in each row of Z, and mask, a 2D integer array of shape (5, 6) that is zero everywhere except for a 1 at each (row, idx[row]) position. Return mask. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D float array of shape (5, 6) of random values in [0, 1), k=2, idx, a 2D integer array of shape (5, 2) holding the column indices of the two largest values in each row of Z, and mask, a 2D integer array of shape (5, 6) that is zero everywhere except for a 1 at each (row, idx[row]) position. Return mask. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5861,7 +5861,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, return the array rotated by 90 degrees a specified number of times, where the rotation direction is counter-clockwise. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, return the array rotated by 90 degrees a specified number of times, where the rotation direction is counter-clockwise. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5895,7 +5895,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D floating-point array of shape (10, 10) with entries drawn from the uniform distribution on [0, 1). Return rank, a single integer scalar giving the rank of Z as a matrix (the number of linearly independent rows or columns). (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 2D floating-point array of shape (10, 10) with entries drawn from the uniform distribution on [0, 1). Return rank, a single integer scalar giving the rank of Z as a matrix (the number of linearly independent rows or columns). (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5929,7 +5929,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D array X, perform resampling with replacement to create multiple samples, calculate the mean for each sample, and then determine the 95% confidence interval for these means using percentiles. (\u2605\u2605\u2605)",
+      "question_text": "Given a 1D array X, perform resampling with replacement to create multiple samples, calculate the mean for each sample, and then determine the 95% confidence interval for these means using percentiles. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -5963,7 +5963,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Compute the element-wise cube of a vector x using `np.power(x, 3)`. Return the resulting array. (\u2605\u2605\u2605)",
+      "question_text": "Compute the element-wise cube of a vector x using `np.power(x, 3)`. Return the resulting array. (★★★)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "numpy",
@@ -5997,7 +5997,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given an array X of shape (n, d) representing points in a d-dimensional space, return the indices of the k closest points to each point, excluding the point itself. (\u2605\u2605\u2605)",
+      "question_text": "Given an array X of shape (n, d) representing points in a d-dimensional space, return the indices of the k closest points to each point, excluding the point itself. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6031,7 +6031,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, return the indices of the k largest values in each row, where k is specified. The output should be sorted in descending order based on the values. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, return the indices of the k largest values in each row, where k is specified. The output should be sorted in descending order based on the values. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6065,21 +6065,21 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 16x16 array, compute the sum of non-overlapping 4x4 blocks and return the resulting array. (\u2605\u2605\u2605)",
+      "question_text": "Given a 16x16 array, compute the sum of non-overlapping 4x4 blocks and return the resulting array. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallk\u00f6tter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\n# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallk\u00f6tter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)",
+          "setup_code": "# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)",
           "call": "solve()",
           "expected_expr": "S"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Robert Kern\n\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\n                                       np.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n\n# alternative solution:\n# Author: Sebastian Wallk\u00f6tter (@FirefoxMetzger)\n\nZ = np.ones((16,16))\nk = 4\n\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n\n# alternative solution (by @Gattocrucco)\nS = Z.reshape(4, 4, 4, 4).sum((1, 3))",
+      "canonical_solution": "# Author: Robert Kern\n\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\n                                       np.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\n\nZ = np.ones((16,16))\nk = 4\n\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n\n# alternative solution (by @Gattocrucco)\nS = Z.reshape(4, 4, 4, 4).sum((1, 3))",
       "expected_output": "[[16. 16. 16. 16.]\n [16. 16. 16. 16.]\n [16. 16. 16. 16.]\n [16. 16. 16. 16.]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -6099,7 +6099,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array X and a kernel K, compute the result of applying the kernel to the array using a sliding window approach, ensuring that the kernel only overlaps with valid regions of the array. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array X and a kernel K, compute the result of applying the kernel to the array using a sliding window approach, ensuring that the kernel only overlaps with valid regions of the array. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6133,7 +6133,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a list of 2D arrays, create a new 2D array that contains the input arrays along its diagonal, filling the rest with zeros. (\u2605\u2605\u2605)",
+      "question_text": "Given a list of 2D arrays, create a new 2D array that contains the input arrays along its diagonal, filling the rest with zeros. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6167,7 +6167,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given B, a 2D binary array of shape (6, 8) whose 6 rows are interpreted as subsets of an 8-element universe (a 1 at column k means element k is in the set). Return the 6x6 symmetric Jaccard-distance matrix J where J[i, j] = 1 - |row_i intersect row_j| / |row_i union row_j|; when the union of two rows is empty, substitute the denominator with 1 so the entry stays 1 instead of becoming NaN. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given B, a 2D binary array of shape (6, 8) whose 6 rows are interpreted as subsets of an 8-element universe (a 1 at column k means element k is in the set). Return the 6x6 symmetric Jaccard-distance matrix J where J[i, j] = 1 - |row_i intersect row_j| / |row_i union row_j|; when the union of two rows is empty, substitute the denominator with 1 so the entry stays 1 instead of becoming NaN. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6201,7 +6201,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Compute the Khatri-Rao product (column-wise Kronecker) of two matrices with the same number of columns (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Compute the Khatri-Rao product (column-wise Kronecker) of two matrices with the same number of columns (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6235,7 +6235,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Sample categories according to row-wise probability matrix P (rows sum to 1) (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Sample categories according to row-wise probability matrix P (rows sum to 1) (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6269,7 +6269,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a set of 2D points P, plus two sets of 2D points P0 and P1 each describing the endpoints of a line, compute the perpendicular distance from every point in P to every line, returning a (len(P), len(P0)) matrix of distances. (\u2605\u2605\u2605)",
+      "question_text": "Given a set of 2D points P, plus two sets of 2D points P0 and P1 each describing the endpoints of a line, compute the perpendicular distance from every point in P to every line, returning a (len(P), len(P0)) matrix of distances. (★★★)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -6303,7 +6303,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D integer array Z of shape (10, 3), return the subarray containing only those rows whose 3 entries are not all equal to each other (i.e., drop any row in which all three columns hold the same value). The result is 2D with shape (k, 3) where k is the number of surviving rows. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 2D integer array Z of shape (10, 3), return the subarray containing only those rows whose 3 entries are not all equal to each other (i.e., drop any row in which all three columns hold the same value). The result is 2D with shape (k, 3) where k is the number of surviving rows. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6337,7 +6337,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 1D integer vector I of length n=9 whose entries fit in 8 unsigned bits, build the n-by-8 matrix B of 0s and 1s in which row i holds the 8-bit binary representation of I[i] with the most significant bit in column 0 and the least significant bit in column 7. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given a 1D integer vector I of length n=9 whose entries fit in 8 unsigned bits, build the n-by-8 matrix B of 0s and 1s in which row i holds the 8-bit binary representation of I[i] with the most significant bit in column 0 and the least significant bit in column 7. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6371,21 +6371,21 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D integer array of shape (6, 3) of random 0/1 values where some rows may be duplicates of each other, and uZ, a 2D array containing only the distinct rows of Z with the original column count preserved. Return uZ so duplicate rows of Z appear exactly once in the output. (\u2605\u2605\u2605)",
+      "question_text": "You are given Z, a 2D integer array of shape (6, 3) of random 0/1 values where some rows may be duplicates of each other, and uZ, a 2D array containing only the distinct rows of Z with the original column count preserved. Return uZ so duplicate rows of Z appear exactly once in the output. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Jaime Fern\u00e1ndez del R\u00edo\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\n# Author: Jaime Fernández del Río\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Jaime Fern\u00e1ndez del R\u00edo\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)",
+          "setup_code": "# Author: Jaime Fernández del Río\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)",
           "call": "solve()",
           "expected_expr": "uZ"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Jaime Fern\u00e1ndez del R\u00edo\n\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\nprint(uZ)",
+      "canonical_solution": "# Author: Jaime Fernández del Río\n\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\nprint(uZ)",
       "expected_output": "[[0 0 0]\n [0 1 0]\n [1 0 0]\n [1 0 1]\n [1 1 1]]\n[[0 0 0]\n [0 1 0]\n [1 0 0]\n [1 0 1]\n [1 1 1]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -6405,7 +6405,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of shape (10000,) containing a random permutation of the values 0 through 9999, and an integer n (here 5). Return a 1D array of length n containing the n largest values of Z. The output ordering need only contain those n values; their internal order is not constrained. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array of shape (10000,) containing a random permutation of the values 0 through 9999, and an integer n (here 5). Return a 1D array of length n containing the n largest values of Z. The output ordering need only contain those n values; their internal order is not constrained. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6439,7 +6439,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a set of 10 triplets representing triangles defined by shared vertices, determine the unique pairs of vertices that form the edges of these triangles. (\u2605\u2605\u2605)",
+      "question_text": "Given a set of 10 triplets representing triangles defined by shared vertices, determine the unique pairs of vertices that form the edges of these triangles. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6473,7 +6473,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given p matrices M with shape (p, n, n) and p vectors V with shape (p, n, 1), compute the sum over p of M[i] @ V[i] in a single call. Return the (n, 1) result. (\u2605\u2605\u2605)",
+      "question_text": "Given p matrices M with shape (p, n, n) and p vectors V with shape (p, n, 1), compute the sum over p of M[i] @ V[i] in a single call. Return the (n, 1) result. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6507,7 +6507,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Implement Conway's Game of Life on a 50x50 binary board with zero-padded boundaries. Given the initial board Z and an integer `iterations`, return the board after that many steps. (\u2605\u2605\u2605)",
+      "question_text": "Implement Conway's Game of Life on a 50x50 binary board with zero-padded boundaries. Given the initial board Z and an integer `iterations`, return the board after that many steps. (★★★)",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "numpy",
@@ -6541,7 +6541,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given an integer n and a 2D array X, select from X the rows which can be interpreted as draws from a multinomial distribution with n degrees, i.e., the rows which only contain integers and which sum to n. (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Given an integer n and a 2D array X, select from X the rows which can be interpreted as draws from a multinomial distribution with n degrees, i.e., the rows which only contain integers and which sum to n. (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6575,7 +6575,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Consider two arrays A and B of shape (8,3) and (2,2). How to find rows of A that contain elements of each row of B regardless of the order of the elements in B? (\u2605\u2605\u2605)\nPrint the result.",
+      "question_text": "Consider two arrays A and B of shape (8,3) and (2,2). How to find rows of A that contain elements of each row of B regardless of the order of the elements in B? (★★★)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6609,7 +6609,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 2D array of shape (3, 3) with boolean dtype in which every one of the 9 entries holds the value True. The result must use the bool dtype (not integer or float) and contain no False entries anywhere in the matrix. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 2D array of shape (3, 3) with boolean dtype in which every one of the 9 entries holds the value True. The result must use the bool dtype (not integer or float) and contain no False entries anywhere in the matrix. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6643,7 +6643,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 1D float vector Z of length 10 whose entries are all 0.0 except the entry at index position 4 (the fifth entry, counting from position 0), which holds the value 1.0. The result is a length-10 vector that is zero everywhere except at that one position. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 1D float vector Z of length 10 whose entries are all 0.0 except the entry at index position 4 (the fifth entry, counting from position 0), which holds the value 1.0. The result is a length-10 vector that is zero everywhere except at that one position. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6677,7 +6677,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 1D array Z that starts at 0 and steps by 0.5 up to but not exceeding 10, so the values are 0.0, 0.5, 1.0, ..., 10.0. The endpoint 10.0 must be included. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 1D array Z that starts at 0 and steps by 0.5 up to but not exceeding 10, so the values are 0.0, 0.5, 1.0, ..., 10.0. The endpoint 10.0 must be included. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6711,7 +6711,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D array of length 10 holding the integers 0 through 9 stored with dtype int32 (32-bit signed integers). Return Z so the printed result shows the sequence [0, 1, ..., 9] with its 32-bit integer dtype intact. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D array of length 10 holding the integers 0 through 9 stored with dtype int32 (32-bit signed integers). Return Z so the printed result shows the sequence [0, 1, ..., 9] with its 32-bit integer dtype intact. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6745,21 +6745,21 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a sorted array C that represents the counts of each integer, return an array A that contains each integer repeated according to its count in C. (\u2605\u2605\u2605)",
+      "question_text": "Given a sorted array C that represents the counts of each integer, return an array A that contains each integer repeated according to its count in C. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Jaime Fern\u00e1ndez del R\u00edo\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\n# Author: Jaime Fernández del Río\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Jaime Fern\u00e1ndez del R\u00edo\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)",
+          "setup_code": "# Author: Jaime Fernández del Río\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)",
           "call": "solve()",
           "expected_expr": "A"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Jaime Fern\u00e1ndez del R\u00edo\n\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)\nprint(A)",
+      "canonical_solution": "# Author: Jaime Fernández del Río\n\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)\nprint(A)",
       "expected_output": "[1 1 2 3 4 4 6]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -6779,7 +6779,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build Z, a 2D integer array of shape (8, 8) whose entries form a checkerboard: Z[i, j] is 0 when i + j is even and 1 when i + j is odd, with the top-left entry Z[0, 0] equal to 0. Adjacent cells (horizontally or vertically) must hold opposite values, producing the classic alternating 0/1 grid. (\u2605\u2606\u2606)",
+      "question_text": "Build Z, a 2D integer array of shape (8, 8) whose entries form a checkerboard: Z[i, j] is 0 when i + j is even and 1 when i + j is odd, with the top-left entry Z[0, 0] equal to 0. Adjacent cells (horizontally or vertically) must hold opposite values, producing the classic alternating 0/1 grid. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6813,7 +6813,7 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Given a 2D array Z, transform each column so that it has a mean of zero and a standard deviation of one, handling any columns with zero standard deviation appropriately. (\u2605\u2605\u2605)",
+      "question_text": "Given a 2D array Z, transform each column so that it has a mean of zero and a standard deviation of one, handling any columns with zero standard deviation appropriately. (★★★)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6847,7 +6847,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D vector of 10 random floats in [0, 1). Return the same vector but with the single entry that holds the largest value replaced by 0; all other entries keep their original values. The result has shape (10,). (\u2605\u2605\u2606)",
+      "question_text": "You are given Z, a 1D vector of 10 random floats in [0, 1). Return the same vector but with the single entry that holds the largest value replaced by 0; all other entries keep their original values. The result has shape (10,). (★★☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6881,7 +6881,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3x3 integer matrix Z whose entries are the values 0 through 8 laid out in row-major order, return a 1D integer array of length 3 whose i-th entry is the total of the three values in the i-th column of Z (one column total per output position). (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given a 3x3 integer matrix Z whose entries are the values 0 through 8 laid out in row-major order, return a 1D integer array of length 3 whose i-th entry is the total of the three values in the i-th column of Z (one column total per output position). (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6915,7 +6915,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Convert a Python nested list of two inner lists, each holding two integers, into a 2D NumPy array Z of shape (2, 2) preserving row order, so each inner list becomes one row of Z in the order it appeared. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Convert a Python nested list of two inner lists, each holding two integers, into a 2D NumPy array Z of shape (2, 2) preserving row order, so each inner list becomes one row of Z in the order it appeared. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6949,7 +6949,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D float array of length 10 in which every entry is 1.0. Return Z so the printed result is a length-10 vector consisting of ten 1.0 values with the default floating-point dtype, with no zeros and no other values present anywhere along its single axis. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D float array of length 10 in which every entry is 1.0. Return Z so the printed result is a length-10 vector consisting of ten 1.0 values with the default floating-point dtype, with no zeros and no other values present anywhere along its single axis. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -6983,7 +6983,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build Z, a 1D floating-point array of shape (10,) in which every entry is 0.0. The result is a single null vector of length 10 with a floating-point dtype, where each of the 10 positions holds the value zero. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build Z, a 1D floating-point array of shape (10,) in which every entry is 0.0. The result is a single null vector of length 10 with a floating-point dtype, where each of the 10 positions holds the value zero. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7017,7 +7017,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 2D floating-point identity matrix of shape (3, 3): the three entries on the main diagonal equal 1.0 and the six off-diagonal entries equal 0.0. The result is the 3x3 multiplicative identity for matrix multiplication. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 2D floating-point identity matrix of shape (3, 3): the three entries on the main diagonal equal 1.0 and the six off-diagonal entries equal 0.0. The result is the 3x3 multiplicative identity for matrix multiplication. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7051,7 +7051,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build a 1D integer vector Z whose entries are the consecutive integers starting at 10 and ending at 49 inclusive, listed in strictly increasing order. The result is a length-40 vector. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Build a 1D integer vector Z whose entries are the consecutive integers starting at 10 and ending at 49 inclusive, listed in strictly increasing order. The result is a length-40 vector. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7085,7 +7085,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given the 1D integer array Z = np.arange(5), produce a new array with the same shape (5,) and the same numerical values along its single axis, but with element dtype float32 instead of integer (so the new dtype is a 32-bit floating-point type and the values themselves are preserved as floats). (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given the 1D integer array Z = np.arange(5), produce a new array with the same shape (5,) and the same numerical values along its single axis, but with element dtype float32 instead of integer (so the new dtype is a 32-bit floating-point type and the values themselves are preserved as floats). (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7119,7 +7119,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D float array of length 10 that started as all zeros and then had its entries at indices 3, 4, 5, 6, 7 (the slice 3:8) overwritten with 5.0. Return Z, a length-10 vector that is 0.0 outside that index range and 5.0 inside it. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D float array of length 10 that started as all zeros and then had its entries at indices 3, 4, 5, 6, 7 (the slice 3:8) overwritten with 5.0. Return Z, a length-10 vector that is 0.0 outside that index range and 5.0 inside it. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7153,7 +7153,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of shape (30,) containing the values 0 through 29 in order. Return a 1D boolean array of the same shape whose i-th entry is True exactly when Z[i] is divisible by 3. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array of shape (30,) containing the values 0 through 29 in order. Return a 1D boolean array of the same shape whose i-th entry is True exactly when Z[i] is divisible by 3. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7187,7 +7187,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer vector of length 50 containing the values 0, 1, 2, ..., 49 in order. Return a 1D vector of the same length whose entries appear in the reverse order, so the result starts at 49 and ends at 0. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer vector of length 50 containing the values 0, 1, 2, ..., 49 in order. Return a 1D vector of the same length whose entries appear in the reverse order, so the result starts at 49 and ends at 0. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7221,7 +7221,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D integer vector Z of length 5, return a 1D vector of the same shape whose i-th entry is the running total of Z's entries from position 0 through position i inclusive (so the first output entry equals Z[0] and the last output entry equals the total of every entry in Z). (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given a 1D integer vector Z of length 5, return a 1D vector of the same shape whose i-th entry is the running total of Z's entries from position 0 through position i inclusive (so the first output entry equals Z[0] and the last output entry equals the total of every entry in Z). (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7255,7 +7255,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given the 1D array Z of shape (10,) containing random floats in [0, 1), reorder its entries so they are in ascending order, modifying Z in place rather than producing a separate sorted copy. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given the 1D array Z of shape (10,) containing random floats in [0, 1), reorder its entries so they are in ascending order, modifying Z in place rather than producing a separate sorted copy. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7289,7 +7289,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D float array of shape (3, 3) of random values in [0, 1). Return a 2D boolean array of the same (3, 3) shape where each entry is True if the corresponding entry of Z is strictly greater than 0.5 and False otherwise. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 2D float array of shape (3, 3) of random values in [0, 1). Return a 2D boolean array of the same (3, 3) shape where each entry is True if the corresponding entry of Z is strictly greater than 0.5 and False otherwise. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7323,7 +7323,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given Z, a 2D floating-point array of shape (4, 4) with entries drawn from the uniform distribution on [0, 1). Return a single scalar equal to the sum of the four main-diagonal entries Z[i, i] for i in 0 through 3. (\u2605\u2606\u2606)",
+      "question_text": "You are given Z, a 2D floating-point array of shape (4, 4) with entries drawn from the uniform distribution on [0, 1). Return a single scalar equal to the sum of the four main-diagonal entries Z[i, i] for i in 0 through 3. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7357,7 +7357,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 2x2 arrays, combine them into a single array by placing one on top of the other and then by placing them side by side. (\u2605\u2606\u2606)",
+      "question_text": "Given two 2x2 arrays, combine them into a single array by placing one on top of the other and then by placing them side by side. (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7391,7 +7391,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given a 2D array of shape (5, 3) filled with 1.0 and a 2D array of shape (3, 2) filled with 1.0. Return their matrix product as a 2D array of shape (5, 2), where each output entry is the sum of three 1*1 products. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "You are given a 2D array of shape (5, 3) filled with 1.0 and a 2D array of shape (3, 2) filled with 1.0. Return their matrix product as a 2D array of shape (5, 2), where each output entry is the sum of three 1*1 products. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7425,7 +7425,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 1D float array Z of length 10 with both positive and negative entries, return a new length-10 float array where each entry has been replaced by the nearest integer that is at least as far from zero as the original (so positive entries move up to the next integer and negative entries move down to the next more-negative integer, preserving sign). (\u2605\u2606\u2606)",
+      "question_text": "Given a 1D float array Z of length 10 with both positive and negative entries, return a new length-10 float array where each entry has been replaced by the nearest integer that is at least as far from zero as the original (so positive entries move up to the next integer and negative entries move down to the next more-negative integer, preserving sign). (★☆☆)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7459,7 +7459,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 1D integer arrays Z1 and Z2 of length 10, each containing random values in [0, 10), produce the sorted 1D array of values that appear in both Z1 and Z2, with each common value listed only once. (\u2605\u2606\u2606)\nPrint the result.",
+      "question_text": "Given two 1D integer arrays Z1 and Z2 of length 10, each containing random values in [0, 10), produce the sorted 1D array of values that appear in both Z1 and Z2, with each common value listed only once. (★☆☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7493,7 +7493,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D float array of length 10 holding 10 evenly spaced values strictly between 0 and 1 (both endpoints excluded), so the spacing matches what you get from splitting [0, 1] into 11 equal sub-intervals and taking the 10 interior breakpoints. Return Z. (\u2605\u2605\u2606)\nPrint the result.",
+      "question_text": "You are given Z, a 1D float array of length 10 holding 10 evenly spaced values strictly between 0 and 1 (both endpoints excluded), so the spacing matches what you get from splitting [0, 1] into 11 equal sub-intervals and taking the 10 interior breakpoints. Return Z. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
@@ -7527,7 +7527,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two batches of vectors, create a batch of matrices where each element of the first batch is multiplied by every element of the second batch. (\u2605\u2606\u2606)",
+      "question_text": "Given two batches of vectors, create a batch of matrices where each element of the first batch is multiplied by every element of the second batch. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7561,7 +7561,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given A, a 2D integer array of shape (2, 2) containing the values 1 through 4 in row-major order. Return a 2D array of shape (2, 2) in which the row and column axes have been swapped, so the output entry at position (j, i) equals A[i, j]. (\u2605\u2606\u2606)",
+      "question_text": "You are given A, a 2D integer array of shape (2, 2) containing the values 1 through 4 in row-major order. Return a 2D array of shape (2, 2) in which the row and column axes have been swapped, so the output entry at position (j, i) equals A[i, j]. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7629,7 +7629,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 2x2 matrices A and B, calculate their product and return the elements that are located on the main diagonal. (\u2605\u2606\u2606)",
+      "question_text": "Given two 2x2 matrices A and B, calculate their product and return the elements that are located on the main diagonal. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7663,7 +7663,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given A, a 2D array of shape (2, 2) with integer entries arranged row by row. Return a 1D array of length 2 whose j-th entry equals the sum of the j-th column of A, i.e. collapse the first axis by addition while keeping the second axis intact. (\u2605\u2606\u2606)",
+      "question_text": "You are given A, a 2D array of shape (2, 2) with integer entries arranged row by row. Return a 1D array of length 2 whose j-th entry equals the sum of the j-th column of A, i.e. collapse the first axis by addition while keeping the second axis intact. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7697,7 +7697,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two matrices X and Y, compute the result of multiplying each row of X with each row of Y, producing a new matrix where each entry corresponds to the product of the respective rows. (\u2605\u2606\u2606)",
+      "question_text": "Given two matrices X and Y, compute the result of multiplying each row of X with each row of Y, producing a new matrix where each entry corresponds to the product of the respective rows. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7731,7 +7731,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of images represented by a 4D array X, compute the sum of the squares of all pixel values for each image. (\u2605\u2606\u2606)",
+      "question_text": "For a batch of images represented by a 4D array X, compute the sum of the squares of all pixel values for each image. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7833,7 +7833,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a vector x and a 2D matrix W, compute a weighted sum of the matrix's rows based on the vector, and then take the dot product of that result with the vector again. Print the final result. (\u2605\u2606\u2606)",
+      "question_text": "Given a vector x and a 2D matrix W, compute a weighted sum of the matrix's rows based on the vector, and then take the dot product of that result with the vector again. Print the final result. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -7935,7 +7935,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 2D array A and a 1D weight vector w, compute the weighted sum of the rows of A, then normalize the result by the sum of the weights. (\u2605\u2606\u2606)",
+      "question_text": "Given a 2D array A and a 1D weight vector w, compute the weighted sum of the rows of A, then normalize the result by the sum of the weights. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8003,7 +8003,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 2x2 array A, return a 1D array containing the elements where the row and column indices match. (\u2605\u2606\u2606)",
+      "question_text": "Given a 2x2 array A, return a 1D array containing the elements where the row and column indices match. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8037,7 +8037,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 2x2 matrix X, compute the result of multiplying the matrix by its transpose to analyze the relationships between its columns. Print the resulting matrix. (\u2605\u2606\u2606)",
+      "question_text": "Given a 2x2 matrix X, compute the result of multiplying the matrix by its transpose to analyze the relationships between its columns. Print the resulting matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8241,7 +8241,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given three 2x2 matrices A, B, and C, perform a series of matrix multiplications on them in a single operation and return the resulting matrix. (\u2605\u2606\u2606)",
+      "question_text": "Given three 2x2 matrices A, B, and C, perform a series of matrix multiplications on them in a single operation and return the resulting matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8309,7 +8309,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of square matrices A, return a 1D array containing the sum of the diagonal elements for each matrix. (\u2605\u2606\u2606)",
+      "question_text": "For a batch of square matrices A, return a 1D array containing the sum of the diagonal elements for each matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8343,7 +8343,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 2x2 matrices A and B, flatten both matrices and compute the sum of the products of their corresponding elements. (\u2605\u2606\u2606)",
+      "question_text": "Given two 2x2 matrices A and B, flatten both matrices and compute the sum of the products of their corresponding elements. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8411,7 +8411,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given an image represented as a 3D array with shape (2, 2, 2) and a 1D array of weights, combine the channels of the image into a single 2D spatial map using the provided weights. (\u2605\u2606\u2606)",
+      "question_text": "Given an image represented as a 3D array with shape (2, 2, 2) and a 1D array of weights, combine the channels of the image into a single 2D spatial map using the provided weights. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8445,7 +8445,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 3D tensors A and B, compute the total sum of the products of their corresponding elements. (\u2605\u2606\u2606)",
+      "question_text": "Given two 3D tensors A and B, compute the total sum of the products of their corresponding elements. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8513,7 +8513,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3D array X representing a sequence of features and a 2D projection matrix M, apply the projection to transform the feature dimension of the sequence and return the resulting array. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3D array X representing a sequence of features and a 2D projection matrix M, apply the projection to transform the feature dimension of the sequence and return the resulting array. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8547,7 +8547,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of matrices A, return a 2D array where each row contains the diagonal elements of the corresponding matrix. (\u2605\u2606\u2606)",
+      "question_text": "For a batch of matrices A, return a 2D array where each row contains the diagonal elements of the corresponding matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8581,7 +8581,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 2D array A, return a 1D array where each element is the sum of the elements in each column of A. (\u2605\u2606\u2606)",
+      "question_text": "Given a 2D array A, return a 1D array where each element is the sum of the elements in each column of A. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8615,7 +8615,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two 2D arrays A and B, create a new tensor where each element of A is multiplied by every element of B, resulting in a 4D array. (\u2605\u2606\u2606)",
+      "question_text": "Given two 2D arrays A and B, create a new tensor where each element of A is multiplied by every element of B, resulting in a 4D array. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8683,7 +8683,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a square 2D matrix A of shape (2, 2) with integer entries, return a single scalar equal to the sum of the entries lying on A's main diagonal (those positions where the row index equals the column index). The result is a scalar, not an array. (\u2605\u2606\u2606)",
+      "question_text": "Given a square 2D matrix A of shape (2, 2) with integer entries, return a single scalar equal to the sum of the entries lying on A's main diagonal (those positions where the row index equals the column index). The result is a scalar, not an array. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8717,7 +8717,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a vector v of size (2), construct a square matrix where each element at position (i, j) is the product of the i-th and j-th elements of v. (\u2605\u2606\u2606)",
+      "question_text": "Given a vector v of size (2), construct a square matrix where each element at position (i, j) is the product of the i-th and j-th elements of v. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8751,7 +8751,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a batch of vectors x with shape (2, 2) and a transformation matrix W with shape (2, 2), compute the result of applying the transformation matrix to each vector in the batch. (\u2605\u2605\u2606)",
+      "question_text": "Given a batch of vectors x with shape (2, 2) and a transformation matrix W with shape (2, 2), compute the result of applying the transformation matrix to each vector in the batch. (★★☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8785,7 +8785,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 4D tensor of shape (b, h, s, d), compute the sum across the second dimension to obtain a tensor of shape (b, s, d). Print the result using the provided input. (\u2605\u2606\u2606)",
+      "question_text": "Given a 4D tensor of shape (b, h, s, d), compute the sum across the second dimension to obtain a tensor of shape (b, s, d). Print the result using the provided input. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8853,7 +8853,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given input x with shape (b, i), weight matrices W1 with shape (i, h) and W2 with shape (h, o), compute the output of applying both weight matrices to the input in a single operation. (\u2605\u2605\u2606)",
+      "question_text": "Given input x with shape (b, i), weight matrices W1 with shape (i, h) and W2 with shape (h, o), compute the output of applying both weight matrices to the input in a single operation. (★★☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8921,7 +8921,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a tensor T with shape (batch, head, seq, dim), rearrange the axes so that the head and seq dimensions are swapped. Print the result using the provided input. (\u2605\u2606\u2606)",
+      "question_text": "Given a tensor T with shape (batch, head, seq, dim), rearrange the axes so that the head and seq dimensions are swapped. Print the result using the provided input. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8955,7 +8955,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a query vector q of shape (d) and a memory matrix M of shape (n, d), compute the similarity between q and each row of M, resulting in a 1D array of length n. (\u2605\u2606\u2606)",
+      "question_text": "Given a query vector q of shape (d) and a memory matrix M of shape (n, d), compute the similarity between q and each row of M, resulting in a 1D array of length n. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -8989,7 +8989,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a batch of vectors x with shape (b, d), return a batch of matrices of shape (b, d, d) that represent the interaction between each pair of features for every vector. (\u2605\u2606\u2606)",
+      "question_text": "Given a batch of vectors x with shape (b, d), return a batch of matrices of shape (b, d, d) that represent the interaction between each pair of features for every vector. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9091,7 +9091,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a tensor X of any dimensionality, return a single scalar that represents the sum of all its elements. (\u2605\u2606\u2606)",
+      "question_text": "Given a tensor X of any dimensionality, return a single scalar that represents the sum of all its elements. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9193,7 +9193,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "From a 3D tensor A with shape (b, n, n), return a 1D array containing the first element from each 2D matrix in the batch. (\u2605\u2606\u2606)",
+      "question_text": "From a 3D tensor A with shape (b, n, n), return a 1D array containing the first element from each 2D matrix in the batch. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9227,7 +9227,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a weight tensor W of shape (2, 2, 2, 2) and an input tensor X of shape (2, 2, 2), compute a resulting vector by combining these tensors such that the output has shape (2). (\u2605\u2606\u2606)",
+      "question_text": "Given a weight tensor W of shape (2, 2, 2, 2) and an input tensor X of shape (2, 2, 2), compute a resulting vector by combining these tensors such that the output has shape (2). (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9261,7 +9261,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 4D tensor X with shape (b, c, h, w), compute a single value for each batch item by aggregating all pixel and channel values. (\u2605\u2606\u2606)",
+      "question_text": "Given a 4D tensor X with shape (b, c, h, w), compute a single value for each batch item by aggregating all pixel and channel values. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9295,7 +9295,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 2D array x of shape (t, d), create a 3D array of shape (t, t, d) where each entry at position (i, j) contains the product of the ith and jth vectors from x. (\u2605\u2606\u2606)",
+      "question_text": "Given a 2D array x of shape (t, d), create a 3D array of shape (t, t, d) where each entry at position (i, j) contains the product of the ith and jth vectors from x. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9329,7 +9329,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a batch of matrices B with shape (b, i, j) and a constant matrix M with shape (j, k), compute the result of multiplying each matrix in the batch by the constant matrix. (\u2605\u2606\u2606)",
+      "question_text": "Given a batch of matrices B with shape (b, i, j) and a constant matrix M with shape (j, k), compute the result of multiplying each matrix in the batch by the constant matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9397,7 +9397,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given two arrays, queries of shape (b, q, d) and keys of shape (b, k, d), calculate a score matrix that combines these inputs to produce an output of shape (b, q, k). (\u2605\u2606\u2606)",
+      "question_text": "Given two arrays, queries of shape (b, q, d) and keys of shape (b, k, d), calculate a score matrix that combines these inputs to produce an output of shape (b, q, k). (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9431,7 +9431,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a 3D tensor img with shape (c, h, w), return a 2D array that combines the height and width dimensions into a single dimension while preserving the channel dimension. (\u2605\u2606\u2606)",
+      "question_text": "Given a 3D tensor img with shape (c, h, w), return a 2D array that combines the height and width dimensions into a single dimension while preserving the channel dimension. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops",
@@ -9635,7 +9635,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a vector v of shape (2) and a matrix M of shape (2, 2), compute the result of the quadratic form involving v and M, which produces a single scalar output. Print the result using the provided inputs. (\u2605\u2606\u2606)",
+      "question_text": "Given a vector v of shape (2) and a matrix M of shape (2, 2), compute the result of the quadratic form involving v and M, which produces a single scalar output. Print the result using the provided inputs. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9703,7 +9703,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a multi-head tensor x with shape (b, t, h, d) and a head-importance weight w with shape (h), compute a new tensor of shape (b, t, d) that represents the weighted sum of the heads. (\u2605\u2606\u2606)",
+      "question_text": "Given a multi-head tensor x with shape (b, t, h, d) and a head-importance weight w with shape (h), compute a new tensor of shape (b, t, d) that represents the weighted sum of the heads. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9737,7 +9737,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Given a batch of vectors v with shape (b, d), compute the outer product of each vector with itself and then sum all resulting matrices together. (\u2605\u2606\u2606)",
+      "question_text": "Given a batch of vectors v with shape (b, d), compute the outer product of each vector with itself and then sum all resulting matrices together. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -9771,7 +9771,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Multiply a 2D matrix A by a vector representing a diagonal matrix, followed by another 2D matrix B, and return the resulting matrix. (\u2605\u2606\u2606)",
+      "question_text": "Multiply a 2D matrix A by a vector representing a diagonal matrix, followed by another 2D matrix B, and return the resulting matrix. (★☆☆)",
       "task_type": "tensor_expression",
       "language": "python",
       "primary_library": "einops.einsum",
@@ -10214,7 +10214,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "2x2 non-overlapping average pooling on a BCHW batch \u2014 output H and W are half the input. Use named factors h2 and w2 for the pooling window.",
+      "question_text": "2x2 non-overlapping average pooling on a BCHW batch — output H and W are half the input. Use named factors h2 and w2 for the pooling window.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
@@ -11326,8 +11326,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(x, 'b c h w -> b (c h w)')",
       "expected_output": "",
-      "expected_artifact_type": "array",
-      "supports_visual_output": false
+      "expected_artifact_type": "image",
+      "supports_visual_output": true
     }
   },
   {
@@ -11418,7 +11418,7 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.concatenate([arr[:2], arr[:2]], axis=1)  # (2, 6, 150, 150) \u2014 c=6 for split=2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.concatenate([arr[:2], arr[:2]], axis=1)  # (2, 6, 150, 150) — c=6 for split=2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
           "setup_code": "arr = np.load('/delta_numbers.npy')\nx = np.concatenate([arr[:2], arr[:2]], axis=1)\nb = 2",
@@ -12008,8 +12008,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.reduce(x, 'b c (h two1) (w two2) -> b (c h w)', 'max', two1=2, two2=2)",
       "expected_output": "",
-      "expected_artifact_type": "array",
-      "supports_visual_output": false
+      "expected_artifact_type": "image",
+      "supports_visual_output": true
     }
   },
   {
@@ -12484,8 +12484,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(img, 'c h w -> c (h w)')",
       "expected_output": "",
-      "expected_artifact_type": "array",
-      "supports_visual_output": false
+      "expected_artifact_type": "image",
+      "supports_visual_output": true
     }
   },
   {
@@ -12622,8 +12622,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=4, w1=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
