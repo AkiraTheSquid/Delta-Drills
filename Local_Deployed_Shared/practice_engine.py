@@ -21,11 +21,13 @@ Usage from JS:
 
 import json
 from dataclasses import dataclass, field, asdict
+from datetime import datetime, timezone
 from math import exp
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
-# Constants
+# Constants — v0 calibration, not literature-derived. Mirror of backend
+# adaptive.py; see papers/MASTERY_ESTIMATION_REFERENCE_v2.md.
 # ---------------------------------------------------------------------------
 
 FEEDBACK_ALPHA = {
@@ -35,6 +37,48 @@ FEEDBACK_ALPHA = {
 }
 
 COLD_START_TARGETS = [25, 50, 75]
+
+# Half-life decay (v0) — Yudelson & Pavlik 2013 (survived audit) flags
+# monotonic mastery as anti-pattern; this is the regression mechanism.
+HALF_LIFE_DAYS: float = 14.0
+P_PRIOR: float = 0.5
+BASELINE_PRIOR: float = 0.0
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
+    if not ts:
+        return None
+    try:
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _decay_factor(last_ts: Optional[str], now: datetime) -> float:
+    prev = _parse_ts(last_ts)
+    if prev is None or HALF_LIFE_DAYS <= 0:
+        return 1.0
+    elapsed_days = max(0.0, (now - prev).total_seconds() / 86400.0)
+    return 0.5 ** (elapsed_days / HALF_LIFE_DAYS)
+
+
+def decayed_view(state: "SubtopicState", now: Optional[datetime] = None) -> Tuple[float, float]:
+    """Return (baseline, p) decayed to `now` without mutating state."""
+    now = now or datetime.now(timezone.utc)
+    factor = _decay_factor(state.last_update_ts, now)
+    baseline = BASELINE_PRIOR + (state.baseline - BASELINE_PRIOR) * factor
+    p = P_PRIOR + (state.p - P_PRIOR) * factor
+    return baseline, p
+
+
+def _apply_decay(state: "SubtopicState", now: datetime) -> None:
+    baseline, p = decayed_view(state, now)
+    state.baseline = baseline
+    state.p = p
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -47,6 +91,7 @@ class AttemptRecord:
     difficulty_score: int
     grade: float          # 0 or 100
     correct: bool
+    timestamp: str = ""   # ISO-8601 UTC; backfilled to _now_iso() on record
     feedback: Optional[str] = None
     alpha: Optional[float] = None
     score: Optional[float] = None
@@ -64,6 +109,7 @@ class SubtopicState:
     target_difficulty: float = 25.0
     history: List[AttemptRecord] = field(default_factory=list)
     served_question_ids: List[int] = field(default_factory=list)
+    last_update_ts: Optional[str] = None
 
 
 @dataclass
@@ -99,6 +145,7 @@ def state_to_dict(state: UserPracticeState) -> dict:
             "target_difficulty": sub_state.target_difficulty,
             "served_question_ids": sub_state.served_question_ids,
             "history": [asdict(a) for a in sub_state.history],
+            "last_update_ts": sub_state.last_update_ts,
         }
     return data
 
@@ -114,6 +161,7 @@ def state_from_dict(data: dict) -> UserPracticeState:
             difficulty_score=pa["difficulty_score"],
             grade=pa["grade"],
             correct=pa["correct"],
+            timestamp=pa.get("timestamp") or "",
             feedback=pa.get("feedback"),
             alpha=pa.get("alpha"),
             score=pa.get("score"),
@@ -130,6 +178,7 @@ def state_from_dict(data: dict) -> UserPracticeState:
                 difficulty_score=a["difficulty_score"],
                 grade=a["grade"],
                 correct=a["correct"],
+                timestamp=a.get("timestamp") or "",
                 feedback=a.get("feedback"),
                 alpha=a.get("alpha"),
                 score=a.get("score"),
@@ -137,6 +186,10 @@ def state_from_dict(data: dict) -> UserPracticeState:
                 p_after=a.get("p_after"),
                 target_difficulty_after=a.get("target_difficulty_after"),
             ))
+        # Backfill last_update_ts from last history entry for migrated saves.
+        last_ts = sub_data.get("last_update_ts")
+        if last_ts is None and history:
+            last_ts = history[-1].timestamp or None
         state.subtopic_states[sub_name] = SubtopicState(
             subtopic=sub_data["subtopic"],
             n=sub_data["n"],
@@ -145,6 +198,7 @@ def state_from_dict(data: dict) -> UserPracticeState:
             target_difficulty=sub_data["target_difficulty"],
             served_question_ids=sub_data.get("served_question_ids", []),
             history=history,
+            last_update_ts=last_ts,
         )
     return state
 
@@ -175,7 +229,8 @@ def compute_difficulty_multiplier(p: float) -> float:
 def get_target_difficulty(state: SubtopicState) -> float:
     if state.n < len(COLD_START_TARGETS):
         return COLD_START_TARGETS[state.n]
-    return state.target_difficulty
+    baseline, p = decayed_view(state)
+    return _clamp_difficulty(baseline * compute_difficulty_multiplier(p))
 
 
 def record_attempt(
@@ -192,6 +247,7 @@ def record_attempt(
         difficulty_score=difficulty_score,
         grade=grade,
         correct=correct,
+        timestamp=_now_iso(),
     )
     user_state.pending_attempt = attempt
     return attempt
@@ -211,6 +267,13 @@ def apply_feedback(
 
     sub_state = user_state.get_subtopic_state(attempt.subtopic)
     sub_state.n += 1
+
+    # Decay before EWMA blend so returning users blend against the
+    # forgetting-adjusted prior.
+    if not attempt.timestamp:
+        attempt.timestamp = _now_iso()
+    now = _parse_ts(attempt.timestamp) or datetime.now(timezone.utc)
+    _apply_decay(sub_state, now)
 
     score = attempt.grade * attempt.difficulty_score / 100.0
     attempt.score = score
@@ -235,6 +298,8 @@ def apply_feedback(
         sub_state.p = alpha * indicator + (1 - alpha) * sub_state.p
         multiplier = compute_difficulty_multiplier(sub_state.p)
         sub_state.target_difficulty = _clamp_difficulty(sub_state.baseline * multiplier)
+
+    sub_state.last_update_ts = attempt.timestamp
 
     attempt.baseline_after = sub_state.baseline
     attempt.p_after = sub_state.p

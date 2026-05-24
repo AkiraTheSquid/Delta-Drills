@@ -92,9 +92,12 @@
     try { return JSON.parse(adaptiveStateJson); } catch (_) { return null; }
   };
 
+  // baseline ∈ [0, 100] in adaptive.py — normalize to [0, 1] at the boundary
+  // so readiness matches the MasteryGatePolicy threshold convention.
   const _baselineForSubtopic = (state, subtopic) => {
     const b = Number(state?.subtopic_states?.[subtopic]?.baseline);
-    return Number.isFinite(b) ? b : null;
+    if (!Number.isFinite(b)) return null;
+    return Math.max(0, Math.min(1, b / 100));
   };
 
   const _avg = (xs) => xs.reduce((s, x) => s + x, 0) / xs.length;

@@ -21,6 +21,11 @@ from typing import Dict, Iterable, Literal
 
 from pydantic import BaseModel, Field
 
+# Mastery scale convention: callers feed values in [0.0, 1.0].
+# Upstream signals (e.g. baseline ∈ [0, 100] from adaptive.py) MUST be
+# normalized at the boundary via `normalize_mastery_mapping`.
+_MASTERY_SCALE_TOLERANCE = 1e-6
+
 _THIS_DIR_ONLY = Path(__file__).resolve().parents[3] / "This-Directory-Only"
 DEFAULT_GRAPH_PATH = (
     _THIS_DIR_ONLY
@@ -82,6 +87,9 @@ class ProblemConceptLink(BaseModel):
 
 
 class MasteryGatePolicy(BaseModel):
+    # v0 calibration default — no literature source. Re-derive empirically once
+    # per-atom attempt data accumulates (see Phase 6+ plans). Mastery values are
+    # in [0, 1]; callers MUST normalize upstream signals.
     mastery_threshold: float = Field(ge=0.0, le=1.0, default=0.8)
     require_all_hard_prereqs: bool = True
     supplemental_concepts_block_progress: bool = False
@@ -152,12 +160,48 @@ def problem_links_for_concept(graph: CurriculumGraph, concept_id: str) -> list[P
     return [link for link in graph.problem_links if link.concept_id == concept_id]
 
 
+def normalize_mastery_mapping(
+    mastery: Dict[str, float],
+    *,
+    source_scale: Literal["unit", "percent", "auto"] = "auto",
+) -> Dict[str, float]:
+    """Normalize a mastery mapping to [0, 1].
+
+    source_scale:
+      - "unit"    — input already in [0, 1]; clamp and return.
+      - "percent" — input in [0, 100]; divide by 100.
+      - "auto"    — detect: if any value > 1.0 + tolerance, treat as percent.
+
+    Values are clamped to [0, 1] after rescaling.
+    """
+    if not mastery:
+        return {}
+    if source_scale == "auto":
+        max_val = max(mastery.values())
+        source_scale = "percent" if max_val > 1.0 + _MASTERY_SCALE_TOLERANCE else "unit"
+    divisor = 100.0 if source_scale == "percent" else 1.0
+    return {k: max(0.0, min(1.0, v / divisor)) for k, v in mastery.items()}
+
+
+def _assert_unit_scale(mastery: Dict[str, float]) -> None:
+    if not mastery:
+        return
+    over = max(mastery.values())
+    if over > 1.0 + _MASTERY_SCALE_TOLERANCE:
+        raise ValueError(
+            f"mastery_by_concept contains value {over} > 1.0; "
+            "callers must pass values in [0, 1]. "
+            "Use normalize_mastery_mapping(..., source_scale='percent') if upstream is [0, 100]."
+        )
+
+
 def mastery_gated_ready_concepts(
     graph: CurriculumGraph,
     mastery_by_concept: Dict[str, float],
     *,
     include_mastered: bool = False,
 ) -> list[ConceptNode]:
+    _assert_unit_scale(mastery_by_concept)
     ready: list[ConceptNode] = []
     for concept in graph.concepts:
         if not include_mastered and mastery_by_concept.get(concept.id, 0.0) >= graph.mastery_gate.mastery_threshold:
@@ -173,6 +217,7 @@ def concept_is_unlocked(
     concept_id: str,
     mastery_by_concept: Dict[str, float],
 ) -> bool:
+    _assert_unit_scale(mastery_by_concept)
     concept = concept_index(graph).get(concept_id)
     if concept is None:
         raise KeyError(f"Unknown concept id: {concept_id}")
@@ -208,6 +253,7 @@ def mastery_gate_snapshot(
     mastery_by_concept: Dict[str, float],
 ) -> list[dict]:
     """Explain why each concept is or is not unlocked."""
+    _assert_unit_scale(mastery_by_concept)
     concepts = concept_index(graph)
     snapshot: list[dict] = []
     for concept in graph.concepts:

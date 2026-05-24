@@ -16,13 +16,22 @@ Higher gradient => higher priority => that subtopic is selected next.
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from math import exp
 from typing import Dict, List, Optional, Tuple
 
-from app.adaptive import SubtopicState, UserPracticeState, COLD_START_TARGETS
+from app.adaptive import (
+    SubtopicState,
+    UserPracticeState,
+    COLD_START_TARGETS,
+    HALF_LIFE_DAYS,
+    _parse_ts,
+)
 from app.questions import get_subtopics, get_questions_by_subtopic, get_topic_for_subtopic
 
 logger = logging.getLogger(__name__)
+
+# --- v0 calibration constants — no literature source, tune empirically ---
 
 # Subtopics with fewer answered questions than this threshold get a boosted
 # learning-rate so they are always selected before topics with real history.
@@ -31,6 +40,20 @@ COLD_START_MIN_QUESTIONS: int = len(COLD_START_TARGETS)
 # Must exceed any realistic EWMA learning rate (scores are 0-100, so deltas
 # are bounded by [-100, 100]; 200 is safely above that ceiling).
 COLD_START_PRIORITY_LR: float = 200.0
+# A subtopic is "stale" once last_update_ts is older than half a half-life;
+# stale subtopics get the cold-start priority boost so decay-driven regression
+# doesn't trap them in low-gradient limbo.
+STALENESS_DAYS: float = HALF_LIFE_DAYS / 2.0
+
+def _is_stale(state: SubtopicState, now: Optional[datetime] = None) -> bool:
+    """True if last_update_ts is older than STALENESS_DAYS."""
+    prev = _parse_ts(state.last_update_ts)
+    if prev is None:
+        return False
+    now = now or datetime.now(timezone.utc)
+    elapsed_days = (now - prev).total_seconds() / 86400.0
+    return elapsed_days >= STALENESS_DAYS
+
 
 def _estimate_learning_rate(state: SubtopicState) -> float:
     """
@@ -40,15 +63,23 @@ def _estimate_learning_rate(state: SubtopicState) -> float:
 
     Returns a float. Higher = more improvement happening.
     Subtopics with no history return a moderate default (0.5).
+    Stale subtopics (last_update_ts > STALENESS_DAYS old) get the cold-start
+    boost so decay-driven regression resurfaces them for refresh.
     """
     # Cold-start: prioritise unexplored topics above any with real history.
     if state.n < COLD_START_MIN_QUESTIONS:
+        return COLD_START_PRIORITY_LR
+
+    # Staleness boost — forgotten subtopics should resurface.
+    if _is_stale(state):
         return COLD_START_PRIORITY_LR
 
     history = state.history
     if len(history) < 2:
         return COLD_START_PRIORITY_LR
 
+    # v0 EWMA rate constant (no literature source) — controls how quickly the
+    # learning-rate estimate forgets old deltas. Tune empirically.
     lambda_ = 0.3
     alpha = 1 - exp(-lambda_)
 

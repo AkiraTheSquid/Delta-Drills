@@ -47,6 +47,16 @@ $$
 
 All of the above should apply for $n>3$ for each subtopics. It will be a cold start of 3 sampling from 3 different difficulty levels (easy/medium/hard) where you just choose $25,50,75$ as the target difficulties for those 3 first questions.
 
+\paragraph{Time decay (added 2026-05-24).} Before each EWMA update (and on every read of \(\text{target\_difficulty}\)), stored baseline and \(p\) are shrunk toward their no-information priors by the multiplicative half-life factor
+$$
+f = 0.5^{\,\Delta t / \tau}, \quad \tau = 14\ \text{days}
+$$
+where \(\Delta t\) is days elapsed since the subtopic's \texttt{last\_update\_ts}. The decayed values are
+$$
+\text{baseline}_{\text{decayed}} = \text{baseline} \cdot f, \qquad p_{\text{decayed}} = 0.5 + (p - 0.5) \cdot f
+$$
+Rationale: monotonic mastery curves are an anti-pattern (Yudelson \& Pavlik 2013); without decay the system cannot regress and stale subtopics get stuck at high difficulty. All constants in this section are v0 calibration choices.
+
 Subtopic and topic selection.
 
 Let $S$ be the set of subtopics that have at least one unserved question.

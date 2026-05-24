@@ -1,31 +1,41 @@
 """
-Adaptive difficulty algorithm.
+Adaptive difficulty algorithm — v0.
 
 Per-user, per-subtopic state that determines what difficulty level to
 serve next based on running performance metrics.
 
 Key variables per (user, subtopic):
   - n:                 number of questions answered
-  - baseline:          running weighted average of score
-  - p:                 running correctness rate
+  - baseline:          running weighted average of score (∈ [0, 100])
+  - p:                 running correctness rate (∈ [0, 1])
   - target_difficulty: what numeric difficulty to serve next (0-100 scale)
   - history:           list of past attempt records
+  - last_update_ts:    ISO-8601 UTC of last EWMA update; drives time decay
 
 Cold start (n <= 3):
   First 3 questions sample with target difficulties 25, 50, 75
 
 For n > 3, after each problem:
-  Feedback alpha: "not_much" -> 0.3, "somewhat" -> 0.6, "a_lot" -> 0.85
-  score(n) = grade(n) * difficulty(n) / 100
-  baseline(n) = alpha * score(n) + (1 - alpha) * baseline(n-1)
-  indicator = 1 if grade > 85, else 0
-  p(n) = p_alpha * indicator + (1 - p_alpha) * p(n-1)
-  difficulty_multiplier:
-    if p <= 0.85: 0.5 + 0.5 * (p / 0.85)^1.8
-    if p > 0.85:  min(2.5, 1 + ((p - 0.85) / 0.15)^2.5)
-  target_difficulty = baseline * difficulty_multiplier
+  1. Decay stored baseline (→ 0) and p (→ 0.5) by half-life since last_update_ts.
+  2. Feedback alpha: "not_much" -> 0.3, "somewhat" -> 0.6, "a_lot" -> 0.80.
+     score(n) = grade(n) * difficulty(n) / 100
+     baseline(n) = alpha * score(n) + (1 - alpha) * baseline(n-1)
+     indicator = 1 if grade > 85, else 0
+     p(n) = p_alpha * indicator + (1 - p_alpha) * p(n-1)
+  3. target_difficulty = baseline * difficulty_multiplier(p)
 
 Grade is binary: 100 if correct, 0 if incorrect.
+
+Calibration status: every numeric constant in this module is a v0 default,
+not literature-derived. See `papers/MASTERY_ESTIMATION_REFERENCE_v2.md` for
+the 2026-05-24 source audit that established this. Tune empirically once
+per-atom attempt data accumulates.
+
+Decay rationale: Yudelson & Pavlik 2013 (survived audit) flags monotonic
+mastery curves as anti-pattern; HLR (Settles & Meeder 2016) is the cleanest
+deployed analog for time-decay on a mastery posterior. This module's
+multiplicative half-life shrinkage is the survived-audit principle, not
+the v1 deep-research doc's fabricated Beta-Bernoulli update rule.
 """
 
 from __future__ import annotations
@@ -42,6 +52,13 @@ logger = logging.getLogger(__name__)
 
 FeedbackLevel = Literal["not_much", "somewhat", "a_lot"]
 
+# ---------------------------------------------------------------------------
+# Tunable parameters — v0 calibration defaults, not literature-grounded.
+# Re-derive empirically from real attempt data before claiming any of these
+# are tuned. See `papers/MASTERY_ESTIMATION_REFERENCE_v2.md` for the audit
+# that established these are doc-author choices, not citations.
+# ---------------------------------------------------------------------------
+
 FEEDBACK_ALPHA: Dict[FeedbackLevel, float] = {
     "not_much": 0.3,
     "somewhat": 0.6,
@@ -53,6 +70,13 @@ P_ALPHA = 0.3
 
 # Cold start target difficulties for the first 3 questions in each subtopic
 COLD_START_TARGETS = [25, 50, 75]
+
+# Half-life decay (v0) — pulls baseline toward 0 and p toward P_PRIOR with this
+# time constant. Yudelson & Pavlik 2013 (survived 2026-05-24 audit) flags
+# monotonic mastery as anti-pattern; this is the regression mechanism.
+HALF_LIFE_DAYS: float = 14.0
+P_PRIOR: float = 0.5      # no-information prior for correctness rate
+BASELINE_PRIOR: float = 0.0  # no-information prior for accumulated score
 
 
 @dataclass
@@ -83,6 +107,8 @@ class SubtopicState:
     history: List[AttemptRecord] = field(default_factory=list)
     # Track which question IDs have been served to avoid repeats
     served_question_ids: List[int] = field(default_factory=list)
+    # ISO-8601 UTC timestamp of last EWMA update; None until first attempt.
+    last_update_ts: Optional[str] = None
 
 
 @dataclass
@@ -141,6 +167,7 @@ def _save_user_state(state: UserPracticeState) -> None:
             "target_difficulty": sub_state.target_difficulty,
             "served_question_ids": sub_state.served_question_ids,
             "history": [asdict(a) for a in sub_state.history],
+            "last_update_ts": sub_state.last_update_ts,
         }
     try:
         _state_file(state.user_id).write_text(json.dumps(data, indent=2), encoding="utf-8")
@@ -190,6 +217,12 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
                     p_after=a.get("p_after"),
                     target_difficulty_after=a.get("target_difficulty_after"),
                 ))
+            # last_update_ts: backfill from last history entry if missing on
+            # older saved states (so existing users get decay starting now,
+            # not retroactively).
+            last_ts = sub_data.get("last_update_ts")
+            if last_ts is None and history:
+                last_ts = history[-1].timestamp or None
             state.subtopic_states[sub_name] = SubtopicState(
                 subtopic=sub_data["subtopic"],
                 n=sub_data["n"],
@@ -198,6 +231,7 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
                 target_difficulty=sub_data["target_difficulty"],
                 served_question_ids=sub_data.get("served_question_ids", []),
                 history=history,
+                last_update_ts=last_ts,
             )
         return state
     except Exception as e:
@@ -225,9 +259,52 @@ def save_user_state(user_id: str) -> None:
 # Core algorithm
 # ---------------------------------------------------------------------------
 
+def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
+    if not ts:
+        return None
+    try:
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _decay_factor(last_ts: Optional[str], now: datetime, half_life_days: float = HALF_LIFE_DAYS) -> float:
+    """Compute multiplicative decay factor in [0, 1] for elapsed time."""
+    prev = _parse_ts(last_ts)
+    if prev is None or half_life_days <= 0:
+        return 1.0
+    elapsed_days = max(0.0, (now - prev).total_seconds() / 86400.0)
+    return 0.5 ** (elapsed_days / half_life_days)
+
+
+def decayed_view(state: SubtopicState, now: Optional[datetime] = None) -> Tuple[float, float]:
+    """Return (baseline, p) decayed to `now` without mutating state.
+
+    Used by get_target_difficulty so served difficulty reflects current
+    (decayed) estimate. Mirrors the apply-side decay so a read between
+    attempts agrees with the next write.
+    """
+    now = now or datetime.now(timezone.utc)
+    factor = _decay_factor(state.last_update_ts, now)
+    baseline = BASELINE_PRIOR + (state.baseline - BASELINE_PRIOR) * factor
+    p = P_PRIOR + (state.p - P_PRIOR) * factor
+    return baseline, p
+
+
+def _apply_decay(state: SubtopicState, now: datetime) -> None:
+    """Mutate state to decayed values; called before each EWMA update."""
+    baseline, p = decayed_view(state, now)
+    state.baseline = baseline
+    state.p = p
+
+
 def compute_difficulty_multiplier(p: float) -> float:
     """
     Compute the difficulty multiplier from the correctness rate p.
+
+    Piecewise curve, v0 parameters (not literature-grounded):
+      breakpoint 0.85, sub-breakpoint exponent 1.8, super exponent 2.5,
+      hard cap at 2.5×. Re-tune empirically.
     """
     if p <= 0.85:
         return 0.5 + 0.5 * (p / 0.85) ** 1.8
@@ -239,11 +316,13 @@ def get_target_difficulty(state: SubtopicState) -> float:
     """
     Return the target difficulty for the next question in this subtopic.
     During cold start (n <= 3), returns predefined targets.
-    After that, returns the computed target_difficulty.
+    After that, returns the difficulty computed from the *decayed* baseline
+    and p (so stale subtopics regress toward easier difficulties).
     """
     if state.n < len(COLD_START_TARGETS):
         return COLD_START_TARGETS[state.n]
-    return state.target_difficulty
+    baseline, p = decayed_view(state)
+    return _clamp_difficulty(baseline * compute_difficulty_multiplier(p))
 
 
 def record_attempt(
@@ -290,6 +369,12 @@ def apply_feedback(
     sub_state = user_state.get_subtopic_state(attempt.subtopic)
     sub_state.n += 1
 
+    # Decay stored baseline/p by time elapsed since last update BEFORE the EWMA
+    # blend. Ensures a returning user's first attempt blends against a
+    # forgetting-adjusted prior rather than a stale snapshot.
+    now = _parse_ts(attempt.timestamp) or datetime.now(timezone.utc)
+    _apply_decay(sub_state, now)
+
     # Compute score
     score = attempt.grade * attempt.difficulty_score / 100.0
     attempt.score = score
@@ -318,6 +403,8 @@ def apply_feedback(
         sub_state.p = P_ALPHA * indicator + (1 - P_ALPHA) * sub_state.p
         multiplier = compute_difficulty_multiplier(sub_state.p)
         sub_state.target_difficulty = _clamp_difficulty(sub_state.baseline * multiplier)
+
+    sub_state.last_update_ts = attempt.timestamp
 
     attempt.baseline_after = sub_state.baseline
     attempt.p_after = sub_state.p
@@ -359,5 +446,5 @@ def override_pending_attempt(
 
 
 def _clamp_difficulty(value: float) -> float:
-    """Clamp target difficulty to [10, 100]."""
+    """Clamp target difficulty to [10, 100]. v0 floor/ceiling, calibrate empirically."""
     return max(10.0, min(100.0, value))

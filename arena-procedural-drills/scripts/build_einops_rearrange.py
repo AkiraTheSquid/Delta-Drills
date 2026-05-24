@@ -16,10 +16,68 @@ source.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "arena-procedural-drills/prereqs_einops/einops-rearrange.ipynb"
+
+
+# ----- build-time solution verification ---------------------------------
+# Run every canonical solution against its in-notebook test BEFORE writing
+# the notebook. If any exercise fails (shape mismatch, value mismatch,
+# ImportError, syntax error in stub/solution drift) the build aborts.
+# Same exec/assert pattern as scripts/validate_arena_solutions.py from
+# Phase 2f-ii (#95) — applied at build time instead of harvest time.
+
+def verify_solutions(specs: list[dict]) -> None:
+    try:
+        import torch as t
+        import numpy as np
+        from torch import Tensor
+        import einops
+        from einops import rearrange
+    except ImportError as e:
+        raise SystemExit(
+            f"[build verify] missing runtime dep: {e}\n"
+            f"  pip install torch numpy einops  # required for build-time solution verification\n"
+            f"  refusing to write notebook with unverified solutions."
+        )
+
+    base_ns = {
+        "t": t, "np": np, "Tensor": Tensor,
+        "einops": einops, "rearrange": rearrange,
+    }
+    failures: list[str] = []
+    for spec in specs:
+        ns = dict(base_ns)
+        # 1. exec the canonical solution to define the function under test
+        try:
+            exec(spec["solution_body"], ns)
+        except Exception as e:
+            failures.append(f"{spec['id']} ({spec['title']}) — solution_body did not compile: {e!r}")
+            continue
+        # 2. build a test function mirroring exercise_code() in the notebook
+        test_src = f"def _test_{spec['id']}():\n    {spec['test_body']}"
+        try:
+            exec(test_src, ns)
+        except Exception as e:
+            failures.append(f"{spec['id']} ({spec['title']}) — test_body did not compile: {e!r}")
+            continue
+        # 3. call the test against the canonical solution
+        try:
+            ns[f"_test_{spec['id']}"]()
+        except Exception as e:
+            failures.append(f"{spec['id']} ({spec['title']}) — assertion failed: {e!r}")
+            continue
+
+    if failures:
+        print("[build verify] FAIL — refusing to emit notebook.", file=sys.stderr)
+        for line in failures:
+            print(f"  ✗ {line}", file=sys.stderr)
+        raise SystemExit(1)
+
+    print(f"[build verify] OK — {len(specs)} canonical solutions pass their tests.")
 
 ATOM_ID = "einops-rearrange"
 SUBTOPIC = "Einops: Rearrange"
@@ -533,6 +591,10 @@ for c in nb["cells"]:
 # Stable per-cell ids so nbformat doesn't warn.
 for i, c in enumerate(nb["cells"]):
     c["id"] = f"cell-{i:02d}"
+
+# Build-time gate: every canonical solution must pass its in-notebook
+# assertions before we emit the notebook. SystemExit(1) on failure.
+verify_solutions(EXERCISE_SPECS)
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(json.dumps(nb, indent=1))
