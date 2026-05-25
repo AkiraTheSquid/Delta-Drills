@@ -5,6 +5,8 @@
 // Returns a number in [0, 1] — same convention as computeArenaReadiness.
 //
 // Bridge strategy (in order):
+//   0. Drill-atom direct subtopic — atom appears in window.PREREQ_SUBTOPICS
+//      (introduced by Colab procedural drills). Read baseline directly.
 //   1. Direct subtopic hit — the atom's `subtopic` field matches a key in
 //      adaptiveStateJson.subtopic_states. Read baseline.
 //   2. Topic-alias bridge — map the atom's `topic` (ARENA part name like
@@ -117,13 +119,31 @@
    * @param {number} [fallback] — score to return if no signal is available
    * @return {number}
    */
+  // Drill-atom direct subtopic — set by Colab procedural drills via PREREQ_SUBTOPICS.
+  // Resolves atoms that aren't in CONCEPT_GRAPH_V5_V2 but ARE in the drill catalog.
+  const _drillSubtopic = (atomId) => {
+    const reg = window.PREREQ_SUBTOPICS;
+    if (!reg || !reg.atom_to_subtopic) return null;
+    return reg.atom_to_subtopic[atomId] || null;
+  };
+
   window.computeAtomReadiness = (atomId, fallback) => {
     const fb = Number.isFinite(Number(fallback)) ? Number(fallback) : 0;
     if (typeof atomId !== "string" || !atomId) return fb;
-    const atom = _atomIndex().get(atomId);
-    if (!atom) return fb;
     const state = _readAdaptiveState();
     if (!state || !state.subtopic_states) return fb;
+
+    // 0. Drill-atom direct subtopic — catches drill-introduced atoms that
+    // may not appear in CONCEPT_GRAPH_V5_V2 yet but DO have an EWMA state
+    // (because the drill beacon posted a rating against PREREQ_SUBTOPICS).
+    const drillSub = _drillSubtopic(atomId);
+    if (drillSub) {
+      const b = _baselineForSubtopic(state, drillSub);
+      if (b !== null) return b;
+    }
+
+    const atom = _atomIndex().get(atomId);
+    if (!atom) return fb;
 
     // 1. Direct subtopic hit
     if (atom.subtopic) {
@@ -202,9 +222,11 @@
       return { error: "adaptiveStateJson missing or empty", concept_count: g.concepts.length };
     }
     const topicIndex = _buildTopicSubtopicIndex();
-    let direct = 0, token = 0, alias = 0, fb = 0;
+    let drill = 0, direct = 0, token = 0, alias = 0, fb = 0;
     const fallbackIds = [];
     g.concepts.forEach((atom) => {
+      const ds = _drillSubtopic(atom.id);
+      if (ds && _baselineForSubtopic(state, ds) !== null) { drill += 1; return; }
       if (atom.subtopic && _baselineForSubtopic(state, atom.subtopic) !== null) {
         direct += 1; return;
       }
@@ -215,6 +237,6 @@
       fb += 1;
       fallbackIds.push(atom.id);
     });
-    return { direct, token, alias, fallback: fb, total: g.concepts.length, fallback_ids: fallbackIds };
+    return { drill, direct, token, alias, fallback: fb, total: g.concepts.length, fallback_ids: fallbackIds };
   };
 })();
