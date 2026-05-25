@@ -24,7 +24,7 @@
   // than topic="Einops". The atom-id-token bridge below catches that.
   const ATOM_TOPIC_TO_BANK_TOPIC = {
     "Ray Tracing": "Numpy",
-    "CNNs": "Numpy",
+    "CNNs": "CNN",
     "Optimization": null,
     "Backprop": null,
     "VAEs and GANs": null,
@@ -39,10 +39,15 @@
     { tokens: ["einsum"], topic: "Einsum" },
     { tokens: ["einops", "rearrange", "reduce", "repeat"], topic: "Einops" },
     { tokens: ["broadcasting", "broadcast", "unbroadcast"], topic: "Numpy" },
-    { tokens: ["as-strided", "stride"], topic: "Numpy" },
+    // NB: keep "as-strided" (Numpy/PyTorch reshape op) but NOT bare "stride" —
+    // bare "stride" misroutes CNN concepts like `stride-kernel-element-step`
+    // (conv kernel stride, not byte-stride) to Numpy.
+    { tokens: ["as-strided"], topic: "Numpy" },
     { tokens: ["argmax", "softmax", "logsumexp", "log-sum-exp"], topic: "Numpy" },
     { tokens: ["boolean-mask", "integer-array-indexing", "isfinite-mask"], topic: "Numpy" },
-    { tokens: ["reshape", "view-vs-reshape", "permute", "flatten", "transpose"], topic: "Numpy" },
+    // NB: dropped "flatten" — the only atom matching it is `flatten-layer`
+    // (CNN `nn.Flatten` module), which should route via CNN alias, not Numpy.
+    { tokens: ["reshape", "view-vs-reshape", "permute", "transpose"], topic: "Numpy" },
     { tokens: ["torch-arange", "torch-where", "torch-stack", "linspace", "tensor-zeros", "tensor-unbind", "tensor-item"], topic: "Numpy" },
     { tokens: ["outer-product", "vector-normalisation", "rotation-matrix", "surface-normal"], topic: "Numpy" },
   ];

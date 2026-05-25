@@ -12,6 +12,7 @@ Endpoints:
   POST /api/practice/feedback
   POST /api/practice/visual-debug
   GET  /api/practice/visual-debug
+  GET  /api/practice/state
   GET  /api/practice/subtopics
   PUT  /api/practice/weights
   POST /api/practice/run-code

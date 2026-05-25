@@ -2,6 +2,7 @@
 Subtopic-stats and weight-update endpoints.
 
 Endpoints (mounted under /api/practice by the parent router):
+  GET /state
   GET /subtopics
   PUT /weights
 """
@@ -13,10 +14,71 @@ from fastapi import APIRouter, Depends
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
-from app.practice_schemas import SubtopicStatsResponse, WeightsUpdateRequest
+from app.practice_schemas import (
+    PracticeStateResponse,
+    SubtopicStateSnapshot,
+    SubtopicStatsResponse,
+    WeightsUpdateRequest,
+)
 from app.prioritization import get_subtopic_weights
+from app.questions import get_topic_for_subtopic
 
 router = APIRouter()
+
+
+def _unprefix_subtopic(full_key: str) -> str:
+    """Strip "{topic}: " prefix from a backend subtopic key.
+
+    Backend `questions.py` prefixes subtopics as `f"{topic}: {raw}"` to
+    keep Numpy/Einsum subtopics distinct across the bank (questions.py:556).
+    The frontend `questionsBank` (loaded from the static questions.json
+    export) keeps subtopics RAW. The atom-readiness bridge in
+    concept-graph/atom_readiness.js builds its topicIndex from
+    `questionsBank` (raw), so wire-format state keys must also be raw —
+    otherwise the alias-bridge lookup misses every subtopic.
+
+    Falls back to the raw split if the topic lookup fails (e.g. legacy
+    state for a subtopic no longer in the bank).
+    """
+    topic = get_topic_for_subtopic(full_key)
+    prefix = f"{topic}: "
+    if topic and full_key.startswith(prefix):
+        return full_key[len(prefix):]
+    if ": " in full_key:
+        return full_key.split(": ", 1)[1]
+    return full_key
+
+
+@router.get("/state", response_model=PracticeStateResponse)
+def get_practice_state(user: User = Depends(get_current_user)) -> PracticeStateResponse:
+    """Return per-subtopic adaptive snapshot for the current user.
+
+    Consumed by the frontend (practice/adaptive.js#loadBackendAdaptiveState)
+    to hydrate `adaptiveStateJson` so concept-graph/atom_readiness.js can
+    bridge atoms onto real EWMA baselines in backend mode (logged-in users
+    skip the Pyodide engine, so without this endpoint the bridge sees an
+    empty state and all atoms return the fallback readiness).
+
+    Subtopic keys are unprefixed on egress to match the raw-subtopic
+    format the frontend questionsBank uses. See `_unprefix_subtopic`.
+    """
+    user_id = str(user.id)
+    user_state = get_user_state(user_id)
+    return PracticeStateResponse(
+        user_id=user_state.user_id,
+        subtopic_states={
+            _unprefix_subtopic(name): SubtopicStateSnapshot(
+                subtopic=_unprefix_subtopic(s.subtopic),
+                n=s.n,
+                baseline=s.baseline,
+                p=s.p,
+                target_difficulty=s.target_difficulty,
+                last_update_ts=s.last_update_ts,
+            )
+            for name, s in user_state.subtopic_states.items()
+        },
+        custom_weights=dict(user_state.custom_weights or {}),
+    )
 
 
 @router.get("/subtopics", response_model=list[SubtopicStatsResponse])

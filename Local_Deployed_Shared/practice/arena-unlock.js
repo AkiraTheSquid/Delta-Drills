@@ -91,9 +91,15 @@
 
   // Build the "why you're ready" recap line: list each prereq's current
   // score with its target so the student knows which gates they cleared.
-  const renderWhyMet = (exTitle) => {
+  // For procedural drills (ex.isDrill / ex.subtopics) we instead show
+  // which subtopic(s) the drill is going to feed — drills BUILD prereqs
+  // rather than consume them, so there's nothing "cleared" to recap.
+  const renderWhyMet = (ex) => {
+    if (ex?.isDrill && Array.isArray(ex.subtopics) && ex.subtopics.length) {
+      return `Targets: ${ex.subtopics.join(" · ")}`;
+    }
     if (typeof window.getArenaPrereqsForExercise !== "function") return "";
-    const prereqs = window.getArenaPrereqsForExercise(exTitle);
+    const prereqs = window.getArenaPrereqsForExercise(ex?.title || "");
     if (!prereqs.length) return "";
     const parts = prereqs.map((p) => {
       const sc = (typeof window.getArenaPrereqSubtopicScore === "function")
@@ -124,16 +130,23 @@
     return t ? `${t}: ${s}` : s;
   };
 
-  const _prereqKeysForExercise = (exTitle) => {
+  // Resolve the subtopics the arena-rating POST should bump for this ex.
+  // Drills carry their own ex.subtopics (the atom's targeted subtopic from
+  // the new algo). ARENA exercises fall back to the legacy prereq map.
+  const _prereqKeysForExercise = (ex) => {
+    if (ex && Array.isArray(ex.subtopics) && ex.subtopics.length) {
+      return Array.from(new Set(ex.subtopics.map((s) => String(s).trim()).filter(Boolean)));
+    }
+    const exTitle = typeof ex === "string" ? ex : ex?.title;
     if (typeof window.getArenaPrereqsForExercise !== "function") return [];
     const prereqs = window.getArenaPrereqsForExercise(exTitle) || [];
     return Array.from(new Set(prereqs.map((p) => _composeSubtopicKey(p.topic, p.subtopic))));
   };
 
-  const _snapshotBeforeScores = (exTitle) => {
+  const _snapshotBeforeScores = (ex) => {
     const cache = window.__arenaSubtopicsCache || {};
     const out = {};
-    _prereqKeysForExercise(exTitle).forEach((key) => {
+    _prereqKeysForExercise(ex).forEach((key) => {
       const entry = cache[key];
       out[key] = (entry && Number.isFinite(entry.p)) ? entry.p : null; // 0-1
     });
@@ -150,11 +163,11 @@
 
   const showCard = (ex) => {
     currentEx = ex;
-    beforeScores = _snapshotBeforeScores(ex.title);
+    beforeScores = _snapshotBeforeScores(ex);
     const clean = stripBackticks(ex.title);
     titleEl.textContent = ex.title;
     headingEl.textContent = clean;
-    whyEl.textContent = renderWhyMet(ex.title);
+    whyEl.textContent = renderWhyMet(ex);
     colabBtn.href = colabHrefForUnlock();
     colabBtn.setAttribute("data-copy-key", clean);
     placeholderEl.classList.add("hidden");
@@ -197,7 +210,7 @@
   const postArenaRating = async (ex, { feedback, correct }) => {
     if (!ex || typeof apiFetch !== "function") return [];
     if (typeof authToken !== "undefined" && !authToken) return [];
-    const subtopics = _prereqKeysForExercise(ex.title);
+    const subtopics = _prereqKeysForExercise(ex);
     if (!subtopics.length) return [];
     const rating = window.ArenaUnlockTimer?.getRating?.() || {};
     const body = {
@@ -381,8 +394,12 @@
   // manual launch — those exercises should remain re-practicable), swap
   // back to the practice view, fire callback.
   continueBtn.addEventListener("click", () => {
-    if (currentEx && !currentEx._targetedPractice && typeof window.markArenaExerciseShown === "function") {
-      window.markArenaExerciseShown(currentEx.title);
+    if (currentEx && !currentEx._targetedPractice) {
+      if (currentEx.isDrill && typeof window.markDrillShown === "function") {
+        window.markDrillShown(currentEx.id);
+      } else if (typeof window.markArenaExerciseShown === "function") {
+        window.markArenaExerciseShown(currentEx.title);
+      }
     }
     hideCard();
     const cb = onContinueCallback;
@@ -440,12 +457,28 @@
       // Refresh first so a just-submitted answer that bumped a subtopic
       // over its gate is reflected on THIS click, not the next one.
       try { await refreshScores(); } catch (_) {}
-      if (typeof window.getNextUnshownUnlockedArenaExercise !== "function") return false;
-      const ex = window.getNextUnshownUnlockedArenaExercise();
-      if (!ex) return false;
-      onContinueCallback = onContinue;
-      showCard(ex);
-      return true;
+      // 1. ARENA legacy unlocks (callum's ARENA_3.0 notebooks).
+      if (typeof window.getNextUnshownUnlockedArenaExercise === "function") {
+        const ex = window.getNextUnshownUnlockedArenaExercise();
+        if (ex) {
+          onContinueCallback = onContinue;
+          showCard(ex);
+          return true;
+        }
+      }
+      // 2. Procedural drills (new-algo, Delta-Drills repo). Drills BUILD
+      // subtopic mastery; we surface each once when its EWMA crosses the
+      // drill's unlockMinPct so the student moves from text-bank reps into
+      // a real applied notebook.
+      if (typeof window.getNextUnshownUnlockedDrill === "function") {
+        const drill = window.getNextUnshownUnlockedDrill();
+        if (drill) {
+          onContinueCallback = onContinue;
+          showCard(drill);
+          return true;
+        }
+      }
+      return false;
     },
     // Manual launch — used by the Targeted Practice "Practice this problem"
     // button. Switches the active tab to Practice (the unlock-page lives

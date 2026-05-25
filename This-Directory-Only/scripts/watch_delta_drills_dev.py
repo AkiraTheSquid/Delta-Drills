@@ -43,6 +43,30 @@ def parse_args() -> argparse.Namespace:
         default=1.5,
         help="How often to inspect the remote-debugging tab list.",
     )
+    parser.add_argument(
+        "--prune-mode",
+        choices=("none", "snapshot", "allowlist"),
+        default="snapshot",
+        help=(
+            "How aggressively to close non-Delta-Drills tabs. "
+            "'none' = never close anything (pure observer). "
+            "'snapshot' (default) = at startup, snapshot the existing non-allowed "
+            "tabs and close ONLY those. Tabs the user opens after startup — "
+            "including Colab tabs spawned by ddrills GUI clicks — are kept. "
+            "'allowlist' (legacy) = continuously close any tab whose URL "
+            "doesn't match the allow-list. Note: this kills GUI-opened popups."
+        ),
+    )
+    parser.add_argument(
+        "--allow",
+        action="append",
+        default=[],
+        metavar="URL_PREFIX",
+        help=(
+            "Additional URL prefix to treat as allowed (repeatable). "
+            "Only applies in --prune-mode=allowlist."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -79,13 +103,46 @@ def main() -> int:
     signal.signal(signal.SIGTERM, on_signal)
     signal.signal(signal.SIGINT, on_signal)
 
-    prefixes = DEFAULT_ALLOWED_PREFIXES + (args.frontend_url.rstrip("/") + "/",)
+    prefixes = (
+        DEFAULT_ALLOWED_PREFIXES
+        + (args.frontend_url.rstrip("/") + "/",)
+        + tuple(args.allow)
+    )
 
     print(
-        f"watching Chrome debug port {args.port} for non-Delta-Drills tabs",
+        f"watching Chrome debug port {args.port} (prune-mode={args.prune_mode})",
         flush=True,
     )
 
+    if args.prune_mode == "none":
+        # Pure observer: park here so the script keeps the watcher PID alive
+        # for delta_drills_dev's cleanup hook, but never touch any tab.
+        while running:
+            time.sleep(args.poll_seconds)
+        return 0
+
+    snapshot_kill_set: set[str] = set()
+    if args.prune_mode == "snapshot":
+        # One-shot prune at startup of any stale non-Delta-Drills tabs
+        # that pre-existed in the profile. Anything opened AFTER (e.g. a
+        # Colab popup spawned from a ddrills GUI click) is kept.
+        try:
+            tabs = remote_json(args.port, "/json/list")
+            for tab in tabs:
+                url = tab.get("url", "")
+                tab_id = tab.get("id", "")
+                if not tab_id or allowed(url, prefixes):
+                    continue
+                snapshot_kill_set.add(tab_id)
+                close_tab(args.port, tab_id, url)
+        except Exception as exc:
+            print(f"snapshot prune skipped: {exc}", flush=True)
+        # Park; we're done after the one-shot prune.
+        while running:
+            time.sleep(args.poll_seconds)
+        return 0
+
+    # args.prune_mode == "allowlist" — legacy continuous mode
     while running:
         try:
             tabs = remote_json(args.port, "/json/list")
@@ -100,7 +157,6 @@ def main() -> int:
                 continue
             if allowed(url, prefixes):
                 continue
-            # Keep the session scoped to Delta Drills only.
             close_tab(args.port, tab_id, url)
 
         time.sleep(args.poll_seconds)

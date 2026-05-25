@@ -53,6 +53,10 @@ CSV_SOURCES = [
         ),
         "skip_rows": 0,
     },
+    {
+        "path": CSV_DIR / "cnn_problems.csv",
+        "skip_rows": 0,
+    },
 ]
 
 CURATED_EXCLUDED_IDS = {9, 20, 21, 33, 39, 44, 45, 57, 88, 161, 188, 203, 221, 222, 223, 226}

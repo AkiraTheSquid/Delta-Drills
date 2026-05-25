@@ -52,6 +52,7 @@ EINOPS_CSV_PATH = (
     if (_CSV_DIR / "einops_problems_with_outputs.csv").exists()
     else _CSV_DIR / "einops_problems.csv"
 )
+CNN_CSV_PATH = _CSV_DIR / "cnn_problems.csv"
 
 
 def _chatgpt_runtime_dir() -> Path:
@@ -633,6 +634,7 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
       1. Numpy CSV  — IDs 1..N
       2. Einsum CSV — IDs N+1..N+70
       3. Einops CSV — IDs N+71..N+70+92
+      4. CNN CSV    — IDs after einops; bridges to atoms with topic="CNNs"
 
     If csv_path is given (e.g. in tests), only that file is loaded using
     the numpy CSV layout (2 empty header rows).
@@ -665,8 +667,12 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             EINSUM_CSV_PATH, questions, start_id=next_id, skip_rows=0,
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
-        _load_csv_into(
+        next_id = _load_csv_into(
             EINOPS_CSV_PATH, questions, start_id=next_id, skip_rows=0,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
+        _load_csv_into(
+            CNN_CSV_PATH, questions, start_id=next_id, skip_rows=0,
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
 

@@ -89,6 +89,28 @@ class WeightsUpdateRequest(BaseModel):
     weights: Dict[str, float]   # { "Numpy: Core array literacy": 0.175, ... }
 
 
+class SubtopicStateSnapshot(BaseModel):
+    # Subset of adaptive.SubtopicState fields needed by the frontend bridge
+    # (computeAtomReadiness in concept-graph/atom_readiness.js). `history[]`
+    # and `served_question_ids[]` are intentionally omitted — they aren't
+    # read by the bridge and bloat the response.
+    subtopic: str
+    n: int
+    baseline: float
+    p: float
+    target_difficulty: float
+    last_update_ts: str | None = None
+
+
+class PracticeStateResponse(BaseModel):
+    # Shape mirrors adaptive._save_user_state minus the heavy per-attempt
+    # arrays. Frontend reassigns `adaptiveStateJson = JSON.stringify(this)`
+    # so the bridge sees `state.subtopic_states[sub].baseline`.
+    user_id: str
+    subtopic_states: Dict[str, SubtopicStateSnapshot]
+    custom_weights: Dict[str, float] = Field(default_factory=dict)
+
+
 class CodeRunRequest(BaseModel):
     code: str
 

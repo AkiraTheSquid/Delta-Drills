@@ -12932,5 +12932,809 @@
       "expected_artifact_type": "image",
       "supports_visual_output": true
     }
+  },
+  {
+    "id": 405,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Conv2d output size: given input H=W=32, kernel=5, stride=1, padding=0, compute the spatial output side using floor((H + 2P - K)/S + 1). Print as int.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nH,K,S,P = 32,5,1,0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nH,K,S,P = 32,5,1,0",
+          "call": "solve()",
+          "expected_expr": "(H + 2*P - K)//S + 1"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; H,K,S,P = 32,5,1,0; print((H + 2*P - K)//S + 1)",
+      "expected_output": "28",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 406,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Conv2d output size with stride and padding: input H=W=224, kernel=7, stride=2, padding=3. Compute output side using floor((H+2P-K)/S+1). Print as int.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nH,K,S,P = 224,7,2,3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "H,K,S,P = 224,7,2,3",
+          "call": "solve()",
+          "expected_expr": "(H + 2*P - K)//S + 1"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "H,K,S,P = 224,7,2,3; print((H + 2*P - K)//S + 1)",
+      "expected_output": "112",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 407,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Verify the output shape of a Conv2d empirically. Input shape (1, 3, 32, 32), kernel=3, stride=2, padding=1, out_channels=8. Print the output shape as tuple.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nimport torch.nn as nn\nx = torch.zeros(1,3,32,32)\nconv = nn.Conv2d(3, 8, kernel_size=3, stride=2, padding=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nimport torch.nn as nn\nx = torch.zeros(1,3,32,32)\nconv = nn.Conv2d(3, 8, kernel_size=3, stride=2, padding=1)",
+          "call": "solve()",
+          "expected_expr": "tuple(conv(x).shape)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; import torch.nn as nn; x = torch.zeros(1,3,32,32); conv = nn.Conv2d(3, 8, kernel_size=3, stride=2, padding=1); print(tuple(conv(x).shape))",
+      "expected_output": "(1, 8, 16, 16)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 408,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "How many input multiply-accumulates per output position for a Conv2d with in_channels=C, kernel=K? Print the formula's value for C=64, K=3 (use C*K*K).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nC,K = 64,3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "C,K = 64,3",
+          "call": "solve()",
+          "expected_expr": "C * K * K"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "C,K = 64,3; print(C * K * K)",
+      "expected_output": "576",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 409,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Same-padding rule for odd kernel: given kernel=5 and stride=1, what padding P keeps output side equal to input side? Use P = (K-1)//2. Print as int.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nK = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "K = 5",
+          "call": "solve()",
+          "expected_expr": "(K-1)//2"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "K = 5; print((K-1)//2)",
+      "expected_output": "2",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 410,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Output shape & arithmetic",
+      "subtopic_key": "CNN: Output shape & arithmetic",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Pad a 1-D tensor x=tensor([1,2,3,4]) with one zero on each side using new_full to allocate the padded buffer then copy in. Print the result tensor.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\nout[1:-1] = x\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\nout[1:-1] = x",
+          "call": "solve()",
+          "expected_expr": "out"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; x = torch.tensor([1,2,3,4]); out = x.new_full((x.shape[0]+2,), 0); out[1:-1] = x; print(out)",
+      "expected_output": "tensor([0, 1, 2, 3, 4, 0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 411,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Print the weight shape of a nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3). Expected order is (out_channels, in_channels, kH, kW).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nconv = nn.Conv2d(3, 16, kernel_size=3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nconv = nn.Conv2d(3, 16, kernel_size=3)",
+          "call": "solve()",
+          "expected_expr": "tuple(conv.weight.shape)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; conv = nn.Conv2d(3, 16, kernel_size=3); print(tuple(conv.weight.shape))",
+      "expected_output": "(16, 3, 3, 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 412,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Create nn.Conv2d(3, 16, kernel_size=3, bias=False) and confirm bias is None. Print 'bias is None: True' or False.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nconv = nn.Conv2d(3, 16, kernel_size=3, bias=False)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nconv = nn.Conv2d(3, 16, kernel_size=3, bias=False)",
+          "call": "solve()",
+          "expected_expr": "f'bias is None: {conv.bias is None}'"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; conv = nn.Conv2d(3, 16, kernel_size=3, bias=False); print(f'bias is None: {conv.bias is None}')",
+      "expected_output": "bias is None: True",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 413,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Why is bias=False used when a Conv2d is immediately followed by BatchNorm2d? Build the pair `nn.Sequential(nn.Conv2d(3,16,3,bias=False), nn.BatchNorm2d(16))` and print the number of learnable parameters using sum(p.numel() for p in seq.parameters()).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nseq = nn.Sequential(nn.Conv2d(3,16,3,bias=False), nn.BatchNorm2d(16))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nseq = nn.Sequential(nn.Conv2d(3,16,3,bias=False), nn.BatchNorm2d(16))",
+          "call": "solve()",
+          "expected_expr": "sum(p.numel() for p in seq.parameters())"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; seq = nn.Sequential(nn.Conv2d(3,16,3,bias=False), nn.BatchNorm2d(16)); print(sum(p.numel() for p in seq.parameters()))",
+      "expected_output": "464",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 414,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Use torch.nn.functional.conv2d to apply a single 3x3 averaging kernel to a (1,1,4,4) ones input. Print the output tensor (use kernel = torch.ones(1,1,3,3)/9).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nimport torch.nn.functional as F\nx = torch.ones(1,1,4,4)\nk = torch.ones(1,1,3,3)/9\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nimport torch.nn.functional as F\nx = torch.ones(1,1,4,4)\nk = torch.ones(1,1,3,3)/9",
+          "call": "solve()",
+          "expected_expr": "F.conv2d(x, k)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; import torch.nn.functional as F; x = torch.ones(1,1,4,4); k = torch.ones(1,1,3,3)/9; print(F.conv2d(x, k))",
+      "expected_output": "tensor([[[[1., 1.],\n          [1., 1.]]]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 415,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Express a 1D conv as an einsum. Given input x shape (B, C_in, L) and weight w shape (C_out, C_in, K), the unfolded patches xp have shape (B, C_in, L_out, K). Print the einsum string that contracts xp with w into output (B, C_out, L_out).",
+      "task_type": "tensor_expression",
+      "language": "python",
+      "primary_library": "einops.einsum",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nh = 2\nw = 3\npatches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "h = 2\nw = 3\npatches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)",
+          "call": "solve()",
+          "expected_expr": "'bilk,oik->bol'"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "print('bilk,oik->bol')",
+      "expected_output": "bilk,oik->bol",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 416,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "subtopic_key": "CNN: Conv2d module mechanics",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Print the parameter count of nn.Conv2d(64, 128, kernel_size=3, padding=1) with default bias=True. Formula: out_ch*(in_ch*K*K) + out_ch.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nC_in, C_out, K = 64, 128, 3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "C_in, C_out, K = 64, 128, 3",
+          "call": "solve()",
+          "expected_expr": "C_out * (C_in * K * K) + C_out"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "C_in, C_out, K = 64, 128, 3; print(C_out * (C_in * K * K) + C_out)",
+      "expected_output": "73856",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 417,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Apply nn.MaxPool2d(kernel_size=2, stride=2) to an input of shape (1, 4, 8, 8). Print the output shape as tuple.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nimport torch.nn as nn\nx = torch.zeros(1, 4, 8, 8)\npool = nn.MaxPool2d(kernel_size=2, stride=2)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nimport torch.nn as nn\nx = torch.zeros(1, 4, 8, 8)\npool = nn.MaxPool2d(kernel_size=2, stride=2)",
+          "call": "solve()",
+          "expected_expr": "tuple(pool(x).shape)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; import torch.nn as nn; x = torch.zeros(1, 4, 8, 8); pool = nn.MaxPool2d(kernel_size=2, stride=2); print(tuple(pool(x).shape))",
+      "expected_output": "(1, 4, 4, 4)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 418,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Global average pool a (1, 64, 7, 7) feature map down to (1, 64) using x.mean(dim=(2,3)). Print the resulting shape as tuple.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nx = torch.zeros(1, 64, 7, 7)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nx = torch.zeros(1, 64, 7, 7)",
+          "call": "solve()",
+          "expected_expr": "tuple(x.mean(dim=(2,3)).shape)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; x = torch.zeros(1, 64, 7, 7); print(tuple(x.mean(dim=(2,3)).shape))",
+      "expected_output": "(1, 64)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 419,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Flatten the output of a conv stack before a linear head. Given x of shape (8, 16, 4, 4), use nn.Flatten() (default start_dim=1) and print the flattened shape.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nimport torch.nn as nn\nx = torch.zeros(8, 16, 4, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nimport torch.nn as nn\nx = torch.zeros(8, 16, 4, 4)",
+          "call": "solve()",
+          "expected_expr": "tuple(nn.Flatten()(x).shape)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; import torch.nn as nn; x = torch.zeros(8, 16, 4, 4); print(tuple(nn.Flatten()(x).shape))",
+      "expected_output": "(8, 256)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 420,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Print the number of learnable parameters in nn.BatchNorm2d(num_features=32). Expected: 2 * num_features (weight + bias).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nbn = nn.BatchNorm2d(32)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nbn = nn.BatchNorm2d(32)",
+          "call": "solve()",
+          "expected_expr": "sum(p.numel() for p in bn.parameters())"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; bn = nn.BatchNorm2d(32); print(sum(p.numel() for p in bn.parameters()))",
+      "expected_output": "64",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 421,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "BatchNorm2d keeps running mean/var as buffers, not parameters. Print the names of all buffers on nn.BatchNorm2d(8) using list(dict(bn.named_buffers()).keys()).",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nbn = nn.BatchNorm2d(8)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nbn = nn.BatchNorm2d(8)",
+          "call": "solve()",
+          "expected_expr": "list(dict(bn.named_buffers()).keys())"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; bn = nn.BatchNorm2d(8); print(list(dict(bn.named_buffers()).keys()))",
+      "expected_output": "['running_mean', 'running_var', 'num_batches_tracked']",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 422,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "subtopic_key": "CNN: Pooling, Flatten, BatchNorm",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Toggle a BatchNorm module to eval mode and confirm running stats are used instead of batch stats. After bn.eval(), print bn.training.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nbn = nn.BatchNorm2d(8)\nbn.eval()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nbn = nn.BatchNorm2d(8)\nbn.eval()",
+          "call": "solve()",
+          "expected_expr": "bn.training"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; bn = nn.BatchNorm2d(8); bn.eval(); print(bn.training)",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 423,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Subclass nn.Module with a single nn.Linear(4, 2) inside __init__. Print the number of learnable parameters using sum(p.numel() for p in model.parameters()).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "__init__",
+      "starter_code": null,
+      "test_cases": [],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn\nclass M(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc = nn.Linear(4, 2)\n    def forward(self, x):\n        return self.fc(x)\nmodel = M(); print(sum(p.numel() for p in model.parameters()))",
+      "expected_output": "10",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 424,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Wrap a raw torch.randn(3, 4) tensor as a learnable parameter on a Module using nn.Parameter. Print whether it appears in .parameters() as `param_count: 1`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "__init__",
+      "starter_code": null,
+      "test_cases": [],
+      "submission_mode": "function",
+      "canonical_solution": "import torch; import torch.nn as nn\nclass M(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.w = nn.Parameter(torch.randn(3, 4))\nmodel = M(); print(f'param_count: {len(list(model.parameters()))}')",
+      "expected_output": "param_count: 1",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 425,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Print the canonical 4-line training step: zero_grad, forward+loss, backward, optimizer.step. Use single-quoted strings and `; ` separators. Order matters.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nprint('opt.zero_grad()\nloss = loss_fn(model(x), y)\nloss.backward()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "print('opt.zero_grad()\nloss = loss_fn(model(x), y)\nloss.backward()",
+          "call": "solve()",
+          "expected_expr": "opt.step()')"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "print('opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()')",
+      "expected_output": "opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 426,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 35,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Use torch.inference_mode() to disable autograd for evaluation. Inside the context, print whether the result of torch.ones(3).sum() requires grad.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch\nwith torch.inference_mode():\ny = torch.ones(3).sum()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch\nwith torch.inference_mode():\ny = torch.ones(3).sum()",
+          "call": "solve()",
+          "expected_expr": "y.requires_grad"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nwith torch.inference_mode():\n    y = torch.ones(3).sum()\nprint(y.requires_grad)",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 427,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Freeze all parameters of a model for feature-extraction fine-tuning. After `for p in model.parameters(): p.requires_grad_(False)`, print the count of parameters still requiring grad.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\np.requires_grad_(False)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\np.requires_grad_(False)",
+          "call": "solve()",
+          "expected_expr": "sum(1 for p in model.parameters() if p.requires_grad)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; model = nn.Linear(4, 2)\nfor p in model.parameters():\n    p.requires_grad_(False)\nprint(sum(1 for p in model.parameters() if p.requires_grad))",
+      "expected_output": "0",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 428,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "curriculum": {
+      "topic": "CNN",
+      "subtopic": "nn.Module & training loop",
+      "subtopic_key": "CNN: nn.Module & training loop",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Distinguish .train() vs .eval() modes on a Module. Build nn.Sequential(nn.Linear(4,2), nn.Dropout(0.5)), put in eval mode, then print model.training.",
+      "task_type": "stdout_prediction",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Linear(4, 2), nn.Dropout(0.5))\nmodel.eval()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch.nn as nn\nmodel = nn.Sequential(nn.Linear(4, 2), nn.Dropout(0.5))\nmodel.eval()",
+          "call": "solve()",
+          "expected_expr": "model.training"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch.nn as nn; model = nn.Sequential(nn.Linear(4, 2), nn.Dropout(0.5)); model.eval(); print(model.training)",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

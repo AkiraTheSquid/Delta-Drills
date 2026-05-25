@@ -103,6 +103,23 @@
         }
       }
     }
+    // Procedural drills (window.DRILLS_CATALOG) ride in on the same surface.
+    // Each drill carries its own subtopics + targetSeconds so the launch path
+    // (ArenaUnlock.showFor below) can POST to the new arena-rating EWMA flow
+    // without falling through to the legacy ARENA_PREREQS_TEMP map.
+    const drills = Array.isArray(window.DRILLS_CATALOG) ? window.DRILLS_CATALOG : [];
+    for (const d of drills) {
+      out.push({
+        id: d.id,
+        title: d.title,
+        sub: d.sub,
+        notebookPath: d.notebookPath,
+        anchor: "",
+        subtopics: d.subtopics,
+        targetSeconds: d.targetSeconds,
+        isDrill: true,
+      });
+    }
     return out;
   };
 
@@ -305,7 +322,15 @@
             return;
           }
           window.ArenaUnlock.showFor(
-            { title: ex.title, notebookPath: ex.notebookPath, anchor: ex.anchor },
+            {
+              title: ex.title,
+              notebookPath: ex.notebookPath,
+              anchor: ex.anchor,
+              // Procedural drills: pass through subtopics + targetSeconds + isDrill
+              // so the card hits the new arena-rating EWMA pipeline against the
+              // drill's atom subtopic, and the timer/Cleared line render correctly.
+              ...(ex.isDrill ? { subtopics: ex.subtopics, targetSeconds: ex.targetSeconds, isDrill: true } : {}),
+            },
             () => {
               if (typeof switchTab === "function") switchTab("targeted-practice");
             }

@@ -307,6 +307,10 @@ json.dumps(_delta_results)
         throw new Error(detail || "Failed to send feedback.");
       }
       const response = await res.json();
+      // /feedback is the only backend mutation that changes subtopic
+      // baselines (submit/override only touch pending_attempt). Re-pull
+      // /state so the concept-graph atom-readiness bridge updates live.
+      await loadBackendAdaptiveState();
       emitPracticeStateChanged();
       return response;
     }
