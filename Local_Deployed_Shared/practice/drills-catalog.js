@@ -51,8 +51,14 @@
   });
 
   window.DRILLS_CATALOG = [
+    // all-reduce-compose
+    E("all-reduce-compose", 1, "compose all_reduce from reduce plus broadcast", "Distributed: all_reduce composition", "arena-procedural-drills/prereqs_distributed/all-reduce-compose/01-compose-all-reduce-from-reduce-plus-broadcast.ipynb", "all-reduce-compose — ex1: compose all_reduce from reduce plus broadcast"),
+    // all-reduce-grad-sync
+    E("all-reduce-grad-sync", 1, "synchronize gradients across ranks with all_reduce", "Distributed: all_reduce grad sync", "arena-procedural-drills/prereqs_distributed/all-reduce-grad-sync/01-synchronize-gradients-across-ranks-with-all-reduce.ipynb", "all-reduce-grad-sync — ex1: synchronize gradients across ranks with all_reduce"),
     // arg-position-back-functions
     E("arg-position-back-functions", 1, "write div_back0 and div_back1 — asymmetric per-arg back fns", "Backprop: Arg-position back funcs", "arena-procedural-drills/prereqs_autograd_internals/arg-position-back-functions/01-write-div-back0-and-div-back1-asymmetric-per-arg.ipynb", "arg-position-back-functions — ex1: write div_back0 and div_back1 — asymmetric per-arg back fns"),
+    // argmax-accuracy-eval
+    E("argmax-accuracy-eval", 1, "top-1 classification accuracy from logits", "Eval: argmax accuracy", "arena-procedural-drills/prereqs_adam_trainer/argmax-accuracy-eval/01-top-1-classification-accuracy-from-logits.ipynb", "argmax-accuracy-eval — ex1: top-1 classification accuracy from logits"),
     // as-strided-noncontig-source
     E("as-strided-noncontig-source", 1, "read the strides of a contiguous tensor", "Numpy: Applied patterns and advanced", "arena-procedural-drills/prereqs_numpy/as-strided-noncontig-source/01-read-the-strides-of-a-contiguous-tensor.ipynb", "as-strided-noncontig-source — ex1: read the strides of a contiguous tensor"),
     E("as-strided-noncontig-source", 2, "transpose breaks contiguity", "Numpy: Applied patterns and advanced", "arena-procedural-drills/prereqs_numpy/as-strided-noncontig-source/02-transpose-breaks-contiguity.ipynb", "as-strided-noncontig-source — ex2: transpose breaks contiguity"),
@@ -66,11 +72,21 @@
     // as-strided-windowing
     E("as-strided-windowing", 1, "compute size + stride args for a 1-D sliding window", "PyTorch: as_strided windowing", "arena-procedural-drills/prereqs_tensor_mechanics/as-strided-windowing/01-compute-size-stride-for-1d-sliding-window.ipynb", "as-strided-windowing — ex1: compute size + stride args for a 1-D sliding window"),
     E("as-strided-windowing", 2, "batched + channelled windowing for conv1d input prep", "PyTorch: as_strided windowing", "arena-procedural-drills/prereqs_tensor_mechanics/as-strided-windowing/02-batched-channelled-windowing-for-conv1d-input-prep.ipynb", "as-strided-windowing — ex2: batched + channelled windowing for conv1d input prep"),
+    // avgpool-reduce
+    E("avgpool-reduce", 1, "build AvgPool2d via einops.reduce", "CNN: AvgPool as reduce", "arena-procedural-drills/prereqs_cnn_extras/avgpool-reduce/01-build-avgpool2d-via-einops-reduce.ipynb", "avgpool-reduce — ex1: build AvgPool2d via einops.reduce"),
     // backward-fn-signature
     E("backward-fn-signature", 1, "write log_back with the canonical (grad_out, out, x) signature", "Backprop: backward fn signature", "arena-procedural-drills/prereqs_backprop/backward-fn-signature/01-write-log-back-with-canonical-signature.ipynb", "backward-fn-signature — ex1: write log_back with the canonical (grad_out, out, x) signature"),
     E("backward-fn-signature", 2, "write negative_back and exp_back — back-fn signature, two ops", "Backprop: backward fn signature", "arena-procedural-drills/prereqs_backprop/backward-fn-signature/02-negative-and-exp-back-two-ops.ipynb", "backward-fn-signature — ex2: write negative_back and exp_back — back-fn signature, two ops"),
+    // backward-func-lookup
+    E("backward-func-lookup", 1, "implement BackwardFuncLookup with (fn, argnum) keys", "Backprop: BackwardFuncLookup", "arena-procedural-drills/prereqs_autograd_pt2/backward-func-lookup/01-implement-backward-func-lookup-with-fn-argnum-keys.ipynb", "backward-func-lookup — ex1: implement BackwardFuncLookup with (fn, argnum) keys"),
     // backward-on-scalar-loss
     E("backward-on-scalar-loss", 1, "reduce per-sample loss to a scalar before backward", "PyTorch: backward()", "arena-procedural-drills/prereqs_training_loop/backward-on-scalar-loss/01-reduce-per-sample-loss-to-a-scalar-before-backward.ipynb", "backward-on-scalar-loss — ex1: reduce per-sample loss to a scalar before backward"),
+    // batchnorm-affine-params
+    E("batchnorm-affine-params", 1, "apply BatchNorm's affine step to a normalized tensor", "CNN: BatchNorm affine params", "arena-procedural-drills/prereqs_cnn_extras/batchnorm-affine-params/01-apply-batchnorms-affine-step-to-a-normalized-tensor.ipynb", "batchnorm-affine-params — ex1: apply BatchNorm's affine step to a normalized tensor"),
+    // bias-correction-divide
+    E("bias-correction-divide", 1, "bias-correct an Adam moment: m_hat = m / (1 - beta**t)", "Optimizer: Adam bias-correction divide", "arena-procedural-drills/prereqs_adam_trainer/bias-correction-divide/01-bias-correct-an-adam-moment-m-hat-equals-m-over-one-minus-beta-to-the-t.ipynb", "bias-correction-divide — ex1: bias-correct an Adam moment: m_hat = m / (1 - beta**t)"),
+    // block-group-stack
+    E("block-group-stack", 1, "build a ResNet BlockGroup from toy blocks", "CNN: BlockGroup stack", "arena-procedural-drills/prereqs_cnn_extras/block-group-stack/01-build-a-resnet-blockgroup-from-toy-blocks.ipynb", "block-group-stack — ex1: build a ResNet BlockGroup from toy blocks"),
     // boolean-mask-combine
     E("boolean-mask-combine", 1, "five-predicate ray-triangle inside test", "Numpy: Boolean mask combine", "arena-procedural-drills/prereqs_einops_advanced/boolean-mask-combine/01-five-predicate-ray-triangle-inside-test.ipynb", "boolean-mask-combine — ex1: five-predicate ray-triangle inside test"),
     // boolean-mask-identity-replace
@@ -83,6 +99,8 @@
     E("boolean-mask-identity-replace", 7, "padded-sequence mean ignoring pad positions", "Numpy: Indexing and selection", "arena-procedural-drills/prereqs_numpy/boolean-mask-identity-replace/07-padded-sequence-mean-ignoring-pad-positions.ipynb", "boolean-mask-identity-replace — ex7: padded-sequence mean ignoring pad positions"),
     E("boolean-mask-identity-replace", 8, "outlier removal with combined boolean masks", "Numpy: Indexing and selection", "arena-procedural-drills/prereqs_numpy/boolean-mask-identity-replace/08-outlier-removal-with-combined-boolean-masks.ipynb", "boolean-mask-identity-replace — ex8: outlier removal with combined boolean masks"),
     E("boolean-mask-identity-replace", 9, "non-max suppression via iterative mask update", "Numpy: Indexing and selection", "arena-procedural-drills/prereqs_numpy/boolean-mask-identity-replace/09-non-max-suppression-via-iterative-mask-update.ipynb", "boolean-mask-identity-replace — ex9: non-max suppression via iterative mask update"),
+    // box-array-to-tensor-with-recipe
+    E("box-array-to-tensor-with-recipe", 1, "box raw output into MiniTensor + attach Recipe when grad-tracked", "Backprop: Box array as Tensor + recipe", "arena-procedural-drills/prereqs_autograd_pt3/box-array-to-tensor-with-recipe/01-box-raw-output-into-tensor-and-attach-recipe.ipynb", "box-array-to-tensor-with-recipe — ex1: box raw output into MiniTensor + attach Recipe when grad-tracked"),
     // broadcasting-rules
     E("broadcasting-rules", 1, "predict the broadcast shape", "Numpy: Vectorization and broadcasting", "arena-procedural-drills/prereqs_numpy/broadcasting-rules/01-predict-the-broadcast-shape.ipynb", "broadcasting-rules — ex1: predict the broadcast shape"),
     E("broadcasting-rules", 2, "row-vector broadcast (add bias to a batch)", "Numpy: Vectorization and broadcasting", "arena-procedural-drills/prereqs_numpy/broadcasting-rules/02-row-vector-broadcast-add-bias-to-a-batch.ipynb", "broadcasting-rules — ex2: row-vector broadcast (add bias to a batch)"),
@@ -97,6 +115,8 @@
     E("buffer-copy_-inplace", 1, "update a BatchNorm running_mean buffer with copy_", "PyTorch: in-place buffer copy", "arena-procedural-drills/prereqs_backprop/buffer-copy_-inplace/01-update-running-mean-buffer-with-copy.ipynb", "buffer-copy_-inplace — ex1: update a BatchNorm running_mean buffer with copy_"),
     // chain-rule-elementwise
     E("chain-rule-elementwise", 1, "write sigmoid_back and relu_back from the elementwise chain rule", "Backprop: Elementwise chain rule", "arena-procedural-drills/prereqs_autograd_internals/chain-rule-elementwise/01-write-sigmoid-and-relu-back-from-elementwise-chain-rule.ipynb", "chain-rule-elementwise — ex1: write sigmoid_back and relu_back from the elementwise chain rule"),
+    // coerce-float-arg-to-array
+    E("coerce-float-arg-to-array", 1, "coerce_to_array: wrap int/float as 0-D tensor, pass-through others", "Backprop: Coerce float arg to array", "arena-procedural-drills/prereqs_autograd_pt3/coerce-float-arg-to-array/01-coerce-float-or-int-arg-to-0d-tensor.ipynb", "coerce-float-arg-to-array — ex1: coerce_to_array: wrap int/float as 0-D tensor, pass-through others"),
     // conditional-hparam-branch
     E("conditional-hparam-branch", 1, "Linear with optional bias gated by use_bias flag", "PyTorch: Conditional hparam branch", "arena-procedural-drills/prereqs_numerical_modules/conditional-hparam-branch/01-linear-with-optional-bias-flag.ipynb", "conditional-hparam-branch — ex1: Linear with optional bias gated by use_bias flag"),
     // contiguous-layout
@@ -120,10 +140,16 @@
     E("convT-as-flipped-padded-conv", 1, "rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)", "CNN: ConvT as flipped padded conv", "arena-procedural-drills/prereqs_cnn_deep/convT-as-flipped-padded-conv/01-rebuild-convtranspose2d-as-flipped-padded-conv2d.ipynb", "convT-as-flipped-padded-conv — ex1: rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)"),
     // convT-kernel-axis-swap
     E("convT-kernel-axis-swap", 1, "compare Conv2d and ConvTranspose2d weight shapes", "CNN: ConvT kernel axis swap", "arena-procedural-drills/prereqs_cnn_deep/convT-kernel-axis-swap/01-compare-conv2d-and-convtranspose2d-weight-shapes.ipynb", "convT-kernel-axis-swap — ex1: compare Conv2d and ConvTranspose2d weight shapes"),
+    // cross-entropy-classification-loss
+    E("cross-entropy-classification-loss", 1, "manual cross-entropy matches F.cross_entropy on logits", "Loss: Cross-entropy classification", "arena-procedural-drills/prereqs_adam_trainer/cross-entropy-classification-loss/01-manual-cross-entropy-matches-f-cross-entropy-on-logits.ipynb", "cross-entropy-classification-loss — ex1: manual cross-entropy matches F.cross_entropy on logits"),
     // dataloader-batching
     E("dataloader-batching", 1, "wrap a TensorDataset in a DataLoader and iterate batches", "PyTorch: DataLoader batching", "arena-procedural-drills/prereqs_optimizer_internals/dataloader-batching/01-wrap-a-tensordataset-in-a-dataloader-and-iterate-batches.ipynb", "dataloader-batching — ex1: wrap a TensorDataset in a DataLoader and iterate batches"),
     // device-consistent-construct
     E("device-consistent-construct", 1, "build a Module that allocates scratch tensors with the right device + dtype", "PyTorch: Device-consistent tensor construction", "arena-procedural-drills/prereqs_numerical_modules/device-consistent-construct/01-device-consistent-scratch-allocation.ipynb", "device-consistent-construct — ex1: build a Module that allocates scratch tensors with the right device + dtype"),
+    // diagonal-via-strides
+    E("diagonal-via-strides", 1, "extract diagonal of (N, N) via as_strided", "Numpy: Diagonal via strides", "arena-procedural-drills/prereqs_cnn_extras/diagonal-via-strides/01-extract-diagonal-of-nn-via-as-strided.ipynb", "diagonal-via-strides — ex1: extract diagonal of (N, N) via as_strided"),
+    // dist-send-recv-pair
+    E("dist-send-recv-pair", 1, "implement broadcast via paired dist.send and dist.recv", "Distributed: dist.send/recv pair", "arena-procedural-drills/prereqs_distributed/dist-send-recv-pair/01-implement-broadcast-via-paired-dist-send-and-dist-recv.ipynb", "dist-send-recv-pair — ex1: implement broadcast via paired dist.send and dist.recv"),
     // einops-einsum
     E("einops-einsum", 1, "elementwise product (Hadamard)", "Einops: Deep Learning", "arena-procedural-drills/prereqs_einops/einops-einsum/01-elementwise-product-hadamard.ipynb", "einops-einsum — ex1: elementwise product (Hadamard)"),
     E("einops-einsum", 2, "matrix multiplication (single-index contraction)", "Einops: Deep Learning", "arena-procedural-drills/prereqs_einops/einops-einsum/02-matrix-multiplication-single-index-contraction.ipynb", "einops-einsum — ex2: matrix multiplication (single-index contraction)"),
@@ -172,10 +198,24 @@
     // einsum-contraction
     E("einsum-contraction", 1, "predict + verify which indices get summed", "Einsum: Index contraction semantics", "arena-procedural-drills/prereqs_einops_advanced/einsum-contraction/01-predict-and-verify-which-indices-get-summed.ipynb", "einsum-contraction — ex1: predict + verify which indices get summed"),
     E("einsum-contraction", 2, "lambertian dot product via index contraction", "Einsum: Index contraction semantics", "arena-procedural-drills/prereqs_einops_advanced/einsum-contraction/02-lambertian-dot-product-via-index-contraction.ipynb", "einsum-contraction — ex2: lambertian dot product via index contraction"),
+    // ema-first-moment
+    E("ema-first-moment", 1, "Adam m-buffer EMA update m = beta1*m + (1-beta1)*g", "Optimizer: Adam EMA first moment", "arena-procedural-drills/prereqs_adam_trainer/ema-first-moment/01-adam-m-buffer-ema-update-m-equals-beta1-m-plus-one-minus-beta1-g.ipynb", "ema-first-moment — ex1: Adam m-buffer EMA update m = beta1*m + (1-beta1)*g"),
     // ema-second-moment
     E("ema-second-moment", 1, "Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2", "Optimizer: Adam EMA second moment", "arena-procedural-drills/prereqs_optimizer_internals/ema-second-moment/01-adam-v-buffer-ema-update-v-equals-beta2-v-plus-one-minus-beta2-g-squared.ipynb", "ema-second-moment — ex1: Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2"),
     // encoder-decoder-symmetric
     E("encoder-decoder-symmetric", 1, "build a tiny autoencoder whose output shape == input shape", "CNN: Encoder-decoder symmetric layout", "arena-procedural-drills/prereqs_numerical_modules/encoder-decoder-symmetric/01-tiny-autoencoder-symmetric-layout.ipynb", "encoder-decoder-symmetric — ex1: build a tiny autoencoder whose output shape == input shape"),
+    // end-grad-default-ones-like
+    E("end-grad-default-ones-like", 1, "resolve end_grad — default ones_like, else use .array", "Backprop: end-grad ones_like default", "arena-procedural-drills/prereqs_autograd_pt2/end-grad-default-ones-like/01-resolve-end-grad-default-ones-like-else-use-array.ipynb", "end-grad-default-ones-like — ex1: resolve end_grad — default ones_like, else use .array"),
+    // examples-seen-step-axis
+    E("examples-seen-step-axis", 1, "compute examples_seen = step * batch_size as wandb x-axis", "Trainer: examples-seen step axis", "arena-procedural-drills/prereqs_adam_trainer/examples-seen-step-axis/01-compute-examples-seen-as-wandb-x-axis.ipynb", "examples-seen-step-axis — ex1: compute examples_seen = step * batch_size as wandb x-axis"),
+    // fractional-stride-zero-insertion
+    E("fractional-stride-zero-insertion", 1, "build the zero-inserted intermediate for stride-2 ConvT", "CNN: ConvT fractional-stride zero insertion", "arena-procedural-drills/prereqs_cnn_extras/fractional-stride-zero-insertion/01-build-the-zero-inserted-intermediate-for-stride-2-convt.ipynb", "fractional-stride-zero-insertion — ex1: build the zero-inserted intermediate for stride-2 ConvT"),
+    // freeze-requires-grad
+    E("freeze-requires-grad", 1, "freeze a toy backbone and collect trainable params", "PyTorch: freeze via requires_grad=False", "arena-procedural-drills/prereqs_cnn_extras/freeze-requires-grad/01-freeze-a-toy-backbone-and-collect-trainable-params.ipynb", "freeze-requires-grad — ex1: freeze a toy backbone and collect trainable params"),
+    // get-children-callable-param
+    E("get-children-callable-param", 1, "get_children yields (name, value) for Tensor-valued attributes", "Backprop: get_children callable param", "arena-procedural-drills/prereqs_autograd_pt3/get-children-callable-param/01-get-children-yields-tensor-valued-attributes.ipynb", "get-children-callable-param — ex1: get_children yields (name, value) for Tensor-valued attributes"),
+    // grad-accumulate-on-leaf
+    E("grad-accumulate-on-leaf", 1, "accumulate_grad: leaf.grad = (leaf.grad or 0) + g", "Backprop: Grad accumulate on leaf", "arena-procedural-drills/prereqs_autograd_pt3/grad-accumulate-on-leaf/01-accumulate-grad-on-leaf-set-or-add.ipynb", "grad-accumulate-on-leaf — ex1: accumulate_grad: leaf.grad = (leaf.grad or 0) + g"),
     // grad-tracking-global-toggle
     E("grad-tracking-global-toggle", 1, "no_grad context manager built on a module-level toggle", "Backprop: Grad-tracking toggle", "arena-procedural-drills/prereqs_autograd_internals/grad-tracking-global-toggle/01-no-grad-context-manager-from-module-toggle.ipynb", "grad-tracking-global-toggle — ex1: no_grad context manager built on a module-level toggle"),
     // inf-masking
@@ -183,16 +223,28 @@
     // inference-mode-step
     E("inference-mode-step", 1, "decorate step with inference_mode to allow in-place leaf update", "PyTorch: Inference mode step", "arena-procedural-drills/prereqs_optimizer_internals/inference-mode-step/01-decorate-step-with-inference-mode-to-allow-in-place-leaf-update.ipynb", "inference-mode-step — ex1: decorate step with inference_mode to allow in-place leaf update"),
     E("inference-mode-step", 2, "diagnose missing inference_mode decorator on step", "PyTorch: Inference mode step", "arena-procedural-drills/prereqs_optimizer_internals/inference-mode-step/02-diagnose-missing-inference-mode-decorator-on-step.ipynb", "inference-mode-step — ex2: diagnose missing inference_mode decorator on step"),
+    // init-process-group-nccl
+    E("init-process-group-nccl", 1, "init + destroy a process group with gloo", "Distributed: init_process_group nccl", "arena-procedural-drills/prereqs_distributed/init-process-group-nccl/01-init-and-destroy-a-process-group-with-gloo.ipynb", "init-process-group-nccl — ex1: init + destroy a process group with gloo"),
+    // inplace-op-unsafe-warning
+    E("inplace-op-unsafe-warning", 1, "add_inplace_safe: refuse when .recipe is not None, mutate otherwise", "Backprop: In-place op unsafe warning", "arena-procedural-drills/prereqs_autograd_pt3/inplace-op-unsafe-warning/01-add-inplace-safe-refuse-when-recipe-attached.ipynb", "inplace-op-unsafe-warning — ex1: add_inplace_safe: refuse when .recipe is not None, mutate otherwise"),
     // inplace-param-update
     E("inplace-param-update", 1, "in-place vs out-of-place parameter update", "PyTorch: In-place param update", "arena-procedural-drills/prereqs_training_loop/inplace-param-update/01-in-place-vs-out-of-place-parameter-update.ipynb", "inplace-param-update — ex1: in-place vs out-of-place parameter update"),
+    // is-differentiable-flag
+    E("is-differentiable-flag", 1, "three-gate requires_grad reading is_differentiable from closure", "Backprop: is_differentiable flag", "arena-procedural-drills/prereqs_autograd_pt2/is-differentiable-flag/01-three-gate-requires-grad-reading-is-differentiable-from-closure.ipynb", "is-differentiable-flag — ex1: three-gate requires_grad reading is_differentiable from closure"),
     // kaiming-uniform-init
     E("kaiming-uniform-init", 1, "build a Linear with Kaiming-uniform init + histogram visualization", "Init: Kaiming uniform", "arena-procedural-drills/prereqs_numerical_modules/kaiming-uniform-init/01-kaiming-uniform-linear-init-with-histogram.ipynb", "kaiming-uniform-init — ex1: build a Linear with Kaiming-uniform init + histogram visualization"),
     // kwargs-pass-through-recipe
     E("kwargs-pass-through-recipe", 1, "thread kwargs into forward call AND Recipe", "Backprop: Kwargs pass-through", "arena-procedural-drills/prereqs_autograd_internals/kwargs-pass-through-recipe/01-thread-kwargs-into-forward-call-and-recipe.ipynb", "kwargs-pass-through-recipe — ex1: thread kwargs into forward call AND Recipe"),
     // linalg-solve-batched
     E("linalg-solve-batched", 1, "solve a batch of 2x2 systems", "PyTorch: Batched linalg.solve", "arena-procedural-drills/prereqs_geometry_cnn/linalg-solve-batched/01-solve-a-batch-of-2x2-systems.ipynb", "linalg-solve-batched — ex1: solve a batch of 2x2 systems"),
+    // log-back
+    E("log-back", 1, "implement log_back from the elementwise chain rule", "Backprop: log_back", "arena-procedural-drills/prereqs_autograd_pt2/log-back/01-implement-log-back-from-elementwise-chain-rule.ipynb", "log-back — ex1: implement log_back from the elementwise chain rule"),
     // loss-item-scalar-extract
     E("loss-item-scalar-extract", 1, "distinguish .item() from .detach().cpu() in a training-loop logger", "PyTorch: loss.item() scalar extract", "arena-procedural-drills/prereqs_numerical_modules/loss-item-scalar-extract/01-loss-item-vs-detach-cpu.ipynb", "loss-item-scalar-extract — ex1: distinguish .item() from .detach().cpu() in a training-loop logger"),
+    // matmul-2d
+    E("matmul-2d", 1, "predict matmul output shape and verify with @", "Numpy: matmul 2-D", "arena-procedural-drills/prereqs_cnn_extras/matmul-2d/01-predict-matmul-output-shape-and-verify-with-at.ipynb", "matmul-2d — ex1: predict matmul output shape and verify with @"),
+    // max-back-tied-half
+    E("max-back-tied-half", 1, "maximum_back with 50/50 tie-splitting", "Backprop: max_back with tied half-mass", "arena-procedural-drills/prereqs_autograd_pt2/max-back-tied-half/01-maximum-back-with-50-50-tie-splitting.ipynb", "max-back-tied-half — ex1: maximum_back with 50/50 tie-splitting"),
     // module-composition
     E("module-composition", 1, "child Modules auto-register as attributes", "PyTorch: Module composition", "arena-procedural-drills/prereqs_pytorch_modules/module-composition/01-child-modules-auto-register.ipynb", "module-composition — ex1: child Modules auto-register as attributes"),
     E("module-composition", 2, "rebuild the MLP with nn.Sequential", "PyTorch: Module composition", "arena-procedural-drills/prereqs_pytorch_modules/module-composition/02-rebuild-mlp-with-sequential.ipynb", "module-composition — ex2: rebuild the MLP with nn.Sequential"),
@@ -200,6 +252,10 @@
     E("module-extra-repr", 1, "extra_repr for a Linear-style module", "PyTorch: Module __repr__", "arena-procedural-drills/prereqs_pytorch_modules/module-extra-repr/01-extra-repr-for-linear-style-module.ipynb", "module-extra-repr — ex1: extra_repr for a Linear-style module"),
     // momentum-buffer-update
     E("momentum-buffer-update", 1, "in-place momentum buffer update b = mu*b + g", "Optimizer: Momentum buffer", "arena-procedural-drills/prereqs_optimizer_internals/momentum-buffer-update/01-in-place-momentum-buffer-update-b-equals-mu-b-plus-g.ipynb", "momentum-buffer-update — ex1: in-place momentum buffer update b = mu*b + g"),
+    // mp-spawn-workers
+    E("mp-spawn-workers", 1, "launch a 2-rank distributed job with mp.spawn", "Distributed: mp.spawn workers", "arena-procedural-drills/prereqs_distributed/mp-spawn-workers/01-launch-a-2-rank-distributed-job-with-mp-spawn.ipynb", "mp-spawn-workers — ex1: launch a 2-rank distributed job with mp.spawn"),
+    // multiply-back
+    E("multiply-back", 1, "implement multiply_back0 / multiply_back1 with unbroadcast", "Backprop: multiply_back", "arena-procedural-drills/prereqs_autograd_pt2/multiply-back/01-implement-multiply-back0-and-back1-with-unbroadcast.ipynb", "multiply-back — ex1: implement multiply_back0 / multiply_back1 with unbroadcast"),
     // nn-module-subclass
     E("nn-module-subclass", 1, "minimal stateless Module (no __init__)", "PyTorch: nn.Module subclassing", "arena-procedural-drills/prereqs_pytorch_modules/nn-module-subclass/01-minimal-stateless-module.ipynb", "nn-module-subclass — ex1: minimal stateless Module (no __init__)"),
     E("nn-module-subclass", 2, "diagnose missing super().__init__()", "PyTorch: nn.Module subclassing", "arena-procedural-drills/prereqs_pytorch_modules/nn-module-subclass/02-diagnose-missing-super-init.ipynb", "nn-module-subclass — ex2: diagnose missing super().__init__()"),
@@ -209,15 +265,27 @@
     E("nn-parameter-wrap", 2, "Parameter vs buffer — pick the right registration", "PyTorch: nn.Parameter", "arena-procedural-drills/prereqs_pytorch_modules/nn-parameter-wrap/02-parameter-vs-buffer.ipynb", "nn-parameter-wrap — ex2: Parameter vs buffer — pick the right registration"),
     // no-relu-on-final-layer
     E("no-relu-on-final-layer", 1, "diagnose and strip a stray ReLU on the classifier head", "CNN: No-ReLU on final layer", "arena-procedural-drills/prereqs_cnn_deep/no-relu-on-final-layer/01-diagnose-and-strip-stray-relu-on-classifier-head.ipynb", "no-relu-on-final-layer — ex1: diagnose and strip a stray ReLU on the classifier head"),
+    // non-diff-fn-wrap
+    E("non-diff-fn-wrap", 1, "wrap a non-differentiable op (eq) — no Recipe, no requires_grad", "Backprop: non-differentiable fn wrap", "arena-procedural-drills/prereqs_autograd_pt2/non-diff-fn-wrap/01-wrap-non-differentiable-op-no-recipe-no-requires-grad.ipynb", "non-diff-fn-wrap — ex1: wrap a non-differentiable op (eq) — no Recipe, no requires_grad"),
     // optimizer-init-params-list
     E("optimizer-init-params-list", 1, "materialize a generator of params into a list at init", "PyTorch: Optimizer init", "arena-procedural-drills/prereqs_training_loop/optimizer-init-params-list/01-materialize-a-generator-of-params-into-a-list-at-init.ipynb", "optimizer-init-params-list — ex1: materialize a generator of params into a list at init"),
+    // optimizer-loop-on-tensor
+    E("optimizer-loop-on-tensor", 1, "manual SGD step: for p in self.params: p -= lr * p.grad", "Optimizer: optimizer.step loop over params", "arena-procedural-drills/prereqs_adam_trainer/optimizer-loop-on-tensor/01-manual-sgd-step-for-p-in-self-params-p-minus-equals-lr-times-p-grad.ipynb", "optimizer-loop-on-tensor — ex1: manual SGD step: for p in self.params: p -= lr * p.grad"),
     // optimizer-state-tensor-buffers
     E("optimizer-state-tensor-buffers", 1, "allocate a per-param zeros_like buffer at init", "Optimizer: Per-param state buffers", "arena-procedural-drills/prereqs_optimizer_internals/optimizer-state-tensor-buffers/01-allocate-a-per-param-zeros-like-buffer-at-init.ipynb", "optimizer-state-tensor-buffers — ex1: allocate a per-param zeros_like buffer at init"),
     E("optimizer-state-tensor-buffers", 2, "two-buffer init for an RMSprop-style optimizer", "Optimizer: Per-param state buffers", "arena-procedural-drills/prereqs_optimizer_internals/optimizer-state-tensor-buffers/02-two-buffer-init-for-an-rmsprop-style-optimizer.ipynb", "optimizer-state-tensor-buffers — ex2: two-buffer init for an RMSprop-style optimizer"),
+    // padding-amount-formula-convT
+    E("padding-amount-formula-convT", 1, "predict ConvTranspose2d output size from the padding arg", "CNN: ConvT padding amount formula", "arena-procedural-drills/prereqs_cnn_extras/padding-amount-formula-convT/01-predict-convtranspose2d-output-size-from-the-padding-arg.ipynb", "padding-amount-formula-convT — ex1: predict ConvTranspose2d output size from the padding arg"),
     // param-grad-access
     E("param-grad-access", 1, "iterate model.parameters() and read .grad with the None guard", "PyTorch: param.grad access", "arena-procedural-drills/prereqs_backprop/param-grad-access/01-iterate-parameters-read-grad-with-none-guard.ipynb", "param-grad-access — ex1: iterate model.parameters() and read .grad with the None guard"),
+    // parameter-subclass-of-tensor
+    E("parameter-subclass-of-tensor", 1, "Parameter subclasses MiniTensor with requires_grad=True default", "Backprop: Parameter subclasses Tensor", "arena-procedural-drills/prereqs_autograd_pt3/parameter-subclass-of-tensor/01-parameter-subclass-of-tensor-requires-grad-default.ipynb", "parameter-subclass-of-tensor — ex1: Parameter subclasses MiniTensor with requires_grad=True default"),
     // parents-dict-by-argidx
     E("parents-dict-by-argidx", 1, "build parents dict — skip non-Tensors, keep original argidx", "Backprop: Parents dict by argidx", "arena-procedural-drills/prereqs_autograd_internals/parents-dict-by-argidx/01-build-parents-dict-skip-non-tensors-keep-argidx.ipynb", "parents-dict-by-argidx — ex1: build parents dict — skip non-Tensors, keep original argidx"),
+    // per-rank-cuda-device
+    E("per-rank-cuda-device", 1, "pin per-rank cuda device with a mocked GPU", "Distributed: per-rank cuda device", "arena-procedural-drills/prereqs_distributed/per-rank-cuda-device/01-pin-per-rank-cuda-device-with-a-mocked-gpu.ipynb", "per-rank-cuda-device — ex1: pin per-rank cuda device with a mocked GPU"),
+    // rank-world-size-args
+    E("rank-world-size-args", 1, "thread rank and world_size through a broadcast signature", "Distributed: rank/world_size args", "arena-procedural-drills/prereqs_distributed/rank-world-size-args/01-thread-rank-and-world-size-through-a-broadcast-signature.ipynb", "rank-world-size-args — ex1: thread rank and world_size through a broadcast signature"),
     // ray-parametric-form
     E("ray-parametric-form", 1, "evaluate one ray at many parameter values", "Geometry: Ray parametric form", "arena-procedural-drills/prereqs_geometry_cnn/ray-parametric-form/01-evaluate-one-ray-at-many-parameter-values.ipynb", "ray-parametric-form — ex1: evaluate one ray at many parameter values"),
     E("ray-parametric-form", 2, "evaluate a batch of rays at one parameter", "Geometry: Ray parametric form", "arena-procedural-drills/prereqs_geometry_cnn/ray-parametric-form/02-evaluate-a-batch-of-rays-at-one-parameter.ipynb", "ray-parametric-form — ex2: evaluate a batch of rays at one parameter"),
@@ -225,6 +293,8 @@
     E("rearrange-as-sequential-layer", 1, "build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)", "Einops: Rearrange as nn.Sequential layer", "arena-procedural-drills/prereqs_numerical_modules/rearrange-as-sequential-layer/01-conv-rearrange-linear-pipeline.ipynb", "rearrange-as-sequential-layer — ex1: build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)"),
     // recipe-dataclass
     E("recipe-dataclass", 1, "define Recipe and construct it for log_forward", "Backprop: Recipe dataclass", "arena-procedural-drills/prereqs_autograd_internals/recipe-dataclass/01-define-recipe-and-construct-it-for-log-forward.ipynb", "recipe-dataclass — ex1: define Recipe and construct it for log_forward"),
+    // reduce-op-mean-divide
+    E("reduce-op-mean-divide", 1, "implement mean reduction as sum-then-in-place-divide", "Distributed: reduce-op mean divide", "arena-procedural-drills/prereqs_distributed/reduce-op-mean-divide/01-implement-mean-reduction-as-sum-then-in-place-divide.ipynb", "reduce-op-mean-divide — ex1: implement mean reduction as sum-then-in-place-divide"),
     // register-back-fn-after-wrap
     E("register-back-fn-after-wrap", 1, "wire one entry into BACK_FUNCS and dispatch it", "Backprop: register back fn", "arena-procedural-drills/prereqs_backprop/register-back-fn-after-wrap/01-wire-one-entry-into-back-funcs.ipynb", "register-back-fn-after-wrap — ex1: wire one entry into BACK_FUNCS and dispatch it"),
     E("register-back-fn-after-wrap", 2, "register a binary op at TWO argnums and dispatch both", "Backprop: register back fn", "arena-procedural-drills/prereqs_backprop/register-back-fn-after-wrap/02-register-binary-op-two-argnums.ipynb", "register-back-fn-after-wrap — ex2: register a binary op at TWO argnums and dispatch both"),
@@ -246,12 +316,18 @@
     E("singular-matrix-mask-trick", 1, "solve a batch with some singular matrices", "Numpy: Singular matrix mask trick", "arena-procedural-drills/prereqs_geometry_cnn/singular-matrix-mask-trick/01-solve-a-batch-with-some-singular-matrices.ipynb", "singular-matrix-mask-trick — ex1: solve a batch with some singular matrices"),
     // slice-view-mutation
     E("slice-view-mutation", 1, "in-place zero the diagonal via slice-view writes", "PyTorch: Slice view mutation", "arena-procedural-drills/prereqs_tensor_mechanics/slice-view-mutation/01-in-place-zero-diagonal-via-slice-view-write.ipynb", "slice-view-mutation — ex1: in-place zero the diagonal via slice-view writes"),
+    // sorted-computational-graph
+    E("sorted-computational-graph", 1, "topological sort of the compute graph for the reverse pass", "Backprop: Sorted computation graph", "arena-procedural-drills/prereqs_autograd_pt2/sorted-computational-graph/01-topological-sort-of-the-compute-graph-for-reverse-pass.ipynb", "sorted-computational-graph — ex1: topological sort of the compute graph for the reverse pass"),
     // sqrt-eps-stabilize
     E("sqrt-eps-stabilize", 1, "rescue a BatchNorm-style normalize from divide-by-zero", "Numerical: sqrt-eps stabilization", "arena-procedural-drills/prereqs_numerical_modules/sqrt-eps-stabilize/01-rescue-batchnorm-from-divide-by-zero.ipynb", "sqrt-eps-stabilize — ex1: rescue a BatchNorm-style normalize from divide-by-zero"),
     // stack-vs-cat
     E("stack-vs-cat", 1, "pick stack or cat from the target shape", "PyTorch: stack vs cat", "arena-procedural-drills/prereqs_tensor_mechanics/stack-vs-cat/01-pick-stack-or-cat-from-target-shape.ipynb", "stack-vs-cat — ex1: pick stack or cat from the target shape"),
+    // step-counter-increment
+    E("step-counter-increment", 1, "step counter increments AFTER optimizer.step", "Trainer: step counter increment", "arena-procedural-drills/prereqs_adam_trainer/step-counter-increment/01-step-counter-increments-after-optimizer-step.ipynb", "step-counter-increment — ex1: step counter increments AFTER optimizer.step"),
     // stride-zero-broadcast
     E("stride-zero-broadcast", 1, "diagnose zero-stride vs copy via .stride() + storage check", "PyTorch: Zero-stride broadcasting", "arena-procedural-drills/prereqs_numerical_modules/stride-zero-broadcast/01-diagnose-zero-stride-vs-copy.ipynb", "stride-zero-broadcast — ex1: diagnose zero-stride vs copy via .stride() + storage check"),
+    // sum-and-broadcast-duality
+    E("sum-and-broadcast-duality", 1, "sum_back and broadcast_back as dual ops", "Backprop: sum/broadcast duality", "arena-procedural-drills/prereqs_autograd_pt3/sum-and-broadcast-duality/01-sum-back-and-broadcast-back-dual-ops.ipynb", "sum-and-broadcast-duality — ex1: sum_back and broadcast_back as dual ops"),
     // tensor-item-scalar
     E("tensor-item-scalar", 1, "extract a Python float from a 0-D tensor", "Numpy: Core array literacy", "arena-procedural-drills/prereqs_numpy/tensor-item-scalar/01-extract-a-python-float-from-a-0-d-tensor.ipynb", "tensor-item-scalar — ex1: extract a Python float from a 0-D tensor"),
     E("tensor-item-scalar", 2, "extract from a single-element 1-D tensor", "Numpy: Core array literacy", "arena-procedural-drills/prereqs_numpy/tensor-item-scalar/02-extract-from-a-single-element-1-d-tensor.ipynb", "tensor-item-scalar — ex2: extract from a single-element 1-D tensor"),
@@ -285,6 +361,8 @@
     E("tensor-zeros-init", 8, "z-buffer painter with per-step debug", "Numpy: Core array literacy", "arena-procedural-drills/prereqs_numpy/tensor-zeros-init/08-z-buffer-painter-with-per-step-debug.ipynb", "tensor-zeros-init — ex8: z-buffer painter with per-step debug"),
     // train-eval-mode-branch
     E("train-eval-mode-branch", 1, "flip train and eval mode around dropout", "PyTorch: train/eval mode", "arena-procedural-drills/prereqs_training_loop/train-eval-mode-branch/01-flip-train-and-eval-mode-around-dropout.ipynb", "train-eval-mode-branch — ex1: flip train and eval mode around dropout"),
+    // trainer-class-skeleton
+    E("trainer-class-skeleton", 1, "minimal Trainer class: fit, validate, _step", "Trainer: Trainer class skeleton", "arena-procedural-drills/prereqs_adam_trainer/trainer-class-skeleton/01-minimal-trainer-class-fit-validate-step.ipynb", "trainer-class-skeleton — ex1: minimal Trainer class: fit, validate, _step"),
     // training-step-cycle
     E("training-step-cycle", 1, "order the five calls of the canonical training step", "PyTorch: Training step cycle", "arena-procedural-drills/prereqs_training_loop/training-step-cycle/01-order-the-five-calls-of-the-canonical-training-step.ipynb", "training-step-cycle — ex1: order the five calls of the canonical training step"),
     E("training-step-cycle", 2, "diagnose a buggy training step that forgets zero_grad", "PyTorch: Training step cycle", "arena-procedural-drills/prereqs_training_loop/training-step-cycle/02-diagnose-a-buggy-training-step-that-forgets-zero-grad.ipynb", "training-step-cycle — ex2: diagnose a buggy training step that forgets zero_grad"),
@@ -292,6 +370,8 @@
     E("triangle-barycentric", 1, "point-in-triangle test from (u, v)", "Geometry: Barycentric coords", "arena-procedural-drills/prereqs_geometry_cnn/triangle-barycentric/01-point-in-triangle-test-from-uv.ipynb", "triangle-barycentric — ex1: point-in-triangle test from (u, v)"),
     // unbind-tuple-unpack
     E("unbind-tuple-unpack", 1, "ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)", "PyTorch: Unbind tuple-unpack", "arena-procedural-drills/prereqs_einops_advanced/unbind-tuple-unpack/01-two-level-destructure-rays-to-named-components.ipynb", "unbind-tuple-unpack — ex1: ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)"),
+    // unbox-args-tensor-to-array
+    E("unbox-args-tensor-to-array", 1, "unbox MiniTensor positional args to raw arrays, pass-through non-Tensors", "Backprop: Unbox Tensor args to array", "arena-procedural-drills/prereqs_autograd_pt3/unbox-args-tensor-to-array/01-unbox-tensor-args-to-raw-arrays.ipynb", "unbox-args-tensor-to-array — ex1: unbox MiniTensor positional args to raw arrays, pass-through non-Tensors"),
     // unbroadcast-pattern
     E("unbroadcast-pattern", 1, "unbroadcast: sum out leading and size-1 broadcast axes", "Backprop: Unbroadcast pattern", "arena-procedural-drills/prereqs_autograd_internals/unbroadcast-pattern/01-unbroadcast-sum-out-leading-and-size-1-axes.ipynb", "unbroadcast-pattern — ex1: unbroadcast: sum out leading and size-1 broadcast axes"),
     // validation-no-grad
