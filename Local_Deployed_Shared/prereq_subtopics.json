@@ -4,6 +4,7 @@
   "source": "arena-procedural-drills/ notebook metadata (canonical walk)",
   "description": "Prereq subtopic keys introduced by Colab procedural drills. These keys are NOT in the regular question bank (zero flashcards) \u2014 drills are the only practice surface. Backend questions.py + frontend atom_readiness.js both consume this file to know about them.",
   "atom_to_subtopic": {
+    "1x1-conv-channel-reshape": "CNN: 1x1 conv channel-reshape",
     "all-reduce-compose": "Distributed: all_reduce composition",
     "all-reduce-grad-sync": "Distributed: all_reduce grad sync",
     "arg-position-back-functions": "Backprop: Arg-position back funcs",
@@ -15,11 +16,14 @@
     "backward-func-lookup": "Backprop: BackwardFuncLookup",
     "backward-on-scalar-loss": "PyTorch: backward()",
     "batchnorm-affine-params": "CNN: BatchNorm affine params",
+    "batchnorm-running-stats": "CNN: BatchNorm running stats",
     "bias-correction-divide": "Optimizer: Adam bias-correction divide",
     "block-group-stack": "CNN: BlockGroup stack",
     "boolean-mask-combine": "Numpy: Boolean mask combine",
     "boolean-mask-identity-replace": "Numpy: Indexing and selection",
+    "bottleneck-latent-projection": "Generative: Bottleneck latent projection",
     "box-array-to-tensor-with-recipe": "Backprop: Box array as Tensor + recipe",
+    "broadcast-source-fanout": "Generative: Broadcast source fan-out",
     "broadcasting-rules": "Numpy: Vectorization and broadcasting",
     "buffer-copy_-inplace": "PyTorch: in-place buffer copy",
     "chain-rule-elementwise": "Backprop: Elementwise chain rule",
@@ -36,7 +40,11 @@
     "convT-as-flipped-padded-conv": "CNN: ConvT as flipped padded conv",
     "convT-kernel-axis-swap": "CNN: ConvT kernel axis swap",
     "cross-entropy-classification-loss": "Loss: Cross-entropy classification",
+    "cuda-empty-cache": "PyTorch: torch.cuda.empty_cache",
+    "dataclass-training-args": "Config: @dataclass training args",
     "dataloader-batching": "PyTorch: DataLoader batching",
+    "dcgan-wrapper-netG-netD": "Generative: DCGAN netG+netD wrapper",
+    "detach-clone-snapshot": "PyTorch: detach + clone snapshot",
     "device-consistent-construct": "PyTorch: Device-consistent tensor construction",
     "diagonal-via-strides": "Numpy: Diagonal via strides",
     "dist-send-recv-pair": "Distributed: dist.send/recv pair",
@@ -44,6 +52,7 @@
     "einops-rearrange": "Einops: Rearrange",
     "einops-rearrange-flatten": "Einops: Rearrange-as-flatten",
     "einops-reduce": "Einops: Reduce",
+    "einops-reduce-min": "Einops: Reduce with min",
     "einops-repeat": "Einops: Repeat",
     "einops-repeat-broadcast": "Einops: Repeat-as-broadcast",
     "einsum-contraction": "Einsum: Index contraction semantics",
@@ -57,6 +66,9 @@
     "get-children-callable-param": "Backprop: get_children callable param",
     "grad-accumulate-on-leaf": "Backprop: Grad accumulate on leaf",
     "grad-tracking-global-toggle": "Backprop: Grad-tracking toggle",
+    "holdout-data-one-per-class": "Generative: Hold-out one-per-class data",
+    "hparam-precedence-merge": "Config: hparam precedence merge",
+    "index-by-tensor": "PyTorch: index by tensor",
     "inf-masking": "Numpy: Inf-fill masking trick",
     "inference-mode-step": "PyTorch: Inference mode step",
     "init-process-group-nccl": "Distributed: init_process_group nccl",
@@ -67,48 +79,69 @@
     "kwargs-pass-through-recipe": "Backprop: Kwargs pass-through",
     "linalg-solve-batched": "PyTorch: Batched linalg.solve",
     "log-back": "Backprop: log_back",
+    "log-samples-eval-callback": "Logging: log-samples eval callback",
     "loss-item-scalar-extract": "PyTorch: loss.item() scalar extract",
     "matmul-2d": "Numpy: matmul 2-D",
+    "matvec": "PyTorch: matrix-vector product",
     "max-back-tied-half": "Backprop: max_back with tied half-mass",
+    "maxpool-reduce": "CNN: MaxPool as reduce",
     "module-composition": "PyTorch: Module composition",
     "module-extra-repr": "PyTorch: Module __repr__",
     "momentum-buffer-update": "Optimizer: Momentum buffer",
     "mp-spawn-workers": "Distributed: mp.spawn workers",
+    "mse-reconstruction-loss": "Generative: MSE reconstruction loss",
     "multiply-back": "Backprop: multiply_back",
+    "nested-param-group-loop": "Config: nested param-group loop",
     "nn-module-subclass": "PyTorch: nn.Module subclassing",
     "nn-parameter-wrap": "PyTorch: nn.Parameter",
     "no-relu-on-final-layer": "CNN: No-ReLU on final layer",
     "non-diff-fn-wrap": "Backprop: non-differentiable fn wrap",
+    "optimizer-class-dispatch": "Config: Optimizer class dispatch",
     "optimizer-init-params-list": "PyTorch: Optimizer init",
     "optimizer-loop-on-tensor": "Optimizer: optimizer.step loop over params",
     "optimizer-state-tensor-buffers": "Optimizer: Per-param state buffers",
     "padding-amount-formula-convT": "CNN: ConvT padding amount formula",
     "param-grad-access": "PyTorch: param.grad access",
+    "param-group-dict-list": "Config: param-group dict list",
     "parameter-subclass-of-tensor": "Backprop: Parameter subclasses Tensor",
+    "params-iterable-vs-groups": "Config: params iterable vs groups",
     "parents-dict-by-argidx": "Backprop: Parents dict by argidx",
     "per-rank-cuda-device": "Distributed: per-rank cuda device",
+    "randn-like-noise-source": "Generative: randn-like noise source",
     "rank-world-size-args": "Distributed: rank/world_size args",
     "ray-parametric-form": "Geometry: Ray parametric form",
     "rearrange-as-sequential-layer": "Einops: Rearrange as nn.Sequential layer",
     "recipe-dataclass": "Backprop: Recipe dataclass",
     "reduce-op-mean-divide": "Distributed: reduce-op mean divide",
     "register-back-fn-after-wrap": "Backprop: register back fn",
+    "register-buffer": "PyTorch: register_buffer",
     "relu-elementwise-max": "CNN: ReLU as elementwise max",
+    "replace-final-head": "Transfer: Replace final head",
+    "requires-grad-leaf-assert": "Generative: requires_grad leaf assert",
     "requires-grad-propagation": "Backprop: requires_grad propagation",
+    "residual-skip-add": "CNN: Residual skip-connection add",
+    "resnet-stem": "CNN: ResNet stem block",
     "rotation-matrix-3d-y-axis": "Numpy: Applied patterns and advanced",
     "singular-matrix-mask-trick": "Numpy: Singular matrix mask trick",
     "slice-view-mutation": "PyTorch: Slice view mutation",
     "sorted-computational-graph": "Backprop: Sorted computation graph",
     "sqrt-eps-stabilize": "Numerical: sqrt-eps stabilization",
     "stack-vs-cat": "PyTorch: stack vs cat",
+    "state-dict-load": "Transfer: state_dict load",
     "step-counter-increment": "Trainer: step counter increment",
     "stride-zero-broadcast": "PyTorch: Zero-stride broadcasting",
     "sum-and-broadcast-duality": "Backprop: sum/broadcast duality",
+    "sweep-config-dict": "Config: wandb sweep config dict",
+    "sweep-hparam-distribution": "Config: sweep hparam distribution",
+    "t-stack-trajectory": "Generative: torch.stack trajectory",
     "tensor-item-scalar": "Numpy: Core array literacy",
     "tensor-to-device": "PyTorch: tensor.to(device)",
     "tensor-unbind": "Numpy: Indexing and selection",
     "tensor-wraps-ndarray": "PyTorch: tensor from ndarray",
     "tensor-zeros-init": "Numpy: Core array literacy",
+    "time-stage-instrumentation": "Logging: time-stage instrumentation",
+    "topk-predictions": "Eval: topk predictions",
+    "tqdm-postfix-metrics": "Logging: tqdm postfix metrics",
     "train-eval-mode-branch": "PyTorch: train/eval mode",
     "trainer-class-skeleton": "Trainer: Trainer class skeleton",
     "training-step-cycle": "PyTorch: Training step cycle",
@@ -117,7 +150,14 @@
     "unbox-args-tensor-to-array": "Backprop: Unbox Tensor args to array",
     "unbroadcast-pattern": "Backprop: Unbroadcast pattern",
     "validation-no-grad": "PyTorch: no_grad validation",
+    "vector-normalize-keepdim": "PyTorch: vector normalize keepdim",
+    "wandb-config-into-args": "Logging: wandb.config into args",
+    "wandb-finish": "Logging: wandb.finish",
+    "wandb-init-run": "Logging: wandb.init run",
+    "wandb-log-step": "Logging: wandb.log step",
+    "wandb-watch-model": "Logging: wandb.watch model",
     "weight-decay-l2-add": "Optimizer: Weight decay L2",
+    "where-clip-negative": "PyTorch: where to clip negative",
     "wrap-forward-fn-generic": "Backprop: wrap forward fn",
     "zero-grad-set-none": "PyTorch: zero_grad"
   },
@@ -206,6 +246,9 @@
     "CNN: 1-D conv windowing": [
       "conv-windowing-1d"
     ],
+    "CNN: 1x1 conv channel-reshape": [
+      "1x1-conv-channel-reshape"
+    ],
     "CNN: 2-D conv windowing": [
       "conv-windowing-2d"
     ],
@@ -214,6 +257,9 @@
     ],
     "CNN: BatchNorm affine params": [
       "batchnorm-affine-params"
+    ],
+    "CNN: BatchNorm running stats": [
+      "batchnorm-running-stats"
     ],
     "CNN: BlockGroup stack": [
       "block-group-stack"
@@ -245,14 +291,47 @@
     "CNN: Kernel shape (OC, IC, KH, KW)": [
       "conv-kernel-shape"
     ],
+    "CNN: MaxPool as reduce": [
+      "maxpool-reduce"
+    ],
     "CNN: No-ReLU on final layer": [
       "no-relu-on-final-layer"
     ],
     "CNN: ReLU as elementwise max": [
       "relu-elementwise-max"
     ],
+    "CNN: ResNet stem block": [
+      "resnet-stem"
+    ],
+    "CNN: Residual skip-connection add": [
+      "residual-skip-add"
+    ],
     "CNN: Stride downsample arithmetic": [
       "conv-stride-downsample"
+    ],
+    "Config: @dataclass training args": [
+      "dataclass-training-args"
+    ],
+    "Config: Optimizer class dispatch": [
+      "optimizer-class-dispatch"
+    ],
+    "Config: hparam precedence merge": [
+      "hparam-precedence-merge"
+    ],
+    "Config: nested param-group loop": [
+      "nested-param-group-loop"
+    ],
+    "Config: param-group dict list": [
+      "param-group-dict-list"
+    ],
+    "Config: params iterable vs groups": [
+      "params-iterable-vs-groups"
+    ],
+    "Config: sweep hparam distribution": [
+      "sweep-hparam-distribution"
+    ],
+    "Config: wandb sweep config dict": [
+      "sweep-config-dict"
     ],
     "Distributed: all_reduce composition": [
       "all-reduce-compose"
@@ -293,6 +372,9 @@
     "Einops: Reduce": [
       "einops-reduce"
     ],
+    "Einops: Reduce with min": [
+      "einops-reduce-min"
+    ],
     "Einops: Repeat": [
       "einops-repeat"
     ],
@@ -305,6 +387,33 @@
     "Eval: argmax accuracy": [
       "argmax-accuracy-eval"
     ],
+    "Eval: topk predictions": [
+      "topk-predictions"
+    ],
+    "Generative: Bottleneck latent projection": [
+      "bottleneck-latent-projection"
+    ],
+    "Generative: Broadcast source fan-out": [
+      "broadcast-source-fanout"
+    ],
+    "Generative: DCGAN netG+netD wrapper": [
+      "dcgan-wrapper-netG-netD"
+    ],
+    "Generative: Hold-out one-per-class data": [
+      "holdout-data-one-per-class"
+    ],
+    "Generative: MSE reconstruction loss": [
+      "mse-reconstruction-loss"
+    ],
+    "Generative: randn-like noise source": [
+      "randn-like-noise-source"
+    ],
+    "Generative: requires_grad leaf assert": [
+      "requires-grad-leaf-assert"
+    ],
+    "Generative: torch.stack trajectory": [
+      "t-stack-trajectory"
+    ],
     "Geometry: Barycentric coords": [
       "triangle-barycentric"
     ],
@@ -313,6 +422,30 @@
     ],
     "Init: Kaiming uniform": [
       "kaiming-uniform-init"
+    ],
+    "Logging: log-samples eval callback": [
+      "log-samples-eval-callback"
+    ],
+    "Logging: time-stage instrumentation": [
+      "time-stage-instrumentation"
+    ],
+    "Logging: tqdm postfix metrics": [
+      "tqdm-postfix-metrics"
+    ],
+    "Logging: wandb.config into args": [
+      "wandb-config-into-args"
+    ],
+    "Logging: wandb.finish": [
+      "wandb-finish"
+    ],
+    "Logging: wandb.init run": [
+      "wandb-init-run"
+    ],
+    "Logging: wandb.log step": [
+      "wandb-log-step"
+    ],
+    "Logging: wandb.watch model": [
+      "wandb-watch-model"
     ],
     "Loss: Cross-entropy classification": [
       "cross-entropy-classification-loss"
@@ -419,14 +552,23 @@
     "PyTorch: backward()": [
       "backward-on-scalar-loss"
     ],
+    "PyTorch: detach + clone snapshot": [
+      "detach-clone-snapshot"
+    ],
     "PyTorch: freeze via requires_grad=False": [
       "freeze-requires-grad"
     ],
     "PyTorch: in-place buffer copy": [
       "buffer-copy_-inplace"
     ],
+    "PyTorch: index by tensor": [
+      "index-by-tensor"
+    ],
     "PyTorch: loss.item() scalar extract": [
       "loss-item-scalar-extract"
+    ],
+    "PyTorch: matrix-vector product": [
+      "matvec"
     ],
     "PyTorch: nn.Module subclassing": [
       "nn-module-subclass"
@@ -440,6 +582,9 @@
     "PyTorch: param.grad access": [
       "param-grad-access"
     ],
+    "PyTorch: register_buffer": [
+      "register-buffer"
+    ],
     "PyTorch: stack vs cat": [
       "stack-vs-cat"
     ],
@@ -449,8 +594,17 @@
     "PyTorch: tensor.to(device)": [
       "tensor-to-device"
     ],
+    "PyTorch: torch.cuda.empty_cache": [
+      "cuda-empty-cache"
+    ],
     "PyTorch: train/eval mode": [
       "train-eval-mode-branch"
+    ],
+    "PyTorch: vector normalize keepdim": [
+      "vector-normalize-keepdim"
+    ],
+    "PyTorch: where to clip negative": [
+      "where-clip-negative"
     ],
     "PyTorch: zero_grad": [
       "zero-grad-set-none"
@@ -463,6 +617,12 @@
     ],
     "Trainer: step counter increment": [
       "step-counter-increment"
+    ],
+    "Transfer: Replace final head": [
+      "replace-final-head"
+    ],
+    "Transfer: state_dict load": [
+      "state-dict-load"
     ]
   },
   "prereq_subtopic_keys": [
@@ -494,9 +654,11 @@
     "Backprop: sum/broadcast duality",
     "Backprop: wrap forward fn",
     "CNN: 1-D conv windowing",
+    "CNN: 1x1 conv channel-reshape",
     "CNN: 2-D conv windowing",
     "CNN: AvgPool as reduce",
     "CNN: BatchNorm affine params",
+    "CNN: BatchNorm running stats",
     "CNN: BlockGroup stack",
     "CNN: Channel-axis sum semantics",
     "CNN: Conv output shape",
@@ -507,9 +669,20 @@
     "CNN: ConvT padding amount formula",
     "CNN: Encoder-decoder symmetric layout",
     "CNN: Kernel shape (OC, IC, KH, KW)",
+    "CNN: MaxPool as reduce",
     "CNN: No-ReLU on final layer",
     "CNN: ReLU as elementwise max",
+    "CNN: ResNet stem block",
+    "CNN: Residual skip-connection add",
     "CNN: Stride downsample arithmetic",
+    "Config: @dataclass training args",
+    "Config: Optimizer class dispatch",
+    "Config: hparam precedence merge",
+    "Config: nested param-group loop",
+    "Config: param-group dict list",
+    "Config: params iterable vs groups",
+    "Config: sweep hparam distribution",
+    "Config: wandb sweep config dict",
     "Distributed: all_reduce composition",
     "Distributed: all_reduce grad sync",
     "Distributed: dist.send/recv pair",
@@ -520,12 +693,30 @@
     "Distributed: reduce-op mean divide",
     "Einops: Rearrange as nn.Sequential layer",
     "Einops: Rearrange-as-flatten",
+    "Einops: Reduce with min",
     "Einops: Repeat-as-broadcast",
     "Einsum: Index contraction semantics",
     "Eval: argmax accuracy",
+    "Eval: topk predictions",
+    "Generative: Bottleneck latent projection",
+    "Generative: Broadcast source fan-out",
+    "Generative: DCGAN netG+netD wrapper",
+    "Generative: Hold-out one-per-class data",
+    "Generative: MSE reconstruction loss",
+    "Generative: randn-like noise source",
+    "Generative: requires_grad leaf assert",
+    "Generative: torch.stack trajectory",
     "Geometry: Barycentric coords",
     "Geometry: Ray parametric form",
     "Init: Kaiming uniform",
+    "Logging: log-samples eval callback",
+    "Logging: time-stage instrumentation",
+    "Logging: tqdm postfix metrics",
+    "Logging: wandb.config into args",
+    "Logging: wandb.finish",
+    "Logging: wandb.init run",
+    "Logging: wandb.log step",
+    "Logging: wandb.watch model",
     "Loss: Cross-entropy classification",
     "Numerical: sqrt-eps stabilization",
     "Numpy: Applied patterns and advanced",
@@ -560,20 +751,29 @@
     "PyTorch: Zero-stride broadcasting",
     "PyTorch: as_strided windowing",
     "PyTorch: backward()",
+    "PyTorch: detach + clone snapshot",
     "PyTorch: freeze via requires_grad=False",
     "PyTorch: in-place buffer copy",
+    "PyTorch: index by tensor",
     "PyTorch: loss.item() scalar extract",
+    "PyTorch: matrix-vector product",
     "PyTorch: nn.Module subclassing",
     "PyTorch: nn.Parameter",
     "PyTorch: no_grad validation",
     "PyTorch: param.grad access",
+    "PyTorch: register_buffer",
     "PyTorch: stack vs cat",
     "PyTorch: tensor from ndarray",
     "PyTorch: tensor.to(device)",
+    "PyTorch: torch.cuda.empty_cache",
     "PyTorch: train/eval mode",
+    "PyTorch: vector normalize keepdim",
+    "PyTorch: where to clip negative",
     "PyTorch: zero_grad",
     "Trainer: Trainer class skeleton",
     "Trainer: examples-seen step axis",
-    "Trainer: step counter increment"
+    "Trainer: step counter increment",
+    "Transfer: Replace final head",
+    "Transfer: state_dict load"
   ]
 }
