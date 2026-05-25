@@ -68,6 +68,19 @@
   const titleEl = document.getElementById("arena-unlock-title");
   const whyEl = document.getElementById("arena-unlock-why");
   const headingEl = document.getElementById("arena-unlock-heading");
+  const bannerEl = card.querySelector(".arena-unlock-banner");
+  const subEl = card.querySelector(".arena-unlock-sub");
+  const headingLabelEl = card.querySelector(".arena-unlock-heading-label");
+
+  // Snapshot the default ARENA copy so we can restore it after a drill card
+  // (the DOM markup in arena-unlock-dom.js still ships ARENA-specific text).
+  const DEFAULT_BANNER = bannerEl?.textContent || "";
+  const DEFAULT_SUB = subEl?.textContent || "";
+  const DEFAULT_HEADING_LABEL = headingLabelEl?.textContent || "";
+
+  const DRILL_BANNER = "🛠️ Procedural drill — hands-on Colab practice";
+  const DRILL_SUB = "This drill exercises material the flashcards can't deliver on their own — interactive tensor work in a real notebook. Open it in Colab, complete the capstone, then come back to rate yourself.";
+  const DRILL_HEADING_LABEL = "Notebook section heading (auto-copied — paste with Ctrl+F inside Colab to jump to the right cell):";
   const hintBtn = document.getElementById("arena-unlock-hint-btn");
   const answerBtn = document.getElementById("arena-unlock-answer-btn");
   const colabBtn = document.getElementById("arena-unlock-colab-btn");
@@ -164,12 +177,24 @@
   const showCard = (ex) => {
     currentEx = ex;
     beforeScores = _snapshotBeforeScores(ex);
-    const clean = stripBackticks(ex.title);
+    // Flip the static ARENA copy when this is a drill card. Drills aren't
+    // "unlocked by clearing prereqs"; they BUILD prereqs through hands-on
+    // Colab work. Restore defaults on ARENA exercises so the same DOM
+    // serves both flows.
+    if (bannerEl) bannerEl.textContent = ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER;
+    if (subEl) subEl.textContent = ex.isDrill ? DRILL_SUB : DEFAULT_SUB;
+    if (headingLabelEl) headingLabelEl.textContent = ex.isDrill ? DRILL_HEADING_LABEL : DEFAULT_HEADING_LABEL;
+    // Heading shown in the code-block + auto-copied on Open in Colab. For
+    // drills we use ex.heading (the notebook's actual top-level markdown
+    // heading) so Ctrl+F inside Colab lands on the right cell. ARENA
+    // exercises fall back to ex.title, which IS the in-notebook heading
+    // they use as the Ctrl+F target.
+    const ctrlFText = stripBackticks(ex.heading || ex.title);
     titleEl.textContent = ex.title;
-    headingEl.textContent = clean;
+    headingEl.textContent = ctrlFText;
     whyEl.textContent = renderWhyMet(ex);
     colabBtn.href = colabHrefForUnlock();
-    colabBtn.setAttribute("data-copy-key", clean);
+    colabBtn.setAttribute("data-copy-key", ctrlFText);
     placeholderEl.classList.add("hidden");
     placeholderEl.textContent = "";
     if (stuckHintEl) stuckHintEl.classList.add("hidden");
@@ -369,9 +394,11 @@
 
   // Auto-copy the exercise heading to the clipboard the moment the
   // student clicks Open in Colab. Same pattern as the Predicted-scores
-  // table Colab pill. Anchor still navigates in the new tab.
+  // table Colab pill. Anchor still navigates in the new tab. Drills use
+  // ex.heading (real notebook section heading); ARENA exercises use
+  // ex.title (which doubles as the Ctrl+F target inside callum's notebooks).
   colabBtn.addEventListener("click", () => {
-    const text = stripBackticks(currentEx?.title || "");
+    const text = stripBackticks(currentEx?.heading || currentEx?.title || "");
     if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => {});
   });
 

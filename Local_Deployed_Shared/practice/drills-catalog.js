@@ -32,10 +32,17 @@
   // just sourced from the new EWMA algo instead of legacy hard prereqs.
   const DEFAULT_UNLOCK_MIN_PCT = 50;
 
-  const D = (folder, atom, subtopic, opts = {}) => ({
+  // heading = the EXACT text of the notebook's top `# ` markdown cell.
+  // ArenaUnlock auto-copies this to the clipboard on Open in Colab so the
+  // student can Ctrl+F + Ctrl+V + Enter inside Colab and land on the right
+  // section. Atom slug ("einops-rearrange") is not searchable in the
+  // notebook body — only the formatted heading is. Keep this in sync with
+  // each notebook's actual top heading.
+  const D = (folder, atom, subtopic, heading, opts = {}) => ({
     id: `drill:${atom}`,
     title: atom,
     sub: `Procedural drill · ${subtopic}`,
+    heading,
     notebookPath: `arena-procedural-drills/${folder}/${atom}.ipynb`,
     subtopics: [subtopic],
     targetSeconds: opts.targetSeconds ?? 600,
@@ -44,19 +51,17 @@
   });
 
   window.DRILLS_CATALOG = [
-    D("prereqs_einops", "einops-rearrange",            "Einops: Rearrange"),
-    D("prereqs_einops", "einops-reduce",               "Einops: Reduce"),
-    D("prereqs_einops", "einops-repeat",               "Einops: Repeat"),
-    D("prereqs_einops", "einops-einsum",               "Einops: Deep Learning"),
-    D("prereqs_numpy",  "tensor-zeros-init",           "Numpy: Core array literacy"),
-    D("prereqs_numpy",  "tensor-item-scalar",          "Numpy: Core array literacy"),
-    D("prereqs_numpy",  "broadcasting-rules",          "Numpy: Vectorization and broadcasting"),
-    D("prereqs_numpy",  "boolean-mask-identity-replace","Numpy: Indexing and selection"),
-    D("prereqs_numpy",  "tensor-unbind",               "Numpy: Indexing and selection"),
-    D("prereqs_numpy",  "vector-normalisation",        "Numpy: Applied patterns and advanced"),
-    D("prereqs_numpy",  "softmax-from-logits",         "Numpy: Applied patterns and advanced"),
-    D("prereqs_numpy",  "rotation-matrix-3d-y-axis",   "Numpy: Applied patterns and advanced"),
-    D("prereqs_numpy",  "as-strided-noncontig-source", "Numpy: Applied patterns and advanced"),
+    D("prereqs_einops", "einops-rearrange",             "Einops: Rearrange",                       "einops.rearrange — procedural drill"),
+    D("prereqs_einops", "einops-reduce",                "Einops: Reduce",                          "einops.reduce — procedural drill"),
+    D("prereqs_einops", "einops-repeat",                "Einops: Repeat",                          "einops.repeat — procedural drill"),
+    D("prereqs_einops", "einops-einsum",                "Einops: Deep Learning",                   "einops.einsum — procedural drill"),
+    D("prereqs_numpy",  "tensor-zeros-init",            "Numpy: Core array literacy",              "tensor zeros init — procedural drill"),
+    D("prereqs_numpy",  "tensor-item-scalar",           "Numpy: Core array literacy",              "tensor .item() — procedural drill"),
+    D("prereqs_numpy",  "broadcasting-rules",           "Numpy: Vectorization and broadcasting",   "broadcasting rules — procedural drill"),
+    D("prereqs_numpy",  "boolean-mask-identity-replace","Numpy: Indexing and selection",           "boolean mask & identity replace — procedural drill"),
+    D("prereqs_numpy",  "tensor-unbind",                "Numpy: Indexing and selection",           "tensor unbind — procedural drill"),
+    D("prereqs_numpy",  "rotation-matrix-3d-y-axis",    "Numpy: Applied patterns and advanced",    "rotation matrix (3-D, Y-axis) — procedural drill"),
+    D("prereqs_numpy",  "as-strided-noncontig-source",  "Numpy: Applied patterns and advanced",    "non-contiguous tensors and as_strided — procedural drill"),
   ];
 
   // ── Drill auto-surface logic (new-algo, no legacy ARENA_PREREQS_TEMP) ──
