@@ -198,6 +198,16 @@ fi
 FLYCTL="${HOME}/.fly/bin/flyctl"
 if [ -f "$FLYCTL" ] || command -v flyctl >/dev/null 2>&1; then
   FLYCTL="${FLYCTL:-flyctl}"
+  # flyctl on this machine doesn't reliably pick up the access_token stored
+  # in ~/.fly/config.yml — extract it into FLY_API_TOKEN so the deploy step
+  # authenticates without an interactive `flyctl auth login`. The env var
+  # only persists for the duration of this subshell.
+  if [ -z "${FLY_API_TOKEN:-}" ] && [ -f "$HOME/.fly/config.yml" ]; then
+    _fly_token=$(grep -E "^access_token:" "$HOME/.fly/config.yml" | sed 's/^access_token: *//')
+    if [ -n "$_fly_token" ]; then
+      export FLY_API_TOKEN="$_fly_token"
+    fi
+  fi
   info "Deploying backend to Fly.io..."
   (
     cd "$REPO_DIR" && \
