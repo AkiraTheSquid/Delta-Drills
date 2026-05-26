@@ -1102,8 +1102,35 @@
     });
   };
 
+  // Composite drills are listed AFTER all single-atom drills in the catalog
+  // (582 single + 180 composite, in that order). A naive in-order walk would
+  // never reach them — students would have to finish every single-atom
+  // exercise on every atom first. Instead, when a student has demonstrated
+  // strong mastery (≥ COMPOSITE_PROMOTE_PCT on every atom of a composite),
+  // promote that composite ahead of further single-atom drills.
+  const COMPOSITE_PROMOTE_PCT = 70;
+  const _isCompositeReadyToPromote = (drill) => {
+    if (!drill.isComposite) return false;
+    const subs = Array.isArray(drill.subtopics) ? drill.subtopics : [];
+    if (!subs.length) return false;
+    return subs.every((s) => {
+      const sc = _scoreFor(s);
+      return sc != null && sc >= COMPOSITE_PROMOTE_PCT;
+    });
+  };
+
   window.getNextUnshownUnlockedDrill = () => {
     const shown = _readShownSet();
+    // Pass 1: promote ready composites — atoms all mastered to ≥ promote pct.
+    // This is what turns the single-atom ladder into a "graduate to harder"
+    // experience: as soon as the constituent atoms are strong, the composite
+    // jumps the queue.
+    for (const d of window.DRILLS_CATALOG) {
+      if (shown.has(d.id)) continue;
+      if (_isCompositeReadyToPromote(d)) return d;
+    }
+    // Pass 2: fall back to in-order walk (single-atom first, composites at
+    // the unlock-gate floor of 50%).
     for (const d of window.DRILLS_CATALOG) {
       if (shown.has(d.id)) continue;
       if (_isDrillUnlocked(d)) return d;
