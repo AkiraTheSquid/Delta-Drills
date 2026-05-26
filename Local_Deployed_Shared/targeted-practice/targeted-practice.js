@@ -118,6 +118,9 @@
         subtopics: d.subtopics,
         targetSeconds: d.targetSeconds,
         isDrill: true,
+        isComposite: d.isComposite === true,
+        compositeAtomIds: d.compositeAtomIds || null,
+        arenaPart: d.arenaPart || null,
       });
     }
     return out;
@@ -326,10 +329,10 @@
               title: ex.title,
               notebookPath: ex.notebookPath,
               anchor: ex.anchor,
-              // Procedural drills: pass through subtopics + targetSeconds + isDrill
+              // Procedural drills: pass through subtopics + targetSeconds + isDrill (+ composite metadata)
               // so the card hits the new arena-rating EWMA pipeline against the
               // drill's atom subtopic, and the timer/Cleared line render correctly.
-              ...(ex.isDrill ? { subtopics: ex.subtopics, targetSeconds: ex.targetSeconds, isDrill: true } : {}),
+              ...(ex.isDrill ? { subtopics: ex.subtopics, targetSeconds: ex.targetSeconds, isDrill: true, isComposite: ex.isComposite, compositeAtomIds: ex.compositeAtomIds, arenaPart: ex.arenaPart } : {}),
             },
             () => {
               if (typeof switchTab === "function") switchTab("targeted-practice");

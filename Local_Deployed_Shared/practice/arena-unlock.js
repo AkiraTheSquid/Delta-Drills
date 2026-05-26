@@ -80,6 +80,8 @@
 
   const DRILL_BANNER = "🛠️ Procedural drill — hands-on Colab practice";
   const DRILL_SUB = "This drill exercises material the flashcards can't deliver on their own — interactive tensor work in a real notebook. Open it in Colab, complete the capstone, then come back to rate yourself.";
+  const COMPOSITE_BANNER = "🧩 Composite drill — atoms exercised together";
+  const COMPOSITE_SUB = "This drill tests 2-3 atoms IN ONE exercise — the composition you'll need for real ARENA tasks. Completing it bumps every constituent atom's mastery in parallel.";
   const DRILL_HEADING_LABEL = "Notebook section heading (auto-copied — paste with Ctrl+F inside Colab to jump to the right cell):";
   const hintBtn = document.getElementById("arena-unlock-hint-btn");
   const answerBtn = document.getElementById("arena-unlock-answer-btn");
@@ -181,8 +183,8 @@
     // "unlocked by clearing prereqs"; they BUILD prereqs through hands-on
     // Colab work. Restore defaults on ARENA exercises so the same DOM
     // serves both flows.
-    if (bannerEl) bannerEl.textContent = ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER;
-    if (subEl) subEl.textContent = ex.isDrill ? DRILL_SUB : DEFAULT_SUB;
+    if (bannerEl) bannerEl.textContent = ex.isComposite ? COMPOSITE_BANNER : (ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER);
+    if (subEl) subEl.textContent = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
     if (headingLabelEl) headingLabelEl.textContent = ex.isDrill ? DRILL_HEADING_LABEL : DEFAULT_HEADING_LABEL;
     // Heading shown in the code-block + auto-copied on Open in Colab. For
     // drills we use ex.heading (the notebook's actual top-level markdown
