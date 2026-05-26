@@ -183,6 +183,16 @@ const _readScoreFromSubState = (subState) => {
 };
 
 window.getArenaPrereqSubtopicScore = (topic, subtopic) => {
+  // Tolerate 1-arg call style: if subtopic is omitted and topic looks like
+  // an already-composed "Topic: Bare" key, treat the single arg as the bare
+  // subtopic so cache/state lookups still hit. Without this, callers that
+  // pass `fn("Einops: Rearrange")` get a silent null even when the key is
+  // sitting in the cache, which is a long-running foot-gun (see 2026-05-26
+  // composite-gating diagnostic).
+  if ((subtopic === undefined || subtopic === null) && typeof topic === "string" && topic.includes(": ")) {
+    subtopic = topic;
+    topic = null;
+  }
   const fullKey = _composeSubtopicKey(topic, subtopic);
   const bareKey = String(subtopic || "").trim();
 
