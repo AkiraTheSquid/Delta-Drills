@@ -515,15 +515,15 @@ SPEC_21 = {
         "**A `MiniTensor` class is provided in the test.**"
     ),
     "stub_body": (
+        "class MiniTensor:\n"
+        "    def __init__(self, array, requires_grad=False):\n"
+        "        self.array = array; self.requires_grad = requires_grad\n"
+        "\n"
         "def cx21_dispatch_all(args, raw_func, back_funcs) -> list:\n"
         '    """Build parents dict by argidx, dispatch back_fn for each parent."""\n'
         "    raise NotImplementedError()"
     ),
     "test_body": (
-        "class MiniTensor:\n"
-        "    def __init__(self, array, requires_grad=False):\n"
-        "        self.array = array; self.requires_grad = requires_grad\n"
-        "\n"
         "def log_back(grad_out, out, x): return grad_out / x\n"
         "def mul_back0(grad_out, out, x, y): return grad_out * y\n"
         "def mul_back1(grad_out, out, x, y): return grad_out * x\n"
@@ -533,6 +533,7 @@ SPEC_21 = {
         "BF = {\n"
         "    (t.log, 0): log_back,\n"
         "    (t.multiply, 0): mul_back0, (t.multiply, 1): mul_back1,\n"
+        "    (t.multiply, 2): mul_back0, (t.multiply, 3): mul_back1,\n"
         "    (t.divide, 0): div_back0, (t.divide, 1): div_back1,\n"
         "}\n"
         "\n"
@@ -566,11 +567,11 @@ SPEC_21 = {
         "by_argnum = {a: (par, f) for a, par, f in triples}\n"
         "assert by_argnum[0] == (p, div_back0)\n"
         "assert by_argnum[1] == (q, div_back1)\n"
-        "assert by_argnum[0][2] is not by_argnum[1][2], 'div_back0 != div_back1'\n"
+        "assert by_argnum[0][1] is not by_argnum[1][1], 'div_back0 != div_back1'\n"
         "\n"
         "# === confirm asymmetric math by running the back_fns ===\n"
-        "grad_p = by_argnum[0][2](t.ones(1), p.array / q.array, p.array, q.array)\n"
-        "grad_q = by_argnum[1][2](t.ones(1), p.array / q.array, p.array, q.array)\n"
+        "grad_p = by_argnum[0][1](t.ones(1), p.array / q.array, p.array, q.array)\n"
+        "grad_q = by_argnum[1][1](t.ones(1), p.array / q.array, p.array, q.array)\n"
         "assert t.allclose(grad_p, t.tensor([0.5])), f'd(p/q)/dp=1/q=0.5; got {grad_p}'\n"
         "assert t.allclose(grad_q, t.tensor([-1.5])), f'd(p/q)/dq=-p/q^2=-1.5; got {grad_q}'\n"
         "\n"
@@ -1127,15 +1128,6 @@ SPEC_24 = {
         "**A `MiniTensor` and `Recipe` are provided in the test cell.**"
     ),
     "stub_body": (
-        "def cx24_wrap_forward_fn(fwd_fn):\n"
-        '    """Return tensor_func that boxes/unboxes and stores kwargs on Recipe."""\n'
-        "    raise NotImplementedError()\n"
-        "\n"
-        "def cx24_call_back_fn(back_fn, grad_out, node):\n"
-        '    """Invoke back_fn(grad_out, node.array, *recipe.args, **recipe.kwargs)."""\n'
-        "    raise NotImplementedError()"
-    ),
-    "test_body": (
         "from dataclasses import dataclass, field\n"
         "from typing import Any, Callable, Optional\n"
         "\n"
@@ -1151,6 +1143,15 @@ SPEC_24 = {
         "        self.array = array; self.requires_grad = requires_grad\n"
         "        self.recipe = recipe; self.grad = None\n"
         "\n"
+        "def cx24_wrap_forward_fn(fwd_fn):\n"
+        '    """Return tensor_func that boxes/unboxes and stores kwargs on Recipe."""\n'
+        "    raise NotImplementedError()\n"
+        "\n"
+        "def cx24_call_back_fn(back_fn, grad_out, node):\n"
+        '    """Invoke back_fn(grad_out, node.array, *recipe.args, **recipe.kwargs)."""\n'
+        "    raise NotImplementedError()"
+    ),
+    "test_body": (
         "# === FORWARD half: kwargs reach BOTH the call and the Recipe ===\n"
         "wrapped_sum = cx24_wrap_forward_fn(t.sum)\n"
         "x = MiniTensor(t.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\n"
