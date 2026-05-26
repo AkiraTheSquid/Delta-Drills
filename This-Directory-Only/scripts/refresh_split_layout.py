@@ -21,6 +21,7 @@ ALLOWED_ROOT_NAMES = {
     "arena-book-colab",      # Colab-rendered ARENA chapters (archival)
     "arena-procedural-drills",  # iter-5 atom-level procedural drill drafts
     "concept-graph",         # top-level concept-graph workspace (separate from Local_Deployed_Shared/concept-graph)
+    "papers",                # research notes (mastery estimation refs, verification logs)
     ".claude",               # Claude Code per-project session state
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}

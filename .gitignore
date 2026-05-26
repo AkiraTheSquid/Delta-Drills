@@ -1,4 +1,5 @@
 .vercel
+*.pre-retag-backup
 backend/user_data/
 storage/
 backend/.env
