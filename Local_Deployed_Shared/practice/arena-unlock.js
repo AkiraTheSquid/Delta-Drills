@@ -68,6 +68,21 @@
   const titleEl = document.getElementById("arena-unlock-title");
   const whyEl = document.getElementById("arena-unlock-why");
   const headingEl = document.getElementById("arena-unlock-heading");
+  const bannerEl = card.querySelector(".arena-unlock-banner");
+  const subEl = card.querySelector(".arena-unlock-sub");
+  const headingLabelEl = card.querySelector(".arena-unlock-heading-label");
+
+  // Snapshot the default ARENA copy so we can restore it after a drill card
+  // (the DOM markup in arena-unlock-dom.js still ships ARENA-specific text).
+  const DEFAULT_BANNER = bannerEl?.textContent || "";
+  const DEFAULT_SUB = subEl?.textContent || "";
+  const DEFAULT_HEADING_LABEL = headingLabelEl?.textContent || "";
+
+  const DRILL_BANNER = "🛠️ Procedural drill — hands-on Colab practice";
+  const DRILL_SUB = "This drill exercises material the flashcards can't deliver on their own — interactive tensor work in a real notebook. Open it in Colab, complete the capstone, then come back to rate yourself.";
+  const COMPOSITE_BANNER = "🧩 Composite drill — atoms exercised together";
+  const COMPOSITE_SUB = "This drill tests 2-3 atoms IN ONE exercise — the composition you'll need for real ARENA tasks. Completing it bumps every constituent atom's mastery in parallel.";
+  const DRILL_HEADING_LABEL = "Notebook section heading (auto-copied — paste with Ctrl+F inside Colab to jump to the right cell):";
   const hintBtn = document.getElementById("arena-unlock-hint-btn");
   const answerBtn = document.getElementById("arena-unlock-answer-btn");
   const colabBtn = document.getElementById("arena-unlock-colab-btn");
@@ -91,9 +106,15 @@
 
   // Build the "why you're ready" recap line: list each prereq's current
   // score with its target so the student knows which gates they cleared.
-  const renderWhyMet = (exTitle) => {
+  // For procedural drills (ex.isDrill / ex.subtopics) we instead show
+  // which subtopic(s) the drill is going to feed — drills BUILD prereqs
+  // rather than consume them, so there's nothing "cleared" to recap.
+  const renderWhyMet = (ex) => {
+    if (ex?.isDrill && Array.isArray(ex.subtopics) && ex.subtopics.length) {
+      return `Targets: ${ex.subtopics.join(" · ")}`;
+    }
     if (typeof window.getArenaPrereqsForExercise !== "function") return "";
-    const prereqs = window.getArenaPrereqsForExercise(exTitle);
+    const prereqs = window.getArenaPrereqsForExercise(ex?.title || "");
     if (!prereqs.length) return "";
     const parts = prereqs.map((p) => {
       const sc = (typeof window.getArenaPrereqSubtopicScore === "function")
@@ -124,16 +145,23 @@
     return t ? `${t}: ${s}` : s;
   };
 
-  const _prereqKeysForExercise = (exTitle) => {
+  // Resolve the subtopics the arena-rating POST should bump for this ex.
+  // Drills carry their own ex.subtopics (the atom's targeted subtopic from
+  // the new algo). ARENA exercises fall back to the legacy prereq map.
+  const _prereqKeysForExercise = (ex) => {
+    if (ex && Array.isArray(ex.subtopics) && ex.subtopics.length) {
+      return Array.from(new Set(ex.subtopics.map((s) => String(s).trim()).filter(Boolean)));
+    }
+    const exTitle = typeof ex === "string" ? ex : ex?.title;
     if (typeof window.getArenaPrereqsForExercise !== "function") return [];
     const prereqs = window.getArenaPrereqsForExercise(exTitle) || [];
     return Array.from(new Set(prereqs.map((p) => _composeSubtopicKey(p.topic, p.subtopic))));
   };
 
-  const _snapshotBeforeScores = (exTitle) => {
+  const _snapshotBeforeScores = (ex) => {
     const cache = window.__arenaSubtopicsCache || {};
     const out = {};
-    _prereqKeysForExercise(exTitle).forEach((key) => {
+    _prereqKeysForExercise(ex).forEach((key) => {
       const entry = cache[key];
       out[key] = (entry && Number.isFinite(entry.p)) ? entry.p : null; // 0-1
     });
@@ -150,13 +178,25 @@
 
   const showCard = (ex) => {
     currentEx = ex;
-    beforeScores = _snapshotBeforeScores(ex.title);
-    const clean = stripBackticks(ex.title);
+    beforeScores = _snapshotBeforeScores(ex);
+    // Flip the static ARENA copy when this is a drill card. Drills aren't
+    // "unlocked by clearing prereqs"; they BUILD prereqs through hands-on
+    // Colab work. Restore defaults on ARENA exercises so the same DOM
+    // serves both flows.
+    if (bannerEl) bannerEl.textContent = ex.isComposite ? COMPOSITE_BANNER : (ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER);
+    if (subEl) subEl.textContent = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
+    if (headingLabelEl) headingLabelEl.textContent = ex.isDrill ? DRILL_HEADING_LABEL : DEFAULT_HEADING_LABEL;
+    // Heading shown in the code-block + auto-copied on Open in Colab. For
+    // drills we use ex.heading (the notebook's actual top-level markdown
+    // heading) so Ctrl+F inside Colab lands on the right cell. ARENA
+    // exercises fall back to ex.title, which IS the in-notebook heading
+    // they use as the Ctrl+F target.
+    const ctrlFText = stripBackticks(ex.heading || ex.title);
     titleEl.textContent = ex.title;
-    headingEl.textContent = clean;
-    whyEl.textContent = renderWhyMet(ex.title);
+    headingEl.textContent = ctrlFText;
+    whyEl.textContent = renderWhyMet(ex);
     colabBtn.href = colabHrefForUnlock();
-    colabBtn.setAttribute("data-copy-key", clean);
+    colabBtn.setAttribute("data-copy-key", ctrlFText);
     placeholderEl.classList.add("hidden");
     placeholderEl.textContent = "";
     if (stuckHintEl) stuckHintEl.classList.add("hidden");
@@ -197,7 +237,7 @@
   const postArenaRating = async (ex, { feedback, correct }) => {
     if (!ex || typeof apiFetch !== "function") return [];
     if (typeof authToken !== "undefined" && !authToken) return [];
-    const subtopics = _prereqKeysForExercise(ex.title);
+    const subtopics = _prereqKeysForExercise(ex);
     if (!subtopics.length) return [];
     const rating = window.ArenaUnlockTimer?.getRating?.() || {};
     const body = {
@@ -356,9 +396,11 @@
 
   // Auto-copy the exercise heading to the clipboard the moment the
   // student clicks Open in Colab. Same pattern as the Predicted-scores
-  // table Colab pill. Anchor still navigates in the new tab.
+  // table Colab pill. Anchor still navigates in the new tab. Drills use
+  // ex.heading (real notebook section heading); ARENA exercises use
+  // ex.title (which doubles as the Ctrl+F target inside callum's notebooks).
   colabBtn.addEventListener("click", () => {
-    const text = stripBackticks(currentEx?.title || "");
+    const text = stripBackticks(currentEx?.heading || currentEx?.title || "");
     if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => {});
   });
 
@@ -381,8 +423,12 @@
   // manual launch — those exercises should remain re-practicable), swap
   // back to the practice view, fire callback.
   continueBtn.addEventListener("click", () => {
-    if (currentEx && !currentEx._targetedPractice && typeof window.markArenaExerciseShown === "function") {
-      window.markArenaExerciseShown(currentEx.title);
+    if (currentEx && !currentEx._targetedPractice) {
+      if (currentEx.isDrill && typeof window.markDrillShown === "function") {
+        window.markDrillShown(currentEx.id);
+      } else if (typeof window.markArenaExerciseShown === "function") {
+        window.markArenaExerciseShown(currentEx.title);
+      }
     }
     hideCard();
     const cb = onContinueCallback;
@@ -440,12 +486,28 @@
       // Refresh first so a just-submitted answer that bumped a subtopic
       // over its gate is reflected on THIS click, not the next one.
       try { await refreshScores(); } catch (_) {}
-      if (typeof window.getNextUnshownUnlockedArenaExercise !== "function") return false;
-      const ex = window.getNextUnshownUnlockedArenaExercise();
-      if (!ex) return false;
-      onContinueCallback = onContinue;
-      showCard(ex);
-      return true;
+      // 1. ARENA legacy unlocks (callum's ARENA_3.0 notebooks).
+      if (typeof window.getNextUnshownUnlockedArenaExercise === "function") {
+        const ex = window.getNextUnshownUnlockedArenaExercise();
+        if (ex) {
+          onContinueCallback = onContinue;
+          showCard(ex);
+          return true;
+        }
+      }
+      // 2. Procedural drills (new-algo, Delta-Drills repo). Drills BUILD
+      // subtopic mastery; we surface each once when its EWMA crosses the
+      // drill's unlockMinPct so the student moves from text-bank reps into
+      // a real applied notebook.
+      if (typeof window.getNextUnshownUnlockedDrill === "function") {
+        const drill = window.getNextUnshownUnlockedDrill();
+        if (drill) {
+          onContinueCallback = onContinue;
+          showCard(drill);
+          return true;
+        }
+      }
+      return false;
     },
     // Manual launch — used by the Targeted Practice "Practice this problem"
     // button. Switches the active tab to Practice (the unlock-page lives

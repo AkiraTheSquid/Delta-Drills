@@ -56,6 +56,11 @@ const initPractice = async () => {
       await loadPracticeEngine(pyodide);
     }
     await loadAdaptiveState();
+  } else {
+    // Backend mode: skip Pyodide engine but still hydrate adaptiveStateJson
+    // from /api/practice/state so concept-graph/atom_readiness.js can
+    // bridge atoms onto real per-subtopic baselines.
+    await loadBackendAdaptiveState();
   }
 
   if (practiceProgress.currentQuestion) {

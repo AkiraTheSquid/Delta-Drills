@@ -5,6 +5,8 @@
 // Returns a number in [0, 1] — same convention as computeArenaReadiness.
 //
 // Bridge strategy (in order):
+//   0. Drill-atom direct subtopic — atom appears in window.PREREQ_SUBTOPICS
+//      (introduced by Colab procedural drills). Read baseline directly.
 //   1. Direct subtopic hit — the atom's `subtopic` field matches a key in
 //      adaptiveStateJson.subtopic_states. Read baseline.
 //   2. Topic-alias bridge — map the atom's `topic` (ARENA part name like
@@ -24,7 +26,7 @@
   // than topic="Einops". The atom-id-token bridge below catches that.
   const ATOM_TOPIC_TO_BANK_TOPIC = {
     "Ray Tracing": "Numpy",
-    "CNNs": "Numpy",
+    "CNNs": "CNN",
     "Optimization": null,
     "Backprop": null,
     "VAEs and GANs": null,
@@ -39,10 +41,15 @@
     { tokens: ["einsum"], topic: "Einsum" },
     { tokens: ["einops", "rearrange", "reduce", "repeat"], topic: "Einops" },
     { tokens: ["broadcasting", "broadcast", "unbroadcast"], topic: "Numpy" },
-    { tokens: ["as-strided", "stride"], topic: "Numpy" },
+    // NB: keep "as-strided" (Numpy/PyTorch reshape op) but NOT bare "stride" —
+    // bare "stride" misroutes CNN concepts like `stride-kernel-element-step`
+    // (conv kernel stride, not byte-stride) to Numpy.
+    { tokens: ["as-strided"], topic: "Numpy" },
     { tokens: ["argmax", "softmax", "logsumexp", "log-sum-exp"], topic: "Numpy" },
     { tokens: ["boolean-mask", "integer-array-indexing", "isfinite-mask"], topic: "Numpy" },
-    { tokens: ["reshape", "view-vs-reshape", "permute", "flatten", "transpose"], topic: "Numpy" },
+    // NB: dropped "flatten" — the only atom matching it is `flatten-layer`
+    // (CNN `nn.Flatten` module), which should route via CNN alias, not Numpy.
+    { tokens: ["reshape", "view-vs-reshape", "permute", "transpose"], topic: "Numpy" },
     { tokens: ["torch-arange", "torch-where", "torch-stack", "linspace", "tensor-zeros", "tensor-unbind", "tensor-item"], topic: "Numpy" },
     { tokens: ["outer-product", "vector-normalisation", "rotation-matrix", "surface-normal"], topic: "Numpy" },
   ];
@@ -92,9 +99,12 @@
     try { return JSON.parse(adaptiveStateJson); } catch (_) { return null; }
   };
 
+  // baseline ∈ [0, 100] in adaptive.py — normalize to [0, 1] at the boundary
+  // so readiness matches the MasteryGatePolicy threshold convention.
   const _baselineForSubtopic = (state, subtopic) => {
     const b = Number(state?.subtopic_states?.[subtopic]?.baseline);
-    return Number.isFinite(b) ? b : null;
+    if (!Number.isFinite(b)) return null;
+    return Math.max(0, Math.min(1, b / 100));
   };
 
   const _avg = (xs) => xs.reduce((s, x) => s + x, 0) / xs.length;
@@ -109,13 +119,31 @@
    * @param {number} [fallback] — score to return if no signal is available
    * @return {number}
    */
+  // Drill-atom direct subtopic — set by Colab procedural drills via PREREQ_SUBTOPICS.
+  // Resolves atoms that aren't in CONCEPT_GRAPH_V5_V2 but ARE in the drill catalog.
+  const _drillSubtopic = (atomId) => {
+    const reg = window.PREREQ_SUBTOPICS;
+    if (!reg || !reg.atom_to_subtopic) return null;
+    return reg.atom_to_subtopic[atomId] || null;
+  };
+
   window.computeAtomReadiness = (atomId, fallback) => {
     const fb = Number.isFinite(Number(fallback)) ? Number(fallback) : 0;
     if (typeof atomId !== "string" || !atomId) return fb;
-    const atom = _atomIndex().get(atomId);
-    if (!atom) return fb;
     const state = _readAdaptiveState();
     if (!state || !state.subtopic_states) return fb;
+
+    // 0. Drill-atom direct subtopic — catches drill-introduced atoms that
+    // may not appear in CONCEPT_GRAPH_V5_V2 yet but DO have an EWMA state
+    // (because the drill beacon posted a rating against PREREQ_SUBTOPICS).
+    const drillSub = _drillSubtopic(atomId);
+    if (drillSub) {
+      const b = _baselineForSubtopic(state, drillSub);
+      if (b !== null) return b;
+    }
+
+    const atom = _atomIndex().get(atomId);
+    if (!atom) return fb;
 
     // 1. Direct subtopic hit
     if (atom.subtopic) {
@@ -194,9 +222,11 @@
       return { error: "adaptiveStateJson missing or empty", concept_count: g.concepts.length };
     }
     const topicIndex = _buildTopicSubtopicIndex();
-    let direct = 0, token = 0, alias = 0, fb = 0;
+    let drill = 0, direct = 0, token = 0, alias = 0, fb = 0;
     const fallbackIds = [];
     g.concepts.forEach((atom) => {
+      const ds = _drillSubtopic(atom.id);
+      if (ds && _baselineForSubtopic(state, ds) !== null) { drill += 1; return; }
       if (atom.subtopic && _baselineForSubtopic(state, atom.subtopic) !== null) {
         direct += 1; return;
       }
@@ -207,6 +237,6 @@
       fb += 1;
       fallbackIds.push(atom.id);
     });
-    return { direct, token, alias, fallback: fb, total: g.concepts.length, fallback_ids: fallbackIds };
+    return { drill, direct, token, alias, fallback: fb, total: g.concepts.length, fallback_ids: fallbackIds };
   };
 })();

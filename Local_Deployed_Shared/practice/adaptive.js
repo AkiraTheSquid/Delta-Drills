@@ -63,6 +63,38 @@ async function loadAdaptiveState() {
   emitAdaptiveStateChanged();
 }
 
+// Backend-mode hydration: backend mode skips the Pyodide engine, so
+// `adaptiveStateJson` stays null and the concept-graph atom-readiness
+// bridge (computeAtomReadiness) sees no signal. Fetch the per-subtopic
+// snapshot from /api/practice/state and bare-assign it so the bridge can
+// read state.subtopic_states[sub].baseline like in supabase/local mode.
+//
+// NB: must be bare assignment, not `window.adaptiveStateJson = ...` —
+// adaptiveStateJson is a module-scope `let` and only the bare lvalue
+// updates that binding; window.x = creates a shadow property the
+// readers above never see.
+async function loadBackendAdaptiveState() {
+  if (typeof apiFetch !== "function") return false;
+  try {
+    const res = await apiFetch("/api/practice/state");
+    if (res.status === 401) {
+      handleExpiredToken();
+      return false;
+    }
+    if (!res.ok) {
+      console.warn("[practice] /api/practice/state failed:", res.status);
+      return false;
+    }
+    const snapshot = await res.json();
+    adaptiveStateJson = JSON.stringify(snapshot);
+    emitAdaptiveStateChanged();
+    return true;
+  } catch (err) {
+    console.warn("[practice] loadBackendAdaptiveState error:", err);
+    return false;
+  }
+}
+
 async function saveAdaptiveState() {
   if (!adaptiveStateJson) return;
   const email = typeof authEmail === "string" && authEmail.trim() ? authEmail.trim() : "guest";
