@@ -513,6 +513,33 @@
     }
     if (banner) banner.classList.remove("hidden");
     if (typeof switchTab === "function") switchTab("practice");
+
+    // Actually launch the selected items via ArenaUnlock.showFor. Without
+    // this, the Practice tab would keep whatever drill the recommender
+    // last auto-fired — so the "Submit to start practicing" button would
+    // appear to do nothing (or open the wrong drill).
+    const queue = Array.from(selected.values());
+    const launchNext = () => {
+      const ex = queue.shift();
+      if (!ex) return;
+      if (!window.ArenaUnlock || typeof window.ArenaUnlock.showFor !== "function") {
+        console.warn("[targeted-practice] ArenaUnlock.showFor unavailable; cannot launch");
+        return;
+      }
+      window.ArenaUnlock.showFor(
+        {
+          title: ex.title,
+          notebookPath: ex.notebookPath,
+          anchor: ex.anchor,
+          // Procedural drills: pass through subtopics + targetSeconds + isDrill
+          // (+ composite metadata) so the card hits the arena-rating EWMA
+          // pipeline and renders the composite banner when applicable.
+          ...(ex.isDrill ? { subtopics: ex.subtopics, targetSeconds: ex.targetSeconds, isDrill: true, isComposite: ex.isComposite, compositeAtomIds: ex.compositeAtomIds, arenaPart: ex.arenaPart } : {}),
+        },
+        launchNext
+      );
+    };
+    launchNext();
   };
 
   // End-targeted-practice (banner button) = "I'm done practicing in real
