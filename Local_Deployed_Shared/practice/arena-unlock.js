@@ -158,6 +158,21 @@
     return Array.from(new Set(prereqs.map((p) => _composeSubtopicKey(p.topic, p.subtopic))));
   };
 
+  // Resolve the atom ids a completed exercise practiced, for the BKT update.
+  // Composite drills: compositeAtomIds (full list). Single drills: atomId.
+  // ARENA exercises currently carry no atom tags on the live object → [].
+  const _atomIdsForExercise = (ex) => {
+    if (!ex) return [];
+    if (Array.isArray(ex.compositeAtomIds) && ex.compositeAtomIds.length) {
+      return Array.from(new Set(ex.compositeAtomIds.map((a) => String(a).trim()).filter(Boolean)));
+    }
+    if (ex.atomId) return [String(ex.atomId).trim()].filter(Boolean);
+    if (Array.isArray(ex.atomIds) && ex.atomIds.length) {
+      return Array.from(new Set(ex.atomIds.map((a) => String(a).trim()).filter(Boolean)));
+    }
+    return [];
+  };
+
   const _snapshotBeforeScores = (ex) => {
     const cache = window.__arenaSubtopicsCache || {};
     const out = {};
@@ -243,6 +258,11 @@
     const body = {
       exercise_title: ex.title,
       subtopics,
+      // Atom ids this exercise practices — drives the per-atom BKT update +
+      // encompassing FIRe credit on the backend. Composite drills carry the
+      // full list; single-atom drills carry one. ARENA exercises without atom
+      // tags send []; they still bump the EWMA area readout via `subtopics`.
+      atom_ids: _atomIdsForExercise(ex),
       feedback,
       correct: !!correct,
       elapsed_seconds: Number.isFinite(rating.elapsedSeconds) ? rating.elapsedSeconds : null,
@@ -261,6 +281,10 @@
       const data = await res.json().catch(() => ({}));
       // Refresh cached scores so the next unlock check sees the bump.
       if (window.ArenaUnlock?.refreshScores) window.ArenaUnlock.refreshScores().catch(() => {});
+      // Re-hydrate adaptiveStateJson so the fresh per-atom BKT posteriors
+      // (atom_mastery) land in the readiness bridge. refreshScores only warms
+      // the subtopic gate cache; it does NOT pull atom_mastery.
+      if (typeof loadBackendAdaptiveState === "function") loadBackendAdaptiveState().catch(() => {});
       return Array.isArray(data?.updated) ? data.updated : [];
     } catch (err) {
       console.warn("[ArenaUnlock] arena-rating error:", err);

@@ -57,6 +57,12 @@ function getPracticeMode(email) {
   if (isOnLocalhost()) {
     return "backend";
   }
+  // MIGRATION (2026-05-30): prod runs on the Fly backend (Neon + BKT gate),
+  // not Supabase/Pyodide. REVERSIBLE: set window.DELTA_USE_BACKEND=false
+  // (app.js) to restore the supabase branch below.
+  if (window.DELTA_USE_BACKEND) {
+    return "backend";
+  }
   const sb = getSupabaseClient();
   if (sb) {
     return "supabase";
