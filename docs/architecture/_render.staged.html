@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Delta Drills — Current Model (EWMA)</title>
+<link rel="stylesheet" href="_katex/katex.min.css">
+<script defer src="_katex/katex.min.js"></script>
+<script defer src="_katex/contrib/auto-render.min.js"></script>
+<style>
+  @page { size: Letter; margin: 0.7in 0.8in; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 11.5pt;
+    line-height: 1.45;
+    color: #111;
+    max-width: 6.8in;
+    margin: 0 auto;
+  }
+  h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 4px; margin-bottom: 12px; }
+  h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+  h3 { font-size: 12pt; margin-top: 14px; color: #333; }
+  p { margin: 8px 0; }
+  blockquote {
+    border-left: 3px solid #888;
+    background: #f5f5f5;
+    padding: 6px 12px;
+    font-style: italic;
+    color: #444;
+    font-size: 10.5pt;
+  }
+  table {
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 10.5pt;
+    width: 100%;
+  }
+  th, td { border: 1px solid #999; padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 10pt; font-family: "DejaVu Sans Mono", monospace; }
+  hr { border: none; border-top: 1px dashed #aaa; margin: 18px 0; }
+  .katex-display { margin: 10px 0; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<div id="content">
+<!-- content injected below by render.py -->
+<h1>Delta Drills — Current Mastery &amp; Selection Model (EWMA stack with prerequisite gating)</h1>
+<blockquote>
+<p>Snapshot of the live engine as of 2026-05-26. Combines the original
+per-subtopic Exponentially Weighted Moving Average (EWMA) update rule
+with the prerequisite-gating layer that has been added since the
+original math document was written. The model is implemented across
+<code>backend/app/adaptive.py</code>, <code>backend/app/prioritization.py</code>,
+<code>backend/app/practice/arena_rating_router.py</code>, and the frontend
+<code>practice/arena-unlock.js</code> + <code>practice/drills-catalog.js</code>.</p>
+</blockquote>
+<hr />
+<h2>0. Notation</h2>
+<p>Let</p>
+<ul>
+<li>$\mathcal{S}$ — the finite set of subtopics covered by the question bank (e.g. <em>Einops: Rearrange</em>, <em>CNN: Conv output shape</em>).</li>
+<li>$\mathcal{T}$ — the finite set of topics. Every subtopic $s$ belongs to exactly one topic $T(s)\in\mathcal{T}$.</li>
+<li>$\mathcal{D}$ — the catalog of procedural drills (Colab notebooks). Each drill $d\in\mathcal{D}$ carries</li>
+<li>$\mathrm{subs}(d) \subseteq \mathcal{S}$ — the subtopics it exercises (one for single-atom drills, multiple for composites),</li>
+<li>a flag $\mathrm{comp}(d)\in\{0,1\}$ — whether $d$ is a composite drill,</li>
+<li>an index $i(d)\in\mathbb{N}$ giving its position in the catalog list.</li>
+<li>$\mathcal{E}$ — the set of ARENA exercises. Each $e\in\mathcal{E}$ carries problem–concept links $L_e=\{(s_i,\omega_i)\}_{i=1}^{m_e}$ where $\omega_i\ge 0$ are the per-link skill weights.</li>
+</ul>
+<p>For each subtopic $s$ and student, the per-subtopic adaptive state is the triple</p>
+<p>$$
+\sigma_s \;=\; \bigl(n_s,\; b_s,\; p_s\bigr) \;\in\; \mathbb{N}\times[0,100]\times[0,1],
+$$</p>
+<p>where $n_s$ is the number of recorded attempts, $b_s$ is the running baseline score, and $p_s$ is the running correctness rate. A timestamp $\tau_s$ of the last update is also kept for time decay (see §1.6).</p>
+<hr />
+<h2>1. Per-subtopic adaptive engine</h2>
+<p>This is the layer that turns each individual attempt into an update of $\sigma_s$ and a target difficulty for the next question on that subtopic.</p>
+<h3>1.1 Cold start ($n_s \le 3$)</h3>
+<p>The first three attempts on each subtopic are scripted to sample three difficulty bands:</p>
+<p>$$
+\mathrm{target}(n_s) \;=\;
+\begin{cases}
+25 & n_s = 0 \\
+50 & n_s = 1 \\
+75 & n_s = 2
+\end{cases}
+\quad\quad (\text{cold-start ladder})
+$$</p>
+<p>The state $\sigma_s$ still accumulates during cold start (using the same EWMA blends as below), but the target difficulty is fixed by the ladder rather than computed from $\sigma_s$.</p>
+<h3>1.2 Indicator and feedback recency factor</h3>
+<p>After every attempt, the student self-reports a grade $\mathrm{grade}(n) \in [0,100]$ and selects a feedback level. The grade-binarizing indicator is</p>
+<p>$$
+\mathbf{1}\bigl(\mathrm{grade}(n)\bigr) \;=\;
+\begin{cases}
+1 & \mathrm{grade}(n) > 85 \\
+0 & \mathrm{grade}(n) \le 85
+\end{cases}
+$$</p>
+<p>The feedback level is mapped to a per-attempt recency factor $\alpha(n)$:</p>
+<p>$$
+\alpha(n) \;=\;
+\begin{cases}
+0.30 & \text{"Not much"} \\
+0.60 & \text{"Somewhat"} \\
+0.85 & \text{"A lot"}
+\end{cases}
+$$</p>
+<p>A higher $\alpha(n)$ means the EWMA absorbs the current attempt more aggressively.</p>
+<h3>1.3 Correctness rate update</h3>
+<p>The running correctness rate evolves as a fixed-recency EWMA on the binarized indicator:</p>
+<p>$$
+p(n) \;=\; \alpha(n)\cdot \mathbf{1}\bigl(\mathrm{grade}(n)\bigr) \;+\; \bigl(1-\alpha(n)\bigr)\, p(n-1),
+\quad p(0)=0.5.
+$$</p>
+<h3>1.4 Score and baseline</h3>
+<p>Each attempt has a difficulty $\mathrm{diff}(n)\in[0,100]$ assigned by the recommender. The raw score is</p>
+<p>$$
+\mathrm{score}(n) \;=\; \frac{\mathrm{grade}(n)\cdot\mathrm{diff}(n)}{100}.
+$$</p>
+<p>The baseline (a running estimate of "how high a difficulty the student is consistently scoring at") is then</p>
+<p>$$
+b(n) \;=\; \alpha(n)\cdot\mathrm{score}(n) \;+\; \bigl(1-\alpha(n)\bigr)\, b(n-1),
+\quad b(0)=0.
+$$</p>
+<h3>1.5 Difficulty multiplier and target difficulty</h3>
+<p>Define the piecewise multiplier</p>
+<p>$$
+\mu\bigl(p\bigr) \;=\;
+\begin{cases}
+0.5 + 0.5\left(\dfrac{p}{0.85}\right)^{1.8} & p \le 0.85 \\[1em]
+\min\!\left(2.5,\; 1 + \left(\dfrac{p-0.85}{0.15}\right)^{2.5}\right) & p > 0.85
+\end{cases}
+$$</p>
+<p>After the third attempt ($n_s > 3$), the target difficulty for the next problem on $s$ is</p>
+<p>$$
+\mathrm{target}(n) \;=\; \mathrm{clip}_{[0,100]}\Bigl(\, b(n)\cdot\mu\bigl(p(n)\bigr)\Bigr).
+$$</p>
+<h3>1.6 Time decay between attempts</h3>
+<p>Let $\Delta t$ be the number of days elapsed since the last update timestamp $\tau_s$, and let $\tau_{1/2}=14$ days be the half-life. Just before applying the EWMA update of §1.3–1.5 on the next attempt, both $b$ and $p$ are shrunk toward their priors $B_0=0$ and $P_0=0.5$:</p>
+<p>$$
+b \;\leftarrow\; B_0 + \bigl(b - B_0\bigr)\cdot 2^{-\Delta t/\tau_{1/2}},
+$$</p>
+<p>$$
+p \;\leftarrow\; P_0 + \bigl(p - P_0\bigr)\cdot 2^{-\Delta t/\tau_{1/2}}.
+$$</p>
+<p>This makes prolonged inactivity regress the mastery estimate back toward "no information" rather than letting it stay at the last observed value indefinitely.</p>
+<hr />
+<h2>2. Subtopic selection (next-question routing)</h2>
+<p>This layer decides <em>which subtopic to pull the next question from</em> whenever the student requests a new question.</p>
+<h3>2.1 User-defined effective weights</h3>
+<p>Through the Statistics page, the student assigns a topic percentage $P_T\in[0,\infty)$ to each topic $T\in\mathcal{T}$ and, within each topic, a subtopic share $P_s\in[0,\infty)$ to each $s$ with $T(s)=T$. The effective weight of subtopic $s$ is</p>
+<p>$$
+w_s \;=\; \frac{P_{T(s)}}{100}\cdot\frac{P_s}{100}.
+$$</p>
+<p>Weights need not sum to 1; only their relative magnitudes affect selection. If no custom weights are set, the system falls back to uniform weights</p>
+<p>$$
+w_s \;=\; \frac{1}{\lvert\mathcal{S}\rvert}.
+$$</p>
+<h3>2.2 Learning-rate estimate via EWMA on baseline deltas</h3>
+<p>Let the recorded baseline sequence for subtopic $s$ be $b_{s,1}, b_{s,2}, \dots, b_{s,n_s}$. Define the step deltas</p>
+<p>$$
+\delta_{s,t} \;=\; b_{s,t} - b_{s,t-1}, \quad t=2,\dots,n_s.
+$$</p>
+<p>The learning-rate estimate $\hat{r}_s$ is an EWMA over these deltas with smoothing constant</p>
+<p>$$
+\alpha_{\mathrm{lr}} \;=\; 1 - e^{-\lambda}, \qquad \lambda = 0.3,
+$$</p>
+<p>(note: $\alpha_{\mathrm{lr}}$ here is the <em>learning-rate EWMA smoothing</em>, distinct from $\alpha(n)$ in §1.2). For $n_s < 2$ there are no deltas yet, so we use a cold-start prior:</p>
+<p>$$
+\hat{r}_s \;=\; 0.5 \quad\text{when}\quad n_s < 2.
+$$</p>
+<p>Otherwise recursively define</p>
+<p>$$
+\begin{aligned}
+s_1 &= \delta_{s,2} \\
+s_k &= \alpha_{\mathrm{lr}}\,\delta_{s,k+1} + (1-\alpha_{\mathrm{lr}})\,s_{k-1}, \quad k=2,\dots,n_s-1
+\end{aligned}
+$$</p>
+<p>and set</p>
+<p>$$
+\hat{r}_s \;=\; s_{n_s-1}.
+$$</p>
+<h3>2.3 Gradient, masking, and selection</h3>
+<p>Let $\mathcal{S}_{\mathrm{open}}\subseteq\mathcal{S}$ be the set of subtopics with at least one unserved question. The subtopic priority (gradient) is</p>
+<p>$$
+g_s \;=\; w_s \cdot \hat{r}_s.
+$$</p>
+<p>The next subtopic is chosen by</p>
+<p>$$
+s^{*} \;=\; \arg\max_{s\,\in\,\mathcal{S}_{\mathrm{open}}}\; g_s.
+$$</p>
+<p>If $\mathcal{S}_{\mathrm{open}}=\emptyset$ (i.e. every question has been served), the served-set is reset and the selection is recomputed. Topics are not selected directly: the induced topic is simply</p>
+<p>$$
+T^{*} \;=\; T(s^{*}).
+$$</p>
+<p>The actual question is then drawn from the bank for subtopic $s^{*}$ at a difficulty close to $\mathrm{target}(n_{s^{*}})$ from §1.5.</p>
+<hr />
+<h2>3. Prerequisite-gated procedural-drill recommender</h2>
+<p>This is the layer that decides, <em>after</em> a question/feedback cycle finishes, whether to fire a procedural Colab drill — and if so, which one.</p>
+<h3>3.1 Per-subtopic mastery readout</h3>
+<p>The frontend's gating logic reads a scalar mastery score per subtopic from the backend state. With $p_s$ the running correctness rate of §1.3, the readout is</p>
+<p>$$
+\rho_s \;=\; 100\cdot p_s \;\in\; [0,100].
+$$</p>
+<p>(For sake of completeness: if $p_s$ is missing but a positive baseline exists, the readout falls back to $b_s$. If neither is set, $\rho_s$ is undefined and treated as "no information.")</p>
+<h3>3.2 Drill unlock predicate</h3>
+<p>Each drill $d\in\mathcal{D}$ unlocks once <em>every</em> one of its constituent subtopics has crossed the unlock floor $\theta_{\mathrm{unlock}}=50$:</p>
+<p>$$
+U(d) \;\equiv\; \bigl(\forall s\in\mathrm{subs}(d):\; \rho_s\;\text{is defined and}\;\rho_s \ge \theta_{\mathrm{unlock}}\bigr).
+$$</p>
+<p>For single-atom drills this is one inequality; for composites it is a conjunction over 2–3 atoms.</p>
+<h3>3.3 Composite promote predicate</h3>
+<p>To prevent composite drills from never firing (they sit at the back of the catalog list, behind hundreds of single-atom drills), composites are <em>promoted</em> ahead of further single-atom drills once their atoms are strongly mastered. Let $\theta_{\mathrm{promote}}=70 > \theta_{\mathrm{unlock}}$. Define</p>
+<p>$$
+P(d) \;\equiv\; \mathrm{comp}(d) \;\wedge\; \bigl(\forall s\in\mathrm{subs}(d):\; \rho_s\;\text{is defined and}\;\rho_s \ge \theta_{\mathrm{promote}}\bigr).
+$$</p>
+<h3>3.4 Two-pass selection</h3>
+<p>Let $\Sigma\subseteq\mathcal{D}$ be the set of drills already shown to the student (tracked in <code>localStorage</code>). The next drill is chosen in two passes:</p>
+<p><strong>Pass 1 (composite promotion).</strong>
+$$
+d^{*}_{1} \;=\; \arg\min_{d}\;\bigl\{\, i(d)\;:\; d\notin\Sigma\;\wedge\; P(d)\,\bigr\}.
+$$</p>
+<p><strong>Pass 2 (in-order unlocked fallback).</strong> If Pass 1 returns no drill,
+$$
+d^{*}_{2} \;=\; \arg\min_{d}\;\bigl\{\, i(d)\;:\; d\notin\Sigma\;\wedge\; U(d)\,\bigr\}.
+$$</p>
+<p>The fired drill is $d^{*} = d^{*}_{1}$ if defined, else $d^{*}_{2}$; if both are empty the recommender returns "no drill available."</p>
+<h3>3.5 ARENA exercise readiness</h3>
+<p>ARENA exercises live on a separate surface (the Courses tab). Each exercise $e\in\mathcal{E}$ has skill-weight links $L_e=\{(s_i,\omega_i)\}$, and its readiness score is the weight-normalized average of constituent atom masteries:</p>
+<p>$$
+R(e) \;=\;
+\begin{cases}
+\dfrac{\displaystyle\sum_{(s_i,\omega_i)\in L_e} \omega_i\cdot\min(\rho_{s_i},100)}
+       {\displaystyle\sum_{(s_i,\omega_i)\in L_e} \omega_i}
+& \text{if } L_e\neq\emptyset \\[1em]
+R_{0}(e) & \text{otherwise (static fallback)}
+\end{cases}
+$$</p>
+<p>$R(e)$ governs the readiness bar shown on ARENA cards and is consumed by <code>targeted-practice</code> for ordering search results.</p>
+<hr />
+<h2>4. Composite drill rating (multi-subtopic credit)</h2>
+<p>When the student rates a procedural drill, the system fires <em>one update per constituent subtopic</em>. This is the "even-skill averaging" credit-assignment scheme.</p>
+<h3>4.1 Self-rating mapping</h3>
+<p>Drill self-rating $r$ is one of four buttons:</p>
+<table>
+<thead>
+<tr>
+<th>Button</th>
+<th>Correct $c(r)$</th>
+<th>Feedback $f(r)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>✓ Solved in target time, no help</td>
+<td>$1$</td>
+<td>"A lot"</td>
+</tr>
+<tr>
+<td>✓ Solved in target time, with a hint</td>
+<td>$1$</td>
+<td>"Somewhat"</td>
+</tr>
+<tr>
+<td>✓ Solved correctly, over target time</td>
+<td>$1$</td>
+<td>"Not much"</td>
+</tr>
+<tr>
+<td>✗ Looked up the solution</td>
+<td>$0$</td>
+<td>"A lot"</td>
+</tr>
+</tbody>
+</table>
+<p>The feedback level $f(r)$ maps to $\alpha(n)\in\{0.3,0.6,0.85\}$ exactly as in §1.2.</p>
+<h3>4.2 Parallel apply-feedback</h3>
+<p>For composite drill $d$ with $\mathrm{subs}(d)=\{s_1,\dots,s_k\}$, the rating event triggers $k$ synthetic attempts in parallel. For each $s_i$:</p>
+<p>$$
+\mathrm{diff}_{s_i} \;=\; \bigl\lfloor\mathrm{target}(n_{s_i})\bigr\rfloor
+\quad\text{(fallback to } 50 \text{ if undefined)},
+$$</p>
+<p>$$
+\mathrm{grade}_{s_i} \;=\; 100\cdot c(r),
+$$</p>
+<p>$$
+\mathrm{score}_{s_i} \;=\; \frac{\mathrm{grade}_{s_i}\cdot\mathrm{diff}_{s_i}}{100}.
+$$</p>
+<p>Then the §1.3–1.5 updates fire independently on each $s_i$ with the same $\alpha(n)=\alpha(f(r))$. After the parallel updates,</p>
+<p>$$
+n_{s_i} \;\leftarrow\; n_{s_i} + 1 \quad\forall\, i,
+$$</p>
+<p>so each constituent atom advances one cold-start step. Each subtopic accumulates its own evidence; there is no shared per-composite latent state.</p>
+<p>This is mathematically equivalent to "equal-credit" multi-tag PFA (cf. Maier 2021): each tagged subtopic receives the same correctness signal weighted by its own current target difficulty.</p>
+<hr />
+<h2>5. Constants summary</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Value</th>
+<th>Source / meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\alpha(n)$ ("Not much"/"Somewhat"/"A lot")</td>
+<td>$0.30$ / $0.60$ / $0.85$</td>
+<td>Per-attempt EWMA recency factor (§1.2)</td>
+</tr>
+<tr>
+<td>$\alpha_{\mathrm{lr}}$</td>
+<td>$1 - e^{-0.3} \approx 0.259$</td>
+<td>Learning-rate EWMA smoothing (§2.2)</td>
+</tr>
+<tr>
+<td>$\tau_{1/2}$</td>
+<td>$14$ days</td>
+<td>Mastery half-life (§1.6)</td>
+</tr>
+<tr>
+<td>$B_0,\,P_0$</td>
+<td>$0,\,0.5$</td>
+<td>Priors for baseline and correctness rate</td>
+</tr>
+<tr>
+<td>Cold-start ladder</td>
+<td>$\{25, 50, 75\}$</td>
+<td>Target difficulties for $n_s\in\{0,1,2\}$</td>
+</tr>
+<tr>
+<td>Grade threshold for "correct"</td>
+<td>$85$</td>
+<td>Indicator $\mathbf{1}(\mathrm{grade}>85)$</td>
+</tr>
+<tr>
+<td>$\theta_{\mathrm{unlock}}$</td>
+<td>$50$</td>
+<td>Drill unlock floor (§3.2)</td>
+</tr>
+<tr>
+<td>$\theta_{\mathrm{promote}}$</td>
+<td>$70$</td>
+<td>Composite promotion floor (§3.3)</td>
+</tr>
+<tr>
+<td>$\mu(p)$ cap</td>
+<td>$2.5$</td>
+<td>Maximum difficulty multiplier (§1.5)</td>
+</tr>
+<tr>
+<td>$\mu(p)$ knee</td>
+<td>$p = 0.85$</td>
+<td>Piecewise breakpoint (§1.5)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>6. Composition diagram</h2>
+<p>The four layers compose top-to-bottom on every interaction:</p>
+<ol>
+<li><strong>Subtopic selection (§2)</strong> chooses $s^{*}$ using $g_s = w_s\hat{r}_s$.</li>
+<li><strong>Per-subtopic engine (§1)</strong> serves a question at difficulty $\approx\mathrm{target}(n_{s^{*}})$, then on feedback updates $\sigma_{s^{*}}=(n,b,p)$ with EWMA + time decay.</li>
+<li><strong>Prereq-gated drill recommender (§3)</strong> checks every drill against $\rho_s$ readouts; fires a composite if any is promotable, otherwise the next in-order unlocked single-atom drill.</li>
+<li><strong>Composite drill rating (§4)</strong> propagates one rating into $k$ parallel per-subtopic updates, each running the same §1 machinery.</li>
+</ol>
+<p>There is no global "student ability" scalar; mastery lives per subtopic, and harder content unlocks through prerequisite conjunctions in §3, not through a global difficulty axis.</p>
+<hr />
+<p><em>Engine code: <code>This-Directory-Only/backend/app/{adaptive.py, prioritization.py, practice/arena_rating_router.py}</code> (Python) and <code>Local_Deployed_Shared/{practice/arena-unlock.js, practice/drills-catalog.js, stats/predicted-prereqs-temp.js}</code> (frontend).</em></p>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$",  right: "$",  display: false},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "\\[", right: "\\]", display: true}
+      ],
+      throwOnError: false
+    });
+    // Signal ready for headless print.
+    setTimeout(function(){ document.title += " :: ready"; }, 600);
+  });
+</script>
+</body>
+</html>

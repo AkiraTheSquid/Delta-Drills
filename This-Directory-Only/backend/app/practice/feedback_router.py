@@ -14,8 +14,11 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.adaptive import apply_feedback, get_user_state, save_user_state
+from app import bkt_mastery
 from app.auth import get_current_user
 from app.models import User
+from app.prioritization import subtopic_mastery, target_difficulty
+from app.questions import get_question_by_id
 from app.practice_schemas import (
     FeedbackRequest,
     FeedbackResponse,
@@ -56,6 +59,38 @@ def submit_feedback(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Failed to apply feedback.",
         )
+
+    # Per-atom BKT update — the real mastery signal. Fires here (not at /submit)
+    # because correctness is only final after any /override, and apply_feedback
+    # finalizes the attempt. Each of the question's atom tags updates its BKT
+    # posterior scaled by the tag's confidence, then FIRe-credits encompassed
+    # atoms. (apply_feedback's EWMA math is now inert bookkeeping — nothing
+    # reads baseline/p for any decision; see bkt_mastery.py.)
+    question = get_question_by_id(attempt.question_id)
+    if question is not None:
+        for tag in getattr(question, "atom_tags", []) or []:
+            bkt_mastery.apply_attempt(
+                user_state.atom_mastery,
+                user_state.atom_last_ts,
+                tag["atom_id"],
+                attempt.correct,
+                confidence=float(tag.get("confidence", 1.0)),
+            )
+
+    # Snapshot the subtopic's BKT mastery into the legacy baseline/p fields the
+    # Statistics panel reads (frontend unchanged): 0-1 mastery → 0-100 baseline.
+    # Done AFTER the BKT update so the recorded attempt reflects post-attempt
+    # mastery; per-attempt baseline_after thus accrues the BKT trajectory the
+    # learning-rate chart plots.
+    mastery = subtopic_mastery(user_state, attempt.subtopic)
+    sub_state = user_state.get_subtopic_state(attempt.subtopic)
+    sub_state.baseline = mastery * 100.0
+    sub_state.p = mastery
+    sub_state.target_difficulty = target_difficulty(user_state, attempt.subtopic)
+    attempt.baseline_after = sub_state.baseline
+    attempt.p_after = sub_state.p
+    attempt.target_difficulty_after = sub_state.target_difficulty
+
     save_user_state(user_id)
 
     return FeedbackResponse(

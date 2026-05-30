@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
+from app import bkt_mastery
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -78,6 +79,8 @@ def get_practice_state(user: User = Depends(get_current_user)) -> PracticeStateR
             for name, s in user_state.subtopic_states.items()
         },
         custom_weights=dict(user_state.custom_weights or {}),
+        atom_mastery=dict(user_state.atom_mastery or {}),
+        atom_last_ts=dict(user_state.atom_last_ts or {}),
     )
 
 
@@ -115,3 +118,26 @@ def update_weights(
     user_state.custom_weights = {k: float(v) for k, v in payload.weights.items()}
     save_user_state(user_id)
     return {"ok": True}
+
+
+@router.get("/atom-gates")
+def atom_gates(user: User = Depends(get_current_user)) -> dict:
+    """Unified per-atom unlock state for the whole concept graph.
+
+    Single source of truth for the frontend drill/ARENA gates (the frontend
+    ships a stale v2 graph, so prereq edges must come from the backend's v3).
+      - ready:    atoms whose gating prerequisites are all mastered (>= 0.85) —
+                  a single-atom teaching item unlocks when its atom is ready.
+      - mastered: atoms whose own posterior is >= 0.85 — a composite/ARENA item
+                  unlocks when ALL its component atoms are mastered.
+    """
+    user_id = str(user.id)
+    user_state = get_user_state(user_id)
+    ready, mastered = bkt_mastery.gate_sets(
+        user_state.atom_mastery, user_state.atom_last_ts
+    )
+    return {
+        "ready": ready,
+        "mastered": mastered,
+        "threshold": bkt_mastery.UNLOCK_THRESHOLD,
+    }

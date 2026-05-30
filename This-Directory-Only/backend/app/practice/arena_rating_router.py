@@ -47,6 +47,7 @@ from app.adaptive import (
     get_user_state,
     save_user_state,
 )
+from app import bkt_mastery
 from app.auth import get_current_user
 from app.models import User
 
@@ -62,6 +63,11 @@ class ArenaRatingRequest(BaseModel):
     correct: bool = True
     elapsed_seconds: Optional[float] = None
     target_seconds: Optional[float] = None
+    # Atom ids this exercise practices (drill compositeAtomIds / tagged ARENA
+    # atoms). When present, each runs a per-atom BKT update with FIRe credit to
+    # the atoms it encompasses — the real per-atom mastery signal. The subtopic
+    # EWMA bump above is retained only for the legacy learner-facing area score.
+    atom_ids: List[str] = Field(default_factory=list)
 
 
 class ArenaRatingUpdate(BaseModel):
@@ -74,6 +80,9 @@ class ArenaRatingUpdate(BaseModel):
 class ArenaRatingResponse(BaseModel):
     success: bool
     updated: List[ArenaRatingUpdate]
+    # atom_id -> new BKT posterior, for every atom changed (directly practiced
+    # or FIRe-credited). Lets the frontend sync readiness without a re-fetch.
+    atom_mastery: dict = Field(default_factory=dict)
 
 
 @router.post("/arena-rating", response_model=ArenaRatingResponse)
@@ -81,58 +90,47 @@ def submit_arena_rating(
     payload: ArenaRatingRequest,
     user: User = Depends(get_current_user),
 ) -> ArenaRatingResponse:
-    """Bump EWMA state for each prereq subtopic of a completed ARENA exercise."""
+    """Per-atom BKT update for a completed ARENA exercise / drill.
+
+    EWMA is fully removed: a rating updates ONLY the per-atom BKT posteriors of
+    the exercise's `atom_ids` (plus encompassing FIRe credit). `subtopics` is
+    retained in the request for back-compat / logging but no longer drives any
+    state — subtopic-level scores are now derived from BKT (see
+    prioritization.get_subtopic_weights). An ARENA exercise that sends no
+    atom_ids therefore updates nothing here; mastery is built by the bank +
+    drills that DO carry atoms.
+    """
     user_id = str(user.id)
     user_state = get_user_state(user_id)
 
-    # Preserve any in-progress Delta Drills attempt — we'll restore it after.
-    saved_pending = user_state.pending_attempt
-
     updated: List[ArenaRatingUpdate] = []
-    grade = 100.0 if payload.correct else 0.0
-    timestamp = datetime.now(timezone.utc).isoformat()
-    fb: FeedbackLevel = payload.feedback
 
-    for subtopic in payload.subtopics:
-        sub_state = user_state.get_subtopic_state(subtopic)
-        # Use the subtopic's current target difficulty (assume the ARENA
-        # exercise lives roughly at the student's current level). Fall back
-        # to 50 if cold-start hasn't seeded a target yet.
-        difficulty = int(sub_state.target_difficulty) if sub_state.target_difficulty else 50
-
-        user_state.pending_attempt = AttemptRecord(
-            question_id=-1,
-            subtopic=subtopic,
-            difficulty_score=difficulty,
-            grade=grade,
-            correct=payload.correct,
-            timestamp=timestamp,
+    # Per-atom BKT update + encompassing FIRe credit — the only mastery signal.
+    # One shared timestamp so every atom this exercise touches decays together.
+    atom_changes: dict = {}
+    now = datetime.now(timezone.utc)
+    for atom_id in dict.fromkeys(payload.atom_ids):  # de-dupe, preserve order
+        changed = bkt_mastery.apply_attempt(
+            user_state.atom_mastery,
+            user_state.atom_last_ts,
+            atom_id,
+            payload.correct,
+            now=now,
         )
-        attempt = apply_feedback(user_state, fb)
-        if attempt is None:
-            continue
-        updated.append(
-            ArenaRatingUpdate(
-                subtopic=subtopic,
-                p_after=sub_state.p,
-                baseline_after=sub_state.baseline,
-                target_difficulty_after=sub_state.target_difficulty,
-            )
-        )
+        atom_changes.update(changed)
 
-    # Restore the original Delta Drills pending attempt (the ARENA rating
-    # shouldn't clobber a half-graded question the student left open).
-    user_state.pending_attempt = saved_pending
     save_user_state(user_id)
 
     logger.info(
-        "arena_rating user=%s exercise=%r feedback=%s elapsed=%s target=%s subtopics=%d",
+        "arena_rating user=%s exercise=%r feedback=%s elapsed=%s target=%s subtopics=%d atoms=%d→%d_changed",
         user_id,
         payload.exercise_title,
         fb,
         payload.elapsed_seconds,
         payload.target_seconds,
         len(updated),
+        len(payload.atom_ids),
+        len(atom_changes),
     )
 
-    return ArenaRatingResponse(success=True, updated=updated)
+    return ArenaRatingResponse(success=True, updated=updated, atom_mastery=atom_changes)

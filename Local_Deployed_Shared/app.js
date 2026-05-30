@@ -24,6 +24,12 @@ let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
 let authToken = localStorage.getItem("auth_token") || "";
 let authEmail = localStorage.getItem("auth_email") || "";
 
+// MIGRATION FLAG (2026-05-30): route auth + practice to the Fly backend
+// (own JWT auth + Neon Postgres + BKT gate) instead of Supabase, in prod too.
+// REVERSIBLE: set false to restore Supabase auth + supabase practice mode
+// (the Supabase code paths below + getPracticeMode's supabase branch stay intact).
+window.DELTA_USE_BACKEND = true;
+
 const authRequiredTabs = ["split-tool", "account", "courses", "practice", "targeted-practice", "statistics"];
 
 const switchTab = (tabName) => {
@@ -128,8 +134,8 @@ loginForm.addEventListener("submit", async (event) => {
   }
 
   try {
-    if (isLocalHost) {
-      // Local app never uses Supabase auth; always use the local backend.
+    if (isLocalHost || window.DELTA_USE_BACKEND) {
+      // Local app + migrated prod: use the Fly backend's own JWT auth.
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -189,8 +195,8 @@ signupForm.addEventListener("submit", async (event) => {
   }
 
   try {
-    if (isLocalHost) {
-      // Local app never uses Supabase auth; always use the local backend.
+    if (isLocalHost || window.DELTA_USE_BACKEND) {
+      // Local app + migrated prod: use the Fly backend's own JWT auth.
       const response = await fetch(`${API_BASE}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

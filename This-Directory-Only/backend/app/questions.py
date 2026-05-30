@@ -108,6 +108,44 @@ def _load_function_overrides() -> Dict[int, dict]:
     return base
 
 
+_ATOM_TAGS_PATH = Path(__file__).resolve().parent / "data" / "question_atom_tags.jsonl"
+
+
+def _apply_atom_tags(questions: List["Question"]) -> None:
+    """Attach concept-graph atom tags (+confidence) to each question from
+    data/question_atom_tags.jsonl. Missing file / malformed lines are skipped
+    silently — questions without tags simply produce no BKT update on submit.
+    """
+    if not _ATOM_TAGS_PATH.exists():
+        logger.info("No question_atom_tags.jsonl — questions will have no atom tags")
+        return
+    by_id: Dict[int, List[dict]] = {}
+    try:
+        for line in _ATOM_TAGS_PATH.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            rec = json.loads(line)
+            tags = []
+            for a in rec.get("atoms", []):
+                aid = a.get("atom_id")
+                conf = float(a.get("confidence", 0.0))
+                if aid and 0.0 <= conf <= 1.0:
+                    tags.append({"atom_id": aid, "confidence": conf})
+            if tags:
+                by_id[int(rec["question_id"])] = tags
+    except (OSError, json.JSONDecodeError, ValueError, TypeError) as exc:
+        logger.warning("Failed to load question_atom_tags.jsonl: %s", exc)
+        return
+    tagged = 0
+    for q in questions:
+        t = by_id.get(q.id)
+        if t:
+            q.atom_tags = t
+            tagged += 1
+    logger.info("Applied atom tags to %d/%d questions", tagged, len(questions))
+
+
 def _load_id_set(filename: str) -> set[int]:
     path = _chatgpt_runtime_dir() / filename
     if not path.exists():
@@ -143,6 +181,10 @@ class Question:
     starter_code: str | None = None
     test_cases: List[dict] = field(default_factory=list)
     submission_mode: str = "stdout"
+    # Concept-graph atoms this question's solution exercises, each with a
+    # confidence ∈ [0,1] (see data/question_atom_tags.jsonl). Drives the
+    # per-atom BKT mastery update on submit. Empty until tags are loaded.
+    atom_tags: List[dict] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -588,6 +630,7 @@ def _load_csv_into(
                 starter_code = override.get("starter_code", starter_code)
                 test_cases = override.get("test_cases", test_cases)
                 submission_mode = override.get("submission_mode", submission_mode)
+                task_type = override.get("task_type", task_type)
                 question_text = override.get("question_text", question_text)
                 if "expected_artifact_type" in override:
                     expected_artifact_type = override["expected_artifact_type"]
@@ -676,6 +719,8 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
 
+    _apply_atom_tags(questions)
+
     _questions = questions
     _questions_by_id = {q.id: q for q in questions}
 
@@ -741,3 +786,19 @@ def get_topic_for_subtopic(subtopic: str) -> str:
     """Return the topic name for a given subtopic key (e.g. 'Numpy' for 'Numpy: Core array literacy')."""
     ensure_questions_loaded()
     return _subtopic_to_topic.get(subtopic, subtopic.split(":")[0] if ":" in subtopic else "")
+
+
+def get_atoms_for_subtopic(subtopic: str) -> List[str]:
+    """Return the distinct concept-graph atom ids exercised by a subtopic's
+    questions (union of their atom tags). This is how BKT prioritization +
+    difficulty map a per-subtopic surface onto per-atom mastery, replacing the
+    old per-subtopic EWMA. Empty if no question in the subtopic carries tags.
+    """
+    ensure_questions_loaded()
+    seen: Dict[str, None] = {}
+    for q in _questions_by_subtopic.get(subtopic, []):
+        for tag in q.atom_tags or []:
+            aid = tag.get("atom_id")
+            if aid:
+                seen.setdefault(aid, None)
+    return list(seen)

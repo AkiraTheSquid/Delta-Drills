@@ -266,8 +266,26 @@ window.debugArenaUnlock = () => {
 // {topic, subtopic, minPct} entries must be met. If even one subtopic
 // has no recorded score yet (null), the exercise is NOT unlocked —
 // otherwise a fresh student with no scores would pass the gate.
+// Component atoms each ARENA exercise composes (self-tagged from canonical
+// solutions, validated against the 393-atom inventory; the 16 graph-anchored
+// titles are supersets of their curriculum-graph atoms). This is the unified
+// gate's source for ARENA: an exercise unlocks when ALL its component atoms are
+// mastered (>= 0.85), read from the backend /atom-gates set (window.__atomGates).
+// Replaces the legacy per-subtopic minPct list, which now survives only as the
+// offline (not-logged-in) fallback below.
+window.ARENA_EXERCISE_ATOMS = {"(1) Column-stacking": ["einops-rearrange", "einops-rearrange-flatten", "tensor-wraps-ndarray"], "(2) Column-stacking and copying": ["einops-rearrange-flatten", "einops-repeat", "einops-repeat-broadcast", "tensor-wraps-ndarray"], "(3) Row-stacking and double-copying": ["einops-rearrange-flatten", "einops-repeat", "einops-repeat-broadcast", "slice-view-mutation", "tensor-wraps-ndarray"], "(4) Stretching": ["einops-rearrange-flatten", "einops-repeat", "einops-repeat-broadcast"], "(5) Split channels": ["einops-rearrange", "einops-rearrange-flatten"], "(6) Stack into rows & cols": ["einops-rearrange", "einops-rearrange-flatten", "unbind-tuple-unpack"], "(7) Transpose": ["einops-rearrange", "slice-view-mutation", "tensor-wraps-ndarray"], "(8) Shrinking": ["einops-rearrange-flatten", "einops-reduce", "einops-reduce-min"], "(A1) rearrange": ["einops-rearrange", "einops-rearrange-flatten", "torch-arange"], "(A2) rearrange": ["einops-rearrange", "einops-rearrange-flatten", "torch-arange"], "(B1) temperature average": ["einops-reduce", "reduce-op-mean-divide"], "(B2) temperature difference": ["einops-reduce", "reduce-op-mean-divide", "einops-repeat", "einops-repeat-broadcast", "broadcasting-rules"], "(C1) normalize a matrix": ["vector-normalize-keepdim", "vector-normalisation", "broadcasting-rules"], "(C2) pairwise cosine similarity": ["vector-normalize-keepdim", "vector-normalisation", "matmul-2d"], "(D) sample distribution": ["torch-rand-uniform", "broadcasting-rules", "sum-and-broadcast-duality"], "(E) classifier accuracy": ["argmax-prediction", "argmax-accuracy-eval", "tensor-item-scalar"], "(F1) total price indexing": ["index-by-tensor", "tensor-item-scalar"], "(F3) total price gather": ["arange-fancy-index-cross-entropy", "index-by-tensor", "tensor-item-scalar", "reduce-gather-sum"], "(G) indexing": ["index-by-tensor", "integer-array-indexing", "tensor-unbind"], "(H1) batched logsumexp": ["broadcasting-rules", "einops-rearrange", "logsumexp-cross-entropy", "sum-and-broadcast-duality"], "(H2) batched softmax": ["broadcasting-rules", "sum-and-broadcast-duality", "vector-normalize-keepdim"], "(H3) batched logsoftmax": ["broadcasting-rules", "logsumexp-cross-entropy", "sum-and-broadcast-duality", "vector-normalize-keepdim"], "(H4) batched cross entropy loss": ["arange-fancy-index-cross-entropy", "cross-entropy-classification-loss", "einops-rearrange", "index-by-tensor", "logsumexp-cross-entropy", "vector-normalize-keepdim"], "(I1) collect rows": ["index-by-tensor", "slice-view-mutation"], "(I2) collect columns": ["index-by-tensor", "slice-view-mutation"], "einsum: trace, mv, mm, inner, outer": ["einops-einsum", "as-strided-trace", "matmul-2d", "matvec", "outer-product-grid"]};
+
 window.isArenaExerciseUnlocked = (exTitle) => {
   if (!window.ARENA_PREREQS_TEMP_ENABLED) return false;
+
+  // Unified atom gate (backend mode): all component atoms must be mastered.
+  const atoms = window.ARENA_EXERCISE_ATOMS && window.ARENA_EXERCISE_ATOMS[exTitle];
+  const gates = window.__atomGates;
+  if (gates && Array.isArray(atoms) && atoms.length) {
+    return atoms.every((a) => gates.mastered.has(a));
+  }
+
+  // Fallback (offline / not logged in): legacy per-subtopic prereq scores.
   const prereqs = window.ARENA_PREREQS_TEMP_BY_EXERCISE &&
                   window.ARENA_PREREQS_TEMP_BY_EXERCISE[exTitle];
   if (!Array.isArray(prereqs) || !prereqs.length) return false;

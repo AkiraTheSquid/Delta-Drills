@@ -27,10 +27,12 @@
    ================================================================ */
 
 (function () {
-  // Default unlock floor: when EWMA accuracy on the targeted subtopic
-  // crosses this percent, the standalone exercise becomes eligible for
-  // auto-surface. Per-exercise overrides supported via E() opts arg.
-  const DEFAULT_UNLOCK_MIN_PCT = 50;
+  // Unified unlock gate (mirrors backend bkt_mastery.UNLOCK_THRESHOLD = 0.85):
+  // an exercise is unlocked iff EVERY atom it requires is mastered to >= this
+  // percent (BKT posterior P(known) * 100). Same hard 0.85 bar used for drills,
+  // composites, and ARENA — replaces the old flat 0.50 EWMA floor.
+  // Per-exercise overrides still supported via E() opts arg.
+  const DEFAULT_UNLOCK_MIN_PCT = 85;
 
   // Default per-exercise timer budget (single-exercise standalones are
   // shorter than the old combined 5-exercise drills).
@@ -1086,18 +1088,52 @@
     try { localStorage.setItem(_DRILL_SHOWN_LS_KEY, JSON.stringify([...set])); } catch (_) {}
   };
 
+  // The atoms a drill exercises. Composites carry the full list; single-atom
+  // drills carry one. Prioritization scores THESE, not subtopics.
+  const _atomsForDrill = (drill) => {
+    if (Array.isArray(drill.compositeAtomIds) && drill.compositeAtomIds.length) {
+      return drill.compositeAtomIds;
+    }
+    if (drill.atomId) return [drill.atomId];
+    return [];
+  };
+
+  // Per-atom mastery on the 0–100 pct scale. computeAtomReadiness is BKT-first
+  // (returns the decayed per-atom posterior when one exists), falling back to
+  // the legacy subtopic-EWMA bridge ONLY for atoms with no posterior yet — so
+  // a brand-new learner still gets a cold-start ranking. Passing NaN as the
+  // fallback lets us distinguish "no signal at all" (null) from a real 0.
+  const _scoreForAtom = (atomId) => {
+    if (typeof window.computeAtomReadiness !== "function") return null;
+    const r = window.computeAtomReadiness(atomId, NaN);
+    return Number.isFinite(r) ? r * 100 : null;
+  };
+
+  // Back-compat alias kept for any external caller; subtopic EWMA is no longer
+  // the prioritization driver — see _scoreForAtom.
   const _scoreFor = (bareSubtopic) => {
     if (typeof window.getArenaPrereqSubtopicScore !== "function") return null;
-    // The fn signature is (topic, subtopic) but it also accepts the full
-    // composed key as the second arg (tries both raw and composed lookups).
     return window.getArenaPrereqSubtopicScore(null, bareSubtopic);
   };
 
+  // Unified prerequisite gate. Single source of truth = backend /atom-gates
+  // (window.__atomGates), because the shipped concept graph is v2 and lacks the
+  // v3 prereq edges. A SINGLE-ATOM drill (teaches atom A) unlocks when A is in
+  // `ready` (all A's gating prereqs mastered ≥0.85). A COMPOSITE drill unlocks
+  // when every component atom is in `mastered` (≥0.85). When __atomGates is
+  // absent (offline / not logged in) we fall back to the old per-atom readiness
+  // floor so the legacy Pyodide path still functions.
   const _isDrillUnlocked = (drill) => {
-    const subs = Array.isArray(drill.subtopics) ? drill.subtopics : [];
-    if (!subs.length) return false;
-    return subs.every((s) => {
-      const sc = _scoreFor(s);
+    const atoms = _atomsForDrill(drill);
+    if (!atoms.length) return false;
+    const gates = window.__atomGates;
+    if (gates) {
+      if (drill.isComposite) return atoms.every((a) => gates.mastered.has(a));
+      return atoms.every((a) => gates.ready.has(a));
+    }
+    // Fallback: own-atom readiness floor (offline legacy mode).
+    return atoms.every((a) => {
+      const sc = _scoreForAtom(a);
       return sc != null && sc >= (drill.unlockMinPct ?? DEFAULT_UNLOCK_MIN_PCT);
     });
   };
@@ -1108,13 +1144,18 @@
   // exercise on every atom first. Instead, when a student has demonstrated
   // strong mastery (≥ COMPOSITE_PROMOTE_PCT on every atom of a composite),
   // promote that composite ahead of further single-atom drills.
-  const COMPOSITE_PROMOTE_PCT = 70;
+  // Composites unlock under the SAME 0.85 required-atoms gate as everything
+  // else; this constant only controls QUEUE ORDER (promote a ready composite
+  // ahead of remaining single-atom drills), not eligibility.
+  const COMPOSITE_PROMOTE_PCT = 85;
   const _isCompositeReadyToPromote = (drill) => {
     if (!drill.isComposite) return false;
-    const subs = Array.isArray(drill.subtopics) ? drill.subtopics : [];
-    if (!subs.length) return false;
-    return subs.every((s) => {
-      const sc = _scoreFor(s);
+    const atoms = _atomsForDrill(drill);
+    if (!atoms.length) return false;
+    const gates = window.__atomGates;
+    if (gates) return atoms.every((a) => gates.mastered.has(a));
+    return atoms.every((a) => {
+      const sc = _scoreForAtom(a);
       return sc != null && sc >= COMPOSITE_PROMOTE_PCT;
     });
   };
@@ -1149,16 +1190,17 @@
   window.debugDrillUnlock = () => {
     const shown = _readShownSet();
     const rows = (window.DRILLS_CATALOG || []).map((d) => {
-      const subs = d.subtopics || [];
-      const checks = subs.map((s) => {
-        const sc = _scoreFor(s);
-        return { subtopic: s, need: d.unlockMinPct, have: sc == null ? "null" : sc.toFixed(1), met: sc != null && sc >= d.unlockMinPct };
+      const atoms = _atomsForDrill(d);
+      const checks = atoms.map((a) => {
+        const sc = _scoreForAtom(a);
+        return { atom: a, need: d.unlockMinPct, have: sc == null ? "null" : sc.toFixed(1), met: sc != null && sc >= d.unlockMinPct };
       });
       return {
         id: d.id,
         shown: shown.has(d.id),
-        unlocked: checks.every((c) => c.met),
-        blocking: checks.filter((c) => !c.met).map((c) => `${c.subtopic}(${c.have}<${c.need})`).join(", ") || "—",
+        unlocked: _isDrillUnlocked(d),
+        gate: window.__atomGates ? (d.isComposite ? "composite:all-mastered" : "single:prereqs-ready") : "fallback:readiness",
+        blocking: checks.filter((c) => !c.met).map((c) => `${c.atom}(${c.have}<${c.need})`).join(", ") || "—",
       };
     });
     console.group(`[Drills] unlock snapshot — ${rows.length} standalone exercises`);

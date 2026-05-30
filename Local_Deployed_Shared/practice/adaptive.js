@@ -87,6 +87,19 @@ async function loadBackendAdaptiveState() {
     }
     const snapshot = await res.json();
     adaptiveStateJson = JSON.stringify(snapshot);
+    // Refresh the unified per-atom unlock sets (backend = single source of
+    // truth; the shipped v2 graph lacks the v3 prereq edges). Non-fatal.
+    try {
+      const gres = await apiFetch("/api/practice/atom-gates");
+      if (gres.ok) {
+        const g = await gres.json();
+        window.__atomGates = {
+          ready: new Set(g.ready || []),
+          mastered: new Set(g.mastered || []),
+          threshold: g.threshold,
+        };
+      }
+    } catch (_) { /* offline / unauth — drills fall back to readiness */ }
     emitAdaptiveStateChanged();
     return true;
   } catch (err) {

@@ -1,108 +1,38 @@
 """
-Subtopic prioritization module.
+Subtopic prioritization module — BKT-driven (EWMA fully removed).
 
-Decides which subtopic to pull the next question from, inspired by the
-gradient-based prioritization in the example code.
+Decides which subtopic to pull the next question from, and at what difficulty,
+using ONLY the per-atom Bayesian Knowledge Tracing posteriors (bkt_mastery.py).
+A subtopic's mastery is the mean BKT posterior over the atoms its questions
+exercise (see questions.get_atoms_for_subtopic — populated from the per-question
+atom tags). The old per-subtopic EWMA gradient/learning-rate is gone.
 
-Each subtopic has:
-  - weight  (uniform 1/num_subtopics for MVP; easy to override later)
-  - learning_rate  estimated via EWMA over recent performance changes
-  - gradient = weight * learning_rate
-
-Higher gradient => higher priority => that subtopic is selected next.
-
+Selection policy: WEAKEST-FIRST. priority = effective_weight * (1 - mastery).
+Un-practiced atoms sit at the BKT prior (~0.10), so fresh subtopics surface
+first naturally; decay regresses mastery over time, resurfacing stale ones
+without a separate staleness rule.
 """
 
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
-from math import exp
 from typing import Dict, List, Optional, Tuple
 
-from app.adaptive import (
-    SubtopicState,
-    UserPracticeState,
-    COLD_START_TARGETS,
-    HALF_LIFE_DAYS,
-    _parse_ts,
+from app import bkt_mastery
+from app.adaptive import UserPracticeState
+from app.questions import (
+    get_atoms_for_subtopic,
+    get_subtopics,
+    get_questions_by_subtopic,
+    get_topic_for_subtopic,
 )
-from app.questions import get_subtopics, get_questions_by_subtopic, get_topic_for_subtopic
 
 logger = logging.getLogger(__name__)
 
-# --- v0 calibration constants — no literature source, tune empirically ---
-
-# Subtopics with fewer answered questions than this threshold get a boosted
-# learning-rate so they are always selected before topics with real history.
-# Matches the difficulty cold-start window in adaptive.py (len(COLD_START_TARGETS) = 3).
-COLD_START_MIN_QUESTIONS: int = len(COLD_START_TARGETS)
-# Must exceed any realistic EWMA learning rate (scores are 0-100, so deltas
-# are bounded by [-100, 100]; 200 is safely above that ceiling).
-COLD_START_PRIORITY_LR: float = 200.0
-# A subtopic is "stale" once last_update_ts is older than half a half-life;
-# stale subtopics get the cold-start priority boost so decay-driven regression
-# doesn't trap them in low-gradient limbo.
-STALENESS_DAYS: float = HALF_LIFE_DAYS / 2.0
-
-def _is_stale(state: SubtopicState, now: Optional[datetime] = None) -> bool:
-    """True if last_update_ts is older than STALENESS_DAYS."""
-    prev = _parse_ts(state.last_update_ts)
-    if prev is None:
-        return False
-    now = now or datetime.now(timezone.utc)
-    elapsed_days = (now - prev).total_seconds() / 86400.0
-    return elapsed_days >= STALENESS_DAYS
-
-
-def _estimate_learning_rate(state: SubtopicState) -> float:
-    """
-    EWMA learning-rate estimate for a single subtopic.
-    Similar to the prioritization example: computes rate of performance change
-    over recent attempts.
-
-    Returns a float. Higher = more improvement happening.
-    Subtopics with no history return a moderate default (0.5).
-    Stale subtopics (last_update_ts > STALENESS_DAYS old) get the cold-start
-    boost so decay-driven regression resurfaces them for refresh.
-    """
-    # Cold-start: prioritise unexplored topics above any with real history.
-    if state.n < COLD_START_MIN_QUESTIONS:
-        return COLD_START_PRIORITY_LR
-
-    # Staleness boost — forgotten subtopics should resurface.
-    if _is_stale(state):
-        return COLD_START_PRIORITY_LR
-
-    history = state.history
-    if len(history) < 2:
-        return COLD_START_PRIORITY_LR
-
-    # v0 EWMA rate constant (no literature source) — controls how quickly the
-    # learning-rate estimate forgets old deltas. Tune empirically.
-    lambda_ = 0.3
-    alpha = 1 - exp(-lambda_)
-
-    rates: List[float] = []
-    for i in range(1, len(history)):
-        curr = history[i]
-        prev = history[i - 1]
-        # "performance" is the score after each attempt
-        curr_perf = curr.baseline_after if curr.baseline_after is not None else 0.0
-        prev_perf = prev.baseline_after if prev.baseline_after is not None else 0.0
-        delta = curr_perf - prev_perf
-        # We use absolute improvement per step (not per hour since attempts are sequential)
-        rates.append(delta)
-
-    if not rates:
-        return 0.5
-
-    # EWMA
-    s = rates[0]
-    for t in range(1, len(rates)):
-        s = alpha * rates[t] + (1 - alpha) * s
-
-    return s
+# Difficulty target maps mastery∈[0,1] → numeric difficulty. Low mastery serves
+# easy items; near-mastery serves the hardest. v0 affine map, tune empirically.
+_DIFF_FLOOR = 20.0
+_DIFF_SPAN = 80.0
 
 
 def _get_weight(user_state: UserPracticeState, st_name: str, uniform_weight: float) -> float:
@@ -112,88 +42,116 @@ def _get_weight(user_state: UserPracticeState, st_name: str, uniform_weight: flo
     return uniform_weight
 
 
+def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
+    """Unified per-atom PREREQUISITE gate for a bank question: servable iff every
+    atom it is tagged with is READY (all that atom's gating prerequisites are
+    mastered ≥ UNLOCK_THRESHOLD). Untagged questions are ungated. Root-atom
+    questions are servable from the start (no prereqs) — the cold-start entry
+    points; composite-atom questions (e.g. conv2d-module) stay locked until their
+    prereq atoms are mastered."""
+    tags = getattr(question, "atom_tags", None) or []
+    if not tags:
+        return True
+    return all(
+        bkt_mastery.atom_is_ready(
+            t["atom_id"], user_state.atom_mastery, user_state.atom_last_ts
+        )
+        for t in tags
+    )
+
+
+def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
+    """Mean decay-adjusted BKT posterior over the atoms this subtopic exercises.
+    Falls back to the BKT prior when the subtopic has no tagged atoms / no
+    practice yet (so it reads as 'weak' and gets prioritized)."""
+    atoms = get_atoms_for_subtopic(subtopic)
+    if not atoms:
+        return bkt_mastery.P_INIT
+    vals = [
+        bkt_mastery.current_mastery(user_state.atom_mastery, user_state.atom_last_ts, a)
+        for a in atoms
+    ]
+    return sum(vals) / len(vals) if vals else bkt_mastery.P_INIT
+
+
+def target_difficulty(user_state: UserPracticeState, subtopic: str) -> float:
+    """BKT-derived target difficulty for the next question in a subtopic.
+    Scales with the learner's mastery of the subtopic's atoms."""
+    m = subtopic_mastery(user_state, subtopic)
+    raw = _DIFF_FLOOR + _DIFF_SPAN * m
+    return max(10.0, min(100.0, raw))
+
+
 def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
-    """
-    Select the subtopic from which to pull the next question.
-
-    Uses gradient = weight * learning_rate and selects the max.
-    If custom_weights are set on the user state, they are used instead of
-    uniform weights.
-
-    Returns the subtopic name, or None if there are no subtopics available.
+    """Select the subtopic to pull the next question from — weakest-first by
+    BKT mastery, weighted by effective (custom) weight. Skips subtopics whose
+    questions are all served; resets served sets if everything is exhausted.
     """
     subtopics = get_subtopics()
     if not subtopics:
         return None
+    uniform_weight = 1.0 / len(subtopics)
 
-    num_subtopics = len(subtopics)
-    uniform_weight = 1.0 / num_subtopics
-
-    # Compute gradients
-    gradients: List[Tuple[str, float]] = []
-    for st_name in subtopics:
-        sub_state = user_state.get_subtopic_state(st_name)
-
-        # Skip subtopics where the user has answered all available questions
-        available = get_questions_by_subtopic(st_name)
-        served = set(sub_state.served_question_ids)
-        remaining = [q for q in available if q.id not in served]
-        if not remaining:
-            continue
-
-        weight = _get_weight(user_state, st_name, uniform_weight)
-        if weight <= 0:
-            continue
-        learning_rate = _estimate_learning_rate(sub_state)
-        gradient = weight * learning_rate
-        gradients.append((st_name, gradient))
-
-    if not gradients:
+    def _candidates(skip_served: bool) -> List[Tuple[str, float]]:
+        out: List[Tuple[str, float]] = []
         for st_name in subtopics:
-            sub_state = user_state.get_subtopic_state(st_name)
-            sub_state.served_question_ids.clear()
-        for st_name in subtopics:
-            sub_state = user_state.get_subtopic_state(st_name)
-            available = get_questions_by_subtopic(st_name)
-            if available:
-                weight = _get_weight(user_state, st_name, uniform_weight)
-                if weight <= 0:
+            available = [
+                q for q in get_questions_by_subtopic(st_name)
+                if question_is_unlocked(user_state, q)
+            ]
+            if not available:
+                continue
+            if skip_served:
+                served = set(user_state.get_subtopic_state(st_name).served_question_ids)
+                if not [q for q in available if q.id not in served]:
                     continue
-                learning_rate = _estimate_learning_rate(sub_state)
-                gradients.append((st_name, weight * learning_rate))
+            weight = _get_weight(user_state, st_name, uniform_weight)
+            if weight <= 0:
+                continue
+            priority = weight * (1.0 - subtopic_mastery(user_state, st_name))
+            out.append((st_name, priority))
+        return out
 
-    if not gradients:
+    cands = _candidates(skip_served=True)
+    if not cands:
+        # Everything served — reset and retry over the full set.
+        for st_name in subtopics:
+            user_state.get_subtopic_state(st_name).served_question_ids.clear()
+        cands = _candidates(skip_served=False)
+    if not cands:
         return None
 
-    gradients.sort(key=lambda item: (-item[1], item[0]))
-    return gradients[0][0]
+    # Highest priority (weakest, weighted) first; alpha tiebreak for determinism.
+    cands.sort(key=lambda item: (-item[1], item[0]))
+    return cands[0][0]
 
 
 def get_subtopic_weights(user_state: UserPracticeState) -> List[Dict]:
-    """
-    Return all subtopics with their current prioritization info.
-    Useful for debugging or displaying to the user.
+    """All subtopics with current prioritization info, sorted weakest-first.
+
+    `baseline`/`p` now carry the BKT subtopic mastery (0-100 and 0-1) so the
+    existing frontend score readers (getArenaPrereqSubtopicScore) and the area
+    readout reflect BKT, not EWMA. `gradient` is the selection priority.
     """
     subtopics = get_subtopics()
-    num_subtopics = len(subtopics) if subtopics else 1
-    uniform_weight = 1.0 / num_subtopics
+    uniform_weight = 1.0 / len(subtopics) if subtopics else 1.0
 
     result = []
     for st_name in subtopics:
         sub_state = user_state.get_subtopic_state(st_name)
         weight = _get_weight(user_state, st_name, uniform_weight)
-        learning_rate = _estimate_learning_rate(sub_state)
-        gradient = weight * learning_rate
+        mastery = subtopic_mastery(user_state, st_name)
+        priority = weight * (1.0 - mastery)
         result.append({
             "subtopic": st_name,
             "topic": get_topic_for_subtopic(st_name),
             "weight": weight,
-            "learning_rate": learning_rate,
-            "gradient": gradient,
+            "learning_rate": priority,          # repurposed: BKT selection priority
+            "gradient": priority,
             "questions_answered": sub_state.n,
-            "current_difficulty": sub_state.target_difficulty,
-            "baseline": sub_state.baseline,
-            "p": sub_state.p,
+            "current_difficulty": target_difficulty(user_state, st_name),
+            "baseline": mastery * 100.0,        # BKT mastery on the 0-100 scale
+            "p": mastery,                       # BKT mastery 0-1 (frontend score)
         })
 
     return sorted(result, key=lambda r: r["gradient"], reverse=True)

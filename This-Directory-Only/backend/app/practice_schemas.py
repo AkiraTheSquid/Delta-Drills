@@ -109,6 +109,11 @@ class PracticeStateResponse(BaseModel):
     user_id: str
     subtopic_states: Dict[str, SubtopicStateSnapshot]
     custom_weights: Dict[str, float] = Field(default_factory=dict)
+    # Per-atom BKT mastery posterior + last-update timestamps. The frontend
+    # readiness/prioritization (concept-graph/atom_readiness.js) prefers these
+    # over the per-subtopic EWMA bridge when an atom has a posterior.
+    atom_mastery: Dict[str, float] = Field(default_factory=dict)
+    atom_last_ts: Dict[str, str] = Field(default_factory=dict)
 
 
 class CodeRunRequest(BaseModel):

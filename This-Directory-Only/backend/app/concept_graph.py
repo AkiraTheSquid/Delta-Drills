@@ -61,6 +61,16 @@ class PrerequisiteEdge(BaseModel):
     weight: float = Field(ge=0.0, le=1.0, default=1.0)
     confidence: float = Field(ge=0.0, le=1.0, default=1.0)
     is_hard_gate: bool = True
+    # Encompassing layer (Skycak / Math Academy). Encompassing edges are a
+    # SUBSET of prerequisite edges: when `is_encompassing` is True, mastering
+    # the *dependent* (higher) concept also exercises this *prerequisite*
+    # (lower) concept, so mastery credit trickles dependent -> prerequisite
+    # (FIRe-style). Every encompassing edge is a prerequisite edge; most
+    # prerequisite edges are NOT encompassing. `propagation_weight` is the
+    # fraction of the dependent's mastery credited to the prerequisite, and is
+    # only meaningful when `is_encompassing` is True (0.0 otherwise).
+    is_encompassing: bool = False
+    propagation_weight: float = Field(ge=0.0, le=1.0, default=0.0)
     rationale: str = ""
 
 
@@ -122,6 +132,19 @@ def _validate_graph(graph: CurriculumGraph) -> CurriculumGraph:
             raise ValueError(f"Unknown prerequisite concept id: {edge.prerequisite_id}")
         if edge.dependent_id not in concept_ids:
             raise ValueError(f"Unknown dependent concept id: {edge.dependent_id}")
+        # Encompassing/propagation consistency: a non-encompassing edge must
+        # carry zero propagation weight, and an encompassing edge must carry
+        # positive weight (otherwise the flag is a no-op).
+        if not edge.is_encompassing and edge.propagation_weight != 0.0:
+            raise ValueError(
+                f"Edge {edge.prerequisite_id}->{edge.dependent_id} is not "
+                f"encompassing but has propagation_weight={edge.propagation_weight}"
+            )
+        if edge.is_encompassing and edge.propagation_weight <= 0.0:
+            raise ValueError(
+                f"Encompassing edge {edge.prerequisite_id}->{edge.dependent_id} "
+                "must have propagation_weight > 0"
+            )
 
     for lesson in graph.lessons:
         missing = [concept_id for concept_id in lesson.concept_ids if concept_id not in concept_ids]
@@ -150,6 +173,20 @@ def concept_index(graph: CurriculumGraph) -> Dict[str, ConceptNode]:
 
 def prerequisite_edges_for(graph: CurriculumGraph, concept_id: str) -> list[PrerequisiteEdge]:
     return [edge for edge in graph.prerequisite_edges if edge.dependent_id == concept_id]
+
+
+def encompassing_edges_from(graph: CurriculumGraph, concept_id: str) -> list[PrerequisiteEdge]:
+    """Encompassing edges whose *dependent* is `concept_id`.
+
+    Mastering `concept_id` (the dependent/higher concept) trickles credit down
+    to each edge's `prerequisite_id` (the encompassed/lower concept). This is
+    the read-side accessor the propagation function (EG2) will consume.
+    """
+    return [
+        edge
+        for edge in graph.prerequisite_edges
+        if edge.is_encompassing and edge.dependent_id == concept_id
+    ]
 
 
 def lesson_index(graph: CurriculumGraph) -> Dict[str, LessonNode]:

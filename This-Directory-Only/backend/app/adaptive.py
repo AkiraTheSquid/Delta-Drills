@@ -121,6 +121,12 @@ class UserPracticeState:
     # User-defined effective weights per subtopic key (e.g. "Numpy: Core array literacy" -> 0.175)
     # Empty dict means fall back to uniform weights.
     custom_weights: Dict[str, float] = field(default_factory=dict)
+    # Per-atom BKT mastery posterior P(known) ∈ [0, 1], keyed by concept-graph
+    # atom id. THE prioritization/readiness signal (see bkt_mastery.py). The
+    # per-subtopic EWMA above is retained only as a learner-facing area readout.
+    atom_mastery: Dict[str, float] = field(default_factory=dict)
+    # ISO-8601 UTC of the last update to each atom's posterior; drives decay.
+    atom_last_ts: Dict[str, str] = field(default_factory=dict)
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -156,6 +162,8 @@ def _save_user_state(state: UserPracticeState) -> None:
         "user_id": state.user_id,
         "pending_attempt": asdict(state.pending_attempt) if state.pending_attempt else None,
         "custom_weights": state.custom_weights,
+        "atom_mastery": state.atom_mastery,
+        "atom_last_ts": state.atom_last_ts,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -184,6 +192,9 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         data = json.loads(path.read_text(encoding="utf-8"))
         state = UserPracticeState(user_id=data["user_id"])
         state.custom_weights = data.get("custom_weights") or {}
+        # Additive, back-compat: older saves predate per-atom BKT state.
+        state.atom_mastery = data.get("atom_mastery") or {}
+        state.atom_last_ts = data.get("atom_last_ts") or {}
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(
@@ -268,61 +279,10 @@ def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def _decay_factor(last_ts: Optional[str], now: datetime, half_life_days: float = HALF_LIFE_DAYS) -> float:
-    """Compute multiplicative decay factor in [0, 1] for elapsed time."""
-    prev = _parse_ts(last_ts)
-    if prev is None or half_life_days <= 0:
-        return 1.0
-    elapsed_days = max(0.0, (now - prev).total_seconds() / 86400.0)
-    return 0.5 ** (elapsed_days / half_life_days)
-
-
-def decayed_view(state: SubtopicState, now: Optional[datetime] = None) -> Tuple[float, float]:
-    """Return (baseline, p) decayed to `now` without mutating state.
-
-    Used by get_target_difficulty so served difficulty reflects current
-    (decayed) estimate. Mirrors the apply-side decay so a read between
-    attempts agrees with the next write.
-    """
-    now = now or datetime.now(timezone.utc)
-    factor = _decay_factor(state.last_update_ts, now)
-    baseline = BASELINE_PRIOR + (state.baseline - BASELINE_PRIOR) * factor
-    p = P_PRIOR + (state.p - P_PRIOR) * factor
-    return baseline, p
-
-
-def _apply_decay(state: SubtopicState, now: datetime) -> None:
-    """Mutate state to decayed values; called before each EWMA update."""
-    baseline, p = decayed_view(state, now)
-    state.baseline = baseline
-    state.p = p
-
-
-def compute_difficulty_multiplier(p: float) -> float:
-    """
-    Compute the difficulty multiplier from the correctness rate p.
-
-    Piecewise curve, v0 parameters (not literature-grounded):
-      breakpoint 0.85, sub-breakpoint exponent 1.8, super exponent 2.5,
-      hard cap at 2.5×. Re-tune empirically.
-    """
-    if p <= 0.85:
-        return 0.5 + 0.5 * (p / 0.85) ** 1.8
-    else:
-        return min(2.5, 1.0 + ((p - 0.85) / 0.15) ** 2.5)
-
-
-def get_target_difficulty(state: SubtopicState) -> float:
-    """
-    Return the target difficulty for the next question in this subtopic.
-    During cold start (n <= 3), returns predefined targets.
-    After that, returns the difficulty computed from the *decayed* baseline
-    and p (so stale subtopics regress toward easier difficulties).
-    """
-    if state.n < len(COLD_START_TARGETS):
-        return COLD_START_TARGETS[state.n]
-    baseline, p = decayed_view(state)
-    return _clamp_difficulty(baseline * compute_difficulty_multiplier(p))
+# EWMA difficulty/decay helpers removed — difficulty is BKT-driven
+# (prioritization.target_difficulty) and per-atom forgetting lives in
+# bkt_mastery.decay(). SubtopicState.baseline/p are now snapshots of BKT subtopic
+# mastery written by feedback_router (for the Statistics panel), not EWMA.
 
 
 def record_attempt(
@@ -362,67 +322,22 @@ def apply_feedback(
     if attempt is None:
         return None
 
-    alpha = FEEDBACK_ALPHA[feedback]
     attempt.feedback = feedback
-    attempt.alpha = alpha
+    attempt.alpha = FEEDBACK_ALPHA.get(feedback)
 
     sub_state = user_state.get_subtopic_state(attempt.subtopic)
     sub_state.n += 1
-
-    # Decay stored baseline/p by time elapsed since last update BEFORE the EWMA
-    # blend. Ensures a returning user's first attempt blends against a
-    # forgetting-adjusted prior rather than a stale snapshot.
-    now = _parse_ts(attempt.timestamp) or datetime.now(timezone.utc)
-    _apply_decay(sub_state, now)
-
-    # Compute score
-    score = attempt.grade * attempt.difficulty_score / 100.0
-    attempt.score = score
-
-    if sub_state.n <= 3:
-        # During cold start, still accumulate baseline and p but use simple averages
-        if sub_state.n == 1:
-            sub_state.baseline = score
-            sub_state.p = 1.0 if attempt.grade > 85 else 0.0
-        else:
-            sub_state.baseline = alpha * score + (1 - alpha) * sub_state.baseline
-            indicator = 1.0 if attempt.grade > 85 else 0.0
-            sub_state.p = P_ALPHA * indicator + (1 - P_ALPHA) * sub_state.p
-
-        # Set target difficulty for next cold start question or transition
-        if sub_state.n < len(COLD_START_TARGETS):
-            sub_state.target_difficulty = COLD_START_TARGETS[sub_state.n]
-        else:
-            # Transitioning out of cold start
-            multiplier = compute_difficulty_multiplier(sub_state.p)
-            sub_state.target_difficulty = _clamp_difficulty(sub_state.baseline * multiplier)
-    else:
-        # Full algorithm for n > 3
-        sub_state.baseline = alpha * score + (1 - alpha) * sub_state.baseline
-        indicator = 1.0 if attempt.grade > 85 else 0.0
-        sub_state.p = P_ALPHA * indicator + (1 - P_ALPHA) * sub_state.p
-        multiplier = compute_difficulty_multiplier(sub_state.p)
-        sub_state.target_difficulty = _clamp_difficulty(sub_state.baseline * multiplier)
-
     sub_state.last_update_ts = attempt.timestamp
-
-    attempt.baseline_after = sub_state.baseline
-    attempt.p_after = sub_state.p
-    attempt.target_difficulty_after = sub_state.target_difficulty
-
     sub_state.history.append(attempt)
     user_state.pending_attempt = None
 
-    logger.info(
-        "Feedback applied: user=%s subtopic=%s n=%d baseline=%.2f p=%.3f target=%.1f",
-        user_state.user_id,
-        attempt.subtopic,
-        sub_state.n,
-        sub_state.baseline,
-        sub_state.p,
-        sub_state.target_difficulty,
-    )
-
+    # NOTE: EWMA baseline/p are NO LONGER computed here. They (and the attempt's
+    # baseline_after / p_after) are snapshotted from the per-atom BKT mastery by
+    # the caller (feedback_router) AFTER the BKT update runs — so the Statistics
+    # panel, which reads these same fields, plots the BKT mastery trajectory
+    # (0-1 mapped to 0-100) instead of EWMA. apply_feedback now only finalizes
+    # the attempt + appends history; all scoring is BKT. See
+    # bkt_mastery.subtopic-mastery snapshot in feedback_router.
     return attempt
 
 

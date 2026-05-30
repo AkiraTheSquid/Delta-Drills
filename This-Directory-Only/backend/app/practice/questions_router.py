@@ -15,7 +15,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.adaptive import (
     COLD_START_TARGETS,
-    get_target_difficulty,
     get_user_state,
     override_pending_attempt,
     record_attempt,
@@ -36,7 +35,7 @@ from app.practice_schemas import (
     SubmitRequest,
     SubmitResponse,
 )
-from app.prioritization import select_next_subtopic
+from app.prioritization import question_is_unlocked, select_next_subtopic, target_difficulty
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
 
 router = APIRouter()
@@ -55,9 +54,12 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         )
 
     sub_state = user_state.get_subtopic_state(subtopic)
-    target_diff = get_target_difficulty(sub_state)
+    target_diff = target_difficulty(user_state, subtopic)
 
-    candidates = get_questions_by_subtopic(subtopic)
+    candidates = [
+        q for q in get_questions_by_subtopic(subtopic)
+        if question_is_unlocked(user_state, q)
+    ]
     served = set(sub_state.served_question_ids)
     question = select_question_for_difficulty(candidates, target_diff, served)
     if question is None:
