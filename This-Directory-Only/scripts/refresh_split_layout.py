@@ -22,6 +22,7 @@ ALLOWED_ROOT_NAMES = {
     "arena-procedural-drills",  # iter-5 atom-level procedural drill drafts
     "concept-graph",         # top-level concept-graph workspace (separate from Local_Deployed_Shared/concept-graph)
     "papers",                # research notes (mastery estimation refs, verification logs)
+    "docs",                  # architecture / model-evidence docs (dev-only). Added 2026-05-31.
     "scripts",               # dev-only build tooling (solution-Colab authoring/validation). Added 2026-05-31.
     ".claude",               # Claude Code per-project session state
 }
