@@ -136,6 +136,22 @@
     return "#";
   };
 
+  // Colab href for the SOLUTION notebook of the current drill. Each drill has
+  // a generated `<name>.solution.ipynb` sibling (answer filled into the stub
+  // so it runs top-to-bottom); window.__drillSolutionPaths lists which drills
+  // have one. Falls back to the problem notebook (it carries the collapsed
+  // solution) when no generated solution exists.
+  const solutionHrefForUnlock = () => {
+    const path = currentEx?.notebookPath;
+    if (path && typeof colabUpstreamHref === "function") {
+      const have = window.__drillSolutionPaths;
+      if (have && typeof have.has === "function" && have.has(path)) {
+        return colabUpstreamHref(path.replace(/\.ipynb$/, ".solution.ipynb"));
+      }
+    }
+    return colabHrefForUnlock();
+  };
+
   // Compose the full "Topic: Subtopic" key the backend uses (matches the
   // logic in predicted-prereqs-temp.js so we hit the same cache entries).
   const _composeSubtopicKey = (topic, subtopic) => {
@@ -423,8 +439,15 @@
   });
 
   answerBtn.addEventListener("click", () => {
-    placeholderEl.textContent = "Answer reveal is not wired up yet — this button is scaffolding so the real answer-reveal can drop in later without UI rework.";
-    placeholderEl.classList.remove("hidden");
+    // Open the solution notebook (answer typed in, runs top-to-bottom) in a
+    // new tab — routed to the student's Delta-Drills fork via colabUpstreamHref.
+    const href = solutionHrefForUnlock();
+    if (href && href !== "#") {
+      window.open(href, "_blank", "noopener");
+    } else {
+      placeholderEl.textContent = "No solution notebook available for this exercise yet.";
+      placeholderEl.classList.remove("hidden");
+    }
   });
 
   // Auto-copy the exercise heading to the clipboard the moment the
