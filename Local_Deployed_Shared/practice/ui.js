@@ -91,22 +91,15 @@ function renderQuestion(q, count) {
   }
 }
 
-// Configure the Show Hint / Show Answer aids for the current question and
-// reset their reveal state. Hint comes straight off the question payload;
-// the Show Answer button routes to the per-question solution Colab via
-// colabUpstreamHref (same GitHub-fork routing the drills use). Buttons hide
-// themselves when the question has no hint / no notebook.
+// Configure the Show Hint aid for the current question and reset its reveal
+// state. Hint comes straight off the question payload. (In-browser bank
+// questions reveal their solution code after submit; the Colab solution link
+// lives on the procedural-drill cards, not the practice tab.)
 function setupQuestionAids(q) {
   const hint = q && typeof q.hint === "string" ? q.hint.trim() : "";
   if (hintText) hintText.textContent = hint;
   if (showHintBtn) showHintBtn.classList.toggle("hidden", !hint);
   if (hintSection) hintSection.classList.add("hidden");
-
-  const path = q && typeof q.solution_notebook_path === "string" ? q.solution_notebook_path : "";
-  const href = path && typeof colabUpstreamHref === "function" ? colabUpstreamHref(path) : "";
-  if (href && colabSolutionLink) colabSolutionLink.href = href;
-  if (showAnswerBtn) showAnswerBtn.classList.toggle("hidden", !href);
-  if (answerAids) answerAids.classList.add("hidden");
 }
 
 function getTargetDifficultyForQuestion(q) {

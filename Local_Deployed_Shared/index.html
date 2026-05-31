@@ -243,19 +243,16 @@
             <canvas class="question-visual-canvas hidden" id="question-visual-canvas"></canvas>
           </div>
 
-          <!-- Hint + Answer aids (available while solving and after) -->
+          <!-- Hint aid only. In-browser bank questions reveal their solution
+               code after submit; the Colab solution link belongs on the
+               procedural-drill cards (Colab-run exercises), not here. -->
           <div class="practice-aids" id="practice-aids">
             <div class="practice-aids-buttons">
               <button class="ghost" id="show-hint-btn" type="button">Show hint</button>
-              <button class="ghost" id="show-answer-btn" type="button">Show answer</button>
             </div>
             <div class="hint-section hidden" id="hint-section">
               <div class="hint-label">Hint</div>
               <div class="hint-text" id="hint-text"></div>
-            </div>
-            <div class="answer-aids hidden" id="answer-aids">
-              <a class="primary colab-solution-link" id="colab-solution-link" target="_blank" rel="noopener" href="#">Open solution in Colab ▶</a>
-              <div class="answer-aids-note" id="answer-aids-note">Runnable notebook with the answer typed in — run it to see it work.</div>
             </div>
           </div>
 
@@ -434,7 +431,7 @@ np.random.seed(0)
   <script src="practice/dom.js?v=8"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
-  <script src="practice/ui.js?v=11"></script>
+  <script src="practice/ui.js?v=12"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=10"></script>
   <script src="practice/timer.js?v=6"></script>
@@ -442,7 +439,7 @@ np.random.seed(0)
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/arena-unlock.js?v=13"></script>
   <script src="practice/drills-catalog.js?v=25"></script>
-  <script src="practice/events.js?v=11"></script>
+  <script src="practice/events.js?v=12"></script>
   <script src="practice/init.js?v=12"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>
