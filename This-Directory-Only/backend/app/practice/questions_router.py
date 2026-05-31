@@ -97,6 +97,8 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         starter_code=question.starter_code,
         test_cases=question.test_cases,
         submission_mode=question.submission_mode,
+        hint=question.hint,
+        solution_notebook_path=question.solution_notebook_path,
     )
 
 

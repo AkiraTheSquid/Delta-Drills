@@ -33,6 +33,10 @@ class NextQuestionResponse(BaseModel):
     starter_code: str | None = None
     test_cases: list[dict] = Field(default_factory=list)
     submission_mode: str = "stdout"
+    hint: str | None = None  # short nudge, revealed by the Show Hint button
+    # repo-relative path to the per-question solution Colab (arena-procedural-drills/…);
+    # the frontend routes it to GitHub via colabUpstreamHref for the Show Answer button.
+    solution_notebook_path: str | None = None
 
 
 class SubmitRequest(BaseModel):

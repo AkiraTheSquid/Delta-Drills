@@ -46,6 +46,18 @@ practiceSubmitBtn.addEventListener("click", async () => {
   }
 });
 
+if (showHintBtn) {
+  showHintBtn.addEventListener("click", () => {
+    if (hintSection) hintSection.classList.toggle("hidden");
+  });
+}
+
+if (showAnswerBtn) {
+  showAnswerBtn.addEventListener("click", () => {
+    if (answerAids) answerAids.classList.remove("hidden");
+  });
+}
+
 overrideCorrectBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   await PracticeAPI.overrideCorrect(q.question_id);

@@ -1,0 +1,4 @@
+# Regenerable build intermediates — re-create with export_questions.py + the workflow
+dd_questions.json
+validation_report.json
+authored/

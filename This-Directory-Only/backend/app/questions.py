@@ -109,6 +109,52 @@ def _load_function_overrides() -> Dict[int, dict]:
 
 
 _ATOM_TAGS_PATH = Path(__file__).resolve().parent / "data" / "question_atom_tags.jsonl"
+_HINTS_PATH = Path(__file__).resolve().parent / "data" / "question_hints.jsonl"
+_SOLUTION_NB_PATH = Path(__file__).resolve().parent / "data" / "question_solution_notebooks.jsonl"
+
+
+def _apply_solution_aids(questions: List["Question"]) -> None:
+    """Attach the per-question Show-Hint text and Show-Answer Colab path from
+    data/question_hints.jsonl and data/question_solution_notebooks.jsonl.
+
+    Both are produced by scripts/solution_build (one solution notebook per bank
+    question). Missing files / malformed lines are skipped silently — a question
+    with no hint or notebook simply renders neither button.
+    """
+    hints: Dict[int, str] = {}
+    if _HINTS_PATH.exists():
+        try:
+            for line in _HINTS_PATH.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                rec = json.loads(line)
+                h = (rec.get("hint") or "").strip()
+                if h:
+                    hints[int(rec["question_id"] if "question_id" in rec else rec["id"])] = h
+        except (OSError, json.JSONDecodeError, ValueError, TypeError, KeyError) as exc:
+            logger.warning("Failed to load question_hints.jsonl: %s", exc)
+
+    nbs: Dict[int, str] = {}
+    if _SOLUTION_NB_PATH.exists():
+        try:
+            for line in _SOLUTION_NB_PATH.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                rec = json.loads(line)
+                p = (rec.get("path") or "").strip()
+                if p:
+                    nbs[int(rec["question_id"] if "question_id" in rec else rec["id"])] = p
+        except (OSError, json.JSONDecodeError, ValueError, TypeError, KeyError) as exc:
+            logger.warning("Failed to load question_solution_notebooks.jsonl: %s", exc)
+
+    for q in questions:
+        if q.id in hints:
+            q.hint = hints[q.id]
+        if q.id in nbs:
+            q.solution_notebook_path = nbs[q.id]
+    logger.info("Solution aids: %d hints, %d notebooks", len(hints), len(nbs))
 
 
 def _apply_atom_tags(questions: List["Question"]) -> None:
@@ -185,6 +231,8 @@ class Question:
     # confidence ∈ [0,1] (see data/question_atom_tags.jsonl). Drives the
     # per-atom BKT mastery update on submit. Empty until tags are loaded.
     atom_tags: List[dict] = field(default_factory=list)
+    hint: str | None = None
+    solution_notebook_path: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -720,6 +768,7 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
         )
 
     _apply_atom_tags(questions)
+    _apply_solution_aids(questions)
 
     _questions = questions
     _questions_by_id = {q.id: q for q in questions}

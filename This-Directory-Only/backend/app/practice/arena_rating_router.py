@@ -125,7 +125,7 @@ def submit_arena_rating(
         "arena_rating user=%s exercise=%r feedback=%s elapsed=%s target=%s subtopics=%d atoms=%d→%d_changed",
         user_id,
         payload.exercise_title,
-        fb,
+        payload.feedback,
         payload.elapsed_seconds,
         payload.target_seconds,
         len(updated),
