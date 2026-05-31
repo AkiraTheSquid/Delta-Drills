@@ -434,7 +434,11 @@
   };
 
   hintBtn.addEventListener("click", () => {
-    placeholderEl.textContent = "Hints are not wired up yet — this button is scaffolding so the real hint content can drop in later without UI rework.";
+    // Per-drill nudge hint, keyed by notebookPath (window.__drillHints, loaded
+    // from drill-hints-manifest.js). Falls back gracefully if absent.
+    const hints = window.__drillHints || {};
+    const hint = currentEx && currentEx.notebookPath ? hints[currentEx.notebookPath] : "";
+    placeholderEl.textContent = hint || "No hint available for this exercise yet.";
     placeholderEl.classList.remove("hidden");
   });
 
