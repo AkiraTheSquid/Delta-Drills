@@ -663,3 +663,17 @@
     overflow: visible;
   }
 }
+
+/* Show Hint / Show Answer aids (per-question hint + solution Colab link) */
+.practice-aids { margin: 12px 0; }
+.practice-aids-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.hint-section {
+  margin-top: 10px; padding: 10px 12px;
+  background: var(--surface-2, #1b1f27); border-radius: 8px;
+  border: 1px solid var(--border, #2a2f3a);
+}
+.hint-label { font-size: 12px; font-weight: 600; opacity: .7; margin-bottom: 4px; }
+.hint-text { font-size: 14px; line-height: 1.5; }
+.answer-aids { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.colab-solution-link { display: inline-block; text-decoration: none; align-self: flex-start; }
+.answer-aids-note { font-size: 12px; opacity: .65; }

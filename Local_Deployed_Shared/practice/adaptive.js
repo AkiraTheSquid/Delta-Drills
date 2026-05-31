@@ -87,6 +87,9 @@ async function loadBackendAdaptiveState() {
     }
     const snapshot = await res.json();
     adaptiveStateJson = JSON.stringify(snapshot);
+    // Expose raw per-atom BKT posteriors so the ARENA "Score updates" panel
+    // can snapshot a before-value and animate the delta after a rating POST.
+    window.__atomMastery = snapshot.atom_mastery || {};
     // Refresh the unified per-atom unlock sets (backend = single source of
     // truth; the shipped v2 graph lacks the v3 prereq edges). Non-fatal.
     try {

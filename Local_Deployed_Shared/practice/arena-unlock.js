@@ -173,12 +173,15 @@
     return [];
   };
 
-  const _snapshotBeforeScores = (ex) => {
-    const cache = window.__arenaSubtopicsCache || {};
+  // Snapshot the per-atom BKT posteriors (0-1) for every atom this exercise
+  // practices, taken BEFORE the rating POST so renderResults can animate the
+  // before→after delta. p_init (0.10) when the atom has no prior. Atom-level
+  // (not subtopic) because BKT mastery is the actual estimate the rating moves.
+  const _snapshotBeforeAtoms = (ex) => {
+    const mastery = window.__atomMastery || {};
     const out = {};
-    _prereqKeysForExercise(ex).forEach((key) => {
-      const entry = cache[key];
-      out[key] = (entry && Number.isFinite(entry.p)) ? entry.p : null; // 0-1
+    _atomIdsForExercise(ex).forEach((atom) => {
+      out[atom] = Number.isFinite(mastery[atom]) ? mastery[atom] : 0.10;
     });
     return out;
   };
@@ -193,7 +196,7 @@
 
   const showCard = (ex) => {
     currentEx = ex;
-    beforeScores = _snapshotBeforeScores(ex);
+    beforeScores = _snapshotBeforeAtoms(ex);
     // Flip the static ARENA copy when this is a drill card. Drills aren't
     // "unlocked by clearing prereqs"; they BUILD prereqs through hands-on
     // Colab work. Restore defaults on ARENA exercises so the same DOM
@@ -248,12 +251,13 @@
 
   // POST the student's manual rating (correct + chosen difficulty) so every
   // prereq subtopic for the completed exercise gets bumped in the adaptive
-  // state. Returns the parsed `updated` array on success, [] otherwise.
+  // state. Returns the parsed response object ({updated, atom_mastery}) on
+  // success, {} otherwise.
   const postArenaRating = async (ex, { feedback, correct }) => {
-    if (!ex || typeof apiFetch !== "function") return [];
-    if (typeof authToken !== "undefined" && !authToken) return [];
+    if (!ex || typeof apiFetch !== "function") return {};
+    if (typeof authToken !== "undefined" && !authToken) return {};
     const subtopics = _prereqKeysForExercise(ex);
-    if (!subtopics.length) return [];
+    if (!subtopics.length) return {};
     const rating = window.ArenaUnlockTimer?.getRating?.() || {};
     const body = {
       exercise_title: ex.title,
@@ -276,7 +280,7 @@
       });
       if (!res.ok) {
         console.warn("[ArenaUnlock] arena-rating failed:", res.status, await res.text().catch(() => ""));
-        return [];
+        return {};
       }
       const data = await res.json().catch(() => ({}));
       // Refresh cached scores so the next unlock check sees the bump.
@@ -285,10 +289,10 @@
       // (atom_mastery) land in the readiness bridge. refreshScores only warms
       // the subtopic gate cache; it does NOT pull atom_mastery.
       if (typeof loadBackendAdaptiveState === "function") loadBackendAdaptiveState().catch(() => {});
-      return Array.isArray(data?.updated) ? data.updated : [];
+      return data || {};
     } catch (err) {
       console.warn("[ArenaUnlock] arena-rating error:", err);
-      return [];
+      return {};
     }
   };
 
@@ -381,24 +385,29 @@
     requestAnimationFrame(tick);
   };
 
-  const renderResults = (beforeMap, updated) => {
+  // Render one animated bar per ATOM the exercise practiced, before→after the
+  // BKT update. `beforeMap` is {atomId: p0to1} snapshotted pre-POST; `afterMap`
+  // is the response's atom_mastery {atomId: newPosterior0to1} — which also
+  // includes FIRe-credited encompassed atoms not in beforeMap (shown from
+  // p_init). This is the per-atom mastery estimate, the thing a rating moves.
+  const renderResults = (beforeMap, afterMap) => {
     if (!resultListEl) return;
     resultListEl.innerHTML = "";
-    const byKey = {};
-    (updated || []).forEach((u) => { if (u && u.subtopic) byKey[u.subtopic] = u; });
-    const keys = Object.keys(beforeMap);
+    const after = afterMap && typeof afterMap === "object" ? afterMap : {};
+    // Union of directly-practiced atoms (beforeMap) + FIRe-credited atoms (only
+    // in after) so encompassing credit is visible too.
+    const keys = Array.from(new Set([...Object.keys(beforeMap || {}), ...Object.keys(after)]));
     if (!keys.length) {
-      resultListEl.textContent = "No prereq subtopics to update.";
+      resultListEl.textContent = "No atoms to update for this exercise.";
       return;
     }
-    keys.forEach((key, idx) => {
-      const upd = byKey[key];
-      const before = beforeMap[key]; // 0-1 or null
-      const after = upd && Number.isFinite(upd.p_after) ? upd.p_after : null;
-      const { shell, refs } = _buildBarRow(key);
+    keys.forEach((atomId, idx) => {
+      const before = Number.isFinite(beforeMap?.[atomId]) ? beforeMap[atomId] : 0.10;
+      const aft = Number.isFinite(after[atomId]) ? after[atomId] : null;
+      const { shell, refs } = _buildBarRow(atomId);
       resultListEl.appendChild(shell);
       // Stagger slightly so bars cascade in instead of all moving in sync.
-      setTimeout(() => _animateBarRow(refs, before, after), 120 * idx);
+      setTimeout(() => _animateBarRow(refs, before, aft), 120 * idx);
     });
   };
 
@@ -436,8 +445,8 @@
       const correct = btn.dataset.correct === "true";
       const feedback = btn.dataset.feedback;
       choiceButtons.forEach((b) => { b.disabled = true; });
-      const updated = await postArenaRating(currentEx, { feedback, correct });
-      renderResults(beforeScores, updated);
+      const data = await postArenaRating(currentEx, { feedback, correct });
+      renderResults(beforeScores, data?.atom_mastery || {});
       setStage("result");
       setTimeout(() => continueBtn.focus({ preventScroll: true }), 0);
     });
