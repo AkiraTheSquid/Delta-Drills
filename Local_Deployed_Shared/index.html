@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="styles/variables.css" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
-  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/components.css?v=2" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -26,6 +26,10 @@
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=5" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Sign in with Google (Google Identity Services). auth-config.js sets the
+       OAuth client id; app.js renders the button + handles the credential. -->
+  <script src="auth-config.js?v=1"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -377,18 +381,30 @@ np.random.seed(0)
     <div class="container">
       <div class="auth-card">
         <h1>Log In</h1>
-        <form id="login-form">
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" class="text-input" type="email" placeholder="you@example.com" />
-          </div>
-          <div class="field">
-            <label for="password">Password</label>
-            <input id="password" class="text-input" type="password" placeholder="Enter your password" />
-          </div>
-          <button class="primary" type="submit">Log in</button>
-          <div id="login-message" class="hint" role="status"></div>
-        </form>
+        <p class="subtitle">Sign in with Google to save your progress across devices.</p>
+
+        <!-- Google Identity Services renders its button here (app.js). -->
+        <div id="google-signin-button"></div>
+        <div id="google-signin-note" class="hint" role="status"></div>
+        <div id="google-signin-message" class="hint" role="status"></div>
+
+        <!-- Email/password kept as a fallback (e.g. before Google is configured,
+             or for existing accounts). Collapsed by default. -->
+        <details id="email-login-fallback" class="auth-fallback">
+          <summary>Use email and password instead</summary>
+          <form id="login-form">
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+            </div>
+            <button class="primary" type="submit">Log in</button>
+            <div id="login-message" class="hint" role="status"></div>
+          </form>
+        </details>
       </div>
     </div>
   </main>
@@ -431,7 +447,7 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>

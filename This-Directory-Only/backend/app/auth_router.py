@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 import logging
+import secrets
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.auth import create_access_token, hash_password, verify_password
+from app.auth import (
+    create_access_token,
+    hash_password,
+    verify_google_id_token,
+    verify_password,
+)
 from app.db import get_db
 from app.models import User
-from app.schemas import Token, UserCreate, UserLogin
+from app.schemas import GoogleAuthRequest, Token, UserCreate, UserLogin
 
 logger = logging.getLogger(__name__)
 
@@ -44,4 +50,35 @@ def login(payload: UserLogin, db: Session = Depends(get_db)) -> Token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     token = create_access_token(str(user.id))
     logger.info("login success email=%s user_id=%s", email, user.id)
+    return Token(access_token=token)
+
+
+@router.post("/google", response_model=Token)
+def google_login(payload: GoogleAuthRequest, db: Session = Depends(get_db)) -> Token:
+    """
+    Sign in with Google. Verifies the Google ID token, then finds-or-creates a
+    user keyed by the verified email and mints our own app JWT (same token the
+    rest of the API consumes). New Google users get a random local password hash
+    they never use — the column is NOT NULL and login() simply never matches it.
+    """
+    info = verify_google_id_token(payload.credential)
+    email = info["email"]
+    user = db.query(User).filter(User.email == email).first()
+    if user is None:
+        user = User(email=email, password_hash=hash_password(secrets.token_urlsafe(32)))
+        db.add(user)
+        try:
+            db.commit()
+        except IntegrityError:
+            # Lost a race with a concurrent first sign-in for this email.
+            db.rollback()
+            user = db.query(User).filter(User.email == email).first()
+            if user is None:
+                raise
+        else:
+            db.refresh(user)
+        logger.info("google signup success email=%s user_id=%s", email, user.id)
+    else:
+        logger.info("google login success email=%s user_id=%s", email, user.id)
+    token = create_access_token(str(user.id))
     return Token(access_token=token)

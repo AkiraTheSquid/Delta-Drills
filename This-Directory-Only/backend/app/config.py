@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     mathpix_app_key: str | None = None
     supabase_url: str = "https://qaxtcaoydbpigomnfjpl.supabase.co"
     supabase_service_role_key: str = ""
+    # Google OAuth (Sign in with Google). Set via the GOOGLE_CLIENT_ID env var /
+    # Fly secret. Must match the OAuth 2.0 Web Client ID the frontend renders.
+    google_client_id: str = ""
     user_data_dir: str = ""  # Override for deployed envs (e.g. /data/user_data on Fly.io)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

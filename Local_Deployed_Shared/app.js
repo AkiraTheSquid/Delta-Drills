@@ -268,6 +268,102 @@ signupForm.addEventListener("submit", async (event) => {
   }
 });
 
+// --- Sign in with Google (Google Identity Services) ---
+
+// Decode a JWT payload (no verification — display only; the backend verifies
+// the signature). Used to show "Logged in as <email>" after Google sign-in.
+const decodeJwtPayload = (jwtStr) => {
+  try {
+    const part = jwtStr.split(".")[1];
+    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decodeURIComponent(escape(json)));
+  } catch {
+    return {};
+  }
+};
+
+const googleSignInMessage = () => document.getElementById("google-signin-message");
+
+// Exchange the Google credential for our app JWT, then sign in.
+const handleGoogleCredential = async (response) => {
+  const msg = googleSignInMessage();
+  const credential = response && response.credential;
+  if (!credential) {
+    if (msg) msg.textContent = "Google sign-in was cancelled.";
+    return;
+  }
+  if (msg) msg.textContent = "Signing in…";
+  try {
+    const res = await fetch(`${API_BASE}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (msg) msg.textContent = data.detail || "Google sign-in failed.";
+      return;
+    }
+    const email = decodeJwtPayload(credential).email || "";
+    if (msg) msg.textContent = "Signed in!";
+    setAuthState(data.access_token, email); // reloads into backend mode
+  } catch (e) {
+    if (msg) msg.textContent = e.message || "Google sign-in failed.";
+  }
+};
+
+// Render the Google button once both the GIS library and a client id are ready.
+let _googleSignInInited = false;
+const initGoogleSignIn = () => {
+  if (_googleSignInInited) return;
+  const clientId = window.GOOGLE_CLIENT_ID || "";
+  const buttonEl = document.getElementById("google-signin-button");
+  const noteEl = document.getElementById("google-signin-note");
+  const fallback = document.getElementById("email-login-fallback");
+  if (!buttonEl) return;
+
+  if (!clientId) {
+    if (noteEl) noteEl.textContent = "Google sign-in isn't configured yet — use email and password below.";
+    if (fallback) fallback.open = true; // surface the fallback when Google is unavailable
+    return;
+  }
+  if (!(window.google && google.accounts && google.accounts.id)) {
+    return; // GIS script not loaded yet; the poller will retry
+  }
+
+  try {
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleGoogleCredential,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+    google.accounts.id.renderButton(buttonEl, {
+      theme: "filled_blue",
+      size: "large",
+      text: "continue_with",
+      shape: "pill",
+      logo_alignment: "left",
+    });
+    if (noteEl) noteEl.textContent = "";
+    _googleSignInInited = true;
+  } catch (e) {
+    if (noteEl) noteEl.textContent = "Could not load Google sign-in. Use email and password below.";
+    if (fallback) fallback.open = true;
+  }
+};
+
+// GIS loads async (`async defer`), so poll briefly until it's ready.
+(() => {
+  let tries = 0;
+  const tick = () => {
+    initGoogleSignIn();
+    if (_googleSignInInited || tries++ > 40) return; // ~10s max
+    setTimeout(tick, 250);
+  };
+  tick();
+})();
+
 // --- Account settings ---
 
 accountForm.addEventListener("submit", async (event) => {

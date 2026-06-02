@@ -35,6 +35,56 @@ def create_access_token(subject: str) -> str:
     return jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
 
 
+def verify_google_id_token(credential: str) -> dict[str, str]:
+    """
+    Verify a Google Identity Services ID token (the `credential` returned by the
+    "Sign in with Google" button). Checks Google's signature, the audience
+    (== our OAuth client id), the issuer, and that the email is verified.
+    Returns {'sub': google-subject-id, 'email': lowercased email}.
+    Raises 401 on any failure.
+    """
+    if not settings.google_client_id:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google sign-in is not configured on the server.",
+        )
+    # Imported lazily so the rest of the app loads even if google-auth is absent
+    # in a stripped environment (e.g. a test that never touches Google login).
+    try:
+        from google.oauth2 import id_token as google_id_token
+        from google.auth.transport import requests as google_requests
+    except ImportError as exc:  # pragma: no cover
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google auth library not installed on the server.",
+        ) from exc
+
+    try:
+        info = google_id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            settings.google_client_id,
+            clock_skew_in_seconds=10,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Google token"
+        ) from exc
+
+    iss = info.get("iss", "")
+    if iss not in ("accounts.google.com", "https://accounts.google.com"):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Google token issuer")
+
+    email = (info.get("email") or "").lower().strip()
+    sub = info.get("sub", "")
+    if not email or not sub:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Google token missing email")
+    if info.get("email_verified") not in (True, "true"):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Google email not verified")
+
+    return {"sub": sub, "email": email}
+
+
 def _decode_supabase_token(token: str) -> dict[str, Any]:
     """
     Validate a Supabase user JWT by calling the Supabase /auth/v1/user endpoint.

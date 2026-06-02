@@ -19,6 +19,11 @@ class UserLogin(BaseModel):
     password: str
 
 
+class GoogleAuthRequest(BaseModel):
+    # The `credential` (Google ID token JWT) from the Sign in with Google button.
+    credential: str
+
+
 class UserOut(BaseModel):
     id: UUID
     email: EmailStr
