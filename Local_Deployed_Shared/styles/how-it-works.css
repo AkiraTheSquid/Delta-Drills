@@ -202,7 +202,7 @@
    the canvas fill the viewport below the sticky 56px topbar. */
 #page-knowledge-graph.page { padding: 16px 16px 16px; }
 .kg-container { max-width: none; margin: 0; }
-.kg-tall #concept-graph-cy { height: calc(100vh - 250px); min-height: 520px; }
+.kg-tall #concept-graph-cy { height: calc(100vh - 210px); min-height: 520px; }
 
 /* CTA button (How It Works → Knowledge Graph tab) */
 .hiw-graph-cta { margin: 4px 0 8px; }
@@ -268,6 +268,20 @@
   margin: 14px 2px 0;
   font-size: 12.5px;
   color: var(--muted);
+}
+/* On the full-bleed Knowledge Graph tab, float the legend over the bottom-right
+   of the graph (bottom-left holds the info text). No panel/background behind it
+   — just the coloured dots + labels floating on the canvas. */
+.kg-tall .hiw-graph-legend {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  margin: 0;
+  max-width: 48%;
+  justify-content: flex-end;
+  background: none;
+  z-index: 5;
+  pointer-events: none;
 }
 .cg-legend-item { display: inline-flex; align-items: center; gap: 7px; }
 .cg-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
