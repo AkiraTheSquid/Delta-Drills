@@ -55,7 +55,10 @@
 
     let layoutName = "cose";
     try {
-      if (window.cytoscapeFcose) {
+      if (window.cytoscapeDagre) {
+        cytoscape.use(window.cytoscapeDagre);
+        layoutName = "dagre";        // hierarchical: prereqs at bottom, dependents up
+      } else if (window.cytoscapeFcose) {
         cytoscape.use(window.cytoscapeFcose);
         layoutName = "fcose";
       }
@@ -132,18 +135,33 @@
           style: { label: "data(label)", color: "#e0e0e0", "font-size": 9, "text-wrap": "wrap", "text-max-width": "90px", "text-background-color": "#16213e", "text-background-opacity": 0.7, "text-background-padding": 2 },
         },
       ],
-      layout: {
-        name: layoutName,
-        animate: false,
-        randomize: true,
-        quality: "default",
-        nodeRepulsion: 6500,
-        idealEdgeLength: 55,
-        nodeSeparation: 80,
-        packComponents: true,
-        fit: true,
-        padding: 28,
-      },
+      layout:
+        layoutName === "dagre"
+          ? {
+              // Hierarchical DAG: edges run prerequisite -> dependent, and
+              // rankDir "BT" places sources (prerequisites) at the BOTTOM with
+              // dependents stacked upward.
+              name: "dagre",
+              rankDir: "BT",
+              nodeSep: 16,
+              rankSep: 60,
+              edgeSep: 8,
+              animate: false,
+              fit: true,
+              padding: 28,
+            }
+          : {
+              name: layoutName,
+              animate: false,
+              randomize: true,
+              quality: "default",
+              nodeRepulsion: 6500,
+              idealEdgeLength: 55,
+              nodeSeparation: 80,
+              packComponents: true,
+              fit: true,
+              padding: 28,
+            },
     });
 
     cy.on("tap", "node", (evt) => {
