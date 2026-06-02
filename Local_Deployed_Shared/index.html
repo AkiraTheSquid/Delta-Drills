@@ -55,7 +55,6 @@
       <span class="guest-banner-label">Guest</span>
       <span class="guest-banner-meta">Your progress is saved in this browser only. <strong>Log in to save your progress</strong> across devices.</span>
       <button type="button" class="guest-banner-btn" id="guest-banner-login">Log in</button>
-      <button type="button" class="guest-banner-btn guest-banner-btn-ghost" id="guest-banner-signup">Create account</button>
     </div>
   </div>
 
@@ -387,49 +386,6 @@ np.random.seed(0)
         <div id="google-signin-button"></div>
         <div id="google-signin-note" class="hint" role="status"></div>
         <div id="google-signin-message" class="hint" role="status"></div>
-
-        <!-- Email/password kept as a fallback (e.g. before Google is configured,
-             or for existing accounts). Collapsed by default. -->
-        <details id="email-login-fallback" class="auth-fallback">
-          <summary>Use email and password instead</summary>
-          <form id="login-form">
-            <div class="field">
-              <label for="email">Email</label>
-              <input id="email" class="text-input" type="email" placeholder="you@example.com" />
-            </div>
-            <div class="field">
-              <label for="password">Password</label>
-              <input id="password" class="text-input" type="password" placeholder="Enter your password" />
-            </div>
-            <button class="primary" type="submit">Log in</button>
-            <div id="login-message" class="hint" role="status"></div>
-          </form>
-        </details>
-      </div>
-    </div>
-  </main>
-
-  <main class="page hidden" id="page-signup">
-    <div class="container">
-      <div class="auth-card">
-        <h1>Create Account</h1>
-        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
-        <form id="signup-form">
-          <div class="field">
-            <label for="signup-email">Email</label>
-            <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
-          </div>
-          <div class="field">
-            <label for="signup-password">Password</label>
-            <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
-          </div>
-          <div class="field">
-            <label for="signup-confirm">Confirm password</label>
-            <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
-          </div>
-          <button class="primary" type="submit">Create account</button>
-          <div id="signup-message" class="hint" role="status"></div>
-        </form>
       </div>
     </div>
   </main>
@@ -447,7 +403,7 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
