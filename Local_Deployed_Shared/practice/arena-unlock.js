@@ -97,6 +97,8 @@
   let currentEx = null;
   let onContinueCallback = null;
   let beforeScores = {};          // {subtopicKey: p0to1} snapshot at showCard time
+  let currentTierPath = null;     // ERE: tiered notebook path overriding ex.notebookPath
+  let currentTierKind = "full";   // "worked" | "faded" | "full"
 
   // Match the strip used elsewhere — Jupyter Book / Colab render markdown
   // backticks as plain text, so Ctrl+F for the raw title with backticks
@@ -130,8 +132,38 @@
   // carries its own notebookPath (the Targeted Practice "Practice this
   // problem" entry path supplies this), use that. Otherwise fall back to
   // the temp 0.0 prereqs notebook used by the regular auto-unlock flow.
+  // ERE adaptive tier (Expertise Reversal Effect). For a single-atom drill,
+  // pick the notebook tier by the learner's current BKT posterior for the atom:
+  //   mastery < 0.40 → worked example (study-only, no beacon)
+  //   0.40–0.75      → faded example  (completion problem)
+  //   ≥ 0.75         → full drill     (the existing ex.notebookPath)
+  // Composites stay full (integration practice is inherently expert-tier).
+  // Returns {path, kind} or null to keep the full drill. window.__ereTiers is
+  // the per-atom manifest (ere-tiers-manifest.js).
+  const _ereTierPick = (ex) => {
+    const tiers = window.__ereTiers;
+    if (!tiers || !ex || ex.isComposite || !ex.atomId) return null;
+    const t = tiers[ex.atomId];
+    if (!t) return null;
+    const m = window.__atomMastery || {};
+    const mastery = Number.isFinite(m[ex.atomId]) ? m[ex.atomId] : 0.10;
+    let pool = null, kind = "full";
+    if (mastery < 0.40 && t.worked && t.worked.length) { pool = t.worked; kind = "worked"; }
+    else if (mastery < 0.75 && t.faded && t.faded.length) { pool = t.faded; kind = "faded"; }
+    if (!pool || !pool.length) return null;
+    // Rotate the variant across visits so a returning learner sees a fresh
+    // problem of the same tier rather than the same one each time.
+    const n = (window.__ereServeCount = (window.__ereServeCount || 0) + 1);
+    return { path: pool[n % pool.length], kind };
+  };
+
+  // The effective notebook path for the current card: the ERE tier override if
+  // one was picked in showCard, else the exercise's own path / temp prereqs nb.
+  const _effPath = () =>
+    currentTierPath || currentEx?.notebookPath || window.ARENA_PREREQS_TEMP_NOTEBOOK_PATH;
+
   const colabHrefForUnlock = () => {
-    const path = currentEx?.notebookPath || window.ARENA_PREREQS_TEMP_NOTEBOOK_PATH;
+    const path = _effPath();
     if (typeof colabUpstreamHref === "function" && path) return colabUpstreamHref(path);
     return "#";
   };
@@ -142,8 +174,14 @@
   // have one. Falls back to the problem notebook (it carries the collapsed
   // solution) when no generated solution exists.
   const solutionHrefForUnlock = () => {
-    const path = currentEx?.notebookPath;
+    const path = _effPath();
     if (path && typeof colabUpstreamHref === "function") {
+      // Worked tier IS already the solution — open it as-is.
+      if (currentTierKind === "worked") return colabUpstreamHref(path);
+      // Faded tier always has a generated `<name>.solution.ipynb` sibling.
+      if (currentTierKind === "faded") {
+        return colabUpstreamHref(path.replace(/\.ipynb$/, ".solution.ipynb"));
+      }
       const have = window.__drillSolutionPaths;
       if (have && typeof have.has === "function" && have.has(path)) {
         return colabUpstreamHref(path.replace(/\.ipynb$/, ".solution.ipynb"));
@@ -212,20 +250,31 @@
 
   const showCard = (ex) => {
     currentEx = ex;
+    // ERE: pick the worked/faded/full tier for this atom by current mastery.
+    const tier = _ereTierPick(ex);
+    currentTierPath = tier ? tier.path : null;
+    currentTierKind = tier ? tier.kind : "full";
     beforeScores = _snapshotBeforeAtoms(ex);
     // Flip the static ARENA copy when this is a drill card. Drills aren't
     // "unlocked by clearing prereqs"; they BUILD prereqs through hands-on
     // Colab work. Restore defaults on ARENA exercises so the same DOM
     // serves both flows.
     if (bannerEl) bannerEl.textContent = ex.isComposite ? COMPOSITE_BANNER : (ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER);
-    if (subEl) subEl.textContent = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
+    if (subEl) {
+      let s = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
+      if (currentTierKind === "worked") s = "Worked example · read it, run it, follow the reasoning · " + s;
+      else if (currentTierKind === "faded") s = "Faded drill · complete the one blanked step · " + s;
+      subEl.textContent = s;
+    }
     if (headingLabelEl) headingLabelEl.textContent = ex.isDrill ? DRILL_HEADING_LABEL : DEFAULT_HEADING_LABEL;
     // Heading shown in the code-block + auto-copied on Open in Colab. For
     // drills we use ex.heading (the notebook's actual top-level markdown
     // heading) so Ctrl+F inside Colab lands on the right cell. ARENA
     // exercises fall back to ex.title, which IS the in-notebook heading
     // they use as the Ctrl+F target.
-    const ctrlFText = stripBackticks(ex.heading || ex.title);
+    // Tiered notebooks (worked/faded) are single-exercise files that open at
+    // the top, so the Ctrl+F heading target doesn't apply — clear it there.
+    const ctrlFText = currentTierKind === "full" ? stripBackticks(ex.heading || ex.title) : "";
     titleEl.textContent = ex.title;
     headingEl.textContent = ctrlFText;
     whyEl.textContent = renderWhyMet(ex);
