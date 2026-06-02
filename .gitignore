@@ -54,3 +54,14 @@ Local_Deployed_Shared/arena-book/_static/
 .directory
 This-Directory-Only/Temporary adjust to have output only/
 .claude/
+
+# ERE pipeline regenerable intermediates
+scripts/solution_build/ere/catalog_dump.json
+scripts/solution_build/ere/ere_atom_bundles.json
+scripts/solution_build/ere/agent_input/
+scripts/solution_build/ere/*_report.json
+# torch verification venv (huge, regenerable) + review scratch
+scripts/solution_build/ere/.verify_venv/
+scripts/solution_build/ere/review/
+scripts/solution_build/ere/authgroups/
+# NOTE: authored/ is the verified spec source-of-truth — intentionally TRACKED.
