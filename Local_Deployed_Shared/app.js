@@ -6,6 +6,10 @@ const tabs = document.querySelectorAll(".tab");
 const authOnlyTabs = document.querySelectorAll(".auth-only");
 const guestOnlyTabs = document.querySelectorAll(".guest-only");
 const pages = document.querySelectorAll(".page");
+const loginForm = document.getElementById("login-form");
+const loginMessage = document.getElementById("login-message");
+const signupForm = document.getElementById("signup-form");
+const signupMessage = document.getElementById("signup-message");
 const authStatus = document.getElementById("auth-status");
 const logoutButton = document.getElementById("logout-button");
 const accountForm = document.getElementById("account-form");
@@ -141,98 +145,128 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   return response;
 };
 
-// --- Sign in with Google (Google Identity Services) ---
+// --- Auth forms ---
 
-// Decode a JWT payload (no verification — display only; the backend verifies
-// the signature). Used to show "Logged in as <email>" after Google sign-in.
-const decodeJwtPayload = (jwtStr) => {
-  try {
-    const part = jwtStr.split(".")[1];
-    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(decodeURIComponent(escape(json)));
-  } catch {
-    return {};
-  }
-};
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  loginMessage.textContent = "Working...";
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-const googleSignInMessage = () => document.getElementById("google-signin-message");
-
-// Exchange the Google credential for our app JWT, then sign in.
-const handleGoogleCredential = async (response) => {
-  const msg = googleSignInMessage();
-  const credential = response && response.credential;
-  if (!credential) {
-    if (msg) msg.textContent = "Google sign-in was cancelled.";
+  if (!email || !password) {
+    loginMessage.textContent = "Enter an email and password.";
     return;
   }
-  if (msg) msg.textContent = "Signing in…";
+
   try {
-    const res = await fetch(`${API_BASE}/auth/google`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (msg) msg.textContent = data.detail || "Google sign-in failed.";
-      return;
+    if (isLocalHost || window.DELTA_USE_BACKEND) {
+      // Local app + migrated prod: use the Fly backend's own JWT auth.
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        loginMessage.textContent = data.detail || "Login failed.";
+        return;
+      }
+      loginMessage.textContent = "Logged in!";
+      loginForm.reset();
+      setAuthState(data.access_token, email);
+    } else if (typeof supabaseSignIn === "function") {
+      // Non-admin or deployed — use Supabase Auth
+      const data = await supabaseSignIn(email, password);
+      loginMessage.textContent = "Logged in!";
+      loginForm.reset();
+      setAuthState(data.session?.access_token || "", email);
+    } else {
+      // Fallback to local backend
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        loginMessage.textContent = data.detail || "Login failed.";
+        return;
+      }
+      loginMessage.textContent = "Logged in!";
+      loginForm.reset();
+      setAuthState(data.access_token, email);
     }
-    const email = decodeJwtPayload(credential).email || "";
-    if (msg) msg.textContent = "Signed in!";
-    setAuthState(data.access_token, email); // reloads into backend mode
+    setTimeout(() => (loginMessage.textContent = ""), 1000);
   } catch (e) {
-    if (msg) msg.textContent = e.message || "Google sign-in failed.";
+    loginMessage.textContent = e.message;
   }
-};
+});
 
-// Render the Google button once both the GIS library and a client id are ready.
-let _googleSignInInited = false;
-const initGoogleSignIn = () => {
-  if (_googleSignInInited) return;
-  const clientId = window.GOOGLE_CLIENT_ID || "";
-  const buttonEl = document.getElementById("google-signin-button");
-  const noteEl = document.getElementById("google-signin-note");
-  if (!buttonEl) return;
+signupForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  signupMessage.textContent = "Working...";
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  const confirm = document.getElementById("signup-confirm").value;
 
-  if (!clientId) {
-    if (noteEl) noteEl.textContent = "Google sign-in isn't configured yet. Please try again later.";
+  if (!email || !password || !confirm) {
+    signupMessage.textContent = "Enter an email and both password fields.";
     return;
   }
-  if (!(window.google && google.accounts && google.accounts.id)) {
-    return; // GIS script not loaded yet; the poller will retry
+
+  if (password !== confirm) {
+    signupMessage.textContent = "Passwords do not match.";
+    return;
   }
 
   try {
-    google.accounts.id.initialize({
-      client_id: clientId,
-      callback: handleGoogleCredential,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
-    google.accounts.id.renderButton(buttonEl, {
-      theme: "filled_blue",
-      size: "large",
-      text: "continue_with",
-      shape: "pill",
-      logo_alignment: "left",
-    });
-    if (noteEl) noteEl.textContent = "";
-    _googleSignInInited = true;
+    if (isLocalHost || window.DELTA_USE_BACKEND) {
+      // Local app + migrated prod: use the Fly backend's own JWT auth.
+      const response = await fetch(`${API_BASE}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        signupMessage.textContent = data.detail || "Signup failed.";
+        return;
+      }
+      signupMessage.textContent = "Account created!";
+      signupForm.reset();
+      setAuthState(data.access_token, email);
+    } else if (typeof supabaseSignUp === "function") {
+      // Non-admin or deployed — use Supabase Auth
+      const data = await supabaseSignUp(email, password);
+      if (data.user && !data.session) {
+        signupMessage.textContent = "Check your email to confirm your account.";
+        signupForm.reset();
+        return;
+      }
+      signupMessage.textContent = "Account created!";
+      signupForm.reset();
+      setAuthState(data.session?.access_token || "", email);
+    } else {
+      // Fallback to local backend
+      const response = await fetch(`${API_BASE}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        signupMessage.textContent = data.detail || "Signup failed.";
+        return;
+      }
+      signupMessage.textContent = "Account created!";
+      signupForm.reset();
+      setAuthState(data.access_token, email);
+    }
+    setTimeout(() => (signupMessage.textContent = ""), 1000);
   } catch (e) {
-    if (noteEl) noteEl.textContent = "Could not load Google sign-in. Please refresh and try again.";
+    signupMessage.textContent = e.message;
   }
-};
-
-// GIS loads async (`async defer`), so poll briefly until it's ready.
-(() => {
-  let tries = 0;
-  const tick = () => {
-    initGoogleSignIn();
-    if (_googleSignInInited || tries++ > 40) return; // ~10s max
-    setTimeout(tick, 250);
-  };
-  tick();
-})();
+});
 
 // --- Account settings ---
 
@@ -292,6 +326,8 @@ if (authToken) {
 switchTab("practice");
 updateTabVisibility();
 
-// Guest-banner CTA → the login page (Sign in with Google).
+// Guest-banner CTAs → the existing login / signup pages.
 const guestBannerLogin = document.getElementById("guest-banner-login");
+const guestBannerSignup = document.getElementById("guest-banner-signup");
 if (guestBannerLogin) guestBannerLogin.addEventListener("click", () => switchTab("login"));
+if (guestBannerSignup) guestBannerSignup.addEventListener("click", () => switchTab("signup"));
