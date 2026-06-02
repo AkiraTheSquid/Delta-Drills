@@ -287,9 +287,9 @@ document.getElementById("account-github-username").value = savedGithubUsername;
 if (authToken) {
   authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
 }
-// Land everyone (guest or authed) directly on Practice. Guests run in local
-// mode; the guest banner is the standing CTA to log in.
-switchTab("practice");
+// Authed users land on Practice; guests land on the How It Works explainer
+// (the marketing/landing page) with the guest banner as the CTA to log in.
+switchTab(authToken ? "practice" : "how-it-works");
 updateTabVisibility();
 // Auth is the Continue-with-Google button rendered into the guest banner by
 // initGoogleSignIn() above — no login/signup pages or CTA buttons to wire.
