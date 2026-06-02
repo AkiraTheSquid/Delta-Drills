@@ -705,12 +705,15 @@ np.random.seed(0)
 
   <script src="app.js?v=11"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
-       fcose layout, lazy-initialised when scrolled into view). -->
+       dagre hierarchical layout — prereqs at bottom, dependents upward;
+       fcose fallback. Lazy-initialised when scrolled into view). -->
   <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js" defer></script>
-  <script src="concept-graph/graph-viz.js?v=5" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
+  <script src="concept-graph/graph-viz.js?v=6" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
