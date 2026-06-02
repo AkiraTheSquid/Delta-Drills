@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
   <link rel="stylesheet" href="styles/components.css?v=3" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=1" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -78,25 +79,221 @@
 
   <main class="page" id="page-how-it-works">
     <div class="container">
-      <h1>How It Works</h1>
-      <p class="subtitle">Upload a PDF textbook, extract the table of contents, and split chapters into clean files ready for NotebookLM.</p>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <div class="step-card-title">Upload your PDF</div>
-          <div class="step-card-text">Select any PDF textbook from your computer.</div>
+
+      <!-- Hero -->
+      <section class="hiw-hero">
+        <h1>How Delta Drills works</h1>
+        <p class="hiw-lead">
+          Intro tutorials are everywhere. The hard part is the jump from
+          <em>following along</em> to <strong>writing the code yourself</strong> —
+          the tensor manipulations, the convolutions, the building blocks of
+          modern ML research. Delta Drills is a practice engine for exactly that
+          gap.
+        </p>
+        <p class="hiw-lead">
+          It works like a coach that has read the whole curriculum: it knows
+          which skills build on which, watches how you're actually doing, and
+          hands you the next problem at the right level — heavily supported when
+          a topic is new, stripped bare once you've got it.
+        </p>
+      </section>
+
+      <!-- 1. Mastery, not coverage -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The idea</p>
+        <h2>You move on when you've got it — not when the clock says so</h2>
+        <p>
+          Most courses march everyone through the same sequence at the same
+          pace. Delta Drills is built around <span class="hiw-em">mastery
+          learning</span> instead: the curriculum is broken into small skills,
+          and you keep practicing one until the evidence says you've actually
+          learned it. Solid foundations first, then the things that build on
+          them — so you never hit an advanced problem missing a piece you were
+          quietly never taught.
+        </p>
+      </section>
+
+      <!-- 2. The knowledge graph -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The map</p>
+        <h2>Every skill knows what comes before it</h2>
+        <p>
+          Under the hood is a <span class="hiw-em">map of the curriculum</span>:
+          a few hundred individual skills — "atoms" — with links recording which
+          ones depend on which. Reshaping with <code>einops</code> comes before
+          building an attention head; understanding a convolution comes before
+          assembling a ResNet. The map is built from real ML teaching material
+          and cross-checked across several independent sources, so the
+          dependencies reflect how the field is actually taught rather than one
+          author's guess.
+        </p>
+        <p>
+          That map does real work. A topic stays locked until the skills it
+          rests on are solid — and credit flows the other way too: nail a hard,
+          composite problem and the simpler skills folded inside it get credited
+          automatically, so you're never made to re-grind something you've
+          already demonstrated.
+        </p>
+        <div class="hiw-stats">
+          <div class="hiw-stat">
+            <span class="hiw-stat-num">~390</span>
+            <span class="hiw-stat-label">skill atoms across the curriculum</span>
+          </div>
+          <div class="hiw-stat">
+            <span class="hiw-stat-num">~480</span>
+            <span class="hiw-stat-label">coding problems, auto-graded</span>
+          </div>
+          <div class="hiw-stat">
+            <span class="hiw-stat-num">~1,300</span>
+            <span class="hiw-stat-label">hands-on drills pulled from research workflows</span>
+          </div>
         </div>
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <div class="step-card-title">Detect chapters</div>
-          <div class="step-card-text">We read the table of contents and organize chapters automatically.</div>
+      </section>
+
+      <!-- 3. How it tracks you -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The model</p>
+        <h2>It tracks what you actually know</h2>
+        <p>
+          Behind each skill is a running estimate of how likely it is you've
+          mastered it. Every problem you submit nudges that estimate — up when
+          you get it right, gently down when you slip — using a well-established
+          method called <span class="hiw-em">Bayesian Knowledge Tracing</span>.
+          It also accounts for the obvious noise: a lucky guess and an
+          unlucky typo don't get treated as if they were the whole story, and
+          confidence in old skills fades over time the way real memory does.
+        </p>
+        <p>
+          The engine then spends your time where it's worth the most. Rather
+          than asking what's next in a fixed list, it looks for your
+          <span class="hiw-em">weakest skill that you're ready to work on</span>
+          and serves a problem there, tuned to a difficulty that should stretch
+          you without stalling you.
+        </p>
+      </section>
+
+      <!-- 4. The ERE ladder — the headline pedagogy -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The practice</p>
+        <h2>The training wheels come off as you improve</h2>
+        <p>
+          Showing a beginner a fully worked example is one of the most effective
+          things you can do. Showing that <em>same</em> worked example to someone
+          who's already fluent just slows them down — a well-documented effect
+          in the learning-science literature (the <span class="hiw-em">expertise
+          reversal effect</span>). So Delta Drills doesn't hand everyone the same
+          problem. Each drill exists at three levels of support, and which one
+          you get depends on how you're doing:
+        </p>
+        <div class="hiw-ladder">
+          <div class="hiw-rung">
+            <span class="hiw-rung-tag">New to it</span>
+            <h3>Worked</h3>
+            <p>The full solution, laid out and explained. You read the reasoning and run it.</p>
+            <code class="hiw-rung-code">x = rearrange(
+  img, "h w c -> c h w"
+)  # ✓ shown</code>
+          </div>
+          <div class="hiw-rung">
+            <span class="hiw-rung-tag">Getting there</span>
+            <h3>Faded</h3>
+            <p>Most of the scaffold is there; you fill the blanks that carry the real idea.</p>
+            <code class="hiw-rung-code">x = rearrange(
+  img, "____"
+)  # you fill this</code>
+          </div>
+          <div class="hiw-rung">
+            <span class="hiw-rung-tag">Fluent</span>
+            <h3>Full</h3>
+            <p>A blank problem and a hint if you want it. You write the whole thing.</p>
+            <code class="hiw-rung-code"># goal: HWC -> CHW
+# write it yourself</code>
+          </div>
         </div>
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <div class="step-card-title">Download splits</div>
-          <div class="step-card-text">Choose the chapters you want and download them as individual PDFs.</div>
+        <p class="hiw-rung-arrow">support fades as mastery rises →</p>
+      </section>
+
+      <!-- 5. Real code, real research -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The substance</p>
+        <h2>You write real code, on real research patterns</h2>
+        <div class="hiw-pairs">
+          <div class="hiw-pair">
+            <h3>Reconstructed from actual workflows</h3>
+            <p>
+              The drills aren't toy puzzles. They're broken out of the kinds of
+              exercises researchers use to learn the field — the tensor work,
+              the model internals — so the skill you build is the one the work
+              actually demands.
+            </p>
+          </div>
+          <div class="hiw-pair">
+            <h3>Graded on what your code does</h3>
+            <p>
+              You write Python — <code>numpy</code>, <code>einops</code>,
+              PyTorch — and submit. The engine runs it and checks the result, so
+              feedback is about whether your solution behaves correctly, not
+              whether it matched a template.
+            </p>
+          </div>
+          <div class="hiw-pair">
+            <h3>Help when you're stuck</h3>
+            <p>
+              Every problem can surface a hint or a fully worked solution on
+              demand — there when you need it, out of the way when you don't.
+            </p>
+          </div>
+          <div class="hiw-pair">
+            <h3>Built for different starting points</h3>
+            <p>
+              Because support is tiered and practice is weakest-first, the same
+              library of problems serves someone seeing a concept for the first
+              time and someone sharpening skills they mostly have.
+            </p>
+          </div>
         </div>
+      </section>
+
+      <!-- 6. A session, start to finish -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">In practice</p>
+        <h2>A session, start to finish</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-card-title">It picks the spot</div>
+            <div class="step-card-text">The engine finds your weakest ready skill and pulls a problem at the right level of difficulty and support.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-card-title">You write the code</div>
+            <div class="step-card-text">Solve it in real Python, with a hint or a worked example one click away if you want it.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-card-title">It updates its picture</div>
+            <div class="step-card-text">Your result moves the mastery estimate for that skill — and credits the simpler skills it contained.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-card-title">The next problem adapts</div>
+            <div class="step-card-text">As you get stronger, support fades and new topics unlock once their prerequisites are solid.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Closing note -->
+      <div class="hiw-note">
+        <p>
+          <strong>Where it's at.</strong> Delta Drills is an early, working
+          build focused on the foundational ML skills behind modern research.
+          The mastery model, prerequisite map, and fading-scaffold practice are
+          all live — and the question and drill banks keep growing.
+          <strong>Try it as a guest below</strong>; sign in only when you want
+          your progress to follow you across devices.
+        </p>
       </div>
+
     </div>
   </main>
 
