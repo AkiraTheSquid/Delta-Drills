@@ -61,6 +61,31 @@
   margin-bottom: 20px;
 }
 
+/* Sign in with Google button container + email/password fallback disclosure. */
+#google-signin-button {
+  margin-bottom: 12px;
+  min-height: 40px;
+}
+#google-signin-note:not(:empty),
+#google-signin-message:not(:empty) {
+  margin-bottom: 12px;
+}
+.auth-fallback {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.auth-fallback > summary {
+  cursor: pointer;
+  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  font-size: 13px;
+  list-style: revert;
+  margin-bottom: 12px;
+}
+.auth-fallback > summary:hover {
+  color: var(--white, #f4f4f7);
+}
+
 .field {
   display: grid;
   gap: 6px;
