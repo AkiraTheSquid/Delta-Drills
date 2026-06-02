@@ -85,6 +85,14 @@
 }
 .guest-banner-meta strong { color: var(--white, #f4f4f7); font-weight: 700; }
 
+/* Continue-with-Google button (GIS-rendered) sitting inline in the banner. */
+.guest-banner-google {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
 .guest-banner-btn {
   font-family: inherit;
   font-size: 12px;

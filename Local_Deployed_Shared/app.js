@@ -6,10 +6,6 @@ const tabs = document.querySelectorAll(".tab");
 const authOnlyTabs = document.querySelectorAll(".auth-only");
 const guestOnlyTabs = document.querySelectorAll(".guest-only");
 const pages = document.querySelectorAll(".page");
-const loginForm = document.getElementById("login-form");
-const loginMessage = document.getElementById("login-message");
-const signupForm = document.getElementById("signup-form");
-const signupMessage = document.getElementById("signup-message");
 const authStatus = document.getElementById("auth-status");
 const logoutButton = document.getElementById("logout-button");
 const accountForm = document.getElementById("account-form");
@@ -145,129 +141,6 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   return response;
 };
 
-// --- Auth forms ---
-
-loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  loginMessage.textContent = "Working...";
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-    loginMessage.textContent = "Enter an email and password.";
-    return;
-  }
-
-  try {
-    if (isLocalHost || window.DELTA_USE_BACKEND) {
-      // Local app + migrated prod: use the Fly backend's own JWT auth.
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        loginMessage.textContent = data.detail || "Login failed.";
-        return;
-      }
-      loginMessage.textContent = "Logged in!";
-      loginForm.reset();
-      setAuthState(data.access_token, email);
-    } else if (typeof supabaseSignIn === "function") {
-      // Non-admin or deployed — use Supabase Auth
-      const data = await supabaseSignIn(email, password);
-      loginMessage.textContent = "Logged in!";
-      loginForm.reset();
-      setAuthState(data.session?.access_token || "", email);
-    } else {
-      // Fallback to local backend
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        loginMessage.textContent = data.detail || "Login failed.";
-        return;
-      }
-      loginMessage.textContent = "Logged in!";
-      loginForm.reset();
-      setAuthState(data.access_token, email);
-    }
-    setTimeout(() => (loginMessage.textContent = ""), 1000);
-  } catch (e) {
-    loginMessage.textContent = e.message;
-  }
-});
-
-signupForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  signupMessage.textContent = "Working...";
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const confirm = document.getElementById("signup-confirm").value;
-
-  if (!email || !password || !confirm) {
-    signupMessage.textContent = "Enter an email and both password fields.";
-    return;
-  }
-
-  if (password !== confirm) {
-    signupMessage.textContent = "Passwords do not match.";
-    return;
-  }
-
-  try {
-    if (isLocalHost || window.DELTA_USE_BACKEND) {
-      // Local app + migrated prod: use the Fly backend's own JWT auth.
-      const response = await fetch(`${API_BASE}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        signupMessage.textContent = data.detail || "Signup failed.";
-        return;
-      }
-      signupMessage.textContent = "Account created!";
-      signupForm.reset();
-      setAuthState(data.access_token, email);
-    } else if (typeof supabaseSignUp === "function") {
-      // Non-admin or deployed — use Supabase Auth
-      const data = await supabaseSignUp(email, password);
-      if (data.user && !data.session) {
-        signupMessage.textContent = "Check your email to confirm your account.";
-        signupForm.reset();
-        return;
-      }
-      signupMessage.textContent = "Account created!";
-      signupForm.reset();
-      setAuthState(data.session?.access_token || "", email);
-    } else {
-      // Fallback to local backend
-      const response = await fetch(`${API_BASE}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        signupMessage.textContent = data.detail || "Signup failed.";
-        return;
-      }
-      signupMessage.textContent = "Account created!";
-      signupForm.reset();
-      setAuthState(data.access_token, email);
-    }
-    setTimeout(() => (signupMessage.textContent = ""), 1000);
-  } catch (e) {
-    signupMessage.textContent = e.message;
-  }
-});
-
 // --- Sign in with Google (Google Identity Services) ---
 
 // Decode a JWT payload (no verification — display only; the backend verifies
@@ -317,12 +190,12 @@ let _googleSignInInited = false;
 const initGoogleSignIn = () => {
   if (_googleSignInInited) return;
   const clientId = window.GOOGLE_CLIENT_ID || "";
-  const buttonEl = document.getElementById("google-signin-button");
+  const buttonEl = document.getElementById("google-signin-banner");
   const noteEl = document.getElementById("google-signin-note");
   if (!buttonEl) return;
 
   if (!clientId) {
-    if (noteEl) noteEl.textContent = "Google sign-in isn't configured yet — use email and password below.";
+    if (noteEl) noteEl.textContent = "Google sign-in isn't configured yet.";
     return;
   }
   if (!(window.google && google.accounts && google.accounts.id)) {
@@ -346,7 +219,7 @@ const initGoogleSignIn = () => {
     if (noteEl) noteEl.textContent = "";
     _googleSignInInited = true;
   } catch (e) {
-    if (noteEl) noteEl.textContent = "Could not load Google sign-in. Use email and password below.";
+    if (noteEl) noteEl.textContent = "Could not load Google sign-in. Please refresh and try again.";
   }
 };
 
@@ -418,9 +291,5 @@ if (authToken) {
 // mode; the guest banner is the standing CTA to log in.
 switchTab("practice");
 updateTabVisibility();
-
-// Guest-banner CTAs → the existing login / signup pages.
-const guestBannerLogin = document.getElementById("guest-banner-login");
-const guestBannerSignup = document.getElementById("guest-banner-signup");
-if (guestBannerLogin) guestBannerLogin.addEventListener("click", () => switchTab("login"));
-if (guestBannerSignup) guestBannerSignup.addEventListener("click", () => switchTab("signup"));
+// Auth is the Continue-with-Google button rendered into the guest banner by
+// initGoogleSignIn() above — no login/signup pages or CTA buttons to wire.
