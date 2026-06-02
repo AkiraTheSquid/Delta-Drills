@@ -17,4 +17,4 @@
    yet" notice and the email/password form remains available as a fallback.
    ================================================================ */
 
-window.GOOGLE_CLIENT_ID = "";
+window.GOOGLE_CLIENT_ID = "974393489971-95s4svmsafosm4uj4ihrp36v91j1vh73.apps.googleusercontent.com";
