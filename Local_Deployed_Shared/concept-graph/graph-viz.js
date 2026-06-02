@@ -1,10 +1,14 @@
 /* ================================================================
    CONCEPT GRAPH VIZ — interactive Cytoscape.js embed for the
-   How It Works page. Loads concept-graph/graph-viz.json (exported by
+   Knowledge Graph tab. Loads concept-graph/graph-viz.json (exported by
    This-Directory-Only/scripts/export_graph_viz.py), colours nodes by
-   family, draws the structural prerequisite backbone bright and the
-   encompassing links faint. Lazy-inits when scrolled into view so it
-   doesn't slow the landing page.
+   family, draws the structural prerequisite backbone bright red and the
+   encompassing links faint/dashed.
+
+   Built on demand via window.deltaInitConceptGraph() — called by app.js
+   switchTab() when the Knowledge Graph tab opens. (Cytoscape can't size
+   its container while the page is display:none, so we defer the build
+   until the tab is actually visible.)
    ================================================================ */
 (() => {
   "use strict";
@@ -21,7 +25,8 @@
   };
   const ACCENT = "#e3212c"; // structural prerequisite edges
 
-  let inited = false;
+  let cy = null;
+  let building = false;
 
   const buildLegend = (families) => {
     const el = document.getElementById("concept-graph-legend");
@@ -41,14 +46,13 @@
     if (el) el.innerHTML = html;
   };
 
-  async function init() {
-    if (inited) return;
+  async function build() {
+    if (cy || building) return;
     const container = document.getElementById("concept-graph-cy");
     if (!container) return;
-    if (typeof cytoscape === "undefined") return; // script not loaded yet
-    inited = true;
+    if (typeof cytoscape === "undefined") return; // CDN not loaded yet
+    building = true;
 
-    // Register fcose layout if its extension loaded.
     let layoutName = "cose";
     try {
       if (window.cytoscapeFcose) {
@@ -65,6 +69,7 @@
       data = await res.json();
     } catch (e) {
       setInfo("Couldn't load the graph data.");
+      building = false;
       return;
     }
 
@@ -81,7 +86,7 @@
       })),
     ];
 
-    const cy = cytoscape({
+    cy = cytoscape({
       container,
       elements,
       wheelSensitivity: 0.2,
@@ -100,11 +105,7 @@
         },
         {
           selector: "edge",
-          style: {
-            "curve-style": "straight",
-            "target-arrow-shape": "none",
-            opacity: 0.9,
-          },
+          style: { "curve-style": "straight", "target-arrow-shape": "none", opacity: 0.9 },
         },
         {
           selector: "edge.enc",
@@ -112,7 +113,13 @@
         },
         {
           selector: "edge.prereq",
-          style: { width: 2, "line-color": ACCENT, "target-arrow-shape": "triangle", "target-arrow-color": ACCENT, "arrow-scale": 0.7 },
+          style: {
+            width: 2,
+            "line-color": ACCENT,
+            "target-arrow-shape": "triangle",
+            "target-arrow-color": ACCENT,
+            "arrow-scale": 0.7,
+          },
         },
         { selector: ".faded", style: { opacity: 0.08 } },
         {
@@ -120,6 +127,10 @@
           style: { width: 22, height: 22, "border-width": 2, "border-color": "#ffffff", "z-index": 99 },
         },
         { selector: "edge.hl", style: { opacity: 1, width: 2.5, "line-color": "#ffffff", "line-style": "solid" } },
+        {
+          selector: "node.named",
+          style: { label: "data(label)", color: "#e0e0e0", "font-size": 9, "text-wrap": "wrap", "text-max-width": "90px", "text-background-color": "#16213e", "text-background-opacity": 0.7, "text-background-padding": 2 },
+        },
       ],
       layout: {
         name: layoutName,
@@ -131,23 +142,21 @@
         nodeSeparation: 80,
         packComponents: true,
         fit: true,
-        padding: 24,
+        padding: 28,
       },
     });
 
-    // Click a node: highlight it + its prerequisites and dependents.
     cy.on("tap", "node", (evt) => {
       const n = evt.target;
       const hood = n.closedNeighborhood();
-      cy.elements().addClass("faded");
+      cy.elements().removeClass("hl named").addClass("faded");
       hood.removeClass("faded").addClass("hl");
-      setInfo(
-        `<strong>${n.data("label")}</strong><span class="cg-info-topic">${n.data("topic")}</span>`
-      );
+      hood.nodes().addClass("named");
+      setInfo(`<strong>${n.data("label")}</strong><span class="cg-info-topic">${n.data("topic")}</span>`);
     });
     cy.on("tap", (evt) => {
       if (evt.target === cy) {
-        cy.elements().removeClass("faded hl");
+        cy.elements().removeClass("faded hl named");
         setInfo("Click any skill to trace what it connects to.");
       }
     });
@@ -155,49 +164,27 @@
     setInfo("Click any skill to trace what it connects to.");
 
     const fitBtn = document.getElementById("concept-graph-fit");
-    if (fitBtn) fitBtn.addEventListener("click", () => cy.fit(undefined, 24));
-
+    if (fitBtn) fitBtn.onclick = () => cy.fit(undefined, 28);
     const toggle = document.getElementById("concept-graph-toggle-enc");
     if (toggle)
-      toggle.addEventListener("change", () => {
-        cy.edges(".enc").style("display", toggle.checked ? "element" : "none");
-      });
+      toggle.onchange = () => cy.edges(".enc").style("display", toggle.checked ? "element" : "none");
+
+    building = false;
   }
 
-  // Lazy-init when the graph scrolls into view (poll for cytoscape in case
-  // the CDN script is still loading).
-  const start = () => {
+  // Called when the Knowledge Graph tab opens. Builds the first time (now that
+  // the container is visible); on later opens just re-fits to the new size.
+  window.deltaInitConceptGraph = function () {
+    if (cy) {
+      cy.resize();
+      cy.fit(undefined, 28);
+      return;
+    }
     let tries = 0;
     const tick = () => {
-      init();
-      if (!inited && tries++ < 60) setTimeout(tick, 200);
+      build();
+      if (!cy && tries++ < 80) setTimeout(tick, 150);
     };
     tick();
   };
-
-  const target = () => document.getElementById("concept-graph-cy");
-  const armObserver = () => {
-    const el = target();
-    if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      start();
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          io.disconnect();
-          start();
-        }
-      },
-      { rootMargin: "200px" }
-    );
-    io.observe(el);
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", armObserver);
-  } else {
-    armObserver();
-  }
 })();

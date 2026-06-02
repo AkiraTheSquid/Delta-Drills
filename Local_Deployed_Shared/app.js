@@ -44,15 +44,25 @@ const switchTab = (tabName) => {
       console.warn("[practice] failed to refresh preferences:", err);
     });
   }
+  // The concept-graph viz can only size itself once its page is visible, so
+  // (re)initialise it when the Knowledge Graph tab opens.
+  if (tabName === "knowledge-graph" && typeof window.deltaInitConceptGraph === "function") {
+    requestAnimationFrame(() => window.deltaInitConceptGraph());
+  }
 };
 
 tabs.forEach((t) => {
   t.addEventListener("click", () => switchTab(t.dataset.tab));
 });
 
+// In-page buttons that jump to a tab (e.g. the How It Works → Knowledge Graph CTA).
+document.querySelectorAll("[data-goto-tab]").forEach((b) => {
+  b.addEventListener("click", () => switchTab(b.dataset.gotoTab));
+});
+
 // Tabs a guest is allowed to see/use (the learning surface). Account-only
 // tabs (Account, Split Tool) stay hidden until login.
-const guestVisibleTabs = ["courses", "practice", "targeted-practice", "statistics"];
+const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-practice", "statistics"];
 
 const updateTabVisibility = () => {
   if (authToken) {
