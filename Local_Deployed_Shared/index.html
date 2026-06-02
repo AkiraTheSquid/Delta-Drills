@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="styles/variables.css" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
-  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/components.css?v=3" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -26,6 +26,10 @@
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=5" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Sign in with Google (Google Identity Services). auth-config.js sets the
+       OAuth client id; app.js renders the button + handles the credential. -->
+  <script src="auth-config.js?v=2"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -377,6 +381,15 @@ np.random.seed(0)
     <div class="container">
       <div class="auth-card">
         <h1>Log In</h1>
+
+        <!-- Option 1: Sign in with Google. GIS renders the button here (app.js). -->
+        <div id="google-signin-button"></div>
+        <div id="google-signin-note" class="hint" role="status"></div>
+        <div id="google-signin-message" class="hint" role="status"></div>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <!-- Option 2: email + password. -->
         <form id="login-form">
           <div class="field">
             <label for="email">Email</label>
@@ -431,7 +444,7 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
