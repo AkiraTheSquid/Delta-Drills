@@ -1,0 +1,555 @@
+{
+ "cluster": "B",
+ "n_dependents": 42,
+ "edges": [
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "backward-fn-signature",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.75,
+   "rationale": "log_back is concrete elementwise chain-rule back fn"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "log-back",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "log_back is the canonical elementwise chain-rule case"
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "log-back",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "log_back instantiates the canonical back-fn signature"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "multiply-back",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "multiply back fns are product-rule chain-rule cases"
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "multiply-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "multiply_back unbroadcasts grad onto each arg shape"
+  },
+  {
+   "prerequisite_id": "coerce-float-arg-to-array",
+   "dependent_id": "multiply-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "multiply_back float-coerces scalar args"
+  },
+  {
+   "prerequisite_id": "multiply-back",
+   "dependent_id": "arg-position-back-functions",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "div per-arg back fns mirror multiply per-arg pattern"
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "arg-position-back-functions",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "asymmetric per-arg grads unbroadcast onto each arg"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "arg-position-back-functions",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.45,
+   "confidence": 0.65,
+   "rationale": "div back fns are elementwise chain-rule cases"
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "max-back-tied-half",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "maximum_back unbroadcasts masked grad onto x/y"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "max-back-tied-half",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.6,
+   "rationale": "maximum_back is masked elementwise chain rule"
+  },
+  {
+   "prerequisite_id": "boolean-mask-combine",
+   "dependent_id": "max-back-tied-half",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "tie-splitting built from boolean masks"
+  },
+  {
+   "prerequisite_id": "grad-expressed-in-out",
+   "dependent_id": "exp-back",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.55,
+   "confidence": 0.7,
+   "rationale": "exp_back is the cache-the-out gradient technique"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "exp-back",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.45,
+   "confidence": 0.65,
+   "rationale": "exp_back is elementwise chain rule via cached out"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "negative-back",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.45,
+   "confidence": 0.65,
+   "rationale": "negative_back is trivial elementwise chain rule"
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "negative-back",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.6,
+   "rationale": "negative_back follows the canonical back-fn signature"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matmul-back-transpose-pair",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "matmul back fns are transposed matmuls"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "matmul-back-transpose-pair",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.6,
+   "rationale": "matmul back is the matrix chain rule"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "permute-back-argsort",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "permute_back inverts an axis permutation"
+  },
+  {
+   "prerequisite_id": "kwargs-pass-through-recipe",
+   "dependent_id": "reshape-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "reshape_back reads new_shape from recipe kwargs"
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "sum-back-expand-broadcast",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "sum_back is the dual/inverse of unbroadcast reduction"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sum-back-expand-broadcast",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "sum_back broadcasts grad back to x.shape"
+  },
+  {
+   "prerequisite_id": "sum-back-expand-broadcast",
+   "dependent_id": "sum-and-broadcast-duality",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "sum_back is one half of the sum/broadcast dual pair"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sum-and-broadcast-duality",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "duality rests on broadcasting semantics"
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "sum-and-broadcast-duality",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "broadcast_back's reverse is the unbroadcast reduction"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "parents-dict-by-argidx",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "parents dict is stored alongside the Recipe"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "boxing attaches a Recipe to the output tensor"
+  },
+  {
+   "prerequisite_id": "parents-dict-by-argidx",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "boxing stores the parents dict in the recipe"
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "box only when grad-tracked per requires_grad gate"
+  },
+  {
+   "prerequisite_id": "grad-tracking-global-toggle",
+   "dependent_id": "requires-grad-propagation",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "global toggle is one of the three requires_grad gates"
+  },
+  {
+   "prerequisite_id": "is-differentiable-flag",
+   "dependent_id": "requires-grad-propagation",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "is_differentiable is one of the three gates"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "kwargs-pass-through-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "kwargs are stored on the Recipe for the back pass"
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "kwargs-pass-through-recipe",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.45,
+   "confidence": 0.6,
+   "rationale": "kwargs threading is part of the generic wrapper"
+  },
+  {
+   "prerequisite_id": "unbox-args-tensor-to-array",
+   "dependent_id": "wrap-forward-fn-generic",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "unbox step is the wrapper's input stage"
+  },
+  {
+   "prerequisite_id": "box-array-to-tensor-with-recipe",
+   "dependent_id": "wrap-forward-fn-generic",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "box-with-recipe is the wrapper's output stage"
+  },
+  {
+   "prerequisite_id": "parents-dict-by-argidx",
+   "dependent_id": "wrap-forward-fn-generic",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "wrapper builds the parents dict for the recipe"
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "wrap-forward-fn-generic",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "wrapper applies the three-gate requires_grad rule"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "wrap-forward-fn-generic",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "wrapper attaches a Recipe to the boxed output"
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "non-diff-fn-wrap",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.55,
+   "confidence": 0.7,
+   "rationale": "non-diff wrap is the no-grad branch of the wrapper"
+  },
+  {
+   "prerequisite_id": "is-differentiable-flag",
+   "dependent_id": "non-diff-fn-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "non-diff op marked is_differentiable=False"
+  },
+  {
+   "prerequisite_id": "backward-func-lookup",
+   "dependent_id": "register-back-fn-after-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "registration writes into the BackwardFuncLookup registry"
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "register-back-fn-after-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "back fn registered after wrapping the forward op"
+  },
+  {
+   "prerequisite_id": "cycle-detection-temp-set",
+   "dependent_id": "dfs-three-set-toposort",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "temp-set cycle detection is the middle set of the 3-set DFS"
+  },
+  {
+   "prerequisite_id": "get-children-callable-param",
+   "dependent_id": "dfs-three-set-toposort",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "toposort walks node children to recurse"
+  },
+  {
+   "prerequisite_id": "dfs-three-set-toposort",
+   "dependent_id": "sorted-computational-graph",
+   "relation": "is-a",
+   "is_encompassing": true,
+   "propagation_weight": 0.65,
+   "confidence": 0.8,
+   "rationale": "the sorted graph IS the DFS toposort applied to the compute graph"
+  },
+  {
+   "prerequisite_id": "backward-func-lookup",
+   "dependent_id": "dispatch-back-fn-from-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "dispatch looks up back fn in the registry by (func,argnum)"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "dispatch-back-fn-from-recipe",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "dispatch reads func/args from the node's Recipe"
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "back-fn-call-with-recipe-args",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "calling follows dispatching the back fn"
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "back-fn-call-with-recipe-args",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "call threads recipe args/kwargs into the back fn"
+  },
+  {
+   "prerequisite_id": "sorted-computational-graph",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "loop iterates the topologically sorted graph"
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "loop dispatches each node's back fn"
+  },
+  {
+   "prerequisite_id": "back-fn-call-with-recipe-args",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "loop calls the dispatched back fn with recipe args"
+  },
+  {
+   "prerequisite_id": "grad-accumulate-on-leaf",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.55,
+   "confidence": 0.7,
+   "rationale": "loop accumulates grads onto leaves"
+  },
+  {
+   "prerequisite_id": "end-grad-default-ones-like",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "loop seeds the reverse pass with end_grad"
+  },
+  {
+   "prerequisite_id": "log-back",
+   "dependent_id": "manual-chain-forward-and-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "hand back-prop calls log_back along the chain"
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "manual-chain-forward-and-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "manual chaining invokes canonical back fns"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "manual-chain-forward-and-back",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "hand back-prop applies the elementwise chain rule"
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "grad-expressed-in-out",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "cached-out sigmoid_back is an elementwise chain-rule variant"
+  },
+  {
+   "prerequisite_id": "grad-tracking-global-toggle",
+   "dependent_id": "no-grad-context-mgr-update",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "NoGrad ctx mgr wraps the global grad toggle"
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "param-grad-access",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "iterating model.parameters() relies on the Module param walk"
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "parameter-subclass-of-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "Parameter defaults requires_grad=True per the grad gate"
+  }
+ ]
+}

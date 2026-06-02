@@ -50,7 +50,7 @@ HALF_LIFE_DAYS = 14.0
 
 GRAPH_PATH = (
     Path(__file__).resolve().parent
-    / "data" / "concept_graphs" / "arena_iter5_v3_encompassing.json"
+    / "data" / "concept_graphs" / "arena_drillable_v1.json"
 )
 
 

@@ -1,0 +1,3893 @@
+{
+ "source": "arena-drillable-v1",
+ "n_nodes": 207,
+ "n_edges": 330,
+ "n_gating": 242,
+ "n_encompassing": 88,
+ "nodes": [
+  {
+   "id": "1x1-conv-channel-reshape",
+   "title": "prove 1x1 Conv2d equals per-pixel Linear",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "all-reduce-compose",
+   "title": "compose all_reduce from reduce plus broadcast",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "all-reduce-eval-metrics",
+   "title": "average a per-rank eval loss across ranks",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "all-reduce-grad-sync",
+   "title": "synchronize gradients across ranks with all_reduce",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "any-reduce-axis",
+   "title": "row-wise any() to flag rows containing any True",
+   "topic": "Misc Cleanup",
+   "drillable": true
+  },
+  {
+   "id": "arange-fancy-index-cross-entropy",
+   "title": "pick per-sample target logits via logits[arange(B), target]",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "arg-position-back-functions",
+   "title": "write div_back0 and div_back1 \u2014 asymmetric per-arg back fns",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "argmax-accuracy-eval",
+   "title": "top-1 classification accuracy from logits",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "as-strided-noncontig-source",
+   "title": "Non-contiguous tensor strides pitfall",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "as-strided-windowing",
+   "title": "compute size + stride args for a 1-D sliding window",
+   "topic": "Tensor Mechanics",
+   "drillable": true
+  },
+  {
+   "id": "avgpool-reduce",
+   "title": "build AvgPool2d via einops.reduce",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "back-fn-call-with-recipe-args",
+   "title": "call a dispatched back_fn with (grad_out, node.array, *args, **kwargs)",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "backprop-pop-outgrad-loop",
+   "title": "implement the main reverse-pass loop over a sorted graph",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "backward-fn-signature",
+   "title": "write log_back with the canonical (grad_out, out, x) signature",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "backward-func-lookup",
+   "title": "BackwardFuncLookup registry",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "backward-on-scalar-loss",
+   "title": "reduce per-sample loss to a scalar before backward",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "batchnorm-affine-params",
+   "title": "apply BatchNorm's affine step to a normalized tensor",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "batchnorm-running-stats",
+   "title": "EMA-update running_mean and running_var in train mode",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "bce-log-loss-real-fake",
+   "title": "discriminator BCE loss = BCE(D(real), 1) + BCE(D(fake), 0)",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "bias-correction-divide",
+   "title": "bias-correct an Adam moment: m_hat = m / (1 - beta**t)",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "block-group-stack",
+   "title": "build a ResNet BlockGroup from toy blocks",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "bn-weight-bias-init-pattern",
+   "title": "BatchNorm init \u2014 weight ~ N(1, 0.02), bias = 0",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "boolean-mask-combine",
+   "title": "five-predicate ray-triangle inside test",
+   "topic": "Einops Advanced",
+   "drillable": true
+  },
+  {
+   "id": "boolean-mask-identity-replace",
+   "title": "Singular-matrix identity substitution trick",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "bottleneck-latent-projection",
+   "title": "encode flat batch into latent + 2-D scatter",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "box-array-to-tensor-with-recipe",
+   "title": "box raw output into MiniTensor + attach Recipe when grad-tracked",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "broadcast-initial-weights",
+   "title": "broadcast rank-0 weights to all ranks at start",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "broadcast-source-fanout",
+   "title": "fan a class-embedding table to a batch via labels",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "broadcasting-rules",
+   "title": "NumPy/PyTorch broadcasting rules",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "buffer-copy_-inplace",
+   "title": "update a BatchNorm running_mean buffer with copy_",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "chain-rule-elementwise",
+   "title": "write sigmoid_back and relu_back from the elementwise chain rule",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "channel-list-reverse-build",
+   "title": "build symmetric encoder/decoder channel pairs from a reversed list",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "clip-grad-norm-pre-step",
+   "title": "clip grads to a max global L2 norm before optimizer.step",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "coerce-float-arg-to-array",
+   "title": "coerce_to_array: wrap int/float as 0-D tensor, pass-through others",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "conditional-hparam-branch",
+   "title": "Linear with optional bias gated by use_bias flag",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "conv-channel-sum",
+   "title": "verify conv2d contracts the IC axis",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "conv-kernel-shape",
+   "title": "introspect a conv2d weight tensor's axes",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "conv-leakyrelu-block-discriminator",
+   "title": "build a 32x32 to 16x16 discriminator downsampling block",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "conv-output-shape",
+   "title": "compute conv2d output shape analytically",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "conv-padding-zero",
+   "title": "build a zero-padded 1-D input by slice assignment",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "conv-stride-downsample",
+   "title": "predict strided conv output length",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "conv-windowing-1d",
+   "title": "build the 1-D conv window view via as_strided",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "conv-windowing-2d",
+   "title": "build the 2-D conv window view via as_strided",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "convT-as-flipped-padded-conv",
+   "title": "rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "convT-kernel-axis-swap",
+   "title": "compare Conv2d and ConvTranspose2d weight shapes",
+   "topic": "Cnn Deep",
+   "drillable": true
+  },
+  {
+   "id": "convtranspose-bn-activation-block",
+   "title": "build a 4x4 to 8x8 generator upsampling block",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "cross-entropy-classification-loss",
+   "title": "manual cross-entropy matches F.cross_entropy on logits",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "cross-product-normal",
+   "title": "unit surface normal of a triangle via cross product",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "cycle-detection-temp-set",
+   "title": "add temp-set cycle detection to a DFS traversal",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "dataclasses-replace-args",
+   "title": "make a sweep of args variants via dataclasses.replace",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "dataloader-batching",
+   "title": "DataLoader for batched iteration",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "dataloader-pin-memory-workers",
+   "title": "build a DataLoader with num_workers and pin_memory configured",
+   "topic": "Pytorch Modules",
+   "drillable": true
+  },
+  {
+   "id": "dcgan-normal-init-002",
+   "title": "apply normal(0, 0.02) init to Conv/ConvTranspose via model.apply",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "dcgan-wrapper-netG-netD",
+   "title": "wrap two subnets as netG/netD with separate optimizers",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "detach-clone-snapshot",
+   "title": "snapshot a hidden state across an optimizer step",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "detach-stop-gradient-trick",
+   "title": "detach G's output during D-step so grad does not flow into G",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "device-consistent-construct",
+   "title": "build a Module that allocates scratch tensors with the right device + dtype",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "dfs-three-set-toposort",
+   "title": "implement three-set DFS topological sort (deps-first, root LAST)",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "diagonal-via-strides",
+   "title": "extract diagonal of (N, N) via as_strided",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "discriminator-classifier-head",
+   "title": "flatten + linear + sigmoid scalar real/fake head",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "dispatch-back-fn-from-recipe",
+   "title": "dispatch back fn from (recipe.func, argnum) for every parent",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "dist-send-recv-pair",
+   "title": "implement broadcast via paired dist.send and dist.recv",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "distributed-sampler-shard",
+   "title": "shard a dataset across ranks with DistributedSampler",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "einops-einsum",
+   "title": "einops.einsum",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "einops-rearrange",
+   "title": "einops.rearrange",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "einops-rearrange-flatten",
+   "title": "CNN flatten before the Linear head \u2014 channel + spatial collapse",
+   "topic": "Einops Advanced",
+   "drillable": true
+  },
+  {
+   "id": "einops-reduce",
+   "title": "einops.reduce",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "einops-reduce-min",
+   "title": "per-channel min floor for a feature map",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "einops-repeat",
+   "title": "einops.repeat",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "einops-repeat-broadcast",
+   "title": "every-ray-with-every-triangle pairing without copy",
+   "topic": "Einops Advanced",
+   "drillable": true
+  },
+  {
+   "id": "elbo-loss-sum-with-beta",
+   "title": "beta-weighted ELBO sum + sweep plot",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "ema-first-moment",
+   "title": "Adam m-buffer EMA update m = beta1*m + (1-beta1)*g",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "ema-second-moment",
+   "title": "Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "encoder-decoder-symmetric",
+   "title": "build a tiny autoencoder whose output shape == input shape",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "end-grad-default-ones-like",
+   "title": "resolve end_grad \u2014 default ones_like, else use .array",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "examples-seen-step-axis",
+   "title": "compute examples_seen = step * batch_size as wandb x-axis",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "exp-back",
+   "title": "exp_back \u2014 reuse cached out",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "fractional-stride-zero-insertion",
+   "title": "build the zero-inserted intermediate for stride-2 ConvT",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "freeze-requires-grad",
+   "title": "freeze a toy backbone and collect trainable params",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "functional-module-wrap",
+   "title": "wrap F.relu in an nn.Module to make it composable",
+   "topic": "Misc Cleanup",
+   "drillable": true
+  },
+  {
+   "id": "generator-loss-fool-discriminator",
+   "title": "generator BCE loss with target=1 on the fake batch",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "generator-project-and-reshape",
+   "title": "latent-to-spatial seed projection + reshape",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "get-children-callable-param",
+   "title": "get_children yields (name, value) for Tensor-valued attributes",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "grad-accumulate-on-leaf",
+   "title": "accumulate_grad: leaf.grad = (leaf.grad or 0) + g",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "grad-expressed-in-out",
+   "title": "write sigmoid_back using cached out (no second sigmoid call)",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "grad-tracking-global-toggle",
+   "title": "no_grad context manager built on a module-level toggle",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "grads-dict-accumulate-parents",
+   "title": "accumulate per-parent contributions in the reverse-pass grads dict",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "holdout-data-one-per-class",
+   "title": "select one sample per class for the holdout gallery",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "hparam-precedence-merge",
+   "title": "merge defaults < config-file < CLI args via dict.update",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "index-by-tensor",
+   "title": "embedding lookup with 2d index tensor",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "inf-masking",
+   "title": "causal attention masking with -inf + softmax + viz",
+   "topic": "Einops Advanced",
+   "drillable": true
+  },
+  {
+   "id": "inference-mode-step",
+   "title": "decorate step with inference_mode to allow in-place leaf update",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "init-process-group-nccl",
+   "title": "init + destroy a process group with gloo",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "inplace-param-update",
+   "title": "in-place vs out-of-place parameter update",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "is-differentiable-flag",
+   "title": "three-gate requires_grad reading is_differentiable from closure",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "kaiming-uniform-sf-init",
+   "title": "initialize weight as Uniform(-sf, +sf) with sf = 1/sqrt(fan_in)",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "kl-divergence-gaussian-closed-form",
+   "title": "closed-form Gaussian KL with per-sample bar chart",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "kwargs-pass-through-recipe",
+   "title": "thread kwargs into forward call AND Recipe",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "leaf-tensor-condition",
+   "title": "classify tensors as leaf vs interior via the grad_fn condition",
+   "topic": "Misc Cleanup",
+   "drillable": true
+  },
+  {
+   "id": "linalg-solve-batched",
+   "title": "solve a batch of 2x2 systems",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "linear-affine-on-custom-tensor",
+   "title": "forward pass of Linear over hand-written Tensor wrappers",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "linspace-out-param",
+   "title": "torch.linspace out= keyword argument",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "log-back",
+   "title": "implement log_back from the elementwise chain rule",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "log-samples-eval-callback",
+   "title": "every-K-steps eval callback that logs N samples to a sink",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "logsumexp-cross-entropy",
+   "title": "numerically stable cross-entropy via logsumexp",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "loss-item-scalar-extract",
+   "title": "distinguish .item() from .detach().cpu() in a training-loop logger",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "manual-chain-forward-and-back",
+   "title": "manually chain forward log/exp and run backward by hand",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "matmul-2d",
+   "title": "predict matmul output shape and verify with @",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "matmul-back-transpose-pair",
+   "title": "matmul_back \u2014 grad_out @ y.T and x.T @ grad_out",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "matvec",
+   "title": "linear layer forward as matvec",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "max-back-tied-half",
+   "title": "maximum_back with 50/50 tie-splitting",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "maxpool-reduce",
+   "title": "build MaxPool2d via einops.reduce",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "module-base-class-custom",
+   "title": "build Module: __setattr__ registers params, parameters() walks recursively",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "module-composition",
+   "title": "child Modules auto-register as attributes",
+   "topic": "Pytorch Modules",
+   "drillable": true
+  },
+  {
+   "id": "module-extra-repr",
+   "title": "extra_repr for a Linear-style module",
+   "topic": "Pytorch Modules",
+   "drillable": true
+  },
+  {
+   "id": "module-modules-iter-isinstance-dispatch",
+   "title": "count + tag layers by type using model.modules() + isinstance",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "momentum-buffer-update",
+   "title": "in-place momentum buffer update b = mu*b + g",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "mp-spawn-workers",
+   "title": "launch a 2-rank distributed job with mp.spawn",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "mse-reconstruction-loss",
+   "title": "MSE reconstruction loss",
+   "topic": "VAEs and GANs",
+   "drillable": true
+  },
+  {
+   "id": "mu-logsigma-encoder-head",
+   "title": "single-head Linear + chunk into mu and logsigma",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "multiply-back",
+   "title": "implement multiply_back0 / multiply_back1 with unbroadcast",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "negative-back",
+   "title": "negative_back \u2014 sign flip of grad_out",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "nested-param-group-loop",
+   "title": "manual SGD step via the nested param_groups loop",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "nn-module-subclass",
+   "title": "Subclassing nn.Module",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "nn-parameter-wrap",
+   "title": "Parameter vs raw tensor \u2014 visibility test",
+   "topic": "Pytorch Modules",
+   "drillable": true
+  },
+  {
+   "id": "no-grad-context-mgr-update",
+   "title": "implement NoGrad context manager with restore-on-exit",
+   "topic": "Backprop Driver",
+   "drillable": true
+  },
+  {
+   "id": "noise-batch-from-latent",
+   "title": "build (B, latent_dim, 1, 1) spatial-prefix noise for DCGAN G",
+   "topic": "Dcgan Final",
+   "drillable": true
+  },
+  {
+   "id": "non-diff-fn-wrap",
+   "title": "wrap a non-differentiable op (eq) \u2014 no Recipe, no requires_grad",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "optimizer-class-dispatch",
+   "title": "build an optimizer from a config string via a class-dispatch dict",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "optimizer-init-params-list",
+   "title": "materialize a generator of params into a list at init",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "optimizer-loop-on-tensor",
+   "title": "manual SGD step: for p in self.params: p -= lr * p.grad",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "optimizer-repr-string",
+   "title": "give a hand-rolled SGD a debug-friendly __repr__",
+   "topic": "Misc Cleanup",
+   "drillable": true
+  },
+  {
+   "id": "optimizer-state-tensor-buffers",
+   "title": "allocate a per-param zeros_like buffer at init",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "padding-amount-formula-convT",
+   "title": "predict ConvTranspose2d output size from the padding arg",
+   "topic": "Cnn Extras",
+   "drillable": true
+  },
+  {
+   "id": "param-grad-access",
+   "title": "iterate model.parameters() and read .grad with the None guard",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "param-group-dict-list",
+   "title": "build differential-LR param groups for encoder vs head",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "parameter-subclass-of-tensor",
+   "title": "Parameter subclasses MiniTensor with requires_grad=True default",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "parameter-wrap-around-tensor",
+   "title": "observe the composition-Parameter anti-pattern breaks isinstance",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "params-iterable-vs-groups",
+   "title": "polymorphic params= signature: flat iterable vs dict-list both normalize to param_groups",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "parents-dict-by-argidx",
+   "title": "build parents dict \u2014 skip non-Tensors, keep original argidx",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "per-rank-cuda-device",
+   "title": "pin per-rank cuda device with a mocked GPU",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "permute-back-argsort",
+   "title": "permute_back \u2014 inverse permutation via argsort",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "randn-like-noise-source",
+   "title": "reparameterization noise that inherits dtype",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "rank-world-size-args",
+   "title": "thread rank and world_size through a broadcast signature",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "rank0-only-side-effects",
+   "title": "guard checkpoint + log side effects behind if rank == 0",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "ray-parametric-form",
+   "title": "Ray parametric form",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "rearrange-as-sequential-layer",
+   "title": "build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "recipe-dataclass",
+   "title": "define Recipe and construct it for log_forward",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "reduce-gather-sum",
+   "title": "compare reduce vs gather + manual sum",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "reduce-op-mean-divide",
+   "title": "implement mean reduction as sum-then-in-place-divide",
+   "topic": "Distributed",
+   "drillable": true
+  },
+  {
+   "id": "register-back-fn-after-wrap",
+   "title": "wire one entry into BACK_FUNCS and dispatch it",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "register-buffer",
+   "title": "register_buffer for non-trainable state",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "relu-elementwise-max",
+   "title": "ReLU activation",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "reparameterization-trick",
+   "title": "differentiable Gaussian sampling with gradient check",
+   "topic": "Vae Gan",
+   "drillable": true
+  },
+  {
+   "id": "replace-final-head",
+   "title": "swap the final classifier of a toy backbone",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "requires-grad-leaf-assert",
+   "title": "guard optimizer init with leaf + requires_grad asserts",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "requires-grad-propagation",
+   "title": "three-gate requires_grad: toggle AND is_differentiable AND any-input",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "reshape-back",
+   "title": "reshape_back \u2014 restore x's original shape",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "residual-skip-add",
+   "title": "build a toy ResidualBlock with conditional shortcut",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "resnet-stem",
+   "title": "build the ResNet stem and verify the 224 \u2192 56 reduction",
+   "topic": "Resnet Modules",
+   "drillable": true
+  },
+  {
+   "id": "rotation-matrix-3d",
+   "title": "Rodrigues rotation about an arbitrary 3-D axis",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "rotation-matrix-3d-y-axis",
+   "title": "3D rotation matrix around y-axis",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "segment-line-intersect-2d",
+   "title": "intersect a segment with an infinite line in 2-D",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "sgd-vanilla-from-scratch",
+   "title": "single-step SGD: in-place update + zero the grad",
+   "topic": "Custom Tensor",
+   "drillable": true
+  },
+  {
+   "id": "singular-matrix-mask-trick",
+   "title": "solve a batch with some singular matrices",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "slice-view-mutation",
+   "title": "in-place zero the diagonal via slice-view writes",
+   "topic": "Tensor Mechanics",
+   "drillable": true
+  },
+  {
+   "id": "sorted-computational-graph",
+   "title": "topological sort of the compute graph for the reverse pass",
+   "topic": "Autograd Pt2",
+   "drillable": true
+  },
+  {
+   "id": "sqrt-eps-stabilize",
+   "title": "rescue a BatchNorm-style normalize from divide-by-zero",
+   "topic": "Numerical Modules",
+   "drillable": true
+  },
+  {
+   "id": "stack-vs-cat",
+   "title": "pick stack or cat from the target shape",
+   "topic": "Tensor Mechanics",
+   "drillable": true
+  },
+  {
+   "id": "state-dict-load",
+   "title": "state_dict load/save",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "step-counter-increment",
+   "title": "step counter increments AFTER optimizer.step",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "stride-zero-broadcast",
+   "title": "Stride tuple semantics",
+   "topic": "CNNs",
+   "drillable": true
+  },
+  {
+   "id": "sum-and-broadcast-duality",
+   "title": "sum_back and broadcast_back as dual ops",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "sum-back-expand-broadcast",
+   "title": "sum_back \u2014 unsqueeze + expand back to x.shape",
+   "topic": "Backward Fns",
+   "drillable": true
+  },
+  {
+   "id": "sweep-config-dict",
+   "title": "build a wandb sweep config: bayes + metric + parameters",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "sweep-hparam-distribution",
+   "title": "pick the right wandb sweep distribution for each hparam type",
+   "topic": "Hparam Config",
+   "drillable": true
+  },
+  {
+   "id": "t-stack-trajectory",
+   "title": "stack per-step latents into a (B, T, D) trajectory",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "tensor-item-scalar",
+   "title": "Tensor.item() to Python scalar",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "tensor-to-device",
+   "title": "move tensor to chosen device with the CPU/CUDA guard",
+   "topic": "Tensor Mechanics",
+   "drillable": true
+  },
+  {
+   "id": "tensor-unbind",
+   "title": "Tensor unbind along a dim",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "tensor-wraps-ndarray",
+   "title": "compare from_numpy aliasing vs tensor copy",
+   "topic": "Tensor Mechanics",
+   "drillable": true
+  },
+  {
+   "id": "tensor-zeros-init",
+   "title": "Tensor zeros initialization",
+   "topic": "Ray Tracing",
+   "drillable": true
+  },
+  {
+   "id": "time-stage-instrumentation",
+   "title": "accumulate per-stage seconds with time.perf_counter",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "topk-predictions",
+   "title": "top-5 accuracy on a batch of logits",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "tqdm-postfix-metrics",
+   "title": "set live loss + examples_seen on a tqdm progress bar",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "train-eval-mode-branch",
+   "title": "flip train and eval mode around dropout",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "trainer-class-skeleton",
+   "title": "minimal Trainer class: fit, validate, _step",
+   "topic": "Adam Trainer",
+   "drillable": true
+  },
+  {
+   "id": "trainer-subclass-extend",
+   "title": "subclass a trainer and extend _step via super() delegation",
+   "topic": "Misc Cleanup",
+   "drillable": true
+  },
+  {
+   "id": "training-step-cycle",
+   "title": "order the five calls of the canonical training step",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "triangle-barycentric",
+   "title": "point-in-triangle test from (u, v)",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "try-except-solve",
+   "title": "graceful single-call solve with try/except",
+   "topic": "Geometry Cnn",
+   "drillable": true
+  },
+  {
+   "id": "two-optimizers-alternating-step",
+   "title": "alternating D-step then G-step with two optimizers on toy modules",
+   "topic": "Generative",
+   "drillable": true
+  },
+  {
+   "id": "unbind-tuple-unpack",
+   "title": "ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)",
+   "topic": "Einops Advanced",
+   "drillable": true
+  },
+  {
+   "id": "unbox-args-tensor-to-array",
+   "title": "unbox MiniTensor positional args to raw arrays, pass-through non-Tensors",
+   "topic": "Autograd Pt3",
+   "drillable": true
+  },
+  {
+   "id": "unbroadcast-pattern",
+   "title": "unbroadcast: sum out leading and size-1 broadcast axes",
+   "topic": "Autograd Internals",
+   "drillable": true
+  },
+  {
+   "id": "validation-no-grad",
+   "title": "validation pass wrapped in torch.no_grad",
+   "topic": "Training Loop",
+   "drillable": true
+  },
+  {
+   "id": "vector-normalize-keepdim",
+   "title": "row-wise L2 normalize a batch of embeddings",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "wandb-config-into-args",
+   "title": "overwrite dataclass args from a wandb sweep config",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "wandb-finish",
+   "title": "close a wandb run at the end of train",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "wandb-init-run",
+   "title": "open a wandb run with project, name, and config",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "wandb-log-step",
+   "title": "log loss + examples_seen step over a fake epoch",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "wandb-watch-model",
+   "title": "watch the trainable head with parameter+gradient logging",
+   "topic": "Logging Instr",
+   "drillable": true
+  },
+  {
+   "id": "weight-decay-decoupled",
+   "title": "implement one AdamW step with decoupled weight decay",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "weight-decay-l2-add",
+   "title": "fold weight decay lambda*theta into the gradient",
+   "topic": "Optimizer Internals",
+   "drillable": true
+  },
+  {
+   "id": "where-clip-negative",
+   "title": "relu via torch.where",
+   "topic": "Tensor Utils",
+   "drillable": true
+  },
+  {
+   "id": "wrap-forward-fn-generic",
+   "title": "write the wrap_forward_fn shell \u2014 unbox, call, box",
+   "topic": "Backprop",
+   "drillable": true
+  },
+  {
+   "id": "zero-grad-set-none",
+   "title": "implement zero_grad with set_to_none semantics",
+   "topic": "Training Loop",
+   "drillable": true
+  }
+ ],
+ "edges": [
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "any-reduce-axis",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "any-reduce-axis",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "arange-fancy-index-cross-entropy",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "arange-fancy-index-cross-entropy",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "as-strided-windowing",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "as-strided-windowing",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "boolean-mask-combine",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "boolean-mask-combine",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "boolean-mask-combine",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "conditional-hparam-branch",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "dataloader-batching",
+   "dependent_id": "dataloader-pin-memory-workers",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "detach-clone-snapshot",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "detach-clone-snapshot",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-to-device",
+   "dependent_id": "device-consistent-construct",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "device-consistent-construct",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "einops-rearrange-flatten",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "einops-rearrange-flatten",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "einops-reduce-min",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "einops-repeat-broadcast",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "einops-repeat-broadcast",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "encoder-decoder-symmetric",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "encoder-decoder-symmetric",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "functional-module-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "functional-module-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backprop-pop-outgrad-loop",
+   "dependent_id": "grads-dict-accumulate-parents",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "grads-dict-accumulate-parents",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "index-by-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "inf-masking",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "inf-masking",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "singular-matrix-mask-trick",
+   "dependent_id": "inf-masking",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "kaiming-uniform-sf-init",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "kaiming-uniform-sf-init",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "leaf-tensor-condition",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "kaiming-uniform-sf-init",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "logsumexp-cross-entropy",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "logsumexp-cross-entropy",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "loss-item-scalar-extract",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matvec",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "matvec",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-base-class-custom",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-composition",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "module-composition",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-extra-repr",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "nn-parameter-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "optimizer-repr-string",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "parameter-subclass-of-tensor",
+   "dependent_id": "parameter-wrap-around-tensor",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "parameter-wrap-around-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "rearrange-as-sequential-layer",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "rearrange-as-sequential-layer",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "slice-view-mutation",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sqrt-eps-stabilize",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "stack-vs-cat",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "tensor-wraps-ndarray",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "argmax-accuracy-eval",
+   "dependent_id": "topk-predictions",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "topk-predictions",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "trainer-class-skeleton",
+   "dependent_id": "trainer-subclass-extend",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "trainer-subclass-extend",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "unbind-tuple-unpack",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "unbind-tuple-unpack",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "vector-normalize-keepdim",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "vector-normalize-keepdim",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "where-clip-negative",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "where-clip-negative",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "backward-fn-signature",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "log-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "log-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "multiply-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "multiply-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "coerce-float-arg-to-array",
+   "dependent_id": "multiply-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "multiply-back",
+   "dependent_id": "arg-position-back-functions",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "arg-position-back-functions",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "arg-position-back-functions",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.45
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "max-back-tied-half",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "max-back-tied-half",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "boolean-mask-combine",
+   "dependent_id": "max-back-tied-half",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "grad-expressed-in-out",
+   "dependent_id": "exp-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.55
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "exp-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.45
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "negative-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.45
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "negative-back",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matmul-back-transpose-pair",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "matmul-back-transpose-pair",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "permute-back-argsort",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "kwargs-pass-through-recipe",
+   "dependent_id": "reshape-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "sum-back-expand-broadcast",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sum-back-expand-broadcast",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "sum-back-expand-broadcast",
+   "dependent_id": "sum-and-broadcast-duality",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sum-and-broadcast-duality",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "unbroadcast-pattern",
+   "dependent_id": "sum-and-broadcast-duality",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "parents-dict-by-argidx",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "parents-dict-by-argidx",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "box-array-to-tensor-with-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "grad-tracking-global-toggle",
+   "dependent_id": "requires-grad-propagation",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "is-differentiable-flag",
+   "dependent_id": "requires-grad-propagation",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "kwargs-pass-through-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "kwargs-pass-through-recipe",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.45
+  },
+  {
+   "prerequisite_id": "unbox-args-tensor-to-array",
+   "dependent_id": "wrap-forward-fn-generic",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "box-array-to-tensor-with-recipe",
+   "dependent_id": "wrap-forward-fn-generic",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "parents-dict-by-argidx",
+   "dependent_id": "wrap-forward-fn-generic",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "wrap-forward-fn-generic",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "wrap-forward-fn-generic",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "non-diff-fn-wrap",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.55
+  },
+  {
+   "prerequisite_id": "is-differentiable-flag",
+   "dependent_id": "non-diff-fn-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backward-func-lookup",
+   "dependent_id": "register-back-fn-after-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wrap-forward-fn-generic",
+   "dependent_id": "register-back-fn-after-wrap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "cycle-detection-temp-set",
+   "dependent_id": "dfs-three-set-toposort",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "get-children-callable-param",
+   "dependent_id": "dfs-three-set-toposort",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "dfs-three-set-toposort",
+   "dependent_id": "sorted-computational-graph",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.65
+  },
+  {
+   "prerequisite_id": "backward-func-lookup",
+   "dependent_id": "dispatch-back-fn-from-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "dispatch-back-fn-from-recipe",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "back-fn-call-with-recipe-args",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "recipe-dataclass",
+   "dependent_id": "back-fn-call-with-recipe-args",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "sorted-computational-graph",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "back-fn-call-with-recipe-args",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "grad-accumulate-on-leaf",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.55
+  },
+  {
+   "prerequisite_id": "end-grad-default-ones-like",
+   "dependent_id": "backprop-pop-outgrad-loop",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "log-back",
+   "dependent_id": "manual-chain-forward-and-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backward-fn-signature",
+   "dependent_id": "manual-chain-forward-and-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "manual-chain-forward-and-back",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "chain-rule-elementwise",
+   "dependent_id": "grad-expressed-in-out",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "grad-tracking-global-toggle",
+   "dependent_id": "no-grad-context-mgr-update",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "param-grad-access",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "parameter-subclass-of-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "broadcasting-rules",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "broadcasting-rules",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "einops-repeat",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "boolean-mask-identity-replace",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "boolean-mask-identity-replace",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "linspace-out-param",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "ray-parametric-form",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linspace-out-param",
+   "dependent_id": "ray-parametric-form",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "ray-parametric-form",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "rotation-matrix-3d-y-axis",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-output-shape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "conv-output-shape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "conv-padding-zero",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "conv-padding-zero",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-windowing-1d",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "conv-windowing-1d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-windowing-1d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "vector-normalize-keepdim",
+   "dependent_id": "cross-product-normal",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "cross-product-normal",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "linalg-solve-batched",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "linalg-solve-batched",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "linalg-solve-batched",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "linalg-solve-batched",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rotation-matrix-3d-y-axis",
+   "dependent_id": "rotation-matrix-3d",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "rotation-matrix-3d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "segment-line-intersect-2d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "segment-line-intersect-2d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "segment-line-intersect-2d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "singular-matrix-mask-trick",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "boolean-mask-identity-replace",
+   "dependent_id": "singular-matrix-mask-trick",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "singular-matrix-mask-trick",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "triangle-barycentric",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "triangle-barycentric",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "boolean-mask-combine",
+   "dependent_id": "triangle-barycentric",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "try-except-solve",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "as-strided-noncontig-source",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "as-strided-noncontig-source",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "dataloader-batching",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "register-buffer",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "relu-elementwise-max",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "state-dict-load",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "state-dict-load",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "stride-zero-broadcast",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "avgpool-reduce",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "avgpool-reduce",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "batchnorm-affine-params",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "batchnorm-affine-params",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "residual-skip-add",
+   "dependent_id": "block-group-stack",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "block-group-stack",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "diagonal-via-strides",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "diagonal-via-strides",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "fractional-stride-zero-insertion",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "fractional-stride-zero-insertion",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "freeze-requires-grad",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "matmul-2d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "padding-amount-formula-convT",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "convT-as-flipped-padded-conv",
+   "dependent_id": "padding-amount-formula-convT",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-channel-sum",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv-channel-sum",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-channel-sum",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "conv-kernel-shape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "conv-stride-downsample",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-windowing-2d",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "conv-windowing-2d",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-windowing-2d",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-padding-zero",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "convT-kernel-axis-swap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "convT-kernel-axis-swap",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "1x1-conv-channel-reshape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "batchnorm-running-stats",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "batchnorm-running-stats",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "batchnorm-running-stats",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "maxpool-reduce",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.65
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "maxpool-reduce",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-windowing-2d",
+   "dependent_id": "maxpool-reduce",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "replace-final-head",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "residual-skip-add",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "1x1-conv-channel-reshape",
+   "dependent_id": "residual-skip-add",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "resnet-stem",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "resnet-stem",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "argmax-accuracy-eval",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "ema-first-moment",
+   "dependent_id": "bias-correction-divide",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "ema-second-moment",
+   "dependent_id": "bias-correction-divide",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "step-counter-increment",
+   "dependent_id": "bias-correction-divide",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "cross-entropy-classification-loss",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.7
+  },
+  {
+   "prerequisite_id": "arange-fancy-index-cross-entropy",
+   "dependent_id": "cross-entropy-classification-loss",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "ema-first-moment",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "ema-first-moment",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "optimizer-loop-on-tensor",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "step-counter-increment",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "trainer-class-skeleton",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "trainer-class-skeleton",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "trainer-class-skeleton",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "backward-on-scalar-loss",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "inplace-param-update",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "inplace-param-update",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "optimizer-init-params-list",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "training-step-cycle",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "training-step-cycle",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "training-step-cycle",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "validation-no-grad",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "zero-grad-set-none",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "clip-grad-norm-pre-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "vector-normalize-keepdim",
+   "dependent_id": "clip-grad-norm-pre-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "ema-second-moment",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "ema-first-moment",
+   "dependent_id": "ema-second-moment",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "momentum-buffer-update",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "momentum-buffer-update",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "optimizer-state-tensor-buffers",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "weight-decay-l2-add",
+   "dependent_id": "weight-decay-decoupled",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "weight-decay-decoupled",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "weight-decay-l2-add",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "nested-param-group-loop",
+   "dependent_id": "hparam-precedence-merge",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "params-iterable-vs-groups",
+   "dependent_id": "nested-param-group-loop",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "nested-param-group-loop",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "optimizer-class-dispatch",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "params-iterable-vs-groups",
+   "dependent_id": "param-group-dict-list",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "params-iterable-vs-groups",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "params-iterable-vs-groups",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "sweep-config-dict",
+   "dependent_id": "sweep-hparam-distribution",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "log-samples-eval-callback",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wandb-log-step",
+   "dependent_id": "log-samples-eval-callback",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "examples-seen-step-axis",
+   "dependent_id": "tqdm-postfix-metrics",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-config-into-args",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "dataclasses-replace-args",
+   "dependent_id": "wandb-config-into-args",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-finish",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-log-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "examples-seen-step-axis",
+   "dependent_id": "wandb-log-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-watch-model",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "reduce-gather-sum",
+   "dependent_id": "all-reduce-compose",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "broadcast-source-fanout",
+   "dependent_id": "all-reduce-compose",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "reduce-op-mean-divide",
+   "dependent_id": "all-reduce-compose",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "all-reduce-compose",
+   "dependent_id": "all-reduce-eval-metrics",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "reduce-op-mean-divide",
+   "dependent_id": "all-reduce-eval-metrics",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "all-reduce-compose",
+   "dependent_id": "all-reduce-grad-sync",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "all-reduce-grad-sync",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcast-source-fanout",
+   "dependent_id": "broadcast-initial-weights",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "broadcast-initial-weights",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "dist-send-recv-pair",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "distributed-sampler-shard",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "init-process-group-nccl",
+   "dependent_id": "mp-spawn-workers",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "mp-spawn-workers",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "tensor-to-device",
+   "dependent_id": "per-rank-cuda-device",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "per-rank-cuda-device",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "rank0-only-side-effects",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "reduce-gather-sum",
+   "dependent_id": "reduce-op-mean-divide",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "bce-log-loss-real-fake",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "bce-log-loss-real-fake",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "detach-stop-gradient-trick",
+   "dependent_id": "bce-log-loss-real-fake",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "bn-weight-bias-init-pattern",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "module-modules-iter-isinstance-dispatch",
+   "dependent_id": "bn-weight-bias-init-pattern",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "bottleneck-latent-projection",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "einops-rearrange-flatten",
+   "dependent_id": "bottleneck-latent-projection",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "bottleneck-latent-projection",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "encoder-decoder-symmetric",
+   "dependent_id": "bottleneck-latent-projection",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "broadcast-source-fanout",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "broadcast-source-fanout",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "encoder-decoder-symmetric",
+   "dependent_id": "channel-list-reverse-build",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "fractional-stride-zero-insertion",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "padding-amount-formula-convT",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "convT-as-flipped-padded-conv",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-modules-iter-isinstance-dispatch",
+   "dependent_id": "dcgan-normal-init-002",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "kaiming-uniform-sf-init",
+   "dependent_id": "dcgan-normal-init-002",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "generator-project-and-reshape",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.4
+  },
+  {
+   "prerequisite_id": "detach-clone-snapshot",
+   "dependent_id": "detach-stop-gradient-trick",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "einops-rearrange-flatten",
+   "dependent_id": "discriminator-classifier-head",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "discriminator-classifier-head",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "mse-reconstruction-loss",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "kl-divergence-gaussian-closed-form",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "bce-log-loss-real-fake",
+   "dependent_id": "generator-loss-fool-discriminator",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "generator-loss-fool-discriminator",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "generator-project-and-reshape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "generator-project-and-reshape",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "holdout-data-one-per-class",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "mu-logsigma-encoder-head",
+   "dependent_id": "kl-divergence-gaussian-closed-form",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "module-modules-iter-isinstance-dispatch",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "mse-reconstruction-loss",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "mu-logsigma-encoder-head",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "mu-logsigma-encoder-head",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "randn-like-noise-source",
+   "dependent_id": "noise-batch-from-latent",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.5
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "randn-like-noise-source",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "randn-like-noise-source",
+   "dependent_id": "reparameterization-trick",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "mu-logsigma-encoder-head",
+   "dependent_id": "reparameterization-trick",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "requires-grad-leaf-assert",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "t-stack-trajectory",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "detach-clone-snapshot",
+   "dependent_id": "t-stack-trajectory",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "two-optimizers-alternating-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "two-optimizers-alternating-step",
+   "render_kind": "encompassing",
+   "is_hard_gate": true,
+   "weight": 1.0,
+   "propagation_weight": 0.6
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "two-optimizers-alternating-step",
+   "render_kind": "gating",
+   "is_hard_gate": false,
+   "weight": 1.0,
+   "propagation_weight": 0.0
+  }
+ ]
+}

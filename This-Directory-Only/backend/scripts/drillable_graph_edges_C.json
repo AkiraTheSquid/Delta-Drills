@@ -1,0 +1,789 @@
+{
+ "cluster": "C",
+ "n_dependents": 49,
+ "edges": [
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "broadcasting-rules",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "reduce+repeat round-trip exercises shape alignment"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "broadcasting-rules",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "repeat back to length then broadcast subtract"
+  },
+  {
+   "prerequisite_id": "vector-normalize-keepdim",
+   "dependent_id": "broadcasting-rules",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "keepdim norm relies on broadcast divide"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "einops-einsum",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "conv drills pair as_strided windows with einsum contraction"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "einops-repeat",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "reduce+repeat round-trip drill pairs them"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "boolean-mask-identity-replace",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "identity substitution protects batched solve from singular dets"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "boolean-mask-identity-replace",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "masking fake solutions needs broadcast boolean ops"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "linspace-out-param",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "allocate zero tensor then write linspace into slice via out="
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "ray-parametric-form",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "rays built by allocating zero (n,2,3) tensor"
+  },
+  {
+   "prerequisite_id": "linspace-out-param",
+   "dependent_id": "ray-parametric-form",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "origins written via linspace out= into slice"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "ray-parametric-form",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "2d rays outer-product grids via repeat"
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "rotation-matrix-3d-y-axis",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "hand-assemble 3x3 matrix from cos/sin rows"
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "tensor-item-scalar",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "integer-array index then .item() scalar extract"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-output-shape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "output length derived from as_strided sliding windows"
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "conv-output-shape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "output shape determined by window construction"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "conv-padding-zero",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "allocate padded buffer then assign into central slice"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "conv-padding-zero",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "pad by writing input into a slice view"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-windowing-1d",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "1d conv window IS the as_strided sliding-window skill"
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "conv-windowing-1d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "window view needs stride tuple reasoning"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-windowing-1d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "windows contracted via einsum"
+  },
+  {
+   "prerequisite_id": "vector-normalize-keepdim",
+   "dependent_id": "cross-product-normal",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "normal normalized after cross product"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "cross-product-normal",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "dot with light vector via einsum/sum"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "linalg-solve-batched",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "batched solve needs broadcast pair construction"
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "linalg-solve-batched",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "unbind O/D and L points before stacking matrix"
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "linalg-solve-batched",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "stack rows into the 2x2/3x3 system"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "linalg-solve-batched",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "pair-broadcast rays/segments via repeat"
+  },
+  {
+   "prerequisite_id": "rotation-matrix-3d-y-axis",
+   "dependent_id": "rotation-matrix-3d",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.75,
+   "rationale": "general axis rotation generalizes y-axis matrix"
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "rotation-matrix-3d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "assemble 3x3 rotation from trig entries"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "segment-line-intersect-2d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "segment/line intersection is a 2x2 solve"
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "segment-line-intersect-2d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "unbind endpoints before building system"
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "segment-line-intersect-2d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "extract u,v scalars to range-check"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "singular-matrix-mask-trick",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "mask trick refines batched solve for singular dets"
+  },
+  {
+   "prerequisite_id": "boolean-mask-identity-replace",
+   "dependent_id": "singular-matrix-mask-trick",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "replace singular dets with identity then mask"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "singular-matrix-mask-trick",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "reduce-min over triangle axis after masking"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "triangle-barycentric",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "(s,u,v) obtained by solving 3x3 system"
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "triangle-barycentric",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "check barycentric conditions via .item()"
+  },
+  {
+   "prerequisite_id": "boolean-mask-combine",
+   "dependent_id": "triangle-barycentric",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "combine s,u,v predicate masks"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "try-except-solve",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "wrap a single linalg.solve call in try/except"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "as-strided-noncontig-source",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.85,
+   "rationale": "non-contiguous caveat refines as_strided usage"
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "as-strided-noncontig-source",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "must read input .stride() not assume last=1"
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "dataloader-batching",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "batched loop drives the train step cycle"
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "nn-module-subclass",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "parameters auto-register as module attributes"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "nn-module-subclass",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "submodules auto-register in __init__"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "register-buffer",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "buffers registered on an nn.Module"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "relu-elementwise-max",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "ReLU implemented as tiny nn.Module subclass"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "state-dict-load",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "state_dict collects params+buffers of a Module"
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "state-dict-load",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "buffers travel in state_dict"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "stride-zero-broadcast",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "stride-0 broadcast views built via as_strided"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "avgpool-reduce",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "AvgPool2d IS einops.reduce mean over spatial dims"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "avgpool-reduce",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "pool wrapped as a Module"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "batchnorm-affine-params",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "affine scale/shift broadcast over (B,C,H,W)"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "batchnorm-affine-params",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "rearrange weight/bias for channel broadcast"
+  },
+  {
+   "prerequisite_id": "residual-skip-add",
+   "dependent_id": "block-group-stack",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "BlockGroup stacks ResidualBlocks in Sequential"
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "block-group-stack",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "first block applies the downsample stride"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "diagonal-via-strides",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "diagonal extracted via as_strided size/stride design"
+  },
+  {
+   "prerequisite_id": "stride-zero-broadcast",
+   "dependent_id": "diagonal-via-strides",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "diagonal stride = row+col stride"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "fractional-stride-zero-insertion",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "allocate spaced zeros then assign strided slice"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "fractional-stride-zero-insertion",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "insert x into x_new[...,::stride]"
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "freeze-requires-grad",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "iterate parameters to set requires_grad_(False)"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "matmul-2d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "matmul output shape from broadcast/contraction rules"
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "padding-amount-formula-convT",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "convT output-size formula inverts conv output shape"
+  },
+  {
+   "prerequisite_id": "convT-as-flipped-padded-conv",
+   "dependent_id": "padding-amount-formula-convT",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "padding arg derived from flipped-padded-conv view"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-channel-sum",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "IC axis contracted by einsum"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv-channel-sum",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "IC axis identified from kernel shape"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-channel-sum",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "channel sum over as_strided conv windows"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "conv-kernel-shape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "4D weight introspected on a Conv2d Module"
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "conv-stride-downsample",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "strided output length refines base conv output formula"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-windowing-2d",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "2d conv window is 6D as_strided sliding view"
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "conv-windowing-2d",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "2d windowing extends the 1d window construction"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-windowing-2d",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "2d windows contracted via einsum"
+  },
+  {
+   "prerequisite_id": "conv-windowing-1d",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "convT delegates to conv1d_minimal windows"
+  },
+  {
+   "prerequisite_id": "conv-padding-zero",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "zero-pad by kernel_width-1 before flipped conv"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "convT-as-flipped-padded-conv",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "swap i<->o kernel axes via einops"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "convT-kernel-axis-swap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "compare ConvT vs Conv weight axis layout"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "convT-kernel-axis-swap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "swap input/output channel axes"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "1x1-conv-channel-reshape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "1x1 kernel collapses spatial; per-pixel Linear"
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "batchnorm-running-stats",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "EMA update written into running buffers via copy_"
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "batchnorm-running-stats",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "running_mean/var stored as buffers"
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "batchnorm-running-stats",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "running-stat BN extends the affine BN step"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "maxpool-reduce",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.65,
+   "confidence": 0.8,
+   "rationale": "MaxPool2d built via einops.reduce max"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "maxpool-reduce",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "2d maxpool amax over as_strided windows"
+  },
+  {
+   "prerequisite_id": "conv-windowing-2d",
+   "dependent_id": "maxpool-reduce",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "pooling reuses 2d window construction"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "replace-final-head",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "swap a Linear submodule on the backbone"
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "residual-skip-add",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "shortcut uses 1x1-stride downsample on size mismatch"
+  },
+  {
+   "prerequisite_id": "1x1-conv-channel-reshape",
+   "dependent_id": "residual-skip-add",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "1x1-stride conv on the shortcut branch"
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "resnet-stem",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "224->56 reduction from 7x7 stride-2 conv + maxpool"
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "resnet-stem",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "verify the 224->56 spatial reduction"
+  }
+ ]
+}

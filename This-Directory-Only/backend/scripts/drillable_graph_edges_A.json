@@ -1,0 +1,618 @@
+{
+ "cluster": "A",
+ "n_dependents": 40,
+ "edges": [
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "any-reduce-axis",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.7,
+   "rationale": "any() is a boolean axis-reduction specialization"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "any-reduce-axis",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "range-check masks rely on broadcast alignment"
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "arange-fancy-index-cross-entropy",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "fancy-index gather is the per-row index lookup"
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "arange-fancy-index-cross-entropy",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "paired with stable logprobs in cross-entropy"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "as-strided-windowing",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "windows contracted via einsum in conv use"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "as-strided-windowing",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "stride view built over an allocated source"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "boolean-mask-combine",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "predicates built on broadcast-repeated rays/tris"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "boolean-mask-combine",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "predicate masks combine via broadcasting"
+  },
+  {
+   "prerequisite_id": "linalg-solve-batched",
+   "dependent_id": "boolean-mask-combine",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "inside-test follows batched barycentric solve"
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "conditional-hparam-branch",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "optional-bias branch wraps a Linear forward"
+  },
+  {
+   "prerequisite_id": "dataloader-batching",
+   "dependent_id": "dataloader-pin-memory-workers",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "adds workers/pin_memory to basic DataLoader"
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "detach-clone-snapshot",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "snapshot taken across optimizer step loop"
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "detach-clone-snapshot",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "snapshots stacked into a trajectory"
+  },
+  {
+   "prerequisite_id": "tensor-to-device",
+   "dependent_id": "device-consistent-construct",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "allocates scratch on right device/dtype"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "device-consistent-construct",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "builds zeros scratch tensor matching device"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "einops-rearrange-flatten",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "flatten is a parenthesized-axis rearrange"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "einops-rearrange-flatten",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "related repeat patterns drilled alongside"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "einops-reduce-min",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "per-channel min is a reduce with min op"
+  },
+  {
+   "prerequisite_id": "einops-repeat",
+   "dependent_id": "einops-repeat-broadcast",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "no-copy pairing is einops.repeat broadcast"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "einops-repeat-broadcast",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "pairing exploits broadcast semantics"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "encoder-decoder-symmetric",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "autoencoder composes encoder/decoder submodules"
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "encoder-decoder-symmetric",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "Rearrange layer flattens/unflattens bottleneck"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "functional-module-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "wrapping F.relu requires subclassing nn.Module"
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "functional-module-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "the wrapped functional op is relu"
+  },
+  {
+   "prerequisite_id": "backprop-pop-outgrad-loop",
+   "dependent_id": "grads-dict-accumulate-parents",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "accumulation step inside the reverse-pass loop"
+  },
+  {
+   "prerequisite_id": "dispatch-back-fn-from-recipe",
+   "dependent_id": "grads-dict-accumulate-parents",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "parent grads come from dispatched back fns"
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "index-by-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "indexed result often reduced to scalar"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "inf-masking",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "masked-to-inf entries dropped by reduce-min"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "inf-masking",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "mask broadcast over the reduction axis"
+  },
+  {
+   "prerequisite_id": "singular-matrix-mask-trick",
+   "dependent_id": "inf-masking",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "non-intersections masked after singular solve"
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "kaiming-uniform-sf-init",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "init writes into a Parameter weight tensor"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "kaiming-uniform-sf-init",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "allocates a weight tensor to fill"
+  },
+  {
+   "prerequisite_id": "requires-grad-propagation",
+   "dependent_id": "leaf-tensor-condition",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "leaf test reads requires_grad/grad_fn state"
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "Linear subclasses the custom Module base"
+  },
+  {
+   "prerequisite_id": "kaiming-uniform-sf-init",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "weight init is part of Linear construction"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "linear-affine-on-custom-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "forward is x @ W.T affine matmul"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "logsumexp-cross-entropy",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "sum/max reductions over the class axis"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "logsumexp-cross-entropy",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "subtract max broadcasts over rows"
+  },
+  {
+   "prerequisite_id": "tensor-item-scalar",
+   "dependent_id": "loss-item-scalar-extract",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "distinguishes .item() scalar extraction nuance"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matvec",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "matvec is the vector case of matmul"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "matvec",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "stride-0 broadcast expands the vector"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-base-class-custom",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "reimplements torch Module registration from scratch"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-composition",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "child auto-registration is a Module behavior"
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "module-composition",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "registered children expose their parameters"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "module-extra-repr",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.75,
+   "rationale": "extra_repr is a Module override hook"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "nn-parameter-wrap",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "Parameter visibility tested inside a Module"
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "optimizer-repr-string",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "repr summarizes the stored optimizer params"
+  },
+  {
+   "prerequisite_id": "parameter-subclass-of-tensor",
+   "dependent_id": "parameter-wrap-around-tensor",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "shows wrap anti-pattern vs proper subclassing"
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "parameter-wrap-around-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "isinstance check happens during param registration"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "rearrange-as-sequential-layer",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "wraps a rearrange as a Sequential layer"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "rearrange-as-sequential-layer",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "Rearrange placed in a composed pipeline"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.8,
+   "rationale": "single-step in-place SGD over params"
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.75,
+   "rationale": "step includes zeroing the grad"
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "sgd-vanilla-from-scratch",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "param updated in place"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "slice-view-mutation",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "mutates an allocated tensor via slice writes"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "sqrt-eps-stabilize",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "eps added before broadcast normalize"
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "stack-vs-cat",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "unbind/stack are inverse shape ops drilled together"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "tensor-wraps-ndarray",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "compares constructed tensor vs numpy aliasing"
+  },
+  {
+   "prerequisite_id": "argmax-accuracy-eval",
+   "dependent_id": "topk-predictions",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "top-5 generalizes top-1 argmax accuracy"
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "topk-predictions",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "computed under inference/no-grad eval"
+  },
+  {
+   "prerequisite_id": "trainer-class-skeleton",
+   "dependent_id": "trainer-subclass-extend",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.8,
+   "rationale": "subclass extends the base Trainer _step"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "trainer-subclass-extend",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "super() delegation pattern from subclassing"
+  },
+  {
+   "prerequisite_id": "tensor-unbind",
+   "dependent_id": "unbind-tuple-unpack",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "two-level destructure built on unbind"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "unbind-tuple-unpack",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "parenthesized-axis split precedes unbind"
+  },
+  {
+   "prerequisite_id": "einops-reduce",
+   "dependent_id": "vector-normalize-keepdim",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "norm is a keepdim sum/reduce over rows"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "vector-normalize-keepdim",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "keepdim divide broadcasts (m,1) over (m,n)"
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "where-clip-negative",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "where-based relu is an alternative to max relu"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "where-clip-negative",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "where condition broadcasts over tensor"
+  }
+ ]
+}
