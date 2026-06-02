@@ -13,6 +13,7 @@ ALLOWED_ROOT_NAMES = {
     ".dockerignore",
     ".vercel",
     "index.html",
+    "vercel.json",           # deploy-branch git config (disables Vercel git auto-deploy). Added 2026-06-02.
     SHARED_DIRNAME,
     THIS_DIRNAME,
     # Dev-only top-level resources (not deployed to Vercel; live at root for
