@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
   <link rel="stylesheet" href="styles/components.css?v=3" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=3" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=4" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -37,6 +37,7 @@
     <div class="logo">Delta Drills <span class="version-tag">v1.0.11</span></div>
     <nav class="tabs">
       <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
+      <button class="tab auth-only" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
       <button class="tab auth-only" data-tab="split-tool" type="button" hidden>Split Tool</button>
       <button class="tab auth-only" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="courses" type="button">Courses</button>
@@ -171,29 +172,12 @@
         </div>
       </section>
 
-      <!-- The graph, live (Cytoscape.js embed) -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">The map, live</p>
-        <h2>This is the actual graph</h2>
-        <p>
-          Every dot is a skill; every line is a dependency. The bright
-          <span class="cg-key-prereq">red links</span> are the structural
-          prerequisites that gate what unlocks; the dashed links are the
-          encompassing relationships that carry credit back down. Colour groups
-          skills by area, and you can click any node to trace what it connects
-          to. (Shown: the skills with mapped dependencies so far — edge coverage
-          across the full curriculum is still growing.)
-        </p>
-        <div class="hiw-graph-wrap">
-          <div class="hiw-graph-controls">
-            <label><input type="checkbox" id="concept-graph-toggle-enc" checked /> encompassing links</label>
-            <button type="button" class="hiw-graph-fit" id="concept-graph-fit">Fit</button>
-          </div>
-          <div id="concept-graph-cy"></div>
-          <div class="hiw-graph-info" id="concept-graph-info">Loading the graph…</div>
-        </div>
-        <div class="hiw-graph-legend" id="concept-graph-legend"></div>
-      </section>
+      <!-- CTA to the dedicated Knowledge Graph tab -->
+      <p class="hiw-graph-cta">
+        <button type="button" class="hiw-graph-cta-btn" data-goto-tab="knowledge-graph">
+          Explore the interactive graph →
+        </button>
+      </p>
 
       <!-- 2 · The student model -->
       <section class="hiw-section">
@@ -396,6 +380,30 @@
         </p>
       </div>
 
+    </div>
+  </main>
+
+  <main class="page hidden" id="page-knowledge-graph">
+    <div class="container kg-container">
+      <h1>The knowledge graph</h1>
+      <p class="subtitle">
+        Every dot is a skill; every line is a dependency. The bright
+        <span class="cg-key-prereq">red links</span> are the structural
+        prerequisites that gate what unlocks; the dashed links are the
+        encompassing relationships that carry credit back down. Colour groups
+        skills by area. Click any node to trace what it connects to. (Showing
+        the skills with mapped dependencies so far — edge coverage across the
+        full curriculum is still growing.)
+      </p>
+      <div class="hiw-graph-wrap kg-tall">
+        <div class="hiw-graph-controls">
+          <label><input type="checkbox" id="concept-graph-toggle-enc" checked /> encompassing links</label>
+          <button type="button" class="hiw-graph-fit" id="concept-graph-fit">Fit</button>
+        </div>
+        <div id="concept-graph-cy"></div>
+        <div class="hiw-graph-info" id="concept-graph-info">Loading the graph…</div>
+      </div>
+      <div class="hiw-graph-legend" id="concept-graph-legend"></div>
     </div>
   </main>
 
@@ -695,14 +703,14 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        fcose layout, lazy-initialised when scrolled into view). -->
   <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js" defer></script>
-  <script src="concept-graph/graph-viz.js?v=2" defer></script>
+  <script src="concept-graph/graph-viz.js?v=3" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
