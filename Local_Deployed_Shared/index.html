@@ -91,14 +91,15 @@
           gap.
         </p>
         <p class="hiw-lead">
-          It works like a coach that has read the whole curriculum: it knows
-          which skills build on which, watches how you're actually doing, and
-          hands you the next problem at the right level — heavily supported when
-          a topic is new, stripped bare once you've got it.
+          Under the hood is an expert system that emulates an expert tutor: it
+          holds a map of the whole curriculum, keeps a running read of what you
+          know, and uses the two together to pick the single best thing for you
+          to work on next — heavily supported when a topic is new, stripped bare
+          once you've got it.
         </p>
       </section>
 
-      <!-- 1. Mastery, not coverage -->
+      <!-- Mastery-learning framing + the four parts -->
       <section class="hiw-section">
         <p class="hiw-eyebrow">The idea</p>
         <h2>You move on when you've got it — not when the clock says so</h2>
@@ -111,28 +112,36 @@
           them — so you never hit an advanced problem missing a piece you were
           quietly never taught.
         </p>
+        <p>
+          The engine that makes this work is built from four parts: a
+          <span class="hiw-em">knowledge graph</span> of how the curriculum fits
+          together, a <span class="hiw-em">student model</span> that tracks what
+          you know, a <span class="hiw-em">task-selection</span> step that picks
+          your next problem, and a <span class="hiw-em">support layer</span> that
+          decides how much help that problem comes with.
+        </p>
       </section>
 
-      <!-- 2. The knowledge graph -->
+      <!-- 1 · The knowledge graph -->
       <section class="hiw-section">
-        <p class="hiw-eyebrow">The map</p>
-        <h2>Every skill knows what comes before it</h2>
+        <p class="hiw-eyebrow">1 · The knowledge graph</p>
+        <h2>A map of what depends on what</h2>
         <p>
-          Under the hood is a <span class="hiw-em">map of the curriculum</span>:
-          a few hundred individual skills — "atoms" — with links recording which
-          ones depend on which. Reshaping with <code>einops</code> comes before
-          building an attention head; understanding a convolution comes before
-          assembling a ResNet. The map is built from real ML teaching material
-          and cross-checked across several independent sources, so the
-          dependencies reflect how the field is actually taught rather than one
+          The foundation is a <span class="hiw-em">map of the curriculum</span>:
+          a few hundred individual skills — "atoms" — connected by links that
+          record how they relate. The map is built from real ML teaching
+          material and cross-checked across several independent sources, so the
+          structure reflects how the field is actually taught rather than one
           author's guess.
         </p>
         <p>
-          That map does real work. A topic stays locked until the skills it
-          rests on are solid — and credit flows the other way too: nail a hard,
-          composite problem and the simpler skills folded inside it get credited
-          automatically, so you're never made to re-grind something you've
-          already demonstrated.
+          Two kinds of link do most of the work. A <span class="hiw-em">prerequisite</span>
+          link says one skill must come before another — reshaping with
+          <code>einops</code> before building an attention head, understanding a
+          convolution before assembling a ResNet. An <span class="hiw-em">encompassing</span>
+          link says a harder skill quietly contains a simpler one, so practicing
+          the hard skill exercises the easy one too. The first kind gates what
+          unlocks; the second lets credit flow back down the graph.
         </p>
         <div class="hiw-stats">
           <div class="hiw-stat">
@@ -150,31 +159,60 @@
         </div>
       </section>
 
-      <!-- 3. How it tracks you -->
+      <!-- 2 · The student model -->
       <section class="hiw-section">
-        <p class="hiw-eyebrow">The model</p>
-        <h2>It tracks what you actually know</h2>
+        <p class="hiw-eyebrow">2 · The student model</p>
+        <h2>A running estimate of what you actually know</h2>
         <p>
-          Behind each skill is a running estimate of how likely it is you've
-          mastered it. Every problem you submit nudges that estimate — up when
-          you get it right, gently down when you slip — using a well-established
-          method called <span class="hiw-em">Bayesian Knowledge Tracing</span>.
-          It also accounts for the obvious noise: a lucky guess and an
-          unlucky typo don't get treated as if they were the whole story, and
-          confidence in old skills fades over time the way real memory does.
+          Laid over the graph is a running estimate, for every skill, of how
+          likely it is you've mastered it. Each problem you submit nudges the
+          estimate for the skills it touches — up when you get it right, gently
+          down when you slip — using a well-established method called
+          <span class="hiw-em">Bayesian Knowledge Tracing</span>. It expects the
+          obvious noise, too: a lucky guess and an unlucky typo aren't treated as
+          the whole story.
         </p>
         <p>
-          The engine then spends your time where it's worth the most. Rather
-          than asking what's next in a fixed list, it looks for your
-          <span class="hiw-em">weakest skill that you're ready to work on</span>
-          and serves a problem there, tuned to a difficulty that should stretch
-          you without stalling you.
+          <span class="hiw-em">Spaced repetition.</span> Confidence in a skill
+          fades over time along a forgetting curve. When a skill has faded far
+          enough, the engine brings it back for review — so practice on anything
+          you've learned is naturally spaced out, and the shakier a skill is, the
+          sooner it resurfaces. Review is driven by how much you're likely to
+          have forgotten, not a fixed calendar.
+        </p>
+        <p>
+          <span class="hiw-em">Credit that trickles down.</span> Because the graph
+          knows which skills are contained in which, nailing a hard, composite
+          problem passes implicit credit to the simpler skills folded inside it.
+          Advanced work quietly refreshes its own foundations, and you're never
+          made to re-grind something you've already demonstrated.
         </p>
       </section>
 
-      <!-- 4. The ERE ladder — the headline pedagogy -->
+      <!-- 3 · Task selection -->
       <section class="hiw-section">
-        <p class="hiw-eyebrow">The practice</p>
+        <p class="hiw-eyebrow">3 · Task selection</p>
+        <h2>Picking the one thing that moves the needle most</h2>
+        <p>
+          With a read on what you know, the engine spends your time where it's
+          worth the most. Rather than walking a fixed list, it finds your
+          <span class="hiw-em">weakest skill that you're actually ready to work
+          on</span> — every prerequisite already solid — and serves a problem
+          there, at a difficulty tuned to your current mastery so it stretches
+          you without stalling you.
+        </p>
+        <p>
+          A topic stays locked until the skills beneath it are solid, and unlocks
+          the moment they are — no busywork holding you at a level you've already
+          cleared. A short calibration at the very start (the first few problems
+          at fixed difficulty) gives the engine a rough read before it begins
+          adapting to you.
+        </p>
+      </section>
+
+      <!-- 4 · The support layer — the ERE ladder -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">4 · The support layer</p>
         <h2>The training wheels come off as you improve</h2>
         <p>
           Showing a beginner a fully worked example is one of the most effective
@@ -287,8 +325,10 @@
         <p>
           <strong>Where it's at.</strong> Delta Drills is an early, working
           build focused on the foundational ML skills behind modern research.
-          The mastery model, prerequisite map, and fading-scaffold practice are
-          all live — and the question and drill banks keep growing.
+          All four parts are live — the knowledge graph, the Bayesian student
+          model with spaced-repetition review and trickle-down credit,
+          weakest-first task selection, and the fading-scaffold support layer —
+          and the question and drill banks keep growing.
           <strong>Try it as a guest below</strong>; sign in only when you want
           your progress to follow you across devices.
         </p>
