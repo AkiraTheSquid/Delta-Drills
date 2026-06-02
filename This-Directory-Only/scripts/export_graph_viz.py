@@ -2,7 +2,7 @@
 """Export the canonical concept graph to a lightweight viz JSON for the
 front-end Cytoscape.js embed on the How It Works page.
 
-Reads the same graph the backend uses (arena_iter5_v3_encompassing.json) and
+Reads the same graph the backend uses (arena_drillable_v1.json) and
 writes nodes + edges (plus a family colour grouping) to
 Local_Deployed_Shared/concept-graph/graph-viz.json.
 
@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-GRAPH = ROOT / "This-Directory-Only" / "backend" / "app" / "data" / "concept_graphs" / "arena_iter5_v3_encompassing.json"
+GRAPH = ROOT / "This-Directory-Only" / "backend" / "app" / "data" / "concept_graphs" / "arena_drillable_v1.json"
 OUT = ROOT / "Local_Deployed_Shared" / "concept-graph" / "graph-viz.json"
 
 # Coarse families for legible colour grouping. The precise per-node `topic`
