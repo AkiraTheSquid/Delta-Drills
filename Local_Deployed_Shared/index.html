@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="styles/variables.css" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
-  <link rel="stylesheet" href="styles/components.css?v=2" />
+  <link rel="stylesheet" href="styles/components.css" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -26,10 +26,6 @@
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=5" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Sign in with Google (Google Identity Services). auth-config.js sets the
-       OAuth client id; app.js renders the button + handles the credential. -->
-  <script src="auth-config.js?v=1"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -55,6 +51,7 @@
       <span class="guest-banner-label">Guest</span>
       <span class="guest-banner-meta">Your progress is saved in this browser only. <strong>Log in to save your progress</strong> across devices.</span>
       <button type="button" class="guest-banner-btn" id="guest-banner-login">Log in</button>
+      <button type="button" class="guest-banner-btn guest-banner-btn-ghost" id="guest-banner-signup">Create account</button>
     </div>
   </div>
 
@@ -380,12 +377,43 @@ np.random.seed(0)
     <div class="container">
       <div class="auth-card">
         <h1>Log In</h1>
-        <p class="subtitle">Sign in with Google to save your progress across devices.</p>
+        <form id="login-form">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" class="text-input" type="password" placeholder="Enter your password" />
+          </div>
+          <button class="primary" type="submit">Log in</button>
+          <div id="login-message" class="hint" role="status"></div>
+        </form>
+      </div>
+    </div>
+  </main>
 
-        <!-- Google Identity Services renders its button here (app.js). -->
-        <div id="google-signin-button"></div>
-        <div id="google-signin-note" class="hint" role="status"></div>
-        <div id="google-signin-message" class="hint" role="status"></div>
+  <main class="page hidden" id="page-signup">
+    <div class="container">
+      <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Use a valid email. You'll confirm it before logging in.</p>
+        <form id="signup-form">
+          <div class="field">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" class="text-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" class="text-input" type="password" placeholder="Create a password" />
+          </div>
+          <div class="field">
+            <label for="signup-confirm">Confirm password</label>
+            <input id="signup-confirm" class="text-input" type="password" placeholder="Re-enter your password" />
+          </div>
+          <button class="primary" type="submit">Create account</button>
+          <div id="signup-message" class="hint" role="status"></div>
+        </form>
       </div>
     </div>
   </main>
@@ -403,7 +431,7 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
