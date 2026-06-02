@@ -1,0 +1,322 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{accent}{RGB}{178,34,34}
+\definecolor{boxbg}{RGB}{248,244,244}
+
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Delta Drills — Mathematical Model}
+\lhead{\small\textcolor{accent}{2026-06-02}}
+\cfoot{\thepage}
+
+\newcommand{\Lhat}{\hat{L}}
+\newcommand{\Pre}{\operatorname{Pre}}
+\newcommand{\Enc}{\operatorname{Enc}}
+\newcommand{\clip}{\operatorname{clip}}
+\newcommand{\clamp}{\operatorname{clamp}}
+\newcommand{\itransit}{\operatorname{itransit}}
+
+\newtcolorbox{keybox}{colback=boxbg,colframe=accent,boxrule=0.5pt,
+  arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt}
+
+\title{\textbf{\textcolor{accent}{Delta Drills}}\\[2pt]
+\large The Mathematical Model of the Mastery Engine}
+\author{Concept graph $\times$ Bayesian Knowledge Tracing}
+\date{Generated 2026-06-02 from \texttt{backend/app/} (live code)}
+
+\begin{document}
+\maketitle
+
+\noindent\small\emph{Every formula below is transcribed from
+\texttt{bkt\_mastery.py}, \texttt{prioritization.py}, \texttt{concept\_graph.py},
+and \texttt{adaptive.py} --- not idealized. Constants flagged ``v0'' are
+engineering defaults, not literature-derived.}\normalsize
+
+\section{The two objects and how they connect}
+
+Delta Drills runs on two coupled structures:
+
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{The concept graph} $G=(\mathcal{A},E)$ --- a static,
+  immutable-at-runtime directed acyclic graph. Nodes are \emph{atoms}
+  (drillable skills); edges are prerequisite relations, a subset of which are
+  \emph{encompassing}.
+  \item \textbf{The per-learner BKT state} --- a time-stamped scalar belief per
+  atom that the learner knows that atom. This is the only thing that changes as
+  a student practices.
+\end{enumerate}
+
+The graph is the fixed scaffolding; the BKT state is the moving belief that flows
+over it. The graph touches the belief in exactly two places:
+\textbf{forward (gating)} --- prerequisite edges decide what a learner may see
+next (\S4); and \textbf{backward (FIRe credit)} --- encompassing edges route
+credit from a practiced atom to the simpler atoms it subsumes (\S5.2).
+Everything else is a read of the BKT state (\S6).
+
+\section{The concept graph $G$}
+
+\subsection{Atoms (nodes)}
+$\mathcal{A}=\{a_1,\dots,a_N\}$, currently $N=207$ (drillable graph). Each atom
+(\texttt{ConceptNode}) carries \texttt{id, title, topic, subtopic,
+kind}$\in\{$knowledge, skill, strategy$\}$, \texttt{tier}. Only \texttt{topic}
+enters the math (area scores, \S6.4).
+
+\subsection{Prerequisite edges}
+An edge $e=(p\!\to\! d)\in E$ (\texttt{PrerequisiteEdge}) states atom $p$
+(prerequisite, simpler) precedes atom $d$ (dependent, advanced).
+
+\begin{center}
+\begin{tabular}{@{}llp{7.6cm}@{}}
+\toprule
+Field & Symbol & Meaning \\
+\midrule
+\texttt{prerequisite\_id} & $p$ & the simpler atom \\
+\texttt{dependent\_id} & $d$ & the advanced atom \\
+\texttt{is\_encompassing} & $\iota_e\in\{0,1\}$ & does mastering $d$ implicitly exercise $p$? \\
+\texttt{propagation\_weight} & $w_e\in[0,1]$ & fraction of credit trickled $d\to p$ \\
+\texttt{is\_hard\_gate} & --- & reserved; gating uses all edges \\
+\texttt{weight, confidence, rationale} & --- & metadata / provenance \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Consistency invariant} (enforced in
+\texttt{concept\_graph.\_validate\_graph}):
+\[
+  \iota_e = 0 \iff w_e = 0, \qquad \iota_e = 1 \implies w_e > 0 .
+\]
+Thus encompassing $\subseteq$ prerequisite, and $w_e$ is meaningful only on
+encompassing edges.
+
+\subsection{The two induced single-hop relations}
+Both are \texttt{lru\_cache}d ($G$ is immutable at runtime).
+
+\paragraph{Gating prerequisites (\texttt{\_prereq\_index}).}
+\[
+  \Pre(d) = \{\, p : (p\!\to\! d)\in E,\ p\notin\mathcal{A}_{\mathrm{NG}} \,\},
+\]
+where $\mathcal{A}_{\mathrm{NG}}$ (\texttt{NON\_GATING\_ATOMS}) is a blocklist of
+infrastructure/dataset atoms (e.g.\ \texttt{cuda-availability-check},
+\texttt{mnist-dataset}) that have no exercises and must never block learning.
+
+\paragraph{Encompassed atoms (\texttt{\_encompassing\_index}).}
+\[
+  \Enc(d) = \{\, (p, w_e) : (p\!\to\! d)\in E,\ \iota_e=1,\ w_e>0 \,\}.
+\]
+Direction matters: $\Enc(d)$ returns the \emph{simpler} atoms $p$ credited when
+the \emph{advanced} atom $d$ is practiced.
+
+\section{The learner state}
+For learner $u$ at wall-clock time $t$, the entire algorithmic state is two maps
+over atoms (\texttt{UserPracticeState}):
+\[
+  L_a\in[0,1]\ (\texttt{atom\_mastery}), \qquad
+  \tau_a\ (\texttt{atom\_last\_ts},\ \text{ISO-8601}).
+\]
+$L_a$ is the last-written BKT posterior $P(\text{learner knows }a)$; $\tau_a$ is
+when it was written. An untouched atom has no entry and is treated as the prior
+$L_0$.
+
+\begin{quote}\small
+The legacy \texttt{SubtopicState} EWMA fields (\texttt{baseline, p, n}) still
+persist but are \emph{no longer drivers} --- since the BKT migration they are
+snapshots derived from the atom posteriors. The single source of truth is
+$\{(L_a,\tau_a)\}$.
+\end{quote}
+
+\subsection{Global constants (all v0 defaults, not literature-derived)}
+\[
+\begin{aligned}
+L_0 &= 0.10 &&(\texttt{P\_INIT},\ \text{prior }P(\text{known}))\\
+T &= 0.30 &&(\texttt{P\_TRANSIT},\ \text{learn rate / practice})\\
+g &= 0.20 &&(\texttt{P\_GUESS},\ P(\text{correct}\mid\text{not known}))\\
+s &= 0.10 &&(\texttt{P\_SLIP},\ P(\text{wrong}\mid\text{known}))\\
+\theta_{\mathrm{m}} &= 0.95 &&(\texttt{MASTERY\_THRESHOLD})\\
+\theta_{\mathrm{u}} &= 0.85 &&(\texttt{UNLOCK\_THRESHOLD})\\
+h &= 14~\text{days} &&(\texttt{HALF\_LIFE\_DAYS})
+\end{aligned}
+\]
+
+\section{The BKT core (per atom)}
+Three operators act on one atom's belief: decay, observe, implicit-transit.
+
+\subsection{Forgetting / decay}
+For a stored belief $L$ last written at $\tau$, read at time $t$ (\texttt{decay}):
+\begin{keybox}
+\[
+  \operatorname{decay}(L,\tau,t) = L_0 + (L-L_0)\cdot 2^{-\Delta/h},
+  \qquad \Delta=\max\!\Big(0,\tfrac{t-\tau}{86400}\Big)\ \text{days}.
+\]
+\end{keybox}
+Missing $\tau \Rightarrow$ identity. As $\Delta\to\infty$, $L\to L_0$: stale
+knowledge reverts toward ``unknown,'' which resurfaces it for review (\S6)
+without a separate staleness rule. The \textbf{decay-adjusted read}
+(\texttt{current\_mastery}) is
+\[
+  \Lhat_a(t) = \operatorname{decay}(L_a,\tau_a,t),\qquad
+  \Lhat_a(t)=L_0 \text{ if never practiced.}
+\]
+Every downstream decision uses $\Lhat$, never the raw stored $L$.
+
+\subsection{Evidence update (a graded attempt)}
+Corbett--Anderson (1994): Bayesian posterior under guess/slip, then learn-transit
+(\texttt{observe}). Posterior given the observation:
+\[
+  P(\text{known}\mid\text{correct})=\frac{L(1-s)}{L(1-s)+(1-L)g},\quad
+  P(\text{known}\mid\text{wrong})=\frac{Ls}{Ls+(1-L)(1-g)} .
+\]
+With posterior $L^{\ast}$, the learn-transit step gives the new belief
+\emph{assuming the attempt definitely exercised $a$}:
+\begin{keybox}
+\[
+  \operatorname{observe}(L,x) = L^{\ast} + (1-L^{\ast})\,T .
+\]
+\end{keybox}
+
+\subsection{Implicit-transit (one FIRe repetition)}
+An encompassed atom is never observed; it gets a learning step of size
+\texttt{gain} with no observation (\texttt{implicit\_transit}):
+\begin{keybox}
+\[
+  \itransit(L,\mathrm{gain}) = L + (1-L)\cdot\mathrm{gain},
+  \qquad \mathrm{gain},L \in[0,1]\ \text{(clamped)} .
+\]
+\end{keybox}
+Same ``move a fraction of the remaining distance to $1$'' shape as the transit
+term, driven by trickle-down credit rather than direct evidence.
+
+\section{The attempt pipeline and credit flow (backward use of the graph)}
+On a graded submission at time $t$, the handler (\texttt{feedback\_router})
+iterates the question's \textbf{atom tags} --- pairs $(a,c)$ with tag confidence
+$c\in[0,1]$ (how sure the question exercises $a$; authored drill $\approx1.0$) ---
+and calls \texttt{apply\_attempt}$(a,\text{correct},c)$ for each.
+
+\subsection{The directly-practiced atom}
+Decay to now, apply evidence, then soft-apply by confidence (belief moves only a
+fraction $c$ of the way to the full posterior):
+\[
+\begin{aligned}
+L^{-}_a &= \operatorname{decay}(L_a,\tau_a,t) &&\text{(forgetting-adjusted prior)}\\
+L^{\mathrm{full}}_a &= \operatorname{observe}(L^{-}_a,x) &&\text{(if the tag were certain)}\\
+L_a &\leftarrow L^{-}_a + \big(L^{\mathrm{full}}_a-L^{-}_a\big)\,c &&\text{(confidence-scaled write)}\\
+\tau_a &\leftarrow t .
+\end{aligned}
+\]
+$c=1\Rightarrow$ standard BKT update; $c=0\Rightarrow$ no-op.
+
+\subsection{FIRe credit to encompassed atoms (correct attempts only)}
+Iff the attempt was correct, set the implicit-rep magnitude
+$\mathrm{gain}=T\cdot c$, and for every $(p,w_e)\in\Enc(a)$ apply one implicit
+repetition against $p$'s own decayed prior:
+\begin{keybox}
+\[
+\begin{aligned}
+L^{-}_p &= \operatorname{decay}(L_p,\tau_p,t),\\
+L_p &\leftarrow \itransit\!\big(L^{-}_p,\ \mathrm{gain}\cdot w_e\big)
+   = L^{-}_p + (1-L^{-}_p)\,\clamp(T\,c\,w_e),\\
+\tau_p &\leftarrow t .
+\end{aligned}
+\]
+\end{keybox}
+
+\noindent\textbf{Properties} (by construction; asserted in
+\texttt{eg\_validate.py}):
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
+  \item Credit flows \textbf{advanced $\to$ simpler} only.
+  \item Credit fires \textbf{only on correct} attempts.
+  \item \textbf{Single-hop}: only atoms directly encompassed by $a$ are credited;
+  no transitive cascade in one attempt.
+  \item \textbf{Bounded}: $\itransit$ keeps $L_p\le1$, and $w_e,c\le1\Rightarrow$
+  implicit gain $\le T$, so one encompassing rep moves $p$ strictly less than a
+  direct correct attempt.
+  \item \textbf{Encompassing edges are the only channel sharing evidence between
+  atoms}; with $E_{\mathrm{enc}}=\varnothing$ this reduces to independent
+  per-atom BKT.
+\end{itemize}
+
+\subsection{What persists}
+\texttt{apply\_attempt} mutates $\{L_a\},\{\tau_a\}$ in place and returns the
+changed atoms (direct $+$ trickled). That state is the entire algorithmic memory,
+serialized to the learner's state file (Fly volume in prod).
+
+\section{Gating, selection \& difficulty (forward use \& reads)}
+
+\subsection{Gating --- forward use of the graph}
+Atom readiness (\texttt{atom\_is\_ready}): $a$ is ready to be \emph{learned} iff
+every gating prerequisite is cleared,
+\[
+  \mathrm{Ready}_u(a,t) = \bigwedge_{p\in\Pre(a)}\big[\Lhat_p(t)\ge\theta_{\mathrm{u}}\big].
+\]
+Root atoms ($\Pre(a)=\varnothing$) are always ready (cold-start entry points);
+the atom itself is not required (non-circular). The unified item gate
+(\texttt{item\_is\_unlocked}) for an item requiring atoms $R$ is
+\[
+  \mathrm{Unlocked}_u(R,t) = \bigwedge_{a\in R}\big[\Lhat_a(t)\ge\theta_{\mathrm{u}}\big],
+\]
+with $R=\varnothing$ unlocked. This single rule replaced the old per-surface
+ad-hoc gates.
+
+\subsection{Subtopic mastery}
+Subtopic $S$ exercises atoms $\mathcal{A}_S$ (from atom tags):
+\[
+  M_u(S,t)=\frac{1}{|\mathcal{A}_S|}\sum_{a\in\mathcal{A}_S}\Lhat_a(t),
+  \qquad M_u(S,t)=L_0\ \text{if}\ \mathcal{A}_S=\varnothing .
+\]
+
+\subsection{Weakest-first selection}
+With effective weight $\omega_S$ (uniform $1/|\mathcal{S}|$ unless customized):
+\begin{keybox}
+\[
+  \mathrm{priority}_u(S) = \omega_S\,\big(1 - M_u(S,t)\big).
+\]
+\end{keybox}
+The next question is drawn from the unlocked, not-yet-exhausted subtopic of
+highest priority (alphabetical tiebreak). Un-practiced atoms sit at
+$L_0=0.10$, so fresh subtopics read weak and surface first; decay regresses
+mastered ones, resurfacing stale material through the \emph{same} rule --- Delta
+Drills' ``spaced repetition'' is decay-driven resurfacing, not an SM-2/FSRS
+scheduler.
+
+\subsection{Target difficulty and area score}
+Difficulty scales affinely with mastery (\texttt{target\_difficulty}, v0 map):
+\[
+  \mathrm{diff}_u(S)=\clip\!\big(20+80\,M_u(S,t),\ 10,\ 100\big).
+\]
+The learner-facing area score per \texttt{topic} $T$ (\texttt{area\_scores}, a
+pure readout) is the mean decayed posterior over practiced atoms,
+\[
+  \mathrm{area}_u(T,t)=\frac{1}{|\mathcal{A}_T^{\mathrm{seen}}|}
+  \sum_{a\in\mathcal{A}_T^{\mathrm{seen}}}\Lhat_a(t).
+\]
+
+\section{End-to-end summary}
+\begin{keybox}
+The concept graph is a fixed DAG whose prerequisite edges gate \emph{what you may
+practice} and whose encompassing sub-edges route \emph{fractional credit
+backward} from advanced atoms to the simpler ones they subsume, while a decaying
+per-atom Bayesian Knowledge Tracing posterior is the only mutable state ---
+updated by direct graded evidence and by single-hop FIRe trickle, and read back
+to pick the weakest unlocked atom to drill next.
+\end{keybox}
+
+\section{Calibration caveat}
+Every constant in \S3.1 and the affine maps in \S6 are \textbf{v0 engineering
+defaults}, explicitly not literature-derived (see the \texttt{bkt\_mastery.py}
+docstring and the 2026-05-24 source audit). Re-fit once real per-atom attempt
+data accumulates. The structure is the contract; the numbers are placeholders.
+
+\end{document}

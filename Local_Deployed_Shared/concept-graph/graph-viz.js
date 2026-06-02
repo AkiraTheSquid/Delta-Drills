@@ -65,7 +65,7 @@
 
     let data;
     try {
-      const res = await fetch("concept-graph/graph-viz.json");
+      const res = await fetch("concept-graph/graph-viz.json?v=4");
       data = await res.json();
     } catch (e) {
       setInfo("Couldn't load the graph data.");
