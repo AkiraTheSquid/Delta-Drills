@@ -1,0 +1,3156 @@
+{
+"nodes": [
+{
+"id": "cross-entropy-loss",
+"label": "Cross-entropy loss",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "torch-linalg-solve",
+"label": "torch.linalg.solve",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "training-loop-skeleton",
+"label": "optimizer.zero_grad()",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "conv-output-size-formula",
+"label": "Conv output size formula",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "adam-bias-correction",
+"label": "Adam update rule",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "vae-reparameterization-trick",
+"label": "Reparameterization trick",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "wandb-sweep-config",
+"label": "wandb sweep configuration",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "wandb-watch-gradients",
+"label": "wandb.init / watch / log / finish",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "adamw-decoupled-weight-decay",
+"label": "AdamW decoupled weight decay",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "batchnorm-running-stats-ema",
+"label": "BatchNorm2d channel-wise normalization",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "torch-stack-vs-cat",
+"label": "torch.cat existing dimension",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "vae-total-loss",
+"label": "VAE total loss = reconstruction + KL",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "dataloader-batching",
+"label": "DataLoader for batched iteration",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "gan-loss-log-d",
+"label": "GAN minimax loss",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "inference-mode-context",
+"label": "torch.inference_mode context",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "nn-parameter",
+"label": "nn.Parameter wrapper",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "stride-zero-broadcast",
+"label": "Stride tuple semantics",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "tensor-grad-attribute",
+"label": "Tensor.grad attribute",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "conv-as-einsum",
+"label": "1D convolution via strided expansion",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "force-pair-int-or-tuple",
+"label": "force_pair helper / IntOrPair type",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "fractional-stride",
+"label": "fractional_stride_1d insert zeros",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "padding-with-new-full",
+"label": "Padding via new_full + slice copy",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "dcgan-architecture",
+"label": "DCGAN architecture",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "detach-for-discriminator-step",
+"label": "Detach fake image for D step",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "determinant-singularity-test",
+"label": "torch.linalg.det",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "examples-seen-step-counter",
+"label": "examples_seen as wandb step",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "extra-repr",
+"label": "Module extra_repr method",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "global-average-pool",
+"label": "Global average pool (channel mean)",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "gradient-clipping-norm",
+"label": "Gradient norm clipping",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "infinity-sentinel",
+"label": "float('inf') / t.inf as missing-distance sentinel",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "integer-array-indexing",
+"label": "Integer array indexing",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "kl-divergence-gaussian",
+"label": "KL divergence to standard normal",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "linspace-out-param",
+"label": "torch.linspace out= keyword argument",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "log-uniform-distribution",
+"label": "Log-uniform hyperparameter sampling",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "matmul-via-strides-and-sum",
+"label": "Matrix multiply via strides + elementwise + sum",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "mse-reconstruction-loss",
+"label": "MSE reconstruction loss",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "no-relu-at-output",
+"label": "No activation on final output layer",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "requires-grad-flag",
+"label": "tensor.requires_grad flag",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "softmax-from-logits",
+"label": "Softmax along the class dimension",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "tensor-item-scalar",
+"label": "Tensor.item() to Python scalar",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "tensor-zeros-init",
+"label": "Tensor zeros initialization",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "topological-sort-dfs",
+"label": "Topological sort via DFS",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "torch-randn-noise",
+"label": "Random normal noise via torch.randn",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "as-strided-trace",
+"label": "Trace via diagonal as_strided",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "autoencoder-architecture",
+"label": "Autoencoder architecture",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "block-group",
+"label": "BlockGroup in ResNet",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "boolean-mask-broadcast-assignment",
+"label": "Boolean-mask broadcast assignment",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "broadcast-collective",
+"label": "broadcast collective",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "broadcasting-rules",
+"label": "NumPy/PyTorch broadcasting rules",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "celeba-dataset",
+"label": "CelebA dataset",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "cifar10-dataset",
+"label": "CIFAR-10 dataset",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "computational-graph",
+"label": "Computational graph",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "cuda-availability-check",
+"label": "torch.cuda.is_available",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "cuda-empty-cache",
+"label": "torch.cuda.empty_cache",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "data-parallelism",
+"label": "Per-parameter all_reduce of .grad",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "dataclass-training-args",
+"label": "@dataclass for training arguments",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "dcgan-weight-init",
+"label": "DCGAN-style weight initialization",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "detach-clone-trajectory",
+"label": "Tensor.detach().clone() snapshot",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "device-to-cuda",
+"label": "Moving tensors between devices with .to/.cuda/.cpu",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "dist-init-process-group",
+"label": "torch.distributed init_process_group",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "distributed-sampler",
+"label": "DistributedSampler",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "einops-einsum",
+"label": "einops.einsum",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "einops-rearrange",
+"label": "einops.rearrange",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "einops-reduce",
+"label": "einops.reduce",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "einops-repeat",
+"label": "einops.repeat",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "exp-backward-via-out",
+"label": "Backward of exp via out",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "forward-hook",
+"label": "Forward hooks on nn.Module",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "imagenet-normalization",
+"label": "ImageNet normalization transform",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "jaxtyping-tensor-annotation",
+"label": "jaxtyping Float[Tensor, ...] annotation",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "kaiming-uniform-init",
+"label": "Kaiming uniform initialization",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "kernel-flip-for-convtranspose",
+"label": "Transposed conv = flipped + padded conv",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "lambertian-reflection",
+"label": "Lambertian reflection model",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "latent-bottleneck",
+"label": "Latent bottleneck dimension",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "leaky-relu",
+"label": "LeakyReLU activation",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "linear-affine-transformation",
+"label": "Linear (affine) layer",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "log-sum-exp-stability",
+"label": "Log-sum-exp numerical stability trick",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "logical-reduction-any-all",
+"label": "Boolean reduction via .any()/.all()",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "matmul-backward-rules",
+"label": "Backward of 2D matmul",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "maximum-backward-tie-split",
+"label": "Backward of max with tie-splitting",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "maxpool2d",
+"label": "MaxPool2d module",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "mnist-dataset",
+"label": "MNIST dataset",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "model-apply-recursive",
+"label": "model.apply for recursive submodule action",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "model-train-eval-toggle",
+"label": "model.train() / model.eval() mode toggle",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "neg-inf-maxpool-pad",
+"label": "Maxpool padding uses -inf",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "nn-module-subclass",
+"label": "Subclassing nn.Module",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "param-groups",
+"label": "Optimizer parameter groups",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "pathological-curve-loss",
+"label": "Pathological curvature / ravine",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "permute-backward-argsort",
+"label": "permute backward via np.argsort(axes)",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "plotly-imshow",
+"label": "plotly imshow for tensor visualisation",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "supplemental"
+},
+{
+"id": "ray-parametric-form",
+"label": "Ray parametric form",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "ray-segment-intersection-linear-system",
+"label": "2D ray-segment 2x2 linear system",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "ray-triangle-3x3-system",
+"label": "Ray\u2013triangle intersection 3\u00d73 system",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "rearrange-as-layer",
+"label": "einops Rearrange as nn.Module",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "register-buffer",
+"label": "register_buffer for non-trainable state",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "relu-elementwise-max",
+"label": "ReLU activation",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "reshape-backward",
+"label": "Backward of reshape is reshape-back",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "resnet34-architecture",
+"label": "ResNet34 architecture",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "rotation-matrix-3d-y-axis",
+"label": "3D rotation matrix around y-axis",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "segment-parametric-form",
+"label": "Line segment parametric form",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "send-recv-point-to-point",
+"label": "dist.send / dist.recv primitives",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "sequential-container",
+"label": "Sequential module container",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "sigmoid-activation",
+"label": "Sigmoid activation",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "simple-mlp-mnist",
+"label": "Simple MLP for MNIST",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "slice-view-shared-storage",
+"label": "Slice returns view sharing storage",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "subset-dataset",
+"label": "torch.utils.data.Subset for reduced sets",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "supplemental"
+},
+{
+"id": "sum-backward-broadcast",
+"label": "Backward of sum is broadcast",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "surface-normal-via-cross-product",
+"label": "Triangle surface normal via cross product",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "tanh-activation",
+"label": "Tanh activation",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "tensor-unbind",
+"label": "Tensor unbind along a dim",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "torch-amax-reduction",
+"label": "tensor.amax over multiple dims",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "torch-multiprocessing-spawn",
+"label": "torch.multiprocessing.spawn",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "torch-var-unbiased",
+"label": "Unbiased vs biased variance flag",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "torch-where-conditional",
+"label": "torch.where elementwise selection",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "torchinfo-summary",
+"label": "torchinfo.summary",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "tqdm-progress-bar",
+"label": "tqdm progress bar",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "unbroadcast",
+"label": "Unbroadcast: sum over broadcasted dims",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "view-vs-reshape",
+"label": "view vs reshape contiguity",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "supplemental"
+},
+{
+"id": "wandb-image-logging",
+"label": "wandb.Image for image logging",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "wrap-forward-fn",
+"label": "Generic wrap_forward_fn",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "accumulate-grads-along-paths",
+"label": "Accumulate (not overwrite) grad on fan-out",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "conv2d-module",
+"label": "Conv2d module",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "all-reduce-collective",
+"label": "All-reduce collective",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "as-strided",
+"label": "as_strided custom view",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "backward-func-lookup",
+"label": "BackwardFuncLookup registry",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "batchnorm-train-eval-divergence",
+"label": "BatchNorm train vs eval behaviour",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "broadcast-reshape-1c11",
+"label": "Inline lambda for reshape-broadcast",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "copy-inplace-_underscore",
+"label": "In-place ops for momentum buffers",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "dataclasses-replace",
+"label": "dataclasses.replace for arg update",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "supplemental"
+},
+{
+"id": "directional-derivative-grad-out",
+"label": "Non-scalar backward via directional derivative",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "feature-extraction-freeze",
+"label": "Feature extraction by freezing layers",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "first-block-may-need-right-branch",
+"label": "Right branch only when shape changes",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "flatten-layer",
+"label": "Flatten module",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "flip-along-dim",
+"label": "tensor.flip(dims) reverse along axis",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "grad-tracking-global-flag",
+"label": "Global grad_tracking_enabled flag",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "hook-removal-discipline",
+"label": "Removing hooks after use",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "imagenet-1k-labels",
+"label": "ImageNet 1000-class labels",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "supplemental"
+},
+{
+"id": "isfinite-mask",
+"label": "torch.isfinite mask",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "leaf-vs-non-leaf-tensor",
+"label": "Leaf tensor",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "log-derivative",
+"label": "Derivative of log",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "min-over-triangles-per-ray",
+"label": "Per-ray min distance over triangles",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "multiply-backward",
+"label": "Backward rule for elementwise multiply",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "param-iterable-list-conversion",
+"label": "Realize an iterable into a list once",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "print-param-count-diff",
+"label": "Parameter-count comparison",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "project-and-reshape-block",
+"label": "Reshape via Rearrange 'b (c h w) -> b c h w'",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "rmsprop-update",
+"label": "RMSprop update rule",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "rosenbrock-banana",
+"label": "Rosenbrock\u2019s banana function",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "sgd-momentum",
+"label": "SGD with momentum",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "sgd-update-rule",
+"label": "Gradient descent update rule",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "state-dict-load",
+"label": "state_dict load/save",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "tensor-recipe",
+"label": "Recipe metadata on a Tensor",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "torch-arange",
+"label": "torch.arange / custom arange",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "torch-save-load-weights",
+"label": "torch.save state_dict to disk",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "supplemental"
+},
+{
+"id": "torchvision-models-pretrained",
+"label": "torchvision.models pretrained weights",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "trainer-class-pattern",
+"label": "Trainer class pattern",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "type-hints-python",
+"label": "Type hints in PyTorch code",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "vae-latent-visualization",
+"label": "Sweeping the VAE latent space on a grid",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "argmax-prediction",
+"label": "argmax to extract predictions",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "as-strided-noncontig-source",
+"label": "Non-contiguous tensor strides pitfall",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "generator-noise-input",
+"label": "Latent noise input to generator",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "adaptive-vs-momentum",
+"label": "Adaptive methods vs. plain momentum",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "ambient-intensity-floor",
+"label": "Ambient intensity floor",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "backprop-algorithm",
+"label": "backprop main loop",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "backward-function",
+"label": "Per-op backward function signature",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "barycentric-coordinates",
+"label": "Barycentric coordinates for triangles",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "boolean-mask-identity-replace",
+"label": "Singular-matrix identity substitution trick",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "chain-rule-backprop",
+"label": "Chain rule in computational graphs",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "conv-fanin-input-channels-times-kernel",
+"label": "Conv fan-in = in_channels * kernel_h * kernel_w",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "conv2d-functional",
+"label": "F.conv2d functional API",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "decoder-mirror-of-encoder",
+"label": "Decoder mirrors encoder structure",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "device-mps-cuda-cpu-fallback",
+"label": "Device fallback (MPS / CUDA / CPU)",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "ewma-running-stat",
+"label": "Exponential moving-average update",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "field-default-factory-mutable",
+"label": "field(default_factory=...) for mutable defaults",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "gan-failure-mode-perfect-d",
+"label": "GAN failure: discriminator wins",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "gan-generator-discriminator",
+"label": "GAN generator/discriminator pair",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "holdout-dataset-monitoring",
+"label": "Holdout images for training monitoring",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "in-place-vs-graph-safety",
+"label": "In-place updates and graph safety",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "linspace-evenly-spaced",
+"label": "Linspace evenly-spaced points",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "loss-landscape",
+"label": "Loss landscape",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "module-class-from-scratch",
+"label": "Module / Parameter from scratch",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "module-modules-iter",
+"label": "model.modules() iteration",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "module-requires-grad-toggle",
+"label": "module.requires_grad_(False) freeze",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "nn-init-normal-constant",
+"label": "nn.init helper functions",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "non-differentiable-passthrough",
+"label": "is_differentiable flag for non-grad ops",
+"topic": "Backprop",
+"family": "Backprop & Autograd",
+"tier": "core"
+},
+{
+"id": "nonlinear-activation-necessity",
+"label": "Need for nonlinear activations",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "outer-product-grid",
+"label": "Outer-product grid via einops.repeat",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "ray-distance-from-parameter",
+"label": "Scale s by Dx to get true ray distance",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "supplemental"
+},
+{
+"id": "residual-block",
+"label": "Residual block",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "right-hand-rule-orientation",
+"label": "Right-hand rule triangle orientation",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "supplemental"
+},
+{
+"id": "skip-connection-degradation",
+"label": "Skip connections cure degradation",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "stride-kernel-element-step",
+"label": "Stride-scaling for strided convolution",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "tensor-pow",
+"label": "tensor.pow elementwise power",
+"topic": "Optimization",
+"family": "Optimization & Training",
+"tier": "core"
+},
+{
+"id": "torch-as-tensor-no-copy",
+"label": "Conversion semantics: numpy <-> tensor",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "torch-no-bias-conv-batchnorm-pair",
+"label": "Conv bias=False before BN",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "torch-rand-uniform",
+"label": "torch.rand for uniform initialisation",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "transposed-convolution",
+"label": "Transposed convolution (ConvTranspose)",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "two-optimizers-gan",
+"label": "Separate optimizers for G and D",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "core"
+},
+{
+"id": "universal-approximation-theorem",
+"label": "Universal approximation theorem",
+"topic": "CNNs",
+"family": "CNNs",
+"tier": "core"
+},
+{
+"id": "vae-encoder-output-shape-2-b-d",
+"label": "Encoder output reshape (2, B, D)",
+"topic": "VAEs and GANs",
+"family": "Generative",
+"tier": "supplemental"
+},
+{
+"id": "vector-normalisation",
+"label": "Vector normalization",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "core"
+},
+{
+"id": "wireframe-vs-fill-rendering",
+"label": "Wireframe vs filled triangle rendering",
+"topic": "Ray Tracing",
+"family": "Ray Tracing",
+"tier": "supplemental"
+}
+],
+"edges": [
+{
+"source": "relu-elementwise-max",
+"target": "nonlinear-activation-necessity",
+"enc": false
+},
+{
+"source": "nonlinear-activation-necessity",
+"target": "leaky-relu",
+"enc": true
+},
+{
+"source": "nonlinear-activation-necessity",
+"target": "sigmoid-activation",
+"enc": true
+},
+{
+"source": "nonlinear-activation-necessity",
+"target": "tanh-activation",
+"enc": true
+},
+{
+"source": "loss-landscape",
+"target": "sgd-update-rule",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "sgd-momentum",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "rmsprop-update",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "adam-bias-correction",
+"target": "adamw-decoupled-weight-decay",
+"enc": true
+},
+{
+"source": "mse-reconstruction-loss",
+"target": "vae-total-loss",
+"enc": true
+},
+{
+"source": "kl-divergence-gaussian",
+"target": "vae-total-loss",
+"enc": true
+},
+{
+"source": "gan-generator-discriminator",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "skip-connection-degradation",
+"target": "resnet34-architecture",
+"enc": false
+},
+{
+"source": "skip-connection-degradation",
+"target": "residual-block",
+"enc": false
+},
+{
+"source": "nn-module-subclass",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "flatten-layer",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "sequential-container",
+"enc": true
+},
+{
+"source": "nn-init-normal-constant",
+"target": "kaiming-uniform-init",
+"enc": true
+},
+{
+"source": "nn-init-normal-constant",
+"target": "dcgan-weight-init",
+"enc": true
+},
+{
+"source": "dist-init-process-group",
+"target": "send-recv-point-to-point",
+"enc": true
+},
+{
+"source": "dist-init-process-group",
+"target": "all-reduce-collective",
+"enc": true
+},
+{
+"source": "dist-init-process-group",
+"target": "broadcast-collective",
+"enc": true
+},
+{
+"source": "all-reduce-collective",
+"target": "data-parallelism",
+"enc": true
+},
+{
+"source": "dataloader-batching",
+"target": "celeba-dataset",
+"enc": true
+},
+{
+"source": "mnist-dataset",
+"target": "dataloader-batching",
+"enc": true
+},
+{
+"source": "cifar10-dataset",
+"target": "dataloader-batching",
+"enc": true
+},
+{
+"source": "loss-landscape",
+"target": "rosenbrock-banana",
+"enc": true
+},
+{
+"source": "loss-landscape",
+"target": "pathological-curve-loss",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "global-average-pool",
+"enc": true
+},
+{
+"source": "rmsprop-update",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "sgd-momentum",
+"target": "rmsprop-update",
+"enc": true
+},
+{
+"source": "sgd-momentum",
+"target": "adaptive-vs-momentum",
+"enc": true
+},
+{
+"source": "autoencoder-architecture",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "decoder-mirror-of-encoder",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "kaiming-uniform-init",
+"target": "dcgan-weight-init",
+"enc": true
+},
+{
+"source": "ray-segment-intersection-linear-system",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "transposed-convolution",
+"target": "kernel-flip-for-convtranspose",
+"enc": true
+},
+{
+"source": "transposed-convolution",
+"target": "fractional-stride",
+"enc": true
+},
+{
+"source": "conv-as-einsum",
+"target": "stride-kernel-element-step",
+"enc": true
+},
+{
+"source": "matmul-via-strides-and-sum",
+"target": "conv-as-einsum",
+"enc": true
+},
+{
+"source": "as-strided",
+"target": "matmul-via-strides-and-sum",
+"enc": true
+},
+{
+"source": "as-strided",
+"target": "as-strided-trace",
+"enc": true
+},
+{
+"source": "broadcasting-rules",
+"target": "broadcast-reshape-1c11",
+"enc": true
+},
+{
+"source": "integer-array-indexing",
+"target": "boolean-mask-broadcast-assignment",
+"enc": false
+},
+{
+"source": "einops-reduce",
+"target": "torch-amax-reduction",
+"enc": false
+},
+{
+"source": "einops-reduce",
+"target": "global-average-pool",
+"enc": true
+},
+{
+"source": "padding-with-new-full",
+"target": "neg-inf-maxpool-pad",
+"enc": true
+},
+{
+"source": "first-block-may-need-right-branch",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "residual-block",
+"target": "block-group",
+"enc": true
+},
+{
+"source": "grad-tracking-global-flag",
+"target": "inference-mode-context",
+"enc": true
+},
+{
+"source": "module-requires-grad-toggle",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "torch-no-bias-conv-batchnorm-pair",
+"enc": true
+},
+{
+"source": "wandb-watch-gradients",
+"target": "examples-seen-step-counter",
+"enc": true
+},
+{
+"source": "wandb-sweep-config",
+"target": "log-uniform-distribution",
+"enc": true
+},
+{
+"source": "cuda-availability-check",
+"target": "device-mps-cuda-cpu-fallback",
+"enc": true
+},
+{
+"source": "vae-reparameterization-trick",
+"target": "vae-encoder-output-shape-2-b-d",
+"enc": true
+},
+{
+"source": "project-and-reshape-block",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "kaiming-uniform-init",
+"target": "conv-fanin-input-channels-times-kernel",
+"enc": true
+},
+{
+"source": "block-group",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "first-block-may-need-right-branch",
+"target": "block-group",
+"enc": true
+},
+{
+"source": "global-average-pool",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "linear-affine-transformation",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "chain-rule-backprop",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "topological-sort-dfs",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "accumulate-grads-along-paths",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "backward-function",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "backward-func-lookup",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "tensor-recipe",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "leaf-vs-non-leaf-tensor",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "computational-graph",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "log-derivative",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "multiply-backward",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "exp-backward-via-out",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "matmul-backward-rules",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "reshape-backward",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "permute-backward-argsort",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "sum-backward-broadcast",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "unbroadcast",
+"target": "backward-function",
+"enc": true
+},
+{
+"source": "tensor-recipe",
+"target": "computational-graph",
+"enc": true
+},
+{
+"source": "vae-reparameterization-trick",
+"target": "vae-total-loss",
+"enc": true
+},
+{
+"source": "latent-bottleneck",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "gan-generator-discriminator",
+"target": "gan-loss-log-d",
+"enc": true
+},
+{
+"source": "two-optimizers-gan",
+"target": "gan-generator-discriminator",
+"enc": false
+},
+{
+"source": "detach-for-discriminator-step",
+"target": "two-optimizers-gan",
+"enc": true
+},
+{
+"source": "generator-noise-input",
+"target": "gan-generator-discriminator",
+"enc": true
+},
+{
+"source": "no-relu-at-output",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "conv-as-einsum",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "conv-output-size-formula",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "batchnorm-train-eval-divergence",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "broadcast-reshape-1c11",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "ray-parametric-form",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "segment-parametric-form",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "barycentric-coordinates",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "ray-parametric-form",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "surface-normal-via-cross-product",
+"target": "lambertian-reflection",
+"enc": true
+},
+{
+"source": "vector-normalisation",
+"target": "surface-normal-via-cross-product",
+"enc": true
+},
+{
+"source": "right-hand-rule-orientation",
+"target": "surface-normal-via-cross-product",
+"enc": false
+},
+{
+"source": "rotation-matrix-3d-y-axis",
+"target": "outer-product-grid",
+"enc": false
+},
+{
+"source": "copy-inplace-_underscore",
+"target": "sgd-momentum",
+"enc": true
+},
+{
+"source": "param-iterable-list-conversion",
+"target": "sgd-update-rule",
+"enc": true
+},
+{
+"source": "training-loop-skeleton",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "dataloader-batching",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "model-train-eval-toggle",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "dataclass-training-args",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "distributed-sampler",
+"target": "data-parallelism",
+"enc": true
+},
+{
+"source": "send-recv-point-to-point",
+"target": "broadcast-collective",
+"enc": true
+},
+{
+"source": "send-recv-point-to-point",
+"target": "all-reduce-collective",
+"enc": true
+},
+{
+"source": "torch-multiprocessing-spawn",
+"target": "data-parallelism",
+"enc": true
+},
+{
+"source": "autoencoder-architecture",
+"target": "gan-generator-discriminator",
+"enc": false
+},
+{
+"source": "vae-reparameterization-trick",
+"target": "gan-generator-discriminator",
+"enc": false
+},
+{
+"source": "view-vs-reshape",
+"target": "as-strided",
+"enc": false
+},
+{
+"source": "relu-elementwise-max",
+"target": "leaky-relu",
+"enc": false
+},
+{
+"source": "broadcasting-rules",
+"target": "matmul-via-strides-and-sum",
+"enc": true
+},
+{
+"source": "stride-zero-broadcast",
+"target": "matmul-via-strides-and-sum",
+"enc": true
+},
+{
+"source": "stride-zero-broadcast",
+"target": "as-strided-trace",
+"enc": true
+},
+{
+"source": "as-strided",
+"target": "conv-as-einsum",
+"enc": true
+},
+{
+"source": "einops-einsum",
+"target": "conv-as-einsum",
+"enc": true
+},
+{
+"source": "stride-zero-broadcast",
+"target": "conv-as-einsum",
+"enc": true
+},
+{
+"source": "as-strided-noncontig-source",
+"target": "conv-as-einsum",
+"enc": true
+},
+{
+"source": "as-strided",
+"target": "stride-kernel-element-step",
+"enc": true
+},
+{
+"source": "tensor-zeros-init",
+"target": "padding-with-new-full",
+"enc": true
+},
+{
+"source": "slice-view-shared-storage",
+"target": "padding-with-new-full",
+"enc": true
+},
+{
+"source": "force-pair-int-or-tuple",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "padding-with-new-full",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "kaiming-uniform-init",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "conv-fanin-input-channels-times-kernel",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "extra-repr",
+"target": "conv2d-module",
+"enc": true
+},
+{
+"source": "conv-as-einsum",
+"target": "conv2d-functional",
+"enc": true
+},
+{
+"source": "torch-amax-reduction",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "as-strided",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "neg-inf-maxpool-pad",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "padding-with-new-full",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "conv-output-size-formula",
+"target": "maxpool2d",
+"enc": true
+},
+{
+"source": "ewma-running-stat",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "register-buffer",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "torch-var-unbiased",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "broadcasting-rules",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "model-train-eval-toggle",
+"target": "batchnorm-running-stats-ema",
+"enc": true
+},
+{
+"source": "model-train-eval-toggle",
+"target": "batchnorm-train-eval-divergence",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "kaiming-uniform-init",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "torch-rand-uniform",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "extra-repr",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "einops-einsum",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "torch-rand-uniform",
+"target": "kaiming-uniform-init",
+"enc": true
+},
+{
+"source": "view-vs-reshape",
+"target": "flatten-layer",
+"enc": true
+},
+{
+"source": "torch-where-conditional",
+"target": "relu-elementwise-max",
+"enc": true
+},
+{
+"source": "linear-affine-transformation",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "relu-elementwise-max",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "flatten-layer",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "sequential-container",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "batchnorm-running-stats-ema",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "relu-elementwise-max",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "torch-no-bias-conv-batchnorm-pair",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "sequential-container",
+"target": "residual-block",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "batchnorm-running-stats-ema",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "maxpool2d",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "relu-elementwise-max",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "sequential-container",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "flatten-layer",
+"target": "resnet34-architecture",
+"enc": true
+},
+{
+"source": "state-dict-load",
+"target": "torchvision-models-pretrained",
+"enc": true
+},
+{
+"source": "imagenet-1k-labels",
+"target": "torchvision-models-pretrained",
+"enc": true
+},
+{
+"source": "imagenet-normalization",
+"target": "torchvision-models-pretrained",
+"enc": true
+},
+{
+"source": "linear-affine-transformation",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "state-dict-load",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "torchvision-models-pretrained",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "torchinfo-summary",
+"target": "print-param-count-diff",
+"enc": true
+},
+{
+"source": "softmax-from-logits",
+"target": "argmax-prediction",
+"enc": false
+},
+{
+"source": "log-sum-exp-stability",
+"target": "softmax-from-logits",
+"enc": true
+},
+{
+"source": "integer-array-indexing",
+"target": "cross-entropy-loss",
+"enc": true
+},
+{
+"source": "torch-arange",
+"target": "cross-entropy-loss",
+"enc": true
+},
+{
+"source": "log-sum-exp-stability",
+"target": "cross-entropy-loss",
+"enc": true
+},
+{
+"source": "softmax-from-logits",
+"target": "cross-entropy-loss",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "device-to-cuda",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "tqdm-progress-bar",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "cross-entropy-loss",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "wandb-watch-gradients",
+"target": "trainer-class-pattern",
+"enc": false
+},
+{
+"source": "device-to-cuda",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "tensor-item-scalar",
+"target": "argmax-prediction",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "sgd-update-rule",
+"enc": true
+},
+{
+"source": "ewma-running-stat",
+"target": "sgd-momentum",
+"enc": true
+},
+{
+"source": "ewma-running-stat",
+"target": "rmsprop-update",
+"enc": true
+},
+{
+"source": "tensor-pow",
+"target": "rmsprop-update",
+"enc": true
+},
+{
+"source": "copy-inplace-_underscore",
+"target": "rmsprop-update",
+"enc": true
+},
+{
+"source": "ewma-running-stat",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "tensor-pow",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "copy-inplace-_underscore",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "copy-inplace-_underscore",
+"target": "adamw-decoupled-weight-decay",
+"enc": true
+},
+{
+"source": "ewma-running-stat",
+"target": "adamw-decoupled-weight-decay",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "param-groups",
+"enc": true
+},
+{
+"source": "param-iterable-list-conversion",
+"target": "param-groups",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "pathological-curve-loss",
+"enc": true
+},
+{
+"source": "sgd-update-rule",
+"target": "rosenbrock-banana",
+"enc": true
+},
+{
+"source": "plotly-imshow",
+"target": "loss-landscape",
+"enc": true
+},
+{
+"source": "wandb-watch-gradients",
+"target": "wandb-sweep-config",
+"enc": true
+},
+{
+"source": "dataclasses-replace",
+"target": "wandb-sweep-config",
+"enc": true
+},
+{
+"source": "wandb-watch-gradients",
+"target": "wandb-image-logging",
+"enc": true
+},
+{
+"source": "linear-affine-transformation",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "transposed-convolution",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "relu-elementwise-max",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "sequential-container",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "flatten-layer",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "rearrange-as-layer",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "torch-randn-noise",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "tensor-pow",
+"target": "kl-divergence-gaussian",
+"enc": true
+},
+{
+"source": "linspace-evenly-spaced",
+"target": "vae-latent-visualization",
+"enc": true
+},
+{
+"source": "outer-product-grid",
+"target": "vae-latent-visualization",
+"enc": true
+},
+{
+"source": "plotly-imshow",
+"target": "vae-latent-visualization",
+"enc": true
+},
+{
+"source": "holdout-dataset-monitoring",
+"target": "vae-latent-visualization",
+"enc": true
+},
+{
+"source": "torch-randn-noise",
+"target": "gan-generator-discriminator",
+"enc": true
+},
+{
+"source": "sigmoid-activation",
+"target": "gan-loss-log-d",
+"enc": true
+},
+{
+"source": "adam-bias-correction",
+"target": "two-optimizers-gan",
+"enc": true
+},
+{
+"source": "gradient-clipping-norm",
+"target": "two-optimizers-gan",
+"enc": true
+},
+{
+"source": "gan-loss-log-d",
+"target": "gan-failure-mode-perfect-d",
+"enc": true
+},
+{
+"source": "transposed-convolution",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "batchnorm-running-stats-ema",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "relu-elementwise-max",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "leaky-relu",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "tanh-activation",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "sigmoid-activation",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "rearrange-as-layer",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "dcgan-weight-init",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "model-apply-recursive",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "torch-no-bias-conv-batchnorm-pair",
+"target": "dcgan-architecture",
+"enc": true
+},
+{
+"source": "celeba-dataset",
+"target": "dcgan-architecture",
+"enc": false
+},
+{
+"source": "model-apply-recursive",
+"target": "dcgan-weight-init",
+"enc": true
+},
+{
+"source": "module-modules-iter",
+"target": "dcgan-weight-init",
+"enc": true
+},
+{
+"source": "flip-along-dim",
+"target": "transposed-convolution",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "transposed-convolution",
+"enc": true
+},
+{
+"source": "padding-with-new-full",
+"target": "transposed-convolution",
+"enc": true
+},
+{
+"source": "flip-along-dim",
+"target": "kernel-flip-for-convtranspose",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "backprop-algorithm",
+"enc": true
+},
+{
+"source": "backprop-algorithm",
+"target": "directional-derivative-grad-out",
+"enc": true
+},
+{
+"source": "topological-sort-dfs",
+"target": "computational-graph",
+"enc": true
+},
+{
+"source": "tensor-recipe",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "requires-grad-flag",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "grad-tracking-global-flag",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "non-differentiable-passthrough",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "torch-as-tensor-no-copy",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "unbroadcast",
+"target": "multiply-backward",
+"enc": true
+},
+{
+"source": "broadcasting-rules",
+"target": "multiply-backward",
+"enc": true
+},
+{
+"source": "broadcasting-rules",
+"target": "sum-backward-broadcast",
+"enc": true
+},
+{
+"source": "unbroadcast",
+"target": "sum-backward-broadcast",
+"enc": true
+},
+{
+"source": "chain-rule-backprop",
+"target": "matmul-backward-rules",
+"enc": true
+},
+{
+"source": "chain-rule-backprop",
+"target": "log-derivative",
+"enc": true
+},
+{
+"source": "torch-where-conditional",
+"target": "maximum-backward-tie-split",
+"enc": true
+},
+{
+"source": "view-vs-reshape",
+"target": "reshape-backward",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "module-class-from-scratch",
+"enc": true
+},
+{
+"source": "param-iterable-list-conversion",
+"target": "module-class-from-scratch",
+"enc": true
+},
+{
+"source": "module-class-from-scratch",
+"target": "module-modules-iter",
+"enc": false
+},
+{
+"source": "argmax-prediction",
+"target": "cross-entropy-loss",
+"enc": true
+},
+{
+"source": "torch-linalg-solve",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "torch-stack-vs-cat",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "einops-repeat",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "determinant-singularity-test",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "boolean-mask-identity-replace",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "boolean-mask-broadcast-assignment",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "logical-reduction-any-all",
+"target": "ray-segment-intersection-linear-system",
+"enc": true
+},
+{
+"source": "torch-linalg-solve",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "torch-stack-vs-cat",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "einops-repeat",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "determinant-singularity-test",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "boolean-mask-identity-replace",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "min-over-triangles-per-ray",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "infinity-sentinel",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "isfinite-mask",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "ray-distance-from-parameter",
+"target": "ray-triangle-3x3-system",
+"enc": true
+},
+{
+"source": "einops-reduce",
+"target": "min-over-triangles-per-ray",
+"enc": true
+},
+{
+"source": "infinity-sentinel",
+"target": "min-over-triangles-per-ray",
+"enc": true
+},
+{
+"source": "einops-repeat",
+"target": "outer-product-grid",
+"enc": true
+},
+{
+"source": "linspace-evenly-spaced",
+"target": "outer-product-grid",
+"enc": true
+},
+{
+"source": "tensor-zeros-init",
+"target": "outer-product-grid",
+"enc": true
+},
+{
+"source": "linspace-out-param",
+"target": "outer-product-grid",
+"enc": true
+},
+{
+"source": "einops-einsum",
+"target": "lambertian-reflection",
+"enc": true
+},
+{
+"source": "ambient-intensity-floor",
+"target": "lambertian-reflection",
+"enc": true
+},
+{
+"source": "torch-where-conditional",
+"target": "lambertian-reflection",
+"enc": true
+},
+{
+"source": "einops-einsum",
+"target": "rotation-matrix-3d-y-axis",
+"enc": true
+},
+{
+"source": "einops-rearrange",
+"target": "plotly-imshow",
+"enc": true
+},
+{
+"source": "barycentric-coordinates",
+"target": "wireframe-vs-fill-rendering",
+"enc": true
+},
+{
+"source": "stride-zero-broadcast",
+"target": "einops-repeat",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "data-parallelism",
+"enc": true
+},
+{
+"source": "param-iterable-list-conversion",
+"target": "data-parallelism",
+"enc": true
+},
+{
+"source": "dataloader-batching",
+"target": "distributed-sampler",
+"enc": true
+},
+{
+"source": "subset-dataset",
+"target": "celeba-dataset",
+"enc": true
+},
+{
+"source": "mnist-dataset",
+"target": "subset-dataset",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "gradient-clipping-norm",
+"enc": true
+},
+{
+"source": "state-dict-load",
+"target": "torch-save-load-weights",
+"enc": true
+},
+{
+"source": "register-buffer",
+"target": "state-dict-load",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "state-dict-load",
+"enc": true
+},
+{
+"source": "nn-parameter",
+"target": "nn-module-subclass",
+"enc": true
+},
+{
+"source": "extra-repr",
+"target": "nn-module-subclass",
+"enc": true
+},
+{
+"source": "register-buffer",
+"target": "nn-module-subclass",
+"enc": true
+},
+{
+"source": "hook-removal-discipline",
+"target": "forward-hook",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "forward-hook",
+"enc": true
+},
+{
+"source": "copy-inplace-_underscore",
+"target": "in-place-vs-graph-safety",
+"enc": true
+},
+{
+"source": "cuda-availability-check",
+"target": "device-to-cuda",
+"enc": true
+},
+{
+"source": "device-to-cuda",
+"target": "device-mps-cuda-cpu-fallback",
+"enc": true
+},
+{
+"source": "device-to-cuda",
+"target": "cuda-empty-cache",
+"enc": true
+},
+{
+"source": "einops-rearrange",
+"target": "rearrange-as-layer",
+"enc": true
+},
+{
+"source": "tensor-pow",
+"target": "gan-loss-log-d",
+"enc": false
+},
+{
+"source": "chain-rule-backprop",
+"target": "permute-backward-argsort",
+"enc": true
+},
+{
+"source": "tensor-grad-attribute",
+"target": "detach-clone-trajectory",
+"enc": false
+},
+{
+"source": "nonlinear-activation-necessity",
+"target": "universal-approximation-theorem",
+"enc": false
+},
+{
+"source": "module-modules-iter",
+"target": "print-param-count-diff",
+"enc": true
+},
+{
+"source": "type-hints-python",
+"target": "jaxtyping-tensor-annotation",
+"enc": true
+},
+{
+"source": "gan-generator-discriminator",
+"target": "gan-failure-mode-perfect-d",
+"enc": true
+},
+{
+"source": "two-optimizers-gan",
+"target": "gan-failure-mode-perfect-d",
+"enc": true
+},
+{
+"source": "model-train-eval-toggle",
+"target": "holdout-dataset-monitoring",
+"enc": true
+},
+{
+"source": "wandb-image-logging",
+"target": "holdout-dataset-monitoring",
+"enc": true
+},
+{
+"source": "vae-reparameterization-trick",
+"target": "vae-latent-visualization",
+"enc": true
+},
+{
+"source": "tensor-item-scalar",
+"target": "training-loop-skeleton",
+"enc": true
+},
+{
+"source": "tensor-item-scalar",
+"target": "tqdm-progress-bar",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "module-modules-iter",
+"enc": true
+},
+{
+"source": "backward-func-lookup",
+"target": "wrap-forward-fn",
+"enc": true
+},
+{
+"source": "inference-mode-context",
+"target": "model-train-eval-toggle",
+"enc": true
+},
+{
+"source": "matmul-backward-rules",
+"target": "linear-affine-transformation",
+"enc": true
+},
+{
+"source": "torch-amax-reduction",
+"target": "softmax-from-logits",
+"enc": true
+},
+{
+"source": "training-loop-skeleton",
+"target": "two-optimizers-gan",
+"enc": true
+},
+{
+"source": "trainer-class-pattern",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "stride-zero-broadcast",
+"target": "broadcasting-rules",
+"enc": true
+},
+{
+"source": "requires-grad-flag",
+"target": "leaf-vs-non-leaf-tensor",
+"enc": true
+},
+{
+"source": "module-modules-iter",
+"target": "model-apply-recursive",
+"enc": true
+},
+{
+"source": "cuda-availability-check",
+"target": "trainer-class-pattern",
+"enc": true
+},
+{
+"source": "dataclass-training-args",
+"target": "field-default-factory-mutable",
+"enc": true
+},
+{
+"source": "dataclass-training-args",
+"target": "dataclasses-replace",
+"enc": true
+},
+{
+"source": "mnist-dataset",
+"target": "autoencoder-architecture",
+"enc": true
+},
+{
+"source": "mnist-dataset",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "tensor-unbind",
+"target": "vae-encoder-output-shape-2-b-d",
+"enc": true
+},
+{
+"source": "backward-function",
+"target": "tensor-recipe",
+"enc": true
+},
+{
+"source": "mnist-dataset",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "cross-entropy-loss",
+"target": "simple-mlp-mnist",
+"enc": true
+},
+{
+"source": "cifar10-dataset",
+"target": "feature-extraction-freeze",
+"enc": true
+},
+{
+"source": "adaptive-vs-momentum",
+"target": "adam-bias-correction",
+"enc": true
+},
+{
+"source": "linear-affine-transformation",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "conv2d-module",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "transposed-convolution",
+"target": "vae-reparameterization-trick",
+"enc": true
+},
+{
+"source": "nn-module-subclass",
+"target": "vae-reparameterization-trick",
+"enc": true
+}
+]
+}
