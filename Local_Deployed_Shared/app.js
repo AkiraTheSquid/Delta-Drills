@@ -30,12 +30,16 @@ let authEmail = localStorage.getItem("auth_email") || "";
 // (the Supabase code paths below + getPracticeMode's supabase branch stay intact).
 window.DELTA_USE_BACKEND = true;
 
-const authRequiredTabs = ["split-tool", "account", "courses", "practice", "targeted-practice", "statistics"];
+// Guests can now use the learning surface (practice/drills/stats) without an
+// account — progress is saved locally only (see getPracticeMode → "local").
+// Only account-management / admin tabs still require a real login.
+const guestBlockedTabs = ["split-tool", "account"];
 
 const switchTab = (tabName) => {
-  if (authRequiredTabs.includes(tabName) && !authToken) {
-    loginMessage.textContent = "Please log in to start a job.";
-    tabName = "login";
+  if (guestBlockedTabs.includes(tabName) && !authToken) {
+    // No forced login page anymore — send guests to practice; the guest
+    // banner is the standing CTA to log in.
+    tabName = "practice";
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
@@ -50,24 +54,45 @@ tabs.forEach((t) => {
   t.addEventListener("click", () => switchTab(t.dataset.tab));
 });
 
+// Tabs a guest is allowed to see/use (the learning surface). Account-only
+// tabs (Account, Split Tool) stay hidden until login.
+const guestVisibleTabs = ["courses", "practice", "targeted-practice", "statistics"];
+
 const updateTabVisibility = () => {
-  authOnlyTabs.forEach((t) => t.classList.toggle("hidden", !authToken));
-  guestOnlyTabs.forEach((t) => t.classList.toggle("hidden", !!authToken));
+  if (authToken) {
+    authOnlyTabs.forEach((t) => t.classList.remove("hidden"));
+    guestOnlyTabs.forEach((t) => t.classList.add("hidden"));
+  } else {
+    authOnlyTabs.forEach((t) =>
+      t.classList.toggle("hidden", !guestVisibleTabs.includes(t.dataset.tab))
+    );
+    guestOnlyTabs.forEach((t) => t.classList.remove("hidden"));
+  }
+  const guestBanner = document.getElementById("guest-banner");
+  if (guestBanner) guestBanner.classList.toggle("hidden", !!authToken);
 };
 
 const setAuthState = (token, email) => {
+  const wasAuthed = !!authToken;
   authToken = token || "";
   authEmail = email || "";
   if (authToken) {
     localStorage.setItem("auth_token", authToken);
     localStorage.setItem("auth_email", authEmail);
     authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
+    // Guest → logged in: practice mode is detected once at init, so reload to
+    // re-init in backend mode and hydrate server-side progress cleanly.
+    if (!wasAuthed) {
+      window.location.reload();
+      return;
+    }
     switchTab("practice");
   } else {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_email");
     authStatus.textContent = "";
-    switchTab("login");
+    // No forced login page — drop back to the guest practice surface.
+    switchTab("practice");
   }
   updateTabVisibility();
   window.dispatchEvent(
@@ -295,8 +320,14 @@ document.getElementById("account-github-username").value = savedGithubUsername;
 
 if (authToken) {
   authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
-  switchTab("practice");
-} else {
-  switchTab("how-it-works");
 }
+// Land everyone (guest or authed) directly on Practice. Guests run in local
+// mode; the guest banner is the standing CTA to log in.
+switchTab("practice");
 updateTabVisibility();
+
+// Guest-banner CTAs → the existing login / signup pages.
+const guestBannerLogin = document.getElementById("guest-banner-login");
+const guestBannerSignup = document.getElementById("guest-banner-signup");
+if (guestBannerLogin) guestBannerLogin.addEventListener("click", () => switchTab("login"));
+if (guestBannerSignup) guestBannerSignup.addEventListener("click", () => switchTab("signup"));

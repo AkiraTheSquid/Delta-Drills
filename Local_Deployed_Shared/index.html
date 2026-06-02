@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
-  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=4" />
+  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=5" />
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -38,10 +38,22 @@
       <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
       <button class="tab auth-only" data-tab="targeted-practice" type="button">Targeted Practice</button>
       <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
-      <button class="tab guest-only" data-tab="login" type="button">Log In</button>
-      <button class="tab guest-only" data-tab="signup" type="button">Create Account</button>
     </nav>
   </header>
+
+  <!-- GUEST BANNER — shown to anyone not logged in. The app is fully usable
+       as a guest (progress saved locally in this browser only); logging in
+       persists progress to the account. Replaces the old forced login /
+       create-account landing page. Toggled by app.js updateTabVisibility(). -->
+  <div class="guest-banner" id="guest-banner">
+    <div class="guest-banner-inner">
+      <span class="guest-banner-dot" aria-hidden="true"></span>
+      <span class="guest-banner-label">Guest</span>
+      <span class="guest-banner-meta">Your progress is saved in this browser only. <strong>Log in to save your progress</strong> across devices.</span>
+      <button type="button" class="guest-banner-btn" id="guest-banner-login">Log in</button>
+      <button type="button" class="guest-banner-btn guest-banner-btn-ghost" id="guest-banner-signup">Create account</button>
+    </div>
+  </div>
 
   <!-- TARGETED PRACTICE MODE BANNER — global indicator that sits below the
        topbar whenever the student has an active targeted-practice session
@@ -419,9 +431,9 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
   <script src="split-tool.js"></script>
-  <script src="supabase-practice.js?v=6"></script>
+  <script src="supabase-practice.js?v=7"></script>
   <script src="practice/config.js?v=6"></script>
   <script src="practice/mode.js?v=6"></script>
   <script src="practice/questions.js?v=21"></script>

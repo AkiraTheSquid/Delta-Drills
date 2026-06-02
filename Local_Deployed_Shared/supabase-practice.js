@@ -54,6 +54,14 @@ function shouldUseLocalBackend(email) {
  *   'local'    — fallback, use Pyodide + localStorage
  */
 function getPracticeMode(email) {
+  // Guests (no auth token) run fully client-side in local mode — Pyodide +
+  // localStorage, no backend calls to 401 on. Logging in reloads the page and
+  // re-detects as "backend" (see app.js setAuthState).
+  const hasToken =
+    typeof authToken === "string" ? !!authToken : !!localStorage.getItem("auth_token");
+  if (!hasToken) {
+    return "local";
+  }
   if (isOnLocalhost()) {
     return "backend";
   }
