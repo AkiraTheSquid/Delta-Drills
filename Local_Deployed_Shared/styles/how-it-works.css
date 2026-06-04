@@ -269,18 +269,20 @@
   font-size: 12.5px;
   color: var(--muted);
 }
-/* On the full-bleed Knowledge Graph tab, float the legend over the bottom-right
-   of the graph (bottom-left holds the info text). No panel/background behind it
-   — just the coloured dots + labels floating on the canvas. */
+/* On the full-bleed Knowledge Graph tab, pin the legend to the bottom of the
+   viewport so it's always visible regardless of scroll (bottom-left holds the
+   info text). Fixed positioning escapes the wrap's overflow; it only renders on
+   this tab since the parent page is display:none otherwise. No panel/background
+   behind it — just the coloured dots + labels floating over the canvas. */
 .kg-tall .hiw-graph-legend {
-  position: absolute;
-  right: 14px;
-  bottom: 12px;
+  position: fixed;
+  right: 18px;
+  bottom: 14px;
   margin: 0;
-  max-width: 48%;
+  max-width: 60%;
   justify-content: flex-end;
   background: none;
-  z-index: 5;
+  z-index: 40;
   pointer-events: none;
 }
 .cg-legend-item { display: inline-flex; align-items: center; gap: 7px; }
