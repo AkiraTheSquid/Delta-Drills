@@ -1,0 +1,324 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{parskip}
+
+\definecolor{accent}{HTML}{C42130}
+\definecolor{codebg}{HTML}{F5F5F7}
+\definecolor{linkcol}{HTML}{1A5FB4}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=linkcol,
+  pdftitle={Splitting ARENA Notebooks into Self-Contained Drills},
+  pdfauthor={Delta Drills}
+}
+
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.5em}{}
+
+\newcommand{\colab}[1]{\href{https://colab.research.google.com/github/AkiraTheSquid/Delta-Drills/blob/main/arena-procedural-drills/#1}{Open in Colab \,$\nearrow$}}
+
+\DefineVerbatimEnvironment{code}{Verbatim}{%
+  fontsize=\small,frame=single,framerule=0pt,rulecolor=\color{codebg},%
+  formatcom=\color{black},baselinestretch=0.95,xleftmargin=4pt,xrightmargin=4pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\title{\color{accent}\bfseries Splitting ARENA Notebooks into\\ Self-Contained Drills\\[4pt]
+\large\color{black}\normalfont A worked case study: where the split was genuinely hard, and how we did it anyway}
+\author{Delta Drills \quad\textbar\quad \href{https://delta-drills.vercel.app}{delta-drills.vercel.app}}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\section*{The claim under test}
+
+\begin{quote}
+\itshape ``While there are some existing efforts to address this issue (MiniARENA, CAMBRIA,
+ARBOx3), ARENA notebooks are designed to be completed in continuous segments, making it
+difficult to split and effectively run the notebooks in shorter, self-contained sessions.''
+\end{quote}
+
+The premise is correct for \emph{stock} ARENA: each notebook is a continuous narrative in
+which exercise $N$ depends on definitions, imports and fixtures established in cells
+$1\ldots N{-}1$. Pull any single exercise out and it will not run.
+
+This document is the counter-example. Delta Drills decomposed ARENA Chapter~0 into
+\textbf{2{,}538 standalone notebooks} --- 582 single-atom drills, 180 composite drills, and
+per-question solution notebooks --- where \emph{every exercise carries its own setup} and
+runs in a fresh Colab kernel with nothing executed before it. The hard part wasn't volume;
+it was the topics where the continuous narrative \emph{is} the point --- the autograd engine,
+the convolution-as-strided-view, the DCGAN decoder. Those are the examples below.
+
+\section{How a split exercise is made self-contained}
+
+The mechanism is the same in every drill, and it is what defeats ``continuous segments'':
+\textbf{each notebook re-declares the minimal scaffolding it needs, inline, inside its own
+test harness.} It never imports the rest of the chapter.
+
+A drill notebook is a fixed 6-part skeleton:
+
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{Setup cell} --- imports + \verb|t.manual_seed(0); np.random.seed(0)|. Deterministic, self-contained.
+  \item \textbf{Auth cell} --- \verb|DD_TOKEN|, \verb|DD_ATOM_IDS|, \verb|DD_SUBTOPICS|, backend URL.
+  \item \textbf{``How these atoms compose''} --- the prose that replaces the missing notebook context.
+  \item \textbf{Exercise stub} --- a single function with \verb|raise NotImplementedError|.
+  \item \textbf{Inline test harness} --- re-declares the local \verb|Recipe| / \verb|MiniTensor| /
+        \verb|back_funcs| etc.\ that the real ARENA notebook would have built over many cells, then asserts correctness.
+  \item \textbf{Completion beacon} --- POSTs to \verb|/api/practice/arena-rating|, updating BKT mastery for every atom the drill exercises.
+\end{enumerate}
+
+The crucial line is in the grader (mirrored inside every notebook's test): seed \emph{then}
+run per-exercise setup, so the learner's function executes against a known fixed state with
+no dependence on prior cells.
+
+\begin{code}
+np.random.seed(0)                       # known state
+exec(case["setup_code"], globals())     # ONLY this exercise's fixtures
+actual = eval(case["call"], globals())  # run solve() in isolation
+\end{code}
+
+\section{Examples where the split was genuinely hard --- and we did it}
+
+The autograd chapter (ARENA \texttt{[0.4] Backprop}) is the hardest case: it builds a working
+mini-autograd engine where \emph{everything depends on everything} --- a \texttt{Tensor}
+wrapper, a \texttt{Recipe} of how each value was computed, a topological sort, and a reverse
+loop that dispatches per-argument backward functions. You cannot test the reverse loop without
+the graph; you cannot build the graph without the wrapper. Stock ARENA does this across one
+long notebook. We split it into atoms that each \emph{rebuild just enough of the engine to
+stand alone.}
+
+\subsection{The full reverse pass, in one isolated cell}
+\textbf{cx25 --- seed reverse pass with \texttt{ones\_like}; pop-and-dispatch loop.} \;\colab{composites/part4/025-end-grad-seeded-backprop-loop.ipynb}
+
+This is the heart of the whole chapter. The notebook re-declares a \verb|Recipe| dataclass, a
+\verb|MiniTensor| class, and two \verb|multiply_back| functions \emph{inside the test}, so the
+reverse-mode loop can be exercised with zero upstream cells:
+
+\begin{code}
+def cx25_backprop(end_node, end_grad, sorted_graph, back_funcs):
+    if end_grad is None:
+        seed = t.ones_like(end_node.array)          # d(end.sum())/d(end)
+    else:
+        assert end_grad.array.shape == end_node.array.shape
+        seed = end_grad.array
+    grads = {id(end_node): seed}
+    for node in sorted_graph:                        # reverse-pass driver
+        grad_out = grads.pop(id(node), None)
+        if grad_out is None: continue
+        if node.recipe is None:                      # leaf -> .grad
+            node.grad = grad_out if node.grad is None else node.grad + grad_out
+            continue
+        for argnum, parent in node.recipe.parents.items():
+            back = back_funcs[(node.recipe.func, argnum)]
+            gp = back(grad_out, node.array, *node.recipe.args, **node.recipe.kwargs)
+            grads[id(parent)] = grads.get(id(parent), 0) + gp
+\end{code}
+
+Why it is hard to split, and why this split is good: the seed step and the loop step are
+\emph{inseparable} in ARENA --- the loop can't start without a seed in \texttt{grads}, and the
+seed has no purpose without the loop. Rather than fake that by stubbing the engine, the drill
+keeps both atoms in one function and supplies a tiny but \emph{real} graph in the test. The
+learner writes the exact code they'd write in ARENA.
+
+\subsection{Topological sort with cycle detection}
+\textbf{cx19 --- three-colour DFS: deps-first order \emph{and} \texttt{ValueError} on a cycle.} \;\colab{composites/part4/019-dfs-toposort-with-temp-set-cycle-detection.ipynb}
+
+A single DFS walk carries two responsibilities --- two atoms --- that ARENA never separates:
+the \texttt{perm}/\texttt{temp} colour sets (cycle detection) and the post-order append
+(deps-first ordering). The test feeds a linear chain, a diamond DAG (node must appear once),
+and a self-loop (must raise), so passing proves both atoms compose correctly.
+
+\begin{code}
+def cx19_topo_sort_with_cycle_check(root, get_children):
+    result, perm, temp = [], set(), set()
+    def visit(node):
+        nid = id(node)
+        if nid in perm: return                     # finished subtree, fine
+        if nid in temp: raise ValueError(f'cycle at {node!r}')  # back-edge
+        temp.add(nid)
+        for child in get_children(node): visit(child)
+        temp.remove(nid); perm.add(nid)
+        result.append(node)                         # deps-first append
+    visit(root); return result
+\end{code}
+
+\subsection{Wiring a brand-new op into the engine}
+\textbf{cx1 --- register a forward op so it builds a \texttt{Recipe} and back-propagates.} \;\colab{composites/part4/001-wire-new-op-into-autograd.ipynb}
+
+\textbf{cx30 --- \texttt{unbroadcast} inverts NumPy broadcasting in the backward pass.} \;\colab{composites/part4/030-unbroadcast-inverts-broadcast.ipynb}
+
+These two are the ``glue'' atoms that, in stock ARENA, are impossible to test until the entire
+engine exists. Splitting them out required re-creating a minimal differentiable-op registry in
+the test cell --- which is exactly the elegant part: the drill proves you understand the
+contract (\texttt{forward} builds a recipe; \texttt{back} replays it; gradients un-broadcast
+back to parameter shape) without the 400-line notebook around it.
+
+\section{Elegant splits: hard core problem, clean two-line drill}
+
+These are cases where the underlying ARENA exercise is conceptually heavy, but the atomised
+drill is short and sharp --- the split \emph{distils} the difficulty instead of diluting it.
+
+\subsection{Conv2d forward as an \texttt{as\_strided} view + einsum}
+\textbf{cx2 --- the whole convolution in two lines.} \;\colab{composites/part2/002-as-strided-then-einsum-conv-forward.ipynb}
+
+ARENA's convolution exercise is one of the chapter's most feared. The atomised version reduces
+it to its two load-bearing ideas --- a strided patch view and a single einsum contraction:
+
+\begin{code}
+def cx2_conv2d_via_einsum(x, w):
+    B, C_in, H, W = x.shape
+    C_out, _, KH, KW = w.shape
+    H_out, W_out = H - KH + 1, W - KW + 1
+    sB, sC, sH, sW = x.stride()
+    patches = x.as_strided(size=(B, C_in, H_out, W_out, KH, KW),
+                           stride=(sB, sC, sH, sW, sH, sW))   # spatial stride twice
+    return einops.einsum(patches, w, 'b c h w kh kw, o c kh kw -> b o h w')
+\end{code}
+
+The elegance is in the stride tuple: the spatial strides appear \emph{twice} because the same
+2-D step walks both the patch origin and the inside of each patch. The drill isolates exactly
+that insight. (Companion drill cx1 \,\colab{composites/part2/001-as-strided-view-sized-by-conv-output-shape.ipynb}
+covers deriving the output shape that sizes the view.)
+
+\subsection{Batched ray/triangle solve}
+\textbf{cx2 --- stack columns, then one batched \texttt{linalg.solve}.} \;\colab{composites/part1/002-stack-then-batched-solve.ipynb}
+
+\begin{code}
+def cx2_solve_from_columns(cols, b):
+    A = t.stack(cols, dim=-1)     # NEW trailing axis -> (K, n, n)
+    return t.linalg.solve(A, b)   # K LU factorisations fused into one BLAS call
+\end{code}
+
+Two atoms, two lines. The drill hinges on the \texttt{stack} vs \texttt{cat} choice ---
+\texttt{cat(dim=-1)} would silently give \texttt{(K, n*n)} and either crash or, worse, return
+garbage. (Companion cx4 \,\colab{composites/part1/004-patch-singular-then-batched-solve.ipynb}
+adds the singular-slice patch that real ray tracing needs.)
+
+\subsection{The DCGAN decoder, as one \texttt{nn.Module}}
+\textbf{cx4 --- latent $z \to$ Linear projection $\to$ reshape $\to$ ConvT/BN/ReLU upsample.} \;\colab{composites/part5/004-latent-projection-then-convt-block.ipynb}
+
+\begin{code}
+class Decoder(nn.Module):
+    def __init__(self, latent_dim, base_channels, base_hw):
+        super().__init__()
+        self.base_c, self.base_hw = base_channels, base_hw
+        self.proj = nn.Linear(latent_dim, base_channels * base_hw * base_hw)  # bare, no act
+        self.block = nn.Sequential(
+            nn.ConvTranspose2d(base_channels, base_channels // 2, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(base_channels // 2),
+            nn.ReLU(inplace=True))
+\end{code}
+
+A generative-model component that ordinarily only makes sense inside a full training notebook
+becomes a self-contained module-construction drill. (Companion cx1
+\,\colab{composites/part5/001-dcgan-g-block-as-nn-module-subclass.ipynb} drills the
+ConvT/BN/activation block on its own.)
+
+\subsection{Optimizer internals}
+\textbf{cx2 --- momentum SGD \texttt{\_\_init\_\_}: materialise params \emph{and} per-param velocity buffer.} \;\colab{composites/part3/002-sgd-init-with-velocity-buffers.ipynb}
+
+\textbf{cx4 --- update the velocity buffer in place via \texttt{copy\_}.} \;\colab{composites/part3/004-velocity-buffer-update-via-copy.ipynb}
+
+The optimizer loop is another ARENA exercise that only ``works'' once the whole training script
+exists. These drills isolate the two subtle bits --- buffer allocation at init, and in-place
+update --- each runnable against a couple of throwaway tensors.
+
+\section{Full example index}
+
+Every link opens a live Colab notebook from the \texttt{AkiraTheSquid/Delta-Drills} repo
+(\texttt{main} branch). Signed-in students get their own fork via the account GitHub-username
+field, so Colab ``Save a copy in GitHub'' persists their work.
+
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{@{}p{2.1cm}p{8.1cm}p{2.4cm}@{}}
+\toprule
+\textbf{Domain} & \textbf{Drill} & \textbf{Link} \\
+\midrule
+\endhead
+Autograd & cx25 seed + pop-and-dispatch reverse pass & \colab{composites/part4/025-end-grad-seeded-backprop-loop.ipynb} \\
+Autograd & cx19 DFS toposort + cycle detection & \colab{composites/part4/019-dfs-toposort-with-temp-set-cycle-detection.ipynb} \\
+Autograd & cx1 wire a new op into autograd & \colab{composites/part4/001-wire-new-op-into-autograd.ipynb} \\
+Autograd & cx30 unbroadcast inverts broadcast & \colab{composites/part4/030-unbroadcast-inverts-broadcast.ipynb} \\
+CNN & cx2 Conv2d via as\_strided + einsum & \colab{composites/part2/002-as-strided-then-einsum-conv-forward.ipynb} \\
+CNN & cx1 as\_strided view sized by conv output shape & \colab{composites/part2/001-as-strided-view-sized-by-conv-output-shape.ipynb} \\
+Ray tracing & cx2 stack columns then batched solve & \colab{composites/part1/002-stack-then-batched-solve.ipynb} \\
+Ray tracing & cx4 patch singular slices then solve & \colab{composites/part1/004-patch-singular-then-batched-solve.ipynb} \\
+Optimizers & cx2 momentum SGD init + velocity buffers & \colab{composites/part3/002-sgd-init-with-velocity-buffers.ipynb} \\
+Optimizers & cx4 velocity buffer update via copy\_ & \colab{composites/part3/004-velocity-buffer-update-via-copy.ipynb} \\
+VAE/GAN & cx4 latent projection then ConvT block & \colab{composites/part5/004-latent-projection-then-convt-block.ipynb} \\
+VAE/GAN & cx1 DCGAN G block as nn.Module subclass & \colab{composites/part5/001-dcgan-g-block-as-nn-module-subclass.ipynb} \\
+Einops & cx2 outer-product two 1-D grids via repeat & \colab{composites/part0/002-outer-product-grids-via-repeat.ipynb} \\
+\bottomrule
+\end{longtable}
+
+The full library is browsable in-app at \href{https://delta-drills.vercel.app}{delta-drills.vercel.app}
+(Practice tab) and in the repo under \texttt{arena-procedural-drills/}.
+
+\section{Method: how the splits were extracted}
+
+The split was a pipeline, not a manual port. Each stage \emph{recycled the artifact built for
+testing the previous stage} --- which is what made it cheap to scale to thousands of notebooks.
+
+\subsection*{1. Atomise the curriculum}
+ARENA's exercises were decomposed into a concept graph of \textbf{207 drillable atoms} (e.g.\
+\texttt{as-strided-windowing}, \texttt{dfs-three-set-toposort}, \texttt{end-grad-default-ones-like}),
+with prerequisite and encompassing edges. Each atom is a single testable skill. Composite
+drills then exercise 2--3 atoms \emph{together}, because some atoms (the seed and the reverse
+loop) are inseparable in real code.
+
+\subsection*{2. Author standalone scaffolding per atom}
+For each atom a notebook was generated carrying its own imports, deterministic seed, a function
+stub, and --- critically --- an \textbf{inline test harness that rebuilds the minimal engine}
+(\texttt{Recipe}, \texttt{MiniTensor}, \texttt{back\_funcs}, helper graph nodes) the exercise
+needs. This is the step that breaks ``continuous segments'': the context that ARENA accumulates
+across cells is re-created locally, in miniature, in one cell.
+
+\subsection*{3. Recycle the grader as the validator}
+The same harness that scores a student's submission at runtime
+(\texttt{code\_runner.run\_function\_tests}: seed $\to$ run \texttt{setup\_code} $\to$ call
+\texttt{solve()}) was reused at \emph{build time} to validate every authored solution. A drill
+ships only if the reference solution passes its own test under the live grader. The test
+fixture, the validation oracle, and the production grader are one object --- not three.
+
+This recycling surfaced a real, load-bearing quirk: the grader seeds the RNG \emph{then} runs
+\texttt{setup\_code} (which consumes the stream), so a correct \texttt{solve()} must
+\emph{reseed internally} before drawing. Because the validator \emph{is} the grader, every
+authored solution was forced to obey the same contract students face --- no drift between
+``passes in authoring'' and ``passes in the app''.
+
+\subsection*{4. Build solution + hint siblings from the same source}
+For each problem notebook a \texttt{.solution.ipynb} sibling was generated by lifting the code
+out of the \verb|<details><summary>Show solution</summary>| block into the
+\texttt{NotImplementedError} stub (761/762 drills), then re-running the grader to confirm the
+solution notebook itself executes clean. Per-drill nudge hints were authored and validated the
+same way. The ``Show answer'' / ``Show hint'' buttons in the app point at these siblings,
+routed to the student's Colab fork.
+
+\subsection*{5. Wire completion back to mastery}
+Each notebook ends with a beacon POSTing to the backend, which updates Bayesian Knowledge
+Tracing mastery for every atom the drill exercises and unlocks downstream atoms through the
+prerequisite graph. The split isn't just \emph{runnable} in a short session --- it
+\emph{closes the loop} on the adaptive engine.
+
+\section*{Verdict}
+
+The claim's premise holds for stock ARENA; its implied limitation does not hold against this
+system. Delta Drills shipped the self-contained-session split the claim treats as the open
+problem --- including on the chapters (autograd, convolution, DCGAN) where the continuous
+narrative is hardest to break --- with reproducible per-exercise setup, isolated grading reused
+as the build-time validator, and mastery wired back through the concept graph. The honest
+framing: ARENA is hard to split \emph{by default}; we solved it with atomisation plus
+self-contained scaffolding, not by wishing the dependency away.
+
+\end{document}
