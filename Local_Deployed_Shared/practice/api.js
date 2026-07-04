@@ -354,4 +354,43 @@ json.dumps(_delta_results)
     emitPracticeStateChanged();
     return;
   },
+
+  // Per-problem content-quality flag (broken / unclear / wrong_image / good).
+  // Best-effort and non-blocking: failures never interrupt practice. In
+  // backend mode posts to the sibling log endpoint; otherwise (and on any
+  // backend error) falls back to a localStorage queue so nothing is lost.
+  async reportProblem(questionId, tag, note, correct) {
+    const entry = {
+      question_id: questionId,
+      tag,
+      note: note || "",
+      correct: typeof correct === "boolean" ? correct : null,
+    };
+    if (practiceMode === "backend") {
+      try {
+        const res = await apiFetch("/api/practice/problem-feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(entry),
+        });
+        if (res.status === 401) {
+          handleExpiredToken();
+        } else if (res.ok) {
+          return { success: true };
+        }
+      } catch (_) {
+        /* fall through to local queue */
+      }
+    }
+    // Local fallback queue — survives offline / non-backend modes.
+    try {
+      const key = "problem_feedback_queue";
+      const queue = JSON.parse(localStorage.getItem(key) || "[]");
+      queue.push({ ...entry, timestamp: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(queue));
+    } catch (_) {
+      /* ignore storage errors */
+    }
+    return { success: true, queuedLocally: true };
+  },
 };

@@ -46,9 +46,17 @@ function renderQuestionBody(q) {
       return `<pre class="question-code-block"><code>${_escapeHtml(p.text)}</code></pre>`;
     }
     // Escape HTML, then turn inline `backtick` spans into <code>. Math ($…$) is
-    // left untouched for KaTeX auto-render below.
-    const escaped = _escapeHtml(p.text).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
-    return `<div class="question-prose">${escaped}</div>`;
+    // left untouched for KaTeX auto-render below. Blank lines split paragraphs
+    // (each its own div — .question-prose has no pre-wrap, so raw \n collapses).
+    return p.text
+      .split(/\n{2,}/)
+      .map((para) => para.trim())
+      .filter(Boolean)
+      .map((para) => {
+        const escaped = _escapeHtml(para).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+        return `<div class="question-prose">${escaped}</div>`;
+      })
+      .join("");
   }).join("");
 
   questionText.innerHTML = html || _escapeHtml(raw);
@@ -122,10 +130,12 @@ function renderQuestion(q, count) {
   const coldStart = isCalibrationQuestion(q);
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
   if (coldStart && csIndex) {
-    coldStartLabel.textContent = `Calibrating — ${csIndex} of 3`;
+    // Calibration is PER SKILL, not global — say so, or "1 of 3" on overall
+    // Question 8 reads as a stuck counter (tester hit exactly this).
+    coldStartLabel.textContent = `Calibrating “${q.subtopic}” — ${csIndex} of 3`;
     if (coldStartNote) {
       coldStartNote.textContent =
-        "First 3 questions use fixed difficulties to calibrate your level. The next difficulty is preset during calibration, so the usual accuracy bar is hidden until calibration finishes.";
+        `Each skill starts with 3 questions at fixed difficulties to find your level, so this counter restarts whenever a new skill (like “${q.subtopic}”) first comes up. The accuracy bar stays hidden until this skill finishes calibrating.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {

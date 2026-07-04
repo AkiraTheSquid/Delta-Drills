@@ -790,6 +790,7 @@
 
 /* Question body: separate the prose prompt from any starter/code block. */
 .question-prose { line-height: 1.6; }
+.question-prose + .question-prose { margin-top: 10px; }
 .question-prose + .question-code-block,
 .question-code-block + .question-prose { margin-top: 10px; }
 .question-code-block {

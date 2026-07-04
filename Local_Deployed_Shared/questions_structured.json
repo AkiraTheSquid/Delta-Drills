@@ -1888,12 +1888,12 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.linspace(-3, 3, 7)\nZ = Z.clip(min=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\nZ = np.linspace(-3, 3, 7)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.linspace(-3, 3, 7)\nZ = Z.clip(min=0)",
+          "setup_code": "Z = np.linspace(-3, 3, 7)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z.clip(min=0)"
         }
       ],
       "submission_mode": "function",
@@ -6444,11 +6444,12 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Nicolas P. Rougier\nfaces = np.random.randint(0,100,(10,3))\nF = np.roll(faces.repeat(2,axis=1),-1,axis=1)\nF = F.reshape(len(F)*3,2)\nF = np.sort(F,axis=1)\nG = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )\nG = np.unique(G)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\n# Author: Nicolas P. Rougier\nfaces = np.random.randint(0,100,(10,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Nicolas P. Rougier\nfaces = np.random.randint(0,100,(10,3))\nF = np.roll(faces.repeat(2,axis=1),-1,axis=1)\nF = F.reshape(len(F)*3,2)\nF = np.sort(F,axis=1)\nG = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )\nG = np.unique(G)",
+          "setup_code": "faces = np.random.randint(0,100,(10,3))",
           "call": "solve()",
+          "expected_setup_code": "F = np.roll(faces.repeat(2,axis=1),-1,axis=1)\nF = F.reshape(len(F)*3,2)\nF = np.sort(F,axis=1)\nG = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )\nG = np.unique(G)",
           "expected_expr": "G"
         }
       ],
@@ -12947,7 +12948,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Conv2d output size: given input H=W=32, kernel=5, stride=1, padding=0, compute the spatial output side using floor((H + 2P - K)/S + 1). Print as int.",
+      "question_text": "A convolution slides a $K \\times K$ kernel with stride $S$ over an input padded by $P$ on each side. For an input of side $H$, the output side is $\\lfloor (H + 2P - K)/S \\rfloor + 1$.\n\nThe starter defines `H, K, S, P` for a 32×32 input, kernel 5, stride 1, no padding. Compute the output side with torch-free integer arithmetic and print it as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -12981,7 +12982,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Conv2d output size with stride and padding: input H=W=224, kernel=7, stride=2, padding=3. Compute output side using floor((H+2P-K)/S+1). Print as int.",
+      "question_text": "Conv output-size arithmetic, one step up: a 224×224 input goes through a conv with kernel 7, stride 2, padding 3 (`H, K, S, P` in the starter). Work out the spatial output side — recall the output-size formula from memory rather than looking it up. Print the result as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13015,7 +13016,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Verify the output shape of a Conv2d empirically. Input shape (1, 3, 32, 32), kernel=3, stride=2, padding=1, out_channels=8. Print the output shape as tuple.",
+      "question_text": "Shape arithmetic is easy to get subtly wrong, so verify it empirically. The starter builds `x` of shape (1, 3, 32, 32) and `conv = nn.Conv2d(3, 8, kernel_size=3, stride=2, padding=1)`. Predict the output shape, then run the input through the conv and print the ACTUAL output shape as a plain tuple (wrap the shape in `tuple(...)` for the expected format).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13049,7 +13050,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "How many input multiply-accumulates per output position for a Conv2d with in_channels=C, kernel=K? Print the formula's value for C=64, K=3 (use C*K*K).",
+      "question_text": "Each output position of a convolution is one dot product between the kernel and an input patch. For `in_channels=C` and a $K \\times K$ kernel, how many multiply-accumulates does ONE output position cost? The starter defines `C = 64, K = 3`. Compute the count and print it as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
@@ -13083,7 +13084,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Same-padding rule for odd kernel: given kernel=5 and stride=1, what padding P keeps output side equal to input side? Use P = (K-1)//2. Print as int.",
+      "question_text": "“Same” padding: with stride 1 and an odd kernel of size $K$, one particular padding $P$ keeps the output side equal to the input side. Derive it from $K$ (don't just recall the number) for the starter's `K = 5`, and print it as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13117,7 +13118,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Pad a 1-D tensor x=tensor([1,2,3,4]) with one zero on each side using new_full to allocate the padded buffer then copy in. Print the result tensor.",
+      "question_text": "Zero-pad a 1-D tensor by hand: from `x = tensor([1, 2, 3, 4])`, produce the length-6 tensor with one 0 on each side. Allocate the padded buffer with `x.new_full` (which preserves `x`'s dtype and device — that's why it beats `torch.zeros` here), then copy `x` into the middle with slice assignment. Print the padded tensor.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13151,7 +13152,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Print the weight shape of a nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3). Expected order is (out_channels, in_channels, kH, kW).",
+      "question_text": "The starter builds `conv = nn.Conv2d(3, 16, kernel_size=3)`. In what ORDER does PyTorch lay out a Conv2d weight's four dimensions? Predict it, then check yourself: print the weight's shape as a plain tuple.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13185,7 +13186,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Create nn.Conv2d(3, 16, kernel_size=3, bias=False) and confirm bias is None. Print 'bias is None: True' or False.",
+      "question_text": "Conv layers immediately followed by BatchNorm are usually built with `bias=False`. The starter creates such a conv. Confirm the bias really is absent: check the module's `bias` attribute and print exactly `bias is None: True` or `bias is None: False` (an f-string works well).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13219,7 +13220,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Why is bias=False used when a Conv2d is immediately followed by BatchNorm2d? Build the pair `nn.Sequential(nn.Conv2d(3,16,3,bias=False), nn.BatchNorm2d(16))` and print the number of learnable parameters using sum(p.numel() for p in seq.parameters()).",
+      "question_text": "Why is `bias=False` safe when a Conv2d feeds straight into BatchNorm2d? Because BatchNorm's own per-channel shift makes a conv bias redundant. The starter builds the pair as `seq`. Count its learnable parameters — the conv weight plus BatchNorm's weight and bias — and print the total as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13253,7 +13254,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Use torch.nn.functional.conv2d to apply a single 3x3 averaging kernel to a (1,1,4,4) ones input. Print the output tensor (use kernel = torch.ones(1,1,3,3)/9).",
+      "question_text": "Apply an averaging filter with the FUNCTIONAL conv API (no module). The starter defines a (1,1,4,4) ones input `x` and a 3×3 averaging kernel `k` (every entry 1/9). Convolve `x` with `k` using `torch.nn.functional.conv2d` and print the output tensor directly. Predict the output's spatial size first.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13321,7 +13322,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Print the parameter count of nn.Conv2d(64, 128, kernel_size=3, padding=1) with default bias=True. Formula: out_ch*(in_ch*K*K) + out_ch.",
+      "question_text": "How many learnable parameters does `nn.Conv2d(64, 128, kernel_size=3, padding=1)` have with the default `bias=True`? Work it out from the shapes of the layer's weight and bias (the starter defines `C_in, C_out, K`). Print the count as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
@@ -13355,7 +13356,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Apply nn.MaxPool2d(kernel_size=2, stride=2) to an input of shape (1, 4, 8, 8). Print the output shape as tuple.",
+      "question_text": "Max-pooling with kernel 2 and stride 2 halves each spatial side. The starter defines `x` of shape (1, 4, 8, 8) and the pool module. Apply it and print the output shape as a plain tuple — note which dims changed and which didn't.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13389,7 +13390,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Global average pool a (1, 64, 7, 7) feature map down to (1, 64) using x.mean(dim=(2,3)). Print the resulting shape as tuple.",
+      "question_text": "Global average pooling collapses each channel's spatial map to a single number. Reduce the starter's (1, 64, 7, 7) feature map `x` to shape (1, 64) by averaging over the spatial dimensions — pick the right `dim` argument yourself. Print the resulting shape as a plain tuple.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13423,7 +13424,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Flatten the output of a conv stack before a linear head. Given x of shape (8, 16, 4, 4), use nn.Flatten() (default start_dim=1) and print the flattened shape.",
+      "question_text": "Between a conv stack and a linear head, activations of shape (B, C, H, W) must become (B, C·H·W). Apply `nn.Flatten()` (default `start_dim=1`) to the starter's `x` of shape (8, 16, 4, 4) and print the flattened shape as a plain tuple. Why does the default leave dim 0 alone?",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13457,7 +13458,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Print the number of learnable parameters in nn.BatchNorm2d(num_features=32). Expected: 2 * num_features (weight + bias).",
+      "question_text": "How many LEARNABLE parameters does `nn.BatchNorm2d(num_features=32)` carry? Think about which per-channel vectors are learnable and which are running buffers (buffers don't count), then verify by counting parameters programmatically on the starter's `bn`. Print the total as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13491,7 +13492,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "BatchNorm2d keeps running mean/var as buffers, not parameters. Print the names of all buffers on nn.BatchNorm2d(8) using list(dict(bn.named_buffers()).keys()).",
+      "question_text": "BatchNorm tracks its running statistics as BUFFERS, not parameters — so they get no gradients and don't appear in `.parameters()`. Using the starter's `bn = nn.BatchNorm2d(8)`, collect the NAMES of all registered buffers (the module has an API for iterating buffers by name) and print them as a Python list of strings.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13525,7 +13526,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Toggle a BatchNorm module to eval mode and confirm running stats are used instead of batch stats. After bn.eval(), print bn.training.",
+      "question_text": "Modules record train/eval state on a boolean flag. The starter puts a BatchNorm2d into eval mode — in eval mode it normalizes with running statistics instead of batch statistics. Print the value of the module attribute that records this mode.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13559,7 +13560,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Subclass nn.Module with a single nn.Linear(4, 2) inside __init__. Print the number of learnable parameters using sum(p.numel() for p in model.parameters()).",
+      "question_text": "Subclass `nn.Module`: in `__init__`, call `super().__init__()` and register a single `nn.Linear(4, 2)` as an attribute, and give the class a `forward` that applies it. Instantiate it, predict how many learnable scalars the linear contributes (weight AND bias), then print the parameter count as an int.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -13587,7 +13588,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Wrap a raw torch.randn(3, 4) tensor as a learnable parameter on a Module using nn.Parameter. Print whether it appears in .parameters() as `param_count: 1`.",
+      "question_text": "A raw tensor stored as a Module attribute is INVISIBLE to `.parameters()`. Inside a Module subclass's `__init__`, wrap `torch.randn(3, 4)` in the class that registers it as learnable, then print exactly `param_count: N` where N counts the module's parameters (an f-string over the count).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -13615,17 +13616,17 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Print the canonical 4-line training step: zero_grad, forward+loss, backward, optimizer.step. Use single-quoted strings and `; ` separators. Order matters.",
+      "question_text": "From memory, write the canonical training step as a single printed string: zero the grads, compute the loss from the forward pass, backpropagate, step the optimizer. Use exactly the four calls `opt.zero_grad()`, `loss = loss_fn(model(x), y)`, `loss.backward()`, `opt.step()`, joined by `; ` in the right ORDER — the order is the drill.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nprint('opt.zero_grad()\nloss = loss_fn(model(x), y)\nloss.backward()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "def solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "print('opt.zero_grad()\nloss = loss_fn(model(x), y)\nloss.backward()",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "opt.step()')"
+          "expected_expr": "'opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()'"
         }
       ],
       "submission_mode": "function",
@@ -13649,15 +13650,15 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Use torch.inference_mode() to disable autograd for evaluation. Inside the context, print whether the result of torch.ones(3).sum() requires grad.",
+      "question_text": "Evaluation code shouldn't build autograd graphs. Inside the starter's `torch.inference_mode()` context, compute the sum of `torch.ones(3)` and print whether the result requires grad. (Compare: outside the context, the same op on a grad-requiring input WOULD track.)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nimport torch\nwith torch.inference_mode():\ny = torch.ones(3).sum()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\nimport torch\nwith torch.inference_mode():\n    y = torch.ones(3).sum()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "import torch\nwith torch.inference_mode():\ny = torch.ones(3).sum()",
+          "setup_code": "import torch\nwith torch.inference_mode():\n    y = torch.ones(3).sum()",
           "call": "solve()",
           "expected_expr": "y.requires_grad"
         }
@@ -13683,15 +13684,15 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Freeze all parameters of a model for feature-extraction fine-tuning. After `for p in model.parameters(): p.requires_grad_(False)`, print the count of parameters still requiring grad.",
+      "question_text": "For feature extraction you freeze a pretrained backbone: the starter turns off `requires_grad` on every parameter of a small model. Count how many parameters still require grad — iterate `model.parameters()` yourself and count, don't guess — and print the count as an int.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\np.requires_grad_(False)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\nimport torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\n    p.requires_grad_(False)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "import torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\np.requires_grad_(False)",
+          "setup_code": "import torch.nn as nn\nmodel = nn.Linear(4, 2)\nfor p in model.parameters():\n    p.requires_grad_(False)",
           "call": "solve()",
           "expected_expr": "sum(1 for p in model.parameters() if p.requires_grad)"
         }
@@ -13717,7 +13718,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Distinguish .train() vs .eval() modes on a Module. Build nn.Sequential(nn.Linear(4,2), nn.Dropout(0.5)), put in eval mode, then print model.training.",
+      "question_text": "Dropout behaves differently in train vs eval mode, so getting the mode right matters. The starter builds a `Sequential` containing a Dropout and calls `model.eval()`. Print the module flag that records which mode the model is in (the same flag `.train()` and `.eval()` flip).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
@@ -13751,12 +13752,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using torch, build the fixed 2x3 float tensor x = [[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]]. Use torch.amax to reduce over dim=1 (the columns), so you get the max of each row. Print the result with print(result.tolist()).",
+      "question_text": "`x` (starter) is a fixed 2×3 float tensor. Reduce it with `torch.amax` to the maximum of each ROW — one value per row, so think about which `dim` gets reduced away. Print the result with print(result.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: use torch.amax to reduce x over dim=1 (max of each row)\nresult = None  # TODO: result = x.amax(dim=1)\nprint(result.tolist())",
+      "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: complete this step (see the problem statement above)\nresult = None  # TODO: fill in result\nprint(result.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nresult = x.amax(dim=1)\nprint(result.tolist())",
@@ -13779,12 +13780,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, build the fixed 2x3 float tensor x = [[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]]. Unlike .max(dim=...), which returns a (values, indices) tuple, .amax returns only the values. Compute vals = x.amax(dim=0) (max down each column). On the first line print vals.tolist(); on the second line print the type NAME of the object returned by x.max(dim=0) using print(type(x.max(dim=0)).__name__).",
+      "question_text": "Unlike `.max(dim=...)`, which returns a (values, indices) named tuple, `.amax(dim=...)` returns just the values tensor. On the starter's 2×3 tensor `x`, compute `vals` — the max down each COLUMN — with `.amax`, choosing the dim yourself. The starter already prints `vals.tolist()` and then the type NAME of what `x.max(dim=0)` returns.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: compute vals = max down each column with x.amax(dim=0)\nvals = None  # TODO: vals = x.amax(dim=0)\nprint(vals.tolist())\nprint(type(x.max(dim=0)).__name__)",
+      "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: compute vals\nvals = None  # TODO: fill in vals\nprint(vals.tolist())\nprint(type(x.max(dim=0)).__name__)",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nvals = x.amax(dim=0)\nprint(vals.tolist())\nprint(type(x.max(dim=0)).__name__)",
@@ -13807,12 +13808,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, implement a 2x2 max-pool with stride 2 over a single 4x4 feature map using amax over the (kh, kw) window dims. Build the fixed tensor of shape (1,1,4,4): x = [[[[1.,7.,2.,0.],[3.,4.,6.,5.],[8.,1.,9.,2.],[0.,4.,3.,7.]]]]. Extract 2x2 windows with x.unfold(2,2,2).unfold(3,2,2) (giving shape (1,1,2,2,2,2)), then take amax over dim=(4,5). Print the pooled result with print(result.tolist()).",
+      "question_text": "Implement a 2×2, stride-2 max-pool by hand on the starter's (1,1,4,4) tensor. Two steps: carve the two spatial dims into 2×2 windows with `.unfold` (called once per spatial dim — mind its size and step arguments), then reduce BOTH window dims away with a single `.amax` over the two trailing dims. Print the pooled result with print(result.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\n# TODO: extract 2x2 windows with x.unfold(2, 2, 2).unfold(3, 2, 2)\n# then take amax over dim=(4, 5) to max-pool\nresult = None  # TODO: result = x.unfold(2,2,2).unfold(3,2,2).amax(dim=(4,5))\nprint(result.tolist())",
+      "starter_code": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\n# TODO: extract 2x2 windows with .unfold, then reduce the window dims away with .amax\nresult = None  # TODO: fill in result\nprint(result.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\nx = x.unfold(2, 2, 2).unfold(3, 2, 2)\nresult = x.amax(dim=(4, 5))\nprint(result.tolist())",
@@ -13835,12 +13836,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using PyTorch, create a 2x3 tensor with torch.empty, then fill it in place using torch.nn.init.constant_ with value 0.25. Print the resulting tensor with print(w.tolist()).",
+      "question_text": "The in-place initializers in `torch.nn.init` end with an underscore and mutate the tensor you hand them. Fill the starter's empty 2×3 tensor `w` with the constant 0.25 using the appropriate init function. Print with print(w.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nw = torch.empty(2, 3)\n# TODO: fill w in place using torch.nn.init.constant_ with value 0.25\nraise NotImplementedError()  # TODO: torch.nn.init.constant_(w, 0.25)\nprint(w.tolist())",
+      "starter_code": "import torch\nw = torch.empty(2, 3)\n# TODO: fill w in place\nraise NotImplementedError()  # TODO: complete this step\nprint(w.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nw = torch.empty(2, 3)\ntorch.nn.init.constant_(w, 0.25)\nprint(w.tolist())",
@@ -13863,12 +13864,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using PyTorch, set torch.manual_seed(0), create a length-5 tensor with torch.empty, then apply torch.nn.init.normal_ in place with mean=2.0 and std=0.0. (A zero standard deviation makes every sampled value exactly equal to the mean.) Print the result with print(w.tolist()).",
+      "question_text": "Sampling initializers take distribution parameters. Fill the starter's empty length-5 tensor in place from a normal distribution with mean 2.0 and std 0.0 — a zero standard deviation makes every draw exactly the mean, which is why this output is deterministic. Print with print(w.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(5)\n# TODO: fill w in place with torch.nn.init.normal_(mean=2.0, std=0.0)\nraise NotImplementedError()  # TODO: torch.nn.init.normal_(w, mean=2.0, std=0.0)\nprint(w.tolist())",
+      "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(5)\n# TODO: fill w in place\nraise NotImplementedError()  # TODO: complete this step\nprint(w.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\ntorch.manual_seed(0)\nw = torch.empty(5)\ntorch.nn.init.normal_(w, mean=2.0, std=0.0)\nprint(w.tolist())",
@@ -13891,12 +13892,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using PyTorch, set torch.manual_seed(0). Create a length-10000 weight tensor with torch.empty and initialize it in place with torch.nn.init.normal_(mean=0.0, std=1.0). Create a length-4 bias tensor with torch.empty and initialize it in place with torch.nn.init.constant_(value=0.0). Print, space-separated on one line: round(float(w.mean()),2), then round(float(w.std()),2), then b.tolist(). Use a single print statement: print(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist()).",
+      "question_text": "Initialize two tensors in place with `torch.nn.init`: `w` (length 10000) from a standard normal — mean 0, std 1 — and `b` (length 4) to the constant 0. With 10k samples the empirical mean and std should land close to the distribution parameters; the starter's print line reports both (rounded to 2 decimals) plus `b.tolist()`.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(10000)\nb = torch.empty(4)\n# TODO: init w in place with torch.nn.init.normal_(mean=0.0, std=1.0)\n# TODO: init b in place with torch.nn.init.constant_(value=0.0)\nraise NotImplementedError()  # TODO: initialize w and b as described\nprint(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())",
+      "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(10000)\nb = torch.empty(4)\n# TODO: init w in place\n# TODO: init b in place\nraise NotImplementedError()  # TODO: initialize w and b as described\nprint(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\ntorch.manual_seed(0)\nw = torch.empty(10000)\ntorch.nn.init.normal_(w, mean=0.0, std=1.0)\nb = torch.empty(4)\ntorch.nn.init.constant_(b, 0.0)\nprint(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())",
@@ -13919,12 +13920,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using PyTorch autograd, create x = torch.tensor([2.0, -3.0, 4.0], requires_grad=True). Compute out = x*x*x (i.e. x cubed elementwise), then call out.backward with grad_out = torch.tensor([1.0, 1.0, 1.0]). The chain rule gives dL/dx = grad_out * d(out)/dx where d(out)/dx = 3*x^2. Print x.grad as a Python list using print(x.grad.tolist()).",
+      "question_text": "Backprop through a cube. The starter's `x` requires grad. Compute `out` as x cubed elementwise, then backprop the starter's all-ones upstream gradient through it by passing that gradient to `out.backward(...)`. Before printing, predict `x.grad`: what is the derivative of $x^3$, evaluated at 2, −3, and 4? Print with print(x.grad.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\n# TODO: compute out = x cubed elementwise, then out.backward(grad_out)\nout = None  # TODO: out = x * x * x\nout.backward(grad_out)\nprint(x.grad.tolist())",
+      "starter_code": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\n# TODO: compute out\nout = None  # TODO: fill in out\nout.backward(grad_out)\nprint(x.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\nout = x * x * x  # out = x^3, d(out)/dx = 3x^2\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\nout.backward(grad_out)\nprint(x.grad.tolist())",
@@ -13947,12 +13948,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Manually implement the backward pass through a sigmoid activation using numpy (no autograd). Let x = np.array([0.0, 1.0, -1.0]) and y = sigmoid(x) = 1/(1+exp(-x)). The local Jacobian of sigmoid is dy/dx = y*(1-y). Given incoming gradient grad_out = np.array([2.0, 0.5, 1.0]), apply the chain rule: dx = grad_out * (y*(1-y)). Print the result as a list of values each rounded to 4 decimals, using print([round(float(v), 4) for v in dx]).",
+      "question_text": "Implement a sigmoid backward pass by hand in numpy — no autograd. Forward: $y = \\sigma(x) = 1/(1+e^{-x})$ for the starter's `x`. For the backward pass you need sigmoid's local derivative $dy/dx$ — express it in terms of $y$ itself (a classic identity worth memorizing), then apply the chain rule to the starter's incoming gradient `grad_out` to get `dx`. Print with print([round(float(v), 4) for v in dx]).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ngrad_out = np.array([2.0, 0.5, 1.0])\n# TODO: y = sigmoid(x) = 1/(1+exp(-x)); local jacobian is y*(1-y)\n# TODO: apply chain rule dx = grad_out * (y*(1-y))\ndx = None  # TODO: compute dx\nprint([round(float(v), 4) for v in dx])",
+      "starter_code": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ngrad_out = np.array([2.0, 0.5, 1.0])\n# TODO: implement the sigmoid backward pass\ndx = None  # TODO: compute dx\nprint([round(float(v), 4) for v in dx])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ny = 1.0 / (1.0 + np.exp(-x))\ngrad_out = np.array([2.0, 0.5, 1.0])\ndx = grad_out * (y * (1.0 - y))\nprint([round(float(v), 4) for v in dx])",
@@ -13975,12 +13976,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Manually backpropagate through a two-stage chain (linear then ReLU) using numpy. Let W = np.array([[1.0, -2.0], [0.5, 3.0]]) and x = np.array([2.0, -1.0]). Forward: z = W @ x, then out = relu(z). Given grad_out = np.array([1.0, 1.0]) flowing into out, apply the chain rule stage by stage: first multiply by ReLU's local Jacobian (1 where z>0 else 0) to get grad_z, then by the linear layer's local Jacobian (W transpose) to get grad_x = W.T @ grad_z. Print grad_x as a list of values each rounded to 4 decimals, using print([round(float(v), 4) for v in grad_x]).",
+      "question_text": "Backprop by hand through a two-stage chain: linear, then ReLU. The starter gives `W`, `x`, and the upstream gradient `grad_out`. Forward: $z = Wx$, then out = relu($z$). Now walk the chain rule backwards one stage at a time: what is ReLU's local Jacobian (a mask determined by $z$)? What does the linear stage contribute (which transpose of `W`, applied to which gradient)? Compute `grad_x` and print with print([round(float(v), 4) for v in grad_x]).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\nW = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\ngrad_out = np.array([1.0, 1.0])\n# TODO: forward z = W @ x; backward stage by stage:\n#   grad_z = grad_out * relu_mask (1 where z>0 else 0)\n#   grad_x = W.T @ grad_z\ngrad_x = None  # TODO: compute grad_x\nprint([round(float(v), 4) for v in grad_x])",
+      "starter_code": "import numpy as np\nW = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\ngrad_out = np.array([1.0, 1.0])\n# TODO: do the forward pass, then backprop stage by stage through the ReLU and the matmul\ngrad_x = None  # TODO: compute grad_x\nprint([round(float(v), 4) for v in grad_x])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\nW = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\nz = W @ x\nrelu_mask = (z > 0).astype(float)\ngrad_out = np.array([1.0, 1.0])\ngrad_z = grad_out * relu_mask\ngrad_x = W.T @ grad_z\nprint([round(float(v), 4) for v in grad_x])",
@@ -14003,12 +14004,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Logits are pre-softmax real-valued scores, and cross-entropy is computed directly from logits (not from probabilities) for numerical stability. Using PyTorch, build the logits tensor [[2.0, 0.5, -1.0], [0.1, 1.2, 3.0]] (a batch of 2 examples over 3 classes) and the integer class targets [0, 2]. Compute the mean cross-entropy loss with torch.nn.functional.cross_entropy (which expects raw logits, not softmax probabilities). Print round(float(loss), 4).",
+      "question_text": "Cross-entropy in PyTorch is computed straight from LOGITS (pre-softmax scores) — you never softmax first. The starter gives a 2×3 logits batch and integer class targets. Compute the mean cross-entropy with the right `torch.nn.functional` call and print round(float(loss), 4).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0],\n                       [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\n# TODO: compute mean cross-entropy with F.cross_entropy (expects raw logits)\nloss = None  # TODO: loss = F.cross_entropy(logits, targets)\nprint(round(float(loss), 4))",
+      "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0],\n                       [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\n# TODO: compute mean cross-entropy\nloss = None  # TODO: fill in loss\nprint(round(float(loss), 4))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0],\n                       [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\nloss = F.cross_entropy(logits, targets)\nprint(round(float(loss), 4))",
@@ -14031,12 +14032,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Show that cross-entropy on a single example equals the negative log-softmax of the logit at the target index, and that this matches F.cross_entropy. Use the logits [3.0, 1.0, 0.2, -2.0] with target class 0. Compute (a) the manual value -log_softmax(logits)[target] using F.log_softmax over dim 0, and (b) F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0)). Print [round(float(a), 4), round(float(b), 4)] as a list (they should be equal).",
+      "question_text": "Show the identity: single-example cross-entropy equals the NEGATIVE log-softmax at the target index. The starter gives 4 logits and target class 0. Compute `manual` from `F.log_softmax` (reduce over dim 0, negate, index at the target), and `builtin` from `F.cross_entropy` — which expects a batch dimension, so unsqueeze both arguments. Print [round(float(manual), 4), round(float(builtin), 4)] — the two should match.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\n# TODO (a): manual = -F.log_softmax(logits, dim=0)[target]\n# TODO (b): builtin = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))\nmanual = None  # TODO\nbuiltin = None  # TODO\nprint([round(float(manual), 4), round(float(builtin), 4)])",
+      "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\n# TODO: complete this step (see the problem statement above)\n# TODO: complete this step (see the problem statement above)\nmanual = None  # TODO: fill in manual\nbuiltin = None  # TODO: fill in builtin\nprint([round(float(manual), 4), round(float(builtin), 4)])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\nmanual = -F.log_softmax(logits, dim=0)[target]\nbuiltin = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))\nprint([round(float(manual), 4), round(float(builtin), 4)])",
@@ -14059,12 +14060,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Demonstrate why cross-entropy is computed on logits directly: the log-sum-exp trick avoids the overflow you'd hit by exponentiating large logits to form a softmax first. Using numpy only, take the logits [1000.0, 999.0, 998.0] with target class 0. Compute the cross-entropy loss as logsumexp(logits) - logits[target], where logsumexp is implemented stably as m + log(sum(exp(logits - m))) with m = max(logits). Print round(float(loss), 4).",
+      "question_text": "Why is cross-entropy computed on logits directly? Because $\\mathrm{CE} = \\mathrm{logsumexp}(z) - z_{\\mathrm{target}}$, and log-sum-exp can be evaluated stably even when exponentiating the logits would overflow — the starter's logits sit near 1000, where a naive softmax is all inf. Implement log-sum-exp the stable way (shift everything by the max before exponentiating), compute the loss, and print round(float(loss), 4).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0\n# TODO: compute the cross-entropy loss = logsumexp(logits) - logits[target],\n# using the stable log-sum-exp: m = max(logits); m + log(sum(exp(logits - m)))\nloss = None  # TODO: compute the stable cross-entropy loss\nprint(round(float(loss), 4))",
+      "starter_code": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0\n# TODO: compute the cross-entropy loss using a numerically stable log-sum-exp\nloss = None  # TODO: compute the stable cross-entropy loss\nprint(round(float(loss), 4))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0\nm = np.max(logits)\nlogsumexp = m + np.log(np.sum(np.exp(logits - m)))\nloss = logsumexp - logits[target]\nprint(round(float(loss), 4))",
@@ -14087,12 +14088,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Apply ONE step of vanilla SGD by hand (no optimizer object). Given parameters theta = [1.0, 2.0, 3.0], gradient grad = [0.5, -1.0, 2.0], and learning rate lr = 0.1, compute the updated parameters theta_new = theta - lr*grad as a float64 torch tensor. Print the result as a Python list with each element rounded to 4 decimals, i.e. print([round(v, 4) for v in theta_new.tolist()]).",
+      "question_text": "One step of vanilla SGD by hand: parameters move a small step AGAINST the gradient. The starter gives `theta`, `grad`, and `lr` as float64 tensors. Apply the SGD update rule from memory to get `theta_new`, and print [round(v, 4) for v in theta_new.tolist()].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1\n# TODO: apply one vanilla SGD step: theta_new = theta - lr * grad\ntheta_new = None  # TODO: compute the updated parameters\nprint([round(v, 4) for v in theta_new.tolist()])",
+      "starter_code": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1\n# TODO: apply one vanilla SGD step\ntheta_new = None  # TODO: fill in theta_new\nprint([round(v, 4) for v in theta_new.tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1\ntheta_new = theta - lr * grad\nprint([round(v, 4) for v in theta_new.tolist()])",
@@ -14115,12 +14116,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Use autograd plus the manual SGD update rule to minimize loss = (x - 5.0)**2 starting from x = 2.0 with learning rate lr = 0.3. Run EXACTLY 3 gradient-descent steps. In each step: compute the loss, call loss.backward(), then update x in-place under torch.no_grad() with x -= lr * x.grad, and finally zero x.grad. After the 3 steps, print round(float(x.detach()), 4).",
+      "question_text": "Minimize $(x-5)^2$ from $x=2$ with three hand-rolled gradient-descent steps (lr 0.3 — all in the starter). Each step: build the loss, backprop it, update `x` in place inside `torch.no_grad()` (why is that context required for a leaf that requires grad?), and zero the gradient before the next iteration (what would accumulate if you didn't?). Then print round(float(x.detach()), 4).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([2.0], requires_grad=True)\nlr = 0.3\nfor _ in range(3):\n    # TODO: compute loss = (x - 5.0) ** 2, call loss.backward(),\n    # then under torch.no_grad() do x -= lr * x.grad, then x.grad.zero_()\n    raise NotImplementedError()\nprint(round(float(x.detach()), 4))",
+      "starter_code": "import torch\nx = torch.tensor([2.0], requires_grad=True)\nlr = 0.3\nfor _ in range(3):\n    # TODO: compute loss\n    # then under torch.no_grad() do x -= lr * x.grad, then x.grad.zero_()\n    raise NotImplementedError()\nprint(round(float(x.detach()), 4))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([2.0], requires_grad=True)\nlr = 0.3\nfor _ in range(3):\n    loss = (x - 5.0) ** 2\n    loss.backward()\n    with torch.no_grad():\n        x -= lr * x.grad\n    x.grad.zero_()\nprint(round(float(x.detach()), 4))",
@@ -14143,12 +14144,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Take ONE SGD step on a linear-regression MSE loss using numpy. The design matrix is X = [[1,1],[1,2],[1,3]], targets y = [1,2,3], and initial parameters theta = [0.0, 0.0]. The MSE gradient is grad = (2/n) * X.T @ (X @ theta - y) where n = 3. With learning rate lr = 0.1, compute theta_new = theta - lr*grad. Print [round(float(v), 4) for v in theta_new].",
+      "question_text": "One SGD step on linear-regression MSE in numpy. The starter defines the design matrix `X`, targets `y`, initial `theta`, `lr`, and `n`. The MSE gradient is $\\nabla_\\theta = \\frac{2}{n} X^\\top (X\\theta - y)$ — translate it to code, apply one descent step, and print [round(float(v), 4) for v in theta_new].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\ntheta = np.array([0.0, 0.0])\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([1.0, 2.0, 3.0])\nlr = 0.1\nn = len(y)\n# TODO: MSE gradient grad = (2/n) * X.T @ (X @ theta - y), then theta_new = theta - lr*grad\ntheta_new = None  # TODO: compute one SGD step\nprint([round(float(v), 4) for v in theta_new])",
+      "starter_code": "import numpy as np\ntheta = np.array([0.0, 0.0])\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([1.0, 2.0, 3.0])\nlr = 0.1\nn = len(y)\n# TODO: compute the MSE gradient, then take one gradient-descent step\ntheta_new = None  # TODO: compute one SGD step\nprint([round(float(v), 4) for v in theta_new])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\ntheta = np.array([0.0, 0.0])\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([1.0, 2.0, 3.0])\nlr = 0.1\nn = len(y)\ngrad = (2.0 / n) * X.T @ (X @ theta - y)\ntheta_new = theta - lr * grad\nprint([round(float(v), 4) for v in theta_new])",
@@ -14171,12 +14172,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "An iterator over parameters exhausts after one pass. Define make_params() that returns iter([torch.tensor([1.,2.,3.]), torch.tensor([4.,5.])]). First, get one iterator `it = make_params()` and compute the total number of elements (sum of p.numel()) by iterating it TWICE: first_pass then second_pass. Then convert a fresh make_params() to a list and again compute the total twice: right_first then right_second. Print the list [first_pass, second_pass, right_first, right_second] (use plain print on the list of ints).",
+      "question_text": "Iterators exhaust; lists don't. `make_params()` (starter) returns a ONE-SHOT iterator over two tensors. First sum `p.numel()` over the same iterator twice — `first_pass`, then `second_pass` (predict the second before running). Then materialize a fresh `make_params()` into a list and take both passes again (`right_first`, `right_second`). Print the four ints as one list. This is exactly why optimizers materialize `model.parameters()` up front.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\n# TODO: iterate the SAME iterator twice; the second pass should be exhausted (0)\nfirst_pass = None   # TODO: sum(p.numel() for p in it)\nsecond_pass = None  # TODO: sum(p.numel() for p in it) again on the same it\n\nparams = list(make_params())\n# TODO: a list can be iterated repeatedly; both passes give the full total\nright_first = None   # TODO: sum(p.numel() for p in params)\nright_second = None  # TODO: sum(p.numel() for p in params) again\n\nprint([first_pass, second_pass, right_first, right_second])",
+      "starter_code": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\n# TODO: iterate the SAME iterator twice; the second pass should be exhausted (0)\nfirst_pass = None  # TODO: fill in first_pass\nsecond_pass = None  # TODO: fill in second_pass\n\nparams = list(make_params())\n# TODO: a list can be iterated repeatedly; both passes give the full total\nright_first = None  # TODO: fill in right_first\nright_second = None  # TODO: fill in right_second\n\nprint([first_pass, second_pass, right_first, right_second])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\nfirst_pass = sum(p.numel() for p in it)\nsecond_pass = sum(p.numel() for p in it)\n\nparams = list(make_params())\nright_first = sum(p.numel() for p in params)\nright_second = sum(p.numel() for p in params)\n\nprint([first_pass, second_pass, right_first, right_second])",
@@ -14199,12 +14200,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "An optimizer iterates over parameters every step, so the params iterator must be materialized as a list first. Build model = torch.nn.Linear(3, 2, bias=False) (set torch.manual_seed(0)) and overwrite its weight with torch.tensor([[1.,2.,3.],[4.,5.,6.]]) under no_grad. Set model.weight.grad = torch.ones_like(model.weight). Capture params = list(model.parameters()). Then run 3 SGD steps with lr=0.1: each step, under no_grad, for p in params do p -= lr * p.grad. Print [round(v,4) for v in model.weight.flatten().tolist()].",
+      "question_text": "An optimizer touches every parameter on every step, so the parameter iterator must be materialized ONCE, up front. The starter builds a `nn.Linear(3, 2)` with a fixed weight, sets a ones gradient, and captures `params = list(model.parameters())`. Run 3 SGD steps with lr 0.1: on each step, inside `torch.no_grad()`, walk `params` and move each parameter one step against its gradient, in place. Print [round(v,4) for v in model.weight.flatten().tolist()].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\ntorch.manual_seed(0)\nmodel = torch.nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\n\nparams = list(model.parameters())\nlr = 0.1\n# TODO: run 3 SGD steps; each step, under torch.no_grad(), for p in params do p -= lr * p.grad\nraise NotImplementedError()\n\nprint([round(v, 4) for v in model.weight.flatten().tolist()])",
+      "starter_code": "import torch\n\ntorch.manual_seed(0)\nmodel = torch.nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\n\nparams = list(model.parameters())\nlr = 0.1\n# TODO: complete this step (see the problem statement above)\nraise NotImplementedError()\n\nprint([round(v, 4) for v in model.weight.flatten().tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\ntorch.manual_seed(0)\nmodel = torch.nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\n\nparams = list(model.parameters())\nlr = 0.1\nfor step in range(3):\n    with torch.no_grad():\n        for p in params:\n            p -= lr * p.grad\n\nprint([round(v, 4) for v in model.weight.flatten().tolist()])",
@@ -14227,12 +14228,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "A generator expression is a one-shot iterator. Create gen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0]). Convert it once with params = list(gen). Compute count = len(params), then total = sum(p.item() for p in params), then total_again = sum(p.item() for p in params) (a second pass over the SAME list). Print [count, round(total,4), round(total_again,4)].",
+      "question_text": "A generator expression is a one-shot iterator, but converting it to a list makes it reusable. The starter builds `gen` and materializes `params = list(gen)`. Compute the count of params, the sum of their scalar values (`.item()`), and that same sum AGAIN over the same list — does a list exhaust? Print [count, round(total,4), round(total_again,4)].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\ngen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0])\nparams = list(gen)\n# TODO: count = len(params); total = sum(p.item() for p in params);\n# total_again = sum over the SAME list again (a list can be re-iterated)\ncount = None        # TODO\ntotal = None        # TODO\ntotal_again = None  # TODO\nprint([count, round(total, 4), round(total_again, 4)])",
+      "starter_code": "import torch\n\ngen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0])\nparams = list(gen)\n# TODO: complete this step (see the problem statement above)\ncount = None  # TODO: fill in count\ntotal = None  # TODO: fill in total\ntotal_again = None  # TODO: fill in total_again\nprint([count, round(total, 4), round(total_again, 4)])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\ngen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0])\nparams = list(gen)\ncount = len(params)\ntotal = sum(p.item() for p in params)\ntotal_again = sum(p.item() for p in params)\nprint([count, round(total, 4), round(total_again, 4)])",
@@ -14255,7 +14256,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a helper to_pair(x) that normalises a hyperparameter into an (h, w) tuple: if x is an int, return (x, x); if x is a length-2 sequence, return (int(x[0]), int(x[1])). Apply it to the inputs 3 and (2, 5) and print a list of the two resulting tuples, i.e. print([to_pair(3), to_pair((2, 5))]).",
+      "question_text": "Conv hyperparameters like `kernel_size` accept either an int or an (h, w) pair. Write the normalizer `to_pair(x)`: an int becomes the symmetric pair, and a length-2 sequence becomes a tuple of its two values as ints. The starter's print line applies it to 3 and (2, 5).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "python",
@@ -14283,12 +14284,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Write a helper to_pair(x) that returns (x, x) when x is an int and (int(x[0]), int(x[1])) when x is a length-2 sequence. Use it to normalise kernel_size=3, stride=(2, 1), and padding=1, then compute the output spatial size of a 2D convolution on an input of height H=32, width W=28 using out = (size + 2*pad - kernel) // stride + 1 independently for the height and width axes. Print the result as a tuple, i.e. print((out_h, out_w)).",
+      "question_text": "Combine the `to_pair` normalizer with per-axis conv arithmetic. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints), normalize kernel 3, stride (2, 1), padding 1, then compute the conv output size for H=32, W=28 — apply the output-size formula independently per axis, indexing the normalized pairs. Print exactly print((out_h, out_w)).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "python",
       "function_name": null,
-      "starter_code": "# TODO: implement to_pair(x): (x, x) when x is an int, else (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\n# TODO: out = (size + 2*pad - kernel) // stride + 1 for each axis\nout_h = None  # TODO: compute output height\nout_w = None  # TODO: compute output width\nprint((out_h, out_w))",
+      "starter_code": "# TODO: implement to_pair(x): (x, x) when x is an int, else (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\n# TODO: apply the conv output-size formula per axis\nout_h = None  # TODO: compute output height\nout_w = None  # TODO: compute output width\nprint((out_h, out_w))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "def to_pair(x):\n    return (x, x) if isinstance(x, int) else (int(x[0]), int(x[1]))\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\nout_h = (H + 2 * p[0] - k[0]) // s[0] + 1\nout_w = (W + 2 * p[1] - k[1]) // s[1] + 1\nprint((out_h, out_w))",
@@ -14311,7 +14312,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a helper to_pair(x) that maps an int x to (x, x) and a length-2 sequence x to (int(x[0]), int(x[1])). Normalise each value in the list [5, (3, 1), 7, (2, 2)] and print the list of resulting (h, w) tuples, i.e. print([to_pair(v) for v in [5, (3, 1), 7, (2, 2)]]).",
+      "question_text": "Normalization helpers must cope with mixed inputs. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints) and map it over the mixed list [5, (3, 1), 7, (2, 2)]. The starter's print line emits the list of resulting pairs.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "python",
@@ -14339,12 +14340,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using PyTorch autograd, let X = [[1,2,3],[4,5,6]] and Y = [[1,0],[0,1],[1,1]] both with requires_grad=True. Compute M = X @ Y, then backpropagate the upstream gradient dL/dM = [[1,2],[3,4]] by calling M.backward(dLdM). Print X.grad.tolist() on the first line and Y.grad.tolist() on the second line (each is a Python nested list of floats).",
+      "question_text": "Autograd through a matmul. The starter's `X` (2×3) and `Y` (3×2) require grad, and an upstream gradient `dLdM` (2×2) is given. Compute the product `M`, then backpropagate the upstream gradient through it by passing it to `M.backward(...)`. Predict the SHAPES of `X.grad` and `Y.grad` before running. Print X.grad.tolist() on the first line and Y.grad.tolist() on the second.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\n# TODO: compute M = X @ Y, then M.backward(dLdM) to populate X.grad and Y.grad\nraise NotImplementedError()\nprint(X.grad.tolist())\nprint(Y.grad.tolist())",
+      "starter_code": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\n# TODO: compute M\nraise NotImplementedError()\nprint(X.grad.tolist())\nprint(Y.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\nM = X @ Y\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\nM.backward(dLdM)\nprint(X.grad.tolist())\nprint(Y.grad.tolist())",
@@ -14367,12 +14368,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Without using autograd, apply the matmul backward rules directly. Given X = [[2,0,1],[1,3,2]], Y = [[1,2],[0,1],[3,0]], and an upstream gradient dL/dM = [[1,1],[2,0]] for M = X @ Y, compute dL/dX = dL/dM @ Y^T and dL/dY = X^T @ dL/dM using torch tensors. Print dLdX.tolist() on the first line and dLdY.tolist() on the second line.",
+      "question_text": "Apply the matmul backward rules directly — no autograd. For $M = XY$: $\\partial L/\\partial X = (\\partial L/\\partial M)\\, Y^\\top$ and $\\partial L/\\partial Y = X^\\top (\\partial L/\\partial M)$. The starter gives `X`, `Y`, and `dLdM`. Translate both rules to torch code and print dLdX.tolist() on the first line and dLdY.tolist() on the second.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\n# TODO: apply the matmul backward rules: dLdX = dLdM @ Y^T, dLdY = X^T @ dLdM\ndLdX = None  # TODO: compute dL/dX\ndLdY = None  # TODO: compute dL/dY\nprint(dLdX.tolist())\nprint(dLdY.tolist())",
+      "starter_code": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\n# TODO: apply the matmul backward rules\ndLdX = None  # TODO: fill in dLdX\ndLdY = None  # TODO: fill in dLdY\nprint(dLdX.tolist())\nprint(dLdY.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\ndLdX = dLdM @ Y.t()\ndLdY = X.t() @ dLdM\nprint(dLdX.tolist())\nprint(dLdY.tolist())",
@@ -14395,12 +14396,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Verify the matmul backward rules against autograd. Let X = [[1,2],[3,4],[5,6]] and Y = [[2,1,0,1],[1,0,2,3]] with requires_grad=True, and M = X @ Y. Define scalar loss L = 0.5 * sum(M*M), so dL/dM = M. Call L.backward(), then compute the manual gradients gX = M @ Y^T and gY = X^T @ M (detached). Print three lines: round(float(max abs difference between X.grad and gX), 4), then the same for Y.grad and gY, then X.grad.tolist().",
+      "question_text": "Verify the matmul backward rules against autograd. The starter has `X`, `Y` (requires grad) and `M = X @ Y` is the product. Build the scalar loss $L = \\tfrac{1}{2}\\sum M^2$ — chosen precisely so that $\\partial L/\\partial M = M$ — and backprop it. Then compute the MANUAL gradients from the matmul backward rules (detach them) and compare. Print three lines: the max abs difference between `X.grad` and manual (rounded to 4), the same for `Y`, then X.grad.tolist().",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nM = X @ Y\n# TODO: build scalar loss L = 0.5 * sum(M*M), call L.backward()\nL = None  # TODO: compute the scalar loss\n# TODO: call L.backward() here\n# TODO: compute manual grads gX = M @ Y^T and gY = X^T @ M (detached)\ngX = None  # TODO\ngY = None  # TODO\nprint(round(float((X.grad - gX).abs().max()), 4))\nprint(round(float((Y.grad - gY).abs().max()), 4))\nprint(X.grad.tolist())",
+      "starter_code": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nM = X @ Y\n# TODO: build scalar loss L\nL = None  # TODO: fill in L\n# TODO: complete this step (see the problem statement above)\n# TODO: compute manual grads gX\ngX = None  # TODO: fill in gX\ngY = None  # TODO: fill in gY\nprint(round(float((X.grad - gX).abs().max()), 4))\nprint(round(float((Y.grad - gY).abs().max()), 4))\nprint(X.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nM = X @ Y\nL = 0.5 * (M * M).sum()\nL.backward()\ngX = (M @ Y.t()).detach()\ngY = (X.t() @ M).detach()\nprint(round(float((X.grad - gX).abs().max()), 4))\nprint(round(float((Y.grad - gY).abs().max()), 4))\nprint(X.grad.tolist())",
@@ -14423,12 +14424,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using torch, build the fixed 2x4 tensor x = [[1,2,3,4],[5,6,7,8]] as float32. Compute the variance over ALL elements two ways: biased (unbiased=False, divides by N) and unbiased (unbiased=True, divides by N-1). Print a single list [biased, unbiased] where each value is round(float(v),4). This shows BatchNorm uses the biased estimator while torch's default .var() is unbiased.",
+      "question_text": "`.var()` hides a convention choice: BIASED divides by $N$, UNBIASED by $N-1$ — and BatchNorm normalizes with the biased one while torch's default is unbiased. On the starter's 2×4 tensor, compute the variance over ALL elements both ways (the `unbiased=` flag) and print [biased, unbiased] with each value round(float(v), 4).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([[1.,2.,3.,4.],[5.,6.,7.,8.]])\n# TODO: compute variance over ALL elements both ways\nvar_biased = None    # TODO: x.var with unbiased=False (divides by N)\nvar_unbiased = None  # TODO: x.var with unbiased=True (divides by N-1)\nprint([round(float(var_biased),4), round(float(var_unbiased),4)])",
+      "starter_code": "import torch\nx = torch.tensor([[1.,2.,3.,4.],[5.,6.,7.,8.]])\n# TODO: compute variance over ALL elements both ways\nvar_biased = None  # TODO: fill in var_biased\nvar_unbiased = None  # TODO: fill in var_unbiased\nprint([round(float(var_biased),4), round(float(var_unbiased),4)])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([[1.,2.,3.,4.],[5.,6.,7.,8.]])\nvar_biased = x.var(unbiased=False)\nvar_unbiased = x.var(unbiased=True)\nprint([round(float(var_biased),4), round(float(var_unbiased),4)])",
@@ -14451,12 +14452,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "BatchNorm2d normalizes per-channel over the batch and spatial dims. Build x = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2) (N=2, C=3, H=2, W=2). For each of the 3 channels compute the per-channel mean and the BIASED variance (unbiased=False) over dims (0,2,3) — exactly what BatchNorm uses. First print mean.tolist(), then on a second line print the biased variance as [round(v,4) for v in var.tolist()].",
+      "question_text": "BatchNorm2d computes PER-CHANNEL statistics over the batch and spatial dims. On the starter's (2, 3, 2, 2) tensor, compute the per-channel mean and the BIASED variance — reduce over exactly the dims that are not the channel dim. Print mean.tolist() on the first line, then [round(v,4) for v in var.tolist()] on the second.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2)\n# TODO: per-channel mean and BIASED variance over dims (0,2,3)\nmean = None  # TODO: x.mean over dims (0,2,3)\nvar = None   # TODO: x.var over dims (0,2,3) with unbiased=False\nprint(mean.tolist())\nprint([round(v,4) for v in var.tolist()])",
+      "starter_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2)\n# TODO: per-channel mean and BIASED variance over dims (0,2,3)\nmean = None  # TODO: fill in mean\nvar = None  # TODO: fill in var\nprint(mean.tolist())\nprint([round(v,4) for v in var.tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2)\nmean = x.mean(dim=(0,2,3))\nvar = x.var(dim=(0,2,3), unbiased=False)\nprint(mean.tolist())\nprint([round(v,4) for v in var.tolist()])",
@@ -14479,12 +14480,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Verify that nn.BatchNorm2d in train mode uses the BIASED variance. Build the single-channel tensor x = [[[[1,2],[3,4]]],[[[5,6],[7,8]]]] (shape 2,1,2,2) as float32. Create bn = nn.BatchNorm2d(1, affine=False, eps=1e-5), call bn.train(), and run out = bn(x). Independently compute mean and BIASED variance (unbiased=False) over dims (0,2,3) with keepdim=True, then manual = (x-mean)/sqrt(var_biased+eps). Print on line 1 the biased variance as [round(v,4) for v in var_biased.flatten().tolist()]; on line 2 print bool(torch.allclose(out, manual, atol=1e-5)); on line 3 print [round(v,4) for v in out.flatten().tolist()].",
+      "question_text": "Prove that BatchNorm2d in train mode uses the BIASED variance. The starter builds a (2,1,2,2) input and a non-affine `bn` in train mode. Run the input through `bn` to get `out`; then normalize `x` yourself: per-channel mean and biased variance over the non-channel dims with `keepdim=True`, then $(x - \\mu)/\\sqrt{\\sigma^2 + \\epsilon}$. Print three lines: the biased variance ([round(v,4) for v in var_biased.flatten().tolist()]), whether your manual result matches `out` (bool of `torch.allclose` at atol=1e-5), and [round(v,4) for v in out.flatten().tolist()].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1.,2.],[3.,4.]]],[[[5.,6.],[7.,8.]]]])\neps = 1e-5\nbn = nn.BatchNorm2d(1, affine=False, eps=eps)\nbn.train()\n# TODO: run out = bn(x), then independently compute mean and BIASED variance\n# over dims (0,2,3) with keepdim=True and manual = (x-mean)/sqrt(var_biased+eps)\nout = None          # TODO: bn(x)\nmean = None         # TODO: x.mean over (0,2,3) keepdim=True\nvar_biased = None   # TODO: x.var over (0,2,3) keepdim=True unbiased=False\nmanual = None       # TODO: (x - mean) / sqrt(var_biased + eps)\nprint([round(v,4) for v in var_biased.flatten().tolist()])\nprint(bool(torch.allclose(out, manual, atol=1e-5)))\nprint([round(v,4) for v in out.flatten().tolist()])",
+      "starter_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1.,2.],[3.,4.]]],[[[5.,6.],[7.,8.]]]])\neps = 1e-5\nbn = nn.BatchNorm2d(1, affine=False, eps=eps)\nbn.train()\n# TODO: run bn on x to get out, then compute mean/var_biased/manual by hand\nout = None  # TODO: fill in out\nmean = None  # TODO: fill in mean\nvar_biased = None  # TODO: fill in var_biased\nmanual = None  # TODO: fill in manual\nprint([round(v,4) for v in var_biased.flatten().tolist()])\nprint(bool(torch.allclose(out, manual, atol=1e-5)))\nprint([round(v,4) for v in out.flatten().tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1.,2.],[3.,4.]]],[[[5.,6.],[7.,8.]]]])\neps = 1e-5\nbn = nn.BatchNorm2d(1, affine=False, eps=eps)\nbn.train()\nout = bn(x)\nmean = x.mean(dim=(0,2,3), keepdim=True)\nvar_biased = x.var(dim=(0,2,3), keepdim=True, unbiased=False)\nmanual = (x - mean) / torch.sqrt(var_biased + eps)\nprint([round(v,4) for v in var_biased.flatten().tolist()])\nprint(bool(torch.allclose(out, manual, atol=1e-5)))\nprint([round(v,4) for v in out.flatten().tolist()])",
@@ -14507,12 +14508,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "An exponentially-weighted moving average (EWMA) updates a running statistic as running = (1 - mu) * running + mu * new_value. Start with running = 0.0 and mu = 0.1, then apply the update once for each value in the list [5.0, 7.0, 3.0, 9.0, 2.0] in order. Print the final running value rounded to 4 decimals via print(round(float(running), 4)).",
+      "question_text": "An EWMA folds each new value into a running statistic: with rate $\\mu$, the running value keeps a $(1-\\mu)$ share of itself and absorbs a $\\mu$ share of the new value. Starting from the starter's `running = 0.0` with `mu = 0.1`, apply that update once per value in the given list, in order. Print round(float(running), 4).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
       "function_name": null,
-      "starter_code": "running = 0.0\nmu = 0.1\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\n# TODO: for each v in values, apply EWMA: running = (1 - mu) * running + mu * v\nfor v in values:\n    pass  # TODO: update running\nprint(round(float(running), 4))",
+      "starter_code": "running = 0.0\nmu = 0.1\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\n# TODO: for each v in values, apply the EWMA update with rate mu\nfor v in values:\n    pass  # TODO: update running\nprint(round(float(running), 4))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "running = 0.0\nmu = 0.1\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\nfor v in values:\n    running = (1 - mu) * running + mu * v\nprint(round(float(running), 4))",
@@ -14535,12 +14536,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "BatchNorm keeps running_mean and running_var updated with EWMA: running = (1 - momentum) * running + momentum * batch_stat. Using numpy, start running_mean = zeros(3) and running_var = ones(3) with momentum = 0.2. For each of the two batches b1 = [[1,2,3],[3,4,5]] and b2 = [[2,0,4],[4,2,6]] (rows are samples, columns are features), compute the per-feature batch mean (b.mean(axis=0)) and per-feature batch variance (b.var(axis=0), population variance) and apply the EWMA update to running_mean and running_var respectively, processing b1 then b2. Print running_mean.round(4).tolist() on the first line and running_var.round(4).tolist() on the second line.",
+      "question_text": "BatchNorm's running statistics are EWMAs with rate `momentum`. The starter gives `running_mean` (zeros), `running_var` (ones), momentum 0.2, and two 2×3 batches (rows are samples, columns are features). For each batch in order: compute the per-feature mean and per-feature POPULATION variance, then EWMA-update both running stats. Print running_mean.round(4).tolist() on line 1 and running_var.round(4).tolist() on line 2. (running_var comes out all ones — check the batch variances to see why.)",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\nrunning_mean = np.zeros(3)\nrunning_var = np.ones(3)\nmomentum = 0.2\nbatches = [\n    np.array([[1.0, 2.0, 3.0], [3.0, 4.0, 5.0]]),\n    np.array([[2.0, 0.0, 4.0], [4.0, 2.0, 6.0]]),\n]\nfor b in batches:\n    # TODO: compute per-feature batch mean (axis=0) and population variance (axis=0)\n    # then EWMA-update running_mean and running_var\n    pass  # TODO: bm, bv, and the two EWMA updates\nprint(running_mean.round(4).tolist())\nprint(running_var.round(4).tolist())",
+      "starter_code": "import numpy as np\nrunning_mean = np.zeros(3)\nrunning_var = np.ones(3)\nmomentum = 0.2\nbatches = [\n    np.array([[1.0, 2.0, 3.0], [3.0, 4.0, 5.0]]),\n    np.array([[2.0, 0.0, 4.0], [4.0, 2.0, 6.0]]),\n]\nfor b in batches:\n    # TODO: compute the per-feature batch mean and population variance\n    # then EWMA-update running_mean and running_var\n    pass  # TODO: bm, bv, and the two EWMA updates\nprint(running_mean.round(4).tolist())\nprint(running_var.round(4).tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\nrunning_mean = np.zeros(3)\nrunning_var = np.ones(3)\nmomentum = 0.2\nbatches = [\n    np.array([[1.0, 2.0, 3.0], [3.0, 4.0, 5.0]]),\n    np.array([[2.0, 0.0, 4.0], [4.0, 2.0, 6.0]]),\n]\nfor b in batches:\n    bm = b.mean(axis=0)\n    bv = b.var(axis=0)\n    running_mean = (1 - momentum) * running_mean + momentum * bm\n    running_var = (1 - momentum) * running_var + momentum * bv\nprint(running_mean.round(4).tolist())\nprint(running_var.round(4).tolist())",
@@ -14563,12 +14564,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Adam's first-moment estimate m is an EWMA of the gradients: m = beta * m + (1 - beta) * g, which is the same running-stat update with mu = (1 - beta). Using torch, start m = torch.zeros(2) and beta = 0.9. Apply the update once per gradient in this order: torch.tensor([1.0, -2.0]), torch.tensor([3.0, 0.0]), torch.tensor([-1.0, 4.0]). Print the final (biased, un-corrected) first moment as a plain python list of floats each rounded to 4 decimals: print([round(float(x), 4) for x in m]).",
+      "question_text": "Adam's first-moment estimate is an EWMA of the gradients with decay `beta`: the moment keeps a `beta` share of itself and absorbs a `(1-beta)` share of each new gradient — the same update as the previous drill with $\\mu = 1-\\beta$. The starter has `m` at zeros, beta 0.9, and three gradients to fold in, in order. Print the final biased (un-corrected) moment: print([round(float(x), 4) for x in m]).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nbeta = 0.9\nm = torch.zeros(2)\ngrads = [\n    torch.tensor([1.0, -2.0]),\n    torch.tensor([3.0, 0.0]),\n    torch.tensor([-1.0, 4.0]),\n]\n# TODO: for each g, apply Adam first-moment EWMA: m = beta * m + (1 - beta) * g\nfor g in grads:\n    pass  # TODO: update m\nprint([round(float(x), 4) for x in m])",
+      "starter_code": "import torch\nbeta = 0.9\nm = torch.zeros(2)\ngrads = [\n    torch.tensor([1.0, -2.0]),\n    torch.tensor([3.0, 0.0]),\n    torch.tensor([-1.0, 4.0]),\n]\n# TODO: for each g, apply Adam first-moment EWMA\nfor g in grads:\n    pass  # TODO: update m\nprint([round(float(x), 4) for x in m])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nbeta = 0.9\nm = torch.zeros(2)\ngrads = [\n    torch.tensor([1.0, -2.0]),\n    torch.tensor([3.0, 0.0]),\n    torch.tensor([-1.0, 4.0]),\n]\nfor g in grads:\n    m = beta * m + (1 - beta) * g\nprint([round(float(x), 4) for x in m])",
@@ -14591,12 +14592,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "BatchNorm stores per-channel weight, bias, running_mean, and running_var as length-C vectors. To apply them to an input of shape (B, C, H, W), each must be reshaped to (1, C, 1, 1) so it broadcasts along the batch and spatial dimensions. Given B=2, C=3, H=2, W=2 and x = torch.arange(B*C*H*W, dtype=torch.float32).reshape(B, C, H, W), with weight=[1.0, 2.0, 0.5], bias=[0.0, 1.0, -1.0], running_mean=[0.0, 4.0, 8.0], running_var=[1.0, 4.0, 16.0] (no eps), compute y = (x - mean) / sqrt(var) * weight + bias by reshaping each length-C vector to (1, C, 1, 1) before the elementwise ops. Print [round(v, 4) for v in y.flatten().tolist()].",
+      "question_text": "BatchNorm's per-channel vectors (weight, bias, running mean, running var — each length C) cannot broadcast against a (B, C, H, W) tensor as-is, because broadcasting aligns TRAILING dims. Reshape each so the channel axis lands on dim 1 with singleton batch/spatial dims, then compute normalize-scale-shift: $(x-\\mu)/\\sqrt{\\sigma^2} \\cdot w + b$ (no eps; all fixtures in the starter). Print [round(v, 4) for v in y.flatten().tolist()].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\nB, C, H, W = 2, 3, 2, 2\nx = torch.arange(B * C * H * W, dtype=torch.float32).reshape(B, C, H, W)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\n\n# TODO: reshape each length-C vector to (1, C, 1, 1) so it broadcasts,\n# then compute y = (x - mean) / sqrt(var) * weight + bias\ny = None  # TODO: compute the per-channel normalized output\nprint([round(val, 4) for val in y.flatten().tolist()])",
+      "starter_code": "import torch\n\nB, C, H, W = 2, 3, 2, 2\nx = torch.arange(B * C * H * W, dtype=torch.float32).reshape(B, C, H, W)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\n\n# TODO: reshape each length-C vector so it broadcasts against x, then normalize-scale-shift\ny = None  # TODO: fill in y\nprint([round(val, 4) for val in y.flatten().tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\nB, C, H, W = 2, 3, 2, 2\nx = torch.arange(B * C * H * W, dtype=torch.float32).reshape(B, C, H, W)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\n\nw = weight.reshape(1, C, 1, 1)\nb = bias.reshape(1, C, 1, 1)\nm = mean.reshape(1, C, 1, 1)\nv = var.reshape(1, C, 1, 1)\n\ny = (x - m) / torch.sqrt(v) * w + b\nprint([round(val, 4) for val in y.flatten().tolist()])",
@@ -14619,12 +14620,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "A BatchNorm layer with C=4 channels stores its weight as a length-C vector (shape (4,)). Before it can broadcast against a (B, C, H, W) activation tensor, it must be reshaped so the channel axis lines up with dim 1 and the batch/height/width axes are singleton. Take weight = torch.tensor([1.0, 2.0, 3.0, 4.0]), reshape it to (1, C, 1, 1), and print the resulting shape as a list of ints via print(list(shaped.shape)).",
+      "question_text": "A length-C vector broadcasts against a (B, C, H, W) tensor only if its channel axis lines up with dim 1. Reshape the starter's length-4 `weight` so the batch, height, and width axes are singletons and C sits on the channel axis. Print list(shaped.shape).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\nC = 4\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])\n# TODO: reshape weight to (1, C, 1, 1) so the channel axis lines up with dim 1\nshaped = None  # TODO: weight reshaped to (1, C, 1, 1)\nprint(list(shaped.shape))",
+      "starter_code": "import torch\n\nC = 4\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])\n# TODO: reshape weight to (1, C, 1, 1) so the channel axis lines up\nshaped = None  # TODO: fill in shaped\nprint(list(shaped.shape))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\nC = 4\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])\nshaped = weight.reshape(1, C, 1, 1)\nprint(list(shaped.shape))",
@@ -14647,12 +14648,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Adding a raw length-C BatchNorm bias vector directly to a (B, C, H, W) tensor fails when C does not equal W, because broadcasting aligns trailing dims. With B=1, C=2, H=2, W=3, let x = torch.ones(B, C, H, W) and bias = torch.tensor([10.0, 20.0]). Attempt x + bias inside a try; on RuntimeError, recover by reshaping bias to (1, C, 1, 1) so it broadcasts per channel, compute good = x + bias.reshape(1, C, 1, 1), and print [round(v, 4) for v in good.flatten().tolist()]. (The reshape path is the one that runs.)",
+      "question_text": "Broadcasting aligns trailing dims — so adding a raw length-C bias to a (B, C, H, W) tensor only 'works' by accident when C equals W, and here (C=2, W=3) it raises. The starter attempts exactly that inside a try block. In the except branch, recover: reshape the bias so it broadcasts per CHANNEL, add it to `x` as `good`, and print [round(v, 4) for v in good.flatten().tolist()].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n\nB, C, H, W = 1, 2, 2, 3\nx = torch.ones(B, C, H, W)\nbias = torch.tensor([10.0, 20.0])\n\ntry:\n    bad = x + bias\n    print(\"no error\")\nexcept RuntimeError:\n    # TODO: recover by reshaping bias to (1, C, 1, 1) so it broadcasts per channel\n    good = None  # TODO: x + bias reshaped to (1, C, 1, 1)\n    print([round(v, 4) for v in good.flatten().tolist()])",
+      "starter_code": "import torch\n\nB, C, H, W = 1, 2, 2, 3\nx = torch.ones(B, C, H, W)\nbias = torch.tensor([10.0, 20.0])\n\ntry:\n    bad = x + bias\n    print(\"no error\")\nexcept RuntimeError:\n    # TODO: recover by reshaping bias to (1, C, 1, 1) so it broadcasts per channel\n    good = None  # TODO: fill in good\n    print([round(v, 4) for v in good.flatten().tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\n\nB, C, H, W = 1, 2, 2, 3\nx = torch.ones(B, C, H, W)\nbias = torch.tensor([10.0, 20.0])\n\ntry:\n    bad = x + bias\n    print(\"no error\")\nexcept RuntimeError:\n    good = x + bias.reshape(1, C, 1, 1)\n    print([round(v, 4) for v in good.flatten().tolist()])",
@@ -14675,12 +14676,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, you have a 1D signal x = [[-3.0, -1.0, -7.0, -2.0]] (shape [1,4]) whose values are all negative. Pad one cell on each side, then take a sliding max over windows of size 3 with stride 1 (use F.pad followed by .unfold(1,3,1).max(dim=2).values). Do this TWICE: once padding with value=float('-inf') (correct) and once padding with value=0.0 (wrong, since 0 beats every real negative at the edges). Print exactly print([correct[0].tolist(), wrong[0].tolist()]).",
+      "question_text": "Padding for max-pooling must never beat real values. The starter gives an all-negative 1-D signal. Build a padded sliding max TWICE (pad one cell on each side with `F.pad`, carve windows of size 3, stride 1 with `.unfold`, then take each window's max): once padding with $-\\infty$ (correct) and once padding with 0.0 (wrong — 0 outranks every negative at the edges). Print exactly print([correct[0].tolist(), wrong[0].tolist()]).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn.functional as F\nx = torch.tensor([[-3.0, -1.0, -7.0, -2.0]])\n# TODO: pad one cell each side then sliding-max over windows of size 3, stride 1.\n# Do it twice: once with value=float('-inf') (correct) and once with value=0.0 (wrong).\ncorrect = None  # TODO: F.pad(x, (1,1), value=float('-inf')).unfold(1,3,1).max(dim=2).values\nwrong = None    # TODO: F.pad(x, (1,1), value=0.0).unfold(1,3,1).max(dim=2).values\nprint([correct[0].tolist(), wrong[0].tolist()])",
+      "starter_code": "import torch\nimport torch.nn.functional as F\nx = torch.tensor([[-3.0, -1.0, -7.0, -2.0]])\n# TODO: pad + sliding max via F.pad/.unfold/.amax, twice with different pad values\ncorrect = None  # TODO: fill in correct\nwrong = None  # TODO: fill in wrong\nprint([correct[0].tolist(), wrong[0].tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn.functional as F\nx = torch.tensor([[-3.0, -1.0, -7.0, -2.0]])\ncorrect = F.pad(x, (1, 1), value=float('-inf')).unfold(1, 3, 1).max(dim=2).values\nwrong   = F.pad(x, (1, 1), value=0.0       ).unfold(1, 3, 1).max(dim=2).values\nprint([correct[0].tolist(), wrong[0].tolist()])",
@@ -14703,12 +14704,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using torch.nn, build a MaxPool1d with kernel_size=2, stride=2, padding=1 and apply it to the all-negative input x = [[[-5.0, -2.0, -9.0, -1.0, -6.0, -8.0]]] (shape [1,1,6]). PyTorch's MaxPool pads with -inf (not 0), so the padded boundary cells never win the max and the output edges reflect the true negative edge values. Print exactly print(y[0].tolist()) where y is the pooled output.",
+      "question_text": "PyTorch's MaxPool pads with $-\\infty$, not 0 — so padding can never fabricate a winning value. Build an `nn.MaxPool1d` with kernel 2, stride 2, padding 1, apply it to the starter's all-negative (1,1,6) input, and print exactly print(y[0].tolist()). Look at the edge outputs: real negative values, not 0.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[-5.0, -2.0, -9.0, -1.0, -6.0, -8.0]]])\n# TODO: build nn.MaxPool1d(kernel_size=2, stride=2, padding=1) and apply to x\npool = None  # TODO: nn.MaxPool1d(...)\ny = None     # TODO: pool(x)\nprint(y[0].tolist())",
+      "starter_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[-5.0, -2.0, -9.0, -1.0, -6.0, -8.0]]])\n# TODO: complete this step (see the problem statement above)\npool = None  # TODO: fill in pool\ny = None  # TODO: fill in y\nprint(y[0].tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[-5.0, -2.0, -9.0, -1.0, -6.0, -8.0]]])\npool = nn.MaxPool1d(kernel_size=2, stride=2, padding=1)\ny = pool(x)\nprint(y[0].tolist())",
@@ -14731,12 +14732,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using only numpy, take x = [-4.0, -1.0, -3.0, -2.0] (all negative). Build two padded versions by prepending and appending a single value: one with -np.inf and one with 0.0. For each, form the 4 sliding windows of size 3 (windows[i] = padded[i:i+3]) and take the max along each window. Print exactly print([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()]) to show how the 0-pad corrupts the edge maxima while -inf does not.",
+      "question_text": "The same -inf-vs-0 padding story in raw numpy. The starter has an all-negative length-4 `x`. Build two padded copies (one value prepended and one appended): one padded with `-np.inf`, one with 0.0. For each, form the 4 sliding windows of size 3 (window i covers padded[i:i+3]) and take each window's max. Print exactly print([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()]). Which edges get corrupted, and why?",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": null,
-      "starter_code": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])\n# TODO: build two padded versions (prepend+append one value): one with -np.inf, one with 0.0\npad_inf = None   # TODO: np.concatenate([[-np.inf], x, [-np.inf]])\npad_zero = None  # TODO: np.concatenate([[0.0], x, [0.0]])\n# TODO: form 4 sliding windows of size 3 for each, then max along each window\nwin_inf = None   # TODO: np.stack([pad_inf[i:i+3] for i in range(len(x))])\nwin_zero = None  # TODO: np.stack([pad_zero[i:i+3] for i in range(len(x))])\nprint([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()])",
+      "starter_code": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])\n# TODO: build two padded versions (prepend+append one value): one with -np.inf, one with 0.0\npad_inf = None   # TODO: pad with -inf on both ends\npad_zero = None  # TODO: pad with 0.0 on both ends\n# TODO: form 4 sliding windows of size 3 for each, then max along each window\nwin_inf = None   # TODO: stack the size-3 sliding windows of pad_inf\nwin_zero = None  # TODO: stack the size-3 sliding windows of pad_zero\nprint([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])\npad_inf = np.concatenate([[-np.inf], x, [-np.inf]])\npad_zero = np.concatenate([[0.0], x, [0.0]])\nwin_inf  = np.stack([pad_inf[i:i+3]  for i in range(len(x))])\nwin_zero = np.stack([pad_zero[i:i+3] for i in range(len(x))])\nprint([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()])",
@@ -14759,7 +14760,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "An elementwise op broadcast a tensor of original shape (3,1) up to (3,2) during the forward pass. The upstream gradient flowing back has shape (3,2) and is all ones (torch.ones(3,2)). Implement the 'unbroadcast' reduction that reverses broadcasting: first sum over any prepended leading dims, then sum (with keepdim) over each axis whose original size was 1. Apply it to reduce the (3,2) ones gradient back to the original (3,1) shape, and print the result with print(result.tolist()).",
+      "question_text": "When the forward pass broadcasts a (3,1) tensor up to (3,2), the backward pass must reduce the (3,2) gradient back to (3,1) — summing over every position the forward copied to. Implement `unbroadcast(grad, shape)`: first sum away any PREPENDED leading dims, then sum WITH `keepdim` over each axis whose original size was 1. Apply it to the starter's all-ones (3,2) gradient and print with print(result.tolist()).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -14787,7 +14788,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "A tensor of original shape (1,2) was broadcast up to (3,2) in an elementwise op. The upstream gradient is torch.tensor([[1.,2.],[3.,4.],[5.,6.]]) with shape (3,2). Implement 'unbroadcast' (sum over prepended dims, then sum-with-keepdim over each axis whose original size is 1) and reduce this gradient back to the original (1,2) shape. Print the result with print(result.tolist()).",
+      "question_text": "Same `unbroadcast`, different geometry: an original (1,2) tensor was broadcast to (3,2), and this time the upstream gradient (starter) is not all ones. Implement the reduction (sum away prepended dims; sum-with-keepdim over axes of original size 1) and bring the gradient back to (1,2). Print with print(result.tolist()). Sanity check: each surviving entry should be the sum down one column.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -14815,12 +14816,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Let x = torch.tensor([[1.,2.,3.]], requires_grad=True) (shape (1,3)) and y = torch.tensor([[1.],[2.]], requires_grad=True) (shape (2,1)). Compute z = (x + y).sum(), which broadcasts x and y to shape (2,3), then call z.backward(). PyTorch's autograd internally unbroadcasts each gradient back to the original operand shapes. Print both accumulated gradients on one line with print(x.grad.tolist(), y.grad.tolist()).",
+      "question_text": "Watch autograd do the unbroadcast for you. The starter defines `x` of shape (1,3) and `y` of shape (2,1), both requiring grad. Add them — broadcasting gives (2,3) — reduce the sum to a scalar, and backprop it. Predict both gradients first: how many broadcast copies does each original element fan out to? Print both with print(x.grad.tolist(), y.grad.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([[1.0, 2.0, 3.0]], requires_grad=True)  # (1,3)\ny = torch.tensor([[1.0],[2.0]], requires_grad=True)       # (2,1)\n# TODO: compute z = (x + y).sum() then call z.backward()\nz = None  # TODO: (x + y).sum()\n# TODO: z.backward()\nprint(x.grad.tolist(), y.grad.tolist())",
+      "starter_code": "import torch\nx = torch.tensor([[1.0, 2.0, 3.0]], requires_grad=True)  # (1,3)\ny = torch.tensor([[1.0],[2.0]], requires_grad=True)       # (2,1)\n# TODO: compute z\nz = None  # TODO: fill in z\n# TODO: complete this step (see the problem statement above)\nprint(x.grad.tolist(), y.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([[1.0, 2.0, 3.0]], requires_grad=True)  # (1,3)\ny = torch.tensor([[1.0],[2.0]], requires_grad=True)       # (2,1)\nz = (x + y).sum()\nz.backward()\nprint(x.grad.tolist(), y.grad.tolist())",
@@ -14843,12 +14844,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Define an nn.Module subclass named Linear that stores in_features, out_features, and bias as attributes in __init__, and override extra_repr to return the string f\"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias}\". Construct Linear(8, 4, bias=False) and print the result of calling its extra_repr() method directly.",
+      "question_text": "`extra_repr` is how a custom Module earns a readable one-line description. Subclass `nn.Module` as `Linear`: store `in_features`, `out_features`, and `bias` as plain attributes in `__init__`, and override `extra_repr` to return the string `in_features=..., out_features=..., bias=...` filled with the stored values (an f-string). Construct `Linear(8, 4, bias=False)` and print the result of calling its `extra_repr()` directly.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        # TODO: store in_features, out_features, bias as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: return f\"in_features=..., out_features=..., bias=...\"\n        raise NotImplementedError()\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
+      "starter_code": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        # TODO: store in_features, out_features, bias as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        self.in_features = in_features\n        self.out_features = out_features\n        self.bias = bias\n    def extra_repr(self):\n        return f\"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias}\"\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
@@ -14871,12 +14872,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Define an nn.Module subclass named Scale that stores dim and factor as attributes, and override extra_repr to return f\"dim={self.dim}, factor={self.factor}\". Construct Scale(16, 2.5) and print(repr(m)) so the overridden extra_repr string appears inside the module's printed parentheses. Print exactly that repr.",
+      "question_text": "Where does `extra_repr` actually surface? Inside the module's repr. Define `Scale(nn.Module)` storing `dim` and `factor` as attributes, with `extra_repr` returning `dim=..., factor=...` (f-string over the stored values). Construct `Scale(16, 2.5)` and print(repr(m)) — your string shows up inside `Scale(...)`.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        # TODO: store dim and factor as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: return f\"dim={self.dim}, factor={self.factor}\"\n        raise NotImplementedError()\n\nm = Scale(16, 2.5)\nprint(repr(m))",
+      "starter_code": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        # TODO: store dim and factor as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Scale(16, 2.5)\nprint(repr(m))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        self.dim = dim\n        self.factor = factor\n    def extra_repr(self):\n        return f\"dim={self.dim}, factor={self.factor}\"\n\nm = Scale(16, 2.5)\nprint(repr(m))",
@@ -14899,12 +14900,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Define an nn.Module subclass named MyBlock whose __init__ stores channels and p as attributes and also creates a submodule self.lin = nn.Linear(channels, channels). Override extra_repr to return f\"channels={self.channels}, p={self.p}\". Construct MyBlock(3, 0.5) and print(repr(m)). Note the printed representation interleaves the extra_repr line with the child submodule line; print exactly that multi-line repr.",
+      "question_text": "When a module has BOTH an `extra_repr` and child submodules, the printed repr interleaves them. Build `MyBlock(nn.Module)`: `__init__` stores `channels` and `p` as attributes and creates the child `self.lin = nn.Linear(channels, channels)`; `extra_repr` returns `channels=..., p=...`. Construct `MyBlock(3, 0.5)` and print(repr(m)) — note where your extra_repr line lands relative to the `(lin): ...` child line.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        # TODO: store channels and p, and create self.lin = nn.Linear(channels, channels)\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: return f\"channels={self.channels}, p={self.p}\"\n        raise NotImplementedError()\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
+      "starter_code": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        self.channels = channels\n        self.p = p\n        self.lin = nn.Linear(channels, channels)\n    def extra_repr(self):\n        return f\"channels={self.channels}, p={self.p}\"\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
@@ -14927,12 +14928,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using torch, flip the global gradient-tracking flag OFF with torch.set_grad_enabled(False). Then create x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True) and compute y = (x * x).sum(). Even though x has requires_grad=True, the global flag suppresses building the autograd graph. Print two lines: first print(y.requires_grad), then print(round(float(y), 4)).",
+      "question_text": "Autograd has a GLOBAL on/off switch, and it beats per-tensor settings. Flip gradient tracking off globally (the subtopic names the function), then create the starter's `x` (requires_grad=True) and compute `y`, the sum of the elementwise square of `x`. No graph gets built despite `requires_grad=True`. Print two lines: print(y.requires_grad), then print(round(float(y), 4)).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\n# TODO: turn the global grad-tracking flag OFF with torch.set_grad_enabled(False)\nx = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\n# TODO: compute y = (x * x).sum()\ny = None  # TODO: (x * x).sum()\nprint(y.requires_grad)\nprint(round(float(y), 4))",
+      "starter_code": "import torch\n# TODO: turn the global grad-tracking flag OFF\nx = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\n# TODO: compute y\ny = None  # TODO: fill in y\nprint(y.requires_grad)\nprint(round(float(y), 4))",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\ntorch.set_grad_enabled(False)\nx = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\ny = (x * x).sum()\nprint(y.requires_grad)\nprint(round(float(y), 4))",
@@ -14955,12 +14956,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, create x = torch.tensor([2.0, 4.0], requires_grad=True). Record prev = torch.is_grad_enabled() (its default value before you change anything). Then set the global grad flag to False and compute a = (x + 1).sum(). Then set the global grad flag back to True and compute b = (x + 1).sum(). Print exactly one list: print([a.requires_grad, b.requires_grad, prev]).",
+      "question_text": "The global grad flag can be flipped back and forth mid-script. The starter records `prev = torch.is_grad_enabled()` before anything changes. Flip the flag OFF and compute `a` — the sum of `x + 1`; flip it back ON and compute `b` the same way. Predict all three booleans, then print exactly print([a.requires_grad, b.requires_grad, prev]).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nx = torch.tensor([2.0, 4.0], requires_grad=True)\nprev = torch.is_grad_enabled()\n# TODO: set global grad flag False, compute a = (x + 1).sum()\na = None  # TODO\n# TODO: set global grad flag True, compute b = (x + 1).sum()\nb = None  # TODO\nprint([a.requires_grad, b.requires_grad, prev])",
+      "starter_code": "import torch\nx = torch.tensor([2.0, 4.0], requires_grad=True)\nprev = torch.is_grad_enabled()\n# TODO: set global grad flag False, compute a\na = None  # TODO: fill in a\n# TODO: set global grad flag True, compute b\nb = None  # TODO: fill in b\nprint([a.requires_grad, b.requires_grad, prev])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nx = torch.tensor([2.0, 4.0], requires_grad=True)\nprev = torch.is_grad_enabled()\ntorch.set_grad_enabled(False)\na = (x + 1).sum()\ntorch.set_grad_enabled(True)\nb = (x + 1).sum()\nprint([a.requires_grad, b.requires_grad, prev])",
@@ -14983,12 +14984,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, create a leaf parameter w = torch.tensor([1.0, 2.0, 3.0], requires_grad=True). Inside a `with torch.no_grad():` block (which locally disables the global grad-tracking flag, allowing in-place edits of a leaf that requires grad), perform the in-place update w -= 0.1 * torch.tensor([1.0, 1.0, 1.0]). Print two lines: first print([round(v, 4) for v in w.tolist()]), then print(w.requires_grad) (the leaf keeps its requires_grad attribute after the no_grad block).",
+      "question_text": "How do optimizers edit parameters that require grad without autograd objecting to in-place ops on a leaf? They work inside `torch.no_grad()`. Within the starter's `no_grad` block, take an in-place SGD-style step on `w`: subtract 0.1 times the all-ones length-3 vector, in place. Print [round(v, 4) for v in w.tolist()], then print(w.requires_grad) — the attribute survives the block.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nwith torch.no_grad():\n    # TODO: perform the in-place update w -= 0.1 * torch.tensor([1.0, 1.0, 1.0])\n    pass\nprint([round(v, 4) for v in w.tolist()])\nprint(w.requires_grad)",
+      "starter_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nwith torch.no_grad():\n    # TODO: perform the in-place update w\n    pass\nprint([round(v, 4) for v in w.tolist()])\nprint(w.requires_grad)",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nwith torch.no_grad():\n    w -= 0.1 * torch.tensor([1.0, 1.0, 1.0])\nprint([round(v, 4) for v in w.tolist()])\nprint(w.requires_grad)",
@@ -15011,12 +15012,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Using torch, create a leaf tensor w = [1.0, 2.0, 3.0] with requires_grad=True and a constant x = [4.0, 5.0, 6.0] (no grad). Compute loss = (w * x).sum(), call loss.backward(), then print w.grad as a list via print(w.grad.tolist()).",
+      "question_text": "The most basic autograd round trip: the starter's `w` requires grad, `x` is a constant. Build the scalar loss — the sum of the elementwise product of `w` and `x` — and backprop it. Predict `w.grad` before running: for this loss you can read it directly off one of the inputs. Print with print(w.grad.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\n# TODO: compute loss = (w * x).sum() and call loss.backward()\nprint(w.grad.tolist())",
+      "starter_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\n# TODO: compute loss\nprint(w.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\nloss = (w * x).sum()\nloss.backward()\nprint(w.grad.tolist())",
@@ -15039,12 +15040,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, create a leaf parameter matrix W = [[1.0, 2.0], [3.0, 4.0]] with requires_grad=True and a constant vector x = [1.0, 1.0]. Compute loss = (W @ x).pow(2).sum(), call loss.backward(). First print whether W.grad has the same shape as W via print(W.grad.shape == W.shape), then on the next line print W.grad.tolist().",
+      "question_text": "A gradient always has the same shape as its parameter. The starter gives a matrix `W` (requires grad) and a constant vector `x`. Build the scalar loss: the sum of squares of the matvec $Wx$. Backprop, then print two lines: print(W.grad.shape == W.shape), then print(W.grad.tolist()).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\n# TODO: compute loss = (W @ x).pow(2).sum() and call loss.backward()\nprint(W.grad.shape == W.shape)\nprint(W.grad.tolist())",
+      "starter_code": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\n# TODO: compute loss\nprint(W.grad.shape == W.shape)\nprint(W.grad.tolist())",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\nloss = (W @ x).pow(2).sum()\nloss.backward()\nprint(W.grad.shape == W.shape)\nprint(W.grad.tolist())",
@@ -15067,12 +15068,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Using torch, create a leaf parameter b = [2.0, -1.0] with requires_grad=True and target = [0.0, 0.0] (constant). Compute loss = ((b - target) ** 2).mean(), call loss.backward(). On the first line print the two grad components rounded to 4 decimals as: print(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4)). Then, simulating one SGD step with lr = 0.1, compute updated = b - lr * b.grad under torch.no_grad() and on the second line print [round(float(v), 4) for v in updated].",
+      "question_text": "The gradient of a MEAN divides by the element count — a classic off-by-factor trap. The starter gives leaf `b` and constant `target`. Build loss = the mean squared error between them, backprop, and print the two gradient components with print(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4)). Then take one SGD step with lr 0.1 inside the starter's `no_grad` block to compute `updated`, and print [round(float(v), 4) for v in updated].",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\n# TODO: compute loss = ((b - target) ** 2).mean() and call loss.backward()\nlr = 0.1\nwith torch.no_grad():\n    updated = None  # TODO: compute b - lr * b.grad\nprint(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4))\nprint([round(float(v), 4) for v in updated])",
+      "starter_code": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\n# TODO: compute loss\nlr = 0.1\nwith torch.no_grad():\n    updated = None  # TODO: fill in updated\nprint(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4))\nprint([round(float(v), 4) for v in updated])",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nloss = ((b - target) ** 2).mean()\nloss.backward()\nlr = 0.1\nwith torch.no_grad():\n    updated = b - lr * b.grad\nprint(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4))\nprint([round(float(v), 4) for v in updated])",
@@ -15095,12 +15096,12 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Build model = nn.Sequential(nn.Linear(3, 4), nn.ReLU(), nn.Linear(4, 2)). Call model.requires_grad_(False), which recursively turns off gradients on every parameter. Then, on one line, print the list [p.requires_grad for p in model.parameters()]. On a second line, print the number of trainable parameters: sum(p.numel() for p in model.parameters() if p.requires_grad).",
+      "question_text": "Calling `requires_grad_(False)` on a MODULE recurses into every parameter. Freeze the starter's 3-layer Sequential with that single call, then print two lines: the list of `requires_grad` flags across all parameters, and the number of trainable parameter ELEMENTS remaining (weight the count by numel, not per-tensor).",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(3, 4),\n    nn.ReLU(),\n    nn.Linear(4, 2),\n)\n# TODO: freeze all params with model.requires_grad_(False)\nflags = None  # TODO: build [p.requires_grad for p in model.parameters()]\nn_trainable = None  # TODO: sum(p.numel() for p in model.parameters() if p.requires_grad)\nprint(flags)\nprint(n_trainable)",
+      "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(3, 4),\n    nn.ReLU(),\n    nn.Linear(4, 2),\n)\n# TODO: freeze all params\nflags = None  # TODO: fill in flags\nn_trainable = None  # TODO: fill in n_trainable\nprint(flags)\nprint(n_trainable)",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(3, 4),\n    nn.ReLU(),\n    nn.Linear(4, 2),\n)\nmodel.requires_grad_(False)\nflags = [p.requires_grad for p in model.parameters()]\nn_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)\nprint(flags)\nprint(n_trainable)",
@@ -15123,12 +15124,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Set torch.manual_seed(0), then build model = nn.Linear(4, 1) and call model.requires_grad_(False) to freeze it. With x = torch.tensor([[1.0, 2.0, 3.0, 4.0]]), compute y = model(x).sum(). On the first line print y.requires_grad. On the second line print (y.grad_fn is None). Both reflect that a frozen module produces an output detached from the autograd graph.",
+      "question_text": "A frozen module's output is detached from the autograd graph. Freeze the starter's `nn.Linear(4, 1)` with one recursive call, run `x` through it and sum to get `y`. Print two lines: print(y.requires_grad), then print(y.grad_fn is None) — both tell the same story from different angles.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\n# TODO: freeze the model with model.requires_grad_(False)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\ny = None  # TODO: compute model(x).sum()\nprint(y.requires_grad)\nprint(y.grad_fn is None)",
+      "starter_code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\n# TODO: freeze the model\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\ny = None  # TODO: fill in y\nprint(y.requires_grad)\nprint(y.grad_fn is None)",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nmodel.requires_grad_(False)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\ny = model(x).sum()\nprint(y.requires_grad)\nprint(y.grad_fn is None)",
@@ -15151,12 +15152,12 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Build model = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2)). Call model.requires_grad_(False) to recursively freeze every parameter, then re-enable only the second layer with model[1].requires_grad_(True). On the first line print the list [p.requires_grad for p in model.parameters()]. On the second line print the count of parameters still requiring grad: sum(int(p.requires_grad) for p in model.parameters()).",
+      "question_text": "Partial unfreezing for fine-tuning: freeze the starter's two-layer Sequential recursively, then re-enable JUST the second layer (index into the Sequential and call the same method with True). Print two lines: the per-parameter `requires_grad` list, then the count of parameter TENSORS still requiring grad.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
-      "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.Linear(3, 2),\n)\n# TODO: freeze all params, then re-enable only the second layer (model[1])\nflags = None  # TODO: build [p.requires_grad for p in model.parameters()]\nn_on = None  # TODO: sum(int(p.requires_grad) for p in model.parameters())\nprint(flags)\nprint(n_on)",
+      "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.Linear(3, 2),\n)\n# TODO: complete this step (see the problem statement above)\nflags = None  # TODO: fill in flags\nn_on = None  # TODO: fill in n_on\nprint(flags)\nprint(n_on)",
       "test_cases": [],
       "submission_mode": "stdout",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.Linear(3, 2),\n)\nmodel.requires_grad_(False)\nmodel[1].requires_grad_(True)\nflags = [p.requires_grad for p in model.parameters()]\nn_on = sum(int(p.requires_grad) for p in model.parameters())\nprint(flags)\nprint(n_on)",
