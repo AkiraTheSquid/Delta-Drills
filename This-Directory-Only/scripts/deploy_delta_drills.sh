@@ -108,6 +108,16 @@ auto_commit_if_dirty "$REPO_DIR" "chore: auto-commit before deploy"
 
 # --- Step 2: Export question bank ---
 
+# A leftover non-empty function_mode_broken_ids.json makes the export below
+# silently EXCLUDE those ids from questions.json (including torch/Colab
+# questions the offline validator simply can't run). Refuse to deploy on it.
+BROKEN_IDS_FILE="$REPO_THIS_DIR/chatgpt/function_mode_broken_ids.json"
+if [ -s "$BROKEN_IDS_FILE" ] && ! grep -qx '\[\]' "$BROKEN_IDS_FILE"; then
+  error "Stale $BROKEN_IDS_FILE present — export would silently drop those ids."
+  error "Inspect it, fix or dismiss the failures, then: rm '$BROKEN_IDS_FILE' and re-deploy."
+  exit 1
+fi
+
 info "Exporting question bank artifacts..."
 python3 "$REPO_THIS_DIR/scripts/export_questions_json.py"
 python3 "$REPO_THIS_DIR/scripts/extract_arena_prereqs.py"
@@ -117,6 +127,13 @@ python3 "$REPO_THIS_DIR/scripts/extract_arena_exercises.py"
 # unwired the per-exercise split-notebook path. The scripts and the
 # arena-book-colab/ tree are kept on disk for archival reference.
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$REPO_DIR"
+
+# --- Step 2b: Hardened bank audit gate ---
+# Blocks the deploy on gameable grading (bare-fixture cheats passing), broken
+# starters, and degenerate expected values. See pipeline/audit_question_bank.py.
+info "Auditing question bank (gameability gate)..."
+"$REPO_THIS_DIR/backend/.venv/bin/python" \
+  "$REPO_SHARED_DIR/pipeline/audit_question_bank.py" --gate
 
 auto_commit_if_dirty "$REPO_DIR" "chore: update deploy artifacts"
 

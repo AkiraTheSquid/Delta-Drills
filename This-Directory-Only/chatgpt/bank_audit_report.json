@@ -1,0 +1,15 @@
+{
+ "total": 455,
+ "questions": {
+  "127": [
+   {
+    "check": "precompute_leak",
+    "var": "D",
+    "detail": "post-setup var 'D' already equals the expected value"
+   }
+  ]
+ },
+ "counts": {
+  "precompute_leak": 1
+ }
+}
