@@ -37,9 +37,12 @@
         <div class="arena-unlock-sub">Your subtopic scores now meet every prereq for this exercise. Go practice it before the next Delta Drills question.</div>
         <div class="arena-unlock-stuck-hint hidden" id="arena-unlock-stuck-hint">⏱️ Time's up. If you're stuck, give up and check the solution — you can still rate yourself below.</div>
         <div class="arena-unlock-why" id="arena-unlock-why"></div>
-        <div class="arena-unlock-heading-block">
-          <div class="arena-unlock-heading-label">Exercise heading (auto-copied when you open Colab — paste with Ctrl+F):</div>
-          <code class="arena-unlock-heading" id="arena-unlock-heading">—</code>
+        <div class="arena-unlock-heading-block" id="arena-unlock-heading-block">
+          <div class="arena-unlock-heading-label" id="arena-unlock-heading-label">Section heading inside the notebook — copy it, then press Ctrl+F in Colab to jump straight to the right cell:</div>
+          <div class="arena-unlock-heading-row">
+            <code class="arena-unlock-heading" id="arena-unlock-heading">—</code>
+            <button type="button" class="ghost arena-unlock-copy-btn" id="arena-unlock-copy-btn">📋 Copy</button>
+          </div>
         </div>
         <!-- ARENA unlock timer — Start when you open the exercise in Colab,
              Stop when you're done. Elapsed-vs-target time becomes the

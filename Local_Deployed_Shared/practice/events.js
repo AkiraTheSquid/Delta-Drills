@@ -58,12 +58,13 @@ overrideCorrectBtn.addEventListener("click", async () => {
 
   resultBadge.textContent = "Correct";
   resultBadge.className = "result-badge correct";
-  feedbackPrompt.textContent = "Nailed it! How hard should we go next?";
-  const labels = ["Inch it up", "Rev the engine", "Full throttle"];
+  feedbackPrompt.textContent = "Nice work. How did that feel?";
+  const labels = ["About right", "A little easy", "Way too easy"];
   feedbackButtons.forEach((btn, i) => {
     btn.textContent = labels[i];
   });
   overrideRow.classList.add("hidden");
+  if (typeof resetMissedFactRow === "function") resetMissedFactRow();
   practiceProgress.lastResultCorrect = true;
   savePracticeProgress(practiceProgress);
 });
@@ -122,6 +123,39 @@ feedbackButtons.forEach((btn) => {
   });
 });
 
+// Per-problem content-quality flags. One click logs immediately; the optional
+// note (if typed) rides along with whichever tag is clicked. Non-blocking —
+// never interferes with the difficulty rating or Next-problem flow.
+problemFlagButtons.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const q = PracticeAPI.currentQuestion;
+    if (!q) return;
+    const tag = btn.dataset.flag;
+    const note = problemFeedbackNote ? problemFeedbackNote.value.trim() : "";
+    problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
+    btn.classList.add("flagged");
+    try {
+      await PracticeAPI.reportProblem(
+        q.question_id,
+        tag,
+        note,
+        practiceProgress.lastResultCorrect,
+      );
+      if (problemFeedbackStatus) {
+        problemFeedbackStatus.classList.remove("hidden");
+      }
+    } catch (_) {
+      /* feedback is best-effort; ignore */
+    }
+  });
+});
+
+const _resetProblemFeedbackRow = () => {
+  problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
+  if (problemFeedbackNote) problemFeedbackNote.value = "";
+  if (problemFeedbackStatus) problemFeedbackStatus.classList.add("hidden");
+};
+
 const _loadNextPracticeQuestion = async () => {
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
@@ -134,6 +168,7 @@ const _loadNextPracticeQuestion = async () => {
   ewmaAccuracy.classList.add("hidden");
   ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
+  _resetProblemFeedbackRow();
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor
@@ -159,3 +194,62 @@ nextProblemBtn.addEventListener("click", async () => {
   }
   await _loadNextPracticeQuestion();
 });
+
+// --- Skip (P1.8): advance without grading and WITHOUT claiming a look-up.
+// Nothing is recorded; the served-question list keeps it from repeating next.
+if (practiceSkipBtn) {
+  practiceSkipBtn.addEventListener("click", async () => {
+    practiceSkipBtn.disabled = true;
+    try {
+      await _loadNextPracticeQuestion();
+    } catch (err) {
+      outputArea.textContent = "Could not load the next question: " + err.message;
+    } finally {
+      practiceSkipBtn.disabled = false;
+    }
+  });
+}
+
+// --- Torch self-rating (P0.1): torch drills run in Colab, not in-app. Record a
+// local-eval attempt (no doomed server grading) when in backend mode, then
+// advance. In guest/local mode recordLocalEval is a no-op; we still advance.
+const _rateTorchAndAdvance = async (correct) => {
+  const q = PracticeAPI.currentQuestion;
+  if (!q) return;
+  if (torchRateSolved) torchRateSolved.disabled = true;
+  if (torchRateLookedUp) torchRateLookedUp.disabled = true;
+  try {
+    if (typeof PracticeAPI.recordLocalEval === "function") {
+      await PracticeAPI.recordLocalEval(q.question_id, correct);
+    }
+  } catch (_) {
+    /* best-effort — still advance so the learner isn't stuck */
+  } finally {
+    if (torchRateSolved) torchRateSolved.disabled = false;
+    if (torchRateLookedUp) torchRateLookedUp.disabled = false;
+  }
+  await _loadNextPracticeQuestion();
+};
+if (torchRateSolved) torchRateSolved.addEventListener("click", () => _rateTorchAndAdvance(true));
+if (torchRateLookedUp) torchRateLookedUp.addEventListener("click", () => _rateTorchAndAdvance(false));
+
+// --- "Missed one concrete thing" (P1.5): a separate signal so a single missed
+// fact isn't read as "too hard". Rides the non-blocking problem-feedback channel.
+if (missedFactBtn) {
+  missedFactBtn.addEventListener("click", async () => {
+    const q = PracticeAPI.currentQuestion;
+    if (!q) return;
+    missedFactBtn.classList.add("flagged");
+    if (missedFactStatus) missedFactStatus.classList.remove("hidden");
+    try {
+      await PracticeAPI.reportProblem(
+        q.question_id,
+        "missed_fact",
+        "Learner: wrong due to one concrete thing, not overall difficulty.",
+        practiceProgress.lastResultCorrect,
+      );
+    } catch (_) {
+      /* feedback is best-effort; ignore */
+    }
+  });
+}

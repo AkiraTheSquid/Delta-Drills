@@ -76,7 +76,40 @@ const updateTabVisibility = () => {
   }
   const guestBanner = document.getElementById("guest-banner");
   if (guestBanner) guestBanner.classList.toggle("hidden", !!authToken);
+  updateAuthIndicators();
 };
+
+// Logged-in indicators the tester asked for: the email in the top bar + the
+// DD_TOKEN on the Account tab (he couldn't tell he was signed in, and couldn't
+// find his token). Called from updateTabVisibility (login, logout, init).
+const topbarAuth = document.getElementById("topbar-auth");
+const topbarAuthEmail = document.getElementById("topbar-auth-email");
+const accountTokenInput = document.getElementById("account-dd-token");
+const accountTokenCopy = document.getElementById("account-dd-token-copy");
+const updateAuthIndicators = () => {
+  if (topbarAuth) topbarAuth.hidden = !authToken;
+  if (topbarAuthEmail) topbarAuthEmail.textContent = authToken ? (authEmail || "Signed in") : "";
+  if (accountTokenInput) {
+    accountTokenInput.value = authToken || "";
+    accountTokenInput.placeholder = authToken ? "" : "Sign in to see your token";
+  }
+};
+if (accountTokenCopy && accountTokenInput) {
+  accountTokenCopy.addEventListener("click", () => {
+    const text = accountTokenInput.value || "";
+    if (!text) return;
+    const done = () => {
+      accountTokenCopy.textContent = "✓ Copied";
+      setTimeout(() => { accountTokenCopy.textContent = "📋 Copy"; }, 1500);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => {});
+    } else {
+      accountTokenInput.select();
+      try { document.execCommand("copy"); done(); } catch (_) { /* ignore */ }
+    }
+  });
+}
 
 const setAuthState = (token, email) => {
   const wasAuthed = !!authToken;

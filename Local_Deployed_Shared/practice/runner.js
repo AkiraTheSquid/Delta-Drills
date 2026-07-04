@@ -147,6 +147,75 @@ ${testSetup}
 `;
 }
 
+// Tab inside the code editor indents instead of jumping to the Run button.
+// Tab => insert two spaces (or indent every selected line); Shift+Tab => dedent.
+// Accessibility escape hatch: press Escape first, then Tab moves focus out of
+// the editor as usual (so keyboard-only users are never trapped).
+let _editorTabEscapes = false;
+const EDITOR_INDENT = "  ";
+if (codeEditor) {
+  codeEditor.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      // Arm a one-shot "let Tab leave the field" so keyboard users can escape.
+      _editorTabEscapes = true;
+      return;
+    }
+    if (e.key !== "Tab") {
+      _editorTabEscapes = false;
+      return;
+    }
+    if (_editorTabEscapes) {
+      // Let this Tab move focus normally, then re-arm capture.
+      _editorTabEscapes = false;
+      return;
+    }
+    e.preventDefault();
+    const el = codeEditor;
+    const value = el.value;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selectsMultipleLines = value.slice(start, end).includes("\n");
+
+    if (!e.shiftKey && !selectsMultipleLines) {
+      // Simple caret indent: insert the indent unit at the caret.
+      el.value = value.slice(0, start) + EDITOR_INDENT + value.slice(end);
+      el.selectionStart = el.selectionEnd = start + EDITOR_INDENT.length;
+      return;
+    }
+
+    // Block (de)indent: operate on every line the selection touches.
+    const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+    const block = value.slice(lineStart, end);
+    const lines = block.split("\n");
+    let newBlock;
+    let removedFirst = 0;
+    let removedTotal = 0;
+    if (e.shiftKey) {
+      newBlock = lines
+        .map((line, i) => {
+          let cut = 0;
+          if (line.startsWith(EDITOR_INDENT)) cut = EDITOR_INDENT.length;
+          else if (line.startsWith("\t")) cut = 1;
+          else if (line.startsWith(" ")) cut = 1;
+          if (i === 0) removedFirst = cut;
+          removedTotal += cut;
+          return line.slice(cut);
+        })
+        .join("\n");
+    } else {
+      newBlock = lines.map((line) => EDITOR_INDENT + line).join("\n");
+    }
+    el.value = value.slice(0, lineStart) + newBlock + value.slice(end);
+    if (e.shiftKey) {
+      el.selectionStart = Math.max(lineStart, start - removedFirst);
+      el.selectionEnd = Math.max(el.selectionStart, end - removedTotal);
+    } else {
+      el.selectionStart = start + EDITOR_INDENT.length;
+      el.selectionEnd = end + EDITOR_INDENT.length * lines.length;
+    }
+  });
+}
+
 runBtn.addEventListener("click", async () => {
   runBtn.disabled = true;
   runBtn.textContent = "Running...";

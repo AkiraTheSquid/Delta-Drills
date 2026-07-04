@@ -478,6 +478,57 @@
   font-size: 13px;
 }
 
+/* Per-problem quality feedback row (content flags) */
+.problem-feedback-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 20px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.problem-feedback-label {
+  font-size: 12px;
+  color: var(--muted, #888);
+  margin-right: 2px;
+}
+
+.problem-flag-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.problem-flag-btn:hover {
+  background: rgba(227, 33, 44, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.problem-flag-btn.flagged {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.problem-feedback-note {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--input-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: inherit;
+}
+
+.problem-feedback-status {
+  font-size: 12px;
+  color: var(--accent);
+}
+
 /* Solution Section */
 .solution-section {
   border-top: 1px solid var(--border);
@@ -677,3 +728,85 @@
 .answer-aids { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .colab-solution-link { display: inline-block; text-decoration: none; align-self: flex-start; }
 .answer-aids-note { font-size: 12px; opacity: .65; }
+
+/* ============================================================
+   Track-3 quick-wins UI: torch routing, clearer difficulty
+   rating, skip, question prose/code split, onboarding intro.
+   ============================================================ */
+
+/* Practice-vs-Targeted one-liner at the top of the practice tab. */
+.practice-mode-intro {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted, #9aa3b2);
+  background: var(--surface-2, #1b1f27);
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+}
+
+/* Torch drills run in Colab — honest routing notice instead of a dead editor. */
+.torch-colab-notice {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: rgba(255, 196, 0, 0.07);
+  border: 1px solid rgba(255, 196, 0, 0.32);
+  border-radius: 10px;
+}
+.torch-colab-title { font-weight: 700; margin-bottom: 6px; }
+.torch-colab-body { font-size: 13px; line-height: 1.55; color: var(--muted, #9aa3b2); margin-bottom: 10px; }
+.torch-colab-body code,
+.question-prose code {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.92em;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+.torch-colab-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* Skip sits next to Submit; ghost weight so Submit stays primary. */
+#practice-submit-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.practice-skip-btn { white-space: nowrap; }
+
+/* Difficulty rating: helper line + a visually-marked default button. */
+.feedback-help {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted, #9aa3b2);
+  margin: 2px 0 8px;
+}
+.feedback-btn--default {
+  border-color: var(--accent, #5b8cff);
+  box-shadow: inset 0 0 0 1px var(--accent, #5b8cff);
+}
+
+/* "I missed one concrete thing" — separate from the difficulty rating. */
+.missed-fact-row { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.missed-fact-btn { font-size: 12px; }
+.missed-fact-btn.flagged { border-color: var(--accent, #5b8cff); }
+.missed-fact-status { font-size: 12px; color: var(--accent, #5b8cff); }
+
+/* Question body: separate the prose prompt from any starter/code block. */
+.question-prose { line-height: 1.6; }
+.question-prose + .question-code-block,
+.question-code-block + .question-prose { margin-top: 10px; }
+.question-code-block {
+  background: var(--surface-2, #1b1f27);
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.question-code-block code { white-space: pre; }
+
+/* Account-tab token row + the top-bar logged-in indicator. */
+.dd-token-row { display: flex; gap: 8px; align-items: center; }
+.dd-token-row .text-input { flex: 1 1 auto; }
+.topbar-auth { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted, #9aa3b2); }
+.topbar-auth-dot { width: 8px; height: 8px; border-radius: 50%; background: #35c46a; box-shadow: 0 0 6px #35c46a; }
+.topbar-auth-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
