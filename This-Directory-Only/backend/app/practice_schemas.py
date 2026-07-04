@@ -4,7 +4,7 @@ Pydantic schemas for the practice / adaptive-learning endpoints.
 
 from __future__ import annotations
 
-from typing import Dict, Literal
+from typing import Dict, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -122,6 +122,19 @@ class PracticeStateResponse(BaseModel):
     # over the per-subtopic EWMA bridge when an atom has a posterior.
     atom_mastery: Dict[str, float] = Field(default_factory=dict)
     atom_last_ts: Dict[str, str] = Field(default_factory=dict)
+    # Self-reported experience level: None | "beginner" | "strong".
+    self_reported_level: Optional[str] = None
+
+
+class SelfReportRequest(BaseModel):
+    # "beginner" | "default" | "strong" — "default" (or unknown) clears the
+    # prior back to the standard BKT p_init.
+    level: str
+
+
+class SelfReportResponse(BaseModel):
+    success: bool
+    level: Optional[str]  # normalized stored value (None when cleared)
 
 
 class CodeRunRequest(BaseModel):

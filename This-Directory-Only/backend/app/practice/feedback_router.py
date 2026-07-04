@@ -68,12 +68,17 @@ def submit_feedback(
     # reads baseline/p for any decision; see bkt_mastery.py.)
     question = get_question_by_id(attempt.question_id)
     if question is not None:
+        # params carry the learner's self-reported prior so a never-practiced
+        # atom's FIRST update starts from that prior (and decay regresses
+        # toward it) — one wrong answer still drops a "strong" prior fast.
+        user_params = bkt_mastery.params_for_level(user_state.self_reported_level)
         for tag in getattr(question, "atom_tags", []) or []:
             bkt_mastery.apply_attempt(
                 user_state.atom_mastery,
                 user_state.atom_last_ts,
                 tag["atom_id"],
                 attempt.correct,
+                params=user_params,
                 confidence=float(tag.get("confidence", 1.0)),
             )
 

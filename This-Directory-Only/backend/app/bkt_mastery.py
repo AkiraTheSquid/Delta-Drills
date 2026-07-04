@@ -64,6 +64,27 @@ class BKTParams:
 
 DEFAULT_PARAMS = BKTParams()
 
+# Self-reported experience level → prior P(known) for never-practiced atoms.
+# The prior positions the difficulty search (target_difficulty, subtopic
+# ordering, and the starting point of the first BKT update); it is NOT
+# evidence — mastery/unlock gates (is_mastered, item_is_unlocked) keep
+# DEFAULT_PARAMS so nothing unlocks from self-report alone. Both priors sit
+# far below UNLOCK_THRESHOLD by construction. v0 values, calibrate like the
+# rest of this module.
+PRIOR_BY_LEVEL: Dict[str, float] = {
+    "beginner": 0.02,   # first questions land at the difficulty floor
+    "strong": 0.45,     # first questions land around difficulty ~56/100
+}
+
+
+def params_for_level(level: Optional[str]) -> BKTParams:
+    """BKTParams with p_init seeded from a self-reported level (None/unknown
+    level → DEFAULT_PARAMS)."""
+    prior = PRIOR_BY_LEVEL.get(level or "")
+    if prior is None:
+        return DEFAULT_PARAMS
+    return BKTParams(p_init=prior, p_transit=P_TRANSIT, p_guess=P_GUESS, p_slip=P_SLIP)
+
 
 # --- encompassing graph index ------------------------------------------------
 

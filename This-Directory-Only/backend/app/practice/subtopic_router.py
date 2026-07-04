@@ -17,6 +17,8 @@ from app.auth import get_current_user
 from app.models import User
 from app.practice_schemas import (
     PracticeStateResponse,
+    SelfReportRequest,
+    SelfReportResponse,
     SubtopicStateSnapshot,
     SubtopicStatsResponse,
     WeightsUpdateRequest,
@@ -81,6 +83,7 @@ def get_practice_state(user: User = Depends(get_current_user)) -> PracticeStateR
         custom_weights=dict(user_state.custom_weights or {}),
         atom_mastery=dict(user_state.atom_mastery or {}),
         atom_last_ts=dict(user_state.atom_last_ts or {}),
+        self_reported_level=user_state.self_reported_level,
     )
 
 
@@ -118,6 +121,26 @@ def update_weights(
     user_state.custom_weights = {k: float(v) for k, v in payload.weights.items()}
     save_user_state(user_id)
     return {"ok": True}
+
+
+@router.put("/self-report", response_model=SelfReportResponse)
+def update_self_report(
+    payload: SelfReportRequest,
+    user: User = Depends(get_current_user),
+) -> SelfReportResponse:
+    """Persist the learner's self-reported experience level.
+
+    Seeds the BKT prior for never-practiced atoms (bkt_mastery.PRIOR_BY_LEVEL)
+    so the first questions start near the learner's level. It is a prior, not
+    evidence: mastery/unlock gates ignore it, and the first few attempts
+    overrule it. "default" (or anything unrecognized) clears it.
+    """
+    user_id = str(user.id)
+    user_state = get_user_state(user_id)
+    level = payload.level.strip().lower()
+    user_state.self_reported_level = level if level in bkt_mastery.PRIOR_BY_LEVEL else None
+    save_user_state(user_id)
+    return SelfReportResponse(success=True, level=user_state.self_reported_level)
 
 
 @router.get("/atom-gates")

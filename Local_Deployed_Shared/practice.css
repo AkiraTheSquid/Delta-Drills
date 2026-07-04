@@ -746,6 +746,52 @@
   margin: 0 0 12px;
 }
 
+/* Self-reported experience level (seeds the adaptive starting difficulty) */
+.self-report-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+
+.self-report-label {
+  color: var(--muted, #9aa3b2);
+  cursor: help;
+}
+
+.self-report-options {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.self-report-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #2a2f3a);
+  background: var(--surface-2, #1b1f27);
+  color: var(--muted, #9aa3b2);
+  cursor: pointer;
+}
+
+.self-report-btn:hover {
+  color: var(--text, #e8ecf4);
+  border-color: var(--accent, #4f8cff);
+}
+
+.self-report-btn.active {
+  color: var(--text, #e8ecf4);
+  border-color: var(--accent, #4f8cff);
+  background: color-mix(in srgb, var(--accent, #4f8cff) 18%, transparent);
+}
+
+.self-report-note {
+  color: var(--muted, #9aa3b2);
+  font-size: 12px;
+}
+
 /* Torch drills run in Colab — honest routing notice instead of a dead editor. */
 .torch-colab-notice {
   margin: 12px 0;

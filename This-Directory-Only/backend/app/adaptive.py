@@ -127,6 +127,11 @@ class UserPracticeState:
     atom_mastery: Dict[str, float] = field(default_factory=dict)
     # ISO-8601 UTC of the last update to each atom's posterior; drives decay.
     atom_last_ts: Dict[str, str] = field(default_factory=dict)
+    # Self-reported experience: None | "beginner" | "strong". Seeds the BKT
+    # prior for never-practiced atoms (bkt_mastery.params_for_level) so the
+    # first questions start near the learner's level; evidence overrules it
+    # within a couple of attempts and it never unlocks anything by itself.
+    self_reported_level: Optional[str] = None
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -164,6 +169,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "custom_weights": state.custom_weights,
         "atom_mastery": state.atom_mastery,
         "atom_last_ts": state.atom_last_ts,
+        "self_reported_level": state.self_reported_level,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -195,6 +201,7 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         # Additive, back-compat: older saves predate per-atom BKT state.
         state.atom_mastery = data.get("atom_mastery") or {}
         state.atom_last_ts = data.get("atom_last_ts") or {}
+        state.self_reported_level = data.get("self_reported_level")
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(

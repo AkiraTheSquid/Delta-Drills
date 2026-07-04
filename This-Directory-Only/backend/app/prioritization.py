@@ -62,16 +62,21 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
 
 def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
     """Mean decay-adjusted BKT posterior over the atoms this subtopic exercises.
-    Falls back to the BKT prior when the subtopic has no tagged atoms / no
-    practice yet (so it reads as 'weak' and gets prioritized)."""
+    Falls back to the learner's prior (self-reported level, else the BKT
+    default) when the subtopic has no tagged atoms / no practice yet — so a
+    self-reported beginner starts at the floor and a self-reported strong
+    learner starts high, and evidence takes over from the first attempt."""
+    params = bkt_mastery.params_for_level(user_state.self_reported_level)
     atoms = get_atoms_for_subtopic(subtopic)
     if not atoms:
-        return bkt_mastery.P_INIT
+        return params.p_init
     vals = [
-        bkt_mastery.current_mastery(user_state.atom_mastery, user_state.atom_last_ts, a)
+        bkt_mastery.current_mastery(
+            user_state.atom_mastery, user_state.atom_last_ts, a, params=params
+        )
         for a in atoms
     ]
-    return sum(vals) / len(vals) if vals else bkt_mastery.P_INIT
+    return sum(vals) / len(vals) if vals else params.p_init
 
 
 def target_difficulty(user_state: UserPracticeState, subtopic: str) -> float:

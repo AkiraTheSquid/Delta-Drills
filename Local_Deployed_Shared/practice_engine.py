@@ -37,6 +37,22 @@ FEEDBACK_ALPHA = {
 
 COLD_START_TARGETS = [25, 50, 75]
 
+# Staircase difficulty (offline mode) — a simple up/down step model seeded by
+# the learner's self-reported level. Correct answer steps the target up, a
+# wrong one steps it back down harder, so strong learners climb out of the
+# easy band in a few questions and beginners never get thrown into the deep
+# end. Backend mode uses the BKT-driven target instead; this only governs
+# offline/Supabase free practice, which previously served a FIXED 25/50/75
+# ramp with no adaptivity at all.
+STAIRCASE_SEED_BY_LEVEL = {
+    "beginner": 15.0,
+    "strong": 70.0,
+}
+STAIRCASE_DEFAULT_SEED = 40.0
+STAIRCASE_STEP_UP = 15.0      # on a correct answer
+STAIRCASE_STEP_DOWN = 20.0    # on a wrong answer (down harder: wrong at level
+                              # k is stronger evidence than right at level k)
+
 # Half-life decay (v0) — Yudelson & Pavlik 2013 (survived audit) flags
 # monotonic mastery as anti-pattern; this is the regression mechanism.
 HALF_LIFE_DAYS: float = 14.0
@@ -91,6 +107,9 @@ class SubtopicState:
     history: List[AttemptRecord] = field(default_factory=list)
     served_question_ids: List[int] = field(default_factory=list)
     last_update_ts: Optional[str] = None
+    # True once target_difficulty has been seeded from the self-reported
+    # level — from then on the staircase owns it.
+    staircase_seeded: bool = False
 
 
 @dataclass
@@ -104,6 +123,9 @@ class UserPracticeState:
     # see bkt_mastery.py for the model. EWMA above is now only an area readout.
     atom_mastery: Dict[str, float] = field(default_factory=dict)
     atom_last_ts: Dict[str, str] = field(default_factory=dict)
+    # Self-reported experience: None | "beginner" | "strong". Seeds each
+    # subtopic's staircase start; the staircase corrects it from question 1.
+    self_reported_level: Optional[str] = None
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -121,6 +143,7 @@ def state_to_dict(state: UserPracticeState) -> dict:
         "custom_weights": state.custom_weights,
         "atom_mastery": state.atom_mastery,
         "atom_last_ts": state.atom_last_ts,
+        "self_reported_level": state.self_reported_level,
         "pending_attempt": asdict(state.pending_attempt) if state.pending_attempt else None,
         "subtopic_states": {},
     }
@@ -134,6 +157,7 @@ def state_to_dict(state: UserPracticeState) -> dict:
             "served_question_ids": sub_state.served_question_ids,
             "history": [asdict(a) for a in sub_state.history],
             "last_update_ts": sub_state.last_update_ts,
+            "staircase_seeded": sub_state.staircase_seeded,
         }
     return data
 
@@ -144,6 +168,7 @@ def state_from_dict(data: dict) -> UserPracticeState:
     # Additive, back-compat: older saves predate per-atom BKT state.
     state.atom_mastery = data.get("atom_mastery") or {}
     state.atom_last_ts = data.get("atom_last_ts") or {}
+    state.self_reported_level = data.get("self_reported_level")
     if data.get("pending_attempt"):
         pa = data["pending_attempt"]
         state.pending_attempt = AttemptRecord(
@@ -190,6 +215,9 @@ def state_from_dict(data: dict) -> UserPracticeState:
             served_question_ids=sub_data.get("served_question_ids", []),
             history=history,
             last_update_ts=last_ts,
+            # Migrated saves predate the staircase: treat a subtopic with
+            # attempts as already seeded so its target isn't reset mid-run.
+            staircase_seeded=sub_data.get("staircase_seeded", sub_data["n"] > 0),
         )
     return state
 
@@ -210,13 +238,28 @@ def _clamp_difficulty(value: float) -> float:
     return max(10.0, min(100.0, value))
 
 
-def get_target_difficulty(state: SubtopicState) -> float:
-    """OFFLINE free-practice difficulty: a cold-start ramp, then a fixed mid
-    target. The adaptive (BKT-driven) difficulty lives only in backend mode
-    (prioritization.target_difficulty); offline is ungated free practice."""
-    if state.n < len(COLD_START_TARGETS):
-        return COLD_START_TARGETS[state.n]
-    return COLD_START_TARGETS[-1]
+def get_target_difficulty(state: SubtopicState, level: Optional[str] = None) -> float:
+    """OFFLINE free-practice difficulty: a per-subtopic STAIRCASE.
+
+    Seeded from the self-reported level (beginner 15 / default 40 / strong 70),
+    then stepped by apply_feedback: +STAIRCASE_STEP_UP on correct,
+    -STAIRCASE_STEP_DOWN on wrong. Replaces the old FIXED [25, 50, 75] ramp,
+    which was predetermined regardless of performance. The BKT-driven target
+    lives only in backend mode (prioritization.target_difficulty)."""
+    if not state.staircase_seeded:
+        state.target_difficulty = STAIRCASE_SEED_BY_LEVEL.get(
+            level or "", STAIRCASE_DEFAULT_SEED
+        )
+        state.staircase_seeded = True
+    return _clamp_difficulty(state.target_difficulty)
+
+
+def step_staircase(state: SubtopicState, correct: bool, level: Optional[str] = None) -> float:
+    """Advance the staircase after a graded attempt and return the new target."""
+    current = get_target_difficulty(state, level)  # seeds if needed
+    delta = STAIRCASE_STEP_UP if correct else -STAIRCASE_STEP_DOWN
+    state.target_difficulty = _clamp_difficulty(current + delta)
+    return state.target_difficulty
 
 
 def record_attempt(
@@ -258,7 +301,7 @@ def apply_feedback(
     if not attempt.timestamp:
         attempt.timestamp = _now_iso()
     sub_state.last_update_ts = attempt.timestamp
-    sub_state.target_difficulty = get_target_difficulty(sub_state)
+    step_staircase(sub_state, attempt.correct, user_state.self_reported_level)
     attempt.target_difficulty_after = sub_state.target_difficulty
 
     sub_state.history.append(attempt)
@@ -345,7 +388,7 @@ def pick_question(user_state: UserPracticeState, questions: list) -> Optional[di
         return None
 
     sub_state = user_state.get_subtopic_state(subtopic)
-    target = get_target_difficulty(sub_state)
+    target = get_target_difficulty(sub_state, user_state.self_reported_level)
 
     # Filter to this subtopic, excluding already-served
     served = set(sub_state.served_question_ids)
@@ -396,6 +439,20 @@ class EngineAPI:
     def set_custom_weights(self, state_json: str, weights_json: str) -> str:
         state = state_from_json(state_json)
         state.custom_weights = json.loads(weights_json)
+        return state_to_json(state)
+
+    def set_self_reported_level(self, state_json: str, level: str) -> str:
+        """Set the self-reported experience level ("beginner" | "strong";
+        anything else clears it). Re-seeds the staircase for subtopics with
+        no attempts yet; subtopics already in progress keep their position."""
+        state = state_from_json(state_json)
+        normalized = (level or "").strip().lower()
+        state.self_reported_level = (
+            normalized if normalized in STAIRCASE_SEED_BY_LEVEL else None
+        )
+        for sub_state in state.subtopic_states.values():
+            if sub_state.n == 0:
+                sub_state.staircase_seeded = False
         return state_to_json(state)
 
     def submit_answer(self, state_json: str, question_id: int, subtopic: str,
