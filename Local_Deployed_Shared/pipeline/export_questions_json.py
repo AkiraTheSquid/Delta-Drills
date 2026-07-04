@@ -420,6 +420,12 @@ def load_function_overrides() -> dict[int, dict]:
         "numpy_einsum_prompt_rewrite_overrides.jsonl",
         "prompt_expansion_overrides.jsonl",
         "difficulty_overrides.jsonl",
+        # question_text-only rewrites (de-giveaway + readability) — keep in
+        # sync with backend/app/questions.py::_load_function_overrides.
+        "question_text_quality_overrides.jsonl",
+        # Starter-code fixes: SyntaxErrors + answer-leaking comments +
+        # precomputed-answer-before-solve() bugs. Keep in sync with backend.
+        "starter_leak_and_syntax_fixes.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():

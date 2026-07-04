@@ -1,0 +1,476 @@
+[
+ {
+  "id": 2,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 3,
+  "var": "color",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 4,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 11,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 12,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 16,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 18,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 25,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 27,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 30,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 31,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 40,
+  "var": "nz",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 46,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 47,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 48,
+  "var": "Z",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 50,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 53,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 55,
+  "var": "Z",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 59,
+  "var": "A",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 68,
+  "var": "is_mono",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 69,
+  "var": "y",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 71,
+  "var": "mapped",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 72,
+  "var": "Z",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 74,
+  "var": "Z",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 75,
+  "var": "R",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 77,
+  "var": "d",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 78,
+  "var": "mask",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 79,
+  "var": "U",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 82,
+  "var": "R",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 83,
+  "var": "Z",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 85,
+  "var": "Z",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 86,
+  "var": "coords",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 89,
+  "var": "out",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 90,
+  "var": "P",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 93,
+  "var": "onehot",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 96,
+  "var": "Z",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 99,
+  "var": "ma",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 100,
+  "var": "out",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 103,
+  "var": "softmax",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 105,
+  "var": "G",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 112,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 114,
+  "var": "ranks",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 116,
+  "var": "D",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 117,
+  "var": "W",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 126,
+  "var": "block_sums",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 130,
+  "var": "idx",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 132,
+  "var": "F",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 136,
+  "var": "A",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 140,
+  "var": "diag_k",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 143,
+  "var": "out",
+  "subtopic": "Indexing and selection",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 146,
+  "var": "C",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 149,
+  "var": "d",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 150,
+  "var": "one_hot",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 155,
+  "var": "decoded",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 157,
+  "var": "R",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 159,
+  "var": "Z0",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 160,
+  "var": "L",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 164,
+  "var": "T",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 165,
+  "var": "A",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 176,
+  "var": "S",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 180,
+  "var": "M",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 195,
+  "var": "S",
+  "subtopic": "Vectorization and broadcasting",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 196,
+  "var": "Y",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 199,
+  "var": "KR",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 212,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 213,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 214,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 215,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 216,
+  "var": "A",
+  "subtopic": "Applied patterns and advanced",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 217,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 224,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 225,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 227,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 228,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 229,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 231,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 233,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 242,
+  "var": "Z",
+  "subtopic": "Core array literacy",
+  "primary_library": "numpy"
+ },
+ {
+  "id": 410,
+  "var": "out",
+  "subtopic": "Output shape & arithmetic",
+  "primary_library": "torch"
+ }
+]
