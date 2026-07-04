@@ -9,6 +9,101 @@ function isCalibrationQuestion(q) {
   return isColdStart(q.subtopic, overrideN);
 }
 
+// A question is "torch" if the bank tags it so, or its starter/solution imports
+// torch. Torch can't run in the in-app sandbox, so these route to Colab.
+function questionIsTorch(q) {
+  if (!q) return false;
+  if (q.primary_library === "torch") return true;
+  const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
+  return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
+}
+
+function _escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Render a question prompt as separated prose + code instead of one wall of
+// text, and let KaTeX render the $…$ math (it was showing raw before). Fenced
+// ```code``` blocks become a styled <pre>; inline `code` becomes <code>; math
+// is left for KaTeX. Returns nothing — writes into #question-text.
+function renderQuestionBody(q) {
+  const raw = (q && q.question_text) || "";
+  // Pull fenced code blocks out first so we don't KaTeX/escape-mangle them.
+  const parts = [];
+  const fence = /```[a-zA-Z0-9]*\n?([\s\S]*?)```/g;
+  let last = 0;
+  let m;
+  while ((m = fence.exec(raw)) !== null) {
+    if (m.index > last) parts.push({ type: "prose", text: raw.slice(last, m.index) });
+    parts.push({ type: "code", text: m[1].replace(/\n$/, "") });
+    last = fence.lastIndex;
+  }
+  if (last < raw.length) parts.push({ type: "prose", text: raw.slice(last) });
+
+  const html = parts.map((p) => {
+    if (p.type === "code") {
+      return `<pre class="question-code-block"><code>${_escapeHtml(p.text)}</code></pre>`;
+    }
+    // Escape HTML, then turn inline `backtick` spans into <code>. Math ($…$) is
+    // left untouched for KaTeX auto-render below. Blank lines split paragraphs
+    // (each its own div — .question-prose has no pre-wrap, so raw \n collapses).
+    return p.text
+      .split(/\n{2,}/)
+      .map((para) => para.trim())
+      .filter(Boolean)
+      .map((para) => {
+        const escaped = _escapeHtml(para).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+        return `<div class="question-prose">${escaped}</div>`;
+      })
+      .join("");
+  }).join("");
+
+  questionText.innerHTML = html || _escapeHtml(raw);
+
+  // Render the math. auto-render.min.js loads `defer`, so it's usually ready by
+  // the time a question renders; guard in case it isn't.
+  if (typeof window.renderMathInElement === "function") {
+    try {
+      window.renderMathInElement(questionText, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    } catch (_) { /* malformed LaTeX — leave the raw text */ }
+  }
+}
+
+// Torch drills route to Colab (the in-app sandbox can't import torch in time).
+// Swap the Submit/editor flow for an honest "do it in Colab + self-rate" panel.
+function applyTorchRouting(q) {
+  const isTorch = questionIsTorch(q);
+  if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !isTorch);
+  if (!isTorch) return;
+  // Hide the doomed in-app submit; the notice carries its own self-rate.
+  practiceSubmitArea.classList.add("hidden");
+  const toHref = (p) => (p && typeof colabUpstreamHref === "function") ? colabUpstreamHref(p) : "";
+  // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall
+  // back to the solution notebook only if no problem notebook exists.
+  if (torchColabLink) {
+    const href = toHref(q && (q.problem_notebook_path || q.solution_notebook_path));
+    torchColabLink.classList.toggle("hidden", !href);
+    if (href) torchColabLink.href = href;
+  }
+  // Separate "Show solution" → the worked-answer notebook, only when we have a
+  // distinct problem notebook (otherwise the primary link already IS the solution).
+  if (torchSolutionLink) {
+    const solHref = toHref(q && q.solution_notebook_path);
+    const showSolution = !!(solHref && q && q.problem_notebook_path);
+    torchSolutionLink.hidden = !showSolution;
+    if (showSolution) torchSolutionLink.href = solHref;
+  }
+}
+
 function renderQuestion(q, count) {
   if (curatedExcludedIds.has(q.question_id)) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
@@ -20,7 +115,7 @@ function renderQuestion(q, count) {
   }
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
-  questionText.textContent = q.question_text;
+  renderQuestionBody(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
   codeEditor.value =
@@ -35,10 +130,12 @@ function renderQuestion(q, count) {
   const coldStart = isCalibrationQuestion(q);
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
   if (coldStart && csIndex) {
-    coldStartLabel.textContent = `Calibrating — ${csIndex} of 3`;
+    // Calibration is PER SKILL, not global — say so, or "1 of 3" on overall
+    // Question 8 reads as a stuck counter (tester hit exactly this).
+    coldStartLabel.textContent = `Calibrating “${q.subtopic}” — ${csIndex} of 3`;
     if (coldStartNote) {
       coldStartNote.textContent =
-        "First 3 questions use fixed difficulties to calibrate your level. The next difficulty is preset during calibration, so the usual accuracy bar is hidden until calibration finishes.";
+        `Each skill starts with 3 questions at fixed difficulties to find your level, so this counter restarts whenever a new skill (like “${q.subtopic}”) first comes up. The accuracy bar stays hidden until this skill finishes calibrating.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {
@@ -57,7 +154,11 @@ function renderQuestion(q, count) {
   ewmaAccuracy.classList.add("hidden");
   ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
+  resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
+  // Torch drills swap the submit flow for the Colab-routing notice (must run
+  // AFTER the submit area is un-hidden above so it can re-hide it for torch).
+  applyTorchRouting(q);
 
   // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
   // Backend mode: use p_current from the question response (adaptiveStateJson is null).
@@ -309,15 +410,27 @@ function applyResult(correct) {
   overrideRow.classList.toggle("hidden", correct);
   practiceFeedbackArea.classList.remove("checking");
   questionMetaTop.classList.remove("hidden");
+  // Buttons map to the engine's not_much / somewhat / a_lot, but difficulty is
+  // driven by your mastery — so these are a felt-difficulty self-report with
+  // "About right" as the clear default (see the helper line + .feedback-btn--default).
   if (correct) {
-    feedbackPrompt.textContent = "Nailed it! How hard should we go next?";
+    feedbackPrompt.textContent = "Nice work. How did that feel?";
     feedbackButtons.forEach((btn, i) => {
-      btn.textContent = ["Inch it up", "Rev the engine", "Full throttle"][i];
+      btn.textContent = ["About right", "A little easy", "Way too easy"][i];
     });
   } else {
-    feedbackPrompt.textContent = "Tough one. How much should we dial it back?";
+    feedbackPrompt.textContent = "No worries. How did that feel?";
     feedbackButtons.forEach((btn, i) => {
-      btn.textContent = ["Just a hair easier", "Take the edge off", "Back to basics"][i];
+      btn.textContent = ["About right", "A little hard", "Way too hard"][i];
     });
   }
+  // "I missed one concrete thing" only makes sense after a wrong answer.
+  if (missedFactRow) missedFactRow.classList.toggle("hidden", correct);
+}
+
+// Clear the "missed one concrete thing" affordance between questions.
+function resetMissedFactRow() {
+  if (missedFactRow) missedFactRow.classList.add("hidden");
+  if (missedFactStatus) missedFactStatus.classList.add("hidden");
+  if (missedFactBtn) missedFactBtn.classList.remove("flagged");
 }

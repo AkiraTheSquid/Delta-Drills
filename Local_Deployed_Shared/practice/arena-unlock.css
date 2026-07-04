@@ -87,11 +87,26 @@
   letter-spacing: 0.04em;
 }
 
+.arena-unlock-heading-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
 .arena-unlock-heading {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
   color: var(--white, #f4f4f7);
   word-break: break-word;
+  flex: 1 1 auto;
+}
+
+.arena-unlock-copy-btn {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  white-space: nowrap;
 }
 
 .arena-unlock-actions {

@@ -20,11 +20,17 @@
   <link rel="stylesheet" href="styles/courses/modal.css?v=1" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css" />
-  <link rel="stylesheet" href="practice.css?v=11" />
+  <link rel="stylesheet" href="practice.css?v=12" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
-  <link rel="stylesheet" href="practice/arena-unlock.css?v=6" />
+  <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
+  <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
+       No SRI integrity attrs on purpose: a stale/wrong hash would silently block
+       the script. jsdelivr is already trusted for pyodide/cytoscape below. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Sign in with Google (Google Identity Services). auth-config.js sets the
@@ -37,14 +43,20 @@
     <div class="logo">Delta Drills <span class="version-tag">v1.0.11</span></div>
     <nav class="tabs">
       <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
-      <button class="tab auth-only" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
+      <button class="tab auth-only" data-tab="knowledge-graph" type="button" title="A map of every skill and what depends on what. Use it to see why something is locked and what it unlocks — Practice picks your next problem from it automatically.">Knowledge Graph</button>
       <button class="tab auth-only" data-tab="split-tool" type="button" hidden>Split Tool</button>
       <button class="tab auth-only" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="courses" type="button">Courses</button>
-      <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
-      <button class="tab auth-only" data-tab="targeted-practice" type="button">Targeted Practice</button>
+      <button class="tab auth-only" data-tab="practice" type="button" title="Your adaptive queue: we choose the next problem for you based on what you're ready for.">Practice</button>
+      <button class="tab auth-only" data-tab="targeted-practice" type="button" title="You choose a specific skill and drill it directly — instead of the adaptive queue choosing for you.">Targeted Practice</button>
       <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
     </nav>
+    <!-- Logged-in indicator (the tester couldn't tell he was signed in). app.js
+         shows the email here when authenticated; hidden for guests. -->
+    <div class="topbar-auth" id="topbar-auth" hidden>
+      <span class="topbar-auth-dot" aria-hidden="true"></span>
+      <span class="topbar-auth-email" id="topbar-auth-email"></span>
+    </div>
   </header>
 
   <!-- GUEST BANNER — shown to anyone not logged in. The app is fully usable
@@ -391,7 +403,10 @@
         <span class="cg-key-prereq">red links</span> are the structural
         prerequisites that gate what unlocks; the dashed links are the
         encompassing relationships that carry credit back down. Colour groups
-        skills by area. Click any node to trace what it connects to. (Showing
+        skills by area. Click any node to trace what it connects to. It's a
+        map, not a to-do list — use it to see <em>why</em> a skill is still
+        locked (what feeds into it) and what finishing it unlocks; Practice
+        already walks this graph for you to choose each next problem. (Showing
         the skills with mapped dependencies so far — edge coverage across the
         full curriculum is still growing.)
       </p>
@@ -491,6 +506,14 @@
               One-time setup: fork <a href="https://github.com/callummcdougall/ARENA_3.0/fork" target="_blank" rel="noreferrer">callummcdougall/ARENA_3.0</a> to your own account, then paste your GitHub username here. The Colab pills on the Predicted course scores tab will then open <em>your</em> fork. After you save a notebook in Colab via <code>File → Save a copy in GitHub</code>, future clicks on the same exercise reopen your latest edits. Leave blank to use the upstream read-only copy.
             </div>
           </div>
+          <div class="field" id="account-token-field">
+            <label for="account-dd-token">Your API token (DD_TOKEN)</label>
+            <div class="dd-token-row">
+              <input id="account-dd-token" class="text-input" type="text" readonly placeholder="Sign in to see your token" autocomplete="off" spellcheck="false" />
+              <button type="button" class="ghost" id="account-dd-token-copy">📋 Copy</button>
+            </div>
+            <div class="hint">Paste this as <code>DD_TOKEN</code> when a drill notebook asks for it — it links the notebook back to your account so completing it counts. It's your login session token, so keep it private.</div>
+          </div>
           <button class="primary" type="submit">Save settings</button>
           <div id="account-message" class="hint" role="status"></div>
         </form>
@@ -523,6 +546,12 @@
       <div class="practice-split">
         <!-- Left Panel: Questions -->
         <div class="practice-left">
+          <!-- One-line orientation: what THIS tab is, vs Targeted Practice
+               (the tester expected them to be the same thing). -->
+          <p class="practice-mode-intro" id="practice-mode-intro">
+            <strong>Practice</strong> is your adaptive queue — we pick the next problem for you based on what you're ready for.
+            Want to drill one specific skill instead? Use <strong>Targeted Practice</strong>.
+          </p>
           <!-- Timed Mode Toggle -->
           <div class="timed-mode-row">
             <div class="timed-mode-control">
@@ -569,6 +598,21 @@
             <canvas class="question-visual-canvas hidden" id="question-visual-canvas"></canvas>
           </div>
 
+          <!-- PyTorch drills can't run in the in-app sandbox (torch won't
+               import inside the time limit) — route them to Colab with honest
+               messaging + a self-rate instead of a silent timeout. Toggled by
+               ui.js when the served question is torch-based. -->
+          <div class="torch-colab-notice hidden" id="torch-colab-notice">
+            <div class="torch-colab-title">🔦 This is a PyTorch drill — run it in Colab</div>
+            <div class="torch-colab-body">The in-app runner can't <code>import torch</code>, so this one runs in a Colab notebook. <strong>Open it</strong> (it's the problem — starter code, no answer), work through it there, then tell us how it went. Stuck? <strong>Show solution</strong> opens the worked answer separately.</div>
+            <div class="torch-colab-actions">
+              <a class="primary" id="torch-colab-link" href="#" target="_blank" rel="noreferrer">Open in Colab ↗</a>
+              <a class="ghost" id="torch-solution-link" href="#" target="_blank" rel="noreferrer" hidden>Show solution ↗</a>
+              <button class="ghost" id="torch-rate-solved" type="button">✓ Worked through it</button>
+              <button class="ghost" id="torch-rate-lookedup" type="button">✗ Just skimmed it</button>
+            </div>
+          </div>
+
           <!-- Hint aid only. In-browser bank questions reveal their solution
                code after submit; the Colab solution link belongs on the
                procedural-drill cards (Colab-run exercises), not here. -->
@@ -585,6 +629,7 @@
           <!-- Submit Area (pre-submission) -->
           <div id="practice-submit-area">
             <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
+            <button class="ghost practice-skip-btn" id="practice-skip-btn" type="button" title="Move on without answering — nothing is recorded, and it isn't counted as looking up the solution.">Skip</button>
           </div>
 
           <!-- Feedback Area (post-submission, hidden by default) -->
@@ -599,13 +644,33 @@
               </div>
             </div>
             <div class="feedback-prompt" id="feedback-prompt"></div>
+            <div class="feedback-help" id="feedback-help">Difficulty adapts from your mastery automatically — this just records how it felt. <strong>“About right” is the safe default if you're not sure.</strong></div>
             <div class="feedback-buttons">
-              <button class="ghost feedback-btn" data-feedback="not_much" type="button">Not much</button>
-              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat</button>
-              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">A lot</button>
+              <button class="ghost feedback-btn feedback-btn--default" data-feedback="not_much" type="button">About right</button>
+              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">A bit off</button>
+              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">Way off</button>
               <button class="primary next-problem-btn hidden" id="next-problem-btn" type="button">
                 Next problem
               </button>
+            </div>
+            <!-- "Wrong for one concrete reason, not because it was too hard" — a
+                 separate signal so a single missed fact isn't read as "too hard".
+                 Logged via the problem-feedback channel; shown only after an
+                 incorrect answer (ui.js). -->
+            <div class="missed-fact-row hidden" id="missed-fact-row">
+              <button class="ghost missed-fact-btn" id="missed-fact-btn" type="button">I missed one specific thing — it wasn't “too hard”</button>
+              <span class="missed-fact-status hidden" id="missed-fact-status">noted ✓</span>
+            </div>
+            <!-- Per-problem quality feedback — content flags, NOT the difficulty rating above -->
+            <div class="problem-feedback-row" id="problem-feedback-row">
+              <span class="problem-feedback-label">Issue with this problem?</span>
+              <button class="ghost problem-flag-btn" data-flag="broken" type="button">🚩 Broken</button>
+              <button class="ghost problem-flag-btn" data-flag="unclear" type="button">😕 Unclear</button>
+              <button class="ghost problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong image</button>
+              <button class="ghost problem-flag-btn" data-flag="good" type="button">👍 Good</button>
+              <input type="text" class="problem-feedback-note" id="problem-feedback-note"
+                     placeholder="optional note…" maxlength="2000" autocomplete="off" />
+              <span class="problem-feedback-status hidden" id="problem-feedback-status">logged ✓</span>
             </div>
             <div class="ewma-accuracy hidden" id="ewma-accuracy">
               <div class="bar-header-row">
@@ -695,11 +760,11 @@ np.random.seed(0)
        document.querySelectorAll(".page") at script-eval time into a static
        NodeList that drives switchTab. Anything injected later is invisible
        to switchTab and the page silently stays .hidden when the tab clicks. -->
-  <script src="practice/arena-unlock-dom.js?v=1"></script>
+  <script src="practice/arena-unlock-dom.js?v=2"></script>
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->
@@ -718,21 +783,21 @@ np.random.seed(0)
   <script src="practice/engine.js?v=6"></script>
   <script src="practice/adaptive.js?v=7"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=8"></script>
+  <script src="practice/dom.js?v=10"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
-  <script src="practice/ui.js?v=12"></script>
+  <script src="practice/ui.js?v=14"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=10"></script>
   <script src="practice/timer.js?v=6"></script>
-  <script src="practice/runner.js?v=8"></script>
+  <script src="practice/runner.js?v=9"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
-  <script src="practice/ere-tiers-manifest.js?v=2"></script>
-  <script src="practice/arena-unlock.js?v=16"></script>
+  <script src="practice/ere-tiers-manifest.js?v=3"></script>
+  <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/drills-catalog.js?v=25"></script>
-  <script src="practice/events.js?v=12"></script>
+  <script src="practice/events.js?v=13"></script>
   <script src="practice/init.js?v=12"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>

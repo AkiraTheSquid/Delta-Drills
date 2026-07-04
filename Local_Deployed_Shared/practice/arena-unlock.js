@@ -78,11 +78,18 @@
   const DEFAULT_SUB = subEl?.textContent || "";
   const DEFAULT_HEADING_LABEL = headingLabelEl?.textContent || "";
 
-  const DRILL_BANNER = "🛠️ Procedural drill — hands-on Colab practice";
-  const DRILL_SUB = "This drill exercises material the flashcards can't deliver on their own — interactive tensor work in a real notebook. Open it in Colab, complete the capstone, then come back to rate yourself.";
-  const COMPOSITE_BANNER = "🧩 Composite drill — atoms exercised together";
-  const COMPOSITE_SUB = "This drill tests 2-3 atoms IN ONE exercise — the composition you'll need for real ARENA tasks. Completing it bumps every constituent atom's mastery in parallel.";
-  const DRILL_HEADING_LABEL = "Notebook section heading (auto-copied — paste with Ctrl+F inside Colab to jump to the right cell):";
+  const DRILL_BANNER = "🛠️ Hands-on drill — practice it in Colab";
+  const DRILL_SUB = "A short coding exercise in a real Colab notebook. Open it, work through it, then come back and rate how it went.";
+  const COMPOSITE_BANNER = "🧩 Combined drill — a few skills at once";
+  const COMPOSITE_SUB = "One exercise that uses 2–3 related skills together, the way you'll need them in real ARENA tasks. Finishing it updates all of them at once.";
+  const DRILL_HEADING_LABEL = "Section heading inside the notebook — copy it, then press Ctrl+F in Colab to jump straight to the right cell:";
+  // Honest one-liners that DEFINE the worked/faded tiers inline (the tester
+  // flagged "faded version" / "completion beacon" as undefined jargon).
+  const WORKED_SUB = "A worked example — study material, not a graded problem. Read it, run each cell, and make sure you can follow the reasoning. Nothing to submit.";
+  const FADED_SUB = "A faded example — most of the code is already written. Fill in the one blanked step, run it to check, then rate how it went.";
+  const headingBlockEl = document.getElementById("arena-unlock-heading-block");
+  const copyBtn = document.getElementById("arena-unlock-copy-btn");
+  const ratingPromptEl = card.querySelector(".arena-unlock-rating-prompt");
   const hintBtn = document.getElementById("arena-unlock-hint-btn");
   const answerBtn = document.getElementById("arena-unlock-answer-btn");
   const colabBtn = document.getElementById("arena-unlock-colab-btn");
@@ -151,10 +158,29 @@
     if (mastery < 0.40 && t.worked && t.worked.length) { pool = t.worked; kind = "worked"; }
     else if (mastery < 0.75 && t.faded && t.faded.length) { pool = t.faded; kind = "faded"; }
     if (!pool || !pool.length) return null;
-    // Rotate the variant across visits so a returning learner sees a fresh
-    // problem of the same tier rather than the same one each time.
-    const n = (window.__ereServeCount = (window.__ereServeCount || 0) + 1);
-    return { path: pool[n % pool.length], kind };
+    // Deterministic per-exercise pick: ex1 → variant 0, ex2 → variant 1, …
+    // (was a global rotating counter, which made the SAME drill click land on
+    // a different tier notebook every time — so the card title/heading no
+    // longer matched the notebook that opened. Tester hit exactly this.)
+    // Stable indexing lets showCard label the card from the notebook we open.
+    const exIdx = Number.isFinite(ex.exerciseIndex) ? ex.exerciseIndex : 1;
+    const idx = (((exIdx - 1) % pool.length) + pool.length) % pool.length;
+    return { path: pool[idx], kind };
+  };
+
+  // Humanize a tier-notebook filename into a card title that MATCHES what the
+  // learner sees when the notebook opens (tier notebooks open at the top, so
+  // there is no separate Ctrl+F target). The worked/faded notebooks are their
+  // own scaffold ladder — NOT 1:1 with the full-exercise titles — so we must
+  // label the card from the file we actually open, not from ex.title.
+  // ".../ere/faded-03-fill-reverse-edge-dispatch.ipynb" → "Faded example 3 · fill reverse edge dispatch".
+  const _tierLabelFromPath = (path, kind) => {
+    const file = String(path || "").split("/").pop().replace(/\.solution\.ipynb$|\.ipynb$/i, "");
+    const kindWord = kind === "worked" ? "Worked example" : kind === "faded" ? "Faded example" : "Example";
+    const m = file.match(/^(worked|faded)-(\d+)-(.+)$/i);
+    if (!m) return kindWord;
+    const slug = m[3].replace(/-/g, " ").trim();
+    return `${kindWord} ${parseInt(m[2], 10)} · ${slug}`;
   };
 
   // The effective notebook path for the current card: the ERE tier override if
@@ -248,6 +274,51 @@
     });
   };
 
+  // Set one self-rating button's text + meaning. `skip:true` makes it a no-rating
+  // "skip" action (used for study material). `hidden:true` removes it from view.
+  const _setChoice = (id, opts) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.toggle("hidden", !!opts.hidden);
+    if (opts.hidden) return;
+    const mark = btn.querySelector(".arena-unlock-choice-mark");
+    const main = btn.querySelector(".arena-unlock-choice-main");
+    const sub = btn.querySelector(".arena-unlock-choice-sub");
+    if (mark) mark.textContent = opts.mark;
+    if (main) main.textContent = opts.main;
+    if (sub) sub.textContent = opts.sub;
+    if (opts.skip) {
+      btn.dataset.skip = "true";
+      btn.removeAttribute("data-correct");
+      btn.removeAttribute("data-feedback");
+    } else {
+      delete btn.dataset.skip;
+      btn.dataset.correct = String(!!opts.correct);
+      btn.dataset.feedback = opts.feedback;
+    }
+  };
+
+  // Reconfigure the 4 self-rating buttons for the current tier. Worked-tier
+  // cards are STUDY MATERIAL, not problems to solve — so they get read-through
+  // completion states ("read it — understood" / "still fuzzy" / "skip") instead
+  // of "solved in target time". (How these feed mastery is the engine track's
+  // call; we just emit the rating signal via the same arena-rating POST.)
+  const _configureChoices = (kind) => {
+    if (kind === "worked") {
+      if (ratingPromptEl) ratingPromptEl.textContent = "Study material — when you've read through it:";
+      _setChoice("arena-unlock-choice-best", { mark: "✓", main: "Read it — understood", sub: "ready to apply it", correct: true, feedback: "somewhat" });
+      _setChoice("arena-unlock-choice-good", { mark: "~", main: "Read it — still fuzzy", sub: "didn't fully get it", correct: false, feedback: "not_much" });
+      _setChoice("arena-unlock-choice-okay", { hidden: true });
+      _setChoice("arena-unlock-choice-bad", { mark: "↦", main: "Skip for now", sub: "come back later", skip: true });
+      return;
+    }
+    if (ratingPromptEl) ratingPromptEl.textContent = "How did you do on this exercise?";
+    _setChoice("arena-unlock-choice-best", { mark: "✓", main: "Solved in target time", sub: "no help", correct: true, feedback: "a_lot" });
+    _setChoice("arena-unlock-choice-good", { mark: "✓", main: "Solved in target time", sub: "with a hint", correct: true, feedback: "somewhat" });
+    _setChoice("arena-unlock-choice-okay", { mark: "✓", main: "Solved correctly", sub: "over target time", correct: true, feedback: "not_much" });
+    _setChoice("arena-unlock-choice-bad", { mark: "✗", main: "Looked up", sub: "the solution", correct: false, feedback: "a_lot" });
+  };
+
   const showCard = (ex) => {
     currentEx = ex;
     // ERE: pick the worked/faded/full tier for this atom by current mastery.
@@ -261,21 +332,25 @@
     // serves both flows.
     if (bannerEl) bannerEl.textContent = ex.isComposite ? COMPOSITE_BANNER : (ex.isDrill ? DRILL_BANNER : DEFAULT_BANNER);
     if (subEl) {
-      let s = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
-      if (currentTierKind === "worked") s = "Worked example · read it, run it, follow the reasoning · " + s;
-      else if (currentTierKind === "faded") s = "Faded drill · complete the one blanked step · " + s;
-      subEl.textContent = s;
+      if (currentTierKind === "worked") subEl.textContent = WORKED_SUB;
+      else if (currentTierKind === "faded") subEl.textContent = FADED_SUB;
+      else subEl.textContent = ex.isComposite ? COMPOSITE_SUB : (ex.isDrill ? DRILL_SUB : DEFAULT_SUB);
     }
+    // Worked tier = study material → read-through completion states; else the
+    // normal outcome self-rating. (P1.4)
+    _configureChoices(currentTierKind);
+    // Card title + Ctrl+F heading. The worked/faded tiers open a DIFFERENT
+    // notebook than the full exercise (their own scaffold ladder), so we must
+    // label the card from the notebook we actually open — otherwise the card
+    // says "ex2: dispatch…" while Colab opens "faded example 3", which is
+    // exactly the mismatch the tester reported. Tier notebooks open at the top,
+    // so there is no Ctrl+F target: hide the heading block and copy nothing.
+    // Full drills keep ex.heading as the Ctrl+F target.
+    const tiered = currentTierKind === "worked" || currentTierKind === "faded";
+    const ctrlFText = tiered ? "" : stripBackticks(ex.heading || ex.title);
+    titleEl.textContent = tiered ? _tierLabelFromPath(currentTierPath, currentTierKind) : ex.title;
+    if (headingBlockEl) headingBlockEl.classList.toggle("hidden", tiered || !ctrlFText);
     if (headingLabelEl) headingLabelEl.textContent = ex.isDrill ? DRILL_HEADING_LABEL : DEFAULT_HEADING_LABEL;
-    // Heading shown in the code-block + auto-copied on Open in Colab. For
-    // drills we use ex.heading (the notebook's actual top-level markdown
-    // heading) so Ctrl+F inside Colab lands on the right cell. ARENA
-    // exercises fall back to ex.title, which IS the in-notebook heading
-    // they use as the Ctrl+F target.
-    // Tiered notebooks (worked/faded) are single-exercise files that open at
-    // the top, so the Ctrl+F heading target doesn't apply — clear it there.
-    const ctrlFText = currentTierKind === "full" ? stripBackticks(ex.heading || ex.title) : "";
-    titleEl.textContent = ex.title;
     headingEl.textContent = ctrlFText;
     whyEl.textContent = renderWhyMet(ex);
     colabBtn.href = colabHrefForUnlock();
@@ -503,35 +578,29 @@
     }
   });
 
-  // Auto-copy the exercise heading to the clipboard the moment the
-  // student clicks Open in Colab. Same pattern as the Predicted-scores
-  // table Colab pill. Anchor still navigates in the new tab. Drills use
-  // ex.heading (real notebook section heading); ARENA exercises use
-  // ex.title (which doubles as the Ctrl+F target inside callum's notebooks).
-  colabBtn.addEventListener("click", () => {
-    const text = stripBackticks(currentEx?.heading || currentEx?.title || "");
-    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => {});
-  });
-
-  // Stage 1: 4-option self-rating. Each button encodes {correct, feedback}
-  // via data-attrs (see index.html). One click → POST → render deltas → Continue.
-  choiceButtons.forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      if (!currentEx) return;
-      const correct = btn.dataset.correct === "true";
-      const feedback = btn.dataset.feedback;
-      choiceButtons.forEach((b) => { b.disabled = true; });
-      const data = await postArenaRating(currentEx, { feedback, correct });
-      renderResults(beforeScores, data?.atom_mastery || {});
-      setStage("result");
-      setTimeout(() => continueBtn.focus({ preventScroll: true }), 0);
+  // Explicit "Copy" button beside the displayed heading. The tester disliked
+  // Open-in-Colab silently copying to his clipboard without asking, so nothing
+  // is copied unless he clicks Copy. Only full-drill cards show the heading
+  // block (tiered notebooks open at the top — see showCard). Open-in-Colab now
+  // just navigates.
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => {
+      const text = headingEl.textContent || "";
+      if (!text || !navigator.clipboard?.writeText) return;
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          copyBtn.textContent = "✓ Copied";
+          setTimeout(() => { copyBtn.textContent = "📋 Copy"; }, 1500);
+        })
+        .catch(() => {});
     });
-  });
+  }
 
-  // Stage 2: Continue → mark shown (unless this was a Targeted Practice
-  // manual launch — those exercises should remain re-practicable), swap
-  // back to the practice view, fire callback.
-  continueBtn.addEventListener("click", () => {
+  // Mark the exercise shown (unless it was a Targeted-Practice manual launch —
+  // those stay re-practicable), swap back to the practice view, and fire the
+  // continue callback. Shared by the Continue button and the "Skip for now"
+  // study-material action.
+  const _finishAndContinue = () => {
     if (currentEx && !currentEx._targetedPractice) {
       if (currentEx.isDrill && typeof window.markDrillShown === "function") {
         window.markDrillShown(currentEx.id);
@@ -544,7 +613,30 @@
     onContinueCallback = null;
     currentEx = null;
     if (typeof cb === "function") cb();
+  };
+
+  // Stage 1: self-rating. Each button encodes {correct, feedback} via data-attrs
+  // (or data-skip for the study-material "Skip for now"). One click → POST →
+  // render deltas → Continue (or, for skip, straight to the next question).
+  choiceButtons.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!currentEx) return;
+      if (btn.dataset.skip === "true") {
+        _finishAndContinue();
+        return;
+      }
+      const correct = btn.dataset.correct === "true";
+      const feedback = btn.dataset.feedback;
+      choiceButtons.forEach((b) => { b.disabled = true; });
+      const data = await postArenaRating(currentEx, { feedback, correct });
+      renderResults(beforeScores, data?.atom_mastery || {});
+      setStage("result");
+      setTimeout(() => continueBtn.focus({ preventScroll: true }), 0);
+    });
   });
+
+  // Stage 2: Continue → finish + load the next question.
+  continueBtn.addEventListener("click", _finishAndContinue);
 
   // Pulls per-subtopic scores from the backend and stashes them as a map
   // keyed by full "Topic: Subtopic" name on window.__arenaSubtopicsCache.
