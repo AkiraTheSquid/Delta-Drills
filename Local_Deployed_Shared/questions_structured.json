@@ -52,12 +52,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\nZ[::2,1::2] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\nZ[::2,1::2] = 1",
+          "setup_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\nZ[::2,1::2] = 1"
         }
       ],
       "submission_mode": "function",
@@ -86,12 +87,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ncolor = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "color = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "color"
+          "expected_expr": "color",
+          "expected_setup_code": "color = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])"
         }
       ],
       "submission_mode": "function",
@@ -120,12 +122,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.diag(1+np.arange(4),k=-1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.diag(1+np.arange(4),k=-1)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.diag(1+np.arange(4),k=-1)"
         }
       ],
       "submission_mode": "function",
@@ -188,12 +191,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nv = np.random.random(5)\nv /= np.linalg.norm(v)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nv = np.random.random(5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "v = np.random.random(5)\nv /= np.linalg.norm(v)",
+          "setup_code": "v = np.random.random(5)",
           "call": "solve()",
-          "expected_expr": "v"
+          "expected_expr": "v",
+          "expected_setup_code": "v = np.random.random(5)\nv /= np.linalg.norm(v)"
         }
       ],
       "submission_mode": "function",
@@ -222,12 +226,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random((5,5))\nZ -= Z.mean(axis=1, keepdims=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random((5,5))\nZ -= Z.mean(axis=1, keepdims=True)",
+          "setup_code": "Z = np.random.random((5,5))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random((5,5))\nZ -= Z.mean(axis=1, keepdims=True)"
         }
       ],
       "submission_mode": "function",
@@ -290,12 +295,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))",
+          "setup_code": "Z = np.random.random((5,5))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))"
         }
       ],
       "submission_mode": "function",
@@ -324,12 +330,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.indices((4,4))[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.indices((4,4))[0]",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.indices((4,4))[0]"
         }
       ],
       "submission_mode": "function",
@@ -358,12 +365,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Evgeni Burovski\nZ = np.arange(11)\nZ[(3 < Z) & (Z < 8)] *= -1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(11)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Evgeni Burovski\nZ = np.arange(11)\nZ[(3 < Z) & (Z < 8)] *= -1",
+          "setup_code": "Z = np.arange(11)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "# Author: Evgeni Burovski\nZ = np.arange(11)\nZ[(3 < Z) & (Z < 8)] *= -1"
         }
       ],
       "submission_mode": "function",
@@ -426,12 +434,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random((3,3))\nZ = Z - Z.mean()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random((3,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random((3,3))\nZ = Z - Z.mean()",
+          "setup_code": "Z = np.random.random((3,3))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random((3,3))\nZ = Z - Z.mean()"
         }
       ],
       "submission_mode": "function",
@@ -460,12 +469,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.tril(np.ones((5,5)), k=-1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.tril(np.ones((5,5)), k=-1)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.tril(np.ones((5,5)), k=-1)"
         }
       ],
       "submission_mode": "function",
@@ -494,12 +504,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.ones((5,5))\nZ = np.pad(Z, pad_width=1, mode='constant', constant_values=0)\nprint(Z)\n# Using fancy indexing\nZ[:, [0, -1]] = 0\nZ[[0, -1], :] = 0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.ones((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.ones((5,5))\nZ = np.pad(Z, pad_width=1, mode='constant', constant_values=0)\nprint(Z)\n# Using fancy indexing\nZ[:, [0, -1]] = 0\nZ[[0, -1], :] = 0",
+          "setup_code": "Z = np.ones((5,5))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.ones((5,5))\nZ = np.pad(Z, pad_width=1, mode='constant', constant_values=0)\nprint(Z)\n# Using fancy indexing\nZ[:, [0, -1]] = 0\nZ[[0, -1], :] = 0"
         }
       ],
       "submission_mode": "function",
@@ -528,12 +539,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([0.0, np.nan, 1.0])\nZ = np.nan_to_num(Z, nan=0.0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([0.0, np.nan, 1.0])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([0.0, np.nan, 1.0])\nZ = np.nan_to_num(Z, nan=0.0)",
+          "setup_code": "Z = np.array([0.0, np.nan, 1.0])",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.array([0.0, np.nan, 1.0])\nZ = np.nan_to_num(Z, nan=0.0)"
         }
       ],
       "submission_mode": "function",
@@ -664,12 +676,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random(10)\nZ[Z.argmax()] = 0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random(10)\nZ[Z.argmax()] = 0",
+          "setup_code": "Z = np.random.random(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random(10)\nZ[Z.argmax()] = 0"
         }
       ],
       "submission_mode": "function",
@@ -698,12 +711,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3,3)\nZ[[0,2]] = Z[[2,0]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(9).reshape(3,3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(9).reshape(3,3)\nZ[[0,2]] = Z[[2,0]]",
+          "setup_code": "Z = np.arange(9).reshape(3,3)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(9).reshape(3,3)\nZ[[0,2]] = Z[[2,0]]"
         }
       ],
       "submission_mode": "function",
@@ -766,12 +780,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.ones((10,10))\nZ[1:-1,1:-1] = 0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.ones((10,10))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.ones((10,10))\nZ[1:-1,1:-1] = 0",
+          "setup_code": "Z = np.ones((10,10))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.ones((10,10))\nZ[1:-1,1:-1] = 0"
         }
       ],
       "submission_mode": "function",
@@ -800,12 +815,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random(30)\nm = Z.mean()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random(30)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random(30)\nm = Z.mean()",
+          "setup_code": "Z = np.random.random(30)",
           "call": "solve()",
-          "expected_expr": "m"
+          "expected_expr": "m",
+          "expected_setup_code": "Z = np.random.random(30)\nm = Z.mean()"
         }
       ],
       "submission_mode": "function",
@@ -834,12 +850,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nx, y = np.meshgrid(np.arange(3), np.arange(2))\nprint(x)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "x, y = np.meshgrid(np.arange(3), np.arange(2))\nprint(x)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "y"
+          "expected_expr": "y",
+          "expected_setup_code": "x, y = np.meshgrid(np.arange(3), np.arange(2))\nprint(x)"
         }
       ],
       "submission_mode": "function",
@@ -868,12 +885,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3,3)\nZ[:,[0,2]] = Z[:,[2,0]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(9).reshape(3,3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(9).reshape(3,3)\nZ[:,[0,2]] = Z[:,[2,0]]",
+          "setup_code": "Z = np.arange(9).reshape(3,3)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(9).reshape(3,3)\nZ[:,[0,2]] = Z[:,[2,0]]"
         }
       ],
       "submission_mode": "function",
@@ -902,12 +920,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.triu(np.ones((5,5)))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.triu(np.ones((5,5)))",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.triu(np.ones((5,5)))"
         }
       ],
       "submission_mode": "function",
@@ -1140,12 +1159,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nnz = np.nonzero([1,2,0,0,4,0])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "nz = np.nonzero([1,2,0,0,4,0])",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "nz"
+          "expected_expr": "nz",
+          "expected_setup_code": "nz = np.nonzero([1,2,0,0,4,0])"
         }
       ],
       "submission_mode": "function",
@@ -1208,12 +1228,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random((3,3,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random((3,3,3))",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random((3,3,3))"
         }
       ],
       "submission_mode": "function",
@@ -1276,12 +1297,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(9).reshape(3, 3)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(9).reshape(3, 3)"
         }
       ],
       "submission_mode": "function",
@@ -1310,12 +1332,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.diag(1 + np.arange(3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.diag(1 + np.arange(3))",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.diag(1 + np.arange(3))"
         }
       ],
       "submission_mode": "function",
@@ -1344,12 +1367,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(10)\nZ[1::2] = -1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(10)\nZ[1::2] = -1",
+          "setup_code": "Z = np.arange(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(10)\nZ[1::2] = -1"
         }
       ],
       "submission_mode": "function",
@@ -1412,12 +1436,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.eye(4) * 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.eye(4) * 2",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.eye(4) * 2"
         }
       ],
       "submission_mode": "function",
@@ -1514,12 +1539,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.linspace(0, 1, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.linspace(0, 1, 5)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.linspace(0, 1, 5)"
         }
       ],
       "submission_mode": "function",
@@ -1548,12 +1574,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange('2016-07', '2016-08', dtype='datetime64[D]')\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')"
         }
       ],
       "submission_mode": "function",
@@ -1582,12 +1609,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random(10)\nZ.sort()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random(10)\nZ.sort()",
+          "setup_code": "Z = np.random.random(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random(10)\nZ.sort()"
         }
       ],
       "submission_mode": "function",
@@ -1616,12 +1644,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.ones(3)*1\nB = np.ones(3)*2\nnp.add(A,B,out=B)\nnp.divide(A,2,out=A)\nnp.negative(A,out=A)\nnp.multiply(A,B,out=A)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.ones(3)*1\nB = np.ones(3)*2\nnp.add(A,B,out=B)\nnp.divide(A,2,out=A)\nnp.negative(A,out=A)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.ones(3)*1\nB = np.ones(3)*2\nnp.add(A,B,out=B)\nnp.divide(A,2,out=A)\nnp.negative(A,out=A)\nnp.multiply(A,B,out=A)",
+          "setup_code": "A = np.ones(3)*1\nB = np.ones(3)*2\nnp.add(A,B,out=B)\nnp.divide(A,2,out=A)\nnp.negative(A,out=A)",
           "call": "solve()",
-          "expected_expr": "A"
+          "expected_expr": "A",
+          "expected_setup_code": "A = np.ones(3)*1\nB = np.ones(3)*2\nnp.add(A,B,out=B)\nnp.divide(A,2,out=A)\nnp.negative(A,out=A)\nnp.multiply(A,B,out=A)"
         }
       ],
       "submission_mode": "function",
@@ -1650,12 +1679,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros((5,5))\nZ += np.arange(5)\nprint(Z)\n# without broadcasting\nZ = np.tile(np.arange(0, 5), (5,1))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros((5,5))\nZ += np.arange(5)\nprint(Z)\n# without broadcasting\nZ = np.tile(np.arange(0, 5), (5,1))",
+          "setup_code": "Z = np.zeros((5,5))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros((5,5))\nZ += np.arange(5)\nprint(Z)\n# without broadcasting\nZ = np.tile(np.arange(0, 5), (5,1))"
         }
       ],
       "submission_mode": "function",
@@ -1679,15 +1709,16 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given Z, a 1D integer array of the values 0 through 99, a scalar v drawn uniformly from [0, 100), and index, the position in Z whose value is nearest to v in absolute distance. Return Z[index] so that the printed result is the single element of Z that minimizes |Z - v|. (★★☆)\nPrint the result.",
+      "question_text": "You are given Z, a 1D integer array of the values 0 through 99, and a scalar v drawn uniformly from [0, 100). Return the single element of Z that is nearest to v — the one that minimizes |Z - v|. (★★☆)\nPrint the result.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(100)\nv = np.random.uniform(0,100)\nindex = (np.abs(Z-v)).argmin()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\nZ = np.arange(100)\nv = np.random.uniform(0, 100)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(100)\nv = np.random.uniform(0,100)\nindex = (np.abs(Z-v)).argmin()",
+          "setup_code": "Z = np.arange(100)\nv = np.random.uniform(0,100)",
+          "expected_setup_code": "index = (np.abs(Z-v)).argmin()",
           "call": "solve()",
           "expected_expr": "Z[index]"
         }
@@ -1786,12 +1817,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.randint(0,2,5)\nB = np.random.randint(0,2,5)\n# Assuming identical shape of the arrays and a tolerance for the comparison of values\nequal = np.allclose(A,B)\nprint(equal)\n# Checking both the shape and the element values, no tolerance (values have to be exactly equal)\nequal = np.array_equal(A,B)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.randint(0,2,5)\nB = np.random.randint(0,2,5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.randint(0,2,5)\nB = np.random.randint(0,2,5)\n# Assuming identical shape of the arrays and a tolerance for the comparison of values\nequal = np.allclose(A,B)\nprint(equal)\n# Checking both the shape and the element values, no tolerance (values have to be exactly equal)\nequal = np.array_equal(A,B)",
+          "setup_code": "A = np.random.randint(0,2,5)\nB = np.random.randint(0,2,5)",
           "call": "solve()",
-          "expected_expr": "equal"
+          "expected_expr": "equal",
+          "expected_setup_code": "A = np.random.randint(0,2,5)\nB = np.random.randint(0,2,5)\n# Assuming identical shape of the arrays and a tolerance for the comparison of values\nequal = np.allclose(A,B)\nprint(equal)\n# Checking both the shape and the element values, no tolerance (values have to be exactly equal)\nequal = np.array_equal(A,B)"
         }
       ],
       "submission_mode": "function",
@@ -1820,12 +1852,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros(10)\nZ.flags.writeable = False\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros(10)\nZ.flags.writeable = False",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros(10)\nZ.flags.writeable = False"
         }
       ],
       "submission_mode": "function",
@@ -1854,12 +1887,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)\nT = np.arctan2(Y,X)\nprint(R)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)\nT = np.arctan2(Y,X)\nprint(R)",
+          "setup_code": "Z = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)",
           "call": "solve()",
-          "expected_expr": "T"
+          "expected_expr": "T",
+          "expected_setup_code": "Z = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)\nT = np.arctan2(Y,X)\nprint(R)"
         }
       ],
       "submission_mode": "function",
@@ -1922,12 +1956,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([1,2,2,4,5])\nis_mono = np.all(np.diff(Z) >= 0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([1,2,2,4,5])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([1,2,2,4,5])\nis_mono = np.all(np.diff(Z) >= 0)",
+          "setup_code": "Z = np.array([1,2,2,4,5])",
           "call": "solve()",
-          "expected_expr": "is_mono"
+          "expected_expr": "is_mono",
+          "expected_setup_code": "Z = np.array([1,2,2,4,5])\nis_mono = np.all(np.diff(Z) >= 0)"
         }
       ],
       "submission_mode": "function",
@@ -1956,12 +1991,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nx = np.array([1,2,3])\nrepeats = np.array([1,3,2])\ny = np.repeat(x, repeats)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nx = np.array([1,2,3])\nrepeats = np.array([1,3,2])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "x = np.array([1,2,3])\nrepeats = np.array([1,3,2])\ny = np.repeat(x, repeats)",
+          "setup_code": "x = np.array([1,2,3])\nrepeats = np.array([1,3,2])",
           "call": "solve()",
-          "expected_expr": "y"
+          "expected_expr": "y",
+          "expected_setup_code": "x = np.array([1,2,3])\nrepeats = np.array([1,3,2])\ny = np.repeat(x, repeats)"
         }
       ],
       "submission_mode": "function",
@@ -2024,12 +2060,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nlabels = np.array([0,2,1,2,0])\nvalues = np.array([10, 20, 30])\nmapped = values[labels]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nlabels = np.array([0,2,1,2,0])\nvalues = np.array([10, 20, 30])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "labels = np.array([0,2,1,2,0])\nvalues = np.array([10, 20, 30])\nmapped = values[labels]",
+          "setup_code": "labels = np.array([0,2,1,2,0])\nvalues = np.array([10, 20, 30])",
           "call": "solve()",
-          "expected_expr": "mapped"
+          "expected_expr": "mapped",
+          "expected_setup_code": "labels = np.array([0,2,1,2,0])\nvalues = np.array([10, 20, 30])\nmapped = values[labels]"
         }
       ],
       "submission_mode": "function",
@@ -2058,12 +2095,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros((8,8), dtype=int)\nZ[1::2, ::2] = 1\nZ[::2, 1::2] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros((8,8), dtype=int)\nZ[1::2, ::2] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros((8,8), dtype=int)\nZ[1::2, ::2] = 1\nZ[::2, 1::2] = 1",
+          "setup_code": "Z = np.zeros((8,8), dtype=int)\nZ[1::2, ::2] = 1",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros((8,8), dtype=int)\nZ[1::2, ::2] = 1\nZ[::2, 1::2] = 1"
         }
       ],
       "submission_mode": "function",
@@ -2126,12 +2164,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(12)\nZ[::3] = -1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(12)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(12)\nZ[::3] = -1",
+          "setup_code": "Z = np.arange(12)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(12)\nZ[::3] = -1"
         }
       ],
       "submission_mode": "function",
@@ -2160,12 +2199,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3,3)\nR = np.rot90(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(9).reshape(3,3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(9).reshape(3,3)\nR = np.rot90(Z)",
+          "setup_code": "Z = np.arange(9).reshape(3,3)",
           "call": "solve()",
-          "expected_expr": "R"
+          "expected_expr": "R",
+          "expected_setup_code": "Z = np.arange(9).reshape(3,3)\nR = np.rot90(Z)"
         }
       ],
       "submission_mode": "function",
@@ -2194,12 +2234,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3,3)\nH = Z[:, ::-1]\nV = Z[::-1, :]\nprint(H)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(9).reshape(3,3)\nH = Z[:, ::-1]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(9).reshape(3,3)\nH = Z[:, ::-1]\nV = Z[::-1, :]\nprint(H)",
+          "setup_code": "Z = np.arange(9).reshape(3,3)\nH = Z[:, ::-1]",
           "call": "solve()",
-          "expected_expr": "V"
+          "expected_expr": "V",
+          "expected_setup_code": "Z = np.arange(9).reshape(3,3)\nH = Z[:, ::-1]\nV = Z[::-1, :]\nprint(H)"
         }
       ],
       "submission_mode": "function",
@@ -2228,12 +2269,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(25).reshape(5,5)\nd = np.diag(Z, k=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(25).reshape(5,5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(25).reshape(5,5)\nd = np.diag(Z, k=1)",
+          "setup_code": "Z = np.arange(25).reshape(5,5)",
           "call": "solve()",
-          "expected_expr": "d"
+          "expected_expr": "d",
+          "expected_setup_code": "Z = np.arange(25).reshape(5,5)\nd = np.diag(Z, k=1)"
         }
       ],
       "submission_mode": "function",
@@ -2262,12 +2304,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nn = 5\nmask = np.triu(np.ones((n,n), dtype=bool))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "n = 5\nmask = np.triu(np.ones((n,n), dtype=bool))",
+          "setup_code": "n = 5",
           "call": "solve()",
-          "expected_expr": "mask"
+          "expected_expr": "mask",
+          "expected_setup_code": "n = 5\nmask = np.triu(np.ones((n,n), dtype=bool))"
         }
       ],
       "submission_mode": "function",
@@ -2296,12 +2339,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([[1,2,3],[1,2,3],[2,3,4]])\nU = np.unique(Z, axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([[1,2,3],[1,2,3],[2,3,4]])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([[1,2,3],[1,2,3],[2,3,4]])\nU = np.unique(Z, axis=0)",
+          "setup_code": "Z = np.array([[1,2,3],[1,2,3],[2,3,4]])",
           "call": "solve()",
-          "expected_expr": "U"
+          "expected_expr": "U",
+          "expected_setup_code": "Z = np.array([[1,2,3],[1,2,3],[2,3,4]])\nU = np.unique(Z, axis=0)"
         }
       ],
       "submission_mode": "function",
@@ -2364,12 +2408,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nv = np.arange(5)\nM = np.tile(v, (4,1))\ncm = M.mean(axis=0)\nprint(M)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "v = np.arange(5)\nM = np.tile(v, (4,1))\ncm = M.mean(axis=0)\nprint(M)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "cm"
+          "expected_expr": "cm",
+          "expected_setup_code": "v = np.arange(5)\nM = np.tile(v, (4,1))\ncm = M.mean(axis=0)\nprint(M)"
         }
       ],
       "submission_mode": "function",
@@ -2398,12 +2443,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(12).reshape(3,4)\nR = Z.cumsum(axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(12).reshape(3,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(12).reshape(3,4)\nR = Z.cumsum(axis=1)",
+          "setup_code": "Z = np.arange(12).reshape(3,4)",
           "call": "solve()",
-          "expected_expr": "R"
+          "expected_expr": "R",
+          "expected_setup_code": "Z = np.arange(12).reshape(3,4)\nR = Z.cumsum(axis=1)"
         }
       ],
       "submission_mode": "function",
@@ -2432,12 +2478,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros((5,5), [('x',float),('y',float)])\nZ['x'], Z['y'] = np.meshgrid(np.linspace(0,1,5),\nnp.linspace(0,1,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros((5,5), [('x',float),('y',float)])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros((5,5), [('x',float),('y',float)])\nZ['x'], Z['y'] = np.meshgrid(np.linspace(0,1,5),\nnp.linspace(0,1,5))",
+          "setup_code": "Z = np.zeros((5,5), [('x',float),('y',float)])",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros((5,5), [('x',float),('y',float)])\nZ['x'], Z['y'] = np.meshgrid(np.linspace(0,1,5),\nnp.linspace(0,1,5))"
         }
       ],
       "submission_mode": "function",
@@ -2466,12 +2513,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.rand(3,4)\nB = np.random.rand(3,4)\nS = np.stack([A,B], axis=0).mean(axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.rand(3,4)\nB = np.random.rand(3,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.rand(3,4)\nB = np.random.rand(3,4)\nS = np.stack([A,B], axis=0).mean(axis=0)",
+          "setup_code": "A = np.random.rand(3,4)\nB = np.random.rand(3,4)",
           "call": "solve()",
-          "expected_expr": "S"
+          "expected_expr": "S",
+          "expected_setup_code": "A = np.random.rand(3,4)\nB = np.random.rand(3,4)\nS = np.stack([A,B], axis=0).mean(axis=0)"
         }
       ],
       "submission_mode": "function",
@@ -2500,12 +2548,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])\nZ = Z[~(Z==0).all(axis=1)]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])\nZ = Z[~(Z==0).all(axis=1)]",
+          "setup_code": "Z = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.array([[0,0,0],[1,0,2],[0,0,0],[3,4,5]])\nZ = Z[~(Z==0).all(axis=1)]"
         }
       ],
       "submission_mode": "function",
@@ -2534,12 +2583,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros((4,5), dtype=int)\nZ[1,2] = 1\nZ[3,4] = 1\ncoords = np.argwhere(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros((4,5), dtype=int)\nZ[1,2] = 1\nZ[3,4] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros((4,5), dtype=int)\nZ[1,2] = 1\nZ[3,4] = 1\ncoords = np.argwhere(Z)",
+          "setup_code": "Z = np.zeros((4,5), dtype=int)\nZ[1,2] = 1\nZ[3,4] = 1",
           "call": "solve()",
-          "expected_expr": "coords"
+          "expected_expr": "coords",
+          "expected_setup_code": "Z = np.zeros((4,5), dtype=int)\nZ[1,2] = 1\nZ[3,4] = 1\ncoords = np.argwhere(Z)"
         }
       ],
       "submission_mode": "function",
@@ -2568,12 +2618,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(100)\ncounts, edges = np.histogram(Z, bins=5, range=(0.0, 1.0))\nprint(counts)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(100)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(100)\ncounts, edges = np.histogram(Z, bins=5, range=(0.0, 1.0))\nprint(counts)",
+          "setup_code": "Z = np.random.rand(100)",
           "call": "solve()",
-          "expected_expr": "edges"
+          "expected_expr": "edges",
+          "expected_setup_code": "Z = np.random.rand(100)\ncounts, edges = np.histogram(Z, bins=5, range=(0.0, 1.0))\nprint(counts)"
         }
       ],
       "submission_mode": "function",
@@ -2602,12 +2653,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.array([1,3,5])\nb = np.array([2,4,6])\nout = np.ravel(np.column_stack((a,b)))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.array([1,3,5])\nb = np.array([2,4,6])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.array([1,3,5])\nb = np.array([2,4,6])\nout = np.ravel(np.column_stack((a,b)))",
+          "setup_code": "a = np.array([1,3,5])\nb = np.array([2,4,6])",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "a = np.array([1,3,5])\nb = np.array([2,4,6])\nout = np.ravel(np.column_stack((a,b)))"
         }
       ],
       "submission_mode": "function",
@@ -2636,12 +2688,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.ones((3,3), dtype=int)\nP = np.pad(Z, pad_width=1, mode='constant', constant_values=-1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.ones((3,3), dtype=int)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.ones((3,3), dtype=int)\nP = np.pad(Z, pad_width=1, mode='constant', constant_values=-1)",
+          "setup_code": "Z = np.ones((3,3), dtype=int)",
           "call": "solve()",
-          "expected_expr": "P"
+          "expected_expr": "P",
+          "expected_setup_code": "Z = np.ones((3,3), dtype=int)\nP = np.pad(Z, pad_width=1, mode='constant', constant_values=-1)"
         }
       ],
       "submission_mode": "function",
@@ -2670,12 +2723,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Divakar\nn = 10\np = 3\nZ = np.zeros((n,n))\nnp.put(Z, np.random.choice(range(n*n), p, replace=False),1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 10\np = 3\nZ = np.zeros((n,n))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Divakar\nn = 10\np = 3\nZ = np.zeros((n,n))\nnp.put(Z, np.random.choice(range(n*n), p, replace=False),1)",
+          "setup_code": "n = 10\np = 3\nZ = np.zeros((n,n))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "# Author: Divakar\nn = 10\np = 3\nZ = np.zeros((n,n))\nnp.put(Z, np.random.choice(range(n*n), p, replace=False),1)"
         }
       ],
       "submission_mode": "function",
@@ -2738,12 +2792,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nlabels = np.array([0,2,1,2])\nK = labels.max() + 1\nonehot = np.eye(K)[labels]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nlabels = np.array([0,2,1,2])\nK = labels.max() + 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "labels = np.array([0,2,1,2])\nK = labels.max() + 1\nonehot = np.eye(K)[labels]",
+          "setup_code": "labels = np.array([0,2,1,2])\nK = labels.max() + 1",
           "call": "solve()",
-          "expected_expr": "onehot"
+          "expected_expr": "onehot",
+          "expected_setup_code": "labels = np.array([0,2,1,2])\nK = labels.max() + 1\nonehot = np.eye(K)[labels]"
         }
       ],
       "submission_mode": "function",
@@ -2772,12 +2827,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(4,4)\nY = np.random.rand(4,4)\nZ[Y > 0.5] = -1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(4,4)\nY = np.random.rand(4,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(4,4)\nY = np.random.rand(4,4)\nZ[Y > 0.5] = -1",
+          "setup_code": "Z = np.random.rand(4,4)\nY = np.random.rand(4,4)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.rand(4,4)\nY = np.random.rand(4,4)\nZ[Y > 0.5] = -1"
         }
       ],
       "submission_mode": "function",
@@ -2806,12 +2862,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nI = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)\nG = np.dot(I[...,:3], [0.299, 0.587, 0.114])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nI = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "I = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)\nG = np.dot(I[...,:3], [0.299, 0.587, 0.114])",
+          "setup_code": "I = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)",
           "call": "solve()",
-          "expected_expr": "G"
+          "expected_expr": "G",
+          "expected_setup_code": "I = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)\nG = np.dot(I[...,:3], [0.299, 0.587, 0.114])"
         }
       ],
       "submission_mode": "function",
@@ -2840,12 +2897,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros(10, [ ('position', [ ('x', float, 1),\n('y', float, 1)]),\n('color',    [ ('r', float, 1),\n('g', float, 1),\n('b', float, 1)])])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros(10, [ ('position', [ ('x', float, 1),\n('y', float, 1)]),\n('color',    [ ('r', float, 1),\n('g', float, 1),\n('b', float, 1)])])",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros(10, [ ('position', [ ('x', float, 1),\n('y', float, 1)]),\n('color',    [ ('r', float, 1),\n('g', float, 1),\n('b', float, 1)])])"
         }
       ],
       "submission_mode": "function",
@@ -2874,12 +2932,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(10)\nZ = Z / np.linalg.norm(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(10)\nZ = Z / np.linalg.norm(Z)",
+          "setup_code": "Z = np.random.rand(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.rand(10)\nZ = Z / np.linalg.norm(Z)"
         }
       ],
       "submission_mode": "function",
@@ -2908,12 +2967,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.uniform(0,1,10)\nz = 0.5\nm = Z.flat[np.abs(Z - z).argmin()]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.uniform(0,1,10)\nz = 0.5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.uniform(0,1,10)\nz = 0.5\nm = Z.flat[np.abs(Z - z).argmin()]",
+          "setup_code": "Z = np.random.uniform(0,1,10)\nz = 0.5",
           "call": "solve()",
-          "expected_expr": "m"
+          "expected_expr": "m",
+          "expected_setup_code": "Z = np.random.uniform(0,1,10)\nz = 0.5\nm = Z.flat[np.abs(Z - z).argmin()]"
         }
       ],
       "submission_mode": "function",
@@ -2942,12 +3002,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nx = np.arange(10, dtype=float)\nkernel = np.ones(3)/3.0\nma = np.convolve(x, kernel, mode='valid')\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nx = np.arange(10, dtype=float)\nkernel = np.ones(3)/3.0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "x = np.arange(10, dtype=float)\nkernel = np.ones(3)/3.0\nma = np.convolve(x, kernel, mode='valid')",
+          "setup_code": "x = np.arange(10, dtype=float)\nkernel = np.ones(3)/3.0",
           "call": "solve()",
-          "expected_expr": "ma"
+          "expected_expr": "ma",
+          "expected_setup_code": "x = np.arange(10, dtype=float)\nkernel = np.ones(3)/3.0\nma = np.convolve(x, kernel, mode='valid')"
         }
       ],
       "submission_mode": "function",
@@ -2976,12 +3037,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.array([1.0, 2.0, 0.0])\nb = np.array([2.0, 0.0, 3.0])\nout = np.divide(a, b, out=np.zeros_like(a), where=b!=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.array([1.0, 2.0, 0.0])\nb = np.array([2.0, 0.0, 3.0])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.array([1.0, 2.0, 0.0])\nb = np.array([2.0, 0.0, 3.0])\nout = np.divide(a, b, out=np.zeros_like(a), where=b!=0)",
+          "setup_code": "a = np.array([1.0, 2.0, 0.0])\nb = np.array([2.0, 0.0, 3.0])",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "a = np.array([1.0, 2.0, 0.0])\nb = np.array([2.0, 0.0, 3.0])\nout = np.divide(a, b, out=np.zeros_like(a), where=b!=0)"
         }
       ],
       "submission_mode": "function",
@@ -3078,12 +3140,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nz = np.array([1.0, 2.0, 3.0])\ne = np.exp(z - z.max())\nsoftmax = e / e.sum()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nz = np.array([1.0, 2.0, 3.0])\ne = np.exp(z - z.max())\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "z = np.array([1.0, 2.0, 3.0])\ne = np.exp(z - z.max())\nsoftmax = e / e.sum()",
+          "setup_code": "z = np.array([1.0, 2.0, 3.0])\ne = np.exp(z - z.max())",
           "call": "solve()",
-          "expected_expr": "softmax"
+          "expected_expr": "softmax",
+          "expected_setup_code": "z = np.array([1.0, 2.0, 3.0])\ne = np.exp(z - z.max())\nsoftmax = e / e.sum()"
         }
       ],
       "submission_mode": "function",
@@ -3112,12 +3175,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nn = 5\nP = np.eye(n)[np.random.permutation(n)]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "n = 5\nP = np.eye(n)[np.random.permutation(n)]",
+          "setup_code": "n = 5",
           "call": "solve()",
-          "expected_expr": "P"
+          "expected_expr": "P",
+          "expected_setup_code": "n = 5\nP = np.eye(n)[np.random.permutation(n)]"
         }
       ],
       "submission_mode": "function",
@@ -3146,12 +3210,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))\nD = np.sqrt(X*X+Y*Y)\nsigma, mu = 1.0, 0.0\nG = np.exp(-( (D-mu)**2 / ( 2.0 * sigma**2 ) ) )\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))\nD = np.sqrt(X*X+Y*Y)\nsigma, mu = 1.0, 0.0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))\nD = np.sqrt(X*X+Y*Y)\nsigma, mu = 1.0, 0.0\nG = np.exp(-( (D-mu)**2 / ( 2.0 * sigma**2 ) ) )",
+          "setup_code": "X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))\nD = np.sqrt(X*X+Y*Y)\nsigma, mu = 1.0, 0.0",
           "call": "solve()",
-          "expected_expr": "G"
+          "expected_expr": "G",
+          "expected_setup_code": "X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))\nD = np.sqrt(X*X+Y*Y)\nsigma, mu = 1.0, 0.0\nG = np.exp(-( (D-mu)**2 / ( 2.0 * sigma**2 ) ) )"
         }
       ],
       "submission_mode": "function",
@@ -3180,12 +3245,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.randn(5, 4)\nX = (X - X.mean(axis=0)) / X.std(axis=0, ddof=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.randn(5, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.randn(5, 4)\nX = (X - X.mean(axis=0)) / X.std(axis=0, ddof=0)",
+          "setup_code": "X = np.random.randn(5, 4)",
           "call": "solve()",
-          "expected_expr": "X"
+          "expected_expr": "X",
+          "expected_setup_code": "X = np.random.randn(5, 4)\nX = (X - X.mean(axis=0)) / X.std(axis=0, ddof=0)"
         }
       ],
       "submission_mode": "function",
@@ -3214,12 +3280,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.rand(3,3)\nb = np.random.rand(3)\nx = np.linalg.solve(A, b)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.rand(3,3)\nb = np.random.rand(3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.rand(3,3)\nb = np.random.rand(3)\nx = np.linalg.solve(A, b)",
+          "setup_code": "A = np.random.rand(3,3)\nb = np.random.rand(3)",
           "call": "solve()",
-          "expected_expr": "x"
+          "expected_expr": "x",
+          "expected_setup_code": "A = np.random.rand(3,3)\nb = np.random.rand(3)\nx = np.linalg.solve(A, b)"
         }
       ],
       "submission_mode": "function",
@@ -3248,12 +3315,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.randn(100,3)\nq = np.quantile(X, [0.25, 0.5, 0.75], axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.randn(100,3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.randn(100,3)\nq = np.quantile(X, [0.25, 0.5, 0.75], axis=0)",
+          "setup_code": "X = np.random.randn(100,3)",
           "call": "solve()",
-          "expected_expr": "q"
+          "expected_expr": "q",
+          "expected_setup_code": "X = np.random.randn(100,3)\nq = np.quantile(X, [0.25, 0.5, 0.75], axis=0)"
         }
       ],
       "submission_mode": "function",
@@ -3282,12 +3350,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Warren Weckesser\nX = np.random.rand(5, 10)\n# Recent versions of numpy\nY = X - X.mean(axis=1, keepdims=True)\n# Older versions of numpy\nY = X - X.mean(axis=1).reshape(-1, 1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.rand(5, 10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Warren Weckesser\nX = np.random.rand(5, 10)\n# Recent versions of numpy\nY = X - X.mean(axis=1, keepdims=True)\n# Older versions of numpy\nY = X - X.mean(axis=1).reshape(-1, 1)",
+          "setup_code": "X = np.random.rand(5, 10)",
           "call": "solve()",
-          "expected_expr": "Y"
+          "expected_expr": "Y",
+          "expected_setup_code": "# Author: Warren Weckesser\nX = np.random.rand(5, 10)\n# Recent versions of numpy\nY = X - X.mean(axis=1, keepdims=True)\n# Older versions of numpy\nY = X - X.mean(axis=1).reshape(-1, 1)"
         }
       ],
       "submission_mode": "function",
@@ -3384,12 +3453,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(25).reshape(5,5)\nmask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1\nZ = Z * mask\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(25).reshape(5,5)\nmask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(25).reshape(5,5)\nmask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1\nZ = Z * mask",
+          "setup_code": "Z = np.arange(25).reshape(5,5)\nmask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(25).reshape(5,5)\nmask = np.abs(np.arange(5)[:,None] - np.arange(5)[None,:]) <= 1\nZ = Z * mask"
         }
       ],
       "submission_mode": "function",
@@ -3452,12 +3522,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([10, 40, 20, 30])\nranks = Z.argsort().argsort()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([10, 40, 20, 30])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([10, 40, 20, 30])\nranks = Z.argsort().argsort()",
+          "setup_code": "Z = np.array([10, 40, 20, 30])",
           "call": "solve()",
-          "expected_expr": "ranks"
+          "expected_expr": "ranks",
+          "expected_setup_code": "Z = np.array([10, 40, 20, 30])\nranks = Z.argsort().argsort()"
         }
       ],
       "submission_mode": "function",
@@ -3520,12 +3591,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nn = 5\nY, X = np.ogrid[:n, :n]\ncenter = (n//2, n//2)\nD = np.abs(Y - center[0]) + np.abs(X - center[1])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 5\nY, X = np.ogrid[:n, :n]\ncenter = (n//2, n//2)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "n = 5\nY, X = np.ogrid[:n, :n]\ncenter = (n//2, n//2)\nD = np.abs(Y - center[0]) + np.abs(X - center[1])",
+          "setup_code": "n = 5\nY, X = np.ogrid[:n, :n]\ncenter = (n//2, n//2)",
           "call": "solve()",
-          "expected_expr": "D"
+          "expected_expr": "D",
+          "expected_setup_code": "n = 5\nY, X = np.ogrid[:n, :n]\ncenter = (n//2, n//2)\nD = np.abs(Y - center[0]) + np.abs(X - center[1])"
         }
       ],
       "submission_mode": "function",
@@ -3554,12 +3626,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nx = np.arange(7)\nfrom numpy.lib.stride_tricks import sliding_window_view\nW = sliding_window_view(x, window_shape=3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\nx = np.arange(7)\nfrom numpy.lib.stride_tricks import sliding_window_view\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "x = np.arange(7)\nfrom numpy.lib.stride_tricks import sliding_window_view\nW = sliding_window_view(x, window_shape=3)",
+          "setup_code": "x = np.arange(7)\nfrom numpy.lib.stride_tricks import sliding_window_view",
           "call": "solve()",
-          "expected_expr": "W"
+          "expected_expr": "W",
+          "expected_setup_code": "x = np.arange(7)\nfrom numpy.lib.stride_tricks import sliding_window_view\nW = sliding_window_view(x, window_shape=3)"
         }
       ],
       "submission_mode": "function",
@@ -3622,12 +3695,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]\nidx = idx[np.argsort(Z[idx])[::-1]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]\nidx = idx[np.argsort(Z[idx])[::-1]]",
+          "setup_code": "Z = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]",
           "call": "solve()",
-          "expected_expr": "idx"
+          "expected_expr": "idx",
+          "expected_setup_code": "Z = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]\nidx = idx[np.argsort(Z[idx])[::-1]]"
         }
       ],
       "submission_mode": "function",
@@ -3656,12 +3730,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))\nX[idx] = np.take(col_means, idx[1])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))\nX[idx] = np.take(col_means, idx[1])",
+          "setup_code": "X = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))",
           "call": "solve()",
-          "expected_expr": "X"
+          "expected_expr": "X",
+          "expected_setup_code": "X = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))\nX[idx] = np.take(col_means, idx[1])"
         }
       ],
       "submission_mode": "function",
@@ -3690,12 +3765,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.rand(5,4)\nB = np.random.rand(5,4)\ndots = np.einsum('ij,ij->i', A, B)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.rand(5,4)\nB = np.random.rand(5,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.rand(5,4)\nB = np.random.rand(5,4)\ndots = np.einsum('ij,ij->i', A, B)",
+          "setup_code": "A = np.random.rand(5,4)\nB = np.random.rand(5,4)",
           "call": "solve()",
-          "expected_expr": "dots"
+          "expected_expr": "dots",
+          "expected_setup_code": "A = np.random.rand(5,4)\nB = np.random.rand(5,4)\ndots = np.einsum('ij,ij->i', A, B)"
         }
       ],
       "submission_mode": "function",
@@ -3724,12 +3800,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.randn(100,4)\nC = np.corrcoef(X, rowvar=False)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.randn(100,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.randn(100,4)\nC = np.corrcoef(X, rowvar=False)",
+          "setup_code": "X = np.random.randn(100,4)",
           "call": "solve()",
-          "expected_expr": "C"
+          "expected_expr": "C",
+          "expected_setup_code": "X = np.random.randn(100,4)\nC = np.corrcoef(X, rowvar=False)"
         }
       ],
       "submission_mode": "function",
@@ -3758,12 +3835,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Thanks Vikas (https://stackoverflow.com/a/10622758/5989906)\n# & unutbu (https://stackoverflow.com/a/4396247/5989906)\nZ = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)\nY[:] = Z\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Thanks Vikas (https://stackoverflow.com/a/10622758/5989906)\n# & unutbu (https://stackoverflow.com/a/4396247/5989906)\nZ = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)\nY[:] = Z",
+          "setup_code": "Z = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)",
           "call": "solve()",
-          "expected_expr": "Y"
+          "expected_expr": "Y",
+          "expected_setup_code": "# Thanks Vikas (https://stackoverflow.com/a/10622758/5989906)\n# & unutbu (https://stackoverflow.com/a/4396247/5989906)\nZ = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)\nY[:] = Z"
         }
       ],
       "submission_mode": "function",
@@ -3792,12 +3870,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)\nout[np.arange(Z.shape[0]), idx] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)\nout[np.arange(Z.shape[0]), idx] = 1",
+          "setup_code": "Z = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "Z = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)\nout[np.arange(Z.shape[0]), idx] = 1"
         }
       ],
       "submission_mode": "function",
@@ -3860,12 +3939,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(4*6).reshape(4,6)\nZ2 = Z.reshape(2,2,3,2)\nblock_sums = Z2.sum(axis=(1,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(4*6).reshape(4,6)\nZ2 = Z.reshape(2,2,3,2)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(4*6).reshape(4,6)\nZ2 = Z.reshape(2,2,3,2)\nblock_sums = Z2.sum(axis=(1,3))",
+          "setup_code": "Z = np.arange(4*6).reshape(4,6)\nZ2 = Z.reshape(2,2,3,2)",
           "call": "solve()",
-          "expected_expr": "block_sums"
+          "expected_expr": "block_sums",
+          "expected_setup_code": "Z = np.arange(4*6).reshape(4,6)\nZ2 = Z.reshape(2,2,3,2)\nblock_sums = Z2.sum(axis=(1,3))"
         }
       ],
       "submission_mode": "function",
@@ -3928,12 +4008,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\nS = (X @ X.T) / (norms @ norms.T)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\nS = (X @ X.T) / (norms @ norms.T)",
+          "setup_code": "X = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)",
           "call": "solve()",
-          "expected_expr": "S"
+          "expected_expr": "S",
+          "expected_setup_code": "X = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\nS = (X @ X.T) / (norms @ norms.T)"
         }
       ],
       "submission_mode": "function",
@@ -3962,12 +4043,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2\nidx = np.argpartition(dist2, kth=k+1, axis=1)[:, 1:k+1]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2\nidx = np.argpartition(dist2, kth=k+1, axis=1)[:, 1:k+1]",
+          "setup_code": "Z = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2",
           "call": "solve()",
-          "expected_expr": "idx"
+          "expected_expr": "idx",
+          "expected_setup_code": "Z = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2\nidx = np.argpartition(dist2, kth=k+1, axis=1)[:, 1:k+1]"
         }
       ],
       "submission_mode": "function",
@@ -3996,12 +4078,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([[0,0,3],[0,2,0],[0,0,0]])\nmask = Z != 0\nidx = np.where(mask.any(axis=1), mask.argmax(axis=1), -1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([[0,0,3],[0,2,0],[0,0,0]])\nmask = Z != 0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([[0,0,3],[0,2,0],[0,0,0]])\nmask = Z != 0\nidx = np.where(mask.any(axis=1), mask.argmax(axis=1), -1)",
+          "setup_code": "Z = np.array([[0,0,3],[0,2,0],[0,0,0]])\nmask = Z != 0",
           "call": "solve()",
-          "expected_expr": "idx"
+          "expected_expr": "idx",
+          "expected_setup_code": "Z = np.array([[0,0,3],[0,2,0],[0,0,0]])\nmask = Z != 0\nidx = np.where(mask.any(axis=1), mask.argmax(axis=1), -1)"
         }
       ],
       "submission_mode": "function",
@@ -4030,12 +4113,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Brett Olsen\nZ = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)\n# Another solution\n# Author: Bartosz Telenczuk\nnp.add.at(Z, I, 1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Brett Olsen\nZ = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)\n# Another solution\n# Author: Bartosz Telenczuk\nnp.add.at(Z, I, 1)",
+          "setup_code": "Z = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "# Author: Brett Olsen\nZ = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)\n# Another solution\n# Author: Bartosz Telenczuk\nnp.add.at(Z, I, 1)"
         }
       ],
       "submission_mode": "function",
@@ -4064,12 +4148,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Alan G Isaac\nX = [1,2,3,4,5,6]\nI = [1,3,9,3,4,1]\nF = np.bincount(I,X)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = [1,2,3,4,5,6]\nI = [1,3,9,3,4,1]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Alan G Isaac\nX = [1,2,3,4,5,6]\nI = [1,3,9,3,4,1]\nF = np.bincount(I,X)",
+          "setup_code": "X = [1,2,3,4,5,6]\nI = [1,3,9,3,4,1]",
           "call": "solve()",
-          "expected_expr": "F"
+          "expected_expr": "F",
+          "expected_setup_code": "# Author: Alan G Isaac\nX = [1,2,3,4,5,6]\nI = [1,3,9,3,4,1]\nF = np.bincount(I,X)"
         }
       ],
       "submission_mode": "function",
@@ -4098,12 +4183,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Fisher Wang\nw, h = 256, 256\nI = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)\ncolors = np.unique(I.reshape(-1, 3), axis=0)\nn = len(colors)\nprint(n)\n# Faster version\n# Author: Mark Setchell\n# https://stackoverflow.com/a/59671950/2836621\nw, h = 256, 256\nI = np.random.randint(0,4,(h,w,3), dtype=np.uint8)\n# View each pixel as a single 24-bit integer, rather than three 8-bit bytes\nI24 = np.dot(I.astype(np.uint32),[1,256,65536])\n# Count unique colours\nn = len(np.unique(I24))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nw, h = 256, 256\nI = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)\ncolors = np.unique(I.reshape(-1, 3), axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Fisher Wang\nw, h = 256, 256\nI = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)\ncolors = np.unique(I.reshape(-1, 3), axis=0)\nn = len(colors)\nprint(n)\n# Faster version\n# Author: Mark Setchell\n# https://stackoverflow.com/a/59671950/2836621\nw, h = 256, 256\nI = np.random.randint(0,4,(h,w,3), dtype=np.uint8)\n# View each pixel as a single 24-bit integer, rather than three 8-bit bytes\nI24 = np.dot(I.astype(np.uint32),[1,256,65536])\n# Count unique colours\nn = len(np.unique(I24))",
+          "setup_code": "w, h = 256, 256\nI = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)\ncolors = np.unique(I.reshape(-1, 3), axis=0)",
           "call": "solve()",
-          "expected_expr": "n"
+          "expected_expr": "n",
+          "expected_setup_code": "# Author: Fisher Wang\nw, h = 256, 256\nI = np.random.randint(0, 4, (h, w, 3)).astype(np.ubyte)\ncolors = np.unique(I.reshape(-1, 3), axis=0)\nn = len(colors)\nprint(n)\n# Faster version\n# Author: Mark Setchell\n# https://stackoverflow.com/a/59671950/2836621\nw, h = 256, 256\nI = np.random.randint(0,4,(h,w,3), dtype=np.uint8)\n# View each pixel as a single 24-bit integer, rather than three 8-bit bytes\nI24 = np.dot(I.astype(np.uint32),[1,256,65536])\n# Count unique colours\nn = len(np.unique(I24))"
         }
       ],
       "submission_mode": "function",
@@ -4166,12 +4252,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.randint(0,10,(3,4,3,4))\n# solution by passing a tuple of axes (introduced in numpy 1.7.0)\nsum = A.sum(axis=(-2,-1))\nprint(sum)\n# solution by flattening the last two dimensions into one\n# (useful for functions that don't accept tuples for axis argument)\nsum = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.randint(0,10,(3,4,3,4))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.randint(0,10,(3,4,3,4))\n# solution by passing a tuple of axes (introduced in numpy 1.7.0)\nsum = A.sum(axis=(-2,-1))\nprint(sum)\n# solution by flattening the last two dimensions into one\n# (useful for functions that don't accept tuples for axis argument)\nsum = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)",
+          "setup_code": "A = np.random.randint(0,10,(3,4,3,4))",
           "call": "solve()",
-          "expected_expr": "sum"
+          "expected_expr": "sum",
+          "expected_setup_code": "A = np.random.randint(0,10,(3,4,3,4))\n# solution by passing a tuple of axes (introduced in numpy 1.7.0)\nsum = A.sum(axis=(-2,-1))\nprint(sum)\n# solution by flattening the last two dimensions into one\n# (useful for functions that don't accept tuples for axis argument)\nsum = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)"
         }
       ],
       "submission_mode": "function",
@@ -4200,12 +4287,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Eelco Hoogendoorn\nA = np.arange(25).reshape(5,5)\nA[[0,1]] = A[[1,0]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.arange(25).reshape(5,5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Eelco Hoogendoorn\nA = np.arange(25).reshape(5,5)\nA[[0,1]] = A[[1,0]]",
+          "setup_code": "A = np.arange(25).reshape(5,5)",
           "call": "solve()",
-          "expected_expr": "A"
+          "expected_expr": "A",
+          "expected_setup_code": "# Author: Eelco Hoogendoorn\nA = np.arange(25).reshape(5,5)\nA[[0,1]] = A[[1,0]]"
         }
       ],
       "submission_mode": "function",
@@ -4268,12 +4356,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])\nZ[:] = Z[p]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])\nZ[:] = Z[p]",
+          "setup_code": "Z = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])\nZ[:] = Z[p]"
         }
       ],
       "submission_mode": "function",
@@ -4336,12 +4425,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.arange(1, 26).reshape(5,5)\nk = -2\ndiag_k = np.diag(A, k=k)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.arange(1, 26).reshape(5,5)\nk = -2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.arange(1, 26).reshape(5,5)\nk = -2\ndiag_k = np.diag(A, k=k)",
+          "setup_code": "A = np.arange(1, 26).reshape(5,5)\nk = -2",
           "call": "solve()",
-          "expected_expr": "diag_k"
+          "expected_expr": "diag_k",
+          "expected_setup_code": "A = np.arange(1, 26).reshape(5,5)\nk = -2\ndiag_k = np.diag(A, k=k)"
         }
       ],
       "submission_mode": "function",
@@ -4438,12 +4528,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.array([1,1,2,2,2,3,1,1,4])\nmask = np.r_[True, a[1:] != a[:-1]]\nout = a[mask]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.array([1,1,2,2,2,3,1,1,4])\nmask = np.r_[True, a[1:] != a[:-1]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.array([1,1,2,2,2,3,1,1,4])\nmask = np.r_[True, a[1:] != a[:-1]]\nout = a[mask]",
+          "setup_code": "a = np.array([1,1,2,2,2,3,1,1,4])\nmask = np.r_[True, a[1:] != a[:-1]]",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "a = np.array([1,1,2,2,2,3,1,1,4])\nmask = np.r_[True, a[1:] != a[:-1]]\nout = a[mask]"
         }
       ],
       "submission_mode": "function",
@@ -4472,12 +4563,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(6, 5)\nv = np.random.rand(5)\ndots = Z @ v\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(6, 5)\nv = np.random.rand(5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(6, 5)\nv = np.random.rand(5)\ndots = Z @ v",
+          "setup_code": "Z = np.random.rand(6, 5)\nv = np.random.rand(5)",
           "call": "solve()",
-          "expected_expr": "dots"
+          "expected_expr": "dots",
+          "expected_setup_code": "Z = np.random.rand(6, 5)\nv = np.random.rand(5)\ndots = Z @ v"
         }
       ],
       "submission_mode": "function",
@@ -4506,12 +4598,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.random.randn(20)\npeaks = np.where((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:]))[0] + 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.random.randn(20)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.random.randn(20)\npeaks = np.where((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:]))[0] + 1",
+          "setup_code": "a = np.random.randn(20)",
           "call": "solve()",
-          "expected_expr": "peaks"
+          "expected_expr": "peaks",
+          "expected_setup_code": "a = np.random.randn(20)\npeaks = np.where((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:]))[0] + 1"
         }
       ],
       "submission_mode": "function",
@@ -4540,12 +4633,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.arange(5)\nB = 10 + np.arange(5)\nC = np.empty(A.size + B.size, dtype=A.dtype)\nC[0::2] = A\nC[1::2] = B\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.arange(5)\nB = 10 + np.arange(5)\nC = np.empty(A.size + B.size, dtype=A.dtype)\nC[0::2] = A\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.arange(5)\nB = 10 + np.arange(5)\nC = np.empty(A.size + B.size, dtype=A.dtype)\nC[0::2] = A\nC[1::2] = B",
+          "setup_code": "A = np.arange(5)\nB = 10 + np.arange(5)\nC = np.empty(A.size + B.size, dtype=A.dtype)\nC[0::2] = A",
           "call": "solve()",
-          "expected_expr": "C"
+          "expected_expr": "C",
+          "expected_setup_code": "A = np.arange(5)\nB = 10 + np.arange(5)\nC = np.empty(A.size + B.size, dtype=A.dtype)\nC[0::2] = A\nC[1::2] = B"
         }
       ],
       "submission_mode": "function",
@@ -4608,12 +4702,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)\nidx_sorted = np.sort(idx)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)\nidx_sorted = np.sort(idx)",
+          "setup_code": "a = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)",
           "call": "solve()",
-          "expected_expr": "idx_sorted"
+          "expected_expr": "idx_sorted",
+          "expected_setup_code": "a = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)\nidx_sorted = np.sort(idx)"
         }
       ],
       "submission_mode": "function",
@@ -4642,12 +4737,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\na = np.arange(10)\nk = 3\nd = np.diff(a, n=k)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\na = np.arange(10)\nk = 3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "a = np.arange(10)\nk = 3\nd = np.diff(a, n=k)",
+          "setup_code": "a = np.arange(10)\nk = 3",
           "call": "solve()",
-          "expected_expr": "d"
+          "expected_expr": "d",
+          "expected_setup_code": "a = np.arange(10)\nk = 3\nd = np.diff(a, n=k)"
         }
       ],
       "submission_mode": "function",
@@ -4676,12 +4772,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ny = np.array([0,2,1,2,0])\nC = y.max() + 1\nI = np.eye(C, dtype=int)\none_hot = I[y]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\ny = np.array([0,2,1,2,0])\nC = y.max() + 1\nI = np.eye(C, dtype=int)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "y = np.array([0,2,1,2,0])\nC = y.max() + 1\nI = np.eye(C, dtype=int)\none_hot = I[y]",
+          "setup_code": "y = np.array([0,2,1,2,0])\nC = y.max() + 1\nI = np.eye(C, dtype=int)",
           "call": "solve()",
-          "expected_expr": "one_hot"
+          "expected_expr": "one_hot",
+          "expected_setup_code": "y = np.array([0,2,1,2,0])\nC = y.max() + 1\nI = np.eye(C, dtype=int)\none_hot = I[y]"
         }
       ],
       "submission_mode": "function",
@@ -4744,12 +4841,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randint(0, 100, (4, 7))\ncummax = np.maximum.accumulate(Z, axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0, 100, (4, 7))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randint(0, 100, (4, 7))\ncummax = np.maximum.accumulate(Z, axis=1)",
+          "setup_code": "Z = np.random.randint(0, 100, (4, 7))",
           "call": "solve()",
-          "expected_expr": "cummax"
+          "expected_expr": "cummax",
+          "expected_setup_code": "Z = np.random.randint(0, 100, (4, 7))\ncummax = np.maximum.accumulate(Z, axis=1)"
         }
       ],
       "submission_mode": "function",
@@ -4778,12 +4876,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)\nZ_unit = np.divide(Z, norms, out=np.zeros_like(Z), where=norms!=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)\nZ_unit = np.divide(Z, norms, out=np.zeros_like(Z), where=norms!=0)",
+          "setup_code": "Z = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)",
           "call": "solve()",
-          "expected_expr": "Z_unit"
+          "expected_expr": "Z_unit",
+          "expected_setup_code": "Z = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)\nZ_unit = np.divide(Z, norms, out=np.zeros_like(Z), where=norms!=0)"
         }
       ],
       "submission_mode": "function",
@@ -4846,12 +4945,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nvalues = np.array([1, 3, 2, 2])\ncounts = np.array([2, 1, 3, 2])\ndecoded = np.repeat(values, counts)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nvalues = np.array([1, 3, 2, 2])\ncounts = np.array([2, 1, 3, 2])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "values = np.array([1, 3, 2, 2])\ncounts = np.array([2, 1, 3, 2])\ndecoded = np.repeat(values, counts)",
+          "setup_code": "values = np.array([1, 3, 2, 2])\ncounts = np.array([2, 1, 3, 2])",
           "call": "solve()",
-          "expected_expr": "decoded"
+          "expected_expr": "decoded",
+          "expected_setup_code": "values = np.array([1, 3, 2, 2])\ncounts = np.array([2, 1, 3, 2])\ndecoded = np.repeat(values, counts)"
         }
       ],
       "submission_mode": "function",
@@ -4880,12 +4980,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randint(0, 5, (6, 7))\nI = np.cumsum(np.cumsum(Z, axis=0), axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0, 5, (6, 7))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randint(0, 5, (6, 7))\nI = np.cumsum(np.cumsum(Z, axis=0), axis=1)",
+          "setup_code": "Z = np.random.randint(0, 5, (6, 7))",
           "call": "solve()",
-          "expected_expr": "I"
+          "expected_expr": "I",
+          "expected_setup_code": "Z = np.random.randint(0, 5, (6, 7))\nI = np.cumsum(np.cumsum(Z, axis=0), axis=1)"
         }
       ],
       "submission_mode": "function",
@@ -4914,12 +5015,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([(\"Hello\", 2.5, 3),\n              (\"World\", 3.6, 2)])\nR = np.rec.fromarrays(Z.T,\n                      names='col1, col2, col3',\n                      formats='S8, f8, i8')\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nZ = np.array([(\"Hello\", 2.5, 3),\n              (\"World\", 3.6, 2)])\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([(\"Hello\", 2.5, 3),\n              (\"World\", 3.6, 2)])\nR = np.rec.fromarrays(Z.T,\n                      names='col1, col2, col3',\n                      formats='S8, f8, i8')",
+          "setup_code": "Z = np.array([(\"Hello\", 2.5, 3),\n              (\"World\", 3.6, 2)])",
           "call": "solve()",
-          "expected_expr": "R"
+          "expected_expr": "R",
+          "expected_setup_code": "Z = np.array([(\"Hello\", 2.5, 3),\n              (\"World\", 3.6, 2)])\nR = np.rec.fromarrays(Z.T,\n                      names='col1, col2, col3',\n                      formats='S8, f8, i8')"
         }
       ],
       "submission_mode": "function",
@@ -4948,12 +5050,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randint(0, 6, (5, 8))\ncounts = np.apply_along_axis(lambda r: np.unique(r).size, 1, Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0, 6, (5, 8))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randint(0, 6, (5, 8))\ncounts = np.apply_along_axis(lambda r: np.unique(r).size, 1, Z)",
+          "setup_code": "Z = np.random.randint(0, 6, (5, 8))",
           "call": "solve()",
-          "expected_expr": "counts"
+          "expected_expr": "counts",
+          "expected_setup_code": "Z = np.random.randint(0, 6, (5, 8))\ncounts = np.apply_along_axis(lambda r: np.unique(r).size, 1, Z)"
         }
       ],
       "submission_mode": "function",
@@ -4982,12 +5085,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Warren Weckesser\nZ = np.array([1,2,3,4,5])\nnz = 3\nZ0 = np.zeros(len(Z) + (len(Z)-1)*(nz))\nZ0[::nz+1] = Z\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.array([1,2,3,4,5])\nnz = 3\nZ0 = np.zeros(len(Z) + (len(Z)-1)*(nz))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Warren Weckesser\nZ = np.array([1,2,3,4,5])\nnz = 3\nZ0 = np.zeros(len(Z) + (len(Z)-1)*(nz))\nZ0[::nz+1] = Z",
+          "setup_code": "Z = np.array([1,2,3,4,5])\nnz = 3\nZ0 = np.zeros(len(Z) + (len(Z)-1)*(nz))",
           "call": "solve()",
-          "expected_expr": "Z0"
+          "expected_expr": "Z0",
+          "expected_setup_code": "# Author: Warren Weckesser\nZ = np.array([1,2,3,4,5])\nnz = 3\nZ0 = np.zeros(len(Z) + (len(Z)-1)*(nz))\nZ0[::nz+1] = Z"
         }
       ],
       "submission_mode": "function",
@@ -5016,12 +5120,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nv = np.arange(1, 6)\nn = v.size\nL = np.tril(np.tile(v, (n,1)))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nv = np.arange(1, 6)\nn = v.size\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "v = np.arange(1, 6)\nn = v.size\nL = np.tril(np.tile(v, (n,1)))",
+          "setup_code": "v = np.arange(1, 6)\nn = v.size",
           "call": "solve()",
-          "expected_expr": "L"
+          "expected_expr": "L",
+          "expected_setup_code": "v = np.arange(1, 6)\nn = v.size\nL = np.tril(np.tile(v, (n,1)))"
         }
       ],
       "submission_mode": "function",
@@ -5050,12 +5155,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)\nZ_norm = np.divide(Z, row_sums, out=np.zeros_like(Z), where=row_sums!=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)\nZ_norm = np.divide(Z, row_sums, out=np.zeros_like(Z), where=row_sums!=0)",
+          "setup_code": "Z = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)",
           "call": "solve()",
-          "expected_expr": "Z_norm"
+          "expected_expr": "Z_norm",
+          "expected_setup_code": "Z = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)\nZ_norm = np.divide(Z, row_sums, out=np.zeros_like(Z), where=row_sums!=0)"
         }
       ],
       "submission_mode": "function",
@@ -5118,12 +5224,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nc = np.arange(6)\ni = np.arange(c.size)[:, None]\nj = np.arange(c.size)[None, :]\nT = c[np.abs(i - j)]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nc = np.arange(6)\ni = np.arange(c.size)[:, None]\nj = np.arange(c.size)[None, :]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "c = np.arange(6)\ni = np.arange(c.size)[:, None]\nj = np.arange(c.size)[None, :]\nT = c[np.abs(i - j)]",
+          "setup_code": "c = np.arange(6)\ni = np.arange(c.size)[:, None]\nj = np.arange(c.size)[None, :]",
           "call": "solve()",
-          "expected_expr": "T"
+          "expected_expr": "T",
+          "expected_setup_code": "c = np.arange(6)\ni = np.arange(c.size)[:, None]\nj = np.arange(c.size)[None, :]\nT = c[np.abs(i - j)]"
         }
       ],
       "submission_mode": "function",
@@ -5152,12 +5259,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nn = 6\nedges = np.array([[0,1],[0,2],[3,5],[2,5]])\nA = np.zeros((n,n), dtype=int)\nA[edges[:,0], edges[:,1]] = 1\nA[edges[:,1], edges[:,0]] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 6\nedges = np.array([[0,1],[0,2],[3,5],[2,5]])\nA = np.zeros((n,n), dtype=int)\nA[edges[:,0], edges[:,1]] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "n = 6\nedges = np.array([[0,1],[0,2],[3,5],[2,5]])\nA = np.zeros((n,n), dtype=int)\nA[edges[:,0], edges[:,1]] = 1\nA[edges[:,1], edges[:,0]] = 1",
+          "setup_code": "n = 6\nedges = np.array([[0,1],[0,2],[3,5],[2,5]])\nA = np.zeros((n,n), dtype=int)\nA[edges[:,0], edges[:,1]] = 1",
           "call": "solve()",
-          "expected_expr": "A"
+          "expected_expr": "A",
+          "expected_setup_code": "n = 6\nedges = np.array([[0,1],[0,2],[3,5],[2,5]])\nA = np.zeros((n,n), dtype=int)\nA[edges[:,0], edges[:,1]] = 1\nA[edges[:,1], edges[:,0]] = 1"
         }
       ],
       "submission_mode": "function",
@@ -5254,12 +5362,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randint(0, 9, (4, 8))\n# use argmax on reversed view, then convert index\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)\nidx = Z.shape[1] - 1 - idx_rev\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0, 9, (4, 8))\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randint(0, 9, (4, 8))\n# use argmax on reversed view, then convert index\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)\nidx = Z.shape[1] - 1 - idx_rev",
+          "setup_code": "Z = np.random.randint(0, 9, (4, 8))\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)",
           "call": "solve()",
-          "expected_expr": "idx"
+          "expected_expr": "idx",
+          "expected_setup_code": "Z = np.random.randint(0, 9, (4, 8))\n# use argmax on reversed view, then convert index\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)\nidx = Z.shape[1] - 1 - idx_rev"
         }
       ],
       "submission_mode": "function",
@@ -5288,12 +5397,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nS = Xn @ Xn.T\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nS = Xn @ Xn.T",
+          "setup_code": "X = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)",
           "call": "solve()",
-          "expected_expr": "S"
+          "expected_expr": "S",
+          "expected_setup_code": "X = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nS = Xn @ Xn.T"
         }
       ],
       "submission_mode": "function",
@@ -5322,12 +5432,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\nZ[inds] = np.take(col_means, inds[1])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\nZ[inds] = np.take(col_means, inds[1])",
+          "setup_code": "Z = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\nZ[inds] = np.take(col_means, inds[1])"
         }
       ],
       "submission_mode": "function",
@@ -5390,12 +5501,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1\nmode = np.apply_along_axis(lambda r: np.bincount(r, minlength=m).argmax(), 1, Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1\nmode = np.apply_along_axis(lambda r: np.bincount(r, minlength=m).argmax(), 1, Z)",
+          "setup_code": "Z = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1",
           "call": "solve()",
-          "expected_expr": "mode"
+          "expected_expr": "mode",
+          "expected_setup_code": "Z = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1\nmode = np.apply_along_axis(lambda r: np.bincount(r, minlength=m).argmax(), 1, Z)"
         }
       ],
       "submission_mode": "function",
@@ -5424,12 +5536,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.random.randn(5, 5)\nb = np.random.randn(5, 3)\nx = np.linalg.solve(A, b)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.randn(5, 5)\nb = np.random.randn(5, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.random.randn(5, 5)\nb = np.random.randn(5, 3)\nx = np.linalg.solve(A, b)",
+          "setup_code": "A = np.random.randn(5, 5)\nb = np.random.randn(5, 3)",
           "call": "solve()",
-          "expected_expr": "x"
+          "expected_expr": "x",
+          "expected_setup_code": "A = np.random.randn(5, 5)\nb = np.random.randn(5, 3)\nx = np.linalg.solve(A, b)"
         }
       ],
       "submission_mode": "function",
@@ -5458,12 +5571,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)\nmed = part[:, m]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)\nmed = part[:, m]",
+          "setup_code": "Z = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)",
           "call": "solve()",
-          "expected_expr": "med"
+          "expected_expr": "med",
+          "expected_setup_code": "Z = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)\nmed = part[:, m]"
         }
       ],
       "submission_mode": "function",
@@ -5526,12 +5640,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nfrom numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(8*10).reshape(8, 10)\nW = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)\nS = W.sum(axis=(-2, -1))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\nfrom numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(8*10).reshape(8, 10)\nW = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(8*10).reshape(8, 10)\nW = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)\nS = W.sum(axis=(-2, -1))",
+          "setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(8*10).reshape(8, 10)\nW = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)",
           "call": "solve()",
-          "expected_expr": "S"
+          "expected_expr": "S",
+          "expected_setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nZ = np.arange(8*10).reshape(8, 10)\nW = sliding_window_view(Z, (2, 4))  # shape: (7, 7, 2, 4)\nS = W.sum(axis=(-2, -1))"
         }
       ],
       "submission_mode": "function",
@@ -5594,12 +5709,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nn = 6\nd0 = 5*np.ones(n)\nd1 = -1*np.ones(n-1)\nM = np.zeros((n,n))\nnp.fill_diagonal(M, d0)\nnp.fill_diagonal(M[:-1,1:], d1)\nnp.fill_diagonal(M[1:,:-1], d1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nn = 6\nd0 = 5*np.ones(n)\nd1 = -1*np.ones(n-1)\nM = np.zeros((n,n))\nnp.fill_diagonal(M, d0)\nnp.fill_diagonal(M[:-1,1:], d1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "n = 6\nd0 = 5*np.ones(n)\nd1 = -1*np.ones(n-1)\nM = np.zeros((n,n))\nnp.fill_diagonal(M, d0)\nnp.fill_diagonal(M[:-1,1:], d1)\nnp.fill_diagonal(M[1:,:-1], d1)",
+          "setup_code": "n = 6\nd0 = 5*np.ones(n)\nd1 = -1*np.ones(n-1)\nM = np.zeros((n,n))\nnp.fill_diagonal(M, d0)\nnp.fill_diagonal(M[:-1,1:], d1)",
           "call": "solve()",
-          "expected_expr": "M"
+          "expected_expr": "M",
+          "expected_setup_code": "n = 6\nd0 = 5*np.ones(n)\nd1 = -1*np.ones(n-1)\nM = np.zeros((n,n))\nnp.fill_diagonal(M, d0)\nnp.fill_diagonal(M[:-1,1:], d1)\nnp.fill_diagonal(M[1:,:-1], d1)"
         }
       ],
       "submission_mode": "function",
@@ -5628,12 +5744,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]\nD = np.sqrt(np.sum(diff*diff, axis=-1))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]\nD = np.sqrt(np.sum(diff*diff, axis=-1))",
+          "setup_code": "X = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]",
           "call": "solve()",
-          "expected_expr": "D"
+          "expected_expr": "D",
+          "expected_setup_code": "X = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]\nD = np.sqrt(np.sum(diff*diff, axis=-1))"
         }
       ],
       "submission_mode": "function",
@@ -5662,12 +5779,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\npts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n[-0.1, 0.9, 0.1],\n[0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]\nout = (H @ T.T)[:, :2]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\npts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n[-0.1, 0.9, 0.1],\n[0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "pts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n[-0.1, 0.9, 0.1],\n[0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]\nout = (H @ T.T)[:, :2]",
+          "setup_code": "pts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n[-0.1, 0.9, 0.1],\n[0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "pts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n[-0.1, 0.9, 0.1],\n[0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]\nout = (H @ T.T)[:, :2]"
         }
       ],
       "submission_mode": "function",
@@ -5798,12 +5916,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Nicolas Rougier\nZ = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])\nR[r] = Z[z]\nprint(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Nicolas Rougier\nZ = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])\nR[r] = Z[z]\nprint(Z)",
+          "setup_code": "Z = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])",
           "call": "solve()",
-          "expected_expr": "R"
+          "expected_expr": "R",
+          "expected_setup_code": "# Author: Nicolas Rougier\nZ = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])\nR[r] = Z[z]\nprint(Z)"
         }
       ],
       "submission_mode": "function",
@@ -5832,12 +5951,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)\nmask[np.arange(Z.shape[0])[:, None], idx] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)\nmask[np.arange(Z.shape[0])[:, None], idx] = 1",
+          "setup_code": "Z = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)",
           "call": "solve()",
-          "expected_expr": "mask"
+          "expected_expr": "mask",
+          "expected_setup_code": "Z = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)\nmask[np.arange(Z.shape[0])[:, None], idx] = 1"
         }
       ],
       "submission_mode": "function",
@@ -5900,12 +6020,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Stefan van der Walt\nZ = np.random.uniform(0,1,(10,10))\nU, S, V = np.linalg.svd(Z) # Singular Value Decomposition\nthreshold = len(S) * S.max() * np.finfo(S.dtype).eps\nrank = np.sum(S > threshold)\nprint(rank)\n# alternative solution:\n# Author: Jeff Luo (@Jeff1999)\nrank = np.linalg.matrix_rank(Z)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.uniform(0,1,(10,10))\nU, S, V = np.linalg.svd(Z) # Singular Value Decomposition\nthreshold = len(S) * S.max() * np.finfo(S.dtype).eps\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Stefan van der Walt\nZ = np.random.uniform(0,1,(10,10))\nU, S, V = np.linalg.svd(Z) # Singular Value Decomposition\nthreshold = len(S) * S.max() * np.finfo(S.dtype).eps\nrank = np.sum(S > threshold)\nprint(rank)\n# alternative solution:\n# Author: Jeff Luo (@Jeff1999)\nrank = np.linalg.matrix_rank(Z)",
+          "setup_code": "Z = np.random.uniform(0,1,(10,10))\nU, S, V = np.linalg.svd(Z) # Singular Value Decomposition\nthreshold = len(S) * S.max() * np.finfo(S.dtype).eps",
           "call": "solve()",
-          "expected_expr": "rank"
+          "expected_expr": "rank",
+          "expected_setup_code": "# Author: Stefan van der Walt\nZ = np.random.uniform(0,1,(10,10))\nU, S, V = np.linalg.svd(Z) # Singular Value Decomposition\nthreshold = len(S) * S.max() * np.finfo(S.dtype).eps\nrank = np.sum(S > threshold)\nprint(rank)\n# alternative solution:\n# Author: Jeff Luo (@Jeff1999)\nrank = np.linalg.matrix_rank(Z)"
         }
       ],
       "submission_mode": "function",
@@ -5934,12 +6055,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Jessica B. Hamrick\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\nconfint = np.percentile(means, [2.5, 97.5])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Jessica B. Hamrick\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\nconfint = np.percentile(means, [2.5, 97.5])",
+          "setup_code": "X = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)",
           "call": "solve()",
-          "expected_expr": "confint"
+          "expected_expr": "confint",
+          "expected_setup_code": "# Author: Jessica B. Hamrick\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\nconfint = np.percentile(means, [2.5, 97.5])"
         }
       ],
       "submission_mode": "function",
@@ -6002,12 +6124,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nX = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2\nidx = np.argpartition(D2, k, axis=1)[:, :k]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nX = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "X = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2\nidx = np.argpartition(D2, k, axis=1)[:, :k]",
+          "setup_code": "X = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2",
           "call": "solve()",
-          "expected_expr": "idx"
+          "expected_expr": "idx",
+          "expected_setup_code": "X = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2\nidx = np.argpartition(D2, k, axis=1)[:, :k]"
         }
       ],
       "submission_mode": "function",
@@ -6036,12 +6159,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\n# sort the top-k indices by actual values descending\nrows = np.arange(Z.shape[0])[:, None]\nidx_sorted = idx[rows, np.argsort(Z[rows, idx], axis=1)[:, ::-1]]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nrows = np.arange(Z.shape[0])[:, None]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\n# sort the top-k indices by actual values descending\nrows = np.arange(Z.shape[0])[:, None]\nidx_sorted = idx[rows, np.argsort(Z[rows, idx], axis=1)[:, ::-1]]",
+          "setup_code": "Z = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nrows = np.arange(Z.shape[0])[:, None]",
           "call": "solve()",
-          "expected_expr": "idx_sorted"
+          "expected_expr": "idx_sorted",
+          "expected_setup_code": "Z = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\n# sort the top-k indices by actual values descending\nrows = np.arange(Z.shape[0])[:, None]\nidx_sorted = idx[rows, np.argsort(Z[rows, idx], axis=1)[:, ::-1]]"
         }
       ],
       "submission_mode": "function",
@@ -6070,12 +6194,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.ones((16,16))\nk = 4\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)",
+          "setup_code": "Z = np.ones((16,16))\nk = 4",
           "call": "solve()",
-          "expected_expr": "S"
+          "expected_expr": "S",
+          "expected_setup_code": "# Author: Robert Kern\nZ = np.ones((16,16))\nk = 4\nS = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),\nnp.arange(0, Z.shape[1], k), axis=1)\nprint(S)\n# alternative solution:\n# Author: Sebastian Wallkötter (@FirefoxMetzger)\nZ = np.ones((16,16))\nk = 4\nwindows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))\nS = windows[::k, ::k, ...].sum(axis=(-2, -1))\n# alternative solution (by @Gattocrucco)"
         }
       ],
       "submission_mode": "function",
@@ -6104,12 +6229,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nfrom numpy.lib.stride_tricks import sliding_window_view\nX = np.arange(7*7).reshape(7,7)\nK = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])\nW = sliding_window_view(X, K.shape)\nY = np.tensordot(W, K, axes=K.ndim)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nfrom numpy.lib.stride_tricks import sliding_window_view\nfrom numpy.lib.stride_tricks import sliding_window_view\nX = np.arange(7*7).reshape(7,7)\nK = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])\nW = sliding_window_view(X, K.shape)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nX = np.arange(7*7).reshape(7,7)\nK = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])\nW = sliding_window_view(X, K.shape)\nY = np.tensordot(W, K, axes=K.ndim)",
+          "setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nX = np.arange(7*7).reshape(7,7)\nK = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])\nW = sliding_window_view(X, K.shape)",
           "call": "solve()",
-          "expected_expr": "Y"
+          "expected_expr": "Y",
+          "expected_setup_code": "from numpy.lib.stride_tricks import sliding_window_view\nX = np.arange(7*7).reshape(7,7)\nK = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])\nW = sliding_window_view(X, K.shape)\nY = np.tensordot(W, K, axes=K.ndim)"
         }
       ],
       "submission_mode": "function",
@@ -6172,12 +6298,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nB = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)\nJ = 1 - inter / np.where(union==0, 1, union)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nB = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "B = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)\nJ = 1 - inter / np.where(union==0, 1, union)",
+          "setup_code": "B = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)",
           "call": "solve()",
-          "expected_expr": "J"
+          "expected_expr": "J",
+          "expected_setup_code": "B = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)\nJ = 1 - inter / np.where(union==0, 1, union)"
         }
       ],
       "submission_mode": "function",
@@ -6206,12 +6333,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nA = np.array([[1,2],[3,4],[5,6]])\nB = np.array([[7,8],[9,10]])\n# result has shape (A_rows*B_rows, n_cols)\nKR = (A[:, None, :] * B[None, :, :]).reshape(A.shape[0]*B.shape[0], A.shape[1])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.array([[1,2],[3,4],[5,6]])\nB = np.array([[7,8],[9,10]])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "A = np.array([[1,2],[3,4],[5,6]])\nB = np.array([[7,8],[9,10]])\n# result has shape (A_rows*B_rows, n_cols)\nKR = (A[:, None, :] * B[None, :, :]).reshape(A.shape[0]*B.shape[0], A.shape[1])",
+          "setup_code": "A = np.array([[1,2],[3,4],[5,6]])\nB = np.array([[7,8],[9,10]])",
           "call": "solve()",
-          "expected_expr": "KR"
+          "expected_expr": "KR",
+          "expected_setup_code": "A = np.array([[1,2],[3,4],[5,6]])\nB = np.array([[7,8],[9,10]])\n# result has shape (A_rows*B_rows, n_cols)\nKR = (A[:, None, :] * B[None, :, :]).reshape(A.shape[0]*B.shape[0], A.shape[1])"
         }
       ],
       "submission_mode": "function",
@@ -6240,12 +6368,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nP = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\nsamples = (u < cs).argmax(axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nP = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "P = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\nsamples = (u < cs).argmax(axis=1)",
+          "setup_code": "P = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)",
           "call": "solve()",
-          "expected_expr": "samples"
+          "expected_expr": "samples",
+          "expected_setup_code": "P = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\nsamples = (u < cs).argmax(axis=1)"
         }
       ],
       "submission_mode": "function",
@@ -6308,12 +6437,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Robert Kern\nZ = np.random.randint(0,5,(10,3))\nprint(Z)\n# solution for arrays of all dtypes (including string arrays and record arrays)\nE = np.all(Z[:,1:] == Z[:,:-1], axis=1)\nU = Z[~E]\nprint(U)\n# soluiton for numerical arrays only, will work for any number of columns in Z\nU = Z[Z.max(axis=1) != Z.min(axis=1),:]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Robert Kern\nZ = np.random.randint(0,5,(10,3))\nprint(Z)\n# solution for arrays of all dtypes (including string arrays and record arrays)\nE = np.all(Z[:,1:] == Z[:,:-1], axis=1)\nU = Z[~E]\nprint(U)\n# soluiton for numerical arrays only, will work for any number of columns in Z\nU = Z[Z.max(axis=1) != Z.min(axis=1),:]",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "U"
+          "expected_expr": "U",
+          "expected_setup_code": "# Author: Robert Kern\nZ = np.random.randint(0,5,(10,3))\nprint(Z)\n# solution for arrays of all dtypes (including string arrays and record arrays)\nE = np.all(Z[:,1:] == Z[:,:-1], axis=1)\nU = Z[~E]\nprint(U)\n# soluiton for numerical arrays only, will work for any number of columns in Z\nU = Z[Z.max(axis=1) != Z.min(axis=1),:]"
         }
       ],
       "submission_mode": "function",
@@ -6376,12 +6506,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Jaime Fernández del Río\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Jaime Fernández del Río\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)",
+          "setup_code": "Z = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)",
           "call": "solve()",
-          "expected_expr": "uZ"
+          "expected_expr": "uZ",
+          "expected_setup_code": "# Author: Jaime Fernández del Río\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)"
         }
       ],
       "submission_mode": "function",
@@ -6410,12 +6541,12 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(10000)\nnp.random.shuffle(Z)\nn = 5\n# Slow\nprint (Z[np.argsort(Z)[-n:]])\n# Fast\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\nZ = np.arange(10000)\nnp.random.shuffle(Z)\nn = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(10000)\nnp.random.shuffle(Z)\nn = 5\n# Slow\nprint (Z[np.argsort(Z)[-n:]])\n# Fast",
-          "call": "solve()",
-          "expected_expr": "print (Z[np.argpartition(-Z,n)[:n]])"
+          "setup_code": "Z = np.arange(10000)\nnp.random.shuffle(Z)\nn = 5",
+          "call": "np.sort(np.asarray(solve()))",
+          "expected_expr": "np.sort(Z)[-n:]"
         }
       ],
       "submission_mode": "function",
@@ -6581,12 +6712,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Gabe Schwartz\nA = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\nC = (A[..., np.newaxis, np.newaxis] == B)\nrows = np.where(C.any((3,1)).all(1))[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nA = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\nC = (A[..., np.newaxis, np.newaxis] == B)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Gabe Schwartz\nA = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\nC = (A[..., np.newaxis, np.newaxis] == B)\nrows = np.where(C.any((3,1)).all(1))[0]",
+          "setup_code": "A = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\nC = (A[..., np.newaxis, np.newaxis] == B)",
           "call": "solve()",
-          "expected_expr": "rows"
+          "expected_expr": "rows",
+          "expected_setup_code": "# Author: Gabe Schwartz\nA = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\nC = (A[..., np.newaxis, np.newaxis] == B)\nrows = np.where(C.any((3,1)).all(1))[0]"
         }
       ],
       "submission_mode": "function",
@@ -6615,12 +6747,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.ones((3,3), dtype=bool)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.ones((3,3), dtype=bool)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.ones((3,3), dtype=bool)"
         }
       ],
       "submission_mode": "function",
@@ -6649,12 +6782,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros(10)\nZ[4] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros(10)\nZ[4] = 1",
+          "setup_code": "Z = np.zeros(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros(10)\nZ[4] = 1"
         }
       ],
       "submission_mode": "function",
@@ -6683,12 +6817,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(0, 10.5, 0.5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(0, 10.5, 0.5)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(0, 10.5, 0.5)"
         }
       ],
       "submission_mode": "function",
@@ -6717,12 +6852,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(10, dtype=np.int32)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(10, dtype=np.int32)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(10, dtype=np.int32)"
         }
       ],
       "submission_mode": "function",
@@ -6751,12 +6887,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\n# Author: Jaime Fernández del Río\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nC = np.bincount([1,1,2,3,4,4,6])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "# Author: Jaime Fernández del Río\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)",
+          "setup_code": "C = np.bincount([1,1,2,3,4,4,6])",
           "call": "solve()",
-          "expected_expr": "A"
+          "expected_expr": "A",
+          "expected_setup_code": "# Author: Jaime Fernández del Río\nC = np.bincount([1,1,2,3,4,4,6])\nA = np.repeat(np.arange(len(C)), C)"
         }
       ],
       "submission_mode": "function",
@@ -6785,12 +6922,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.tile( np.array([[0,1],[1,0]]), (4,4))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.tile( np.array([[0,1],[1,0]]), (4,4))",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.tile( np.array([[0,1],[1,0]]), (4,4))"
         }
       ],
       "submission_mode": "function",
@@ -6853,12 +6991,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random(10)\nZ[Z.argmax()] = 0\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random(10)\nZ[Z.argmax()] = 0",
+          "setup_code": "Z = np.random.random(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random(10)\nZ[Z.argmax()] = 0"
         }
       ],
       "submission_mode": "function",
@@ -6921,12 +7060,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.array([[1,2],[3,4]])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.array([[1,2],[3,4]])",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.array([[1,2],[3,4]])"
         }
       ],
       "submission_mode": "function",
@@ -6955,12 +7095,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.ones(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.ones(10)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.ones(10)"
         }
       ],
       "submission_mode": "function",
@@ -6989,12 +7130,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros(10)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros(10)"
         }
       ],
       "submission_mode": "function",
@@ -7023,12 +7165,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.eye(3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.eye(3)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.eye(3)"
         }
       ],
       "submission_mode": "function",
@@ -7057,12 +7200,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(10,50)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(10,50)",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(10,50)"
         }
       ],
       "submission_mode": "function",
@@ -7095,8 +7239,8 @@
       "test_cases": [
         {
           "setup_code": "Z = np.arange(5)",
-          "call": "solve()",
-          "expected_expr": "Z.astype(np.float32)"
+          "call": "(solve().dtype.name, solve())",
+          "expected_expr": "('float32', Z.astype(np.float32))"
         }
       ],
       "submission_mode": "function",
@@ -7125,12 +7269,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.zeros(10)\nZ[3:8] = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.zeros(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.zeros(10)\nZ[3:8] = 5",
+          "setup_code": "Z = np.zeros(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.zeros(10)\nZ[3:8] = 5"
         }
       ],
       "submission_mode": "function",
@@ -7193,12 +7338,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.arange(50)\nZ = Z[::-1]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.arange(50)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.arange(50)\nZ = Z[::-1]",
+          "setup_code": "Z = np.arange(50)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.arange(50)\nZ = Z[::-1]"
         }
       ],
       "submission_mode": "function",
@@ -7261,12 +7407,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.random.random(10)\nZ.sort()\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nZ = np.random.random(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.random.random(10)\nZ.sort()",
+          "setup_code": "Z = np.random.random(10)",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.random.random(10)\nZ.sort()"
         }
       ],
       "submission_mode": "function",
@@ -7397,12 +7544,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.matmul(np.ones((5, 3)), np.ones((3, 2)))\nprint(Z)\n# Alternative solution, in Python 3.5 and above\nZ = np.ones((5,3)) @ np.ones((3,2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.matmul(np.ones((5, 3)), np.ones((3, 2)))\nprint(Z)\n# Alternative solution, in Python 3.5 and above\nZ = np.ones((5,3)) @ np.ones((3,2))",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.matmul(np.ones((5, 3)), np.ones((3, 2)))\nprint(Z)\n# Alternative solution, in Python 3.5 and above\nZ = np.ones((5,3)) @ np.ones((3,2))"
         }
       ],
       "submission_mode": "function",
@@ -7499,12 +7647,13 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nZ = np.linspace(0,1,11,endpoint=False)[1:]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "Z = np.linspace(0,1,11,endpoint=False)[1:]",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "Z"
+          "expected_expr": "Z",
+          "expected_setup_code": "Z = np.linspace(0,1,11,endpoint=False)[1:]"
         }
       ],
       "submission_mode": "function",
@@ -10147,17 +10296,17 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) of channels-first images, plus integer subgrid factors hs and ws (here both 2) that evenly divide height and width. First produce a packed intermediate of shape (hs * ws * batch, channels, height / hs, width / ws) by splitting each image into an hs-by-ws spatial grid and folding both subgrid axes plus batch into the leading axis. Then invert that step to recover the original (batch, channels, height, width) array.",
+      "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) of channels-first images, plus integer subgrid factors hs and ws (here both 2) that evenly divide height and width. Produce the packed array of shape (hs * ws * batch, channels, height / hs, width / ws) by splitting each image into an hs-by-ws spatial grid and folding both subgrid axes plus batch into the leading axis. Return the packed array.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here - define y\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
           "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2",
           "call": "solve()",
-          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> b c (h hs) (w ws)', hs=hs, ws=ws)"
+          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=hs, ws=ws)"
         }
       ],
       "submission_mode": "function",
@@ -10836,12 +10985,13 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)  # (6, 150, 150, 3) BHWC\nb, h = 6, 150\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb, h = 6, 150\ntmp = einops.rearrange(arr, 'b h w c -> (b h) w c')",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "einops.rearrange(tmp, '(b h) w c -> b h w c', b=b, h=h)"
+          "expected_expr": "einops.rearrange(tmp, '(b h) w c -> b h w c', b=b, h=h)",
+          "expected_setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb, h = 6, 150\ntmp = einops.rearrange(arr, 'b h w c -> (b h) w c')"
         }
       ],
       "submission_mode": "function",
@@ -11379,18 +11529,17 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of images with height, width, and color channels, first remove the color channels dimension by squeezing it out, and then add it back as a singleton dimension, returning to the original shape.",
+      "question_text": "You are given arr, a batch of HWC images with shape (b, h, w, c). Using einops.rearrange, insert a singleton axis directly after the batch axis, producing shape (b, 1, h, w, c), and return the result.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define tmp\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
           "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
           "call": "solve()",
-          "expected_expr": "einops.rearrange(tmp, 'b () h w c -> b h w c')",
-          "expected_setup_code": "tmp = einops.rearrange(arr, 'b h w c -> b () h w c')"
+          "expected_expr": "einops.rearrange(arr, 'b h w c -> b () h w c')"
         }
       ],
       "submission_mode": "function",
@@ -11453,12 +11602,13 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx2d = np.arange(3 * 4).reshape(3, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "x2d = np.arange(3 * 4).reshape(3, 4)\ny = einops.rearrange(x2d, 'h w -> 1 h w')",
+          "setup_code": "",
           "call": "solve()",
-          "expected_expr": "einops.rearrange(y, '1 h w -> h w')"
+          "expected_expr": "einops.rearrange(y, '1 h w -> h w')",
+          "expected_setup_code": "x2d = np.arange(3 * 4).reshape(3, 4)\ny = einops.rearrange(x2d, 'h w -> 1 h w')"
         }
       ],
       "submission_mode": "function",
@@ -11482,17 +11632,17 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Combine a list of HWC images into a batch format, where each image retains its height, width, and color channels.",
+      "question_text": "You are given imgs, a Python list of HWC image arrays that all share the same (h, w, c) shape. Using einops.rearrange, combine the list into a single batched ndarray of shape (b, h, w, c), where each image retains its height, width, and color channels.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimgs = list(np.moveaxis(np.load('/delta_numbers.npy'), 1, -1))\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange(arr, 'b h w c -> b h w c')"
+          "setup_code": "imgs = list(np.moveaxis(np.load('/delta_numbers.npy'), 1, -1))\nb = 2",
+          "call": "(type(solve()).__name__, solve())",
+          "expected_expr": "('ndarray', einops.rearrange(imgs, 'b h w c -> b h w c'))"
         }
       ],
       "submission_mode": "function",
@@ -13123,12 +13273,13 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\nimport torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\nout[1:-1] = x\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport torch\nimport torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "import torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\nout[1:-1] = x",
+          "setup_code": "import torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)",
           "call": "solve()",
-          "expected_expr": "out"
+          "expected_expr": "out",
+          "expected_setup_code": "import torch\nx = torch.tensor([1,2,3,4])\nout = x.new_full((x.shape[0]+2,), 0)\nout[1:-1] = x"
         }
       ],
       "submission_mode": "function",
