@@ -59,8 +59,32 @@ async function loadAdaptiveState() {
     }
   }
 
+  // Apply a self-reported level chosen BEFORE this state existed (the
+  // selector writes localStorage immediately; the engine state may not
+  // have been initialized yet at click time).
+  await syncSelfReportIntoEngineState();
+
   await syncAdaptiveWeightsToPracticePreferences();
   emitAdaptiveStateChanged();
+}
+
+async function syncSelfReportIntoEngineState() {
+  if (!adaptiveStateJson || practiceMode === "backend") return;
+  const saved = localStorage.getItem(_selfReportStorageKey());
+  if (!saved) return;
+  try {
+    const current = JSON.parse(adaptiveStateJson)?.self_reported_level ?? null;
+    const savedLevel = ["beginner", "strong"].includes(saved) ? saved : null;
+    if (current === savedLevel) return;
+    const pyodide = await initPyodide();
+    if (pyodide && practiceEngineLoaded) {
+      const api = pyodide.globals.get("engine_api");
+      adaptiveStateJson = api.set_self_reported_level(adaptiveStateJson, saved);
+      await saveAdaptiveState();
+    }
+  } catch (err) {
+    console.warn("[practice] self-report sync error:", err);
+  }
 }
 
 // Backend-mode hydration: backend mode skips the Pyodide engine, so
@@ -179,3 +203,78 @@ function getEwmaFromAdaptiveState(subtopic) {
     return null;
   }
 }
+
+/* ================================================================
+   SELF-REPORTED EXPERIENCE LEVEL — seeds where the adaptive queue
+   starts (a prior, not a placement; answers overrule it quickly).
+   Backend mode: PUT /api/practice/self-report (BKT p_init prior).
+   Offline/Supabase mode: Pyodide engine staircase seed.
+   ================================================================ */
+
+function _selfReportStorageKey() {
+  const email = typeof authEmail === "string" && authEmail.trim() ? authEmail.trim() : "guest";
+  return `self_report_level_${email}`;
+}
+
+async function setSelfReportedLevel(level) {
+  const normalized = ["beginner", "strong"].includes(level) ? level : "default";
+  localStorage.setItem(_selfReportStorageKey(), normalized);
+
+  if (practiceMode === "backend" && typeof apiFetch === "function") {
+    try {
+      const res = await apiFetch("/api/practice/self-report", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ level: normalized }),
+      });
+      if (!res.ok) console.warn("[practice] self-report save failed:", res.status);
+    } catch (err) {
+      console.warn("[practice] self-report save error:", err);
+    }
+  } else if (adaptiveStateJson) {
+    try {
+      const pyodide = await initPyodide();
+      if (pyodide && practiceEngineLoaded) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.set_self_reported_level(adaptiveStateJson, normalized);
+        await saveAdaptiveState();
+      }
+    } catch (err) {
+      console.warn("[practice] self-report engine error:", err);
+    }
+  }
+  return normalized;
+}
+
+function initSelfReportControls() {
+  const row = document.getElementById("self-report-row");
+  if (!row) return;
+  const note = document.getElementById("self-report-note");
+  const buttons = Array.from(row.querySelectorAll(".self-report-btn"));
+
+  const NOTE_BY_LEVEL = {
+    beginner: "Starting at the easiest problems — answering well moves you up fast.",
+    strong: "Starting at harder problems — a miss steps back down, no harm done.",
+    default: "Starting in the middle — your answers take it from there.",
+  };
+
+  const highlight = (level) => {
+    buttons.forEach((b) => b.classList.toggle("active", b.dataset.level === level));
+  };
+
+  const saved = localStorage.getItem(_selfReportStorageKey());
+  if (saved) highlight(saved);
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const level = await setSelfReportedLevel(btn.dataset.level);
+      highlight(level);
+      if (note) {
+        note.textContent = NOTE_BY_LEVEL[level] || "";
+        note.classList.remove("hidden");
+      }
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initSelfReportControls);

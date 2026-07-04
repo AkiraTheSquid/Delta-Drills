@@ -7,7 +7,9 @@ let practiceEngineLoaded = false;
 async function loadPracticeEngine(pyodide) {
   if (practiceEngineLoaded) return;
   try {
-    const res = await fetch("practice_engine.py");
+    // Cache-busted: bump when practice_engine.py changes, or the browser
+    // keeps running a stale engine (set_self_reported_level was missing).
+    const res = await fetch("practice_engine.py?v=2");
     if (!res.ok) throw new Error("HTTP " + res.status);
     const source = await res.text();
     pyodide.runPython(source);

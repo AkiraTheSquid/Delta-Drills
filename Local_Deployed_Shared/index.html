@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="styles/courses/modal.css?v=1" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css" />
-  <link rel="stylesheet" href="practice.css?v=12" />
+  <link rel="stylesheet" href="practice.css?v=13" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -552,6 +552,17 @@
             <strong>Practice</strong> is your adaptive queue — we pick the next problem for you based on what you're ready for.
             Want to drill one specific skill instead? Use <strong>Targeted Practice</strong>.
           </p>
+          <!-- Self-reported experience level: seeds where the adaptive queue
+               STARTS (a prior, not a placement — answers still decide). -->
+          <div class="self-report-row" id="self-report-row">
+            <span class="self-report-label" title="This only sets where questions start — your answers quickly adjust it either way.">Starting point:</span>
+            <div class="self-report-options" role="group" aria-label="Self-reported experience level">
+              <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
+              <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
+              <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
+            </div>
+            <span class="self-report-note hidden" id="self-report-note"></span>
+          </div>
           <!-- Timed Mode Toggle -->
           <div class="timed-mode-row">
             <div class="timed-mode-control">
@@ -780,8 +791,8 @@ np.random.seed(0)
   <script src="practice/config.js?v=6"></script>
   <script src="practice/mode.js?v=6"></script>
   <script src="practice/questions.js?v=21"></script>
-  <script src="practice/engine.js?v=6"></script>
-  <script src="practice/adaptive.js?v=7"></script>
+  <script src="practice/engine.js?v=7"></script>
+  <script src="practice/adaptive.js?v=8"></script>
   <script src="practice/storage.js?v=6"></script>
   <script src="practice/dom.js?v=10"></script>
   <script src="practice/bars.js?v=6"></script>
