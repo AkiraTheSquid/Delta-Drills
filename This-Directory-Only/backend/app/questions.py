@@ -99,6 +99,14 @@ def _load_function_overrides() -> Dict[int, dict]:
         "numpy_einsum_prompt_rewrite_overrides.jsonl",
         "prompt_expansion_overrides.jsonl",
         "difficulty_overrides.jsonl",
+        # question_text-only rewrites of the authored torch/autograd/optimizer
+        # batch (ids 405-479): de-giveaway + readability (2026-07 tester pass).
+        # Layered last so these texts win; starter/test fields untouched.
+        "question_text_quality_overrides.jsonl",
+        # Starter-code fixes: 3 SyntaxErrors (bad indent/broken string literal)
+        # and answer-leaking comments/precomputed-answer-before-solve() bugs
+        # found during the 2026-07-04 tester pass. Layered last so these win.
+        "starter_leak_and_syntax_fixes.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():
@@ -111,6 +119,9 @@ def _load_function_overrides() -> Dict[int, dict]:
 _ATOM_TAGS_PATH = Path(__file__).resolve().parent / "data" / "question_atom_tags.jsonl"
 _HINTS_PATH = Path(__file__).resolve().parent / "data" / "question_hints.jsonl"
 _SOLUTION_NB_PATH = Path(__file__).resolve().parent / "data" / "question_solution_notebooks.jsonl"
+# Per-question PROBLEM notebooks (starter, no answer) — only torch questions get
+# one, since those route to Colab instead of the in-app runner.
+_PROBLEM_NB_PATH = Path(__file__).resolve().parent / "data" / "question_problem_notebooks.jsonl"
 
 
 def _apply_solution_aids(questions: List["Question"]) -> None:
@@ -149,12 +160,29 @@ def _apply_solution_aids(questions: List["Question"]) -> None:
         except (OSError, json.JSONDecodeError, ValueError, TypeError, KeyError) as exc:
             logger.warning("Failed to load question_solution_notebooks.jsonl: %s", exc)
 
+    problem_nbs: Dict[int, str] = {}
+    if _PROBLEM_NB_PATH.exists():
+        try:
+            for line in _PROBLEM_NB_PATH.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                rec = json.loads(line)
+                p = (rec.get("path") or "").strip()
+                if p:
+                    problem_nbs[int(rec["question_id"] if "question_id" in rec else rec["id"])] = p
+        except (OSError, json.JSONDecodeError, ValueError, TypeError, KeyError) as exc:
+            logger.warning("Failed to load question_problem_notebooks.jsonl: %s", exc)
+
     for q in questions:
         if q.id in hints:
             q.hint = hints[q.id]
         if q.id in nbs:
             q.solution_notebook_path = nbs[q.id]
-    logger.info("Solution aids: %d hints, %d notebooks", len(hints), len(nbs))
+        if q.id in problem_nbs:
+            q.problem_notebook_path = problem_nbs[q.id]
+    logger.info("Solution aids: %d hints, %d notebooks, %d problem notebooks",
+                len(hints), len(nbs), len(problem_nbs))
 
 
 def _apply_atom_tags(questions: List["Question"]) -> None:
@@ -233,6 +261,9 @@ class Question:
     atom_tags: List[dict] = field(default_factory=list)
     hint: str | None = None
     solution_notebook_path: str | None = None
+    # Repo-relative PROBLEM Colab (starter, no answer) for torch questions that
+    # route to Colab instead of the in-app runner. None for in-app questions.
+    problem_notebook_path: str | None = None
 
 
 # ---------------------------------------------------------------------------

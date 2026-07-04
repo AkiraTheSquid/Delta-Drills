@@ -12,7 +12,13 @@ from typing import List, Optional, Tuple
 
 from fastapi import HTTPException, status
 
-from app.code_runner import ExecutionResult, run_code, run_function_tests
+from app.code_runner import (
+    TORCH_COLAB_MESSAGE,
+    ExecutionResult,
+    code_uses_torch,
+    run_code,
+    run_function_tests,
+)
 from app.models import User
 from app.practice.chatgpt_helpers import call_chatgpt
 from app.practice.prompts import build_ai_judge_prompt
@@ -21,7 +27,7 @@ from app.questions import Question
 
 def run_and_get_expected_output(answer_code: str) -> str:
     """Run the canonical answer code and return its stdout."""
-    result = run_code(answer_code, timeout=5)
+    result = run_code(answer_code, timeout=20)
     return result.stdout.strip()
 
 
@@ -51,7 +57,21 @@ def grade_submission(
 
     Returns: (correct, actual_output, expected_output, failed_tests)
     """
-    user_result: ExecutionResult = run_code(user_code, timeout=5)
+    # Torch/GPU drills are Colab-only — the sandbox can't import torch. The
+    # frontend should route these to Colab self-rating before submitting, but
+    # if one reaches here we refuse rather than run a doomed subprocess or
+    # record a bogus wrong answer.
+    if (
+        getattr(question, "primary_library", None) == "torch"
+        or code_uses_torch(user_code)
+        or code_uses_torch(getattr(question, "answer_code", "") or "")
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=TORCH_COLAB_MESSAGE,
+        )
+
+    user_result: ExecutionResult = run_code(user_code, timeout=20)
     actual_output = user_result.stdout.strip()
     expected_output = question.expected_output or run_and_get_expected_output(question.answer_code)
 

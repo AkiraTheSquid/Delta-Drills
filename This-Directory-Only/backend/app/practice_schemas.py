@@ -37,6 +37,10 @@ class NextQuestionResponse(BaseModel):
     # repo-relative path to the per-question solution Colab (arena-procedural-drills/…);
     # the frontend routes it to GitHub via colabUpstreamHref for the Show Answer button.
     solution_notebook_path: str | None = None
+    # repo-relative path to the per-question PROBLEM Colab (starter, no answer).
+    # Present for torch questions, which route to Colab instead of the in-app
+    # runner; the frontend opens this and offers the solution separately.
+    problem_notebook_path: str | None = None
 
 
 class SubmitRequest(BaseModel):

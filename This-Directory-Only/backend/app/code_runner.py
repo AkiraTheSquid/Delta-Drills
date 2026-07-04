@@ -2,7 +2,7 @@
 Sandboxed Python code execution.
 
 Runs user-submitted code in a subprocess with:
-  - A hard timeout (default 5 seconds)
+  - A hard timeout (default 20 seconds)
   - numpy available
   - No direct use of exec()/eval() — uses subprocess instead
   - Captures stdout, stderr, and success flag
@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import subprocess
 import sys
 import tempfile
@@ -20,7 +21,16 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT_SECONDS = 5
+DEFAULT_TIMEOUT_SECONDS = 20
+
+TORCH_COLAB_MESSAGE = "This drill uses PyTorch, which the in-app sandbox can't run. Open it in Colab (use Show Answer / the solution notebook), complete it there, then self-rate your result."
+
+
+def code_uses_torch(code: str) -> bool:
+    """Return True if the code imports torch (``import torch`` or ``from torch ...``)."""
+    return re.search(r"(?m)^\s*(?:import\s+torch\b|from\s+torch[\s.])", code or "") is not None
+
+
 ARENA_NUMBERS_PATH = (
     Path(__file__).resolve().parents[3]
     / "Local_Deployed_Shared"
@@ -95,6 +105,11 @@ def run_code(code: str, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> ExecutionResu
     Returns:
         ExecutionResult with stdout, stderr, and success flag.
     """
+    # Torch/GPU drills are Colab-only: the in-app sandbox can't import torch
+    # within a sane timeout. Return an honest message instead of hanging.
+    if code_uses_torch(code):
+        return ExecutionResult(stdout="", stderr=TORCH_COLAB_MESSAGE, success=False)
+
     full_code = CODE_PREAMBLE + code
 
     # Write to a temp file so we avoid shell injection issues

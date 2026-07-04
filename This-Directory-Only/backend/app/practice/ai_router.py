@@ -27,8 +27,8 @@ router = APIRouter()
 
 @router.post("/run-code", response_model=CodeRunResponse)
 def run_code_endpoint(payload: CodeRunRequest) -> CodeRunResponse:
-    """Run arbitrary Python code in a sandboxed subprocess (5s timeout)."""
-    result = run_code(payload.code, timeout=5)
+    """Run arbitrary Python code in a sandboxed subprocess (20s timeout)."""
+    result = run_code(payload.code, timeout=20)
     return CodeRunResponse(
         stdout=result.stdout,
         stderr=result.stderr,

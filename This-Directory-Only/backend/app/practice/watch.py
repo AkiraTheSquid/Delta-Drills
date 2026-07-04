@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(THIS, '..', '..'))
 SUB_ROUTERS = [
     'ai_router.py',
     'feedback_router.py',
+    'problem_feedback_router.py',
     'questions_router.py',
     'subtopic_router.py',
 ]
@@ -24,6 +25,7 @@ EXPECTED_PATHS = {
     '/api/practice/submit-local-eval',
     '/api/practice/override',
     '/api/practice/feedback',
+    '/api/practice/problem-feedback',
     '/api/practice/visual-debug',
     '/api/practice/subtopics',
     '/api/practice/weights',
