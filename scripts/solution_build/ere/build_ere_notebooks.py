@@ -73,20 +73,43 @@ def _src(c: dict) -> str:
 
 # Agents sometimes emit `lhs = raise NotImplementedError()  # cmt`, which is
 # invalid python (raise is a statement, not an expression). Rewrite it to a
-# parseable stub that still halts clearly and shows the learner the target.
+# parseable stub that still halts clearly.
 _BAD_STUB = re.compile(
     r"^(?P<indent>[ \t]*)(?P<lhs>[\w\s,()\[\].]+?)\s*=\s*raise\s+NotImplementedError\([^)]*\)\s*(?P<cmt>#.*)?$",
     re.MULTILINE,
 )
 
+# Generic pointer that replaces any answer-bearing TODO comment in the FADED
+# scaffold. The learner gets the operation/shape guidance from the prompt and
+# concept markdown cells above the code cell — the comment must never carry the
+# literal answer expression.
+_GENERIC_TODO = "# TODO: fill in this step — read the prompt cell above"
+
+# Matches a trailing `# TODO ...` / `#TODO ...` comment (everything from the `#`
+# onward). Authored faded scaffolds put the literal answer here, e.g.
+#   out = None  # TODO: grad_out * out * (1 - out)
+#   raise NotImplementedError()  # TODO: OR over the batch axis to get (H, W)
+# We strip the answer text and substitute a generic conceptual pointer, while
+# keeping the code structure (the `= None` / `____` placeholder, the halting
+# `raise NotImplementedError()`, dict-key blanks, signatures, control flow).
+# Note: this is a heuristic that assumes `#` introduces a comment. Scaffolds in
+# this corpus never put `#` inside a string literal on a TODO line, so this is
+# safe in practice; revisit if that assumption changes.
+_TODO_COMMENT = re.compile(r"#\s*TODO\b.*$", re.MULTILINE)
+
 
 def _sanitize_scaffold(code: str) -> str:
+    # FADED tier only (worked + reference_fill paths never call this). Drop any
+    # answer-revealing TODO comment, but keep the scaffold's structure so the
+    # learner still has signatures, variable names, control flow, and a clear
+    # blank to fill.
     def repl(m: "re.Match") -> str:
-        ind, lhs, cmt = m.group("indent"), m.group("lhs").strip(), (m.group("cmt") or "").strip()
-        note = cmt[1:].strip() if cmt.startswith("#") else ""
-        return (f"{ind}{lhs} = None  # TODO: {note}\n"
+        ind, lhs = m.group("indent"), m.group("lhs").strip()
+        return (f"{ind}{lhs} = None  {_GENERIC_TODO}\n"
                 f'{ind}raise NotImplementedError("Complete `{lhs}` above, then delete this line.")')
-    return _BAD_STUB.sub(repl, code)
+    code = _BAD_STUB.sub(repl, code)
+    code = _TODO_COMMENT.sub(_GENERIC_TODO, code)
+    return code
 
 
 def _template_cells(bundle: dict) -> dict:
@@ -114,6 +137,17 @@ def _rewire_beacon(beacon: dict, marker: str, atom_id: str) -> dict:
     return beacon
 
 
+# Orientation line at the top of every Concept cell. Tier notebooks open cold
+# (a tester landed on "The core BackwardFuncLookup raises KeyError…" with no
+# idea what BackwardFuncLookup was) — every name the Concept text references is
+# defined in the Setup cell, so point the learner there explicitly.
+_CONTEXT_BRIDGE = (
+    "_First time on this topic? Run the **Setup** cell above and skim it: every "
+    "class and helper mentioned below is defined there. You don't need to have "
+    "done any other drill first._"
+)
+
+
 # ---- notebook builders ----------------------------------------------------
 def build_worked(bundle: dict, w: dict, idx: int, tpl: dict) -> dict:
     atom = bundle["atomId"]
@@ -122,13 +156,14 @@ def build_worked(bundle: dict, w: dict, idx: int, tpl: dict) -> dict:
         md(f"# {atom} — worked example {idx}: {title}\n\n"
            f"> Worked example from [Delta Drills](https://delta-drills.vercel.app). "
            f"Atom: `{atom}`.\n\n"
-           f"**This is a worked example — read it, run it, follow the reasoning.** "
-           f"It is study material, not a graded drill (no completion beacon). "
-           f"When the steps feel obvious, move to the faded version, then the full drill."),
+           f"**This is a worked example — read it, run each cell, and follow the reasoning.** "
+           f"It's study material, so there's nothing to submit here. Delta Drills hands you "
+           f"a hands-on version to complete yourself as you get comfortable with the idea."),
         md("## Setup"),
         tpl["imports"] or code("import numpy as np\nimport torch as t\nimport einops\n"
                                "t.manual_seed(0)\nnp.random.seed(0)"),
-        md("## Concept\n\n" + (w.get("concept_md") or bundle.get("definition", ""))),
+        md("## Concept\n\n" + _CONTEXT_BRIDGE + "\n\n"
+           + (w.get("concept_md") or bundle.get("definition", ""))),
         md("## Worked solution\n\n" + (w.get("walkthrough_md") or "")),
         code(w["solution_code"]),
     ]
@@ -149,24 +184,31 @@ def build_faded(bundle: dict, f: dict, idx: int, tpl: dict, filled: bool) -> dic
     )
     cells = [
         md(f"# {atom} — faded example {idx}: {title}\n\n"
-           f"> Faded drill from [Delta Drills](https://delta-drills.vercel.app). "
-           f"Atom: `{atom}`. Running the beacon reports progress on the "
-           f"`{subtopic}` subtopic.\n\n"
-           f"**Most of the solution is filled in — complete the one blanked step**, "
-           f"run the test, then fire the beacon. Less scaffolding than the worked "
-           f"example, more than the full drill."),
+           f"> Practice drill from [Delta Drills](https://delta-drills.vercel.app). "
+           f"Atom: `{atom}`. The last cell reports your progress on the "
+           f"`{subtopic}` subtopic back to Delta Drills.\n\n"
+           f"**Most of the code is already written — complete the one blanked step**, "
+           f"run the test to check it, then run the last cell to record your progress."),
         md("## Setup"),
         tpl["imports"] or code("import numpy as np\nimport torch as t\nimport einops"),
         tpl["connect_md"] or md("## Connect to Delta Drills"),
         tpl["auth"] or code(f'DD_TOKEN = ""\nDD_ATOM_ID = "{atom}"\n'
                             f'DD_SUBTOPIC = "{subtopic}"\n'
                             f'DD_BACKEND_URL = "https://delta-drills-backend.fly.dev"\n_dd_passed = set()'),
-        md("## Concept\n\n" + (f.get("concept_md") or "")),
+        md("## Concept\n\n" + _CONTEXT_BRIDGE + "\n\n" + (f.get("concept_md") or "")),
+        # NOTE: we intentionally do NOT echo the authored `blank_description`
+        # here — those strings spell out the literal answer (e.g. "grad_out
+        # times the local Jacobian expressed through out"), which made the
+        # faded tier mindless. The learner gets the concept from the Concept +
+        # prompt_md cells and the structure from the scaffold; the missing
+        # expression they must work out themselves.
         md(f"## Faded exercise {idx}\n\n" + (f.get("prompt_md") or "")
-           + (f"\n\n**Fill in:** {f.get('blank_description','')}" if f.get("blank_description") else "")),
+           + "\n\n**Your task:** complete the one blanked step in the code cell below. "
+             "The surrounding code, function signatures, and variable names are given — "
+             "work out the missing expression yourself, then run the test."),
         code(work + ("\n\n" + test + runner if test else "")),
-        md("## Report completion\n\nRun the cell below to report progress. "
-           "The beacon fires only if the test above passed."),
+        md("## Report your progress\n\nRun the cell below to send your progress to "
+           "Delta Drills. It only counts if the test above passed."),
         _rewire_beacon(tpl["beacon"], marker, atom) if tpl["beacon"]
         else code(f"# beacon unavailable for {atom}"),
         md("<details><summary>Solution</summary>\n\n```python\n"
