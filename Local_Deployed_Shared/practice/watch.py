@@ -133,8 +133,12 @@ def check_public_api():
 # ── Invariant checks ──────────────────────────
 # Structural rules that must remain true:
 #  1. No leftover modulario template markers.
-#  2. Every question carries the runtime_dependencies contract.
-#  3. The id-27 einsum entry has a non-null canonical_solution (was a known bug).
+#  2. Every function-implementation question has a canonical_solution
+#     (runtime_dependencies was dropped from the generator schema 2026-07-06).
+#  3. The id-27 einsum entry has a non-null canonical_solution (was a known bug;
+#     regressed once when the notebook's last cell had no trailing solution
+#     markdown — now covered by the solutions-notebook fallback in
+#     extract_arena_prereqs.py).
 #  4. The Pyodide preamble's injected names match the doc's "Always injected" set.
 def check_invariants():
     for fname in ("README.md", "watch.py"):
@@ -144,8 +148,12 @@ def check_invariants():
         )
 
     data = json.loads(_read(os.path.join(SHARED, "arena_prereqs_structured.json")))
-    bad = [q["id"] for q in data if "runtime_dependencies" not in q.get("exercise", {})]
-    assert not bad, f"questions missing runtime_dependencies: {bad}"
+    bad = [
+        q["id"] for q in data
+        if q.get("exercise", {}).get("task_type") == "function_implementation"
+        and not q.get("exercise", {}).get("canonical_solution")
+    ]
+    assert not bad, f"function questions missing canonical_solution: {bad}"
 
     id27 = next((q for q in data if q.get("id") == 27), None)
     assert id27 is not None, "missing question id 27"

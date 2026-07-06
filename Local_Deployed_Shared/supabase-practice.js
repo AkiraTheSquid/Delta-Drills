@@ -152,9 +152,15 @@ async function loadUserSettingsFromSupabase(email) {
 
 (async () => {
   if (isOnLocalhost()) return;
+  // Never let a legacy Supabase session clobber a backend JWT (Google or
+  // password sign-in). The Supabase auth project is retired; a stale
+  // sb-* localStorage session resolving here used to OVERWRITE the valid
+  // token, whose next API call then 401'd → silent logout on every load.
+  const existingToken = localStorage.getItem("auth_token") || "";
+  const hasBackendJwt = existingToken && existingToken !== "supabase_session";
   try {
     const session = await supabaseGetSession();
-    if (session?.access_token) {
+    if (session?.access_token && !hasBackendJwt) {
       if (typeof setAuthState === "function") {
         setAuthState(session.access_token, session.user?.email || "");
       }

@@ -157,7 +157,10 @@ const maybeRefreshSupabaseAuth = async () => {
     const refreshedToken = session?.access_token || "";
     const refreshedEmail = session?.user?.email || authEmail || "";
     if (!refreshedToken) {
-      if (authToken) setAuthState("", "");
+      // No Supabase session is the NORMAL state for Google/backend sign-ins
+      // (they never create one). Signing the user out here turned every
+      // stray 401 into a full logout. Let the caller's 401 handling decide
+      // (handleExpiredToken shows the banner); just report "not refreshed".
       return false;
     }
     if (refreshedToken === authToken) return false;

@@ -62,7 +62,9 @@ def check_public_api():
     prereqs = json.loads(_read(os.path.join(HERE, "arena_prereqs_structured.json")))
     assert isinstance(prereqs, list) and prereqs, "arena_prereqs_structured.json must be a non-empty list"
 
-    required_keys = {"starter_code", "expected_artifact_type", "supports_visual_output", "runtime_dependencies"}
+    # Current extract_arena_prereqs.py schema — runtime_dependencies was
+    # dropped from the generator (stale invariant removed 2026-07-06).
+    required_keys = {"starter_code", "expected_artifact_type", "supports_visual_output", "task_type", "canonical_solution"}
     for q in prereqs:
         ex = q.get("exercise") or {}
         missing = required_keys - ex.keys()
@@ -247,9 +249,18 @@ def check_invariants():
     ]
     assert not visual_missing, f"visual questions missing canonical_solution: {visual_missing}"
 
-    # runtime_unmet_dependencies must be a list (the schema field, even if empty).
-    bad_schema = [q["id"] for q in prereqs if not isinstance(q["exercise"].get("runtime_unmet_dependencies"), list)]
-    assert not bad_schema, f"runtime_unmet_dependencies must be a list on: {bad_schema}"
+    # (runtime_unmet_dependencies check removed 2026-07-06 — the field was
+    # dropped from the extract_arena_prereqs.py schema.)
+
+    # Every function-implementation exercise must carry a canonical solution
+    # (the solutions-notebook fallback in extract_arena_prereqs.py guarantees
+    # this even for exercises with no trailing solution markdown).
+    fn_missing = [
+        q["id"] for q in prereqs
+        if q["exercise"].get("task_type") == "function_implementation"
+        and not q["exercise"].get("canonical_solution")
+    ]
+    assert not fn_missing, f"function questions missing canonical_solution: {fn_missing}"
 
     # export_questions_json.py must merge the same override layers as the
     # backend's _load_function_overrides(). If they ever drift, the validator
