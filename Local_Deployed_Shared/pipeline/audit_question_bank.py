@@ -292,12 +292,16 @@ def check_stdout_expected(code_runner, question: dict) -> list[dict]:
     answer = (question.get("answer_code") or "").strip()
     if not answer:
         return []
-    if code_runner.code_uses_torch(answer) and not code_runner.torch_available():
-        # Can't run torch in this audit env (prod grades these via the fork
-        # runner + live expected recompute). Non-blocking, mirrors the
-        # torch_unavailable handling in scan_function_question.
+    if code_runner.code_uses_torch(answer):
+        # Skip torch answers here UNCONDITIONALLY. Prod's stdout branch
+        # recomputes expected live (fork runner), so the stored string is
+        # never graded against — and raw run_code-with-torch inside the
+        # audit process hung the fork runner during deploy 2026-07-06
+        # (4×20s timeouts → spurious GATE FAIL; the venv python HAS torch,
+        # so a torch_available() guard doesn't help). Non-blocking finding
+        # mirrors torch_unavailable elsewhere.
         return [{"check": "torch_unavailable",
-                 "detail": "stdout-graded torch answer — unverifiable without torch"}]
+                 "detail": "stdout-graded torch answer — prod recomputes expected live; not audited here"}]
     result = code_runner.run_code(answer, timeout=20)
     actual = result.stdout.strip()
     if not actual:

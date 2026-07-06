@@ -8,315 +8,219 @@
     "detail": "post-setup var 'D' already equals the expected value"
    }
   ],
-  "405": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "407": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "410": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "411": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "412": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "413": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "414": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "417": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "418": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "419": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "420": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "421": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "422": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "426": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "427": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "428": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
   "429": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "430": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "431": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "432": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "433": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "434": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "435": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "438": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "439": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "441": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "442": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "445": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "446": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "450": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "451": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "452": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "453": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "454": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "455": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "458": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "459": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "460": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "461": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "462": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "463": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "467": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "471": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "472": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "473": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "474": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "475": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "476": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "477": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "478": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
   "479": [
    {
     "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ]
  },
  "counts": {
   "precompute_leak": 1,
-  "torch_unavailable": 51
+  "torch_unavailable": 35
  }
 }
