@@ -827,6 +827,19 @@
   border-color: var(--accent, #5b8cff);
   box-shadow: inset 0 0 0 1px var(--accent, #5b8cff);
 }
+/* Instant click acknowledgment while the rating posts (slow-network case). */
+.feedback-btn--pressed {
+  background: rgba(91, 140, 255, 0.18);
+  border-color: var(--accent, #5b8cff);
+  color: var(--accent, #5b8cff);
+}
+.feedback-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.feedback-btn--pressed:disabled {
+  opacity: 1;
+}
 
 /* "I missed one concrete thing" — separate from the difficulty rating. */
 .missed-fact-row { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

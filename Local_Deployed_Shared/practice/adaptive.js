@@ -110,6 +110,24 @@ async function loadBackendAdaptiveState() {
       return false;
     }
     const snapshot = await res.json();
+    // Heal a server-side self-report lost to a state wipe/reset: localStorage
+    // still remembers the learner's choice, the (fresh) server state doesn't.
+    // Push it back up so the prior survives — without this, a wiped account
+    // silently reverts to the default prior while the UI button stays lit.
+    const savedLevel = localStorage.getItem(_selfReportStorageKey());
+    if (
+      snapshot.self_reported_level == null &&
+      ["beginner", "strong"].includes(savedLevel)
+    ) {
+      try {
+        const putRes = await apiFetch("/api/practice/self-report", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ level: savedLevel }),
+        });
+        if (putRes.ok) snapshot.self_reported_level = savedLevel;
+      } catch (_) { /* non-fatal — selector click still works */ }
+    }
     adaptiveStateJson = JSON.stringify(snapshot);
     // Expose raw per-atom BKT posteriors so the ARENA "Score updates" panel
     // can snapshot a before-value and animate the delta after a rating POST.

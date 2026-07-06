@@ -207,7 +207,15 @@ def _clamp(x: float) -> float:
 
 
 def observe(prior: float, correct: bool, params: BKTParams = DEFAULT_PARAMS) -> float:
-    """One graded attempt → posterior + learn-transit. Returns L'."""
+    """One graded attempt → posterior + learn-transit. Returns L'.
+
+    Transit fires ONLY on a correct attempt (same rule FIRe already uses in
+    apply_attempt). Vanilla BKT adds T unconditionally — "attempting teaches
+    even when you fail" — which is perverse for difficulty targeting: from a
+    low prior, a WRONG answer RAISED mastery (0.10 → posterior 0.014 → +0.30
+    transit → 0.31) and the next question got HARDER (target 28 → 43.9,
+    caught live 2026-07-05). Gating transit on correctness makes the target
+    behave like a noise-robust staircase: wrong → down, right → up."""
     L = _clamp(prior)
     g, s, t = params.p_guess, params.p_slip, params.p_transit
     if correct:
@@ -217,6 +225,8 @@ def observe(prior: float, correct: bool, params: BKTParams = DEFAULT_PARAMS) -> 
         num = L * s
         den = num + (1 - L) * (1 - g)
     post = num / den if den > 1e-12 else L
+    if not correct:
+        return post
     return post + (1 - post) * t
 
 

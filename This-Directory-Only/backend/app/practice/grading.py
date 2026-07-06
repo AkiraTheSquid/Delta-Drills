@@ -43,7 +43,11 @@ def select_question_for_difficulty(
     if not pool:
         return None
     ranked = sorted(pool, key=lambda q: abs(q.difficulty_score - target_difficulty))
-    top_n = ranked[: min(3, len(ranked))]
+    # Explore only within a band of the target. The old flat top-3 was uniform
+    # random in a 3-question subtopic — a self-reported beginner (target ~22)
+    # could draw the 45-difficulty variant on the first exposure.
+    band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= 15]
+    top_n = (band or ranked[:1])[:3]
     return random.choice(top_n)
 
 

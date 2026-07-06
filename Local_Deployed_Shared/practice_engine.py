@@ -329,11 +329,27 @@ def override_pending_attempt(
 # Subtopic prioritization (from prioritization.py)
 # ---------------------------------------------------------------------------
 
+def _peek_target_difficulty(state: SubtopicState, level: Optional[str]) -> float:
+    """Staircase target WITHOUT the seeding side effect (selection scans many
+    subtopics; only the served one should get seeded)."""
+    if state.staircase_seeded:
+        return _clamp_difficulty(state.target_difficulty)
+    return STAIRCASE_SEED_BY_LEVEL.get(level or "", STAIRCASE_DEFAULT_SEED)
+
+
+def _difficulty_reach_factor(easiest_available: float, target: float) -> float:
+    """Mirror of prioritization._difficulty_reach_factor: a subtopic is only
+    servable-at-level if its easiest unserved question sits near the learner's
+    target — a self-reported beginner should get 'Numpy core' (min diff 10),
+    not 'the easiest matmul-backward drill' (min diff 30+)."""
+    gap = max(0.0, easiest_available - target)
+    return 1.0 / (1.0 + gap / 8.0)
+
+
 def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Optional[str]:
-    """OFFLINE free practice: pick the LEAST-served subtopic that still has an
-    unserved question (respecting custom_weights>0), resetting served sets when
-    everything is exhausted. No EWMA learning-rate gradient — adaptive ordering
-    is backend-only (prioritization.select_next_subtopic)."""
+    """OFFLINE free practice: among the LEAST-served subtopics (respecting
+    custom_weights>0), prefer the one with questions reachable at the current
+    staircase target; reset served sets when everything is exhausted."""
     by_subtopic: Dict[str, list] = {}
     for q in questions:
         st = q.get("subtopic", "")
@@ -344,6 +360,7 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
     if not subtopics:
         return None
     uniform = 1.0 / len(subtopics)
+    level = user_state.self_reported_level
 
     def _eligible(skip_served: bool):
         out = []
@@ -352,13 +369,16 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
                 continue
             sub_state = user_state.get_subtopic_state(st_name)
             available = by_subtopic.get(st_name, [])
-            if not available:
-                continue
             if skip_served:
                 served = set(sub_state.served_question_ids)
-                if not [q for q in available if q["id"] not in served]:
-                    continue
-            out.append((st_name, sub_state.n))
+                available = [q for q in available if q["id"] not in served]
+            if not available:
+                continue
+            easiest = min(q["difficulty_score"] for q in available)
+            reach = _difficulty_reach_factor(
+                easiest, _peek_target_difficulty(sub_state, level)
+            )
+            out.append((st_name, sub_state.n, reach, easiest))
         return out
 
     cands = _eligible(skip_served=True)
@@ -368,8 +388,9 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
         cands = _eligible(skip_served=False)
     if not cands:
         return None
-    # least-served first; alpha tiebreak for determinism
-    cands.sort(key=lambda item: (item[1], item[0]))
+    # least-served first, then best difficulty fit, then genuinely-easiest
+    # entry question, then alpha for determinism
+    cands.sort(key=lambda item: (item[1], -item[2], item[3], item[0]))
     return cands[0][0]
 
 

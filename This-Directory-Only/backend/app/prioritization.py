@@ -87,10 +87,25 @@ def target_difficulty(user_state: UserPracticeState, subtopic: str) -> float:
     return max(10.0, min(100.0, raw))
 
 
+def _difficulty_reach_factor(easiest_available: float, target: float) -> float:
+    """Down-weight subtopics whose EASIEST unserved question sits far above the
+    learner's target difficulty. Weakest-first alone is perverse for a
+    self-reported beginner: every untouched subtopic ties at the prior, so the
+    queue happily opens with 'the easiest matmul-backward drill' — which is
+    still an advanced problem (tester hit exactly this). A subtopic is only
+    servable-at-level if it actually HAS a question near the target; the
+    factor fades as mastery (and thus target) rises, so advanced subtopics
+    re-enter naturally. 1.0 when reachable, ~0.5 one 8-point gap out."""
+    gap = max(0.0, easiest_available - target)
+    return 1.0 / (1.0 + gap / 8.0)
+
+
 def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
     """Select the subtopic to pull the next question from — weakest-first by
-    BKT mastery, weighted by effective (custom) weight. Skips subtopics whose
-    questions are all served; resets served sets if everything is exhausted.
+    BKT mastery, weighted by effective (custom) weight and by whether the
+    subtopic has questions reachable at the learner's target difficulty.
+    Skips subtopics whose questions are all served; resets served sets if
+    everything is exhausted.
     """
     subtopics = get_subtopics()
     if not subtopics:
@@ -108,13 +123,16 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
                 continue
             if skip_served:
                 served = set(user_state.get_subtopic_state(st_name).served_question_ids)
-                if not [q for q in available if q.id not in served]:
+                available = [q for q in available if q.id not in served]
+                if not available:
                     continue
             weight = _get_weight(user_state, st_name, uniform_weight)
             if weight <= 0:
                 continue
-            priority = weight * (1.0 - subtopic_mastery(user_state, st_name))
-            out.append((st_name, priority))
+            easiest = min(q.difficulty_score for q in available)
+            reach = _difficulty_reach_factor(easiest, target_difficulty(user_state, st_name))
+            priority = weight * (1.0 - subtopic_mastery(user_state, st_name)) * reach
+            out.append((st_name, priority, easiest))
         return out
 
     cands = _candidates(skip_served=True)
@@ -126,8 +144,11 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
     if not cands:
         return None
 
-    # Highest priority (weakest, weighted) first; alpha tiebreak for determinism.
-    cands.sort(key=lambda item: (-item[1], item[0]))
+    # Highest priority (weakest, weighted, reachable) first. Ties — common on
+    # fresh accounts where every subtopic sits at the same prior — resolve to
+    # the subtopic with the genuinely easiest entry question, THEN alpha (the
+    # old alpha-first tiebreak opened beginners on "CNN: Conv2d mechanics").
+    cands.sort(key=lambda item: (-item[1], item[2], item[0]))
     return cands[0][0]
 
 
