@@ -107,6 +107,10 @@ def _load_function_overrides() -> Dict[int, dict]:
         # and answer-leaking comments/precomputed-answer-before-solve() bugs
         # found during the 2026-07-04 tester pass. Layered last so these win.
         "starter_leak_and_syntax_fixes.jsonl",
+        # Canonical answer_code repairs: numpy-2.0 removals (ptp / np.int),
+        # missing imports, truncated CSV code, wrong lookup-table bound
+        # (2026-07-06 stdout-expected sweep). Layered last so these win.
+        "answer_code_repairs.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():

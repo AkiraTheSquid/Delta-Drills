@@ -25,6 +25,7 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceFeedbackArea.classList.remove("hidden");
 
   applyResult(result.correct);
+  if (typeof renderFailedTests === "function") renderFailedTests(result, q);
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
@@ -177,6 +178,7 @@ const _loadNextPracticeQuestion = async () => {
   ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
   _resetProblemFeedbackRow();
+  if (typeof hideFailedTests === "function") hideFailedTests();
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor

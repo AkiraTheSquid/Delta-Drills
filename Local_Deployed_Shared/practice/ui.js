@@ -448,6 +448,44 @@ function applyResult(correct) {
   if (missedFactRow) missedFactRow.classList.toggle("hidden", correct);
 }
 
+// Failed-test-case breakdown — shows WHICH cases failed with expected vs got,
+// so a wrong grade is evidence, not a verdict (tester: "it needs to show all
+// the cases that it tested and where it actually failed"). Renders into a
+// dynamic <div> right under the result badge; hidden on correct/next.
+function renderFailedTests(result, question) {
+  let block = document.getElementById("failed-tests-block");
+  if (!result || result.correct || !Array.isArray(result.failed_tests) || !result.failed_tests.length) {
+    if (block) block.classList.add("hidden");
+    return;
+  }
+  if (!block) {
+    block = document.createElement("div");
+    block.id = "failed-tests-block";
+    block.className = "failed-tests-block";
+    const anchor = document.getElementById("feedback-prompt");
+    if (!anchor || !anchor.parentNode) return;
+    anchor.parentNode.insertBefore(block, anchor);
+  }
+  const total = (question && Array.isArray(question.test_cases) && question.test_cases.length) || result.failed_tests.length;
+  const clip = (s) => {
+    const t = String(s == null ? "" : s);
+    return t.length > 220 ? t.slice(0, 220) + "…" : t;
+  };
+  const rows = result.failed_tests.map((t, i) => {
+    if (t.error) return `✗ failing case ${i + 1}: error — ${_escapeHtml(clip(t.error))}`;
+    return `✗ failing case ${i + 1}:\n    expected: ${_escapeHtml(clip(t.expected))}\n    got:      ${_escapeHtml(clip(t.actual))}`;
+  });
+  block.innerHTML =
+    `<div class="failed-tests-title">Failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}</div>` +
+    `<pre class="failed-tests-body">${rows.join("\n")}</pre>`;
+  block.classList.remove("hidden");
+}
+
+function hideFailedTests() {
+  const block = document.getElementById("failed-tests-block");
+  if (block) block.classList.add("hidden");
+}
+
 // Clear the "missed one concrete thing" affordance between questions.
 function resetMissedFactRow() {
   if (missedFactRow) missedFactRow.classList.add("hidden");

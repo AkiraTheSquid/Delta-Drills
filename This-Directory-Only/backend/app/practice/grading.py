@@ -77,19 +77,17 @@ def grade_submission(
 
     user_result: ExecutionResult = run_code(user_code, timeout=20)
     actual_output = user_result.stdout.strip()
-    expected_output = question.expected_output or run_and_get_expected_output(question.answer_code)
 
     failed_tests: List[dict] = []
 
-    if (
-        question.task_type == "stdout_prediction"
-        and expected_output.strip()
-        and not question.supports_visual_output
-    ):
-        correct = actual_output.strip() == expected_output.strip()
-        return correct, actual_output, expected_output, failed_tests
-
+    # Function tests FIRST — they are the audited grading contract (per-case
+    # value equality, fixture-aware seeding). The old order let the stdout
+    # branch hijack 232 function-mode questions into an exact string compare
+    # against the stored expected_output — and 85 of those stored strings
+    # came from an UNSEEDED CSV-era capture, unreachable by any honest
+    # solution under the seeded harness (tester's id-24 argmax drill).
     if question.submission_mode == "function" and question.test_cases:
+        expected_output = question.expected_output or ""
         test_results, test_execution = run_function_tests(user_code, question.test_cases)
         correct = all(result.passed for result in test_results)
         if test_execution.stdout.strip():
@@ -102,6 +100,20 @@ def grade_submission(
             if not result.passed
         ]
         return correct, actual_output, expected_output, failed_tests
+
+    if (
+        question.task_type == "stdout_prediction"
+        and not question.supports_visual_output
+    ):
+        # Recompute expected stdout by running the canonical answer under the
+        # SAME harness (preamble + seed) the user's code just ran under —
+        # never trust the stored CSV-era string (see above).
+        expected_output = run_and_get_expected_output(question.answer_code)
+        if expected_output.strip():
+            correct = actual_output.strip() == expected_output.strip()
+            return correct, actual_output, expected_output, failed_tests
+
+    expected_output = question.expected_output or run_and_get_expected_output(question.answer_code)
 
     judge_prompt = build_ai_judge_prompt(
         question_text=question.question_text,

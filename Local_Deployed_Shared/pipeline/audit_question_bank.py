@@ -275,6 +275,41 @@ def confirm_gameable(code_runner, question: dict, leaked_vars: list[str]) -> lis
     return findings
 
 
+def check_stdout_expected(code_runner, question: dict) -> list[dict]:
+    """For questions that ACTUALLY grade by stdout compare (stdout_prediction,
+    non-visual, and no function test_cases to take precedence), the stored
+    expected_output must equal what answer_code prints under the real harness
+    (preamble + seed). The CSV-era 'Output' column was captured from unseeded
+    runs — 85/274 stored strings were unreachable by any honest solution
+    (found 2026-07-06, tester's id-24). The exporter now recomputes them;
+    this check keeps the contract from regressing."""
+    if question.get("task_type") != "stdout_prediction":
+        return []
+    if question.get("supports_visual_output"):
+        return []
+    if question.get("submission_mode") == "function" and question.get("test_cases"):
+        return []  # function tests grade this question; stored string is display-only
+    answer = (question.get("answer_code") or "").strip()
+    if not answer:
+        return []
+    if code_runner.code_uses_torch(answer) and not code_runner.torch_available():
+        # Can't run torch in this audit env (prod grades these via the fork
+        # runner + live expected recompute). Non-blocking, mirrors the
+        # torch_unavailable handling in scan_function_question.
+        return [{"check": "torch_unavailable",
+                 "detail": "stdout-graded torch answer — unverifiable without torch"}]
+    result = code_runner.run_code(answer, timeout=20)
+    actual = result.stdout.strip()
+    if not actual:
+        return [{"check": "answer_exec_error",
+                 "detail": (result.stderr.strip().splitlines() or ["no stdout"])[-1][:120]}]
+    stored = (question.get("expected_output") or "").strip()
+    if actual != stored:
+        return [{"check": "stdout_expected_stale",
+                 "detail": f"stored expected differs from harness run of answer_code (stored {stored[:40]!r} vs run {actual[:40]!r})"}]
+    return []
+
+
 def audit(confirm: bool) -> dict:
     questions = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
     code_runner = load_code_runner() if confirm else None
@@ -284,6 +319,8 @@ def audit(confirm: bool) -> dict:
         qid = question["id"]
         findings = check_starter_syntax(question)
         findings += check_todo_answer_leak(question)
+        if confirm:
+            findings += check_stdout_expected(code_runner, question)
         if question.get("submission_mode") == "function":
             findings += scan_function_question(question)
             if confirm:
@@ -306,7 +343,7 @@ def audit(confirm: bool) -> dict:
 
 BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
                    "expected_eval_error", "setup_exec_error", "identity_expected",
-                   "torch_unconfirmable"}
+                   "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error"}
 
 
 def main() -> None:

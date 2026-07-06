@@ -7,9 +7,316 @@
     "var": "D",
     "detail": "post-setup var 'D' already equals the expected value"
    }
+  ],
+  "405": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "407": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "410": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "411": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "412": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "413": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "414": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "417": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "418": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "419": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "420": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "421": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "422": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "426": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "427": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "428": [
+   {
+    "check": "torch_unavailable",
+    "detail": "torch not importable here \u2014 question unscanned"
+   }
+  ],
+  "429": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "430": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "431": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "432": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "433": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "434": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "435": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "438": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "439": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "441": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "442": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "445": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "446": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "450": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "451": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "452": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "453": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "454": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "455": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "458": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "459": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "460": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "461": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "462": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "463": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "467": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "471": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "472": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "473": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "474": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "475": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "476": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "477": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "478": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
+  ],
+  "479": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 unverifiable without torch"
+   }
   ]
  },
  "counts": {
-  "precompute_leak": 1
+  "precompute_leak": 1,
+  "torch_unavailable": 51
  }
 }
