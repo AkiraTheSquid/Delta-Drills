@@ -1119,9 +1119,16 @@
   // Unified prerequisite gate. Single source of truth = backend /atom-gates
   // (window.__atomGates), because the shipped concept graph is v2 and lacks the
   // v3 prereq edges. A SINGLE-ATOM drill (teaches atom A) unlocks when A is in
-  // `ready` (all A's gating prereqs mastered ≥0.85). A COMPOSITE drill unlocks
-  // when every component atom is in `mastered` (≥0.85). When __atomGates is
-  // absent (offline / not logged in) we fall back to the old per-atom readiness
+  // `ready` (all A's gating prereqs mastered ≥0.85) AND the learner's OWN
+  // mastery of A has crossed the drill's unlockMinPct. Ready-alone is NOT
+  // enough: many advanced atoms are graph ROOTS (no authored prereq edges),
+  // so they are "ready" from minute one — a fresh self-reported beginner got
+  // a Backprop: BackwardFuncLookup worked example on an early Next-problem
+  // click (2026-07-06). The own-mastery floor restores the design intent:
+  // drills surface when text-bank reps show you're learning the atom, as the
+  // graduation into an applied notebook. A COMPOSITE drill unlocks when every
+  // component atom is in `mastered` (≥0.85). When __atomGates is absent
+  // (offline / not logged in) we fall back to the old per-atom readiness
   // floor so the legacy Pyodide path still functions.
   const _isDrillUnlocked = (drill) => {
     const atoms = _atomsForDrill(drill);
@@ -1129,7 +1136,11 @@
     const gates = window.__atomGates;
     if (gates) {
       if (drill.isComposite) return atoms.every((a) => gates.mastered.has(a));
-      return atoms.every((a) => gates.ready.has(a));
+      return atoms.every((a) => {
+        if (!gates.ready.has(a)) return false;
+        const sc = _scoreForAtom(a);
+        return sc != null && sc >= (drill.unlockMinPct ?? DEFAULT_UNLOCK_MIN_PCT);
+      });
     }
     // Fallback: own-atom readiness floor (offline legacy mode).
     return atoms.every((a) => {
