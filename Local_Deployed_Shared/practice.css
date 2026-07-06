@@ -827,6 +827,30 @@
   border-color: var(--accent, #5b8cff);
   box-shadow: inset 0 0 0 1px var(--accent, #5b8cff);
 }
+/* Failed-test-case breakdown under the Incorrect badge. */
+.failed-tests-block {
+  background: rgba(227, 33, 44, 0.06);
+  border: 1px solid rgba(227, 33, 44, 0.35);
+  border-radius: 6px;
+  margin: 10px 0;
+  padding: 8px 12px;
+}
+.failed-tests-title {
+  color: var(--accent, #e3212c);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.failed-tests-body {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* Mode-demotion banner — expired sign-in / demo-pool fallback. Must be
    impossible to miss; a console.warn is not a notice. */
 .practice-mode-notice {

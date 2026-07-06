@@ -164,10 +164,18 @@ const PracticeAPI = {
     const questionText = this.currentQuestion.question_text || "";
     let correct = false;
 
+    // Function test cases take precedence over the stdout string compare —
+    // they are the audited contract. (Mirrors backend grade_submission; the
+    // old order hijacked function-mode questions into comparing against
+    // stored CSV-era expected strings, some captured from unseeded runs.)
+    const hasFunctionTests =
+      this.currentQuestion.submission_mode === "function" &&
+      this.currentQuestion.test_cases?.length;
     if (
       this.currentQuestion.task_type === "stdout_prediction" &&
       expected &&
-      !this.currentQuestion.supports_visual_output
+      !this.currentQuestion.supports_visual_output &&
+      !hasFunctionTests
     ) {
       correct = this.outputsMatch(actualOutput, expected);
 

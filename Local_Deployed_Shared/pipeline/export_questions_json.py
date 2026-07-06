@@ -426,6 +426,10 @@ def load_function_overrides() -> dict[int, dict]:
         # Starter-code fixes: SyntaxErrors + answer-leaking comments +
         # precomputed-answer-before-solve() bugs. Keep in sync with backend.
         "starter_leak_and_syntax_fixes.jsonl",
+        # Canonical answer_code repairs: numpy-2.0 removals (ptp / np.int),
+        # missing imports, truncated CSV code, wrong lookup-table bound
+        # (2026-07-06 stdout-expected sweep). Layered last so these win.
+        "answer_code_repairs.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
@@ -600,11 +604,68 @@ def write_json(path: Path, payload: object) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def _load_harness():
+    """Load the backend grading harness (code_runner.py) standalone — same
+    trick as audit_question_bank.py; the `app` package can't import outside
+    the backend venv (pydantic_settings etc.)."""
+    import importlib.util
+
+    path = THIS_DIR_ONLY / "backend" / "app" / "code_runner.py"
+    spec = importlib.util.spec_from_file_location("delta_code_runner_export", path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    try:
+        module.preload_torch()
+    except Exception:
+        pass  # torch unavailable — torch questions keep their stored value
+    return module
+
+
+def recompute_expected_outputs(questions: list) -> None:
+    """Replace each stdout-graded question's expected_output with the stdout
+    its canonical answer_code ACTUALLY produces under the grading harness
+    (preamble + np.random.seed(0)).
+
+    The CSV 'Output' column was captured from unseeded, out-of-harness runs —
+    85 of 274 stored strings were unreachable by ANY honest solution (found
+    2026-07-06 via the tester's id-24 argmax drill). The backend now
+    recomputes live at grade time; this keeps the exported bank (offline
+    Pyodide grading + display strings) consistent with it. Questions whose
+    answer errors under the harness keep the stored value and are reported —
+    the audit gate flags them separately."""
+    runner = _load_harness()
+    corrected, consistent, errored = 0, 0, []
+    for q in questions:
+        if q.get("task_type") != "stdout_prediction" or q.get("supports_visual_output"):
+            continue
+        answer = (q.get("answer_code") or "").strip()
+        if not answer:
+            continue
+        result = runner.run_code(answer, timeout=20)
+        actual = result.stdout.strip()
+        if not actual:
+            errored.append(q["id"])
+            continue
+        if actual != (q.get("expected_output") or "").strip():
+            corrected += 1
+        else:
+            consistent += 1
+        q["expected_output"] = actual
+    print(
+        f"expected_output recompute: {corrected} corrected, {consistent} already-consistent, "
+        f"{len(errored)} answer-errors kept stored value: {errored}"
+    )
+
+
 def main() -> None:
     questions = load_questions()
     if not questions:
         print("ERROR: no questions were exported", file=sys.stderr)
         sys.exit(1)
+
+    recompute_expected_outputs(questions)
 
     broken_ids = load_broken_ids()
     student_questions = [question for question in questions if int(question["id"]) not in broken_ids]

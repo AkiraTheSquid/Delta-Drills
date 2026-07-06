@@ -28,7 +28,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0,10,(5,5)); print(Z.argmax(axis=1))",
-      "expected_output": "[2 1 0 0 2]",
+      "expected_output": "[4 0 2 3 1]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -167,7 +167,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((3,3)); print(np.linalg.norm(Z))",
-      "expected_output": "1.5646026648910527",
+      "expected_output": "1.9962373669404487",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -202,7 +202,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "v = np.random.random(5); v /= np.linalg.norm(v); print(v)",
-      "expected_output": "[0.38158715 0.16702306 0.22728842 0.51478185 0.71402673]",
+      "expected_output": "[0.42694075 0.55637021 0.4689102  0.42388322 0.32957552]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -237,7 +237,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((5,5)); Z -= Z.mean(axis=1, keepdims=True); print(Z)",
-      "expected_output": "[[-0.18075516 -0.33656325  0.43336769  0.03705023  0.04690049]\n [-0.07416761  0.05931944 -0.25957298  0.08563998  0.18878116]\n [-0.18972818 -0.09626449  0.1565576  -0.07345407  0.20288914]\n [-0.11746031  0.12000872  0.33778269 -0.15196078 -0.18837032]\n [-0.16436352 -0.38635364  0.36401961 -0.19494465  0.3816422 ]]",
+      "expected_output": "[[-0.01824734  0.14812852  0.03570253 -0.02217766 -0.14340605]\n [-0.01857761 -0.22688451  0.22730128  0.29919104 -0.2810302 ]\n [ 0.21466559 -0.04816452 -0.00901488  0.3485372  -0.50602338]\n [-0.43049799 -0.49740889  0.31499256  0.26052946  0.35238486]\n [ 0.35100637  0.17154659 -0.16613261  0.1529172  -0.50933755]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -306,7 +306,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))\nprint(Z)",
-      "expected_output": "[[ 0.52893663  1.06857029 -0.86650139 -0.57639068 -0.2588925 ]\n [-1.83496024 -1.06518312  0.45755049 -0.22892142  0.34772359]\n [-1.87448732  0.80076562  0.44797266  0.85034123  0.33909274]\n [-1.24016654 -0.72517537  1.51074523  1.72892268  0.61821021]\n [-0.11949262  1.40552524  0.29897438 -0.01526342 -1.59789637]]",
+      "expected_output": "[[-0.14854421  0.44055117  0.04247881 -0.1624605  -0.59169993]\n [ 0.19519398 -0.54236874  1.06578972  1.32033341 -0.73408512]\n [ 0.71154487 -0.21907095 -0.08045184  1.18555078 -1.84023484]\n [-1.78325269 -2.02016749  0.85634317  0.66350295  0.98873998]\n [ 1.37328739  0.73786513 -0.4577726   0.67190312 -1.67297558]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -445,7 +445,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((3,3)); Z = Z - Z.mean(); print(Z)",
-      "expected_output": "[[ 0.21936346  0.13127684 -0.48393371]\n [ 0.19049139  0.08942673  0.17334346]\n [ 0.16389669  0.09502324 -0.5788881 ]]",
+      "expected_output": "[[-0.09276664  0.07360922 -0.03881677]\n [-0.09669696 -0.21792535  0.00431397]\n [-0.20399293  0.25019285  0.32208261]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -687,7 +687,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(10); Z[Z.argmax()] = 0; print(Z)",
-      "expected_output": "[0.47574857 0.94318884 0.17651576 0.81866012 0.17983904 0.55808314\n 0.46369884 0.54385119 0.         0.1807641 ]",
+      "expected_output": "[0.5488135  0.71518937 0.60276338 0.54488318 0.4236548  0.64589411\n 0.43758721 0.891773   0.         0.38344152]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -756,7 +756,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((10,10))\nZmin, Zmax = Z.min(), Z.max()\nprint(Zmin, Zmax)",
-      "expected_output": "0.0023942929669520385 0.9883593991580394",
+      "expected_output": "0.004695476192547066 0.9883738380592262",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -826,7 +826,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(30)\nm = Z.mean()\nprint(m)",
-      "expected_output": "0.53640139985914",
+      "expected_output": "0.5811203282945502",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1101,7 +1101,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "a = np.random.random(3); b = np.random.random(3); print(np.dot(a,b))",
-      "expected_output": "0.619317506745586",
+      "expected_output": "0.9913539725682842",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1135,7 +1135,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(10); print(Z.argmin())",
-      "expected_output": "8",
+      "expected_output": "9",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1239,7 +1239,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((3,3,3))\nprint(Z)",
-      "expected_output": "[[[0.38405161 0.39712299 0.88449136]\n  [0.12672671 0.93825344 0.38776081]\n  [0.62859974 0.26609589 0.58898664]]\n\n [[0.92227792 0.15219338 0.7566384 ]\n  [0.60577162 0.1097569  0.01551242]\n  [0.46076452 0.38069121 0.08818755]]\n\n [[0.44448478 0.04066118 0.79337226]\n  [0.09948202 0.17218629 0.04788884]\n  [0.00430341 0.05953571 0.27682031]]]",
+      "expected_output": "[[[0.5488135  0.71518937 0.60276338]\n  [0.54488318 0.4236548  0.64589411]\n  [0.43758721 0.891773   0.96366276]]\n\n [[0.38344152 0.79172504 0.52889492]\n  [0.56804456 0.92559664 0.07103606]\n  [0.0871293  0.0202184  0.83261985]]\n\n [[0.77815675 0.87001215 0.97861834]\n  [0.79915856 0.46147936 0.78052918]\n  [0.11827443 0.63992102 0.14335329]]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1620,7 +1620,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(10)\nZ.sort()\nprint(Z)",
-      "expected_output": "[0.16992849 0.18833719 0.2267247  0.48070648 0.53760859 0.59427194\n 0.59700102 0.63698946 0.73558225 0.90656448]",
+      "expected_output": "[0.38344152 0.4236548  0.43758721 0.54488318 0.5488135  0.60276338\n 0.64589411 0.71518937 0.891773   0.96366276]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1725,7 +1725,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.arange(100)\nv = np.random.uniform(0,100)\nindex = (np.abs(Z-v)).argmin()\nprint(Z[index])",
-      "expected_output": "63",
+      "expected_output": "55",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1793,7 +1793,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.uniform(0,10,10)\n\nprint(Z - Z%1)\nprint(Z // 1)\nprint(np.floor(Z))\nprint(Z.astype(int))\nprint(np.trunc(Z))",
-      "expected_output": "[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]\n[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]\n[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]\n[4 2 8 0 3 7 9 5 7 9]\n[4. 2. 8. 0. 3. 7. 9. 5. 7. 9.]",
+      "expected_output": "[5. 7. 6. 5. 4. 6. 4. 8. 9. 3.]\n[5. 7. 6. 5. 4. 6. 4. 8. 9. 3.]\n[5. 7. 6. 5. 4. 6. 4. 8. 9. 3.]\n[5 7 6 5 4 6 4 8 9 3]\n[5. 7. 6. 5. 4. 6. 4. 8. 9. 3.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -1898,7 +1898,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((10,2))\nX,Y = Z[:,0], Z[:,1]\nR = np.sqrt(X**2+Y**2)\nT = np.arctan2(Y,X)\nprint(R)\nprint(T)",
-      "expected_output": "[0.57252467 0.91137137 0.77340607 0.81284509 0.3169809  0.85470956\n 0.1693644  0.62853931 0.48933242 0.82315806]\n[0.77985606 0.4937261  0.88104334 0.63844228 0.46415504 1.48101358\n 0.47704524 0.10165502 1.22255291 0.25003248]",
+      "expected_output": "[0.90149437 0.81254007 0.77243938 0.99334871 1.03714672 0.95213359\n 1.08600357 0.11241724 0.83286529 1.16723994]\n[0.91627198 0.73500704 0.99027074 1.1146216  0.37869482 0.58894485\n 1.02035952 0.88679866 1.54651823 0.84107236]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2036,7 +2036,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.arange(12).reshape(4,3)\nperm = np.random.permutation(Z.shape[0])\nprint(Z[perm])",
-      "expected_output": "[[ 9 10 11]\n [ 6  7  8]\n [ 0  1  2]\n [ 3  4  5]]",
+      "expected_output": "[[ 6  7  8]\n [ 9 10 11]\n [ 3  4  5]\n [ 0  1  2]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2383,8 +2383,8 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "Z = np.random.rand(10)\nZ = (Z - Z.min()) / (Z.ptp())\nprint(Z)",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nAttributeError: 'numpy.ndarray' object has no attribute 'ptp'",
+      "canonical_solution": "Z = np.random.rand(10)\nZ = (Z - Z.min()) / (Z.max() - Z.min())\nprint(Z)",
+      "expected_output": "[0.28501539 0.57176095 0.37799695 0.27824156 0.06930681 0.45233193\n 0.09331905 0.8760994  1.         0.        ]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2524,7 +2524,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "A = np.random.rand(3,4)\nB = np.random.rand(3,4)\nS = np.stack([A,B], axis=0).mean(axis=0)\nprint(S)",
-      "expected_output": "[[0.31206589 0.56800654 0.28367568 0.66187566]\n [0.21160109 0.68957924 0.6353237  0.22636494]\n [0.24468365 0.54233246 0.73668624 0.96023693]]",
+      "expected_output": "[[0.55842903 0.820393   0.33689972 0.31600624]\n [0.2219366  0.73925698 0.60787198 0.88089257]\n [0.97114055 0.59130004 0.6266022  0.65471205]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2629,7 +2629,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(100)\ncounts, edges = np.histogram(Z, bins=5, range=(0.0, 1.0))\nprint(counts)\nprint(edges)",
-      "expected_output": "[20 22 18 18 22]\n[0.  0.2 0.4 0.6 0.8 1. ]",
+      "expected_output": "[25 16 21 23 15]\n[0.  0.2 0.4 0.6 0.8 1. ]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2734,7 +2734,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Divakar\n\nn = 10\np = 3\nZ = np.zeros((n,n))\nnp.put(Z, np.random.choice(range(n*n), p, replace=False),1)\nprint(Z)",
-      "expected_output": "[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 1. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]",
+      "expected_output": "[[0. 0. 1. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]\n [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2768,7 +2768,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Steve Tjoa\n\nZ = np.random.randint(0,10,(3,3))\nprint(Z)\nprint(Z[Z[:,1].argsort()])",
-      "expected_output": "[[2 1 8]\n [5 2 5]\n [7 3 6]]\n[[2 1 8]\n [5 2 5]\n [7 3 6]]",
+      "expected_output": "[[5 0 3]\n [3 7 9]\n [3 5 2]]\n[[5 0 3]\n [3 5 2]\n [3 7 9]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2838,7 +2838,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(4,4)\nY = np.random.rand(4,4)\nZ[Y > 0.5] = -1\nprint(Z)",
-      "expected_output": "[[ 0.14159384 -1.          0.64613209  0.7921272 ]\n [ 0.11454557  0.71502814  0.66959616 -1.        ]\n [-1.          0.10595674  0.8494133  -1.        ]\n [-1.          0.39363278 -1.         -1.        ]]",
+      "expected_output": "[[ 0.5488135  -1.         -1.         -1.        ]\n [-1.         -1.          0.43758721 -1.        ]\n [ 0.96366276 -1.          0.79172504 -1.        ]\n [-1.          0.92559664  0.07103606 -1.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2873,7 +2873,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "I = np.random.randint(0, 256, (4,4,3)).astype(np.uint8)\nG = np.dot(I[...,:3], [0.299, 0.587, 0.114])\nprint(G)",
-      "expected_output": "[[153.506 107.705 166.418 127.088]\n [199.612 156.776 190.38  115.287]\n [ 71.01  228.706 192.557  77.841]\n [188.672 120.394 153.159 106.723]]",
+      "expected_output": "[[ 92.355 125.351 119.792 103.004]\n [ 69.813 132.2   156.853  82.566]\n [ 92.669  60.882 102.677 227.291]\n [142.269 116.828 196.185 111.718]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2943,7 +2943,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(10)\nZ = Z / np.linalg.norm(Z)\nprint(Z)",
-      "expected_output": "[0.27995634 0.07506861 0.14604666 0.40894894 0.20797201 0.20250243\n 0.43321546 0.27503238 0.45066407 0.4204095 ]",
+      "expected_output": "[0.2699884  0.35183688 0.296529   0.26805488 0.20841667 0.31774713\n 0.21527071 0.43870707 0.47407319 0.18863377]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -2978,7 +2978,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.uniform(0,1,10)\nz = 0.5\nm = Z.flat[np.abs(Z - z).argmin()]\nprint(m)",
-      "expected_output": "0.4259094837948626",
+      "expected_output": "0.5448831829968969",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3082,7 +3082,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0,10,(10,3))\nk = 4\nidx = np.random.choice(Z.shape[0], k, replace=False)\nprint(Z[idx])",
-      "expected_output": "[[3 2 6]\n [1 9 8]\n [5 1 2]\n [9 4 1]]",
+      "expected_output": "[[9 8 9]\n [8 1 5]\n [3 5 0]\n [8 8 1]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3116,7 +3116,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0,5,20)\nvals, cnts = np.unique(Z, return_counts=True)\norder = np.argsort(cnts)[::-1]\nprint(vals[order])\nprint(cnts[order])",
-      "expected_output": "[2 0 1 3 4]\n[5 5 5 3 2]",
+      "expected_output": "[0 1 4 3 2]\n[5 5 4 4 2]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3186,7 +3186,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "n = 5\nP = np.eye(n)[np.random.permutation(n)]\nprint(P)",
-      "expected_output": "[[1. 0. 0. 0. 0.]\n [0. 0. 1. 0. 0.]\n [0. 0. 0. 0. 1.]\n [0. 1. 0. 0. 0.]\n [0. 0. 0. 1. 0.]]",
+      "expected_output": "[[0. 0. 1. 0. 0.]\n [1. 0. 0. 0. 0.]\n [0. 1. 0. 0. 0.]\n [0. 0. 0. 1. 0.]\n [0. 0. 0. 0. 1.]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3256,7 +3256,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.randn(5, 4)\nX = (X - X.mean(axis=0)) / X.std(axis=0, ddof=0)\nprint(X)",
-      "expected_output": "[[ 1.40469618 -1.22025664 -1.57277145  0.88360839]\n [-1.35792998  1.77309263  0.98873144  0.37054491]\n [ 0.53170776 -0.27248252  0.25102389  1.07712429]\n [-0.89455739  0.21589242  1.01218449 -1.48525444]\n [ 0.31608344 -0.49624589 -0.67916837 -0.84602316]]",
+      "expected_output": "[[ 0.82165024  0.87341626  1.21741023  1.47268633]\n [ 0.96167714 -1.79914187  1.13291374 -0.68047399]\n [-1.70447487  0.8936749  -1.24436341  0.76468423]\n [-0.53527125  0.33309327 -0.36010191 -0.24391825]\n [ 0.45641874 -0.30104256 -0.74585864 -1.31297831]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3291,7 +3291,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "A = np.random.rand(3,3)\nb = np.random.rand(3)\nx = np.linalg.solve(A, b)\nprint(x)",
-      "expected_output": "[ 5.14506648  0.47077899 -4.38722011]",
+      "expected_output": "[ 0.89134069 -1.2236379   1.27644537]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3326,7 +3326,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.randn(100,3)\nq = np.quantile(X, [0.25, 0.5, 0.75], axis=0)\nprint(q)",
-      "expected_output": "[[-0.49251721 -0.61809092 -0.72365599]\n [-0.00706699  0.11535494  0.02562234]\n [ 0.84945466  0.91432367  0.72241158]]",
+      "expected_output": "[[-0.48410031 -0.63884372 -0.81320078]\n [ 0.05760369  0.13285929 -0.14125756]\n [ 0.71132129  0.77414244  0.56319475]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3361,7 +3361,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Warren Weckesser\n\nX = np.random.rand(5, 10)\n\n# Recent versions of numpy\nY = X - X.mean(axis=1, keepdims=True)\n\n# Older versions of numpy\nY = X - X.mean(axis=1).reshape(-1, 1)\n\nprint(Y)",
-      "expected_output": "[[-0.38319189  0.00882367 -0.1750345  -0.35522474  0.5079892   0.05089086\n  -0.22387468  0.24632219 -0.11764188  0.44094177]\n [ 0.14796244  0.15437542  0.01179455 -0.46516048  0.0689555  -0.05635658\n   0.08551346  0.44360694 -0.44147799  0.05078673]\n [-0.19198306  0.44187083 -0.24142991 -0.03958377  0.07343688 -0.12095197\n   0.39130212 -0.13598446 -0.17249766 -0.00417899]\n [ 0.13545534 -0.26779492  0.13541999 -0.15180051  0.34405964  0.45543967\n  -0.30020802 -0.36311538 -0.0200415   0.03258569]\n [-0.14970781  0.41353103  0.05889307  0.13121059 -0.39064405  0.04437748\n  -0.26178678 -0.36702406  0.06075783  0.46039269]]",
+      "expected_output": "[[-0.06695278  0.09942308 -0.01300291 -0.0708831  -0.19211148  0.03012783\n  -0.17817907  0.27600672  0.34789648 -0.23232476]\n [ 0.24438167 -0.01844845  0.0207012   0.37825327 -0.47630731 -0.46021407\n  -0.52712497  0.28527648  0.23081339  0.32266878]\n [ 0.39836701  0.21890723 -0.11877197  0.20027784 -0.46197691  0.05966969\n  -0.43689805  0.36441758 -0.05840301 -0.1655894 ]\n [-0.29088409  0.21879399 -0.09928937  0.01299425 -0.5366499   0.0621958\n   0.05665602  0.0614943   0.38830838  0.1263806 ]\n [-0.03151701  0.04600705  0.30660629 -0.33079944  0.27574181  0.27961296\n  -0.18064235 -0.26209861 -0.07559656 -0.02731414]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3567,7 +3567,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Warren Weckesser\n\n# null : 0 \nZ = np.random.randint(0,3,(3,10))\nprint((~Z.any(axis=0)).any())\n\n# null : np.nan\nZ=np.array([\n    [0,1,np.nan],\n    [1,2,np.nan],\n    [4,5,np.nan]\n])\nprint(np.isnan(Z).all(axis=0))",
-      "expected_output": "False\n[False False  True]",
+      "expected_output": "True\n[False False  True]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3706,7 +3706,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(10)\nk = 3\nidx = np.argpartition(Z, -k)[-k:]\nidx = idx[np.argsort(Z[idx])[::-1]]\nprint(idx)",
-      "expected_output": "[4 0 2]",
+      "expected_output": "[8 7 1]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3741,7 +3741,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.randn(5,4)\nX[::2, 1] = np.nan\ncol_means = np.nanmean(X, axis=0)\nidx = np.where(np.isnan(X))\nX[idx] = np.take(col_means, idx[1])\nprint(X)",
-      "expected_output": "[[-0.68251698 -0.27056533 -0.34717368  1.62302513]\n [ 2.25959845 -0.76308003 -1.5788158  -0.73524404]\n [ 0.39078776 -0.27056533  0.51673811  0.04037029]\n [-1.12575257  0.22194937 -0.46028186 -1.89396384]\n [-2.39524508 -0.27056533 -0.54098371 -0.22534603]]",
+      "expected_output": "[[ 1.76405235 -0.42780143  0.97873798  2.2408932 ]\n [ 1.86755799 -0.97727788  0.95008842 -0.15135721]\n [-0.10321885 -0.42780143  0.14404357  1.45427351]\n [ 0.76103773  0.12167502  0.44386323  0.33367433]\n [ 1.49407907 -0.42780143  0.3130677  -0.85409574]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3811,7 +3811,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.randn(100,4)\nC = np.corrcoef(X, rowvar=False)\nprint(C)",
-      "expected_output": "[[ 1.         -0.12835261  0.0905946   0.03156166]\n [-0.12835261  1.         -0.18839136  0.08954937]\n [ 0.0905946  -0.18839136  1.          0.05502689]\n [ 0.03156166  0.08954937  0.05502689  1.        ]]",
+      "expected_output": "[[ 1.         -0.07463505  0.13985001  0.07164597]\n [-0.07463505  1.          0.2037025   0.05589301]\n [ 0.13985001  0.2037025   1.          0.02046702]\n [ 0.07164597  0.05589301  0.02046702  1.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3846,7 +3846,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Thanks Vikas (https://stackoverflow.com/a/10622758/5989906)\n# & unutbu (https://stackoverflow.com/a/4396247/5989906)\nZ = (np.random.rand(10)*100).astype(np.float32)\nY = Z.view(np.int32)\nY[:] = Z\nprint(Y)",
-      "expected_output": "[91 14  7 70 53 86 61 12 43 46]",
+      "expected_output": "[54 71 60 54 42 64 43 89 96 38]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3881,7 +3881,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(4,5)\nidx = Z.argmax(axis=1)\nout = np.zeros_like(Z)\nout[np.arange(Z.shape[0]), idx] = 1\nprint(out)",
-      "expected_output": "[[0. 0. 0. 0. 1.]\n [0. 0. 0. 1. 0.]\n [0. 0. 0. 0. 1.]\n [0. 0. 0. 0. 1.]]",
+      "expected_output": "[[0. 1. 0. 0. 0.]\n [0. 0. 0. 1. 0.]\n [0. 0. 0. 1. 0.]\n [0. 0. 0. 0. 1.]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3914,8 +3914,8 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "from io import StringIO\n\n# Fake file\ns = StringIO('''1, 2, 3, 4, 5\n\n                6,  ,  , 7, 8\n\n                 ,  , 9,10,11\n''')\nZ = np.genfromtxt(s, delimiter=',', dtype=np.int)\nprint(Z)",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 11, in <module>\n  File \"/home/stellar-thread/Applications/pdf-split-tool/backend/.venv/lib/python3.12/site-packages/numpy/__init__.py\", line 775, in __getattr__\n    raise AttributeError(__former_attrs__[attr], name=None)\nAttributeError: module 'numpy' has no attribute 'int'.\n`np.int` was a deprecated alias for the builtin `int`. To avoid this error in existing code, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.\nThe aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:\n    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations",
+      "canonical_solution": "from io import StringIO\n\ns = StringIO('1, 2, 3, 4, 5\\n6,  ,  , 7, 8\\n ,  , 9,10,11\\n')\nZ = np.genfromtxt(s, delimiter=',', dtype=int, filling_values=0)\nprint(Z)",
+      "expected_output": "[[ 1  2  3  4  5]\n [ 6  0  0  7  8]\n [ 0  0  9 10 11]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -3984,7 +3984,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((10,2))\nX,Y = np.atleast_2d(Z[:,0], Z[:,1])\nD = np.sqrt( (X-X.T)**2 + (Y-Y.T)**2)\nprint(D)\n\n# Much faster with scipy\nimport scipy\n# Thanks Gavin Heverly-Coulson (#issue 1)\nimport scipy.spatial\n\nZ = np.random.random((10,2))\nD = scipy.spatial.distance.cdist(Z,Z)\nprint(D)",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nModuleNotFoundError: No module named 'scipy'",
+      "expected_output": "[[0.         0.1786471  0.14306129 0.20869372 0.53118409 0.30612356\n  0.2112843  0.7891329  0.54148195 0.27670999]\n [0.1786471  0.         0.20562852 0.3842079  0.39536284 0.18963685\n  0.38229325 0.70162138 0.64973151 0.36942074]\n [0.14306129 0.20562852 0.         0.2462733  0.60040816 0.38621822\n  0.31477278 0.66072543 0.44455307 0.41940497]\n [0.20869372 0.3842079  0.2462733  0.         0.73154383 0.50704448\n  0.13477076 0.8842009  0.42153982 0.34126404]\n [0.53118409 0.39536284 0.60040816 0.73154383 0.         0.2252094\n  0.67115269 0.94052292 1.04491552 0.52073358]\n [0.30612356 0.18963685 0.38621822 0.50704448 0.2252094  0.\n  0.45541762 0.84531028 0.82913891 0.34138697]\n [0.2112843  0.38229325 0.31477278 0.13477076 0.67115269 0.45541762\n  0.         0.97470248 0.55566014 0.21734021]\n [0.7891329  0.70162138 0.66072543 0.8842009  0.94052292 0.84531028\n  0.97470248 0.         0.74722058 1.05495271]\n [0.54148195 0.64973151 0.44455307 0.42153982 1.04491552 0.82913891\n  0.55566014 0.74722058 0.         0.75886015]\n [0.27670999 0.36942074 0.41940497 0.34126404 0.52073358 0.34138697\n  0.21734021 1.05495271 0.75886015 0.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4019,7 +4019,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.rand(5,4)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\nS = (X @ X.T) / (norms @ norms.T)\nprint(S)",
-      "expected_output": "[[1.         0.80378514 0.79234472 0.66140213 0.8206145 ]\n [0.80378514 1.         0.9577044  0.91974193 0.83739071]\n [0.79234472 0.9577044  1.         0.97520674 0.84711683]\n [0.66140213 0.91974193 0.97520674 1.         0.84030333]\n [0.8206145  0.83739071 0.84711683 0.84030333 1.        ]]",
+      "expected_output": "[[1.         0.94562312 0.91795706 0.8030004  0.89048957]\n [0.94562312 1.         0.83201665 0.68950128 0.92150621]\n [0.91795706 0.83201665 1.         0.65356244 0.70088745]\n [0.8030004  0.68950128 0.65356244 1.         0.58332919]\n [0.89048957 0.92150621 0.70088745 0.58332919 1.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4054,7 +4054,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(6,2)\nX, Y = Z[:,None,:], Z[None,:,:]\ndist2 = ((X - Y)**2).sum(axis=2)\nk = 2\nidx = np.argpartition(dist2, kth=k+1, axis=1)[:, 1:k+1]\nprint(idx)",
-      "expected_output": "[[3 2]\n [3 0]\n [0 3]\n [0 2]\n [1 5]\n [1 2]]",
+      "expected_output": "[[2 1]\n [0 5]\n [0 1]\n [0 2]\n [5 1]\n [1 4]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4124,7 +4124,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Brett Olsen\n\nZ = np.ones(10)\nI = np.random.randint(0,len(Z),20)\nZ += np.bincount(I, minlength=len(Z))\nprint(Z)\n\n# Another solution\n# Author: Bartosz Telenczuk\nnp.add.at(Z, I, 1)\nprint(Z)",
-      "expected_output": "[1. 1. 2. 3. 2. 2. 4. 4. 6. 5.]\n[ 1.  1.  3.  5.  3.  3.  7.  7. 11.  9.]",
+      "expected_output": "[2. 3. 2. 4. 2. 3. 3. 5. 4. 2.]\n[3. 5. 3. 7. 3. 5. 5. 9. 7. 3.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4228,7 +4228,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0,10,50)\nprint(np.bincount(Z).argmax())",
-      "expected_output": "1",
+      "expected_output": "3",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4263,7 +4263,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "A = np.random.randint(0,10,(3,4,3,4))\n# solution by passing a tuple of axes (introduced in numpy 1.7.0)\nsum = A.sum(axis=(-2,-1))\nprint(sum)\n# solution by flattening the last two dimensions into one\n# (useful for functions that don't accept tuples for axis argument)\nsum = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)\nprint(sum)",
-      "expected_output": "[[67 37 52 55]\n [51 55 70 60]\n [51 61 38 48]]\n[[67 37 52 55]\n [51 55 70 60]\n [51 61 38 48]]",
+      "expected_output": "[[54 77 35 52]\n [48 56 59 43]\n [35 40 45 56]]\n[[54 77 35 52]\n [48 56 59 43]\n [35 40 45 56]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4332,7 +4332,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Jaime Fernández del Río\n\nD = np.random.uniform(0,1,100)\nS = np.random.randint(0,10,100)\nD_sums = np.bincount(S, weights=D)\nD_counts = np.bincount(S)\nD_means = D_sums / D_counts\nprint(D_means)\n\n# Pandas solution as a reference due to more intuitive code\nimport pandas as pd\nprint(pd.Series(D).groupby(S).mean())",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\nModuleNotFoundError: No module named 'pandas'",
+      "expected_output": "[0.42042584 0.4400591  0.45687766 0.42543766 0.44180652 0.48963101\n 0.46108245 0.23776201 0.60076181 0.56968053]\n0    0.420426\n1    0.440059\n2    0.456878\n3    0.425438\n4    0.441807\n5    0.489631\n6    0.461082\n7    0.237762\n8    0.600762\n9    0.569681\ndtype: float64",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4367,7 +4367,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.arange(20).reshape(5,4)\np = np.random.permutation(Z.shape[0])\nZ[:] = Z[p]\nprint(Z)",
-      "expected_output": "[[ 8  9 10 11]\n [12 13 14 15]\n [16 17 18 19]\n [ 0  1  2  3]\n [ 4  5  6  7]]",
+      "expected_output": "[[ 8  9 10 11]\n [ 0  1  2  3]\n [ 4  5  6  7]\n [12 13 14 15]\n [16 17 18 19]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4401,7 +4401,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.arange(40).reshape(10,4)\nm = 3\nidx = np.random.choice(Z.shape[0], size=m, replace=False)\nprint(Z[idx])",
-      "expected_output": "[[12 13 14 15]\n [32 33 34 35]\n [36 37 38 39]]",
+      "expected_output": "[[ 8  9 10 11]\n [32 33 34 35]\n [16 17 18 19]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4574,7 +4574,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(6, 5)\nv = np.random.rand(5)\ndots = Z @ v\nprint(dots)",
-      "expected_output": "[1.97195793 1.65927772 2.54998545 1.75031846 1.9040491  1.47574759]",
+      "expected_output": "[1.2915566  1.47143564 1.40553259 0.8771822  1.53404006 1.0156224 ]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4609,7 +4609,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "a = np.random.randn(20)\npeaks = np.where((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:]))[0] + 1\nprint(peaks)",
-      "expected_output": "[ 1  3  6  9 13 15 17]",
+      "expected_output": "[ 3  6  9 11 14 16 18]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4678,7 +4678,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randn(1000)\nlo, hi = np.percentile(Z, [5, 95])\nZ_wins = np.clip(Z, lo, hi)\nprint(Z_wins.min(), Z_wins.max())",
-      "expected_output": "-1.4549729742092148 1.6323986775053554",
+      "expected_output": "-1.6331510645993008 1.6601204080198209",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4713,7 +4713,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "a = np.random.randint(0, 10, 20)\n_, idx = np.unique(a, return_index=True)\nidx_sorted = np.sort(idx)\nprint(idx_sorted)",
-      "expected_output": "[ 0  1  2  3  4  5  9 12 13]",
+      "expected_output": "[ 0  1  2  4  5  8  9 11 12 14]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4852,7 +4852,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0, 100, (4, 7))\ncummax = np.maximum.accumulate(Z, axis=1)\nprint(cummax)",
-      "expected_output": "[[15 46 46 46 72 72 72]\n [ 2  8 89 89 89 89 89]\n [20 57 57 57 57 57 97]\n [96 97 97 97 97 97 97]]",
+      "expected_output": "[[44 47 64 67 67 67 83]\n [21 36 87 87 88 88 88]\n [58 65 65 87 87 88 88]\n [37 37 77 77 77 77 80]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4887,7 +4887,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(5, 4)\nnorms = np.linalg.norm(Z, axis=1, keepdims=True)\nZ_unit = np.divide(Z, norms, out=np.zeros_like(Z), where=norms!=0)\nprint(Z_unit)",
-      "expected_output": "[[0.63455023 0.40523623 0.48119577 0.44897688]\n [0.33535763 0.01059808 0.10125842 0.93657337]\n [0.44127614 0.66514376 0.60029569 0.05004233]\n [0.4815804  0.26723269 0.63788148 0.53830682]\n [0.33822481 0.66412228 0.58741397 0.315421  ]]",
+      "expected_output": "[[0.45220585 0.58929456 0.49665892 0.44896738]\n [0.33667915 0.5132931  0.34775126 0.70869345]\n [0.68445968 0.27234658 0.56233766 0.37565761]\n [0.52027953 0.8477662  0.06506287 0.07980288]\n [0.01410013 0.58066172 0.54267964 0.60673879]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4921,7 +4921,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randn(100, 5)\nmu = Z.mean(axis=0, keepdims=True)\nsd = Z.std(axis=0, ddof=0, keepdims=True)\nZz = (Z - mu) / np.where(sd==0, 1, sd)\nZc = np.clip(Zz, -3, 3)\nprint(Zc.min(), Zc.max())",
-      "expected_output": "-3.0 2.9597301783501373",
+      "expected_output": "-2.8990101694364707 2.6360373247117894",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -4991,7 +4991,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0, 5, (6, 7))\nI = np.cumsum(np.cumsum(Z, axis=0), axis=1)\nprint(I)",
-      "expected_output": "[[ 2  2  3  5  8 12 16]\n [ 3  3  6 10 14 21 29]\n [ 7 10 15 22 28 36 44]\n [ 7 13 18 25 35 47 57]\n [ 9 17 25 35 45 61 75]\n [10 21 31 42 56 74 88]]",
+      "expected_output": "[[ 4  4  7 10 13 14 17]\n [ 6 10 13 16 23 26 30]\n [ 6 11 15 18 26 33 40]\n [ 6 14 18 23 34 41 49]\n [ 9 20 27 32 44 52 61]\n [ 9 22 33 41 56 66 79]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5061,7 +5061,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0, 6, (5, 8))\ncounts = np.apply_along_axis(lambda r: np.unique(r).size, 1, Z)\nprint(counts)",
-      "expected_output": "[5 4 5 5 6]",
+      "expected_output": "[5 5 4 4 4]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5166,7 +5166,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(5, 3)\nrow_sums = Z.sum(axis=1, keepdims=True)\nZ_norm = np.divide(Z, row_sums, out=np.zeros_like(Z), where=row_sums!=0)\nprint(Z_norm)",
-      "expected_output": "[[0.46023749 0.00790967 0.53185284]\n [0.5355077  0.07378921 0.39070308]\n [0.39494427 0.22061054 0.38444519]\n [0.3723624  0.2907398  0.3368978 ]\n [0.35834705 0.15279255 0.48886041]]",
+      "expected_output": "[[0.29399155 0.38311672 0.32289173]\n [0.33750765 0.26241723 0.40007512]\n [0.1908342  0.38890714 0.42025866]\n [0.22501625 0.46461061 0.31037314]\n [0.36304264 0.59155755 0.04539982]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5337,8 +5337,8 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "# Author: Chris Barker\n\nZ = np.random.randint(0,5,(10,10))\nn = 3\ni = 1 + (Z.shape[0]-3)\nj = 1 + (Z.shape[1]-3)\nC = stride_tricks.as_strided(Z, shape=(i, j, n, n), strides=Z.strides + Z.strides)\nprint(C)\n\n# Author: Jeff Luo (@Jeff1999)\n\nZ = np.random.randint(0,5,(10,10))\nprint(sliding_window_view(Z, window_shape=(3, 3)))",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nNameError: name 'stride_tricks' is not defined",
+      "canonical_solution": "from numpy.lib.stride_tricks import sliding_window_view\n\nZ = np.random.randint(0, 5, (10, 10))\nC = sliding_window_view(Z, window_shape=(3, 3))\nprint(C)",
+      "expected_output": "[[[[4 0 3]\n   [0 4 2]\n   [3 0 3]]\n\n  [[0 3 3]\n   [4 2 1]\n   [0 3 0]]\n\n  [[3 3 3]\n   [2 1 0]\n   [3 0 2]]\n\n  [[3 3 1]\n   [1 0 1]\n   [0 2 3]]\n\n  [[3 1 3]\n   [0 1 1]\n   [2 3 0]]\n\n  [[1 3 2]\n   [1 1 0]\n   [3 0 1]]\n\n  [[3 2 4]\n   [1 0 1]\n   [0 1 3]]\n\n  [[2 4 0]\n   [0 1 4]\n   [1 3 3]]]\n\n\n [[[0 4 2]\n   [3 0 3]\n   [3 0 1]]\n\n  [[4 2 1]\n   [0 3 0]\n   [0 1 1]]\n\n  [[2 1 0]\n   [3 0 2]\n   [1 1 1]]\n\n  [[1 0 1]\n   [0 2 3]\n   [1 1 0]]\n\n  [[0 1 1]\n   [2 3 0]\n   [1 0 2]]\n\n  [[1 1 0]\n   [3 0 1]\n   [0 2 4]]\n\n  [[1 0 1]\n   [0 1 3]\n   [2 4 3]]\n\n  [[0 1 4]\n   [1 3 3]\n   [4 3 3]]]\n\n\n [[[3 0 3]\n   [3 0 1]\n   [2 4 2]]\n\n  [[0 3 0]\n   [0 1 1]\n   [4 2 0]]\n\n  [[3 0 2]\n   [1 1 1]\n   [2 0 0]]\n\n  [[0 2 3]\n   [1 1 0]\n   [0 0 4]]\n\n  [[2 3 0]\n   [1 0 2]\n   [0 4 0]]\n\n  [[3 0 1]\n   [0 2 4]\n   [4 0 4]]\n\n  [[0 1 3]\n   [2 4 3]\n   [0 4 1]]\n\n  [[1 3 3]\n   [4 3 3]\n   [4 1 4]]]\n\n\n [[[3 0 1]\n   [2 4 2]\n   [1 2 2]]\n\n  [[0 1 1]\n   [4 2 0]\n   [2 2 0]]\n\n  [[1 1 1]\n   [2 0 0]\n   [2 0 1]]\n\n  [[1 1 0]\n   [0 0 4]\n   [0 1 1]]\n\n  [[1 0 2]\n   [0 4 0]\n   [1 1 1]]\n\n  [[0 2 4]\n   [4 0 4]\n   [1 1 1]]\n\n  [[2 4 3]\n   [0 4 1]\n   [1 1 3]]\n\n  [[4 3 3]\n   [4 1 4]\n   [1 3 3]]]\n\n\n [[[2 4 2]\n   [1 2 2]\n   [2 3 0]]\n\n  [[4 2 0]\n   [2 2 0]\n   [3 0 3]]\n\n  [[2 0 0]\n   [2 0 1]\n   [0 3 4]]\n\n  [[0 0 4]\n   [0 1 1]\n   [3 4 1]]\n\n  [[0 4 0]\n   [1 1 1]\n   [4 1 2]]\n\n  [[4 0 4]\n   [1 1 1]\n   [1 2 4]]\n\n  [[0 4 1]\n   [1 1 3]\n   [2 4 3]]\n\n  [[4 1 4]\n   [1 3 3]\n   [4 3 4]]]\n\n\n [[[1 2 2]\n   [2 3 0]\n   [4 4 3]]\n\n  [[2 2 0]\n   [3 0 3]\n   [4 3 4]]\n\n  [[2 0 1]\n   [0 3 4]\n   [3 4 4]]\n\n  [[0 1 1]\n   [3 4 1]\n   [4 4 4]]\n\n  [[1 1 1]\n   [4 1 2]\n   [4 4 0]]\n\n  [[1 1 1]\n   [1 2 4]\n   [4 0 4]]\n\n  [[1 1 3]\n   [2 4 3]\n   [0 4 3]]\n\n  [[1 3 3]\n   [4 3 4]\n   [4 3 2]]]\n\n\n [[[2 3 0]\n   [4 4 3]\n   [0 1 1]]\n\n  [[3 0 3]\n   [4 3 4]\n   [1 1 3]]\n\n  [[0 3 4]\n   [3 4 4]\n   [1 3 0]]\n\n  [[3 4 1]\n   [4 4 4]\n   [3 0 0]]\n\n  [[4 1 2]\n   [4 4 0]\n   [0 0 1]]\n\n  [[1 2 4]\n   [4 0 4]\n   [0 1 2]]\n\n  [[2 4 3]\n   [0 4 3]\n   [1 2 4]]\n\n  [[4 3 4]\n   [4 3 2]\n   [2 4 2]]]\n\n\n [[[4 4 3]\n   [0 1 1]\n   [0 3 2]]\n\n  [[4 3 4]\n   [1 1 3]\n   [3 2 2]]\n\n  [[3 4 4]\n   [1 3 0]\n   [2 2 0]]\n\n  [[4 4 4]\n   [3 0 0]\n   [2 0 1]]\n\n  [[4 4 0]\n   [0 0 1]\n   [0 1 0]]\n\n  [[4 0 4]\n   [0 1 2]\n   [1 0 2]]\n\n  [[0 4 3]\n   [1 2 4]\n   [0 2 2]]\n\n  [[4 3 2]\n   [2 4 2]\n   [2 2 3]]]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5373,7 +5373,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0, 9, (4, 8))\n# use argmax on reversed view, then convert index\nrev = Z[:, ::-1]\nidx_rev = rev.argmax(axis=1)\nidx = Z.shape[1] - 1 - idx_rev\nprint(idx)",
-      "expected_output": "[7 6 3 0]",
+      "expected_output": "[4 4 4 5]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5408,7 +5408,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.rand(6, 5)\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nS = Xn @ Xn.T\nprint(S)",
-      "expected_output": "[[1.         0.80711555 0.93078138 0.77111694 0.54029131 0.57408377]\n [0.80711555 1.         0.94936222 0.84387821 0.63333035 0.82541215]\n [0.93078138 0.94936222 1.         0.79706433 0.50331774 0.71177219]\n [0.77111694 0.84387821 0.79706433 1.         0.79021235 0.91442022]\n [0.54029131 0.63333035 0.50331774 0.79021235 1.         0.68136092]\n [0.57408377 0.82541215 0.71177219 0.91442022 0.68136092 1.        ]]",
+      "expected_output": "[[1.         0.93494595 0.90896997 0.73470935 0.92883703 0.86805113]\n [0.93494595 1.         0.95237175 0.83599347 0.89205431 0.94617471]\n [0.90896997 0.95237175 1.         0.64251428 0.97124714 0.84886608]\n [0.73470935 0.83599347 0.64251428 1.         0.53377109 0.84424725]\n [0.92883703 0.89205431 0.97124714 0.53377109 1.         0.78777519]\n [0.86805113 0.94617471 0.84886608 0.84424725 0.78777519 1.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5443,7 +5443,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randn(6, 4)\nZ[np.random.rand(*Z.shape) < 0.2] = np.nan\ncol_means = np.nanmean(Z, axis=0, keepdims=True)\ninds = np.where(np.isnan(Z))\nZ[inds] = np.take(col_means, inds[1])\nprint(Z)",
-      "expected_output": "[[ 0.92821132 -1.83963087  0.12356746 -0.55141404]\n [-0.7066612   0.69027074  0.66444057  0.17103801]\n [-1.42796954 -1.83899556  0.11414011 -0.52026126]\n [ 0.48156796 -1.50226676  0.11414011 -0.10020617]\n [ 0.53257051 -0.34731895 -0.6347048   0.05417213]\n [ 0.35098503 -0.09033296  0.30325719 -0.18933427]]",
+      "expected_output": "[[ 1.76405235  0.40015721  0.54309982  2.2408932 ]\n [ 1.86755799 -0.97727788  0.95008842 -0.15135721]\n [-0.10321885  0.4105985   0.14404357  0.41181342]\n [ 0.76103773  0.12167502  0.44386323  0.41181342]\n [ 1.49407907 -0.20515826  0.3130677  -0.85409574]\n [-2.55298982 -0.05000108  0.8644362   0.41181342]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5512,7 +5512,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randint(0, 5, (6, 7))\nm = Z.max() + 1\nmode = np.apply_along_axis(lambda r: np.bincount(r, minlength=m).argmax(), 1, Z)\nprint(mode)",
-      "expected_output": "[2 3 4 1 0 2]",
+      "expected_output": "[3 0 1 0 1 2]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5547,7 +5547,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "A = np.random.randn(5, 5)\nb = np.random.randn(5, 3)\nx = np.linalg.solve(A, b)\nprint(x)",
-      "expected_output": "[[-0.61263028  0.61163874  0.1301234 ]\n [ 0.00810086  1.29363193  0.15139921]\n [ 2.75483703 -2.84042273  0.26377655]\n [-2.80720085  2.65293911 -0.80116749]\n [-1.34292333  3.68290416 -1.01076944]]",
+      "expected_output": "[[ 3.92250309  2.32080319 -6.51389613]\n [ 1.99526417  1.28097759 -2.21626403]\n [-6.00669042 -5.67151216  5.07225449]\n [-5.51332962 -2.423713    8.26700347]\n [ 4.85204377  3.43836935 -6.05033746]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5582,7 +5582,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(7, 9)\nm = Z.shape[1]//2\npart = np.partition(Z, m, axis=1)\nmed = part[:, m]\nprint(med)",
-      "expected_output": "[0.61210779 0.52380325 0.68382924 0.66444396 0.88770145 0.3531581\n 0.42496453]",
+      "expected_output": "[0.60276338 0.52889492 0.77815675 0.52184832 0.616934   0.36371077\n 0.24442559]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5684,8 +5684,8 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "a = np.array([1,2,3,2,1,0])\nmapping = {0:9, 1:8, 2:7}\nmax_key = max(mapping.keys())\ntable = np.arange(max_key+1)\nfor k,v in mapping.items():\n    table[k] = v\nout = table[a]\nprint(out)",
-      "expected_output": "[ERROR] Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nIndexError: index 3 is out of bounds for axis 0 with size 3",
+      "canonical_solution": "a = np.array([1, 2, 3, 2, 1, 0])\nmapping = {0: 9, 1: 8, 2: 7, 3: 6}\ntable = np.arange(max(mapping) + 1)\nfor k, v in mapping.items():\n    table[k] = v\nout = table[a]\nprint(out)",
+      "expected_output": "[8 7 6 7 8 9]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5755,7 +5755,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.rand(6, 4)\ndiff = X[:, None, :] - X[None, :, :]\nD = np.sqrt(np.sum(diff*diff, axis=-1))\nprint(D)",
-      "expected_output": "[[0.         1.09438528 0.56646931 0.56897808 0.63348327 0.89125923]\n [1.09438528 0.         0.97535657 1.28860571 0.62527779 0.9975922 ]\n [0.56646931 0.97535657 0.         0.32903309 0.47350788 0.48830903]\n [0.56897808 1.28860571 0.32903309 0.         0.75203097 0.665604  ]\n [0.63348327 0.62527779 0.47350788 0.75203097 0.         0.7865064 ]\n [0.89125923 0.9975922  0.48830903 0.665604   0.7865064  0.        ]]",
+      "expected_output": "[[0.         0.40997835 0.5640201  0.73274389 0.65549553 0.51698475]\n [0.40997835 0.         0.78586517 0.93855908 0.56043606 0.58687354]\n [0.5640201  0.78586517 0.         1.07934953 1.09926953 0.58772982]\n [0.73274389 0.93855908 1.07934953 0.         1.19234367 0.9043267 ]\n [0.65549553 0.56043606 1.09926953 1.19234367 0.         1.01387469]\n [0.51698475 0.58687354 0.58772982 0.9043267  1.01387469 0.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5790,7 +5790,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "pts = np.random.rand(5, 2)\nT = np.array([[1.2, 0.2, 0.5],\n              [-0.1, 0.9, 0.1],\n              [0.0, 0.0, 1.0]])\nH = np.c_[pts, np.ones(len(pts))]\nout = (H @ T.T)[:, :2]\nprint(out)",
-      "expected_output": "[[0.79905518 0.59692083]\n [0.77948877 0.21893996]\n [1.58186217 0.79577471]\n [1.13056851 0.27376056]\n [0.92238101 0.90604277]]",
+      "expected_output": "[[1.30161408 0.68878908]\n [1.33229269 0.53011853]\n [1.13756458 0.63893922]\n [1.20345925 0.85883698]\n [1.73308362 0.34873109]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5824,7 +5824,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(4, 6)\norder = np.argsort(Z, axis=1)\nranks = np.empty_like(order)\nranks[np.arange(Z.shape[0])[:, None], order] = np.arange(Z.shape[1])\nprint(ranks + 1)",
-      "expected_output": "[[4 2 3 6 1 5]\n [4 2 3 1 6 5]\n [5 2 6 3 1 4]\n [3 5 4 6 2 1]]",
+      "expected_output": "[[3 6 4 2 1 5]\n [2 5 6 1 4 3]\n [4 6 2 3 1 5]\n [2 5 6 4 1 3]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5892,7 +5892,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "a = np.random.randint(0, 4, 30)\nstarts = np.r_[0, 1 + np.flatnonzero(a[1:] != a[:-1])]\nvalues = a[starts]\ncounts = np.diff(np.r_[starts, a.size])\nprint(values, counts)",
-      "expected_output": "[0 3 0 3 2 0 2 1 2 1 2 3 2 1 3 1 0 1 2 0 2 3 2 3] [1 1 1 2 2 2 1 1 1 1 1 2 1 1 1 1 2 2 1 1 1 1 1 1]",
+      "expected_output": "[0 3 1 0 3 1 3 1 2 0 3 2 0 2 1 2 3 2 0 1 0] [1 1 1 1 4 1 1 1 1 1 1 1 3 1 1 1 2 1 1 4 1]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5927,7 +5927,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Nicolas Rougier\n\nZ = np.random.randint(0,10,(10,10))\nshape = (5,5)\nfill  = 0\nposition = (1,1)\n\nR = np.ones(shape, dtype=Z.dtype)*fill\nP  = np.array(list(position)).astype(int)\nRs = np.array(list(R.shape)).astype(int)\nZs = np.array(list(Z.shape)).astype(int)\n\nR_start = np.zeros((len(shape),)).astype(int)\nR_stop  = np.array(list(shape)).astype(int)\nZ_start = (P-Rs//2)\nZ_stop  = (P+Rs//2)+Rs%2\n\nR_start = (R_start - np.minimum(Z_start,0)).tolist()\nZ_start = (np.maximum(Z_start,0)).tolist()\nR_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()\nZ_stop = (np.minimum(Z_stop,Zs)).tolist()\n\nr = tuple([slice(start,stop) for start,stop in zip(R_start,R_stop)])\nz = tuple([slice(start,stop) for start,stop in zip(Z_start,Z_stop)])\nR[r] = Z[z]\nprint(Z)\nprint(R)",
-      "expected_output": "[[1 1 0 2 8 6 3 5 3 5]\n [0 6 1 9 9 2 3 5 7 7]\n [0 1 9 9 0 5 6 8 9 4]\n [3 7 4 5 6 0 9 8 1 3]\n [1 9 7 1 4 4 5 9 3 4]\n [8 8 8 8 4 4 2 5 9 9]\n [7 7 3 0 7 7 0 4 5 2]\n [4 5 7 6 9 0 2 9 1 9]\n [1 9 9 0 3 8 5 5 5 3]\n [6 9 7 4 5 8 0 4 6 5]]\n[[0 0 0 0 0]\n [0 1 1 0 2]\n [0 0 6 1 9]\n [0 0 1 9 9]\n [0 3 7 4 5]]",
+      "expected_output": "[[5 0 3 3 7 9 3 5 2 4]\n [7 6 8 8 1 6 7 7 8 1]\n [5 9 8 9 4 3 0 3 5 0]\n [2 3 8 1 3 3 3 7 0 1]\n [9 9 0 4 7 3 2 7 2 0]\n [0 4 5 5 6 8 4 1 4 9]\n [8 1 1 7 9 9 3 6 7 2]\n [0 3 5 9 4 4 6 4 4 3]\n [4 4 8 4 3 7 5 5 0 1]\n [5 9 3 0 5 0 1 2 4 2]]\n[[0 0 0 0 0]\n [0 5 0 3 3]\n [0 7 6 8 8]\n [0 5 9 8 9]\n [0 2 3 8 1]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -5962,7 +5962,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(5, 6)\nk = 2\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\nmask = np.zeros_like(Z, dtype=int)\nmask[np.arange(Z.shape[0])[:, None], idx] = 1\nprint(mask)",
-      "expected_output": "[[0 1 0 0 1 0]\n [0 0 1 0 0 1]\n [1 0 0 1 0 0]\n [1 1 0 0 0 0]\n [0 0 0 0 1 1]]",
+      "expected_output": "[[0 1 0 0 0 1]\n [0 1 1 0 0 0]\n [0 1 0 0 0 1]\n [0 1 1 0 0 0]\n [0 1 0 1 0 0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6066,7 +6066,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Jessica B. Hamrick\n\nX = np.random.randn(100) # random 1D array\nN = 1000 # number of bootstrap samples\nidx = np.random.randint(0, X.size, (N, X.size))\nmeans = X[idx].mean(axis=1)\nconfint = np.percentile(means, [2.5, 97.5])\nprint(confint)",
-      "expected_output": "[-0.1639379   0.22175557]",
+      "expected_output": "[-0.13559955  0.26480175]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6135,7 +6135,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "X = np.random.rand(8, 3)\ndiff = X[:, None, :] - X[None, :, :]\nD2 = np.sum(diff*diff, axis=-1)\nnp.fill_diagonal(D2, np.inf)\nk = 2\nidx = np.argpartition(D2, k, axis=1)[:, :k]\nprint(idx)",
-      "expected_output": "[[1 5]\n [0 5]\n [4 7]\n [1 5]\n [2 7]\n [0 1]\n [7 5]\n [0 1]]",
+      "expected_output": "[[3 1]\n [7 0]\n [6 0]\n [0 1]\n [3 0]\n [1 7]\n [2 7]\n [1 0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6170,7 +6170,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.rand(5, 10)\nk = 3\nidx = np.argpartition(Z, -k, axis=1)[:, -k:]\n# sort the top-k indices by actual values descending\nrows = np.arange(Z.shape[0])[:, None]\nidx_sorted = idx[rows, np.argsort(Z[rows, idx], axis=1)[:, ::-1]]\nprint(idx_sorted)",
-      "expected_output": "[[4 0 2]\n [2 7 6]\n [2 7 4]\n [0 6 3]\n [9 6 3]]",
+      "expected_output": "[[8 7 1]\n [3 9 7]\n [0 7 1]\n [8 1 9]\n [2 5 4]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6309,7 +6309,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "B = (np.random.rand(6, 8) > 0.6).astype(int)\ninter = (B[:, None, :] & B[None, :, :]).sum(-1)\nunion = (B[:, None, :] | B[None, :, :]).sum(-1)\nJ = 1 - inter / np.where(union==0, 1, union)\nprint(J)",
-      "expected_output": "[[0.         0.75       0.4        0.75       1.         1.        ]\n [0.75       0.         0.83333333 1.         0.66666667 0.83333333]\n [0.4        0.83333333 0.         0.83333333 1.         0.75      ]\n [0.75       1.         0.83333333 0.         0.66666667 0.83333333]\n [1.         0.66666667 1.         0.66666667 0.         0.6       ]\n [1.         0.83333333 0.75       0.83333333 0.6        0.        ]]",
+      "expected_output": "[[0.         0.6        0.33333333 0.6        0.71428571 0.6       ]\n [0.6        0.         0.71428571 1.         0.85714286 0.5       ]\n [0.33333333 0.71428571 0.         0.5        0.42857143 0.5       ]\n [0.6        1.         0.5        0.         0.66666667 1.        ]\n [0.71428571 0.85714286 0.42857143 0.66666667 0.         0.66666667]\n [0.6        0.5        0.5        1.         0.66666667 0.        ]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6379,7 +6379,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "P = np.random.dirichlet(np.ones(5), size=10)\nu = np.random.rand(P.shape[0], 1)\ncs = np.cumsum(P, axis=1)\nsamples = (u < cs).argmax(axis=1)\nprint(samples)",
-      "expected_output": "[0 3 4 4 2 0 0 2 1 4]",
+      "expected_output": "[2 2 4 2 0 0 2 1 2 0]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6448,7 +6448,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Robert Kern\n\nZ = np.random.randint(0,5,(10,3))\nprint(Z)\n# solution for arrays of all dtypes (including string arrays and record arrays)\nE = np.all(Z[:,1:] == Z[:,:-1], axis=1)\nU = Z[~E]\nprint(U)\n# soluiton for numerical arrays only, will work for any number of columns in Z\nU = Z[Z.max(axis=1) != Z.min(axis=1),:]\nprint(U)",
-      "expected_output": "[[0 3 2]\n [3 3 0]\n [0 0 1]\n [0 0 0]\n [0 3 4]\n [2 3 4]\n [0 1 2]\n [0 4 2]\n [0 0 1]\n [4 4 0]]\n[[0 3 2]\n [3 3 0]\n [0 0 1]\n [0 3 4]\n [2 3 4]\n [0 1 2]\n [0 4 2]\n [0 0 1]\n [4 4 0]]\n[[0 3 2]\n [3 3 0]\n [0 0 1]\n [0 3 4]\n [2 3 4]\n [0 1 2]\n [0 4 2]\n [0 0 1]\n [4 4 0]]",
+      "expected_output": "[[4 0 3]\n [3 3 1]\n [3 2 4]\n [0 0 4]\n [2 1 0]\n [1 1 0]\n [1 4 3]\n [0 3 0]\n [2 3 0]\n [1 3 3]]\n[[4 0 3]\n [3 3 1]\n [3 2 4]\n [0 0 4]\n [2 1 0]\n [1 1 0]\n [1 4 3]\n [0 3 0]\n [2 3 0]\n [1 3 3]]\n[[4 0 3]\n [3 3 1]\n [3 2 4]\n [0 0 4]\n [2 1 0]\n [1 1 0]\n [1 4 3]\n [0 3 0]\n [2 3 0]\n [1 3 3]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6517,7 +6517,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Jaime Fernández del Río\n\nZ = np.random.randint(0,2,(6,3))\nT = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))\n_, idx = np.unique(T, return_index=True)\nuZ = Z[idx]\nprint(uZ)\n\n# Author: Andreas Kouzelis\n# NumPy >= 1.13\nuZ = np.unique(Z, axis=0)\nprint(uZ)",
-      "expected_output": "[[0 0 0]\n [0 1 0]\n [1 0 0]\n [1 0 1]\n [1 1 1]]\n[[0 0 0]\n [0 1 0]\n [1 0 0]\n [1 0 1]\n [1 1 1]]",
+      "expected_output": "[[0 0 0]\n [0 1 0]\n [0 1 1]\n [1 1 0]\n [1 1 1]]\n[[0 0 0]\n [0 1 0]\n [0 1 1]\n [1 1 0]\n [1 1 1]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6586,7 +6586,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Nicolas P. Rougier\n\nfaces = np.random.randint(0,100,(10,3))\nF = np.roll(faces.repeat(2,axis=1),-1,axis=1)\nF = F.reshape(len(F)*3,2)\nF = np.sort(F,axis=1)\nG = F.view( dtype=[('p0',F.dtype),('p1',F.dtype)] )\nG = np.unique(G)\nprint(G)",
-      "expected_output": "[( 1,  8) ( 1, 52) ( 5, 16) ( 5, 34) ( 7, 75) ( 7, 83) ( 8, 52) ( 9, 31)\n ( 9, 69) (15, 20) (15, 48) (16, 34) (16, 79) (16, 90) (20, 48) (23, 39)\n (23, 59) (31, 69) (35, 80) (35, 94) (36, 57) (36, 87) (39, 59) (52, 56)\n (52, 75) (56, 75) (57, 87) (75, 83) (79, 90) (80, 94)]",
+      "expected_output": "[( 9, 20) ( 9, 67) ( 9, 72) (12, 58) (12, 88) (20, 72) (21, 36) (21, 83)\n (25, 37) (25, 77) (36, 83) (37, 77) (39, 65) (39, 87) (44, 47) (44, 64)\n (46, 81) (46, 88) (47, 64) (58, 88) (65, 87) (67, 67) (69, 79) (69, 80)\n (70, 87) (70, 88) (79, 80) (81, 88) (87, 88)]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6723,7 +6723,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Gabe Schwartz\n\nA = np.random.randint(0,5,(8,3))\nB = np.random.randint(0,5,(2,2))\n\nC = (A[..., np.newaxis, np.newaxis] == B)\nrows = np.where(C.any((3,1)).all(1))[0]\nprint(rows)",
-      "expected_output": "[4 5]",
+      "expected_output": "[0 1 4 6 7]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -6967,7 +6967,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.randn(5, 4)\nmu = Z.mean(axis=0, keepdims=True)\nsd = Z.std(axis=0, ddof=0, keepdims=True)\nZz = (Z - mu) / np.where(sd==0, 1, sd)\nprint(Zz.mean(0), Zz.std(0))",
-      "expected_output": "[-3.33066907e-17  4.99600361e-17  1.33226763e-16 -4.44089210e-17] [1. 1. 1. 1.]",
+      "expected_output": "[ 1.11022302e-17 -4.44089210e-17 -1.11022302e-16  0.00000000e+00] [1. 1. 1. 1.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7002,7 +7002,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(10)\nZ[Z.argmax()] = 0\nprint(Z)",
-      "expected_output": "[0.66063364 0.79044362 0.54555333 0.04633374 0.19438754 0.75637858\n 0.2545503  0.90759047 0.         0.09505246]",
+      "expected_output": "[0.5488135  0.71518937 0.60276338 0.54488318 0.4236548  0.64589411\n 0.43758721 0.891773   0.         0.38344152]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7418,7 +7418,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random(10); Z.sort(); print(Z)",
-      "expected_output": "[0.0258762  0.18621817 0.29411985 0.30254315 0.41550968 0.45174497\n 0.5312839  0.53241641 0.62399452 0.65391156]",
+      "expected_output": "[0.38344152 0.4236548  0.43758721 0.54488318 0.5488135  0.60276338\n 0.64589411 0.71518937 0.891773   0.96366276]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7452,7 +7452,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((3,3)); print(Z > 0.5)",
-      "expected_output": "[[False  True False]\n [False  True  True]\n [ True  True False]]",
+      "expected_output": "[[ True  True  True]\n [ True False  True]\n [False  True  True]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7486,7 +7486,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z = np.random.random((4,4)); print(np.trace(Z))",
-      "expected_output": "1.0502694024089547",
+      "expected_output": "2.073561954778186",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7589,7 +7589,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "# Author: Charles R Harris\n\nZ = np.random.uniform(-10,+10,10)\nprint(np.copysign(np.ceil(np.abs(Z)), Z))\n\n# More readable but less efficient\nprint(np.where(Z>0, np.ceil(Z), np.floor(Z)))",
-      "expected_output": "[ 1.  7.  5.  5. -6. -9.  3. -5. -1. -8.]\n[ 1.  7.  5.  5. -6. -9.  3. -5. -1. -8.]",
+      "expected_output": "[ 1.  5.  3.  1. -2.  3. -2.  8. 10. -3.]\n[ 1.  5.  3.  1. -2.  3. -2.  8. 10. -3.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -7623,7 +7623,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "Z1 = np.random.randint(0,10,10)\nZ2 = np.random.randint(0,10,10)\nprint(np.intersect1d(Z1,Z2))",
-      "expected_output": "[0 4 7]",
+      "expected_output": "[7]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
