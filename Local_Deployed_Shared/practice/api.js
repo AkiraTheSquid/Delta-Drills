@@ -94,7 +94,17 @@ const PracticeAPI = {
         };
       }
     } else {
-      // Fallback to hardcoded pool
+      // Fallback to hardcoded pool — a static round-robin with NO adaptivity.
+      // Never serve this silently: the practice UI still renders target-
+      // difficulty/calibration widgets, and without a notice they read as a
+      // live adaptive session that mysteriously never updates (tester hit
+      // exactly this after a silent token-expiry demotion).
+      if (typeof showPracticeModeNotice === "function") {
+        showPracticeModeNotice(
+          "Demo questions — the adaptive engine isn't available right now, " +
+          "so difficulty won't adapt. Sign in (or reload) for the real queue.",
+        );
+      }
       const completed = new Set(practiceProgress.completedQuestionIds);
       let attempts = 0;
       let nextIndex = practiceQuestionIndex;
