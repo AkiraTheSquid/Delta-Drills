@@ -87,11 +87,17 @@ def check_invariants():
     assert main_pos != -1, "no <main ...> in index.html (unexpected)"
     assert banner_pos < main_pos, "tp-banner moved inside/after <main> — must stay above all pages"
 
-    # The Targeted Practice tab button must be auth-gated (matches the
-    # authRequiredTabs entry in app.js).
+    # Tab visibility contract (guest-first rework replaced authRequiredTabs):
+    # the tab button carries .auth-only, and app.js#guestVisibleTabs whitelists
+    # "targeted-practice" so guests can still reach it. Both halves must hold —
+    # dropping the whitelist entry hides the tab from guests; dropping the
+    # class breaks the logged-in visibility toggle.
     app_js = _read(os.path.join(SHARED, 'app.js'))
-    assert '"targeted-practice"' in app_js and 'authRequiredTabs' in app_js, (
-        "app.js#authRequiredTabs no longer gates targeted-practice"
+    assert 'guestVisibleTabs' in app_js and '"targeted-practice"' in app_js, (
+        "app.js#guestVisibleTabs no longer includes targeted-practice"
+    )
+    assert re.search(r'class="tab auth-only"[^>]*data-tab="targeted-practice"', index_html), (
+        "targeted-practice tab button lost its auth-only class"
     )
 
     # Script load order — controller must load AFTER all hard deps.

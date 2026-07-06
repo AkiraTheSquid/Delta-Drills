@@ -92,9 +92,29 @@ def extract_variable_name(code: str) -> str | None:
     return None
 
 
+def solutions_code_for(function_names: list[str], solutions_cells: list[dict]) -> str | None:
+    """Fallback canonical_solution: the solutions-notebook code cell defining
+    the exercise's function. Needed when an exercise has no trailing solution
+    markdown — e.g. einsum_trace is the LAST cell of the exercises notebook,
+    so `next_markdown` is empty and the naive extraction yields None (the
+    id-27 null-solution regression, re-caught by practice/watch.py)."""
+    for name in function_names:
+        for cell in solutions_cells:
+            if cell.get("cell_type") != "code":
+                continue
+            src = cell_text(cell)
+            if f"def {name}(" in src:
+                return src.strip()
+    return None
+
+
 def extract_records() -> list[dict]:
     notebook = json.loads(NOTEBOOK_PATH.read_text(encoding="utf-8"))
     cells = notebook.get("cells", [])
+    solutions_path = NOTEBOOK_PATH.with_name("0.0_Prerequisites_solutions.ipynb")
+    solutions_cells: list[dict] = []
+    if solutions_path.exists():
+        solutions_cells = json.loads(solutions_path.read_text(encoding="utf-8")).get("cells", [])
 
     records = []
     current_section = "Prerequisites"
@@ -126,6 +146,9 @@ def extract_records() -> list[dict]:
         function_names = extract_function_names(source)
         variable_name = extract_variable_name(source)
         title = markdown_title(last_prompt_markdown) or (function_names[0] if function_names else variable_name or f"cell_{idx}")
+        canonical_solution = code_block_from_markdown(next_markdown)
+        if not canonical_solution and function_names:
+            canonical_solution = solutions_code_for(function_names, solutions_cells)
 
         records.append(
             {
@@ -148,7 +171,7 @@ def extract_records() -> list[dict]:
                     "variable_name": variable_name,
                     "prompt_markdown": clean_markdown(last_prompt_markdown),
                     "starter_code": source.strip(),
-                    "canonical_solution": code_block_from_markdown(next_markdown),
+                    "canonical_solution": canonical_solution,
                     "expected_artifact_type": "image" if task_type == "image_transform" else "function",
                     "supports_visual_output": task_type == "image_transform",
                     "render_helper": "display_array_as_img" if task_type == "image_transform" else None,
