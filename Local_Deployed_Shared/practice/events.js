@@ -78,11 +78,19 @@ feedbackButtons.forEach((btn) => {
       ? practiceProgress.currentTargetDifficulty
       : getTargetDifficultyForQuestion(q);
     const pBefore = ewmaAccuracyPBefore;
+    // Acknowledge the click INSTANTLY — the network round-trip below can be
+    // slow (backend boot, cold path) and a silent 5-10s wait reads as "did
+    // that even register?" (tester hit exactly this). Disabling also blocks
+    // a double-click from posting the BKT update twice.
+    feedbackButtons.forEach((b) => (b.disabled = true));
+    btn.classList.add("feedback-btn--pressed");
     let response;
     try {
       response = await PracticeAPI.sendFeedback(q.question_id, feedback);
     } catch (err) {
       outputArea.textContent = "Feedback failed: " + err.message;
+      feedbackButtons.forEach((b) => (b.disabled = false));
+      btn.classList.remove("feedback-btn--pressed");
       return;
     }
     const backendTarget = Number.isFinite(response?.target_difficulty_after)

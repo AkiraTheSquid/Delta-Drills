@@ -147,8 +147,11 @@ function renderQuestion(q, count) {
     // Question 8 reads as a stuck counter (tester hit exactly this).
     coldStartLabel.textContent = `Calibrating “${q.subtopic}” — ${csIndex} of 3`;
     if (coldStartNote) {
+      // Copy must match reality: selection is adaptive from question 1
+      // (wrong → easier, right → harder), NOT "3 questions at fixed
+      // difficulties" (that described the old fixed-ramp system, removed).
       coldStartNote.textContent =
-        `Each skill starts with 3 questions at fixed difficulties to find your level, so this counter restarts whenever a new skill (like “${q.subtopic}”) first comes up. The accuracy bar stays hidden until this skill finishes calibrating.`;
+        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${q.subtopic}”) first comes up, and the accuracy bar stays hidden until it finishes.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {
@@ -224,7 +227,11 @@ function getTargetDifficultyForQuestion(q) {
 }
 
 function showFeedbackButtons() {
-  feedbackButtons.forEach((btn) => btn.classList.remove("hidden"));
+  feedbackButtons.forEach((btn) => {
+    btn.classList.remove("hidden");
+    btn.classList.remove("feedback-btn--pressed");
+    btn.disabled = false;
+  });
   nextProblemBtn.classList.add("hidden");
 }
 
