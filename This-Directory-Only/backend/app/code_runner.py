@@ -12,7 +12,10 @@ from __future__ import annotations
 
 import json
 import logging
+import multiprocessing
+import os
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -24,6 +27,36 @@ logger = logging.getLogger(__name__)
 DEFAULT_TIMEOUT_SECONDS = 20
 
 TORCH_COLAB_MESSAGE = "This drill uses PyTorch, which the in-app sandbox can't run. Open it in Colab (use Show Answer / the solution notebook), complete it there, then self-rate your result."
+
+# --- warm torch fork runner ---------------------------------------------------
+# A cold `import torch` per submission (the subprocess path) costs seconds on a
+# small VM and OOM'd the old 512mb Fly box outright. Instead the API process
+# preimports torch ONCE at startup (preload_torch, called from app.main); torch
+# submissions then run in an os.fork() child that sees the already-imported
+# module via copy-on-write — per-run cost is milliseconds. Non-torch code keeps
+# the proven subprocess path.
+_torch_preloaded = False
+
+
+def preload_torch() -> bool:
+    """Import torch into this process (call once at app startup). Returns
+    availability; safe to call in environments without torch installed."""
+    global _torch_preloaded
+    if _torch_preloaded:
+        return True
+    try:
+        import torch  # noqa: F401
+        _torch_preloaded = True
+        logger.info("torch preloaded for fork runner (%s)", torch.__version__)
+    except Exception as exc:
+        _torch_preloaded = False
+        logger.warning("torch preload failed — torch drills stay Colab-only: %s", exc)
+    return _torch_preloaded
+
+
+def torch_available() -> bool:
+    """True when torch submissions can be graded in-process (fork runner)."""
+    return _torch_preloaded
 
 
 def code_uses_torch(code: str) -> bool:
@@ -83,6 +116,108 @@ class ExecutionResult:
     success: bool
 
 
+def _forked_child_main(code: str, conn) -> None:
+    """Body of the forked grading child. Runs the (preamble-prefixed) user
+    code in a fresh globals dict and ships the result back over the pipe.
+
+    Hardening vs the parent API process it was forked from:
+      - new session (own process group → parent can SIGKILL the whole group)
+      - environment cleared to a minimal PATH (the subprocess path strips env
+        via _safe_env; forks inherit os.environ, so scrub it here)
+      - app.* modules dropped from sys.modules and the backend dir removed
+        from sys.path so user code can't `import app.config` for secrets
+    """
+    import contextlib
+    import io
+    import traceback
+
+    try:
+        os.setsid()
+    except OSError:
+        pass
+    keep_path = os.environ.get("PATH", "/usr/local/bin:/usr/bin:/bin")
+    os.environ.clear()
+    os.environ["PATH"] = keep_path
+    backend_dir = Path(__file__).resolve().parents[1]
+
+    def _points_at_backend(entry: str) -> bool:
+        try:
+            return Path(entry or os.getcwd()).resolve() == backend_dir
+        except OSError:
+            return False
+
+    sys.path[:] = [p for p in sys.path if not _points_at_backend(p)]
+    sys.path_importer_cache.clear()
+    for name in [m for m in sys.modules if m == "app" or m.startswith("app.")]:
+        sys.modules.pop(name, None)
+    # Poison the package name outright — even a surviving path entry can't
+    # resurrect `import app` when sys.modules maps it to None.
+    sys.modules["app"] = None
+
+    buf_out, buf_err = io.StringIO(), io.StringIO()
+    success = True
+    try:
+        with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
+            exec(compile(code, "<practice>", "exec"), {"__name__": "__main__"})
+    except SystemExit as exc:
+        success = exc.code in (0, None)
+    except BaseException:
+        buf_err.write(traceback.format_exc())
+        success = False
+    try:
+        conn.send({"stdout": buf_out.getvalue(), "stderr": buf_err.getvalue(),
+                   "success": success})
+        conn.close()
+    except Exception:
+        os._exit(1)
+    os._exit(0)
+
+
+def _run_code_forked(code: str, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> ExecutionResult:
+    """Execute code in an os.fork() child of this process (torch preimported
+    → no per-run import cost). Same contract as the subprocess path."""
+    ctx = multiprocessing.get_context("fork")
+    parent_conn, child_conn = ctx.Pipe(duplex=False)
+    proc = ctx.Process(target=_forked_child_main, args=(code, child_conn), daemon=True)
+    try:
+        proc.start()
+        child_conn.close()
+        result = None
+        if parent_conn.poll(timeout):
+            try:
+                result = parent_conn.recv()
+            except EOFError:
+                result = None
+        if result is not None:
+            return ExecutionResult(
+                stdout=result["stdout"], stderr=result["stderr"],
+                success=bool(result["success"]),
+            )
+        # timeout or child died without reporting — kill the whole group
+        timed_out = proc.is_alive()
+        if proc.pid:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
+        if timed_out:
+            return ExecutionResult(
+                stdout="", stderr=f"Execution timed out after {timeout} seconds",
+                success=False,
+            )
+        return ExecutionResult(
+            stdout="", stderr="Execution failed (grading process died)", success=False,
+        )
+    except Exception as exc:
+        logger.exception("Fork runner error")
+        return ExecutionResult(stdout="", stderr=f"Internal error: {exc}", success=False)
+    finally:
+        parent_conn.close()
+        proc.join(timeout=1)
+        if proc.is_alive():
+            proc.kill()
+
+
 @dataclass
 class TestCaseResult:
     passed: bool
@@ -105,9 +240,11 @@ def run_code(code: str, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> ExecutionResu
     Returns:
         ExecutionResult with stdout, stderr, and success flag.
     """
-    # Torch/GPU drills are Colab-only: the in-app sandbox can't import torch
-    # within a sane timeout. Return an honest message instead of hanging.
+    # Torch code: fork runner when torch is preloaded (milliseconds); honest
+    # Colab-routing refusal when it isn't (e.g. an env without torch).
     if code_uses_torch(code):
+        if torch_available():
+            return _run_code_forked(CODE_PREAMBLE + code, timeout=timeout)
         return ExecutionResult(stdout="", stderr=TORCH_COLAB_MESSAGE, success=False)
 
     full_code = CODE_PREAMBLE + code
@@ -259,7 +396,14 @@ for _delta_case in json.loads({payload!r}):
         }})
 print("__DELTA_TESTS__" + json.dumps(_delta_results))
 """
-    execution = run_code(harness, timeout=timeout)
+    # Torch may hide inside the JSON payload's setup/expected strings (where
+    # the line-anchored code_uses_torch can't see it) — e.g. a non-torch
+    # submission against a torch question. Route those through the fork
+    # runner too rather than paying a cold torch import in a subprocess.
+    if torch_available() and ("torch" in payload or code_uses_torch(user_code)):
+        execution = _run_code_forked(CODE_PREAMBLE + harness, timeout=timeout)
+    else:
+        execution = run_code(harness, timeout=timeout)
     marker = "__DELTA_TESTS__"
     results: list[TestCaseResult] = []
     if marker in execution.stdout:

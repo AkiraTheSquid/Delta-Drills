@@ -10,12 +10,20 @@ function isCalibrationQuestion(q) {
 }
 
 // A question is "torch" if the bank tags it so, or its starter/solution imports
-// torch. Torch can't run in the in-app sandbox, so these route to Colab.
+// torch.
 function questionIsTorch(q) {
   if (!q) return false;
   if (q.primary_library === "torch") return true;
   const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
   return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
+}
+
+// Colab routing applies ONLY where the runner can't grade torch. Backend mode
+// grades torch in-process now (fork runner, torch preimported at boot), so
+// torch questions there use the normal editor flow. Offline/Supabase practice
+// runs on Pyodide, which cannot import torch at all → Colab.
+function torchNeedsColab(q) {
+  return questionIsTorch(q) && practiceMode !== "backend";
 }
 
 function _escapeHtml(s) {
@@ -78,14 +86,19 @@ function renderQuestionBody(q) {
   }
 }
 
-// Torch drills route to Colab (the in-app sandbox can't import torch in time).
-// Swap the Submit/editor flow for an honest "do it in Colab + self-rate" panel.
+// BINARY interface per question: either the Colab card (offline torch) or the
+// full editor flow (everything else) — never both half-shown at once (a torch
+// card next to a live editor read as contradictory; tester feedback).
 function applyTorchRouting(q) {
-  const isTorch = questionIsTorch(q);
-  if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !isTorch);
-  if (!isTorch) return;
-  // Hide the doomed in-app submit; the notice carries its own self-rate.
-  practiceSubmitArea.classList.add("hidden");
+  const colabRoute = torchNeedsColab(q);
+  if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !colabRoute);
+  // The whole right editor panel + hint aids + submit/skip swap out together.
+  const rightPanel = document.querySelector(".practice-right");
+  if (rightPanel) rightPanel.classList.toggle("hidden", colabRoute);
+  const aids = document.getElementById("practice-aids");
+  if (aids) aids.classList.toggle("hidden", colabRoute);
+  practiceSubmitArea.classList.toggle("hidden", colabRoute);
+  if (!colabRoute) return;
   const toHref = (p) => (p && typeof colabUpstreamHref === "function") ? colabUpstreamHref(p) : "";
   // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall
   // back to the solution notebook only if no problem notebook exists.

@@ -6,8 +6,12 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc libpq-dev && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python dependencies. torch MUST come from the cpu index first —
+# plain PyPI serves the CUDA-bundled wheel (multi-GB, OOMs the VM); the cpu
+# wheel is ~200MB and imports in ~1s. requirements.txt's torch>=2.0 is then
+# already satisfied and skipped.
 COPY This-Directory-Only/backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy only the split-layout files the backend uses at runtime

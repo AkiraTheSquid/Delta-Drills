@@ -30,6 +30,15 @@ def _ensure_schema() -> None:
         logger.warning("Schema bootstrap skipped: %s", exc)
 
 
+@app.on_event("startup")
+def _preload_torch_runner() -> None:
+    """Preimport torch so the fork runner grades torch drills in-process
+    (milliseconds per run instead of a doomed cold import). Non-fatal when
+    torch is absent — those drills fall back to Colab routing."""
+    from app.code_runner import preload_torch
+    preload_torch()
+
+
 app.include_router(practice_router)
 app.include_router(auth_router)
 app.include_router(jobs_router)

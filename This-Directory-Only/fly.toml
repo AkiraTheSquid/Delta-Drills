@@ -30,4 +30,6 @@ primary_region = "sjc"
 
 [[vm]]
   size = "shared-cpu-1x"
-  memory = "512mb"
+  # 2GB: torch (cpu wheel) stays preimported in the API process so the fork
+  # runner can grade torch drills in-process. 512mb OOM'd on torch import.
+  memory = "2gb"

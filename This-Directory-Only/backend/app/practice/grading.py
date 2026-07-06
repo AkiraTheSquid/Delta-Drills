@@ -18,6 +18,7 @@ from app.code_runner import (
     code_uses_torch,
     run_code,
     run_function_tests,
+    torch_available,
 )
 from app.models import User
 from app.practice.chatgpt_helpers import call_chatgpt
@@ -57,11 +58,10 @@ def grade_submission(
 
     Returns: (correct, actual_output, expected_output, failed_tests)
     """
-    # Torch/GPU drills are Colab-only — the sandbox can't import torch. The
-    # frontend should route these to Colab self-rating before submitting, but
-    # if one reaches here we refuse rather than run a doomed subprocess or
-    # record a bogus wrong answer.
-    if (
+    # Torch drills grade in-process via the fork runner when torch is
+    # preloaded (app startup). Refuse with the Colab-routing message only
+    # when torch genuinely isn't available in this environment.
+    if not torch_available() and (
         getattr(question, "primary_library", None) == "torch"
         or code_uses_torch(user_code)
         or code_uses_torch(getattr(question, "answer_code", "") or "")
