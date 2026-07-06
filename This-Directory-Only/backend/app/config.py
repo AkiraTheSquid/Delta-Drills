@@ -4,7 +4,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:54322/pdf_split_tool"
     jwt_secret: str = "change-me"
-    access_token_ttl_minutes: int = 720
+    # 30 days. Was 720 (12h) — short enough that a learner returning the next
+    # day got silently demoted to the static demo pool mid-"session" (token
+    # expired overnight, handleExpiredToken fell back to local mode with no
+    # visible notice). This is a learning app, not a bank; long-lived tokens
+    # + the frontend's expired-session banner are the right trade.
+    access_token_ttl_minutes: int = 43200
     storage_dir: str = "/tmp/delta-drills-local"
     openai_api_key: str | None = None
     openai_model: str | None = None

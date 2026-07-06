@@ -827,6 +827,20 @@
   border-color: var(--accent, #5b8cff);
   box-shadow: inset 0 0 0 1px var(--accent, #5b8cff);
 }
+/* Mode-demotion banner — expired sign-in / demo-pool fallback. Must be
+   impossible to miss; a console.warn is not a notice. */
+.practice-mode-notice {
+  background: rgba(227, 33, 44, 0.12);
+  border: 1px solid var(--accent, #e3212c);
+  border-radius: 6px;
+  color: var(--accent, #e3212c);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+}
+
 /* Instant click acknowledgment while the rating posts (slow-network case). */
 .feedback-btn--pressed {
   background: rgba(91, 140, 255, 0.18);
