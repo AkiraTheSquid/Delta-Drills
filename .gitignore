@@ -65,3 +65,49 @@ scripts/solution_build/ere/.verify_venv/
 scripts/solution_build/ere/review/
 scripts/solution_build/ere/authgroups/
 # NOTE: authored/ is the verified spec source-of-truth — intentionally TRACKED.
+
+arena-procedural-drills/
+
+docs/
+
+papers/
+
+scripts/solution_build/
+
+.vercel/
+
+arena-book/
+
+arena-book-colab/
+
+Local_Deployed_Shared/archive/
+
+Local_Deployed_Shared/content/
+
+Local_Deployed_Shared/concept-graph/
+
+Local_Deployed_Shared/prompts/
+
+Local_Deployed_Shared/chatgpt/
+
+Local_Deployed_Shared/tools/
+
+Local_Deployed_Shared/docs/
+
+This-Directory-Only/Public/
+
+This-Directory-Only/supabase/
+
+This-Directory-Only/toc_md/
+
+This-Directory-Only/chatgpt/
+
+This-Directory-Only/backend/docs/
+
+This-Directory-Only/csv files of problems/
+
+This-Directory-Only/mathpix processor/
+
+This-Directory-Only/code example for the prioritization of topics/
+
+This-Directory-Only/backend/app/data/

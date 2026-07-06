@@ -1,5 +1,5 @@
 <!-- modulario:template -->
-# part32_function_vectors_and_model_steering
+# scripts
 
 ## Purpose
 - One or two sentences on what this folder is responsible for.
@@ -44,4 +44,4 @@
   - Status: `ACTIVE` = still a risk, `RESOLVED` = was an issue, now fixed (keep for history).
 
 ## Recent Changes
-- 2026-05-19: Initial doc created.
+- 2026-07-06: Initial doc created.
