@@ -59,6 +59,9 @@ def load_code_runner():
     backend_python = get_backend_python()
     if backend_python.exists():
         module.sys.executable = str(backend_python)
+    # Enable the fork runner so torch questions confirm against the real
+    # grading path (same as prod, where torch preloads at app startup).
+    module.preload_torch()
     return module
 
 
@@ -286,13 +289,9 @@ def audit(confirm: bool) -> dict:
             if confirm:
                 leaked = [f["var"] for f in findings
                           if f["check"] in ("precompute_leak", "precompute_leak_scalar")]
-                blob = json.dumps(question.get("test_cases") or []) + (question.get("starter_code") or "")
-                if leaked and ("torch" in blob):
-                    # sandbox refuses torch, so the harness can't confirm —
-                    # the in-process leak finding stands on its own
-                    findings.append({"check": "torch_unconfirmable",
-                                     "detail": "leak found in-process; grading harness refuses torch"})
-                elif leaked:
+                if leaked:
+                    # torch confirms too: load_code_runner preloads torch, so
+                    # the harness grades torch via the fork runner like prod.
                     findings += confirm_gameable(code_runner, question, leaked)
         if findings:
             report["questions"][str(qid)] = findings
