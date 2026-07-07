@@ -117,6 +117,40 @@ function applyTorchRouting(q) {
   }
 }
 
+function stableQuestionId(q) {
+  const raw = q?.question_id ?? q?.id;
+  return Number.isFinite(raw) ? String(raw) : String(raw || "");
+}
+
+function renderQuestionIdChip(q) {
+  if (!questionIdChip) return;
+  const id = stableQuestionId(q);
+  if (!id) {
+    questionIdChip.textContent = "ID --";
+    questionIdChip.disabled = true;
+    questionIdChip.removeAttribute("data-question-id");
+    return;
+  }
+  questionIdChip.disabled = false;
+  questionIdChip.dataset.questionId = id;
+  questionIdChip.textContent = `ID ${id}`;
+  questionIdChip.title = `Copy stable problem ID: ${id}`;
+  questionIdChip.onclick = async () => {
+    const value = `question_id=${id}`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(value);
+      }
+      questionIdChip.textContent = "Copied";
+      window.setTimeout(() => {
+        if (questionIdChip.dataset.questionId === id) questionIdChip.textContent = `ID ${id}`;
+      }, 900);
+    } catch (_) {
+      questionIdChip.textContent = `ID ${id}`;
+    }
+  };
+}
+
 function renderQuestion(q, count) {
   if (curatedExcludedIds.has(q.question_id)) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
@@ -136,6 +170,7 @@ function renderQuestion(q, count) {
     "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
+  renderQuestionIdChip(q);
   questionMetaTop.classList.add("hidden");
 
   // Cold-start calibration badge
@@ -467,6 +502,7 @@ function renderFailedTests(result, question) {
     anchor.parentNode.insertBefore(block, anchor);
   }
   const total = (question && Array.isArray(question.test_cases) && question.test_cases.length) || result.failed_tests.length;
+  const id = stableQuestionId(question);
   const clip = (s) => {
     const t = String(s == null ? "" : s);
     return t.length > 220 ? t.slice(0, 220) + "…" : t;
@@ -476,7 +512,7 @@ function renderFailedTests(result, question) {
     return `✗ failing case ${i + 1}:\n    expected: ${_escapeHtml(clip(t.expected))}\n    got:      ${_escapeHtml(clip(t.actual))}`;
   });
   block.innerHTML =
-    `<div class="failed-tests-title">Failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}</div>` +
+    `<div class="failed-tests-title">Failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}${id ? ` · ID ${_escapeHtml(id)}` : ""}</div>` +
     `<pre class="failed-tests-body">${rows.join("\n")}</pre>`;
   block.classList.remove("hidden");
 }
