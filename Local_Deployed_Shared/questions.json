@@ -9967,8 +9967,8 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "For a 3D array A with shape (2, 2, 2), calculate the similarity between the internal feature vectors for each item in the batch, resulting in a 3D array that captures this relationship. Print the result.",
-    "answer_code": "einsum(A, A, 'b i d, b j d -> b i j')",
+    "question_text": "Write a function solve(a) that takes a 3-D array of shape (b, i, d) — a batch of i feature vectors of dimension d — and returns the (b, i, i) batch of similarity matrices: entry [n, p, q] is the dot product of vectors p and q within batch item n.",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('bid,bjd->bij', a, a)\n\n\nprint(solve(np.arange(8.0).reshape(2, 2, 2)))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "[[[  5  11]\n  [ 11  25]]\n\n [[ 61  83]\n  [ 83 113]]]",
@@ -9976,12 +9976,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return the (b, i, i) batch of similarity matrices.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, A, 'b i d, b j d -> b i j')"
+        "setup_code": "import numpy as np\na = np.arange(8.0).reshape(2, 2, 2)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('bid,bjd->bij', a, a)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[1.0, 0.0], [0.0, 1.0]]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[1.0, 0.0], [0.0, 1.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(81)\na = np.random.rand(3, 4, 5)",
+        "call": "(np.asarray(solve(a)).shape, np.round(np.asarray(solve(a)), 10).tolist())",
+        "expected_expr": "((3, 4, 4), np.round(np.asarray(np.einsum('bid,bjd->bij', a, a)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[2.0]]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[4.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -9995,8 +10010,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given a 3D array X of shape (2, 2, 2) and a 1D array v of length 2, apply the vector to each token in the batch by performing a reduction that combines the last dimension of X with the vector, resulting in a 2D array of shape (2, 2). Print the result.",
-    "answer_code": "einsum(X, v, 'b t d, d -> b t')",
+    "question_text": "Write a function solve(x, v) that takes a 3-D array x of shape (b, t, d) — a batch of t tokens with d features — and a 1-D vector v of length d, and returns the (b, t) array where each token's feature vector has been reduced to its dot product with v.",
+    "answer_code": "import numpy as np\n\ndef solve(x, v):\n    return np.einsum('btd,d->bt', x, v)\n\n\nprint(solve(np.ones((1, 2, 3)), np.array([1.0, 2.0, 3.0])))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "[[ 5 11]\n [17 23]]",
@@ -10004,12 +10019,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nX = np.arange(1, 9).reshape((2, 2, 2))\nv = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x, v):\n    \"\"\"Return the (b, t) array where each token's feature vector has been reduced to its dot product with v.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((1, 2, 3)), np.array([1.0, 2.0, 3.0])))\n",
     "test_cases": [
       {
-        "setup_code": "X = np.arange(1, 9).reshape((2, 2, 2))\nv = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(X, v, 'b t d, d -> b t')"
+        "setup_code": "import numpy as np\nx = np.ones((1, 2, 3))\nv = np.array([1.0, 2.0, 3.0])",
+        "call": "np.round(np.asarray(solve(x, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((1, 2), 6.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(82)\nx = np.random.rand(2, 3, 4)\nv = np.random.rand(4)",
+        "call": "np.round(np.asarray(solve(x, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('btd,d->bt', x, v)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[[1.0, -1.0]]])\nv = np.array([3.0, 3.0])",
+        "call": "np.round(np.asarray(solve(x, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[0.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(4.0).reshape(2, 2, 1)\nv = np.array([10.0])",
+        "call": "np.round(np.asarray(solve(x, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[0.0, 10.0], [20.0, 30.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10023,21 +10053,36 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given a vector x and a 2D matrix W, compute a weighted sum of the matrix's rows based on the vector, and then take the dot product of that result with the vector again. Print the final result. (★☆☆)",
-    "answer_code": "einsum(x, W, x, 'i, i j, j ->')",
+    "question_text": "Write a function solve(x, w) that takes a 1-D vector x of length n and an (n, n) matrix w, and returns the QUADRATIC FORM x^T W x as a single scalar: weight each pair of components x[i] * x[j] by w[i, j] and sum everything.",
+    "answer_code": "import numpy as np\n\ndef solve(x, w):\n    return np.einsum('i,ij,j->', x, w, x)\n\n\nprint(solve(np.array([1.0, 2.0]), np.eye(2)))\n",
     "difficulty_score": 42,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "27",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx = np.arange(1, 3)\nW = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x, w):\n    \"\"\"Return the QUADRATIC FORM x^T W x as a single scalar.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([1.0, 2.0]), np.eye(2)))\n",
     "test_cases": [
       {
-        "setup_code": "x = np.arange(1, 3)\nW = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(x, W, x, 'i, i j, j ->')"
+        "setup_code": "import numpy as np\nx = np.array([1.0, 2.0])\nw = np.eye(2)",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(5.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(83)\nx = np.random.rand(4)\nw = np.random.rand(4, 4)",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('i,ij,j->', x, w, x)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([2.0])\nw = np.array([[3.0]])",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(12.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([1.0, -1.0])\nw = np.array([[0.0, 1.0], [1.0, 0.0]])",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(-2.0)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10051,8 +10096,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given two 3D arrays F and G with shape (2, 2, 2), compute the sum of products of corresponding elements across the channel dimension for each spatial location, resulting in a 2D array. Print the result.",
-    "answer_code": "einsum(F, G, 'c h w, c h w -> h w')",
+    "question_text": "Write a function solve(f, g) that takes two 3-D arrays of identical shape (c, h, w) — c channels of h x w maps — and returns the (h, w) array formed by multiplying corresponding elements and summing across the CHANNEL dimension only.",
+    "answer_code": "import numpy as np\n\ndef solve(f, g):\n    return np.einsum('chw,chw->hw', f, g)\n\n\nprint(solve(np.ones((2, 2, 2)), np.ones((2, 2, 2))))\n",
     "difficulty_score": 36,
     "difficulty_label": "medium",
     "expected_output": "[[26 40]\n [58 80]]",
@@ -10060,12 +10105,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nF = np.arange(1, 9).reshape((2, 2, 2))\nG = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(f, g):\n    \"\"\"Return the (h, w) array formed by multiplying corresponding elements and summing across the CHANNEL dimension \"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((2, 2, 2)), np.ones((2, 2, 2))))\n",
     "test_cases": [
       {
-        "setup_code": "F = np.arange(1, 9).reshape((2, 2, 2))\nG = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(F, G, 'c h w, c h w -> h w')"
+        "setup_code": "import numpy as np\nf = np.ones((2, 2, 2))\ng = np.ones((2, 2, 2))",
+        "call": "np.round(np.asarray(solve(f, g)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((2, 2), 2.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(84)\nf = np.random.rand(3, 2, 4)\ng = np.random.rand(3, 2, 4)",
+        "call": "np.round(np.asarray(solve(f, g)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('chw,chw->hw', f, g)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nf = np.array([[[1.0, 2.0]], [[3.0, 4.0]]])\ng = np.array([[[10.0, 0.0]], [[0.0, 1.0]]])",
+        "call": "np.round(np.asarray(solve(f, g)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[10.0, 4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nf = np.array([[[5.0]]])\ng = np.array([[[-2.0]]])",
+        "call": "np.round(np.asarray(solve(f, g)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[-10.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10079,8 +10139,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given two 4D arrays S and V with shapes (2, 2, 2, 2), combine them by summing over the dimension representing keys, resulting in a new array with the shape (2, 2, 2, d). Print the result.",
-    "answer_code": "einsum(S, V, 'b h q k, b h k d -> b h q d')",
+    "question_text": "Write a function solve(s, v) that takes attention weights s of shape (b, h, q, k) and values v of shape (b, h, k, d), and returns the (b, h, q, d) result of applying the weights: for each batch and head, the weighted sum over the k (key) axis of the value vectors.",
+    "answer_code": "import numpy as np\n\ndef solve(s, v):\n    return np.einsum('bhqk,bhkd->bhqd', s, v)\n\n\nprint(solve(np.ones((1, 1, 1, 2)) / 2, np.arange(4.0).reshape(1, 1, 2, 2)))\n",
     "difficulty_score": 55,
     "difficulty_label": "medium",
     "expected_output": "[[[[  7  10]\n   [ 15  22]]\n\n  [[ 67  78]\n   [ 91 106]]]\n\n\n [[[191 210]\n   [231 254]]\n\n  [[379 406]\n   [435 466]]]]",
@@ -10088,12 +10148,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nS = np.arange(1, 17).reshape((2, 2, 2, 2))\nV = np.arange(1, 17).reshape((2, 2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(s, v):\n    \"\"\"Return the (b, h, q, d) result of applying the weights.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((1, 1, 1, 2)) / 2, np.arange(4.0).reshape(1, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "S = np.arange(1, 17).reshape((2, 2, 2, 2))\nV = np.arange(1, 17).reshape((2, 2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(S, V, 'b h q k, b h k d -> b h q d')"
+        "setup_code": "import numpy as np\ns = np.ones((1, 1, 1, 2)) / 2\nv = np.arange(4.0).reshape(1, 1, 2, 2)",
+        "call": "np.round(np.asarray(solve(s, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[1.0, 2.0]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(85)\ns = np.random.rand(2, 2, 3, 4)\nv = np.random.rand(2, 2, 4, 5)",
+        "call": "(np.asarray(solve(s, v)).shape, np.round(np.asarray(solve(s, v)), 10).tolist())",
+        "expected_expr": "((2, 2, 3, 5), np.round(np.asarray(np.einsum('bhqk,bhkd->bhqd', s, v)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\ns = np.array([[[[1.0, 0.0]]]])\nv = np.array([[[[7.0, 8.0], [9.0, 10.0]]]])",
+        "call": "np.round(np.asarray(solve(s, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[7.0, 8.0]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\ns = np.zeros((1, 1, 2, 2))\nv = np.ones((1, 1, 2, 3))",
+        "call": "np.round(np.asarray(solve(s, v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 1, 2, 3))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10107,21 +10182,36 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "Given a 2D array A and a 1D weight vector w, compute the weighted sum of the rows of A, then normalize the result by the sum of the weights. (★☆☆)",
-    "answer_code": "einsum(w, A, 'n, n d -> d') / w.sum()",
+    "question_text": "Write a function solve(a, w) that takes a 2-D array a of shape (n, d) and a 1-D weight vector w of length n, and returns the WEIGHTED AVERAGE of a's rows as a length-d vector: the w-weighted sum of the rows divided by the total weight (assume w.sum() is nonzero).",
+    "answer_code": "import numpy as np\n\ndef solve(a, w):\n    return np.einsum('n,nd->d', w, a) / w.sum()\n\n\nprint(solve(np.array([[0.0, 0.0], [10.0, 20.0]]), np.array([1.0, 3.0])))\n",
     "difficulty_score": 42,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "[2.33333333 3.33333333]",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nw = np.arange(1, 3)\nA = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, w):\n    \"\"\"Return the WEIGHTED AVERAGE of a's rows as a length-d vector.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[0.0, 0.0], [10.0, 20.0]]), np.array([1.0, 3.0])))\n",
     "test_cases": [
       {
-        "setup_code": "w = np.arange(1, 3)\nA = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(w, A, 'n, n d -> d') / w.sum()"
+        "setup_code": "import numpy as np\na = np.array([[0.0, 0.0], [10.0, 20.0]])\nw = np.array([1.0, 3.0])",
+        "call": "np.round(np.asarray(solve(a, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([7.5, 15.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(86)\na = np.random.rand(5, 3)\nw = np.random.rand(5) + 0.1",
+        "call": "np.round(np.asarray(solve(a, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('n,nd->d', w, a) / w.sum()), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[4.0, 8.0]])\nw = np.array([2.0])",
+        "call": "np.round(np.asarray(solve(a, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([4.0, 8.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[1.0], [3.0]])\nw = np.array([1.0, 1.0])",
+        "call": "np.round(np.asarray(solve(a, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([2.0])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10135,8 +10225,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Create a matrix where each element at position (i, j) is the result of multiplying the i-th element of vector v1 by the j-th element of vector v2. Use the provided inputs and print the resulting matrix.",
-    "answer_code": "einsum(v1, v2, 'i, j -> i j')",
+    "question_text": "Write a function solve(v1, v2) that takes two 1-D vectors of lengths i and j and returns their (i, j) OUTER PRODUCT matrix: entry [p, q] is v1[p] * v2[q].",
+    "answer_code": "import numpy as np\n\ndef solve(v1, v2):\n    return np.einsum('i,j->ij', v1, v2)\n\n\nprint(solve(np.array([1.0, 2.0]), np.array([10.0, 20.0, 30.0])))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[[1 2]\n [2 4]]",
@@ -10144,12 +10234,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nv1 = np.arange(1, 3)\nv2 = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(v1, v2):\n    \"\"\"Return their (i, j) OUTER PRODUCT matrix.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([1.0, 2.0]), np.array([10.0, 20.0, 30.0])))\n",
     "test_cases": [
       {
-        "setup_code": "v1 = np.arange(1, 3)\nv2 = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(v1, v2, 'i, j -> i j')"
+        "setup_code": "import numpy as np\nv1 = np.array([1.0, 2.0])\nv2 = np.array([10.0, 20.0, 30.0])",
+        "call": "np.round(np.asarray(solve(v1, v2)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[10.0, 20.0, 30.0], [20.0, 40.0, 60.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(87)\nv1 = np.random.rand(4)\nv2 = np.random.rand(2)",
+        "call": "np.round(np.asarray(solve(v1, v2)), 10)",
+        "expected_expr": "np.round(np.asarray(np.outer(v1, v2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv1 = np.array([3.0])\nv2 = np.array([-2.0])",
+        "call": "np.round(np.asarray(solve(v1, v2)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[-6.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv1 = np.array([1.0, 0.0])\nv2 = np.array([5.0, 7.0])",
+        "call": "np.round(np.asarray(solve(v1, v2)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[5.0, 7.0], [0.0, 0.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10163,8 +10268,8 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "Given a 2x2 array A, return a 1D array containing the elements where the row and column indices match. (★☆☆)",
-    "answer_code": "einsum(A, 'i i -> i')",
+    "question_text": "Write a function solve(a) that takes a square 2-D array and returns its main DIAGONAL as a 1-D array — the entries a[i, i] — extracted via index notation (a repeated input index kept in the output).",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('ii->i', a)\n\n\nprint(solve(np.array([[1, 2], [3, 4]])))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "[1 4]",
@@ -10172,12 +10277,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return its main DIAGONAL as a 1-D array — the entries a[i, i] — extracted via index notation (a repeated input\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1, 2], [3, 4]])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, 'i i -> i')"
+        "setup_code": "import numpy as np\na = np.array([[1, 2], [3, 4]])",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[1, 4]"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.arange(9).reshape(3, 3)",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[0, 4, 8]"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[7]])",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[7]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(88)\na = np.random.randint(0, 9, (4, 4))",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "np.einsum('ii->i', a).tolist()"
       }
     ],
     "submission_mode": "function",
@@ -10191,8 +10311,8 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "Given a 2x2 matrix X, compute the result of multiplying the matrix by its transpose to analyze the relationships between its columns. Print the resulting matrix. (★☆☆)",
-    "answer_code": "einsum(X, X, 'n d, n e -> d e')",
+    "question_text": "Write a function solve(x) that takes a 2-D array of shape (n, d) and returns the (d, d) matrix X^T X — the Gram matrix of x's COLUMNS, where entry [p, q] is the dot product of column p with column q.",
+    "answer_code": "import numpy as np\n\ndef solve(x):\n    return np.einsum('nd,ne->de', x, x)\n\n\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]])))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "[[10 14]\n [14 20]]",
@@ -10200,12 +10320,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nX = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x):\n    \"\"\"Return the (d, d) matrix X^T X — the Gram matrix of x's COLUMNS, where entry [p, q] is the dot product of colu\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "X = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(X, X, 'n d, n e -> d e')"
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 2.0], [3.0, 4.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[10.0, 14.0], [14.0, 20.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(89)\nx = np.random.rand(5, 3)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(x.T @ x), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[2.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 0.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[2.0, 0.0], [0.0, 1.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10219,8 +10354,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given a 2D array X of shape (2, 2) and its mean along the first axis, compute the variance and covariance by contracting the batch dimension of the mean-centered data. Use the provided inputs and print the result.",
-    "answer_code": "einsum(X-mu, X-mu, 'n d, n e -> d e') / (n-1)",
+    "question_text": "Write a function solve(x) that takes a 2-D array of shape (n, d) with n >= 2 rows of observations and returns the (d, d) SAMPLE COVARIANCE matrix: center each column by its mean, contract the observation axis between the centered matrix and itself, and divide by n - 1.",
+    "answer_code": "import numpy as np\n\ndef solve(x):\n    return np.einsum('nd,ne->de', x - x.mean(axis=0), x - x.mean(axis=0)) / (x.shape[0] - 1)\n\n\nprint(solve(np.array([[1.0, 2.0], [3.0, 6.0]])))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "[[2. 2.]\n [2. 2.]]",
@@ -10228,12 +10363,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nX = np.arange(1, 5).reshape((2, 2))\nmu = X.mean(axis=0)\nn = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x):\n    \"\"\"Return the (d, d) SAMPLE COVARIANCE matrix.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0], [3.0, 6.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "X = np.arange(1, 5).reshape((2, 2))\nmu = X.mean(axis=0)\nn = 2",
-        "call": "solve()",
-        "expected_expr": "einsum(X-mu, X-mu, 'n d, n e -> d e') / (n-1)"
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 2.0], [3.0, 6.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[2.0, 4.0], [4.0, 8.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(90)\nx = np.random.randn(20, 3)",
+        "call": "np.round(np.asarray(solve(x)), 8)",
+        "expected_expr": "np.round(np.cov(x, rowvar=False), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[5.0], [7.0], [9.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((2, 2))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10247,8 +10397,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given two 2x2 matrices C and D, compute the resulting matrix by summing the products of corresponding elements over the shared inner dimension. Print the result.",
-    "answer_code": "einsum(C, D, 'i k, k j -> i j')",
+    "question_text": "Write a function solve(c, d) that takes two matrices with compatible shapes (i, k) and (k, j) and returns their MATRIX PRODUCT: entry [i, j] sums the products c[i, k] * d[k, j] over the shared inner dimension k.",
+    "answer_code": "import numpy as np\n\ndef solve(c, d):\n    return np.einsum('ik,kj->ij', c, d)\n\n\nprint(solve(np.array([[1.0, 2.0]]), np.array([[3.0], [4.0]])))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "[[ 7 10]\n [15 22]]",
@@ -10256,12 +10406,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nC = np.arange(1, 5).reshape((2, 2))\nD = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(c, d):\n    \"\"\"Return their MATRIX PRODUCT.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0]]), np.array([[3.0], [4.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "C = np.arange(1, 5).reshape((2, 2))\nD = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(C, D, 'i k, k j -> i j')"
+        "setup_code": "import numpy as np\nc = np.array([[1.0, 2.0]])\nd = np.array([[3.0], [4.0]])",
+        "call": "np.round(np.asarray(solve(c, d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[11.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(91)\nc = np.random.rand(3, 4)\nd = np.random.rand(4, 2)",
+        "call": "np.round(np.asarray(solve(c, d)), 10)",
+        "expected_expr": "np.round(np.asarray(c @ d), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nc = np.eye(2)\nd = np.array([[5.0, 6.0], [7.0, 8.0]])",
+        "call": "np.round(np.asarray(solve(c, d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[5.0, 6.0], [7.0, 8.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nc = np.array([[2.0, 0.0], [0.0, 3.0]])\nd = np.array([[1.0, 1.0], [1.0, 1.0]])",
+        "call": "np.round(np.asarray(solve(c, d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[2.0, 2.0], [3.0, 3.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10275,8 +10440,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given a 1D array x containing the values from 1 to 2, return a single value that represents the total of all elements in the array. Print the result.",
-    "answer_code": "einsum(x, 'i ->')",
+    "question_text": "Write a function solve(x) that takes a numpy array of ANY shape and returns the total of all its elements as a scalar, expressed as a full contraction (every index summed away).",
+    "answer_code": "import numpy as np\n\ndef solve(x):\n    return np.einsum(x, list(range(x.ndim)), [])\n\n\nprint(solve(np.arange(6.0).reshape(2, 3)))\n",
     "difficulty_score": 18,
     "difficulty_label": "easy",
     "expected_output": "3",
@@ -10284,12 +10449,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x):\n    \"\"\"Return the total of all its elements as a scalar, expressed as a full contraction (every index summed away).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(6.0).reshape(2, 3)))\n",
     "test_cases": [
       {
-        "setup_code": "x = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(x, 'i ->')"
+        "setup_code": "import numpy as np\nx = np.array([1.0, 2.0])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(3.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(6.0).reshape(2, 3)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(15.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(2, 2, 2)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(28.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[-4.5]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(-4.5)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10303,8 +10483,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given a 2x2 matrix A and a 1D vector b, compute the resulting vector by performing a multiplication that combines the rows of the matrix with the elements of the vector. Print the result.",
-    "answer_code": "einsum(A, b, 'i j, j -> i')",
+    "question_text": "Write a function solve(a, b) that takes an (i, j) matrix and a length-j vector, and returns the length-i MATRIX-VECTOR product: entry i is the dot product of row i of a with b.",
+    "answer_code": "import numpy as np\n\ndef solve(a, b):\n    return np.einsum('ij,j->i', a, b)\n\n\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([10.0, 1.0])))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[ 5 11]",
@@ -10312,12 +10492,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\nb = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b):\n    \"\"\"Return the length-i MATRIX-VECTOR product.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([10.0, 1.0])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))\nb = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(A, b, 'i j, j -> i')"
+        "setup_code": "import numpy as np\na = np.array([[1.0, 2.0], [3.0, 4.0]])\nb = np.array([10.0, 1.0])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([12.0, 34.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(92)\na = np.random.rand(4, 3)\nb = np.random.rand(3)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(a @ b), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[5.0]])\nb = np.array([2.0])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([10.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.eye(3)\nb = np.array([7.0, 8.0, 9.0])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([7.0, 8.0, 9.0])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10331,8 +10526,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given Query and Key tensors Q and K with shapes (2, 2, 2, 2), compute the attention scores by comparing these tensors across the batch dimension and returning a new tensor with the appropriate shape. Print the result.",
-    "answer_code": "einsum(Q, K, 'b h q d, b h k d -> b h q k')",
+    "question_text": "Write a function solve(q, k) that takes Query and Key tensors of shapes (b, h, q, d) and (b, h, k, d), and returns the (b, h, q, k) ATTENTION SCORE tensor: for each batch and head, the dot product of every query vector with every key vector (no scaling).",
+    "answer_code": "import numpy as np\n\ndef solve(q, k):\n    return np.einsum('bhqd,bhkd->bhqk', q, k)\n\n\nprint(solve(np.ones((1, 1, 1, 2)), np.ones((1, 1, 2, 2))))\n",
     "difficulty_score": 55,
     "difficulty_label": "medium",
     "expected_output": "[[[[  5  11]\n   [ 11  25]]\n\n  [[ 61  83]\n   [ 83 113]]]\n\n\n [[[181 219]\n   [219 265]]\n\n  [[365 419]\n   [419 481]]]]",
@@ -10340,12 +10535,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nQ = np.arange(1, 17).reshape((2, 2, 2, 2))\nK = np.arange(1, 17).reshape((2, 2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(q, k):\n    \"\"\"Return the (b, h, q, k) ATTENTION SCORE tensor.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((1, 1, 1, 2)), np.ones((1, 1, 2, 2))))\n",
     "test_cases": [
       {
-        "setup_code": "Q = np.arange(1, 17).reshape((2, 2, 2, 2))\nK = np.arange(1, 17).reshape((2, 2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(Q, K, 'b h q d, b h k d -> b h q k')"
+        "setup_code": "import numpy as np\nq = np.ones((1, 1, 1, 2))\nk = np.ones((1, 1, 2, 2))",
+        "call": "np.round(np.asarray(solve(q, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((1, 1, 1, 2), 2.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(93)\nq = np.random.rand(2, 2, 3, 4)\nk = np.random.rand(2, 2, 5, 4)",
+        "call": "(np.asarray(solve(q, k)).shape, np.round(np.asarray(solve(q, k)), 10).tolist())",
+        "expected_expr": "((2, 2, 3, 5), np.round(np.asarray(np.einsum('bhqd,bhkd->bhqk', q, k)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nq = np.array([[[[1.0, 0.0]]]])\nk = np.array([[[[1.0, 0.0], [0.0, 1.0]]]])",
+        "call": "np.round(np.asarray(solve(q, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[1.0, 0.0]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nq = np.zeros((1, 1, 2, 3))\nk = np.ones((1, 1, 2, 3))",
+        "call": "np.round(np.asarray(solve(q, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 1, 2, 2))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10359,21 +10569,36 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given three 2x2 matrices A, B, and C, perform a series of matrix multiplications on them in a single operation and return the resulting matrix. (★☆☆)",
-    "answer_code": "einsum(A, B, C, 'i k, k m, m p -> i p')",
+    "question_text": "Write a function solve(a, b, c) that takes three matrices with chain-compatible shapes (i, k), (k, m), (m, p) and returns the triple MATRIX PRODUCT a @ b @ c as one einsum contraction.",
+    "answer_code": "import numpy as np\n\ndef solve(a, b, c):\n    return np.einsum('ik,km,mp->ip', a, b, c)\n\n\nprint(solve(np.eye(2), np.array([[1.0, 2.0], [3.0, 4.0]]), np.eye(2)))\n",
     "difficulty_score": 38,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "[[ 37  54]\n [ 81 118]]",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))\nC = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b, c):\n    \"\"\"Return the triple MATRIX PRODUCT a @ b @ c as one einsum contraction.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.eye(2), np.array([[1.0, 2.0], [3.0, 4.0]]), np.eye(2)))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))\nC = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, B, C, 'i k, k m, m p -> i p')"
+        "setup_code": "import numpy as np\na = np.eye(2)\nb = np.array([[1.0, 2.0], [3.0, 4.0]])\nc = np.eye(2)",
+        "call": "np.round(np.asarray(solve(a, b, c)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, 2.0], [3.0, 4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(94)\na = np.random.rand(2, 3)\nb = np.random.rand(3, 4)\nc = np.random.rand(4, 2)",
+        "call": "np.round(np.asarray(solve(a, b, c)), 10)",
+        "expected_expr": "np.round(np.asarray(a @ b @ c), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[2.0]])\nb = np.array([[3.0]])\nc = np.array([[4.0]])",
+        "call": "np.round(np.asarray(solve(a, b, c)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[24.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[1.0, 1.0]])\nb = np.eye(2)\nc = np.array([[5.0], [7.0]])",
+        "call": "np.round(np.asarray(solve(a, b, c)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[12.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10387,8 +10612,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given two batches of 2x2 matrices T and U, compute the product of the inner matrices for each batch item and return the resulting batch of matrices. Print the result.",
-    "answer_code": "einsum(T, U, 'a i j, a j k -> a i k')",
+    "question_text": "Write a function solve(t, u) that takes two batches of matrices — t of shape (a, i, j) and u of shape (a, j, k) — and returns the (a, i, k) batch where each item is the matrix product t[n] @ u[n].",
+    "answer_code": "import numpy as np\n\ndef solve(t, u):\n    return np.einsum('aij,ajk->aik', t, u)\n\n\nprint(solve(np.ones((1, 2, 2)), np.ones((1, 2, 2))))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "[[[  7  10]\n  [ 15  22]]\n\n [[ 67  78]\n  [ 91 106]]]",
@@ -10396,12 +10621,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nT = np.arange(1, 9).reshape((2, 2, 2))\nU = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(t, u):\n    \"\"\"Return the (a, i, k) batch where each item is the matrix product t[n] @ u[n].\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((1, 2, 2)), np.ones((1, 2, 2))))\n",
     "test_cases": [
       {
-        "setup_code": "T = np.arange(1, 9).reshape((2, 2, 2))\nU = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(T, U, 'a i j, a j k -> a i k')"
+        "setup_code": "import numpy as np\nt = np.ones((1, 2, 2))\nu = np.ones((1, 2, 2))",
+        "call": "np.round(np.asarray(solve(t, u)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((1, 2, 2), 2.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(95)\nt = np.random.rand(3, 2, 4)\nu = np.random.rand(3, 4, 2)",
+        "call": "np.round(np.asarray(solve(t, u)), 10)",
+        "expected_expr": "np.round(np.asarray(t @ u), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nt = np.stack([np.eye(2), 2 * np.eye(2)])\nu = np.stack([np.array([[1.0, 2.0], [3.0, 4.0]]), np.eye(2)])",
+        "call": "np.round(np.asarray(solve(t, u)), 10)",
+        "expected_expr": "np.round(np.asarray(np.stack([np.array([[1.0, 2.0], [3.0, 4.0]]), 2 * np.eye(2)])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nt = np.array([[[3.0]]])\nu = np.array([[[5.0]]])",
+        "call": "np.round(np.asarray(solve(t, u)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[15.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10415,8 +10655,8 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "For a batch of square matrices A, return a 1D array containing the sum of the diagonal elements for each matrix. (★☆☆)",
-    "answer_code": "einsum(A, 'b i i -> b')",
+    "question_text": "Write a function solve(a) that takes a batch of square matrices of shape (b, n, n) and returns a 1-D array of length b holding each matrix's TRACE (the sum of its diagonal entries).",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('bii->b', a)\n\n\nprint(solve(np.stack([np.eye(2), 3 * np.eye(2)])))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "[ 5 13]",
@@ -10424,12 +10664,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return a 1-D array of length b holding each matrix's TRACE (the sum of its diagonal entries).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.stack([np.eye(2), 3 * np.eye(2)])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, 'b i i -> b')"
+        "setup_code": "import numpy as np\na = np.stack([np.eye(2), 3 * np.eye(2)])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([2.0, 6.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(96)\na = np.random.rand(4, 3, 3)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.trace(a, axis1=1, axis2=2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[7.0]]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([7.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.arange(8.0).reshape(2, 2, 2)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([3.0, 11.0])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10443,8 +10698,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given two 2x2 matrices A and B, flatten both matrices and compute the sum of the products of their corresponding elements. (★☆☆)",
-    "answer_code": "einsum(A, B, 'i j, i j ->')",
+    "question_text": "Write a function solve(a, b) that takes two arrays of identical 2-D shape and returns the SCALAR sum of the products of corresponding elements — the Frobenius inner product (flatten both, dot them).",
+    "answer_code": "import numpy as np\n\ndef solve(a, b):\n    return np.einsum('ij,ij->', a, b)\n\n\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]]), np.ones((2, 2))))\n",
     "difficulty_score": 26,
     "difficulty_label": "easy",
     "expected_output": "30",
@@ -10452,12 +10707,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b):\n    \"\"\"Return the SCALAR sum of the products of corresponding elements — the Frobenius inner product (flatten both, d\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]]), np.ones((2, 2))))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, B, 'i j, i j ->')"
+        "setup_code": "import numpy as np\na = np.array([[1.0, 2.0], [3.0, 4.0]])\nb = np.ones((2, 2))",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(10.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(97)\na = np.random.rand(3, 4)\nb = np.random.rand(3, 4)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray((a * b).sum()), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[2.0]])\nb = np.array([[-4.0]])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(-8.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.eye(3)\nb = np.arange(9.0).reshape(3, 3)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(12.0)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10471,8 +10741,8 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "Given a batch of 2x2 matrices A and a batch of 2x2 vectors x, compute the result of applying each matrix to its corresponding vector, producing a new array that maintains the batch structure. Print the result.",
-    "answer_code": "einsum(A, x, 'b i j, b j -> b i')",
+    "question_text": "Write a function solve(a, x) that takes a batch of matrices a of shape (b, i, j) and a batch of vectors x of shape (b, j), and returns the (b, i) batch of matrix-vector products: item n is a[n] @ x[n].",
+    "answer_code": "import numpy as np\n\ndef solve(a, x):\n    return np.einsum('bij,bj->bi', a, x)\n\n\nprint(solve(np.stack([np.eye(2)]), np.array([[3.0, 4.0]])))\n",
     "difficulty_score": 34,
     "difficulty_label": "easy",
     "expected_output": "[[ 5 11]\n [39 53]]",
@@ -10480,12 +10750,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\nx = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, x):\n    \"\"\"Return the (b, i) batch of matrix-vector products.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.stack([np.eye(2)]), np.array([[3.0, 4.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))\nx = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, x, 'b i j, b j -> b i')"
+        "setup_code": "import numpy as np\na = np.stack([np.eye(2)])\nx = np.array([[3.0, 4.0]])",
+        "call": "np.round(np.asarray(solve(a, x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[3.0, 4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(98)\na = np.random.rand(3, 2, 4)\nx = np.random.rand(3, 4)",
+        "call": "np.round(np.asarray(solve(a, x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('bij,bj->bi', a, x)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[1.0, 2.0], [3.0, 4.0]]])\nx = np.array([[10.0, 1.0]])",
+        "call": "np.round(np.asarray(solve(a, x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[12.0, 34.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[2.0]]])\nx = np.array([[5.0]])",
+        "call": "np.round(np.asarray(solve(a, x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[10.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10499,8 +10784,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given an image represented as a 3D array with shape (2, 2, 2) and a 1D array of weights, combine the channels of the image into a single 2D spatial map using the provided weights. (★☆☆)",
-    "answer_code": "einsum(img, w, 'c h w, c -> h w')",
+    "question_text": "Write a function solve(img, w) that takes a channels-first image of shape (c, h, w) and a per-channel weight vector of length c, and returns the (h, w) weighted combination of the channels — each channel map scaled by its weight and summed.",
+    "answer_code": "import numpy as np\n\ndef solve(img, w):\n    return np.einsum('chw,c->hw', img, w)\n\n\nprint(solve(np.ones((3, 2, 2)), np.array([0.5, 0.25, 0.25])))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
     "expected_output": "[[11 14]\n [17 20]]",
@@ -10508,12 +10793,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimg = np.arange(1, 9).reshape((2, 2, 2))\nw = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(img, w):\n    \"\"\"Return the (h, w) weighted combination of the channels — each channel map scaled by its weight and summed.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((3, 2, 2)), np.array([0.5, 0.25, 0.25])))\n",
     "test_cases": [
       {
-        "setup_code": "img = np.arange(1, 9).reshape((2, 2, 2))\nw = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(img, w, 'c h w, c -> h w')"
+        "setup_code": "import numpy as np\nimg = np.ones((3, 2, 2))\nw = np.array([0.5, 0.25, 0.25])",
+        "call": "np.round(np.asarray(solve(img, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((2, 2))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(99)\nimg = np.random.rand(3, 4, 5)\nw = np.array([0.299, 0.587, 0.114])",
+        "call": "np.round(np.asarray(solve(img, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('chw,c->hw', img, w)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.array([[[1.0, 2.0]], [[10.0, 20.0]]])\nw = np.array([1.0, 0.0])",
+        "call": "np.round(np.asarray(solve(img, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, 2.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.array([[[4.0]]])\nw = np.array([-0.5])",
+        "call": "np.round(np.asarray(solve(img, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[-2.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10527,8 +10827,8 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given two 3D tensors A and B, compute the total sum of the products of their corresponding elements. (★☆☆)",
-    "answer_code": "einsum(A, B, 'a b c, a b c ->')",
+    "question_text": "Write a function solve(a, b) that takes two 3-D arrays of identical shape and returns the SCALAR total of the products of corresponding elements — the full elementwise contraction across all three axes.",
+    "answer_code": "import numpy as np\n\ndef solve(a, b):\n    return np.einsum('abc,abc->', a, b)\n\n\nprint(solve(np.ones((2, 2, 2)), np.ones((2, 2, 2))))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "204",
@@ -10536,12 +10836,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\nB = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b):\n    \"\"\"Return the SCALAR total of the products of corresponding elements — the full elementwise contraction across al\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((2, 2, 2)), np.ones((2, 2, 2))))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))\nB = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, B, 'a b c, a b c ->')"
+        "setup_code": "import numpy as np\na = np.ones((2, 2, 2))\nb = np.ones((2, 2, 2))",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(8.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(100)\na = np.random.rand(2, 3, 4)\nb = np.random.rand(2, 3, 4)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray((a * b).sum()), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.arange(8.0).reshape(2, 2, 2)\nb = np.zeros((2, 2, 2))",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(0.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[-2.0]]])\nb = np.array([[[3.0]]])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(-6.0)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10555,8 +10870,8 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "Given a 4D tensor T with shape (2, 2, 2, 2), rearrange the dimensions so that the color channel, currently in the second position, is moved to the last position. Print the result.",
-    "answer_code": "einsum(T, 'b c h w -> b h w c')",
+    "question_text": "Write a function solve(t) that takes a 4-D channels-second tensor of shape (b, c, h, w) and returns it in channels-LAST layout (b, h, w, c) — a pure axis permutation, no values changed.",
+    "answer_code": "import numpy as np\n\ndef solve(t):\n    return np.einsum('bchw->bhwc', t)\n\n\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[[[[ 1  5]\n   [ 2  6]]\n\n  [[ 3  7]\n   [ 4  8]]]\n\n\n [[[ 9 13]\n   [10 14]]\n\n  [[11 15]\n   [12 16]]]]",
@@ -10564,12 +10879,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nT = np.arange(1, 17).reshape((2, 2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(t):\n    \"\"\"Return it in channels-LAST layout (b, h, w, c) — a pure axis permutation, no values changed.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "T = np.arange(1, 17).reshape((2, 2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(T, 'b c h w -> b h w c')"
+        "setup_code": "import numpy as np\nt = np.arange(24.0).reshape(2, 3, 2, 2)",
+        "call": "(np.asarray(solve(t)).shape, np.round(np.asarray(solve(t)), 10).tolist())",
+        "expected_expr": "((2, 2, 2, 3), np.round(np.asarray(np.moveaxis(t, 1, -1)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nt = np.arange(8.0).reshape(1, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(t)), 10)",
+        "expected_expr": "np.round(np.asarray(np.transpose(t, (0, 2, 3, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nt = np.zeros((1, 1, 1, 1))\nt[0, 0, 0, 0] = 5.0",
+        "call": "np.round(np.asarray(solve(t)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[5.0]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(101)\nt = np.random.rand(2, 4, 1, 3)",
+        "call": "(np.asarray(solve(t)).shape,)",
+        "expected_expr": "((2, 1, 3, 4),)"
       }
     ],
     "submission_mode": "function",
@@ -10583,21 +10913,36 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given a 3D array X representing a sequence of features and a 2D projection matrix M, apply the projection to transform the feature dimension of the sequence and return the resulting array. (★☆☆)",
-    "answer_code": "einsum(X, M, 'b t c, c f -> b t f')",
+    "question_text": "Write a function solve(x, m) that takes a sequence tensor x of shape (b, t, c) and a projection matrix m of shape (c, f), and returns the (b, t, f) tensor with the feature axis projected through m — every token's feature vector multiplied by the matrix.",
+    "answer_code": "import numpy as np\n\ndef solve(x, m):\n    return np.einsum('btc,cf->btf', x, m)\n\n\nprint(solve(np.ones((1, 2, 2)), np.eye(2)))\n",
     "difficulty_score": 40,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "[[[ 7 10]\n  [15 22]]\n\n [[23 34]\n  [31 46]]]",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nX = np.arange(1, 9).reshape((2, 2, 2))\nM = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x, m):\n    \"\"\"Return the (b, t, f) tensor with the feature axis projected through m — every token's feature vector multiplie\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((1, 2, 2)), np.eye(2)))\n",
     "test_cases": [
       {
-        "setup_code": "X = np.arange(1, 9).reshape((2, 2, 2))\nM = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(X, M, 'b t c, c f -> b t f')"
+        "setup_code": "import numpy as np\nx = np.ones((1, 2, 2))\nm = np.eye(2)",
+        "call": "np.round(np.asarray(solve(x, m)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 2))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(102)\nx = np.random.rand(2, 3, 4)\nm = np.random.rand(4, 5)",
+        "call": "(np.asarray(solve(x, m)).shape, np.round(np.asarray(solve(x, m)), 10).tolist())",
+        "expected_expr": "((2, 3, 5), np.round(np.asarray(x @ m), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[[1.0, 2.0]]])\nm = np.array([[1.0], [10.0]])",
+        "call": "np.round(np.asarray(solve(x, m)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[21.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.zeros((1, 1, 3))\nm = np.ones((3, 2))",
+        "call": "np.round(np.asarray(solve(x, m)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 1, 2))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10611,8 +10956,8 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "For a batch of matrices A, return a 2D array where each row contains the diagonal elements of the corresponding matrix. (★☆☆)",
-    "answer_code": "einsum(A, 'b i i -> b i')",
+    "question_text": "Write a function solve(a) that takes a batch of square matrices of shape (b, n, n) and returns the (b, n) array whose row i is the DIAGONAL of matrix i — the batched diagonal extraction.",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('bii->bi', a)\n\n\nprint(solve(np.stack([np.diag([1.0, 2.0]), np.diag([3.0, 4.0])])))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
     "expected_output": "[[1 4]\n [5 8]]",
@@ -10620,12 +10965,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return the (b, n) array whose row i is the DIAGONAL of matrix i — the batched diagonal extraction.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.stack([np.diag([1.0, 2.0]), np.diag([3.0, 4.0])])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, 'b i i -> b i')"
+        "setup_code": "import numpy as np\na = np.stack([np.diag([1.0, 2.0]), np.diag([3.0, 4.0])])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, 2.0], [3.0, 4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(103)\na = np.random.rand(3, 4, 4)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('bii->bi', a)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.arange(8.0).reshape(2, 2, 2)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[0.0, 3.0], [4.0, 7.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[9.0]]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[9.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10639,8 +10999,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given a 2D array A, return a 1D array where each element is the sum of the elements in each column of A. (★☆☆)",
-    "answer_code": "einsum(A, 'i j -> i')",
+    "question_text": "Write a function solve(a) that takes a 2-D array and returns a 1-D array of its ROW SUMS: entry i is the total of row i (the column axis is collapsed). (A companion drill sums columns — mind which index survives.)",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('ij->i', a)\n\n\nprint(solve(np.array([[1, 2], [3, 4]])))\n",
     "difficulty_score": 18,
     "difficulty_label": "easy",
     "expected_output": "[3 7]",
@@ -10648,12 +11008,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return a 1-D array of its ROW SUMS.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1, 2], [3, 4]])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, 'i j -> i')"
+        "setup_code": "import numpy as np\na = np.array([[1, 2], [3, 4]])",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[3, 7]"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[5, -1, 2]])",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[6]"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[3], [4], [5]])",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "[3, 4, 5]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(104)\na = np.random.randint(-5, 6, (4, 5))",
+        "call": "np.asarray(solve(a)).tolist()",
+        "expected_expr": "a.sum(axis=1).tolist()"
       }
     ],
     "submission_mode": "function",
@@ -10667,21 +11042,36 @@
     "topic": "Einsum",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Einsum: Applied patterns and advanced",
-    "question_text": "Given two 2D arrays A and B, create a new tensor where each element of A is multiplied by every element of B, resulting in a 4D array. (★☆☆)",
-    "answer_code": "einsum(A, B, 'p q, r s -> p r q s')",
+    "question_text": "Write a function solve(a, b) that takes two 2-D arrays of shapes (p, q) and (r, s) and returns their (p, r, q, s) TENSOR (outer) product with the axes interleaved as p, r, q, s: entry [i, k, j, l] equals a[i, j] * b[k, l].",
+    "answer_code": "import numpy as np\n\ndef solve(a, b):\n    return np.einsum('pq,rs->prqs', a, b)\n\n\nprint(solve(np.array([[1.0, 2.0]]), np.array([[3.0], [4.0]])))\n",
     "difficulty_score": 38,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "[[[[ 1  2]\n   [ 2  4]]\n\n  [[ 3  4]\n   [ 6  8]]]\n\n\n [[[ 3  6]\n   [ 4  8]]\n\n  [[ 9 12]\n   [12 16]]]]",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b):\n    \"\"\"Return their (p, r, q, s) TENSOR (outer) product with the axes interleaved as p, r, q, s.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0]]), np.array([[3.0], [4.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))\nB = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, B, 'p q, r s -> p r q s')"
+        "setup_code": "import numpy as np\na = np.array([[1.0, 2.0]])\nb = np.array([[3.0], [4.0]])",
+        "call": "(np.asarray(solve(a, b)).shape, np.round(np.asarray(solve(a, b)), 10).tolist())",
+        "expected_expr": "((1, 2, 2, 1), [[[[3.0], [6.0]], [[4.0], [8.0]]]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(105)\na = np.random.rand(2, 3)\nb = np.random.rand(2, 2)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('pq,rs->prqs', a, b)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[2.0]])\nb = np.array([[5.0]])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[10.0]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.eye(2)\nb = np.array([[1.0]])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.eye(2).reshape(2, 1, 2, 1)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10695,8 +11085,8 @@
     "topic": "Einsum",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Einsum: Vectorization and broadcasting",
-    "question_text": "Given two 3D arrays A and B, each with shape (2, 2, 2), compute the product of the last two dimensions for each item in the first dimension, resulting in a new array with shape (2, 2, 2). Print the result.",
-    "answer_code": "einsum(A, B, 'b i k, b k j -> b i j')",
+    "question_text": "Write a function solve(a, b) that takes two 3-D arrays a of shape (b, i, k) and b of shape (b, k, j), and returns the (b, i, j) batched matrix product — contracting the shared inner axis independently for each leading batch index.",
+    "answer_code": "import numpy as np\n\ndef solve(a, b):\n    return np.einsum('bik,bkj->bij', a, b)\n\n\nprint(solve(np.ones((2, 1, 2)), np.ones((2, 2, 1))))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "[[[  7  10]\n  [ 15  22]]\n\n [[ 67  78]\n  [ 91 106]]]",
@@ -10704,12 +11094,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 9).reshape((2, 2, 2))\nB = np.arange(1, 9).reshape((2, 2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a, b):\n    \"\"\"Return the (b, i, j) batched matrix product — contracting the shared inner axis independently for each leading\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((2, 1, 2)), np.ones((2, 2, 1))))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 9).reshape((2, 2, 2))\nB = np.arange(1, 9).reshape((2, 2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, B, 'b i k, b k j -> b i j')"
+        "setup_code": "import numpy as np\na = np.ones((2, 1, 2))\nb = np.ones((2, 2, 1))",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((2, 1, 1), 2.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(106)\na = np.random.rand(4, 2, 3)\nb = np.random.rand(4, 3, 5)",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(a @ b), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[1.0, 2.0], [3.0, 4.0]], [[0.0, 1.0], [1.0, 0.0]]])\nb = np.stack([np.eye(2), np.eye(2)])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(a), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[[2.0]]])\nb = np.array([[[7.0]]])",
+        "call": "np.round(np.asarray(solve(a, b)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[14.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10723,8 +11128,8 @@
     "topic": "Einsum",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Einsum: Indexing and selection",
-    "question_text": "Given a square 2D matrix A of shape (2, 2) with integer entries, return a single scalar equal to the sum of the entries lying on A's main diagonal (those positions where the row index equals the column index). The result is a scalar, not an array. (★☆☆)",
-    "answer_code": "einsum(A, 'i i ->')",
+    "question_text": "Write a function solve(a) that takes a square 2-D array and returns its TRACE — the scalar sum of the main-diagonal entries — via the repeated-index contraction.",
+    "answer_code": "import numpy as np\n\ndef solve(a):\n    return np.einsum('ii->', a)\n\n\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]])))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "5",
@@ -10732,12 +11137,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nA = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(a):\n    \"\"\"Return its TRACE — the scalar sum of the main-diagonal entries — via the repeated-index contraction.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0], [3.0, 4.0]])))\n",
     "test_cases": [
       {
-        "setup_code": "A = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(A, 'i i ->')"
+        "setup_code": "import numpy as np\na = np.array([[1.0, 2.0], [3.0, 4.0]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(5.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.arange(9).reshape(3, 3)",
+        "call": "int(solve(a))",
+        "expected_expr": "12"
+      },
+      {
+        "setup_code": "import numpy as np\na = np.array([[7.5]])",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(7.5)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(107)\na = np.random.rand(5, 5)",
+        "call": "np.round(np.asarray(solve(a)), 10)",
+        "expected_expr": "np.round(np.asarray(np.trace(a)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -10751,8 +11171,8 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given a vector v of size (2), construct a square matrix where each element at position (i, j) is the product of the i-th and j-th elements of v. (★☆☆)",
-    "answer_code": "einsum(v, v, 'i, j -> i j')",
+    "question_text": "Write a function solve(v) that takes a single 1-D vector of length n and returns the (n, n) symmetric matrix of ALL pairwise products of its entries: entry [i, j] is v[i] * v[j] — the vector's outer product with itself.",
+    "answer_code": "import numpy as np\n\ndef solve(v):\n    return np.einsum('i,j->ij', v, v)\n\n\nprint(solve(np.array([1.0, 2.0, 3.0])))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "[[1 2]\n [2 4]]",
@@ -10760,12 +11180,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nv = np.arange(1, 3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(v):\n    \"\"\"Return the (n, n) symmetric matrix of ALL pairwise products of its entries.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([1.0, 2.0, 3.0])))\n",
     "test_cases": [
       {
-        "setup_code": "v = np.arange(1, 3)",
-        "call": "solve()",
-        "expected_expr": "einsum(v, v, 'i, j -> i j')"
+        "setup_code": "import numpy as np\nv = np.array([1.0, 2.0, 3.0])",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0], [3.0, 6.0, 9.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(108)\nv = np.random.rand(4)",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.outer(v, v)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv = np.array([-2.0])",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[4.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv = np.array([1.0, 0.0])",
+        "call": "(np.round(np.asarray(solve(v)), 10).tolist(), bool((np.asarray(solve(v)) == np.asarray(solve(v)).T).all()))",
+        "expected_expr": "([[1.0, 0.0], [0.0, 0.0]], True)"
       }
     ],
     "submission_mode": "function",
@@ -10779,21 +11214,36 @@
     "topic": "Einsum",
     "subtopic": "Core array literacy",
     "subtopic_key": "Einsum: Core array literacy",
-    "question_text": "Given a batch of vectors x with shape (2, 2) and a transformation matrix W with shape (2, 2), compute the result of applying the transformation matrix to each vector in the batch. (★★☆)",
-    "answer_code": "einsum(x, W, 'b d, d e -> b e')",
+    "question_text": "Write a function solve(x, w) that takes a batch of vectors x of shape (b, d) and a transformation matrix w of shape (d, e), and returns the (b, e) batch of transformed vectors — each row of x multiplied through w (a linear layer without bias).",
+    "answer_code": "import numpy as np\n\ndef solve(x, w):\n    return np.einsum('bd,de->be', x, w)\n\n\nprint(solve(np.array([[1.0, 2.0]]), np.eye(2)))\n",
     "difficulty_score": 32,
-    "difficulty_label": "medium",
+    "difficulty_label": "easy",
     "expected_output": "[[ 7 10]\n [15 22]]",
     "language": "python",
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx = np.arange(1, 5).reshape((2, 2))\nW = np.arange(1, 5).reshape((2, 2))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x, w):\n    \"\"\"Return the (b, e) batch of transformed vectors — each row of x multiplied through w (a linear layer without bi\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 2.0]]), np.eye(2)))\n",
     "test_cases": [
       {
-        "setup_code": "x = np.arange(1, 5).reshape((2, 2))\nW = np.arange(1, 5).reshape((2, 2))",
-        "call": "solve()",
-        "expected_expr": "einsum(x, W, 'b d, d e -> b e')"
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 2.0]])\nw = np.eye(2)",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, 2.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(109)\nx = np.random.rand(3, 4)\nw = np.random.rand(4, 2)",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(x @ w), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[1.0, 0.0], [0.0, 2.0]])\nw = np.array([[3.0, 4.0], [5.0, 6.0]])",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[3.0, 4.0], [10.0, 12.0]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[2.0]])\nw = np.array([[0.5, -0.5]])",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.0, -1.0]])), 10)"
       }
     ],
     "submission_mode": "function",
