@@ -111,6 +111,12 @@ def _load_function_overrides() -> Dict[int, dict]:
         # missing imports, truncated CSV code, wrong lookup-table bound
         # (2026-07-06 stdout-expected sweep). Layered last so these win.
         "answer_code_repairs.jsonl",
+        # Parameterized regeneration (2026-07-07): full question rewrites to
+        # `def solve(<real params>)` + 3-6 test cases incl. edge cases, from
+        # the Fable generation pass (mech-gate verified + hand-reviewed).
+        # Layered last — replaces question_text/starter/test_cases/answer_code
+        # wholesale for its ids. Keep in sync with the exporter.
+        "parameterized_regen_overrides.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():
@@ -715,6 +721,7 @@ def _load_csv_into(
                 submission_mode = override.get("submission_mode", submission_mode)
                 task_type = override.get("task_type", task_type)
                 question_text = override.get("question_text", question_text)
+                answer_code = override.get("answer_code", answer_code)
                 if "expected_artifact_type" in override:
                     expected_artifact_type = override["expected_artifact_type"]
                 if "supports_visual_output" in override:

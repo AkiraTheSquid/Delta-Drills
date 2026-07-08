@@ -15,6 +15,7 @@ const questionVisualNote = document.getElementById("question-visual-note");
 const questionVisualCanvas = document.getElementById("question-visual-canvas");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
+const questionIdChip = document.getElementById("question-id-chip");
 const targetDifficultyTitle = document.getElementById("target-difficulty-title");
 const targetDifficultyFill = document.getElementById("target-difficulty-fill");
 const targetDifficultyDelta = document.getElementById("target-difficulty-delta");

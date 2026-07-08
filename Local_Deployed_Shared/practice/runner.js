@@ -148,11 +148,13 @@ ${testSetup}
 }
 
 // Tab inside the code editor indents instead of jumping to the Run button.
-// Tab => insert two spaces (or indent every selected line); Shift+Tab => dedent.
+// Tab => insert a real tab character (or indent every selected line);
+// Shift+Tab => dedent one tab or up to one Python indent of spaces.
 // Accessibility escape hatch: press Escape first, then Tab moves focus out of
 // the editor as usual (so keyboard-only users are never trapped).
 let _editorTabEscapes = false;
-const EDITOR_INDENT = "  ";
+const EDITOR_INDENT = "\t";
+const EDITOR_SPACE_INDENT_WIDTH = 4;
 if (codeEditor) {
   codeEditor.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -194,9 +196,9 @@ if (codeEditor) {
       newBlock = lines
         .map((line, i) => {
           let cut = 0;
+          const leadingSpaces = line.match(/^ +/)?.[0].length || 0;
           if (line.startsWith(EDITOR_INDENT)) cut = EDITOR_INDENT.length;
-          else if (line.startsWith("\t")) cut = 1;
-          else if (line.startsWith(" ")) cut = 1;
+          else if (leadingSpaces) cut = Math.min(leadingSpaces, EDITOR_SPACE_INDENT_WIDTH);
           if (i === 0) removedFirst = cut;
           removedTotal += cut;
           return line.slice(cut);

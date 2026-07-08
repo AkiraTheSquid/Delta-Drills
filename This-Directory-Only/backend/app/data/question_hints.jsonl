@@ -18,26 +18,26 @@
 {"id": 22, "hint": "There is a function for successive differences; point it at the column axis to difference adjacent entries within each row."}
 {"id": 23, "hint": "Flatten the array but request column-major (Fortran) ordering so it reads down columns first."}
 {"id": 24, "hint": "There is a single-call way to locate the position of the largest entry, then write to that position."}
-{"id": 25, "hint": "You can index multiple rows with a list of row numbers and assign a reordered view back into the same rows."}
-{"id": 26, "hint": "Two array reduction methods give the global smallest and largest values; return them together."}
-{"id": 27, "hint": "Begin with all ones and set the interior to zero with a slice that drops the outermost rows and columns."}
-{"id": 28, "hint": "There is a one-method reduction that computes the average of all entries."}
-{"id": 29, "hint": "A single NumPy function turns two 1D coordinate vectors into a pair of 2D coordinate grids."}
-{"id": 30, "hint": "Index columns with a list and assign a reordered column selection back to swap them in one step."}
-{"id": 31, "hint": "There is a dedicated NumPy function that extracts the upper triangle of a matrix."}
-{"id": 32, "hint": "Combine an element-wise NaN test with a boolean reduction that asks whether any element qualifies."}
-{"id": 34, "hint": "Use the function that repeats the entire array as a block, not the one that repeats individual elements."}
-{"id": 35, "hint": "Use the element-wise duplication function, not the block-tiling one."}
-{"id": 36, "hint": "A length-12 vector can be reshaped to any shape whose dimensions multiply to 12."}
-{"id": 37, "hint": "The sum of element-wise products of two vectors is exactly their dot product."}
-{"id": 38, "hint": "One reduction returns the position (not the value) of the minimum."}
-{"id": 40, "hint": "There is a function that reports nonzero positions and returns them as a tuple of index arrays."}
-{"id": 41, "hint": "There is a *_like constructor that mirrors an array's shape and dtype while filling with zeros."}
-{"id": 42, "hint": "Pass the desired shape tuple directly to the uniform random generator."}
-{"id": 43, "hint": "Use the element-wise pairwise comparison function, not the reduction that returns a single max."}
-{"id": 46, "hint": "Generate the consecutive integers, then reshape them into the square grid in row-major order."}
-{"id": 47, "hint": "np.diag turns a 1D vector into a diagonal matrix. Build the vector [1,2,3] from a range first."}
-{"id": 48, "hint": "Use strided slice assignment starting at index 1 with step 2 to target the odd positions."}
+{"id": 25, "hint": "Indexing a numpy array with a list of row positions selects (or assigns) several whole rows at once, and negative positions count from the end."}
+{"id": 26, "hint": "numpy arrays have reduction methods that, when called with no axis argument, collapse the entire array down to one scalar."}
+{"id": 27, "hint": "Start from a uniform matrix and overwrite its interior block with one 2-D slice assignment \u2014 remember that negative slice bounds count from the end of an axis."}
+{"id": 28, "hint": "numpy arrays have a built-in reduction that collapses the whole vector to one number \u2014 the average of its entries."}
+{"id": 29, "hint": "numpy has one function that turns a pair of coordinate vectors into exactly this pair of grids \u2014 the same one plotting code calls right before evaluating f(X, Y) over a surface."}
+{"id": 30, "hint": "Indexing with a list of column positions lets you read or write several columns at once \u2014 just do it on a copy so the caller's array survives."}
+{"id": 31, "hint": "Start from a matrix of all ones, then use numpy's upper-triangle helper to zero out everything strictly below the main diagonal."}
+{"id": 32, "hint": "NaN never compares equal to anything \u2014 even itself \u2014 so use numpy's elementwise NaN test and then collapse the resulting boolean array to a single yes/no answer."}
+{"id": 34, "hint": "numpy has a built-in that lays whole copies of an array end-to-end a given number of times \u2014 a different function from the one that repeats each element in place."}
+{"id": 35, "hint": "numpy has a built-in that duplicates each individual element a given number of times consecutively \u2014 it is not the one that stacks whole copies of the array end to end."}
+{"id": 36, "hint": "numpy can reinterpret an array's existing data under a new set of dimensions in a single call, as long as the total element count stays the same."}
+{"id": 37, "hint": "Think of the dot product as an elementwise product followed by a sum \u2014 numpy offers a single built-in reduction that does both at once for a pair of vectors."}
+{"id": 38, "hint": "numpy has a reduction that reports the position of an extreme value rather than the value itself."}
+{"id": 40, "hint": "numpy has a single function that reports where entries are nonzero, packaging the result as one index array per dimension."}
+{"id": 41, "hint": "numpy has a one-call constructor that builds a zero-filled array by borrowing another array's shape and dtype \u2014 you never have to read .shape or .dtype yourself."}
+{"id": 42, "hint": "numpy's random module has functions that take a shape (or its unpacked dimensions) and return that many independent draws from the unit interval."}
+{"id": 43, "hint": "numpy has a vectorized function that pairs two arrays and keeps the larger entry position by position \u2014 Python's built-in max and the reducing np.max both do something different."}
+{"id": 46, "hint": "First build the full run of consecutive integers as a flat array, then change its shape into the square grid you need."}
+{"id": 47, "hint": "numpy has a single function that, given a 1-D vector, builds the square matrix with that vector on the main diagonal."}
+{"id": 48, "hint": "A strided slice can appear on the left-hand side of an assignment, and a scalar broadcasts into every position that slice selects."}
 {"id": 49, "hint": "There is a single ufunc that rounds each element down toward negative infinity."}
 {"id": 50, "hint": "Start from an identity matrix and scale it."}
 {"id": 51, "hint": "The array has an attribute that reports total bytes of its data buffer; format it with the required string."}
@@ -119,15 +119,15 @@
 {"id": 131, "hint": "Count occurrences with bincount and add them, then apply an unbuffered np.add.at pass so repeated indices are not dropped."}
 {"id": 132, "hint": "bincount takes a weights argument that accumulates each value into the bin named by the matching index."}
 {"id": 133, "hint": "Reshape the pixels into an (N,3) list of colors and let np.unique with axis=0 deduplicate entire rows."}
-{"id": 134, "hint": "Tally counts per value with bincount, then take the argmax \u2014 its tie-breaking already favors the smallest value."}
-{"id": 135, "hint": "sum accepts a tuple of axes, so you can reduce the last two dimensions in a single call."}
+{"id": 134, "hint": "Build an array of occurrence counts indexed by value, then find the position of the largest count \u2014 first-match behavior on ties is exactly what you need."}
+{"id": 135, "hint": "numpy reductions accept a tuple of axes, so you can collapse several dimensions in one call."}
 {"id": 136, "hint": "Assign A[[1,0]] into A[[0,1]] \u2014 fancy indexing copies the source rows first, so the swap is atomic."}
-{"id": 137, "hint": "Use weighted bincount for the per-group sums and unweighted bincount for the per-group counts, then divide."}
+{"id": 137, "hint": "There is a numpy function that tallies how many times each integer label occurs \u2014 and it can also take per-element weights, letting you get per-label sums the same way."}
 {"id": 138, "hint": "Index the rows with the permutation, then write the result back through a full slice (Z[:] = ...) to mutate in place."}
-{"id": 139, "hint": "Draw distinct row indices with np.random.choice(..., replace=False) and gather them with fancy indexing."}
+{"id": 139, "hint": "An integer array used as an index picks out whole rows at once, in exactly the order the integers are listed."}
 {"id": 140, "hint": "np.diag takes a k offset \u2014 negative values pull diagonals below the main diagonal."}
 {"id": 141, "hint": "Write the diagonal entry as sum_j A[i,j]*B[j,i] and translate it directly into an einsum subscript string."}
-{"id": 142, "hint": "Use isfinite plus an all-reduction per row, negate it, and read off the row indices with np.where."}
+{"id": 142, "hint": "An elementwise finiteness test gives a boolean array the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
 {"id": 143, "hint": "Compare each element to its predecessor to find run boundaries, keeping the first element unconditionally."}
 {"id": 144, "hint": "A single matrix-vector product (Z @ v) already gives the dot of every row with v."}
 {"id": 145, "hint": "Compare the interior slice against its left and right shifts, then offset the resulting indices by one to account for the dropped first element."}
@@ -199,26 +199,26 @@
 {"id": 216, "hint": "The values to emit are just the indices 0..len(C)-1; repeat each index by its corresponding count using np.repeat."}
 {"id": 217, "hint": "Find the smallest 2x2 block that already alternates correctly, then replicate it across the grid with np.tile."}
 {"id": 218, "hint": "Compute column means and stds along axis 0 (keepdims for broadcasting), subtract and divide, but replace any zero std with 1 before dividing to handle constant columns safely."}
-{"id": 219, "hint": "Locate the position of the maximum with argmax, then assign zero to just that index."}
-{"id": 220, "hint": "Reducing with sum over axis 0 aggregates down the rows, producing one total per column."}
-{"id": 224, "hint": "Pass the nested list straight to the array constructor; the nesting structure becomes the rows."}
-{"id": 225, "hint": "Use the ones constructor with the desired length; the default dtype is already floating point."}
-{"id": 227, "hint": "The zeros constructor with a single length argument gives a float null vector."}
-{"id": 228, "hint": "There is a dedicated constructor that produces an identity matrix given its size."}
-{"id": 229, "hint": "arange takes start and stop; remember the stop is exclusive when choosing the upper bound."}
-{"id": 230, "hint": "Build the integer range, then convert dtype with the astype method specifying the 32-bit float type."}
-{"id": 231, "hint": "Start from a vector of zeros and assign a scalar into a half-open slice; the stop index is exclusive."}
-{"id": 232, "hint": "Take the remainder of each element under division by 3 and compare it elementwise to zero."}
-{"id": 233, "hint": "A negative slice step reverses traversal order."}
-{"id": 234, "hint": "There is a single NumPy reduction that yields prefix sums."}
-{"id": 235, "hint": "Use the in-place sort method on the array rather than a function that returns a new array."}
-{"id": 236, "hint": "A single elementwise comparison against the threshold produces the mask."}
-{"id": 237, "hint": "There is a dedicated NumPy function for the sum of the main diagonal."}
-{"id": 238, "hint": "There are two complementary stacking helpers: one concatenates rows, the other concatenates columns."}
-{"id": 239, "hint": "Use the real matrix product (not elementwise) so the shared inner dimension is contracted."}
-{"id": 240, "hint": "Round positives up and negatives down; a sign-conditioned select (or a copysign on the ceiled magnitude) does it elementwise."}
-{"id": 241, "hint": "There is a single set-style NumPy function that returns sorted unique common values of two arrays."}
-{"id": 242, "hint": "Generate evenly spaced points with the right step, then slice off the zero endpoint."}
+{"id": 219, "hint": "numpy has a reduction that gives you the position (index) of the largest value rather than the value itself \u2014 use that index to assign into a copy."}
+{"id": 220, "hint": "Numpy reductions take an axis argument \u2014 pick the axis that runs down the rows so it collapses, leaving one value per column."}
+{"id": 224, "hint": "NumPy has one constructor that accepts nested Python sequences directly and infers a row for each inner list."}
+{"id": 225, "hint": "numpy ships ready-made constructors that build a fresh array of a given shape prefilled with a fixed value \u2014 pick the one whose fill value is one."}
+{"id": 227, "hint": "numpy has a one-call constructor that allocates an all-zero array of a given size, and its default dtype is already floating point."}
+{"id": 228, "hint": "numpy's array-creation functions include a one-call constructor for a square matrix with ones on the main diagonal and zeros everywhere else."}
+{"id": 229, "hint": "numpy's range-building function treats its stop argument as exclusive, so pick a stop that pushes one past the last value you want."}
+{"id": 230, "hint": "numpy arrays have a method that returns a copy of the array converted to whatever dtype you ask for."}
+{"id": 231, "hint": "numpy lets you assign a single scalar to a whole contiguous run of an array in one statement \u2014 no loop needed."}
+{"id": 232, "hint": "Elementwise arithmetic on a numpy array gives each element's remainder at once, and comparing that whole result to a scalar yields a boolean array."}
+{"id": 233, "hint": "Slicing accepts a negative step, which walks the array from the end back to the start."}
+{"id": 234, "hint": "numpy has a built-in that computes a running (cumulative) total along an array in one call."}
+{"id": 235, "hint": "An ndarray has a method that reorders its own contents, unlike the top-level numpy function that hands back a sorted copy."}
+{"id": 236, "hint": "Comparing a numpy array to a scalar with a comparison operator broadcasts elementwise and yields a boolean mask of the same shape."}
+{"id": 237, "hint": "The entries z[i, i] form the main diagonal \u2014 numpy can extract that diagonal (or sum it directly) in one vectorized step."}
+{"id": 238, "hint": "numpy has a pair of stacking helpers that join a sequence of arrays along the row axis or along the column axis."}
+{"id": 239, "hint": "Elementwise multiplication is not what you want here \u2014 look for the operation that combines each row of the first array with each column of the second."}
+{"id": 240, "hint": "Think of each value as a magnitude and a sign: the magnitude always rounds in the same direction, and the sign can be reattached elementwise afterwards."}
+{"id": 241, "hint": "numpy has set-style operations that work directly on arrays \u2014 look for the one that keeps only the values common to both inputs."}
+{"id": 242, "hint": "If you generate the evenly spaced points including both endpoints, you need two extra points \u2014 then drop the first and last."}
 {"id": 243, "hint": "Share the batch index on both inputs and give the two vector indices distinct names in the output so neither is contracted."}
 {"id": 244, "hint": "Reorder the two axis names on the output side to swap them."}
 {"id": 245, "hint": "Repeat the index on both operands and leave the output side empty to contract it to a scalar."}
