@@ -1,12 +1,6 @@
 {
  "total": 455,
  "questions": {
-  "113": [
-   {
-    "check": "setup_exec_error",
-    "detail": "AttributeError: 'NoneType' object has no attribute 'name'"
-   }
-  ],
   "429": [
    {
     "check": "torch_unavailable",
@@ -255,7 +249,6 @@
   ]
  },
  "counts": {
-  "setup_exec_error": 1,
   "torch_unavailable": 41
  }
 }
