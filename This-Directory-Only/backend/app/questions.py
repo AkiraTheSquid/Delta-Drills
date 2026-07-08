@@ -117,6 +117,10 @@ def _load_function_overrides() -> Dict[int, dict]:
         # Layered last — replaces question_text/starter/test_cases/answer_code
         # wholesale for its ids. Keep in sync with the exporter.
         "parameterized_regen_overrides.jsonl",
+        # Einops visual triage (2026-07-07): 41 layout-only/garbage-render
+        # questions demoted to ordinary function grading (visual flags off);
+        # 7 duplicate-image keepers get distinct fixtures (digit swaps).
+        "einops_visual_fixes.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():

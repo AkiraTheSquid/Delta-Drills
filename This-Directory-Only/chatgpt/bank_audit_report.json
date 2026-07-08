@@ -74,6 +74,12 @@
     "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
+  "444": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
   "445": [
    {
     "check": "torch_unavailable",
@@ -158,7 +164,37 @@
     "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
+  "465": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
+  "466": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
   "467": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
+  "468": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
+  "469": [
+   {
+    "check": "torch_unavailable",
+    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
+   }
+  ],
+  "470": [
    {
     "check": "torch_unavailable",
     "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
@@ -221,6 +257,6 @@
  },
  "counts": {
   "precompute_leak": 1,
-  "torch_unavailable": 35
+  "torch_unavailable": 41
  }
 }

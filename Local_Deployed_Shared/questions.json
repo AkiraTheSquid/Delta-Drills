@@ -9026,8 +9026,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9055,8 +9055,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9195,8 +9195,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9307,8 +9307,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9391,8 +9391,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9419,8 +9419,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9447,8 +9447,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9475,8 +9475,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9503,8 +9503,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9531,8 +9531,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9588,8 +9588,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9607,10 +9607,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2",
+        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2",
         "call": "solve()",
         "expected_expr": "einops.rearrange([img, img], 'b h w c -> (h b) w c')"
       }
@@ -9644,8 +9644,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9673,8 +9673,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9702,8 +9702,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9815,8 +9815,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9844,8 +9844,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9901,8 +9901,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9929,8 +9929,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9957,8 +9957,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -9986,8 +9986,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10127,8 +10127,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10212,8 +10212,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10240,8 +10240,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10296,8 +10296,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10324,8 +10324,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10381,8 +10381,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10466,8 +10466,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10494,8 +10494,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10634,8 +10634,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10681,10 +10681,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]",
         "call": "solve()",
         "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"
       }
@@ -10718,8 +10718,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10802,8 +10802,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10886,8 +10886,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -10970,8 +10970,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11045,10 +11045,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2",
+        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2",
         "call": "solve()",
         "expected_expr": "einops.reduce(arr, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
       }
@@ -11073,10 +11073,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2",
+        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\nb = 2",
         "call": "solve()",
         "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)"
       }
@@ -11129,10 +11129,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
     "test_cases": [
       {
-        "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)\nb = 2",
+        "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2",
         "call": "solve()",
         "expected_expr": "einops.rearrange(arr[:6], '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
       }
@@ -11166,8 +11166,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11194,8 +11194,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11223,8 +11223,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11242,10 +11242,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[0], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[0], 2, axis=0)",
+        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)",
         "call": "solve()",
         "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
       }
@@ -11280,8 +11280,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11308,8 +11308,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11364,8 +11364,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11392,8 +11392,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11448,8 +11448,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -11495,10 +11495,10 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]",
         "call": "solve()",
         "expected_expr": "img - mx",
         "expected_setup_code": "mx = einops.reduce(img, 'h w c -> () w c', 'max')"
@@ -11561,8 +11561,8 @@
       }
     ],
     "submission_mode": "function",
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/einops_problems.csv"
   },
@@ -12569,7 +12569,7 @@
     "expected_output": "[5, 0, 5, 5]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\n# TODO: iterate the SAME iterator twice; the second pass should be exhausted (0)\nfirst_pass = None  # TODO: fill in first_pass\nsecond_pass = None  # TODO: fill in second_pass\n\nparams = list(make_params())\n# TODO: a list can be iterated repeatedly; both passes give the full total\nright_first = None  # TODO: fill in right_first\nright_second = None  # TODO: fill in right_second\n\nprint([first_pass, second_pass, right_first, right_second])",
     "test_cases": [],
@@ -12635,7 +12635,7 @@
     "expected_output": "[(3, 3), (2, 5)]",
     "language": "python",
     "primary_library": "python",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "# TODO: implement to_pair(x): if x is an int return (x, x);\n# otherwise return (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nprint([to_pair(3), to_pair((2, 5))])",
     "test_cases": [],
@@ -12657,7 +12657,7 @@
     "expected_output": "(16, 28)",
     "language": "python",
     "primary_library": "python",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "# TODO: implement to_pair(x): (x, x) when x is an int, else (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\n# TODO: apply the conv output-size formula per axis\nout_h = None  # TODO: compute output height\nout_w = None  # TODO: compute output width\nprint((out_h, out_w))",
     "test_cases": [],
@@ -12679,7 +12679,7 @@
     "expected_output": "[(5, 5), (3, 1), (7, 7), (2, 2)]",
     "language": "python",
     "primary_library": "python",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "# TODO: implement to_pair(x): int -> (x, x); length-2 seq -> (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nprint([to_pair(v) for v in [5, (3, 1), 7, (2, 2)]])",
     "test_cases": [],
@@ -13031,7 +13031,7 @@
     "expected_output": "[[2.0], [2.0], [2.0]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch\ndef unbroadcast(grad, shape):\n    \"\"\"Reverse broadcasting: sum over prepended leading dims, then sum (keepdim) over each axis whose original size was 1.\"\"\"\n    # TODO: implement the unbroadcast reduction\n    raise NotImplementedError()\na = torch.tensor([[1.0],[2.0],[3.0]])  # original shape (3,1)\nout_grad = torch.ones(3, 2)\nprint(unbroadcast(out_grad, a.shape).tolist())",
     "test_cases": [],
@@ -13053,7 +13053,7 @@
     "expected_output": "[[9.0, 12.0]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch\ndef unbroadcast(grad, shape):\n    \"\"\"Reverse broadcasting: sum over prepended leading dims, then sum (keepdim) over each axis whose original size was 1.\"\"\"\n    # TODO: implement the unbroadcast reduction\n    raise NotImplementedError()\nb_shape = (1, 2)\nout_grad = torch.tensor([[1.0, 2.0],[3.0, 4.0],[5.0, 6.0]])  # shape (3,2)\nprint(unbroadcast(out_grad, b_shape).tolist())",
     "test_cases": [],
@@ -13097,7 +13097,7 @@
     "expected_output": "in_features=8, out_features=4, bias=False",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        # TODO: store in_features, out_features, bias as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
     "test_cases": [],
@@ -13119,7 +13119,7 @@
     "expected_output": "Scale(dim=16, factor=2.5)",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        # TODO: store dim and factor as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Scale(16, 2.5)\nprint(repr(m))",
     "test_cases": [],
@@ -13141,7 +13141,7 @@
     "expected_output": "MyBlock(\n  channels=3, p=0.5\n  (lin): Linear(in_features=3, out_features=3, bias=True)\n)",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "function_impl",
+    "task_type": "stdout_prediction",
     "function_name": null,
     "starter_code": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
     "test_cases": [],
