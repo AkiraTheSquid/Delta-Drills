@@ -327,69 +327,69 @@
 {"id": 350, "hint": "Factor each spatial axis into an outer and a size-2 inner index, then swap the two inner indices on the output."}
 {"id": 351, "hint": "Use repeat with a literal 2 merged into both the height and width output groups."}
 {"id": 352, "hint": "'(h k)' with k INNER repeats each row before moving to the next \u2014 stretching, not tiling."}
-{"id": 353, "hint": "Use rearrange and combine the two middle axes into one composite, leaving batch and depth alone."}
-{"id": 354, "hint": "Reduce with 'min' over the two spatial axes but keep them as size-1 dimensions, then subtract."}
-{"id": 355, "hint": "Use repeat: stack the batch into the height composite and fold a literal 2 into the width, putting channels first."}
-{"id": 356, "hint": "Use rearrange to combine the three non-batch axes into one composite dimension."}
+{"id": 353, "hint": "Adjacent axes merged in order \u2014 a pure reshape, the inverse of segmenting."}
+{"id": 354, "hint": "'()' in the output keeps a singleton axis \u2014 the einops spelling of keepdims \u2014 so the minima broadcast straight back."}
+{"id": 355, "hint": "Slice, then one repeat pattern that BOTH merges batch into height and introduces a new horizontal copy index."}
+{"id": 356, "hint": "Merging already-adjacent trailing axes is a reshape \u2014 batch stays, everything else concatenates in order."}
 {"id": 357, "hint": "Use rearrange and combine channels with height into a single leading composite axis."}
-{"id": 358, "hint": "Use the () token in the rearrange pattern to add a singleton axis, then a second rearrange that matches and drops it."}
-{"id": 359, "hint": "Split the channel axis into a leading factor of 2 and the remaining channels, then bring that factor to the front."}
-{"id": 360, "hint": "Add a size-1 leading axis with rearrange, then a second rearrange that consumes that axis to drop it."}
-{"id": 361, "hint": "The input and output patterns are identical here; rearrange acts as an identity over the batched HWC axes."}
-{"id": 362, "hint": "Split the channel axis so the size-2 factor is the inner (fastest) index, then promote that factor to the front."}
+{"id": 358, "hint": "An empty '()' group on the output side mints a length-1 axis at that position."}
+{"id": 359, "hint": "Factor the channels with the split index OUTERMOST and name it first in the output \u2014 tuple unpacking does the rest."}
+{"id": 360, "hint": "A leading '()' output group adds the channel axis a grayscale image needs to enter image pipelines."}
+{"id": 361, "hint": "Handing einops a list makes the list index the first pattern axis \u2014 an identity pattern is np.stack."}
+{"id": 362, "hint": "'(c split)' puts the group index INNERMOST \u2014 every other channel belongs to the other group."}
 {"id": 363, "hint": "Factor height and width into outer indices and size-3 inner blocks, then reduce those blocks with 'mean'."}
-{"id": 364, "hint": "Split the batch axis into row and column factors, then merge the row factor into height and the column factor into width."}
-{"id": 365, "hint": "Let rearrange stack the list as the batch axis, then permute so spatial dims lead and the batch axis goes last."}
-{"id": 367, "hint": "Keep the axes you want to retain on the right of the arrow and let reduce average over the ones you drop."}
-{"id": 368, "hint": "Split each spatial axis into an output-size axis times a literal window of 2, then reduce with 'max'."}
-{"id": 369, "hint": "Factor the channel axis into named groups, then transpose just the two group axes in the output pattern."}
-{"id": 370, "hint": "Reduce to a shape that keeps the channel axis but has singletons elsewhere, so it broadcasts back over x on subtraction."}
-{"id": 371, "hint": "Read off the forward pattern and write its mirror image: split the packed batch axis and fold the factors back into height and width."}
-{"id": 372, "hint": "Decompose channels into (group, in-group) and swap the order of those two factors in the output."}
+{"id": 364, "hint": "Factor the batch into grid rows and columns, then merge each with its matching spatial axis \u2014 channels ride along at the end."}
+{"id": 365, "hint": "List-as-batch plus a permutation that sends the new axis to the back \u2014 one call."}
+{"id": 367, "hint": "Drop only the spatial letters; batch and channel both survive."}
+{"id": 368, "hint": "Factor each spatial axis into (kept, 2) and reduce the three pooled factors away with max."}
+{"id": 369, "hint": "Factor the channel axis three ways, swap the two outer factors in the output group, merge back."}
+{"id": 370, "hint": "Reduce b, h, AND w to singletons, keeping only c at full size \u2014 the statistic is shared across the batch."}
+{"id": 371, "hint": "Factor the batch into (hs, ws, b) and interleave hs into height and ws into width."}
+{"id": 372, "hint": "Factor as (g, c), emit as (c, g) \u2014 a transpose hidden inside one axis."}
 {"id": 373, "hint": "Fold the channel axis into height by listing it first inside the merged group, and use () to add the trailing size-1 axis."}
-{"id": 374, "hint": "Merge the batch axis into width in the output pattern so images sit side by side."}
-{"id": 375, "hint": "Split the time axis into output-length times a window of 2, then mean-reduce the window."}
+{"id": 374, "hint": "List-as-batch feeding straight into a width merge \u2014 stack and concatenate in one pattern."}
+{"id": 375, "hint": "Factor time into (kept, 2) and average the pair factor away."}
 {"id": 376, "hint": "Wrap the two images in a list to create a batch axis, then merge that axis into width."}
-{"id": 377, "hint": "Combine the pooling factorization with a merged trailing output axis so reduce both maxes and flattens at once."}
-{"id": 378, "hint": "Factor time into output-length times a window of 4 and average over the window."}
+{"id": 377, "hint": "Pooling factors reduce away while the surviving axes merge into the flat feature vector \u2014 one pattern, two jobs."}
+{"id": 378, "hint": "Same pair-pooling pattern with the window length as a parameter."}
 {"id": 379, "hint": "Just reorder the height and width axis names on the right side of the arrow."}
-{"id": 380, "hint": "Combine batch and height into one merged axis and move channels last in the output pattern."}
+{"id": 380, "hint": "Permute to channels-last first (conceptually), then the (b h) merge is contiguous \u2014 einops fuses both."}
 {"id": 381, "hint": "Make the four images a batch, split it into rows and columns, then fold rows into height and columns into width."}
 {"id": 382, "hint": "Split the batch into r=3 rows (columns are inferred), then merge rows into height and columns into width."}
-{"id": 383, "hint": "Use repeat with a new factor r=2 merged in front of the channel axis to double the channels."}
-{"id": 384, "hint": "Merge the heads axis into the embedding axis in the output, keeping tokens as a separate dimension."}
+{"id": 383, "hint": "'(r c)' with the new index OUTER copies the whole channel block, keeping original channel order within each copy."}
+{"id": 384, "hint": "Bring heads next to depth first, then merge them \u2014 head index outer so each head's features stay contiguous."}
 {"id": 385, "hint": "Use repeat and expand the width axis with a factor of 4 placed after w in the merged group."}
 {"id": 386, "hint": "Factor the width into an outer index and an inner group of 2, then let reduce collapse the inner group with a mean."}
 {"id": 387, "hint": "Decompose height and width into (stripe, size) pairs, then compose the stripe indices together with batch as the new leading dimension."}
-{"id": 388, "hint": "Just reorder the named axes in the output pattern so time leads batch; no splitting or merging is needed."}
+{"id": 388, "hint": "Swap the first two letters \u2014 the classic batch-first/time-first conversion."}
 {"id": 389, "hint": "Split the batch into row and column grid indices, then fold the row index into height and the column index into width."}
-{"id": 390, "hint": "Split the single flattened axis into (h w) and pass the known height and width sizes so einops can unflatten it."}
-{"id": 391, "hint": "Keep the channel axis as-is and merge height and width into one parenthesized axis in the output."}
-{"id": 392, "hint": "Bring channels to the front and compose the batch axis together with height so the images stack along the height dimension."}
+{"id": 390, "hint": "Merging loses the factorization \u2014 the inverse pattern must be told one factor and infers the other."}
+{"id": 391, "hint": "Adjacent trailing axes merge row-major \u2014 one reshape."}
+{"id": 392, "hint": "Batch merges into height with b outermost \u2014 channels move in front first so the merge is contiguous."}
 {"id": 393, "hint": "Factor channels into (pair_index, within_pair) with the inner factor 2, then move the within-pair index to the front."}
-{"id": 394, "hint": "Use () to insert and later remove a singleton batch axis, and a single composed (c h w) axis to flatten the features in between."}
+{"id": 394, "hint": "One pattern can mint the batch axis AND merge everything else \u2014 '()' plus a merged group."}
 {"id": 395, "hint": "Split each spatial axis into an outer index and a block factor, then compose those block factors together with channels into the new channel dimension."}
-{"id": 396, "hint": "Factor the last axis into heads and per-head dim, then reorder so heads sits right after batch."}
-{"id": 397, "hint": "Put height and width first, then merge batch and channels into one parenthesized trailing axis."}
-{"id": 398, "hint": "Split the patch axis into (h w) using the given grid sizes, then compose each grid index with its corresponding patch axis to rebuild the spatial dims."}
+{"id": 396, "hint": "Factor the feature axis into (heads, per-head depth) and move heads ahead of time \u2014 the inverse of concat-heads."}
+{"id": 397, "hint": "Permute spatial to the front, then merge the two remaining axes in their stated order."}
+{"id": 398, "hint": "Same stitch as the channels-last version \u2014 only the channel letter's position in the pattern moves."}
 {"id": 399, "hint": "Reduce across channels with a mean, but write a () in the output so the channel axis collapses to size 1 rather than disappearing."}
-{"id": 400, "hint": "Keep channels and height up front, then merge batch into the width axis so images sit side by side."}
+{"id": 400, "hint": "'(w b)' with b INNER interleaves the batches column by column \u2014 the merge order is the semantics."}
 {"id": 401, "hint": "Decompose height and width into (grid, patch) pairs with patch size 3, then compose the two grid indices into a single patch-count axis."}
 {"id": 402, "hint": "Reduce over the height axis with max but retain a singleton there so the result broadcasts back against the original image when subtracted."}
-{"id": 403, "hint": "Split width into a remaining-width and a factor of 4, then compose that factor as the outer part of a new height axis."}
-{"id": 404, "hint": "Factor height and width into (grid, patch) pairs, then compose the two grid indices into one leading axis while keeping channel and patch axes separate."}
+{"id": 403, "hint": "Factor width, then merge the inner factor into height with it OUTERMOST in '(w4 h)' \u2014 the folded strips stack above one another."}
+{"id": 404, "hint": "Factor both spatial axes into (tile, within-tile) and merge the two tile indices into the leading patch-list axis."}
 {"id": 405, "hint": "Plug the four values straight into floor((H + 2P - K)/S + 1) using integer division for the floor."}
-{"id": 406, "hint": "Apply floor((H + 2P - K)/S + 1); the stride of 2 is what roughly halves the side length."}
+{"id": 406, "hint": "Padded extent minus kernel gives the sliding room; divide by stride (floor) and add the starting position."}
 {"id": 407, "hint": "Build the actual nn.Conv2d, push a zero tensor through it, and read tuple(out.shape)."}
-{"id": 408, "hint": "Count taps per output position as channels times the kernel area."}
-{"id": 409, "hint": "The padding that preserves size for an odd kernel is half of K-1."}
+{"id": 408, "hint": "One output value is a dot product across every input channel of every kernel cell."}
+{"id": 409, "hint": "The kernel loses k-1 pixels of extent; splitting that evenly between the two sides restores them."}
 {"id": 410, "hint": "Allocate a zero buffer two longer than x, then copy x into the middle slice."}
 {"id": 411, "hint": "Read conv.weight.shape and recall the order is out, in, then the kernel height and width."}
 {"id": 412, "hint": "Construct the conv with bias disabled and format whether conv.bias is None into the string."}
 {"id": 413, "hint": "Sum p.numel() over the Sequential; remember the conv has no bias and BN contributes two vectors of size num_features."}
 {"id": 414, "hint": "Call F.conv2d(x, k) directly; with all-ones input the averaging kernel returns ones at every valid position."}
-{"id": 415, "hint": "Identify which axes are shared (summed) between patches and weight and which survive in the (B, C_out, L_out) output."}
-{"id": 416, "hint": "Multiply out-channels by per-filter weights (in_ch*K*K) and add one bias per out-channel."}
+{"id": 415, "hint": "Unfold the length axis into overlapping windows first \u2014 then the conv is one einsum contracting input channels and window offsets."}
+{"id": 416, "hint": "Weights are one c_in x k x k block per output channel; bias adds one scalar per output channel."}
 {"id": 417, "hint": "Pass the tensor through the pool and read the shape; a stride-2 2x2 window halves H and W."}
 {"id": 418, "hint": "Reduce the two spatial axes with mean(dim=(2,3)) and inspect the remaining shape."}
 {"id": 419, "hint": "Flatten everything except the batch dimension; multiply the non-batch dims together."}
@@ -398,7 +398,7 @@
 {"id": 422, "hint": "Switch the module to eval mode and read the boolean training attribute."}
 {"id": 423, "hint": "Register the Linear inside __init__ and sum p.numel() over model.parameters(); count weight plus bias."}
 {"id": 424, "hint": "nn.Parameter assigned as a Module attribute is auto-registered; count what .parameters() yields."}
-{"id": 425, "hint": "Order is zero_grad, forward+loss, backward, step \u2014 emit them as one semicolon-joined string."}
+{"id": 425, "hint": "Chain rule on (wx - y)^2: derivative 2(wx - y) times the inner derivative x; then step downhill."}
 {"id": 426, "hint": "Tensors created inside the inference_mode context never track gradients."}
 {"id": 427, "hint": "After freezing every parameter, count how many still have requires_grad True."}
 {"id": 428, "hint": "model.eval() sets the training flag \u2014 just read it back."}
@@ -409,35 +409,35 @@
 {"id": 433, "hint": "Zero standard deviation makes every normal sample equal the mean."}
 {"id": 434, "hint": "Initialize weights normally and the bias to a constant, then summarize the weight stats and dump the bias."}
 {"id": 435, "hint": "Differentiate x cubed elementwise (3x^2) and scale by the incoming gradient."}
-{"id": 436, "hint": "Use the sigmoid's own output to form its derivative y*(1-y), then multiply by the upstream gradient."}
-{"id": 437, "hint": "Gate the upstream gradient by where z>0, then pull it back through the linear layer with W transposed."}
+{"id": 436, "hint": "Sigmoid's derivative is expressible from its OUTPUT alone \u2014 y(1-y) \u2014 then multiply by whatever gradient arrived from above."}
+{"id": 437, "hint": "ReLU's gradient gates grad_out by which pre-activations were positive; then the linear layer's two gradients are an outer product (for W) and a transposed matvec (for x)."}
 {"id": 438, "hint": "Pass raw logits and integer targets straight into F.cross_entropy \u2014 no manual softmax."}
 {"id": 439, "hint": "Index the negative log-softmax at the target and compare to the batched F.cross_entropy."}
-{"id": 440, "hint": "Subtract the max logit before exponentiating, then take loss = logsumexp - target logit."}
+{"id": 440, "hint": "Pull the max out of the logsumexp \u2014 the shifted exponentials stay tame and the max adds back linearly."}
 {"id": 441, "hint": "Subtract lr times the gradient from the parameters \u2014 one elementwise update."}
 {"id": 442, "hint": "Loop three times: backward for the gradient, then update x in-place under no_grad and clear x.grad."}
-{"id": 443, "hint": "Compute the residual X@theta - y first, project it back through X.T, scale by 2/n, then take a single gradient-descent step."}
+{"id": 443, "hint": "Residual first (X theta - y), then push it back through X.T with the 2/n factor from differentiating the squared mean."}
 {"id": 444, "hint": "Iterating an iterator exhausts it; iterating a list does not. Watch what the second pass over each sees."}
 {"id": 445, "hint": "The grad is all ones and never recomputed, so each step subtracts the same constant from every weight. Count how many steps run."}
 {"id": 446, "hint": "Convert the generator to a list immediately, then both the count and the two sum passes operate on stored elements."}
-{"id": 447, "hint": "Branch on whether the input is an int; duplicate it if so, otherwise unpack its two elements as ints."}
-{"id": 448, "hint": "Normalize each hyperparameter to a pair, then apply the conv output formula separately for the height and width axes."}
-{"id": 449, "hint": "Apply the int-or-sequence normalizer to each list element with a comprehension."}
+{"id": 447, "hint": "Branch on isinstance(int): scalars duplicate, sequences convert element-wise \u2014 and always emit a plain tuple of ints."}
+{"id": 448, "hint": "Normalize every hyperparameter to a pair FIRST, then run the size formula independently per axis."}
+{"id": 449, "hint": "Write to_pair once and map it over the three arguments \u2014 mixed int/list/tuple inputs all canonicalize the same way."}
 {"id": 450, "hint": "Call backward on M with the upstream gradient tensor; let autograd populate X.grad and Y.grad for you."}
 {"id": 451, "hint": "Post-multiply the upstream gradient by Y transposed for dL/dX; pre-multiply by X transposed for dL/dY."}
 {"id": 452, "hint": "The derivative of 0.5*sum(M*M) w.r.t. M is just M; plug that in as dL/dM and compare the manual products against autograd."}
 {"id": 453, "hint": "Call .var twice, toggling the unbiased flag; the only difference is dividing by N versus N-1."}
 {"id": 454, "hint": "Reduce over every axis except the channel axis (dim 1), and use the biased variance flag."}
 {"id": 455, "hint": "Recreate BatchNorm's normalization by hand using the biased per-channel variance with keepdim, then compare against the layer's output with allclose."}
-{"id": 456, "hint": "Loop through the values in order, each time mixing (1-mu) of the old running value with mu of the new value."}
-{"id": 457, "hint": "Compute per-feature mean and population variance with axis=0, then EWMA-update the two running buffers once per batch in order."}
+{"id": 456, "hint": "Each step keeps a (1-mu) share of the old value and adds a mu share of the new one \u2014 a loop with one line of state."}
+{"id": 457, "hint": "Two EWMAs side by side \u2014 one over batch means, one over batch (population) variances \u2014 starting from the (0, 1) prior."}
 {"id": 458, "hint": "Use the running-stat update with mu = 1 - beta, applied component-wise to each gradient in order; skip any bias correction."}
 {"id": 459, "hint": "Reshape every length-C vector to (1, C, 1, 1) before the elementwise normalize, scale, and shift so each lines up with dim 1."}
 {"id": 460, "hint": "Put the channel count on dim 1 and make the batch and spatial dims singletons."}
 {"id": 461, "hint": "The raw add fails because C != W on the trailing axis; in the except branch reshape the bias to (1, C, 1, 1) so it broadcasts per channel."}
 {"id": 462, "hint": "Think about what value, when placed in a window, is guaranteed to lose a max comparison against any real number."}
 {"id": 463, "hint": "Remember which fill value PyTorch's pooling layers use at the boundary, and slide non-overlapping windows of size 2."}
-{"id": 464, "hint": "Build each padded array, slice consecutive length-3 windows by index, and reduce along the window axis."}
+{"id": 464, "hint": "Pad both ways, pool both ways, and compare \u2014 the zero pad wins the max at negative borders and corrupts the result."}
 {"id": 465, "hint": "Reverse broadcasting by summing the upstream gradient over exactly the axes that were size 1 in the original shape, keeping the dimension."}
 {"id": 466, "hint": "The size-1 axis here is the row dimension; sum the upstream rows together while keeping that dimension."}
 {"id": 467, "hint": "Each operand's gradient equals the number of times broadcasting replicated it along its size-1 axis."}
