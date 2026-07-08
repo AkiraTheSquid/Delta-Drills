@@ -71,32 +71,32 @@
 {"id": 82, "hint": "The cumulative-sum function takes an axis \u2014 choose the one that walks across each row."}
 {"id": 83, "hint": "Allocate a zeroed structured array with two float fields, then fill both fields at once from a coordinate-grid pair."}
 {"id": 84, "hint": "Stacking along a NEW leading axis turns the pair into one array whose first axis you can average away."}
-{"id": 85, "hint": "Build a per-row boolean mask of all-zero rows, negate it, and use it to index the rows."}
-{"id": 86, "hint": "There is a single NumPy function that returns the coordinates of nonzero entries as rows of an array."}
-{"id": 87, "hint": "np.histogram returns both counts and the bin edges; fixing range=(0.0, 1.0) gives equal-width bins."}
-{"id": 89, "hint": "Pair the two arrays up as columns of a 2-column matrix, then flatten it in row-major order."}
-{"id": 90, "hint": "There is a single NumPy function for adding a constant-valued border of a given width around an array."}
-{"id": 91, "hint": "Sample distinct flat indices over range(n*n) without replacement, then write into the array's flattened view."}
-{"id": 92, "hint": "Get the ordering of the target column with argsort, then use that index array to reorder the rows."}
-{"id": 93, "hint": "Rows of an identity matrix are exactly the one-hot vectors; index it by the label array."}
-{"id": 94, "hint": "Build a boolean mask from the comparison on the second array and assign into the first array through that mask."}
-{"id": 95, "hint": "A dot product of the channel axis against the luminance weight vector collapses RGB to one grayscale value per pixel."}
-{"id": 96, "hint": "Express the dtype as a list of (name, sub-dtype) pairs where the sub-dtype is itself a list of named float fields."}
-{"id": 97, "hint": "Divide the vector by its L2 norm (np.linalg.norm)."}
-{"id": 98, "hint": "Take the absolute differences from the target, find the argmin, and index back into the array."}
-{"id": 99, "hint": "Convolve the signal with a uniform length-3 kernel of weight 1/3 using mode='valid'."}
-{"id": 100, "hint": "Use the out= and where= arguments of np.divide so divisions only happen where the denominator is nonzero, with zeros pre-filled elsewhere."}
-{"id": 101, "hint": "Sample k distinct row indices without replacement, then index the array by that vector of row indices."}
-{"id": 102, "hint": "Get unique values with their counts, then argsort the counts and reverse to order both arrays by frequency descending."}
-{"id": 103, "hint": "Exponentiate the logits (shifting by the max for stability) and divide by their sum."}
-{"id": 104, "hint": "Permute the rows of an n\u00d7n identity matrix using a random permutation of 0..n-1."}
-{"id": 105, "hint": "Compute the radial distance from the grid, then apply the Gaussian exp(-(D-mu)^2 / (2 sigma^2))."}
-{"id": 106, "hint": "Subtract the column means and divide by the column standard deviations, both taken with axis=0."}
-{"id": 107, "hint": "Use the dedicated linear-system solver rather than inverting the matrix."}
-{"id": 108, "hint": "Pass a list of three probabilities to a single quantile call and reduce along the observation axis."}
-{"id": 109, "hint": "Take the per-row mean while keeping dimensions so it broadcasts back against the original matrix."}
-{"id": 110, "hint": "Collapse nonzero presence onto each axis, then take the first and last indices that are True."}
-{"id": 111, "hint": "Let nditer allocate the output by passing None, then write the sum into the third operand inside the loop."}
+{"id": 85, "hint": "Build a boolean per-row test \u2014 'is this whole row zero?' \u2014 then invert it and use it as a row mask."}
+{"id": 86, "hint": "One numpy function returns nonzero positions already grouped as one (row, col) pair per hit \u2014 a cousin of np.nonzero with a different packaging."}
+{"id": 87, "hint": "numpy's histogram function does the binning and counting in one call \u2014 give it the bin count and the (0, 1) range explicitly."}
+{"id": 89, "hint": "Pair the arrays up as columns of one matrix, then read that matrix in row-major order."}
+{"id": 90, "hint": "The padding function's constant mode takes the border value as an argument \u2014 it isn't limited to zeros."}
+{"id": 91, "hint": "Choose p distinct FLAT indices out of n*n without replacement, then scatter 1s into them \u2014 np.put writes into an array as if it were flat."}
+{"id": 92, "hint": "Get the ORDER that would sort just the key column, then apply that order to the whole array's rows with fancy indexing."}
+{"id": 93, "hint": "The rows of the k x k identity matrix ARE the k one-hot vectors \u2014 gather the right ones by fancy indexing with the label array."}
+{"id": 94, "hint": "A boolean mask built from ONE array can index a DIFFERENT array of the same shape."}
+{"id": 95, "hint": "A dot product between the trailing channel axis and a length-3 weight vector collapses (h, w, 3) to (h, w) in one operation."}
+{"id": 96, "hint": "Structured dtypes nest: a field's type can itself be a list of (name, type) pairs."}
+{"id": 97, "hint": "Dividing by the current norm gives a unit vector \u2014 then scale that up to whatever length you were asked for."}
+{"id": 98, "hint": "Distance-to-target is an array too \u2014 you want the position of its minimum, converted to a plain int."}
+{"id": 99, "hint": "A moving average is a convolution with a uniform kernel \u2014 and the 'valid' mode keeps only fully overlapping windows."}
+{"id": 100, "hint": "ufuncs accept a where= mask plus an out= array of defaults \u2014 division simply never happens at the masked-off positions."}
+{"id": 101, "hint": "Sample row INDICES without replacement, then gather those rows with fancy indexing."}
+{"id": 102, "hint": "Get values with their counts first, then compute the ordering that sorts the COUNTS and apply it to both arrays \u2014 reversed."}
+{"id": 103, "hint": "Softmax is unchanged by subtracting any constant from all logits \u2014 subtract the maximum so the largest exponent is exp(0)."}
+{"id": 104, "hint": "Shuffling the ROWS of the identity matrix keeps exactly one 1 in every row and column."}
+{"id": 105, "hint": "meshgrid over two linspaces gives every grid point's coordinates at once; the rest is elementwise arithmetic on those grids."}
+{"id": 106, "hint": "Reduce along axis 0 for both statistics \u2014 the resulting per-column vectors broadcast back across the rows on their own."}
+{"id": 107, "hint": "numpy's linear-algebra module has a direct system solver \u2014 faster and more accurate than inverting and multiplying."}
+{"id": 108, "hint": "The quantile function accepts a LIST of fractions and an axis at the same time \u2014 one call produces the whole table."}
+{"id": 109, "hint": "Averaging along axis 0 collapses the rows, leaving one mean per column \u2014 and that vector broadcasts back over the rows without any reshaping."}
+{"id": 110, "hint": "Collapse each axis with any() to learn which rows and which columns contain something, then take the first and last True positions."}
+{"id": 111, "hint": "np.nditer with a None operand allocates the broadcast output for you and iterates all three in lockstep \u2014 assigning through z[...] fills it."}
 {"id": 112, "hint": "Build a mask from the absolute difference of row and column indices and keep only the band within one step."}
 {"id": 113, "hint": "Use __new__ to set the attribute on construction and __array_finalize__ to propagate it through views."}
 {"id": 114, "hint": "Apply argsort twice; the second call inverts the sorting permutation into ranks."}
