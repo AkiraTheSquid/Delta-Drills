@@ -44,33 +44,33 @@
 {"id": 52, "hint": "True counts as nonzero (and as 1 in a sum) \u2014 just remember to convert the numpy result to a plain int."}
 {"id": 53, "hint": "numpy has a constructor that takes both endpoints and a COUNT of points \u2014 unlike the one that takes a step size."}
 {"id": 55, "hint": "A month-precision datetime64 plus 1 is the NEXT month \u2014 and np.arange can walk between two months in steps of days."}
-{"id": 58, "hint": "Draw the vector, then sort it in place."}
-{"id": 59, "hint": "Every numpy ufunc accepts an out= target; chain add, divide, negative, multiply writing into A and B."}
-{"id": 60, "hint": "Broadcast a 1D arange across the rows of a zeros matrix by adding it."}
-{"id": 61, "hint": "Compute absolute distances to v, then take argmin to find the closest element."}
-{"id": 62, "hint": "Reduce the array with the add ufunc rather than calling np.sum."}
-{"id": 63, "hint": "Several methods drop the fraction; np.trunc removes it toward zero for positive values."}
-{"id": 64, "hint": "Two comparisons exist; the strict one is np.array_equal (shape + exact values)."}
+{"id": 58, "hint": "numpy has two sorts: the top-level FUNCTION returns a sorted copy, while the array METHOD sorts in place."}
+{"id": 59, "hint": "Every numpy ufunc accepts out= to write its result into an existing array \u2014 sequence the four operations so nothing you still need gets overwritten."}
+{"id": 60, "hint": "One row is just the 0..cols-1 range \u2014 then either tile it down the rows or let broadcasting add it to a zero matrix."}
+{"id": 61, "hint": "Turn 'closest' into 'smallest absolute difference', then ask numpy for the POSITION of that smallest value."}
+{"id": 62, "hint": "Any of numpy's summing routes works \u2014 the catch is converting the numpy scalar into Python's own integer type."}
+{"id": 63, "hint": "For positive numbers, flooring, truncating, integer-dividing by 1, and subtracting the remainder mod 1 all agree."}
+{"id": 64, "hint": "numpy has one comparison that forgives tiny float error and another that demands bit-for-bit agreement \u2014 this drill wants both."}
 {"id": 65, "hint": "Arrays expose a writeable flag in .flags that can be turned off."}
-{"id": 66, "hint": "The polar angle comes from np.arctan2(Y, X); the radius from the hypotenuse."}
-{"id": 67, "hint": "Clip the array at a lower bound of 0."}
-{"id": 68, "hint": "Look at consecutive differences and check they are all non-negative."}
-{"id": 69, "hint": "np.repeat accepts an array of per-element counts, not just a single scalar."}
-{"id": 70, "hint": "Fancy-index the array's first axis with the permutation array to pick rows in a new order."}
-{"id": 71, "hint": "Index the lookup table directly with the integer label array."}
-{"id": 72, "hint": "Use step-2 slices on rows and columns to assign 1 to the alternating cells of a zero matrix."}
-{"id": 73, "hint": "There is a dedicated ndenumerate iterator that gives you the multi-index alongside each value."}
-{"id": 74, "hint": "Assign the scalar to a step-3 slice of the vector."}
-{"id": 75, "hint": "There is a single NumPy function for a 90-degree rotation."}
-{"id": 76, "hint": "Use a reversed slice (::-1) along the axis you want to mirror."}
-{"id": 77, "hint": "np.diag takes an offset argument k that selects diagonals above or below the main one."}
-{"id": 78, "hint": "Start from an all-True matrix and apply the upper-triangle function."}
-{"id": 79, "hint": "np.unique can operate over whole rows when you tell it which axis to deduplicate along."}
-{"id": 80, "hint": "Shift by the minimum, then scale by the range (max minus min)."}
-{"id": 81, "hint": "Tile the vector into rows, then reduce with mean along the row axis (axis=0)."}
-{"id": 82, "hint": "A cumulative sum along the column axis gives per-row running totals."}
-{"id": 83, "hint": "Define a structured dtype with x and y fields, then fill them from a meshgrid of two linspaces."}
-{"id": 84, "hint": "Stack the two arrays along a new leading axis, then take the mean over that axis."}
+{"id": 66, "hint": "Slice the two coordinate columns apart, then use the two-argument arctangent \u2014 it gets the quadrant right where a plain arctan of y/x cannot."}
+{"id": 67, "hint": "numpy has a clamping method that takes a lower bound \u2014 or take the elementwise maximum against zero."}
+{"id": 68, "hint": "Consecutive differences tell the whole story: the sequence is non-decreasing exactly when none of them is negative."}
+{"id": 69, "hint": "The element-repeating function accepts not just one count but a whole array of per-element counts."}
+{"id": 70, "hint": "Indexing a 2-D array with an integer array along the first axis selects whole rows in exactly the order you list them."}
+{"id": 71, "hint": "Index the TABLE with the label array \u2014 fancy indexing gathers one table entry per label in a single operation."}
+{"id": 72, "hint": "A checkerboard cell's value is decided by the parity of row+column \u2014 the corner value just flips which parity gets the 1s."}
+{"id": 73, "hint": "numpy ships an N-dimensional enumerate that yields a position tuple alongside each value."}
+{"id": 74, "hint": "A strided slice can be the TARGET of an assignment \u2014 do it on a copy so the caller's array survives."}
+{"id": 75, "hint": "numpy has a quarter-turn rotation helper \u2014 or compose a transpose with a flip and check the direction on a non-square array."}
+{"id": 76, "hint": "Reversing a slice along one axis mirrors the array across the other \u2014 pick the axis carefully for each of the two mirrors."}
+{"id": 77, "hint": "The same numpy function that BUILDS a matrix from a diagonal also EXTRACTS diagonals when handed a matrix \u2014 and it takes an offset."}
+{"id": 78, "hint": "Take the upper triangle of an all-True array \u2014 or compare the row and column index grids directly."}
+{"id": 79, "hint": "The deduplication function takes an axis argument \u2014 along axis 0 it treats whole rows as the things to compare."}
+{"id": 80, "hint": "Shift so the minimum sits at zero, then divide by the full spread between the extremes."}
+{"id": 81, "hint": "Tile the vector with a (reps, 1) repetition pattern, then average down the rows (axis 0)."}
+{"id": 82, "hint": "The cumulative-sum function takes an axis \u2014 choose the one that walks across each row."}
+{"id": 83, "hint": "Allocate a zeroed structured array with two float fields, then fill both fields at once from a coordinate-grid pair."}
+{"id": 84, "hint": "Stacking along a NEW leading axis turns the pair into one array whose first axis you can average away."}
 {"id": 85, "hint": "Build a per-row boolean mask of all-zero rows, negate it, and use it to index the rows."}
 {"id": 86, "hint": "There is a single NumPy function that returns the coordinates of nonzero entries as rows of an array."}
 {"id": 87, "hint": "np.histogram returns both counts and the bin edges; fixing range=(0.0, 1.0) gives equal-width bins."}
