@@ -568,7 +568,7 @@
             <div class="timed-mode-control">
               <label class="timed-mode-label">Timed Mode</label>
               <label class="toggle-switch">
-                <input type="checkbox" id="timed-mode-toggle" />
+                <input type="checkbox" id="timed-mode-toggle" checked />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -585,12 +585,14 @@
             <div class="question-meta-top hidden" id="question-meta-top">
               <span class="subtopic-label" id="subtopic-label"></span>
               <span class="difficulty-label" id="difficulty-label"></span>
-              <button class="question-id-chip" id="question-id-chip" type="button" title="Copy stable problem ID">ID --</button>
             </div>
           </div>
 
-          <!-- Question Number -->
-          <div class="question-number" id="question-number">Question 1</div>
+          <!-- Question Number (ID chip stays visible while answering; meta-top does not) -->
+          <div class="question-number-row">
+            <div class="question-number" id="question-number">Question 1</div>
+            <button class="question-id-chip" id="question-id-chip" type="button" title="Copy stable problem ID">ID --</button>
+          </div>
 
           <!-- Cold Start Badge (hidden when not calibrating) -->
           <div class="cold-start-badge hidden" id="cold-start-badge">

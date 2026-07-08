@@ -124,13 +124,19 @@
 }
 
 /* Question Number */
+.question-number-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .question-number {
   font-size: 14px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
 }
 
 /* Question Text */
