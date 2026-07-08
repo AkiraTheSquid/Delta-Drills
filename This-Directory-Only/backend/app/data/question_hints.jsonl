@@ -180,25 +180,25 @@
 {"id": 196, "hint": "Expose every valid window as trailing axes with a sliding view \u2014 the kernel broadcasts against all of them at once, and one double-axis sum finishes each response."}
 {"id": 197, "hint": "Total the heights and widths for the canvas, then walk the blocks, dropping each into its slice and advancing both offsets by its shape."}
 {"id": 198, "hint": "Broadcast the row sets against each other \u2014 bitwise AND counts the intersection, bitwise OR the union, and the distance is one minus their ratio."}
-{"id": 199, "hint": "Broadcast A and B with inserted singleton row axes so the column axis aligns, multiply, then collapse the two row axes into one."}
-{"id": 200, "hint": "Take the per-row cumulative sum, draw one uniform per row, and find the first cumulative bin that exceeds it with argmax."}
-{"id": 201, "hint": "Write each line in implicit ax+by+c form from its endpoints, then broadcast point coordinates against the per-line coefficients and divide by the line length."}
-{"id": 202, "hint": "A row is all-equal iff its row max equals its row min; keep the rows where they differ via a boolean mask."}
-{"id": 204, "hint": "Cast the vector to uint8, give it a trailing axis, and let np.unpackbits along that axis produce the MSB-first 8-bit rows."}
-{"id": 205, "hint": "np.unique can deduplicate whole rows directly when you tell it which axis to operate over."}
-{"id": 206, "hint": "Partition on the negated array so the largest values' indices land first, then take the first n and index back into the array."}
-{"id": 207, "hint": "Duplicate each vertex and roll to form consecutive (a,b) edge pairs, sort each pair so direction doesn't matter, then take unique rows via a structured-dtype view."}
-{"id": 208, "hint": "A matrix-vector product is a contraction over the matrix columns and the vector rows; the batch sum is a contraction over the leading axis of each. np.tensordot can take both pairs of axes in one call."}
-{"id": 209, "hint": "Count neighbours with eight offset slices of the board summed together, then derive birth and survival masks from that count and the current cell state. Write into a fresh zero board each iteration so reads aren't corrupted by writes."}
-{"id": 210, "hint": "Test integrality with the fractional part (modulo 1) and require it across the whole row, then intersect with a row-sum-equals-n condition. Use the resulting boolean mask to index the rows."}
-{"id": 211, "hint": "Add two trailing length-1 axes to A so it broadcasts against B, producing a 4D match tensor. Reduce with any over the right axes to ask 'does this B element appear in the A row', then all to require every B row be covered."}
-{"id": 212, "hint": "The ones constructor accepts a dtype argument; pick the boolean dtype so the fill value is True."}
-{"id": 213, "hint": "Make a zero vector of the right length, then assign into the single index you need (remember positions are counted from 0)."}
-{"id": 214, "hint": "arange's stop is exclusive; push the stop slightly beyond your desired last value so the endpoint is included."}
-{"id": 215, "hint": "arange takes a dtype keyword; specify the 32-bit signed integer type explicitly."}
-{"id": 216, "hint": "The values to emit are just the indices 0..len(C)-1; repeat each index by its corresponding count using np.repeat."}
-{"id": 217, "hint": "Find the smallest 2x2 block that already alternates correctly, then replicate it across the grid with np.tile."}
-{"id": 218, "hint": "Compute column means and stds along axis 0 (keepdims for broadcasting), subtract and divide, but replace any zero std with 1 before dividing to handle constant columns safely."}
+{"id": 199, "hint": "Broadcast a's rows against b's rows into an (ra, rb, c) product cube, then collapse the two row axes into one."}
+{"id": 200, "hint": "A row's cumulative sums split [0, 1) into segments sized by the probabilities \u2014 the first cumulative value exceeding the uniform draw names the sampled category."}
+{"id": 201, "hint": "The 2-D cross product of the line direction with the point-to-line-start vector measures twice the triangle area \u2014 divide by the direction's length to recover the height."}
+{"id": 202, "hint": "A row is constant exactly when every entry equals its FIRST entry \u2014 compare against the first column and reduce."}
+{"id": 204, "hint": "Bitwise-AND each value against the eight powers of two at once by broadcasting \u2014 then flip the column order for MSB-first."}
+{"id": 205, "hint": "Row-wise unique can report each distinct row's first index \u2014 sort THOSE indices to restore scan order, then gather."}
+{"id": 206, "hint": "Partition against the n-th-from-last position \u2014 the top n land in the tail unordered, and a tiny sort of just those n finishes."}
+{"id": 207, "hint": "Each triangle contributes the vertex pairs (0,1), (1,2), (2,0) \u2014 list them all, canonicalize each pair by sorting its two ids, then deduplicate rows."}
+{"id": 208, "hint": "Write the contraction as index notation: the batch index p and the inner index j both disappear, leaving ik."}
+{"id": 209, "hint": "Pad the board with a dead border, sum the eight shifted slices to count neighbors everywhere at once, then apply both birth/survival rules as one boolean expression."}
+{"id": 210, "hint": "Three independent row conditions \u2014 integer-valued (check the remainder mod 1), non-negative, and the right total \u2014 AND them into one mask."}
+{"id": 211, "hint": "Broadcast a 4-D equality cube (a-row, a-col, b-row, b-col), then reduce: ANY match within a b-row, but ALL b-rows must be hit."}
+{"id": 212, "hint": "The ones constructor takes a dtype \u2014 and for booleans, one IS True. np.full works too."}
+{"id": 213, "hint": "Start from zeros and set one position \u2014 two lines."}
+{"id": 214, "hint": "Count how many points there are (stop/step plus one) and scale an integer range \u2014 safer than nudging a float endpoint."}
+{"id": 215, "hint": "np.dtype turns the string name into a dtype object, and arange accepts it directly."}
+{"id": 216, "hint": "The values are just 0..len(c)-1 \u2014 repeat each one by its own count."}
+{"id": 217, "hint": "np.tile's repetition argument is a tuple \u2014 one count per axis."}
+{"id": 218, "hint": "Swap the zero stds for a harmless 1 BEFORE dividing \u2014 a centered constant column is already all zeros, so dividing by 1 leaves it correct."}
 {"id": 219, "hint": "numpy has a reduction that gives you the position (index) of the largest value rather than the value itself \u2014 use that index to assign into a copy."}
 {"id": 220, "hint": "Numpy reductions take an axis argument \u2014 pick the axis that runs down the rows so it collapses, leaving one value per column."}
 {"id": 224, "hint": "NumPy has one constructor that accepts nested Python sequences directly and infers a row for each inner list."}
@@ -219,13 +219,13 @@
 {"id": 240, "hint": "Think of each value as a magnitude and a sign: the magnitude always rounds in the same direction, and the sign can be reattached elementwise afterwards."}
 {"id": 241, "hint": "numpy has set-style operations that work directly on arrays \u2014 look for the one that keeps only the values common to both inputs."}
 {"id": 242, "hint": "If you generate the evenly spaced points including both endpoints, you need two extra points \u2014 then drop the first and last."}
-{"id": 243, "hint": "Share the batch index on both inputs and give the two vector indices distinct names in the output so neither is contracted."}
-{"id": 244, "hint": "Reorder the two axis names on the output side to swap them."}
-{"id": 245, "hint": "Repeat the index on both operands and leave the output side empty to contract it to a scalar."}
-{"id": 246, "hint": "Pick index labels so the output keeps only the row/column index that is shared by both factors at the diagonal, and contract the inner index."}
-{"id": 247, "hint": "Omit the row index in the output pattern so it gets summed away, leaving only the column axis."}
-{"id": 248, "hint": "Give the two matrices independent row labels but a shared column/feature label, and contract that shared one."}
-{"id": 249, "hint": "Contract X against itself over the channel and spatial axes while keeping only the batch axis in the output."}
+{"id": 243, "hint": "Keep the batch index on both sides of the arrow, keep i and j separate in the output, and contract over nothing."}
+{"id": 244, "hint": "In einsum, writing the output indices in a different order IS the permutation \u2014 nothing is summed."}
+{"id": 245, "hint": "A repeated index that vanishes from the output means multiply-and-sum over it \u2014 with nothing after the arrow, the result is a scalar."}
+{"id": 246, "hint": "Give b's indices in transposed order so its column pairs with a's row, contract over the shared k, and keep i."}
+{"id": 247, "hint": "Dropping an index from einsum's output side sums over it \u2014 drop i to collapse the rows."}
+{"id": 248, "hint": "Share the feature index d between the operands and keep both row indices \u2014 the contraction over d does the dots."}
+{"id": 249, "hint": "Feed x in twice with identical indices and keep only the batch index \u2014 every other axis multiplies with itself and sums away."}
 {"id": 250, "hint": "Both operands are the same array; share the hidden axis d and keep separate row indices i and j so every pair within a batch item gets dotted."}
 {"id": 251, "hint": "Match the hidden axis d on both X and v, and keep only b and t in the output."}
 {"id": 252, "hint": "Use all three operands in one einsum, sharing i with the matrix rows and j with the matrix columns, and leave the output side empty."}
