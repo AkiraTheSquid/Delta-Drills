@@ -256,37 +256,37 @@
 {"id": 277, "hint": "Repeat the index to select the diagonal, and output nothing to sum it."}
 {"id": 278, "hint": "Feed the SAME vector in twice under two different letters \u2014 nothing contracts, every pairing survives."}
 {"id": 279, "hint": "Contract the shared feature axis d; the batch axis b and output axis e both survive."}
-{"id": 280, "hint": "List every axis except the one you want gone on the output side; the missing label is summed."}
-{"id": 282, "hint": "First contract the t axis with einsum to get sums, then divide by the size of that dimension."}
-{"id": 283, "hint": "Pass all three tensors and chain the contraction labels so each weight's output axis feeds the next weight's input axis."}
-{"id": 284, "hint": "Multiply the batch of vectors by itself, contract the feature axis, and keep the batch axis to get per-vector squared norms."}
-{"id": 285, "hint": "Keep all four labels but exchange the head and seq labels on the output side."}
-{"id": 286, "hint": "Share the query's only axis with M's feature axis and keep the row axis on the output."}
-{"id": 287, "hint": "Pass x twice with different feature labels but the same batch label, and keep all three on the output."}
-{"id": 288, "hint": "Contract the shared feature axis and let the leading weight axis n broadcast, placing it first on the output."}
-{"id": 289, "hint": "Name all three input axes but omit the batch axis from the output side; einsum reduces over any axis you don't keep."}
-{"id": 290, "hint": "Name each axis on the input and leave the output empty so every axis is summed away into one number."}
-{"id": 291, "hint": "Pair the per-channel scalar's single axis with the image's channel axis and keep that axis in the output instead of reducing it."}
-{"id": 292, "hint": "Use two different axis letters that both survive into the output to build the outer product, then add the scalar afterward."}
-{"id": 293, "hint": "Pass the tensor through einsum unchanged, then index the (0, 0) corner across the batch axis."}
-{"id": 294, "hint": "Label the weight's leading axis as the surviving output and let every other axis be shared between W and X so it gets summed away."}
-{"id": 295, "hint": "Name all four axes but keep just the batch axis in the output so the rest are summed."}
-{"id": 296, "hint": "Give the two copies different sequence-position labels but the same feature label, and keep the feature axis in the output rather than reducing it."}
-{"id": 297, "hint": "Share the inner axis j between B and M, keep the batch axis, and let the output expose i and k."}
-{"id": 298, "hint": "Cross the two index letters between A and B and reduce everything; the trace of a product is sum_ij A_ij B_ji."}
-{"id": 299, "hint": "Align the batch axis, contract the shared feature axis d, and let the distinct query and key position axes form the output matrix."}
-{"id": 300, "hint": "Use rearrange and group the two spatial axes in parentheses on the right to merge them into one."}
-{"id": 301, "hint": "Keep b and h aligned, give the two sequence axes distinct labels (n and m), and contract the shared last dimension d."}
-{"id": 302, "hint": "Reduce to (b, c) with einsum to get the sum, then divide by the number of averaged positions to turn it into a mean."}
-{"id": 303, "hint": "Get the transpose by reading the input axes in swapped order into the same output layout, then subtract from the original."}
-{"id": 304, "hint": "Match the weight vector's single axis to x's last axis and omit it from the output so it gets contracted."}
-{"id": 305, "hint": "Share the hidden axis between h and W, keep batch and time, and let the weight's second axis become the new last dimension."}
-{"id": 306, "hint": "Feed all three operands into one einsum, chaining the index letters so both vectors meet the matrix, and reduce to a scalar."}
-{"id": 308, "hint": "Slice the sequence into all-but-last and all-but-first, then contract the feature axis while keeping the position axis."}
-{"id": 309, "hint": "Name the head axis in both operands and simply omit it from the output pattern so einsum contracts (weights then sums) over it."}
-{"id": 310, "hint": "Give the two copies of v different free indices for the matrix dimensions and a shared batch index that you leave out of the output so it gets summed."}
-{"id": 311, "hint": "Treat the diagonal as a 1D operand sharing the contracted index j with both matrices; the output keeps only the outer indices i and k."}
-{"id": 312, "hint": "This is a standard matrix-times-vector contraction: share the column index j between P and v and keep only the row index i."}
+{"id": 280, "hint": "Drop exactly one letter from the output \u2014 the h axis is the one summed away."}
+{"id": 282, "hint": "einsum can only sum \u2014 the divide-by-count that turns a sum into a mean happens outside."}
+{"id": 283, "hint": "Chain the indices b-i-h-o with i and h each shared by two operands \u2014 both contract in one call."}
+{"id": 284, "hint": "Pair the batch with itself: matching d entries multiply (squares) and d contracts, keeping b."}
+{"id": 285, "hint": "Same letters both sides, two of them exchanged after the arrow \u2014 no contraction, just reordering."}
+{"id": 286, "hint": "Contract the shared feature index d; only the memory-row index survives."}
+{"id": 287, "hint": "Feed the batch in twice with two different feature letters \u2014 the shared b keeps each vector paired with itself."}
+{"id": 288, "hint": "The projection-stack index n never contracts \u2014 it labels which output slice used which matrix, while d contracts as usual."}
+{"id": 289, "hint": "Drop the leading letter \u2014 the batch is the axis that vanishes."}
+{"id": 290, "hint": "Sum all axes with a rank-generic contraction (the interleaved einsum form), then one division makes it a mean."}
+{"id": 291, "hint": "Keep the channel index in the OUTPUT \u2014 a repeated index that survives multiplies without summing."}
+{"id": 292, "hint": "The outer product is the einsum part; the scalar rides in afterwards by ordinary broadcasting."}
+{"id": 293, "hint": "Fix the last two indices at 0 and let the batch axis run free \u2014 plain integer indexing, no contraction needed."}
+{"id": 294, "hint": "Every axis of x is shared with w and contracts; only the output-filter axis o survives."}
+{"id": 295, "hint": "Keep only the batch letter \u2014 the other three all vanish and sum together."}
+{"id": 296, "hint": "Two row letters, one shared feature letter kept in the output \u2014 pairs multiply feature-by-feature without any summing."}
+{"id": 297, "hint": "m carries no batch letter, so the same matrix hits every item \u2014 only j contracts."}
+{"id": 298, "hint": "Transpose one operand's letters and contract BOTH indices \u2014 the double contraction is the trace of the product."}
+{"id": 299, "hint": "Contract d, keep both position indices, share the batch \u2014 the multi-head version just carries one more letter."}
+{"id": 300, "hint": "A reshape with -1 merges the trailing axes in row-major order \u2014 h varies slower than w, exactly the '(h w)' grouping."}
+{"id": 301, "hint": "Two leading letters ride along; the two position letters stay separate; only the shared depth contracts."}
+{"id": 302, "hint": "Sum out three letters at once, then divide by the product of those axes' lengths for the mean."}
+{"id": 303, "hint": "Subtract the transposed matrix \u2014 index notation writes it as the same letters read in both orders."}
+{"id": 304, "hint": "Match the weight vector's single letter to the TIME axis, not the feature axis \u2014 t contracts, d survives."}
+{"id": 305, "hint": "Contract the hidden index between the states and the matrix \u2014 batch and time flow through."}
+{"id": 306, "hint": "Both copies of v share the batch letter so each row pairs with itself; i and j contract through the matrix."}
+{"id": 308, "hint": "Slice the sequence against its shifted self first \u2014 the einsum then pairs row i with row i+1 automatically."}
+{"id": 309, "hint": "The weight vector matches the HEAD letter; batch, time, and depth all pass through."}
+{"id": 310, "hint": "Share the batch letter and drop it from the output \u2014 the outer products form AND sum in one contraction."}
+{"id": 311, "hint": "A diagonal matrix in a product just scales along the shared index \u2014 write the vector with that single letter between the two matrices."}
+{"id": 312, "hint": "It's just a matrix-vector product \u2014 the permutation structure of p does the reordering by itself."}
 {"id": 313, "hint": "Split both spatial axes with named factors of size 2, then merge those factors into the channel axis in the output pattern."}
 {"id": 314, "hint": "Fold batch into width with (b w), then undo it by splitting the width axis back into (b w) while supplying b so einops knows the split sizes."}
 {"id": 315, "hint": "Factor the sequence-length axis into (n p) and fix the inner factor p to the segment length so einops infers the number of segments."}
