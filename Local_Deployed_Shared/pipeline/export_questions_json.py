@@ -430,6 +430,12 @@ def load_function_overrides() -> dict[int, dict]:
         # missing imports, truncated CSV code, wrong lookup-table bound
         # (2026-07-06 stdout-expected sweep). Layered last so these win.
         "answer_code_repairs.jsonl",
+        # Parameterized regeneration (2026-07-07): full question rewrites to
+        # `def solve(<real params>)` + 3-6 test cases incl. edge cases, from
+        # the Fable generation pass (mech-gate verified + hand-reviewed).
+        # Layered last — replaces question_text/starter/test_cases/answer_code
+        # wholesale for its ids. Keep in sync with backend.
+        "parameterized_regen_overrides.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
