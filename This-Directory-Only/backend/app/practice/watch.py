@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(THIS, '..', '..'))
 
 SUB_ROUTERS = [
     'ai_router.py',
+    'diagnostic_router.py',
     'feedback_router.py',
     'problem_feedback_router.py',
     'questions_router.py',
@@ -32,6 +33,11 @@ EXPECTED_PATHS = {
     '/api/practice/run-code',
     '/api/practice/ai-explanation',
     '/api/practice/ai-judge',
+    '/api/practice/diagnostic/status',
+    '/api/practice/diagnostic/start',
+    '/api/practice/diagnostic/answer',
+    '/api/practice/diagnostic/finish',
+    '/api/practice/diagnostic/decline',
 }
 
 
@@ -50,6 +56,7 @@ def check_imports():
     from app.practice import (  # noqa: F401
         ai_router,
         chatgpt_helpers,
+        diagnostic_router,
         feedback_router,
         grading,
         prompts,

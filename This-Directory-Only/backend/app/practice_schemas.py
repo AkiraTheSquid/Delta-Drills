@@ -41,6 +41,13 @@ class NextQuestionResponse(BaseModel):
     # Present for torch questions, which route to Colab instead of the in-app
     # runner; the frontend opens this and offers the solution separately.
     problem_notebook_path: str | None = None
+    # ALEKS-style placement diagnostic (diagnostic.py). When active, this
+    # question is a placement probe: the frontend shows the placement badge +
+    # "I don't know yet" button and skips the felt-difficulty rating.
+    diagnostic_active: bool = False
+    diagnostic_probe_index: int | None = None   # 1-based index of this probe
+    diagnostic_budget: int | None = None        # MAX_PROBES fatigue cap
+    diagnostic_area: str | None = None          # topic area being probed
 
 
 class SubmitRequest(BaseModel):
@@ -135,6 +142,31 @@ class SelfReportRequest(BaseModel):
 class SelfReportResponse(BaseModel):
     success: bool
     level: Optional[str]  # normalized stored value (None when cleared)
+
+
+class DiagnosticAreaEstimate(BaseModel):
+    topic: str
+    theta: float    # posterior-mean ability on the 0-100 difficulty scale
+    sd: float       # posterior SD (placement uncertainty)
+    probes: int     # probes answered in this area
+
+
+class DiagnosticStatusResponse(BaseModel):
+    active: bool
+    completed_at: str | None = None
+    declined: bool = False
+    probes_done: int = 0
+    budget: int
+    min_probes: int
+    areas: list[DiagnosticAreaEstimate] = Field(default_factory=list)
+    atoms_seeded: int | None = None   # set once finished
+
+
+class DiagnosticAnswerRequest(BaseModel):
+    question_id: int
+    # "dont_know" is the first-class no-attempt response; correct/incorrect
+    # cover self-rated paths (e.g. Colab-routed items).
+    result: Literal["dont_know", "correct", "incorrect"]
 
 
 class CodeRunRequest(BaseModel):

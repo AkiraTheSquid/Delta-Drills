@@ -12,6 +12,11 @@ Endpoints:
   POST /api/practice/feedback
   POST /api/practice/visual-debug
   GET  /api/practice/visual-debug
+  GET  /api/practice/diagnostic/status
+  POST /api/practice/diagnostic/start
+  POST /api/practice/diagnostic/answer
+  POST /api/practice/diagnostic/finish
+  POST /api/practice/diagnostic/decline
   GET  /api/practice/state
   GET  /api/practice/subtopics
   PUT  /api/practice/weights
@@ -24,6 +29,7 @@ from fastapi import APIRouter
 
 from app.practice.ai_router import router as ai_router
 from app.practice.arena_rating_router import router as arena_rating_router
+from app.practice.diagnostic_router import router as diagnostic_router
 from app.practice.feedback_router import router as feedback_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
 from app.practice.questions_router import router as questions_router
@@ -31,6 +37,7 @@ from app.practice.subtopic_router import router as subtopic_router
 
 router = APIRouter(prefix="/api/practice", tags=["practice"])
 router.include_router(questions_router)
+router.include_router(diagnostic_router)
 router.include_router(feedback_router)
 router.include_router(subtopic_router)
 router.include_router(ai_router)

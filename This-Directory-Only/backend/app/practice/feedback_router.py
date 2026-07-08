@@ -14,7 +14,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.adaptive import apply_feedback, get_user_state, save_user_state
-from app import bkt_mastery
+from app import bkt_mastery, diagnostic
 from app.auth import get_current_user
 from app.models import User
 from app.prioritization import subtopic_mastery, target_difficulty
@@ -42,6 +42,17 @@ def submit_feedback(
     user_state = get_user_state(user_id)
 
     if user_state.pending_attempt is None:
+        # During the placement diagnostic /submit records the probe directly
+        # (no pending attempt, no felt-difficulty step). A stale cached
+        # frontend may still post feedback here — accept it as a no-op rather
+        # than breaking its flow with a 400.
+        d = diagnostic.get_diag(user_state)
+        if d["active"] or any(
+            p["question_id"] == payload.question_id for p in d["probes"]
+        ):
+            return FeedbackResponse(
+                success=True, target_difficulty_after=0.0, p_after=0.0
+            )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No pending attempt to provide feedback on. Submit an answer first.",

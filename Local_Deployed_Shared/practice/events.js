@@ -30,6 +30,20 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
   resetTimerToInput();
+
+  // Placement probe: the backend already recorded it at /submit — there is no
+  // pending attempt and no felt-difficulty step. Go straight to Next.
+  if (q.diagnostic_active && practiceMode === "backend") {
+    feedbackPrompt.textContent = result.correct
+      ? "Placement recorded — on to the next probe."
+      : "Placement recorded — misses here just pin down your level.";
+    if (!practiceProgress.completedQuestionIds.includes(q.question_id)) {
+      practiceProgress.completedQuestionIds.push(q.question_id);
+    }
+    savePracticeProgress(practiceProgress);
+    showNextProblemButton();
+    _notifyIfPlacementDone();
+  }
   if (practiceMode === "backend" || practiceMode === "supabase") {
     aiExplanationSection.classList.remove("hidden");
     aiExplanationText.textContent = "Loading explanation...";
@@ -204,6 +218,50 @@ nextProblemBtn.addEventListener("click", async () => {
   }
   await _loadNextPracticeQuestion();
 });
+
+// --- Placement diagnostic helpers ------------------------------------------
+// After a probe is recorded (submit or "I don't know yet"), check whether the
+// diagnostic just finished; if so, tell the learner + refresh the adaptive
+// state so the seeded BKT mastery reaches the graph/stats views immediately.
+async function _notifyIfPlacementDone() {
+  try {
+    const status = await PracticeAPI.diagnosticStatus();
+    if (!status || status.active || !status.completed_at) return;
+    if (typeof loadBackendAdaptiveState === "function") {
+      await loadBackendAdaptiveState();
+    }
+    emitPracticeStateChanged();
+    if (typeof showPracticeModeNotice === "function") {
+      const strongest = (status.areas || []).slice().sort((a, b) => b.theta - a.theta)[0];
+      showPracticeModeNotice(
+        `Placement complete after ${status.probes_done} questions — practice now starts at your level` +
+        (strongest ? ` (strongest area: ${strongest.topic}).` : "."),
+      );
+    }
+  } catch (_) {
+    /* best-effort — never blocks the practice flow */
+  }
+}
+
+// "I don't know yet" — placement-only: records a diagnostic miss WITHOUT a
+// code attempt (strong evidence the item sits above the learner's level),
+// then advances. This is the fast path that keeps beginners from burning
+// time on problems they already know they can't solve.
+if (typeof practiceDontKnowBtn !== "undefined" && practiceDontKnowBtn) {
+  practiceDontKnowBtn.addEventListener("click", async () => {
+    const q = PracticeAPI.currentQuestion;
+    if (!q || !q.diagnostic_active) return;
+    practiceDontKnowBtn.disabled = true;
+    try {
+      await PracticeAPI.diagnosticAnswer(q.question_id, "dont_know");
+      await _notifyIfPlacementDone();
+      await _loadNextPracticeQuestion();
+    } catch (err) {
+      outputArea.textContent = "Could not record the answer: " + err.message;
+      practiceDontKnowBtn.disabled = false;
+    }
+  });
+}
 
 // --- Skip (P1.8): advance without grading and WITHOUT claiming a look-up.
 // Nothing is recorded; the served-question list keeps it from repeating next.

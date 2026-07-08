@@ -132,6 +132,10 @@ class UserPracticeState:
     # first questions start near the learner's level; evidence overrules it
     # within a couple of attempts and it never unlocks anything by itself.
     self_reported_level: Optional[str] = None
+    # ALEKS-style placement diagnostic state (probe log + flags) — owned and
+    # interpreted by diagnostic.py; kept as a plain JSON-able dict so the
+    # posterior is always recomputed from the probe log, never persisted.
+    diagnostic: Dict = field(default_factory=dict)
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -170,6 +174,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "atom_mastery": state.atom_mastery,
         "atom_last_ts": state.atom_last_ts,
         "self_reported_level": state.self_reported_level,
+        "diagnostic": state.diagnostic,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -202,6 +207,7 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.atom_mastery = data.get("atom_mastery") or {}
         state.atom_last_ts = data.get("atom_last_ts") or {}
         state.self_reported_level = data.get("self_reported_level")
+        state.diagnostic = data.get("diagnostic") or {}
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(
