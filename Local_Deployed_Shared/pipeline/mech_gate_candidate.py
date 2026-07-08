@@ -158,6 +158,16 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
         if n_params < 1 and not fn_def.args.vararg:
             failures.append(f"starter_contract: `{fn}` takes no parameters — "
                             "the whole point is a parameterized stub")
+    # The bank audit exec's starters directly (setup_exec_error is blocking),
+    # so the starter must run clean top-to-bottom with its stub in place —
+    # e.g. no attribute access on the stub's None return (bit id 113).
+    try:
+        import contextlib, io
+        with contextlib.redirect_stdout(io.StringIO()):
+            exec(starter, {"np": np})
+    except Exception as exc:
+        failures.append(f"starter_contract: starter does not execute cleanly "
+                        f"({type(exc).__name__}: {exc})")
     example_args = None
     for node in ast.walk(starter_tree):
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == fn:

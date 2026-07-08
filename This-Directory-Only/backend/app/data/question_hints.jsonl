@@ -128,32 +128,32 @@
 {"id": 140, "hint": "Extract the offset diagonal and sum it \u2014 or use the trace function, which takes the very same offset directly."}
 {"id": 141, "hint": "Diagonal entry i multiplies row i of the first matrix with COLUMN i of the second \u2014 an einsum can say that with a transposed index, summing over j only."}
 {"id": 142, "hint": "An elementwise finiteness test gives a boolean array the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
-{"id": 143, "hint": "Compare each element to its predecessor to find run boundaries, keeping the first element unconditionally."}
-{"id": 144, "hint": "A single matrix-vector product (Z @ v) already gives the dot of every row with v."}
-{"id": 145, "hint": "Compare the interior slice against its left and right shifts, then offset the resulting indices by one to account for the dropped first element."}
-{"id": 146, "hint": "Make an empty length-2n array and assign A and B into its even and odd strided slices."}
-{"id": 147, "hint": "Get the two percentile cut points, then clamp the array between them."}
-{"id": 148, "hint": "np.unique can return first-occurrence indices; then sort the indices to restore original discovery order."}
-{"id": 149, "hint": "np.diff takes an order argument n that repeats the differencing."}
-{"id": 150, "hint": "Index the rows of an identity matrix of size C by the label vector."}
-{"id": 151, "hint": "Add a trailing singleton axis to the (5,5) array so it broadcasts over the last dimension."}
-{"id": 152, "hint": "The maximum ufunc has an accumulate method; run it along the row axis."}
-{"id": 153, "hint": "Take per-row norms with keepdims, then divide using the where/out guard to skip zero-norm rows."}
-{"id": 154, "hint": "Subtract column means, divide by column stds (guard against zero), then clip to the range."}
-{"id": 155, "hint": "np.repeat can take a per-element count array."}
-{"id": 156, "hint": "Cumsum along one axis, then cumsum the result along the other."}
-{"id": 157, "hint": "Transpose so each column is one field, then feed the columns to a record-array constructor with names and formats."}
-{"id": 158, "hint": "Apply a per-row function that returns the size of the unique values along the row axis."}
-{"id": 159, "hint": "Allocate the right-sized zero array and scatter the values onto every (nz+1)-th slot."}
-{"id": 160, "hint": "Tile the vector into n rows, then keep the lower triangle."}
-{"id": 162, "hint": "Divide by per-row sums (keepdims), using the where/out guard to skip zero-sum rows."}
-{"id": 163, "hint": "Check that every row-wise consecutive difference is positive, then mask-select those rows."}
-{"id": 164, "hint": "Build the |i-j| index matrix via broadcasting, then use it to gather from c."}
-{"id": 165, "hint": "Use the edge endpoint columns as paired row/column indices to set 1s both ways."}
-{"id": 166, "hint": "numpy.lib.stride_tricks.sliding_window_view turns the 1D array into a 2D array of overlapping windows; reduce along the window axis."}
-{"id": 167, "hint": "Pass a tuple window_shape=(3, 3) to sliding_window_view to collect every 3x3 block at once."}
-{"id": 168, "hint": "argmax picks the first max; reverse each row so the last max becomes first, then convert the index back."}
-{"id": 169, "hint": "Normalize each row to unit length first, then a single matrix product with the transpose gives all pairwise cosines."}
+{"id": 143, "hint": "Compare the array to itself shifted by one \u2014 an entry starts a new run exactly when it differs from its left neighbor (and the first entry always counts)."}
+{"id": 144, "hint": "Matrix-vector multiplication IS the per-row dot product \u2014 one operator does the whole job."}
+{"id": 145, "hint": "Three shifted slices line every interior element up with its two neighbors \u2014 compare, AND the masks, and remember the slice offset."}
+{"id": 146, "hint": "Allocate the full-length result and fill it with three strided assignments \u2014 every third slot per source."}
+{"id": 147, "hint": "Two percentiles give the fences; one clip call pushes the outliers onto them."}
+{"id": 148, "hint": "np.unique can report WHERE each distinct value first occurs \u2014 but it returns them in value order, not scan order."}
+{"id": 149, "hint": "The difference function has an order argument \u2014 n applications in one call, shrinking the array by one each time."}
+{"id": 150, "hint": "Infer the width from the largest label, build an integer identity of that size, and gather its rows by label."}
+{"id": 151, "hint": "Broadcasting aligns TRAILING axes \u2014 (h, w) against (h, w, c) fails, but (h, w, 1) stretches over the channels."}
+{"id": 152, "hint": "cumsum is just add.accumulate \u2014 the maximum ufunc has the same accumulate method, along whichever axis you choose."}
+{"id": 153, "hint": "Per-row norms with keepdims broadcast back over the row \u2014 and the where=/out= division pattern skips the zero norms instead of dividing by them."}
+{"id": 154, "hint": "Two independent steps: axis-0 statistics broadcast down the columns, then a symmetric clip caps the z-scores."}
+{"id": 155, "hint": "Element-wise repetition with a per-element count array IS run-length decoding."}
+{"id": 156, "hint": "Accumulate down the rows, then accumulate that result across the columns \u2014 two cumulative sums compose into the 2-D prefix sum."}
+{"id": 157, "hint": "Records are built column-by-column: transpose the row-oriented array so each COLUMN becomes one field array, then hand the list to the record constructor."}
+{"id": 158, "hint": "When a reduction has no vectorized form, apply_along_axis runs your one-row function over every row \u2014 here, the size of each row's unique set."}
+{"id": 159, "hint": "Allocate the zero-filled result at its final size, then drop z's values in with ONE strided assignment \u2014 the stride is nz + 1."}
+{"id": 160, "hint": "Stack n copies of v as rows, then let the lower-triangle helper zero out everything past each row's prefix."}
+{"id": 162, "hint": "Row sums with keepdims broadcast the divisor across each row; the where=/out= division pattern sidesteps the zero-sum rows."}
+{"id": 163, "hint": "Row-wise differences must ALL be positive for a strictly increasing row \u2014 reduce the comparison along the row axis into a row mask."}
+{"id": 164, "hint": "Build the |i - j| index grid by broadcasting a column of indices against a row \u2014 then use that whole grid to index c at once."}
+{"id": 165, "hint": "The two edge-list columns form coordinate arrays \u2014 one paired-array assignment sets all (u, v) cells, and swapping the columns sets the mirrors."}
+{"id": 166, "hint": "A window's sum is the difference of two prefix sums n apart \u2014 cumsum once, subtract a shifted copy, divide by n."}
+{"id": 167, "hint": "The sliding-window view accepts a 2-D window shape \u2014 it slides over both axes at once and never copies."}
+{"id": 168, "hint": "argmax always reports the FIRST maximum \u2014 run it on the reversed rows and convert the index back."}
+{"id": 169, "hint": "Normalize each side's rows to unit length first \u2014 then the whole similarity table is a single matrix product."}
 {"id": 170, "hint": "Use np.nanmean per column, locate the NaNs with np.where(np.isnan(...)), then scatter the matching column means back in."}
 {"id": 171, "hint": "np.meshgrid(*arrays, indexing='ij') gives the broadcasted coordinate grids; stack on the last axis and reshape to (-1, n)."}
 {"id": 172, "hint": "Count value occurrences per row with np.bincount; argmax over the counts naturally breaks ties toward the smaller value."}
