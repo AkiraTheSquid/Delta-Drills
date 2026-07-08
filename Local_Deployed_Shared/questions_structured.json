@@ -10767,8 +10767,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=2, p2=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -10802,8 +10802,8 @@
       "submission_mode": "function",
       "canonical_solution": "tmp = einops.rearrange(arr, 'b h w c -> h (b w) c'); einops.rearrange(tmp, 'h (b w) c -> b h w c', b=b)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -10972,8 +10972,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c h w -> b h w c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11108,8 +11108,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=h, w=w)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11210,8 +11210,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.reduce(arr, 'b h w c -> b h w', 'max')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11244,8 +11244,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(img, 'h w c -> h c w')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11278,8 +11278,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.reduce(img, 'h w c -> w c', 'mean')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11312,8 +11312,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr[:6], '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11346,8 +11346,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c h w -> c h w b')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11380,8 +11380,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr_even, '(r n) c h w -> c (r h) (n w)', r=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11449,8 +11449,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(list_of_tensors, 'b c h w -> b h w c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11472,10 +11472,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2",
+          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2",
           "call": "solve()",
           "expected_expr": "einops.rearrange([img, img], 'b h w c -> (h b) w c')"
         }
@@ -11517,8 +11517,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(img, 'h w c -> c h w')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11552,8 +11552,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr8 = einops.reduce(arr, '(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)', 'max', h2=2, w2=2, b1=2); display_array_as_img(arr8)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11587,8 +11587,8 @@
       "submission_mode": "function",
       "canonical_solution": "tmp = einops.rearrange(arr, 'b h w c -> h (b w) c'); einops.rearrange(tmp, 'h (b w) c -> b h w c', b=b)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11724,8 +11724,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr2 = einops.repeat(arr[0], 'c h w -> c (2 h) w'); display_array_as_img(arr2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11759,8 +11759,8 @@
       "submission_mode": "function",
       "canonical_solution": "tmp = einops.rearrange(arr, 'b h w c -> (b h) w c'); einops.rearrange(tmp, '(b h) w c -> b h w c', b=b, h=h)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11828,8 +11828,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr7 = einops.rearrange(arr[1], 'c h w -> c w h'); display_array_as_img(arr7)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11862,8 +11862,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b h w c -> b c h w')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11896,8 +11896,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b h w c -> h (b w) c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -11931,8 +11931,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr5 = einops.rearrange(arr[0], 'c h w -> h (c w)'); display_array_as_img(arr5)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12102,8 +12102,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr4 = einops.repeat(arr[0], 'c h w -> c (h 2) w'); display_array_as_img(arr4)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12205,8 +12205,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr3 = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'); display_array_as_img(arr3)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12239,8 +12239,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(x, 'b c h w -> b (c h w)')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12307,8 +12307,8 @@
       "submission_mode": "function",
       "canonical_solution": "tmp = einops.rearrange(arr, 'b h w c -> b () h w c'); einops.rearrange(tmp, 'b () h w c -> b h w c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12341,8 +12341,8 @@
       "submission_mode": "function",
       "canonical_solution": "part1, part2 = einops.rearrange(x, 'b (split c) h w -> split b c h w', split=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12410,8 +12410,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b h w c -> b h w c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12513,8 +12513,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr6 = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2); display_array_as_img(arr6)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12547,8 +12547,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(list_of_tensors, 'b c h w -> h w c b')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12717,8 +12717,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=2, ws=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12774,10 +12774,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]",
           "call": "solve()",
           "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"
         }
@@ -12819,8 +12819,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b h w c -> h (b w) c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -12921,8 +12921,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.reduce(x, 'b c (h two1) (w two2) -> b (c h w)', 'max', two1=2, two2=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13023,8 +13023,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c h w -> (b h) w c')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13125,8 +13125,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.repeat(img, 'c h w -> (r c) h w', r=2)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13216,10 +13216,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2",
+          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2",
           "call": "solve()",
           "expected_expr": "einops.reduce(arr, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
         }
@@ -13250,10 +13250,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2",
+          "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\nb = 2",
           "call": "solve()",
           "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)"
         }
@@ -13318,10 +13318,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)\nb = 2",
+          "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2",
           "call": "solve()",
           "expected_expr": "einops.rearrange(arr[:6], '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
         }
@@ -13363,8 +13363,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(flat, 'c (h w) -> c h w', h=h, w=w)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13397,8 +13397,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(img, 'c h w -> c (h w)')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13432,8 +13432,8 @@
       "submission_mode": "function",
       "canonical_solution": "arr1 = einops.rearrange(arr, 'b c h w -> c (b h) w'); display_array_as_img(arr1)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13455,10 +13455,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[0], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[0], 2, axis=0)",
+          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)",
           "call": "solve()",
           "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
         }
@@ -13501,8 +13501,8 @@
       "submission_mode": "function",
       "canonical_solution": "y = einops.rearrange(img, 'c h w -> () c h w'); preds = einops.rearrange(y, 'b c h w -> b (c h w)'); einops.rearrange(preds, '() classes -> classes')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13535,8 +13535,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=4, w1=2)",
       "expected_output": "",
-      "expected_artifact_type": "stdout",
-      "supports_visual_output": false
+      "expected_artifact_type": "image",
+      "supports_visual_output": true
     }
   },
   {
@@ -13603,8 +13603,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c h w -> h w (b c)')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13637,8 +13637,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(patches, '(h w) c p1 p2 -> c (h p1) (w p2)', h=h, w=w)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13705,8 +13705,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(arr, 'b c h w -> c h (b w)')",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -13762,10 +13762,10 @@
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]",
           "call": "solve()",
           "expected_expr": "img - mx",
           "expected_setup_code": "mx = einops.reduce(img, 'h w c -> () w c', 'max')"
@@ -13842,8 +13842,8 @@
       "submission_mode": "function",
       "canonical_solution": "einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=10, p2=10)",
       "expected_output": "",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -15086,7 +15086,7 @@
     },
     "exercise": {
       "question_text": "Iterators exhaust; lists don't. `make_params()` (starter) returns a ONE-SHOT iterator over two tensors. First sum `p.numel()` over the same iterator twice — `first_pass`, then `second_pass` (predict the second before running). Then materialize a fresh `make_params()` into a list and take both passes again (`right_first`, `right_second`). Print the four ints as one list. This is exactly why optimizers materialize `model.parameters()` up front.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
@@ -15170,7 +15170,7 @@
     },
     "exercise": {
       "question_text": "Conv hyperparameters like `kernel_size` accept either an int or an (h, w) pair. Write the normalizer `to_pair(x)`: an int becomes the symmetric pair, and a length-2 sequence becomes a tuple of its two values as ints. The starter's print line applies it to 3 and (2, 5).",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
       "function_name": null,
@@ -15198,7 +15198,7 @@
     },
     "exercise": {
       "question_text": "Combine the `to_pair` normalizer with per-axis conv arithmetic. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints), normalize kernel 3, stride (2, 1), padding 1, then compute the conv output size for H=32, W=28 — apply the output-size formula independently per axis, indexing the normalized pairs. Print exactly print((out_h, out_w)).",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
       "function_name": null,
@@ -15226,7 +15226,7 @@
     },
     "exercise": {
       "question_text": "Normalization helpers must cope with mixed inputs. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints) and map it over the mixed list [5, (3, 1), 7, (2, 2)]. The starter's print line emits the list of resulting pairs.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "python",
       "function_name": null,
@@ -15674,7 +15674,7 @@
     },
     "exercise": {
       "question_text": "When the forward pass broadcasts a (3,1) tensor up to (3,2), the backward pass must reduce the (3,2) gradient back to (3,1) — summing over every position the forward copied to. Implement `unbroadcast(grad, shape)`: first sum away any PREPENDED leading dims, then sum WITH `keepdim` over each axis whose original size was 1. Apply it to the starter's all-ones (3,2) gradient and print with print(result.tolist()).",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
@@ -15702,7 +15702,7 @@
     },
     "exercise": {
       "question_text": "Same `unbroadcast`, different geometry: an original (1,2) tensor was broadcast to (3,2), and this time the upstream gradient (starter) is not all ones. Implement the reduction (sum away prepended dims; sum-with-keepdim over axes of original size 1) and bring the gradient back to (1,2). Print with print(result.tolist()). Sanity check: each surviving entry should be the sum down one column.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
@@ -15758,7 +15758,7 @@
     },
     "exercise": {
       "question_text": "`extra_repr` is how a custom Module earns a readable one-line description. Subclass `nn.Module` as `Linear`: store `in_features`, `out_features`, and `bias` as plain attributes in `__init__`, and override `extra_repr` to return the string `in_features=..., out_features=..., bias=...` filled with the stored values (an f-string). Construct `Linear(8, 4, bias=False)` and print the result of calling its `extra_repr()` directly.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
@@ -15786,7 +15786,7 @@
     },
     "exercise": {
       "question_text": "Where does `extra_repr` actually surface? Inside the module's repr. Define `Scale(nn.Module)` storing `dim` and `factor` as attributes, with `extra_repr` returning `dim=..., factor=...` (f-string over the stored values). Construct `Scale(16, 2.5)` and print(repr(m)) — your string shows up inside `Scale(...)`.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,
@@ -15814,7 +15814,7 @@
     },
     "exercise": {
       "question_text": "When a module has BOTH an `extra_repr` and child submodules, the printed repr interleaves them. Build `MyBlock(nn.Module)`: `__init__` stores `channels` and `p` as attributes and creates the child `self.lin = nn.Linear(channels, channels)`; `extra_repr` returns `channels=..., p=...`. Construct `MyBlock(3, 0.5)` and print(repr(m)) — note where your extra_repr line lands relative to the `(lin): ...` child line.",
-      "task_type": "function_impl",
+      "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": null,

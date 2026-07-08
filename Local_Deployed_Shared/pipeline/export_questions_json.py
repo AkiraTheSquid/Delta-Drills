@@ -436,6 +436,9 @@ def load_function_overrides() -> dict[int, dict]:
         # Layered last — replaces question_text/starter/test_cases/answer_code
         # wholesale for its ids. Keep in sync with backend.
         "parameterized_regen_overrides.jsonl",
+        # Einops visual triage (2026-07-07): 41 demotions to non-visual +
+        # 7 duplicate-image fixture swaps. Keep in sync with backend.
+        "einops_visual_fixes.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
@@ -541,6 +544,17 @@ def load_questions() -> list[dict]:
                     except (TypeError, ValueError):
                         pass
             expected_artifact_type = "image" if task_type == "image_transform" else "stdout"
+            supports_visual_output = expected_artifact_type == "image"
+            # Visual-flag overrides (mirror backend/app/questions.py): used by the
+            # 2026-07-07 einops demotions — layout-only/garbage-render questions
+            # flipped to ordinary function-graded drills.
+            if override:
+                task_type = override.get("task_type", task_type)
+                if "expected_artifact_type" in override:
+                    expected_artifact_type = override["expected_artifact_type"]
+                    supports_visual_output = expected_artifact_type == "image"
+                if "supports_visual_output" in override:
+                    supports_visual_output = bool(override["supports_visual_output"])
 
             questions.append(
                 {
@@ -561,7 +575,7 @@ def load_questions() -> list[dict]:
                     "test_cases": test_cases,
                     "submission_mode": submission_mode,
                     "expected_artifact_type": expected_artifact_type,
-                    "supports_visual_output": expected_artifact_type == "image",
+                    "supports_visual_output": supports_visual_output,
                     "source_type": "csv",
                     "source_path": str(path.relative_to(REPO_DIR)),
                 }
