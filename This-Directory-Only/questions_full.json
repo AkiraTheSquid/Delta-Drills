@@ -4,21 +4,41 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a 5x5 matrix Z of random integers, return the index of the largest value in each row as a 1D array. (★☆☆)",
-    "answer_code": "Z = np.random.randint(0,10,(5,5)); print(Z.argmax(axis=1))",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy array z and returns a 1-D integer array containing, for each row, the index of that row's largest value. If a row's maximum appears more than once, report the first (leftmost) occurrence. The matrix can have any shape, including a single row or a single column.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return z.argmax(axis=1)\n\n\nexample = np.array([[1, 9, 3], [7, 2, 5]])\nprint(solve(example))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "[4 0 2 3 1]",
+    "expected_output": "[1 0]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.random.randint(0,10,(5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return the per-row index of the largest value in z.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different arrays.\nexample = np.array([[1, 9, 3], [7, 2, 5]])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.randint(0,10,(5,5))",
-        "call": "solve()",
-        "expected_expr": "Z.argmax(axis=1)"
+        "setup_code": "import numpy as np\nz = np.array([[1, 9, 3], [7, 2, 5]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "z.argmax(axis=1).tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[4, 4, 1], [0, 3, 3]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[0, 1]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[-5, -2, -9, -2]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[1]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[3], [8], [1]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[0, 0, 0]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(2)\nz = np.random.randint(0, 10, (5, 5))",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "z.argmax(axis=1).tolist()"
       }
     ],
     "submission_mode": "function",
@@ -32,22 +52,41 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Build an 8x8 integer matrix filled with a checkerboard pattern of 0s and 1s, where the top-left entry is 0, entries alternate between 0 and 1 along each row and column, and no two horizontally or vertically adjacent entries share the same value. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\nZ[::2,1::2] = 1\nprint(Z)",
+    "question_text": "Write a function solve(rows, cols) that takes two positive integers and returns a rows x cols integer matrix holding a checkerboard pattern of 0s and 1s. The top-left entry is 0, and values alternate along every row and every column, so no two horizontally or vertically adjacent entries are equal.",
+    "answer_code": "import numpy as np\n\ndef solve(rows, cols):\n    z = np.zeros((rows, cols), dtype=int)\n    z[1::2, ::2] = 1\n    z[::2, 1::2] = 1\n    return z\n\n\nprint(solve(3, 4))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
-    "expected_output": "[[0 1 0 1 0 1 0 1]\n [1 0 1 0 1 0 1 0]\n [0 1 0 1 0 1 0 1]\n [1 0 1 0 1 0 1 0]\n [0 1 0 1 0 1 0 1]\n [1 0 1 0 1 0 1 0]\n [0 1 0 1 0 1 0 1]\n [1 0 1 0 1 0 1 0]]",
+    "expected_output": "[[0 1 0 1]\n [1 0 1 0]\n [0 1 0 1]]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(rows, cols):\n    \"\"\"Return a rows x cols checkerboard of 0s and 1s, top-left 0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different sizes.\nprint(solve(3, 4))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.zeros((8,8),dtype=int)\nZ[1::2,::2] = 1\nZ[::2,1::2] = 1"
+        "setup_code": "import numpy as np\nrows, cols = 8, 8",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "(np.indices((rows, cols)).sum(axis=0) % 2).tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 1, 1",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "[[0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 2, 3",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "[[0, 1, 0], [1, 0, 1]]"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 5, 2",
+        "call": "(np.asarray(solve(rows, cols)).dtype.kind, np.asarray(solve(rows, cols)).tolist())",
+        "expected_expr": "('i', (np.indices((rows, cols)).sum(axis=0) % 2).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 1, 6",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "[[0, 1, 0, 1, 0, 1]]"
       }
     ],
     "submission_mode": "function",
@@ -61,22 +100,36 @@
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Define a custom NumPy structured dtype named color that describes an RGBA pixel as four unsigned byte fields, in the order r, g, b, a (each one byte, range 0-255). The result should be a dtype object usable to construct or interpret structured arrays where every element holds the four named color channels. (★☆☆)\nPrint the result.",
-    "answer_code": "color = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])\nprint(color)",
+    "question_text": "Write a function solve(names) that takes a list of field names (for example ['r', 'g', 'b', 'a']) and returns a numpy structured dtype in which each named field, in the given order, is a single unsigned byte (0-255). Calling it with ['r', 'g', 'b', 'a'] should produce a dtype describing one RGBA pixel.",
+    "answer_code": "import numpy as np\n\ndef solve(names):\n    return np.dtype([(n, np.ubyte) for n in names])\n\n\nprint(solve(['r', 'g', 'b', 'a']))\n",
     "difficulty_score": 38,
-    "difficulty_label": "easy",
+    "difficulty_label": "medium",
     "expected_output": "[('r', 'u1'), ('g', 'u1'), ('b', 'u1'), ('a', 'u1')]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(names):\n    \"\"\"Return a structured dtype with one unsigned-byte field per name.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several field lists.\nprint(solve(['r', 'g', 'b', 'a']))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "color",
-        "expected_setup_code": "color = np.dtype([('r', np.ubyte), ('g', np.ubyte), ('b', np.ubyte), ('a', np.ubyte)])"
+        "setup_code": "import numpy as np\nnames = ['r', 'g', 'b', 'a']",
+        "call": "str(np.dtype(solve(names)).descr)",
+        "expected_expr": "str(np.dtype([(n, np.uint8) for n in names]).descr)"
+      },
+      {
+        "setup_code": "import numpy as np\nnames = ['b', 'g', 'r']",
+        "call": "str(np.dtype(solve(names)).descr)",
+        "expected_expr": "str(np.dtype([(n, np.uint8) for n in names]).descr)"
+      },
+      {
+        "setup_code": "import numpy as np\nnames = ['alpha']",
+        "call": "str(np.dtype(solve(names)).descr)",
+        "expected_expr": "str(np.dtype([(n, np.uint8) for n in names]).descr)"
+      },
+      {
+        "setup_code": "import numpy as np\nnames = ['y', 'cb', 'cr']",
+        "call": "(np.dtype(solve(names)).itemsize, str(np.dtype(solve(names)).descr))",
+        "expected_expr": "(3, str(np.dtype([(n, np.uint8) for n in names]).descr))"
       }
     ],
     "submission_mode": "function",
@@ -90,8 +143,8 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Construct a 5x5 matrix where the values 1, 2, 3, and 4 are placed just below the main diagonal, with all other elements being zero. (★☆☆)",
-    "answer_code": "Z = np.diag(1+np.arange(4),k=-1)\nprint(Z)",
+    "question_text": "Write a function solve(n) that takes an integer n >= 1 and returns an n x n integer matrix that is all zeros except immediately below the main diagonal, where the values 1, 2, ..., n-1 appear in order. For n = 1 there is no room below the diagonal, so the result is just [[0]].",
+    "answer_code": "import numpy as np\n\ndef solve(n):\n    return np.diag(1 + np.arange(n - 1), k=-1)\n\n\nprint(solve(5))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "[[0 0 0 0 0]\n [1 0 0 0 0]\n [0 2 0 0 0]\n [0 0 3 0 0]\n [0 0 0 4 0]]",
@@ -99,13 +152,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(n):\n    \"\"\"Return an n x n matrix with 1..n-1 just below the main diagonal.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several sizes.\nprint(solve(5))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.diag(1+np.arange(4),k=-1)"
+        "setup_code": "import numpy as np\nn = 5",
+        "call": "np.asarray(solve(n)).tolist()",
+        "expected_expr": "np.diag(1 + np.arange(n - 1), k=-1).tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 2",
+        "call": "np.asarray(solve(n)).tolist()",
+        "expected_expr": "[[0, 0], [1, 0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 1",
+        "call": "np.asarray(solve(n)).tolist()",
+        "expected_expr": "[[0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 4",
+        "call": "np.asarray(solve(n)).tolist()",
+        "expected_expr": "np.diag(1 + np.arange(n - 1), k=-1).tolist()"
       }
     ],
     "submission_mode": "function",
@@ -119,21 +186,41 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a 3x3 matrix Z, calculate the square root of the sum of the absolute squares of its elements. (★☆☆)",
-    "answer_code": "Z = np.random.random((3,3)); print(np.linalg.norm(Z))",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy array of floats and returns its Frobenius norm: the square root of the sum of the squares of all its entries, as a single scalar. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.linalg.norm(z)\n\n\nexample = np.array([[3.0, 4.0], [0.0, 0.0]])\nprint(solve(example))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "1.9962373669404487",
+    "expected_output": "5.0",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.random.random((3,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return the square root of the sum of squared entries of z.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several matrices.\nexample = np.array([[3.0, 4.0], [0.0, 0.0]])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.random((3,3))",
-        "call": "solve()",
-        "expected_expr": "np.linalg.norm(Z)"
+        "setup_code": "import numpy as np\nz = np.array([[3.0, 4.0], [0.0, 0.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.asarray(np.sqrt((z ** 2).sum())), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[-2.0, 1.5, 0.5], [3.0, -1.0, 2.5]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.asarray(np.sqrt((z ** 2).sum())), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[0.0, 0.0], [0.0, 0.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.asarray(0.0), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[-7.5]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.asarray(7.5), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(1)\nz = np.random.random((3, 3))",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.asarray(np.sqrt((z ** 2).sum())), 10)"
       }
     ],
     "submission_mode": "function",
@@ -147,22 +234,36 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a random vector of length 5, adjust its values so that the total length of the vector equals 1, maintaining the direction of the vector. (★☆☆)",
-    "answer_code": "v = np.random.random(5); v /= np.linalg.norm(v); print(v)",
+    "question_text": "Write a function solve(v) that takes a 1-D numpy array of floats with nonzero length (and at least one nonzero entry) and returns the vector rescaled to unit length: the result points in the same direction but its Euclidean length equals 1. Do not modify the input array.",
+    "answer_code": "import numpy as np\n\ndef solve(v):\n    return v / np.linalg.norm(v)\n\n\nexample = np.array([3.0, 4.0])\nprint(solve(example))\n",
     "difficulty_score": 24,
     "difficulty_label": "easy",
-    "expected_output": "[0.42694075 0.55637021 0.4689102  0.42388322 0.32957552]",
+    "expected_output": "[0.6 0.8]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nv = np.random.random(5)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(v):\n    \"\"\"Return v scaled so its Euclidean length is exactly 1.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several vectors.\nexample = np.array([3.0, 4.0])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "v = np.random.random(5)",
-        "call": "solve()",
-        "expected_expr": "v",
-        "expected_setup_code": "v = np.random.random(5)\nv /= np.linalg.norm(v)"
+        "setup_code": "import numpy as np\nv = np.array([3.0, 4.0])",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(v / np.sqrt((v ** 2).sum()), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv = np.array([-2.0, 1.0, 2.0])",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(v / np.sqrt((v ** 2).sum()), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nv = np.array([7.5])",
+        "call": "np.round(np.asarray(solve(v)), 10)",
+        "expected_expr": "np.round(np.array([1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(4)\nv = np.random.random(5) + 0.1",
+        "call": "(np.round(np.asarray(solve(v)), 10).tolist(), np.round(v, 10).tolist())",
+        "expected_expr": "(np.round(v / np.sqrt((v ** 2).sum()), 10).tolist(), np.round(v, 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -176,22 +277,41 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a 5x5 matrix Z of random values, return a new matrix where each element in a row has had the mean of that row subtracted from it. (★☆☆)",
-    "answer_code": "Z = np.random.random((5,5)); Z -= Z.mean(axis=1, keepdims=True); print(Z)",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy array of floats and returns a new array of the same shape in which every entry has had its own row's mean subtracted. Each row of the result therefore averages to zero. Do not use Python loops, and do not modify the input.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return z - z.mean(axis=1, keepdims=True)\n\n\nexample = np.array([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
     "difficulty_score": 38,
-    "difficulty_label": "easy",
-    "expected_output": "[[-0.01824734  0.14812852  0.03570253 -0.02217766 -0.14340605]\n [-0.01857761 -0.22688451  0.22730128  0.29919104 -0.2810302 ]\n [ 0.21466559 -0.04816452 -0.00901488  0.3485372  -0.50602338]\n [-0.43049799 -0.49740889  0.31499256  0.26052946  0.35238486]\n [ 0.35100637  0.17154659 -0.16613261  0.1529172  -0.50933755]]",
+    "difficulty_label": "medium",
+    "expected_output": "[[ -1.   0.   1.]\n [-10.   0.  10.]]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.random.random((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z with each row centered on its own mean.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several matrices.\nexample = np.array([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.random((5,5))",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.random.random((5,5))\nZ -= Z.mean(axis=1, keepdims=True)"
+        "setup_code": "import numpy as np\nz = np.array([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(z - z.mean(axis=1, keepdims=True), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[-4.0, 4.0], [0.0, 5.0], [2.5, -2.5]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(z - z.mean(axis=1, keepdims=True), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[6.0, 8.0, 1.0, 5.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(z - z.mean(axis=1, keepdims=True), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[3.0], [-7.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([[0.0], [0.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(5)\nz = np.random.random((5, 5))",
+        "call": "(np.round(np.asarray(solve(z)), 10).tolist(), np.round(z, 10).tolist())",
+        "expected_expr": "(np.round(z - z.mean(axis=1, keepdims=True), 10).tolist(), np.round(z, 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -205,8 +325,8 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "You are given rng, a NumPy random Generator seeded with a fixed integer so its output stream is deterministic. Produce a 1D array of length 3 containing the next three uniform floats in [0, 1) drawn from this generator. Because the seed is fixed, running the code repeatedly must yield the exact same three numbers. (★☆☆)\nPrint the result.",
-    "answer_code": "rng = np.random.default_rng(42); print(rng.random(3))",
+    "question_text": "Write a function solve(rng, n) that takes a numpy random Generator rng and a positive integer n, and returns a 1-D array of the next n uniform floats in [0, 1) drawn from that generator. Use the generator you are given — do not create a new one or reseed, since the grader checks the exact deterministic stream.",
+    "answer_code": "import numpy as np\n\ndef solve(rng, n):\n    return rng.random(n)\n\n\nexample_rng = np.random.default_rng(42)\nprint(solve(example_rng, 3))\n",
     "difficulty_score": 14,
     "difficulty_label": "easy",
     "expected_output": "[0.77395605 0.43887844 0.85859792]",
@@ -214,12 +334,31 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nrng = np.random.default_rng(42)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from the generator rng.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with seeded generators.\nexample_rng = np.random.default_rng(42)\nprint(solve(example_rng, 3))\n",
     "test_cases": [
       {
-        "setup_code": "rng = np.random.default_rng(42)",
-        "call": "solve()",
-        "expected_expr": "rng.random(3)"
+        "setup_code": "import numpy as np\nrng = np.random.default_rng(42)\nn = 3",
+        "call": "np.round(np.asarray(solve(rng, n)), 10)",
+        "expected_setup_code": "import numpy as np\nrng2 = np.random.default_rng(42)\nn = 3",
+        "expected_expr": "np.round(rng2.random(n), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nrng = np.random.default_rng(7)\nn = 5",
+        "call": "np.round(np.asarray(solve(rng, n)), 10)",
+        "expected_setup_code": "import numpy as np\nrng2 = np.random.default_rng(7)\nn = 5",
+        "expected_expr": "np.round(rng2.random(n), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nrng = np.random.default_rng(0)\nn = 1",
+        "call": "np.round(np.asarray(solve(rng, n)), 10)",
+        "expected_setup_code": "import numpy as np\nrng2 = np.random.default_rng(0)\nn = 1",
+        "expected_expr": "np.round(rng2.random(n), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nrng = np.random.default_rng(123)\nn = 8",
+        "call": "np.round(np.asarray(solve(rng, n)), 10)",
+        "expected_setup_code": "import numpy as np\nrng2 = np.random.default_rng(123)\nn = 8",
+        "expected_expr": "np.round(rng2.random(n), 10)"
       }
     ],
     "submission_mode": "function",
@@ -233,22 +372,36 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "You are given Z, a 2D array of shape (5, 5) filled with random values drawn from the uniform distribution on [0, 1). Rescale Z so that its overall mean becomes 0 and its overall standard deviation becomes 1, computing those statistics across all 25 entries (not per-row or per-column). The result should be a (5, 5) array of the same dtype. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))\nprint(Z)",
+    "question_text": "Write a function solve(z) that takes a numpy array of floats (any shape, not all entries equal) and returns a new array of the same shape rescaled so that its overall mean is 0 and its overall standard deviation is 1. Use the population standard deviation (numpy's default). Do not modify the input.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return (z - z.mean()) / z.std()\n\n\nexample = np.array([[1.0, 2.0], [3.0, 4.0]])\nprint(solve(example))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
-    "expected_output": "[[-0.14854421  0.44055117  0.04247881 -0.1624605  -0.59169993]\n [ 0.19519398 -0.54236874  1.06578972  1.32033341 -0.73408512]\n [ 0.71154487 -0.21907095 -0.08045184  1.18555078 -1.84023484]\n [-1.78325269 -2.02016749  0.85634317  0.66350295  0.98873998]\n [ 1.37328739  0.73786513 -0.4577726   0.67190312 -1.67297558]]",
+    "expected_output": "[[-1.34164079 -0.4472136 ]\n [ 0.4472136   1.34164079]]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.random.random((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z standardized: overall mean 0, overall std 1.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([[1.0, 2.0], [3.0, 4.0]])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.random((5,5))",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.random.random((5,5))\nZ = (Z - np.mean (Z)) / (np.std (Z))"
+        "setup_code": "import numpy as np\nz = np.array([[1.0, 2.0], [3.0, 4.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round((z - z.mean()) / z.std(), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-3.0, 0.0, 3.0, 6.0, -6.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round((z - z.mean()) / z.std(), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[5.0], [7.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([[-1.0], [1.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(9)\nz = np.random.random((5, 5))",
+        "call": "(np.round(np.asarray(solve(z)), 10).tolist(), np.round(z, 10).tolist())",
+        "expected_expr": "(np.round((z - z.mean()) / z.std(), 10).tolist(), np.round(z, 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -262,8 +415,8 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Build a 4x4 2D array where every entry equals its own row index, so each row holds a single repeated integer value and that value equals the row's position from top to bottom. The result must have integer dtype and shape (4, 4). (★☆☆)",
-    "answer_code": "Z = np.indices((4,4))[0]; print(Z)",
+    "question_text": "Write a function solve(rows, cols) that takes two positive integers and returns a rows x cols integer matrix in which every entry equals its own row index: the top row is all 0s, the next row all 1s, and so on. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(rows, cols):\n    return np.indices((rows, cols))[0]\n\n\nprint(solve(4, 4))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",
     "expected_output": "[[0 0 0 0]\n [1 1 1 1]\n [2 2 2 2]\n [3 3 3 3]]",
@@ -271,13 +424,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(rows, cols):\n    \"\"\"Return a rows x cols matrix where each entry equals its row index.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several sizes.\nprint(solve(4, 4))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.indices((4,4))[0]"
+        "setup_code": "import numpy as np\nrows, cols = 4, 4",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "np.indices((rows, cols))[0].tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 1, 5",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "[[0, 0, 0, 0, 0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 3, 1",
+        "call": "np.asarray(solve(rows, cols)).tolist()",
+        "expected_expr": "[[0], [1], [2]]"
+      },
+      {
+        "setup_code": "import numpy as np\nrows, cols = 2, 3",
+        "call": "(np.asarray(solve(rows, cols)).dtype.kind, np.asarray(solve(rows, cols)).tolist())",
+        "expected_expr": "('i', [[0, 0, 0], [1, 1, 1]])"
       }
     ],
     "submission_mode": "function",
@@ -291,8 +458,8 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Given a 1D array Z, modify the array such that all elements with values greater than 3 and less than 8 are negated. (★☆☆)",
-    "answer_code": "# Author: Evgeni Burovski\n\nZ = np.arange(11)\nZ[(3 < Z) & (Z < 8)] *= -1\nprint(Z)",
+    "question_text": "Write a function solve(z) that takes a 1-D numpy integer array and returns a new array in which every entry strictly greater than 3 and strictly less than 8 has been negated, while all other entries are unchanged. The input array itself must not be modified. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    out = z.copy()\n    out[(out > 3) & (out < 8)] *= -1\n    return out\n\n\nexample = np.arange(11)\nprint(solve(example))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "[ 0  1  2  3 -4 -5 -6 -7  8  9 10]",
@@ -300,13 +467,32 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.arange(11)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z with entries in the open interval (3, 8) negated.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.arange(11)\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.arange(11)",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "# Author: Evgeni Burovski\nZ = np.arange(11)\nZ[(3 < Z) & (Z < 8)] *= -1"
+        "setup_code": "import numpy as np\nz = np.arange(11)",
+        "call": "(np.asarray(solve(z)).tolist(), z.tolist())",
+        "expected_expr": "([0, 1, 2, 3, -4, -5, -6, -7, 8, 9, 10], list(range(11)))"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([3, 8, 0, 9])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[3, 8, 0, 9]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([4, 5, 6, 7])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[-4, -5, -6, -7]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-4, 5, 12, 7, 2])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[-4, -5, 12, -7, 2]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([6])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[-6]"
       }
     ],
     "submission_mode": "function",
@@ -320,21 +506,41 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Given an array Z, return the distinct elements along with the number of times each element appears in the array. (★☆☆)",
-    "answer_code": "Z = np.array([1,2,2,3,3,3]); vals, cnts = np.unique(Z, return_counts=True); print(vals, cnts)",
+    "question_text": "Write a function solve(z) that takes a 1-D numpy array and returns a tuple of two arrays: the distinct values of z in ascending order, and, aligned with them, the number of times each value occurs. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.unique(z, return_counts=True)\n\n\nexample = np.array([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
-    "expected_output": "[1 2 3] [1 2 3]",
+    "expected_output": "(array([1, 2, 3]), array([1, 2, 3]))",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.array([1,2,2,3,3,3])\nvals, cnts = np.unique(Z, return_counts=True)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return (distinct values ascending, matching occurrence counts).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.array([1,2,2,3,3,3])\nvals, cnts = np.unique(Z, return_counts=True)",
-        "call": "solve()",
-        "expected_expr": "vals, cnts"
+        "setup_code": "import numpy as np\nz = np.array([1, 2, 2, 3, 3, 3])",
+        "call": "[np.asarray(p).tolist() for p in solve(z)]",
+        "expected_expr": "[list(p.tolist() for p in np.unique(z, return_counts=True))[0], list(p.tolist() for p in np.unique(z, return_counts=True))[1]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([5, -1, 5, -1, 5, 0])",
+        "call": "[np.asarray(p).tolist() for p in solve(z)]",
+        "expected_expr": "[[-1, 0, 5], [2, 1, 3]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([7, 7, 7, 7])",
+        "call": "[np.asarray(p).tolist() for p in solve(z)]",
+        "expected_expr": "[[7], [4]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([9])",
+        "call": "[np.asarray(p).tolist() for p in solve(z)]",
+        "expected_expr": "[[9], [1]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([3, 1, 2])",
+        "call": "[np.asarray(p).tolist() for p in solve(z)]",
+        "expected_expr": "[[1, 2, 3], [1, 1, 1]]"
       }
     ],
     "submission_mode": "function",
@@ -348,22 +554,36 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a 3x3 matrix Z of random values, return the matrix after adjusting each element by removing the average value of all elements. (★☆☆)",
-    "answer_code": "Z = np.random.random((3,3)); Z = Z - Z.mean(); print(Z)",
+    "question_text": "Write a function solve(z) that takes a numpy array of floats (any shape) and returns a new array of the same shape in which the mean of ALL entries has been subtracted from every entry, so the result's overall mean is zero. Do not modify the input array.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return z - z.mean()\n\n\nexample = np.array([[1.0, 2.0], [3.0, 6.0]])\nprint(solve(example))\n",
     "difficulty_score": 16,
     "difficulty_label": "easy",
-    "expected_output": "[[-0.09276664  0.07360922 -0.03881677]\n [-0.09669696 -0.21792535  0.00431397]\n [-0.20399293  0.25019285  0.32208261]]",
+    "expected_output": "[[-2. -1.]\n [ 0.  3.]]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.random.random((3,3))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z shifted so the mean of all its entries is 0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([[1.0, 2.0], [3.0, 6.0]])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.random((3,3))",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.random.random((3,3))\nZ = Z - Z.mean()"
+        "setup_code": "import numpy as np\nz = np.array([[1.0, 2.0], [3.0, 6.0]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(z - z.mean(), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([4.5, -2.5, 0.0, 10.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(z - z.mean(), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[8.25]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([[0.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(6)\nz = np.random.random((3, 3))",
+        "call": "(np.round(np.asarray(solve(z)), 10).tolist(), np.round(z, 10).tolist())",
+        "expected_expr": "(np.round(z - z.mean(), 10).tolist(), np.round(z, 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -377,8 +597,8 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Construct a 5x5 floating-point matrix Z whose entries strictly below the main diagonal are 1.0 and every other entry (the main diagonal itself and everything above it) is 0.0. The result is a 2D array of shape (5, 5) with ones forming a triangle that excludes the diagonal. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.tril(np.ones((5,5)), k=-1); print(Z)",
+    "question_text": "Write a function solve(n) that takes an integer n >= 1 and returns an n x n floating-point matrix whose entries strictly below the main diagonal are 1.0 and all other entries (the diagonal itself and above) are 0.0. For n = 1 the result is [[0.0]]. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(n):\n    return np.tril(np.ones((n, n)), k=-1)\n\n\nprint(solve(5))\n",
     "difficulty_score": 24,
     "difficulty_label": "easy",
     "expected_output": "[[0. 0. 0. 0. 0.]\n [1. 0. 0. 0. 0.]\n [1. 1. 0. 0. 0.]\n [1. 1. 1. 0. 0.]\n [1. 1. 1. 1. 0.]]",
@@ -386,13 +606,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(n):\n    \"\"\"Return an n x n float matrix: 1.0 strictly below the diagonal, else 0.0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several sizes.\nprint(solve(5))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.tril(np.ones((5,5)), k=-1)"
+        "setup_code": "import numpy as np\nn = 5",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.tril(np.ones((n, n)), k=-1), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 1",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.array([[0.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 2",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.array([[0.0, 0.0], [1.0, 0.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 4",
+        "call": "(np.asarray(solve(n)).dtype.kind, np.round(np.asarray(solve(n)), 10).tolist())",
+        "expected_expr": "('f', np.round(np.tril(np.ones((n, n)), k=-1), 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -406,22 +640,36 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "Starting from a 5x5 array Z filled with ones, surround the existing values with a one-cell-thick border of zeros so the result is a 7x7 array whose outermost row and column on every side contain zeros and whose interior 5x5 region preserves the original ones. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.ones((5,5))\nZ = np.pad(Z, pad_width=1, mode='constant', constant_values=0)\nprint(Z)\n\n# Using fancy indexing\nZ[:, [0, -1]] = 0\nZ[[0, -1], :] = 0\nprint(Z)",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy array of floats and returns a new array with one extra row on the top and bottom and one extra column on each side, all filled with zeros — a one-cell-thick zero border surrounding the original values. An input of shape (r, c) therefore produces output of shape (r+2, c+2).",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.pad(z, pad_width=1, mode=\"constant\", constant_values=0)\n\n\nexample = np.ones((2, 2))\nprint(solve(example))\n",
     "difficulty_score": 26,
     "difficulty_label": "easy",
-    "expected_output": "[[0. 0. 0. 0. 0. 0. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 0. 0. 0. 0. 0. 0.]]\n[[0. 0. 0. 0. 0. 0. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 1. 1. 1. 1. 1. 0.]\n [0. 0. 0. 0. 0. 0. 0.]]",
+    "expected_output": "[[0. 0. 0. 0.]\n [0. 1. 1. 0.]\n [0. 1. 1. 0.]\n [0. 0. 0. 0.]]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.ones((5,5))\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z surrounded by a one-cell border of zeros.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.ones((2, 2))\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.ones((5,5))",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.ones((5,5))\nZ = np.pad(Z, pad_width=1, mode='constant', constant_values=0)\nprint(Z)\n# Using fancy indexing\nZ[:, [0, -1]] = 0\nZ[[0, -1], :] = 0"
+        "setup_code": "import numpy as np\nz = np.ones((3, 3))",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.pad(z, pad_width=1, mode='constant', constant_values=0), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[5.5, -2.0, 1.0], [0.5, 3.0, -4.5]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.pad(z, pad_width=1, mode='constant', constant_values=0), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[7.25]])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([[0.0, 0.0, 0.0], [0.0, 7.25, 0.0], [0.0, 0.0, 0.0]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(8)\nz = np.random.random((1, 4))",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.pad(z, pad_width=1, mode='constant', constant_values=0), 10)"
       }
     ],
     "submission_mode": "function",
@@ -435,22 +683,36 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "You are given Z, a 1D float array of length 3 that originally held a mix of finite floats and at least one NaN, but with every NaN entry already replaced by 0.0. Return Z so it can be inspected; the result must be a NaN-free copy of the original with the same shape, dtype, and ordering of the non-NaN values. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.array([0.0, np.nan, 1.0]); Z = np.nan_to_num(Z, nan=0.0); print(Z)",
+    "question_text": "Write a function solve(z) that takes a 1-D numpy array of floats that may contain NaN entries (but no infinities) and returns a new array in which every NaN has been replaced by 0.0 while every other value is unchanged. Do not modify the input array.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.nan_to_num(z, nan=0.0)\n\n\nexample = np.array([0.5, np.nan, 1.0])\nprint(solve(example))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
-    "expected_output": "[0. 0. 1.]",
+    "expected_output": "[0.5 0.  1. ]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.array([0.0, np.nan, 1.0])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z with every NaN replaced by 0.0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([0.5, np.nan, 1.0])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.array([0.0, np.nan, 1.0])",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.array([0.0, np.nan, 1.0])\nZ = np.nan_to_num(Z, nan=0.0)"
+        "setup_code": "import numpy as np\nz = np.array([0.5, np.nan, 1.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([0.5, 0.0, 1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([np.nan, np.nan])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([0.0, 0.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-3.25, 7.0, 0.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([-3.25, 7.0, 0.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([np.nan, -1.5, np.nan, 2.5])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.where(np.isnan(z), 0.0, z), 10)"
       }
     ],
     "submission_mode": "function",
@@ -464,21 +726,36 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "You are given Z, a 1D complex-valued array of shape (2,) whose two entries each carry a real part and an imaginary part. Produce two separate real-valued arrays of shape (2,): the first contains the real components of each entry, and the second contains the imaginary components. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.array([1+2j, 3+4j]); print(np.real(Z), np.imag(Z))",
+    "question_text": "Write a function solve(z) that takes a 1-D complex-valued numpy array and returns a tuple of two real-valued arrays of the same length: the first holding the real part of each entry, the second holding the imaginary part.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.real(z), np.imag(z)\n\n\nexample = np.array([1 + 2j, 3 + 4j])\nprint(solve(example))\n",
     "difficulty_score": 18,
     "difficulty_label": "easy",
-    "expected_output": "[1. 3.] [2. 4.]",
+    "expected_output": "(array([1., 3.]), array([2., 4.]))",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.array([1+2j, 3+4j])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return (real parts, imaginary parts) of the complex array z.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([1 + 2j, 3 + 4j])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.array([1+2j, 3+4j])",
-        "call": "solve()",
-        "expected_expr": "np.real(Z), np.imag(Z)"
+        "setup_code": "import numpy as np\nz = np.array([1 + 2j, 3 + 4j])",
+        "call": "[np.round(np.asarray(p), 10).tolist() for p in solve(z)]",
+        "expected_expr": "[[1.0, 3.0], [2.0, 4.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-1.5 - 0.5j, 0.0 + 1j, 2.25 + 0j])",
+        "call": "[np.round(np.asarray(p), 10).tolist() for p in solve(z)]",
+        "expected_expr": "[np.round(np.real(z), 10).tolist(), np.round(np.imag(z), 10).tolist()]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([5j])",
+        "call": "[np.round(np.asarray(p), 10).tolist() for p in solve(z)]",
+        "expected_expr": "[[0.0], [5.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([2 + 0j, -3 + 0j])",
+        "call": "[np.round(np.asarray(p), 10).tolist() for p in solve(z)]",
+        "expected_expr": "[[2.0, -3.0], [0.0, 0.0]]"
       }
     ],
     "submission_mode": "function",
@@ -492,8 +769,8 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "You are given Z, a 3x3 integer matrix containing the values 0 through 8 arranged row by row. For each row, compute the successive differences between adjacent column entries, producing a 2D array of shape (3, 2) where entry (i, j) equals Z[i, j+1] - Z[i, j]. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.arange(9).reshape(3,3); print(np.diff(Z, axis=1))",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy integer array and returns the successive differences between adjacent columns within each row: entry [i, j] of the result equals z[i, j+1] - z[i, j]. For input of shape (r, c) the result has shape (r, c-1). You may assume z has at least two columns. Do not use Python loops.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.diff(z, axis=1)\n\n\nexample = np.arange(9).reshape(3, 3)\nprint(solve(example))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
     "expected_output": "[[1 1]\n [1 1]\n [1 1]]",
@@ -501,12 +778,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.arange(9).reshape(3,3)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return per-row differences between adjacent columns of z.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several matrices.\nexample = np.arange(9).reshape(3, 3)\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.arange(9).reshape(3,3)",
-        "call": "solve()",
-        "expected_expr": "np.diff(Z, axis=1)"
+        "setup_code": "import numpy as np\nz = np.arange(9).reshape(3, 3)",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "np.diff(z, axis=1).tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[5, 1, 8, 2]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[[-4, 7, -6]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[3, 3], [10, -2], [0, 4]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[[0], [-12], [4]]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[-5, -1, -9], [2, 2, 2]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "np.diff(z, axis=1).tolist()"
       }
     ],
     "submission_mode": "function",
@@ -520,21 +812,36 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Given a 3x4 integer matrix Z whose entries are 0 through 11 in row-major order, return a 1D array of length 12 that lists Z's entries in column-major order (reading down each column from top to bottom, columns ordered left to right). (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.arange(12).reshape(3,4); print(Z.flatten('F'))",
+    "question_text": "Write a function solve(z) that takes a 2-D numpy array and returns a 1-D array listing all of z's entries in column-major order: read down the first column top to bottom, then the second column, and so on. Note that this is not the default row-major flattening.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return z.flatten('F')\n\n\nexample = np.arange(6).reshape(2, 3)\nprint(solve(example))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "[ 0  4  8  1  5  9  2  6 10  3  7 11]",
+    "expected_output": "[0 3 1 4 2 5]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.arange(12).reshape(3,4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return the entries of z flattened in column-major order.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several matrices.\nexample = np.arange(6).reshape(2, 3)\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.arange(12).reshape(3,4)",
-        "call": "solve()",
-        "expected_expr": "Z.flatten('F')"
+        "setup_code": "import numpy as np\nz = np.arange(12).reshape(3, 4)",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "z.flatten('F').tolist()"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[7, -2], [0, 5]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[7, 0, -2, 5]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[4, 9, 1]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[4, 9, 1]"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([[3], [8], [-1]])",
+        "call": "np.asarray(solve(z)).tolist()",
+        "expected_expr": "[3, 8, -1]"
       }
     ],
     "submission_mode": "function",
@@ -548,22 +855,41 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Given a random vector Z of length 10, set the largest value in the vector to 0 and return the modified vector. (★☆☆)",
-    "answer_code": "Z = np.random.random(10); Z[Z.argmax()] = 0; print(Z)",
+    "question_text": "Write a function solve(z) that takes a 1-D numpy array of floats and returns a new array in which the largest value has been replaced by 0.0, with everything else unchanged. If the maximum occurs more than once, replace only its first occurrence. Do not modify the input array.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    out = z.copy()\n    out[out.argmax()] = 0.0\n    return out\n\n\nexample = np.array([2.0, 9.0, 4.0])\nprint(solve(example))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "[0.5488135  0.71518937 0.60276338 0.54488318 0.4236548  0.64589411\n 0.43758721 0.891773   0.         0.38344152]",
+    "expected_output": "[2. 0. 4.]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nZ = np.random.random(10)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return z with its largest value replaced by 0.0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several vectors.\nexample = np.array([2.0, 9.0, 4.0])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.random.random(10)",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.random.random(10)\nZ[Z.argmax()] = 0"
+        "setup_code": "import numpy as np\nz = np.array([2.0, 9.0, 4.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([2.0, 0.0, 4.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([5.0, 1.0, 5.0, 3.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([0.0, 1.0, 5.0, 3.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-4.0, -1.5, -3.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([-4.0, 0.0, -3.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([6.25])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([0.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(3)\nz = np.round(np.random.random(8), 3)",
+        "call": "(np.round(np.asarray(solve(z)), 10).tolist(), np.round(z, 10).tolist())",
+        "expected_expr": "((lambda w: (w.__setitem__(w.argmax(), 0.0), np.round(w, 10).tolist())[1])(z.copy()), np.round(z, 10).tolist())"
       }
     ],
     "submission_mode": "function",
@@ -1487,8 +1813,8 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Given a 1D float array Z, return a new float array of the same shape where each entry has been replaced by the largest integer that is less than or equal to it (so positives lose their fractional part toward zero and negatives are pushed further negative). (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.array([1.2, 3.7, -0.3]); print(np.floor(Z))",
+    "question_text": "Write a function solve(z) that takes a 1-D numpy array of floats and returns a new float array of the same shape in which each entry is replaced by the largest integer value less than or equal to it (the floor). Positive numbers lose their fractional part, while negative numbers with any fractional part move further from zero (for example -0.3 becomes -1.0).",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return np.floor(z)\n\n\nexample = np.array([1.2, 3.7, -0.3])\nprint(solve(example))\n",
     "difficulty_score": 12,
     "difficulty_label": "easy",
     "expected_output": "[ 1.  3. -1.]",
@@ -1496,12 +1822,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.array([1.2, 3.7, -0.3])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return the floor of every entry of z as floats.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([1.2, 3.7, -0.3])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.array([1.2, 3.7, -0.3])",
-        "call": "solve()",
-        "expected_expr": "np.floor(Z)"
+        "setup_code": "import numpy as np\nz = np.array([1.2, 3.7, -0.3])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([1.0, 3.0, -1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([-2.5, -0.999, 0.999])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([-3.0, -1.0, 0.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([4.0, -6.0, 0.0])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([4.0, -6.0, 0.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([7.5])",
+        "call": "np.round(np.asarray(solve(z)), 10)",
+        "expected_expr": "np.round(np.array([7.0]), 10)"
       }
     ],
     "submission_mode": "function",
@@ -1515,8 +1856,8 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Construct a 4x4 square matrix where all the elements on the main diagonal are 2, and all other elements are 0. (★☆☆)",
-    "answer_code": "Z = np.eye(4) * 2; print(Z)",
+    "question_text": "Write a function solve(n, v) that takes an integer n >= 1 and a number v, and returns an n x n floating-point matrix with v at every position on the main diagonal and 0.0 everywhere else.",
+    "answer_code": "import numpy as np\n\ndef solve(n, v):\n    return np.eye(n) * v\n\n\nprint(solve(4, 2.0))\n",
     "difficulty_score": 12,
     "difficulty_label": "easy",
     "expected_output": "[[2. 0. 0. 0.]\n [0. 2. 0. 0.]\n [0. 0. 2. 0.]\n [0. 0. 0. 2.]]",
@@ -1524,13 +1865,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(n, v):\n    \"\"\"Return an n x n float matrix with v on the diagonal, zeros elsewhere.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(4, 2.0))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.eye(4) * 2"
+        "setup_code": "import numpy as np\nn, v = 4, 2.0",
+        "call": "np.round(np.asarray(solve(n, v)), 10)",
+        "expected_expr": "np.round(np.eye(n) * v, 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn, v = 1, 7.5",
+        "call": "np.round(np.asarray(solve(n, v)), 10)",
+        "expected_expr": "np.round(np.array([[7.5]]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn, v = 3, -1.25",
+        "call": "np.round(np.asarray(solve(n, v)), 10)",
+        "expected_expr": "np.round(np.eye(n) * v, 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn, v = 2, 0.5",
+        "call": "np.round(np.asarray(solve(n, v)), 10)",
+        "expected_expr": "np.round(np.array([[0.5, 0.0], [0.0, 0.5]]), 10)"
       }
     ],
     "submission_mode": "function",
@@ -1544,21 +1899,36 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Given a 10x10 array Z of zeros (float64), report how much memory the array's data buffer occupies in bytes and print that count, formatted as the string \"<n> bytes\" where <n> is the byte count. Count only the element storage, not Python or array-object overhead. (★☆☆)",
-    "answer_code": "Z = np.zeros((10,10))\nprint(\"%d bytes\" % (Z.size * Z.itemsize))\n\n# Simpler alternative\nprint(\"%d bytes\" % Z.nbytes)",
+    "question_text": "Write a function solve(z) that takes any numpy array and returns the size of its data buffer as the string \"<n> bytes\", where <n> is the total number of bytes the array's elements occupy (element count times bytes per element). For example, a 10x10 float64 array gives \"800 bytes\".",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return f\"{z.nbytes} bytes\"\n\n\nexample = np.zeros((10, 10))\nprint(solve(example))\n",
     "difficulty_score": 18,
     "difficulty_label": "easy",
-    "expected_output": "800 bytes\n800 bytes",
+    "expected_output": "800 bytes",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.zeros((10,10))\nprint(\"%d bytes\" % (Z.size * Z.itemsize))\n# Simpler alternative\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return the array's data-buffer size formatted as '<n> bytes'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.zeros((10, 10))\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.zeros((10,10))\nprint(\"%d bytes\" % (Z.size * Z.itemsize))\n# Simpler alternative",
-        "call": "solve()",
-        "expected_expr": "\"%d bytes\" % Z.nbytes"
+        "setup_code": "import numpy as np\nz = np.zeros((10, 10))",
+        "call": "str(solve(z))",
+        "expected_expr": "'800 bytes'"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.arange(6, dtype=np.int32)",
+        "call": "str(solve(z))",
+        "expected_expr": "'24 bytes'"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([1.5])",
+        "call": "str(solve(z))",
+        "expected_expr": "'8 bytes'"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.ones((2, 3, 4), dtype=np.uint8)",
+        "call": "str(solve(z))",
+        "expected_expr": "str(z.nbytes) + ' bytes'"
       }
     ],
     "submission_mode": "function",
@@ -1572,8 +1942,8 @@
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
-    "question_text": "You are given Z, a 1D boolean array of length 4 with a mix of True and False entries. Return the total number of True entries in Z as a single integer count. The answer must reflect how many positions hold True, ignoring False entries entirely. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.array([True, False, True, True]); print(np.count_nonzero(Z))",
+    "question_text": "Write a function solve(z) that takes a 1-D boolean numpy array and returns the number of True entries as a plain Python int. The array may be all True, all False, or any mix, and may have any length >= 1.",
+    "answer_code": "import numpy as np\n\ndef solve(z):\n    return int(np.count_nonzero(z))\n\n\nexample = np.array([True, False, True, True])\nprint(solve(example))\n",
     "difficulty_score": 12,
     "difficulty_label": "easy",
     "expected_output": "3",
@@ -1581,12 +1951,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nZ = np.array([True, False, True, True])\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(z):\n    \"\"\"Return how many entries of the boolean array z are True.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several arrays.\nexample = np.array([True, False, True, True])\nprint(solve(example))\n",
     "test_cases": [
       {
-        "setup_code": "Z = np.array([True, False, True, True])",
-        "call": "solve()",
-        "expected_expr": "np.count_nonzero(Z)"
+        "setup_code": "import numpy as np\nz = np.array([True, False, True, True])",
+        "call": "(isinstance(solve(z), int), int(solve(z)))",
+        "expected_expr": "(True, 3)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([False, False])",
+        "call": "(isinstance(solve(z), int), int(solve(z)))",
+        "expected_expr": "(True, 0)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([True] * 7)",
+        "call": "(isinstance(solve(z), int), int(solve(z)))",
+        "expected_expr": "(True, 7)"
+      },
+      {
+        "setup_code": "import numpy as np\nz = np.array([False])",
+        "call": "(isinstance(solve(z), int), int(solve(z)))",
+        "expected_expr": "(True, 0)"
       }
     ],
     "submission_mode": "function",
@@ -1600,8 +1985,8 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Build Z, a 1D floating-point array of shape (5,) containing 5 evenly spaced values that start at 0 and end at 1 inclusive, with equal spacing between consecutive entries. The first entry must be exactly 0.0, the last entry must be exactly 1.0, and entries in between fill in at uniform steps. (★☆☆)\nPrint the result.",
-    "answer_code": "Z = np.linspace(0, 1, 5); print(Z)",
+    "question_text": "Write a function solve(n) that takes an integer n >= 2 and returns a 1-D floating-point array of n evenly spaced values that starts at exactly 0.0 and ends at exactly 1.0, with equal spacing between consecutive entries.",
+    "answer_code": "import numpy as np\n\ndef solve(n):\n    return np.linspace(0.0, 1.0, n)\n\n\nprint(solve(5))\n",
     "difficulty_score": 14,
     "difficulty_label": "easy",
     "expected_output": "[0.   0.25 0.5  0.75 1.  ]",
@@ -1609,13 +1994,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(n):\n    \"\"\"Return n evenly spaced floats from 0.0 to 1.0 inclusive.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several lengths.\nprint(solve(5))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.linspace(0, 1, 5)"
+        "setup_code": "import numpy as np\nn = 5",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.array([0.0, 0.25, 0.5, 0.75, 1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 2",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.array([0.0, 1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 3",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.array([0.0, 0.5, 1.0]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nn = 11",
+        "call": "np.round(np.asarray(solve(n)), 10)",
+        "expected_expr": "np.round(np.arange(11) / 10.0, 10)"
       }
     ],
     "submission_mode": "function",
@@ -1629,8 +2028,8 @@
     "topic": "Numpy",
     "subtopic": "Applied patterns and advanced",
     "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Given a date range from July 1, 2016, to July 31, 2016, return all the dates within that month as an array. (★★☆)",
-    "answer_code": "Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')\nprint(Z)",
+    "question_text": "Write a function solve(year, month) that takes a year and a month (1-12) as integers and returns a 1-D numpy datetime64 array containing every calendar date in that month, in order — from the 1st through the last day. The function must get the month length right, including February in leap years.",
+    "answer_code": "import numpy as np\n\ndef solve(year, month):\n    start = np.datetime64(f\"{year}-{month:02d}\")\n    return np.arange(start, start + 1, dtype=\"datetime64[D]\")\n\n\nprint(solve(2016, 7))\n",
     "difficulty_score": 42,
     "difficulty_label": "medium",
     "expected_output": "['2016-07-01' '2016-07-02' '2016-07-03' '2016-07-04' '2016-07-05'\n '2016-07-06' '2016-07-07' '2016-07-08' '2016-07-09' '2016-07-10'\n '2016-07-11' '2016-07-12' '2016-07-13' '2016-07-14' '2016-07-15'\n '2016-07-16' '2016-07-17' '2016-07-18' '2016-07-19' '2016-07-20'\n '2016-07-21' '2016-07-22' '2016-07-23' '2016-07-24' '2016-07-25'\n '2016-07-26' '2016-07-27' '2016-07-28' '2016-07-29' '2016-07-30'\n '2016-07-31']",
@@ -1638,13 +2037,27 @@
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(year, month):\n    \"\"\"Return all dates of the given month as a datetime64[D] array.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several months.\nprint(solve(2016, 7))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "Z",
-        "expected_setup_code": "Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')"
+        "setup_code": "import numpy as np\nyear, month = 2016, 7",
+        "call": "[str(d) for d in solve(year, month)]",
+        "expected_expr": "[str(d) for d in np.arange(np.datetime64('2016-07'), np.datetime64('2016-08'), dtype='datetime64[D]')]"
+      },
+      {
+        "setup_code": "import numpy as np\nyear, month = 2016, 2",
+        "call": "(len(solve(year, month)), str(solve(year, month)[-1]))",
+        "expected_expr": "(29, '2016-02-29')"
+      },
+      {
+        "setup_code": "import numpy as np\nyear, month = 2015, 2",
+        "call": "(len(solve(year, month)), str(solve(year, month)[-1]))",
+        "expected_expr": "(28, '2015-02-28')"
+      },
+      {
+        "setup_code": "import numpy as np\nyear, month = 2020, 12",
+        "call": "[str(d) for d in solve(year, month)]",
+        "expected_expr": "[str(d) for d in np.arange(np.datetime64('2020-12'), np.datetime64('2021-01'), dtype='datetime64[D]')]"
       }
     ],
     "submission_mode": "function",

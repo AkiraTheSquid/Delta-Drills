@@ -1,23 +1,23 @@
-{"id": 1, "hint": "There is a single array method that returns the index of the maximum; tell it which axis to reduce over so it works row by row."}
-{"id": 2, "hint": "Start from a zero matrix and use strided slicing (start::2) on rows and columns to set the two interleaved groups of cells to 1."}
-{"id": 3, "hint": "np.dtype accepts a list of (field_name, field_type) tuples; pick the unsigned single-byte integer type for each channel."}
-{"id": 4, "hint": "np.diag can build a matrix from a vector placed on an offset diagonal; a negative offset moves it below the main diagonal."}
-{"id": 5, "hint": "There is a single linear-algebra function whose default behavior on a matrix gives the square-root-of-sum-of-squares you need."}
-{"id": 6, "hint": "Divide the vector by its own Euclidean length so the magnitude becomes 1 while the direction is unchanged."}
-{"id": 7, "hint": "Take the mean over the column axis but keep the reduced dimension so it broadcasts back against each row."}
-{"id": 8, "hint": "Construct a Generator with a fixed seed, then ask it for three uniform samples; the fixed seed guarantees reproducibility."}
-{"id": 10, "hint": "Use the whole-array (no-axis) mean and standard deviation as scalars to center then scale every entry."}
-{"id": 11, "hint": "np.indices produces coordinate grids; the first of the returned grids holds the row index at every position."}
-{"id": 12, "hint": "Build a boolean mask from the two comparisons combined with &, then multiply the masked elements by -1 in place."}
-{"id": 14, "hint": "One function gives both the sorted distinct values and, with the right flag, the matching occurrence counts."}
-{"id": 15, "hint": "Subtract the single scalar mean of all entries from the matrix so the overall average becomes zero."}
-{"id": 16, "hint": "Take the lower triangle of an all-ones matrix but shift the cutoff so the main diagonal itself is excluded."}
-{"id": 17, "hint": "There is a padding function that adds a one-cell border of a constant value around an array."}
-{"id": 18, "hint": "A single conversion function swaps NaN entries for a chosen replacement value while preserving the rest."}
-{"id": 19, "hint": "Two companion functions pull out the real part and the imaginary part of a complex array separately."}
-{"id": 22, "hint": "There is a function for successive differences; point it at the column axis to difference adjacent entries within each row."}
-{"id": 23, "hint": "Flatten the array but request column-major (Fortran) ordering so it reads down columns first."}
-{"id": 24, "hint": "There is a single-call way to locate the position of the largest entry, then write to that position."}
+{"id": 1, "hint": "Reductions that report a position (not a value) also take an axis argument \u2014 pick the axis that runs across each row."}
+{"id": 2, "hint": "A cell's color depends only on whether its row index plus its column index is even or odd."}
+{"id": 3, "hint": "np.dtype accepts a list of (name, type) pairs; numpy's one-byte unsigned integer type goes in the second slot."}
+{"id": 4, "hint": "The function that builds a matrix from a diagonal vector takes an offset argument that shifts which diagonal the vector lands on."}
+{"id": 5, "hint": "numpy's linear-algebra module has a one-call norm, or build it yourself from squaring, summing, and a square root."}
+{"id": 6, "hint": "Divide the vector by its own Euclidean length \u2014 and return a new array rather than scaling in place."}
+{"id": 7, "hint": "Compute the mean along the row axis and keep its dimensions so broadcasting lines each mean up with its own row."}
+{"id": 8, "hint": "Generator objects have a method that returns uniform [0,1) floats and accepts a size argument."}
+{"id": 10, "hint": "Center first by subtracting the overall mean, then divide by the overall standard deviation."}
+{"id": 11, "hint": "Broadcast a column of row numbers across the width \u2014 or use the numpy helper that returns the index grids of a shape."}
+{"id": 12, "hint": "Combine two comparisons with the elementwise AND operator to build a boolean mask, then assign through it on a copy."}
+{"id": 14, "hint": "The deduplication function has an optional flag that makes it also report how often each distinct value appeared."}
+{"id": 15, "hint": "A no-axis mean collapses the whole array to one number, and subtracting a scalar broadcasts to every entry."}
+{"id": 16, "hint": "numpy's lower-triangle helper takes an offset that can exclude the main diagonal itself."}
+{"id": 17, "hint": "numpy has a padding function whose width argument adds the same margin on every side \u2014 or allocate a bigger zero array and drop z into its interior slice."}
+{"id": 18, "hint": "Either use numpy's NaN-replacement helper, or build a boolean NaN mask and select between 0.0 and the original values."}
+{"id": 19, "hint": "Complex arrays expose their two components either as array attributes or through a matching pair of numpy functions."}
+{"id": 22, "hint": "numpy has a discrete-difference function that takes an axis argument \u2014 or subtract two shifted column slices."}
+{"id": 23, "hint": "Flattening accepts an order argument \u2014 the Fortran convention walks down columns first. Transposing before a default flatten works too."}
+{"id": 24, "hint": "Find the POSITION of the maximum rather than its value, then assign into a copy at that single index."}
 {"id": 25, "hint": "Indexing a numpy array with a list of row positions selects (or assigns) several whole rows at once, and negative positions count from the end."}
 {"id": 26, "hint": "numpy arrays have reduction methods that, when called with no axis argument, collapse the entire array down to one scalar."}
 {"id": 27, "hint": "Start from a uniform matrix and overwrite its interior block with one 2-D slice assignment \u2014 remember that negative slice bounds count from the end of an axis."}
@@ -38,12 +38,12 @@
 {"id": 46, "hint": "First build the full run of consecutive integers as a flat array, then change its shape into the square grid you need."}
 {"id": 47, "hint": "numpy has a single function that, given a 1-D vector, builds the square matrix with that vector on the main diagonal."}
 {"id": 48, "hint": "A strided slice can appear on the left-hand side of an assignment, and a scalar broadcasts into every position that slice selects."}
-{"id": 49, "hint": "There is a single ufunc that rounds each element down toward negative infinity."}
-{"id": 50, "hint": "Start from an identity matrix and scale it."}
-{"id": 51, "hint": "The array has an attribute that reports total bytes of its data buffer; format it with the required string."}
-{"id": 52, "hint": "Booleans are 1/0 under the hood; count the nonzero entries."}
-{"id": 53, "hint": "One numpy call gives evenly spaced values with both endpoints included."}
-{"id": 55, "hint": "np.arange works on datetime64 day units; bound it from the month start to the next month start."}
+{"id": 49, "hint": "numpy has an elementwise rounding family \u2014 pick the member that always rounds toward negative infinity, not toward zero."}
+{"id": 50, "hint": "Scale the identity matrix, or hand a constant diagonal vector to the diagonal-matrix builder."}
+{"id": 51, "hint": "Arrays carry their buffer size as an attribute \u2014 or multiply the element count by the per-element item size."}
+{"id": 52, "hint": "True counts as nonzero (and as 1 in a sum) \u2014 just remember to convert the numpy result to a plain int."}
+{"id": 53, "hint": "numpy has a constructor that takes both endpoints and a COUNT of points \u2014 unlike the one that takes a step size."}
+{"id": 55, "hint": "A month-precision datetime64 plus 1 is the NEXT month \u2014 and np.arange can walk between two months in steps of days."}
 {"id": 58, "hint": "Draw the vector, then sort it in place."}
 {"id": 59, "hint": "Every numpy ufunc accepts an out= target; chain add, divide, negative, multiply writing into A and B."}
 {"id": 60, "hint": "Broadcast a 1D arange across the rows of a zeros matrix by adding it."}
