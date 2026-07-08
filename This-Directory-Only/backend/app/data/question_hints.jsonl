@@ -154,32 +154,32 @@
 {"id": 167, "hint": "The sliding-window view accepts a 2-D window shape \u2014 it slides over both axes at once and never copies."}
 {"id": 168, "hint": "argmax always reports the FIRST maximum \u2014 run it on the reversed rows and convert the index back."}
 {"id": 169, "hint": "Normalize each side's rows to unit length first \u2014 then the whole similarity table is a single matrix product."}
-{"id": 170, "hint": "Use np.nanmean per column, locate the NaNs with np.where(np.isnan(...)), then scatter the matching column means back in."}
-{"id": 171, "hint": "np.meshgrid(*arrays, indexing='ij') gives the broadcasted coordinate grids; stack on the last axis and reshape to (-1, n)."}
-{"id": 172, "hint": "Count value occurrences per row with np.bincount; argmax over the counts naturally breaks ties toward the smaller value."}
-{"id": 173, "hint": "np.linalg.solve accepts a multi-column b and returns one solution column per right-hand side."}
-{"id": 174, "hint": "The median of an odd-length row is the middle order statistic; np.partition places exactly that element at index cols//2."}
-{"id": 175, "hint": "A length-3 sliding window over the 1D array yields each shifted triple as a row."}
-{"id": 176, "hint": "Build the 2x4 sliding windows, then reduce over the two trailing window axes with .sum(axis=(-2, -1))."}
-{"id": 177, "hint": "Make a lookup array large enough to cover the maximum key, fill in the mappings, then index it with a."}
-{"id": 180, "hint": "np.fill_diagonal on shifted slices M[:-1, 1:] and M[1:, :-1] targets the upper and lower diagonals."}
-{"id": 181, "hint": "Insert a new axis so the two copies broadcast into an (n, n, d) difference tensor, then reduce over the feature axis."}
-{"id": 182, "hint": "Augment the points with a ones column for homogeneous coordinates, multiply by T.T, then keep the first two columns."}
-{"id": 183, "hint": "argsort each row, then scatter 0..cols-1 into those sorted positions to invert the permutation into ranks."}
-{"id": 184, "hint": "Mirror the write: set both Z[i, j] and Z[j, i] to v."}
-{"id": 185, "hint": "Find where neighbors differ to get run starts, sample values there, and diff the start positions for the counts."}
-{"id": 186, "hint": "Compute the centered window's start/stop in Z, clip them to the array bounds, and copy into the aligned slice of a fill-initialized output."}
-{"id": 187, "hint": "argpartition gives you the top-k column indices per row cheaply; scatter 1s into a zeros_like array using broadcasted row indices against those columns."}
-{"id": 189, "hint": "One CCW quarter-turn equals transposing the array and then flipping it along the first axis."}
-{"id": 190, "hint": "The rank equals the number of non-negligible singular values; numpy has a one-call helper that does the SVD and thresholding for you."}
-{"id": 191, "hint": "Generate an (N, len(X)) matrix of random integer indices to fancy-index X all at once, take row means, then read off the 2.5 and 97.5 percentiles."}
-{"id": 192, "hint": "Apply np.power with exponent 3 directly to the whole array; no loop or einsum needed."}
-{"id": 193, "hint": "Build a pairwise squared-distance matrix by broadcasting, mask the diagonal with infinity, then argpartition each row to grab the k nearest indices."}
-{"id": 194, "hint": "argpartition gets the top-k indices cheaply; then argsort the corresponding values per row and reverse to reorder those indices descending."}
-{"id": 195, "hint": "Reshape the matrix into (blocks, within, blocks, within) and sum over the two within-block axes."}
-{"id": 196, "hint": "Use sliding_window_view to expose every valid window, then contract each window against the kernel with tensordot over both kernel axes."}
-{"id": 197, "hint": "Allocate a zero matrix sized to the total rows and columns, then walk a running (row, col) offset and paste each block into its slice."}
-{"id": 198, "hint": "Broadcast the binary rows pairwise and use bitwise AND/OR summed over columns for intersection and union sizes; guard a zero union before dividing."}
+{"id": 170, "hint": "nanmean with keepdims gives a (1, cols) row of fill values \u2014 one np.where selects between it and the original everywhere at once."}
+{"id": 171, "hint": "meshgrid with indexing='ij' expands every combination into aligned grids \u2014 ravel each grid and stack them as columns."}
+{"id": 172, "hint": "Per row: count occurrences by value with bincount, then take argmax \u2014 its first-index tie rule lands on the smallest value automatically."}
+{"id": 173, "hint": "The linear solver accepts a MATRIX right-hand side directly \u2014 one factorization covers every column."}
+{"id": 174, "hint": "With an odd row length the median is one specific order statistic \u2014 a partial sort (partition) places exactly that element without sorting the whole row."}
+{"id": 175, "hint": "Take ALL stride-1 windows first, then keep every step-th row \u2014 slicing a view is still a view."}
+{"id": 176, "hint": "A sliding-window view exposes every window as trailing axes \u2014 one sum over those two axes collapses each window."}
+{"id": 177, "hint": "Turn the dict into a dense lookup TABLE indexed by old value \u2014 then one fancy-index gathers every replacement at once."}
+{"id": 180, "hint": "fill_diagonal writes the MAIN diagonal of whatever view you hand it \u2014 offset views like m[:-1, 1:] turn that into the off-diagonals."}
+{"id": 181, "hint": "Give x a new middle axis and y a new leading axis \u2014 the difference then broadcasts to (n, m, d) and one reduction finishes it."}
+{"id": 182, "hint": "Row-vector points need t TRANSPOSED in the product \u2014 and keep the divisor 2-D (a column) so it broadcasts over both coordinates."}
+{"id": 183, "hint": "The double-argsort rank trick works along an axis too \u2014 apply both passes with axis=1."}
+{"id": 184, "hint": "Symmetry is an invariant YOU maintain \u2014 write the mirrored cell in the same operation."}
+{"id": 185, "hint": "Find where runs START (positions differing from their predecessor, plus position 0) \u2014 the values sit there, and the gaps between consecutive starts are the lengths."}
+{"id": 186, "hint": "Fill the output with the pad value first, then compute the CLIPPED source rectangle and the matching destination rectangle \u2014 one slice assignment does the copy."}
+{"id": 187, "hint": "argpartition along rows finds the top-k columns cheaply; pair them with a broadcast column of row numbers to scatter the 1s."}
+{"id": 189, "hint": "The quarter-turn function takes a COUNT argument and handles the modulo-4 cycle itself."}
+{"id": 190, "hint": "Rank equals the number of singular values above a tolerance \u2014 numpy wraps the whole SVD recipe in one linalg call."}
+{"id": 191, "hint": "One (n_samples, n) integer index matrix fancy-indexes ALL the resamples at once \u2014 then a row-mean and two percentiles finish the interval."}
+{"id": 192, "hint": "Elementwise exponentiation is a single ufunc \u2014 or just multiply the array by itself twice."}
+{"id": 193, "hint": "Row-sorted squared distances put each point's own index first (distance zero) \u2014 the k neighbors follow immediately after."}
+{"id": 194, "hint": "argpartition isolates each row's top-k cheaply but unordered \u2014 gather those k values and argsort just them, descending, to finish."}
+{"id": 195, "hint": "reduceat sums between the START positions you give it \u2014 starts every k rows, then every k columns, and the ragged tail takes care of itself."}
+{"id": 196, "hint": "Expose every valid window as trailing axes with a sliding view \u2014 the kernel broadcasts against all of them at once, and one double-axis sum finishes each response."}
+{"id": 197, "hint": "Total the heights and widths for the canvas, then walk the blocks, dropping each into its slice and advancing both offsets by its shape."}
+{"id": 198, "hint": "Broadcast the row sets against each other \u2014 bitwise AND counts the intersection, bitwise OR the union, and the distance is one minus their ratio."}
 {"id": 199, "hint": "Broadcast A and B with inserted singleton row axes so the column axis aligns, multiply, then collapse the two row axes into one."}
 {"id": 200, "hint": "Take the per-row cumulative sum, draw one uniform per row, and find the first cumulative bin that exceeds it with argmax."}
 {"id": 201, "hint": "Write each line in implicit ax+by+c form from its endpoints, then broadcast point coordinates against the per-line coefficients and divide by the line length."}
