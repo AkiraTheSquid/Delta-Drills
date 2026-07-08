@@ -123,6 +123,38 @@ const PracticeAPI = {
     return this.currentQuestion;
   },
 
+  // --- Placement diagnostic (backend mode only) -------------------------
+  // "I don't know yet" and self-rated probe results go here; answered probes
+  // are recorded server-side by /submit while the diagnostic is active.
+  async diagnosticAnswer(questionId, result) {
+    if (practiceMode !== "backend") return null;
+    const res = await apiFetch("/api/practice/diagnostic/answer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question_id: questionId, result }),
+    });
+    if (res.status === 401) {
+      handleExpiredToken();
+      return null;
+    }
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(detail || "Failed to record placement answer.");
+    }
+    return await res.json();
+  },
+
+  async diagnosticStatus() {
+    if (practiceMode !== "backend") return null;
+    try {
+      const res = await apiFetch("/api/practice/diagnostic/status");
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (_) {
+      return null;
+    }
+  },
+
   async submitAnswer(questionId, userCode) {
     const requiresLocalPyodide = questionNeedsEinops(this.currentQuestion);
 

@@ -27,6 +27,7 @@ const targetDifficultyValue = document.getElementById("target-difficulty-value")
 const practiceSubmitArea = document.getElementById("practice-submit-area");
 const practiceSubmitBtn = document.getElementById("practice-submit-btn");
 const practiceSkipBtn = document.getElementById("practice-skip-btn");
+const practiceDontKnowBtn = document.getElementById("practice-dontknow-btn");
 // Torch-drill Colab routing (torch can't run in the in-app sandbox).
 const torchColabNotice = document.getElementById("torch-colab-notice");
 const torchColabLink = document.getElementById("torch-colab-link");

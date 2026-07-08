@@ -173,11 +173,20 @@ function renderQuestion(q, count) {
   renderQuestionIdChip(q);
   questionMetaTop.classList.add("hidden");
 
-  // Cold-start calibration badge
+  // Placement diagnostic badge (backend ALEKS-style placement) takes priority
+  // over the legacy per-skill cold-start badge (offline staircase only).
   const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
   const coldStart = isCalibrationQuestion(q);
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
-  if (coldStart && csIndex) {
+  if (q.diagnostic_active) {
+    coldStartLabel.textContent =
+      `Placement diagnostic — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
+    if (coldStartNote) {
+      coldStartNote.textContent =
+        "A short adaptive placement: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.";
+    }
+    coldStartBadge.classList.remove("hidden");
+  } else if (coldStart && csIndex) {
     // Calibration is PER SKILL, not global — say so, or "1 of 3" on overall
     // Question 8 reads as a stuck counter (tester hit exactly this).
     coldStartLabel.textContent = `Calibrating “${q.subtopic}” — ${csIndex} of 3`;
@@ -191,6 +200,12 @@ function renderQuestion(q, count) {
     coldStartBadge.classList.remove("hidden");
   } else {
     coldStartBadge.classList.add("hidden");
+  }
+  // "I don't know yet" only exists during placement — in normal practice the
+  // Skip button (nothing recorded) covers that need.
+  if (typeof practiceDontKnowBtn !== "undefined" && practiceDontKnowBtn) {
+    practiceDontKnowBtn.classList.toggle("hidden", !q.diagnostic_active);
+    practiceDontKnowBtn.disabled = false;
   }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   solutionCode.textContent = q.solution_code;
@@ -217,7 +232,7 @@ function renderQuestion(q, count) {
   ewmaAccuracyPBefore = Number.isFinite(q.p_current)
     ? q.p_current
     : getEwmaFromAdaptiveState(q.subtopic);
-  if (coldStart) {
+  if (coldStart || q.diagnostic_active) {
     showEwmaAccuracyCalibration(q.subtopic);
   } else {
     showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
