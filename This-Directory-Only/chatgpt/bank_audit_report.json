@@ -1,11 +1,10 @@
 {
  "total": 455,
  "questions": {
-  "127": [
+  "113": [
    {
-    "check": "precompute_leak",
-    "var": "D",
-    "detail": "post-setup var 'D' already equals the expected value"
+    "check": "setup_exec_error",
+    "detail": "AttributeError: 'NoneType' object has no attribute 'name'"
    }
   ],
   "429": [
@@ -256,7 +255,7 @@
   ]
  },
  "counts": {
-  "precompute_leak": 1,
+  "setup_exec_error": 1,
   "torch_unavailable": 41
  }
 }

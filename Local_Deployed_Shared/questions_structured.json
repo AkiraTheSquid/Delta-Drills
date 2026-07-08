@@ -5003,7 +5003,7 @@
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve(values, name):\n    \"\"\"Return a NamedArray (ndarray subclass) with a .name attribute.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nr = solve([1, 2, 3], \"range\")\nprint(r, r.name)\n",
+      "starter_code": "import numpy as np\n\ndef solve(values, name):\n    \"\"\"Return a NamedArray (ndarray subclass) with a .name attribute.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\n# (Once implemented, the result prints like an array and carries .name.)\nprint(solve([1, 2, 3], \"range\"))\n",
       "test_cases": [
         {
           "setup_code": "import numpy as np\nvalues = [1, 2, 3, 4]\nname = 'range_10'",
