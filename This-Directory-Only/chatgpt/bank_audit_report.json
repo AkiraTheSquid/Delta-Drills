@@ -29,6 +29,20 @@
     "detail": "post-setup var 'x' already equals the expected value"
    }
   ],
+  "283": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "305": [
+   {
+    "check": "precompute_leak",
+    "var": "h",
+    "detail": "post-setup var 'h' already equals the expected value"
+   }
+  ],
   "429": [
    {
     "check": "torch_unavailable",
@@ -277,7 +291,7 @@
   ]
  },
  "counts": {
-  "precompute_leak": 4,
+  "precompute_leak": 6,
   "torch_unavailable": 41
  }
 }
