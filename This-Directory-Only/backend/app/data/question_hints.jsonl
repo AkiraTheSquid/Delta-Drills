@@ -97,36 +97,36 @@
 {"id": 109, "hint": "Averaging along axis 0 collapses the rows, leaving one mean per column \u2014 and that vector broadcasts back over the rows without any reshaping."}
 {"id": 110, "hint": "Collapse each axis with any() to learn which rows and which columns contain something, then take the first and last True positions."}
 {"id": 111, "hint": "np.nditer with a None operand allocates the broadcast output for you and iterates all three in lockstep \u2014 assigning through z[...] fills it."}
-{"id": 112, "hint": "Build a mask from the absolute difference of row and column indices and keep only the band within one step."}
-{"id": 113, "hint": "Use __new__ to set the attribute on construction and __array_finalize__ to propagate it through views."}
-{"id": 114, "hint": "Apply argsort twice; the second call inverts the sorting permutation into ranks."}
-{"id": 115, "hint": "Build a NaN mask and ask whether it holds for every row within each column."}
-{"id": 116, "hint": "Use open grid coordinates and add the absolute row and column distances from the center."}
-{"id": 117, "hint": "Reach for the stride-trick that produces overlapping windows of a fixed size."}
-{"id": 118, "hint": "Form the pairwise-difference matrix with an outer subtraction, invert elementwise, then take the determinant."}
-{"id": 119, "hint": "Partition out the top-k indices, then sort only that small subset by value in descending order."}
-{"id": 120, "hint": "Compute NaN-ignoring column means, find the NaN coordinates, and scatter the matching column mean into each hole."}
-{"id": 121, "hint": "Write an einsum that shares both indices on the inputs but keeps only the row index in the output."}
-{"id": 122, "hint": "Use the built-in correlation routine and tell it that each variable is a column, not a row."}
-{"id": 123, "hint": "Reinterpret the buffer with a same-width int view, then assign the floats back into it to trigger the cast."}
-{"id": 124, "hint": "Find each row's argmax column, then use paired row/column fancy indexing to drop a 1 at those spots."}
-{"id": 125, "hint": "Parse with the missing-value-tolerant text reader and tell it what to substitute for blank fields."}
-{"id": 126, "hint": "Reshape so each spatial axis splits into a block index and an in-block index, then sum the in-block axes."}
-{"id": 127, "hint": "Turn each coordinate column into a row vector and subtract it from its own transpose so broadcasting builds every pairwise difference at once."}
-{"id": 128, "hint": "Compute all pairwise dot products with X @ X.T, then divide by the outer product of the per-row Euclidean norms."}
-{"id": 129, "hint": "Form the full squared-distance matrix by broadcasting, then use a partial sort to grab the smallest distances per row while skipping the point's own zero-distance entry."}
-{"id": 130, "hint": "Build a boolean mask of nonzeros; argmax on it finds the first True per row, and any() tells you which rows should fall back to -1."}
-{"id": 131, "hint": "Count occurrences with bincount and add them, then apply an unbuffered np.add.at pass so repeated indices are not dropped."}
-{"id": 132, "hint": "bincount takes a weights argument that accumulates each value into the bin named by the matching index."}
-{"id": 133, "hint": "Reshape the pixels into an (N,3) list of colors and let np.unique with axis=0 deduplicate entire rows."}
+{"id": 112, "hint": "An entry [i, j] is near the diagonal exactly when |i - j| is small \u2014 build that condition as a broadcast boolean mask."}
+{"id": 113, "hint": "Subclassing ndarray means creating instances with view() inside __new__ \u2014 and __array_finalize__ is where attributes get copied onto slices and other derived arrays."}
+{"id": 114, "hint": "argsort answers 'which element goes in each sorted slot' \u2014 apply it twice and it flips into 'which slot does each element go to', which is the rank."}
+{"id": 115, "hint": "Turn the array into a NaN mask first, then ask along the column axis whether EVERY entry is flagged."}
+{"id": 116, "hint": "np.ogrid hands you a column of row indices and a row of column indices \u2014 broadcasting their absolute offsets adds up into the full grid."}
+{"id": 117, "hint": "numpy's stride-tricks module has a purpose-built sliding-window view \u2014 no copying, no loops."}
+{"id": 118, "hint": "Every ufunc has an .outer form that applies it to all pairs \u2014 subtraction's outer gives the x[i] - y[j] table in one call."}
+{"id": 119, "hint": "argpartition finds the top-k cheaply but unordered \u2014 a small argsort of just those k finishes the ranking."}
+{"id": 120, "hint": "nanmean ignores the NaNs while averaging; np.where hands you the (row, col) positions of the holes, and the col half of that picks which mean to drop in."}
+{"id": 121, "hint": "Multiply elementwise and sum across each row \u2014 or say exactly that with an einsum whose output keeps only the row index."}
+{"id": 122, "hint": "numpy's correlation function assumes VARIABLES ARE ROWS by default \u2014 one flag flips it to columns."}
+{"id": 123, "hint": "view() re-types the SAME 4 bytes per element; assigning the float values through the int view is what performs the conversion without allocating."}
+{"id": 124, "hint": "Pair a row-index range with the per-row argmax as a coordinate pair \u2014 indexing with two arrays writes one cell per row."}
+{"id": 125, "hint": "np.genfromtxt (unlike loadtxt) tolerates missing fields \u2014 and takes an argument saying what to substitute for them."}
+{"id": 126, "hint": "Reshape each axis into (blocks, within-block) pairs \u2014 then one sum over both within-block axes collapses every block at once."}
+{"id": 127, "hint": "Insert one new axis on each operand so the points broadcast against each other \u2014 the difference array then has shape (n, n, 2)."}
+{"id": 128, "hint": "x @ x.T computes every pairwise dot product in one shot; an outer product of the row norms gives the matching denominators."}
+{"id": 129, "hint": "Build the squared-distance matrix by broadcasting, then argsort each row \u2014 position 0 is always the point itself, so the neighbors sit at positions 1 and 2."}
+{"id": 130, "hint": "On a boolean row, argmax stops at the first True \u2014 but an all-False row ALSO returns 0, so you need a second reduction to tell those apart."}
+{"id": 131, "hint": "Naive fancy-index += collapses repeats (each position updates once) \u2014 count the occurrences first, or use the ufunc method built for unbuffered updates."}
+{"id": 132, "hint": "bincount doesn't just count \u2014 hand it weights and each occurrence contributes its value instead of 1."}
+{"id": 133, "hint": "Flatten the spatial dimensions so each pixel becomes one row of 3 \u2014 then deduplicate ROWS, not individual numbers."}
 {"id": 134, "hint": "Build an array of occurrence counts indexed by value, then find the position of the largest count \u2014 first-match behavior on ties is exactly what you need."}
 {"id": 135, "hint": "numpy reductions accept a tuple of axes, so you can collapse several dimensions in one call."}
-{"id": 136, "hint": "Assign A[[1,0]] into A[[0,1]] \u2014 fancy indexing copies the source rows first, so the swap is atomic."}
+{"id": 136, "hint": "Fancy indexing with a LIST of row numbers works on both sides of an assignment \u2014 and the right side is gathered before the left side is written."}
 {"id": 137, "hint": "There is a numpy function that tallies how many times each integer label occurs \u2014 and it can also take per-element weights, letting you get per-label sums the same way."}
-{"id": 138, "hint": "Index the rows with the permutation, then write the result back through a full slice (Z[:] = ...) to mutate in place."}
+{"id": 138, "hint": "z[p] builds the reordered copy; assigning it through z[:] pours those values back into the ORIGINAL buffer instead of rebinding the name."}
 {"id": 139, "hint": "An integer array used as an index picks out whole rows at once, in exactly the order the integers are listed."}
-{"id": 140, "hint": "np.diag takes a k offset \u2014 negative values pull diagonals below the main diagonal."}
-{"id": 141, "hint": "Write the diagonal entry as sum_j A[i,j]*B[j,i] and translate it directly into an einsum subscript string."}
+{"id": 140, "hint": "Extract the offset diagonal and sum it \u2014 or use the trace function, which takes the very same offset directly."}
+{"id": 141, "hint": "Diagonal entry i multiplies row i of the first matrix with COLUMN i of the second \u2014 an einsum can say that with a transposed index, summing over j only."}
 {"id": 142, "hint": "An elementwise finiteness test gives a boolean array the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
 {"id": 143, "hint": "Compare each element to its predecessor to find run boundaries, keeping the first element unconditionally."}
 {"id": 144, "hint": "A single matrix-vector product (Z @ v) already gives the dot of every row with v."}
