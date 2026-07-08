@@ -14161,8 +14161,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "For a batch of sequences divided into chunks, combine the chunk and sequence dimensions into a single dimension while preserving the depth, resulting in a structure where the sequence length is the product of the number of chunks and the length of each chunk.",
-    "answer_code": "einops.rearrange(seq_chunks, 'b n p d -> b (n p) d')",
+    "question_text": "Write a function solve(seq_chunks) that takes a chunked sequence tensor of shape (b, n, p, d) — n chunks of p tokens each — and MERGES the chunk axes back into one sequence: return shape (b, n*p, d) via 'b n p d -> b (n p) d'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq_chunks):\n    return einops.rearrange(seq_chunks, 'b n p d -> b (n p) d')\n\n\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14170,12 +14170,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nseq_chunks = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq_chunks):\n    \"\"\"Return shape (b, n*p, d) via 'b n p d -> b (n p) d'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "seq_chunks = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(seq_chunks, 'b n p d -> b (n p) d')"
+        "setup_code": "import numpy as np\nseq_chunks = np.arange(8.0).reshape(1, 2, 2, 2)",
+        "call": "(np.asarray(solve(seq_chunks)).shape, np.round(np.asarray(solve(seq_chunks)), 10).tolist())",
+        "expected_expr": "((1, 4, 2), np.round(np.asarray(seq_chunks.reshape(1, 4, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(170)\nseq_chunks = np.random.rand(2, 3, 4, 2)",
+        "call": "np.round(np.asarray(solve(seq_chunks)), 10)",
+        "expected_expr": "np.round(np.asarray(seq_chunks.reshape(2, 12, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq_chunks = np.ones((1, 1, 3, 1))",
+        "call": "np.round(np.asarray(solve(seq_chunks)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 3, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq_chunks = np.arange(4.0).reshape(2, 1, 1, 2)",
+        "call": "np.round(np.asarray(solve(seq_chunks)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(2, 1, 2)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14189,8 +14204,8 @@
     "topic": "Einops",
     "subtopic": "Reduce",
     "subtopic_key": "Einops: Reduce",
-    "question_text": "For a (b, h, w, c) tensor, subtract its per-image spatial minimum (one min value per (b, c) pair) using broadcasting.",
-    "answer_code": "mn = einops.reduce(arr, 'b h w c -> b () () c', 'min'); arr - mn",
+    "question_text": "Write a function solve(arr) that takes a channels-last batch (b, h, w, c) and subtracts each (batch, channel) pair's SPATIAL MINIMUM from its own map: reduce with 'b h w c -> b () () c' and 'min', then subtract with broadcasting. Every map's minimum becomes exactly 0.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return arr - einops.reduce(arr, 'b h w c -> b () () c', 'min')\n\n\nprint(solve(np.arange(4.0).reshape(1, 2, 2, 1)))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14198,12 +14213,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(4.0).reshape(1, 2, 2, 1)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.arange(2 * 3 * 4 * 5).reshape(2, 3, 4, 5)\nmn = einops.reduce(arr, 'b h w c -> b 1 1 c', 'min')",
-        "call": "solve()",
-        "expected_expr": "arr - mn"
+        "setup_code": "import numpy as np\narr = np.arange(1.0, 5.0).reshape(1, 2, 2, 1)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr - arr.min(axis=(1, 2), keepdims=True)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(171)\narr = np.random.rand(2, 3, 3, 2)",
+        "call": "(np.round(np.asarray(solve(arr)), 8).tolist(), np.round(np.asarray(solve(arr)).min(axis=(1, 2)), 8).tolist())",
+        "expected_expr": "(np.round(arr - arr.min(axis=(1, 2), keepdims=True), 8).tolist(), np.zeros((2, 2)).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.full((1, 2, 2, 1), 5.0)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 2, 2, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.array([[[[-3.0], [-1.0]]]])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[0.0], [2.0]]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14217,8 +14247,8 @@
     "topic": "Einops",
     "subtopic": "Repeat",
     "subtopic_key": "Einops: Repeat",
-    "question_text": "You are given arr, a 4D array of shape (batch, channels, height, width) = (6, 3, 150, 150) holding channels-first digit images, and you use only the first 2 images arr[0:2]. Stack these 2 images vertically into a single tall image, and at the same time duplicate the result horizontally so the right half is an exact copy of the left half, producing a 3D channels-first array of shape (channels, 2 * height, 2 * width) = (3, 300, 300).",
-    "answer_code": "arr3 = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'); display_array_as_img(arr3)",
+    "question_text": "Write a function solve(arr, k) that takes a channels-first batch (b, c, h, w) with b >= 2, keeps the FIRST TWO images, stacks them vertically, and repeats the whole strip k times horizontally: return shape (c, 2*h, k*w) via einops.repeat(arr[:2], 'b c h w -> c (b h) (k w)', k=k).",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, k):\n    return einops.repeat(arr[:2], 'b c h w -> c (b h) (k w)', k=k)\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2), 2))\n",
     "difficulty_score": 56,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14226,13 +14256,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2\n\ndef solve():\n    # Write your solution here - define arr3\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, k):\n    \"\"\"Return shape (c, 2*h, k*w) via einops.repeat(arr[:2], 'b c h w -> c (b h) (k w)', k=k).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2",
-        "call": "solve()",
-        "expected_expr": "arr3",
-        "expected_setup_code": "arr3 = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)\nk = 2",
+        "call": "(np.asarray(solve(arr, k)).shape, np.round(np.asarray(solve(arr, k)), 10).tolist())",
+        "expected_expr": "((1, 4, 4), np.round(np.asarray(np.tile(arr[:2].transpose(1, 0, 2, 3).reshape(1, 4, 2), (1, 1, 2))), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(172)\narr = np.random.rand(3, 2, 2, 3)\nk = 3",
+        "call": "np.round(np.asarray(solve(arr, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.tile(arr[:2].transpose(1, 0, 2, 3).reshape(2, 4, 3), (1, 1, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((2, 1, 1, 2))\nk = 1",
+        "call": "np.round(np.asarray(solve(arr, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 2))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 1)), np.ones((1, 1, 1))])\nk = 2",
+        "call": "np.round(np.asarray(solve(arr, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 0.0], [1.0, 1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14246,8 +14290,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "For a batch of images with channels and spatial dimensions, combine the channel, height, and width into a single dimension, resulting in a flattened representation for each image.",
-    "answer_code": "einops.rearrange(x, 'b c h w -> b (c h w)')",
+    "question_text": "Write a function solve(x) that takes a batch (b, c, h, w) and FLATTENS each image completely: return shape (b, c*h*w) via 'b c h w -> b (c h w)' — the standard conv-features-to-classifier-head flatten.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x):\n    return einops.rearrange(x, 'b c h w -> b (c h w)')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14255,12 +14299,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]  # (2, 3, 150, 150) BCHW\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x):\n    \"\"\"Return shape (b, c*h*w) via 'b c h w -> b (c h w)' — the standard conv-features-to-classifier-head flatten.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[:2]\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x, 'b c h w -> b (c h w)')"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(x)).shape, np.round(np.asarray(solve(x)), 10).tolist())",
+        "expected_expr": "((2, 4), np.round(np.asarray(x.reshape(2, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(173)\nx = np.random.rand(3, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(3, 8)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 3, 1, 1))",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(4.0).reshape(1, 1, 2, 2)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[0.0, 1.0, 2.0, 3.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14302,8 +14361,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "You are given arr, a batch of HWC images with shape (b, h, w, c). Using einops.rearrange, insert a singleton axis directly after the batch axis, producing shape (b, 1, h, w, c), and return the result.",
-    "answer_code": "tmp = einops.rearrange(arr, 'b h w c -> b () h w c'); einops.rearrange(tmp, 'b () h w c -> b h w c')",
+    "question_text": "Write a function solve(arr) that takes a channels-last batch (b, h, w, c) and INSERTS a singleton axis right after the batch axis: return shape (b, 1, h, w, c) via the '()' output group — 'b h w c -> b () h w c'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.rearrange(arr, 'b h w c -> b () h w c')\n\n\nprint(solve(np.ones((2, 2, 2, 1))))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14311,12 +14370,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return shape (b, 1, h, w, c) via the '()' output group — 'b h w c -> b () h w c'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((2, 2, 2, 1))))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b h w c -> b () h w c')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(arr)).shape, np.round(np.asarray(solve(arr)), 10).tolist())",
+        "expected_expr": "((2, 1, 1, 2, 2), np.round(np.asarray(arr[:, None]), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(174)\narr = np.random.rand(1, 3, 3, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr[:, None]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 1, 1, 1))",
+        "call": "(np.asarray(solve(arr)).shape,)",
+        "expected_expr": "((1, 1, 1, 1, 1),)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.arange(4.0).reshape(1, 2, 2, 1)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.expand_dims(arr, 1)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14330,8 +14404,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given x, a 4D uint8 array of shape (2, 6, 150, 150) in (batch, channels, height, width) layout where the 6 channels are conceptually two stacked halves of 3 channels each. Split the channel axis into its first 3-channel half and its second 3-channel half, returning a 5D array of shape (2, 2, 3, 150, 150) in (split, batch, channels_per_half, height, width) layout whose two slices along the leading split axis are part1 and part2.",
-    "answer_code": "part1, part2 = einops.rearrange(x, 'b (split c) h w -> split b c h w', split=2)",
+    "question_text": "Write a function solve(x, split) that takes a tensor of shape (b, split*c, h, w) whose channel axis holds `split` consecutive groups (group index SLOWEST) and returns shape (split, b, c, h, w) — the groups separated and moved to the front, ready to unpack as part1, part2, ... = solve(x, 2).",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, split):\n    return einops.rearrange(x, 'b (split c) h w -> split b c h w', split=split)\n\n\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14339,12 +14413,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.concatenate([arr[:2], arr[:2]], axis=1)  # (2, 6, 150, 150) — c=6 for split=2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, split):\n    \"\"\"Return shape (split, b, c, h, w) — the groups separated and moved to the front, ready to unpack as part1, part\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = np.concatenate([arr[:2], arr[:2]], axis=1)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x, 'b (split c) h w -> split b c h w', split=2)"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(1, 4, 1, 2)\nsplit = 2",
+        "call": "(np.asarray(solve(x, split)).shape, np.round(np.asarray(solve(x, split)), 10).tolist())",
+        "expected_expr": "((2, 1, 2, 1, 2), np.round(np.asarray(x.reshape(1, 2, 2, 1, 2).transpose(1, 0, 2, 3, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(175)\nx = np.random.rand(2, 6, 2, 2)\nsplit = 2",
+        "call": "np.round(np.asarray(solve(x, split)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(2, 2, 3, 2, 2).transpose(1, 0, 2, 3, 4)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 3, 1, 1))\nsplit = 3",
+        "call": "(np.asarray(solve(x, split)).shape,)",
+        "expected_expr": "((3, 1, 1, 1, 1),)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(4.0).reshape(2, 1, 1, 2)\nsplit = 1",
+        "call": "np.round(np.asarray(solve(x, split)), 10)",
+        "expected_expr": "np.round(np.asarray(x[None]), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14358,8 +14447,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "For a 2D image represented by its height and width, add a singleton channel dimension at the beginning, and then remove that channel dimension, returning to the original height and width.",
-    "answer_code": "y = einops.rearrange(x2d, 'h w -> () h w'); einops.rearrange(y, '() h w -> h w')",
+    "question_text": "Write a function solve(x2d) that takes a plain 2-D array (h, w) and returns the 3-D version (1, h, w) with a leading singleton channel axis — 'h w -> () h w'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x2d):\n    return einops.rearrange(x2d, 'h w -> () h w')\n\n\nprint(solve(np.ones((2, 3))))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14367,13 +14456,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x2d):\n    \"\"\"Return the 3-D version (1, h, w) with a leading singleton channel axis — 'h w -> () h w'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.ones((2, 3))))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(y, '1 h w -> h w')",
-        "expected_setup_code": "x2d = np.arange(3 * 4).reshape(3, 4)\ny = einops.rearrange(x2d, 'h w -> 1 h w')"
+        "setup_code": "import numpy as np\nx2d = np.arange(6.0).reshape(2, 3)",
+        "call": "(np.asarray(solve(x2d)).shape, np.round(np.asarray(solve(x2d)), 10).tolist())",
+        "expected_expr": "((1, 2, 3), np.round(np.asarray(x2d[None]), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(176)\nx2d = np.random.rand(4, 2)",
+        "call": "np.round(np.asarray(solve(x2d)), 10)",
+        "expected_expr": "np.round(np.asarray(x2d[None]), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx2d = np.array([[7.0]])",
+        "call": "(np.asarray(solve(x2d)).shape,)",
+        "expected_expr": "((1, 1, 1),)"
+      },
+      {
+        "setup_code": "import numpy as np\nx2d = np.zeros((1, 5))",
+        "call": "np.round(np.asarray(solve(x2d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 1, 5))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14387,8 +14490,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "You are given imgs, a Python list of HWC image arrays that all share the same (h, w, c) shape. Using einops.rearrange, combine the list into a single batched ndarray of shape (b, h, w, c), where each image retains its height, width, and color channels.",
-    "answer_code": "einops.rearrange(arr, 'b h w c -> b h w c')",
+    "question_text": "Write a function solve(imgs) that takes a PYTHON LIST of channels-last images, each (h, w, c), and STACKS it into one batch array of shape (len(imgs), h, w, c) — einops.rearrange on the list with the identity pattern 'b h w c -> b h w c'. The return value must be an actual numpy array, not the list.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(imgs):\n    return einops.rearrange(imgs, 'b h w c -> b h w c')\n\n\nprint(solve([np.ones((2, 2, 1)), np.zeros((2, 2, 1))]))\n",
     "difficulty_score": 12,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14396,12 +14499,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nimgs = list(np.moveaxis(np.load('/delta_numbers.npy'), 1, -1))\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(imgs):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve([np.ones((2, 2, 1)), np.zeros((2, 2, 1))]))\n",
     "test_cases": [
       {
-        "setup_code": "imgs = list(np.moveaxis(np.load('/delta_numbers.npy'), 1, -1))\nb = 2",
-        "call": "(type(solve()).__name__, solve())",
-        "expected_expr": "('ndarray', einops.rearrange(imgs, 'b h w c -> b h w c'))"
+        "setup_code": "import numpy as np\nimgs = [np.ones((2, 2, 1)), np.zeros((2, 2, 1))]",
+        "call": "(isinstance(solve(imgs), np.ndarray), (np.asarray(solve(imgs)).shape, np.round(np.asarray(solve(imgs)), 10).tolist()))",
+        "expected_expr": "(True, ((2, 2, 2, 1), np.round(np.asarray(np.stack(imgs)), 10).tolist()))"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(177)\nimgs = [np.random.rand(3, 2, 2) for _ in range(3)]",
+        "call": "(isinstance(solve(imgs), np.ndarray), np.round(np.asarray(solve(imgs)), 10))",
+        "expected_expr": "(True, np.round(np.asarray(np.stack(imgs)), 10))"
+      },
+      {
+        "setup_code": "import numpy as np\nimgs = [np.arange(4.0).reshape(2, 2, 1)]",
+        "call": "(isinstance(solve(imgs), np.ndarray), np.round(np.asarray(solve(imgs)), 10))",
+        "expected_expr": "(True, np.round(np.asarray(np.arange(4.0).reshape(1, 2, 2, 1)), 10))"
+      },
+      {
+        "setup_code": "import numpy as np\nimgs = [np.zeros((1, 1, 1)), np.ones((1, 1, 1)), np.full((1, 1, 1), 2.0)]",
+        "call": "(isinstance(solve(imgs), np.ndarray), np.round(np.asarray(solve(imgs)), 10))",
+        "expected_expr": "(True, np.round(np.asarray(np.array([0.0, 1.0, 2.0]).reshape(3, 1, 1, 1)), 10))"
       }
     ],
     "submission_mode": "function",
@@ -14415,8 +14533,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) whose channels axis has an even length and is interpreted as interleaved pairs (channels = c_in * 2, with the two members of each pair sitting at consecutive channel positions). Return a 5D array of shape (2, batch, c_in, height, width) whose leading axis selects between the two interleaved sub-streams: index 0 collects every even-indexed channel and index 1 collects every odd-indexed channel.",
-    "answer_code": "part1, part2 = einops.rearrange(x, 'b (c_in split) h w -> split b c_in h w', split=2)",
+    "question_text": "Write a function solve(x, split) that takes a tensor of shape (b, c*split, h, w) whose channels INTERLEAVE `split` groups (group index FASTEST: channel order is g0, g1, g0, g1, ...) and returns shape (split, b, c, h, w) via 'b (c split) h w -> split b c h w'. (Contrast the consecutive-groups drill, where the group index is slowest.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, split):\n    return einops.rearrange(x, 'b (c split) h w -> split b c h w', split=split)\n\n\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
     "difficulty_score": 60,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14424,12 +14542,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, split):\n    \"\"\"Return shape (split, b, c, h, w) via 'b (c split) h w -> split b c h w'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x, 'b (c_in split) h w -> split b c_in h w', split=2)"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(1, 4, 1, 2)\nsplit = 2",
+        "call": "(np.asarray(solve(x, split)).shape, np.round(np.asarray(solve(x, split)), 10).tolist())",
+        "expected_expr": "((2, 1, 2, 1, 2), np.round(np.asarray(x.reshape(1, 2, 2, 1, 2).transpose(2, 0, 1, 3, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(178)\nx = np.random.rand(2, 6, 2, 2)\nsplit = 2",
+        "call": "np.round(np.asarray(solve(x, split)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(2, 3, 2, 2, 2).transpose(2, 0, 1, 3, 4)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(6.0).reshape(1, 3, 1, 2)\nsplit = 3",
+        "call": "np.round(np.asarray(solve(x, split)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(1, 1, 3, 1, 2).transpose(2, 0, 1, 3, 4)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 2, 1, 1))\nsplit = 1",
+        "call": "np.round(np.asarray(solve(x, split)), 10)",
+        "expected_expr": "np.round(np.asarray(x[None]), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14471,8 +14604,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "You are given arr, a 4D channels-first batch of shape (batch, channels, height, width) = (6, 3, 150, 150) holding 6 digit images. Split the batch axis 6 into b1 = 2 rows and b2 = 3 columns of images, then tile them into a single 3D channels-first canvas of shape (channels, b1*height, b2*width) = (3, 300, 450), where the i-th batch image lands in row i // 3 and column i % 3 of the 2x3 grid.",
-    "answer_code": "arr6 = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2); display_array_as_img(arr6)",
+    "question_text": "Write a function solve(arr, b1) that takes a channels-LAST batch (b, h, w, c) — b divisible by b1 — and tiles the images into a b1-row montage: return shape (b1*h, (b//b1)*w, c) via '(b1 b2) h w c -> (b1 h) (b2 w) c'. (The companion drill does this for channels-first input.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, b1):\n    return einops.rearrange(arr, '(b1 b2) h w c -> (b1 h) (b2 w) c', b1=b1)\n\n\nprint(solve(np.arange(8.0).reshape(4, 1, 2, 1), 2))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14480,13 +14613,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\nws = 2\n\ndef solve():\n    # Write your solution here - define arr6\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, b1):\n    \"\"\"Return shape (b1*h, (b//b1)*w, c) via '(b1 b2) h w c -> (b1 h) (b2 w) c'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(4, 1, 2, 1), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]\nws = 2",
-        "call": "solve()",
-        "expected_expr": "arr6",
-        "expected_setup_code": "arr6 = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2)"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(4, 1, 2, 1)\nb1 = 2",
+        "call": "(np.asarray(solve(arr, b1)).shape, np.round(np.asarray(solve(arr, b1)), 10).tolist())",
+        "expected_expr": "((2, 4, 1), np.round(np.asarray(arr.reshape(2, 2, 1, 2, 1).transpose(0, 2, 1, 3, 4).reshape(2, 4, 1)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(179)\narr = np.random.rand(6, 2, 2, 3)\nb1 = 3",
+        "call": "np.round(np.asarray(solve(arr, b1)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.reshape(3, 2, 2, 2, 3).transpose(0, 2, 1, 3, 4).reshape(6, 4, 3)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 2, 2, 1))\nb1 = 1",
+        "call": "np.round(np.asarray(solve(arr, b1)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((2, 2, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 1)), np.ones((1, 1, 1))])\nb1 = 2",
+        "call": "np.round(np.asarray(solve(arr, b1)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0]], [[1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14500,8 +14647,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Combine a list of BCHW tensors into a single structure while moving the axis that represents the list to the end, resulting in the spatial dimensions coming first.",
-    "answer_code": "einops.rearrange(list_of_tensors, 'b c h w -> h w c b')",
+    "question_text": "Write a function solve(tensors) that takes a PYTHON LIST of channels-first images (c, h, w) and returns a single array of shape (h, w, c, len(list)) — stacked AND rearranged so the list axis lands LAST: rearrange(list, 'b c h w -> h w c b').",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(tensors):\n    return einops.rearrange(tensors, 'b c h w -> h w c b')\n\n\nprint(solve([np.ones((1, 2, 2)), np.zeros((1, 2, 2))]))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14509,12 +14656,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\nlist_of_tensors = list(arr[:b])  # list of b CHW tensors\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(tensors):\n    \"\"\"Return a single array of shape (h, w, c, len(list)) — stacked AND rearranged so the list axis lands LAST.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve([np.ones((1, 2, 2)), np.zeros((1, 2, 2))]))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2\nlist_of_tensors = list(arr[:b])",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(list_of_tensors, 'b c h w -> h w c b')"
+        "setup_code": "import numpy as np\ntensors = [np.ones((1, 2, 2)), np.zeros((1, 2, 2))]",
+        "call": "(np.asarray(solve(tensors)).shape, np.round(np.asarray(solve(tensors)), 10).tolist())",
+        "expected_expr": "((2, 2, 1, 2), np.round(np.asarray(np.stack([np.ones((1, 2, 2)), np.zeros((1, 2, 2))]).transpose(2, 3, 1, 0)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(180)\ntensors = [np.random.rand(2, 2, 3) for _ in range(4)]",
+        "call": "np.round(np.asarray(solve(tensors)), 10)",
+        "expected_expr": "np.round(np.asarray(np.stack(tensors).transpose(2, 3, 1, 0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\ntensors = [np.arange(4.0).reshape(1, 2, 2)]",
+        "call": "np.round(np.asarray(solve(tensors)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(1, 2, 2)[None].transpose(2, 3, 1, 0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\ntensors = [np.zeros((1, 1, 1)), np.full((1, 1, 1), 3.0)]",
+        "call": "np.round(np.asarray(solve(tensors)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[0.0, 3.0]]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14528,8 +14690,8 @@
     "topic": "Einops",
     "subtopic": "Reduce",
     "subtopic_key": "Einops: Reduce",
-    "question_text": "For a batch of images with channels and spatial dimensions, compute the mean value for each channel across the height and width of each image, resulting in a reduced representation that retains the channels for each image.",
-    "answer_code": "einops.reduce(arr, 'b c h w -> b c', 'mean')",
+    "question_text": "Write a function solve(arr) that takes a channels-first batch (b, c, h, w) and returns the (b, c) array of PER-CHANNEL spatial means: each value averages one channel's h x w map.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.reduce(arr, 'b c h w -> b c', 'mean')\n\n\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14537,12 +14699,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return the (b, c) array of PER-CHANNEL spatial means.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy').astype(np.float32)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.reduce(arr, 'b c h w -> b c', 'mean')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(1, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[1.5, 5.5]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(181)\narr = np.random.rand(3, 2, 4, 4)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.mean(axis=(2, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((2, 3, 1, 1))",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((2, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.array([[[[2.0, 4.0]], [[-2.0, -4.0]]]])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[3.0, -3.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14556,8 +14733,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Given a 5D array x_3d of shape (batch, channels, X, Y, Z) where each of the three spatial dimensions X, Y, Z is even, return a 5D array of shape (batch, channels, X/2, Y/2, Z/2) where each output entry is the maximum over a non-overlapping 2x2x2 spatial block of the input at the corresponding batch and channel index (3D max pooling with window 2 and stride 2 along every spatial axis).",
-    "answer_code": "einops.reduce(x_3d, 'b c (x2 2) (y2 2) (z2 2) -> b c x2 y2 z2', 'max')",
+    "question_text": "Write a function solve(x3d) that takes a 5-D volume batch (b, c, x, y, z) with all three spatial dims EVEN and max-pools it with non-overlapping 2x2x2 windows: return shape (b, c, x//2, y//2, z//2) via 'b c (x 2) (y 2) (z 2) -> b c x y z' with 'max'. (Note the anonymous literal 2s in the pattern.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x3d):\n    return einops.reduce(x3d, 'b c (x two1) (y two2) (z two3) -> b c x y z', 'max', two1=2, two2=2, two3=2)\n\n\nprint(solve(np.arange(16.0).reshape(1, 2, 2, 2, 2)))\n",
     "difficulty_score": 55,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14565,12 +14742,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nb = 2\nc = 3\nx_3d = np.random.rand(b, c, 4, 4, 4)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x3d):\n    \"\"\"Return shape (b, c, x//2, y//2, z//2) via 'b c (x 2) (y 2) (z 2) -> b c x y z' with 'max'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(16.0).reshape(1, 2, 2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "b = 2\nc = 3\nx_3d = np.random.rand(b, c, 4, 4, 4)",
-        "call": "solve()",
-        "expected_expr": "einops.reduce(x_3d, 'b c (x2 2) (y2 2) (z2 2) -> b c x2 y2 z2', 'max')"
+        "setup_code": "import numpy as np\nx3d = np.arange(16.0).reshape(1, 2, 2, 2, 2)",
+        "call": "(np.asarray(solve(x3d)).shape, np.round(np.asarray(solve(x3d)), 10).tolist())",
+        "expected_expr": "((1, 2, 1, 1, 1), [[[[[7.0]]], [[[15.0]]]]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(182)\nx3d = np.random.rand(2, 1, 4, 2, 2)",
+        "call": "np.round(np.asarray(solve(x3d)), 10)",
+        "expected_expr": "np.round(np.asarray(x3d.reshape(2, 1, 2, 2, 1, 2, 1, 2).max(axis=(3, 5, 7))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx3d = np.zeros((1, 1, 2, 2, 2))\nx3d[0, 0, 1, 1, 1] = 9.0",
+        "call": "np.round(np.asarray(solve(x3d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[[9.0]]]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx3d = np.full((1, 1, 2, 2, 4), -1.0)",
+        "call": "np.round(np.asarray(solve(x3d)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((1, 1, 1, 1, 2), -1.0)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14584,8 +14776,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Rearrange the channels of a tensor where the channels are initially grouped into two sets. The first group has a size of four, and the second group also has a size of four. The output should have the groups swapped while maintaining the same height and width dimensions.",
-    "answer_code": "einops.rearrange(x, 'b (g1 g2 c) h w -> b (g2 g1 c) h w', g1=4, g2=4)",
+    "question_text": "Write a function solve(x, g1, g2) that takes a tensor of shape (b, g1*g2*c, h, w) whose channel axis factors as (g1, g2, c) with g1 slowest, and SWAPS the two group levels: return the same shape with channels reordered as (g2, g1, c) — 'b (g1 g2 c) h w -> b (g2 g1 c) h w'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, g1, g2):\n    return einops.rearrange(x, 'b (g1 g2 c) h w -> b (g2 g1 c) h w', g1=g1, g2=g2)\n\n\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2, 2))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14593,12 +14785,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange\n\nx = np.arange(2 * 16 * 8 * 8).reshape(2, 16, 8, 8)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, g1, g2):\n    \"\"\"Return the same shape with channels reordered as (g2, g1, c) — 'b (g1 g2 c) h w -> b (g2 g1 c) h w'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 4, 1, 2), 2, 2))\n",
     "test_cases": [
       {
-        "setup_code": "x = np.arange(2 * 16 * 8 * 8).reshape(2, 16, 8, 8)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x, 'b (g1 g2 c) h w -> b (g2 g1 c) h w', g1=4, g2=4)"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(1, 4, 1, 2)\ng1, g2 = 2, 2",
+        "call": "np.round(np.asarray(solve(x, g1, g2)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(1, 2, 2, 1, 1, 2).swapaxes(1, 2).reshape(1, 4, 1, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(183)\nx = np.random.rand(2, 16, 2, 2)\ng1, g2 = 4, 4",
+        "call": "np.round(np.asarray(solve(x, g1, g2)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(2, 4, 4, 1, 2, 2).swapaxes(1, 2).reshape(2, 16, 2, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(6.0).reshape(1, 6, 1, 1)\ng1, g2 = 2, 3",
+        "call": "np.round(np.asarray(solve(x, g1, g2)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(1, 2, 3, 1, 1, 1).swapaxes(1, 2).reshape(1, 6, 1, 1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 4, 1, 1))\ng1, g2 = 1, 4",
+        "call": "np.round(np.asarray(solve(x, g1, g2)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 4, 1, 1))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14612,8 +14819,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given x, a 4D float32 array of shape (batch, channels, height, width) = (2, 12, 8, 8). Compute, for each channel, a single mean value taken over the batch and both spatial axes (so 12 scalar means in total), then subtract that per-channel mean from every entry of the corresponding channel. The result has the same shape (2, 12, 8, 8) as x.",
-    "answer_code": "x - einops.reduce(x, 'b c h w -> 1 c 1 1', 'mean')",
+    "question_text": "Write a function solve(x) that takes a batch (b, c, h, w) and centers each CHANNEL across the WHOLE BATCH and all pixels: subtract from every value its channel's mean over (b, h, w). Reduce to '1 c 1 1' so the means broadcast — BatchNorm-style centering (contrast per-image centering, which keeps b).",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x):\n    return x - einops.reduce(x, 'b c h w -> 1 c 1 1', 'mean')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 44,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14621,12 +14828,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\ndef solve():\n    x = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8).astype(np.float32)\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "x = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8).astype(np.float32)",
-        "call": "solve()",
-        "expected_expr": "x - einops.reduce(x, 'b c h w -> 1 c 1 1', 'mean')"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(x - x.mean(axis=(0, 2, 3), keepdims=True)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(184)\nx = np.random.rand(2, 3, 4, 4)",
+        "call": "(np.round(np.asarray(solve(x)), 8).tolist(), np.round(np.asarray(solve(x)).mean(axis=(0, 2, 3)), 8).tolist())",
+        "expected_expr": "(np.round(x - x.mean(axis=(0, 2, 3), keepdims=True), 8).tolist(), np.zeros(3).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.full((2, 2, 1, 1), 3.0)",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((2, 2, 1, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[[[1.0]]], [[[3.0]]]])",
+        "call": "np.round(np.asarray(solve(x)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[[-1.0]]], [[[1.0]]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14640,8 +14862,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Inverse of packing 2x2 spatial subgrids into the batch axis: take a tensor of shape (hs*ws*b, c, h, w) and unpack it back to (b, c, h*hs, w*ws) with hs=ws=2.",
-    "answer_code": "einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=2, ws=2)",
+    "question_text": "Write a function solve(y, hs, ws) that takes a tensor of shape (hs*ws*b, c, h, w) — spatial subgrids packed into the batch axis, subgrid index slowest — and UNPACKS them back into space: return shape (b, c, h*hs, w*ws) via '(hs ws b) c h w -> b c (h hs) (w ws)'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(y, hs, ws):\n    return einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=hs, ws=ws)\n\n\nprint(solve(np.arange(4.0).reshape(4, 1, 1, 1), 2, 2))\n",
     "difficulty_score": 65,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14649,12 +14871,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')  # (6, 3, 150, 150) BCHW\ny = einops.rearrange(arr[:2], 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(y, hs, ws):\n    \"\"\"Return shape (b, c, h*hs, w*ws) via '(hs ws b) c h w -> b c (h hs) (w ws)'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(4.0).reshape(4, 1, 1, 1), 2, 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\ny = einops.rearrange(arr[:2], 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=2, ws=2)"
+        "setup_code": "import numpy as np\ny = np.arange(4.0).reshape(4, 1, 1, 1)\nhs, ws = 2, 2",
+        "call": "(np.asarray(solve(y, hs, ws)).shape, np.round(np.asarray(solve(y, hs, ws)), 10).tolist())",
+        "expected_expr": "((1, 1, 2, 2), [[[[0.0, 1.0], [2.0, 3.0]]]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(185)\ny = np.random.rand(8, 2, 2, 2)\nhs, ws = 2, 2",
+        "call": "np.round(np.asarray(solve(y, hs, ws)), 10)",
+        "expected_expr": "np.round(np.asarray(y.reshape(2, 2, 2, 2, 2, 2).transpose(2, 3, 4, 0, 5, 1).reshape(2, 2, 4, 4)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\ny = np.ones((2, 1, 2, 2))\nhs, ws = 1, 2",
+        "call": "(np.asarray(solve(y, hs, ws)).shape,)",
+        "expected_expr": "((1, 1, 2, 4),)"
+      },
+      {
+        "setup_code": "import numpy as np\ny = np.arange(8.0).reshape(1, 2, 2, 2)\nhs, ws = 1, 1",
+        "call": "np.round(np.asarray(solve(y, hs, ws)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(8.0).reshape(1, 2, 2, 2)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14668,8 +14905,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Rearrange the channels of a batch of images by grouping them into sets and then reorganizing the output so that the number of channels and groups are swapped.",
-    "answer_code": "einops.rearrange(x, 'b (g c_in) h w -> b (c_in g) h w', g=4)",
+    "question_text": "Write a function solve(x, g) that takes a tensor of shape (b, g*c, h, w) with g channel groups (group index slowest) and TRANSPOSES groups against within-group channels: return the same shape reordered by 'b (g c) h w -> b (c g) h w' — after which consecutive channels come from DIFFERENT groups.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, g):\n    return einops.rearrange(x, 'b (g c) h w -> b (c g) h w', g=g)\n\n\nprint(solve(np.arange(4.0).reshape(1, 4, 1, 1), 2))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14677,12 +14914,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, g):\n    \"\"\"Return the same shape reordered by 'b (g c) h w -> b (c g) h w' — after which consecutive channels come from D\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(4.0).reshape(1, 4, 1, 1), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x, 'b (g c_in) h w -> b (c_in g) h w', g=4)"
+        "setup_code": "import numpy as np\nx = np.arange(4.0).reshape(1, 4, 1, 1)\ng = 2",
+        "call": "np.round(np.asarray(solve(x, g)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(1, 2, 2, 1, 1).swapaxes(1, 2).reshape(1, 4, 1, 1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(186)\nx = np.random.rand(2, 8, 2, 2)\ng = 4",
+        "call": "np.round(np.asarray(solve(x, g)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(2, 4, 2, 2, 2).swapaxes(1, 2).reshape(2, 8, 2, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(6.0).reshape(1, 6, 1, 1)\ng = 3",
+        "call": "np.round(np.asarray(solve(x, g)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(1, 3, 2, 1, 1).swapaxes(1, 2).reshape(1, 6, 1, 1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 5, 1, 1))\ng = 1",
+        "call": "np.round(np.asarray(solve(x, g)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 5, 1, 1))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14724,8 +14976,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Combine a list of HWC images by stacking them side by side along the width dimension, resulting in a single height with the total width being the sum of all images' widths.",
-    "answer_code": "einops.rearrange(arr, 'b h w c -> h (b w) c')",
+    "question_text": "Write a function solve(imgs) that takes a PYTHON LIST of channels-last images (h, w, c) and concatenates them SIDE BY SIDE: return shape (h, len(list)*w, c) — the list index merging straight into width via 'b h w c -> h (b w) c'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(imgs):\n    return einops.rearrange(imgs, 'b h w c -> h (b w) c')\n\n\nprint(solve([np.zeros((2, 1, 1)), np.ones((2, 1, 1))]))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14733,12 +14985,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(imgs):\n    \"\"\"Return shape (h, len(list)*w, c) — the list index merging straight into width via 'b h w c -> h (b w) c'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve([np.zeros((2, 1, 1)), np.ones((2, 1, 1))]))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b h w c -> h (b w) c')"
+        "setup_code": "import numpy as np\nimgs = [np.zeros((2, 1, 1)), np.ones((2, 1, 1))]",
+        "call": "(np.asarray(solve(imgs)).shape, np.round(np.asarray(solve(imgs)), 10).tolist())",
+        "expected_expr": "((2, 2, 1), [[[0.0], [1.0]], [[0.0], [1.0]]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(187)\nimgs = [np.random.rand(2, 3, 2) for _ in range(3)]",
+        "call": "np.round(np.asarray(solve(imgs)), 10)",
+        "expected_expr": "np.round(np.asarray(np.concatenate(imgs, axis=1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimgs = [np.arange(4.0).reshape(2, 2, 1)]",
+        "call": "np.round(np.asarray(solve(imgs)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(2, 2, 1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimgs = [np.full((1, 2, 1), 5.0), np.full((1, 2, 1), 7.0)]",
+        "call": "np.round(np.asarray(solve(imgs)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[5.0], [5.0], [7.0], [7.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14752,8 +15019,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "Downsample a temporal sequence of shape (b, c, t*2) by averaging non-overlapping pairs along the time axis. Output shape (b, c, t).",
-    "answer_code": "einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)",
+    "question_text": "Write a function solve(x_seq) that takes a temporal tensor of shape (b, c, 2*t) and DOWNSAMPLES time by averaging non-overlapping PAIRS: return shape (b, c, t) via 'b c (t two) -> b c t' with 'mean'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_seq):\n    return einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)\n\n\nprint(solve(np.arange(8.0).reshape(1, 1, 8)))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14761,12 +15028,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx_seq = np.arange(2 * 3 * 8).reshape(2, 3, 8).astype(float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_seq):\n    \"\"\"Return shape (b, c, t) via 'b c (t two) -> b c t' with 'mean'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 1, 8)))\n",
     "test_cases": [
       {
-        "setup_code": "x_seq = np.arange(2 * 3 * 8).reshape(2, 3, 8).astype(float)",
-        "call": "solve()",
-        "expected_expr": "einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)"
+        "setup_code": "import numpy as np\nx_seq = np.arange(8.0).reshape(1, 1, 8)",
+        "call": "np.round(np.asarray(solve(x_seq)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.5, 2.5, 4.5, 6.5]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(188)\nx_seq = np.random.rand(2, 3, 6)",
+        "call": "np.round(np.asarray(solve(x_seq)), 10)",
+        "expected_expr": "np.round(np.asarray(x_seq.reshape(2, 3, 3, 2).mean(axis=3)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_seq = np.array([[[4.0, 6.0]]])",
+        "call": "np.round(np.asarray(solve(x_seq)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[5.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_seq = np.ones((1, 2, 4))",
+        "call": "np.round(np.asarray(solve(x_seq)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 2))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14808,8 +15090,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) = (2, 3, 150, 150) holding two channels-first images. First apply a 2x2 maximum pooling on the spatial axes, taking the maximum value within each non-overlapping 2x2 window of height and width so each spatial axis is halved. Then flatten the channel axis together with the two pooled spatial axes into a single trailing feature axis, returning a 2D array of shape (batch, channels * (height/2) * (width/2)) = (2, 16875).",
-    "answer_code": "einops.reduce(x, 'b c (h two1) (w two2) -> b (c h w)', 'max', two1=2, two2=2)",
+    "question_text": "Write a function solve(x, k) that takes a batch (b, c, h, w) — h, w divisible by k — and does max-pooling with k x k windows FOLLOWED by a full flatten: return shape (b, c*(h//k)*(w//k)) in ONE einops.reduce: 'b c (h k1) (w k2) -> b (c h w)' with 'max'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, k):\n    return einops.reduce(x, 'b c (h k1) (w k2) -> b (c h w)', 'max', k1=k, k2=k)\n\n\nprint(solve(np.arange(16.0).reshape(1, 1, 4, 4), 2))\n",
     "difficulty_score": 56,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14817,12 +15099,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy').astype(float)\nx = arr[:2]  # (2, 3, 150, 150) BCHW\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, k):\n    \"\"\"Return shape (b, c*(h//k)*(w//k)) in ONE einops.reduce.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(16.0).reshape(1, 1, 4, 4), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy').astype(float)\nx = arr[:2]",
-        "call": "solve()",
-        "expected_expr": "einops.reduce(x, 'b c (h two1) (w two2) -> b (c h w)', 'max', two1=2, two2=2)"
+        "setup_code": "import numpy as np\nx = np.arange(16.0).reshape(1, 1, 4, 4)\nk = 2",
+        "call": "(np.asarray(solve(x, k)).shape, np.round(np.asarray(solve(x, k)), 10).tolist())",
+        "expected_expr": "((1, 4), [[5.0, 7.0, 13.0, 15.0]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(189)\nx = np.random.rand(2, 2, 4, 4)\nk = 2",
+        "call": "np.round(np.asarray(solve(x, k)), 10)",
+        "expected_expr": "np.round(np.asarray(x.reshape(2, 2, 2, 2, 2, 2).max(axis=(3, 5)).reshape(2, 8)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 3, 2, 2))\nk = 2",
+        "call": "np.round(np.asarray(solve(x, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.arange(4.0).reshape(1, 1, 2, 2)\nk = 1",
+        "call": "np.round(np.asarray(solve(x, k)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[0.0, 1.0, 2.0, 3.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14836,8 +15133,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "1D average pooling over time with non-overlapping window of length 4 on a tensor of shape (b, c, t*4). Output shape (b, c, t).",
-    "answer_code": "einops.reduce(x_seq, 'b c (t w) -> b c t', 'mean', w=4)",
+    "question_text": "Write a function solve(x_seq, w) that takes a temporal tensor (b, c, t*w) and average-pools time with non-overlapping windows of length w: return shape (b, c, t) via 'b c (t w) -> b c t' with 'mean'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_seq, w):\n    return einops.reduce(x_seq, 'b c (t w) -> b c t', 'mean', w=w)\n\n\nprint(solve(np.arange(8.0).reshape(1, 1, 8), 4))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14845,12 +15142,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nx_seq = np.arange(2 * 3 * 12).reshape(2, 3, 12).astype(float)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_seq, w):\n    \"\"\"Return shape (b, c, t) via 'b c (t w) -> b c t' with 'mean'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 1, 8), 4))\n",
     "test_cases": [
       {
-        "setup_code": "x_seq = np.arange(2 * 3 * 12).reshape(2, 3, 12).astype(float)",
-        "call": "solve()",
-        "expected_expr": "einops.reduce(x_seq, 'b c (t w) -> b c t', 'mean', w=4)"
+        "setup_code": "import numpy as np\nx_seq = np.arange(8.0).reshape(1, 1, 8)\nw = 4",
+        "call": "np.round(np.asarray(solve(x_seq, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[1.5, 5.5]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(190)\nx_seq = np.random.rand(2, 2, 12)\nw = 3",
+        "call": "np.round(np.asarray(solve(x_seq, w)), 10)",
+        "expected_expr": "np.round(np.asarray(x_seq.reshape(2, 2, 4, 3).mean(axis=3)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_seq = np.array([[[2.0, 4.0, 6.0]]])\nw = 3",
+        "call": "np.round(np.asarray(solve(x_seq, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[4.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_seq = np.ones((1, 1, 6))\nw = 1",
+        "call": "np.round(np.asarray(solve(x_seq, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 1, 6))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14892,8 +15204,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "For a batch of images with multiple channels and spatial dimensions, combine the batch and height dimensions into a single dimension while keeping the width and channels intact.",
-    "answer_code": "einops.rearrange(arr, 'b c h w -> (b h) w c')",
+    "question_text": "Write a function solve(arr) that takes a channels-first batch (b, c, h, w) and returns shape (b*h, w, c): batch merged into height AND the layout converted to channels-last in the same pattern — 'b c h w -> (b h) w c'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.rearrange(arr, 'b c h w -> (b h) w c')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -14901,12 +15213,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return shape (b*h, w, c).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b c h w -> (b h) w c')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(arr)).shape, np.round(np.asarray(solve(arr)), 10).tolist())",
+        "expected_expr": "((4, 2, 1), np.round(np.asarray(arr.transpose(0, 2, 3, 1).reshape(4, 2, 1)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(191)\narr = np.random.rand(3, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.transpose(0, 2, 3, 1).reshape(6, 2, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 3, 2, 1))",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((2, 1, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 1)), np.ones((1, 1, 1))])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0]], [[1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -14976,8 +15303,8 @@
     "topic": "Einops",
     "subtopic": "Repeat",
     "subtopic_key": "Einops: Repeat",
-    "question_text": "For a single CHW image, duplicate each color channel so that the output has twice as many channels, while keeping the height and width dimensions unchanged.",
-    "answer_code": "einops.repeat(img, 'c h w -> (r c) h w', r=2)",
+    "question_text": "Write a function solve(img, r) that takes a channels-first image (c, h, w) and DUPLICATES the whole channel block r times: return shape (r*c, h, w) via repeat's '(r c)' grouping — channels 0..c-1, then the same again, r blocks total.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img, r):\n    return einops.repeat(img, 'c h w -> (r c) h w', r=r)\n\n\nprint(solve(np.arange(4.0).reshape(1, 2, 2), 2))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -14985,12 +15312,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve():\n    # Write your solution here - define r\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img, r):\n    \"\"\"Return shape (r*c, h, w) via repeat's '(r c)' grouping — channels 0..c-1, then the same again, r blocks total.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(4.0).reshape(1, 2, 2), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-        "call": "solve()",
-        "expected_expr": "einops.repeat(img, 'c h w -> (r c) h w', r=2)"
+        "setup_code": "import numpy as np\nimg = np.arange(4.0).reshape(1, 2, 2)\nr = 2",
+        "call": "(np.asarray(solve(img, r)).shape, np.round(np.asarray(solve(img, r)), 10).tolist())",
+        "expected_expr": "((2, 2, 2), np.round(np.asarray(np.tile(img, (2, 1, 1))), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(192)\nimg = np.random.rand(3, 2, 2)\nr = 2",
+        "call": "np.round(np.asarray(solve(img, r)), 10)",
+        "expected_expr": "np.round(np.asarray(np.tile(img, (2, 1, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.array([[[5.0]]])\nr = 4",
+        "call": "np.round(np.asarray(solve(img, r)), 10)",
+        "expected_expr": "np.round(np.asarray(np.full((4, 1, 1), 5.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.ones((2, 1, 2))\nr = 1",
+        "call": "np.round(np.asarray(solve(img, r)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((2, 1, 2))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15004,8 +15346,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given x_heads, a 4D array of shape (batch, heads, tokens, embedding_dim) representing multi-head attention output. Concatenate the per-head embeddings into a single embedding per token, returning a 3D array of shape (batch, tokens, heads * embedding_dim) where the head dimension is folded into the trailing embedding axis.",
-    "answer_code": "einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')",
+    "question_text": "Write a function solve(x_heads) that takes multi-head attention output of shape (b, nh, t, d) and CONCATENATES the heads back together per token: return shape (b, t, nh*d) via 'b nh t d -> b t (nh d)'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_heads):\n    return einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')\n\n\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15013,12 +15355,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_heads):\n    \"\"\"Return shape (b, t, nh*d) via 'b nh t d -> b t (nh d)'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2\nx_heads = arr.reshape(b, -1, arr.shape[1], arr.shape[2])",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')"
+        "setup_code": "import numpy as np\nx_heads = np.arange(8.0).reshape(1, 2, 2, 2)",
+        "call": "(np.asarray(solve(x_heads)).shape, np.round(np.asarray(solve(x_heads)), 10).tolist())",
+        "expected_expr": "((1, 2, 4), np.round(np.asarray(x_heads.transpose(0, 2, 1, 3).reshape(1, 2, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(193)\nx_heads = np.random.rand(2, 4, 3, 2)",
+        "call": "np.round(np.asarray(solve(x_heads)), 10)",
+        "expected_expr": "np.round(np.asarray(x_heads.transpose(0, 2, 1, 3).reshape(2, 3, 8)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_heads = np.ones((1, 1, 2, 3))",
+        "call": "np.round(np.asarray(solve(x_heads)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx_heads = np.arange(4.0).reshape(1, 2, 1, 2)",
+        "call": "np.round(np.asarray(solve(x_heads)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 1.0, 2.0, 3.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15116,8 +15473,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "For a collection of sequences, interchange the axes representing time and batch size, so that each time step is grouped by its corresponding sequence.",
-    "answer_code": "einops.rearrange(seq, 'b t d -> t b d')",
+    "question_text": "Write a function solve(seq) that takes a batch-first sequence tensor (b, t, d) and returns the TIME-FIRST layout (t, b, d) — batch and time axes exchanged.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq):\n    return einops.rearrange(seq, 'b t d -> t b d')\n\n\nprint(solve(np.arange(6.0).reshape(2, 3, 1)))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -15125,12 +15482,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nseq = np.arange(2 * 12 * 3).reshape(2, 12, 3)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq):\n    \"\"\"Return the TIME-FIRST layout (t, b, d) — batch and time axes exchanged.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(6.0).reshape(2, 3, 1)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nseq = np.arange(2 * 12 * 3).reshape(2, 12, 3)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(seq, 'b t d -> t b d')"
+        "setup_code": "import numpy as np\nseq = np.arange(6.0).reshape(2, 3, 1)",
+        "call": "(np.asarray(solve(seq)).shape, np.round(np.asarray(solve(seq)), 10).tolist())",
+        "expected_expr": "((3, 2, 1), np.round(np.asarray(seq.transpose(1, 0, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(194)\nseq = np.random.rand(3, 4, 2)",
+        "call": "np.round(np.asarray(solve(seq)), 10)",
+        "expected_expr": "np.round(np.asarray(np.swapaxes(seq, 0, 1)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq = np.ones((1, 1, 5))",
+        "call": "np.round(np.asarray(solve(seq)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 1, 5))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq = np.arange(4.0).reshape(2, 2, 1)",
+        "call": "np.round(np.asarray(solve(seq)), 10)",
+        "expected_expr": "np.round(np.asarray(seq.transpose(1, 0, 2)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15172,8 +15544,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Transform a tensor with color channels and flattened spatial dimensions back into a 2D format by separating the height and width, ensuring that each color channel retains its original spatial arrangement.",
-    "answer_code": "einops.rearrange(flat, 'c (h w) -> c h w', h=h, w=w)",
+    "question_text": "Write a function solve(flat, h) that takes a channel-wise FLATTENED image of shape (c, h*w) and the original height h, and restores the spatial layout: return shape (c, h, w) via 'c (h w) -> c h w' — the inverse flatten needs h (or w) passed in.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(flat, h):\n    return einops.rearrange(flat, 'c (h w) -> c h w', h=h)\n\n\nprint(solve(np.arange(8.0).reshape(2, 4), 2))\n",
     "difficulty_score": 26,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -15181,12 +15553,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nh, w = 150, 150\nflat = arr[0].reshape(3, h * w)  # (3, 22500) channel-flattened digit\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(flat, h):\n    \"\"\"Return shape (c, h, w) via 'c (h w) -> c h w' — the inverse flatten needs h (or w) passed in.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 4), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nh, w = 150, 150\nflat = arr[0].reshape(3, h * w)",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(flat, 'c (h w) -> c h w', h=h, w=w)"
+        "setup_code": "import numpy as np\nflat = np.arange(8.0).reshape(2, 4)\nh = 2",
+        "call": "(np.asarray(solve(flat, h)).shape, np.round(np.asarray(solve(flat, h)), 10).tolist())",
+        "expected_expr": "((2, 2, 2), np.round(np.asarray(flat.reshape(2, 2, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(195)\nflat = np.random.rand(3, 12)\nh = 3",
+        "call": "np.round(np.asarray(solve(flat, h)), 10)",
+        "expected_expr": "np.round(np.asarray(flat.reshape(3, 3, 4)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nflat = np.ones((1, 5))\nh = 1",
+        "call": "np.round(np.asarray(solve(flat, h)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 1, 5))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nflat = np.arange(6.0).reshape(1, 6)\nh = 3",
+        "call": "np.round(np.asarray(solve(flat, h)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(6.0).reshape(1, 3, 2)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15200,8 +15587,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "For a single CHW image, combine the height and width dimensions into a single dimension while keeping the channels separate.",
-    "answer_code": "einops.rearrange(img, 'c h w -> c (h w)')",
+    "question_text": "Write a function solve(img) that takes a channels-first image (c, h, w) and FLATTENS its spatial axes per channel: return shape (c, h*w) via 'c h w -> c (h w)'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    return einops.rearrange(img, 'c h w -> c (h w)')\n\n\nprint(solve(np.arange(8.0).reshape(2, 2, 2)))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -15209,12 +15596,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return shape (c, h*w) via 'c h w -> c (h w)'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(img, 'c h w -> c (h w)')"
+        "setup_code": "import numpy as np\nimg = np.arange(8.0).reshape(2, 2, 2)",
+        "call": "(np.asarray(solve(img)).shape, np.round(np.asarray(solve(img)), 10).tolist())",
+        "expected_expr": "((2, 4), np.round(np.asarray(img.reshape(2, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(196)\nimg = np.random.rand(3, 2, 4)",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(img.reshape(3, 8)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.ones((1, 1, 6))",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 6))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.arange(4.0).reshape(4, 1, 1)",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(4, 1)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15228,8 +15630,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "You are given arr, a 4D uint8 array of shape (6, 3, 150, 150) holding 6 RGB digit images in (batch, channels, height, width) layout. Stack the 6 images on top of each other along the height axis, returning a 3D array of shape (3, 6*150, 150) in (channels, batch*height, width) layout so all 6 images form a single tall column with image 0 on top and image 5 on the bottom.",
-    "answer_code": "arr1 = einops.rearrange(arr, 'b c h w -> c (b h) w'); display_array_as_img(arr1)",
+    "question_text": "Write a function solve(arr) that takes a channels-first batch (b, c, h, w) and stacks the images VERTICALLY in channels-first layout: return shape (c, b*h, w) via 'b c h w -> c (b h) w'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.rearrange(arr, 'b c h w -> c (b h) w')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15237,13 +15639,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2\n\ndef solve():\n    # Write your solution here - define arr1\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return shape (c, b*h, w) via 'b c h w -> c (b h) w'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2",
-        "call": "solve()",
-        "expected_expr": "arr1",
-        "expected_setup_code": "arr1 = einops.rearrange(arr, 'b c h w -> c (b h) w')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(arr)).shape, np.round(np.asarray(solve(arr)), 10).tolist())",
+        "expected_expr": "((1, 4, 2), np.round(np.asarray(arr.transpose(1, 0, 2, 3).reshape(1, 4, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(197)\narr = np.random.rand(3, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.transpose(1, 0, 2, 3).reshape(2, 6, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 3, 2, 1))",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((3, 2, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 2)), np.ones((1, 1, 2))])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 0.0], [1.0, 1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15285,8 +15701,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given img, a 3D array of shape (channels, height, width) representing a single channels-first image. First add a leading singleton batch axis to produce shape (1, channels, height, width). Next flatten the channel and spatial axes together to produce a 2D array of shape (1, channels * height * width) suitable for a fully-connected classifier. Finally drop the leading singleton axis to produce a 1D array of length channels * height * width.",
-    "answer_code": "y = einops.rearrange(img, 'c h w -> () c h w'); preds = einops.rearrange(y, 'b c h w -> b (c h w)'); einops.rearrange(preds, '() classes -> classes')",
+    "question_text": "Write a function solve(img) that takes a single channels-first image (c, h, w), treats it as a batch of ONE, and returns the flattened prediction-style vector batch of shape (1, c*h*w): add the leading batch axis then flatten the rest — the two rearranges compose into 'c h w -> () (c h w)'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    return einops.rearrange(img, 'c h w -> () (c h w)')\n\n\nprint(solve(np.arange(4.0).reshape(1, 2, 2)))\n",
     "difficulty_score": 44,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15294,13 +15710,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2\n\ndef solve():\n    # Write your solution here - define y\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return the flattened prediction-style vector batch of shape (1, c*h*w).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(4.0).reshape(1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(preds, '() classes -> classes')",
-        "expected_setup_code": "y = einops.rearrange(img, 'c h w -> () c h w')\npreds = einops.rearrange(y, 'b c h w -> b (c h w)')"
+        "setup_code": "import numpy as np\nimg = np.arange(4.0).reshape(1, 2, 2)",
+        "call": "(np.asarray(solve(img)).shape, np.round(np.asarray(solve(img)), 10).tolist())",
+        "expected_expr": "((1, 4), [[0.0, 1.0, 2.0, 3.0]])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(198)\nimg = np.random.rand(3, 2, 2)",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(img.reshape(1, 12)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.ones((2, 1, 3))",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 6))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.array([[[7.0]]])",
+        "call": "np.round(np.asarray(solve(img)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[7.0]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15342,8 +15772,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "You are given seq, a 3D array of shape (batch, tokens, heads*embedding_dim) = (2, 12, 8) representing a transformer sequence whose trailing axis is the concatenation of 8 attention heads. With heads = 8, split that trailing axis into a heads axis and a per-head embedding_dim axis (so embedding_dim = 1 here) and move the heads axis next to the batch, producing a 4D array of shape (batch, heads, tokens, embedding_dim) = (2, 8, 12, 1).",
-    "answer_code": "einops.rearrange(seq, 'b t (nh d) -> b nh t d', nh=8)",
+    "question_text": "Write a function solve(seq, nh) that takes a transformer sequence of shape (b, t, nh*d) — the head outputs concatenated per token, head index slowest — and SPLITS the heads back out: return shape (b, nh, t, d) via 'b t (nh d) -> b nh t d'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq, nh):\n    return einops.rearrange(seq, 'b t (nh d) -> b nh t d', nh=nh)\n\n\nprint(solve(np.arange(8.0).reshape(1, 2, 4), 2))\n",
     "difficulty_score": 60,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15351,12 +15781,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange\n\narr = np.load('/delta_numbers.npy')\nseq = np.arange(2 * 12 * 8).reshape(2, 12, 8)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq, nh):\n    \"\"\"Return shape (b, nh, t, d) via 'b t (nh d) -> b nh t d'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 2, 4), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nseq = np.arange(2 * 12 * 8).reshape(2, 12, 8)\nb = 2",
-        "call": "solve()",
-        "expected_expr": "rearrange(seq, 'b t (nh d) -> b nh t d', nh=8)"
+        "setup_code": "import numpy as np\nseq = np.arange(8.0).reshape(1, 2, 4)\nnh = 2",
+        "call": "(np.asarray(solve(seq, nh)).shape, np.round(np.asarray(solve(seq, nh)), 10).tolist())",
+        "expected_expr": "((1, 2, 2, 2), np.round(np.asarray(seq.reshape(1, 2, 2, 2).transpose(0, 2, 1, 3)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(199)\nseq = np.random.rand(2, 12, 8)\nnh = 8",
+        "call": "np.round(np.asarray(solve(seq, nh)), 10)",
+        "expected_expr": "np.round(np.asarray(seq.reshape(2, 12, 8, 1).transpose(0, 2, 1, 3)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq = np.ones((1, 3, 6))\nnh = 3",
+        "call": "(np.asarray(solve(seq, nh)).shape,)",
+        "expected_expr": "((1, 3, 3, 2),)"
+      },
+      {
+        "setup_code": "import numpy as np\nseq = np.arange(4.0).reshape(1, 1, 4)\nnh = 1",
+        "call": "np.round(np.asarray(solve(seq, nh)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(1, 1, 1, 4)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15370,8 +15815,8 @@
     "topic": "Einops",
     "subtopic": "Deep Learning",
     "subtopic_key": "Einops: Deep Learning",
-    "question_text": "For a batch of tensors organized in channel-first format, combine the channels and batch dimensions into a single dimension while keeping the height and width dimensions intact.",
-    "answer_code": "einops.rearrange(arr, 'b c h w -> h w (b c)')",
+    "question_text": "Write a function solve(arr) that takes a batch (b, c, h, w) and returns shape (h, w, b*c): spatial axes leading, batch and channels merged (batch slowest) at the END — 'b c h w -> h w (b c)'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.rearrange(arr, 'b c h w -> h w (b c)')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -15379,12 +15824,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return shape (h, w, b*c).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b c h w -> h w (b c)')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(arr)).shape, np.round(np.asarray(solve(arr)), 10).tolist())",
+        "expected_expr": "((2, 2, 2), np.round(np.asarray(arr.transpose(2, 3, 0, 1).reshape(2, 2, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(200)\narr = np.random.rand(2, 3, 2, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.transpose(2, 3, 0, 1).reshape(2, 2, 6)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 1, 3, 2))",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((3, 2, 1))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 1)), np.ones((1, 1, 1))])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15398,8 +15858,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Reconstruct an image from a batch of color channels organized into 4x4 patches by rearranging the patches into a complete image format, specifying the height and width of the final image.",
-    "answer_code": "einops.rearrange(patches, '(h w) c p1 p2 -> c (h p1) (w p2)', h=h, w=w)",
+    "question_text": "Write a function solve(patches, h, w) that takes a patch stack of shape (h*w, c, p1, p2) — channels-FIRST patches listed row-major — and reassembles the image in channels-first form: return shape (c, h*p1, w*p2) via '(h w) c p1 p2 -> c (h p1) (w p2)'. (The companion drill reassembles channels-last patches.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(patches, h, w):\n    return einops.rearrange(patches, '(h w) c p1 p2 -> c (h p1) (w p2)', h=h, w=w)\n\n\nprint(solve(np.arange(16.0).reshape(4, 1, 2, 2), 2, 2))\n",
     "difficulty_score": 55,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15407,12 +15867,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nh, w = 15, 15\npatches = einops.rearrange(arr[0], 'c (h p1) (w p2) -> (h w) c p1 p2', p1=10, p2=10)\n\ndef solve():\n    # Write your solution here - define h\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(patches, h, w):\n    \"\"\"Return shape (c, h*p1, w*p2) via '(h w) c p1 p2 -> c (h p1) (w p2)'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(16.0).reshape(4, 1, 2, 2), 2, 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nh, w = 15, 15\npatches = einops.rearrange(arr[0], 'c (h p1) (w p2) -> (h w) c p1 p2', p1=10, p2=10)",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(patches, '(h w) c p1 p2 -> c (h p1) (w p2)', h=h, w=w)"
+        "setup_code": "import numpy as np\npatches = np.arange(16.0).reshape(4, 1, 2, 2)\nh, w = 2, 2",
+        "call": "(np.asarray(solve(patches, h, w)).shape, np.round(np.asarray(solve(patches, h, w)), 10).tolist())",
+        "expected_expr": "((1, 4, 4), np.round(np.asarray(patches.reshape(2, 2, 1, 2, 2).transpose(2, 0, 3, 1, 4).reshape(1, 4, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(201)\npatches = np.random.rand(6, 2, 2, 3)\nh, w = 2, 3",
+        "call": "np.round(np.asarray(solve(patches, h, w)), 10)",
+        "expected_expr": "np.round(np.asarray(patches.reshape(2, 3, 2, 2, 3).transpose(2, 0, 3, 1, 4).reshape(2, 4, 9)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\npatches = np.ones((1, 3, 2, 2))\nh, w = 1, 1",
+        "call": "np.round(np.asarray(solve(patches, h, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((3, 2, 2))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\npatches = np.stack([np.zeros((1, 1, 1)), np.ones((1, 1, 1))])\nh, w = 1, 2",
+        "call": "np.round(np.asarray(solve(patches, h, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15454,8 +15929,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Given a 4D array arr of shape (batch, channels, height, width) holding a batch of channels-first color images, return a 3D array of shape (channels, height, batch * width) that lays every image side by side into one long horizontal strip: image 0 occupies the leftmost width columns, image 1 the next width columns, and so on, with channels and height preserved.",
-    "answer_code": "einops.rearrange(arr, 'b c h w -> c h (b w)')",
+    "question_text": "Write a function solve(arr) that takes a batch (b, c, h, w) and merges batch into width with the batch index INNERMOST: return shape (c, h, w*b) via 'b c h w -> c h (w b)' — the images' columns INTERLEAVE (column 0 of every image, then column 1, ...) instead of sitting side by side. (Contrast '(b w)', which concatenates whole images.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    return einops.rearrange(arr, 'b c h w -> c h (w b)')\n\n\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "difficulty_score": 28,
     "difficulty_label": "easy",
     "expected_output": "",
@@ -15463,12 +15938,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr):\n    \"\"\"Return shape (c, h, w*b) via 'b c h w -> c h (w b)' — the images' columns INTERLEAVE (column 0 of every image,\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(2, 1, 2, 2)))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b c h w -> c h (b w)')"
+        "setup_code": "import numpy as np\narr = np.arange(8.0).reshape(2, 1, 2, 2)",
+        "call": "(np.asarray(solve(arr)).shape, np.round(np.asarray(solve(arr)), 10).tolist())",
+        "expected_expr": "((1, 2, 4), np.round(np.asarray(arr.transpose(1, 2, 3, 0).reshape(1, 2, 4)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(202)\narr = np.random.rand(3, 2, 2, 2)",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.transpose(1, 2, 3, 0).reshape(2, 2, 6)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 1, 2, 3))",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.stack([np.zeros((1, 1, 2)), np.ones((1, 1, 2))])",
+        "call": "np.round(np.asarray(solve(arr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[0.0, 1.0, 0.0, 1.0]]])), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15539,8 +16029,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "You are given arr, a 4D array of shape (batch, height, width, channels) = (2, 3, 8, 5) in BHWC layout. Reinterpret the width axis as a (remaining_width, factor) pair where factor = 4 (so remaining_width = 2), then merge that factor of 4 into the height axis as its outer index, producing a 4D array of shape (batch, factor * height, remaining_width, channels) = (2, 12, 2, 5).",
-    "answer_code": "einops.rearrange(arr, 'b h (w w4) c -> b (w4 h) w c', w4=4)",
+    "question_text": "Write a function solve(arr, w4) that takes a BHWC batch (b, h, w*w4, c) and folds width chunks into height: factor the width axis as (w, w4) with w4 INNER, then merge w4 into height AHEAD of h — return shape (b, w4*h, w, c) via 'b h (w w4) c -> b (w4 h) w c'.",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, w4):\n    return einops.rearrange(arr, 'b h (w w4) c -> b (w4 h) w c', w4=w4)\n\n\nprint(solve(np.arange(16.0).reshape(1, 1, 8, 2), 4))\n",
     "difficulty_score": 56,
     "difficulty_label": "medium",
     "expected_output": "",
@@ -15548,12 +16038,27 @@
     "primary_library": "einops",
     "task_type": "tensor_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.arange(2 * 3 * 8 * 5).reshape(2, 3, 8, 5)\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, w4):\n    \"\"\"Return shape (b, w4*h, w, c) via 'b h (w w4) c -> b (w4 h) w c'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(16.0).reshape(1, 1, 8, 2), 4))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.arange(2 * 3 * 8 * 5).reshape(2, 3, 8, 5)",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(arr, 'b h (w w4) c -> b (w4 h) w c', w4=4)"
+        "setup_code": "import numpy as np\narr = np.arange(16.0).reshape(1, 1, 8, 2)\nw4 = 4",
+        "call": "(np.asarray(solve(arr, w4)).shape, np.round(np.asarray(solve(arr, w4)), 10).tolist())",
+        "expected_expr": "((1, 4, 2, 2), np.round(np.asarray(arr.reshape(1, 1, 2, 4, 2).transpose(0, 3, 1, 2, 4).reshape(1, 4, 2, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(203)\narr = np.random.rand(2, 3, 8, 5)\nw4 = 4",
+        "call": "np.round(np.asarray(solve(arr, w4)), 10)",
+        "expected_expr": "np.round(np.asarray(arr.reshape(2, 3, 2, 4, 5).transpose(0, 3, 1, 2, 4).reshape(2, 12, 2, 5)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.ones((1, 2, 2, 1))\nw4 = 2",
+        "call": "(np.asarray(solve(arr, w4)).shape,)",
+        "expected_expr": "((1, 4, 1, 1),)"
+      },
+      {
+        "setup_code": "import numpy as np\narr = np.arange(4.0).reshape(1, 2, 2, 1)\nw4 = 1",
+        "call": "np.round(np.asarray(solve(arr, w4)), 10)",
+        "expected_expr": "np.round(np.asarray(np.arange(4.0).reshape(1, 2, 2, 1)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15567,8 +16072,8 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "For an image with color channels and spatial dimensions, extract non-overlapping patches of size 4 by 4, resulting in a new arrangement where the image is represented as a collection of these patches along with the color channels.",
-    "answer_code": "einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=10, p2=10)",
+    "question_text": "Write a function solve(img, p) that takes a channels-first image (c, h*p, w*p) and EXTRACTS its non-overlapping p x p patches: return shape (h*w, c, p, p) — patches listed row-major — via 'c (h p1) (w p2) -> (h w) c p1 p2'. (The inverse of patch reassembly.)",
+    "answer_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img, p):\n    return einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=p, p2=p)\n\n\nprint(solve(np.arange(16.0).reshape(1, 4, 4), 2))\n",
     "difficulty_score": 70,
     "difficulty_label": "hard",
     "expected_output": "",
@@ -15576,12 +16081,27 @@
     "primary_library": "einops",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]  # (3, 150, 150) CHW digit\n\ndef solve():\n    # Write your solution here\n    return None\n",
+    "starter_code": "import numpy as np\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img, p):\n    \"\"\"Return shape (h*w, c, p, p) — patches listed row-major — via 'c (h p1) (w p2) -> (h w) c p1 p2'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(16.0).reshape(1, 4, 4), 2))\n",
     "test_cases": [
       {
-        "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-        "call": "solve()",
-        "expected_expr": "einops.rearrange(img, 'c (h p1) (w p2) -> (h w) c p1 p2', p1=10, p2=10)"
+        "setup_code": "import numpy as np\nimg = np.arange(16.0).reshape(1, 4, 4)\np = 2",
+        "call": "(np.asarray(solve(img, p)).shape, np.round(np.asarray(solve(img, p)), 10).tolist())",
+        "expected_expr": "((4, 1, 2, 2), np.round(np.asarray(img.reshape(1, 2, 2, 2, 2).transpose(1, 3, 0, 2, 4).reshape(4, 1, 2, 2)), 10).tolist())"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(204)\nimg = np.random.rand(3, 4, 6)\np = 2",
+        "call": "np.round(np.asarray(solve(img, p)), 10)",
+        "expected_expr": "np.round(np.asarray(img.reshape(3, 2, 2, 3, 2).transpose(1, 3, 0, 2, 4).reshape(6, 3, 2, 2)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.ones((2, 3, 3))\np = 3",
+        "call": "np.round(np.asarray(solve(img, p)), 10)",
+        "expected_expr": "np.round(np.asarray(np.ones((1, 2, 3, 3))), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nimg = np.arange(4.0).reshape(1, 2, 2)\np = 1",
+        "call": "(np.asarray(solve(img, p)).shape,)",
+        "expected_expr": "((4, 1, 1, 1),)"
       }
     ],
     "submission_mode": "function",
@@ -15623,8 +16143,8 @@
     "topic": "CNN",
     "subtopic": "Output shape & arithmetic",
     "subtopic_key": "CNN: Output shape & arithmetic",
-    "question_text": "Conv output-size arithmetic, one step up: a 224×224 input goes through a conv with kernel 7, stride 2, padding 3 (`H, K, S, P` in the starter). Work out the spatial output side — recall the output-size formula from memory rather than looking it up. Print the result as an int.",
-    "answer_code": "H,K,S,P = 224,7,2,3; print((H + 2*P - K)//S + 1)",
+    "question_text": "Write a function solve(h, k, s, p) that computes a convolution's OUTPUT SIDE LENGTH from input side h, kernel size k, stride s, and padding p using the standard formula floor((h + 2p - k) / s) + 1, returned as a plain int.",
+    "answer_code": "import numpy as np\n\ndef solve(h, k, s, p):\n    return int((h + 2 * p - k) // s + 1)\n\n\nprint(solve(224, 7, 2, 3))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "112",
@@ -15632,12 +16152,27 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nH,K,S,P = 224,7,2,3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(h, k, s, p):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(224, 7, 2, 3))\n",
     "test_cases": [
       {
-        "setup_code": "H,K,S,P = 224,7,2,3",
-        "call": "solve()",
-        "expected_expr": "(H + 2*P - K)//S + 1"
+        "setup_code": "import numpy as np\nh, k, s, p = 224, 7, 2, 3",
+        "call": "(isinstance(solve(h, k, s, p), int), int(solve(h, k, s, p)))",
+        "expected_expr": "(True, 112)"
+      },
+      {
+        "setup_code": "import numpy as np\nh, k, s, p = 32, 3, 1, 1",
+        "call": "int(solve(h, k, s, p))",
+        "expected_expr": "32"
+      },
+      {
+        "setup_code": "import numpy as np\nh, k, s, p = 28, 5, 1, 0",
+        "call": "int(solve(h, k, s, p))",
+        "expected_expr": "24"
+      },
+      {
+        "setup_code": "import numpy as np\nh, k, s, p = 10, 2, 2, 0",
+        "call": "int(solve(h, k, s, p))",
+        "expected_expr": "5"
       }
     ],
     "submission_mode": "function",
@@ -15679,8 +16214,8 @@
     "topic": "CNN",
     "subtopic": "Output shape & arithmetic",
     "subtopic_key": "CNN: Output shape & arithmetic",
-    "question_text": "Each output position of a convolution is one dot product between the kernel and an input patch. For `in_channels=C` and a $K \\times K$ kernel, how many multiply-accumulates does ONE output position cost? The starter defines `C = 64, K = 3`. Compute the count and print it as an int.",
-    "answer_code": "C,K = 64,3; print(C * K * K)",
+    "question_text": "Write a function solve(c, k) that returns, as a plain int, the number of multiplications in ONE output position of a convolution with c input channels and a k x k kernel — the dot-product length c * k * k.",
+    "answer_code": "import numpy as np\n\ndef solve(c, k):\n    return int(c * k * k)\n\n\nprint(solve(64, 3))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "576",
@@ -15688,12 +16223,27 @@
     "primary_library": "python",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nC,K = 64,3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(c, k):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(64, 3))\n",
     "test_cases": [
       {
-        "setup_code": "C,K = 64,3",
-        "call": "solve()",
-        "expected_expr": "C * K * K"
+        "setup_code": "import numpy as np\nc, k = 64, 3",
+        "call": "(isinstance(solve(c, k), int), int(solve(c, k)))",
+        "expected_expr": "(True, 576)"
+      },
+      {
+        "setup_code": "import numpy as np\nc, k = 3, 7",
+        "call": "int(solve(c, k))",
+        "expected_expr": "147"
+      },
+      {
+        "setup_code": "import numpy as np\nc, k = 1, 1",
+        "call": "int(solve(c, k))",
+        "expected_expr": "1"
+      },
+      {
+        "setup_code": "import numpy as np\nc, k = 128, 5",
+        "call": "int(solve(c, k))",
+        "expected_expr": "3200"
       }
     ],
     "submission_mode": "function",
@@ -15707,8 +16257,8 @@
     "topic": "CNN",
     "subtopic": "Output shape & arithmetic",
     "subtopic_key": "CNN: Output shape & arithmetic",
-    "question_text": "“Same” padding: with stride 1 and an odd kernel of size $K$, one particular padding $P$ keeps the output side equal to the input side. Derive it from $K$ (don't just recall the number) for the starter's `K = 5`, and print it as an int.",
-    "answer_code": "K = 5; print((K-1)//2)",
+    "question_text": "Write a function solve(k) that takes an ODD kernel size k and returns the 'same' padding as a plain int — the padding that keeps output size equal to input size at stride 1: (k - 1) // 2.",
+    "answer_code": "import numpy as np\n\ndef solve(k):\n    return int((k - 1) // 2)\n\n\nprint(solve(5))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
     "expected_output": "2",
@@ -15716,12 +16266,27 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nK = 5\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(k):\n    \"\"\"Return the 'same' padding as a plain int — the padding that keeps output size equal to input size at stride 1.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(5))\n",
     "test_cases": [
       {
-        "setup_code": "K = 5",
-        "call": "solve()",
-        "expected_expr": "(K-1)//2"
+        "setup_code": "import numpy as np\nk = 5",
+        "call": "(isinstance(solve(k), int), int(solve(k)))",
+        "expected_expr": "(True, 2)"
+      },
+      {
+        "setup_code": "import numpy as np\nk = 3",
+        "call": "int(solve(k))",
+        "expected_expr": "1"
+      },
+      {
+        "setup_code": "import numpy as np\nk = 1",
+        "call": "int(solve(k))",
+        "expected_expr": "0"
+      },
+      {
+        "setup_code": "import numpy as np\nk = 7",
+        "call": "int(solve(k))",
+        "expected_expr": "3"
       }
     ],
     "submission_mode": "function",
@@ -15876,8 +16441,8 @@
     "topic": "CNN",
     "subtopic": "Conv2d module mechanics",
     "subtopic_key": "CNN: Conv2d module mechanics",
-    "question_text": "Express a 1D conv as an einsum. Given input x shape (B, C_in, L) and weight w shape (C_out, C_in, K), the unfolded patches xp have shape (B, C_in, L_out, K). Print the einsum string that contracts xp with w into output (B, C_out, L_out).",
-    "answer_code": "print('bilk,oik->bol')",
+    "question_text": "Write a function solve(x, w) that computes a VALID 1-D convolution (cross-correlation, no flip) via unfold+einsum: x has shape (b, c_in, l), w has shape (c_out, c_in, k); return shape (b, c_out, l-k+1) by sliding windows over x and contracting with the einsum 'bilk,oik->bol' (i = input channel, l = output position, k = within-window offset).",
+    "answer_code": "import numpy as np\n\ndef solve(x, w):\n    return np.einsum('bilk,oik->bol', np.lib.stride_tricks.sliding_window_view(x, w.shape[2], axis=2), w)\n\n\nprint(solve(np.arange(8.0).reshape(1, 1, 8), np.ones((1, 1, 3))))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
     "expected_output": "bilk,oik->bol",
@@ -15885,12 +16450,27 @@
     "primary_library": "einops.einsum",
     "task_type": "tensor_expression",
     "function_name": "solve",
-    "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\nh = 2\nw = 3\npatches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(x, w):\n    \"\"\"Return shape (b, c_out, l-k+1) by sliding windows over x and contracting with the einsum 'bilk,oik->bol' (i = \"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.arange(8.0).reshape(1, 1, 8), np.ones((1, 1, 3))))\n",
     "test_cases": [
       {
-        "setup_code": "h = 2\nw = 3\npatches = np.arange(h * w * 2 * 2 * 3).reshape(h * w, 2, 2, 3)\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)",
-        "call": "solve()",
-        "expected_expr": "'bilk,oik->bol'"
+        "setup_code": "import numpy as np\nx = np.arange(8.0).reshape(1, 1, 8)\nw = np.ones((1, 1, 3))",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[3.0, 6.0, 9.0, 12.0, 15.0, 18.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(205)\nx = np.random.rand(2, 3, 10)\nw = np.random.rand(4, 3, 3)",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.einsum('bilk,oik->bol', np.lib.stride_tricks.sliding_window_view(x, 3, axis=2), w)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([[[1.0, 2.0, 3.0]]])\nw = np.array([[[1.0, 0.0, -1.0]]])",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([[[-2.0]]])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.ones((1, 2, 4))\nw = np.zeros((3, 2, 2))",
+        "call": "np.round(np.asarray(solve(x, w)), 10)",
+        "expected_expr": "np.round(np.asarray(np.zeros((1, 3, 3))), 10)"
       }
     ],
     "submission_mode": "function",
@@ -15904,8 +16484,8 @@
     "topic": "CNN",
     "subtopic": "Conv2d module mechanics",
     "subtopic_key": "CNN: Conv2d module mechanics",
-    "question_text": "How many learnable parameters does `nn.Conv2d(64, 128, kernel_size=3, padding=1)` have with the default `bias=True`? Work it out from the shapes of the layer's weight and bias (the starter defines `C_in, C_out, K`). Print the count as an int.",
-    "answer_code": "C_in, C_out, K = 64, 128, 3; print(C_out * (C_in * K * K) + C_out)",
+    "question_text": "Write a function solve(c_in, c_out, k, bias) that returns the LEARNABLE PARAMETER COUNT of a 2-D conv layer as a plain int: c_out filters of size c_in*k*k, plus c_out bias terms when bias is True.",
+    "answer_code": "import numpy as np\n\ndef solve(c_in, c_out, k, bias):\n    return int(c_out * (c_in * k * k) + (c_out if bias else 0))\n\n\nprint(solve(64, 128, 3, True))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "73856",
@@ -15913,12 +16493,27 @@
     "primary_library": "python",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import numpy as np\n\nC_in, C_out, K = 64, 128, 3\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(c_in, c_out, k, bias):\n    \"\"\"Return the LEARNABLE PARAMETER COUNT of a 2-D conv layer as a plain int.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(64, 128, 3, True))\n",
     "test_cases": [
       {
-        "setup_code": "C_in, C_out, K = 64, 128, 3",
-        "call": "solve()",
-        "expected_expr": "C_out * (C_in * K * K) + C_out"
+        "setup_code": "import numpy as np\nc_in, c_out, k, bias = 64, 128, 3, True",
+        "call": "(isinstance(solve(c_in, c_out, k, bias), int), int(solve(c_in, c_out, k, bias)))",
+        "expected_expr": "(True, 73856)"
+      },
+      {
+        "setup_code": "import numpy as np\nc_in, c_out, k, bias = 64, 128, 3, False",
+        "call": "int(solve(c_in, c_out, k, bias))",
+        "expected_expr": "73728"
+      },
+      {
+        "setup_code": "import numpy as np\nc_in, c_out, k, bias = 3, 16, 5, True",
+        "call": "int(solve(c_in, c_out, k, bias))",
+        "expected_expr": "1216"
+      },
+      {
+        "setup_code": "import numpy as np\nc_in, c_out, k, bias = 1, 1, 1, True",
+        "call": "int(solve(c_in, c_out, k, bias))",
+        "expected_expr": "2"
       }
     ],
     "submission_mode": "function",
@@ -16144,21 +16739,36 @@
     "topic": "CNN",
     "subtopic": "nn.Module & training loop",
     "subtopic_key": "CNN: nn.Module & training loop",
-    "question_text": "From memory, write the canonical training step as a single printed string: zero the grads, compute the loss from the forward pass, backpropagate, step the optimizer. Use exactly the four calls `opt.zero_grad()`, `loss = loss_fn(model(x), y)`, `loss.backward()`, `opt.step()`, joined by `; ` in the right ORDER — the order is the drill.",
-    "answer_code": "print('opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()')",
+    "question_text": "Write a function solve(w, x, y, lr) implementing ONE full training step for the scalar model pred = w * x with squared-error loss (pred - y)^2, entirely by hand: compute the loss's gradient dL/dw = 2 * (w*x - y) * x, take the gradient-descent step, and return the updated w as a float. This is zero_grad/forward/backward/step compressed to arithmetic.",
+    "answer_code": "import numpy as np\n\ndef solve(w, x, y, lr):\n    return float(w - lr * 2 * (w * x - y) * x)\n\n\nprint(solve(0.0, 2.0, 4.0, 0.1))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
-    "expected_output": "opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()",
+    "expected_output": "1.6",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "def solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+    "starter_code": "import numpy as np\n\ndef solve(w, x, y, lr):\n    \"\"\"Return the updated w as a float.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(0.0, 2.0, 4.0, 0.1))\n",
     "test_cases": [
       {
-        "setup_code": "",
-        "call": "solve()",
-        "expected_expr": "'opt.zero_grad(); loss = loss_fn(model(x), y); loss.backward(); opt.step()'"
+        "setup_code": "import numpy as np\nw, x, y, lr = 0.0, 2.0, 4.0, 0.1",
+        "call": "np.round(np.asarray(solve(w, x, y, lr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(1.6)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nw, x, y, lr = 2.0, 1.0, 2.0, 0.5",
+        "call": "np.round(np.asarray(solve(w, x, y, lr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(2.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nw, x, y, lr = 1.0, 3.0, 0.0, 0.01",
+        "call": "np.round(np.asarray(solve(w, x, y, lr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(1.0 - 0.01 * 18.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nw, x, y, lr = -1.0, 2.0, 2.0, 0.25",
+        "call": "np.round(np.asarray(solve(w, x, y, lr)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(-1.0 + 0.25 * 16.0)), 10)"
       }
     ],
     "submission_mode": "function",
@@ -16410,18 +17020,39 @@
     "topic": "Autograd",
     "subtopic": "Chain Rule and Backward Functions",
     "subtopic_key": "Autograd: Chain Rule and Backward Functions",
-    "question_text": "Implement a sigmoid backward pass by hand in numpy — no autograd. Forward: $y = \\sigma(x) = 1/(1+e^{-x})$ for the starter's `x`. For the backward pass you need sigmoid's local derivative $dy/dx$ — express it in terms of $y$ itself (a classic identity worth memorizing), then apply the chain rule to the starter's incoming gradient `grad_out` to get `dx`. Print with print([round(float(v), 4) for v in dx]).",
-    "answer_code": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ny = 1.0 / (1.0 + np.exp(-x))\ngrad_out = np.array([2.0, 0.5, 1.0])\ndx = grad_out * (y * (1.0 - y))\nprint([round(float(v), 4) for v in dx])",
+    "question_text": "Write a function solve(x, grad_out) implementing the SIGMOID BACKWARD PASS by hand: forward is y = 1/(1+exp(-x)) elementwise; given the upstream gradient grad_out (dL/dy), return the downstream gradient dL/dx = grad_out * y * (1 - y).",
+    "answer_code": "import numpy as np\n\ndef solve(x, grad_out):\n    return (lambda y: grad_out * y * (1 - y))(1.0 / (1.0 + np.exp(-x)))\n\n\nprint(solve(np.array([0.0]), np.array([1.0])))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
-    "expected_output": "[0.5, 0.0983, 0.1966]",
+    "expected_output": "[0.25]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ngrad_out = np.array([2.0, 0.5, 1.0])\n# TODO: implement the sigmoid backward pass\ndx = None  # TODO: compute dx\nprint([round(float(v), 4) for v in dx])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(x, grad_out):\n    \"\"\"Return the downstream gradient dL/dx = grad_out * y * (1 - y).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([0.0]), np.array([1.0])))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nx = np.array([0.0, 1.0, -1.0])\ngrad_out = np.array([1.0, 1.0, 1.0])",
+        "call": "np.round(np.asarray(solve(x, grad_out)), 8)",
+        "expected_expr": "np.round((lambda y: y * (1 - y))(1.0 / (1.0 + np.exp(-x))), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([0.0])\ngrad_out = np.array([4.0])",
+        "call": "np.round(np.asarray(solve(x, grad_out)), 10)",
+        "expected_expr": "np.round(np.asarray(np.array([1.0])), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(206)\nx = np.random.randn(6)\ngrad_out = np.random.randn(6)",
+        "call": "np.round(np.asarray(solve(x, grad_out)), 8)",
+        "expected_expr": "np.round(grad_out * (1.0 / (1.0 + np.exp(-x))) * (1 - 1.0 / (1.0 + np.exp(-x))), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([100.0])\ngrad_out = np.array([5.0])",
+        "call": "float(np.round(np.asarray(solve(x, grad_out)), 8)[0])",
+        "expected_expr": "0.0"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16432,18 +17063,39 @@
     "topic": "Autograd",
     "subtopic": "Chain Rule and Backward Functions",
     "subtopic_key": "Autograd: Chain Rule and Backward Functions",
-    "question_text": "Backprop by hand through a two-stage chain: linear, then ReLU. The starter gives `W`, `x`, and the upstream gradient `grad_out`. Forward: $z = Wx$, then out = relu($z$). Now walk the chain rule backwards one stage at a time: what is ReLU's local Jacobian (a mask determined by $z$)? What does the linear stage contribute (which transpose of `W`, applied to which gradient)? Compute `grad_x` and print with print([round(float(v), 4) for v in grad_x]).",
-    "answer_code": "import numpy as np\nW = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\nz = W @ x\nrelu_mask = (z > 0).astype(float)\ngrad_out = np.array([1.0, 1.0])\ngrad_z = grad_out * relu_mask\ngrad_x = W.T @ grad_z\nprint([round(float(v), 4) for v in grad_x])",
+    "question_text": "Write a function solve(w, x, grad_out) backpropagating BY HAND through z = w @ x followed by a = relu(z): given upstream gradient grad_out (dL/da), return the tuple (grad_w, grad_x) where grad_z = grad_out * (z > 0), grad_w = outer(grad_z, x), and grad_x = w.T @ grad_z.",
+    "answer_code": "import numpy as np\n\ndef solve(w, x, grad_out):\n    return (lambda gz: (np.outer(gz, x), w.T @ gz))(grad_out * ((w @ x) > 0))\n\n\nprint(solve(np.eye(2), np.array([1.0, -1.0]), np.array([1.0, 1.0])))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
-    "expected_output": "[1.0, -2.0]",
+    "expected_output": "(array([[ 1., -1.],\n       [ 0., -0.]]), array([1., 0.]))",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\nW = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\ngrad_out = np.array([1.0, 1.0])\n# TODO: do the forward pass, then backprop stage by stage through the ReLU and the matmul\ngrad_x = None  # TODO: compute grad_x\nprint([round(float(v), 4) for v in grad_x])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(w, x, grad_out):\n    \"\"\"Return the tuple (grad_w, grad_x) where grad_z = grad_out * (z > 0), grad_w = outer(grad_z, x), and grad_x = w\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.eye(2), np.array([1.0, -1.0]), np.array([1.0, 1.0])))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nw = np.array([[1.0, -2.0], [0.5, 3.0]])\nx = np.array([2.0, -1.0])\ngrad_out = np.array([1.0, 1.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(w, x, grad_out)]",
+        "expected_expr": "(lambda gz: [np.round(np.outer(gz, x), 8).tolist(), np.round(w.T @ gz, 8).tolist()])(grad_out * ((w @ x) > 0))"
+      },
+      {
+        "setup_code": "import numpy as np\nw = np.eye(2)\nx = np.array([1.0, -1.0])\ngrad_out = np.array([1.0, 1.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(w, x, grad_out)]",
+        "expected_expr": "[[[1.0, -1.0], [0.0, 0.0]], [1.0, 0.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(207)\nw = np.random.randn(3, 2)\nx = np.random.randn(2)\ngrad_out = np.random.randn(3)",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(w, x, grad_out)]",
+        "expected_expr": "(lambda gz: [np.round(np.outer(gz, x), 8).tolist(), np.round(w.T @ gz, 8).tolist()])(grad_out * ((w @ x) > 0))"
+      },
+      {
+        "setup_code": "import numpy as np\nw = np.array([[-1.0]])\nx = np.array([5.0])\ngrad_out = np.array([3.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(w, x, grad_out)]",
+        "expected_expr": "[[[0.0]], [0.0]]"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16498,18 +17150,39 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Cross-Entropy Loss on Logits",
     "subtopic_key": "PyTorch Fundamentals: Cross-Entropy Loss on Logits",
-    "question_text": "Why is cross-entropy computed on logits directly? Because $\\mathrm{CE} = \\mathrm{logsumexp}(z) - z_{\\mathrm{target}}$, and log-sum-exp can be evaluated stably even when exponentiating the logits would overflow — the starter's logits sit near 1000, where a naive softmax is all inf. Implement log-sum-exp the stable way (shift everything by the max before exponentiating), compute the loss, and print round(float(loss), 4).",
-    "answer_code": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0\nm = np.max(logits)\nlogsumexp = m + np.log(np.sum(np.exp(logits - m)))\nloss = logsumexp - logits[target]\nprint(round(float(loss), 4))",
+    "question_text": "Write a function solve(logits, target) computing NUMERICALLY STABLE cross-entropy directly on logits: CE = logsumexp(logits) - logits[target], where logsumexp subtracts the max before exponentiating. Works even for logits around 1000 where naive softmax-then-log overflows. Return a float scalar.",
+    "answer_code": "import numpy as np\n\ndef solve(logits, target):\n    return (lambda m: float(m + np.log(np.sum(np.exp(logits - m))) - logits[target]))(np.max(logits))\n\n\nprint(solve(np.array([1.0, 2.0, 3.0]), 2))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
-    "expected_output": "0.4076",
+    "expected_output": "0.4076059644443806",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0\n# TODO: compute the cross-entropy loss using a numerically stable log-sum-exp\nloss = None  # TODO: compute the stable cross-entropy loss\nprint(round(float(loss), 4))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(logits, target):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([1.0, 2.0, 3.0]), 2))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nlogits = np.array([1000.0, 999.0, 998.0])\ntarget = 0",
+        "call": "np.round(np.asarray(solve(logits, target)), 8)",
+        "expected_expr": "np.round(np.log(np.sum(np.exp(np.array([0.0, -1.0, -2.0])))), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nlogits = np.array([1.0, 2.0, 3.0])\ntarget = 2",
+        "call": "np.round(np.asarray(solve(logits, target)), 8)",
+        "expected_expr": "np.round(np.log(np.exp(1.0) + np.exp(2.0) + np.exp(3.0)) - 3.0, 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nlogits = np.array([0.0, 0.0])\ntarget = 1",
+        "call": "np.round(np.asarray(solve(logits, target)), 8)",
+        "expected_expr": "np.round(np.log(2.0), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nlogits = np.array([50.0, -50.0])\ntarget = 0",
+        "call": "float(np.round(np.asarray(solve(logits, target)), 8))",
+        "expected_expr": "0.0"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16564,18 +17237,39 @@
     "topic": "Optimizers",
     "subtopic": "SGD update rule",
     "subtopic_key": "Optimizers: SGD update rule",
-    "question_text": "One SGD step on linear-regression MSE in numpy. The starter defines the design matrix `X`, targets `y`, initial `theta`, `lr`, and `n`. The MSE gradient is $\\nabla_\\theta = \\frac{2}{n} X^\\top (X\\theta - y)$ — translate it to code, apply one descent step, and print [round(float(v), 4) for v in theta_new].",
-    "answer_code": "import numpy as np\ntheta = np.array([0.0, 0.0])\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([1.0, 2.0, 3.0])\nlr = 0.1\nn = len(y)\ngrad = (2.0 / n) * X.T @ (X @ theta - y)\ntheta_new = theta - lr * grad\nprint([round(float(v), 4) for v in theta_new])",
+    "question_text": "Write a function solve(X, y, theta, lr) performing ONE gradient-descent step on linear-regression MSE loss mean((X @ theta - y)^2): the gradient is (2/n) * X.T @ (X @ theta - y) where n = len(y); return theta - lr * gradient (a new array; do not modify theta).",
+    "answer_code": "import numpy as np\n\ndef solve(X, y, theta, lr):\n    return theta - lr * (2.0 / len(y)) * (X.T @ (X @ theta - y))\n\n\nprint(solve(np.array([[1.0, 1.0], [1.0, 2.0]]), np.array([2.0, 3.0]), np.zeros(2), 0.1))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
-    "expected_output": "[0.4, 0.9333]",
+    "expected_output": "[0.5 0.8]",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\ntheta = np.array([0.0, 0.0])\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([1.0, 2.0, 3.0])\nlr = 0.1\nn = len(y)\n# TODO: compute the MSE gradient, then take one gradient-descent step\ntheta_new = None  # TODO: compute one SGD step\nprint([round(float(v), 4) for v in theta_new])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(X, y, theta, lr):\n    \"\"\"Return theta - lr * gradient (a new array; do not modify theta).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([[1.0, 1.0], [1.0, 2.0]]), np.array([2.0, 3.0]), np.zeros(2), 0.1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nX = np.array([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])\ny = np.array([2.0, 3.0, 4.0])\ntheta = np.array([0.0, 0.0])\nlr = 0.1",
+        "call": "np.round(np.asarray(solve(X, y, theta, lr)), 8)",
+        "expected_expr": "np.round(-0.1 * (2.0 / 3) * (X.T @ (X @ np.zeros(2) - y)) , 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nX = np.array([[1.0, 1.0], [1.0, 2.0]])\ny = np.array([3.0, 5.0])\ntheta = np.array([1.0, 2.0])\nlr = 0.5",
+        "call": "(np.round(np.asarray(solve(X, y, theta, lr)), 8).tolist(), np.round(theta, 8).tolist())",
+        "expected_expr": "([1.0, 2.0], [1.0, 2.0])"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(208)\nX = np.random.randn(10, 3)\ny = np.random.randn(10)\ntheta = np.zeros(3)\nlr = 0.05",
+        "call": "np.round(np.asarray(solve(X, y, theta, lr)), 8)",
+        "expected_expr": "np.round(theta - 0.05 * (2.0 / 10) * (X.T @ (X @ theta - y)), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nX = np.array([[2.0]])\ny = np.array([4.0])\ntheta = np.array([0.0])\nlr = 0.25",
+        "call": "np.round(np.asarray(solve(X, y, theta, lr)), 8)",
+        "expected_expr": "np.round(np.array([4.0]), 8)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16652,18 +17346,39 @@
     "topic": "CNNs",
     "subtopic": "Hyperparameter normalization (int-or-tuple to (h,w) pair)",
     "subtopic_key": "CNNs: Hyperparameter normalization (int-or-tuple to (h,w) pair)",
-    "question_text": "Conv hyperparameters like `kernel_size` accept either an int or an (h, w) pair. Write the normalizer `to_pair(x)`: an int becomes the symmetric pair, and a length-2 sequence becomes a tuple of its two values as ints. The starter's print line applies it to 3 and (2, 5).",
-    "answer_code": "def to_pair(x):\n    if isinstance(x, int):\n        return (x, x)\n    return (int(x[0]), int(x[1]))\n\nprint([to_pair(3), to_pair((2, 5))])",
+    "question_text": "Write a function solve(x) that normalizes a conv hyperparameter: an int becomes the symmetric pair (x, x); a length-2 sequence (list or tuple) becomes a tuple of its two values as plain ints. Always return a tuple of two ints.",
+    "answer_code": "import numpy as np\n\ndef solve(x):\n    return (int(x), int(x)) if isinstance(x, int) else (int(x[0]), int(x[1]))\n\n\nprint(solve(3), solve((1, 2)))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "[(3, 3), (2, 5)]",
+    "expected_output": "(3, 3) (1, 2)",
     "language": "python",
     "primary_library": "python",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "# TODO: implement to_pair(x): if x is an int return (x, x);\n# otherwise return (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nprint([to_pair(3), to_pair((2, 5))])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(x):\n    \"\"\"Return a tuple of two ints.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(3), solve((1, 2)))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nx = 3",
+        "call": "(isinstance(solve(x), tuple), solve(x))",
+        "expected_expr": "(True, (3, 3))"
+      },
+      {
+        "setup_code": "import numpy as np\nx = (1, 2)",
+        "call": "solve(x)",
+        "expected_expr": "(1, 2)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = [5, 7]",
+        "call": "(isinstance(solve(x), tuple), solve(x), isinstance(solve(x)[0], int))",
+        "expected_expr": "(True, (5, 7), True)"
+      },
+      {
+        "setup_code": "import numpy as np\nx = 1",
+        "call": "solve(x)",
+        "expected_expr": "(1, 1)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16674,18 +17389,39 @@
     "topic": "CNNs",
     "subtopic": "Hyperparameter normalization (int-or-tuple to (h,w) pair)",
     "subtopic_key": "CNNs: Hyperparameter normalization (int-or-tuple to (h,w) pair)",
-    "question_text": "Combine the `to_pair` normalizer with per-axis conv arithmetic. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints), normalize kernel 3, stride (2, 1), padding 1, then compute the conv output size for H=32, W=28 — apply the output-size formula independently per axis, indexing the normalized pairs. Print exactly print((out_h, out_w)).",
-    "answer_code": "def to_pair(x):\n    return (x, x) if isinstance(x, int) else (int(x[0]), int(x[1]))\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\nout_h = (H + 2 * p[0] - k[0]) // s[0] + 1\nout_w = (W + 2 * p[1] - k[1]) // s[1] + 1\nprint((out_h, out_w))",
+    "question_text": "Write a function solve(hw, kernel, stride, padding) that combines the int-or-pair normalizer with per-axis conv arithmetic: each of kernel/stride/padding may be an int or an (h, w) pair; hw is the input (h, w) pair. Return the output (h', w') as a tuple of ints using floor((size + 2p - k)/s) + 1 per axis.",
+    "answer_code": "import numpy as np\n\ndef solve(hw, kernel, stride, padding):\n    return (lambda P: (int((hw[0] + 2 * P(padding)[0] - P(kernel)[0]) // P(stride)[0] + 1), int((hw[1] + 2 * P(padding)[1] - P(kernel)[1]) // P(stride)[1] + 1)))(lambda v: (v, v) if isinstance(v, int) else (int(v[0]), int(v[1])))\n\n\nprint(solve((32, 32), 3, 1, 1))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
-    "expected_output": "(16, 28)",
+    "expected_output": "(32, 32)",
     "language": "python",
     "primary_library": "python",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "# TODO: implement to_pair(x): (x, x) when x is an int, else (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nH, W = 32, 28\nk = to_pair(3)\ns = to_pair((2, 1))\np = to_pair(1)\n# TODO: apply the conv output-size formula per axis\nout_h = None  # TODO: compute output height\nout_w = None  # TODO: compute output width\nprint((out_h, out_w))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(hw, kernel, stride, padding):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve((32, 32), 3, 1, 1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nhw, kernel, stride, padding = (32, 32), 3, 1, 1",
+        "call": "solve(hw, kernel, stride, padding)",
+        "expected_expr": "(32, 32)"
+      },
+      {
+        "setup_code": "import numpy as np\nhw, kernel, stride, padding = (224, 224), 7, 2, 3",
+        "call": "solve(hw, kernel, stride, padding)",
+        "expected_expr": "(112, 112)"
+      },
+      {
+        "setup_code": "import numpy as np\nhw, kernel, stride, padding = (28, 20), (5, 3), (1, 2), 0",
+        "call": "solve(hw, kernel, stride, padding)",
+        "expected_expr": "(24, 9)"
+      },
+      {
+        "setup_code": "import numpy as np\nhw, kernel, stride, padding = (10, 10), 2, (2, 5), (0, 0)",
+        "call": "solve(hw, kernel, stride, padding)",
+        "expected_expr": "(5, 2)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16696,18 +17432,39 @@
     "topic": "CNNs",
     "subtopic": "Hyperparameter normalization (int-or-tuple to (h,w) pair)",
     "subtopic_key": "CNNs: Hyperparameter normalization (int-or-tuple to (h,w) pair)",
-    "question_text": "Normalization helpers must cope with mixed inputs. Implement `to_pair` (int → symmetric pair; length-2 sequence → tuple of ints) and map it over the mixed list [5, (3, 1), 7, (2, 2)]. The starter's print line emits the list of resulting pairs.",
-    "answer_code": "def to_pair(x):\n    if isinstance(x, int):\n        return (x, x)\n    return (int(x[0]), int(x[1]))\n\nprint([to_pair(v) for v in [5, (3, 1), 7, (2, 2)]])",
+    "question_text": "Write a function solve(kernel, stride, padding) that normalizes ALL THREE conv hyperparameters at once — each may be an int or a length-2 sequence — returning a tuple of three (h, w) int pairs: (kernel_pair, stride_pair, padding_pair).",
+    "answer_code": "import numpy as np\n\ndef solve(kernel, stride, padding):\n    return (lambda P: (P(kernel), P(stride), P(padding)))(lambda v: (int(v), int(v)) if isinstance(v, int) else (int(v[0]), int(v[1])))\n\n\nprint(solve(3, (1, 2), [0, 1]))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
-    "expected_output": "[(5, 5), (3, 1), (7, 7), (2, 2)]",
+    "expected_output": "((3, 3), (1, 2), (0, 1))",
     "language": "python",
     "primary_library": "python",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "# TODO: implement to_pair(x): int -> (x, x); length-2 seq -> (int(x[0]), int(x[1]))\ndef to_pair(x):\n    raise NotImplementedError()\n\nprint([to_pair(v) for v in [5, (3, 1), 7, (2, 2)]])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(kernel, stride, padding):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(3, (1, 2), [0, 1]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nkernel, stride, padding = 3, (1, 2), [0, 1]",
+        "call": "solve(kernel, stride, padding)",
+        "expected_expr": "((3, 3), (1, 2), (0, 1))"
+      },
+      {
+        "setup_code": "import numpy as np\nkernel, stride, padding = (5, 7), 2, 0",
+        "call": "solve(kernel, stride, padding)",
+        "expected_expr": "((5, 7), (2, 2), (0, 0))"
+      },
+      {
+        "setup_code": "import numpy as np\nkernel, stride, padding = 1, 1, 1",
+        "call": "solve(kernel, stride, padding)",
+        "expected_expr": "((1, 1), (1, 1), (1, 1))"
+      },
+      {
+        "setup_code": "import numpy as np\nkernel, stride, padding = [3, 3], [2, 2], (1, 0)",
+        "call": "(solve(kernel, stride, padding), all(isinstance(v, int) for pair in solve(kernel, stride, padding) for v in pair))",
+        "expected_expr": "(((3, 3), (2, 2), (1, 0)), True)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16850,18 +17607,39 @@
     "topic": "Optimizers",
     "subtopic": "EWMA running statistics (BatchNorm / Adam / RMSprop)",
     "subtopic_key": "Optimizers: EWMA running statistics (BatchNorm / Adam / RMSprop)",
-    "question_text": "An EWMA folds each new value into a running statistic: with rate $\\mu$, the running value keeps a $(1-\\mu)$ share of itself and absorbs a $\\mu$ share of the new value. Starting from the starter's `running = 0.0` with `mu = 0.1`, apply that update once per value in the given list, in order. Print round(float(running), 4).",
-    "answer_code": "running = 0.0\nmu = 0.1\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\nfor v in values:\n    running = (1 - mu) * running + mu * v\nprint(round(float(running), 4))",
+    "question_text": "Write a function solve(values, mu) that folds a list of values into an EWMA running statistic starting from 0.0: for each v, running = (1 - mu) * running + mu * v. Return the final running value as a float.",
+    "answer_code": "import numpy as np\n\ndef solve(values, mu):\n    return (lambda r: r)(__import__('functools').reduce(lambda acc, v: (1 - mu) * acc + mu * v, values, 0.0))\n\n\nprint(solve([5.0, 7.0, 3.0, 9.0, 2.0], 0.1))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
-    "expected_output": "2.0914",
+    "expected_output": "2.0913500000000003",
     "language": "python",
     "primary_library": "python",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "running = 0.0\nmu = 0.1\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\n# TODO: for each v in values, apply the EWMA update with rate mu\nfor v in values:\n    pass  # TODO: update running\nprint(round(float(running), 4))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(values, mu):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve([5.0, 7.0, 3.0, 9.0, 2.0], 0.1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nvalues = [5.0, 7.0, 3.0, 9.0, 2.0]\nmu = 0.1",
+        "call": "np.round(np.asarray(solve(values, mu)), 8)",
+        "expected_expr": "np.round(np.asarray((lambda: [globals().__setitem__('_r', 0.0), [globals().__setitem__('_r', (1 - 0.1) * globals()['_r'] + 0.1 * v) for v in values], globals()['_r']][2])()), 8)"
+      },
+      {
+        "setup_code": "import numpy as np\nvalues = [10.0]\nmu = 0.5",
+        "call": "np.round(np.asarray(solve(values, mu)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(5.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nvalues = [4.0, 4.0, 4.0]\nmu = 1.0",
+        "call": "np.round(np.asarray(solve(values, mu)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(4.0)), 10)"
+      },
+      {
+        "setup_code": "import numpy as np\nvalues = [8.0, 6.0]\nmu = 0.0",
+        "call": "np.round(np.asarray(solve(values, mu)), 10)",
+        "expected_expr": "np.round(np.asarray(np.asarray(0.0)), 10)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16872,18 +17650,39 @@
     "topic": "Optimizers",
     "subtopic": "EWMA running statistics (BatchNorm / Adam / RMSprop)",
     "subtopic_key": "Optimizers: EWMA running statistics (BatchNorm / Adam / RMSprop)",
-    "question_text": "BatchNorm's running statistics are EWMAs with rate `momentum`. The starter gives `running_mean` (zeros), `running_var` (ones), momentum 0.2, and two 2×3 batches (rows are samples, columns are features). For each batch in order: compute the per-feature mean and per-feature POPULATION variance, then EWMA-update both running stats. Print running_mean.round(4).tolist() on line 1 and running_var.round(4).tolist() on line 2. (running_var comes out all ones — check the batch variances to see why.)",
-    "answer_code": "import numpy as np\nrunning_mean = np.zeros(3)\nrunning_var = np.ones(3)\nmomentum = 0.2\nbatches = [\n    np.array([[1.0, 2.0, 3.0], [3.0, 4.0, 5.0]]),\n    np.array([[2.0, 0.0, 4.0], [4.0, 2.0, 6.0]]),\n]\nfor b in batches:\n    bm = b.mean(axis=0)\n    bv = b.var(axis=0)\n    running_mean = (1 - momentum) * running_mean + momentum * bm\n    running_var = (1 - momentum) * running_var + momentum * bv\nprint(running_mean.round(4).tolist())\nprint(running_var.round(4).tolist())",
+    "question_text": "Write a function solve(batches, momentum) that maintains BatchNorm-style RUNNING statistics: starting from running_mean = zeros(d) and running_var = ones(d), fold in each batch (a 2-D array of shape (n, d)) with running = (1 - momentum) * running + momentum * batch_stat, using the batch's per-column mean and POPULATION variance. Return the tuple (running_mean, running_var).",
+    "answer_code": "import numpy as np\n\ndef solve(batches, momentum):\n    return (lambda rm_rv: rm_rv)(__import__('functools').reduce(lambda acc, b: ((1 - momentum) * acc[0] + momentum * b.mean(axis=0), (1 - momentum) * acc[1] + momentum * b.var(axis=0)), batches, (np.zeros(batches[0].shape[1]), np.ones(batches[0].shape[1]))))\n\n\nprint(solve([np.array([[1.0, 2.0], [3.0, 4.0]])], 0.2))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
-    "expected_output": "[0.92, 0.68, 1.64]\n[1.0, 1.0, 1.0]",
+    "expected_output": "(array([0.4, 0.6]), array([1., 1.]))",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\nrunning_mean = np.zeros(3)\nrunning_var = np.ones(3)\nmomentum = 0.2\nbatches = [\n    np.array([[1.0, 2.0, 3.0], [3.0, 4.0, 5.0]]),\n    np.array([[2.0, 0.0, 4.0], [4.0, 2.0, 6.0]]),\n]\nfor b in batches:\n    # TODO: compute the per-feature batch mean and population variance\n    # then EWMA-update running_mean and running_var\n    pass  # TODO: bm, bv, and the two EWMA updates\nprint(running_mean.round(4).tolist())\nprint(running_var.round(4).tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(batches, momentum):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve([np.array([[1.0, 2.0], [3.0, 4.0]])], 0.2))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nbatches = [np.array([[1.0, 2.0], [3.0, 4.0]])]\nmomentum = 0.2",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(batches, momentum)]",
+        "expected_expr": "[[0.4, 0.6], [1.0, 1.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(209)\nbatches = [np.random.randn(8, 3) for _ in range(4)]\nmomentum = 0.2",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(batches, momentum)]",
+        "expected_expr": "(lambda: [globals().__setitem__('_rm', np.zeros(3)), globals().__setitem__('_rv', np.ones(3)), [ (globals().__setitem__('_rm', 0.8 * globals()['_rm'] + 0.2 * b.mean(axis=0)), globals().__setitem__('_rv', 0.8 * globals()['_rv'] + 0.2 * b.var(axis=0))) for b in batches], [np.round(globals()['_rm'], 8).tolist(), np.round(globals()['_rv'], 8).tolist()]][3])()"
+      },
+      {
+        "setup_code": "import numpy as np\nbatches = [np.zeros((4, 2))]\nmomentum = 1.0",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(batches, momentum)]",
+        "expected_expr": "[[0.0, 0.0], [0.0, 0.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nbatches = [np.ones((3, 2)), np.ones((3, 2))]\nmomentum = 0.5",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(batches, momentum)]",
+        "expected_expr": "[[0.75, 0.75], [0.25, 0.25]]"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17026,18 +17825,39 @@
     "topic": "CNNs",
     "subtopic": "Padding for Max Pooling",
     "subtopic_key": "CNNs: Padding for Max Pooling",
-    "question_text": "The same -inf-vs-0 padding story in raw numpy. The starter has an all-negative length-4 `x`. Build two padded copies (one value prepended and one appended): one padded with `-np.inf`, one with 0.0. For each, form the 4 sliding windows of size 3 (window i covers padded[i:i+3]) and take each window's max. Print exactly print([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()]). Which edges get corrupted, and why?",
-    "answer_code": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])\npad_inf = np.concatenate([[-np.inf], x, [-np.inf]])\npad_zero = np.concatenate([[0.0], x, [0.0]])\nwin_inf  = np.stack([pad_inf[i:i+3]  for i in range(len(x))])\nwin_zero = np.stack([pad_zero[i:i+3] for i in range(len(x))])\nprint([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()])",
+    "question_text": "Write a function solve(x) demonstrating why max-pooling pads with -inf, not 0: x is a 1-D float array (possibly all negative). Pad one element on EACH side twice — once with -inf, once with 0.0 — then max-pool both padded arrays with window 2, stride 2. Return the tuple (pooled_inf_pad, pooled_zero_pad); they differ whenever x is negative at the borders.",
+    "answer_code": "import numpy as np\n\ndef solve(x):\n    return (lambda pi, pz: (np.maximum(pi[0::2], pi[1::2]), np.maximum(pz[0::2], pz[1::2])))(np.concatenate([[-np.inf], x, [-np.inf]]), np.concatenate([[0.0], x, [0.0]]))\n\n\nprint(solve(np.array([-4.0, -1.0, -3.0, -2.0])))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
-    "expected_output": "[[-1.0, -1.0, -1.0, -2.0], [0.0, -1.0, -1.0, 0.0]]",
+    "expected_output": "(array([-4., -1., -2.]), array([ 0., -1.,  0.]))",
     "language": "python",
     "primary_library": "numpy",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])\n# TODO: build two padded versions (prepend+append one value): one with -np.inf, one with 0.0\npad_inf = None   # TODO: pad with -inf on both ends\npad_zero = None  # TODO: pad with 0.0 on both ends\n# TODO: form 4 sliding windows of size 3 for each, then max along each window\nwin_inf = None   # TODO: stack the size-3 sliding windows of pad_inf\nwin_zero = None  # TODO: stack the size-3 sliding windows of pad_zero\nprint([win_inf.max(axis=1).tolist(), win_zero.max(axis=1).tolist()])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import numpy as np\n\ndef solve(x):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(np.array([-4.0, -1.0, -3.0, -2.0])))\n",
+    "test_cases": [
+      {
+        "setup_code": "import numpy as np\nx = np.array([-4.0, -1.0, -3.0, -2.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(x)]",
+        "expected_expr": "[[-4.0, -1.0, -2.0], [0.0, -1.0, 0.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([1.0, 2.0, 3.0, 4.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(x)]",
+        "expected_expr": "[[1.0, 3.0, 4.0], [1.0, 3.0, 4.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nx = np.array([-5.0, -6.0])",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(x)]",
+        "expected_expr": "[[-5.0, -6.0], [0.0, 0.0]]"
+      },
+      {
+        "setup_code": "import numpy as np\nnp.random.seed(210)\nx = -np.abs(np.random.randn(6))",
+        "call": "[np.round(np.asarray(p), 8).tolist() for p in solve(x)]",
+        "expected_expr": "(lambda pi, pz: [np.round(np.maximum(pi[0::2], pi[1::2]), 8).tolist(), np.round(np.maximum(pz[0::2], pz[1::2]), 8).tolist()])(np.concatenate([[-np.inf], x, [-np.inf]]), np.concatenate([[0.0], x, [0.0]]))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
