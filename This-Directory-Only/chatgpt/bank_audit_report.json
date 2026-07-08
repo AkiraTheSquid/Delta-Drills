@@ -127,6 +127,13 @@
     "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
    }
   ],
+  "448": [
+   {
+    "check": "precompute_leak",
+    "var": "hw",
+    "detail": "post-setup var 'hw' already equals the expected value"
+   }
+  ],
   "450": [
    {
     "check": "torch_unavailable",
@@ -291,7 +298,7 @@
   ]
  },
  "counts": {
-  "precompute_leak": 6,
+  "precompute_leak": 7,
   "torch_unavailable": 41
  }
 }
