@@ -822,6 +822,29 @@
   font-size: 12px;
 }
 
+/* Entry point into the placement diagnostic for accounts with history
+   (auto-start is zero-attempt-only). Amber to match the placement badge. */
+.placement-start-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 196, 0, 0.45);
+  background: rgba(255, 196, 0, 0.08);
+  color: var(--text, #e8ecf4);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.placement-start-btn:hover {
+  border-color: rgba(255, 196, 0, 0.8);
+  background: rgba(255, 196, 0, 0.16);
+}
+
+.placement-start-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Torch drills run in Colab — honest routing notice instead of a dead editor. */
 .torch-colab-notice {
   margin: 12px 0;

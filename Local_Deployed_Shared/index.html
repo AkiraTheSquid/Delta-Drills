@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="styles/courses/modal.css?v=1" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css" />
-  <link rel="stylesheet" href="practice.css?v=18" />
+  <link rel="stylesheet" href="practice.css?v=19" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -562,6 +562,7 @@
               <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
             </div>
             <span class="self-report-note hidden" id="self-report-note"></span>
+            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" title="~6-14 adaptive questions that locate your level across all topics and seed the practice queue — answers here re-place you, they don't count against mastery you've already earned.">Take placement diagnostic</button>
           </div>
           <!-- Timed Mode Toggle -->
           <div class="timed-mode-row">
@@ -572,13 +573,13 @@
                 <span class="toggle-slider"></span>
               </label>
             </div>
-            <div class="timer-controls hidden" id="timer-controls">
+            <div class="timer-controls" id="timer-controls">
               <input
                 class="timer-input"
                 id="timer-input"
                 type="text"
                 inputmode="numeric"
-                value="00:10"
+                value="05:00"
                 aria-label="Timer duration"
               />
             </div>
@@ -798,12 +799,12 @@ np.random.seed(0)
   <script src="practice/engine.js?v=8"></script>
   <script src="practice/adaptive.js?v=10"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=12"></script>
+  <script src="practice/dom.js?v=13"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/ui.js?v=19"></script>
   <script src="practice/ai.js?v=6"></script>
-  <script src="practice/api.js?v=13"></script>
+  <script src="practice/api.js?v=14"></script>
   <script src="practice/timer.js?v=6"></script>
   <script src="practice/runner.js?v=10"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
@@ -812,8 +813,8 @@ np.random.seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=16"></script>
-  <script src="practice/init.js?v=12"></script>
+  <script src="practice/events.js?v=17"></script>
+  <script src="practice/init.js?v=13"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>
   <script src="stats/weights.js?v=9"></script>

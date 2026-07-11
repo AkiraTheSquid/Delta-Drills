@@ -144,6 +144,22 @@ const PracticeAPI = {
     return await res.json();
   },
 
+  async diagnosticStart() {
+    if (practiceMode !== "backend") return null;
+    const res = await apiFetch("/api/practice/diagnostic/start", {
+      method: "POST",
+    });
+    if (res.status === 401) {
+      handleExpiredToken();
+      return null;
+    }
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(detail || "Failed to start the placement diagnostic.");
+    }
+    return await res.json();
+  },
+
   async diagnosticStatus() {
     if (practiceMode !== "backend") return null;
     try {

@@ -117,3 +117,6 @@ This-Directory-Only/visual_review/generated/
 This-Directory-Only/visual_review/review_state.json
 This-Directory-Only/visual_review/visual_malformed_flags.jsonl
 This-Directory-Only/visual_review/visual_malformed_flags.md
+
+# graphify knowledge graph output
+graphify-out/
