@@ -314,10 +314,164 @@ def check_stdout_expected(code_runner, question: dict) -> list[dict]:
     return []
 
 
+def _load_bkt_module():
+    bkt_path = THIS_DIR_ONLY / "backend" / "app" / "bkt_mastery.py"
+    spec = importlib.util.spec_from_file_location("delta_bkt_mastery", bkt_path)
+    bkt = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = bkt  # @dataclass needs the module registered
+    spec.loader.exec_module(bkt)
+    return bkt
+
+
+def check_atom_graph(questions: list[dict], graph: dict | None = None,
+                     tag_rows: list[dict] | None = None) -> dict[int, list[dict]]:
+    """Atom-tag ↔ concept-graph consistency (the 2026-07-08 orphan-atom fix's
+    regression guard). Findings attach to every question the offending atom is
+    tagged on:
+
+      atom_tag_unwired       tagged atom is not a graph node, or has no
+                             EFFECTIVE prerequisite edge (edges from
+                             NON_GATING_ATOMS don't count — runtime strips
+                             them) AND is not declared in the graph's
+                             intentional_root_atoms — the prereq gate silently
+                             never fires for it
+      atom_prereq_untrainable a gating prerequisite has ZERO bank questions
+                             (and is not NON_GATING) — the atom is permanently
+                             locked for every learner
+      atom_graph_cycle       prerequisite edges contain a cycle — atoms in it
+                             can never unlock
+
+    `graph`/`tag_rows` are injectable for the self-test; by default the real
+    graph (bkt_mastery.GRAPH_PATH) and question_atom_tags.jsonl are read.
+    """
+    from graphlib import TopologicalSorter, CycleError
+
+    bkt = _load_bkt_module()
+    non_gating = bkt.NON_GATING_ATOMS
+
+    if graph is None:
+        graph = json.loads(Path(bkt.GRAPH_PATH).read_text(encoding="utf-8"))
+    if tag_rows is None:
+        tags_path = THIS_DIR_ONLY / "backend" / "app" / "data" / "question_atom_tags.jsonl"
+        tag_rows = [json.loads(line)
+                    for line in tags_path.read_text(encoding="utf-8").splitlines()
+                    if line.strip()]
+    bank_ids = {q["id"] for q in questions}
+    atom_qids: dict[str, list[int]] = {}
+    for row in tag_rows:
+        if row["question_id"] not in bank_ids:
+            continue
+        for t in row["atoms"]:
+            atom_qids.setdefault(t["atom_id"], []).append(row["question_id"])
+
+    node_ids = {c["id"] for c in graph.get("concepts", [])}
+    edges = graph.get("prerequisite_edges", [])
+    # Effective gating prereqs — mirror _prereq_index: NON_GATING edges are
+    # stripped at runtime, so an atom whose only incoming edges are NON_GATING
+    # behaves as a root and must be declared intentional (codex finding #2).
+    eff_prereqs: dict[str, set] = {}
+    for e in edges:
+        if e["prerequisite_id"] in non_gating:
+            continue
+        eff_prereqs.setdefault(e["dependent_id"], set()).add(e["prerequisite_id"])
+    roots = set(graph.get("intentional_root_atoms", []))
+
+    findings: dict[int, list[dict]] = {}
+
+    def flag(atom: str, check: str, detail: str) -> None:
+        for qid in atom_qids.get(atom, []):
+            findings.setdefault(qid, []).append(
+                {"check": check, "atom": atom, "detail": detail})
+
+    for atom in sorted(atom_qids):
+        if atom not in node_ids:
+            flag(atom, "atom_tag_unwired", "tagged atom is not a concept-graph node")
+        elif not eff_prereqs.get(atom) and atom not in roots:
+            flag(atom, "atom_tag_unwired",
+                 "no effective prerequisite edge and not in intentional_root_atoms")
+        untrainable = sorted(p for p in eff_prereqs.get(atom, ()) if p not in atom_qids)
+        if untrainable:
+            flag(atom, "atom_prereq_untrainable",
+                 f"gating prereq(s) with zero bank questions: {untrainable}")
+
+    ts = TopologicalSorter()
+    for e in edges:
+        ts.add(e["dependent_id"], e["prerequisite_id"])
+    try:
+        # static_order() is LAZY — CycleError only raises on consumption.
+        list(ts.static_order())
+    except CycleError as exc:
+        cycle_atoms = [a for a in exc.args[1] if a in atom_qids] or list(atom_qids)[:1]
+        flag(cycle_atoms[0], "atom_graph_cycle", f"prerequisite cycle: {exc.args[1]}")
+
+    return findings
+
+
+def selftest_atom_graph() -> None:
+    """Negative-case self-test for check_atom_graph (run: --selftest-atoms).
+    Exercises the failure modes the real graph should never have; each case
+    must produce its finding or the audit itself is broken."""
+    questions = [{"id": 1}, {"id": 2}, {"id": 3}]
+    tag_rows = [
+        {"question_id": 1, "atoms": [{"atom_id": "a"}]},
+        {"question_id": 2, "atoms": [{"atom_id": "b"}]},
+        {"question_id": 3, "atoms": [{"atom_id": "c"}]},
+    ]
+    nodes = [{"id": x} for x in ("a", "b", "c", "ghost", "tensor-item-scalar")]
+
+    def edge(pre, dep):
+        return {"prerequisite_id": pre, "dependent_id": dep}
+
+    cases = {
+        # two-node cycle a<->b (codex finding #1: lazy static_order)
+        "atom_graph_cycle": {
+            "concepts": nodes,
+            "prerequisite_edges": [edge("a", "b"), edge("b", "a"), edge("a", "c")],
+            "intentional_root_atoms": ["a", "b"],
+        },
+        # c's only incoming edge is from a NON_GATING atom -> effective root,
+        # undeclared (codex finding #2)
+        "atom_tag_unwired": {
+            "concepts": nodes,
+            "prerequisite_edges": [edge("tensor-item-scalar", "c"), edge("a", "b")],
+            "intentional_root_atoms": ["a"],
+        },
+        # b gated by an atom with zero bank questions -> permanent lock
+        "atom_prereq_untrainable": {
+            "concepts": nodes,
+            "prerequisite_edges": [edge("ghost", "b"), edge("a", "c")],
+            "intentional_root_atoms": ["a"],
+        },
+    }
+    failed = False
+    for expect, graph in cases.items():
+        found = {f["check"]
+                 for flist in check_atom_graph(questions, graph=graph, tag_rows=tag_rows).values()
+                 for f in flist}
+        ok = expect in found
+        print(f"{'PASS' if ok else 'FAIL'} selftest {expect} -> findings {sorted(found)}")
+        failed |= not ok
+    # positive case: clean graph produces zero findings
+    clean = {
+        "concepts": nodes,
+        "prerequisite_edges": [edge("a", "b"), edge("b", "c")],
+        "intentional_root_atoms": ["a"],
+    }
+    clean_findings = check_atom_graph(questions, graph=clean, tag_rows=tag_rows)
+    ok = not clean_findings
+    print(f"{'PASS' if ok else 'FAIL'} selftest clean graph -> {clean_findings}")
+    failed |= not ok
+    sys.exit(1 if failed else 0)
+
+
 def audit(confirm: bool) -> dict:
     questions = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
     code_runner = load_code_runner() if confirm else None
     report: dict = {"total": len(questions), "questions": {}}
+
+    for qid, atom_findings in check_atom_graph(questions).items():
+        report["questions"].setdefault(str(qid), []).extend(atom_findings)
 
     for question in questions:
         qid = question["id"]
@@ -335,7 +489,7 @@ def audit(confirm: bool) -> dict:
                     # the harness grades torch via the fork runner like prod.
                     findings += confirm_gameable(code_runner, question, leaked)
         if findings:
-            report["questions"][str(qid)] = findings
+            report["questions"].setdefault(str(qid), []).extend(findings)
 
     counts: dict[str, int] = {}
     for flist in report["questions"].values():
@@ -347,7 +501,8 @@ def audit(confirm: bool) -> dict:
 
 BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
                    "expected_eval_error", "setup_exec_error", "identity_expected",
-                   "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error"}
+                   "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error",
+                   "atom_tag_unwired", "atom_prereq_untrainable", "atom_graph_cycle"}
 
 
 def main() -> None:
@@ -356,7 +511,11 @@ def main() -> None:
                         help="confirm precompute leaks against the real grading harness")
     parser.add_argument("--gate", action="store_true",
                         help="--confirm + exit 1 if any blocking defect is confirmed")
+    parser.add_argument("--selftest-atoms", action="store_true",
+                        help="run the atom-graph check self-test and exit")
     args = parser.parse_args()
+    if args.selftest_atoms:
+        selftest_atom_graph()
     confirm = args.confirm or args.gate
 
     report = audit(confirm=confirm)

@@ -2,14 +2,14 @@
 {"question_id": 2, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
 {"question_id": 3, "atoms": [{"atom_id": "torch-as-tensor-no-copy", "confidence": 0.4}]}
 {"question_id": 4, "atoms": [{"atom_id": "diagonal-via-strides", "confidence": 0.45}]}
-{"question_id": 5, "atoms": [{"atom_id": "vector-normalisation", "confidence": 0.55}]}
-{"question_id": 6, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.7}, {"atom_id": "vector-normalisation", "confidence": 0.55}]}
+{"question_id": 5, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.55}]}
+{"question_id": 6, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.7}]}
 {"question_id": 7, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}
 {"question_id": 8, "atoms": [{"atom_id": "manual-seed", "confidence": 0.78}]}
 {"question_id": 10, "atoms": [{"atom_id": "batchnorm-running-stats-ema", "confidence": 0.42}]}
 {"question_id": 11, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.45}]}
 {"question_id": 12, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.75}]}
-{"question_id": 14, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.45}]}
+{"question_id": 14, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.45}]}
 {"question_id": 15, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.6}]}
 {"question_id": 16, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.45}]}
 {"question_id": 17, "atoms": [{"atom_id": "padding-with-new-full", "confidence": 0.55}, {"atom_id": "slice-view-mutation", "confidence": 0.5}]}
@@ -18,30 +18,30 @@
 {"question_id": 22, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 23, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.45}]}
 {"question_id": 24, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.7}]}
-{"question_id": 25, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.55}]}
+{"question_id": 25, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.55}]}
 {"question_id": 26, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.4}]}
 {"question_id": 27, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.55}]}
 {"question_id": 28, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.4}]}
 {"question_id": 29, "atoms": [{"atom_id": "outer-product-grid", "confidence": 0.65}]}
-{"question_id": 30, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.6}]}
+{"question_id": 30, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.6}]}
 {"question_id": 31, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.45}]}
-{"question_id": 32, "atoms": [{"atom_id": "isfinite-mask", "confidence": 0.55}, {"atom_id": "logical-reduction-any-all", "confidence": 0.5}]}
+{"question_id": 32, "atoms": [{"atom_id": "isfinite-mask", "confidence": 0.55}, {"atom_id": "any-reduce-axis", "confidence": 0.5}]}
 {"question_id": 34, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.45}]}
 {"question_id": 35, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.5}]}
 {"question_id": 36, "atoms": [{"atom_id": "reshape-backward", "confidence": 0.45}]}
 {"question_id": 37, "atoms": [{"atom_id": "matvec", "confidence": 0.45}]}
 {"question_id": 38, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.55}]}
-{"question_id": 40, "atoms": [{"atom_id": "logical-reduction-any-all", "confidence": 0.45}, {"atom_id": "integer-array-indexing", "confidence": 0.45}]}
+{"question_id": 40, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.45}, {"atom_id": "index-by-tensor", "confidence": 0.45}]}
 {"question_id": 41, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.78}]}
 {"question_id": 42, "atoms": [{"atom_id": "torch-rand-uniform", "confidence": 0.55}]}
 {"question_id": 43, "atoms": [{"atom_id": "maximum-backward-tie-split", "confidence": 0.45}]}
 {"question_id": 46, "atoms": [{"atom_id": "torch-arange", "confidence": 0.55}, {"atom_id": "view-vs-reshape", "confidence": 0.4}]}
 {"question_id": 47, "atoms": [{"atom_id": "diagonal-via-strides", "confidence": 0.45}]}
-{"question_id": 48, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.7}]}
+{"question_id": 48, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
 {"question_id": 49, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.4}]}
 {"question_id": 50, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.5}]}
 {"question_id": 51, "atoms": [{"atom_id": "stride-zero-broadcast", "confidence": 0.45}]}
-{"question_id": 52, "atoms": [{"atom_id": "logical-reduction-any-all", "confidence": 0.4}]}
+{"question_id": 52, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 53, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.85}]}
 {"question_id": 55, "atoms": [{"atom_id": "torch-arange", "confidence": 0.6}]}
 {"question_id": 58, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.4}]}
@@ -51,19 +51,19 @@
 {"question_id": 62, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 63, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.4}]}
 {"question_id": 64, "atoms": [{"atom_id": "assert-shape-pattern", "confidence": 0.4}]}
-{"question_id": 65, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.4}]}
+{"question_id": 65, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.4}]}
 {"question_id": 66, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.45}]}
 {"question_id": 67, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.8}, {"atom_id": "relu-elementwise-max", "confidence": 0.55}]}
 {"question_id": 68, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.55}]}
 {"question_id": 69, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.45}]}
-{"question_id": 70, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.7}]}
-{"question_id": 71, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.85}]}
-{"question_id": 72, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.6}]}
-{"question_id": 73, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.4}]}
-{"question_id": 74, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.62}]}
+{"question_id": 70, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.7}]}
+{"question_id": 71, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.85}]}
+{"question_id": 72, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.6}]}
+{"question_id": 73, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.4}]}
+{"question_id": 74, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.62}]}
 {"question_id": 75, "atoms": [{"atom_id": "permute-backward-argsort", "confidence": 0.4}]}
-{"question_id": 76, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.5}]}
-{"question_id": 77, "atoms": [{"atom_id": "as-strided-trace", "confidence": 0.55}]}
+{"question_id": 76, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.5}]}
+{"question_id": 77, "atoms": [{"atom_id": "diagonal-via-strides", "confidence": 0.55}]}
 {"question_id": 78, "atoms": [{"atom_id": "inf-masking", "confidence": 0.45}]}
 {"question_id": 79, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 80, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.5}]}
@@ -74,25 +74,25 @@
 {"question_id": 85, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.72}]}
 {"question_id": 86, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.45}]}
 {"question_id": 87, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.4}]}
-{"question_id": 89, "atoms": [{"atom_id": "torch-stack-vs-cat", "confidence": 0.55}]}
+{"question_id": 89, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.55}]}
 {"question_id": 90, "atoms": [{"atom_id": "padding-with-new-full", "confidence": 0.6}]}
-{"question_id": 91, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.55}, {"atom_id": "tensor-zeros-init", "confidence": 0.4}]}
+{"question_id": 91, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.55}, {"atom_id": "tensor-zeros-init", "confidence": 0.4}]}
 {"question_id": 92, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.6}]}
 {"question_id": 93, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.75}]}
 {"question_id": 94, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.75}]}
 {"question_id": 95, "atoms": [{"atom_id": "matvec", "confidence": 0.5}]}
 {"question_id": 96, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.4}]}
-{"question_id": 97, "atoms": [{"atom_id": "vector-normalisation", "confidence": 0.85}]}
+{"question_id": 97, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.85}]}
 {"question_id": 98, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.65}]}
 {"question_id": 99, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.45}]}
 {"question_id": 100, "atoms": [{"atom_id": "torch-where-conditional", "confidence": 0.62}]}
-{"question_id": 101, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.7}]}
+{"question_id": 101, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.7}]}
 {"question_id": 102, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 103, "atoms": [{"atom_id": "softmax-from-logits", "confidence": 0.8}, {"atom_id": "log-sum-exp-stability", "confidence": 0.5}]}
-{"question_id": 104, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.7}]}
+{"question_id": 104, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.7}]}
 {"question_id": 105, "atoms": [{"atom_id": "outer-product-grid", "confidence": 0.6}, {"atom_id": "broadcasting-rules", "confidence": 0.4}]}
 {"question_id": 106, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.55}]}
-{"question_id": 107, "atoms": [{"atom_id": "torch-linalg-solve", "confidence": 0.85}, {"atom_id": "linalg-solve-batched", "confidence": 0.45}]}
+{"question_id": 107, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
 {"question_id": 108, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.4}]}
 {"question_id": 109, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}
 {"question_id": 110, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.78}]}
@@ -100,7 +100,7 @@
 {"question_id": 112, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.55}]}
 {"question_id": 113, "atoms": [{"atom_id": "torch-as-tensor-no-copy", "confidence": 0.42}]}
 {"question_id": 114, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.4}]}
-{"question_id": 115, "atoms": [{"atom_id": "logical-reduction-any-all", "confidence": 0.7}]}
+{"question_id": 115, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.7}]}
 {"question_id": 116, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
 {"question_id": 117, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.82}]}
 {"question_id": 118, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.6}, {"atom_id": "determinant-singularity-test", "confidence": 0.5}]}
@@ -109,33 +109,33 @@
 {"question_id": 121, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.75}]}
 {"question_id": 122, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.4}]}
 {"question_id": 123, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.55}]}
-{"question_id": 124, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.75}, {"atom_id": "argmax-prediction", "confidence": 0.55}]}
+{"question_id": 124, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.75}, {"atom_id": "argmax-prediction", "confidence": 0.55}]}
 {"question_id": 125, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.4}]}
 {"question_id": 126, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
 {"question_id": 127, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.78}]}
 {"question_id": 128, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.6}, {"atom_id": "matmul-2d", "confidence": 0.45}]}
 {"question_id": 129, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.7}]}
 {"question_id": 130, "atoms": [{"atom_id": "torch-where-conditional", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
-{"question_id": 131, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.5}]}
-{"question_id": 132, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.5}]}
+{"question_id": 131, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.5}]}
+{"question_id": 132, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.5}]}
 {"question_id": 133, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 134, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 135, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.4}]}
-{"question_id": 136, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.58}]}
+{"question_id": 136, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.58}]}
 {"question_id": 137, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
-{"question_id": 138, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.65}, {"atom_id": "slice-view-shared-storage", "confidence": 0.45}]}
+{"question_id": 138, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.65}, {"atom_id": "slice-view-mutation", "confidence": 0.45}]}
 {"question_id": 139, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.75}]}
 {"question_id": 140, "atoms": [{"atom_id": "diagonal-via-strides", "confidence": 0.45}]}
 {"question_id": 141, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.6}]}
 {"question_id": 142, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.72}, {"atom_id": "isfinite-mask", "confidence": 0.55}]}
 {"question_id": 143, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.6}]}
 {"question_id": 144, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.6}, {"atom_id": "matvec", "confidence": 0.5}]}
-{"question_id": 145, "atoms": [{"atom_id": "logical-reduction-any-all", "confidence": 0.5}, {"atom_id": "broadcasting-rules", "confidence": 0.45}]}
+{"question_id": 145, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.5}, {"atom_id": "broadcasting-rules", "confidence": 0.45}]}
 {"question_id": 146, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.65}]}
 {"question_id": 147, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.55}]}
 {"question_id": 148, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 149, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
-{"question_id": 150, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.78}]}
+{"question_id": 150, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.78}]}
 {"question_id": 151, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.78}]}
 {"question_id": 152, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.4}]}
 {"question_id": 153, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.7}, {"atom_id": "broadcasting-rules", "confidence": 0.45}]}
@@ -144,7 +144,7 @@
 {"question_id": 156, "atoms": [{"atom_id": "matmul-via-strides-and-sum", "confidence": 0.4}]}
 {"question_id": 157, "atoms": [{"atom_id": "type-hints-python", "confidence": 0.4}]}
 {"question_id": 158, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
-{"question_id": 159, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.62}]}
+{"question_id": 159, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.62}]}
 {"question_id": 160, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.45}]}
 {"question_id": 162, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.6}]}
 {"question_id": 163, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.5}]}
@@ -153,7 +153,7 @@
 {"question_id": 166, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.78}]}
 {"question_id": 167, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.85}]}
 {"question_id": 168, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.8}]}
-{"question_id": 169, "atoms": [{"atom_id": "vector-normalisation", "confidence": 0.7}, {"atom_id": "matmul-2d", "confidence": 0.5}]}
+{"question_id": 169, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.7}, {"atom_id": "matmul-2d", "confidence": 0.5}]}
 {"question_id": 170, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.6}, {"atom_id": "isfinite-mask", "confidence": 0.45}]}
 {"question_id": 171, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.4}]}
 {"question_id": 172, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
@@ -161,18 +161,18 @@
 {"question_id": 174, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.42}]}
 {"question_id": 175, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.82}]}
 {"question_id": 176, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.82}]}
-{"question_id": 177, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.6}]}
-{"question_id": 180, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.5}, {"atom_id": "as-strided", "confidence": 0.4}]}
+{"question_id": 177, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.6}]}
+{"question_id": 180, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.5}, {"atom_id": "as-strided-windowing", "confidence": 0.4}]}
 {"question_id": 181, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.88}]}
 {"question_id": 182, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.6}]}
-{"question_id": 183, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.65}]}
+{"question_id": 183, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.65}]}
 {"question_id": 184, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.42}]}
-{"question_id": 185, "atoms": [{"atom_id": "logical-reduction-any-all", "confidence": 0.4}]}
+{"question_id": 185, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
 {"question_id": 186, "atoms": [{"atom_id": "padding-with-new-full", "confidence": 0.6}, {"atom_id": "broadcasting-rules", "confidence": 0.4}]}
 {"question_id": 187, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.7}]}
 {"question_id": 189, "atoms": [{"atom_id": "permute-backward-argsort", "confidence": 0.4}]}
 {"question_id": 190, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.4}]}
-{"question_id": 191, "atoms": [{"atom_id": "integer-array-indexing", "confidence": 0.6}]}
+{"question_id": 191, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.6}]}
 {"question_id": 192, "atoms": [{"atom_id": "tensor-pow", "confidence": 0.6}]}
 {"question_id": 193, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.6}]}
 {"question_id": 194, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.6}]}
@@ -191,7 +191,7 @@
 {"question_id": 208, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.55}]}
 {"question_id": 209, "atoms": [{"atom_id": "as-strided-windowing", "confidence": 0.45}, {"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.4}]}
 {"question_id": 210, "atoms": [{"atom_id": "boolean-mask-combine", "confidence": 0.6}]}
-{"question_id": 211, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.62}, {"atom_id": "logical-reduction-any-all", "confidence": 0.55}]}
+{"question_id": 211, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.62}, {"atom_id": "any-reduce-axis", "confidence": 0.55}]}
 {"question_id": 212, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.45}]}
 {"question_id": 213, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.6}]}
 {"question_id": 214, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
@@ -199,8 +199,8 @@
 {"question_id": 216, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.45}]}
 {"question_id": 217, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.4}]}
 {"question_id": 218, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.5}, {"atom_id": "torch-where-conditional", "confidence": 0.45}]}
-{"question_id": 219, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.6}, {"atom_id": "integer-array-indexing", "confidence": 0.45}]}
-{"question_id": 220, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.55}, {"atom_id": "sum-backward-broadcast", "confidence": 0.35}]}
+{"question_id": 219, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.6}, {"atom_id": "index-by-tensor", "confidence": 0.45}]}
+{"question_id": 220, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.55}, {"atom_id": "sum-back-expand-broadcast", "confidence": 0.35}]}
 {"question_id": 224, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.4}]}
 {"question_id": 225, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.45}]}
 {"question_id": 227, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.8}]}
@@ -209,12 +209,12 @@
 {"question_id": 230, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.4}]}
 {"question_id": 231, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.5}]}
 {"question_id": 232, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.5}]}
-{"question_id": 233, "atoms": [{"atom_id": "slice-view-shared-storage", "confidence": 0.62}]}
+{"question_id": 233, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.62}]}
 {"question_id": 234, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.4}]}
 {"question_id": 235, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.4}]}
 {"question_id": 236, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.45}]}
-{"question_id": 237, "atoms": [{"atom_id": "as-strided-trace", "confidence": 0.78}]}
-{"question_id": 238, "atoms": [{"atom_id": "torch-stack-vs-cat", "confidence": 0.6}]}
+{"question_id": 237, "atoms": [{"atom_id": "diagonal-via-strides", "confidence": 0.78}]}
+{"question_id": 238, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.6}]}
 {"question_id": 239, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.9}]}
 {"question_id": 240, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.4}]}
 {"question_id": 241, "atoms": [{"atom_id": "torch-arange", "confidence": 0.4}]}
@@ -253,7 +253,7 @@
 {"question_id": 274, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.85}]}
 {"question_id": 275, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.9}]}
 {"question_id": 276, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.9}]}
-{"question_id": 277, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.88}, {"atom_id": "as-strided-trace", "confidence": 0.4}]}
+{"question_id": 277, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.88}, {"atom_id": "diagonal-via-strides", "confidence": 0.4}]}
 {"question_id": 278, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.91}]}
 {"question_id": 279, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.9}]}
 {"question_id": 280, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.92}]}
@@ -268,7 +268,7 @@
 {"question_id": 290, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.82}]}
 {"question_id": 291, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.88}]}
 {"question_id": 292, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.85}, {"atom_id": "broadcasting-rules", "confidence": 0.45}]}
-{"question_id": 293, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.65}, {"atom_id": "slice-view-shared-storage", "confidence": 0.4}]}
+{"question_id": 293, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.65}, {"atom_id": "slice-view-mutation", "confidence": 0.4}]}
 {"question_id": 294, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.9}]}
 {"question_id": 295, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.9}]}
 {"question_id": 296, "atoms": [{"atom_id": "einops-einsum", "confidence": 0.88}]}
@@ -378,11 +378,11 @@
 {"question_id": 402, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.85}, {"atom_id": "broadcasting-rules", "confidence": 0.5}]}
 {"question_id": 403, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.95}]}
 {"question_id": 404, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.9}]}
-{"question_id": 405, "atoms": [{"atom_id": "conv-output-shape", "confidence": 0.85}, {"atom_id": "conv-output-size-formula", "confidence": 0.8}]}
-{"question_id": 406, "atoms": [{"atom_id": "conv-output-size-formula", "confidence": 0.95}, {"atom_id": "conv-output-shape", "confidence": 0.55}]}
+{"question_id": 405, "atoms": [{"atom_id": "conv-output-shape", "confidence": 0.85}]}
+{"question_id": 406, "atoms": [{"atom_id": "conv-output-shape", "confidence": 0.95}]}
 {"question_id": 407, "atoms": [{"atom_id": "conv-output-shape", "confidence": 0.86}, {"atom_id": "conv2d-module", "confidence": 0.6}]}
 {"question_id": 408, "atoms": [{"atom_id": "conv-fanin-input-channels-times-kernel", "confidence": 0.72}]}
-{"question_id": 409, "atoms": [{"atom_id": "conv-output-size-formula", "confidence": 0.78}, {"atom_id": "conv-output-shape", "confidence": 0.5}]}
+{"question_id": 409, "atoms": [{"atom_id": "conv-output-shape", "confidence": 0.78}]}
 {"question_id": 410, "atoms": [{"atom_id": "padding-with-new-full", "confidence": 0.92}, {"atom_id": "conv-padding-zero", "confidence": 0.6}]}
 {"question_id": 411, "atoms": [{"atom_id": "conv-kernel-shape", "confidence": 0.93}, {"atom_id": "conv2d-module", "confidence": 0.6}]}
 {"question_id": 412, "atoms": [{"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.7}, {"atom_id": "conv2d-module", "confidence": 0.5}]}
@@ -402,7 +402,6 @@
 {"question_id": 426, "atoms": [{"atom_id": "inference-mode-context", "confidence": 0.9}, {"atom_id": "requires-grad-flag", "confidence": 0.5}]}
 {"question_id": 427, "atoms": [{"atom_id": "freeze-requires-grad", "confidence": 0.85}, {"atom_id": "feature-extraction-freeze", "confidence": 0.55}]}
 {"question_id": 428, "atoms": [{"atom_id": "model-train-eval-toggle", "confidence": 0.93}]}
-
 {"question_id": 429, "atoms": [{"atom_id": "torch-amax-reduction", "confidence": 0.95}]}
 {"question_id": 430, "atoms": [{"atom_id": "torch-amax-reduction", "confidence": 0.95}]}
 {"question_id": 431, "atoms": [{"atom_id": "torch-amax-reduction", "confidence": 0.95}]}

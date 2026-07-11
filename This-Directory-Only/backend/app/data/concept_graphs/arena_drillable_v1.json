@@ -1,8 +1,8 @@
 {
  "curriculum_id": "arena-drillable-v1",
- "title": "ARENA Chapter 0 \u2014 drillable-atom graph (v1)",
- "version": "1.0.0",
- "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation.",
+ "title": "ARENA Chapter 0 — drillable-atom graph (v1)",
+ "version": "1.1.0",
+ "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.]",
  "concepts": [
   {
    "id": "1x1-conv-channel-reshape",
@@ -12,7 +12,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "1x1-conv-channel-reshape \u2014 ex1: prove 1x1 Conv2d equals per-pixel Linear",
+   "description": "1x1-conv-channel-reshape — ex1: prove 1x1 Conv2d equals per-pixel Linear",
    "tags": [
     "drill-atom"
    ]
@@ -25,7 +25,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "all-reduce-compose \u2014 ex1: compose all_reduce from reduce plus broadcast",
+   "description": "all-reduce-compose — ex1: compose all_reduce from reduce plus broadcast",
    "tags": [
     "drill-atom"
    ]
@@ -38,7 +38,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "all-reduce-eval-metrics \u2014 ex1: average a per-rank eval loss across ranks",
+   "description": "all-reduce-eval-metrics — ex1: average a per-rank eval loss across ranks",
    "tags": [
     "drill-atom"
    ]
@@ -51,7 +51,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "all-reduce-grad-sync \u2014 ex1: synchronize gradients across ranks with all_reduce",
+   "description": "all-reduce-grad-sync — ex1: synchronize gradients across ranks with all_reduce",
    "tags": [
     "drill-atom"
    ]
@@ -64,7 +64,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "any-reduce-axis \u2014 ex1: row-wise any() to flag rows containing any True",
+   "description": "any-reduce-axis — ex1: row-wise any() to flag rows containing any True",
    "tags": [
     "drill-atom"
    ]
@@ -77,20 +77,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "arange-fancy-index-cross-entropy \u2014 ex1: pick per-sample target logits via logits[arange(B), target]",
+   "description": "arange-fancy-index-cross-entropy — ex1: pick per-sample target logits via logits[arange(B), target]",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "arg-position-back-functions",
-   "title": "write div_back0 and div_back1 \u2014 asymmetric per-arg back fns",
+   "title": "write div_back0 and div_back1 — asymmetric per-arg back fns",
    "topic": "Autograd Internals",
    "subtopic": "Backprop: Arg-position back funcs",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "arg-position-back-functions \u2014 ex1: write div_back0 and div_back1 \u2014 asymmetric per-arg back fns",
+   "description": "arg-position-back-functions — ex1: write div_back0 and div_back1 — asymmetric per-arg back fns",
    "tags": [
     "drill-atom"
    ]
@@ -103,7 +103,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "argmax-accuracy-eval \u2014 ex1: top-1 classification accuracy from logits",
+   "description": "argmax-accuracy-eval — ex1: top-1 classification accuracy from logits",
    "tags": [
     "drill-atom"
    ]
@@ -130,7 +130,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "as-strided-windowing \u2014 ex1: compute size + stride args for a 1-D sliding window",
+   "description": "as-strided-windowing — ex1: compute size + stride args for a 1-D sliding window",
    "tags": [
     "drill-atom"
    ]
@@ -143,7 +143,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "avgpool-reduce \u2014 ex1: build AvgPool2d via einops.reduce",
+   "description": "avgpool-reduce — ex1: build AvgPool2d via einops.reduce",
    "tags": [
     "drill-atom"
    ]
@@ -156,7 +156,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "back-fn-call-with-recipe-args \u2014 ex1: call a dispatched back_fn with (grad_out, node.array, *args, **kwargs)",
+   "description": "back-fn-call-with-recipe-args — ex1: call a dispatched back_fn with (grad_out, node.array, *args, **kwargs)",
    "tags": [
     "drill-atom"
    ]
@@ -169,7 +169,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "backprop-pop-outgrad-loop \u2014 ex1: implement the main reverse-pass loop over a sorted graph",
+   "description": "backprop-pop-outgrad-loop — ex1: implement the main reverse-pass loop over a sorted graph",
    "tags": [
     "drill-atom"
    ]
@@ -182,7 +182,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "backward-fn-signature \u2014 ex1: write log_back with the canonical (grad_out, out, x) signature",
+   "description": "backward-fn-signature — ex1: write log_back with the canonical (grad_out, out, x) signature",
    "tags": [
     "drill-atom"
    ]
@@ -209,7 +209,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "backward-on-scalar-loss \u2014 ex1: reduce per-sample loss to a scalar before backward",
+   "description": "backward-on-scalar-loss — ex1: reduce per-sample loss to a scalar before backward",
    "tags": [
     "drill-atom"
    ]
@@ -222,7 +222,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "batchnorm-affine-params \u2014 ex1: apply BatchNorm's affine step to a normalized tensor",
+   "description": "batchnorm-affine-params — ex1: apply BatchNorm's affine step to a normalized tensor",
    "tags": [
     "drill-atom"
    ]
@@ -235,7 +235,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "batchnorm-running-stats \u2014 ex1: EMA-update running_mean and running_var in train mode",
+   "description": "batchnorm-running-stats — ex1: EMA-update running_mean and running_var in train mode",
    "tags": [
     "drill-atom"
    ]
@@ -248,7 +248,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "bce-log-loss-real-fake \u2014 ex1: discriminator BCE loss = BCE(D(real), 1) + BCE(D(fake), 0)",
+   "description": "bce-log-loss-real-fake — ex1: discriminator BCE loss = BCE(D(real), 1) + BCE(D(fake), 0)",
    "tags": [
     "drill-atom"
    ]
@@ -261,7 +261,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "bias-correction-divide \u2014 ex1: bias-correct an Adam moment: m_hat = m / (1 - beta**t)",
+   "description": "bias-correction-divide — ex1: bias-correct an Adam moment: m_hat = m / (1 - beta**t)",
    "tags": [
     "drill-atom"
    ]
@@ -274,20 +274,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "block-group-stack \u2014 ex1: build a ResNet BlockGroup from toy blocks",
+   "description": "block-group-stack — ex1: build a ResNet BlockGroup from toy blocks",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "bn-weight-bias-init-pattern",
-   "title": "BatchNorm init \u2014 weight ~ N(1, 0.02), bias = 0",
+   "title": "BatchNorm init — weight ~ N(1, 0.02), bias = 0",
    "topic": "Dcgan Final",
    "subtopic": "GAN: BN weight=1 bias=0 init",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "bn-weight-bias-init-pattern \u2014 ex1: BatchNorm init \u2014 weight ~ N(1, 0.02), bias = 0",
+   "description": "bn-weight-bias-init-pattern — ex1: BatchNorm init — weight ~ N(1, 0.02), bias = 0",
    "tags": [
     "drill-atom"
    ]
@@ -300,7 +300,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "boolean-mask-combine \u2014 ex1: five-predicate ray-triangle inside test",
+   "description": "boolean-mask-combine — ex1: five-predicate ray-triangle inside test",
    "tags": [
     "drill-atom"
    ]
@@ -327,7 +327,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "bottleneck-latent-projection \u2014 ex1: encode flat batch into latent + 2-D scatter",
+   "description": "bottleneck-latent-projection — ex1: encode flat batch into latent + 2-D scatter",
    "tags": [
     "drill-atom"
    ]
@@ -340,7 +340,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "box-array-to-tensor-with-recipe \u2014 ex1: box raw output into MiniTensor + attach Recipe when grad-tracked",
+   "description": "box-array-to-tensor-with-recipe — ex1: box raw output into MiniTensor + attach Recipe when grad-tracked",
    "tags": [
     "drill-atom"
    ]
@@ -353,7 +353,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "broadcast-initial-weights \u2014 ex1: broadcast rank-0 weights to all ranks at start",
+   "description": "broadcast-initial-weights — ex1: broadcast rank-0 weights to all ranks at start",
    "tags": [
     "drill-atom"
    ]
@@ -366,7 +366,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "broadcast-source-fanout \u2014 ex1: fan a class-embedding table to a batch via labels",
+   "description": "broadcast-source-fanout — ex1: fan a class-embedding table to a batch via labels",
    "tags": [
     "drill-atom"
    ]
@@ -393,7 +393,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "buffer-copy_-inplace \u2014 ex1: update a BatchNorm running_mean buffer with copy_",
+   "description": "buffer-copy_-inplace — ex1: update a BatchNorm running_mean buffer with copy_",
    "tags": [
     "drill-atom"
    ]
@@ -406,7 +406,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "chain-rule-elementwise \u2014 ex1: write sigmoid_back and relu_back from the elementwise chain rule",
+   "description": "chain-rule-elementwise — ex1: write sigmoid_back and relu_back from the elementwise chain rule",
    "tags": [
     "drill-atom"
    ]
@@ -419,7 +419,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "channel-list-reverse-build \u2014 ex1: build symmetric encoder/decoder channel pairs from a reversed list",
+   "description": "channel-list-reverse-build — ex1: build symmetric encoder/decoder channel pairs from a reversed list",
    "tags": [
     "drill-atom"
    ]
@@ -432,7 +432,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "clip-grad-norm-pre-step \u2014 ex1: clip grads to a max global L2 norm before optimizer.step",
+   "description": "clip-grad-norm-pre-step — ex1: clip grads to a max global L2 norm before optimizer.step",
    "tags": [
     "drill-atom"
    ]
@@ -445,7 +445,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "coerce-float-arg-to-array \u2014 ex1: coerce_to_array: wrap int/float as 0-D tensor, pass-through others",
+   "description": "coerce-float-arg-to-array — ex1: coerce_to_array: wrap int/float as 0-D tensor, pass-through others",
    "tags": [
     "drill-atom"
    ]
@@ -458,7 +458,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conditional-hparam-branch \u2014 ex1: Linear with optional bias gated by use_bias flag",
+   "description": "conditional-hparam-branch — ex1: Linear with optional bias gated by use_bias flag",
    "tags": [
     "drill-atom"
    ]
@@ -471,7 +471,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-channel-sum \u2014 ex1: verify conv2d contracts the IC axis",
+   "description": "conv-channel-sum — ex1: verify conv2d contracts the IC axis",
    "tags": [
     "drill-atom"
    ]
@@ -484,7 +484,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-kernel-shape \u2014 ex1: introspect a conv2d weight tensor's axes",
+   "description": "conv-kernel-shape — ex1: introspect a conv2d weight tensor's axes",
    "tags": [
     "drill-atom"
    ]
@@ -497,7 +497,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-leakyrelu-block-discriminator \u2014 ex1: build a 32x32 to 16x16 discriminator downsampling block",
+   "description": "conv-leakyrelu-block-discriminator — ex1: build a 32x32 to 16x16 discriminator downsampling block",
    "tags": [
     "drill-atom"
    ]
@@ -510,7 +510,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-output-shape \u2014 ex1: compute conv2d output shape analytically",
+   "description": "conv-output-shape — ex1: compute conv2d output shape analytically",
    "tags": [
     "drill-atom"
    ]
@@ -523,7 +523,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-padding-zero \u2014 ex1: build a zero-padded 1-D input by slice assignment",
+   "description": "conv-padding-zero — ex1: build a zero-padded 1-D input by slice assignment",
    "tags": [
     "drill-atom"
    ]
@@ -536,7 +536,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-stride-downsample \u2014 ex1: predict strided conv output length",
+   "description": "conv-stride-downsample — ex1: predict strided conv output length",
    "tags": [
     "drill-atom"
    ]
@@ -549,7 +549,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-windowing-1d \u2014 ex1: build the 1-D conv window view via as_strided",
+   "description": "conv-windowing-1d — ex1: build the 1-D conv window view via as_strided",
    "tags": [
     "drill-atom"
    ]
@@ -562,7 +562,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "conv-windowing-2d \u2014 ex1: build the 2-D conv window view via as_strided",
+   "description": "conv-windowing-2d — ex1: build the 2-D conv window view via as_strided",
    "tags": [
     "drill-atom"
    ]
@@ -575,7 +575,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "convT-as-flipped-padded-conv \u2014 ex1: rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)",
+   "description": "convT-as-flipped-padded-conv — ex1: rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)",
    "tags": [
     "drill-atom"
    ]
@@ -588,7 +588,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "convT-kernel-axis-swap \u2014 ex1: compare Conv2d and ConvTranspose2d weight shapes",
+   "description": "convT-kernel-axis-swap — ex1: compare Conv2d and ConvTranspose2d weight shapes",
    "tags": [
     "drill-atom"
    ]
@@ -601,7 +601,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "convtranspose-bn-activation-block \u2014 ex1: build a 4x4 to 8x8 generator upsampling block",
+   "description": "convtranspose-bn-activation-block — ex1: build a 4x4 to 8x8 generator upsampling block",
    "tags": [
     "drill-atom"
    ]
@@ -614,7 +614,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "cross-entropy-classification-loss \u2014 ex1: manual cross-entropy matches F.cross_entropy on logits",
+   "description": "cross-entropy-classification-loss — ex1: manual cross-entropy matches F.cross_entropy on logits",
    "tags": [
     "drill-atom"
    ]
@@ -627,7 +627,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "cross-product-normal \u2014 ex1: unit surface normal of a triangle via cross product",
+   "description": "cross-product-normal — ex1: unit surface normal of a triangle via cross product",
    "tags": [
     "drill-atom"
    ]
@@ -640,7 +640,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "cycle-detection-temp-set \u2014 ex1: add temp-set cycle detection to a DFS traversal",
+   "description": "cycle-detection-temp-set — ex1: add temp-set cycle detection to a DFS traversal",
    "tags": [
     "drill-atom"
    ]
@@ -653,7 +653,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dataclasses-replace-args \u2014 ex1: make a sweep of args variants via dataclasses.replace",
+   "description": "dataclasses-replace-args — ex1: make a sweep of args variants via dataclasses.replace",
    "tags": [
     "drill-atom"
    ]
@@ -680,7 +680,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dataloader-pin-memory-workers \u2014 ex1: build a DataLoader with num_workers and pin_memory configured",
+   "description": "dataloader-pin-memory-workers — ex1: build a DataLoader with num_workers and pin_memory configured",
    "tags": [
     "drill-atom"
    ]
@@ -693,7 +693,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dcgan-normal-init-002 \u2014 ex1: apply normal(0, 0.02) init to Conv/ConvTranspose via model.apply",
+   "description": "dcgan-normal-init-002 — ex1: apply normal(0, 0.02) init to Conv/ConvTranspose via model.apply",
    "tags": [
     "drill-atom"
    ]
@@ -706,7 +706,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dcgan-wrapper-netG-netD \u2014 ex1: wrap two subnets as netG/netD with separate optimizers",
+   "description": "dcgan-wrapper-netG-netD — ex1: wrap two subnets as netG/netD with separate optimizers",
    "tags": [
     "drill-atom"
    ]
@@ -719,7 +719,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "detach-clone-snapshot \u2014 ex1: snapshot a hidden state across an optimizer step",
+   "description": "detach-clone-snapshot — ex1: snapshot a hidden state across an optimizer step",
    "tags": [
     "drill-atom"
    ]
@@ -732,7 +732,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "detach-stop-gradient-trick \u2014 ex1: detach G's output during D-step so grad does not flow into G",
+   "description": "detach-stop-gradient-trick — ex1: detach G's output during D-step so grad does not flow into G",
    "tags": [
     "drill-atom"
    ]
@@ -745,7 +745,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "device-consistent-construct \u2014 ex1: build a Module that allocates scratch tensors with the right device + dtype",
+   "description": "device-consistent-construct — ex1: build a Module that allocates scratch tensors with the right device + dtype",
    "tags": [
     "drill-atom"
    ]
@@ -758,7 +758,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dfs-three-set-toposort \u2014 ex1: implement three-set DFS topological sort (deps-first, root LAST)",
+   "description": "dfs-three-set-toposort — ex1: implement three-set DFS topological sort (deps-first, root LAST)",
    "tags": [
     "drill-atom"
    ]
@@ -771,7 +771,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "diagonal-via-strides \u2014 ex1: extract diagonal of (N, N) via as_strided",
+   "description": "diagonal-via-strides — ex1: extract diagonal of (N, N) via as_strided",
    "tags": [
     "drill-atom"
    ]
@@ -784,7 +784,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "discriminator-classifier-head \u2014 ex1: flatten + linear + sigmoid scalar real/fake head",
+   "description": "discriminator-classifier-head — ex1: flatten + linear + sigmoid scalar real/fake head",
    "tags": [
     "drill-atom"
    ]
@@ -797,7 +797,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dispatch-back-fn-from-recipe \u2014 ex1: dispatch back fn from (recipe.func, argnum) for every parent",
+   "description": "dispatch-back-fn-from-recipe — ex1: dispatch back fn from (recipe.func, argnum) for every parent",
    "tags": [
     "drill-atom"
    ]
@@ -810,7 +810,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "dist-send-recv-pair \u2014 ex1: implement broadcast via paired dist.send and dist.recv",
+   "description": "dist-send-recv-pair — ex1: implement broadcast via paired dist.send and dist.recv",
    "tags": [
     "drill-atom"
    ]
@@ -823,7 +823,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "distributed-sampler-shard \u2014 ex1: shard a dataset across ranks with DistributedSampler",
+   "description": "distributed-sampler-shard — ex1: shard a dataset across ranks with DistributedSampler",
    "tags": [
     "drill-atom"
    ]
@@ -858,13 +858,13 @@
   },
   {
    "id": "einops-rearrange-flatten",
-   "title": "CNN flatten before the Linear head \u2014 channel + spatial collapse",
+   "title": "CNN flatten before the Linear head — channel + spatial collapse",
    "topic": "Einops Advanced",
    "subtopic": "Einops: Rearrange-as-flatten",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "einops-rearrange-flatten \u2014 ex1: CNN flatten before the Linear head \u2014 channel + spatial collapse",
+   "description": "einops-rearrange-flatten — ex1: CNN flatten before the Linear head — channel + spatial collapse",
    "tags": [
     "drill-atom"
    ]
@@ -891,7 +891,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "einops-reduce-min \u2014 ex1: per-channel min floor for a feature map",
+   "description": "einops-reduce-min — ex1: per-channel min floor for a feature map",
    "tags": [
     "drill-atom"
    ]
@@ -918,7 +918,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "einops-repeat-broadcast \u2014 ex1: every-ray-with-every-triangle pairing without copy",
+   "description": "einops-repeat-broadcast — ex1: every-ray-with-every-triangle pairing without copy",
    "tags": [
     "drill-atom"
    ]
@@ -931,7 +931,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "elbo-loss-sum-with-beta \u2014 ex1: beta-weighted ELBO sum + sweep plot",
+   "description": "elbo-loss-sum-with-beta — ex1: beta-weighted ELBO sum + sweep plot",
    "tags": [
     "drill-atom"
    ]
@@ -944,7 +944,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "ema-first-moment \u2014 ex1: Adam m-buffer EMA update m = beta1*m + (1-beta1)*g",
+   "description": "ema-first-moment — ex1: Adam m-buffer EMA update m = beta1*m + (1-beta1)*g",
    "tags": [
     "drill-atom"
    ]
@@ -957,7 +957,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "ema-second-moment \u2014 ex1: Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2",
+   "description": "ema-second-moment — ex1: Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2",
    "tags": [
     "drill-atom"
    ]
@@ -970,20 +970,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "encoder-decoder-symmetric \u2014 ex1: build a tiny autoencoder whose output shape == input shape",
+   "description": "encoder-decoder-symmetric — ex1: build a tiny autoencoder whose output shape == input shape",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "end-grad-default-ones-like",
-   "title": "resolve end_grad \u2014 default ones_like, else use .array",
+   "title": "resolve end_grad — default ones_like, else use .array",
    "topic": "Autograd Pt2",
    "subtopic": "Backprop: end-grad ones_like default",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "end-grad-default-ones-like \u2014 ex1: resolve end_grad \u2014 default ones_like, else use .array",
+   "description": "end-grad-default-ones-like — ex1: resolve end_grad — default ones_like, else use .array",
    "tags": [
     "drill-atom"
    ]
@@ -996,20 +996,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "examples-seen-step-axis \u2014 ex1: compute examples_seen = step * batch_size as wandb x-axis",
+   "description": "examples-seen-step-axis — ex1: compute examples_seen = step * batch_size as wandb x-axis",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "exp-back",
-   "title": "exp_back \u2014 reuse cached out",
+   "title": "exp_back — reuse cached out",
    "topic": "Backward Fns",
    "subtopic": "Backprop: exp_back",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "exp-back \u2014 ex1: exp_back \u2014 reuse cached out",
+   "description": "exp-back — ex1: exp_back — reuse cached out",
    "tags": [
     "drill-atom"
    ]
@@ -1022,7 +1022,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "fractional-stride-zero-insertion \u2014 ex1: build the zero-inserted intermediate for stride-2 ConvT",
+   "description": "fractional-stride-zero-insertion — ex1: build the zero-inserted intermediate for stride-2 ConvT",
    "tags": [
     "drill-atom"
    ]
@@ -1035,7 +1035,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "freeze-requires-grad \u2014 ex1: freeze a toy backbone and collect trainable params",
+   "description": "freeze-requires-grad — ex1: freeze a toy backbone and collect trainable params",
    "tags": [
     "drill-atom"
    ]
@@ -1048,7 +1048,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "functional-module-wrap \u2014 ex1: wrap F.relu in an nn.Module to make it composable",
+   "description": "functional-module-wrap — ex1: wrap F.relu in an nn.Module to make it composable",
    "tags": [
     "drill-atom"
    ]
@@ -1061,7 +1061,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "generator-loss-fool-discriminator \u2014 ex1: generator BCE loss with target=1 on the fake batch",
+   "description": "generator-loss-fool-discriminator — ex1: generator BCE loss with target=1 on the fake batch",
    "tags": [
     "drill-atom"
    ]
@@ -1074,7 +1074,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "generator-project-and-reshape \u2014 ex1: latent-to-spatial seed projection + reshape",
+   "description": "generator-project-and-reshape — ex1: latent-to-spatial seed projection + reshape",
    "tags": [
     "drill-atom"
    ]
@@ -1087,7 +1087,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "get-children-callable-param \u2014 ex1: get_children yields (name, value) for Tensor-valued attributes",
+   "description": "get-children-callable-param — ex1: get_children yields (name, value) for Tensor-valued attributes",
    "tags": [
     "drill-atom"
    ]
@@ -1100,7 +1100,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "grad-accumulate-on-leaf \u2014 ex1: accumulate_grad: leaf.grad = (leaf.grad or 0) + g",
+   "description": "grad-accumulate-on-leaf — ex1: accumulate_grad: leaf.grad = (leaf.grad or 0) + g",
    "tags": [
     "drill-atom"
    ]
@@ -1113,7 +1113,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "grad-expressed-in-out \u2014 ex1: write sigmoid_back using cached out (no second sigmoid call)",
+   "description": "grad-expressed-in-out — ex1: write sigmoid_back using cached out (no second sigmoid call)",
    "tags": [
     "drill-atom"
    ]
@@ -1126,7 +1126,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "grad-tracking-global-toggle \u2014 ex1: no_grad context manager built on a module-level toggle",
+   "description": "grad-tracking-global-toggle — ex1: no_grad context manager built on a module-level toggle",
    "tags": [
     "drill-atom"
    ]
@@ -1139,7 +1139,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "grads-dict-accumulate-parents \u2014 ex1: accumulate per-parent contributions in the reverse-pass grads dict",
+   "description": "grads-dict-accumulate-parents — ex1: accumulate per-parent contributions in the reverse-pass grads dict",
    "tags": [
     "drill-atom"
    ]
@@ -1152,7 +1152,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "holdout-data-one-per-class \u2014 ex1: select one sample per class for the holdout gallery",
+   "description": "holdout-data-one-per-class — ex1: select one sample per class for the holdout gallery",
    "tags": [
     "drill-atom"
    ]
@@ -1165,7 +1165,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "hparam-precedence-merge \u2014 ex1: merge defaults < config-file < CLI args via dict.update",
+   "description": "hparam-precedence-merge — ex1: merge defaults < config-file < CLI args via dict.update",
    "tags": [
     "drill-atom"
    ]
@@ -1178,7 +1178,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "index-by-tensor \u2014 ex1: embedding lookup with 2d index tensor",
+   "description": "index-by-tensor — ex1: embedding lookup with 2d index tensor",
    "tags": [
     "drill-atom"
    ]
@@ -1191,7 +1191,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "inf-masking \u2014 ex1: causal attention masking with -inf + softmax + viz",
+   "description": "inf-masking — ex1: causal attention masking with -inf + softmax + viz",
    "tags": [
     "drill-atom"
    ]
@@ -1204,7 +1204,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "inference-mode-step \u2014 ex1: decorate step with inference_mode to allow in-place leaf update",
+   "description": "inference-mode-step — ex1: decorate step with inference_mode to allow in-place leaf update",
    "tags": [
     "drill-atom"
    ]
@@ -1217,7 +1217,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "init-process-group-nccl \u2014 ex1: init + destroy a process group with gloo",
+   "description": "init-process-group-nccl — ex1: init + destroy a process group with gloo",
    "tags": [
     "drill-atom"
    ]
@@ -1230,7 +1230,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "inplace-param-update \u2014 ex1: in-place vs out-of-place parameter update",
+   "description": "inplace-param-update — ex1: in-place vs out-of-place parameter update",
    "tags": [
     "drill-atom"
    ]
@@ -1243,7 +1243,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "is-differentiable-flag \u2014 ex1: three-gate requires_grad reading is_differentiable from closure",
+   "description": "is-differentiable-flag — ex1: three-gate requires_grad reading is_differentiable from closure",
    "tags": [
     "drill-atom"
    ]
@@ -1256,7 +1256,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "kaiming-uniform-sf-init \u2014 ex1: initialize weight as Uniform(-sf, +sf) with sf = 1/sqrt(fan_in)",
+   "description": "kaiming-uniform-sf-init — ex1: initialize weight as Uniform(-sf, +sf) with sf = 1/sqrt(fan_in)",
    "tags": [
     "drill-atom"
    ]
@@ -1269,7 +1269,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "kl-divergence-gaussian-closed-form \u2014 ex1: closed-form Gaussian KL with per-sample bar chart",
+   "description": "kl-divergence-gaussian-closed-form — ex1: closed-form Gaussian KL with per-sample bar chart",
    "tags": [
     "drill-atom"
    ]
@@ -1282,7 +1282,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "kwargs-pass-through-recipe \u2014 ex1: thread kwargs into forward call AND Recipe",
+   "description": "kwargs-pass-through-recipe — ex1: thread kwargs into forward call AND Recipe",
    "tags": [
     "drill-atom"
    ]
@@ -1295,7 +1295,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "leaf-tensor-condition \u2014 ex1: classify tensors as leaf vs interior via the grad_fn condition",
+   "description": "leaf-tensor-condition — ex1: classify tensors as leaf vs interior via the grad_fn condition",
    "tags": [
     "drill-atom"
    ]
@@ -1308,7 +1308,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "linalg-solve-batched \u2014 ex1: solve a batch of 2x2 systems",
+   "description": "linalg-solve-batched — ex1: solve a batch of 2x2 systems",
    "tags": [
     "drill-atom"
    ]
@@ -1321,7 +1321,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "linear-affine-on-custom-tensor \u2014 ex1: forward pass of Linear over hand-written Tensor wrappers",
+   "description": "linear-affine-on-custom-tensor — ex1: forward pass of Linear over hand-written Tensor wrappers",
    "tags": [
     "drill-atom"
    ]
@@ -1348,7 +1348,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "log-back \u2014 ex1: implement log_back from the elementwise chain rule",
+   "description": "log-back — ex1: implement log_back from the elementwise chain rule",
    "tags": [
     "drill-atom"
    ]
@@ -1361,7 +1361,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "log-samples-eval-callback \u2014 ex1: every-K-steps eval callback that logs N samples to a sink",
+   "description": "log-samples-eval-callback — ex1: every-K-steps eval callback that logs N samples to a sink",
    "tags": [
     "drill-atom"
    ]
@@ -1374,7 +1374,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "logsumexp-cross-entropy \u2014 ex1: numerically stable cross-entropy via logsumexp",
+   "description": "logsumexp-cross-entropy — ex1: numerically stable cross-entropy via logsumexp",
    "tags": [
     "drill-atom"
    ]
@@ -1387,7 +1387,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "loss-item-scalar-extract \u2014 ex1: distinguish .item() from .detach().cpu() in a training-loop logger",
+   "description": "loss-item-scalar-extract — ex1: distinguish .item() from .detach().cpu() in a training-loop logger",
    "tags": [
     "drill-atom"
    ]
@@ -1400,7 +1400,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "manual-chain-forward-and-back \u2014 ex1: manually chain forward log/exp and run backward by hand",
+   "description": "manual-chain-forward-and-back — ex1: manually chain forward log/exp and run backward by hand",
    "tags": [
     "drill-atom"
    ]
@@ -1413,20 +1413,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "matmul-2d \u2014 ex1: predict matmul output shape and verify with @",
+   "description": "matmul-2d — ex1: predict matmul output shape and verify with @",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "matmul-back-transpose-pair",
-   "title": "matmul_back \u2014 grad_out @ y.T and x.T @ grad_out",
+   "title": "matmul_back — grad_out @ y.T and x.T @ grad_out",
    "topic": "Backward Fns",
    "subtopic": "Backprop: matmul_back transpose pair",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "matmul-back-transpose-pair \u2014 ex1: matmul_back \u2014 grad_out @ y.T and x.T @ grad_out",
+   "description": "matmul-back-transpose-pair — ex1: matmul_back — grad_out @ y.T and x.T @ grad_out",
    "tags": [
     "drill-atom"
    ]
@@ -1439,7 +1439,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "matvec \u2014 ex1: linear layer forward as matvec",
+   "description": "matvec — ex1: linear layer forward as matvec",
    "tags": [
     "drill-atom"
    ]
@@ -1452,7 +1452,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "max-back-tied-half \u2014 ex1: maximum_back with 50/50 tie-splitting",
+   "description": "max-back-tied-half — ex1: maximum_back with 50/50 tie-splitting",
    "tags": [
     "drill-atom"
    ]
@@ -1465,7 +1465,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "maxpool-reduce \u2014 ex1: build MaxPool2d via einops.reduce",
+   "description": "maxpool-reduce — ex1: build MaxPool2d via einops.reduce",
    "tags": [
     "drill-atom"
    ]
@@ -1478,7 +1478,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "module-base-class-custom \u2014 ex1: build Module: __setattr__ registers params, parameters() walks recursively",
+   "description": "module-base-class-custom — ex1: build Module: __setattr__ registers params, parameters() walks recursively",
    "tags": [
     "drill-atom"
    ]
@@ -1491,7 +1491,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "module-composition \u2014 ex1: child Modules auto-register as attributes",
+   "description": "module-composition — ex1: child Modules auto-register as attributes",
    "tags": [
     "drill-atom"
    ]
@@ -1504,7 +1504,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "module-extra-repr \u2014 ex1: extra_repr for a Linear-style module",
+   "description": "module-extra-repr — ex1: extra_repr for a Linear-style module",
    "tags": [
     "drill-atom"
    ]
@@ -1517,7 +1517,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "module-modules-iter-isinstance-dispatch \u2014 ex1: count + tag layers by type using model.modules() + isinstance",
+   "description": "module-modules-iter-isinstance-dispatch — ex1: count + tag layers by type using model.modules() + isinstance",
    "tags": [
     "drill-atom"
    ]
@@ -1530,7 +1530,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "momentum-buffer-update \u2014 ex1: in-place momentum buffer update b = mu*b + g",
+   "description": "momentum-buffer-update — ex1: in-place momentum buffer update b = mu*b + g",
    "tags": [
     "drill-atom"
    ]
@@ -1543,7 +1543,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "mp-spawn-workers \u2014 ex1: launch a 2-rank distributed job with mp.spawn",
+   "description": "mp-spawn-workers — ex1: launch a 2-rank distributed job with mp.spawn",
    "tags": [
     "drill-atom"
    ]
@@ -1556,7 +1556,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "nn.MSELoss()(target, prediction) \u2014 mean squared error between original image and decoder output, the basic autoencoder objective.",
+   "description": "nn.MSELoss()(target, prediction) — mean squared error between original image and decoder output, the basic autoencoder objective.",
    "tags": [
     "part5",
     "arena-conf-high"
@@ -1570,7 +1570,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "mu-logsigma-encoder-head \u2014 ex1: single-head Linear + chunk into mu and logsigma",
+   "description": "mu-logsigma-encoder-head — ex1: single-head Linear + chunk into mu and logsigma",
    "tags": [
     "drill-atom"
    ]
@@ -1583,20 +1583,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "multiply-back \u2014 ex1: implement multiply_back0 / multiply_back1 with unbroadcast",
+   "description": "multiply-back — ex1: implement multiply_back0 / multiply_back1 with unbroadcast",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "negative-back",
-   "title": "negative_back \u2014 sign flip of grad_out",
+   "title": "negative_back — sign flip of grad_out",
    "topic": "Backward Fns",
    "subtopic": "Backprop: negative_back",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "negative-back \u2014 ex1: negative_back \u2014 sign flip of grad_out",
+   "description": "negative-back — ex1: negative_back — sign flip of grad_out",
    "tags": [
     "drill-atom"
    ]
@@ -1609,7 +1609,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "nested-param-group-loop \u2014 ex1: manual SGD step via the nested param_groups loop",
+   "description": "nested-param-group-loop — ex1: manual SGD step via the nested param_groups loop",
    "tags": [
     "drill-atom"
    ]
@@ -1630,13 +1630,13 @@
   },
   {
    "id": "nn-parameter-wrap",
-   "title": "Parameter vs raw tensor \u2014 visibility test",
+   "title": "Parameter vs raw tensor — visibility test",
    "topic": "Pytorch Modules",
    "subtopic": "PyTorch: nn.Parameter",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "nn-parameter-wrap \u2014 ex1: Parameter vs raw tensor \u2014 visibility test",
+   "description": "nn-parameter-wrap — ex1: Parameter vs raw tensor — visibility test",
    "tags": [
     "drill-atom"
    ]
@@ -1649,7 +1649,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "no-grad-context-mgr-update \u2014 ex1: implement NoGrad context manager with restore-on-exit",
+   "description": "no-grad-context-mgr-update — ex1: implement NoGrad context manager with restore-on-exit",
    "tags": [
     "drill-atom"
    ]
@@ -1662,20 +1662,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "noise-batch-from-latent \u2014 ex1: build (B, latent_dim, 1, 1) spatial-prefix noise for DCGAN G",
+   "description": "noise-batch-from-latent — ex1: build (B, latent_dim, 1, 1) spatial-prefix noise for DCGAN G",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "non-diff-fn-wrap",
-   "title": "wrap a non-differentiable op (eq) \u2014 no Recipe, no requires_grad",
+   "title": "wrap a non-differentiable op (eq) — no Recipe, no requires_grad",
    "topic": "Autograd Pt2",
    "subtopic": "Backprop: non-differentiable fn wrap",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "non-diff-fn-wrap \u2014 ex1: wrap a non-differentiable op (eq) \u2014 no Recipe, no requires_grad",
+   "description": "non-diff-fn-wrap — ex1: wrap a non-differentiable op (eq) — no Recipe, no requires_grad",
    "tags": [
     "drill-atom"
    ]
@@ -1688,7 +1688,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "optimizer-class-dispatch \u2014 ex1: build an optimizer from a config string via a class-dispatch dict",
+   "description": "optimizer-class-dispatch — ex1: build an optimizer from a config string via a class-dispatch dict",
    "tags": [
     "drill-atom"
    ]
@@ -1701,7 +1701,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "optimizer-init-params-list \u2014 ex1: materialize a generator of params into a list at init",
+   "description": "optimizer-init-params-list — ex1: materialize a generator of params into a list at init",
    "tags": [
     "drill-atom"
    ]
@@ -1714,7 +1714,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "optimizer-loop-on-tensor \u2014 ex1: manual SGD step: for p in self.params: p -= lr * p.grad",
+   "description": "optimizer-loop-on-tensor — ex1: manual SGD step: for p in self.params: p -= lr * p.grad",
    "tags": [
     "drill-atom"
    ]
@@ -1727,7 +1727,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "optimizer-repr-string \u2014 ex1: give a hand-rolled SGD a debug-friendly __repr__",
+   "description": "optimizer-repr-string — ex1: give a hand-rolled SGD a debug-friendly __repr__",
    "tags": [
     "drill-atom"
    ]
@@ -1740,7 +1740,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "optimizer-state-tensor-buffers \u2014 ex1: allocate a per-param zeros_like buffer at init",
+   "description": "optimizer-state-tensor-buffers — ex1: allocate a per-param zeros_like buffer at init",
    "tags": [
     "drill-atom"
    ]
@@ -1753,7 +1753,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "padding-amount-formula-convT \u2014 ex1: predict ConvTranspose2d output size from the padding arg",
+   "description": "padding-amount-formula-convT — ex1: predict ConvTranspose2d output size from the padding arg",
    "tags": [
     "drill-atom"
    ]
@@ -1766,7 +1766,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "param-grad-access \u2014 ex1: iterate model.parameters() and read .grad with the None guard",
+   "description": "param-grad-access — ex1: iterate model.parameters() and read .grad with the None guard",
    "tags": [
     "drill-atom"
    ]
@@ -1779,7 +1779,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "param-group-dict-list \u2014 ex1: build differential-LR param groups for encoder vs head",
+   "description": "param-group-dict-list — ex1: build differential-LR param groups for encoder vs head",
    "tags": [
     "drill-atom"
    ]
@@ -1792,7 +1792,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "parameter-subclass-of-tensor \u2014 ex1: Parameter subclasses MiniTensor with requires_grad=True default",
+   "description": "parameter-subclass-of-tensor — ex1: Parameter subclasses MiniTensor with requires_grad=True default",
    "tags": [
     "drill-atom"
    ]
@@ -1805,7 +1805,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "parameter-wrap-around-tensor \u2014 ex1: observe the composition-Parameter anti-pattern breaks isinstance",
+   "description": "parameter-wrap-around-tensor — ex1: observe the composition-Parameter anti-pattern breaks isinstance",
    "tags": [
     "drill-atom"
    ]
@@ -1818,20 +1818,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "params-iterable-vs-groups \u2014 ex1: polymorphic params= signature: flat iterable vs dict-list both normalize to param_groups",
+   "description": "params-iterable-vs-groups — ex1: polymorphic params= signature: flat iterable vs dict-list both normalize to param_groups",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "parents-dict-by-argidx",
-   "title": "build parents dict \u2014 skip non-Tensors, keep original argidx",
+   "title": "build parents dict — skip non-Tensors, keep original argidx",
    "topic": "Autograd Internals",
    "subtopic": "Backprop: Parents dict by argidx",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "parents-dict-by-argidx \u2014 ex1: build parents dict \u2014 skip non-Tensors, keep original argidx",
+   "description": "parents-dict-by-argidx — ex1: build parents dict — skip non-Tensors, keep original argidx",
    "tags": [
     "drill-atom"
    ]
@@ -1844,20 +1844,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "per-rank-cuda-device \u2014 ex1: pin per-rank cuda device with a mocked GPU",
+   "description": "per-rank-cuda-device — ex1: pin per-rank cuda device with a mocked GPU",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "permute-back-argsort",
-   "title": "permute_back \u2014 inverse permutation via argsort",
+   "title": "permute_back — inverse permutation via argsort",
    "topic": "Backward Fns",
    "subtopic": "Backprop: permute_back via argsort",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "permute-back-argsort \u2014 ex1: permute_back \u2014 inverse permutation via argsort",
+   "description": "permute-back-argsort — ex1: permute_back — inverse permutation via argsort",
    "tags": [
     "drill-atom"
    ]
@@ -1870,7 +1870,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "randn-like-noise-source \u2014 ex1: reparameterization noise that inherits dtype",
+   "description": "randn-like-noise-source — ex1: reparameterization noise that inherits dtype",
    "tags": [
     "drill-atom"
    ]
@@ -1883,7 +1883,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "rank-world-size-args \u2014 ex1: thread rank and world_size through a broadcast signature",
+   "description": "rank-world-size-args — ex1: thread rank and world_size through a broadcast signature",
    "tags": [
     "drill-atom"
    ]
@@ -1896,7 +1896,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "rank0-only-side-effects \u2014 ex1: guard checkpoint + log side effects behind if rank == 0",
+   "description": "rank0-only-side-effects — ex1: guard checkpoint + log side effects behind if rank == 0",
    "tags": [
     "drill-atom"
    ]
@@ -1923,7 +1923,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "rearrange-as-sequential-layer \u2014 ex1: build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)",
+   "description": "rearrange-as-sequential-layer — ex1: build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)",
    "tags": [
     "drill-atom"
    ]
@@ -1936,7 +1936,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "recipe-dataclass \u2014 ex1: define Recipe and construct it for log_forward",
+   "description": "recipe-dataclass — ex1: define Recipe and construct it for log_forward",
    "tags": [
     "drill-atom"
    ]
@@ -1949,7 +1949,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "reduce-gather-sum \u2014 ex1: compare reduce vs gather + manual sum",
+   "description": "reduce-gather-sum — ex1: compare reduce vs gather + manual sum",
    "tags": [
     "drill-atom"
    ]
@@ -1962,7 +1962,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "reduce-op-mean-divide \u2014 ex1: implement mean reduction as sum-then-in-place-divide",
+   "description": "reduce-op-mean-divide — ex1: implement mean reduction as sum-then-in-place-divide",
    "tags": [
     "drill-atom"
    ]
@@ -1975,7 +1975,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "register-back-fn-after-wrap \u2014 ex1: wire one entry into BACK_FUNCS and dispatch it",
+   "description": "register-back-fn-after-wrap — ex1: wire one entry into BACK_FUNCS and dispatch it",
    "tags": [
     "drill-atom"
    ]
@@ -2016,7 +2016,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "reparameterization-trick \u2014 ex1: differentiable Gaussian sampling with gradient check",
+   "description": "reparameterization-trick — ex1: differentiable Gaussian sampling with gradient check",
    "tags": [
     "drill-atom"
    ]
@@ -2029,7 +2029,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "replace-final-head \u2014 ex1: swap the final classifier of a toy backbone",
+   "description": "replace-final-head — ex1: swap the final classifier of a toy backbone",
    "tags": [
     "drill-atom"
    ]
@@ -2042,7 +2042,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "requires-grad-leaf-assert \u2014 ex1: guard optimizer init with leaf + requires_grad asserts",
+   "description": "requires-grad-leaf-assert — ex1: guard optimizer init with leaf + requires_grad asserts",
    "tags": [
     "drill-atom"
    ]
@@ -2055,20 +2055,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "requires-grad-propagation \u2014 ex1: three-gate requires_grad: toggle AND is_differentiable AND any-input",
+   "description": "requires-grad-propagation — ex1: three-gate requires_grad: toggle AND is_differentiable AND any-input",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "reshape-back",
-   "title": "reshape_back \u2014 restore x's original shape",
+   "title": "reshape_back — restore x's original shape",
    "topic": "Backward Fns",
    "subtopic": "Backprop: reshape_back",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "reshape-back \u2014 ex1: reshape_back \u2014 restore x's original shape",
+   "description": "reshape-back — ex1: reshape_back — restore x's original shape",
    "tags": [
     "drill-atom"
    ]
@@ -2081,20 +2081,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "residual-skip-add \u2014 ex1: build a toy ResidualBlock with conditional shortcut",
+   "description": "residual-skip-add — ex1: build a toy ResidualBlock with conditional shortcut",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "resnet-stem",
-   "title": "build the ResNet stem and verify the 224 \u2192 56 reduction",
+   "title": "build the ResNet stem and verify the 224 → 56 reduction",
    "topic": "Resnet Modules",
    "subtopic": "CNN: ResNet stem block",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "resnet-stem \u2014 ex1: build the ResNet stem and verify the 224 \u2192 56 reduction",
+   "description": "resnet-stem — ex1: build the ResNet stem and verify the 224 → 56 reduction",
    "tags": [
     "drill-atom"
    ]
@@ -2107,7 +2107,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "rotation-matrix-3d \u2014 ex1: Rodrigues rotation about an arbitrary 3-D axis",
+   "description": "rotation-matrix-3d — ex1: Rodrigues rotation about an arbitrary 3-D axis",
    "tags": [
     "drill-atom"
    ]
@@ -2120,7 +2120,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "The 3x3 matrix [[cos\u03b8,0,sin\u03b8],[0,1,0],[-sin\u03b8,0,cos\u03b8]] that rotates a 3D vector counterclockwise about the y-axis by angle \u03b8.",
+   "description": "The 3x3 matrix [[cosθ,0,sinθ],[0,1,0],[-sinθ,0,cosθ]] that rotates a 3D vector counterclockwise about the y-axis by angle θ.",
    "tags": [
     "part1",
     "arena-conf-high"
@@ -2134,7 +2134,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "segment-line-intersect-2d \u2014 ex1: intersect a segment with an infinite line in 2-D",
+   "description": "segment-line-intersect-2d — ex1: intersect a segment with an infinite line in 2-D",
    "tags": [
     "drill-atom"
    ]
@@ -2147,7 +2147,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sgd-vanilla-from-scratch \u2014 ex1: single-step SGD: in-place update + zero the grad",
+   "description": "sgd-vanilla-from-scratch — ex1: single-step SGD: in-place update + zero the grad",
    "tags": [
     "drill-atom"
    ]
@@ -2160,7 +2160,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "singular-matrix-mask-trick \u2014 ex1: solve a batch with some singular matrices",
+   "description": "singular-matrix-mask-trick — ex1: solve a batch with some singular matrices",
    "tags": [
     "drill-atom"
    ]
@@ -2173,7 +2173,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "slice-view-mutation \u2014 ex1: in-place zero the diagonal via slice-view writes",
+   "description": "slice-view-mutation — ex1: in-place zero the diagonal via slice-view writes",
    "tags": [
     "drill-atom"
    ]
@@ -2186,7 +2186,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sorted-computational-graph \u2014 ex1: topological sort of the compute graph for the reverse pass",
+   "description": "sorted-computational-graph — ex1: topological sort of the compute graph for the reverse pass",
    "tags": [
     "drill-atom"
    ]
@@ -2199,7 +2199,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sqrt-eps-stabilize \u2014 ex1: rescue a BatchNorm-style normalize from divide-by-zero",
+   "description": "sqrt-eps-stabilize — ex1: rescue a BatchNorm-style normalize from divide-by-zero",
    "tags": [
     "drill-atom"
    ]
@@ -2212,7 +2212,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "stack-vs-cat \u2014 ex1: pick stack or cat from the target shape",
+   "description": "stack-vs-cat — ex1: pick stack or cat from the target shape",
    "tags": [
     "drill-atom"
    ]
@@ -2239,7 +2239,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "step-counter-increment \u2014 ex1: step counter increments AFTER optimizer.step",
+   "description": "step-counter-increment — ex1: step counter increments AFTER optimizer.step",
    "tags": [
     "drill-atom"
    ]
@@ -2266,20 +2266,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sum-and-broadcast-duality \u2014 ex1: sum_back and broadcast_back as dual ops",
+   "description": "sum-and-broadcast-duality — ex1: sum_back and broadcast_back as dual ops",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "sum-back-expand-broadcast",
-   "title": "sum_back \u2014 unsqueeze + expand back to x.shape",
+   "title": "sum_back — unsqueeze + expand back to x.shape",
    "topic": "Backward Fns",
    "subtopic": "Backprop: sum_back via expand_broadcast",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sum-back-expand-broadcast \u2014 ex1: sum_back \u2014 unsqueeze + expand back to x.shape",
+   "description": "sum-back-expand-broadcast — ex1: sum_back — unsqueeze + expand back to x.shape",
    "tags": [
     "drill-atom"
    ]
@@ -2292,7 +2292,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sweep-config-dict \u2014 ex1: build a wandb sweep config: bayes + metric + parameters",
+   "description": "sweep-config-dict — ex1: build a wandb sweep config: bayes + metric + parameters",
    "tags": [
     "drill-atom"
    ]
@@ -2305,7 +2305,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "sweep-hparam-distribution \u2014 ex1: pick the right wandb sweep distribution for each hparam type",
+   "description": "sweep-hparam-distribution — ex1: pick the right wandb sweep distribution for each hparam type",
    "tags": [
     "drill-atom"
    ]
@@ -2318,7 +2318,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "t-stack-trajectory \u2014 ex1: stack per-step latents into a (B, T, D) trajectory",
+   "description": "t-stack-trajectory — ex1: stack per-step latents into a (B, T, D) trajectory",
    "tags": [
     "drill-atom"
    ]
@@ -2345,7 +2345,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "tensor-to-device \u2014 ex1: move tensor to chosen device with the CPU/CUDA guard",
+   "description": "tensor-to-device — ex1: move tensor to chosen device with the CPU/CUDA guard",
    "tags": [
     "drill-atom"
    ]
@@ -2372,7 +2372,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "tensor-wraps-ndarray \u2014 ex1: compare from_numpy aliasing vs tensor copy",
+   "description": "tensor-wraps-ndarray — ex1: compare from_numpy aliasing vs tensor copy",
    "tags": [
     "drill-atom"
    ]
@@ -2399,7 +2399,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "time-stage-instrumentation \u2014 ex1: accumulate per-stage seconds with time.perf_counter",
+   "description": "time-stage-instrumentation — ex1: accumulate per-stage seconds with time.perf_counter",
    "tags": [
     "drill-atom"
    ]
@@ -2412,7 +2412,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "topk-predictions \u2014 ex1: top-5 accuracy on a batch of logits",
+   "description": "topk-predictions — ex1: top-5 accuracy on a batch of logits",
    "tags": [
     "drill-atom"
    ]
@@ -2425,7 +2425,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "tqdm-postfix-metrics \u2014 ex1: set live loss + examples_seen on a tqdm progress bar",
+   "description": "tqdm-postfix-metrics — ex1: set live loss + examples_seen on a tqdm progress bar",
    "tags": [
     "drill-atom"
    ]
@@ -2438,7 +2438,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "train-eval-mode-branch \u2014 ex1: flip train and eval mode around dropout",
+   "description": "train-eval-mode-branch — ex1: flip train and eval mode around dropout",
    "tags": [
     "drill-atom"
    ]
@@ -2451,7 +2451,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "trainer-class-skeleton \u2014 ex1: minimal Trainer class: fit, validate, _step",
+   "description": "trainer-class-skeleton — ex1: minimal Trainer class: fit, validate, _step",
    "tags": [
     "drill-atom"
    ]
@@ -2464,7 +2464,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "trainer-subclass-extend \u2014 ex1: subclass a trainer and extend _step via super() delegation",
+   "description": "trainer-subclass-extend — ex1: subclass a trainer and extend _step via super() delegation",
    "tags": [
     "drill-atom"
    ]
@@ -2477,7 +2477,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "training-step-cycle \u2014 ex1: order the five calls of the canonical training step",
+   "description": "training-step-cycle — ex1: order the five calls of the canonical training step",
    "tags": [
     "drill-atom"
    ]
@@ -2490,7 +2490,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "triangle-barycentric \u2014 ex1: point-in-triangle test from (u, v)",
+   "description": "triangle-barycentric — ex1: point-in-triangle test from (u, v)",
    "tags": [
     "drill-atom"
    ]
@@ -2503,7 +2503,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "try-except-solve \u2014 ex1: graceful single-call solve with try/except",
+   "description": "try-except-solve — ex1: graceful single-call solve with try/except",
    "tags": [
     "drill-atom"
    ]
@@ -2516,7 +2516,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "two-optimizers-alternating-step \u2014 ex1: alternating D-step then G-step with two optimizers on toy modules",
+   "description": "two-optimizers-alternating-step — ex1: alternating D-step then G-step with two optimizers on toy modules",
    "tags": [
     "drill-atom"
    ]
@@ -2529,7 +2529,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "unbind-tuple-unpack \u2014 ex1: ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)",
+   "description": "unbind-tuple-unpack — ex1: ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)",
    "tags": [
     "drill-atom"
    ]
@@ -2542,7 +2542,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "unbox-args-tensor-to-array \u2014 ex1: unbox MiniTensor positional args to raw arrays, pass-through non-Tensors",
+   "description": "unbox-args-tensor-to-array — ex1: unbox MiniTensor positional args to raw arrays, pass-through non-Tensors",
    "tags": [
     "drill-atom"
    ]
@@ -2555,7 +2555,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "unbroadcast-pattern \u2014 ex1: unbroadcast: sum out leading and size-1 broadcast axes",
+   "description": "unbroadcast-pattern — ex1: unbroadcast: sum out leading and size-1 broadcast axes",
    "tags": [
     "drill-atom"
    ]
@@ -2568,7 +2568,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "validation-no-grad \u2014 ex1: validation pass wrapped in torch.no_grad",
+   "description": "validation-no-grad — ex1: validation pass wrapped in torch.no_grad",
    "tags": [
     "drill-atom"
    ]
@@ -2581,7 +2581,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "vector-normalize-keepdim \u2014 ex1: row-wise L2 normalize a batch of embeddings",
+   "description": "vector-normalize-keepdim — ex1: row-wise L2 normalize a batch of embeddings",
    "tags": [
     "drill-atom"
    ]
@@ -2594,7 +2594,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wandb-config-into-args \u2014 ex1: overwrite dataclass args from a wandb sweep config",
+   "description": "wandb-config-into-args — ex1: overwrite dataclass args from a wandb sweep config",
    "tags": [
     "drill-atom"
    ]
@@ -2607,7 +2607,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wandb-finish \u2014 ex1: close a wandb run at the end of train",
+   "description": "wandb-finish — ex1: close a wandb run at the end of train",
    "tags": [
     "drill-atom"
    ]
@@ -2620,7 +2620,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wandb-init-run \u2014 ex1: open a wandb run with project, name, and config",
+   "description": "wandb-init-run — ex1: open a wandb run with project, name, and config",
    "tags": [
     "drill-atom"
    ]
@@ -2633,7 +2633,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wandb-log-step \u2014 ex1: log loss + examples_seen step over a fake epoch",
+   "description": "wandb-log-step — ex1: log loss + examples_seen step over a fake epoch",
    "tags": [
     "drill-atom"
    ]
@@ -2646,7 +2646,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wandb-watch-model \u2014 ex1: watch the trainable head with parameter+gradient logging",
+   "description": "wandb-watch-model — ex1: watch the trainable head with parameter+gradient logging",
    "tags": [
     "drill-atom"
    ]
@@ -2659,7 +2659,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "weight-decay-decoupled \u2014 ex1: implement one AdamW step with decoupled weight decay",
+   "description": "weight-decay-decoupled — ex1: implement one AdamW step with decoupled weight decay",
    "tags": [
     "drill-atom"
    ]
@@ -2672,7 +2672,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "weight-decay-l2-add \u2014 ex1: fold weight decay lambda*theta into the gradient",
+   "description": "weight-decay-l2-add — ex1: fold weight decay lambda*theta into the gradient",
    "tags": [
     "drill-atom"
    ]
@@ -2685,20 +2685,20 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "where-clip-negative \u2014 ex1: relu via torch.where",
+   "description": "where-clip-negative — ex1: relu via torch.where",
    "tags": [
     "drill-atom"
    ]
   },
   {
    "id": "wrap-forward-fn-generic",
-   "title": "write the wrap_forward_fn shell \u2014 unbox, call, box",
+   "title": "write the wrap_forward_fn shell — unbox, call, box",
    "topic": "Backprop",
    "subtopic": "Backprop: wrap forward fn",
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "wrap-forward-fn-generic \u2014 ex1: write the wrap_forward_fn shell \u2014 unbox, call, box",
+   "description": "wrap-forward-fn-generic — ex1: write the wrap_forward_fn shell — unbox, call, box",
    "tags": [
     "drill-atom"
    ]
@@ -2711,7 +2711,748 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "zero-grad-set-none \u2014 ex1: implement zero_grad with set_to_none semantics",
+   "description": "zero-grad-set-none — ex1: implement zero_grad with set_to_none semantics",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "argmax-prediction",
+   "title": "argmax prediction",
+   "topic": "Numpy",
+   "subtopic": "Indexing and selection",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "argmax-prediction — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "assert-shape-pattern",
+   "title": "assert shape pattern",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "assert-shape-pattern — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "batchnorm-running-stats-ema",
+   "title": "batchnorm running stats ema",
+   "topic": "CNN",
+   "subtopic": "Pooling, Flatten, BatchNorm",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "batchnorm-running-stats-ema — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "batchnorm-train-eval-divergence",
+   "title": "batchnorm train eval divergence",
+   "topic": "CNN",
+   "subtopic": "Pooling, Flatten, BatchNorm",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "batchnorm-train-eval-divergence — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "boolean-mask-broadcast-assignment",
+   "title": "boolean mask broadcast assignment",
+   "topic": "Numpy",
+   "subtopic": "Indexing and selection",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "boolean-mask-broadcast-assignment — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "broadcast-reshape-1c11",
+   "title": "broadcast reshape 1c11",
+   "topic": "CNNs",
+   "subtopic": "BatchNorm per-channel broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "broadcast-reshape-1c11 — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "chain-rule-backprop",
+   "title": "chain rule backprop",
+   "topic": "Autograd",
+   "subtopic": "Chain Rule and Backward Functions",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "chain-rule-backprop — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "conv-as-einsum",
+   "title": "conv as einsum",
+   "topic": "Numpy",
+   "subtopic": "Applied patterns and advanced",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "conv-as-einsum — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "conv-fanin-input-channels-times-kernel",
+   "title": "conv fanin input channels times kernel",
+   "topic": "CNN",
+   "subtopic": "Output shape & arithmetic",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "conv-fanin-input-channels-times-kernel — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "conv2d-functional",
+   "title": "conv2d functional",
+   "topic": "CNN",
+   "subtopic": "Conv2d module mechanics",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "conv2d-functional — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "conv2d-module",
+   "title": "conv2d module",
+   "topic": "CNN",
+   "subtopic": "Conv2d module mechanics",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "conv2d-module — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "copy-inplace-_underscore",
+   "title": "copy inplace _underscore",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "copy-inplace-_underscore — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "cross-entropy-loss",
+   "title": "cross entropy loss",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "Cross-Entropy Loss on Logits",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "cross-entropy-loss — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "determinant-singularity-test",
+   "title": "determinant singularity test",
+   "topic": "Numpy",
+   "subtopic": "Applied patterns and advanced",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "determinant-singularity-test — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "ewma-running-stat",
+   "title": "ewma running stat",
+   "topic": "Optimizers",
+   "subtopic": "EWMA running statistics (BatchNorm / Adam / RMSprop)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "ewma-running-stat — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "extra-repr",
+   "title": "extra repr",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "nn.Module extra_repr",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "extra-repr — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "feature-extraction-freeze",
+   "title": "feature extraction freeze",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "feature-extraction-freeze — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "flatten-layer",
+   "title": "flatten layer",
+   "topic": "CNN",
+   "subtopic": "Pooling, Flatten, BatchNorm",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "flatten-layer — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "force-pair-int-or-tuple",
+   "title": "force pair int or tuple",
+   "topic": "CNNs",
+   "subtopic": "Hyperparameter normalization (int-or-tuple to (h,w) pair)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "force-pair-int-or-tuple — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "global-average-pool",
+   "title": "global average pool",
+   "topic": "Einops",
+   "subtopic": "Reduce",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "global-average-pool — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "grad-tracking-global-flag",
+   "title": "grad tracking global flag",
+   "topic": "Autograd",
+   "subtopic": "Global grad-mode flag (torch.set_grad_enabled / no_grad)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "grad-tracking-global-flag — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "inference-mode-context",
+   "title": "inference mode context",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "inference-mode-context — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "isfinite-mask",
+   "title": "isfinite mask",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "isfinite-mask — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "linear-affine-transformation",
+   "title": "linear affine transformation",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "linear-affine-transformation — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "linspace-evenly-spaced",
+   "title": "linspace evenly spaced",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "linspace-evenly-spaced — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "log-sum-exp-stability",
+   "title": "log sum exp stability",
+   "topic": "Numpy",
+   "subtopic": "Indexing and selection",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "log-sum-exp-stability — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "manual-seed",
+   "title": "manual seed",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "manual-seed — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "matmul-backward-rules",
+   "title": "matmul backward rules",
+   "topic": "Autograd",
+   "subtopic": "Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "matmul-backward-rules — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "matmul-via-strides-and-sum",
+   "title": "matmul via strides and sum",
+   "topic": "Numpy",
+   "subtopic": "Applied patterns and advanced",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "matmul-via-strides-and-sum — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "maximum-backward-tie-split",
+   "title": "maximum backward tie split",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "maximum-backward-tie-split — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "maxpool2d",
+   "title": "maxpool2d",
+   "topic": "CNN",
+   "subtopic": "Pooling, Flatten, BatchNorm",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "maxpool2d — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "model-train-eval-toggle",
+   "title": "model train eval toggle",
+   "topic": "CNN",
+   "subtopic": "Pooling, Flatten, BatchNorm",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "model-train-eval-toggle — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "module-requires-grad-toggle",
+   "title": "module requires grad toggle",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "Freezing parameters with requires_grad_",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "module-requires-grad-toggle — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "neg-inf-maxpool-pad",
+   "title": "neg inf maxpool pad",
+   "topic": "CNNs",
+   "subtopic": "Padding for Max Pooling",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "neg-inf-maxpool-pad — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "nn-init-normal-constant",
+   "title": "nn init normal constant",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "Weight Initialization (normal_ / constant_)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "nn-init-normal-constant — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "nn-parameter",
+   "title": "nn parameter",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "nn-parameter — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "outer-product-grid",
+   "title": "outer product grid",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "outer-product-grid — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "padding-with-new-full",
+   "title": "padding with new full",
+   "topic": "Numpy",
+   "subtopic": "Indexing and selection",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "padding-with-new-full — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "param-iterable-list-conversion",
+   "title": "param iterable list conversion",
+   "topic": "Optimizers",
+   "subtopic": "Parameter iteration and iterator exhaustion",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "param-iterable-list-conversion — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "permute-backward-argsort",
+   "title": "permute backward argsort",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "permute-backward-argsort — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "requires-grad-flag",
+   "title": "requires grad flag",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "requires-grad-flag — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "reshape-backward",
+   "title": "reshape backward",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "reshape-backward — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "sgd-update-rule",
+   "title": "sgd update rule",
+   "topic": "Optimizers",
+   "subtopic": "SGD update rule",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "sgd-update-rule — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "softmax-from-logits",
+   "title": "softmax from logits",
+   "topic": "Numpy",
+   "subtopic": "Indexing and selection",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "softmax-from-logits — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "tensor-grad-attribute",
+   "title": "tensor grad attribute",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "Autograd: .grad on leaf parameters",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "tensor-grad-attribute — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "tensor-pow",
+   "title": "tensor pow",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "tensor-pow — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-amax-reduction",
+   "title": "torch amax reduction",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "Reduction ops: amax",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-amax-reduction — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-arange",
+   "title": "torch arange",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-arange — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-as-tensor-no-copy",
+   "title": "torch as tensor no copy",
+   "topic": "Numpy",
+   "subtopic": "Applied patterns and advanced",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-as-tensor-no-copy — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-no-bias-conv-batchnorm-pair",
+   "title": "torch no bias conv batchnorm pair",
+   "topic": "CNN",
+   "subtopic": "Conv2d module mechanics",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-no-bias-conv-batchnorm-pair — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-rand-uniform",
+   "title": "torch rand uniform",
+   "topic": "Numpy",
+   "subtopic": "Core array literacy",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-rand-uniform — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-var-unbiased",
+   "title": "torch var unbiased",
+   "topic": "PyTorch Fundamentals",
+   "subtopic": "BatchNorm variance: biased vs unbiased",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-var-unbiased — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "torch-where-conditional",
+   "title": "torch where conditional",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "torch-where-conditional — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "training-loop-skeleton",
+   "title": "training loop skeleton",
+   "topic": "CNN",
+   "subtopic": "nn.Module & training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "training-loop-skeleton — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "type-hints-python",
+   "title": "type hints python",
+   "topic": "Numpy",
+   "subtopic": "Applied patterns and advanced",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "type-hints-python — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "unbroadcast",
+   "title": "unbroadcast",
+   "topic": "Autograd",
+   "subtopic": "Broadcasting gradients (unbroadcast)",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "unbroadcast — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "view-vs-reshape",
+   "title": "view vs reshape",
+   "topic": "Numpy",
+   "subtopic": "Vectorization and broadcasting",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "view-vs-reshape — drill atom wired from question bank tags (2026-07-08 orphan-atom fix)",
    "tags": [
     "drill-atom"
    ]
@@ -3229,24 +3970,14 @@
    "rationale": "[uses] Rearrange placed in a composed pipeline"
   },
   {
-   "prerequisite_id": "optimizer-loop-on-tensor",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "sgd-vanilla-from-scratch",
    "weight": 1.0,
    "confidence": 0.8,
    "is_hard_gate": true,
    "is_encompassing": true,
    "propagation_weight": 0.7,
-   "rationale": "[refines] single-step in-place SGD over params"
-  },
-  {
-   "prerequisite_id": "zero-grad-set-none",
-   "dependent_id": "sgd-vanilla-from-scratch",
-   "weight": 1.0,
-   "confidence": 0.75,
-   "is_hard_gate": true,
-   "is_encompassing": true,
-   "propagation_weight": 0.4,
-   "rationale": "[part-of] step includes zeroing the grad"
+   "rationale": "[refines] single-step in-place SGD over params [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "inplace-param-update",
@@ -3299,14 +4030,14 @@
    "rationale": "[uses] compares constructed tensor vs numpy aliasing"
   },
   {
-   "prerequisite_id": "argmax-accuracy-eval",
+   "prerequisite_id": "argmax-prediction",
    "dependent_id": "topk-predictions",
    "weight": 1.0,
    "confidence": 0.75,
    "is_hard_gate": true,
    "is_encompassing": true,
    "propagation_weight": 0.6,
-   "rationale": "[refines] top-5 generalizes top-1 argmax accuracy"
+   "rationale": "[refines] top-5 generalizes top-1 argmax accuracy [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "validation-no-grad",
@@ -4119,16 +4850,6 @@
    "rationale": "[uses] output length derived from as_strided sliding windows"
   },
   {
-   "prerequisite_id": "conv-windowing-1d",
-   "dependent_id": "conv-output-shape",
-   "weight": 1.0,
-   "confidence": 0.65,
-   "is_hard_gate": false,
-   "is_encompassing": false,
-   "propagation_weight": 0.0,
-   "rationale": "[uses] output shape determined by window construction"
-  },
-  {
    "prerequisite_id": "tensor-zeros-init",
    "dependent_id": "conv-padding-zero",
    "weight": 1.0,
@@ -4539,14 +5260,14 @@
    "rationale": "[uses] insert x into x_new[...,::stride]"
   },
   {
-   "prerequisite_id": "param-grad-access",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "freeze-requires-grad",
    "weight": 1.0,
    "confidence": 0.65,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] iterate parameters to set requires_grad_(False)"
+   "rationale": "[uses] iterate parameters to set requires_grad_(False) [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "broadcasting-rules",
@@ -4639,16 +5360,6 @@
    "rationale": "[part-of] 2d conv window is 6D as_strided sliding view"
   },
   {
-   "prerequisite_id": "conv-windowing-1d",
-   "dependent_id": "conv-windowing-2d",
-   "weight": 1.0,
-   "confidence": 0.75,
-   "is_hard_gate": true,
-   "is_encompassing": true,
-   "propagation_weight": 0.6,
-   "rationale": "[refines] 2d windowing extends the 1d window construction"
-  },
-  {
    "prerequisite_id": "einops-einsum",
    "dependent_id": "conv-windowing-2d",
    "weight": 1.0,
@@ -4659,14 +5370,14 @@
    "rationale": "[uses] 2d windows contracted via einsum"
   },
   {
-   "prerequisite_id": "conv-windowing-1d",
+   "prerequisite_id": "as-strided-windowing",
    "dependent_id": "convT-as-flipped-padded-conv",
    "weight": 1.0,
    "confidence": 0.65,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] convT delegates to conv1d_minimal windows"
+   "rationale": "[uses] convT delegates to conv1d_minimal windows [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "conv-padding-zero",
@@ -4767,16 +5478,6 @@
    "is_encompassing": false,
    "propagation_weight": 0.0,
    "rationale": "[uses] 2d maxpool amax over as_strided windows"
-  },
-  {
-   "prerequisite_id": "conv-windowing-2d",
-   "dependent_id": "maxpool-reduce",
-   "weight": 1.0,
-   "confidence": 0.6,
-   "is_hard_gate": false,
-   "is_encompassing": false,
-   "propagation_weight": 0.0,
-   "rationale": "[uses] pooling reuses 2d window construction"
   },
   {
    "prerequisite_id": "nn-module-subclass",
@@ -4919,14 +5620,14 @@
    "rationale": "[uses] step does in-place leaf param update"
   },
   {
-   "prerequisite_id": "optimizer-loop-on-tensor",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "step-counter-increment",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] counter increments after the optimizer step"
+   "rationale": "[uses] counter increments after the optimizer step [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "training-step-cycle",
@@ -4999,34 +5700,24 @@
    "rationale": "[uses] params() generator yields Parameters to list"
   },
   {
-   "prerequisite_id": "backward-on-scalar-loss",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "training-step-cycle",
    "weight": 1.0,
    "confidence": 0.85,
    "is_hard_gate": true,
    "is_encompassing": true,
    "propagation_weight": 0.6,
-   "rationale": "[part-of] backward on scalar loss is a step in the cycle"
+   "rationale": "[part-of] backward on scalar loss is a step in the cycle [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
-   "prerequisite_id": "zero-grad-set-none",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "training-step-cycle",
    "weight": 1.0,
    "confidence": 0.85,
    "is_hard_gate": true,
    "is_encompassing": true,
    "propagation_weight": 0.6,
-   "rationale": "[part-of] zero_grad is one of the five canonical calls"
-  },
-  {
-   "prerequisite_id": "optimizer-loop-on-tensor",
-   "dependent_id": "training-step-cycle",
-   "weight": 1.0,
-   "confidence": 0.7,
-   "is_hard_gate": true,
-   "is_encompassing": true,
-   "propagation_weight": 0.5,
-   "rationale": "[part-of] optimizer.step is a call in the cycle"
+   "rationale": "[part-of] zero_grad is one of the five canonical calls [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "inference-mode-step",
@@ -5039,24 +5730,24 @@
    "rationale": "[alternative-to] no_grad and inference_mode both disable grad for val"
   },
   {
-   "prerequisite_id": "param-grad-access",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "zero-grad-set-none",
    "weight": 1.0,
    "confidence": 0.7,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] zero_grad iterates params and clears .grad"
+   "rationale": "[uses] zero_grad iterates params and clears .grad [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
-   "prerequisite_id": "param-grad-access",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "clip-grad-norm-pre-step",
    "weight": 1.0,
    "confidence": 0.75,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] clip reads each param .grad to compute global norm"
+   "rationale": "[uses] clip reads each param .grad to compute global norm [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "vector-normalize-keepdim",
@@ -5139,14 +5830,14 @@
    "rationale": "[uses] theta*=1-lr*lmda rescales params in place"
   },
   {
-   "prerequisite_id": "param-grad-access",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "weight-decay-l2-add",
    "weight": 1.0,
    "confidence": 0.65,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] fold lambda*theta into the gradient buffer"
+   "rationale": "[uses] fold lambda*theta into the gradient buffer [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "nested-param-group-loop",
@@ -5169,24 +5860,24 @@
    "rationale": "[uses] loop iterates normalized param_groups"
   },
   {
-   "prerequisite_id": "optimizer-loop-on-tensor",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "nested-param-group-loop",
    "weight": 1.0,
    "confidence": 0.7,
    "is_hard_gate": true,
    "is_encompassing": true,
    "propagation_weight": 0.6,
-   "rationale": "[refines] nested loop generalizes the flat optimizer step"
+   "rationale": "[refines] nested loop generalizes the flat optimizer step [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
-   "prerequisite_id": "optimizer-loop-on-tensor",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "optimizer-class-dispatch",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] dispatched optimizer reused in the SGD-style loop"
+   "rationale": "[uses] dispatched optimizer reused in the SGD-style loop [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "params-iterable-vs-groups",
@@ -5379,14 +6070,14 @@
    "rationale": "[uses] sync grads with op=mean all_reduce"
   },
   {
-   "prerequisite_id": "param-grad-access",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "all-reduce-grad-sync",
    "weight": 1.0,
    "confidence": 0.7,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] iterate params to all_reduce each .grad"
+   "rationale": "[uses] iterate params to all_reduce each .grad [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "broadcast-source-fanout",
@@ -5499,14 +6190,14 @@
    "rationale": "[uses] loss consumes D's sigmoid real/fake scalar"
   },
   {
-   "prerequisite_id": "backward-on-scalar-loss",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "bce-log-loss-real-fake",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] BCE reduced to scalar before backward"
+   "rationale": "[uses] BCE reduced to scalar before backward [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "detach-stop-gradient-trick",
@@ -5809,14 +6500,14 @@
    "rationale": "[part-of] ELBO sums KL term scaled by beta"
   },
   {
-   "prerequisite_id": "backward-on-scalar-loss",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "elbo-loss-sum-with-beta",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] ELBO scalarized before backward"
+   "rationale": "[uses] ELBO scalarized before backward [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "bce-log-loss-real-fake",
@@ -5889,14 +6580,14 @@
    "rationale": "[uses] iterate registered child modules"
   },
   {
-   "prerequisite_id": "backward-on-scalar-loss",
+   "prerequisite_id": "tensor-grad-attribute",
    "dependent_id": "mse-reconstruction-loss",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] MSE reduced to scalar before backward"
+   "rationale": "[uses] MSE reduced to scalar before backward [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "linear-affine-on-custom-tensor",
@@ -5989,14 +6680,14 @@
    "rationale": "[uses] snapshot each step before stacking"
   },
   {
-   "prerequisite_id": "optimizer-loop-on-tensor",
+   "prerequisite_id": "sgd-update-rule",
    "dependent_id": "two-optimizers-alternating-step",
    "weight": 1.0,
    "confidence": 0.6,
    "is_hard_gate": false,
    "is_encompassing": false,
    "propagation_weight": 0.0,
-   "rationale": "[uses] each step runs a manual optimizer update"
+   "rationale": "[uses] each step runs a manual optimizer update [2026-07-08: prereq rewritten to trainable twin — original had no bank questions and permanently locked this atom]"
   },
   {
    "prerequisite_id": "training-step-cycle",
@@ -6009,14 +6700,614 @@
    "rationale": "[refines] two interleaved training-step cycles"
   },
   {
-   "prerequisite_id": "zero-grad-set-none",
-   "dependent_id": "two-optimizers-alternating-step",
+   "prerequisite_id": "tensor-wraps-ndarray",
+   "dependent_id": "requires-grad-flag",
    "weight": 1.0,
-   "confidence": 0.6,
-   "is_hard_gate": false,
-   "is_encompassing": false,
-   "propagation_weight": 0.0,
-   "rationale": "[uses] each optimizer zero_grads between steps"
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "requires-grad-flag",
+   "dependent_id": "tensor-grad-attribute",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "requires-grad-flag",
+   "dependent_id": "grad-tracking-global-flag",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-grad-attribute",
+   "dependent_id": "nn-parameter",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "requires-grad-flag",
+   "dependent_id": "module-requires-grad-toggle",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-parameter",
+   "dependent_id": "module-requires-grad-toggle",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "module-requires-grad-toggle",
+   "dependent_id": "feature-extraction-freeze",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-wraps-ndarray",
+   "dependent_id": "nn-module-subclass",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "extra-repr",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-parameter",
+   "dependent_id": "nn-init-normal-constant",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "any-reduce-axis",
+   "dependent_id": "torch-amax-reduction",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "any-reduce-axis",
+   "dependent_id": "torch-var-unbiased",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-wraps-ndarray",
+   "dependent_id": "torch-as-tensor-no-copy",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "torch-where-conditional",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "any-reduce-axis",
+   "dependent_id": "softmax-from-logits",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "softmax-from-logits",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "softmax-from-logits",
+   "dependent_id": "cross-entropy-loss",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "softmax-from-logits",
+   "dependent_id": "log-sum-exp-stability",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "grad-tracking-global-flag",
+   "dependent_id": "inference-mode-context",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-grad-attribute",
+   "dependent_id": "sgd-update-rule",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "ewma-running-stat",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-parameter",
+   "dependent_id": "param-iterable-list-conversion",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "training-loop-skeleton",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "conv2d-module",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "conv-output-shape",
+   "dependent_id": "conv2d-module",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv2d-functional",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv-fanin-input-channels-times-kernel",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "conv-as-einsum",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "conv-as-einsum",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "einops-rearrange-flatten",
+   "dependent_id": "flatten-layer",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "maxpool-reduce",
+   "dependent_id": "maxpool2d",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "avgpool-reduce",
+   "dependent_id": "global-average-pool",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "broadcast-reshape-1c11",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "conv2d-module",
+   "dependent_id": "torch-no-bias-conv-batchnorm-pair",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "torch-no-bias-conv-batchnorm-pair",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "inf-masking",
+   "dependent_id": "neg-inf-maxpool-pad",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "maxpool-reduce",
+   "dependent_id": "neg-inf-maxpool-pad",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "padding-with-new-full",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "linear-affine-transformation",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "ewma-running-stat",
+   "dependent_id": "batchnorm-running-stats-ema",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "batchnorm-running-stats-ema",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "batchnorm-running-stats-ema",
+   "dependent_id": "batchnorm-train-eval-divergence",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "model-train-eval-toggle",
+   "dependent_id": "batchnorm-train-eval-divergence",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "model-train-eval-toggle",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "tensor-grad-attribute",
+   "dependent_id": "chain-rule-backprop",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matmul-backward-rules",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "chain-rule-backprop",
+   "dependent_id": "matmul-backward-rules",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "unbroadcast",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "sum-back-expand-broadcast",
+   "dependent_id": "unbroadcast",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "maximum-backward-tie-split",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "permute-backward-argsort",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "view-vs-reshape",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "view-vs-reshape",
+   "dependent_id": "reshape-backward",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "boolean-mask-combine",
+   "dependent_id": "boolean-mask-broadcast-assignment",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "as-strided-windowing",
+   "dependent_id": "matmul-via-strides-and-sum",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "matmul-via-strides-and-sum",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "outer-product-grid",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "copy-inplace-_underscore",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "matmul-2d",
+   "dependent_id": "determinant-singularity-test",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "einops-rearrange",
+   "dependent_id": "assert-shape-pattern",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "linspace-evenly-spaced",
+   "dependent_id": "linspace-out-param",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
   }
  ],
  "lessons": [],
@@ -9939,7 +11230,7 @@
    "concept_id": "log-back",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+   "notes": "Elementwise log back fn — canonical (grad_out, out, x) signature, returns grad_out / x."
   },
   {
    "source_bank": "arena_chap0",
@@ -9947,7 +11238,7 @@
    "concept_id": "backward-fn-signature",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+   "notes": "Elementwise log back fn — canonical (grad_out, out, x) signature, returns grad_out / x."
   },
   {
    "source_bank": "arena_chap0",
@@ -9955,7 +11246,7 @@
    "concept_id": "chain-rule-elementwise",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+   "notes": "Elementwise log back fn — canonical (grad_out, out, x) signature, returns grad_out / x."
   },
   {
    "source_bank": "arena_chap0",
@@ -9963,7 +11254,7 @@
    "concept_id": "unbroadcast-pattern",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Reverse-broadcast helper \u2014 sum prepended dims then size-1 dims with keepdims."
+   "notes": "Reverse-broadcast helper — sum prepended dims then size-1 dims with keepdims."
   },
   {
    "source_bank": "arena_chap0",
@@ -9971,7 +11262,7 @@
    "concept_id": "broadcasting-rules",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Reverse-broadcast helper \u2014 sum prepended dims then size-1 dims with keepdims."
+   "notes": "Reverse-broadcast helper — sum prepended dims then size-1 dims with keepdims."
   },
   {
    "source_bank": "arena_chap0",
@@ -9979,7 +11270,7 @@
    "concept_id": "sum-and-broadcast-duality",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Reverse-broadcast helper \u2014 sum prepended dims then size-1 dims with keepdims."
+   "notes": "Reverse-broadcast helper — sum prepended dims then size-1 dims with keepdims."
   },
   {
    "source_bank": "arena_chap0",
@@ -9987,7 +11278,7 @@
    "concept_id": "multiply-back",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -9995,7 +11286,7 @@
    "concept_id": "backward-fn-signature",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -10003,7 +11294,7 @@
    "concept_id": "arg-position-back-functions",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -10011,7 +11302,7 @@
    "concept_id": "unbroadcast-pattern",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -10019,7 +11310,7 @@
    "concept_id": "chain-rule-elementwise",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -10027,7 +11318,7 @@
    "concept_id": "coerce-float-arg-to-array",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+   "notes": "Per-arg multiply back fns — chain rule * y or * x, then unbroadcast, with float coercion."
   },
   {
    "source_bank": "arena_chap0",
@@ -10091,7 +11382,7 @@
    "concept_id": "backward-func-lookup",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+   "notes": "Dict keyed by (forward_fn, arg_position) — add/get back fn registrations."
   },
   {
    "source_bank": "arena_chap0",
@@ -10099,7 +11390,7 @@
    "concept_id": "arg-position-back-functions",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+   "notes": "Dict keyed by (forward_fn, arg_position) — add/get back fn registrations."
   },
   {
    "source_bank": "arena_chap0",
@@ -10107,7 +11398,7 @@
    "concept_id": "register-back-fn-after-wrap",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+   "notes": "Dict keyed by (forward_fn, arg_position) — add/get back fn registrations."
   },
   {
    "source_bank": "arena_chap0",
@@ -10115,7 +11406,7 @@
    "concept_id": "recipe-dataclass",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10123,7 +11414,7 @@
    "concept_id": "box-array-to-tensor-with-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10131,7 +11422,7 @@
    "concept_id": "requires-grad-propagation",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10139,7 +11430,7 @@
    "concept_id": "grad-tracking-global-toggle",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10147,7 +11438,7 @@
    "concept_id": "parents-dict-by-argidx",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10155,7 +11446,7 @@
    "concept_id": "unbox-args-tensor-to-array",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+   "notes": "Manual forward wrapper for log — unbox, compute, box with Recipe + parents when grad-tracked."
   },
   {
    "source_bank": "arena_chap0",
@@ -10163,7 +11454,7 @@
    "concept_id": "recipe-dataclass",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10171,7 +11462,7 @@
    "concept_id": "box-array-to-tensor-with-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10179,7 +11470,7 @@
    "concept_id": "requires-grad-propagation",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10187,7 +11478,7 @@
    "concept_id": "grad-tracking-global-toggle",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10195,7 +11486,7 @@
    "concept_id": "parents-dict-by-argidx",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10203,7 +11494,7 @@
    "concept_id": "unbox-args-tensor-to-array",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10211,7 +11502,7 @@
    "concept_id": "coerce-float-arg-to-array",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+   "notes": "Manual forward wrapper for multiply — handles mixed Tensor/scalar args via parents-by-argidx."
   },
   {
    "source_bank": "arena_chap0",
@@ -10219,7 +11510,7 @@
    "concept_id": "wrap-forward-fn-generic",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10227,7 +11518,7 @@
    "concept_id": "recipe-dataclass",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10235,7 +11526,7 @@
    "concept_id": "box-array-to-tensor-with-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10243,7 +11534,7 @@
    "concept_id": "requires-grad-propagation",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10251,7 +11542,7 @@
    "concept_id": "is-differentiable-flag",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10259,7 +11550,7 @@
    "concept_id": "grad-tracking-global-toggle",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10267,7 +11558,7 @@
    "concept_id": "parents-dict-by-argidx",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10275,7 +11566,7 @@
    "concept_id": "unbox-args-tensor-to-array",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10283,7 +11574,7 @@
    "concept_id": "kwargs-pass-through-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10291,7 +11582,7 @@
    "concept_id": "non-diff-fn-wrap",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+   "notes": "Generic forward-fn wrapper — unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
   },
   {
    "source_bank": "arena_chap0",
@@ -10299,7 +11590,7 @@
    "concept_id": "dfs-three-set-toposort",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+   "notes": "Three-set DFS toposort with temp-set cycle detection — root last in result list."
   },
   {
    "source_bank": "arena_chap0",
@@ -10307,7 +11598,7 @@
    "concept_id": "cycle-detection-temp-set",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+   "notes": "Three-set DFS toposort with temp-set cycle detection — root last in result list."
   },
   {
    "source_bank": "arena_chap0",
@@ -10315,7 +11606,7 @@
    "concept_id": "sorted-computational-graph",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+   "notes": "Three-set DFS toposort with temp-set cycle detection — root last in result list."
   },
   {
    "source_bank": "arena_chap0",
@@ -10323,7 +11614,7 @@
    "concept_id": "get-children-callable-param",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+   "notes": "Three-set DFS toposort with temp-set cycle detection — root last in result list."
   },
   {
    "source_bank": "arena_chap0",
@@ -10331,7 +11622,7 @@
    "concept_id": "backprop-pop-outgrad-loop",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10339,7 +11630,7 @@
    "concept_id": "sorted-computational-graph",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10347,7 +11638,7 @@
    "concept_id": "end-grad-default-ones-like",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10355,7 +11646,7 @@
    "concept_id": "dispatch-back-fn-from-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10363,7 +11654,7 @@
    "concept_id": "back-fn-call-with-recipe-args",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10371,7 +11662,7 @@
    "concept_id": "grad-accumulate-on-leaf",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10379,7 +11670,7 @@
    "concept_id": "grads-dict-accumulate-parents",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10387,7 +11678,7 @@
    "concept_id": "leaf-tensor-condition",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10395,7 +11686,7 @@
    "concept_id": "param-grad-access",
    "role": "primary",
    "weight": 1.0,
-   "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+   "notes": "Main reverse-pass driver — pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
   },
   {
    "source_bank": "arena_chap0",
@@ -10435,7 +11726,7 @@
    "concept_id": "exp-back",
    "role": "primary",
    "weight": 1.0,
-   "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+   "notes": "exp_back reuses cached out (out * grad_out) — no second exp call; registered post-wrap."
   },
   {
    "source_bank": "arena_chap0",
@@ -10443,7 +11734,7 @@
    "concept_id": "grad-expressed-in-out",
    "role": "primary",
    "weight": 1.0,
-   "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+   "notes": "exp_back reuses cached out (out * grad_out) — no second exp call; registered post-wrap."
   },
   {
    "source_bank": "arena_chap0",
@@ -10451,7 +11742,7 @@
    "concept_id": "backward-fn-signature",
    "role": "primary",
    "weight": 1.0,
-   "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+   "notes": "exp_back reuses cached out (out * grad_out) — no second exp call; registered post-wrap."
   },
   {
    "source_bank": "arena_chap0",
@@ -10459,7 +11750,7 @@
    "concept_id": "register-back-fn-after-wrap",
    "role": "primary",
    "weight": 1.0,
-   "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+   "notes": "exp_back reuses cached out (out * grad_out) — no second exp call; registered post-wrap."
   },
   {
    "source_bank": "arena_chap0",
@@ -10467,7 +11758,7 @@
    "concept_id": "wrap-forward-fn-generic",
    "role": "primary",
    "weight": 1.0,
-   "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+   "notes": "exp_back reuses cached out (out * grad_out) — no second exp call; registered post-wrap."
   },
   {
    "source_bank": "arena_chap0",
@@ -10555,7 +11846,7 @@
    "concept_id": "sum-back-expand-broadcast",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10563,7 +11854,7 @@
    "concept_id": "sum-and-broadcast-duality",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10571,7 +11862,7 @@
    "concept_id": "backward-fn-signature",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10579,7 +11870,7 @@
    "concept_id": "register-back-fn-after-wrap",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10587,7 +11878,7 @@
    "concept_id": "wrap-forward-fn-generic",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10595,7 +11886,7 @@
    "concept_id": "kwargs-pass-through-recipe",
    "role": "primary",
    "weight": 1.0,
-   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+   "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape — dual of forward sum."
   },
   {
    "source_bank": "arena_chap0",
@@ -10659,7 +11950,7 @@
    "concept_id": "chain-rule-elementwise",
    "role": "primary",
    "weight": 1.0,
-   "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+   "notes": "relu(x) = maximum(x, 0.0) — reuses the already-wrapped maximum op, no new back fn."
   },
   {
    "source_bank": "arena_chap0",
@@ -10667,7 +11958,7 @@
    "concept_id": "max-back-tied-half",
    "role": "primary",
    "weight": 1.0,
-   "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+   "notes": "relu(x) = maximum(x, 0.0) — reuses the already-wrapped maximum op, no new back fn."
   },
   {
    "source_bank": "arena_chap0",
@@ -10675,7 +11966,7 @@
    "concept_id": "functional-module-wrap",
    "role": "primary",
    "weight": 1.0,
-   "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+   "notes": "relu(x) = maximum(x, 0.0) — reuses the already-wrapped maximum op, no new back fn."
   },
   {
    "source_bank": "arena_chap0",
@@ -10859,5 +12150,22 @@
   "require_all_hard_prereqs": true,
   "supplemental_concepts_block_progress": false,
   "notes": "Defaults inherited from Delta Drills MasteryGatePolicy. Threshold can be tuned once real attempt data is collected. require_all_hard_prereqs=True means: a learner unlocks atom X only when ALL hard-gate prerequisites are above the mastery threshold."
- }
+ },
+ "intentional_root_atoms": [
+  "argmax-prediction",
+  "einops-einsum",
+  "einops-rearrange",
+  "einops-reduce",
+  "force-pair-int-or-tuple",
+  "index-by-tensor",
+  "isfinite-mask",
+  "linspace-evenly-spaced",
+  "manual-seed",
+  "tensor-pow",
+  "tensor-unbind",
+  "tensor-zeros-init",
+  "torch-arange",
+  "torch-rand-uniform",
+  "type-hints-python"
+ ]
 }

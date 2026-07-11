@@ -126,6 +126,10 @@ NON_GATING_ATOMS = frozenset({
     "tqdm-progress-bar", "mnist-dataset", "imagenet-1k-labels", "wandb-watch-gradients",
     "imagenet-normalization", "torchvision-models-pretrained", "trainer-class-pattern",
     "cifar10-dataset",
+    # 2026-07-08 orphan-atom fix: untrainable prereqs (zero bank questions) that
+    # permanently locked their dependents; no trainable twin exists to rewrite to.
+    "tensor-item-scalar", "singular-matrix-mask-trick", "unbroadcast-pattern",
+    "validation-no-grad",
 })
 
 
