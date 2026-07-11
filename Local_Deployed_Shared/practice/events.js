@@ -230,6 +230,7 @@ async function _notifyIfPlacementDone() {
     if (typeof loadBackendAdaptiveState === "function") {
       await loadBackendAdaptiveState();
     }
+    refreshPlacementStartBtn().catch(() => {});
     emitPracticeStateChanged();
     if (typeof showPracticeModeNotice === "function") {
       const strongest = (status.areas || []).slice().sort((a, b) => b.theta - a.theta)[0];
@@ -241,6 +242,46 @@ async function _notifyIfPlacementDone() {
   } catch (_) {
     /* best-effort — never blocks the practice flow */
   }
+}
+
+// "Take placement diagnostic" — the way IN for accounts with existing history
+// (the diagnostic only auto-starts for zero-attempt users). Shown whenever the
+// backend says no diagnostic is running; label flips to "Retake" once one has
+// completed. Starting re-places the learner: BKT seeding at finish only raises
+// practiced atoms, so earned mastery is safe.
+async function refreshPlacementStartBtn() {
+  if (typeof placementStartBtn === "undefined" || !placementStartBtn) return;
+  const status = await PracticeAPI.diagnosticStatus();
+  if (!status || status.active) {
+    placementStartBtn.classList.add("hidden");
+    return;
+  }
+  placementStartBtn.textContent = status.completed_at
+    ? "Retake placement diagnostic"
+    : "Take placement diagnostic";
+  placementStartBtn.disabled = false;
+  placementStartBtn.classList.remove("hidden");
+}
+window.refreshPlacementStartBtn = refreshPlacementStartBtn;
+
+if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
+  placementStartBtn.addEventListener("click", async () => {
+    placementStartBtn.disabled = true;
+    try {
+      const status = await PracticeAPI.diagnosticStart();
+      if (!status) throw new Error("not signed in to the practice backend");
+      placementStartBtn.classList.add("hidden");
+      if (typeof showPracticeModeNotice === "function") {
+        showPracticeModeNotice(
+          "Placement diagnostic started — a few adaptive questions to locate your level.",
+        );
+      }
+      await _loadNextPracticeQuestion();
+    } catch (err) {
+      outputArea.textContent = "Could not start the placement diagnostic: " + err.message;
+      placementStartBtn.disabled = false;
+    }
+  });
 }
 
 // "I don't know yet" — placement-only: records a diagnostic miss WITHOUT a

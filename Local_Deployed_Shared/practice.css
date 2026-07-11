@@ -124,13 +124,19 @@
 }
 
 /* Question Number */
+.question-number-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .question-number {
   font-size: 14px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
 }
 
 /* Question Text */
@@ -814,6 +820,29 @@
 .self-report-note {
   color: var(--muted, #9aa3b2);
   font-size: 12px;
+}
+
+/* Entry point into the placement diagnostic for accounts with history
+   (auto-start is zero-attempt-only). Amber to match the placement badge. */
+.placement-start-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 196, 0, 0.45);
+  background: rgba(255, 196, 0, 0.08);
+  color: var(--text, #e8ecf4);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.placement-start-btn:hover {
+  border-color: rgba(255, 196, 0, 0.8);
+  background: rgba(255, 196, 0, 0.16);
+}
+
+.placement-start-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* Torch drills run in Colab — honest routing notice instead of a dead editor. */

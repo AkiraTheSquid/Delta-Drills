@@ -3,21 +3,21 @@
    ================================================================ */
 
 let timerInterval = null;
-let timerSeconds = 10; // 10 seconds default
-let timerTargetSeconds = 10; // the user-set value to reset to
+let timerSeconds = 300; // 5 minutes default
+let timerTargetSeconds = 300; // the user-set value to reset to
 
 const parseTimerInput = (value) => {
   const raw = String(value || "").trim();
-  if (!raw) return 10;
+  if (!raw) return 300;
   if (raw.includes(":")) {
     const [mStr, sStr] = raw.split(":");
     const m = Number(mStr);
     const s = Number(sStr);
-    if (!Number.isFinite(m) || !Number.isFinite(s)) return 10;
+    if (!Number.isFinite(m) || !Number.isFinite(s)) return 300;
     return Math.max(1, Math.min(3600, m * 60 + s));
   }
   const asNumber = Number(raw);
-  if (!Number.isFinite(asNumber)) return 10;
+  if (!Number.isFinite(asNumber)) return 300;
   return Math.max(1, Math.min(3600, Math.round(asNumber)));
 };
 
