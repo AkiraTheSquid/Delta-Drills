@@ -69,16 +69,24 @@ def code_uses_torch(code: str) -> bool:
     return re.search(r"(?m)^\s*(?:import\s+torch\b|from\s+torch[\s.])", code or "") is not None
 
 
-ARENA_NUMBERS_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "Local_Deployed_Shared"
-    / "content"
-    / "ARENA_3.0-main"
-    / "chapter0_fundamentals"
-    / "exercises"
-    / "part0_prereqs"
-    / "numbers.npy"
-)
+def _resolve_arena_numbers_path() -> Path:
+    """First existing copy of the ARENA digits fixture. The vendored copy in
+    app/data ships in the Docker image (the ARENA content tree is gitignored
+    and absent from the deploy build context — visual fixtures could never
+    grade on Fly until it was vendored, 2026-07-12)."""
+    candidates = (
+        Path(__file__).resolve().parent / "data" / "numbers.npy",
+        Path(__file__).resolve().parents[3]
+        / "Local_Deployed_Shared" / "content" / "ARENA_3.0-main"
+        / "chapter0_fundamentals" / "exercises" / "part0_prereqs" / "numbers.npy",
+    )
+    for p in candidates:
+        if p.exists():
+            return p
+    return candidates[0]
+
+
+ARENA_NUMBERS_PATH = _resolve_arena_numbers_path()
 
 # Preamble injected before user code to ensure numpy (and einops) are available
 # and results are reproducible. einops import is guarded so numpy/einsum problems

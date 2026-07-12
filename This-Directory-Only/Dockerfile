@@ -21,10 +21,9 @@ COPY ["This-Directory-Only/mathpix processor", "./This-Directory-Only/mathpix pr
 COPY ["This-Directory-Only/csv files of problems", "./This-Directory-Only/csv files of problems"]
 COPY Local_Deployed_Shared/chatgpt ./Local_Deployed_Shared/chatgpt
 COPY Local_Deployed_Shared/tools ./Local_Deployed_Shared/tools
-# The grading harness redirects np.load('/delta_numbers.npy') to this file
-# (code_runner.ARENA_NUMBERS_PATH) — without it every canonical visual/einops
-# image fixture fails with FileNotFoundError on the backend (405KB).
-COPY Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy ./Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part0_prereqs/numbers.npy
+# numbers.npy (the visual-fixture image data) is vendored in backend/app/data
+# — the ARENA content tree is gitignored and absent from this build context,
+# so code_runner resolves the vendored copy first.
 
 # Persistent volume mount point — Fly.io mounts /data here
 RUN mkdir -p /data/storage /data/user_data
