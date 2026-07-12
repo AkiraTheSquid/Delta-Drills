@@ -518,6 +518,13 @@ def compose_full_solution(starter_code: str | None, answer_code: str) -> str:
     into the existing editor body. Returning the complete script lets them
     do exactly that and submit it as-is.
     """
+    text = (answer_code or "").strip()
+    # Parameterized-regen answers are already COMPLETE paste-ready scripts
+    # (imports + fixture + def solve(<params>) + example invocation). Splicing
+    # them into the starter would nest/mangle them (bit the visual regen:
+    # solution_code came back as a def-inside-def with broken indentation).
+    if re.search(r"(?m)^def\s+solve\s*\(", text):
+        return text
     answer_func = wrap_answer_as_function(answer_code)
     if not answer_func:
         return starter_code or ""
@@ -550,7 +557,9 @@ def wrap_answer_as_function(answer_code: str) -> str:
     text = (answer_code or "").strip()
     if not text:
         return text
-    if text.lstrip().startswith("def solve("):
+    # A full-script answer (imports/fixture lines before its own def solve)
+    # is already function-form — wrapping would nest def-inside-def.
+    if re.search(r"(?m)^def\s+solve\s*\(", text):
         return text
     # Drop any display_array_as_img(...) side-effect calls.
     cleaned = re.sub(r";?\s*display_array_as_img\([^)]*\)", "", text).strip()
