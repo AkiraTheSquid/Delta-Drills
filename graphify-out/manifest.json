@@ -5,92 +5,92 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sphinx_design_static/design-tabs.js": {
-    "mtime": 1783813977.0121224,
+    "mtime": 1783815268.5348065,
     "ast_hash": "e44d3bc0f076c93816e75e2470470bc6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/clipboard.min.js": {
-    "mtime": 1783813977.025267,
+    "mtime": 1783815268.5476975,
     "ast_hash": "274d5f6334c31fdb1b0464a912fa7f15",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/copybutton.js": {
-    "mtime": 1783813977.0251641,
+    "mtime": 1783815268.5475926,
     "ast_hash": "462580e0fcd4067a106177096419108b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/copybutton_funcs.js": {
-    "mtime": 1783813977.0250149,
+    "mtime": 1783815268.547433,
     "ast_hash": "56b563b96397f379f05613335b4d99a7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/design-tabs.js": {
-    "mtime": 1783813977.0258207,
+    "mtime": 1783815268.5483065,
     "ast_hash": "e44d3bc0f076c93816e75e2470470bc6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/doctools.js": {
-    "mtime": 1783813977.0129137,
+    "mtime": 1783815268.535603,
     "ast_hash": "a06061bf0e46e0400baa163b402ef611",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/documentation_options.js": {
-    "mtime": 1783813977.013156,
+    "mtime": 1783815268.5358145,
     "ast_hash": "d7c831fd8111e9a03413bf326377ccce",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/language_data.js": {
-    "mtime": 1783813977.0128026,
+    "mtime": 1783815268.5355036,
     "ast_hash": "a56f6149e9ed16ae383a92b7718fbee6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/bootstrap.js": {
-    "mtime": 1783813977.016045,
+    "mtime": 1783815268.5377326,
     "ast_hash": "1baa30c2f9ff97f0e99fa86590da1efb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/fontawesome.js": {
-    "mtime": 1783813977.0142612,
+    "mtime": 1783815268.5365934,
     "ast_hash": "7eae02f934761b971f53bae8bb510422",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/pydata-sphinx-theme.js": {
-    "mtime": 1783813977.013453,
+    "mtime": 1783815268.536128,
     "ast_hash": "14abd6417bd42e3ec7b57ba5273c3d80",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/sphinx-book-theme.js": {
-    "mtime": 1783813977.016636,
+    "mtime": 1783815268.5391622,
     "ast_hash": "e48e782cb6e6334a930c0f2247e32cc9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/searchtools.js": {
-    "mtime": 1783813977.0126796,
+    "mtime": 1783815268.5353847,
     "ast_hash": "e87e903ebecd87a523519d324121fd8a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/sphinx-thebe.js": {
-    "mtime": 1783813977.0254643,
+    "mtime": 1783815268.5479155,
     "ast_hash": "7c31f0e82b74697f2b7575a50e64115a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/sphinx_highlight.js": {
-    "mtime": 1783813977.0131903,
+    "mtime": 1783815268.5358512,
     "ast_hash": "0cd5ef6415c4af33c6faf75b54102cf5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/togglebutton.js": {
-    "mtime": 1783813977.024793,
+    "mtime": 1783815268.5471988,
     "ast_hash": "7c656beb4459625968bbb8c695490635",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/searchindex.js": {
-    "mtime": 1783813977.0112612,
+    "mtime": 1783815268.5339627,
     "ast_hash": "95c832ae5a64f5f8126cb889fdc62860",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena/exercises.js": {
-    "mtime": 1783813951.9629443,
+    "mtime": 1783815244.100935,
     "ast_hash": "119f87465722259f756a0801561a2a4d",
     "semantic_hash": ""
   },
@@ -110,7 +110,7 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena_prereqs_structured.json": {
-    "mtime": 1783813951.9164147,
+    "mtime": 1783815244.0557106,
     "ast_hash": "5f4baa5462dc9b02446727c59dceff78",
     "semantic_hash": ""
   },
@@ -3180,8 +3180,8 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/pipeline/mech_gate_candidate.py": {
-    "mtime": 1783484592.6143084,
-    "ast_hash": "4aea5d31b8fb588508bc4d691a989174",
+    "mtime": 1783814032.6120286,
+    "ast_hash": "5a2a3b1d7399d16cd2ee42a70c81a2c9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/pipeline/regen_status.py": {
@@ -3360,13 +3360,13 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/questions.json": {
-    "mtime": 1783813951.8759134,
-    "ast_hash": "eab434e70eefa097895f17929c05777e",
+    "mtime": 1783815244.0164042,
+    "ast_hash": "d04beeb65c98c36d8504dfeb9c37fadf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/questions_structured.json": {
-    "mtime": 1783813951.8879135,
-    "ast_hash": "7ae0bab08ece4d3ed6c92a9e09abe0b6",
+    "mtime": 1783815244.0284042,
+    "ast_hash": "d051d21c0c0b4d603aa3642cbde596e8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/split-tool.js": {
@@ -3695,572 +3695,572 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/00_[0.0]_Prerequisites.md": {
-    "mtime": 1783813977.0875964,
+    "mtime": 1783815268.6095848,
     "ast_hash": "28f9845a7a8766395c2220259e2c716e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/01_[0.1]_Ray_Tracing.md": {
-    "mtime": 1783813977.0880134,
+    "mtime": 1783815268.6099975,
     "ast_hash": "a9afd018839486b5cbb89d7cf755eb82",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/02_[0.2]_CNNs_&_ResNets.md": {
-    "mtime": 1783813977.0882614,
+    "mtime": 1783815268.6102376,
     "ast_hash": "96e5f8b4737ec6b591930a43a76ece75",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/03_[0.3]_Optimization.md": {
-    "mtime": 1783813977.0884757,
+    "mtime": 1783815268.6104362,
     "ast_hash": "cbc9ba366db2aa33cd0023f96a1450dc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/04_[0.4]_Backprop.md": {
-    "mtime": 1783813977.0886898,
+    "mtime": 1783815268.6106374,
     "ast_hash": "a0993acb3a49269ebbf05bc7428965f7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter0_fundamentals/instructions/pages/05_[0.5]_VAEs_&_GANs.md": {
-    "mtime": 1783813977.088894,
+    "mtime": 1783815268.6108286,
     "ast_hash": "a0dda87a2b0fa90ea52f735bc129499d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/01_[1.1]_Transformer_from_Scratch.md": {
-    "mtime": 1783813977.0940654,
+    "mtime": 1783815268.6145754,
     "ast_hash": "643bf7bcd576f7c96fcf4ab1854ea2b6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/02_[1.2]_Intro_to_Mech_Interp.md": {
-    "mtime": 1783813977.094517,
+    "mtime": 1783815268.614992,
     "ast_hash": "499f6519200d5936cb711a0bafdbf70a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/11_[1.3.1]_Linear_Probes.md": {
-    "mtime": 1783813977.0947418,
+    "mtime": 1783815268.6152043,
     "ast_hash": "c64151bdb6b916b9995977781a42a4d8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/11_[1.3.1]_Probing_for_Deception.md": {
-    "mtime": 1783813977.0949903,
+    "mtime": 1783815268.6154077,
     "ast_hash": "87b686dc0d67abbd2d1a88fce207b30e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/12_[1.3.2]_Function_Vectors_&_Model_Steering.md": {
-    "mtime": 1783813977.0951905,
+    "mtime": 1783815268.6156077,
     "ast_hash": "05daacd12892338e917ef7337f48561f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/13_[1.3.3]_Interpretability_with_SAEs.md": {
-    "mtime": 1783813977.0954616,
+    "mtime": 1783815268.615887,
     "ast_hash": "fcea07512bacada383b192ccc504d98a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/14_[1.3.4]_Activation_Oracles.md": {
-    "mtime": 1783813977.0958939,
+    "mtime": 1783815268.6162863,
     "ast_hash": "ad08f113d8b25192d71339c788f73d4e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/21_[1.4.1]_Indirect_Object_Identification.md": {
-    "mtime": 1783813977.0961735,
+    "mtime": 1783815268.616568,
     "ast_hash": "b3e5eeccac3c0279e9956d93124f1832",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/22_[1.4.2]_SAE_Circuits.md": {
-    "mtime": 1783813977.0964823,
+    "mtime": 1783815268.6168835,
     "ast_hash": "1d038d3f612107e1dc6e82969d822fdd",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/31_[1.5.1]_Balanced_Bracket_Classifier.md": {
-    "mtime": 1783813977.096843,
+    "mtime": 1783815268.6172423,
     "ast_hash": "9a76192d0e76b9e2db924ac227f3f83f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/32_[1.5.2]_Grokking_&_Modular_Arithmetic.md": {
-    "mtime": 1783813977.0970347,
+    "mtime": 1783815268.6174412,
     "ast_hash": "5f480055758ab2ca08d623296f8836b2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/33_[1.5.3]_OthelloGPT.md": {
-    "mtime": 1783813977.0972447,
+    "mtime": 1783815268.6176467,
     "ast_hash": "61b816e3f78d6b5190d09e25b1b459f1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/34_[1.5.4]_Toy_Models_of_Superposition_&_SAEs.md": {
-    "mtime": 1783813977.0975096,
+    "mtime": 1783815268.6178727,
     "ast_hash": "7db32ac8aa9d1819eb3fc8798add7f6e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter1_transformer_interp/instructions/pages/39_[1.5.X]_Monthly_Algorithmic_Problems.md": {
-    "mtime": 1783813977.0977118,
+    "mtime": 1783815268.618069,
     "ast_hash": "34853a0b322a52455dbcd3bfcd76f9e1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/01_[2.1]_Intro_to_RL.md": {
-    "mtime": 1783813977.098768,
+    "mtime": 1783815268.6191256,
     "ast_hash": "60db8636b0673d6fc920d8069e0bb960",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/02_[2.2]_DQN_&_VPG.md": {
-    "mtime": 1783813977.0991695,
+    "mtime": 1783815268.6195254,
     "ast_hash": "f0d5b7f1cc93eabed23c74058aa42c0a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/03_[2.3]_PPO.md": {
-    "mtime": 1783813977.099365,
+    "mtime": 1783815268.6197248,
     "ast_hash": "8aec028cd570e0b3959403a93933f32e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/04_[2.4]_RLHF.md": {
-    "mtime": 1783813977.099572,
+    "mtime": 1783815268.6199307,
     "ast_hash": "4c1979e7a9df64da47b3e39bcd9650bf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/21_[2.2.2]_Policy_Gradient.md": {
-    "mtime": 1783813977.099795,
+    "mtime": 1783815268.6201017,
     "ast_hash": "8a8446a2fa95c0493e93581300463eee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter2_rl/instructions/pages/22_[2.2.2]_VPG.md": {
-    "mtime": 1783813977.0999491,
+    "mtime": 1783815268.6202493,
     "ast_hash": "04aadf4963ccecdcb22efcbbb6b70845",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter3_llm_evals/instructions/pages/01_[3.1]_Intro_to_Evals.md": {
-    "mtime": 1783813977.101074,
+    "mtime": 1783815268.6213245,
     "ast_hash": "f22c713de436ee446fe013b76147178c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter3_llm_evals/instructions/pages/02_[3.2]_Dataset_Generation.md": {
-    "mtime": 1783813977.1014154,
+    "mtime": 1783815268.6216557,
     "ast_hash": "4194f67d27db0037df011025a8a7dcc6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter3_llm_evals/instructions/pages/03_[3.3]_Running_Evals_with_Inspect.md": {
-    "mtime": 1783813977.101603,
+    "mtime": 1783815268.6218472,
     "ast_hash": "0adead418beefbf543655558609316f2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter3_llm_evals/instructions/pages/04_[3.4]_LLM_Agents.md": {
-    "mtime": 1783813977.1017787,
+    "mtime": 1783815268.6220264,
     "ast_hash": "be5811b2764a7a11002e0107d7c1d55b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter4_alignment_science/instructions/pages/01_[4.1]_Emergent_Misalignment.md": {
-    "mtime": 1783813977.10348,
+    "mtime": 1783815268.6236057,
     "ast_hash": "e222db0b69fd683de529e29ac6dccf01",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter4_alignment_science/instructions/pages/02_[4.2]_Science_of_Misalignment.md": {
-    "mtime": 1783813977.1036954,
+    "mtime": 1783815268.6238117,
     "ast_hash": "f7053222299a2dcc5abb4997dfc13329",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter4_alignment_science/instructions/pages/03_[4.3]_Interpreting_Reasoning_Models.md": {
-    "mtime": 1783813977.10392,
+    "mtime": 1783815268.624047,
     "ast_hash": "2ae32b61e31bbcb3a4653cf32def5c20",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter4_alignment_science/instructions/pages/04_[4.4]_LLM_Psychology_&_Persona_Vectors.md": {
-    "mtime": 1783813977.1041486,
+    "mtime": 1783815268.6242774,
     "ast_hash": "7338ef6fd492fc82e4e043c87b9d66eb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/chapter4_alignment_science/instructions/pages/05_[4.5]_Investigator_Agents.md": {
-    "mtime": 1783813977.1043675,
+    "mtime": 1783815268.6245046,
     "ast_hash": "994dea35ababd4d1f2631c92dca82693",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_sources/intro.md": {
-    "mtime": 1783813977.1045053,
+    "mtime": 1783815268.624653,
     "ast_hash": "d9f540f6c359114eccd731c63a283bf5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/sbt-webpack-macros.html": {
-    "mtime": 1783813977.0246873,
+    "mtime": 1783815268.547095,
     "ast_hash": "4662aa81ab9bdafa4de74d5c33302e46",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/bootstrap.js.LICENSE.txt": {
-    "mtime": 1783813977.0148447,
+    "mtime": 1783815268.5374036,
     "ast_hash": "98a6f719a0e699ad3742fe588fbb3788",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/scripts/fontawesome.js.LICENSE.txt": {
-    "mtime": 1783813977.0148861,
+    "mtime": 1783815268.537442,
     "ast_hash": "cfb33d190ffa15551a6a320611715848",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/webpack-macros.html": {
-    "mtime": 1783813977.019637,
+    "mtime": 1783815268.5421624,
     "ast_hash": "5f94e8e5223e16643b3b01e0ec6a11ab",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises.html": {
-    "mtime": 1783813977.104554,
+    "mtime": 1783815268.6247003,
     "ast_hash": "f706e41ec9e386198c618e370c76d02a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.html": {
-    "mtime": 1783813977.1048806,
+    "mtime": 1783815268.625033,
     "ast_hash": "2e1b166dfea7fd13a308c87528349fd1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part2_cnns/0.2_CNNs_&_ResNets_exercises.html": {
-    "mtime": 1783813977.1052625,
+    "mtime": 1783815268.6254292,
     "ast_hash": "aa115cbcc41fa61c54c5a60a95b59bb3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part3_optimization/0.3_Optimization_exercises.html": {
-    "mtime": 1783813977.1056652,
+    "mtime": 1783815268.6258652,
     "ast_hash": "6da9e907af31a1090103ba52a65a48b5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part4_backprop/0.4_Backprop_exercises.html": {
-    "mtime": 1783813977.1062624,
+    "mtime": 1783815268.626362,
     "ast_hash": "b2b775d7d708577786dcbbb831014c1a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&_GANs_exercises.html": {
-    "mtime": 1783813977.1066182,
+    "mtime": 1783815268.6268022,
     "ast_hash": "87bec5ca3ddf0d50fa636843e6de6db3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/.streamlit/README.html": {
-    "mtime": 1783813977.107275,
+    "mtime": 1783815268.627504,
     "ast_hash": "1b6a3035dddb2461d726394b40789531",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/00_[0.0]_Prerequisites.html": {
-    "mtime": 1783813977.1072993,
+    "mtime": 1783815268.6275313,
     "ast_hash": "503c3a1c3d9dfd9b9c4b8cc94e70156b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/01_[0.1]_Ray_Tracing.html": {
-    "mtime": 1783813977.1077914,
+    "mtime": 1783815268.628006,
     "ast_hash": "eab90658ab587468569d5b70e39c40ee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/02_[0.2]_CNNs_&_ResNets.html": {
-    "mtime": 1783813977.1080904,
+    "mtime": 1783815268.6283135,
     "ast_hash": "d1e7b18d273a25ba19163ef3f6455a47",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/03_[0.3]_Optimization.html": {
-    "mtime": 1783813977.1082625,
+    "mtime": 1783815268.6288314,
     "ast_hash": "5c86289801c2110506bded04f325678e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/04_[0.4]_Backprop.html": {
-    "mtime": 1783813977.109102,
+    "mtime": 1783815268.6292403,
     "ast_hash": "af3e2e72759f70f0aad437fc12c2d234",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter0_fundamentals/instructions/pages/05_[0.5]_VAEs_&_GANs.html": {
-    "mtime": 1783813977.1092625,
+    "mtime": 1783815268.6297169,
     "ast_hash": "bdc1d8aa76f6c6a9b47abf243c10b724",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises.html": {
-    "mtime": 1783813977.109866,
+    "mtime": 1783815268.6299605,
     "ast_hash": "be7fa269c1e5672a2da6adfe432b8a6f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part2_intro_to_mech_interp/1.2_Intro_to_Mech_Interp_exercises.html": {
-    "mtime": 1783813977.1103656,
+    "mtime": 1783815268.6304646,
     "ast_hash": "80384b33f95ce6520d5dbd0a5305c4ab",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_exercises.html": {
-    "mtime": 1783813977.1109755,
+    "mtime": 1783815268.6309521,
     "ast_hash": "3f761867189bb767c908e64e57d5f4d6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part32_function_vectors_and_model_steering/1.3.2_Function_Vectors_&_Model_Steering_exercises.html": {
-    "mtime": 1783813977.1115148,
+    "mtime": 1783815268.631453,
     "ast_hash": "957f850bc8ff4c2723b95b2dc5b678db",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_exercises.html": {
-    "mtime": 1783813977.1122625,
+    "mtime": 1783815268.6319263,
     "ast_hash": "ccd79be05b75fc24e18aa68e2878736b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part34_activation_oracles/1.3.4_Activation_Oracles_exercises.html": {
-    "mtime": 1783813977.1126344,
+    "mtime": 1783815268.6325824,
     "ast_hash": "2fbd64f8d202ebd617b839838a13922c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part41_indirect_object_identification/1.4.1_Indirect_Object_Identification_exercises.html": {
-    "mtime": 1783813977.1132627,
+    "mtime": 1783815268.633,
     "ast_hash": "09b4dbcd923bd8200f898fd1bfcd765f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.html": {
-    "mtime": 1783813977.113675,
+    "mtime": 1783815268.6335173,
     "ast_hash": "318a22771a743be7ea6d48359dc7748d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part51_balanced_bracket_classifier/1.5.1_Balanced_Bracket_Classifier_exercises.html": {
-    "mtime": 1783813977.114302,
+    "mtime": 1783815268.6341472,
     "ast_hash": "e4535ef0f130d77e658ca59e85e3eafe",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part52_grokking_and_modular_arithmetic/1.5.2_Grokking_&_Modular_Arithmetic_exercises.html": {
-    "mtime": 1783813977.1146502,
+    "mtime": 1783815268.634482,
     "ast_hash": "3147f6189688b8f55c417647e50daed9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part53_othellogpt/1.5.3_OthelloGPT_exercises.html": {
-    "mtime": 1783813977.1152625,
+    "mtime": 1783815268.6348555,
     "ast_hash": "def55e0c86d027afc53966f299f61cbc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/exercises/part54_toy_models_of_superposition_and_saes/1.5.4_Toy_Models_of_Superposition_&_SAEs_exercises.html": {
-    "mtime": 1783813977.115616,
+    "mtime": 1783815268.6354074,
     "ast_hash": "0a3693189e8739de3d097a42655a0603",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/.streamlit/README.html": {
-    "mtime": 1783813977.1164575,
+    "mtime": 1783815268.6363406,
     "ast_hash": "fe885de8b634e5c1f1ba9997c3edb6ff",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/01_[1.1]_Transformer_from_Scratch.html": {
-    "mtime": 1783813977.116488,
+    "mtime": 1783815268.636368,
     "ast_hash": "9bf1984f93fd37e03865d69f56a2727f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/02_[1.2]_Intro_to_Mech_Interp.html": {
-    "mtime": 1783813977.1171627,
+    "mtime": 1783815268.6370244,
     "ast_hash": "f9a9c8f979e64b76ede858e6a31ead6f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/11_[1.3.1]_Linear_Probes.html": {
-    "mtime": 1783813977.1172626,
+    "mtime": 1783815268.637483,
     "ast_hash": "ef39ed5aad4401f5687151c33ec7ab55",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/11_[1.3.1]_Probing_for_Deception.html": {
-    "mtime": 1783813977.1182191,
+    "mtime": 1783815268.6380336,
     "ast_hash": "b22bbe8ccf8cf5bdc601ec961de2b718",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/12_[1.3.2]_Function_Vectors_&_Model_Steering.html": {
-    "mtime": 1783813977.1182625,
+    "mtime": 1783815268.6385522,
     "ast_hash": "d12178166de1f0c2d0acc9a4c524a70a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/13_[1.3.3]_Interpretability_with_SAEs.html": {
-    "mtime": 1783813977.1191144,
+    "mtime": 1783815268.6389167,
     "ast_hash": "c0acd478e5b51b136d379e1b5fa346a6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/14_[1.3.4]_Activation_Oracles.html": {
-    "mtime": 1783813977.1192627,
+    "mtime": 1783815268.6395159,
     "ast_hash": "98e5279f9a65d46603869b62cc785857",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/21_[1.4.1]_Indirect_Object_Identification.html": {
-    "mtime": 1783813977.1201618,
+    "mtime": 1783815268.6399446,
     "ast_hash": "7938cb5432ae909765bf75e9dd6f63b7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/22_[1.4.2]_SAE_Circuits.html": {
-    "mtime": 1783813977.1207666,
+    "mtime": 1783815268.6405067,
     "ast_hash": "904970806753797c243ac2116479fb93",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/31_[1.5.1]_Balanced_Bracket_Classifier.html": {
-    "mtime": 1783813977.121392,
+    "mtime": 1783815268.6410792,
     "ast_hash": "deca5defc224b6a4ccdaac4164b86f7b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/32_[1.5.2]_Grokking_&_Modular_Arithmetic.html": {
-    "mtime": 1783813977.1217625,
+    "mtime": 1783815268.6414304,
     "ast_hash": "20bae8983eecead7e7aaf8e8dbf2ce61",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/33_[1.5.3]_OthelloGPT.html": {
-    "mtime": 1783813977.122381,
+    "mtime": 1783815268.641853,
     "ast_hash": "17e8521c73308df55187f81a1ec2904c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/34_[1.5.4]_Toy_Models_of_Superposition_&_SAEs.html": {
-    "mtime": 1783813977.1228333,
+    "mtime": 1783815268.6423934,
     "ast_hash": "3ccc9d48add3382aa11bede563f0fdd6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter1_transformer_interp/instructions/pages/39_[1.5.X]_Monthly_Algorithmic_Problems.html": {
-    "mtime": 1783813977.1235197,
+    "mtime": 1783815268.6429412,
     "ast_hash": "6bfa7eecd66024405ca8e47cd2cd8dec",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html": {
-    "mtime": 1783813977.1236436,
+    "mtime": 1783815268.6430013,
     "ast_hash": "e122857eb44c2a4e42a3c8a6a39a777f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_&_VPG_exercises.html": {
-    "mtime": 1783813977.1243267,
+    "mtime": 1783815268.6434128,
     "ast_hash": "9b0d51cb0bd4e8a5cf77de8bdff06888",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises.html": {
-    "mtime": 1783813977.1247203,
+    "mtime": 1783815268.6438115,
     "ast_hash": "c548086cf00b45a62192730ce4c92ff0",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises.html": {
-    "mtime": 1783813977.1253016,
+    "mtime": 1783815268.6443942,
     "ast_hash": "6c540213a776eb3ec24847fba797dbdd",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/.streamlit/README.html": {
-    "mtime": 1783813977.1260161,
+    "mtime": 1783815268.6451328,
     "ast_hash": "4eef6dc9671b8a83da6f1e2d27a8159d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/01_[2.1]_Intro_to_RL.html": {
-    "mtime": 1783813977.1260424,
+    "mtime": 1783815268.6451566,
     "ast_hash": "5b0838ef109cea453bf898ed1c18e917",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/02_[2.2]_DQN_&_VPG.html": {
-    "mtime": 1783813977.1262627,
+    "mtime": 1783815268.6457279,
     "ast_hash": "2d61e4fec550d4335c786f31cd1c4c66",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/03_[2.3]_PPO.html": {
-    "mtime": 1783813977.1269946,
+    "mtime": 1783815268.6460874,
     "ast_hash": "738d2f8e73831a92dc4610e449a4121d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/04_[2.4]_RLHF.html": {
-    "mtime": 1783813977.127384,
+    "mtime": 1783815268.6464791,
     "ast_hash": "6fd555417f5833337a59b110cc57ce29",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/21_[2.2.2]_Policy_Gradient.html": {
-    "mtime": 1783813977.1279244,
+    "mtime": 1783815268.647038,
     "ast_hash": "52dd17ee342fede126fd980daab64944",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter2_rl/instructions/pages/22_[2.2.2]_VPG.html": {
-    "mtime": 1783813977.1281476,
+    "mtime": 1783815268.647267,
     "ast_hash": "d62aaadab3d86d63bcb8ba4bd88700a7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/exercises/part1_intro_to_evals/3.1_Intro_to_Evals_exercises.html": {
-    "mtime": 1783813977.128259,
+    "mtime": 1783815268.6473475,
     "ast_hash": "518ec4d6d11fc3ffa3b80bfbc8b88cfb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/exercises/part2_dataset_generation/3.2_Dataset_Generation_exercises.html": {
-    "mtime": 1783813977.1284792,
+    "mtime": 1783815268.6475754,
     "ast_hash": "44f1a1499ccc7e489b439ac623e654c5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/exercises/part3_running_evals_with_inspect/3.3_Running_Evals_with_Inspect_exercises.html": {
-    "mtime": 1783813977.128701,
+    "mtime": 1783815268.6477966,
     "ast_hash": "836644e9ff44d28a014e68d0dff77cca",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/exercises/part4_llm_agents/3.4_LLM_Agents_exercises.html": {
-    "mtime": 1783813977.1290874,
+    "mtime": 1783815268.6481855,
     "ast_hash": "2b86c14ceac6af18fd0955c65f3becf7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/instructions/.streamlit/README.html": {
-    "mtime": 1783813977.129752,
+    "mtime": 1783815268.6489387,
     "ast_hash": "5bb5e86394ef9ff4d233d5748893a39c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/instructions/pages/01_[3.1]_Intro_to_Evals.html": {
-    "mtime": 1783813977.1297748,
+    "mtime": 1783815268.648962,
     "ast_hash": "8f6c3dabce7a1b40566f8408cd0664a1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/instructions/pages/02_[3.2]_Dataset_Generation.html": {
-    "mtime": 1783813977.1301975,
+    "mtime": 1783815268.649356,
     "ast_hash": "9401ae47c860310370e40f26da0740bd",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/instructions/pages/03_[3.3]_Running_Evals_with_Inspect.html": {
-    "mtime": 1783813977.1305447,
+    "mtime": 1783815268.6497138,
     "ast_hash": "c66f587823c5da30a67e4b62d86ff9f9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter3_llm_evals/instructions/pages/04_[3.4]_LLM_Agents.html": {
-    "mtime": 1783813977.1308153,
+    "mtime": 1783815268.6499445,
     "ast_hash": "4bee017046fb79fc74c9ad8f5b96982a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/exercises/part1_emergent_misalignment/4.1_Emergent_Misalignment_exercises.html": {
-    "mtime": 1783813977.131003,
+    "mtime": 1783815268.6501346,
     "ast_hash": "7accfdb7813102437ae34e21ad324ab5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/exercises/part2_science_of_misalignment/4.2_Science_of_Misalignment_exercises.html": {
-    "mtime": 1783813977.1314628,
+    "mtime": 1783815268.6506064,
     "ast_hash": "c14c0fdb45459215e169c776a829dfb8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_exercises.html": {
-    "mtime": 1783813977.132263,
+    "mtime": 1783815268.6511807,
     "ast_hash": "9f358fab120d300a0b68b606462a4da8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/exercises/part4_persona_vectors/4.4_LLM_Psychology_&_Persona_Vectors_exercises.html": {
-    "mtime": 1783813977.1327138,
+    "mtime": 1783815268.651841,
     "ast_hash": "171bf3f2104ab8daffd0aef0596f5ce3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/exercises/part5_investigator_agents/4.5_Investigator_Agents_exercises.html": {
-    "mtime": 1783813977.1332629,
+    "mtime": 1783815268.652389,
     "ast_hash": "f357e8f245c8b19ef6a017c5242c5e5d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/instructions/pages/01_[4.1]_Emergent_Misalignment.html": {
-    "mtime": 1783813977.133913,
+    "mtime": 1783815268.6531518,
     "ast_hash": "027f7a28d10a9978516b7cdc0ca9dc71",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/instructions/pages/02_[4.2]_Science_of_Misalignment.html": {
-    "mtime": 1783813977.1344497,
+    "mtime": 1783815268.653655,
     "ast_hash": "4102e45492bde5c7f4edff009fd5e834",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/instructions/pages/03_[4.3]_Interpreting_Reasoning_Models.html": {
-    "mtime": 1783813977.134873,
+    "mtime": 1783815268.6540723,
     "ast_hash": "96d27c9b16b2fcba3b1914cdb6bf67e0",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/instructions/pages/04_[4.4]_LLM_Psychology_&_Persona_Vectors.html": {
-    "mtime": 1783813977.135263,
+    "mtime": 1783815268.6546626,
     "ast_hash": "a618063c744efa97d3dae036cd9e6d75",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/chapter4_alignment_science/instructions/pages/05_[4.5]_Investigator_Agents.html": {
-    "mtime": 1783813977.136507,
+    "mtime": 1783815268.655333,
     "ast_hash": "cade0f3aee98528d8933475269f6cb60",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/genindex.html": {
-    "mtime": 1783813977.0261202,
+    "mtime": 1783815268.5486317,
     "ast_hash": "98b297144ecace44ef62fd9aadbcbd4f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/index.html": {
-    "mtime": 1783813977.0264466,
+    "mtime": 1783815268.5490541,
     "ast_hash": "efae3bd5e8eb9cb5d36bb2113fd0cffe",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/intro.html": {
-    "mtime": 1783813977.0259783,
+    "mtime": 1783815268.5484774,
     "ast_hash": "ad098c598ce8045e230282cfafb25be1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/search.html": {
-    "mtime": 1783813977.0262299,
+    "mtime": 1783815268.5487578,
     "ast_hash": "99c7907d392b1398cd363e2fb195ebdf",
     "semantic_hash": ""
   },
@@ -5255,1197 +5255,1197 @@
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/000000.png": {
-    "mtime": 1783813977.0289805,
+    "mtime": 1783815268.5517585,
     "ast_hash": "d991a888e752cd1e2256779be01829f2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0000001.png": {
-    "mtime": 1783813977.034856,
+    "mtime": 1783815268.5578146,
     "ast_hash": "d991a888e752cd1e2256779be01829f2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/005b82.png": {
-    "mtime": 1783813977.0276985,
+    "mtime": 1783815268.5503953,
     "ast_hash": "09079d91a38fff5193f9cfd4842f16cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/005b821.png": {
-    "mtime": 1783813977.0336688,
+    "mtime": 1783815268.5564318,
     "ast_hash": "09079d91a38fff5193f9cfd4842f16cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00622f.png": {
-    "mtime": 1783813977.02768,
+    "mtime": 1783815268.5503755,
     "ast_hash": "e3065600532c2a6fee551e5cd2a5b9b1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00622f1.png": {
-    "mtime": 1783813977.033649,
+    "mtime": 1783815268.556411,
     "ast_hash": "e3065600532c2a6fee551e5cd2a5b9b1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0072b2.png": {
-    "mtime": 1783813977.0289423,
+    "mtime": 1783815268.5517168,
     "ast_hash": "1d1d23b20e0b58dab2184283e5e3c1f0",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0072b21.png": {
-    "mtime": 1783813977.0348113,
+    "mtime": 1783815268.5577695,
     "ast_hash": "1d1d23b20e0b58dab2184283e5e3c1f0",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00749c.png": {
-    "mtime": 1783813977.0280232,
+    "mtime": 1783815268.5507193,
     "ast_hash": "01b4d23acc44a6387f2daba504639ff3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00749c1.png": {
-    "mtime": 1783813977.0340452,
+    "mtime": 1783815268.556847,
     "ast_hash": "01b4d23acc44a6387f2daba504639ff3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/008561.png": {
-    "mtime": 1783813977.0288584,
+    "mtime": 1783815268.5516284,
     "ast_hash": "41afa3e31bbaa9ef15a07394589384b4",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0085611.png": {
-    "mtime": 1783813977.0347912,
+    "mtime": 1783815268.5577483,
     "ast_hash": "41afa3e31bbaa9ef15a07394589384b4",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00e0e0.png": {
-    "mtime": 1783813977.027129,
+    "mtime": 1783815268.5497794,
     "ast_hash": "0701cc783419f9ee2cbe2f1fce869271",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/00e0e01.png": {
-    "mtime": 1783813977.0330951,
+    "mtime": 1783815268.5558417,
     "ast_hash": "0701cc783419f9ee2cbe2f1fce869271",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/023b95.png": {
-    "mtime": 1783813977.0310717,
+    "mtime": 1783815268.5538146,
     "ast_hash": "af8cff5a49724b32680766f6d73ec387",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/023b951.png": {
-    "mtime": 1783813977.0369864,
+    "mtime": 1783815268.5599043,
     "ast_hash": "af8cff5a49724b32680766f6d73ec387",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/024c1a.png": {
-    "mtime": 1783813977.0309882,
+    "mtime": 1783815268.553727,
     "ast_hash": "6741eebcee534a6919de79c41da422aa",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/024c1a1.png": {
-    "mtime": 1783813977.0369668,
+    "mtime": 1783815268.5598826,
     "ast_hash": "6741eebcee534a6919de79c41da422aa",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0550ae.png": {
-    "mtime": 1783813977.0304544,
+    "mtime": 1783815268.5532348,
     "ast_hash": "43b4247a11e6e031c405bc8285f51f15",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0550ae1.png": {
-    "mtime": 1783813977.0363195,
+    "mtime": 1783815268.559232,
     "ast_hash": "43b4247a11e6e031c405bc8285f51f15",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/080808.png": {
-    "mtime": 1783813977.0277364,
+    "mtime": 1783815268.5504353,
     "ast_hash": "fa46d2a1000a03d8fcd803bfc2e118ee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/0808081.png": {
-    "mtime": 1783813977.033772,
+    "mtime": 1783815268.5565417,
     "ast_hash": "fa46d2a1000a03d8fcd803bfc2e118ee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/116329.png": {
-    "mtime": 1783813977.0304348,
+    "mtime": 1783815268.553214,
     "ast_hash": "edf28417bbe5868eba02471acf9a348e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/1163291.png": {
-    "mtime": 1783813977.0362995,
+    "mtime": 1783815268.55921,
     "ast_hash": "edf28417bbe5868eba02471acf9a348e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/116633.png": {
-    "mtime": 1783813977.0279396,
+    "mtime": 1783815268.550631,
     "ast_hash": "c6516896fa66f3e340a006740ecefdb3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/1166331.png": {
-    "mtime": 1783813977.0340264,
+    "mtime": 1783815268.556826,
     "ast_hash": "c6516896fa66f3e340a006740ecefdb3",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/141414.png": {
-    "mtime": 1783813977.031645,
+    "mtime": 1783815268.554386,
     "ast_hash": "cb35b25db3f5bd3b5d682c608cbcd0fc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/1414141.png": {
-    "mtime": 1783813977.0375757,
+    "mtime": 1783815268.5605123,
     "ast_hash": "cb35b25db3f5bd3b5d682c608cbcd0fc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/18c1c4.png": {
-    "mtime": 1783813977.0325859,
+    "mtime": 1783815268.5553331,
     "ast_hash": "643d67feaa1fe588f148a023140cd549",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/18c1c41.png": {
-    "mtime": 1783813977.0385647,
+    "mtime": 1783815268.5615275,
     "ast_hash": "643d67feaa1fe588f148a023140cd549",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/1e1e1e.png": {
-    "mtime": 1783813977.0280643,
+    "mtime": 1783815268.5507572,
     "ast_hash": "d36b9d3e336b0efa32b929f291479fb5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/1e1e1e1.png": {
-    "mtime": 1783813977.034084,
+    "mtime": 1783815268.5568888,
     "ast_hash": "d36b9d3e336b0efa32b929f291479fb5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/24292f.png": {
-    "mtime": 1783813977.0304947,
+    "mtime": 1783815268.553273,
     "ast_hash": "3d33f4fc9263012d9170ae72ea3598cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/24292f1.png": {
-    "mtime": 1783813977.036414,
+    "mtime": 1783815268.5593286,
     "ast_hash": "3d33f4fc9263012d9170ae72ea3598cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/3d73a9.png": {
-    "mtime": 1783813977.0318148,
+    "mtime": 1783815268.554552,
     "ast_hash": "ceca28073887434429e6b1fe089d5ce9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/3d73a91.png": {
-    "mtime": 1783813977.037814,
+    "mtime": 1783815268.5607533,
     "ast_hash": "ceca28073887434429e6b1fe089d5ce9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/437a6b.png": {
-    "mtime": 1783813977.0317943,
+    "mtime": 1783815268.5545323,
     "ast_hash": "1a1d7967dbe9d3153401340bf25bcc0b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/437a6b1.png": {
-    "mtime": 1783813977.0377262,
+    "mtime": 1783815268.5606613,
     "ast_hash": "1a1d7967dbe9d3153401340bf25bcc0b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/515151.png": {
-    "mtime": 1783813977.0275347,
+    "mtime": 1783815268.5502336,
     "ast_hash": "6a04c14a21cbf26e424daf61b617035c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/5151511.png": {
-    "mtime": 1783813977.0335054,
+    "mtime": 1783815268.556261,
     "ast_hash": "6a04c14a21cbf26e424daf61b617035c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/5391cf.png": {
-    "mtime": 1783813977.0285711,
+    "mtime": 1783815268.5513334,
     "ast_hash": "e1e78be8b26bb68e35673c2b05699257",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/5391cf1.png": {
-    "mtime": 1783813977.0344641,
+    "mtime": 1783815268.557208,
     "ast_hash": "e1e78be8b26bb68e35673c2b05699257",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/5ca7e4.png": {
-    "mtime": 1783813977.0321817,
+    "mtime": 1783815268.5549145,
     "ast_hash": "1f3c03d2eaa81a049eee77d683c58d30",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/5ca7e41.png": {
-    "mtime": 1783813977.0381646,
+    "mtime": 1783815268.5611095,
     "ast_hash": "1f3c03d2eaa81a049eee77d683c58d30",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/622cbc.png": {
-    "mtime": 1783813977.0310912,
+    "mtime": 1783815268.5538332,
     "ast_hash": "f4620806f844d6dcfe7a48825e2cdb37",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/622cbc1.png": {
-    "mtime": 1783813977.0370564,
+    "mtime": 1783815268.5599787,
     "ast_hash": "f4620806f844d6dcfe7a48825e2cdb37",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66707b.png": {
-    "mtime": 1783813977.030926,
+    "mtime": 1783815268.5536687,
     "ast_hash": "a6c5c1bea7d9f93ab96f0088420ca159",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66707b1.png": {
-    "mtime": 1783813977.0368524,
+    "mtime": 1783815268.5597634,
     "ast_hash": "a6c5c1bea7d9f93ab96f0088420ca159",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66ccee.png": {
-    "mtime": 1783813977.0284836,
+    "mtime": 1783815268.5512462,
     "ast_hash": "243018d517220979ba840297f9ec9d1c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66ccee1.png": {
-    "mtime": 1783813977.034444,
+    "mtime": 1783815268.5571866,
     "ast_hash": "243018d517220979ba840297f9ec9d1c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66e9ec.png": {
-    "mtime": 1783813977.032606,
+    "mtime": 1783815268.5553527,
     "ast_hash": "278533c420938962e0198eca00361502",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/66e9ec1.png": {
-    "mtime": 1783813977.0385861,
+    "mtime": 1783815268.5615497,
     "ast_hash": "278533c420938962e0198eca00361502",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6730c5.png": {
-    "mtime": 1783813977.0277174,
+    "mtime": 1783815268.550415,
     "ast_hash": "6000b9e39e568cdb7f3d820faf744e86",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6730c51.png": {
-    "mtime": 1783813977.033689,
+    "mtime": 1783815268.5564516,
     "ast_hash": "6000b9e39e568cdb7f3d820faf744e86",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6e7781.png": {
-    "mtime": 1783813977.030312,
+    "mtime": 1783815268.5530875,
     "ast_hash": "4ffbd307bdd81be8eb353540c56e3278",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6e77811.png": {
-    "mtime": 1783813977.036188,
+    "mtime": 1783815268.5590966,
     "ast_hash": "4ffbd307bdd81be8eb353540c56e3278",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6f98b3.png": {
-    "mtime": 1783813977.031443,
+    "mtime": 1783815268.5541818,
     "ast_hash": "4966fbd6a777953ca7b564a663ac2560",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/6f98b31.png": {
-    "mtime": 1783813977.0373874,
+    "mtime": 1783815268.5603201,
     "ast_hash": "4966fbd6a777953ca7b564a663ac2560",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/702c00.png": {
-    "mtime": 1783813977.030967,
+    "mtime": 1783815268.5537076,
     "ast_hash": "9eb6ec44589af9b7b253eb31a1718e0b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/702c001.png": {
-    "mtime": 1783813977.0369463,
+    "mtime": 1783815268.5598598,
     "ast_hash": "9eb6ec44589af9b7b253eb31a1718e0b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/72f088.png": {
-    "mtime": 1783813977.0300255,
+    "mtime": 1783815268.5528092,
     "ast_hash": "ab4b912afe0e2c02f01f1bd959b3da35",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/72f0881.png": {
-    "mtime": 1783813977.0359817,
+    "mtime": 1783815268.5588875,
     "ast_hash": "ab4b912afe0e2c02f01f1bd959b3da35",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/737373.png": {
-    "mtime": 1783813977.0288005,
+    "mtime": 1783815268.5515685,
     "ast_hash": "39ee105cc44228e43090559294d68fe6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7373731.png": {
-    "mtime": 1783813977.0346725,
+    "mtime": 1783815268.5575516,
     "ast_hash": "39ee105cc44228e43090559294d68fe6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/797979.png": {
-    "mtime": 1783813977.032017,
+    "mtime": 1783815268.554749,
     "ast_hash": "ee5f336b23f2dfa7f72ecffd1990ffd9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7979791.png": {
-    "mtime": 1783813977.0379994,
+    "mtime": 1783815268.5609381,
     "ast_hash": "ee5f336b23f2dfa7f72ecffd1990ffd9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7998f2.png": {
-    "mtime": 1783813977.032625,
+    "mtime": 1783815268.555373,
     "ast_hash": "17ebe72819e7557088e58289cd93563d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7998f21.png": {
-    "mtime": 1783813977.0386071,
+    "mtime": 1783815268.5615745,
     "ast_hash": "17ebe72819e7557088e58289cd93563d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/79c0ff.png": {
-    "mtime": 1783813977.0293176,
+    "mtime": 1783815268.552093,
     "ast_hash": "6af9a5d63981f4772643ce357064c31e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/79c0ff1.png": {
-    "mtime": 1783813977.0353382,
+    "mtime": 1783815268.5582733,
     "ast_hash": "6af9a5d63981f4772643ce357064c31e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7ee787.png": {
-    "mtime": 1783813977.029298,
+    "mtime": 1783815268.5520732,
     "ast_hash": "e67c6f2c4491cedae6a50f17b8305857",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7ee7871.png": {
-    "mtime": 1783813977.0353172,
+    "mtime": 1783815268.5582528,
     "ast_hash": "e67c6f2c4491cedae6a50f17b8305857",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7f4707.png": {
-    "mtime": 1783813977.0275779,
+    "mtime": 1783815268.5502727,
     "ast_hash": "1cf59667e3657c5aa3d7132210055e87",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/7f47071.png": {
-    "mtime": 1783813977.0335455,
+    "mtime": 1783815268.5563023,
     "ast_hash": "1cf59667e3657c5aa3d7132210055e87",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8045e5.png": {
-    "mtime": 1783813977.0280428,
+    "mtime": 1783815268.5507379,
     "ast_hash": "742c858142d2fe31cba73b05abd2dd95",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8045e51.png": {
-    "mtime": 1783813977.034065,
+    "mtime": 1783815268.5568676,
     "ast_hash": "742c858142d2fe31cba73b05abd2dd95",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/81b19b.png": {
-    "mtime": 1783813977.031423,
+    "mtime": 1783815268.5541618,
     "ast_hash": "e3d22345f512642a9d45b89653966fe1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/81b19b1.png": {
-    "mtime": 1783813977.0373678,
+    "mtime": 1783815268.560299,
     "ast_hash": "e3d22345f512642a9d45b89653966fe1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8250df.png": {
-    "mtime": 1783813977.0304747,
+    "mtime": 1783815268.5532534,
     "ast_hash": "8d8d014578efb1acd886d3bd7dd9d913",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8250df1.png": {
-    "mtime": 1783813977.0363402,
+    "mtime": 1783815268.5592544,
     "ast_hash": "8d8d014578efb1acd886d3bd7dd9d913",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8786ac.png": {
-    "mtime": 1783813977.032443,
+    "mtime": 1783815268.555187,
     "ast_hash": "c91637df204377add54eaaa2b6cb6c45",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8786ac1.png": {
-    "mtime": 1783813977.0384145,
+    "mtime": 1783815268.5613778,
     "ast_hash": "c91637df204377add54eaaa2b6cb6c45",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8a4600.png": {
-    "mtime": 1783813977.0307298,
+    "mtime": 1783815268.55348,
     "ast_hash": "b7ecf95584e1556d7f94ed57a8b2d748",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8a46001.png": {
-    "mtime": 1783813977.0366502,
+    "mtime": 1783815268.5595658,
     "ast_hash": "b7ecf95584e1556d7f94ed57a8b2d748",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8b949e.png": {
-    "mtime": 1783813977.029175,
+    "mtime": 1783815268.5519445,
     "ast_hash": "a38f012dab9be9ea1e46455bf0aac2f7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8b949e1.png": {
-    "mtime": 1783813977.0351639,
+    "mtime": 1783815268.5581079,
     "ast_hash": "a38f012dab9be9ea1e46455bf0aac2f7",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8c8c8c.png": {
-    "mtime": 1783813977.028327,
+    "mtime": 1783815268.55109,
     "ast_hash": "1c798c6ea15156a9f97217d506a88503",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/8c8c8c1.png": {
-    "mtime": 1783813977.034333,
+    "mtime": 1783815268.5570724,
     "ast_hash": "1c798c6ea15156a9f97217d506a88503",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/912583.png": {
-    "mtime": 1783813977.027597,
+    "mtime": 1783815268.550292,
     "ast_hash": "67fdcce388c4b73afc381bfbd86bb28e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9125831.png": {
-    "mtime": 1783813977.0336294,
+    "mtime": 1783815268.55639,
     "ast_hash": "67fdcce388c4b73afc381bfbd86bb28e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/91cbff.png": {
-    "mtime": 1783813977.0300455,
+    "mtime": 1783815268.552829,
     "ast_hash": "8495d2f696307a7bd6133fb68493fc46",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/91cbff1.png": {
-    "mtime": 1783813977.0360017,
+    "mtime": 1783815268.5589094,
     "ast_hash": "8495d2f696307a7bd6133fb68493fc46",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/953800.png": {
-    "mtime": 1783813977.030352,
+    "mtime": 1783815268.5531273,
     "ast_hash": "0ddb1479a2622ff1e9bef47dc5432e3d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9538001.png": {
-    "mtime": 1783813977.0362792,
+    "mtime": 1783815268.559189,
     "ast_hash": "0ddb1479a2622ff1e9bef47dc5432e3d",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/974eb7.png": {
-    "mtime": 1783813977.0318353,
+    "mtime": 1783815268.5545788,
     "ast_hash": "edb4891b0f1447252e8299b4d72312cc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/974eb71.png": {
-    "mtime": 1783813977.0378337,
+    "mtime": 1783815268.5607748,
     "ast_hash": "edb4891b0f1447252e8299b4d72312cc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/98661b.png": {
-    "mtime": 1783813977.0317724,
+    "mtime": 1783815268.5545113,
     "ast_hash": "c0c13b05123bb6bf5fcd327dd963512e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/98661b1.png": {
-    "mtime": 1783813977.037706,
+    "mtime": 1783815268.56064,
     "ast_hash": "c0c13b05123bb6bf5fcd327dd963512e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/996b00.png": {
-    "mtime": 1783813977.0288396,
+    "mtime": 1783815268.551609,
     "ast_hash": "df2914ee8660ffc93b3f8e226586fe21",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/996b001.png": {
-    "mtime": 1783813977.0347157,
+    "mtime": 1783815268.5576727,
     "ast_hash": "df2914ee8660ffc93b3f8e226586fe21",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9e86c8.png": {
-    "mtime": 1783813977.0322645,
+    "mtime": 1783815268.5550056,
     "ast_hash": "ad172a406d86c665cd45641fbfebfd3b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9e86c81.png": {
-    "mtime": 1783813977.0382485,
+    "mtime": 1783815268.5611992,
     "ast_hash": "ad172a406d86c665cd45641fbfebfd3b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9e8741.png": {
-    "mtime": 1783813977.0321202,
+    "mtime": 1783815268.5548527,
     "ast_hash": "b5f7ae2cdcb0ec9639b7be49e7e80b1a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9e87411.png": {
-    "mtime": 1783813977.0381036,
+    "mtime": 1783815268.5610435,
     "ast_hash": "b5f7ae2cdcb0ec9639b7be49e7e80b1a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9f4e55.png": {
-    "mtime": 1783813977.0316658,
+    "mtime": 1783815268.554406,
     "ast_hash": "074aa5731178f2a8a5e7d4c8a2a25134",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/9f4e551.png": {
-    "mtime": 1783813977.0376668,
+    "mtime": 1783815268.560597,
     "ast_hash": "074aa5731178f2a8a5e7d4c8a2a25134",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a0111f.png": {
-    "mtime": 1783813977.0309455,
+    "mtime": 1783815268.5536883,
     "ast_hash": "a716159268f4be9a8fec646b1d3734ef",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a0111f1.png": {
-    "mtime": 1783813977.0369258,
+    "mtime": 1783815268.5598378,
     "ast_hash": "a716159268f4be9a8fec646b1d3734ef",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-dark.png": {
-    "mtime": 1783813977.0265353,
+    "mtime": 1783815268.5491445,
     "ast_hash": "605b30f360b67659f5ca272c1aa73dbe",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-dark1.png": {
-    "mtime": 1783813977.0328872,
+    "mtime": 1783815268.555631,
     "ast_hash": "605b30f360b67659f5ca272c1aa73dbe",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-high-contrast-dark.png": {
-    "mtime": 1783813977.0273077,
+    "mtime": 1783815268.5499759,
     "ast_hash": "83b12f711f2a0cf3cd61b2c48c5571e8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-high-contrast-dark1.png": {
-    "mtime": 1783813977.0332818,
+    "mtime": 1783815268.5560312,
     "ast_hash": "83b12f711f2a0cf3cd61b2c48c5571e8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-high-contrast-light.png": {
-    "mtime": 1783813977.0275002,
+    "mtime": 1783815268.5501902,
     "ast_hash": "d2dbbf36709c2245847d68bd36f99827",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-high-contrast-light1.png": {
-    "mtime": 1783813977.0334704,
+    "mtime": 1783815268.5562274,
     "ast_hash": "d2dbbf36709c2245847d68bd36f99827",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-light.png": {
-    "mtime": 1783813977.0278778,
+    "mtime": 1783815268.5505795,
     "ast_hash": "4b5a81fa3bfb1e4686d7d4a580340543",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a11y-light1.png": {
-    "mtime": 1783813977.0339227,
+    "mtime": 1783815268.55671,
     "ast_hash": "4b5a81fa3bfb1e4686d7d4a580340543",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a12236.png": {
-    "mtime": 1783813977.0275543,
+    "mtime": 1783815268.5502532,
     "ast_hash": "082e26b80180510f191dafa325c6cc90",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a122361.png": {
-    "mtime": 1783813977.0335255,
+    "mtime": 1783815268.556282,
     "ast_hash": "082e26b80180510f191dafa325c6cc90",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a25e53.png": {
-    "mtime": 1783813977.031688,
+    "mtime": 1783815268.5544264,
     "ast_hash": "2b8d141bd34ff91b025775831af7521a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a25e531.png": {
-    "mtime": 1783813977.0376866,
+    "mtime": 1783815268.5606184,
     "ast_hash": "2b8d141bd34ff91b025775831af7521a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a2bffc.png": {
-    "mtime": 1783813977.0321605,
+    "mtime": 1783815268.554895,
     "ast_hash": "796fa581fec5dc56c3741d9d75c57076",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a2bffc1.png": {
-    "mtime": 1783813977.0381427,
+    "mtime": 1783815268.5610883,
     "ast_hash": "796fa581fec5dc56c3741d9d75c57076",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a5d6ff.png": {
-    "mtime": 1783813977.0297227,
+    "mtime": 1783815268.552505,
     "ast_hash": "a459fe1e44eef024e3a83c6c91705a9c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/a5d6ff1.png": {
-    "mtime": 1783813977.035671,
+    "mtime": 1783815268.55861,
     "ast_hash": "a459fe1e44eef024e3a83c6c91705a9c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ab6369.png": {
-    "mtime": 1783813977.0313003,
+    "mtime": 1783815268.5540323,
     "ast_hash": "355e8be86d0404e72ed5ce9fc9826d63",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ab63691.png": {
-    "mtime": 1783813977.0372443,
+    "mtime": 1783815268.5601678,
     "ast_hash": "355e8be86d0404e72ed5ce9fc9826d63",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/abe338.png": {
-    "mtime": 1783813977.0270438,
+    "mtime": 1783815268.5496938,
     "ast_hash": "694ab33ab01a0dbebaeb9d13fae0f94b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/abe3381.png": {
-    "mtime": 1783813977.0330746,
+    "mtime": 1783815268.555822,
     "ast_hash": "694ab33ab01a0dbebaeb9d13fae0f94b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b19db4.png": {
-    "mtime": 1783813977.0314627,
+    "mtime": 1783815268.5542014,
     "ast_hash": "327be238bacfae925398111c6d160b0c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b19db41.png": {
-    "mtime": 1783813977.0374067,
+    "mtime": 1783815268.5603423,
     "ast_hash": "327be238bacfae925398111c6d160b0c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b1bac4.png": {
-    "mtime": 1783813977.029598,
+    "mtime": 1783815268.552378,
     "ast_hash": "d5b6f9bed669bf1230b1d98b130cc3b1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b1bac41.png": {
-    "mtime": 1783813977.0356088,
+    "mtime": 1783815268.558544,
     "ast_hash": "d5b6f9bed669bf1230b1d98b130cc3b1",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b35900.png": {
-    "mtime": 1783813977.0306926,
+    "mtime": 1783815268.5534606,
     "ast_hash": "51f547ad54e79bbef4d54a828cdee383",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b359001.png": {
-    "mtime": 1783813977.036582,
+    "mtime": 1783815268.5594904,
     "ast_hash": "51f547ad54e79bbef4d54a828cdee383",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b89784.png": {
-    "mtime": 1783813977.0313208,
+    "mtime": 1783815268.5540514,
     "ast_hash": "79a799e2fdb10a16600f3d21a05dd4e5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/b897841.png": {
-    "mtime": 1783813977.0372643,
+    "mtime": 1783815268.5601892,
     "ast_hash": "79a799e2fdb10a16600f3d21a05dd4e5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/bbbbbb.png": {
-    "mtime": 1783813977.0286114,
+    "mtime": 1783815268.5513742,
     "ast_hash": "c9b167fdc0ca9d28aadc93aad78de6ee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/bbbbbb1.png": {
-    "mtime": 1783813977.0345063,
+    "mtime": 1783815268.55732,
     "ast_hash": "c9b167fdc0ca9d28aadc93aad78de6ee",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/bf5400.png": {
-    "mtime": 1783813977.0288203,
+    "mtime": 1783815268.5515885,
     "ast_hash": "6da27869d4f3cc26be9f0e9b6c313a2b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/bf54001.png": {
-    "mtime": 1783813977.0346947,
+    "mtime": 1783815268.5576508,
     "ast_hash": "6da27869d4f3cc26be9f0e9b6c313a2b",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/blinds-dark.png": {
-    "mtime": 1783813977.0282135,
+    "mtime": 1783815268.5509717,
     "ast_hash": "bfc44fb30a4aeb0ca5f0597baf2e9402",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/blinds-dark1.png": {
-    "mtime": 1783813977.0342934,
+    "mtime": 1783815268.557031,
     "ast_hash": "bfc44fb30a4aeb0ca5f0597baf2e9402",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/blinds-light.png": {
-    "mtime": 1783813977.0287588,
+    "mtime": 1783815268.5515237,
     "ast_hash": "69ec6531a89f7cfac49fed41ae7cd989",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/blinds-light1.png": {
-    "mtime": 1783813977.0346327,
+    "mtime": 1783815268.5574453,
     "ast_hash": "69ec6531a89f7cfac49fed41ae7cd989",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c4a2f5.png": {
-    "mtime": 1783813977.0327158,
+    "mtime": 1783815268.555456,
     "ast_hash": "8e8167e3cd5bfcdb2f446c3c544deb75",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c4a2f51.png": {
-    "mtime": 1783813977.0386913,
+    "mtime": 1783815268.5616672,
     "ast_hash": "8e8167e3cd5bfcdb2f446c3c544deb75",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c5e478.png": {
-    "mtime": 1783813977.0321403,
+    "mtime": 1783815268.5548742,
     "ast_hash": "8e1cac9d0aa505c1c6e4e56213485ac9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c5e4781.png": {
-    "mtime": 1783813977.0381231,
+    "mtime": 1783815268.5610664,
     "ast_hash": "8e1cac9d0aa505c1c6e4e56213485ac9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c9d1d9.png": {
-    "mtime": 1783813977.0294213,
+    "mtime": 1783815268.5521975,
     "ast_hash": "caba0a6202137c469549e05d4b739df6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/c9d1d91.png": {
-    "mtime": 1783813977.0354338,
+    "mtime": 1783815268.5583658,
     "ast_hash": "caba0a6202137c469549e05d4b739df6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/caab6d.png": {
-    "mtime": 1783813977.0313404,
+    "mtime": 1783815268.5540707,
     "ast_hash": "db9a5e3f12d4862de525fa20af40b48a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/caab6d1.png": {
-    "mtime": 1783813977.0372841,
+    "mtime": 1783815268.5602105,
     "ast_hash": "db9a5e3f12d4862de525fa20af40b48a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/cc398b.png": {
-    "mtime": 1783813977.028961,
+    "mtime": 1783815268.5517368,
     "ast_hash": "5507f08a3ed7ddb316ff13c5dd17ac92",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/cc398b1.png": {
-    "mtime": 1783813977.0348332,
+    "mtime": 1783815268.5577924,
     "ast_hash": "5507f08a3ed7ddb316ff13c5dd17ac92",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ccbb44.png": {
-    "mtime": 1783813977.028464,
+    "mtime": 1783815268.5512238,
     "ast_hash": "2f44589fe7af35990295f639caf6783a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ccbb441.png": {
-    "mtime": 1783813977.034373,
+    "mtime": 1783815268.557115,
     "ast_hash": "2f44589fe7af35990295f639caf6783a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/cf222e.png": {
-    "mtime": 1783813977.0303316,
+    "mtime": 1783815268.553107,
     "ast_hash": "62bd09db60487a0ed566592cec3d9188",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/cf222e1.png": {
-    "mtime": 1783813977.0362093,
+    "mtime": 1783815268.5591187,
     "ast_hash": "62bd09db60487a0ed566592cec3d9188",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d166a3.png": {
-    "mtime": 1783813977.02859,
+    "mtime": 1783815268.5513537,
     "ast_hash": "93c33474f8e67a5611f4f851dcc6b1f2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d166a31.png": {
-    "mtime": 1783813977.0344856,
+    "mtime": 1783815268.5572295,
     "ast_hash": "93c33474f8e67a5611f4f851dcc6b1f2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d2a8ff.png": {
-    "mtime": 1783813977.029338,
+    "mtime": 1783815268.5521138,
     "ast_hash": "ef953dd0231b9f80e03c38cdb9d47e89",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d2a8ff1.png": {
-    "mtime": 1783813977.035412,
+    "mtime": 1783815268.5583434,
     "ast_hash": "ef953dd0231b9f80e03c38cdb9d47e89",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d4d0ab.png": {
-    "mtime": 1783813977.0268664,
+    "mtime": 1783815268.5495048,
     "ast_hash": "c9eea96c02909de840d9cb6650453841",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d4d0ab1.png": {
-    "mtime": 1783813977.032927,
+    "mtime": 1783815268.555672,
     "ast_hash": "c9eea96c02909de840d9cb6650453841",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d71835.png": {
-    "mtime": 1783813977.0279193,
+    "mtime": 1783815268.5506115,
     "ast_hash": "f02c09674dce6020dd5894d9682ad4cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d718351.png": {
-    "mtime": 1783813977.0339558,
+    "mtime": 1783815268.556751,
     "ast_hash": "f02c09674dce6020dd5894d9682ad4cf",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d9dee3.png": {
-    "mtime": 1783813977.0299017,
+    "mtime": 1783815268.5526817,
     "ast_hash": "6f79689bf70683bbafdbf99f77adb3c9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/d9dee31.png": {
-    "mtime": 1783813977.0358644,
+    "mtime": 1783815268.5587738,
     "ast_hash": "6f79689bf70683bbafdbf99f77adb3c9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/dbb7ff.png": {
-    "mtime": 1783813977.0300665,
+    "mtime": 1783815268.5528483,
     "ast_hash": "54f7250a5f63d87500b101a685e47f72",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/dbb7ff1.png": {
-    "mtime": 1783813977.036022,
+    "mtime": 1783815268.5589328,
     "ast_hash": "54f7250a5f63d87500b101a685e47f72",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/dcc6e0.png": {
-    "mtime": 1783813977.0271492,
+    "mtime": 1783815268.549806,
     "ast_hash": "446b4307a2b8023276ef8b8f6bd8f36f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/dcc6e01.png": {
-    "mtime": 1783813977.0331144,
+    "mtime": 1783815268.5558617,
     "ast_hash": "446b4307a2b8023276ef8b8f6bd8f36f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ec8e2c.png": {
-    "mtime": 1783813977.0296826,
+    "mtime": 1783815268.5524673,
     "ast_hash": "b8157b4a9462f76d5fa77bab45707f2e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ec8e2c1.png": {
-    "mtime": 1783813977.0356295,
+    "mtime": 1783815268.5585654,
     "ast_hash": "b8157b4a9462f76d5fa77bab45707f2e",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ee6677.png": {
-    "mtime": 1783813977.0284271,
+    "mtime": 1783815268.551186,
     "ast_hash": "a00d116df8d89ec26135a91bc8396e8a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ee66771.png": {
-    "mtime": 1783813977.0343528,
+    "mtime": 1783815268.5570924,
     "ast_hash": "a00d116df8d89ec26135a91bc8396e8a",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f26196.png": {
-    "mtime": 1783813977.0324626,
+    "mtime": 1783815268.5552082,
     "ast_hash": "dcd0372d9820c488ec927204a7e4870f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f261961.png": {
-    "mtime": 1783813977.0384347,
+    "mtime": 1783815268.5614002,
     "ast_hash": "dcd0372d9820c488ec927204a7e4870f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5a394.png": {
-    "mtime": 1783813977.0324821,
+    "mtime": 1783815268.5552301,
     "ast_hash": "17a6a0e6f0004f5d6e8c7b80190e2bfb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5a3941.png": {
-    "mtime": 1783813977.038455,
+    "mtime": 1783815268.5614214,
     "ast_hash": "17a6a0e6f0004f5d6e8c7b80190e2bfb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5ab35.png": {
-    "mtime": 1783813977.0270047,
+    "mtime": 1783815268.5496476,
     "ast_hash": "e94a09224dc2f11e74a300569a379052",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5ab351.png": {
-    "mtime": 1783813977.032967,
+    "mtime": 1783815268.5557122,
     "ast_hash": "e94a09224dc2f11e74a300569a379052",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5f5f5.png": {
-    "mtime": 1783813977.0312788,
+    "mtime": 1783815268.5540128,
     "ast_hash": "c38f3a9a9f2035034af20a4160681e29",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f5f5f51.png": {
-    "mtime": 1783813977.037224,
+    "mtime": 1783815268.5601478,
     "ast_hash": "c38f3a9a9f2035034af20a4160681e29",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f78c6c.png": {
-    "mtime": 1783813977.0320375,
+    "mtime": 1783815268.5547695,
     "ast_hash": "e953d41e663c55391be97bd69f8eef76",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f78c6c1.png": {
-    "mtime": 1783813977.038083,
+    "mtime": 1783815268.5610213,
     "ast_hash": "e953d41e663c55391be97bd69f8eef76",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f8f8f2.png": {
-    "mtime": 1783813977.0271695,
+    "mtime": 1783815268.5498295,
     "ast_hash": "f31a37cf7dc90deb9e3098749e50b64f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/f8f8f21.png": {
-    "mtime": 1783813977.0331352,
+    "mtime": 1783815268.555883,
     "ast_hash": "f31a37cf7dc90deb9e3098749e50b64f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fad000.png": {
-    "mtime": 1783813977.0325654,
+    "mtime": 1783815268.5553124,
     "ast_hash": "ce71d2576871c9db908c134067593310",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fad0001.png": {
-    "mtime": 1783813977.0385451,
+    "mtime": 1783815268.5615075,
     "ast_hash": "ce71d2576871c9db908c134067593310",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fdac54.png": {
-    "mtime": 1783813977.029703,
+    "mtime": 1783815268.5524855,
     "ast_hash": "95ebe801f5d893a522773ac67d19f188",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fdac541.png": {
-    "mtime": 1783813977.03565,
+    "mtime": 1783815268.558588,
     "ast_hash": "95ebe801f5d893a522773ac67d19f188",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fefeff.png": {
-    "mtime": 1783813977.0327353,
+    "mtime": 1783815268.555478,
     "ast_hash": "72d8f71c66a9d4a2f2e288f29f994765",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/fefeff1.png": {
-    "mtime": 1783813977.0387115,
+    "mtime": 1783815268.5616877,
     "ast_hash": "72d8f71c66a9d4a2f2e288f29f994765",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ff7b72.png": {
-    "mtime": 1783813977.0291946,
+    "mtime": 1783815268.551964,
     "ast_hash": "0bc9b07a67e45cd6847aa57dfb02161c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ff7b721.png": {
-    "mtime": 1783813977.0352566,
+    "mtime": 1783815268.5581927,
     "ast_hash": "0bc9b07a67e45cd6847aa57dfb02161c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ff9492.png": {
-    "mtime": 1783813977.0299215,
+    "mtime": 1783815268.5527015,
     "ast_hash": "a0b9b3b5a898d10cb54216a26411950c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ff94921.png": {
-    "mtime": 1783813977.0358872,
+    "mtime": 1783815268.5587952,
     "ast_hash": "a0b9b3b5a898d10cb54216a26411950c",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffa07a.png": {
-    "mtime": 1783813977.0269675,
+    "mtime": 1783815268.5496051,
     "ast_hash": "4bbaf84eb19f1d7d6e6668c54f983092",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffa07a1.png": {
-    "mtime": 1783813977.0329466,
+    "mtime": 1783815268.555692,
     "ast_hash": "4bbaf84eb19f1d7d6e6668c54f983092",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffa657.png": {
-    "mtime": 1783813977.0292783,
+    "mtime": 1783815268.5520525,
     "ast_hash": "c706d219a355c32ab0587cea6910e91f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffa6571.png": {
-    "mtime": 1783813977.0352955,
+    "mtime": 1783815268.5582309,
     "ast_hash": "c706d219a355c32ab0587cea6910e91f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffb757.png": {
-    "mtime": 1783813977.0299413,
+    "mtime": 1783815268.5527208,
     "ast_hash": "f790600dbf55460e97854a5b6d8a9805",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffb7571.png": {
-    "mtime": 1783813977.0359604,
+    "mtime": 1783815268.5588646,
     "ast_hash": "f790600dbf55460e97854a5b6d8a9805",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffd700.png": {
-    "mtime": 1783813977.0270247,
+    "mtime": 1783815268.5496702,
     "ast_hash": "4412723271c015b02b09b3f8461a62e2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffd7001.png": {
-    "mtime": 1783813977.0329864,
+    "mtime": 1783815268.5557327,
     "ast_hash": "4412723271c015b02b09b3f8461a62e2",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffd900.png": {
-    "mtime": 1783813977.027349,
+    "mtime": 1783815268.550026,
     "ast_hash": "aabcc02a6c80abdecae22f995349979f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/ffd9001.png": {
-    "mtime": 1783813977.0333219,
+    "mtime": 1783815268.5560794,
     "ast_hash": "aabcc02a6c80abdecae22f995349979f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark-colorblind.png": {
-    "mtime": 1783813977.029564,
+    "mtime": 1783815268.5523384,
     "ast_hash": "8080d5999f28d02488e66140c04e84dc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark-colorblind1.png": {
-    "mtime": 1783813977.0355744,
+    "mtime": 1783815268.5585027,
     "ast_hash": "8080d5999f28d02488e66140c04e84dc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark-high-contrast.png": {
-    "mtime": 1783813977.0298607,
+    "mtime": 1783815268.552642,
     "ast_hash": "53873960c004d308acf0db6159346cb5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark-high-contrast1.png": {
-    "mtime": 1783813977.0358193,
+    "mtime": 1783815268.5587392,
     "ast_hash": "53873960c004d308acf0db6159346cb5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark.png": {
-    "mtime": 1783813977.0291336,
+    "mtime": 1783815268.5519114,
     "ast_hash": "434bb7532f6dd801f2d54c8e3c193e39",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-dark1.png": {
-    "mtime": 1783813977.0350506,
+    "mtime": 1783815268.5580022,
     "ast_hash": "434bb7532f6dd801f2d54c8e3c193e39",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light-colorblind.png": {
-    "mtime": 1783813977.030648,
+    "mtime": 1783815268.553421,
     "ast_hash": "46be74a095c76531ce50bb000fb216fb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light-colorblind1.png": {
-    "mtime": 1783813977.0365388,
+    "mtime": 1783815268.559454,
     "ast_hash": "46be74a095c76531ce50bb000fb216fb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light-high-contrast.png": {
-    "mtime": 1783813977.0308855,
+    "mtime": 1783815268.5536292,
     "ast_hash": "b1356be78403748276bf24f2af6d3fb8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light-high-contrast1.png": {
-    "mtime": 1783813977.0367785,
+    "mtime": 1783815268.559694,
     "ast_hash": "b1356be78403748276bf24f2af6d3fb8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light.png": {
-    "mtime": 1783813977.0302718,
+    "mtime": 1783815268.5530477,
     "ast_hash": "fad4b46685e07700edb3e986c28f1017",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/github-light1.png": {
-    "mtime": 1783813977.0361464,
+    "mtime": 1783815268.5590563,
     "ast_hash": "fad4b46685e07700edb3e986c28f1017",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/gotthard-dark.png": {
-    "mtime": 1783813977.0312407,
+    "mtime": 1783815268.553981,
     "ast_hash": "39a27987d270fe5c88d319909411f782",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/gotthard-dark1.png": {
-    "mtime": 1783813977.037183,
+    "mtime": 1783815268.560106,
     "ast_hash": "39a27987d270fe5c88d319909411f782",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/gotthard-light.png": {
-    "mtime": 1783813977.031609,
+    "mtime": 1783815268.5543444,
     "ast_hash": "0de77585f1bd0fa7ef55c6f0a28a20bc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/gotthard-light1.png": {
-    "mtime": 1783813977.0375419,
+    "mtime": 1783815268.560479,
     "ast_hash": "0de77585f1bd0fa7ef55c6f0a28a20bc",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/greative.png": {
-    "mtime": 1783813977.0319734,
+    "mtime": 1783815268.5547156,
     "ast_hash": "1f1c37c891993f542614d3121f964f3f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/greative1.png": {
-    "mtime": 1783813977.0379634,
+    "mtime": 1783815268.5609045,
     "ast_hash": "1f1c37c891993f542614d3121f964f3f",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/pitaya-smoothie.png": {
-    "mtime": 1783813977.032408,
+    "mtime": 1783815268.5551486,
     "ast_hash": "91c770e734efee87ac97902e989aadf8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_images/pitaya-smoothie1.png": {
-    "mtime": 1783813977.0383813,
+    "mtime": 1783815268.5613353,
     "ast_hash": "91c770e734efee87ac97902e989aadf8",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/check-solid.svg": {
-    "mtime": 1783813977.0249941,
+    "mtime": 1783815268.5474072,
     "ast_hash": "be5a4b1a3702037c2caf75fdc74db314",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/copy-button.svg": {
-    "mtime": 1783813977.0250537,
+    "mtime": 1783815268.5474803,
     "ast_hash": "10e3a25ec1822fc28b44bfce28a6e6e5",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/file.png": {
-    "mtime": 1783813977.0133965,
+    "mtime": 1783815268.536083,
     "ast_hash": "ba0c95766a77a6c598a7ca542f1db738",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/images/logo_binder.svg": {
-    "mtime": 1783813977.0239851,
+    "mtime": 1783815268.546392,
     "ast_hash": "f28c9a01d6eae455ea64f37811a47fb6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/images/logo_colab.png": {
-    "mtime": 1783813977.0244365,
+    "mtime": 1783815268.5468416,
     "ast_hash": "bcb32d6bf00d4020464256d8803598a6",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/images/logo_deepnote.svg": {
-    "mtime": 1783813977.024283,
+    "mtime": 1783815268.5466871,
     "ast_hash": "f01d08ab0a611a4dc4a9a7a954895802",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/images/logo_jupyterhub.svg": {
-    "mtime": 1783813977.0245864,
+    "mtime": 1783815268.5469956,
     "ast_hash": "fa8a9d51d34ceccd07248531d0c21aeb",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/images/logo_jupyterlite.svg": {
-    "mtime": 1783813977.024185,
+    "mtime": 1783815268.5465875,
     "ast_hash": "327de3ac886815d717596443f9408837",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/minus.png": {
-    "mtime": 1783813977.0134172,
+    "mtime": 1783815268.5361018,
     "ast_hash": "36b1a4b05451c7acde7ced60b2f6bc21",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/play-solid.svg": {
-    "mtime": 1783813977.0253665,
+    "mtime": 1783815268.5478032,
     "ast_hash": "f79fe6ae99a50939f12f755851398cf9",
     "semantic_hash": ""
   },
   "Local_Deployed_Shared/arena-book/_static/plus.png": {
-    "mtime": 1783813977.013293,
+    "mtime": 1783815268.5359747,
     "ast_hash": "0d7849fd4d4148b7f78cab60a087633a",
     "semantic_hash": ""
   },
