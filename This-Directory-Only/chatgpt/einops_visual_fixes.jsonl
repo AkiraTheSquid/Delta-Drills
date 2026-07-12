@@ -9,7 +9,6 @@
 {"id": 330, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 331, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 333, "supports_visual_output": false, "expected_artifact_type": "stdout"}
-{"id": 334, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n", "test_cases": [{"setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2", "call": "solve()", "expected_expr": "einops.rearrange([img, img], 'b h w c -> (h b) w c')"}]}
 {"id": 335, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 336, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 337, "supports_visual_output": false, "expected_artifact_type": "stdout"}
@@ -28,21 +27,15 @@
 {"id": 364, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 365, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 371, "supports_visual_output": false, "expected_artifact_type": "stdout"}
-{"id": 373, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n", "test_cases": [{"setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]", "call": "solve()", "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"}]}
 {"id": 374, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 377, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 380, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 383, "supports_visual_output": false, "expected_artifact_type": "stdout"}
-{"id": 386, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n", "test_cases": [{"setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2", "call": "solve()", "expected_expr": "einops.reduce(arr, 'b h (w w2) c -> b h w c', 'mean', w2=2)"}]}
-{"id": 387, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n", "test_cases": [{"setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\nb = 2", "call": "solve()", "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)"}]}
-{"id": 389, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n", "test_cases": [{"setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2", "call": "solve()", "expected_expr": "einops.rearrange(arr[:6], '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"}]}
 {"id": 390, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 391, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 392, "supports_visual_output": false, "expected_artifact_type": "stdout"}
-{"id": 393, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n", "test_cases": [{"setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)", "call": "solve()", "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"}]}
 {"id": 394, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 397, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 398, "supports_visual_output": false, "expected_artifact_type": "stdout"}
 {"id": 400, "supports_visual_output": false, "expected_artifact_type": "stdout"}
-{"id": 402, "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n", "test_cases": [{"setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]", "call": "solve()", "expected_expr": "img - mx", "expected_setup_code": "mx = einops.reduce(img, 'h w c -> () w c', 'max')"}]}
 {"id": 404, "supports_visual_output": false, "expected_artifact_type": "stdout"}

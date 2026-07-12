@@ -291,14 +291,14 @@
 {"id": 314, "hint": "The batch index must vary SLOWER than width inside the merged axis \u2014 '(b w)' puts each whole image before the next."}
 {"id": 315, "hint": "Factor the time axis into (segments, within-segment) \u2014 since the split is contiguous, it's a pure reshape."}
 {"id": 316, "hint": "Factor the channel axis with the group index OUTERMOST, then transpose that new axis to the front."}
-{"id": 317, "hint": "Use repeat (not rearrange) and place the literal tiling factor next to the height axis inside a grouped (h 3) on the output side."}
-{"id": 318, "hint": "Factor the batch axis into grid rows and columns, then fuse the row factor with height and the column factor with width in the output."}
+{"id": 317, "hint": "`einops.repeat(img, 'c h w -> c (h 3) w')` \u2014 the (h 3) group repeats each row."}
+{"id": 318, "hint": "'(g1 g2) c h w -> c (g1 h) (g2 w)' with g1=4 \u2014 batch splits into grid rows \u00d7 cols."}
 {"id": 319, "hint": "A pure axis permutation \u2014 every letter appears on both sides, just reordered."}
-{"id": 320, "hint": "Factor the height axis into a leading half-selector of size 2, then merge that selector into the batch axis to produce twice as many shorter images."}
+{"id": 320, "hint": "'b (two h) w c -> (two b) h w c', two=2 \u2014 height splits; the halves join the batch."}
 {"id": 321, "hint": "Factor the channel axis into (h1, w1, c) with the sub-position indices outermost, then merge h1 into height and w1 into width."}
-{"id": 322, "hint": "Fold the spatial subgrid factors and batch into one leading axis, then run the mirror-image pattern to undo it, keeping hs and ws fixed."}
+{"id": 322, "hint": "'b c (h hs) (w ws) -> (hs ws b) c h w' \u2014 subgrid indices move out to the batch."}
 {"id": 323, "hint": "Split the tile index back into its (row, col) grid coordinates, then interleave rows-of-tiles with rows-within-tiles."}
-{"id": 324, "hint": "Factor both spatial axes into output-size and window-size parts, drop the window parts from the output, and use the 'mean' reduction."}
+{"id": 324, "hint": "einops.reduce with 'mean' and '(h h2) (w w2)' window factors, h2=w2=2."}
 {"id": 325, "hint": "reduce with a pattern that keeps only b and the reduction name 'mean' \u2014 the dropped axes are what gets averaged."}
 {"id": 326, "hint": "Drop only the channel letter and pick 'max' as the reduction."}
 {"id": 327, "hint": "Swap the last two letters \u2014 a transpose of trailing axes."}
@@ -306,9 +306,9 @@
 {"id": 329, "hint": "Factor the batch into (rows, cols) of the grid, then merge rows-of-images into height and columns into width."}
 {"id": 330, "hint": "Move the first letter to the end of the output list \u2014 one axis relocation."}
 {"id": 331, "hint": "Slice first (every second image), THEN grid \u2014 rearrange only reorganizes whatever you hand it."}
-{"id": 332, "hint": "Reduce over width with max while keeping a singleton width axis, then rely on broadcasting to subtract."}
+{"id": 332, "hint": "Row max: einops.reduce(img, 'h w c -> h () c', 'max'), then subtract (broadcast)."}
 {"id": 333, "hint": "einops accepts a LIST of arrays: the list index becomes the pattern's first axis, so stacking and permuting happen in one call."}
-{"id": 334, "hint": "Treat the list as a batch axis, then merge height with batch in that order so rows alternate between the two images."}
+{"id": 334, "hint": "'b h w c -> (h b) w c' with the images as a list \u2014 (h b) interleaves rows."}
 {"id": 335, "hint": "Move the trailing letter to the front \u2014 the inverse of the channels-last conversion."}
 {"id": 336, "hint": "One reduce pattern can pool AND lay out a grid: the pooling factors vanish (reduced), the grid factors migrate into height and width."}
 {"id": 337, "hint": "Factoring '(b w)' on the INPUT side is the undo of merging it on the output side \u2014 you must tell einops b (or w) since the strip alone is ambiguous."}
@@ -322,22 +322,22 @@
 {"id": 345, "hint": "Move the trailing channel letter to slot two \u2014 the inverse of the bchw-to-bhwc conversion."}
 {"id": 346, "hint": "Batch merges into width with b outermost \u2014 but first the axes must be brought adjacent, which the pattern does implicitly."}
 {"id": 347, "hint": "Merging '(c w)' with c outermost puts whole channel images next to each other \u2014 height stays shared."}
-{"id": 348, "hint": "Use repeat with a new factor axis folded into the height group, leaving the other axes identical on both sides."}
+{"id": 348, "hint": "einops.repeat 'b h w c -> b (h r) w c' with r=3 \u2014 r after h repeats rows in place."}
 {"id": 349, "hint": "Every letter vanishes \u2014 the empty right side is the grand total."}
-{"id": 350, "hint": "Factor each spatial axis into an outer and a size-2 inner index, then swap the two inner indices on the output."}
-{"id": 351, "hint": "Use repeat with a literal 2 merged into both the height and width output groups."}
+{"id": 350, "hint": "'(h p1) (w p2) c -> (h p2) (w p1) c' \u2014 swap the within-patch axes."}
+{"id": 351, "hint": "einops.repeat 'h w c -> (h 2) (w 2) c' \u2014 each pixel becomes a 2\u00d72 block."}
 {"id": 352, "hint": "'(h k)' with k INNER repeats each row before moving to the next \u2014 stretching, not tiling."}
 {"id": 353, "hint": "Adjacent axes merged in order \u2014 a pure reshape, the inverse of segmenting."}
 {"id": 354, "hint": "'()' in the output keeps a singleton axis \u2014 the einops spelling of keepdims \u2014 so the minima broadcast straight back."}
 {"id": 355, "hint": "Slice, then one repeat pattern that BOTH merges batch into height and introduces a new horizontal copy index."}
 {"id": 356, "hint": "Merging already-adjacent trailing axes is a reshape \u2014 batch stays, everything else concatenates in order."}
-{"id": 357, "hint": "Use rearrange and combine channels with height into a single leading composite axis."}
+{"id": 357, "hint": "'c h w -> (c h) w' \u2014 channels become stacked bands of rows."}
 {"id": 358, "hint": "An empty '()' group on the output side mints a length-1 axis at that position."}
 {"id": 359, "hint": "Factor the channels with the split index OUTERMOST and name it first in the output \u2014 tuple unpacking does the rest."}
 {"id": 360, "hint": "A leading '()' output group adds the channel axis a grayscale image needs to enter image pipelines."}
 {"id": 361, "hint": "Handing einops a list makes the list index the first pattern axis \u2014 an identity pattern is np.stack."}
 {"id": 362, "hint": "'(c split)' puts the group index INNERMOST \u2014 every other channel belongs to the other group."}
-{"id": 363, "hint": "Factor height and width into outer indices and size-3 inner blocks, then reduce those blocks with 'mean'."}
+{"id": 363, "hint": "einops.reduce 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3."}
 {"id": 364, "hint": "Factor the batch into grid rows and columns, then merge each with its matching spatial axis \u2014 channels ride along at the end."}
 {"id": 365, "hint": "List-as-batch plus a permutation that sends the new axis to the back \u2014 one call."}
 {"id": 367, "hint": "Drop only the spatial letters; batch and channel both survive."}
@@ -346,36 +346,36 @@
 {"id": 370, "hint": "Reduce b, h, AND w to singletons, keeping only c at full size \u2014 the statistic is shared across the batch."}
 {"id": 371, "hint": "Factor the batch into (hs, ws, b) and interleave hs into height and ws into width."}
 {"id": 372, "hint": "Factor as (g, c), emit as (c, g) \u2014 a transpose hidden inside one axis."}
-{"id": 373, "hint": "Fold the channel axis into height by listing it first inside the merged group, and use () to add the trailing size-1 axis."}
+{"id": 373, "hint": "'h w c -> (c h) w ()' \u2014 channel-major row stack plus a trailing singleton."}
 {"id": 374, "hint": "List-as-batch feeding straight into a width merge \u2014 stack and concatenate in one pattern."}
 {"id": 375, "hint": "Factor time into (kept, 2) and average the pair factor away."}
-{"id": 376, "hint": "Wrap the two images in a list to create a batch axis, then merge that axis into width."}
+{"id": 376, "hint": "'b h w c -> h (b w) c' \u2014 the (b w) group lays the images side by side."}
 {"id": 377, "hint": "Pooling factors reduce away while the surviving axes merge into the flat feature vector \u2014 one pattern, two jobs."}
 {"id": 378, "hint": "Same pair-pooling pattern with the window length as a parameter."}
-{"id": 379, "hint": "Just reorder the height and width axis names on the right side of the arrow."}
+{"id": 379, "hint": "'b c h w -> b c w h' \u2014 pure axis permutation, no groups needed."}
 {"id": 380, "hint": "Permute to channels-last first (conceptually), then the (b h) merge is contiguous \u2014 einops fuses both."}
-{"id": 381, "hint": "Make the four images a batch, split it into rows and columns, then fold rows into height and columns into width."}
-{"id": 382, "hint": "Split the batch into r=3 rows (columns are inferred), then merge rows into height and columns into width."}
+{"id": 381, "hint": "'(r nc) h w ch -> (r h) (nc w) ch' with r=2 \u2014 4 images, 2\u00d72 grid, row-major."}
+{"id": 382, "hint": "'(r nc) h w ch -> (r h) (nc w) ch' with r=3 \u2014 6 images to a 3\u00d72 montage."}
 {"id": 383, "hint": "'(r c)' with the new index OUTER copies the whole channel block, keeping original channel order within each copy."}
 {"id": 384, "hint": "Bring heads next to depth first, then merge them \u2014 head index outer so each head's features stay contiguous."}
-{"id": 385, "hint": "Use repeat and expand the width axis with a factor of 4 placed after w in the merged group."}
-{"id": 386, "hint": "Factor the width into an outer index and an inner group of 2, then let reduce collapse the inner group with a mean."}
-{"id": 387, "hint": "Decompose height and width into (stripe, size) pairs, then compose the stripe indices together with batch as the new leading dimension."}
+{"id": 385, "hint": "einops.repeat 'c h w -> c h (w 4)' \u2014 each column appears four times in a row."}
+{"id": 386, "hint": "einops.reduce 'b h (w w2) c -> b h w c', 'mean', w2=2 \u2014 adjacent column pairs."}
+{"id": 387, "hint": "'b c (h hs) (w ws) -> (hs ws b) c h w' \u2014 subgrid positions become batch entries."}
 {"id": 388, "hint": "Swap the first two letters \u2014 the classic batch-first/time-first conversion."}
-{"id": 389, "hint": "Split the batch into row and column grid indices, then fold the row index into height and the column index into width."}
+{"id": 389, "hint": "'(g1 g2) h w c -> (g1 h) (g2 w) c' with g1=3 \u2014 three rows, two columns."}
 {"id": 390, "hint": "Merging loses the factorization \u2014 the inverse pattern must be told one factor and infers the other."}
 {"id": 391, "hint": "Adjacent trailing axes merge row-major \u2014 one reshape."}
 {"id": 392, "hint": "Batch merges into height with b outermost \u2014 channels move in front first so the merge is contiguous."}
-{"id": 393, "hint": "Factor channels into (pair_index, within_pair) with the inner factor 2, then move the within-pair index to the front."}
+{"id": 393, "hint": "'(p two) h w -> two p h w', two=2 \u2014 pair-member axis splits out to the front."}
 {"id": 394, "hint": "One pattern can mint the batch axis AND merge everything else \u2014 '()' plus a merged group."}
-{"id": 395, "hint": "Split each spatial axis into an outer index and a block factor, then compose those block factors together with channels into the new channel dimension."}
+{"id": 395, "hint": "'b c (h h1) (w w1) -> b (h1 w1 c) h w' \u2014 block positions fold INTO channels."}
 {"id": 396, "hint": "Factor the feature axis into (heads, per-head depth) and move heads ahead of time \u2014 the inverse of concat-heads."}
 {"id": 397, "hint": "Permute spatial to the front, then merge the two remaining axes in their stated order."}
 {"id": 398, "hint": "Same stitch as the channels-last version \u2014 only the channel letter's position in the pattern moves."}
-{"id": 399, "hint": "Reduce across channels with a mean, but write a () in the output so the channel axis collapses to size 1 rather than disappearing."}
+{"id": 399, "hint": "einops.reduce 'b h w c -> b h w ()', 'mean' \u2014 average channels, keep the axis."}
 {"id": 400, "hint": "'(w b)' with b INNER interleaves the batches column by column \u2014 the merge order is the semantics."}
-{"id": 401, "hint": "Decompose height and width into (grid, patch) pairs with patch size 3, then compose the two grid indices into a single patch-count axis."}
-{"id": 402, "hint": "Reduce over the height axis with max but retain a singleton there so the result broadcasts back against the original image when subtracted."}
+{"id": 401, "hint": "'(h p1) (w p2) c -> (h w) p1 p2 c', p1=p2=3 \u2014 patch grid flattens to one axis."}
+{"id": 402, "hint": "Column max: einops.reduce(img, 'h w c -> () w c', 'max'), then subtract."}
 {"id": 403, "hint": "Factor width, then merge the inner factor into height with it OUTERMOST in '(w4 h)' \u2014 the folded strips stack above one another."}
 {"id": 404, "hint": "Factor both spatial axes into (tile, within-tile) and merge the two tile indices into the leading patch-list axis."}
 {"id": 405, "hint": "floor((H + 2P \u2212 K)/S) + 1, with `//` for the floor."}

@@ -22,6 +22,12 @@ async function renderRunOutputVisual(pyodide, question) {
     hideOutputVisual();
     return;
   }
+  // Parameterized visual questions take real arguments — render from the
+  // canonical case's call (e.g. solve(img); the starter defines the fixture
+  // vars at module level, so they exist in the user's globals). Zero-param
+  // legacy questions fall back to solve().
+  const visualCall =
+    (Array.isArray(question.test_cases) && question.test_cases[0]?.call) || "solve()";
   try {
     const payload = await pyodide.runPythonAsync(`
 import json
@@ -38,7 +44,7 @@ def _delta_to_jsonable(value):
         return [_delta_to_jsonable(v) for v in value]
     return value
 
-_delta_output_value = solve()
+_delta_output_value = ${visualCall}
 json.dumps(_delta_to_jsonable(_delta_output_value))
 `);
     const parsed = JSON.parse(payload);
