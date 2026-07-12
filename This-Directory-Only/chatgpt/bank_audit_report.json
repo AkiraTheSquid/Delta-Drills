@@ -49,76 +49,9 @@
     "var": "hw",
     "detail": "post-setup var 'hw' already equals the expected value"
    }
-  ],
-  "459": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "460": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "461": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "462": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "463": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "465": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "466": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "467": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "471": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "472": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
-  ],
-  "473": [
-   {
-    "check": "torch_unavailable",
-    "detail": "stdout-graded torch answer \u2014 prod recomputes expected live; not audited here"
-   }
   ]
  },
  "counts": {
-  "precompute_leak": 7,
-  "torch_unavailable": 11
+  "precompute_leak": 7
  }
 }
