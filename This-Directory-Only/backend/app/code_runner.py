@@ -381,6 +381,15 @@ def _delta_equal(a, b):
             b2 = b.detach().cpu().numpy() if _delta_torch_tensor(b) else np.asarray(b)
             return bool(np.array_equal(a2, b2))
         except Exception:
+            # dtypes numpy can't hold (bfloat16, conj views): equal tensors must
+            # not grade as unequal — fall back to torch's own comparison.
+            _torch = sys.modules.get("torch")
+            if _torch is not None and isinstance(a, _torch.Tensor) and isinstance(b, _torch.Tensor):
+                try:
+                    return bool(_torch.equal(a.detach().cpu().resolve_conj(),
+                                             b.detach().cpu().resolve_conj()))
+                except Exception:
+                    return False
             return False
     if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
         return bool(np.array_equal(np.asarray(a), np.asarray(b)))
@@ -390,17 +399,26 @@ def _delta_equal(a, b):
         return all(_delta_equal(x, y) for x, y in zip(a, b))
     return bool(a == b)
 
+def _delta_seed():
+    # Same seed before the actual-side and expected-side setup runs, for BOTH
+    # rngs — setup executes twice, so unseeded torch.rand in setup would give
+    # the two sides different fixtures and fail honest answers.
+    np.random.seed(0)
+    _torch = sys.modules.get("torch")
+    if _torch is not None:
+        _torch.manual_seed(0)
+
 _delta_results = []
 {user_code}
 for _delta_case in json.loads({payload!r}):
     try:
         if _delta_case.get("setup_code"):
-            np.random.seed(0)
+            _delta_seed()
             exec(_delta_case["setup_code"], globals())
         _delta_actual = eval(_delta_case["call"], globals())
         _delta_expected_setup = _delta_case.get("expected_setup_code") or _delta_case.get("setup_code")
         if _delta_expected_setup:
-            np.random.seed(0)
+            _delta_seed()
             exec(_delta_expected_setup, globals())
         _delta_expected = eval(_delta_case["expected_expr"], globals())
         _delta_results.append({{

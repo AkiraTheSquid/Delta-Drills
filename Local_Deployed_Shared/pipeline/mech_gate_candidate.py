@@ -106,6 +106,21 @@ def _setup_assigned_names(setup_codes: list[str]) -> set[str]:
 def _values_equal(a, b) -> bool:
     import numpy as np
 
+    # torch tensors: bool(a == b) raises on multi-element tensors, which made
+    # the non-degeneracy check silently unable to flag constant torch expecteds.
+    _torch = sys.modules.get("torch")
+    if _torch is not None and (isinstance(a, _torch.Tensor) or isinstance(b, _torch.Tensor)):
+        try:
+            a2 = a.detach().cpu().numpy() if isinstance(a, _torch.Tensor) else np.asarray(a)
+            b2 = b.detach().cpu().numpy() if isinstance(b, _torch.Tensor) else np.asarray(b)
+            return bool(np.array_equal(a2, b2))
+        except Exception:
+            if isinstance(a, _torch.Tensor) and isinstance(b, _torch.Tensor):
+                try:
+                    return bool(_torch.equal(a.detach().cpu(), b.detach().cpu()))
+                except Exception:
+                    return False
+            return False
     if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
         try:
             return bool(np.array_equal(np.asarray(a), np.asarray(b)))
@@ -210,15 +225,21 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
         return failures
 
     # --- case self-sufficiency + collect expected values (numpy-only ns) ---
+    def _seed():
+        np.random.seed(0)
+        _torch = sys.modules.get("torch")
+        if _torch is not None:
+            _torch.manual_seed(0)
+
     expected_values = []
     for i, case in enumerate(cases):
         ns: dict = {"np": np}
         try:
-            np.random.seed(0)
+            _seed()
             exec(case["setup_code"], ns)
             exp_setup = case.get("expected_setup_code")
             if exp_setup:
-                np.random.seed(0)
+                _seed()
                 exec(exp_setup, ns)
             value = eval(case["expected_expr"], ns)
         except Exception as exc:
