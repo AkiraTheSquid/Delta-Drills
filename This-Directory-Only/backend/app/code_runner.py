@@ -46,6 +46,11 @@ def preload_torch() -> bool:
         return True
     try:
         import torch  # noqa: F401
+        # Single-thread torch BEFORE any fork: OMP/intra-op thread pools do not
+        # survive fork() and can deadlock the child (observed as rare 20s
+        # timeouts on F.cross_entropy / BatchNorm in forked grading). Drill
+        # tensors are tiny — one thread is also the fast path.
+        torch.set_num_threads(1)
         _torch_preloaded = True
         logger.info("torch preloaded for fork runner (%s)", torch.__version__)
     except Exception as exc:
@@ -344,9 +349,19 @@ def run_function_tests(
     payload = json.dumps(test_cases)
     harness = f"""
 import json
+import sys
 import numpy as np
 
+def _delta_torch_tensor(value):
+    # torch only if the question already imported it — numpy questions must
+    # not pay the torch import. Guests never reach here for torch questions
+    # (Pyodide has no torch; they get Colab routing), so backend-only is fine.
+    _torch = sys.modules.get("torch")
+    return _torch is not None and isinstance(value, _torch.Tensor)
+
 def _delta_to_jsonable(value):
+    if _delta_torch_tensor(value):
+        return value.detach().cpu().tolist()
     if isinstance(value, np.ndarray):
         return value.tolist()
     if isinstance(value, np.generic):
@@ -360,6 +375,13 @@ def _delta_to_jsonable(value):
     return value
 
 def _delta_equal(a, b):
+    if _delta_torch_tensor(a) or _delta_torch_tensor(b):
+        try:
+            a2 = a.detach().cpu().numpy() if _delta_torch_tensor(a) else np.asarray(a)
+            b2 = b.detach().cpu().numpy() if _delta_torch_tensor(b) else np.asarray(b)
+            return bool(np.array_equal(a2, b2))
+        except Exception:
+            return False
     if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
         return bool(np.array_equal(np.asarray(a), np.asarray(b)))
     if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):

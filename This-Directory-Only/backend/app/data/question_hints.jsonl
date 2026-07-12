@@ -402,36 +402,36 @@
 {"id": 426, "hint": "Tensors created inside the inference_mode context never track gradients."}
 {"id": 427, "hint": "After freezing every parameter, count how many still have requires_grad True."}
 {"id": 428, "hint": "model.eval() sets the training flag \u2014 just read it back."}
-{"id": 429, "hint": "Reduce over the column axis to collapse each row to its largest entry."}
-{"id": 430, "hint": "amax gives just values; inspect the class name of what max(dim=...) returns to see the difference."}
-{"id": 431, "hint": "Unfold both spatial axes into 2x2 patches, then take the max over the patch dimensions."}
-{"id": 432, "hint": "An in-place constant fill overwrites whatever torch.empty allocated."}
-{"id": 433, "hint": "Zero standard deviation makes every normal sample equal the mean."}
-{"id": 434, "hint": "Initialize weights normally and the bias to a constant, then summarize the weight stats and dump the bias."}
-{"id": 435, "hint": "Differentiate x cubed elementwise (3x^2) and scale by the incoming gradient."}
+{"id": 429, "hint": "`.amax(dim=...)` reduces the given dim away; rows survive when you reduce dim 1."}
+{"id": 430, "hint": "Reduce dim 0 for column maxes; compare `isinstance(..., torch.Tensor)` on both results."}
+{"id": 431, "hint": "`.unfold(2, 2, 2).unfold(3, 2, 2)` carves 2\u00d72 windows; then one `.amax(dim=(4, 5))`."}
+{"id": 432, "hint": "`torch.nn.init.constant_(w, value)` \u2014 the trailing underscore = in place."}
+{"id": 433, "hint": "`torch.nn.init.normal_(w, mean=mean, std=0.0)` \u2014 std 0 makes every draw the mean."}
+{"id": 434, "hint": "Seed first (`torch.manual_seed(0)`), then `normal_(w, 0.0, 1.0)`, then `constant_(b, c)`."}
+{"id": 435, "hint": "out = `x * x * x`; pass grad_out into `out.backward(grad_out)`; x.grad = 3x\u00b2\u00b7grad_out."}
 {"id": 436, "hint": "Sigmoid's derivative is expressible from its OUTPUT alone \u2014 y(1-y) \u2014 then multiply by whatever gradient arrived from above."}
 {"id": 437, "hint": "ReLU's gradient gates grad_out by which pre-activations were positive; then the linear layer's two gradients are an outer product (for W) and a transposed matvec (for x)."}
-{"id": 438, "hint": "Pass raw logits and integer targets straight into F.cross_entropy \u2014 no manual softmax."}
-{"id": 439, "hint": "Index the negative log-softmax at the target and compare to the batched F.cross_entropy."}
+{"id": 438, "hint": "`F.cross_entropy(logits, targets)` \u2014 it applies log-softmax internally."}
+{"id": 439, "hint": "`-F.log_softmax(logits, dim=0)[target]` vs `F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))`."}
 {"id": 440, "hint": "Pull the max out of the logsumexp \u2014 the shifted exponentials stay tame and the max adds back linearly."}
-{"id": 441, "hint": "Subtract lr times the gradient from the parameters \u2014 one elementwise update."}
-{"id": 442, "hint": "Loop three times: backward for the gradient, then update x in-place under no_grad and clear x.grad."}
+{"id": 441, "hint": "theta_new = `theta - lr * grad` \u2014 move AGAINST the gradient."}
+{"id": 442, "hint": "Each step: fresh loss, `backward()`, `x -= lr * x.grad` under no_grad, then `x.grad.zero_()`."}
 {"id": 443, "hint": "Residual first (X theta - y), then push it back through X.T with the 2/n factor from differentiating the squared mean."}
-{"id": 444, "hint": "Iterating an iterator exhausts it; iterating a list does not. Watch what the second pass over each sees."}
-{"id": 445, "hint": "The grad is all ones and never recomputed, so each step subtracts the same constant from every weight. Count how many steps run."}
-{"id": 446, "hint": "Convert the generator to a list immediately, then both the count and the two sum passes operate on stored elements."}
+{"id": 444, "hint": "Sum numel over the iterator twice \u2014 the second pass sees nothing. Lists don't exhaust."}
+{"id": 445, "hint": "`params = list(model.parameters())` once; each step `p -= lr * p.grad` under no_grad."}
+{"id": 446, "hint": "`list(gen)` materializes; a list can be summed twice and both sums agree."}
 {"id": 447, "hint": "Branch on isinstance(int): scalars duplicate, sequences convert element-wise \u2014 and always emit a plain tuple of ints."}
 {"id": 448, "hint": "Normalize every hyperparameter to a pair FIRST, then run the size formula independently per axis."}
 {"id": 449, "hint": "Write to_pair once and map it over the three arguments \u2014 mixed int/list/tuple inputs all canonicalize the same way."}
-{"id": 450, "hint": "Call backward on M with the upstream gradient tensor; let autograd populate X.grad and Y.grad for you."}
-{"id": 451, "hint": "Post-multiply the upstream gradient by Y transposed for dL/dX; pre-multiply by X transposed for dL/dY."}
-{"id": 452, "hint": "The derivative of 0.5*sum(M*M) w.r.t. M is just M; plug that in as dL/dM and compare the manual products against autograd."}
-{"id": 453, "hint": "Call .var twice, toggling the unbiased flag; the only difference is dividing by N versus N-1."}
-{"id": 454, "hint": "Reduce over every axis except the channel axis (dim 1), and use the biased variance flag."}
-{"id": 455, "hint": "Recreate BatchNorm's normalization by hand using the biased per-channel variance with keepdim, then compare against the layer's output with allclose."}
+{"id": 450, "hint": "`M.backward(dLdM)`; X.grad has X's shape (dLdM @ Y\u1d40), Y.grad has Y's (X\u1d40 @ dLdM)."}
+{"id": 451, "hint": "Straight translation: `dLdM @ Y.t()` and `X.t() @ dLdM`."}
+{"id": 452, "hint": "L = \u00bd\u03a3M\u00b2 makes dL/dM = M; manual gX = M @ Y\u1d40, gY = X\u1d40 @ M (detached)."}
+{"id": 453, "hint": "`x.var(unbiased=False)` divides by N; `unbiased=True` (the default) by N\u22121."}
+{"id": 454, "hint": "Reduce over dims (0, 2, 3) \u2014 everything except the channel dim; var with `unbiased=False`."}
+{"id": 455, "hint": "BN with `affine=False`, `.train()`; manual: mean/var over (0,2,3) keepdim, biased, then (x\u2212\u03bc)/\u221a(\u03c3\u00b2+\u03b5)."}
 {"id": 456, "hint": "Each step keeps a (1-mu) share of the old value and adds a mu share of the new one \u2014 a loop with one line of state."}
 {"id": 457, "hint": "Two EWMAs side by side \u2014 one over batch means, one over batch (population) variances \u2014 starting from the (0, 1) prior."}
-{"id": 458, "hint": "Use the running-stat update with mu = 1 - beta, applied component-wise to each gradient in order; skip any bias correction."}
+{"id": 458, "hint": "Fold in order: `m = beta * m + (1 - beta) * g` per gradient."}
 {"id": 459, "hint": "Reshape every length-C vector to (1, C, 1, 1) before the elementwise normalize, scale, and shift so each lines up with dim 1."}
 {"id": 460, "hint": "Put the channel count on dim 1 and make the batch and spatial dims singletons."}
 {"id": 461, "hint": "The raw add fails because C != W on the trailing axis; in the except branch reshape the bias to (1, C, 1, 1) so it broadcasts per channel."}
@@ -441,15 +441,15 @@
 {"id": 465, "hint": "Reverse broadcasting by summing the upstream gradient over exactly the axes that were size 1 in the original shape, keeping the dimension."}
 {"id": 466, "hint": "The size-1 axis here is the row dimension; sum the upstream rows together while keeping that dimension."}
 {"id": 467, "hint": "Each operand's gradient equals the number of times broadcasting replicated it along its size-1 axis."}
-{"id": 468, "hint": "Store the constructor arguments as attributes and have extra_repr format them into the requested f-string."}
-{"id": 469, "hint": "With no submodules, the repr collapses to the class name wrapping your extra_repr string in parentheses."}
-{"id": 470, "hint": "With a submodule present, the repr expands to multiple indented lines: your extra_repr first, then each child module."}
+{"id": 468, "hint": "Store the args in `__init__` (after `super().__init__()`); `extra_repr` returns one f-string."}
+{"id": 469, "hint": "repr(m) becomes `Scale(dim=16, factor=2.5)` \u2014 your extra_repr fills the parens."}
+{"id": 470, "hint": "Create `self.lin` in `__init__`; repr shows your extra_repr line ABOVE the `(lin): ...` child line."}
 {"id": 471, "hint": "The global flag wins over a tensor's requires_grad for graph construction, but it does not change the computed numbers."}
 {"id": 472, "hint": "Capture the default flag first, then observe how each result's requires_grad mirrors the flag state at compute time."}
 {"id": 473, "hint": "Wrap the in-place update in the context manager that turns off tracking, then check that the leaf's requires_grad survives outside it."}
-{"id": 474, "hint": "Differentiate a sum of products with respect to one factor and the other factor is what remains."}
-{"id": 475, "hint": "The gradient of each weight is 2 times the corresponding pre-activation output times the input feature that multiplied it."}
-{"id": 476, "hint": "Differentiate the mean-squared term, then apply a single gradient-descent step inside a no-grad block."}
-{"id": 477, "hint": "The call freezes every parameter recursively; count only those whose requires_grad survives."}
-{"id": 478, "hint": "If no input to an operation requires grad, the result carries neither a requires_grad flag nor a grad_fn."}
-{"id": 479, "hint": "Freeze everything, then selectively unfreeze one submodule; the parameter order follows the module order."}
+{"id": 474, "hint": "loss = `(w * x).sum()`, then `loss.backward()`; d(loss)/dw is just x."}
+{"id": 475, "hint": "loss = `(W @ x).pow(2).sum()`; a gradient always has its parameter's shape."}
+{"id": 476, "hint": "MSE with `.mean()` divides the gradient by numel; update inside `torch.no_grad()`."}
+{"id": 477, "hint": "One call: `model.requires_grad_(False)` \u2014 it recurses; count elements with `numel()`."}
+{"id": 478, "hint": "Freeze, forward, `.sum()`; check `y.requires_grad` and `y.grad_fn is None`."}
+{"id": 479, "hint": "Freeze all, then `model[idx].requires_grad_(True)` re-enables just that layer."}

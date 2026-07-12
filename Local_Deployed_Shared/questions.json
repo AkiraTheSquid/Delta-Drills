@@ -16866,18 +16866,39 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Reduction ops: amax",
     "subtopic_key": "PyTorch Fundamentals: Reduction ops: amax",
-    "question_text": "`x` (starter) is a fixed 2×3 float tensor. Reduce it with `torch.amax` to the maximum of each ROW — one value per row, so think about which `dim` gets reduced away. Print the result with print(result.tolist()).",
-    "answer_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nresult = x.amax(dim=1)\nprint(result.tolist())",
+    "question_text": "Write a function solve(x) that takes a 2-D float tensor and returns the maximum of each ROW as a 1-D tensor — one value per row, so think about which `dim` gets reduced away. Use `torch.amax` (or the `.amax` method), which returns just the values (unlike `.max(dim=...)`, which returns a named tuple).",
+    "answer_code": "import torch\n\ndef solve(x):\n    return x.amax(dim=1)\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[5.0, 6.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: complete this step (see the problem statement above)\nresult = None  # TODO: fill in result\nprint(result.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([5.0, 6.0])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[-3.0, -1.0], [-2.0, -8.0], [0.0, -5.0]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([-1.0, -2.0, 0.0])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[7.0, 7.0, 2.0, 7.0]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([7.0])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[2.5], [1.5], [9.0]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([2.5, 1.5, 9.0])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16888,18 +16909,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Reduction ops: amax",
     "subtopic_key": "PyTorch Fundamentals: Reduction ops: amax",
-    "question_text": "Unlike `.max(dim=...)`, which returns a (values, indices) named tuple, `.amax(dim=...)` returns just the values tensor. On the starter's 2×3 tensor `x`, compute `vals` — the max down each COLUMN — with `.amax`, choosing the dim yourself. The starter already prints `vals.tolist()` and then the type NAME of what `x.max(dim=0)` returns.",
-    "answer_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nvals = x.amax(dim=0)\nprint(vals.tolist())\nprint(type(x.max(dim=0)).__name__)",
+    "question_text": "Unlike `.max(dim=...)`, which returns a (values, indices) named tuple, `.amax(dim=...)` returns just the values tensor. Write solve(x) that takes a 2-D float tensor and returns the tuple `(vals, max_is_tensor, amax_is_tensor)`: `vals` = the max down each COLUMN via `.amax` (choose the dim yourself), `max_is_tensor` = `isinstance(x.max(dim=0), torch.Tensor)`, and `amax_is_tensor` = the same check on your `vals` — one of the two is not a plain tensor.",
+    "answer_code": "import torch\n\ndef solve(x):\n    vals = x.amax(dim=0)\n    return (vals, isinstance(x.max(dim=0), torch.Tensor), isinstance(vals, torch.Tensor))\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "[4.0, 5.0, 6.0]\nmax",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\n# TODO: compute vals\nvals = None  # TODO: fill in vals\nprint(vals.tolist())\nprint(type(x.max(dim=0)).__name__)",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])",
+        "call": "solve(x)",
+        "expected_expr": "(torch.tensor([4.0, 5.0, 6.0]), False, True)"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[-1.0, -7.0], [-3.0, -2.0]])",
+        "call": "solve(x)",
+        "expected_expr": "(torch.tensor([-1.0, -2.0]), False, True)"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[0.5, 1.5, 2.5, 3.5]])",
+        "call": "solve(x)",
+        "expected_expr": "(torch.tensor([0.5, 1.5, 2.5, 3.5]), False, True)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16910,18 +16947,39 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Reduction ops: amax",
     "subtopic_key": "PyTorch Fundamentals: Reduction ops: amax",
-    "question_text": "Implement a 2×2, stride-2 max-pool by hand on the starter's (1,1,4,4) tensor. Two steps: carve the two spatial dims into 2×2 windows with `.unfold` (called once per spatial dim — mind its size and step arguments), then reduce BOTH window dims away with a single `.amax` over the two trailing dims. Print the pooled result with print(result.tolist()).",
-    "answer_code": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\nx = x.unfold(2, 2, 2).unfold(3, 2, 2)\nresult = x.amax(dim=(4, 5))\nprint(result.tolist())",
+    "question_text": "Implement a 2×2, stride-2 max-pool by hand. Write solve(x) for a (1, 1, H, W) float tensor (H, W even): carve the two spatial dims into 2×2 windows with `.unfold` (called once per spatial dim — mind its size and step arguments), then reduce BOTH window dims away with a single `.amax` over the two trailing dims. Return the pooled (1, 1, H//2, W//2) tensor.",
+    "answer_code": "import torch\n\ndef solve(x):\n    w = x.unfold(2, 2, 2).unfold(3, 2, 2)\n    return w.amax(dim=(4, 5))\n\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\nprint(solve(x))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
     "expected_output": "[[[[7.0, 6.0], [8.0, 9.0]]]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\n# TODO: extract 2x2 windows with .unfold, then reduce the window dims away with .amax\nresult = None  # TODO: fill in result\nprint(result.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.tensor([[[[1., 7., 2., 0.], [3., 4., 6., 5.], [8., 1., 9., 2.], [0., 4., 3., 7.]]]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([[[[7., 6.], [8., 9.]]]])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[[[5., -1.], [-3., 2.]]]])",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([[[[5.]]]])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(1, 1, 4, 6)",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([[[[7., 9., 11.], [19., 21., 23.]]]])"
+      },
+      {
+        "setup_code": "import torch\nx = -torch.arange(16, dtype=torch.float32).reshape(1, 1, 4, 4)",
+        "call": "solve(x)",
+        "expected_expr": "torch.tensor([[[[-0., -2.], [-8., -10.]]]])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16932,18 +16990,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Weight Initialization (normal_ / constant_)",
     "subtopic_key": "PyTorch Fundamentals: Weight Initialization (normal_ / constant_)",
-    "question_text": "The in-place initializers in `torch.nn.init` end with an underscore and mutate the tensor you hand them. Fill the starter's empty 2×3 tensor `w` with the constant 0.25 using the appropriate init function. Print with print(w.tolist()).",
-    "answer_code": "import torch\nw = torch.empty(2, 3)\ntorch.nn.init.constant_(w, 0.25)\nprint(w.tolist())",
+    "question_text": "The in-place initializers in `torch.nn.init` end with an underscore and mutate the tensor you hand them. Write solve(w, value): fill the tensor `w` IN PLACE with the constant `value` using the appropriate init function, and return `w`. The grader checks the original tensor object afterward, so a filled copy does not count.",
+    "answer_code": "import torch\n\ndef solve(w, value):\n    torch.nn.init.constant_(w, value)\n    return w\n\nw = torch.empty(2, 3)\nprint(solve(w, 0.25))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[[0.25, 0.25, 0.25], [0.25, 0.25, 0.25]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nw = torch.empty(2, 3)\n# TODO: fill w in place\nraise NotImplementedError()  # TODO: complete this step\nprint(w.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(w, value):\n    # Write your solution here\n    return None\n\nw = torch.empty(2, 3)\nprint(solve(w, 0.25))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nw = torch.empty(2, 3)",
+        "call": "(solve(w, 0.25), w)[1]",
+        "expected_expr": "torch.full((2, 3), 0.25)"
+      },
+      {
+        "setup_code": "import torch\nw = torch.empty(4)",
+        "call": "(solve(w, -1.5), w)[1]",
+        "expected_expr": "torch.full((4,), -1.5)"
+      },
+      {
+        "setup_code": "import torch\nw = torch.empty(1, 5)",
+        "call": "solve(w, 3.0)",
+        "expected_expr": "torch.full((1, 5), 3.0)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16954,18 +17028,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Weight Initialization (normal_ / constant_)",
     "subtopic_key": "PyTorch Fundamentals: Weight Initialization (normal_ / constant_)",
-    "question_text": "Sampling initializers take distribution parameters. Fill the starter's empty length-5 tensor in place from a normal distribution with mean 2.0 and std 0.0 — a zero standard deviation makes every draw exactly the mean, which is why this output is deterministic. Print with print(w.tolist()).",
-    "answer_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(5)\ntorch.nn.init.normal_(w, mean=2.0, std=0.0)\nprint(w.tolist())",
+    "question_text": "Sampling initializers take distribution parameters. Write solve(w, mean): fill `w` IN PLACE from a normal distribution with the given mean and std 0.0 (a zero standard deviation makes every draw exactly the mean, which is why this is deterministic), using `torch.nn.init.normal_`. Return `w` — the grader checks the original tensor object.",
+    "answer_code": "import torch\n\ndef solve(w, mean):\n    torch.nn.init.normal_(w, mean=mean, std=0.0)\n    return w\n\nw = torch.empty(5)\nprint(solve(w, 2.0))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
     "expected_output": "[2.0, 2.0, 2.0, 2.0, 2.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(5)\n# TODO: fill w in place\nraise NotImplementedError()  # TODO: complete this step\nprint(w.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(w, mean):\n    # Write your solution here\n    return None\n\nw = torch.empty(5)\nprint(solve(w, 2.0))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nw = torch.empty(5)",
+        "call": "(solve(w, 2.0), w)[1]",
+        "expected_expr": "torch.full((5,), 2.0)"
+      },
+      {
+        "setup_code": "import torch\nw = torch.empty(2, 2)",
+        "call": "(solve(w, -0.5), w)[1]",
+        "expected_expr": "torch.full((2, 2), -0.5)"
+      },
+      {
+        "setup_code": "import torch\nw = torch.empty(3)",
+        "call": "solve(w, 7.25)",
+        "expected_expr": "torch.full((3,), 7.25)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16976,18 +17066,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Weight Initialization (normal_ / constant_)",
     "subtopic_key": "PyTorch Fundamentals: Weight Initialization (normal_ / constant_)",
-    "question_text": "Initialize two tensors in place with `torch.nn.init`: `w` (length 10000) from a standard normal — mean 0, std 1 — and `b` (length 4) to the constant 0. With 10k samples the empirical mean and std should land close to the distribution parameters; the starter's print line reports both (rounded to 2 decimals) plus `b.tolist()`.",
-    "answer_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(10000)\ntorch.nn.init.normal_(w, mean=0.0, std=1.0)\nb = torch.empty(4)\ntorch.nn.init.constant_(b, 0.0)\nprint(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())",
+    "question_text": "Write solve(n, c): call `torch.manual_seed(0)` FIRST, then create `w = torch.empty(n)` and fill it in place from a standard normal (mean 0, std 1) with `torch.nn.init.normal_`; then create `b = torch.empty(4)` and fill it in place with the constant `c`. With thousands of samples the empirical stats land close to the parameters. Return the tuple `(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())`. Follow that exact order — seed, then w, then b — so the random draws are reproducible.",
+    "answer_code": "import torch\n\ndef solve(n, c):\n    torch.manual_seed(0)\n    w = torch.empty(n)\n    torch.nn.init.normal_(w, mean=0.0, std=1.0)\n    b = torch.empty(4)\n    torch.nn.init.constant_(b, c)\n    return (round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())\n\nprint(solve(10000, 0.0))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "-0.01 1.0 [0.0, 0.0, 0.0, 0.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\ntorch.manual_seed(0)\nw = torch.empty(10000)\nb = torch.empty(4)\n# TODO: init w in place\n# TODO: init b in place\nraise NotImplementedError()  # TODO: initialize w and b as described\nprint(round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(n, c):\n    # Write your solution here\n    return None\n\nprint(solve(10000, 0.0))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nn, c = 10000, 0.0",
+        "call": "solve(n, c)",
+        "expected_expr": "(lambda w: (round(float(w.mean()), 2), round(float(w.std()), 2), [0.0, 0.0, 0.0, 0.0]))((torch.manual_seed(0), torch.nn.init.normal_(torch.empty(10000), 0.0, 1.0))[1])"
+      },
+      {
+        "setup_code": "import torch\nn, c = 5000, 2.5",
+        "call": "solve(n, c)",
+        "expected_expr": "(lambda w: (round(float(w.mean()), 2), round(float(w.std()), 2), [2.5, 2.5, 2.5, 2.5]))((torch.manual_seed(0), torch.nn.init.normal_(torch.empty(5000), 0.0, 1.0))[1])"
+      },
+      {
+        "setup_code": "import torch\nn, c = 20000, -1.0",
+        "call": "solve(n, c)",
+        "expected_expr": "(lambda w: (round(float(w.mean()), 2), round(float(w.std()), 2), [-1.0, -1.0, -1.0, -1.0]))((torch.manual_seed(0), torch.nn.init.normal_(torch.empty(20000), 0.0, 1.0))[1])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16998,18 +17104,34 @@
     "topic": "Autograd",
     "subtopic": "Chain Rule and Backward Functions",
     "subtopic_key": "Autograd: Chain Rule and Backward Functions",
-    "question_text": "Backprop through a cube. The starter's `x` requires grad. Compute `out` as x cubed elementwise, then backprop the starter's all-ones upstream gradient through it by passing that gradient to `out.backward(...)`. Before printing, predict `x.grad`: what is the derivative of $x^3$, evaluated at 2, −3, and 4? Print with print(x.grad.tolist()).",
-    "answer_code": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\nout = x * x * x  # out = x^3, d(out)/dx = 3x^2\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\nout.backward(grad_out)\nprint(x.grad.tolist())",
+    "question_text": "Backprop through a cube. Write solve(x, grad_out) where `x` requires grad: compute `out` as x cubed elementwise, then backprop the given upstream gradient through it by passing it to `out.backward(...)`. Before running, predict `x.grad`: the derivative of x³ is 3x², scaled elementwise by `grad_out`. Return `x.grad`.",
+    "answer_code": "import torch\n\ndef solve(x, grad_out):\n    out = x * x * x\n    out.backward(grad_out)\n    return x.grad\n\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\nprint(solve(x, grad_out))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "[12.0, 27.0, 48.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\n# TODO: compute out\nout = None  # TODO: fill in out\nout.backward(grad_out)\nprint(x.grad.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x, grad_out):\n    # Write your solution here\n    return None\n\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\nprint(solve(x, grad_out))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])",
+        "call": "solve(x, grad_out)",
+        "expected_expr": "torch.tensor([12.0, 27.0, 48.0])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([1.0, 2.0], requires_grad=True)\ngrad_out = torch.tensor([2.0, 0.5])",
+        "call": "solve(x, grad_out)",
+        "expected_expr": "torch.tensor([6.0, 6.0])"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([0.0, -1.0], requires_grad=True)\ngrad_out = torch.tensor([5.0, 1.0])",
+        "call": "solve(x, grad_out)",
+        "expected_expr": "torch.tensor([0.0, 3.0])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17106,18 +17228,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Cross-Entropy Loss on Logits",
     "subtopic_key": "PyTorch Fundamentals: Cross-Entropy Loss on Logits",
-    "question_text": "Cross-entropy in PyTorch is computed straight from LOGITS (pre-softmax scores) — you never softmax first. The starter gives a 2×3 logits batch and integer class targets. Compute the mean cross-entropy with the right `torch.nn.functional` call and print round(float(loss), 4).",
-    "answer_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0],\n                       [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\nloss = F.cross_entropy(logits, targets)\nprint(round(float(loss), 4))",
+    "question_text": "Cross-entropy in PyTorch is computed straight from LOGITS (pre-softmax scores) — you never softmax first. Write solve(logits, targets) for a (N, C) logits batch and integer class targets: return the mean cross-entropy as a plain float rounded to 4 decimals, i.e. `round(float(loss), 4)`, using the right `torch.nn.functional` call.",
+    "answer_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(logits, targets):\n    loss = F.cross_entropy(logits, targets)\n    return round(float(loss), 4)\n\nlogits = torch.tensor([[2.0, 0.5, -1.0], [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\nprint(solve(logits, targets))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "0.2202",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0],\n                       [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\n# TODO: compute mean cross-entropy\nloss = None  # TODO: fill in loss\nprint(round(float(loss), 4))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(logits, targets):\n    # Write your solution here\n    return None\n\nlogits = torch.tensor([[2.0, 0.5, -1.0], [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])\nprint(solve(logits, targets))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[2.0, 0.5, -1.0], [0.1, 1.2, 3.0]])\ntargets = torch.tensor([0, 2])",
+        "call": "solve(logits, targets)",
+        "expected_expr": "round(float(F.cross_entropy(logits, targets)), 4)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[0.0, 0.0]])\ntargets = torch.tensor([1])",
+        "call": "solve(logits, targets)",
+        "expected_expr": "round(float(F.cross_entropy(logits, targets)), 4)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([[10.0, -10.0, 0.0], [-5.0, 5.0, 0.0], [1.0, 1.0, 1.0]])\ntargets = torch.tensor([0, 1, 2])",
+        "call": "solve(logits, targets)",
+        "expected_expr": "round(float(F.cross_entropy(logits, targets)), 4)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17128,18 +17266,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Cross-Entropy Loss on Logits",
     "subtopic_key": "PyTorch Fundamentals: Cross-Entropy Loss on Logits",
-    "question_text": "Show the identity: single-example cross-entropy equals the NEGATIVE log-softmax at the target index. The starter gives 4 logits and target class 0. Compute `manual` from `F.log_softmax` (reduce over dim 0, negate, index at the target), and `builtin` from `F.cross_entropy` — which expects a batch dimension, so unsqueeze both arguments. Print [round(float(manual), 4), round(float(builtin), 4)] — the two should match.",
-    "answer_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\nmanual = -F.log_softmax(logits, dim=0)[target]\nbuiltin = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))\nprint([round(float(manual), 4), round(float(builtin), 4)])",
+    "question_text": "Show the identity: single-example cross-entropy equals the NEGATIVE log-softmax at the target index. Write solve(logits, target) for a 1-D logits tensor and a 0-D integer target: compute `manual` from `F.log_softmax` (reduce over dim 0, negate, index at the target), and `builtin` from `F.cross_entropy` — which expects a batch dimension, so unsqueeze both arguments. Return `(round(float(manual), 4), round(float(builtin), 4))` — the two should match.",
+    "answer_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(logits, target):\n    manual = -F.log_softmax(logits, dim=0)[target]\n    builtin = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))\n    return (round(float(manual), 4), round(float(builtin), 4))\n\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\nprint(solve(logits, target))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "[0.1847, 0.1847]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\n# TODO: complete this step (see the problem statement above)\n# TODO: complete this step (see the problem statement above)\nmanual = None  # TODO: fill in manual\nbuiltin = None  # TODO: fill in builtin\nprint([round(float(manual), 4), round(float(builtin), 4)])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(logits, target):\n    # Write your solution here\n    return None\n\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\nprint(solve(logits, target))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)",
+        "call": "solve(logits, target)",
+        "expected_expr": "(lambda m: (round(float(m), 4), round(float(m), 4)))(-F.log_softmax(logits, dim=0)[target])"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([0.5, 2.5])\ntarget = torch.tensor(1)",
+        "call": "solve(logits, target)",
+        "expected_expr": "(lambda m: (round(float(m), 4), round(float(m), 4)))(-F.log_softmax(logits, dim=0)[target])"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn.functional as F\nlogits = torch.tensor([-1.0, -1.0, 4.0])\ntarget = torch.tensor(2)",
+        "call": "solve(logits, target)",
+        "expected_expr": "(lambda m: (round(float(m), 4), round(float(m), 4)))(-F.log_softmax(logits, dim=0)[target])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17193,18 +17347,39 @@
     "topic": "Optimizers",
     "subtopic": "SGD update rule",
     "subtopic_key": "Optimizers: SGD update rule",
-    "question_text": "One step of vanilla SGD by hand: parameters move a small step AGAINST the gradient. The starter gives `theta`, `grad`, and `lr` as float64 tensors. Apply the SGD update rule from memory to get `theta_new`, and print [round(v, 4) for v in theta_new.tolist()].",
-    "answer_code": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1\ntheta_new = theta - lr * grad\nprint([round(v, 4) for v in theta_new.tolist()])",
+    "question_text": "One step of vanilla SGD by hand: parameters move a small step AGAINST the gradient. Write solve(theta, grad, lr): apply the SGD update rule from memory and return the updated parameter tensor (do not modify `theta` in place).",
+    "answer_code": "import torch\n\ndef solve(theta, grad, lr):\n    return theta - lr * grad\n\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nprint(solve(theta, grad, 0.1))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[0.95, 2.1, 2.8]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1\n# TODO: apply one vanilla SGD step\ntheta_new = None  # TODO: fill in theta_new\nprint([round(v, 4) for v in theta_new.tolist()])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(theta, grad, lr):\n    # Write your solution here\n    return None\n\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nprint(solve(theta, grad, 0.1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nlr = 0.1",
+        "call": "torch.round((solve(theta, grad, lr)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([0.95, 2.1, 2.8], dtype=torch.float64)"
+      },
+      {
+        "setup_code": "import torch\ntheta = torch.tensor([0.0], dtype=torch.float64)\ngrad = torch.tensor([-4.0], dtype=torch.float64)\nlr = 0.5",
+        "call": "torch.round((solve(theta, grad, lr)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([2.0], dtype=torch.float64)"
+      },
+      {
+        "setup_code": "import torch\ntheta = torch.tensor([5.0, -5.0], dtype=torch.float64)\ngrad = torch.tensor([1.0, 1.0], dtype=torch.float64)\nlr = 0.0",
+        "call": "torch.round((solve(theta, grad, lr)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([5.0, -5.0], dtype=torch.float64)"
+      },
+      {
+        "setup_code": "import torch\ntheta = torch.tensor([2.0], dtype=torch.float64)\ngrad = torch.tensor([2.0], dtype=torch.float64)\nlr = 1.0",
+        "call": "torch.round((solve(theta, grad, lr)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([0.0], dtype=torch.float64)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17215,18 +17390,39 @@
     "topic": "Optimizers",
     "subtopic": "SGD update rule",
     "subtopic_key": "Optimizers: SGD update rule",
-    "question_text": "Minimize $(x-5)^2$ from $x=2$ with three hand-rolled gradient-descent steps (lr 0.3 — all in the starter). Each step: build the loss, backprop it, update `x` in place inside `torch.no_grad()` (why is that context required for a leaf that requires grad?), and zero the gradient before the next iteration (what would accumulate if you didn't?). Then print round(float(x.detach()), 4).",
-    "answer_code": "import torch\nx = torch.tensor([2.0], requires_grad=True)\nlr = 0.3\nfor _ in range(3):\n    loss = (x - 5.0) ** 2\n    loss.backward()\n    with torch.no_grad():\n        x -= lr * x.grad\n    x.grad.zero_()\nprint(round(float(x.detach()), 4))",
+    "question_text": "Minimize (x − c)² by hand-rolled gradient descent. Write solve(x0, c, lr, steps): start from the leaf `x = torch.tensor([x0], requires_grad=True)`. Each step: build the loss `(x - c) ** 2`, backprop it, update `x` IN PLACE inside `torch.no_grad()` (why is that context required for a leaf that requires grad?), and zero the gradient before the next iteration (what would accumulate if you didn't?). Return `round(float(x.detach()), 4)`.",
+    "answer_code": "import torch\n\ndef solve(x0, c, lr, steps):\n    x = torch.tensor([x0], requires_grad=True)\n    for _ in range(steps):\n        loss = (x - c) ** 2\n        loss.backward()\n        with torch.no_grad():\n            x -= lr * x.grad\n        x.grad.zero_()\n    return round(float(x.detach()), 4)\n\nprint(solve(2.0, 5.0, 0.3, 3))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
     "expected_output": "4.808",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([2.0], requires_grad=True)\nlr = 0.3\nfor _ in range(3):\n    # TODO: compute loss\n    # then under torch.no_grad() do x -= lr * x.grad, then x.grad.zero_()\n    raise NotImplementedError()\nprint(round(float(x.detach()), 4))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x0, c, lr, steps):\n    # Write your solution here\n    return None\n\nprint(solve(2.0, 5.0, 0.3, 3))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nargs = (2.0, 5.0, 0.3, 3)",
+        "call": "solve(*args)",
+        "expected_expr": "round(5.0 - 3.0 * 0.4 ** 3, 4)"
+      },
+      {
+        "setup_code": "import torch\nargs = (10.0, 0.0, 0.5, 1)",
+        "call": "solve(*args)",
+        "expected_expr": "0.0"
+      },
+      {
+        "setup_code": "import torch\nargs = (1.0, 3.0, 0.1, 5)",
+        "call": "solve(*args)",
+        "expected_expr": "round(3.0 - 2.0 * 0.8 ** 5, 4)"
+      },
+      {
+        "setup_code": "import torch\nargs = (4.0, 4.0, 0.3, 2)",
+        "call": "solve(*args)",
+        "expected_expr": "4.0"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17280,18 +17476,34 @@
     "topic": "Optimizers",
     "subtopic": "Parameter iteration and iterator exhaustion",
     "subtopic_key": "Optimizers: Parameter iteration and iterator exhaustion",
-    "question_text": "Iterators exhaust; lists don't. `make_params()` (starter) returns a ONE-SHOT iterator over two tensors. First sum `p.numel()` over the same iterator twice — `first_pass`, then `second_pass` (predict the second before running). Then materialize a fresh `make_params()` into a list and take both passes again (`right_first`, `right_second`). Print the four ints as one list. This is exactly why optimizers materialize `model.parameters()` up front.",
-    "answer_code": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\nfirst_pass = sum(p.numel() for p in it)\nsecond_pass = sum(p.numel() for p in it)\n\nparams = list(make_params())\nright_first = sum(p.numel() for p in params)\nright_second = sum(p.numel() for p in params)\n\nprint([first_pass, second_pass, right_first, right_second])",
+    "question_text": "Iterators exhaust; lists don't. Write solve(make_params) where `make_params()` returns a ONE-SHOT iterator over parameter tensors. First sum `p.numel()` over the same iterator twice — `first_pass`, then `second_pass` (predict the second before running). Then materialize a fresh `make_params()` into a list and take both passes again (`right_first`, `right_second`). Return the list `[first_pass, second_pass, right_first, right_second]`. This is exactly why optimizers materialize `model.parameters()` up front.",
+    "answer_code": "import torch\n\ndef solve(make_params):\n    it = make_params()\n    first_pass = sum(p.numel() for p in it)\n    second_pass = sum(p.numel() for p in it)\n    params = list(make_params())\n    right_first = sum(p.numel() for p in params)\n    right_second = sum(p.numel() for p in params)\n    return [first_pass, second_pass, right_first, right_second]\n\nmake_params = lambda: iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\nprint(solve(make_params))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "[5, 0, 5, 5]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\n\ndef make_params():\n    return iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\n\nit = make_params()\n# TODO: iterate the SAME iterator twice; the second pass should be exhausted (0)\nfirst_pass = None  # TODO: fill in first_pass\nsecond_pass = None  # TODO: fill in second_pass\n\nparams = list(make_params())\n# TODO: a list can be iterated repeatedly; both passes give the full total\nright_first = None  # TODO: fill in right_first\nright_second = None  # TODO: fill in right_second\n\nprint([first_pass, second_pass, right_first, right_second])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(make_params):\n    # Write your solution here\n    return None\n\nmake_params = lambda: iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])\nprint(solve(make_params))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nmake_params = lambda: iter([torch.tensor([1.0, 2.0, 3.0]), torch.tensor([4.0, 5.0])])",
+        "call": "solve(make_params)",
+        "expected_expr": "[5, 0, 5, 5]"
+      },
+      {
+        "setup_code": "import torch\nmake_params = lambda: iter([torch.zeros(2, 3), torch.zeros(4), torch.zeros(1)])",
+        "call": "solve(make_params)",
+        "expected_expr": "[11, 0, 11, 11]"
+      },
+      {
+        "setup_code": "import torch\nmake_params = lambda: iter([torch.ones(7)])",
+        "call": "solve(make_params)",
+        "expected_expr": "[7, 0, 7, 7]"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17302,18 +17514,34 @@
     "topic": "Optimizers",
     "subtopic": "Parameter iteration and iterator exhaustion",
     "subtopic_key": "Optimizers: Parameter iteration and iterator exhaustion",
-    "question_text": "An optimizer touches every parameter on every step, so the parameter iterator must be materialized ONCE, up front. The starter builds a `nn.Linear(3, 2)` with a fixed weight, sets a ones gradient, and captures `params = list(model.parameters())`. Run 3 SGD steps with lr 0.1: on each step, inside `torch.no_grad()`, walk `params` and move each parameter one step against its gradient, in place. Print [round(v,4) for v in model.weight.flatten().tolist()].",
-    "answer_code": "import torch\n\ntorch.manual_seed(0)\nmodel = torch.nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\n\nparams = list(model.parameters())\nlr = 0.1\nfor step in range(3):\n    with torch.no_grad():\n        for p in params:\n            p -= lr * p.grad\n\nprint([round(v, 4) for v in model.weight.flatten().tolist()])",
+    "question_text": "An optimizer touches every parameter on every step, so the parameter iterator must be materialized ONCE, up front. Write solve(model, lr, steps) for a module whose parameters already carry gradients (`p.grad` is set): capture `params = list(model.parameters())` once, then run `steps` SGD steps — on each step, inside `torch.no_grad()`, walk `params` and move each parameter one step against its gradient, in place (`p -= lr * p.grad`). Return the model's weight tensor (detached is fine).",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, lr, steps):\n    params = list(model.parameters())\n    for _ in range(steps):\n        with torch.no_grad():\n            for p in params:\n                p -= lr * p.grad\n    return model.weight.detach()\n\nmodel = nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\nprint(solve(model, 0.1, 3))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
     "expected_output": "[0.7, 1.7, 2.7, 3.7, 4.7, 5.7]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\n\ntorch.manual_seed(0)\nmodel = torch.nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\n\nparams = list(model.parameters())\nlr = 0.1\n# TODO: complete this step (see the problem statement above)\nraise NotImplementedError()\n\nprint([round(v, 4) for v in model.weight.flatten().tolist()])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, lr, steps):\n    # Write your solution here\n    return None\n\nmodel = nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\nprint(solve(model, 0.1, 3))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\nlr, steps = 0.1, 3",
+        "call": "torch.round((solve(model, lr, steps)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([[0.7, 1.7, 2.7], [3.7, 4.7, 5.7]])"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Linear(2, 1, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[10.0, -10.0]]))\nmodel.weight.grad = torch.tensor([[2.0, -2.0]])\nlr, steps = 0.5, 2",
+        "call": "torch.round((solve(model, lr, steps)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([[8.0, -8.0]])"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Linear(1, 1, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[3.0]]))\nmodel.weight.grad = torch.tensor([[1.0]])\nlr, steps = 0.25, 4",
+        "call": "torch.round((solve(model, lr, steps)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([[2.0]])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17324,18 +17552,34 @@
     "topic": "Optimizers",
     "subtopic": "Parameter iteration and iterator exhaustion",
     "subtopic_key": "Optimizers: Parameter iteration and iterator exhaustion",
-    "question_text": "A generator expression is a one-shot iterator, but converting it to a list makes it reusable. The starter builds `gen` and materializes `params = list(gen)`. Compute the count of params, the sum of their scalar values (`.item()`), and that same sum AGAIN over the same list — does a list exhaust? Print [count, round(total,4), round(total_again,4)].",
-    "answer_code": "import torch\n\ngen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0])\nparams = list(gen)\ncount = len(params)\ntotal = sum(p.item() for p in params)\ntotal_again = sum(p.item() for p in params)\nprint([count, round(total, 4), round(total_again, 4)])",
+    "question_text": "A generator expression is a one-shot iterator, but converting it to a list makes it reusable. Write solve(vals): build `gen = (torch.tensor(float(v)) for v in vals)`, materialize `params = list(gen)`, then compute the count of params, the sum of their scalar values (`.item()`), and that same sum AGAIN over the same list — does a list exhaust? Return `[count, round(total, 4), round(total_again, 4)]`.",
+    "answer_code": "import torch\n\ndef solve(vals):\n    gen = (torch.tensor(float(v)) for v in vals)\n    params = list(gen)\n    count = len(params)\n    total = sum(p.item() for p in params)\n    total_again = sum(p.item() for p in params)\n    return [count, round(total, 4), round(total_again, 4)]\n\nprint(solve([2.0, 3.0, 4.0]))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "[3, 9.0, 9.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\n\ngen = (torch.tensor(float(i)) for i in [2.0, 3.0, 4.0])\nparams = list(gen)\n# TODO: complete this step (see the problem statement above)\ncount = None  # TODO: fill in count\ntotal = None  # TODO: fill in total\ntotal_again = None  # TODO: fill in total_again\nprint([count, round(total, 4), round(total_again, 4)])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(vals):\n    # Write your solution here\n    return None\n\nprint(solve([2.0, 3.0, 4.0]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nvals = [2.0, 3.0, 4.0]",
+        "call": "solve(vals)",
+        "expected_expr": "[3, 9.0, 9.0]"
+      },
+      {
+        "setup_code": "import torch\nvals = [-1.5, 1.5]",
+        "call": "solve(vals)",
+        "expected_expr": "[2, 0.0, 0.0]"
+      },
+      {
+        "setup_code": "import torch\nvals = [7.25]",
+        "call": "solve(vals)",
+        "expected_expr": "[1, 7.25, 7.25]"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17475,18 +17719,34 @@
     "topic": "Autograd",
     "subtopic": "Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
     "subtopic_key": "Autograd: Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
-    "question_text": "Autograd through a matmul. The starter's `X` (2×3) and `Y` (3×2) require grad, and an upstream gradient `dLdM` (2×2) is given. Compute the product `M`, then backpropagate the upstream gradient through it by passing it to `M.backward(...)`. Predict the SHAPES of `X.grad` and `Y.grad` before running. Print X.grad.tolist() on the first line and Y.grad.tolist() on the second.",
-    "answer_code": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\nM = X @ Y\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\nM.backward(dLdM)\nprint(X.grad.tolist())\nprint(Y.grad.tolist())",
+    "question_text": "Autograd through a matmul. Write solve(X, Y, dLdM) where `X` (n×k) and `Y` (k×m) require grad and `dLdM` (n×m) is the upstream gradient: compute the product `M = X @ Y`, then backpropagate by passing the upstream gradient to `M.backward(...)`. Predict the SHAPES of `X.grad` and `Y.grad` before running. Return the tuple `(X.grad, Y.grad)`.",
+    "answer_code": "import torch\n\ndef solve(X, Y, dLdM):\n    M = X @ Y\n    M.backward(dLdM)\n    return (X.grad, Y.grad)\n\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\nprint(solve(X, Y, dLdM))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
     "expected_output": "[[1.0, 2.0, 3.0], [3.0, 4.0, 7.0]]\n[[13.0, 18.0], [17.0, 24.0], [21.0, 30.0]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\n# TODO: compute M\nraise NotImplementedError()\nprint(X.grad.tolist())\nprint(Y.grad.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(X, Y, dLdM):\n    # Write your solution here\n    return None\n\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\nprint(solve(X, Y, dLdM))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.round((dLdM @ Y.detach().t()) * 10000) / 10000, torch.round((X.detach().t() @ dLdM) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nX = torch.tensor([[2., 0.]], requires_grad=True)\nY = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\ndLdM = torch.tensor([[1., 0., -1.]])",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.round((dLdM @ Y.detach().t()) * 10000) / 10000, torch.round((X.detach().t() @ dLdM) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nX = torch.tensor([[1.], [2.], [3.]], requires_grad=True)\nY = torch.tensor([[4., 5.]], requires_grad=True)\ndLdM = torch.ones(3, 2)",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.round((dLdM @ Y.detach().t()) * 10000) / 10000, torch.round((X.detach().t() @ dLdM) * 10000) / 10000)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17497,18 +17757,34 @@
     "topic": "Autograd",
     "subtopic": "Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
     "subtopic_key": "Autograd: Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
-    "question_text": "Apply the matmul backward rules directly — no autograd. For $M = XY$: $\\partial L/\\partial X = (\\partial L/\\partial M)\\, Y^\\top$ and $\\partial L/\\partial Y = X^\\top (\\partial L/\\partial M)$. The starter gives `X`, `Y`, and `dLdM`. Translate both rules to torch code and print dLdX.tolist() on the first line and dLdY.tolist() on the second.",
-    "answer_code": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\ndLdX = dLdM @ Y.t()\ndLdY = X.t() @ dLdM\nprint(dLdX.tolist())\nprint(dLdY.tolist())",
+    "question_text": "Apply the matmul backward rules directly — no autograd. For M = XY: dL/dX = (dL/dM) Yᵀ and dL/dY = Xᵀ (dL/dM). Write solve(X, Y, dLdM): translate both rules to torch code and return the tuple `(dLdX, dLdY)`.",
+    "answer_code": "import torch\n\ndef solve(X, Y, dLdM):\n    dLdX = dLdM @ Y.t()\n    dLdY = X.t() @ dLdM\n    return (dLdX, dLdY)\n\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\nprint(solve(X, Y, dLdM))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "[[3.0, 1.0, 3.0], [2.0, 0.0, 6.0]]\n[[4.0, 2.0], [6.0, 0.0], [5.0, 1.0]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\n# TODO: apply the matmul backward rules\ndLdX = None  # TODO: fill in dLdX\ndLdY = None  # TODO: fill in dLdY\nprint(dLdX.tolist())\nprint(dLdY.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(X, Y, dLdM):\n    # Write your solution here\n    return None\n\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\nprint(solve(X, Y, dLdM))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.round((dLdM @ Y.t()) * 10000) / 10000, torch.round((X.t() @ dLdM) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nX = torch.eye(2)\nY = torch.tensor([[3., 1.], [0., 2.]])\ndLdM = torch.ones(2, 2)",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.round((dLdM @ Y.t()) * 10000) / 10000, torch.round((X.t() @ dLdM) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nX = torch.tensor([[1., -1.]])\nY = torch.tensor([[2.], [4.]])\ndLdM = torch.tensor([[3.]])",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(X, Y, dLdM))",
+        "expected_expr": "(torch.tensor([[6.0, 12.0]]), torch.tensor([[3.0], [-3.0]]))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17519,18 +17795,34 @@
     "topic": "Autograd",
     "subtopic": "Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
     "subtopic_key": "Autograd: Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
-    "question_text": "Verify the matmul backward rules against autograd. The starter has `X`, `Y` (requires grad) and `M = X @ Y` is the product. Build the scalar loss $L = \\tfrac{1}{2}\\sum M^2$ — chosen precisely so that $\\partial L/\\partial M = M$ — and backprop it. Then compute the MANUAL gradients from the matmul backward rules (detach them) and compare. Print three lines: the max abs difference between `X.grad` and manual (rounded to 4), the same for `Y`, then X.grad.tolist().",
-    "answer_code": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nM = X @ Y\nL = 0.5 * (M * M).sum()\nL.backward()\ngX = (M @ Y.t()).detach()\ngY = (X.t() @ M).detach()\nprint(round(float((X.grad - gX).abs().max()), 4))\nprint(round(float((Y.grad - gY).abs().max()), 4))\nprint(X.grad.tolist())",
+    "question_text": "Verify the matmul backward rules against autograd. Write solve(X, Y) where both require grad: compute `M = X @ Y`, build the scalar loss L = ½·Σ M² — chosen precisely so that dL/dM = M — and backprop it. Then compute the MANUAL gradients from the matmul backward rules (detach them) and compare. Return `(round(float((X.grad - gX).abs().max()), 4), round(float((Y.grad - gY).abs().max()), 4), X.grad)` — the two max-abs-differences should be 0.",
+    "answer_code": "import torch\n\ndef solve(X, Y):\n    M = X @ Y\n    L = 0.5 * (M * M).sum()\n    L.backward()\n    gX = (M @ Y.t()).detach()\n    gY = (X.t() @ M).detach()\n    return (round(float((X.grad - gX).abs().max()), 4), round(float((Y.grad - gY).abs().max()), 4), X.grad)\n\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nprint(solve(X, Y))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
     "expected_output": "0.0\n0.0\n[[16.0, 33.0], [38.0, 71.0], [60.0, 109.0]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nM = X @ Y\n# TODO: build scalar loss L\nL = None  # TODO: fill in L\n# TODO: complete this step (see the problem statement above)\n# TODO: compute manual grads gX\ngX = None  # TODO: fill in gX\ngY = None  # TODO: fill in gY\nprint(round(float((X.grad - gX).abs().max()), 4))\nprint(round(float((Y.grad - gY).abs().max()), 4))\nprint(X.grad.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(X, Y):\n    # Write your solution here\n    return None\n\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nprint(solve(X, Y))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)",
+        "call": "(lambda r: (r[0], r[1], torch.round((r[2]) * 10000) / 10000))(solve(X, Y))",
+        "expected_expr": "(0.0, 0.0, torch.round((((X.detach() @ Y.detach()) @ Y.detach().t())) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nX = torch.tensor([[2.]], requires_grad=True)\nY = torch.tensor([[3.]], requires_grad=True)",
+        "call": "(lambda r: (r[0], r[1], torch.round((r[2]) * 10000) / 10000))(solve(X, Y))",
+        "expected_expr": "(0.0, 0.0, torch.tensor([[18.0]]))"
+      },
+      {
+        "setup_code": "import torch\nX = torch.tensor([[1., 0.], [0., 1.]], requires_grad=True)\nY = torch.tensor([[5., 6.], [7., 8.]], requires_grad=True)",
+        "call": "(lambda r: (r[0], r[1], torch.round((r[2]) * 10000) / 10000))(solve(X, Y))",
+        "expected_expr": "(0.0, 0.0, torch.round((((X.detach() @ Y.detach()) @ Y.detach().t())) * 10000) / 10000)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17541,18 +17833,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "BatchNorm variance: biased vs unbiased",
     "subtopic_key": "PyTorch Fundamentals: BatchNorm variance: biased vs unbiased",
-    "question_text": "`.var()` hides a convention choice: BIASED divides by $N$, UNBIASED by $N-1$ — and BatchNorm normalizes with the biased one while torch's default is unbiased. On the starter's 2×4 tensor, compute the variance over ALL elements both ways (the `unbiased=` flag) and print [biased, unbiased] with each value round(float(v), 4).",
-    "answer_code": "import torch\nx = torch.tensor([[1.,2.,3.,4.],[5.,6.,7.,8.]])\nvar_biased = x.var(unbiased=False)\nvar_unbiased = x.var(unbiased=True)\nprint([round(float(var_biased),4), round(float(var_unbiased),4)])",
+    "question_text": "`.var()` hides a convention choice: BIASED divides by N, UNBIASED by N−1 — and BatchNorm normalizes with the biased one while torch's default is unbiased. Write solve(x): compute the variance of ALL elements of `x` both ways (the `unbiased=` flag) and return `(round(float(var_biased), 4), round(float(var_unbiased), 4))`.",
+    "answer_code": "import torch\n\ndef solve(x):\n    vb = x.var(unbiased=False)\n    vu = x.var(unbiased=True)\n    return (round(float(vb), 4), round(float(vu), 4))\n\nx = torch.tensor([[1., 2., 3., 4.], [5., 6., 7., 8.]])\nprint(solve(x))\n",
     "difficulty_score": 22,
     "difficulty_label": "easy",
     "expected_output": "[5.25, 6.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.tensor([[1.,2.,3.,4.],[5.,6.,7.,8.]])\n# TODO: compute variance over ALL elements both ways\nvar_biased = None  # TODO: fill in var_biased\nvar_unbiased = None  # TODO: fill in var_unbiased\nprint([round(float(var_biased),4), round(float(var_unbiased),4)])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.tensor([[1., 2., 3., 4.], [5., 6., 7., 8.]])\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.tensor([[1., 2., 3., 4.], [5., 6., 7., 8.]])",
+        "call": "solve(x)",
+        "expected_expr": "(round(float(x.var(unbiased=False)), 4), round(float(x.var(unbiased=True)), 4))"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([2.0, 4.0])",
+        "call": "solve(x)",
+        "expected_expr": "(1.0, 2.0)"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[0.0, 10.0, 20.0]])",
+        "call": "solve(x)",
+        "expected_expr": "(round(float(x.var(unbiased=False)), 4), round(float(x.var(unbiased=True)), 4))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17563,18 +17871,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "BatchNorm variance: biased vs unbiased",
     "subtopic_key": "PyTorch Fundamentals: BatchNorm variance: biased vs unbiased",
-    "question_text": "BatchNorm2d computes PER-CHANNEL statistics over the batch and spatial dims. On the starter's (2, 3, 2, 2) tensor, compute the per-channel mean and the BIASED variance — reduce over exactly the dims that are not the channel dim. Print mean.tolist() on the first line, then [round(v,4) for v in var.tolist()] on the second.",
-    "answer_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2)\nmean = x.mean(dim=(0,2,3))\nvar = x.var(dim=(0,2,3), unbiased=False)\nprint(mean.tolist())\nprint([round(v,4) for v in var.tolist()])",
+    "question_text": "BatchNorm2d computes PER-CHANNEL statistics over the batch and spatial dims. Write solve(x) for a (B, C, H, W) float tensor: return the tuple `(mean, var)` where `mean` is the per-channel mean and `var` the per-channel BIASED variance — reduce over exactly the dims that are not the channel dim. Both are length-C tensors.",
+    "answer_code": "import torch\n\ndef solve(x):\n    mean = x.mean(dim=(0, 2, 3))\n    var = x.var(dim=(0, 2, 3), unbiased=False)\n    return (mean, var)\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nprint(solve(x))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "[7.5, 11.5, 15.5]\n[37.25, 37.25, 37.25]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2,3,2,2)\n# TODO: per-channel mean and BIASED variance over dims (0,2,3)\nmean = None  # TODO: fill in mean\nvar = None  # TODO: fill in var\nprint(mean.tolist())\nprint([round(v,4) for v in var.tolist()])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(torch.round((x.mean(dim=(0, 2, 3))) * 10000) / 10000, torch.round((x.var(dim=(0, 2, 3), unbiased=False)) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nx = torch.tensor([[[[2.0, 4.0], [6.0, 8.0]]]])",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(torch.tensor([5.0]), torch.tensor([5.0]))"
+      },
+      {
+        "setup_code": "import torch\nx = -torch.arange(16, dtype=torch.float32).reshape(2, 2, 2, 2)",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(torch.round((x.mean(dim=(0, 2, 3))) * 10000) / 10000, torch.round((x.var(dim=(0, 2, 3), unbiased=False)) * 10000) / 10000)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17585,18 +17909,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "BatchNorm variance: biased vs unbiased",
     "subtopic_key": "PyTorch Fundamentals: BatchNorm variance: biased vs unbiased",
-    "question_text": "Prove that BatchNorm2d in train mode uses the BIASED variance. The starter builds a (2,1,2,2) input and a non-affine `bn` in train mode. Run the input through `bn` to get `out`; then normalize `x` yourself: per-channel mean and biased variance over the non-channel dims with `keepdim=True`, then $(x - \\mu)/\\sqrt{\\sigma^2 + \\epsilon}$. Print three lines: the biased variance ([round(v,4) for v in var_biased.flatten().tolist()]), whether your manual result matches `out` (bool of `torch.allclose` at atol=1e-5), and [round(v,4) for v in out.flatten().tolist()].",
-    "answer_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1.,2.],[3.,4.]]],[[[5.,6.],[7.,8.]]]])\neps = 1e-5\nbn = nn.BatchNorm2d(1, affine=False, eps=eps)\nbn.train()\nout = bn(x)\nmean = x.mean(dim=(0,2,3), keepdim=True)\nvar_biased = x.var(dim=(0,2,3), keepdim=True, unbiased=False)\nmanual = (x - mean) / torch.sqrt(var_biased + eps)\nprint([round(v,4) for v in var_biased.flatten().tolist()])\nprint(bool(torch.allclose(out, manual, atol=1e-5)))\nprint([round(v,4) for v in out.flatten().tolist()])",
+    "question_text": "Prove that BatchNorm2d in train mode uses the BIASED variance. Write solve(x) for a (B, C, H, W) float tensor: build `bn = torch.nn.BatchNorm2d(C, affine=False, eps=1e-5)` (C from x's channel dim), put it in train mode, and run `out = bn(x)`. Then normalize `x` yourself: per-channel mean and BIASED variance over the non-channel dims with `keepdim=True`, then (x − mean)/sqrt(var + eps). Return `(matches, out)` where `matches = bool(torch.allclose(out, manual, atol=1e-5))`.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(x):\n    eps = 1e-5\n    bn = nn.BatchNorm2d(x.shape[1], affine=False, eps=eps)\n    bn.train()\n    out = bn(x)\n    mean = x.mean(dim=(0, 2, 3), keepdim=True)\n    var = x.var(dim=(0, 2, 3), keepdim=True, unbiased=False)\n    manual = (x - mean) / torch.sqrt(var + eps)\n    return (bool(torch.allclose(out, manual, atol=1e-5)), out)\n\nx = torch.tensor([[[[1., 2.], [3., 4.]]], [[[5., 6.], [7., 8.]]]])\nprint(solve(x))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
     "expected_output": "[5.25]\nTrue\n[-1.5275, -1.0911, -0.6547, -0.2182, 0.2182, 0.6547, 1.0911, 1.5275]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1.,2.],[3.,4.]]],[[[5.,6.],[7.,8.]]]])\neps = 1e-5\nbn = nn.BatchNorm2d(1, affine=False, eps=eps)\nbn.train()\n# TODO: run bn on x to get out, then compute mean/var_biased/manual by hand\nout = None  # TODO: fill in out\nmean = None  # TODO: fill in mean\nvar_biased = None  # TODO: fill in var_biased\nmanual = None  # TODO: fill in manual\nprint([round(v,4) for v in var_biased.flatten().tolist()])\nprint(bool(torch.allclose(out, manual, atol=1e-5)))\nprint([round(v,4) for v in out.flatten().tolist()])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.tensor([[[[1., 2.], [3., 4.]]], [[[5., 6.], [7., 8.]]]])\nprint(solve(x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[1., 2.], [3., 4.]]], [[[5., 6.], [7., 8.]]]])",
+        "call": "(lambda r: (r[0] is True, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(True, torch.round(((x - x.mean(dim=(0, 2, 3), keepdim=True)) / torch.sqrt(x.var(dim=(0, 2, 3), keepdim=True, unbiased=False) + 1e-5)) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nx = torch.arange(16, dtype=torch.float32).reshape(2, 2, 2, 2)",
+        "call": "(lambda r: (r[0] is True, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(True, torch.round(((x - x.mean(dim=(0, 2, 3), keepdim=True)) / torch.sqrt(x.var(dim=(0, 2, 3), keepdim=True, unbiased=False) + 1e-5)) * 10000) / 10000)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nx = torch.tensor([[[[0., 100.], [-50., 50.]]]])",
+        "call": "(lambda r: (r[0] is True, torch.round((r[1]) * 10000) / 10000))(solve(x))",
+        "expected_expr": "(True, torch.round(((x - x.mean(dim=(0, 2, 3), keepdim=True)) / torch.sqrt(x.var(dim=(0, 2, 3), keepdim=True, unbiased=False) + 1e-5)) * 10000) / 10000)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17693,18 +18033,39 @@
     "topic": "Optimizers",
     "subtopic": "EWMA running statistics (BatchNorm / Adam / RMSprop)",
     "subtopic_key": "Optimizers: EWMA running statistics (BatchNorm / Adam / RMSprop)",
-    "question_text": "Adam's first-moment estimate is an EWMA of the gradients with decay `beta`: the moment keeps a `beta` share of itself and absorbs a `(1-beta)` share of each new gradient — the same update as the previous drill with $\\mu = 1-\\beta$. The starter has `m` at zeros, beta 0.9, and three gradients to fold in, in order. Print the final biased (un-corrected) moment: print([round(float(x), 4) for x in m]).",
-    "answer_code": "import torch\nbeta = 0.9\nm = torch.zeros(2)\ngrads = [\n    torch.tensor([1.0, -2.0]),\n    torch.tensor([3.0, 0.0]),\n    torch.tensor([-1.0, 4.0]),\n]\nfor g in grads:\n    m = beta * m + (1 - beta) * g\nprint([round(float(x), 4) for x in m])",
+    "question_text": "Adam's first-moment estimate is an EWMA of the gradients with decay `beta`: the moment keeps a `beta` share of itself and absorbs a `(1−beta)` share of each new gradient. Write solve(m, beta, grads): fold the list of gradient tensors into `m` in order with that update, and return the final biased (un-corrected) moment tensor.",
+    "answer_code": "import torch\n\ndef solve(m, beta, grads):\n    for g in grads:\n        m = beta * m + (1 - beta) * g\n    return m\n\nm = torch.zeros(2)\ngrads = [torch.tensor([1.0, -2.0]), torch.tensor([3.0, 0.0]), torch.tensor([-1.0, 4.0])]\nprint(solve(m, 0.9, grads))\n",
     "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "[0.251, 0.238]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nbeta = 0.9\nm = torch.zeros(2)\ngrads = [\n    torch.tensor([1.0, -2.0]),\n    torch.tensor([3.0, 0.0]),\n    torch.tensor([-1.0, 4.0]),\n]\n# TODO: for each g, apply Adam first-moment EWMA\nfor g in grads:\n    pass  # TODO: update m\nprint([round(float(x), 4) for x in m])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(m, beta, grads):\n    # Write your solution here\n    return None\n\nm = torch.zeros(2)\ngrads = [torch.tensor([1.0, -2.0]), torch.tensor([3.0, 0.0]), torch.tensor([-1.0, 4.0])]\nprint(solve(m, 0.9, grads))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nm = torch.zeros(2)\nbeta = 0.9\ngrads = [torch.tensor([1.0, -2.0]), torch.tensor([3.0, 0.0]), torch.tensor([-1.0, 4.0])]",
+        "call": "torch.round((solve(m, beta, grads)) * 10000) / 10000",
+        "expected_expr": "torch.round(((lambda mm: [mm := beta * mm + (1 - beta) * g for g in grads][-1])(m)) * 10000) / 10000"
+      },
+      {
+        "setup_code": "import torch\nm = torch.zeros(1)\nbeta = 0.5\ngrads = [torch.tensor([4.0]), torch.tensor([8.0])]",
+        "call": "torch.round((solve(m, beta, grads)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([5.0])"
+      },
+      {
+        "setup_code": "import torch\nm = torch.tensor([10.0, 10.0])\nbeta = 0.9\ngrads = [torch.tensor([10.0, 10.0])]",
+        "call": "torch.round((solve(m, beta, grads)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([10.0, 10.0])"
+      },
+      {
+        "setup_code": "import torch\nm = torch.zeros(2)\nbeta = 0.0\ngrads = [torch.tensor([1.0, 2.0]), torch.tensor([-3.0, 5.0])]",
+        "call": "torch.round((solve(m, beta, grads)) * 10000) / 10000",
+        "expected_expr": "torch.tensor([-3.0, 5.0])"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17934,18 +18295,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "nn.Module extra_repr",
     "subtopic_key": "PyTorch Fundamentals: nn.Module extra_repr",
-    "question_text": "`extra_repr` is how a custom Module earns a readable one-line description. Subclass `nn.Module` as `Linear`: store `in_features`, `out_features`, and `bias` as plain attributes in `__init__`, and override `extra_repr` to return the string `in_features=..., out_features=..., bias=...` filled with the stored values (an f-string). Construct `Linear(8, 4, bias=False)` and print the result of calling its `extra_repr()` directly.",
-    "answer_code": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        self.in_features = in_features\n        self.out_features = out_features\n        self.bias = bias\n    def extra_repr(self):\n        return f\"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias}\"\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
+    "question_text": "`extra_repr` is how a custom Module earns a readable one-line description. Write solve(in_features, out_features, bias): define a class `Linear(torch.nn.Module)` whose `__init__` stores the three arguments as plain attributes (calling `super().__init__()` first), and whose `extra_repr` returns the string `in_features=..., out_features=..., bias=...` filled with the stored values (an f-string). Return an INSTANCE constructed with the given arguments.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features, bias):\n    class Linear(nn.Module):\n        def __init__(self, i, o, b):\n            super().__init__()\n            self.in_features = i\n            self.out_features = o\n            self.bias = b\n        def extra_repr(self):\n            return f\"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias}\"\n    return Linear(in_features, out_features, bias)\n\nm = solve(8, 4, False)\nprint(m)\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "in_features=8, out_features=4, bias=False",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch.nn as nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features, out_features, bias=True):\n        super().__init__()\n        # TODO: store in_features, out_features, bias as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Linear(8, 4, bias=False)\nprint(m.extra_repr())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features, bias):\n    # Write your solution here\n    return None\n\nm = solve(8, 4, False)\nprint(m)\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (8, 4, False)",
+        "call": "solve(*args).extra_repr()",
+        "expected_expr": "'in_features=8, out_features=4, bias=False'"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (128, 64, True)",
+        "call": "solve(*args).extra_repr()",
+        "expected_expr": "'in_features=128, out_features=64, bias=True'"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (2, 3, True)",
+        "call": "isinstance(solve(*args), nn.Module)",
+        "expected_expr": "True"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17956,18 +18333,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "nn.Module extra_repr",
     "subtopic_key": "PyTorch Fundamentals: nn.Module extra_repr",
-    "question_text": "Where does `extra_repr` actually surface? Inside the module's repr. Define `Scale(nn.Module)` storing `dim` and `factor` as attributes, with `extra_repr` returning `dim=..., factor=...` (f-string over the stored values). Construct `Scale(16, 2.5)` and print(repr(m)) — your string shows up inside `Scale(...)`.",
-    "answer_code": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        self.dim = dim\n        self.factor = factor\n    def extra_repr(self):\n        return f\"dim={self.dim}, factor={self.factor}\"\n\nm = Scale(16, 2.5)\nprint(repr(m))",
+    "question_text": "Where does `extra_repr` actually surface? Inside the module's repr. Write solve(dim, factor): define `Scale(torch.nn.Module)` storing `dim` and `factor` as attributes (super().__init__() first), with `extra_repr` returning `dim=..., factor=...` (f-string over the stored values). Return an instance built with the given arguments — the grader reads `repr()` of it, where your string shows up inside `Scale(...)`.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(dim, factor):\n    class Scale(nn.Module):\n        def __init__(self, d, f):\n            super().__init__()\n            self.dim = d\n            self.factor = f\n        def extra_repr(self):\n            return f\"dim={self.dim}, factor={self.factor}\"\n    return Scale(dim, factor)\n\nm = solve(16, 2.5)\nprint(repr(m))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
     "expected_output": "Scale(dim=16, factor=2.5)",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch.nn as nn\n\nclass Scale(nn.Module):\n    def __init__(self, dim, factor):\n        super().__init__()\n        # TODO: store dim and factor as attributes\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = Scale(16, 2.5)\nprint(repr(m))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(dim, factor):\n    # Write your solution here\n    return None\n\nm = solve(16, 2.5)\nprint(repr(m))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (16, 2.5)",
+        "call": "repr(solve(*args))",
+        "expected_expr": "'Scale(dim=16, factor=2.5)'"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (4, 0.5)",
+        "call": "repr(solve(*args))",
+        "expected_expr": "'Scale(dim=4, factor=0.5)'"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (1, -3.0)",
+        "call": "isinstance(solve(*args), nn.Module) and solve(*args).extra_repr() == 'dim=1, factor=-3.0'",
+        "expected_expr": "True"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17978,18 +18371,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "nn.Module extra_repr",
     "subtopic_key": "PyTorch Fundamentals: nn.Module extra_repr",
-    "question_text": "When a module has BOTH an `extra_repr` and child submodules, the printed repr interleaves them. Build `MyBlock(nn.Module)`: `__init__` stores `channels` and `p` as attributes and creates the child `self.lin = nn.Linear(channels, channels)`; `extra_repr` returns `channels=..., p=...`. Construct `MyBlock(3, 0.5)` and print(repr(m)) — note where your extra_repr line lands relative to the `(lin): ...` child line.",
-    "answer_code": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        self.channels = channels\n        self.p = p\n        self.lin = nn.Linear(channels, channels)\n    def extra_repr(self):\n        return f\"channels={self.channels}, p={self.p}\"\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
+    "question_text": "When a module has BOTH an `extra_repr` and child submodules, the printed repr interleaves them. Write solve(channels, p): define `MyBlock(torch.nn.Module)` whose `__init__` stores `channels` and `p` as attributes and creates the child `self.lin = torch.nn.Linear(channels, channels)`; `extra_repr` returns `channels=..., p=...`. Return an instance — the grader checks the repr structure (your extra_repr line lands ABOVE the `(lin): ...` child line) and the child's weight shape.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(channels, p):\n    class MyBlock(nn.Module):\n        def __init__(self, c, prob):\n            super().__init__()\n            self.channels = c\n            self.p = prob\n            self.lin = nn.Linear(c, c)\n        def extra_repr(self):\n            return f\"channels={self.channels}, p={self.p}\"\n    return MyBlock(channels, p)\n\nm = solve(3, 0.5)\nprint(repr(m))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "MyBlock(\n  channels=3, p=0.5\n  (lin): Linear(in_features=3, out_features=3, bias=True)\n)",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch.nn as nn\n\nclass MyBlock(nn.Module):\n    def __init__(self, channels, p):\n        super().__init__()\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n    def extra_repr(self):\n        # TODO: complete this step (see the problem statement above)\n        raise NotImplementedError()\n\nm = MyBlock(3, 0.5)\nprint(repr(m))",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(channels, p):\n    # Write your solution here\n    return None\n\nm = solve(3, 0.5)\nprint(repr(m))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (3, 0.5)",
+        "call": "(lambda r: r.splitlines()[0:2] + [tuple(r.lin.weight.shape)])(solve(*args)) if False else (lambda m: [repr(m).splitlines()[1].strip(), repr(m).splitlines()[2].split(':')[0].strip(), tuple(m.lin.weight.shape)])(solve(*args))",
+        "expected_expr": "['channels=3, p=0.5', '(lin)', (3, 3)]"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (5, 0.1)",
+        "call": "(lambda m: [repr(m).splitlines()[1].strip(), tuple(m.lin.weight.shape)])(solve(*args))",
+        "expected_expr": "['channels=5, p=0.1', (5, 5)]"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nargs = (2, 0.9)",
+        "call": "isinstance(solve(*args).lin, nn.Linear)",
+        "expected_expr": "True"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18066,18 +18475,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Autograd: .grad on leaf parameters",
     "subtopic_key": "PyTorch Fundamentals: Autograd: .grad on leaf parameters",
-    "question_text": "The most basic autograd round trip: the starter's `w` requires grad, `x` is a constant. Build the scalar loss — the sum of the elementwise product of `w` and `x` — and backprop it. Predict `w.grad` before running: for this loss you can read it directly off one of the inputs. Print with print(w.grad.tolist()).",
-    "answer_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\nloss = (w * x).sum()\nloss.backward()\nprint(w.grad.tolist())",
+    "question_text": "The most basic autograd round trip. Write solve(w, x) where `w` already requires grad and `x` is a constant: build the scalar loss — the sum of the elementwise product of `w` and `x` — and backprop it with `.backward()`. Predict `w.grad` before running: for this loss you can read it directly off one of the inputs. Return the tuple `(round(float(loss), 4), w.grad)`.",
+    "answer_code": "import torch\n\ndef solve(w, x):\n    loss = (w * x).sum()\n    loss.backward()\n    return (round(float(loss), 4), w.grad)\n\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\nprint(solve(w, x))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "[4.0, 5.0, 6.0]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\n# TODO: compute loss\nprint(w.grad.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(w, x):\n    # Write your solution here\n    return None\n\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\nprint(solve(w, x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])",
+        "call": "solve(w, x)",
+        "expected_expr": "(32.0, torch.tensor([4.0, 5.0, 6.0]))"
+      },
+      {
+        "setup_code": "import torch\nw = torch.tensor([0.5, -0.5], requires_grad=True)\nx = torch.tensor([-2.0, 8.0])",
+        "call": "solve(w, x)",
+        "expected_expr": "(-5.0, torch.tensor([-2.0, 8.0]))"
+      },
+      {
+        "setup_code": "import torch\nw = torch.tensor([10.0], requires_grad=True)\nx = torch.tensor([0.0])",
+        "call": "solve(w, x)",
+        "expected_expr": "(0.0, torch.tensor([0.0]))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18088,18 +18513,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Autograd: .grad on leaf parameters",
     "subtopic_key": "PyTorch Fundamentals: Autograd: .grad on leaf parameters",
-    "question_text": "A gradient always has the same shape as its parameter. The starter gives a matrix `W` (requires grad) and a constant vector `x`. Build the scalar loss: the sum of squares of the matvec $Wx$. Backprop, then print two lines: print(W.grad.shape == W.shape), then print(W.grad.tolist()).",
-    "answer_code": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\nloss = (W @ x).pow(2).sum()\nloss.backward()\nprint(W.grad.shape == W.shape)\nprint(W.grad.tolist())",
+    "question_text": "A gradient always has the same shape as its parameter. Write solve(W, x) where matrix `W` requires grad and `x` is a constant vector: build the scalar loss — the sum of squares of the matvec W@x — backprop it, and return the tuple `(W.grad.shape == W.shape, W.grad)`.",
+    "answer_code": "import torch\n\ndef solve(W, x):\n    loss = (W @ x).pow(2).sum()\n    loss.backward()\n    return (W.grad.shape == W.shape, W.grad)\n\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\nprint(solve(W, x))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "True\n[[6.0, 6.0], [14.0, 14.0]]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\n# TODO: compute loss\nprint(W.grad.shape == W.shape)\nprint(W.grad.tolist())",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(W, x):\n    # Write your solution here\n    return None\n\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\nprint(solve(W, x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])",
+        "call": "(lambda r: (r[0], torch.round((r[1]) * 10000) / 10000))(solve(W, x))",
+        "expected_expr": "(True, torch.tensor([[6.0, 6.0], [14.0, 14.0]]))"
+      },
+      {
+        "setup_code": "import torch\nW = torch.tensor([[2.0, 0.0, 1.0]], requires_grad=True)\nx = torch.tensor([1.0, 2.0, 3.0])",
+        "call": "(lambda r: (r[0], torch.round((r[1]) * 10000) / 10000))(solve(W, x))",
+        "expected_expr": "(True, torch.tensor([[10.0, 20.0, 30.0]]))"
+      },
+      {
+        "setup_code": "import torch\nW = torch.tensor([[1.0], [-1.0]], requires_grad=True)\nx = torch.tensor([3.0])",
+        "call": "(lambda r: (r[0], torch.round((r[1]) * 10000) / 10000))(solve(W, x))",
+        "expected_expr": "(True, torch.tensor([[18.0], [-18.0]]))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18110,18 +18551,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Autograd: .grad on leaf parameters",
     "subtopic_key": "PyTorch Fundamentals: Autograd: .grad on leaf parameters",
-    "question_text": "The gradient of a MEAN divides by the element count — a classic off-by-factor trap. The starter gives leaf `b` and constant `target`. Build loss = the mean squared error between them, backprop, and print the two gradient components with print(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4)). Then take one SGD step with lr 0.1 inside the starter's `no_grad` block to compute `updated`, and print [round(float(v), 4) for v in updated].",
-    "answer_code": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nloss = ((b - target) ** 2).mean()\nloss.backward()\nlr = 0.1\nwith torch.no_grad():\n    updated = b - lr * b.grad\nprint(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4))\nprint([round(float(v), 4) for v in updated])",
+    "question_text": "The gradient of a MEAN divides by the element count — a classic off-by-factor trap. Write solve(b, target, lr) where leaf `b` requires grad: build loss = the mean squared error between `b` and `target` (elementwise (b−target)² then `.mean()`), backprop, then compute one SGD step `updated = b - lr * b.grad` inside `torch.no_grad()`. Return `(b.grad, updated)`.",
+    "answer_code": "import torch\n\ndef solve(b, target, lr):\n    loss = ((b - target) ** 2).mean()\n    loss.backward()\n    with torch.no_grad():\n        updated = b - lr * b.grad\n    return (b.grad, updated)\n\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nprint(solve(b, target, 0.1))\n",
     "difficulty_score": 50,
     "difficulty_label": "medium",
     "expected_output": "2.0 -1.0\n[1.8, -0.9]",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\n# TODO: compute loss\nlr = 0.1\nwith torch.no_grad():\n    updated = None  # TODO: fill in updated\nprint(round(float(b.grad[0]), 4), round(float(b.grad[1]), 4))\nprint([round(float(v), 4) for v in updated])",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\n\ndef solve(b, target, lr):\n    # Write your solution here\n    return None\n\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nprint(solve(b, target, 0.1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nlr = 0.1",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(b, target, lr))",
+        "expected_expr": "(torch.tensor([2.0, -1.0]), torch.tensor([1.8, -0.9]))"
+      },
+      {
+        "setup_code": "import torch\nb = torch.tensor([4.0], requires_grad=True)\ntarget = torch.tensor([1.0])\nlr = 0.5",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(b, target, lr))",
+        "expected_expr": "(torch.tensor([6.0]), torch.tensor([1.0]))"
+      },
+      {
+        "setup_code": "import torch\nb = torch.tensor([1.0, 2.0, 3.0, 6.0], requires_grad=True)\ntarget = torch.tensor([1.0, 2.0, 3.0, 2.0])\nlr = 1.0",
+        "call": "(lambda r: (torch.round((r[0]) * 10000) / 10000, torch.round((r[1]) * 10000) / 10000))(solve(b, target, lr))",
+        "expected_expr": "(torch.tensor([0.0, 0.0, 0.0, 2.0]), torch.tensor([1.0, 2.0, 3.0, 4.0]))"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18132,18 +18589,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Freezing parameters with requires_grad_",
     "subtopic_key": "PyTorch Fundamentals: Freezing parameters with requires_grad_",
-    "question_text": "Calling `requires_grad_(False)` on a MODULE recurses into every parameter. Freeze the starter's 3-layer Sequential with that single call, then print two lines: the list of `requires_grad` flags across all parameters, and the number of trainable parameter ELEMENTS remaining (weight the count by numel, not per-tensor).",
-    "answer_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(3, 4),\n    nn.ReLU(),\n    nn.Linear(4, 2),\n)\nmodel.requires_grad_(False)\nflags = [p.requires_grad for p in model.parameters()]\nn_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)\nprint(flags)\nprint(n_trainable)",
+    "question_text": "Calling `requires_grad_(False)` on a MODULE recurses into every parameter. Write solve(model): freeze the given module with that single call, then return the tuple `(flags, n_trainable)` — `flags` = the list of `requires_grad` across `model.parameters()`, and `n_trainable` = the number of trainable parameter ELEMENTS remaining (weight the count by `numel()`, not per-tensor).",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(model):\n    model.requires_grad_(False)\n    flags = [p.requires_grad for p in model.parameters()]\n    n_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)\n    return (flags, n_trainable)\n\nmodel = nn.Sequential(nn.Linear(3, 4), nn.ReLU(), nn.Linear(4, 2))\nprint(solve(model))\n",
     "difficulty_score": 25,
     "difficulty_label": "easy",
     "expected_output": "[False, False, False, False]\n0",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(3, 4),\n    nn.ReLU(),\n    nn.Linear(4, 2),\n)\n# TODO: freeze all params\nflags = None  # TODO: fill in flags\nn_trainable = None  # TODO: fill in n_trainable\nprint(flags)\nprint(n_trainable)",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(model):\n    # Write your solution here\n    return None\n\nmodel = nn.Sequential(nn.Linear(3, 4), nn.ReLU(), nn.Linear(4, 2))\nprint(solve(model))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Linear(3, 4), nn.ReLU(), nn.Linear(4, 2))",
+        "call": "solve(model)",
+        "expected_expr": "([False, False, False, False], 0)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Linear(5, 5)",
+        "call": "solve(model)",
+        "expected_expr": "([False, False], 0)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Conv2d(1, 2, 3), nn.Linear(2, 2, bias=False))",
+        "call": "solve(model)",
+        "expected_expr": "([False, False, False], 0)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18154,18 +18627,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Freezing parameters with requires_grad_",
     "subtopic_key": "PyTorch Fundamentals: Freezing parameters with requires_grad_",
-    "question_text": "A frozen module's output is detached from the autograd graph. Freeze the starter's `nn.Linear(4, 1)` with one recursive call, run `x` through it and sum to get `y`. Print two lines: print(y.requires_grad), then print(y.grad_fn is None) — both tell the same story from different angles.",
-    "answer_code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nmodel.requires_grad_(False)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\ny = model(x).sum()\nprint(y.requires_grad)\nprint(y.grad_fn is None)",
+    "question_text": "A frozen module's output is detached from the autograd graph. Write solve(model, x): freeze `model` with one recursive `requires_grad_(False)` call, run `x` through it and `.sum()` to get `y`. Return `(y.requires_grad, y.grad_fn is None)` — both tell the same story from different angles.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, x):\n    model.requires_grad_(False)\n    y = model(x).sum()\n    return (y.requires_grad, y.grad_fn is None)\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\nprint(solve(model, x))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
     "expected_output": "False\nTrue",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\n# TODO: freeze the model\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\ny = None  # TODO: fill in y\nprint(y.requires_grad)\nprint(y.grad_fn is None)",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, x):\n    # Write your solution here\n    return None\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\nprint(solve(model, x))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])",
+        "call": "solve(model, x)",
+        "expected_expr": "(False, True)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\ntorch.manual_seed(1)\nmodel = nn.Sequential(nn.Linear(2, 3), nn.ReLU(), nn.Linear(3, 1))\nx = torch.ones(1, 2)",
+        "call": "solve(model, x)",
+        "expected_expr": "(False, True)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\ntorch.manual_seed(2)\nmodel = nn.Conv2d(1, 1, 1)\nx = torch.ones(1, 1, 2, 2)",
+        "call": "(lambda r: (isinstance(r[0], bool), r[0], r[1]))(solve(model, x))",
+        "expected_expr": "(True, False, True)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18176,18 +18665,34 @@
     "topic": "PyTorch Fundamentals",
     "subtopic": "Freezing parameters with requires_grad_",
     "subtopic_key": "PyTorch Fundamentals: Freezing parameters with requires_grad_",
-    "question_text": "Partial unfreezing for fine-tuning: freeze the starter's two-layer Sequential recursively, then re-enable JUST the second layer (index into the Sequential and call the same method with True). Print two lines: the per-parameter `requires_grad` list, then the count of parameter TENSORS still requiring grad.",
-    "answer_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.Linear(3, 2),\n)\nmodel.requires_grad_(False)\nmodel[1].requires_grad_(True)\nflags = [p.requires_grad for p in model.parameters()]\nn_on = sum(int(p.requires_grad) for p in model.parameters())\nprint(flags)\nprint(n_on)",
+    "question_text": "Partial unfreezing for fine-tuning. Write solve(model, idx) for a `nn.Sequential`: freeze the whole model recursively, then re-enable JUST the layer at position `idx` (index into the Sequential and call the same method with True). Return `(flags, n_on)` — the per-parameter `requires_grad` list and the count of parameter TENSORS still requiring grad.",
+    "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, idx):\n    model.requires_grad_(False)\n    model[idx].requires_grad_(True)\n    flags = [p.requires_grad for p in model.parameters()]\n    n_on = sum(int(p.requires_grad) for p in model.parameters())\n    return (flags, n_on)\n\nmodel = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2))\nprint(solve(model, 1))\n",
     "difficulty_score": 40,
     "difficulty_label": "medium",
     "expected_output": "[False, False, True, True]\n2",
     "language": "python",
     "primary_library": "torch",
     "task_type": "stdout_prediction",
-    "function_name": null,
-    "starter_code": "import torch\nimport torch.nn as nn\n\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.Linear(3, 2),\n)\n# TODO: complete this step (see the problem statement above)\nflags = None  # TODO: fill in flags\nn_on = None  # TODO: fill in n_on\nprint(flags)\nprint(n_on)",
-    "test_cases": [],
-    "submission_mode": "stdout",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(model, idx):\n    # Write your solution here\n    return None\n\nmodel = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2))\nprint(solve(model, 1))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2))\nidx = 1",
+        "call": "solve(model, idx)",
+        "expected_expr": "([False, False, True, True], 2)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2), nn.Linear(2, 2))\nidx = 0",
+        "call": "solve(model, idx)",
+        "expected_expr": "([True, True, False, False, False, False], 2)"
+      },
+      {
+        "setup_code": "import torch\nimport torch.nn as nn\nmodel = nn.Sequential(nn.Linear(4, 4, bias=False), nn.Linear(4, 1))\nidx = 1",
+        "call": "solve(model, idx)",
+        "expected_expr": "([False, True, True], 2)"
+      }
+    ],
+    "submission_mode": "function",
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",

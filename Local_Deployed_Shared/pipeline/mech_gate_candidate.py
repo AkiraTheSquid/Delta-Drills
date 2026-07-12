@@ -65,6 +65,9 @@ def load_code_runner():
     assert spec.loader is not None
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
+    # Torch candidates grade through the fork runner like prod (and like the
+    # bank audit); without preload every case pays a fresh torch import.
+    module.preload_torch()
     return module
 
 
