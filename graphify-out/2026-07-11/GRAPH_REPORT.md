@@ -1,11 +1,11 @@
 # Graph Report - Delta-Drills-Deployed  (2026-07-11)
 
 ## Corpus Check
-- 886 files · ~9,708,444 words
+- 887 files · ~9,708,992 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 26504 nodes · 42532 edges · 1884 communities (1802 shown, 82 thin omitted)
+- 26508 nodes · 42536 edges · 1879 communities (1794 shown, 85 thin omitted)
 - Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 2630 edges (avg confidence: 0.64)
 - Token cost: 0 input · 0 output
 
@@ -1284,12 +1284,10 @@
 - 2️⃣ LoRA Fine-Tuning
 - Suggested paper replications
 - .reshape
-- log_forward
 - get_samples
 - Lora
 - test_with_pytest.py
 - utils.py
-- log_forward
 - 2️⃣ Einops, Einsum & Tensor Manipulation
 - Software Engineering
 - Libraries
@@ -1604,10 +1602,8 @@
 - The "transformer environment"
 - print_dict_as_table
 - _convert_master_ipynb_cell_to_master_py_cell_data
-- BackwardFuncLookup
 - .get_permitted_links
 - display_array_as_img
-- BackwardFuncLookup
 - conv1d minimal
 - BatchNorm2d
 - Intermediate stride exercises
@@ -1632,7 +1628,6 @@
 - Development of the embedding
 - Neuron Interpretability and Studying Superposition
 - Using the probe
-- Toy
 - Bonus - other suggestions
 - Intro to OpenAI Gymnasium
 - Bonus
@@ -1748,15 +1743,15 @@
   Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/tests.py → Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/solutions.py
 - `test_linear_no_bias()` --calls--> `Linear`  [INFERRED]
   Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/tests.py → Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/solutions.py
+- `test_get_resnet_for_feature_extraction()` --calls--> `get_resnet_for_feature_extraction()`  [INFERRED]
+  Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/tests.py → Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part2_cnns/solutions.py
 - `test_Tanh()` --calls--> `Tanh`  [INFERRED]
-  Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part5_vaes_and_gans/tests.py → Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part5_vaes_and_gans/solutions.py
-- `test_Sigmoid()` --calls--> `Sigmoid`  [INFERRED]
   Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part5_vaes_and_gans/tests.py → Local_Deployed_Shared/content/ARENA_3.0-main/chapter0_fundamentals/exercises/part5_vaes_and_gans/solutions.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (1884 total, 82 thin omitted)
+## Communities (1879 total, 85 thin omitted)
 
 ### Community 0 - "dom.js"
 Cohesion: 0.03
@@ -1776,31 +1771,31 @@ Nodes (6): formatTimer(), parseTimerInput(), resetTimerToInput(), startTimer(), 
 
 ### Community 5 - "solutions.py"
 Cohesion: 0.02
-Nodes (149): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+141 more)
+Nodes (134): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+126 more)
 
 ### Community 6 - "Linear"
 Cohesion: 0.03
-Nodes (137): BatchNorm2d, Conv2d, Linear, Like torch's conv2d using bias=False., Same as torch.nn.Conv2d with bias=False.          Name your weight field `self.w, Like nn.BatchNorm2d with track_running_stats=True and affine=True.          Name, A single residual block with optional downsampling.          For compatibility w, A simple linear (technically, affine) transformation.          The fields should (+129 more)
+Nodes (140): BatchNorm2d, Conv2d, Linear, Like torch's conv2d using bias=False., Same as torch.nn.Conv2d with bias=False.          Name your weight field `self.w, Like nn.BatchNorm2d with track_running_stats=True and affine=True.          Name, A single residual block with optional downsampling.          For compatibility w, A simple linear (technically, affine) transformation.          The fields should (+132 more)
 
 ### Community 7 - "master_0_2.py"
-Cohesion: 0.02
-Nodes (127): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+119 more)
+Cohesion: 0.05
+Nodes (59): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, conv1d(), conv1d_minimal(), conv1d_minimal_simple() (+51 more)
 
 ### Community 8 - "solutions.py"
 Cohesion: 0.02
-Nodes (131): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+123 more)
+Nodes (133): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+125 more)
 
 ### Community 9 - "solutions.py"
 Cohesion: 0.02
-Nodes (112): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BlockGroup, conv1d(), conv1d_minimal() (+104 more)
+Nodes (84): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BlockGroup, conv1d(), conv1d_minimal_simple() (+76 more)
 
 ### Community 10 - "master_0_2.py"
-Cohesion: 0.03
-Nodes (96): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+88 more)
+Cohesion: 0.02
+Nodes (135): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+127 more)
 
 ### Community 11 - "master_2_2.py"
 Cohesion: 0.03
-Nodes (70): compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss(), compute_returns(), DQNAgent, DQNArgs, DQNTrainer, epsilon_greedy_policy() (+62 more)
+Nodes (79): Probe4, Probe5, Tensor, Vectorized Probe5: Two actions, random 0/1 observation, one timestep, reward is, Vectorized Probe4: Two actions, [0.0] observation, one timestep, reward is -1.0, Sets random seeds in several different ways (to guarantee reproducibility), set_global_seeds(), Samples from the replay buffer, converted to PyTorch for use in neural network t (+71 more)
 
 ### Community 12 - "fs"
 Cohesion: 0.05
@@ -1815,8 +1810,8 @@ Cohesion: 0.02
 Nodes (83): [6, 96, 96, 3] -> [96, (6 * 96), 3], all letters are observable, at the same time horizontal axis is downsampled by 2x, average over batch, below we swapped height and width., besides mean, there are also min, max, sum, prod, but all pixels are the same!, but is so much more readable (+75 more)
 
 ### Community 15 - "Tensor"
-Cohesion: 0.04
-Nodes (52): arange(), cross_entropy(), empty(), log_forward(), Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Like torch.arange(start, end). (+44 more)
+Cohesion: 0.05
+Nodes (39): A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Tensor, test_add_broadcasted(), test_backprop(), test_backprop_branching(), test_backprop_float_arg(), test_backprop_requires_grad_false() (+31 more)
 
 ### Community 16 - "solutions_dqn.py"
 Cohesion: 0.04
@@ -1835,32 +1830,32 @@ Cohesion: 0.05
 Nodes (52): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+44 more)
 
 ### Community 20 - "Tensor"
-Cohesion: 0.04
-Nodes (48): empty(), log_forward(), A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Performs np.log on a Tensor object., Like torch.sub_. Compute x -= other * alpha in-place and return tensor., Like torch.nn.function.relu(x, inplace=False)., relu() (+40 more)
+Cohesion: 0.05
+Nodes (42): A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Like torch.sub_. Compute x -= other * alpha in-place and return tensor., sub_(), Tensor, test_add_broadcasted(), test_backprop(), test_backprop_branching() (+34 more)
 
 ### Community 21 - "master_0_3.py"
 Cohesion: 0.05
-Nodes (52): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+44 more)
+Nodes (54): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+46 more)
 
 ### Community 22 - "solutions.py"
 Cohesion: 0.05
-Nodes (50): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+42 more)
+Nodes (48): all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar(), get_untrained_resnet() (+40 more)
 
 ### Community 23 - "Probe4"
-Cohesion: 0.06
-Nodes (44): Probe4, Probe5, Tensor, Vectorized Probe5: Two actions, random 0/1 observation, one timestep, reward is, Vectorized Probe4: Two actions, [0.0] observation, one timestep, reward is -1.0, compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss() (+36 more)
+Cohesion: 0.09
+Nodes (31): compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss(), compute_returns(), normalize_returns(), PolicyNetwork, Any, Bool (+23 more)
 
 ### Community 24 - "master_0_3.py"
 Cohesion: 0.05
-Nodes (49): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+41 more)
+Nodes (54): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+46 more)
 
 ### Community 25 - "solutions.py"
 Cohesion: 0.05
-Nodes (48): all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar(), get_untrained_resnet() (+40 more)
+Nodes (51): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+43 more)
 
 ### Community 26 - "solutions.py"
 Cohesion: 0.05
-Nodes (48): all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar(), get_untrained_resnet() (+40 more)
+Nodes (49): AdamW, all_reduce(), bivariate_gaussian(), broadcast(), dist_train_resnet_from_scratch(), DistResNetTrainer, DistResNetTrainingArgs, get_cifar() (+41 more)
 
 ### Community 27 - "fontawesome.js"
 Cohesion: 0.08
@@ -1868,19 +1863,19 @@ Nodes (56): DOCUMENTATION_OPTIONS, a(), ac(), Al(), Bc(), c(), cc(), d() (+48 mo
 
 ### Community 28 - "solutions.py"
 Cohesion: 0.04
-Nodes (45): pad1d(), Return a new tensor with padding applied to the edges., conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), DCGANTrainer, display_data() (+37 more)
+Nodes (42): conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), DCGANTrainer, display_data(), fractional_stride_1d(), fractional_stride_2d() (+34 more)
 
 ### Community 29 - "solutions.py"
 Cohesion: 0.05
-Nodes (43): pad1d(), Return a new tensor with padding applied to the edges., Autoencoder, AutoencoderArgs, AutoencoderTrainer, conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d() (+35 more)
+Nodes (33): conv1d_minimal(), Like torch's conv1d using bias=False and all other keyword arguments left at def, test_conv1d_minimal(), conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), DCGANTrainer (+25 more)
 
 ### Community 30 - "Tensor"
-Cohesion: 0.05
-Nodes (41): A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Like torch.sub_. Compute x -= other * alpha in-place and return tensor., sub_(), Tensor, test_add_broadcasted(), test_backprop(), test_backprop_branching() (+33 more)
+Cohesion: 0.04
+Nodes (52): arange(), cross_entropy(), empty(), log_forward(), Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Like torch.arange(start, end). (+44 more)
 
 ### Community 31 - "solutions.py"
-Cohesion: 0.05
-Nodes (55): _argmax(), BackwardFuncLookup, coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+47 more)
+Cohesion: 0.06
+Nodes (48): _argmax(), coerce_index(), empty(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+40 more)
 
 ### Community 32 - "solutions.py"
 Cohesion: 0.06
@@ -1895,8 +1890,8 @@ Cohesion: 0.06
 Nodes (59): ablation_induction_score(), current_attn_detector(), decompose_attn_scores(), decompose_k(), decompose_q(), decompose_qk_input(), find_K_comp_full_circuit(), first_attn_detector() (+51 more)
 
 ### Community 35 - "solutions.py"
-Cohesion: 0.05
-Nodes (53): _argmax(), BackwardFuncLookup, coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+45 more)
+Cohesion: 0.06
+Nodes (48): _argmax(), coerce_index(), empty(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+40 more)
 
 ### Community 36 - "master_4_2.py"
 Cohesion: 0.06
@@ -1963,8 +1958,8 @@ Cohesion: 0.06
 Nodes (52): assert_all_close(), assert_all_equal(), batched_cross_entropy_loss(), batched_logsoftmax(), batched_logsumexp(), batched_softmax(), classifier_accuracy(), collect_columns() (+44 more)
 
 ### Community 52 - "solutions.py"
-Cohesion: 0.06
-Nodes (48): _argmax(), coerce_index(), empty(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+40 more)
+Cohesion: 0.05
+Nodes (53): _argmax(), BackwardFuncLookup, coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+45 more)
 
 ### Community 53 - "Tensor"
 Cohesion: 0.08
@@ -1996,7 +1991,7 @@ Nodes (45): build_messages(), build_model_contrastive_steering_vector(), build_s
 
 ### Community 60 - "solutions_vaes.py"
 Cohesion: 0.07
-Nodes (37): conv1d_minimal(), Like torch's conv1d using bias=False and all other keyword arguments left at def, test_conv1d_minimal(), Autoencoder, AutoencoderArgs, AutoencoderTrainer, conv_transpose1d(), conv_transpose1d_minimal() (+29 more)
+Nodes (28): conv_transpose1d(), conv_transpose2d(), create_grid_of_latents(), display_data(), fractional_stride_1d(), fractional_stride_2d(), get_dataset(), Dataset (+20 more)
 
 ### Community 61 - "master_1_3_4.py"
 Cohesion: 0.08
@@ -2011,16 +2006,16 @@ Cohesion: 0.07
 Nodes (49): compute_sae_umap_data(), create_prompt(), fetch_max_activating_examples(), fetch_max_activating_examples_attn(), generate_with_steering(), get_autointerp_explanation(), get_cache_fwd_and_bwd(), get_k_largest_indices() (+41 more)
 
 ### Community 64 - "master_0_4.py"
-Cohesion: 0.07
-Nodes (45): _argmax(), coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back(), log_back() (+37 more)
+Cohesion: 0.06
+Nodes (48): _argmax(), BackwardFuncLookup, coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back() (+40 more)
 
 ### Community 65 - "master_0_4.py"
 Cohesion: 0.07
 Nodes (45): _argmax(), coerce_index(), exp_back(), forward_and_back(), get_children(), _getitem(), getitem_back(), log_back() (+37 more)
 
 ### Community 66 - "Tensor"
-Cohesion: 0.05
-Nodes (30): conv_transpose1d(), conv_transpose1d_minimal(), create_grid_of_latents(), DCGANTrainer, display_data(), fractional_stride_1d(), fractional_stride_2d(), Float (+22 more)
+Cohesion: 0.06
+Nodes (29): conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), DCGANTrainer, display_data(), fractional_stride_1d(), fractional_stride_2d() (+21 more)
 
 ### Community 67 - "solutions.py"
 Cohesion: 0.09
@@ -2043,8 +2038,8 @@ Cohesion: 0.04
 Nodes (42): measure_whistleblowing_propensity(), Run multi-turn audits and score for whistleblowing dimensions.      Uses run_aud, _mock_generate_response_for_conversation(), _mock_generate_response_for_grading(), _MockChoice, _MockCompletion, _MockMessage, _MockToolCall (+34 more)
 
 ### Community 72 - "Tensor"
-Cohesion: 0.06
-Nodes (17): add_(), backprop(), empty(), A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., Like torch.sub_. Compute x -= other * alpha in-place and return tensor. (+9 more)
+Cohesion: 0.05
+Nodes (27): add_(), arange(), backprop(), cross_entropy(), empty(), log_forward(), multiply_forward(), Extra information necessary to run backpropagation. You don't need to modify thi (+19 more)
 
 ### Community 73 - "master_2_2_2.py"
 Cohesion: 0.09
@@ -2119,20 +2114,20 @@ Cohesion: 0.08
 Nodes (39): arrange_by_2d_freqs(), avg_attn_pattern(), embed_SVD(), excl_loss(), fft1d(), fft1d_given_dim(), fft2d(), find_neuron_freqs() (+31 more)
 
 ### Community 91 - "tests.py"
-Cohesion: 0.08
-Nodes (28): Adam, RMSprop, construct_param_config_from_description(), format_config(), _get_moon_data(), get_sgd_optimizer(), Net, Net2 (+20 more)
+Cohesion: 0.09
+Nodes (30): Zeros all gradients of the parameters in `self.params`., Performs a single optimization step of the SGD algorithm., SGD, construct_param_config_from_description(), format_config(), _get_moon_data(), get_sgd_optimizer(), Net (+22 more)
 
 ### Community 92 - "es"
 Cohesion: 0.08
 Nodes (5): be, es, getDataAttributes(), me(), Zi
 
 ### Community 93 - "tests.py"
-Cohesion: 0.09
-Nodes (30): Zeros all gradients of the parameters in `self.params`., Performs a single optimization step of the SGD algorithm., SGD, construct_param_config_from_description(), format_config(), _get_moon_data(), get_sgd_optimizer(), Net (+22 more)
+Cohesion: 0.08
+Nodes (32): Implements SGD with momentum.          Like the PyTorch version, but assume nest, Zeros all gradients of the parameters in `self.params`., Performs a single optimization step of the SGD algorithm., Implements SGD with momentum.          Accepts parameters in groups, or an itera, SGD, construct_param_config_from_description(), format_config(), _get_moon_data() (+24 more)
 
 ### Community 94 - "tests.py"
-Cohesion: 0.09
-Nodes (30): Zeros all gradients of the parameters in `self.params`., Performs a single optimization step of the SGD algorithm., SGD, construct_param_config_from_description(), format_config(), _get_moon_data(), get_sgd_optimizer(), Net (+22 more)
+Cohesion: 0.08
+Nodes (32): Implements SGD with momentum.          Like the PyTorch version, but assume nest, Zeros all gradients of the parameters in `self.params`., Performs a single optimization step of the SGD algorithm., Implements SGD with momentum.          Accepts parameters in groups, or an itera, SGD, construct_param_config_from_description(), format_config(), _get_moon_data() (+24 more)
 
 ### Community 95 - "utils.py"
 Cohesion: 0.08
@@ -2183,8 +2178,8 @@ Cohesion: 0.05
 Nodes (38): 1️⃣ Intro to LLM Agents, 1️⃣ Intro to LLM Agents, 2️⃣ Building a Simple Arithmetic Agent, 2️⃣ Building a Simple Arithmetic Agent, [3.4] - LLM Agents, 3️⃣ Building a more Complex Agent: WikiGame, 3️⃣ Building a more complex agent: WikiGame, 4️⃣ Elicitation (+30 more)
 
 ### Community 107 - "Tensor"
-Cohesion: 0.07
-Nodes (28): conv_transpose1d(), conv_transpose1d_minimal(), create_grid_of_latents(), fractional_stride_1d(), fractional_stride_2d(), Float, Tensor, Like torch's conv_transpose1d using bias=False and all other keyword arguments l (+20 more)
+Cohesion: 0.05
+Nodes (39): conv1d_minimal(), Like torch's conv1d using bias=False and all other keyword arguments left at def, test_conv1d_minimal(), conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), display_data() (+31 more)
 
 ### Community 108 - "1️⃣ Deep Q-Learning"
 Cohesion: 0.05
@@ -2247,8 +2242,8 @@ Cohesion: 0.08
 Nodes (21): ClipRewardEnv, cummean(), EpisodicLifeEnv, FireResetEnv, MaxAndSkipEnv, NoopResetEnv, prepare_atari_env(), prepare_mujoco_env() (+13 more)
 
 ### Community 123 - "solutions.py"
-Cohesion: 0.11
-Nodes (25): compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss(), compute_returns(), normalize_returns(), Any, Bool, device (+17 more)
+Cohesion: 0.09
+Nodes (31): compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss(), compute_returns(), normalize_returns(), PolicyNetwork, Any, Bool (+23 more)
 
 ### Community 124 - "utils.py"
 Cohesion: 0.12
@@ -2295,8 +2290,8 @@ Cohesion: 0.06
 Nodes (35): 1️⃣ Intro to Inspect, 1️⃣ Intro to Inspect, 2️⃣ Solvers and Scorers, 2️⃣ Writing Solvers, [3.3] Running Evals with Inspect, 3️⃣ Writing Tasks and Evaluating, 3️⃣ Writing Tasks and Evaluating, Asyncio (+27 more)
 
 ### Community 135 - "Tensor"
-Cohesion: 0.07
-Nodes (9): empty(), A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Like torch.sub_. Compute x -= other * alpha in-place and return tensor., Like torch.nn.function.relu(x, inplace=False)., relu(), sub_(), Tensor (+1 more)
+Cohesion: 0.06
+Nodes (17): add_(), backprop(), empty(), A drop-in replacement for torch.Tensor supporting a subset of features., Same as https://pytorch.org/docs/stable/generated/torch.Tensor.is_leaf.html, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., Like torch.sub_. Compute x -= other * alpha in-place and return tensor. (+9 more)
 
 ### Community 136 - "Tensor"
 Cohesion: 0.12
@@ -2391,8 +2386,8 @@ Cohesion: 0.13
 Nodes (30): apply_scale(), calculate_accumulated_probe_score(), calculate_attn_and_mlp_probe_score_contributions(), calculate_neuron_input_weights(), calculate_neuron_output_weights(), flip_hook(), get_act_patch_resid_pre(), get_w_in() (+22 more)
 
 ### Community 159 - "Module"
-Cohesion: 0.08
-Nodes (16): Linear, Module, Parameter, Any, A simple linear (technically, affine) transformation.          The fields should, x: shape (*, in_features)         Return: shape (*, out_features), Vanilla SGD with no additional features., Like torch.nn.function.relu(x, inplace=False). (+8 more)
+Cohesion: 0.09
+Nodes (14): Linear, MLP, Module, Parameter, Any, A simple linear (technically, affine) transformation.          The fields should, x: shape (*, in_features)         Return: shape (*, out_features), Vanilla SGD with no additional features. (+6 more)
 
 ### Community 160 - "Tensor"
 Cohesion: 0.11
@@ -2419,8 +2414,8 @@ Cohesion: 0.12
 Nodes (27): calculate(), Any, agent_task(), arithmetic_agent(), calculate(), get_page(), get_permitted_links(), GetContentTool() (+19 more)
 
 ### Community 166 - "Tensor"
-Cohesion: 0.07
-Nodes (25): as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, conv1d(), conv1d_minimal_simple(), pad1d(), predict() (+17 more)
+Cohesion: 0.03
+Nodes (91): add_hook(), as_strided_mm(), as_strided_mv(), as_strided_trace(), AveragePool, BatchNorm2d, BlockGroup, conv1d() (+83 more)
 
 ### Community 167 - "master_1_5_3.py"
 Cohesion: 0.13
@@ -2523,12 +2518,12 @@ Cohesion: 0.06
 Nodes (30): 1️⃣ Intro to API calls, 1️⃣ Intro to API Calls, 2️⃣ Case Study: Alignment Faking, 2️⃣ Case Study: Alignment Faking, [3.1] Intro to Evals, 3️⃣ Threat-Modeling & Eval Design, 3️⃣ Threat-Modeling & Specification Design, Alignment Faking in LLMs (+22 more)
 
 ### Community 192 - "ResNet34"
-Cohesion: 0.07
-Nodes (15): x: shape (batch, channels, height, width)         Return: shape (batch, n_classe, ResNet34, AdamW, Adam, Parameter, Implements SGD with momentum.          Accepts parameters in groups, or an itera, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Zeros all gradients of the parameters in `self.params`. (+7 more)
+Cohesion: 0.13
+Nodes (6): Adam, Parameter, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, RMSprop
 
 ### Community 193 - "Module"
-Cohesion: 0.09
-Nodes (14): Linear, MLP, Module, Parameter, Any, A simple linear (technically, affine) transformation.          The fields should, x: shape (*, in_features)         Return: shape (*, out_features), Vanilla SGD with no additional features. (+6 more)
+Cohesion: 0.08
+Nodes (17): Linear, MLP, Module, Parameter, Any, A simple linear (technically, affine) transformation.          The fields should, x: shape (*, in_features)         Return: shape (*, out_features), Vanilla SGD with no additional features. (+9 more)
 
 ### Community 194 - "3️⃣ Threat-Modeling & Specification Design"
 Cohesion: 0.06
@@ -2559,8 +2554,8 @@ Cohesion: 0.14
 Nodes (23): agent_task(), GetContentTool(), MovePageTool(), Agent, ChatMessageUser, Task, Tool, Get summary of a wikipedia page, to the last full stop within the first 500 char (+15 more)
 
 ### Community 201 - "Float"
-Cohesion: 0.12
-Nodes (18): forward(), JumpReLUToySAE, Float, Returns decoder weights, normalized over the autoencoder input dimension., Generates a batch of hidden activations from our model., Forward pass on the autoencoder.          Args:             h: hidden layer acti, Optimizes the autoencoder using the given hyperparameters.          Args:, Resamples dead latents, by modifying the model's weights and biases inplace. (+10 more)
+Cohesion: 0.11
+Nodes (14): GatedToySAE, NeuronComputationModel, Float, Tensor, Returns decoder weights, normalized over the autoencoder input dimension., Forward pass on the autoencoder.          Args:             h: hidden layer acti, Generates a batch of data of shape (batch_size, n_instances, n_features)., Resamples dead latents, by modifying the model's weights and biases inplace. (+6 more)
 
 ### Community 202 - "Cell"
 Cohesion: 0.09
@@ -2591,8 +2586,8 @@ Cohesion: 0.12
 Nodes (12): GatedToySAE, NeuronComputationModel, Float, Tensor, Returns decoder weights, normalized over the autoencoder input dimension., Forward pass on the autoencoder.          Args:             h: hidden layer acti, Resamples dead latents, by modifying the model's weights and biases inplace., Resamples latents that have been dead for `dead_feature_window` steps, according (+4 more)
 
 ### Community 209 - "Module"
-Cohesion: 0.10
-Nodes (13): Linear, MLP, Module, Parameter, Any, Vanilla SGD with no additional features., Share the array with the provided tensor., Return an iterator over Module parameters.          recurse: if True, the iterat (+5 more)
+Cohesion: 0.08
+Nodes (15): Linear, Module, Parameter, Any, Vanilla SGD with no additional features., Like torch.nn.function.relu(x, inplace=False)., Share the array with the provided tensor., Return the direct child modules of this module, not including self. (+7 more)
 
 ### Community 210 - "tests.py"
 Cohesion: 0.07
@@ -2619,8 +2614,8 @@ Cohesion: 0.07
 Nodes (27): 1️⃣ Policy Gradient Theorem, 1️⃣ Policy Gradient Theorem, [2.2.2] - Vanilla Policy Gradient (VPG), 2️⃣ Implementation, 2️⃣ Implementation, Building up to the loss function, Content & Learning Objectives, Exercise - implement `compute_importance_weights` (+19 more)
 
 ### Community 216 - ".__init__"
-Cohesion: 0.10
-Nodes (20): DQNAgent, epsilon_greedy_policy(), linear_schedule(), Arr, Bool, Float, Int, ndarray (+12 more)
+Cohesion: 0.25
+Nodes (7): DQNAgent, linear_schedule(), ndarray, Base Agent class handling the interaction with the environment., Carries out a single interaction step between agent & environment, and adds resu, Samples actions according to the epsilon-greedy policy using the linear schedule, Return the appropriate epsilon for the current step.      Epsilon should be star
 
 ### Community 217 - "Tensor"
 Cohesion: 0.12
@@ -2651,7 +2646,7 @@ Cohesion: 0.07
 Nodes (27): 1️⃣ Policy Gradient Theorem, 1️⃣ Policy Gradient Theorem, [2.2.2] - Vanilla Policy Gradient (VPG), 2️⃣ Implementation, 2️⃣ Implementation, Building up to the loss function, Content & Learning Objectives, Exercise - implement `compute_importance_weights` (+19 more)
 
 ### Community 224 - "Module"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (13): Linear, Module, Parameter, Any, Share the array with the provided tensor., Return the direct child modules of this module, not including self., Return an iterator over Module parameters.          recurse: if True, the iterat, If val is a Parameter or Module, store it in the appropriate _parameters or _mod (+5 more)
 
 ### Community 225 - "Tensor"
@@ -2695,24 +2690,24 @@ Cohesion: 0.13
 Nodes (24): Ability, add_few_shot_examples(), add_variance_prompts(), Answers, filter_dataset(), generate_and_score_questions(), generate_structured_response(), generate_structured_responses_with_threadpool() (+16 more)
 
 ### Community 235 - "Module"
-Cohesion: 0.11
-Nodes (13): Linear, Module, Parameter, Any, Share the array with the provided tensor., Return the direct child modules of this module, not including self., Return an iterator over Module parameters.          recurse: if True, the iterat, If val is a Parameter or Module, store it in the appropriate _parameters or _mod (+5 more)
+Cohesion: 0.09
+Nodes (14): Linear, MLP, Module, Parameter, Any, Share the array with the provided tensor., Return the direct child modules of this module, not including self., Return an iterator over Module parameters.          recurse: if True, the iterat (+6 more)
 
 ### Community 236 - "Environment"
 Cohesion: 0.11
 Nodes (17): CliffWalking, Environment, find_optimal_policy(), Norvig, policy_eval_exact(), policy_eval_numerical(), policy_improvement(), Arr (+9 more)
 
 ### Community 237 - ".reset"
-Cohesion: 0.13
-Nodes (12): Probe1, Probe2, Probe3, Probe4, Probe5, ActType, ObsType, One action, [0.0] then [1.0] observation, two timesteps, +1 reward at the end. (+4 more)
+Cohesion: 0.15
+Nodes (10): Probe1, Probe3, Probe4, Probe5, ActType, ObsType, One action, [0.0] then [1.0] observation, two timesteps, +1 reward at the end., Two actions, [0.0] observation, one timestep, reward is -1.0 or +1.0 dependent o (+2 more)
 
 ### Community 238 - "master_3_2.py"
 Cohesion: 0.13
 Nodes (24): Ability, add_few_shot_examples(), add_variance_prompts(), Answers, filter_dataset(), generate_and_score_questions(), generate_structured_response(), generate_structured_responses_with_threadpool() (+16 more)
 
 ### Community 239 - "train"
-Cohesion: 0.09
-Nodes (17): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star (+9 more)
+Cohesion: 0.16
+Nodes (10): NoGrad, DataLoader, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star, Method which is called whenever we exit the context manager. This sets the globa, Iterates through params, and sets all grads to None., Iterates through params, and updates each of them by subtracting `param.grad * l, SGD (+2 more)
 
 ### Community 240 - "Trainer"
 Cohesion: 0.11
@@ -2735,8 +2730,8 @@ Cohesion: 0.13
 Nodes (24): Ability, add_few_shot_examples(), add_variance_prompts(), Answers, filter_dataset(), generate_and_score_questions(), generate_structured_response(), generate_structured_responses_with_threadpool() (+16 more)
 
 ### Community 245 - "Module"
-Cohesion: 0.11
-Nodes (13): Linear, Module, Parameter, Any, Share the array with the provided tensor., Return the direct child modules of this module, not including self., Return an iterator over Module parameters.          recurse: if True, the iterat, If val is a Parameter or Module, store it in the appropriate _parameters or _mod (+5 more)
+Cohesion: 0.10
+Nodes (13): Linear, MLP, Module, Parameter, Any, Share the array with the provided tensor., Return an iterator over Module parameters.          recurse: if True, the iterat, If val is a Parameter or Module, store it in the appropriate _parameters or _mod (+5 more)
 
 ### Community 246 - "master_3_2.py"
 Cohesion: 0.13
@@ -2759,8 +2754,8 @@ Cohesion: 0.13
 Nodes (24): Ability, add_few_shot_examples(), add_variance_prompts(), Answers, filter_dataset(), generate_and_score_questions(), generate_structured_response(), generate_structured_responses_with_threadpool() (+16 more)
 
 ### Community 251 - "train"
-Cohesion: 0.09
-Nodes (17): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.arange(start, end)., Backward function for torch.reshape., Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape (+9 more)
+Cohesion: 0.11
+Nodes (15): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.arange(start, end)., Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad. (+7 more)
 
 ### Community 252 - "master_3_2.py"
 Cohesion: 0.13
@@ -2779,8 +2774,8 @@ Cohesion: 0.11
 Nodes (19): calc_clipped_surrogate_objective(), compute_advantages(), get_logprobs(), normalize_reward(), Forward pass with LoRA enabled, but value head is not used., Normalizes the reward function values over the batch of sequences., Computes the advantages for the PPO loss function, i.e. A_pi(s, a) = Q_pi(s, a), Samples from the replay memory. (+11 more)
 
 ### Community 257 - ".step"
-Cohesion: 0.12
-Nodes (10): EpisodicLifeEnv, FireResetEnv, FrameStack, MaxAndSkipEnv, NoopResetEnv, Reset only when lives are exhausted.         This way all states are still reach, Return only every `skip`-th frame, Repeat action, sum reward, and max over last observations. (+2 more)
+Cohesion: 0.08
+Nodes (17): ClipRewardEnv, EpisodicLifeEnv, FireResetEnv, FrameStack, MaxAndSkipEnv, NoopResetEnv, Reset only when lives are exhausted.         This way all states are still reach, Return only every `skip`-th frame (+9 more)
 
 ### Community 258 - "get_logprobs"
 Cohesion: 0.11
@@ -2791,7 +2786,7 @@ Cohesion: 0.10
 Nodes (11): angle_normalize(), CartPole, Pendulum, Vectorized environments that run on GPU. Taken from https://gist.github.com/ngo, Description:         A pole is attached by an un-actuated joint to a cart, whic, generate_and_plot_trajectory(), make_env(), prepare_atari_env() (+3 more)
 
 ### Community 260 - "Environment"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (17): CliffWalking, Environment, find_optimal_policy(), Norvig, policy_eval_exact(), policy_eval_numerical(), policy_improvement(), Arr (+9 more)
 
 ### Community 261 - ".__init__"
@@ -2803,8 +2798,8 @@ Cohesion: 0.12
 Nodes (11): apply_system_format(), apply_user_format(), EvalPrompts, GenPrompts, Initialize the system and user prompts, Update the system and user prompts whenever a class attribute is changed, Modify an existing method for both the instance and the class., Save all class attributes to a JSON file. (+3 more)
 
 ### Community 263 - "master_0_2.py"
-Cohesion: 0.11
-Nodes (24): copy_weights(), get_cifar(), get_cifar_subset(), get_mnist(), get_resnet_for_feature_extraction(), NanModule, CIFAR10, ResNet (+16 more)
+Cohesion: 0.07
+Nodes (23): BatchNorm2d, BlockGroup, Conv2d, Flatten, Linear, Module, Same as torch.nn.Conv2d with bias=False.          Name your weight field `self.w, Apply the functional conv2d, which you can import. (+15 more)
 
 ### Community 264 - "master_file.py"
 Cohesion: 0.13
@@ -2812,7 +2807,7 @@ Nodes (19): Cell class for representing and processing notebook cells.  This mod
 
 ### Community 265 - "delta_paths.py"
 Cohesion: 0.11
-Nodes (16): get_backend_python(), get_chatgpt_code_dir(), get_chatgpt_runtime_dir(), Path, main(), run(), main(), build_user_prompt() (+8 more)
+Nodes (13): get_backend_python(), get_chatgpt_code_dir(), get_chatgpt_runtime_dir(), Path, main(), run(), main(), build_user_prompt() (+5 more)
 
 ### Community 266 - "solutions.py"
 Cohesion: 0.17
@@ -2843,8 +2838,8 @@ Cohesion: 0.17
 Nodes (14): Config, DemoTransformer, Embed, LayerNorm, load_gpt2_test(), MLP, PosEmbed, GPT2TokenizerFast (+6 more)
 
 ### Community 273 - "Tensor"
-Cohesion: 0.13
-Nodes (17): compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss(), compute_returns(), normalize_returns(), Any, Bool, Float (+9 more)
+Cohesion: 0.07
+Nodes (33): Probe4, Probe5, Tensor, Vectorized Probe5: Two actions, random 0/1 observation, one timestep, reward is, Vectorized Probe4: Two actions, [0.0] observation, one timestep, reward is -1.0, compute_importance_weights(), compute_logprobs_and_entropy(), compute_reinforce_loss() (+25 more)
 
 ### Community 274 - "GenPrompts"
 Cohesion: 0.12
@@ -2907,8 +2902,8 @@ Cohesion: 0.14
 Nodes (16): calc_value_function_loss(), Float, HookPoint, Tensor, Cache the input to query/key/value., Cache the input to $W_O$., Applies the LoRA modules to query/key/value, based on the hook location., Applies the LoRA modules to the output projection matrix W_O in the attention la (+8 more)
 
 ### Community 289 - "train"
-Cohesion: 0.10
-Nodes (15): Normalize each channel.          Compute the variance using `torch.var(x, unbias, arange(), cross_entropy(), NoGrad, DataLoader, Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star (+7 more)
+Cohesion: 0.09
+Nodes (17): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star (+9 more)
 
 ### Community 290 - "Trainer"
 Cohesion: 0.13
@@ -2963,8 +2958,8 @@ Cohesion: 0.09
 Nodes (22): 1️⃣ Dataset Generation, 1️⃣ Dataset Generation, 2️⃣ Dataset Quality Control, 2️⃣ Dataset Quality Control, [3.2] - Dataset Generation, Content & Learning Objectives, Exercise - Add variance prompts, Exercise - Checks and summary statistics (+14 more)
 
 ### Community 303 - "train"
-Cohesion: 0.11
-Nodes (15): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.arange(start, end)., Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad. (+7 more)
+Cohesion: 0.13
+Nodes (11): Normalize each channel.          Compute the variance using `torch.var(x, unbias, NoGrad, DataLoader, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star, Method which is called whenever we exit the context manager. This sets the globa, Iterates through params, and sets all grads to None., Iterates through params, and updates each of them by subtracting `param.grad * l (+3 more)
 
 ### Community 304 - "Trainer"
 Cohesion: 0.14
@@ -2979,8 +2974,8 @@ Cohesion: 0.09
 Nodes (22): 1️⃣ Dataset Generation, 1️⃣ Dataset Generation, 2️⃣ Dataset Quality Control, 2️⃣ Dataset Quality Control, [3.2] - Dataset Generation, Content & Learning Objectives, Exercise - Add variance prompts, Exercise - Checks and summary statistics (+14 more)
 
 ### Community 307 - "train"
-Cohesion: 0.11
-Nodes (15): arange(), cross_entropy(), MLP, NoGrad, DataLoader, Like torch.arange(start, end)., Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad. (+7 more)
+Cohesion: 0.12
+Nodes (14): arange(), cross_entropy(), NoGrad, DataLoader, Like torch.arange(start, end)., Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star (+6 more)
 
 ### Community 308 - ".reset"
 Cohesion: 0.15
@@ -3063,8 +3058,8 @@ Cohesion: 0.18
 Nodes (9): get_log_probs(), Float, Int, Tensor, logprobs:             tensor of the log-probs for the next token         no_repe, Calculates the loss on the tokens in the batch, performs a gradient update step,, Applies temperature scaling to the logits., Applies a frequency penalty to the logits. (+1 more)
 
 ### Community 328 - "Environment"
-Cohesion: 0.13
-Nodes (13): CliffWalking, Environment, Norvig, policy_eval_exact(), policy_eval_numerical(), Arr, Args:             states  : (m,) all the possible next states             reward, Numerically evaluates the value of a given policy by iterating the Bellman equat (+5 more)
+Cohesion: 0.11
+Nodes (17): CliffWalking, Environment, find_optimal_policy(), Norvig, policy_eval_exact(), policy_eval_numerical(), policy_improvement(), Arr (+9 more)
 
 ### Community 329 - "solutions.py"
 Cohesion: 0.13
@@ -3115,8 +3110,8 @@ Cohesion: 0.10
 Nodes (20): apply layer to tensor, but we have only 2d convolutions., ... create a dummy 1-element axis ..., each image is split into subgrids, each subgrid now is a separate "image", example given for pytorch, but code in other frameworks is almost identical, ... finally, decompose (remove) dummy axis, imagine we are working with 3d data, ... imagine you predicted this with a convolutional network for classification, (+12 more)
 
 ### Community 341 - ".__init__"
-Cohesion: 0.14
-Nodes (15): linear_schedule(), SyncVectorEnv, Tensor, QNetwork, Contains buffer; has a method to sample from it to return a ReplayBufferSamples, Return the appropriate epsilon for the current step.      Epsilon should be star, For consistency with your tests, please wrap your modules in a `nn.Sequential` c, ReplayBuffer (+7 more)
+Cohesion: 0.09
+Nodes (27): DQNAgent, epsilon_greedy_policy(), linear_schedule(), Arr, Bool, Float, Int, ndarray (+19 more)
 
 ### Community 342 - "solutions.py"
 Cohesion: 0.14
@@ -3127,8 +3122,8 @@ Cohesion: 0.11
 Nodes (14): calculate_loss(), CustomFunction, get_cache_fwd_and_bwd(), Heaviside, JumpReLU, ActivationCache, Any, Returns the rectangle function value, i.e. K(x) = 1[|x| < width/2], as a float. (+6 more)
 
 ### Community 344 - "run_episode"
-Cohesion: 0.14
-Nodes (11): Experience, Env, A class for storing one piece of experience during an episode run., Simulates one episode of interaction, agent learns as appropriate          Input, Takes an action by choosing an arm and returns the result of the action., Runs a single episode of interaction between an agent and an environment.      A, run_agent(), run_episode() (+3 more)
+Cohesion: 0.22
+Nodes (7): Env, Simulates one episode of interaction, agent learns as appropriate          Input, Takes an action by choosing an arm and returns the result of the action., Runs a single episode of interaction between an agent and an environment.      A, run_agent(), run_episode(), UCBActionSelection
 
 ### Community 345 - ".compute_ppo_objective"
 Cohesion: 0.15
@@ -3143,8 +3138,8 @@ Cohesion: 0.20
 Nodes (10): compute_generalization_matrix(), get_pca_components(), LRProbe, MMProbe, Float, Tensor, Compute the top-k principal components of the activation matrix.              Ar, Apply StandardScaler normalization if scaler parameters are available. (+2 more)
 
 ### Community 348 - "run_episode"
-Cohesion: 0.14
-Nodes (11): Experience, Env, A class for storing one piece of experience during an episode run., Simulates one episode of interaction, agent learns as appropriate          Input, Takes an action by choosing an arm and returns the result of the action., Runs a single episode of interaction between an agent and an environment.      A, run_agent(), run_episode() (+3 more)
+Cohesion: 0.22
+Nodes (7): Env, Simulates one episode of interaction, agent learns as appropriate          Input, Takes an action by choosing an arm and returns the result of the action., Runs a single episode of interaction between an agent and an environment.      A, run_agent(), run_episode(), UCBActionSelection
 
 ### Community 349 - ".compute_ppo_objective"
 Cohesion: 0.15
@@ -3187,8 +3182,8 @@ Cohesion: 0.14
 Nodes (11): Agent, ActType, ObsType, Random, RandomAgent, Execute an action and return the new state, reward, done flag, and additional in, Base class for agents interacting with an environment.      You do not need to a, Agent observes experience, and updates model as appropriate.         Implementat (+3 more)
 
 ### Community 359 - "master_2_2_1.py"
-Cohesion: 0.15
-Nodes (13): DQNArgs, DQNTrainer, get_episode_data_from_infos(), device, Helper function: returns dict of data from the first terminated environment, if, Takes n steps with the agent, adding to the replay buffer (and logging any resul, Called to fill the replay buffer before training starts., Samples once from the replay buffer, and takes a single training step. (+5 more)
+Cohesion: 0.31
+Nodes (6): DQNTrainer, Takes n steps with the agent, adding to the replay buffer (and logging any resul, Called to fill the replay buffer before training starts., Samples once from the replay buffer, and takes a single training step., Tests a probe environment by training a network on it & verifying that the value, test_probe()
 
 ### Community 360 - ".compute_ppo_objective"
 Cohesion: 0.16
@@ -3207,8 +3202,8 @@ Cohesion: 0.16
 Nodes (16): calculate_and_apply_steering_vector(), calculate_h(), calculate_h_and_intervene(), calculate_h_and_intervene_logprobs(), display_model_completions_on_antonyms(), display_model_completions_on_h_intervention(), display_model_logprobs_on_h_intervention(), ICLDataset (+8 more)
 
 ### Community 364 - ".__init__"
-Cohesion: 0.13
-Nodes (5): Cheater, DiscreteEnviroGym, Resets the environment to its initial state., Initializes the MultiArmedBandit environment.          Args:             num_arm, RewardAveraging
+Cohesion: 0.15
+Nodes (4): DiscreteEnviroGym, Resets the environment to its initial state., Initializes the MultiArmedBandit environment.          Args:             num_arm, RewardAveraging
 
 ### Community 365 - "fetch_max_activating_examples"
 Cohesion: 0.13
@@ -3219,8 +3214,8 @@ Cohesion: 0.14
 Nodes (11): Agent, ActType, ObsType, Random, RandomAgent, Execute an action and return the new state, reward, done flag, and additional in, Base class for agents interacting with an environment.      You do not need to a, Agent observes experience, and updates model as appropriate.         Implementat (+3 more)
 
 ### Community 367 - "Environment"
-Cohesion: 0.15
-Nodes (11): CliffWalking, Environment, Norvig, policy_eval_numerical(), Arr, Returns tuple of (out_states, out_rewards, out_probs) for this given (state, act, Constructs the T and R tensors from the dynamics of the environment.          Re, Computes the distribution over possible outcomes for a given state         and a (+3 more)
+Cohesion: 0.11
+Nodes (17): CliffWalking, Environment, find_optimal_policy(), Norvig, policy_eval_exact(), policy_eval_numerical(), policy_improvement(), Arr (+9 more)
 
 ### Community 368 - "Exercises - einops operations & broadcasting"
 Cohesion: 0.10
@@ -3239,12 +3234,12 @@ Cohesion: 0.13
 Nodes (18): cross_prompt_swap(), display_top_seqs(), fetch_max_activating_examples(), format_prompt(), generate_with_intervention(), get_k_largest_indices(), index_with_buffer(), NodeType (+10 more)
 
 ### Community 372 - "tests.py"
-Cohesion: 0.14
-Nodes (14): compute_dimensionality(), HookedSAETransformer, SAE, This function works assuming your SAE has `W_enc` attribute, rather then `_W_enc, We test by checking whether a couple of expected deembeddings are in the output., setup_sae(), test_compute_dimensionality(), test_create_extended_embedding() (+6 more)
+Cohesion: 0.13
+Nodes (15): compute_dimensionality(), HookedSAETransformer, SAE, This function works assuming your SAE has `W_enc` attribute, rather then `_W_enc, We test by checking whether a couple of expected deembeddings are in the output., setup_sae(), test_compute_dimensionality(), test_create_extended_embedding() (+7 more)
 
 ### Community 373 - ".__init__"
-Cohesion: 0.13
-Nodes (5): Cheater, DiscreteEnviroGym, Resets the environment to its initial state., Initializes the MultiArmedBandit environment.          Args:             num_arm, RewardAveraging
+Cohesion: 0.18
+Nodes (3): DiscreteEnviroGym, Resets the environment to its initial state., RewardAveraging
 
 ### Community 374 - "utils.py"
 Cohesion: 0.11
@@ -3263,24 +3258,24 @@ Cohesion: 0.14
 Nodes (11): Agent, ActType, ObsType, Random, RandomAgent, Execute an action and return the new state, reward, done flag, and additional in, Base class for agents interacting with an environment.      You do not need to a, Agent observes experience, and updates model as appropriate.         Implementat (+3 more)
 
 ### Community 378 - "Environment"
-Cohesion: 0.15
-Nodes (11): CliffWalking, Environment, Norvig, policy_eval_numerical(), Arr, Returns tuple of (out_states, out_rewards, out_probs) for this given (state, act, Constructs the T and R tensors from the dynamics of the environment.          Re, Computes the distribution over possible outcomes for a given state         and a (+3 more)
+Cohesion: 0.11
+Nodes (17): CliffWalking, Environment, find_optimal_policy(), Norvig, policy_eval_exact(), policy_eval_numerical(), policy_improvement(), Arr (+9 more)
 
 ### Community 379 - "visuals.js"
 Cohesion: 0.21
 Nodes (19): augmentVisualSetupCode(), drawImageToCanvas(), extractStarterSetupCode(), extractVisualVariableName(), fetchArenaNumbersAsset(), getArenaNumbersPathCandidates(), getArenaNumbersPngCandidates(), getVisualExecutionPlan() (+11 more)
 
 ### Community 380 - "train"
-Cohesion: 0.13
-Nodes (12): NoGrad, DataLoader, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star, Method which is called whenever we exit the context manager. This sets the globa, Iterates through params, and sets all grads to None., Iterates through params, and updates each of them by subtracting `param.grad * l, Backward function for torch.reshape. (+4 more)
+Cohesion: 0.10
+Nodes (16): arange(), cross_entropy(), NoGrad, DataLoader, Like torch.nn.functional.cross_entropy with reduction='none'.      logits: shape, Context manager that disables grad inside the block. Like torch.no_grad., Method which is called whenever the context manager is entered, i.e. at the star, Method which is called whenever we exit the context manager. This sets the globa (+8 more)
 
 ### Community 381 - "CartPole"
 Cohesion: 0.15
 Nodes (5): angle_normalize(), CartPole, Pendulum, Vectorized environments that run on GPU. Taken from https://gist.github.com/ngoo, Description:         A pole is attached by an un-actuated joint to a cart, which
 
 ### Community 382 - ".__init__"
-Cohesion: 0.15
-Nodes (13): epsilon_greedy_policy(), Arr, Bool, Float, Int, SyncVectorEnv, Tensor, QNetwork (+5 more)
+Cohesion: 0.09
+Nodes (27): DQNAgent, epsilon_greedy_policy(), linear_schedule(), Arr, Bool, Float, Int, ndarray (+19 more)
 
 ### Community 383 - "TransformerWithValueHeadLora"
 Cohesion: 0.13
@@ -3307,8 +3302,8 @@ Cohesion: 0.15
 Nodes (5): angle_normalize(), CartPole, Pendulum, Vectorized environments that run on GPU. Taken from https://gist.github.com/ngoo, Description:         A pole is attached by an un-actuated joint to a cart, which
 
 ### Community 389 - "vpg_batched_working.py"
-Cohesion: 0.17
-Nodes (11): PolicyNetwork, device, Env, Base Agent class handling the interaction with the environment., Trains the agent by generating rollouts and updating the policy.         The pro, Tests a probe environment by training a network on it & verifying that the value, For consistency with your tests, please wrap your modules in a `nn.Sequential` c, test_probe() (+3 more)
+Cohesion: 0.10
+Nodes (26): copy_weights(), get_cifar(), get_cifar_subset(), get_mnist(), get_resnet_for_feature_extraction(), NanModule, CIFAR10, ResNet (+18 more)
 
 ### Community 390 - "TransformerWithValueHeadLora"
 Cohesion: 0.13
@@ -3323,8 +3318,8 @@ Cohesion: 0.26
 Nodes (18): BracketsDataset, Float, HookedTransformer, Tensor, test_get_activations(), test_get_attn_probs(), test_get_ln_fit(), test_get_out_by_components() (+10 more)
 
 ### Community 393 - "solutions.py"
-Cohesion: 0.19
-Nodes (14): Actor, Critic, EasyCart, get_actor_and_critic_atari(), get_actor_and_critic_classic(), get_actor_and_critic_mujoco(), layer_init(), CartPoleEnv (+6 more)
+Cohesion: 0.38
+Nodes (7): get_actor_and_critic_atari(), get_actor_and_critic_classic(), layer_init(), Linear, Sequential, Returns (actor, critic) in the "classic-control" case, according to diagram abov, Returns (actor, critic) in the "atari" case, according to diagram above.
 
 ### Community 394 - "TransformerWithValueHeadLora"
 Cohesion: 0.13
@@ -3335,8 +3330,8 @@ Cohesion: 0.11
 Nodes (12): AuditorToolkit, InvestigationState, State of an ongoing investigation., Simplified implementation of Petri's auditor toolkit., Send a message to the target and get response., Modify the target's system prompt., Create a fake tool to test target's behavior.         The target will believe th, Roll back the conversation, keeping only the first `index` messages.          ro (+4 more)
 
 ### Community 396 - "Adam"
-Cohesion: 0.11
-Nodes (8): Adam, Parameter, Implements SGD with momentum.          Accepts parameters in groups, or an itera, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, RMSprop
+Cohesion: 0.13
+Nodes (6): Adam, Parameter, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, RMSprop
 
 ### Community 397 - "attribute"
 Cohesion: 0.14
@@ -3369,10 +3364,6 @@ Nodes (18): 4️⃣ Sampling from a Transformer, Beam search, Bonus - cached bea
 ### Community 404 - "3️⃣ Secret extraction & advanced applications"
 Cohesion: 0.11
 Nodes (18): 3️⃣ Secret extraction & advanced applications, Analyzing emotions, Demo: emergently misaligned behavior, Detecting EM misalignment with the oracle, Detecting misaligned personas, Exercise - Come up with more goal extraction examples, Exercise - Compare oracle prompts and input types, Exercise - Detect misalignment from activations (+10 more)
-
-### Community 405 - "Adam"
-Cohesion: 0.11
-Nodes (8): Adam, Parameter, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements SGD with momentum.          Accepts parameters in groups, or an itera, RMSprop
 
 ### Community 406 - "solutions.py"
 Cohesion: 0.12
@@ -3415,8 +3406,8 @@ Cohesion: 0.14
 Nodes (18): create_prompt(), display_top_seqs(), fetch_max_activating_examples(), fetch_max_activating_examples_attn(), get_autointerp_explanation(), get_k_largest_indices(), index_with_buffer(), ActivationsStore (+10 more)
 
 ### Community 416 - "plotly_utils.py"
-Cohesion: 0.16
-Nodes (17): get_untrained_resnet(), ResNet34, Gets untrained resnet using code from part2_cnns.solutions (you can replace this, test_resnet_on_random_input(), bar(), hist(), imshow(), line() (+9 more)
+Cohesion: 0.21
+Nodes (14): test_resnet_on_random_input(), bar(), hist(), imshow(), line(), plot_train_loss_and_test_accuracy_from_metrics(), DataFrame, Tensor (+6 more)
 
 ### Community 417 - "solutions.py"
 Cohesion: 0.12
@@ -3435,7 +3426,7 @@ Cohesion: 0.16
 Nodes (10): Agent, ActType, ObsType, Random, RandomAgent, Base class for agents in a multi-armed bandit environment      (you do not need, Execute an action and return the new state, reward, done flag, and additional in, Base class for agents interacting with an environment.      You do not need to a (+2 more)
 
 ### Community 421 - "plotly_utils.py"
-Cohesion: 0.17
+Cohesion: 0.20
 Nodes (15): bar(), cliffwalk_imshow(), hist(), imshow(), line(), plot_cartpole_obs_and_dones(), ndarray, Tensor (+7 more)
 
 ### Community 422 - ".compute_ppo_objective"
@@ -3459,12 +3450,12 @@ Cohesion: 0.12
 Nodes (14): anthropic_lr(), compute_dimensionality(), cosine_decay_lr(), forward(), linear_warmup_lr(), NeuronModel, Increases linearly from 0 to 1., As per the description in the paper: 2500 step linear warmup, followed by cosine (+6 more)
 
 ### Community 427 - "master_2_1.py"
-Cohesion: 0.16
-Nodes (13): AgentConfig, Cheater, EpsilonGreedy, find_optimal_policy(), policy_eval_exact(), policy_improvement(), QLearning, Finds the exact solution to the Bellman equation. (+5 more)
+Cohesion: 0.18
+Nodes (10): AgentConfig, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from., SARSA (+2 more)
 
 ### Community 428 - "Adam"
-Cohesion: 0.11
-Nodes (8): Adam, Parameter, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements SGD with momentum.          Accepts parameters in groups, or an itera, RMSprop
+Cohesion: 0.13
+Nodes (6): Adam, Parameter, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, RMSprop
 
 ### Community 429 - "solutions.py"
 Cohesion: 0.17
@@ -3483,28 +3474,28 @@ Cohesion: 0.16
 Nodes (10): Agent, ActType, ObsType, Random, RandomAgent, Execute an action and return the new state, reward, done flag, and additional in, Base class for agents interacting with an environment.      You do not need to a, Agent observes experience, and updates model as appropriate.         Implementat (+2 more)
 
 ### Community 433 - "plotly_utils.py"
-Cohesion: 0.17
+Cohesion: 0.20
 Nodes (15): bar(), cliffwalk_imshow(), hist(), imshow(), line(), plot_cartpole_obs_and_dones(), ndarray, Tensor (+7 more)
 
 ### Community 434 - ".compute_ppo_objective"
-Cohesion: 0.18
-Nodes (16): calc_clipped_surrogate_objective(), calc_clipped_surrogate_objective_cts(), calc_entropy_bonus(), calc_value_function_loss(), Categorical, Float, Tensor, Changes required:         - logprobs need to be summed over action space (+8 more)
+Cohesion: 0.13
+Nodes (22): calc_clipped_surrogate_objective(), calc_clipped_surrogate_objective_cts(), calc_entropy_bonus(), calc_value_function_loss(), compute_advantages(), display_frames(), Arr, Bool (+14 more)
 
 ### Community 435 - "LoraHooks"
 Cohesion: 0.13
 Nodes (12): Lora, LoraHooks, dtype, HookedTransformerConfig, Module that implements the basic LoRA block.     - Input: tensor of shape (...,, Initialize the weights of the LoRA block.         - The A block should be initia, Defines the LoRA hooks needed for the Attention Layers of the transformer.     (, Returns a list of hook_point names and functions to call for the forward pass of (+4 more)
 
 ### Community 436 - ".__init__"
-Cohesion: 0.16
-Nodes (8): BatchNorm2d, Flatten, Linear, Like nn.BatchNorm2d with track_running_stats=True and affine=True.          Name, A single residual block with optional downsampling.          For compatibility w, A simple linear (technically, affine) transformation.          The fields should, ReLU, Implements the generator architecture from the DCGAN paper (the diagram at the t
+Cohesion: 0.15
+Nodes (7): DCGANTrainer, Float, Tensor, Generates a real and fake image, and performs a gradient step on the discriminat, Performs a gradient step on the generator to maximize log(D(G(z))). Logs to wand, Performs evaluation by generating 8 instances of random noise and passing them t, Performs a full training run.
 
 ### Community 437 - "AutoModelForCausalLM"
 Cohesion: 0.16
 Nodes (16): ChatActivations, construct_instructed_pairs(), few_shot_evaluate(), intervention_experiment(), layer_sweep_accuracy(), AutoModelForCausalLM, AutoTokenizer, Evaluate P(TRUE) - P(FALSE) for each statement using few-shot classification. (+8 more)
 
 ### Community 438 - "master_2_1.py"
-Cohesion: 0.16
-Nodes (13): AgentConfig, Cheater, EpsilonGreedy, find_optimal_policy(), policy_eval_exact(), policy_improvement(), QLearning, Finds the exact solution to the Bellman equation. (+5 more)
+Cohesion: 0.18
+Nodes (10): AgentConfig, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from., SARSA (+2 more)
 
 ### Community 439 - "split_LADR4e_chapters.py"
 Cohesion: 0.20
@@ -3551,8 +3542,8 @@ Cohesion: 0.15
 Nodes (4): DiscreteEnviroGym, Resets the environment to its initial state., Initializes the MultiArmedBandit environment.          Args:             num_arm, RewardAveraging
 
 ### Community 450 - "test_agent"
-Cohesion: 0.16
-Nodes (14): DQNAgent, linear_schedule(), ndarray, Return the appropriate epsilon for the current step.      Epsilon should be star, Base Agent class handling the interaction with the environment., Carries out a single interaction step between agent & environment, and adds resu, Samples actions according to the epsilon-greedy policy using the linear schedule, get_steps() (+6 more)
+Cohesion: 0.20
+Nodes (8): force_pair(), MaxPool2d, IntOrPair, Pair, Call the functional version of maxpool2d., Add additional information to the string representation of this class., Convert v to a pair of int, if it isn't already., Like PyTorch's maxpool2d. If stride is None, should be equal to kernel size.
 
 ### Community 451 - "Cell"
 Cohesion: 0.12
@@ -3575,8 +3566,8 @@ Cohesion: 0.12
 Nodes (17): 1️⃣ Intro to SAE Interpretability, Attention SAEs, Bonus, Error term, Exercise - derive attention DFA, Exercise - explore attention SAE dashboards, Exercise - find interesting latents, Exercise - implement `generate_with_steering` (+9 more)
 
 ### Community 456 - "solutions.py"
-Cohesion: 0.18
-Nodes (10): AgentConfig, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from., SARSA (+2 more)
+Cohesion: 0.15
+Nodes (11): AgentConfig, Cheater, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from. (+3 more)
 
 ### Community 457 - "Cell"
 Cohesion: 0.12
@@ -3587,8 +3578,8 @@ Cohesion: 0.21
 Nodes (8): AutoInterp, display_messages(), Example, Messages, This is a start-to-end class for generating explanations and optionally scores., Runs both generation & scoring phases, and returns the results in a dictionary., Generic API usage function for OpenAI, Data for a single example sequence.
 
 ### Community 459 - ".__init__"
-Cohesion: 0.12
-Nodes (4): CheatyMcCheater, Sets up dynamics for the toy environment:             - In state s_L, we move to, RewardAveraging, Toy
+Cohesion: 0.11
+Nodes (5): CheatyMcCheater, Initializes the MultiArmedBandit environment.          Args:             num_arm, Sets up dynamics for the toy environment:             - In state s_L, we move to, RewardAveraging, Toy
 
 ### Community 460 - "☆ Bonus - Convolutions From Scratch"
 Cohesion: 0.12
@@ -3611,8 +3602,8 @@ Cohesion: 0.12
 Nodes (17): 3️⃣ Activation Patching, Consolidating Understanding, Creating a metric, Decomposing Heads, Example: denoising the residual stream, Exercise - create a metric, Exercise - implement head-to-head patching, Exercise - implement head-to-residual patching (+9 more)
 
 ### Community 465 - "solutions.py"
-Cohesion: 0.18
-Nodes (10): AgentConfig, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from., SARSA (+2 more)
+Cohesion: 0.15
+Nodes (11): AgentConfig, Cheater, EpsilonGreedy, Experience, QLearning, A class for storing one piece of experience during an episode run., Hyperparameters for agents, A class for SARSA and Q-Learning to inherit from. (+3 more)
 
 ### Community 466 - "solutions.py"
 Cohesion: 0.21
@@ -3623,12 +3614,12 @@ Cohesion: 0.12
 Nodes (16): filter_effective_pairs(), Filter scored responses for effective contrastive pairs.      An effective pair, Test that generate_with_capping produces a string output and properly manages ho, # NOTE: this test is no longer used (filter_effective_pairs is now given code, n, Test the filter_effective_pairs function with synthetic scored responses., Test extract_contrastive_vectors by comparing output shape and basic properties, Test that the cosine similarity matrix has correct mathematical properties., # NOTE: this test is no longer used (centering is folded into the cosine similar (+8 more)
 
 ### Community 468 - "conv_transpose2d"
-Cohesion: 0.14
-Nodes (16): conv1d_minimal(), conv2d_minimal(), Like torch's conv1d using bias=False and all other keyword arguments left at def, Like torch's conv2d using bias=False and all other keyword arguments left at def, conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), fractional_stride_1d() (+8 more)
+Cohesion: 0.05
+Nodes (32): conv_transpose1d(), conv_transpose1d_minimal(), conv_transpose2d(), create_grid_of_latents(), DCGANTrainer, display_data(), fractional_stride_1d(), fractional_stride_2d() (+24 more)
 
 ### Community 469 - ".__init__"
-Cohesion: 0.12
-Nodes (4): CheatyMcCheater, Sets up dynamics for the toy environment:             - In state s_L, we move to, RewardAveraging, Toy
+Cohesion: 0.11
+Nodes (5): CheatyMcCheater, Initializes the MultiArmedBandit environment.          Args:             num_arm, Sets up dynamics for the toy environment:             - In state s_L, we move to, RewardAveraging, Toy
 
 ### Community 470 - "AuditorToolkit"
 Cohesion: 0.12
@@ -3719,8 +3710,8 @@ Cohesion: 0.15
 Nodes (15): _extract_lora_info(), inspect_lora_adapters(), plot_kl_divergence_comparison(), plot_steering_heatmaps(), Any, DataFrame, Figure, PeftModel (+7 more)
 
 ### Community 493 - "Conv2d"
-Cohesion: 0.15
-Nodes (12): Conv2d, force_pair(), MaxPool2d, pad2d(), IntOrPair, Pair, Same as torch.nn.Conv2d with bias=False.          Name your weight field `self.w, Add additional information to the string representation of this class. (+4 more)
+Cohesion: 0.20
+Nodes (8): get_episode_data_from_infos(), device, Helper function: returns dict of data from the first terminated environment, if, Samples from the replay buffer, converted to PyTorch for use in neural network t, Contains buffer; has a method to sample from it to return a ReplayBufferSamples, Sample a batch of transitions from the buffer, with replacement., ReplayBuffer, ReplayBufferSamples
 
 ### Community 494 - "FreezeHooks"
 Cohesion: 0.12
@@ -3803,8 +3794,8 @@ Cohesion: 0.19
 Nodes (8): Env, Runs a single episode of interaction between an agent and an environment.      A, Simulates one episode of interaction, agent learns as appropriate          Input, Run a batch of episodes, and return the total reward obtained per episode, Takes an action by choosing an arm and returns the result of the action., run_agent(), run_episode(), UCBActionSelection
 
 ### Community 517 - "epsilon_greedy_policy"
-Cohesion: 0.17
-Nodes (12): DQNAgent, epsilon_greedy_policy(), Arr, Bool, Float, Int, ndarray, Add a batch of transitions to the replay buffer. (+4 more)
+Cohesion: 0.24
+Nodes (5): DQNArgs, SyncVectorEnv, Tensor, QNetwork, For consistency with your tests, please wrap your modules in a `nn.Sequential` c
 
 ### Community 518 - "Any"
 Cohesion: 0.15
@@ -3819,8 +3810,8 @@ Cohesion: 0.20
 Nodes (8): JumpReLUToySAE, Generates a batch of hidden activations from our model., Optimizes the autoencoder using the given hyperparameters.          Args:, Resamples latents that have been dead for 'dead_feature_window' steps, according, This function should replicate figure 15 from the DeepMind paper, in a way which, Same as previous forward function, but allows for gated case as well (in which c, replicate_figure_15(), resample_advanced()
 
 ### Community 521 - ".reset"
-Cohesion: 0.16
-Nodes (7): DiscreteEnviroGym, MultiArmedBandit, Resets the environment to its initial state., A class representing a multi-armed bandit environment, based on OpenAI Gym's Env, Initializes the MultiArmedBandit environment.          Args:             num_arm, Resets the environment to its initial state.          Args:             seed (in, Renders the state of the environment, in the form of a violin plot.
+Cohesion: 0.33
+Nodes (4): MultiArmedBandit, A class representing a multi-armed bandit environment, based on OpenAI Gym's Env, Resets the environment to its initial state.          Args:             seed (in, Renders the state of the environment, in the form of a violin plot.
 
 ### Community 522 - "ReplayMemory"
 Cohesion: 0.17
@@ -3835,8 +3826,8 @@ Cohesion: 0.16
 Nodes (14): build_embedding_nodes(), build_graph_nodes(), build_intermediate_nodes(), build_logit_nodes(), GraphNodes, NodeInfo, prepare_backward_batches(), Metadata about a single node in the attribution graph. (+6 more)
 
 ### Community 525 - "ToyModel"
-Cohesion: 0.22
-Nodes (7): __init__(), Generates a batch of data of shape (batch_size, n_instances, n_features)., Calculates the loss for a given batch (as a scalar tensor), using this loss desc, Performs a single forward pass. For a single instance, this is given by:, ToyModel, ToyModelConfig, ToySAEConfig
+Cohesion: 0.32
+Nodes (7): epsilon_greedy_policy(), Arr, Bool, Float, Int, Add a batch of transitions to the replay buffer., With probability epsilon, take a random action. Otherwise, take a greedy action
 
 ### Community 526 - "Actual Code!"
 Cohesion: 0.13
@@ -3863,16 +3854,12 @@ Cohesion: 0.13
 Nodes (15): 2️⃣ Black-box Analysis, Bonus: Implementing Your Own Resampling (local models), Checking your answer and interpreting the graph, Exercise - calculate forced answer importance, Exercise - compare resampling importance, Exercise - compute counterfactual importance, Exercise - implement resampling (optional), Exercise - replicate causal graph (+7 more)
 
 ### Community 532 - "Sequential"
-Cohesion: 0.16
-Nodes (10): add_hook(), hook_check_for_nan_output(), Module, Chain each module together, with the output from one feeding into the next one., Hook function which detects when the output of a layer is NaN., Register our hook function in a module.      Use model.apply(add_hook) to recurs, Remove all hooks from module.      Use module.apply(remove_hooks) to do this rec, remove_hooks() (+2 more)
-
-### Community 533 - "add_"
-Cohesion: 0.13
-Nodes (9): add_(), backprop(), BackwardFuncLookup, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul, safe_example() (+1 more)
+Cohesion: 0.25
+Nodes (3): Cheater, DiscreteEnviroGym, Resets the environment to its initial state.
 
 ### Community 534 - ".reset"
-Cohesion: 0.16
-Nodes (7): DiscreteEnviroGym, MultiArmedBandit, Resets the environment to its initial state., A class representing a multi-armed bandit environment, based on OpenAI Gym's Env, Initializes the MultiArmedBandit environment.          Args:             num_arm, Resets the environment to its initial state.          Args:             seed (in, Renders the state of the environment, in the form of a violin plot.
+Cohesion: 0.33
+Nodes (4): MultiArmedBandit, A class representing a multi-armed bandit environment, based on OpenAI Gym's Env, Resets the environment to its initial state.          Args:             seed (in, Renders the state of the environment, in the form of a violin plot.
 
 ### Community 535 - "ReplayMemory"
 Cohesion: 0.17
@@ -3987,12 +3974,12 @@ Cohesion: 0.14
 Nodes (14): Architecture, ...but metrics can sometimes be misleading, Context size, Datasets & streaming, Dead latents, resampling & ghost gradients, Dense latents & learning rates, Gated models, Interpreting the latent density histogram (+6 more)
 
 ### Community 563 - "utils.py"
-Cohesion: 0.15
-Nodes (13): test_linear_schedule(), cummean(), linear_schedule(), make_env(), moving_avg(), plot_rewards(), Arr, ndarray (+5 more)
+Cohesion: 0.20
+Nodes (10): cummean(), make_env(), moving_avg(), plot_rewards(), Arr, ndarray, Computes the total discounted sum of rewards for an episode.     By default, ass, Computes the cumulative mean (+2 more)
 
 ### Community 564 - ".__init__"
-Cohesion: 0.14
-Nodes (7): ClipRewardEnv, Bin reward to {+1, 0, -1} by its sign., Stack k last frames.          Returns lazy array, which is much more memory effi, This object ensures that common frames between the observations are only stored, Sample initial states by taking random number of no-ops on reset.         No-op, Take action on reset for environments that are fixed until firing., Make end-of-life == end-of-episode, but only reset on true game over.         Do
+Cohesion: 0.25
+Nodes (3): Cheater, DiscreteEnviroGym, Resets the environment to its initial state.
 
 ### Community 565 - "1️⃣ RLHF on transformer language models"
 Cohesion: 0.14
@@ -4031,8 +4018,8 @@ Cohesion: 0.16
 Nodes (14): display_topk_token_predictions(), find_threshold(), get_topk(), inspect_feature(), load_example_data(), load_example_data_parallel(), Tensor, Get top-k predicted tokens and their probabilities from logits. (+6 more)
 
 ### Community 574 - "solutions.py"
-Cohesion: 0.16
-Nodes (10): anthropic_lr(), calculate_loss(), cosine_decay_lr(), linear_warmup_lr(), NeuronModel, Resamples dead latents, by modifying the model's weights and biases inplace., Calculates the loss for a given batch, using this loss described in the Toy Mode, Increases linearly from 0 to 1. (+2 more)
+Cohesion: 0.13
+Nodes (13): anthropic_lr(), calculate_loss(), cosine_decay_lr(), forward(), linear_warmup_lr(), NeuronModel, Forward pass on the autoencoder.      Args:         h: hidden layer activations, Resamples dead latents, by modifying the model's weights and biases inplace. (+5 more)
 
 ### Community 575 - "Metrics"
 Cohesion: 0.14
@@ -4179,8 +4166,8 @@ Cohesion: 0.15
 Nodes (13): assert_all_close(), assert_all_equal(), batched_softmax(), collect_columns(), integer_array_indexing(), Tensor, Return [[1, 2, 3], [4, 5, 6]] using only t.arange and einops.rearrange., Normalize each day by the weekly average and weekly standard deviation. (+5 more)
 
 ### Community 611 - "add_"
-Cohesion: 0.17
-Nodes (10): add_(), backprop(), For a given tensor, return a list of Tensors that make up the nodes of the given, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul, safe_example() (+2 more)
+Cohesion: 0.12
+Nodes (18): add_(), backprop(), Return a list of node's descendants in reverse topological order from future, For a given tensor, return a list of Tensors that make up the nodes of the given, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul (+10 more)
 
 ### Community 612 - "4️⃣ ResNets"
 Cohesion: 0.15
@@ -4251,8 +4238,8 @@ Cohesion: 0.18
 Nodes (10): get_actor_and_critic(), make_optimizer(), PPOScheduler, Adam, Module, Optimizer, SyncVectorEnv, Implement linear learning rate decay so that after `total_phases` calls to step, (+2 more)
 
 ### Community 629 - "add_"
-Cohesion: 0.17
-Nodes (10): add_(), backprop(), For a given tensor, return a list of Tensors that make up the nodes of the given, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul, safe_example() (+2 more)
+Cohesion: 0.12
+Nodes (18): add_(), backprop(), Return a list of node's descendants in reverse topological order from future, For a given tensor, return a list of Tensors that make up the nodes of the given, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul (+10 more)
 
 ### Community 630 - "tests.py"
 Cohesion: 0.17
@@ -4535,8 +4522,8 @@ Cohesion: 0.17
 Nodes (12): A Transformer Circuit Laboratory, ☆ Bonus, [Chess-GPT's Internal World Model](https://adamkarvonen.github.io/machine_learning/2024/01/03/chess-world-models.html), Cleaning Up, Concrete starter projects, Finding Modular Circuits, [Inside the mind of a superhuman Go model: How does Leela Zero read ladders?](https://www.lesswrong.com/posts/FF8i6SLfKb4g7C4EL/inside-the-mind-of-a-superhuman-go-model-how-does-leela-zero-2), Preliminary Results On Modular Circuits (+4 more)
 
 ### Community 700 - "Probe4"
-Cohesion: 0.23
-Nodes (5): Probe4, Probe5, Tensor, Vectorized Probe5: Two actions, random 0/1 observation, one timestep, reward is, Vectorized Probe4: Two actions, [0.0] observation, one timestep, reward is -1.0
+Cohesion: 0.29
+Nodes (6): log_forward(), multiply_forward(), Extra information necessary to run backpropagation. You don't need to modify thi, Performs np.log on a Tensor object., Performs np.multiply on a Tensor object., Recipe
 
 ### Community 701 - "HookedTransformerWithValueHead"
 Cohesion: 0.20
@@ -4767,8 +4754,8 @@ Cohesion: 0.18
 Nodes (11): Building the auditor toolkit, Demo - Categorise seed instructions, Exercise - Build a simplified judge, Exercise - Implement `measure_whistleblowing_propensity`, Exercise - Implement the auditor conversation loop, Exercise - Implement tool dispatch logic, Exercise - Run Petri on AI psychosis (Python API), Predict: whistleblowing ablation results (+3 more)
 
 ### Community 758 - "add_"
-Cohesion: 0.20
-Nodes (8): add_(), backprop(), Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul, safe_example(), unsafe_example()
+Cohesion: 0.17
+Nodes (10): add_(), backprop(), For a given tensor, return a list of Tensors that make up the nodes of the given, Accumulates gradients in the grad field of each leaf node.      tensor.backward(, Like torch.add_. Compute x += other * alpha in-place and return tensor., This example should work properly., This example is expected to compute the wrong gradients, because dc/db is calcul, safe_example() (+2 more)
 
 ### Community 759 - "Backward functions of two tensors"
 Cohesion: 0.18
@@ -4915,16 +4902,16 @@ Cohesion: 0.20
 Nodes (11): compute_feature_data(), create_attribution_dashboard(), get_ticks(), hist_from_data(), process_examples_for_feature(), ndarray, Returns nicely spaced tick values for a histogram axis., Creates histogram data dict from a 1D array, for use by Plotly in the dashboard (+3 more)
 
 ### Community 795 - ".calculate_loss"
-Cohesion: 0.22
-Nodes (5): DoubleDescentModel, Optimizes the model using the given hyperparameters., Calculates dimensionalities of data. Assumes data is of shape ... batch d_hidden, New function for generating batch, so we can normalize it., New function to calculate loss, because we need a "loss per instance" option to
+Cohesion: 0.13
+Nodes (13): DoubleDescentModel, JumpReLUToySAE, Generates a batch of hidden activations from our model., Optimizes the autoencoder using the given hyperparameters.          Args:, Optimizes the model using the given hyperparameters., Resamples latents that have been dead for 'dead_feature_window' steps, according, This function should replicate figure 15 from the DeepMind paper, in a way which, Same as previous forward function, but allows for gated case as well (in which c (+5 more)
 
 ### Community 796 - "Tensor"
-Cohesion: 0.27
-Nodes (4): GatedToySAE, NeuronComputationModel, Tensor, Same as previous forward function, but allows for gated case as well (in which c
+Cohesion: 0.29
+Nodes (6): log_forward(), multiply_forward(), Extra information necessary to run backpropagation. You don't need to modify thi, Performs np.log on a Tensor object., Performs np.multiply on a Tensor object., Recipe
 
 ### Community 797 - "generate_batch"
-Cohesion: 0.18
-Nodes (11): generate_anticorrelated_features(), generate_batch(), generate_correlated_features(), generate_uncorrelated_features(), Generates a batch of hidden activations from our model., Generates a batch of data of shape (batch_size, n_instances, n_features).      T, Generates a batch of data of shape (batch_size, n_instances, n_features)., Generates a batch of correlated features. For each pair `batch[i, j, [2k, 2k+1]] (+3 more)
+Cohesion: 0.19
+Nodes (15): generate_anticorrelated_features(), generate_batch(), generate_correlated_features(), generate_uncorrelated_features(), __init__(), Generates a batch of hidden activations from our model., Generates a batch of data of shape (batch_size, n_instances, n_features).      T, Generates a batch of data of shape (batch_size, n_instances, n_features). (+7 more)
 
 ### Community 798 - "Multi-token generation"
 Cohesion: 0.18
@@ -4967,20 +4954,20 @@ Cohesion: 0.20
 Nodes (10): cummean(), make_env(), moving_avg(), plot_rewards(), Arr, ndarray, Computes the total discounted sum of rewards for an episode.     By default, as, Computes the cumulative mean (+2 more)
 
 ### Community 808 - "set_global_seeds"
-Cohesion: 0.25
-Nodes (9): Sets random seeds in several different ways (to guarantee reproducibility), set_global_seeds(), get_actor_and_critic(), PPOAgent, PPOAgentCts, PPOArgs, SyncVectorEnv, Returns (actor, critic), the networks used for PPO, in one of 3 different modes. (+1 more)
+Cohesion: 0.29
+Nodes (3): Normalize each channel.          Compute the variance using `torch.var(x, unbias, Backward function for torch.reshape., reshape_back()
 
 ### Community 809 - "ReplayMemory"
-Cohesion: 0.24
-Nodes (7): get_minibatch_indices(), ndarray, Return a list of length `num_minibatches`, where each element is an array of `mi, Contains buffer; has a method to sample from it to return a ReplayMinibatch obje, Resets all stored experiences, ready for new ones to be added to memory., Returns a list of minibatches. Each minibatch has size `minibatch_size`, and the, ReplayMemory
+Cohesion: 0.20
+Nodes (9): PPOAgent, PPOAgentCts, Samples from the replay memory, converted to PyTorch for use in neural network t, Contains buffer; has a method to sample from it to return a ReplayMinibatch obje, Resets all stored experiences, ready for new ones to be added to memory., Returns a list of minibatches. Each minibatch has size `minibatch_size`, and the, Gets minibatches from the replay memory, and resets the memory, ReplayMemory (+1 more)
 
 ### Community 810 - "PPOTrainer"
-Cohesion: 0.24
-Nodes (7): PPOTrainer, PPOTrainerCts, Gets minibatches from the replay memory, and resets the memory, This function populates the memory with a new set of experiences, using self.age, This function does the following:             - Generates minibatches from memor, Tests a probe environment by training a network on it & verifying that the value, test_probe()
+Cohesion: 0.17
+Nodes (10): EasyCart, PPOTrainer, PPOTrainerCts, CartPoleEnv, Changes required:             - actor returns (mu, sigma, dist), with dist used, This function populates the memory with a new set of experiences, using self.age, This function does the following:             - Generates minibatches from memor, Tests a probe environment by training a network on it & verifying that the value (+2 more)
 
 ### Community 811 - "utils.py"
-Cohesion: 0.22
-Nodes (10): arg_help(), cummean(), ewma(), Arr, Computes sliding window average, Computes the cumulative mean, Returns the exponentially weighted moving average of x.     Parameters:     --, Computes the total discounted sum of rewards for an episode.     By default, as (+2 more)
+Cohesion: 0.18
+Nodes (11): PPOArgs, arg_help(), cummean(), ewma(), Arr, Computes sliding window average, Computes the cumulative mean, Returns the exponentially weighted moving average of x.     Parameters:     -- (+3 more)
 
 ### Community 812 - "ActivationCapper"
 Cohesion: 0.20
@@ -5001,10 +4988,6 @@ Nodes (11): Attention Suppression, Bonus Exercises: Replicating Paper Whitebox R
 ### Community 816 - "Building the auditor toolkit"
 Cohesion: 0.18
 Nodes (11): Building the auditor toolkit, Demo - Categorise seed instructions, Exercise - Build a simplified judge, Exercise - Implement `measure_whistleblowing_propensity`, Exercise - Implement the auditor conversation loop, Exercise - Implement tool dispatch logic, Exercise - Run Petri on AI psychosis (Python API), Predict: whistleblowing ablation results (+3 more)
-
-### Community 817 - "ConvTranspose2d"
-Cohesion: 0.22
-Nodes (6): ConvTranspose2d, initialize_weights(), Module, Initializes weights according to the DCGAN paper (details at the end of page 3 o, Same as torch.nn.ConvTranspose2d with bias=False.         Name your weight field, Creates the encoder & decoder modules.
 
 ### Community 818 - "TransformerSampler"
 Cohesion: 0.24
@@ -5219,8 +5202,8 @@ Cohesion: 0.20
 Nodes (9): format_mcq_as_user(), generate_response_basic(), get_user_prompt(), DataFrame, Messages, Format a multiple-choice dict into a user prompt (with MCQ choices or without) f, Generate a response using the OpenAI or Anthropic APIs.      Args:         model, Retry a function with exponential backoff.      This decorator retries the wrapp (+1 more)
 
 ### Community 871 - "Parameter"
-Cohesion: 0.20
-Nodes (6): Parameter, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements SGD with momentum.          Accepts parameters in groups, or an itera
+Cohesion: 0.11
+Nodes (8): Adam, Parameter, Implements SGD with momentum.          Like the PyTorch version, but assume nest, Implements RMSprop.          Like the PyTorch version, but assumes centered=Fals, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements Adam.          Like the PyTorch version, but assumes amsgrad=False an, Implements SGD with momentum.          Accepts parameters in groups, or an itera, RMSprop
 
 ### Community 872 - "UniqueCharDataset"
 Cohesion: 0.22
@@ -5411,12 +5394,12 @@ Cohesion: 0.20
 Nodes (10): 1️⃣ Periodicity & Fourier basis, 2️⃣ Circuits & Feature Analysis, 3️⃣ Analysis During Training, ☆ Bonus, Content & Learning Objectives, Introduction, Notation, Problem Setup (+2 more)
 
 ### Community 919 - ".play_step"
-Cohesion: 0.20
-Nodes (5): calc_entropy_bonus_cts(), Normal, Changes required:             - actor returns (mu, sigma, dist), with dist used, Changes required:         - entropy needs to be summed over action space before, Carries out a single interaction step between the agent and the environment, and
+Cohesion: 0.19
+Nodes (10): Actor, calc_entropy_bonus_cts(), Critic, get_actor_and_critic_mujoco(), get_minibatch_indices(), ndarray, Normal, Returns (actor, critic) in the "classic-control" case, according to description (+2 more)
 
 ### Community 920 - "tests.py"
-Cohesion: 0.22
-Nodes (7): get_steps(), Gets steps, in both the case where it's named "step" and "steps". Written to han, test_calc_clipped_surrogate_objective(), test_calc_value_function_loss(), test_compute_advantages(), test_compute_advantages_single(), test_get_actor_and_critic()
+Cohesion: 0.24
+Nodes (7): get_steps(), Gets steps, in both the case where it's named "step" and "steps". Written to han, test_calc_entropy_bonus(), test_calc_value_function_loss(), test_compute_advantages(), test_compute_advantages_single(), test_ppo_agent()
 
 ### Community 921 - "1️⃣ Deep Q-Learning"
 Cohesion: 0.20
@@ -5718,10 +5701,6 @@ Nodes (5): AutoInterpConfig, Controls all parameters for how autointerp will wor
 Cohesion: 0.22
 Nodes (7): Thin include-style shim for exercise_template.py.  - Importing from this file re, Configure imports and paths so this file can run standalone., For each day, subtract the average for the week the day belongs to., Return the total price of items using gather., setup_environment(), temperatures_differences(), total_price_gather()
 
-### Community 996 - "topological_sort"
-Cohesion: 0.39
-Nodes (8): Return a list of node's descendants in reverse topological order from future, topological_sort(), get_children(), Node, test_topological_sort_branching(), test_topological_sort_cyclic(), test_topological_sort_linked_list(), test_topological_sort_rejoining()
-
 ### Community 997 - "Exercises - einops operations (match images)"
 Cohesion: 0.22
 Nodes (9): (1) Column-stacking, (2) Column-stacking and copying, (3) Row-stacking and double-copying, (4) Stretching, (5) Split channels, (6) Stack into rows & cols, (7) Transpose, (8) Shrinking (+1 more)
@@ -5807,8 +5786,8 @@ Cohesion: 0.22
 Nodes (9): 2️⃣ Looking for modular circuits, Activation Patching, Exercise - compute attn and mlp contributions, Exercise - create a patching metric, Exercise - repeat this for the "blank" probe, Exercise - write a patching function, Probing Across Layers, Recap of this section (+1 more)
 
 ### Community 1018 - "find_optimal_policy"
-Cohesion: 0.33
-Nodes (8): find_optimal_policy(), policy_improvement(), Args:         env: Environment         V  : (num_states,) value of each state fo, Args:         env: environment     Outputs:         pi : (num_states,) int, of a, _load_objects_for_tests(), test_find_optimal_policy(), test_policy_eval(), test_policy_improvement()
+Cohesion: 0.36
+Nodes (7): _load_objects_for_tests(), test_find_optimal_policy(), test_linear_schedule(), test_policy_eval(), test_policy_improvement(), linear_schedule(), Return the appropriate epsilon for the current step.     Epsilon should be start
 
 ### Community 1019 - "4️⃣ Atari"
 Cohesion: 0.22
@@ -5829,10 +5808,6 @@ Nodes (5): AutoInterpConfig, Controls all parameters for how autointerp will wor
 ### Community 1023 - "DQNAgent"
 Cohesion: 0.25
 Nodes (7): DQNAgent, linear_schedule(), ndarray, Base Agent class handling the interaction with the environment., Carries out a single interaction step between agent & environment, and adds resu, Samples actions according to the epsilon-greedy policy using the linear schedule, Return the appropriate epsilon for the current step.      Epsilon should be star
-
-### Community 1024 - "topological_sort"
-Cohesion: 0.39
-Nodes (8): Return a list of node's descendants in reverse topological order from future, topological_sort(), get_children(), Node, test_topological_sort_branching(), test_topological_sort_cyclic(), test_topological_sort_linked_list(), test_topological_sort_rejoining()
 
 ### Community 1025 - "Exercises - einops operations (match images)"
 Cohesion: 0.22
@@ -5943,8 +5918,8 @@ Cohesion: 0.22
 Nodes (9): Exercise - demonstrate advantage of Gated models, Exercise - implement custom gradient functions, Exercise - implement Gated SAEs, Exercise - implement JumpReLU SAEs, Functional / visual intuition, Gated & JumpReLU SAEs, Gated SAEs, JumpReLU SAEs (+1 more)
 
 ### Community 1052 - "make_optimizer"
-Cohesion: 0.22
-Nodes (7): make_optimizer(), PPOScheduler, Adam, Module, Optimizer, Implement linear learning rate decay so that after `total_phases` calls to step,, Return an appropriately configured Adam with its attached scheduler.
+Cohesion: 0.16
+Nodes (11): get_actor_and_critic(), make_optimizer(), PPOScheduler, Adam, Module, Optimizer, SyncVectorEnv, Returns (actor, critic), the networks used for PPO, in one of 3 different modes. (+3 more)
 
 ### Community 1053 - "4️⃣ Atari"
 Cohesion: 0.22
@@ -6462,10 +6437,6 @@ Nodes (7): _load_objects_for_tests(), test_find_optimal_policy(), test_linear_sc
 Cohesion: 0.32
 Nodes (7): epsilon_greedy_policy(), Arr, Bool, Float, Int, Add a batch of transitions to the replay buffer., With probability epsilon, take a random action. Otherwise, take a greedy action
 
-### Community 1185 - ".add"
-Cohesion: 0.29
-Nodes (7): compute_advantages(), display_frames(), Arr, Bool, Int, Compute advantages using Generalized Advantage Estimation., Add a batch of transitions to the replay memory.
-
 ### Community 1186 - "01_[2.1]_Intro_to_RL.md"
 Cohesion: 0.25
 Nodes (7): 1️⃣ Planning, [2.1] - Intro to RL, 2️⃣ Learning, 3️⃣ (Optional) Multi-Armed Bandit, Content & Learning Objectives, Introduction, Setup code
@@ -6509,10 +6480,6 @@ Nodes (8): 1️⃣ Mapping Persona Space, 2️⃣ Steering along the Assistant A
 ### Community 1196 - "05_[4.5]_Investigator_Agents.md"
 Cohesion: 0.25
 Nodes (7): 1️⃣ AI Psychosis - Multi-Turn Red-Teaming, [4.5] Investigator Agents, Bloom: from exploration to measurement, ☆ Bonus, Looking ahead: from manual to automated, Other directions to explore, Overview
-
-### Community 1197 - ".__init__"
-Cohesion: 0.25
-Nodes (5): BlockGroup, Compute the forward pass. If no downsampling block is present, the addition shou, An n_blocks-long sequence of ResidualBlock where only the first block uses the p, Compute the forward pass.          x: shape (batch, in_feats, height, width), ResidualBlock
 
 ### Community 1198 - "train_log_text"
 Cohesion: 0.32
@@ -6695,8 +6662,8 @@ Cohesion: 0.33
 Nodes (6): FigureWidget, Tensor, Plot any number of line segments in 3D.      lines: shape (num_lines, num_points, render_lines_with_plotly(), setup_widget_fig_ray(), setup_widget_fig_triangle()
 
 ### Community 1243 - "Node"
-Cohesion: 0.43
-Nodes (6): get_children(), Node, test_topological_sort_branching(), test_topological_sort_cyclic(), test_topological_sort_linked_list(), test_topological_sort_rejoining()
+Cohesion: 0.39
+Nodes (8): Return a list of node's descendants in reverse topological order from future, topological_sort(), get_children(), Node, test_topological_sort_branching(), test_topological_sort_cyclic(), test_topological_sort_linked_list(), test_topological_sort_rejoining()
 
 ### Community 1244 - "2️⃣ Einops, Einsum & Tensor Manipulation"
 Cohesion: 0.29
@@ -6807,12 +6774,8 @@ Cohesion: 0.29
 Nodes (7): complete `LoraMixedPrecision`, [Deep Reinforcement Learning from Human Preferences](https://arxiv.org/abs/1706.03741), Extend `Lora` to MLP layers (optional), Extentions for LoRA, Mixed Precision (Optional), [Recursively Summarizing Books with Human Feedback](https://arxiv.org/abs/2109.10862), Suggested paper replications
 
 ### Community 1271 - ".reshape"
-Cohesion: 0.29
-Nodes (3): Normalize each channel.          Compute the variance using `torch.var(x, unbias, Backward function for torch.reshape., reshape_back()
-
-### Community 1272 - "log_forward"
-Cohesion: 0.29
-Nodes (6): log_forward(), multiply_forward(), Extra information necessary to run backpropagation. You don't need to modify thi, Performs np.log on a Tensor object., Performs np.multiply on a Tensor object., Recipe
+Cohesion: 0.67
+Nodes (3): load_module(), main(), Path
 
 ### Community 1273 - "get_samples"
 Cohesion: 0.33
@@ -6829,10 +6792,6 @@ Nodes (6): Tests intersect_ray_1d, by looping over all (rays, segments) and find
 ### Community 1276 - "utils.py"
 Cohesion: 0.33
 Nodes (6): FigureWidget, Tensor, Plot any number of line segments in 3D.      lines: shape (num_lines, num_points, render_lines_with_plotly(), setup_widget_fig_ray(), setup_widget_fig_triangle()
-
-### Community 1277 - "log_forward"
-Cohesion: 0.29
-Nodes (6): log_forward(), multiply_forward(), Extra information necessary to run backpropagation. You don't need to modify thi, Performs np.log on a Tensor object., Performs np.multiply on a Tensor object., Recipe
 
 ### Community 1278 - "2️⃣ Einops, Einsum & Tensor Manipulation"
 Cohesion: 0.29
@@ -6947,7 +6906,7 @@ Cohesion: 0.43
 Nodes (6): update(), display_frames(), Arr, Int, Add a batch of transitions to the replay memory., save_display_frames()
 
 ### Community 1306 - ".reshape"
-Cohesion: 0.29
+Cohesion: 0.40
 Nodes (3): Normalize each channel.          Compute the variance using `torch.var(x, unbias, Backward function for torch.reshape., reshape_back()
 
 ### Community 1307 - "log_forward"
@@ -7898,6 +7857,10 @@ Nodes (5): Analysing our model with Fourier Transforms, Aside: Change of basis o
 Cohesion: 0.40
 Nodes (4): [1.5.3] OthelloGPT, 4️⃣ Training a Probe, Exercise - fill in the missing code below, Exercise - train all 3 modes at once (bonus)
 
+### Community 1550 - "CheatyMcCheater"
+Cohesion: 0.15
+Nodes (4): CheatyMcCheater, Sets up dynamics for the toy environment:             - In state s_L, we move to, Initializes the MultiArmedBandit environment.          Args:             num_arm, Toy
+
 ### Community 1551 - "Sampling from a transformer"
 Cohesion: 0.40
 Nodes (5): Exercise - brainstorm your reward function, Exercise - implement `get_advantages`, Exercise - implement `normalize_reward`, Exercise - implement `reward_fn_char_count`, Sampling from a transformer
@@ -8285,16 +8248,16 @@ Nodes (3): EarlyStopException, Exception, Custom exception for stopping model fo
 ## Knowledge Gaps
 - **6026 isolated node(s):** `tabs`, `authOnlyTabs`, `guestOnlyTabs`, `pages`, `authStatus` (+6021 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **82 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **85 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Linear` connect `Linear` to `solutions.py`, `master_0_2.py`, `solutions.py`, `solutions.py`, `master_0_2.py`, `Adam`, `master_0_3.py`, `Adam`, `solutions.py`, `master_0_3.py`, `master_0_3.py`, `solutions.py`, `solutions.py`, `solutions.py`, `solutions.py`, `Adam`, `Adam`, `ConvTranspose2d`, `solutions_vaes.py`, `ResNet34`, `Tensor`, `tests.py`, `tests.py`, `tests.py`?**
+- **Why does `Linear` connect `Linear` to `vpg_batched_working.py`, `solutions.py`, `solutions.py`, `master_0_2.py`, `Adam`, `master_0_3.py`, `Adam`, `solutions.py`, `master_0_3.py`, `master_0_3.py`, `solutions.py`, `solutions.py`, `solutions.py`, `solutions.py`, `Adam`, `Adam`, `ConvTranspose2d`, `.__init__`, `solutions_vaes.py`, `ResNet34`, `Tensor`, `conv_transpose2d`, `tests.py`, `tests.py`, `tests.py`, `Parameter`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
-- **Why does `test_initialize_weights()` connect `solutions.py` to `tests.py`?**
+- **Why does `test_initialize_weights()` connect `solutions.py` to `tests.py`, `tests.py`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `test_model()` connect `solutions.py` to `tests.py`?**
+- **Why does `test_model()` connect `tests.py` to `solutions.py`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **Are the 174 inferred relationships involving `Linear` (e.g. with `test_linear_forward()` and `test_linear_no_bias()`) actually correct?**
   _`Linear` has 174 INFERRED edges - model-reasoned connections that need verification._
