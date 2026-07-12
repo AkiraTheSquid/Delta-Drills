@@ -14529,21 +14529,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Repeat a single CHW image along its height axis by a factor of three, resulting in an output that is three times as tall while preserving the width and color channels.",
+      "question_text": "Write solve(img) for a single CHW image: repeat it along its HEIGHT axis by a factor of three — three times as tall, width and channels unchanged. Use einops.repeat; the target image shows the canonical fixture's result.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nimg = arr[0]",
+          "call": "solve(img)",
           "expected_expr": "einops.repeat(img, 'c h w -> c (h 3) w')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(24, dtype=np.uint8).reshape(3, 2, 4)",
+          "call": "solve(img)",
+          "expected_expr": "einops.repeat(img, 'c h w -> c (h 3) w')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(12, dtype=np.uint8).reshape(1, 4, 3)[::1]",
+          "call": "solve(img)",
+          "expected_expr": "np.repeat(img, 3, axis=1)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.repeat(img, 'c h w -> c (h 3) w')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    return einops.repeat(img, 'c h w -> c (h 3) w')\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -14563,21 +14573,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given arr, a 4D array of shape (batch, channels, height, width) = (12, 3, 150, 150) holding 12 channels-first digit images. Tile these 12 images into a single composite image laid out as a 4-row by 3-column grid (rows fill first), producing a 3D channels-first array of shape (channels, 4 * height, 3 * width) = (3, 600, 450).",
+      "question_text": "Write solve(imgs) for a (12, C, H, W) batch of channels-first images: tile them into a single CHW image laid out as a 4-row × 3-column grid (row-major: image i lands at row i//3, column i%3). Pattern: '(g1 g2) c h w -> c (g1 h) (g2 w)' with g1=4.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-12 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:12]\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\n_base = np.load('/delta_numbers.npy')\nimgs = np.concatenate([_base] * (-(-12 // _base.shape[0])))[:12]\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-12 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:12]",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange(arr[:12], '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)"
+          "setup_code": "import einops\n_base = np.load('/delta_numbers.npy')\nimgs = np.concatenate([_base] * (-(-12 // _base.shape[0])))[:12]",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(12 * 3 * 2 * 2, dtype=np.uint8).reshape(12, 3, 2, 2)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(12 * 1 * 1 * 2, dtype=np.uint8) * 3).reshape(12, 1, 1, 2)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(arr[:12], '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)",
+      "canonical_solution": "import numpy as np\nimport einops\n\n_base = np.load('/delta_numbers.npy')\nimgs = np.concatenate([_base] * (-(-12 // _base.shape[0])))[:12]\n\ndef solve(imgs):\n    return einops.rearrange(imgs, '(g1 g2) c h w -> c (g1 h) (g2 w)', g1=4)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -14646,21 +14666,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For a batch of images, divide each image into two equal halves along the height dimension and then stack these halves vertically, resulting in a new batch that has twice the number of images.",
+      "question_text": "Write solve(imgs) for a (B, H, W, C) batch: divide each image into two equal halves along HEIGHT and stack the halves into the batch axis — output (2·B, H/2, W, C) with all the TOP halves first, then all the bottom halves. Pattern: 'b (two h) w c -> (two b) h w c' with two=2.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define two\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange(arr, 'b (two h) w c -> (two b) h w c', two=2)"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, 'b (two h) w c -> (two b) h w c', two=2)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(2 * 4 * 3 * 1, dtype=np.uint8).reshape(2, 4, 3, 1)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, 'b (two h) w c -> (two b) h w c', two=2)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(1 * 6 * 2 * 3, dtype=np.uint8) * 2).reshape(1, 6, 2, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, 'b (two h) w c -> (two b) h w c', two=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(arr, 'b (two h) w c -> (two b) h w c', two=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    return einops.rearrange(imgs, 'b (two h) w c -> (two b) h w c', two=2)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -14729,21 +14759,31 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) of channels-first images, plus integer subgrid factors hs and ws (here both 2) that evenly divide height and width. Produce the packed array of shape (hs * ws * batch, channels, height / hs, width / ws) by splitting each image into an hs-by-ws spatial grid and folding both subgrid axes plus batch into the leading axis. Return the packed array.",
+      "question_text": "Write solve(x, hs, ws) for a (B, C, H, W) batch and integer subgrid factors: carve each image's height into hs strips and width into ws strips, moving the (hs, ws) subgrid indices OUT into the batch axis — output (hs·ws·B, C, H/hs, W/ws), subgrid-major then batch. Pattern: 'b c (h hs) (w ws) -> (hs ws b) c h w'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\n\ndef solve(x, hs, ws):\n    # Write your solution here\n    return None\n\nprint(solve(x, hs, ws))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\nb = 2",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2",
+          "call": "solve(x, hs, ws)",
           "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=hs, ws=ws)"
+        },
+        {
+          "setup_code": "import einops\nx = np.arange(1 * 2 * 4 * 6, dtype=np.uint8).reshape(1, 2, 4, 6)\nhs, ws = 2, 3",
+          "call": "solve(x, hs, ws)",
+          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=3)"
+        },
+        {
+          "setup_code": "import einops\nx = (np.arange(2 * 1 * 2 * 2, dtype=np.uint8) * 5).reshape(2, 1, 2, 2)\nhs, ws = 2, 1",
+          "call": "solve(x, hs, ws)",
+          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=1)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "y = einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=hs, ws=ws); out = einops.rearrange(y, '(hs ws b) c h w -> b c (h hs) (w ws)', hs=hs, ws=ws)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nx = arr[:2]\nhs = 2\nws = 2\n\ndef solve(x, hs, ws):\n    return einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=hs, ws=ws)\n\nprint(solve(x, hs, ws))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -14812,21 +14852,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "2x2 non-overlapping average pooling on a BCHW batch — output H and W are half the input. Use named factors h2 and w2 for the pooling window.",
+      "question_text": "Write solve(x) for a float (B, C, H, W) batch: 2×2 NON-OVERLAPPING average pooling — output H and W are half the input. Use einops.reduce with named window factors (e.g. h2, w2).",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nb = 2\n\ndef solve():\n    # Write your solution here - define h2\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nx = arr\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nprint(solve(x))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy').astype(np.float32)\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.reduce(arr, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)"
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy').astype(np.float32)\nx = arr",
+          "call": "solve(x)",
+          "expected_expr": "einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)"
+        },
+        {
+          "setup_code": "import einops\nx = np.arange(1 * 1 * 4 * 4, dtype=np.float32).reshape(1, 1, 4, 4)",
+          "call": "solve(x)",
+          "expected_expr": "einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)"
+        },
+        {
+          "setup_code": "import einops\nx = (np.arange(2 * 2 * 2 * 6, dtype=np.float32) * 4).reshape(2, 2, 2, 6)",
+          "call": "solve(x)",
+          "expected_expr": "einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.reduce(arr, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nx = arr\n\ndef solve(x):\n    return einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)\n\nprint(solve(x))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -15189,22 +15239,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For an image represented by its height, width, and color channels, compute the maximum value for each row across the color channels and then subtract this maximum from the original image, maintaining the same dimensions.",
+      "question_text": "Write solve(img) for an (H, W, C) image: compute the maximum over each ROW — reducing width and channels to singletons, 'h w c -> h () c' is close but the row max is over BOTH w and c per h and c... precisely: reduce 'h w c -> h () c' with 'max' takes each row's per-channel max over width; then subtract that from the image (broadcasting back). Return img - mx. (uint8 wraparound on underflow is expected — same on both sides.)",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
-          "call": "solve()",
-          "expected_expr": "img - mx",
-          "expected_setup_code": "mx = einops.reduce(img, 'h w c -> h () c', 'max')"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "img - einops.reduce(img, 'h w c -> h () c', 'max')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(2 * 3 * 2, dtype=np.uint8).reshape(2, 3, 2)",
+          "call": "solve(img)",
+          "expected_expr": "img - einops.reduce(img, 'h w c -> h () c', 'max')"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(3 * 2 * 3, dtype=np.uint8) * 7).reshape(3, 2, 3)",
+          "call": "solve(img)",
+          "expected_expr": "img - img.max(axis=1, keepdims=True)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "mx = einops.reduce(img, 'h w c -> h () c', 'max'); img - mx",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    mx = einops.reduce(img, 'h w c -> h () c', 'max')\n    return img - mx\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -15273,21 +15332,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given a list [img, img] of two identical 3D images, each of shape (height, width, channels) = (150, 150, 3). Produce a single 3D array of shape (2*height, width, channels) = (300, 150, 3) by interleaving the two images row-by-row: row 0 of the output is row 0 of the first image, row 1 is row 0 of the second image, row 2 is row 1 of the first image, and so on.",
+      "question_text": "Write solve(img_a, img_b) for two identical-shape (H, W, C) images: produce a single (2·H, W, C) image whose rows INTERLEAVE the two inputs — row 0 of a, row 0 of b, row 1 of a, row 1 of b, … Pattern: einops.rearrange([img_a, img_b], 'b h w c -> (h b) w c').",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[1]\nimg_b = arr[1]\n\ndef solve(img_a, img_b):\n    # Write your solution here\n    return None\n\nprint(solve(img_a, img_b))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[1]\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange([img, img], 'b h w c -> (h b) w c')"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[1]\nimg_b = arr[1]",
+          "call": "solve(img_a, img_b)",
+          "expected_expr": "einops.rearrange([img_a, img_b], 'b h w c -> (h b) w c')"
+        },
+        {
+          "setup_code": "import einops\nimg_a = np.arange(6, dtype=np.uint8).reshape(3, 2, 1)\nimg_b = (np.arange(6, dtype=np.uint8) + 100).reshape(3, 2, 1)",
+          "call": "solve(img_a, img_b)",
+          "expected_expr": "einops.rearrange([img_a, img_b], 'b h w c -> (h b) w c')"
+        },
+        {
+          "setup_code": "import einops\nimg_a = np.zeros((2, 2, 3), dtype=np.uint8)\nimg_b = np.full((2, 2, 3), 9, dtype=np.uint8)",
+          "call": "solve(img_a, img_b)",
+          "expected_expr": "einops.rearrange([img_a, img_b], 'b h w c -> (h b) w c')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange([img, img], 'b h w c -> (h b) w c')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[1]\nimg_b = arr[1]\n\ndef solve(img_a, img_b):\n    return einops.rearrange([img_a, img_b], 'b h w c -> (h b) w c')\n\nprint(solve(img_a, img_b))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -15944,21 +16013,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of images with height, width, and color channels, increase the height of each image by a factor of three by repeating each row three times, while keeping the width and color channels unchanged.",
+      "question_text": "Write solve(imgs) for a (B, H, W, C) batch: make each image three times as TALL by repeating each ROW three times consecutively (row 0 three times, then row 1 three times, …). Pattern: einops.repeat 'b h w c -> b (h r) w c' with r=3.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here - define r\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.repeat(arr, 'b h w c -> b (h r) w c', r=3)"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.repeat(imgs, 'b h w c -> b (h r) w c', r=3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(1 * 2 * 3 * 1, dtype=np.uint8).reshape(1, 2, 3, 1)",
+          "call": "solve(imgs)",
+          "expected_expr": "np.repeat(imgs, 3, axis=1)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(2 * 3 * 2 * 2, dtype=np.uint8) * 3).reshape(2, 3, 2, 2)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.repeat(imgs, 'b h w c -> b (h r) w c', r=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.repeat(arr, 'b h w c -> b (h r) w c', r=3)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    return einops.repeat(imgs, 'b h w c -> b (h r) w c', r=3)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -16027,21 +16106,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For an image with spatial dimensions and color channels, rearrange each 2x2 patch so that the width and height of the patches are swapped while keeping the color channels in place.",
+      "question_text": "Write solve(img) for an (H, W, C) image with H and W even: within every non-overlapping 2×2 patch, TRANSPOSE the patch (swap its within-patch row and column). Pattern: '(h p1) (w p2) c -> (h p2) (w p1) c' with p1=2, p2=2. Output shape is unchanged; content moves.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]  # (150, 150, 3) HWC digit\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(4 * 4 * 1, dtype=np.uint8).reshape(4, 4, 1)",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(2 * 6 * 3, dtype=np.uint8) * 2).reshape(2, 6, 3)",
+          "call": "solve(img)",
           "expected_expr": "einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    return einops.rearrange(img, '(h p1) (w p2) c -> (h p2) (w p1) c', p1=2, p2=2)\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -16061,21 +16150,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For an image with height, width, and color channels, increase both the height and width dimensions by a factor of two by repeating each pixel in a nearest-neighbor manner.",
+      "question_text": "Write solve(img) for an (H, W, C) image: double BOTH spatial dimensions by repeating each pixel into a 2×2 block (nearest-neighbor upscaling). Pattern: einops.repeat 'h w c -> (h 2) (w 2) c'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "einops.repeat(img, 'h w c -> (h 2) (w 2) c')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(2 * 3 * 1, dtype=np.uint8).reshape(2, 3, 1)",
+          "call": "solve(img)",
+          "expected_expr": "np.repeat(np.repeat(img, 2, axis=0), 2, axis=1)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(3 * 2 * 3, dtype=np.uint8) * 5).reshape(3, 2, 3)",
+          "call": "solve(img)",
           "expected_expr": "einops.repeat(img, 'h w c -> (h 2) (w 2) c')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.repeat(img, 'h w c -> (h 2) (w 2) c')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    return einops.repeat(img, 'h w c -> (h 2) (w 2) c')\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -16340,21 +16439,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a single CHW image, combine the channels and height dimensions into a single tall strip while keeping the width unchanged.",
+      "question_text": "Write solve(img) for a (C, H, W) channels-first image: combine channels and height into one tall strip — output ((C·H), W), channel 0's rows first, then channel 1's, … Pattern: 'c h w -> (c h) w'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, 'c h w -> (c h) w')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(3 * 2 * 4, dtype=np.uint8).reshape(3, 2, 4)",
+          "call": "solve(img)",
+          "expected_expr": "img.reshape(6, 4)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(2 * 3 * 2, dtype=np.uint8) * 9).reshape(2, 3, 2)",
+          "call": "solve(img)",
           "expected_expr": "einops.rearrange(img, 'c h w -> (c h) w')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(img, 'c h w -> (c h) w')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    return einops.rearrange(img, 'c h w -> (c h) w')\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -16619,21 +16728,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Apply average pooling with a 3x3 filter to a single image, reducing the height and width dimensions by a factor of three while keeping the number of channels the same.",
+      "question_text": "Write solve(img) for a float (C, H, W) image with H and W divisible by 3: 3×3 non-overlapping average pooling — H and W shrink by 3×, channels unchanged. einops.reduce with 'mean' and named window factors.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nimg = arr[0]\n\ndef solve():\n    # Write your solution here - define h2\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy').astype(np.float32)\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy').astype(np.float32)\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "einops.reduce(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(1 * 3 * 6, dtype=np.float32).reshape(1, 3, 6)",
+          "call": "solve(img)",
+          "expected_expr": "einops.reduce(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(2 * 6 * 3, dtype=np.float32) * 3).reshape(2, 6, 3)",
+          "call": "solve(img)",
           "expected_expr": "einops.reduce(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.reduce(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy').astype(np.float32)\nimg = arr[0]\n\ndef solve(img):\n    return einops.reduce(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17045,21 +17164,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For a single image with height, width, and color channels, repeat the channel dimension along the height axis, resulting in a new arrangement where the height is multiplied by the number of channels and the width remains unchanged, with an additional singleton dimension added.",
+      "question_text": "Write solve(img) for an (H, W, C) image: unroll the CHANNEL dimension along the height axis — all of channel 0's rows, then channel 1's, then channel 2's — with a trailing singleton axis so the result is ((C·H), W, 1). Pattern: 'h w c -> (c h) w ()'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(2 * 3 * 2, dtype=np.uint8).reshape(2, 3, 2)",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(3 * 2 * 3, dtype=np.uint8) * 4).reshape(3, 2, 3)",
+          "call": "solve(img)",
           "expected_expr": "einops.rearrange(img, 'h w c -> (c h) w ()')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(img, 'h w c -> (c h) w ()')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[4]\n\ndef solve(img):\n    return einops.rearrange(img, 'h w c -> (c h) w ()')\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17177,21 +17306,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "You are given img_a and img_b, two 3D uint8 arrays each of shape (150, 150, 3) in (height, width, channels) layout. Treat them as a batch of 2 images and concatenate them side by side along the width axis, returning a 3D array of shape (150, 2*150, 3) in (height, batch*width, channels) layout so img_b sits immediately to the right of img_a.",
+      "question_text": "Write solve(img_a, img_b) for two identical-shape (H, W, C) images: place them SIDE BY SIDE into one (H, 2·W, C) image, img_a on the left. Pattern: einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c').",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2\n\nimg_a = img\nimg_b = img\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]\n\ndef solve(img_a, img_b):\n    # Write your solution here\n    return None\n\nprint(solve(img_a, img_b))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nb = 2\nimg_a = img\nimg_b = img",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]",
+          "call": "solve(img_a, img_b)",
+          "expected_expr": "einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c')"
+        },
+        {
+          "setup_code": "import einops\nimg_a = np.arange(6, dtype=np.uint8).reshape(2, 3, 1)\nimg_b = (np.arange(6, dtype=np.uint8) + 50).reshape(2, 3, 1)",
+          "call": "solve(img_a, img_b)",
+          "expected_expr": "np.concatenate([img_a, img_b], axis=1)"
+        },
+        {
+          "setup_code": "import einops\nimg_a = np.zeros((3, 2, 3), dtype=np.uint8)\nimg_b = np.full((3, 2, 3), 7, dtype=np.uint8)",
+          "call": "solve(img_a, img_b)",
           "expected_expr": "einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]\n\ndef solve(img_a, img_b):\n    return einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c')\n\nprint(solve(img_a, img_b))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17309,21 +17448,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of images with channels, height, and width, swap the height and width dimensions so that the spatial layout of each image is transposed.",
+      "question_text": "Write solve(imgs) for a (B, C, H, W) batch: swap the HEIGHT and WIDTH dimensions of every image (spatial transpose) — output (B, C, W, H). Pattern: 'b c h w -> b c w h'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nb = 2",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nimgs = arr",
+          "call": "solve(imgs)",
           "expected_expr": "einops.rearrange(arr, 'b c h w -> b c w h')"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(1 * 2 * 2 * 3, dtype=np.uint8).reshape(1, 2, 2, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "imgs.swapaxes(2, 3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(2 * 1 * 3 * 2, dtype=np.uint8) * 6).reshape(2, 1, 3, 2)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, 'b c h w -> b c w h')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(arr, 'b c h w -> b c w h')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimgs = arr\n\ndef solve(imgs):\n    return einops.rearrange(imgs, 'b c h w -> b c w h')\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17392,21 +17541,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given four channels-last images img_a, img_b, img_c, img_d, each a 3D array of shape (height, width, channels) with identical shape. Combine them into a single 3D array of shape (2 * height, 2 * width, channels) arranged as a 2-by-2 spatial grid: img_a and img_b occupy the top row (left and right), and img_c and img_d occupy the bottom row (left and right).",
+      "question_text": "Write solve(img_a, img_b, img_c, img_d) for four identical-shape (H, W, C) images: combine them into one (2·H, 2·W, C) image laid out as a 2×2 grid, row-major (a top-left, b top-right, c bottom-left, d bottom-right). Pattern: einops.rearrange([a, b, c, d], '(r nc) h w ch -> (r h) (nc w) ch', r=2).",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\n\nimg_a = img\nimg_b = img\nimg_c = img\nimg_d = img\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]\nimg_c = arr[0]\nimg_d = arr[0]\n\ndef solve(img_a, img_b, img_c, img_d):\n    # Write your solution here\n    return None\n\nprint(solve(img_a, img_b, img_c, img_d))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[0]\nimg_a = img\nimg_b = img\nimg_c = img\nimg_d = img",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]\nimg_c = arr[0]\nimg_d = arr[0]",
+          "call": "solve(img_a, img_b, img_c, img_d)",
+          "expected_expr": "einops.rearrange([img_a, img_b, img_c, img_d], '(r nc) h w ch -> (r h) (nc w) ch', r=2)"
+        },
+        {
+          "setup_code": "import einops\nimg_a, img_b, img_c, img_d = [np.full((2, 2, 1), v, dtype=np.uint8) for v in (1, 2, 3, 4)]",
+          "call": "solve(img_a, img_b, img_c, img_d)",
+          "expected_expr": "einops.rearrange([img_a, img_b, img_c, img_d], '(r nc) h w ch -> (r h) (nc w) ch', r=2)"
+        },
+        {
+          "setup_code": "import einops\nimg_a, img_b, img_c, img_d = [np.arange(6, dtype=np.uint8).reshape(2, 1, 3) + 10 * v for v in range(4)]",
+          "call": "solve(img_a, img_b, img_c, img_d)",
           "expected_expr": "einops.rearrange([img_a, img_b, img_c, img_d], '(r nc) h w ch -> (r h) (nc w) ch', r=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange([img_a, img_b, img_c, img_d], '(r nc) h w ch -> (r h) (nc w) ch', r=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_a = arr[0]\nimg_b = arr[0]\nimg_c = arr[0]\nimg_d = arr[0]\n\ndef solve(img_a, img_b, img_c, img_d):\n    return einops.rearrange([img_a, img_b, img_c, img_d], '(r nc) h w ch -> (r h) (nc w) ch', r=2)\n\nprint(solve(img_a, img_b, img_c, img_d))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17426,21 +17585,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given arr, a 4D channels-last batch of shape (batch, height, width, channels) = (6, 150, 150, 3) holding 6 digit images. Split the batch axis 6 into r = 3 rows and nc = 2 columns of images, then tile them into a single 3D channels-last canvas of shape (r*height, nc*width, channels) = (450, 300, 3), where the i-th batch image lands in row i // 2 and column i % 2 of the 3x2 grid.",
+      "question_text": "Write solve(imgs) for a (6, H, W, C) channels-last batch: split the batch into a 3-row × 2-column grid, row-major, producing one ((3·H), (2·W), C) image. Pattern: '(r nc) h w ch -> (r h) (nc w) ch' with r=3.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\n\ndef solve():\n    # Write your solution here - define r\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange(arr, '(r nc) h w ch -> (r h) (nc w) ch', r=3)"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(r nc) h w ch -> (r h) (nc w) ch', r=3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(6 * 2 * 2 * 1, dtype=np.uint8).reshape(6, 2, 2, 1)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(r nc) h w ch -> (r h) (nc w) ch', r=3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(6 * 1 * 3 * 3, dtype=np.uint8) * 2).reshape(6, 1, 3, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(r nc) h w ch -> (r h) (nc w) ch', r=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(arr, '(r nc) h w ch -> (r h) (nc w) ch', r=3)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    return einops.rearrange(imgs, '(r nc) h w ch -> (r h) (nc w) ch', r=3)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17558,21 +17727,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Repeat a single CHW image along its width axis so the output is four times as wide, with each column of the original appearing four times in sequence.",
+      "question_text": "Write solve(img) for a (C, H, W) image: make it four times as WIDE with each original column appearing four times IN SEQUENCE (column 0 four times, then column 1 four times, …). Pattern: einops.repeat 'c h w -> c h (w 4)'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nimg = arr[0]",
+          "call": "solve(img)",
+          "expected_expr": "einops.repeat(img, 'c h w -> c h (w 4)')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(2 * 2 * 3, dtype=np.uint8).reshape(2, 2, 3)",
+          "call": "solve(img)",
+          "expected_expr": "np.repeat(img, 4, axis=2)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(1 * 3 * 2, dtype=np.uint8) * 8).reshape(1, 3, 2)",
+          "call": "solve(img)",
           "expected_expr": "einops.repeat(img, 'c h w -> c h (w 4)')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.repeat(img, 'c h w -> c h (w 4)')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = arr[0]\n\ndef solve(img):\n    return einops.repeat(img, 'c h w -> c h (w 4)')\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17592,21 +17771,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For a batch of images with multiple color channels, reduce the width of each image by averaging pairs of adjacent columns, resulting in a new width that is half the original.",
+      "question_text": "Write solve(imgs) for a float (B, H, W, C) batch with W even: halve the WIDTH by averaging each pair of adjacent columns. Pattern: einops.reduce 'b h (w w2) c -> b h w c' with 'mean', w2=2.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define w2\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.reduce(arr, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nimgs = arr",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(1 * 2 * 4 * 1, dtype=np.float32).reshape(1, 2, 4, 1)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(2 * 1 * 6 * 3, dtype=np.float32) * 2).reshape(2, 1, 6, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.reduce(arr, 'b h (w w2) c -> b h w c', 'mean', w2=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)[::-1].copy()\nimgs = arr\n\ndef solve(imgs):\n    return einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17626,21 +17815,31 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "You are given x, a 4D array of shape (batch, channels, height, width) = (2, 3, 150, 150) holding channels-first digit images, with hs = 2 and ws = 2. Split each image's height into 2 stripes and its width into 2 stripes (forming a 2x2 grid of half-size sub-images per input image), then promote those sub-grid indices to the leading batch axis, producing a 4D array of shape (hs * ws * batch, channels, height / hs, width / ws) = (8, 3, 75, 75).",
+      "question_text": "Write solve(x, hs, ws) for a (B, C, H, W) batch: split each image into an hs × ws subgrid and move the subgrid indices out into the batch axis — output (hs·ws·B, C, H/hs, W/ws), subgrid-major then batch. Pattern: 'b c (h hs) (w ws) -> (hs ws b) c h w'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]  # (2, 3, 150, 150) BCHW\nhs = 2\nws = 2\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\n\ndef solve(x, hs, ws):\n    # Write your solution here\n    return None\n\nprint(solve(x, hs, ws))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\nb = 2",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2",
+          "call": "solve(x, hs, ws)",
           "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)"
+        },
+        {
+          "setup_code": "import einops\nx = np.arange(1 * 1 * 6 * 4, dtype=np.uint8).reshape(1, 1, 6, 4)\nhs, ws = 3, 2",
+          "call": "solve(x, hs, ws)",
+          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=3, ws=2)"
+        },
+        {
+          "setup_code": "import einops\nx = (np.arange(2 * 2 * 2 * 2, dtype=np.uint8) * 4).reshape(2, 2, 2, 2)\nhs, ws = 1, 2",
+          "call": "solve(x, hs, ws)",
+          "expected_expr": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=1, ws=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=2, ws=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nx = arr[2:4]\nhs = 2\nws = 2\n\ndef solve(x, hs, ws):\n    return einops.rearrange(x, 'b c (h hs) (w ws) -> (hs ws b) c h w', hs=hs, ws=ws)\n\nprint(solve(x, hs, ws))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17709,21 +17908,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Arrange the first six HWC images into a grid with three rows and two columns, keeping the color channels intact while adjusting the layout of the images.",
+      "question_text": "Write solve(imgs) for a (6, H, W, C) batch: arrange the six images into a THREE-row × TWO-column grid (row-major), producing ((3·H), (2·W), C). Pattern: '(g1 g2) h w c -> (g1 h) (g2 w) c' with g1=3.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\n_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2\n\ndef solve():\n    # Write your solution here - define g1\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\n_base = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = np.concatenate([_base] * (-(-6 // _base.shape[0])))[:6]\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "_base_arr = np.load('/delta_numbers.npy')\n_arr_repeats = -(-6 // _base_arr.shape[0])\narr = np.concatenate([_base_arr] * _arr_repeats, axis=0)\narr = arr[:6]\narr = np.moveaxis(arr, 1, -1)[::-1].copy()\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.rearrange(arr[:6], '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
+          "setup_code": "import einops\n_base = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = np.concatenate([_base] * (-(-6 // _base.shape[0])))[:6]",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(6 * 2 * 3 * 1, dtype=np.uint8).reshape(6, 2, 3, 1)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(6 * 1 * 2 * 3, dtype=np.uint8) * 3).reshape(6, 1, 2, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(arr[:6], '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)",
+      "canonical_solution": "import numpy as np\nimport einops\n\n_base = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimgs = np.concatenate([_base] * (-(-6 // _base.shape[0])))[:6]\n\ndef solve(imgs):\n    return einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17890,21 +18099,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "You are given img, a 3D array of shape (channels, height, width) = (6, 150, 150) in channels-first layout where channels is even. Treat the channels axis as consecutive pairs of length 2, split it into two halves such that within every pair the first member goes into the first half and the second member goes into the second half, and promote that within-pair index to a new leading axis. Return a 4D array of shape (2, channels/2, height, width) = (2, 3, 150, 150).",
+      "question_text": "Write solve(img) for a (C, H, W) image whose C is EVEN: treat the channel axis as (p × two) pairs and split OUT the pair-member axis to the front — output (2, C/2, H, W) where result[0] holds the even-pair members. Pattern: '(p two) h w -> two p h w' with two=2.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)  # (6, 150, 150): channels R,R,G,G,B,B\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(4 * 2 * 3, dtype=np.uint8).reshape(4, 2, 3)",
+          "call": "solve(img)",
+          "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(6 * 2 * 2, dtype=np.uint8) * 2).reshape(6, 2, 2)",
+          "call": "solve(img)",
           "expected_expr": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(img, '(p two) h w -> two p h w', two=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.load('/delta_numbers.npy')\nimg = np.repeat(arr[5], 2, axis=0)\n\ndef solve(img):\n    return einops.rearrange(img, '(p two) h w -> two p h w', two=2)\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -17973,21 +18192,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For a batch of images with multiple channels, rearrange the spatial dimensions by grouping pixels into larger blocks, where the height is divided into segments of four and the width into segments of two, resulting in a new arrangement of channels and spatial dimensions.",
+      "question_text": "Write solve(x, h1, w1) for a (B, C, H, W) batch: space-to-depth — carve each spatial map into h1×w1 blocks and fold the block-position indices INTO the channel axis, output (B, h1·w1·C, H/h1, W/w1) with channel order (h1, w1, c). Pattern: 'b c (h h1) (w w1) -> b (h1 w1 c) h w'.",
       "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nh1 = 4\nw1 = 2\n\ndef solve(x, h1, w1):\n    # Write your solution here\n    return None\n\nprint(solve(x, h1, w1))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.load('/delta_numbers.npy')\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nb = 2",
-          "call": "solve()",
+          "setup_code": "import einops\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nh1 = 4\nw1 = 2",
+          "call": "solve(x, h1, w1)",
           "expected_expr": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=4, w1=2)"
+        },
+        {
+          "setup_code": "import einops\nx = np.arange(1 * 2 * 4 * 4, dtype=np.uint8).reshape(1, 2, 4, 4)\nh1, w1 = 2, 2",
+          "call": "solve(x, h1, w1)",
+          "expected_expr": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=2, w1=2)"
+        },
+        {
+          "setup_code": "import einops\nx = (np.arange(2 * 1 * 2 * 6, dtype=np.uint8) * 3).reshape(2, 1, 2, 6)\nh1, w1 = 1, 3",
+          "call": "solve(x, h1, w1)",
+          "expected_expr": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=1, w1=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=4, w1=2)",
+      "canonical_solution": "import numpy as np\nimport einops\n\nx = np.arange(2 * 12 * 8 * 8).reshape(2, 12, 8, 8)\nh1 = 4\nw1 = 2\n\ndef solve(x, h1, w1):\n    return einops.rearrange(x, 'b c (h h1) (w w1) -> b (h1 w1 c) h w', h1=h1, w1=w1)\n\nprint(solve(x, h1, w1))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -18154,21 +18383,31 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "For a batch of images with color channels, compute the grayscale version of each image by averaging the values across the color channels, resulting in a single channel output for each image while maintaining the height and width.",
+      "question_text": "Write solve(imgs) for a float (B, H, W, C) batch: grayscale each image by AVERAGING across the color channels, keeping a trailing singleton channel — output (B, H, W, 1). Pattern: einops.reduce 'b h w c -> b h w ()' with 'mean'.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2\n\ndef solve():\n    # Write your solution here\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    # Write your solution here\n    return None\n\nprint(solve(imgs))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nb = 2",
-          "call": "solve()",
-          "expected_expr": "einops.reduce(arr, 'b h w c -> b h w ()', 'mean')"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nimgs = arr",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.reduce(imgs, 'b h w c -> b h w ()', 'mean')"
+        },
+        {
+          "setup_code": "import einops\nimgs = np.arange(1 * 2 * 2 * 3, dtype=np.float32).reshape(1, 2, 2, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "imgs.mean(axis=-1, keepdims=True)"
+        },
+        {
+          "setup_code": "import einops\nimgs = (np.arange(2 * 2 * 3 * 3, dtype=np.float32) * 3).reshape(2, 2, 3, 3)",
+          "call": "solve(imgs)",
+          "expected_expr": "einops.reduce(imgs, 'b h w c -> b h w ()', 'mean')"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.reduce(arr, 'b h w c -> b h w ()', 'mean')",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy').astype(np.float32), 1, -1)\nimgs = arr\n\ndef solve(imgs):\n    return einops.reduce(imgs, 'b h w c -> b h w ()', 'mean')\n\nprint(solve(imgs))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -18237,21 +18476,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "From a batch of images in HWC format, extract non-overlapping patches of size 3 by 3, resulting in a new structure that includes the number of patches along with the color channels.",
+      "question_text": "Write solve(img_hwc) for an (H, W, C) image with H and W divisible by 3: extract all non-overlapping 3×3 patches into a ((H/3 · W/3), 3, 3, C) array, patches ordered row-major. Pattern: '(h p1) (w p2) c -> (h w) p1 p2 c' with p1=3, p2=3.",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_hwc = arr[0]  # (150, 150, 3) HWC digit\n\ndef solve():\n    # Write your solution here\n    return None\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_hwc = arr[0]\n\ndef solve(img_hwc):\n    # Write your solution here\n    return None\n\nprint(solve(img_hwc))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_hwc = arr[0]",
-          "call": "solve()",
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_hwc = arr[0]",
+          "call": "solve(img_hwc)",
+          "expected_expr": "einops.rearrange(img_hwc, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=3, p2=3)"
+        },
+        {
+          "setup_code": "import einops\nimg_hwc = np.arange(3 * 6 * 1, dtype=np.uint8).reshape(3, 6, 1)",
+          "call": "solve(img_hwc)",
+          "expected_expr": "einops.rearrange(img_hwc, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=3, p2=3)"
+        },
+        {
+          "setup_code": "import einops\nimg_hwc = (np.arange(6 * 3 * 2, dtype=np.uint8) * 2).reshape(6, 3, 2)",
+          "call": "solve(img_hwc)",
           "expected_expr": "einops.rearrange(img_hwc, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=3, p2=3)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "einops.rearrange(img_hwc, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=3, p2=3)",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg_hwc = arr[0]\n\ndef solve(img_hwc):\n    return einops.rearrange(img_hwc, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=3, p2=3)\n\nprint(solve(img_hwc))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true
@@ -18271,22 +18520,31 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For an image with height, width, and color channels, compute the maximum value for each column across all color channels and then subtract this maximum from the original image, maintaining the same dimensions.",
+      "question_text": "Write solve(img) for an (H, W, C) image: compute each COLUMN's per-channel maximum (reduce the height axis to a singleton: 'h w c -> () w c' with 'max') and subtract it from the image. Return img - mx. (uint8 wraparound on underflow is expected — same on both sides.)",
       "task_type": "image_transform",
       "language": "python",
       "primary_library": "einops",
       "function_name": "solve",
-      "starter_code": "import numpy as np\nimport einops\nfrom einops import einsum, rearrange, reduce, repeat\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve():\n    # Write your solution here - define mx\n    return None\n\nprint(solve())\n",
+      "starter_code": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve(img):\n    # Write your solution here\n    return None\n\nprint(solve(img))\n",
       "test_cases": [
         {
-          "setup_code": "arr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]",
-          "call": "solve()",
-          "expected_expr": "img - mx",
-          "expected_setup_code": "mx = einops.reduce(img, 'h w c -> () w c', 'max')"
+          "setup_code": "import einops\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]",
+          "call": "solve(img)",
+          "expected_expr": "img - einops.reduce(img, 'h w c -> () w c', 'max')"
+        },
+        {
+          "setup_code": "import einops\nimg = np.arange(3 * 2 * 2, dtype=np.uint8).reshape(3, 2, 2)",
+          "call": "solve(img)",
+          "expected_expr": "img - einops.reduce(img, 'h w c -> () w c', 'max')"
+        },
+        {
+          "setup_code": "import einops\nimg = (np.arange(2 * 3 * 3, dtype=np.uint8) * 5).reshape(2, 3, 3)",
+          "call": "solve(img)",
+          "expected_expr": "img - img.max(axis=0, keepdims=True)"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "mx = einops.reduce(img, 'h w c -> () w c', 'max'); img - mx",
+      "canonical_solution": "import numpy as np\nimport einops\n\narr = np.moveaxis(np.load('/delta_numbers.npy'), 1, -1)\nimg = arr[3]\n\ndef solve(img):\n    mx = einops.reduce(img, 'h w c -> () w c', 'max')\n    return img - mx\n\nprint(solve(img))\n",
       "expected_output": "",
       "expected_artifact_type": "image",
       "supports_visual_output": true

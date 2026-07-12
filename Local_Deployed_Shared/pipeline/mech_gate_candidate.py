@@ -134,6 +134,19 @@ def _values_equal(a, b) -> bool:
         return False
 
 
+def _preamble_ns(code_runner) -> dict:
+    """Fresh namespace seeded with the grading harness's CODE_PREAMBLE — the
+    REAL grading env (np.load '/delta_numbers.npy' redirect, einops shims).
+    Bare {'np': np} diverges from prod for visual/einops fixtures."""
+    import contextlib
+    import io
+
+    ns: dict = {}
+    with contextlib.redirect_stdout(io.StringIO()):
+        exec(code_runner.CODE_PREAMBLE, ns)
+    return ns
+
+
 def gate_candidate(candidate: dict, code_runner) -> list[str]:
     import numpy as np
 
@@ -182,7 +195,7 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
     try:
         import contextlib, io
         with contextlib.redirect_stdout(io.StringIO()):
-            exec(starter, {"np": np})
+            exec(starter, _preamble_ns(code_runner))
     except Exception as exc:
         failures.append(f"starter_contract: starter does not execute cleanly "
                         f"({type(exc).__name__}: {exc})")
@@ -233,7 +246,7 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
 
     expected_values = []
     for i, case in enumerate(cases):
-        ns: dict = {"np": np}
+        ns = _preamble_ns(code_runner)
         try:
             _seed()
             exec(case["setup_code"], ns)
@@ -244,8 +257,9 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
             value = eval(case["expected_expr"], ns)
         except Exception as exc:
             failures.append(
-                f"case_self_suff: case {i} does not run with only numpy preloaded "
-                f"({type(exc).__name__}: {exc}) — put ALL other imports inside setup_code")
+                f"case_self_suff: case {i} does not run in the harness-preamble "
+                f"namespace ({type(exc).__name__}: {exc}) — put non-preamble imports "
+                f"inside setup_code")
             continue
         if value is None:
             failures.append(f"case_self_suff: case {i} expected value is None")
