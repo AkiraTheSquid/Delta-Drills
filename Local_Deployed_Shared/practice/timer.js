@@ -173,6 +173,16 @@ const PracticeSession = (() => {
     _setPhase("grading", "Grading…");
   };
 
+  // Every advance path funnels through _loadNextPracticeQuestion; both
+  // countdowns must die there, or a Skip clicked near 00:00 leaves the old
+  // answer timer running and its expiry force-submits the skipped question.
+  const pauseForAdvance = () => {
+    if (!isActive()) return;
+    _stopTick();
+    _stopPoll();
+    _setPhase("loading", "Loading…");
+  };
+
   const resumeAnswerPhase = () => {
     if (!isActive() || state.phase !== "grading") return;
     _setPhase("answer", "Answering");
@@ -183,7 +193,10 @@ const PracticeSession = (() => {
   };
 
   const beginReviewPhase = () => {
-    if (!isActive()) return;
+    // Only a grade we are actually waiting on may start review — a stale
+    // response landing after End session → Start session must not hijack the
+    // new session's first question.
+    if (!isActive() || state.phase !== "grading") return;
     _setPhase("review", "Reviewing");
     remaining = state.reviewSecs;
     _tick(_forceAdvance);
@@ -204,7 +217,9 @@ const PracticeSession = (() => {
         ? `Session ended early — ${served} of ${total} questions.`
         : reason === "error"
           ? "Could not load a question — check the connection and start again."
-          : `Session complete — ${total} questions done. Set up the next block when you're ready.`;
+          : reason === "placement"
+            ? "Placement diagnostic started — begin a session to answer the probes."
+            : `Session complete — ${total} question${total === 1 ? "" : "s"} done. Set up the next block when you're ready.`;
     sessionSummary.classList.remove("hidden");
   };
 
@@ -226,6 +241,7 @@ const PracticeSession = (() => {
     start,
     onQuestionRendered,
     pauseForGrading,
+    pauseForAdvance,
     resumeAnswerPhase,
     beginReviewPhase,
     shouldFinishInsteadOfAdvance,

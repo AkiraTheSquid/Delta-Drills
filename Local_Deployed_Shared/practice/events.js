@@ -11,11 +11,17 @@ practiceSubmitBtn.addEventListener("click", async () => {
   try {
     result = await PracticeAPI.submitAnswer(q.question_id, userCode);
   } catch (err) {
+    if (PracticeAPI.currentQuestion !== q) return;
     outputArea.textContent = "Submit failed: " + err.message;
     practiceSubmitBtn.disabled = false;
     PracticeSession.resumeAnswerPhase();
     return;
   }
+
+  // The question can change while grading is in flight (Skip, End session →
+  // new session). A stale grade must not repaint the current question or
+  // start its review countdown.
+  if (PracticeAPI.currentQuestion !== q) return;
 
   const solCode = q.solution_code || result.solution_code || "";
   const actualOutput = result.actual_output || "";
@@ -189,6 +195,10 @@ const _loadNextPracticeQuestion = async () => {
     PracticeSession.finish("complete");
     return;
   }
+  // Kill both countdowns while the next question loads — otherwise a Skip
+  // near 00:00 leaves the old answer timer live and it force-submits the
+  // question being skipped.
+  PracticeSession.pauseForAdvance();
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
   practiceProgress.currentTargetDifficulty = null;
@@ -285,7 +295,15 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
           "Placement diagnostic started — a few adaptive questions to locate your level.",
         );
       }
-      await _loadNextPracticeQuestion();
+      // The diagnostic is its own flow with its own (backend-driven) length —
+      // don't let the current session's quota gate swallow it ("Session
+      // complete" while the backend diagnostic stays active). End the block
+      // and let the learner start a fresh one; its questions ARE the probes.
+      if (PracticeSession.isActive()) {
+        PracticeSession.finish("placement");
+      } else {
+        await _loadNextPracticeQuestion();
+      }
     } catch (err) {
       outputArea.textContent = "Could not start the placement diagnostic: " + err.message;
       placementStartBtn.disabled = false;

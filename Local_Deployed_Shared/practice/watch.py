@@ -123,6 +123,34 @@ def check_public_api():
     assert "ArenaUnlock" in events_js, "events.js no longer routes through ArenaUnlock.tryShow"
     assert "_loadNextPracticeQuestion" in events_js, "events.js missing _loadNextPracticeQuestion helper"
 
+    # Rigid-session lifecycle (timer.js PracticeSession) — every hook must stay
+    # wired or a timer keeps running across a question boundary (the Skip-at-
+    # 00:00 force-submit race) or a stale grade hijacks a new session.
+    timer_js = _read(os.path.join(HERE, "timer.js"))
+    for method in (
+        "onQuestionRendered", "pauseForGrading", "pauseForAdvance",
+        "resumeAnswerPhase", "beginReviewPhase", "shouldFinishInsteadOfAdvance",
+    ):
+        assert method in timer_js, f"timer.js PracticeSession lost method: {method}"
+    assert 'state.phase !== "grading"' in timer_js, (
+        "timer.js beginReviewPhase lost its grading-phase guard — a stale grade "
+        "after End session → Start session hijacks the new session's first question"
+    )
+    assert "PracticeSession.onQuestionRendered" in ui_js, (
+        "ui.js renderQuestion no longer starts the session answer countdown"
+    )
+    for hook in (
+        "PracticeSession.pauseForGrading",
+        "PracticeSession.pauseForAdvance",
+        "PracticeSession.beginReviewPhase",
+        "PracticeSession.shouldFinishInsteadOfAdvance",
+    ):
+        assert hook in events_js, f"events.js lost session hook: {hook}"
+    assert "PracticeAPI.currentQuestion !== q" in events_js, (
+        "events.js submit handler lost the stale-grade guard — a grade landing "
+        "after Skip/End-session repaints the wrong question"
+    )
+
     questions_path = os.path.join(SHARED, "questions_structured.json")
     data = json.loads(_read(questions_path))
     assert isinstance(data, list) and data, "questions_structured.json is empty or not a list"
