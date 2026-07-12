@@ -135,6 +135,14 @@ info "Auditing question bank (gameability gate)..."
 "$REPO_THIS_DIR/backend/.venv/bin/python" \
   "$REPO_SHARED_DIR/pipeline/audit_question_bank.py" --gate
 
+# --- Step 2c: Grading-harness regression tests ---
+# Torch tensor equality, rng seeding across setup re-exec, mech-gate
+# non-degeneracy on tensors. See pipeline/test_torch_grading.py (codex
+# cross-review 2026-07-11). Blocks the deploy on any regression.
+info "Running grading-harness regression tests..."
+"$REPO_THIS_DIR/backend/.venv/bin/python" \
+  "$REPO_SHARED_DIR/pipeline/test_torch_grading.py"
+
 auto_commit_if_dirty "$REPO_DIR" "chore: update deploy artifacts"
 
 # --- Step 3: Push main to origin ---
