@@ -1,0 +1,136 @@
+/* Practice tab — rigid session: setup panel + per-question countdown status.
+   The old free-running timed-mode toggle is gone on purpose: the learner
+   commits to question count + answer/review time up front, and the timers
+   cannot be paused or re-negotiated mid-session. */
+
+/* While no session is running, only the setup panel is visible; once a
+   session starts, the setup panel yields to the question split. */
+#page-practice.session-idle .practice-split {
+  display: none;
+}
+
+#page-practice:not(.session-idle) .session-setup {
+  display: none;
+}
+
+/* Setup panel (pre-session) */
+.session-setup {
+  max-width: 560px;
+  margin: 48px auto;
+  padding: 28px 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.session-setup-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.session-setup-note {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.session-setup-fields {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.session-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.session-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.session-start-btn {
+  width: 100%;
+}
+
+.session-summary {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.session-summary.hidden {
+  display: none;
+}
+
+/* Timer / numeric inputs (shared by all three setup fields) */
+.timer-input {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  letter-spacing: 1px;
+  width: 92px;
+  text-align: center;
+}
+
+/* In-session status row (replaces the old timed-mode row) */
+.session-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.session-status-row.hidden {
+  display: none;
+}
+
+.session-progress,
+.session-phase {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.session-status-row.session-status--review .session-phase {
+  color: #4ade80;
+}
+
+.session-countdown {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  letter-spacing: 1px;
+}
+
+.session-countdown--low {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+.session-end-btn {
+  font-size: 12px;
+  padding: 6px 10px;
+}

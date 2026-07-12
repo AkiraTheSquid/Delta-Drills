@@ -1,47 +1,47 @@
-<!-- modulario:template -->
-# practice
+# styles/practice
 
 ## Purpose
-- One or two sentences on what this folder is responsible for.
-- Describe the business/domain concern, not the technical details.
+- Stylesheets for the Practice tab (the adaptive-queue question page), split out of the former monolithic `practice.css` (972 LOC) into per-concern files.
 
 ## Owns
-- List the main responsibilities this folder **does own**.
-- Each item should be something that changes when this folder changes.
+- All CSS for the practice page shell, session setup/status, question display, feedback/rating UI, code editor/output, and the tab's smaller extras.
 
 ## Does NOT own
-- List responsibilities that live elsewhere to prevent scope creep.
-- Link to the other folder/module if relevant.
+- Progress-bar styles (`../../practice/bars.css`), ARENA unlock interstitial styles (`../../practice/arena-unlock.css`, `arena-unlock-timer.css`), Targeted Practice styles (`../../targeted-practice/targeted-practice.css`).
+- Global utilities — `.hidden`, buttons, variables live in `../components.css`, `../base.css`, `../variables.css`.
 
 ## Key Files
-- `example.js`: short description of what this file is and when it runs.
+- `layout.css`: page container, left/right split panels, responsive stacking under 900px.
+- `timer.css`: rigid-session UI — the pre-session setup panel (question count, answer/review time), the in-session status row (progress, phase, strict countdown), and the `session-idle` page-state rules.
+- `question.css`: question number/text, imported-helpers pills + detail, target-image visual, meta chips, cold-start badge, prose/code-block split.
+- `feedback.css`: submit/skip/don't-know row, result badge, felt-difficulty rating buttons, problem quality flags, missed-fact row, failed-tests block.
+- `editor.css`: code editor, Run button, output area + output visual, solution section, AI explanation.
+- `misc.css`: hint/answer aids, practice-mode intro, self-report row, placement entry button, torch Colab notice, mode-demotion notice, topbar auth indicator.
 
 ## Data & External Dependencies
-- What data models or types this area works with.
-- What external services or libraries it directly touches.
-- Any important shared modules it depends on.
+- CSS custom properties from `../variables.css` (`--border`, `--surface`, `--muted`, `--accent`, …).
+- Markup lives in `../../index.html` (`#page-practice`); class toggling driven by `../../practice/*.js`.
 
 ## How It Works (Flow)
-1. Brief step-by-step of the main flow.
-2. Optional secondary flows if they are important.
+1. `index.html` links all six files (after `../components.css`, so same-specificity practice rules win).
+2. `#page-practice.session-idle` (set in markup, toggled by `practice/timer.js`) shows the setup panel and hides `.practice-split`; starting a session flips it.
 
 ## Invariants & Constraints
-- Rules that **must** remain true.
-- Performance or security constraints.
-- "Never do X" type rules that are easy to forget.
+- Load order: these files must come AFTER `styles/components.css` — several rules rely on overriding it by order.
+- Any rule that sets `display` on an element JS toggles with `.hidden` must re-assert `.selector.hidden { display: none; }` when its selector outweighs the global `.hidden` class (see `#practice-submit-area.hidden` in `feedback.css`).
+- Keep selectors class-based; ID selectors beat `.hidden` and have caused real hide-failures.
 
 ## Extension Points
-- How to add a new feature in this area.
-- What file to start from when extending behavior.
+- New practice-tab UI: add to the file matching its concern (or a new file + `<link>` in `index.html` with a `?v=` param). Bump the file's `?v=` on every edit — stale-cache trap.
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
-- **Short name of issue** — `ACTIVE` or `RESOLVED`
-  - When it happens: one line about the situation/context.
-  - Symptom: what you see break.
-  - Root cause: the underlying mistake or assumption.
-  - Prevention/fix: the rule, pattern, or helper to use so it doesn't come back.
-  - Status: `ACTIVE` = still a risk, `RESOLVED` = was an issue, now fixed (keep for history).
+- **ID selector defeats `.hidden`** — `RESOLVED`
+  - When it happens: a rule like `#practice-submit-area { display: flex }` styles an element JS hides via `classList.add("hidden")`.
+  - Symptom: element never disappears.
+  - Root cause: ID specificity (1,0,0) beats the global `.hidden` class (0,1,0).
+  - Prevention/fix: re-assert `#the-id.hidden { display: none; }` next to the rule, or use a class selector.
+  - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
-- 2026-04-27: Initial doc created.
+- 2026-07-12: Folder created — `practice.css` split into layout/timer/question/feedback/editor/misc. `timer.css` rewritten from the old timed-mode toggle to the rigid session setup/status UI. Added `#practice-submit-area.hidden` specificity fix.

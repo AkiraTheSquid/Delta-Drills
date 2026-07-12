@@ -242,10 +242,9 @@ function renderQuestion(q, count) {
   aiExplanationSection.classList.add("hidden");
   aiExplanationText.textContent = "";
 
-  // Reset timer for next question if timed mode is on
-  if (timedModeToggle.checked) {
-    startTimer();
-  }
+  // Rigid session: every rendered question starts a fresh strict answer
+  // countdown (no-op while no session is running).
+  PracticeSession.onQuestionRendered();
 
   const pending = practiceProgress.pendingFeedback;
   if (pending) {

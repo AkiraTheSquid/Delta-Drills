@@ -36,8 +36,8 @@ def _status(user_state) -> DiagnosticStatusResponse:
         completed_at=d["completed_at"],
         declined=d["declined"],
         probes_done=len(d["probes"]),
-        budget=diagnostic.MAX_PROBES,
-        min_probes=diagnostic.MIN_PROBES,
+        budget=diagnostic.effective_budget(user_state),
+        min_probes=diagnostic.effective_min_probes(user_state),
         areas=diagnostic.area_estimates(user_state),
         atoms_seeded=d.get("atoms_seeded"),
     )

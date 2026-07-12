@@ -1,0 +1,62 @@
+/* Practice tab — page shell: container, split panels, responsive. */
+/* ================================================================
+   PRACTICE TAB
+   ================================================================ */
+
+#page-practice {
+  padding: 0;
+}
+
+.practice-container {
+  height: calc(100vh - 56px - 40px);
+  overflow: hidden;
+}
+
+.practice-split {
+  display: flex;
+  height: 100%;
+}
+
+/* Left Panel */
+.practice-left {
+  flex: 1;
+  padding: 28px 32px 32px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Right Panel */
+.practice-right {
+  flex: 1;
+  padding: 28px 32px 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+/* ================================================================
+   RESPONSIVE — Practice
+   ================================================================ */
+
+@media (max-width: 900px) {
+  .practice-split {
+    flex-direction: column;
+  }
+
+  .practice-left {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 50vh;
+  }
+
+  .practice-right {
+    max-height: 50vh;
+  }
+
+  .practice-container {
+    height: auto;
+    overflow: visible;
+  }
+}

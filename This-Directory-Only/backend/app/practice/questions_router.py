@@ -47,6 +47,12 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
     probe (max-information item across topic areas) instead of the normal
     weakest-subtopic flow. Returns None when no informative probe remains —
     the diagnostic finishes (seeding BKT) and the caller falls through."""
+    if diagnostic.should_finish(user_state):
+        # Budget already met/exceeded (e.g. history credit shrank it between
+        # requests) — finish now rather than serving probe N+1 "of ≤N".
+        diagnostic.finish(user_state)
+        save_user_state(user_id)
+        return None
     question = diagnostic.select_probe(user_state)
     if question is None:
         diagnostic.finish(user_state)
@@ -88,7 +94,7 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
         problem_notebook_path=question.problem_notebook_path,
         diagnostic_active=True,
         diagnostic_probe_index=len(diagnostic.get_diag(user_state)["probes"]) + 1,
-        diagnostic_budget=diagnostic.MAX_PROBES,
+        diagnostic_budget=diagnostic.effective_budget(user_state),
         diagnostic_area=question.topic,
     )
 

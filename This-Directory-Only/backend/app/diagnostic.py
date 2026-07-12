@@ -58,6 +58,12 @@ CROSS_AREA_CAP = 3.0         # …but their TOTAL influence caps at ~3 probes'
                              # torch novice) isn't averaged flat by volume
 MIN_PROBES = 6
 MAX_PROBES = 14              # fatigue budget (ALEKS: 30 for a whole course)
+HISTORY_WEIGHT = 0.6         # past graded practice attempts enter the posterior
+                             # as discounted pseudo-probes: real evidence, but
+                             # stale (decay) and gathered under practice
+                             # conditions (hints, retries) rather than probes
+HISTORY_PER_SUBTOPIC = 20    # most recent N per subtopic — bounds posterior
+                             # cost and keeps ancient attempts from dominating
 SD_STOP = 11.0               # stop early when every area's posterior SD ≤ this
 INFORMATIVE_BAND = (0.25, 0.75)  # a probe is informative if P̂(correct) in band
 SEED_MASTERY_FLOOR = 0.02
@@ -169,19 +175,67 @@ def _log_prior(theta: float, level: Optional[str]) -> float:
     return -0.5 * z * z
 
 
+def _history_evidence(user_state: UserPracticeState) -> List[dict]:
+    """Past graded practice attempts as probe-shaped evidence records.
+
+    Existing users arrive at the diagnostic with real data — the posterior
+    starts from it (at HISTORY_WEIGHT) instead of the bare self-report prior,
+    so areas the learner has already practiced need few or no probes and the
+    placement finishes faster. Diagnostic submits never reach subtopic
+    history (questions_router routes them to record_probe instead of
+    record_attempt), so these can't double-count live or past probes.
+
+    Each record carries a recency weight "w" ∈ (0, 1]: evidence fades with the
+    same half-life as BKT forgetting (bkt_mastery.HALF_LIFE_DAYS), so a stack
+    of months-old wins can't resurrect knowledge the decay model has already
+    written off — neither in the posterior nor in the budget credit."""
+    now = datetime.now(timezone.utc)
+    out = []
+    for sub in user_state.subtopic_states.values():
+        topic = get_topic_for_subtopic(sub.subtopic) or "Other"
+        for a in sub.history[-HISTORY_PER_SUBTOPIC:]:
+            w = 1.0
+            try:
+                age_days = (now - datetime.fromisoformat(a.timestamp)).total_seconds() / 86400.0
+                if age_days > 0:
+                    w = 0.5 ** (age_days / bkt_mastery.HALF_LIFE_DAYS)
+            except (TypeError, ValueError):
+                pass  # unparseable/missing ts: keep full weight
+            if w < 0.05:
+                continue  # ancient — no meaningful evidence left
+            out.append({
+                "topic": topic,
+                "difficulty": float(a.difficulty_score),
+                "result": "correct" if a.correct else "incorrect",
+                "w": w,
+            })
+    return out
+
+
 def area_posterior(user_state: UserPracticeState, area: str) -> List[float]:
     """Normalized posterior over GRID for one topic area, partially pooled:
-    own-area probes at full weight, other areas' at CROSS_AREA_WEIGHT."""
+    own-area probes at full weight, other areas' at CROSS_AREA_WEIGHT; past
+    practice attempts likewise but discounted by HISTORY_WEIGHT."""
     d = get_diag(user_state)
     level = user_state.self_reported_level
+    history = _history_evidence(user_state)
     n_other = sum(1 for p in d["probes"] if p.get("topic") != area)
     w_other = min(CROSS_AREA_WEIGHT, CROSS_AREA_CAP / n_other) if n_other else 0.0
+    sum_w_other_hist = sum(h["w"] for h in history if h["topic"] != area)
+    w_other_hist = (
+        min(CROSS_AREA_WEIGHT, CROSS_AREA_CAP / sum_w_other_hist) * HISTORY_WEIGHT
+        if sum_w_other_hist
+        else 0.0
+    )
     logs = []
     for theta in GRID:
         lp = _log_prior(theta, level)
         for probe in d["probes"]:
             w = 1.0 if probe.get("topic") == area else w_other
             lp += w * _log_lik(theta, probe)
+        for h in history:
+            w = (HISTORY_WEIGHT if h["topic"] == area else w_other_hist) * h["w"]
+            lp += w * _log_lik(theta, h)
         logs.append(lp)
     m = max(logs)
     weights = [math.exp(v - m) for v in logs]
@@ -212,6 +266,27 @@ def _areas() -> List[str]:
 
 def _probed_ids(diag: dict) -> set:
     return {p["question_id"] for p in diag["probes"]}
+
+
+def effective_budget(user_state: UserPracticeState) -> int:
+    """Probe budget after crediting existing practice history.
+
+    Each past graded attempt is worth HISTORY_WEIGHT of a probe (times its
+    recency weight), so a returning learner's placement is shorter in
+    proportion to the data they already have — probe selection still targets
+    the widest-SD (least-known) areas first, so the remaining budget goes
+    where history says least.
+
+    The floor guarantees coverage: history piled in ONE area must not starve
+    the probes needed for areas with no evidence at all (an area "has
+    evidence" when its decayed history weight sums to ≥ 1 attempt's worth)."""
+    history = _history_evidence(user_state)
+    credit = int(HISTORY_WEIGHT * sum(h["w"] for h in history))
+    w_by_area: Dict[str, float] = {}
+    for h in history:
+        w_by_area[h["topic"]] = w_by_area.get(h["topic"], 0.0) + h["w"]
+    uncovered = sum(1 for a in _areas() if w_by_area.get(a, 0.0) < 1.0)
+    return max(MIN_PROBES, uncovered, MAX_PROBES - credit)
 
 
 def select_probe(user_state: UserPracticeState):
@@ -297,12 +372,28 @@ def override_probe(user_state: UserPracticeState, question_id: int, correct: boo
     return True
 
 
+def effective_min_probes(user_state: UserPracticeState) -> int:
+    """MIN_PROBES guards against a fluky early stop from the bare prior; a
+    learner with real practice history already has evidence in the posterior,
+    so don't force filler probes on them — 2 live ones suffice. Requires at
+    least one fresh attempt's worth of decayed evidence."""
+    total_w = sum(h["w"] for h in _history_evidence(user_state))
+    return 2 if total_w >= 1.0 else MIN_PROBES
+
+
+def should_finish(user_state: UserPracticeState) -> bool:
+    """Public stop-check for serving paths. The budget can shrink between
+    requests (history credit landing in a deploy mid-diagnostic), so callers
+    must re-check BEFORE selecting a probe, not only after recording one."""
+    return _should_stop(user_state)
+
+
 def _should_stop(user_state: UserPracticeState) -> bool:
     diag = get_diag(user_state)
     n = len(diag["probes"])
-    if n >= MAX_PROBES:
+    if n >= effective_budget(user_state):
         return True
-    if n < MIN_PROBES:
+    if n < effective_min_probes(user_state):
         return False
     for area in _areas():
         _, sd = posterior_summary(area_posterior(user_state, area))
@@ -313,8 +404,10 @@ def _should_stop(user_state: UserPracticeState) -> bool:
 
 # --- finish: seed BKT ----------------------------------------------------------------------
 
-def area_estimates(user_state: UserPracticeState) -> List[dict]:
-    """Per-area (θ̂, sd, probes) snapshot for the UI / finish summary."""
+def _compute_area_estimates(user_state: UserPracticeState) -> List[dict]:
+    """Fresh per-area (θ̂, sd, probes) from the current posterior. finish()
+    must use THIS (not area_estimates) so an /override of the finishing probe
+    re-seeds from the corrected posterior, not the frozen snapshot."""
     diag = get_diag(user_state)
     out = []
     for area in _areas():
@@ -326,6 +419,18 @@ def area_estimates(user_state: UserPracticeState) -> List[dict]:
             "probes": sum(1 for p in diag["probes"] if p["topic"] == area),
         })
     return out
+
+
+def area_estimates(user_state: UserPracticeState) -> List[dict]:
+    """Per-area (θ̂, sd, probes) snapshot for the UI / finish summary.
+
+    A COMPLETED diagnostic returns the estimates frozen at finish() — later
+    practice history flows into area_posterior, and recomputing would make a
+    finished placement's reported result drift retroactively."""
+    diag = get_diag(user_state)
+    if diag["completed_at"] and diag.get("estimates"):
+        return diag["estimates"]
+    return _compute_area_estimates(user_state)
 
 
 def _mastery_from_theta(theta: float) -> float:
@@ -343,7 +448,7 @@ def finish(user_state: UserPracticeState) -> dict:
     bombs placement is corrected downward too."""
     diag = get_diag(user_state)
     now = datetime.now(timezone.utc)
-    estimates = area_estimates(user_state)
+    estimates = _compute_area_estimates(user_state)
     theta_by_area = {e["topic"]: e["theta"] for e in estimates}
 
     params = bkt_mastery.params_for_level(user_state.self_reported_level)
