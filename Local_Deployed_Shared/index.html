@@ -20,7 +20,12 @@
   <link rel="stylesheet" href="styles/courses/modal.css?v=1" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css" />
-  <link rel="stylesheet" href="practice.css?v=19" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/timer.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/editor.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=1" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -541,8 +546,35 @@
     </div>
   </main>
 
-  <main class="page hidden" id="page-practice">
+  <main class="page hidden session-idle" id="page-practice">
     <div class="practice-container">
+      <!-- Rigid session setup — the learner commits to a block (question
+           count + strict answer/review time per question) BEFORE any
+           question is shown. practice/timer.js owns the lifecycle. -->
+      <div class="session-setup" id="practice-session-setup">
+        <div class="session-setup-title">Set up your session</div>
+        <p class="session-setup-note">
+          Decide the block before you start. Once running, the timers are strict:
+          when answer time runs out the question auto-submits, and when review
+          time runs out the next question loads. No pausing.
+        </p>
+        <div class="session-setup-fields">
+          <label class="session-field">
+            <span class="session-field-label">Questions</span>
+            <input class="timer-input" id="session-question-count" type="number" min="1" max="50" step="1" value="10" aria-label="Number of questions" />
+          </label>
+          <label class="session-field">
+            <span class="session-field-label">Answer time / question</span>
+            <input class="timer-input" id="session-answer-time" type="text" inputmode="numeric" value="05:00" aria-label="Answer time per question (mm:ss)" />
+          </label>
+          <label class="session-field">
+            <span class="session-field-label">Review time / question</span>
+            <input class="timer-input" id="session-review-time" type="text" inputmode="numeric" value="02:00" aria-label="Review time per question (mm:ss)" />
+          </label>
+        </div>
+        <button class="primary session-start-btn" id="session-start-btn" type="button">Start session</button>
+        <div class="session-summary hidden" id="session-summary"></div>
+      </div>
       <div class="practice-split">
         <!-- Left Panel: Questions -->
         <div class="practice-left">
@@ -562,27 +594,15 @@
               <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
             </div>
             <span class="self-report-note hidden" id="self-report-note"></span>
-            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" title="~6-14 adaptive questions that locate your level across all topics and seed the practice queue — answers here re-place you, they don't count against mastery you've already earned.">Take placement diagnostic</button>
+            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" title="A few adaptive questions that locate your level across all topics and seed the practice queue. Your past attempts already count as evidence, so it's shorter where you've practiced — and answers here never lower mastery you've already earned.">Take placement diagnostic</button>
           </div>
-          <!-- Timed Mode Toggle -->
-          <div class="timed-mode-row">
-            <div class="timed-mode-control">
-              <label class="timed-mode-label">Timed Mode</label>
-              <label class="toggle-switch">
-                <input type="checkbox" id="timed-mode-toggle" checked />
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            <div class="timer-controls" id="timer-controls">
-              <input
-                class="timer-input"
-                id="timer-input"
-                type="text"
-                inputmode="numeric"
-                value="05:00"
-                aria-label="Timer duration"
-              />
-            </div>
+          <!-- In-session status: progress, phase (Answering/Reviewing) and
+               the strict countdown. No pause control on purpose. -->
+          <div class="session-status-row hidden" id="session-status-row">
+            <span class="session-progress" id="session-progress">0 / 0</span>
+            <span class="session-phase" id="session-phase">Answering</span>
+            <span class="session-countdown" id="session-countdown">05:00</span>
+            <button class="ghost session-end-btn" id="session-end-btn" type="button" title="End the session early — recorded answers are kept.">End session</button>
             <div class="question-meta-top hidden" id="question-meta-top">
               <span class="subtopic-label" id="subtopic-label"></span>
               <span class="difficulty-label" id="difficulty-label"></span>
@@ -799,13 +819,13 @@ np.random.seed(0)
   <script src="practice/engine.js?v=8"></script>
   <script src="practice/adaptive.js?v=10"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=13"></script>
+  <script src="practice/dom.js?v=14"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
-  <script src="practice/ui.js?v=19"></script>
+  <script src="practice/ui.js?v=20"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=14"></script>
-  <script src="practice/timer.js?v=6"></script>
+  <script src="practice/timer.js?v=7"></script>
   <script src="practice/runner.js?v=11"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
@@ -813,7 +833,7 @@ np.random.seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=17"></script>
+  <script src="practice/events.js?v=18"></script>
   <script src="practice/init.js?v=13"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>

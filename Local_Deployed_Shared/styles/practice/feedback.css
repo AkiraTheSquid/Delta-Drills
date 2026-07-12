@@ -1,0 +1,224 @@
+/* Practice tab — submit/skip, result badge, difficulty rating, problem flags, missed-fact. */
+/* Submit Button */
+.practice-submit-btn {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 0;
+}
+
+/* Result Badge */
+.result-badge {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 10px 0;
+  margin-bottom: 16px;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.result-badge.correct {
+  color: #4ade80;
+}
+
+.result-badge.incorrect {
+  color: #f87171;
+}
+
+.result-badge.checking {
+  color: #fbbf24;
+}
+
+/* Hide feedback controls while the AI judge is running */
+#practice-feedback-area.checking .feedback-prompt,
+#practice-feedback-area.checking .feedback-buttons {
+  display: none;
+}
+
+.override-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.override-btn {
+  align-self: flex-start;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Feedback Prompt */
+.feedback-prompt {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* Feedback Buttons */
+.feedback-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.feedback-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10px 12px;
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.feedback-btn:hover {
+  background: rgba(227, 33, 44, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.next-problem-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+/* Per-problem quality feedback row (content flags) */
+.problem-feedback-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 20px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.problem-feedback-label {
+  font-size: 12px;
+  color: var(--muted, #888);
+  margin-right: 2px;
+}
+
+.problem-flag-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.problem-flag-btn:hover {
+  background: rgba(227, 33, 44, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.problem-flag-btn.flagged {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.problem-feedback-note {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--input-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: inherit;
+}
+
+.problem-feedback-status {
+  font-size: 12px;
+  color: var(--accent);
+}
+/* Skip sits next to Submit; ghost weight so Submit stays primary. */
+#practice-submit-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+/* The ID selector above outweighs the global `.hidden` class — re-assert it
+   (same pattern as targeted-practice.css) or the row can never hide. */
+#practice-submit-area.hidden { display: none; }
+.practice-skip-btn { white-space: nowrap; }
+
+/* Placement-only "I don't know yet" — amber accent so it reads as a real,
+   sanctioned diagnostic answer rather than a bail-out. */
+.practice-dontknow-btn {
+  white-space: nowrap;
+  border-color: rgba(245, 185, 66, 0.55);
+  color: #e8b64c;
+}
+.practice-dontknow-btn:hover { border-color: #e8b64c; }
+
+/* Difficulty rating: helper line + a visually-marked default button. */
+.feedback-help {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted, #9aa3b2);
+  margin: 2px 0 8px;
+}
+.feedback-btn--default {
+  border-color: var(--accent, #5b8cff);
+  box-shadow: inset 0 0 0 1px var(--accent, #5b8cff);
+}
+/* Failed-test-case breakdown under the Incorrect badge. */
+.failed-tests-block {
+  background: rgba(227, 33, 44, 0.06);
+  border: 1px solid rgba(227, 33, 44, 0.35);
+  border-radius: 6px;
+  margin: 10px 0;
+  padding: 8px 12px;
+}
+.failed-tests-title {
+  color: var(--accent, #e3212c);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.failed-tests-body {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Mode-demotion banner — expired sign-in / demo-pool fallback. Must be
+   impossible to miss; a console.warn is not a notice. */
+.practice-mode-notice {
+  background: rgba(227, 33, 44, 0.12);
+  border: 1px solid var(--accent, #e3212c);
+  border-radius: 6px;
+  color: var(--accent, #e3212c);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+}
+
+/* Instant click acknowledgment while the rating posts (slow-network case). */
+.feedback-btn--pressed {
+  background: rgba(91, 140, 255, 0.18);
+  border-color: var(--accent, #5b8cff);
+  color: var(--accent, #5b8cff);
+}
+.feedback-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.feedback-btn--pressed:disabled {
+  opacity: 1;
+}
+
+/* "I missed one concrete thing" — separate from the difficulty rating. */
+.missed-fact-row { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.missed-fact-btn { font-size: 12px; }
+.missed-fact-btn.flagged { border-color: var(--accent, #5b8cff); }
+.missed-fact-status { font-size: 12px; color: var(--accent, #5b8cff); }

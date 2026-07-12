@@ -5,7 +5,7 @@
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   const userCode = codeEditor.value;
-  stopTimer();
+  PracticeSession.pauseForGrading();
   practiceSubmitBtn.disabled = true;
   let result;
   try {
@@ -13,6 +13,7 @@ practiceSubmitBtn.addEventListener("click", async () => {
   } catch (err) {
     outputArea.textContent = "Submit failed: " + err.message;
     practiceSubmitBtn.disabled = false;
+    PracticeSession.resumeAnswerPhase();
     return;
   }
 
@@ -29,7 +30,8 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
-  resetTimerToInput();
+  // Grade landed — the strict review countdown starts now.
+  PracticeSession.beginReviewPhase();
 
   // Placement probe: the backend already recorded it at /submit — there is no
   // pending attempt and no felt-difficulty step. Go straight to Next.
@@ -180,6 +182,13 @@ const _resetProblemFeedbackRow = () => {
 };
 
 const _loadNextPracticeQuestion = async () => {
+  // Session quota reached — every advance path (Next, Skip, torch self-rate,
+  // "I don't know yet", forced advance) funnels through here, so this is the
+  // single place the session can end.
+  if (PracticeSession.shouldFinishInsteadOfAdvance()) {
+    PracticeSession.finish("complete");
+    return;
+  }
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
   practiceProgress.currentTargetDifficulty = null;

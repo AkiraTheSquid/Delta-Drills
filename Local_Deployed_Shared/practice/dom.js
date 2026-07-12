@@ -2,9 +2,18 @@
    PRACTICE DOM — element references
    ================================================================ */
 
-const timedModeToggle = document.getElementById("timed-mode-toggle");
-const timerControls = document.getElementById("timer-controls");
-const timerInput = document.getElementById("timer-input");
+// Rigid-session controls (setup panel + in-session status row; timer.js)
+const sessionSetupPanel = document.getElementById("practice-session-setup");
+const sessionQuestionCountInput = document.getElementById("session-question-count");
+const sessionAnswerTimeInput = document.getElementById("session-answer-time");
+const sessionReviewTimeInput = document.getElementById("session-review-time");
+const sessionStartBtn = document.getElementById("session-start-btn");
+const sessionSummary = document.getElementById("session-summary");
+const sessionStatusRow = document.getElementById("session-status-row");
+const sessionProgressLabel = document.getElementById("session-progress");
+const sessionPhaseLabel = document.getElementById("session-phase");
+const sessionCountdown = document.getElementById("session-countdown");
+const sessionEndBtn = document.getElementById("session-end-btn");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");
