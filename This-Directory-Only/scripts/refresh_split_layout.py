@@ -26,6 +26,7 @@ ALLOWED_ROOT_NAMES = {
     "docs",                  # architecture / model-evidence docs (dev-only). Added 2026-05-31.
     "scripts",               # dev-only build tooling (solution-Colab authoring/validation). Added 2026-05-31.
     ".claude",               # Claude Code per-project session state
+    ".directory",            # KDE Dolphin folder-icon metadata (dev-only). Added 2026-07-18.
     "CLAUDE.md",             # Claude Code project instructions (graphify). Added 2026-07-11.
     "graphify-out",          # graphify knowledge graph output (dev-only)
 }
