@@ -1,0 +1,163 @@
+---
+kc: numpy.dot-matmul-patterns
+title: Dot products and matrix-multiply patterns
+supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rules]
+new_syntax: []
+faded: [37, 144]
+guided: [5]
+independent: [121, 141]
+---
+
+## Concept
+
+The **dot product** of two equal-length vectors — multiply corresponding
+entries, add them up — is the atom that all of linear algebra's products are
+built from. NumPy spells it three interchangeable ways:
+
+```python no-run
+np.dot(a, b)      ==  a @ b  ==  (a * b).sum()
+```
+
+The third spelling is the important one conceptually: *dot = elementwise
+multiply + reduction.* Every fancier product is this atom applied
+systematically:
+
+- **Matrix @ vector** (`z @ v`, shapes (n, m) @ (m,)): one dot per row of z —
+  "each row dotted with v" in a single call. Result (n,).
+- **Matrix @ matrix**: one dot per (row, column) pair — the previous KP.
+- **Norms**: a vector's Euclidean length is `np.sqrt(v @ v)`. Applied to a
+  whole matrix's entries — √(sum of all squares) — it's the **Frobenius
+  norm**, `np.linalg.norm(z)` with no arguments.
+
+When the pattern you need is *not* one of the packaged shapes, the
+decomposition rescues you. "Dot each row of `a` with the CORRESPONDING row of
+`b`" (same shapes) is not `a @ b` — the shapes don't even align for matmul.
+But per the atom: multiply elementwise, then reduce each row:
+
+```python no-run
+(a * b).sum(axis=1)          # row-wise dots
+```
+
+That multiply-then-reduce-an-axis maneuver, and its cousins with a transpose
+mixed in, cover the "batch of dots" tasks — and they are the exact patterns
+einsum notation will name concisely in the next course topic. Meeting them
+here as multiply+sum makes einsum's spec strings feel inevitable rather than
+magic.
+
+## Worked example
+
+Task: a plain dot; every row of a matrix dotted with one vector; row-wise
+dots of two matrices; a Frobenius norm.
+
+```python
+import numpy as np
+
+a = np.array([1.0, 2.0, 3.0])
+b = np.array([4.0, -5.0, 6.0])
+
+# The atom, three spellings — same number.
+d = float(np.dot(a, b))
+assert d == float(a @ b) == float((a * b).sum()) == 12.0
+
+# Matrix @ vector: row i of the result = (row i of z) . v
+z = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+v = np.array([10.0, 1.0])
+zv = z @ v
+assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
+
+# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.
+# Decompose: elementwise product, then reduce along each row.
+p = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+q = np.array([[5.0, 6.0],
+              [7.0, 8.0]])
+row_dots = (p * q).sum(axis=1)
+assert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8
+
+# Frobenius norm: sqrt of the sum of ALL squared entries.
+f = np.array([[3.0, 4.0],
+              [0.0, 0.0]])
+assert np.linalg.norm(f) == 5.0
+assert np.isclose(np.linalg.norm(f), np.sqrt((f * f).sum()))
+```
+
+Why each step:
+
+1. Verifying the three dot spellings agree once buys permanent fluency: when
+   you see `(x * w).sum()` in someone's code, you now read "dot".
+2. In `z @ v`, checking one output by hand (1·10 + 2·1 = 12) anchors "matmul
+   = a dot per row" — and predicts the result's shape (n,) without
+   memorizing another rule.
+3. The row-wise-dots case is deliberately posed as a trap: `p @ q` runs on
+   these square matrices and returns the WRONG thing (full matrix product).
+   Decomposing to multiply+sum(axis=1) is the general escape whenever the
+   packaged products don't match the pairing you need.
+
+## Faded practice
+
+### q37
+Dot product of two vectors, as a plain float.
+
+```python starter
+import numpy as np
+
+def solve(a, b):
+    """The dot product of vectors a and b."""
+    return float(np._____(a, b))
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """The dot product of vectors a and b."""
+    return float(np.dot(a, b))
+```
+
+### q144
+Each row of z dotted with v.
+
+```python starter
+import numpy as np
+
+def solve(z, v):
+    """Length-n array: entry i = (row i of z) . v."""
+    return z _____ v
+```
+
+```python solution
+import numpy as np
+
+def solve(z, v):
+    """Length-n array: entry i = (row i of z) . v."""
+    return z @ v
+```
+
+## Guided practice
+
+### q5
+1. Square root of the sum of squares of ALL entries of a matrix — which norm
+   is that, and which function computes it with zero arguments?
+2. `np.linalg.norm` on a 2-D array defaults to exactly this (Frobenius).
+3. Or first principles: `np.sqrt((z * z).sum())` — multiply+reduce again.
+
+## Independent practice
+
+From the drill bank: q121 (row-wise dots of two same-shape matrices — the
+multiply+sum decomposition, or einsum if you've peeked ahead), q141 (diagonal
+of a @ b WITHOUT computing the full product — think about which dots the
+diagonal actually needs: row i of a with COLUMN i of b).
+
+## Misconceptions
+
+- **"Row-wise dots of two matrices = a @ b."** — Matmul dots every row with
+  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row
+  reduction: `(a * b).sum(axis=1)`.
+- **"The dot product is its own primitive."** — It's multiply + sum. Holding
+  the decomposition lets you build variants (weighted dots, masked dots,
+  batch dots) instead of hunting for a function that may not exist.
+- **"norm of a matrix = largest row norm."** — Default `np.linalg.norm(z)` on
+  2-D is FROBENIUS: all entries squared, summed, rooted — as if the matrix
+  were one long vector. Operator norms exist behind `ord=`, but Frobenius is
+  the drills' default meaning of "the norm".

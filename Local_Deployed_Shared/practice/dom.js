@@ -2,17 +2,23 @@
    PRACTICE DOM — element references
    ================================================================ */
 
-// Rigid-session controls (setup panel + in-session status row; timer.js)
+// Resumable-session controls (setup/resume panel + in-session status; timer.js)
 const sessionSetupPanel = document.getElementById("practice-session-setup");
 const sessionQuestionCountInput = document.getElementById("session-question-count");
 const sessionAnswerTimeInput = document.getElementById("session-answer-time");
 const sessionReviewTimeInput = document.getElementById("session-review-time");
+const sessionTimeEstimate = document.getElementById("session-time-estimate");
 const sessionStartBtn = document.getElementById("session-start-btn");
 const sessionSummary = document.getElementById("session-summary");
+const sessionResumePanel = document.getElementById("session-resume-panel");
+const sessionResumeSummary = document.getElementById("session-resume-summary");
+const sessionResumeBtn = document.getElementById("session-resume-btn");
+const sessionDiscardBtn = document.getElementById("session-discard-btn");
 const sessionStatusRow = document.getElementById("session-status-row");
 const sessionProgressLabel = document.getElementById("session-progress");
 const sessionPhaseLabel = document.getElementById("session-phase");
 const sessionCountdown = document.getElementById("session-countdown");
+const sessionPauseBtn = document.getElementById("session-pause-btn");
 const sessionEndBtn = document.getElementById("session-end-btn");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");

@@ -1,0 +1,4302 @@
+{
+ "1": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "2": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "3": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-faded"
+ },
+ "4": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "5": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "6": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "7": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "8": {
+  "target_kcs": [
+   "numpy.random-generator"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "10": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "11": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "12": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "boolean-mask-indexing"
+  ],
+  "source": "kp-guided"
+ },
+ "14": {
+  "target_kcs": [
+   "numpy.unique"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "15": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "16": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "17": {
+  "target_kcs": [
+   "numpy.pad-borders"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "18": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "19": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "22": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "23": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "24": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "25": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "26": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "27": {
+  "target_kcs": [
+   "numpy.pad-borders"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "28": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "29": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "30": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "31": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "32": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "34": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "35": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "36": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "37": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "38": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "40": {
+  "target_kcs": [
+   "numpy.nonzero-argwhere"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "41": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "42": {
+  "target_kcs": [
+   "numpy.random-generator"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "43": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "46": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "47": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "48": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "49": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "51": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "52": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "boolean-mask-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "53": {
+  "target_kcs": [
+   "numpy.ranges"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "55": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-independent"
+ },
+ "58": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "59": {
+  "target_kcs": [
+   "numpy.inplace-out"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.slicing-views",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "60": {
+  "target_kcs": [
+   "numpy.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "61": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "62": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "63": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "64": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "65": {
+  "target_kcs": [
+   "numpy.inplace-out"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.slicing-views",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "66": {
+  "target_kcs": [
+   "numpy.geometry-transforms"
+  ],
+  "supporting_kcs": [
+   "numpy.dot-matmul-patterns",
+   "numpy.slicing-views",
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "67": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "68": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "69": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "70": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-guided"
+ },
+ "71": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "72": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "73": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "74": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "75": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "slice-notation",
+   "multi-axis-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "76": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "slice-notation",
+   "multi-axis-indexing"
+  ],
+  "source": "kp-guided"
+ },
+ "77": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "78": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "79": {
+  "target_kcs": [
+   "numpy.unique"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "80": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "81": {
+  "target_kcs": [
+   "numpy.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "82": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "83": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-independent"
+ },
+ "84": {
+  "target_kcs": [
+   "numpy.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "85": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "86": {
+  "target_kcs": [
+   "numpy.nonzero-argwhere"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "87": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "89": {
+  "target_kcs": [
+   "numpy.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "90": {
+  "target_kcs": [
+   "numpy.pad-borders"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "91": {
+  "target_kcs": [
+   "numpy.random-sampling"
+  ],
+  "supporting_kcs": [
+   "numpy.random-generator",
+   "numpy.fancy-indexing",
+   "numpy.cumulative-diff",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "92": {
+  "target_kcs": [
+   "numpy.argsort-ranking"
+  ],
+  "supporting_kcs": [
+   "numpy.sorting",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "93": {
+  "target_kcs": [
+   "numpy.onehot-bincount"
+  ],
+  "supporting_kcs": [
+   "numpy.fancy-indexing",
+   "numpy.constructors",
+   "numpy.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "94": {
+  "target_kcs": [
+   "numpy.where-select"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "95": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "96": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-guided"
+ },
+ "97": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "98": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "99": {
+  "target_kcs": [
+   "numpy.sliding-windows"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.slicing-views",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "100": {
+  "target_kcs": [
+   "numpy.where-select"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "101": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "102": {
+  "target_kcs": [
+   "numpy.unique"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "103": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "104": {
+  "target_kcs": [
+   "numpy.random-generator"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "105": {
+  "target_kcs": [
+   "numpy.geometry-transforms"
+  ],
+  "supporting_kcs": [
+   "numpy.dot-matmul-patterns",
+   "numpy.slicing-views",
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "106": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "107": {
+  "target_kcs": [
+   "numpy.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "matmul-operator"
+  ],
+  "source": "kp-faded"
+ },
+ "108": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "109": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "110": {
+  "target_kcs": [
+   "numpy.nonzero-argwhere"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "111": {
+  "target_kcs": [
+   "numpy.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "112": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "113": {
+  "target_kcs": [
+   "numpy.memory-model"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "114": {
+  "target_kcs": [
+   "numpy.argsort-ranking"
+  ],
+  "supporting_kcs": [
+   "numpy.sorting",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "115": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "116": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "117": {
+  "target_kcs": [
+   "numpy.sliding-windows"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.slicing-views",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "118": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "119": {
+  "target_kcs": [
+   "numpy.argsort-ranking"
+  ],
+  "supporting_kcs": [
+   "numpy.sorting",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "120": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "121": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "122": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "123": {
+  "target_kcs": [
+   "numpy.memory-model"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "124": {
+  "target_kcs": [
+   "numpy.onehot-bincount"
+  ],
+  "supporting_kcs": [
+   "numpy.fancy-indexing",
+   "numpy.constructors",
+   "numpy.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "125": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-independent"
+ },
+ "126": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "127": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "128": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "129": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "130": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "131": {
+  "target_kcs": [
+   "numpy.scatter-gather"
+  ],
+  "supporting_kcs": [
+   "numpy.onehot-bincount",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "132": {
+  "target_kcs": [
+   "numpy.scatter-gather"
+  ],
+  "supporting_kcs": [
+   "numpy.onehot-bincount",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "133": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "134": {
+  "target_kcs": [
+   "numpy.onehot-bincount"
+  ],
+  "supporting_kcs": [
+   "numpy.fancy-indexing",
+   "numpy.constructors",
+   "numpy.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "135": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "136": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "137": {
+  "target_kcs": [
+   "numpy.scatter-gather"
+  ],
+  "supporting_kcs": [
+   "numpy.onehot-bincount",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "138": {
+  "target_kcs": [
+   "numpy.inplace-out"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.slicing-views",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "139": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "140": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "141": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "142": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "143": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "144": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "145": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "146": {
+  "target_kcs": [
+   "numpy.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "147": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "148": {
+  "target_kcs": [
+   "numpy.unique"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "149": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "150": {
+  "target_kcs": [
+   "numpy.onehot-bincount"
+  ],
+  "supporting_kcs": [
+   "numpy.fancy-indexing",
+   "numpy.constructors",
+   "numpy.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "151": {
+  "target_kcs": [
+   "numpy.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing"
+  ],
+  "source": "kp-guided"
+ },
+ "152": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "153": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "154": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "155": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "156": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "157": {
+  "target_kcs": [
+   "numpy.structured-dtypes"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "structured-dtype-syntax"
+  ],
+  "source": "kp-independent"
+ },
+ "158": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "159": {
+  "target_kcs": [
+   "numpy.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "160": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "162": {
+  "target_kcs": [
+   "numpy.rescaling"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "163": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "164": {
+  "target_kcs": [
+   "numpy.index-grids"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "165": {
+  "target_kcs": [
+   "numpy.scatter-gather"
+  ],
+  "supporting_kcs": [
+   "numpy.onehot-bincount",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "166": {
+  "target_kcs": [
+   "numpy.sliding-windows"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.slicing-views",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "167": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "168": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "169": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "170": {
+  "target_kcs": [
+   "numpy.nan-handling"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.where-select"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "171": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "172": {
+  "target_kcs": [
+   "numpy.onehot-bincount"
+  ],
+  "supporting_kcs": [
+   "numpy.fancy-indexing",
+   "numpy.constructors",
+   "numpy.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "173": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "174": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "175": {
+  "target_kcs": [
+   "numpy.sliding-windows"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.slicing-views",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "176": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "177": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "180": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "181": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "182": {
+  "target_kcs": [
+   "numpy.geometry-transforms"
+  ],
+  "supporting_kcs": [
+   "numpy.dot-matmul-patterns",
+   "numpy.slicing-views",
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "183": {
+  "target_kcs": [
+   "numpy.argsort-ranking"
+  ],
+  "supporting_kcs": [
+   "numpy.sorting",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "184": {
+  "target_kcs": [
+   "numpy.fancy-indexing"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "185": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "186": {
+  "target_kcs": [
+   "numpy.pad-borders"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "187": {
+  "target_kcs": [
+   "numpy.topk-selection"
+  ],
+  "supporting_kcs": [
+   "numpy.argsort-ranking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "189": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "190": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "191": {
+  "target_kcs": [
+   "numpy.random-sampling"
+  ],
+  "supporting_kcs": [
+   "numpy.random-generator",
+   "numpy.fancy-indexing",
+   "numpy.cumulative-diff",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "192": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "193": {
+  "target_kcs": [
+   "numpy.pairwise-metrics"
+  ],
+  "supporting_kcs": [
+   "numpy.broadcasting-rules",
+   "numpy.axis-reductions",
+   "numpy.rescaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "194": {
+  "target_kcs": [
+   "numpy.topk-selection"
+  ],
+  "supporting_kcs": [
+   "numpy.argsort-ranking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "195": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "196": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "197": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "198": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "199": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "200": {
+  "target_kcs": [
+   "numpy.random-sampling"
+  ],
+  "supporting_kcs": [
+   "numpy.random-generator",
+   "numpy.fancy-indexing",
+   "numpy.cumulative-diff",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "201": {
+  "target_kcs": [
+   "numpy.geometry-transforms"
+  ],
+  "supporting_kcs": [
+   "numpy.dot-matmul-patterns",
+   "numpy.slicing-views",
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "202": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "204": {
+  "target_kcs": [
+   "numpy.memory-model"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "205": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "206": {
+  "target_kcs": [
+   "numpy.topk-selection"
+  ],
+  "supporting_kcs": [
+   "numpy.argsort-ranking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "207": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "208": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "209": {
+  "target_kcs": [
+   "numpy.window-stencil"
+  ],
+  "supporting_kcs": [
+   "numpy.sliding-windows",
+   "numpy.pad-borders",
+   "numpy.cumulative-diff"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "210": {
+  "target_kcs": [
+   "numpy.random-sampling"
+  ],
+  "supporting_kcs": [
+   "numpy.random-generator",
+   "numpy.fancy-indexing",
+   "numpy.cumulative-diff",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "211": {
+  "target_kcs": [
+   "numpy.set-combinatorics"
+  ],
+  "supporting_kcs": [
+   "numpy.unique",
+   "numpy.cumulative-diff",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "212": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "213": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "214": {
+  "target_kcs": [
+   "numpy.ranges"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "215": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "216": {
+  "target_kcs": [
+   "numpy.scatter-gather"
+  ],
+  "supporting_kcs": [
+   "numpy.onehot-bincount",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "217": {
+  "target_kcs": [
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "218": {
+  "target_kcs": [
+   "numpy.centering"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "219": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "220": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "224": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "import-numpy-as-np",
+   "array-attributes"
+  ],
+  "source": "kp-faded"
+ },
+ "225": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "227": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "228": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "229": {
+  "target_kcs": [
+   "numpy.ranges"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "230": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "231": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "slice-notation",
+   "multi-axis-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "232": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "boolean-mask-indexing"
+  ],
+  "source": "kp-independent"
+ },
+ "233": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "slice-notation",
+   "multi-axis-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "234": {
+  "target_kcs": [
+   "numpy.cumulative-diff"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "235": {
+  "target_kcs": [
+   "numpy.inplace-out"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.slicing-views",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "236": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "boolean-mask-indexing"
+  ],
+  "source": "kp-faded"
+ },
+ "237": {
+  "target_kcs": [
+   "numpy.diag-triangles"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "238": {
+  "target_kcs": [
+   "numpy.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "239": {
+  "target_kcs": [
+   "numpy.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "matmul-operator"
+  ],
+  "source": "kp-guided"
+ },
+ "240": {
+  "target_kcs": [
+   "numpy.where-select"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "241": {
+  "target_kcs": [
+   "numpy.unique"
+  ],
+  "supporting_kcs": [
+   "numpy.boolean-masking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "242": {
+  "target_kcs": [
+   "numpy.ranges"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "243": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "244": {
+  "target_kcs": [
+   "einsum.notation-model"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.dot-matmul-patterns",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einsum-spec-string"
+  ],
+  "source": "kp-faded"
+ },
+ "245": {
+  "target_kcs": [
+   "einsum.dot-frobenius"
+  ],
+  "supporting_kcs": [
+   "einsum.reductions",
+   "numpy.dot-matmul-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "246": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "247": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "248": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "249": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "250": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "251": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "252": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "253": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "254": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "255": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "256": {
+  "target_kcs": [
+   "einsum.outer-products"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "257": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "258": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "259": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "260": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "261": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "262": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "263": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "264": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "265": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "266": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "267": {
+  "target_kcs": [
+   "einsum.dot-frobenius"
+  ],
+  "supporting_kcs": [
+   "einsum.reductions",
+   "numpy.dot-matmul-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "268": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "269": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "270": {
+  "target_kcs": [
+   "einsum.dot-frobenius"
+  ],
+  "supporting_kcs": [
+   "einsum.reductions",
+   "numpy.dot-matmul-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "271": {
+  "target_kcs": [
+   "einsum.notation-model"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.dot-matmul-patterns",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einsum-spec-string"
+  ],
+  "source": "kp-guided"
+ },
+ "272": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "273": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "274": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "275": {
+  "target_kcs": [
+   "einsum.outer-products"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "276": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "277": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "278": {
+  "target_kcs": [
+   "einsum.outer-products"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "279": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "280": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "282": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "283": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "284": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "285": {
+  "target_kcs": [
+   "einsum.notation-model"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.dot-matmul-patterns",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einsum-spec-string"
+  ],
+  "source": "kp-independent"
+ },
+ "286": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "287": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "288": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "289": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "290": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "291": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "292": {
+  "target_kcs": [
+   "einsum.outer-products"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "293": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "294": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "295": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "296": {
+  "target_kcs": [
+   "einsum.outer-products"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "297": {
+  "target_kcs": [
+   "einsum.batch-dims"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.outer-products"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "298": {
+  "target_kcs": [
+   "einsum.diag-trace"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.diag-triangles"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "299": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "300": {
+  "target_kcs": [
+   "einsum.notation-model"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.dot-matmul-patterns",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "301": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "302": {
+  "target_kcs": [
+   "einsum.reductions"
+  ],
+  "supporting_kcs": [
+   "einsum.notation-model",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "303": {
+  "target_kcs": [
+   "einsum.notation-model"
+  ],
+  "supporting_kcs": [
+   "numpy.axis-reductions",
+   "numpy.dot-matmul-patterns",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "304": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "305": {
+  "target_kcs": [
+   "einsum.attention-patterns"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.broadcast-scaling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "306": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "308": {
+  "target_kcs": [
+   "einsum.dot-frobenius"
+  ],
+  "supporting_kcs": [
+   "einsum.reductions",
+   "numpy.dot-matmul-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "309": {
+  "target_kcs": [
+   "einsum.broadcast-scaling"
+  ],
+  "supporting_kcs": [
+   "einsum.batch-dims",
+   "einsum.reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "310": {
+  "target_kcs": [
+   "einsum.matrix-forms"
+  ],
+  "supporting_kcs": [
+   "einsum.matvec-matmul",
+   "einsum.batch-dims",
+   "numpy.centering"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "311": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "312": {
+  "target_kcs": [
+   "einsum.matvec-matmul"
+  ],
+  "supporting_kcs": [
+   "einsum.dot-frobenius",
+   "numpy.linalg-basics"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "313": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "314": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
+ },
+ "315": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "316": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "317": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "318": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "319": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "320": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "321": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "322": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "323": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "324": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "325": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "326": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "327": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "328": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "329": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "330": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [
+   "einops-pattern-string"
+  ],
+  "source": "kp-independent"
+ },
+ "331": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "332": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "333": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "334": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "335": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [
+   "einops-pattern-string"
+  ],
+  "source": "kp-independent"
+ },
+ "336": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "337": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "338": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "339": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "340": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "341": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "342": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
+ },
+ "343": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "344": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "345": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [
+   "einops-pattern-string"
+  ],
+  "source": "kp-faded"
+ },
+ "346": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "347": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
+ },
+ "348": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "349": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes",
+   "einsum.attention-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "350": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "351": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "352": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "353": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "354": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "355": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "356": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes",
+   "einsum.attention-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "357": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-guided"
+ },
+ "358": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "359": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "360": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "361": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "362": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "363": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "364": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "365": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "367": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "368": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "369": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "370": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "371": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "372": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "373": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "374": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "375": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "376": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "377": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "378": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "379": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [
+   "einops-pattern-string"
+  ],
+  "source": "kp-independent"
+ },
+ "380": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "381": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "382": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "383": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "384": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes",
+   "einsum.attention-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "385": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.tile-repeat-meshgrid",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "386": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "387": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "388": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten",
+   "einsum.notation-model"
+  ],
+  "new_syntax": [
+   "einops-pattern-string"
+  ],
+  "source": "kp-guided"
+ },
+ "389": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "390": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "391": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-faded"
+ },
+ "392": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "393": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "394": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes",
+   "einsum.attention-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "395": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "396": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes",
+   "einsum.attention-patterns"
+  ],
+  "new_syntax": [],
+  "source": "kp-guided"
+ },
+ "397": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "398": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "399": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "400": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "401": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "402": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "403": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "leftover-assignment"
+ },
+ "404": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ }
+}

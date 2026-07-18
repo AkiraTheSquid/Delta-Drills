@@ -1,7 +1,6 @@
-/* Practice tab — rigid session: setup panel + per-question countdown status.
-   The old free-running timed-mode toggle is gone on purpose: the learner
-   commits to question count + answer/review time up front, and the timers
-   cannot be paused or re-negotiated mid-session. */
+/* Practice tab — resumable session setup + per-question countdown status.
+   Timers remain strict while active; Pause & exit freezes a persisted
+   snapshot without changing the committed limits. */
 
 /* While no session is running, only the setup panel is visible; once a
    session starts, the setup panel yields to the question split. */
@@ -58,8 +57,62 @@
   letter-spacing: 0.5px;
 }
 
+/* Live total-time estimate under the setup fields — recomputed as the
+   learner edits count / answer time / review time. */
+.session-time-estimate {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: -8px 0 20px;
+}
+
+.session-time-estimate strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
 .session-start-btn {
   width: 100%;
+}
+
+.session-setup--has-resume .session-start-btn {
+  margin-top: 12px;
+}
+
+.session-resume-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 10px;
+  background: rgba(74, 222, 128, 0.06);
+}
+
+.session-resume-panel.hidden {
+  display: none;
+}
+
+.session-resume-title {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.session-resume-summary {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.session-resume-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.session-resume-actions button {
+  flex: 1 1 180px;
 }
 
 .session-summary {
@@ -92,6 +145,7 @@
 .session-status-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -130,7 +184,12 @@
   border-color: rgba(248, 113, 113, 0.5);
 }
 
+.session-pause-btn,
 .session-end-btn {
   font-size: 12px;
   padding: 6px 10px;
+}
+
+.session-pause-btn {
+  border-color: rgba(74, 222, 128, 0.35);
 }

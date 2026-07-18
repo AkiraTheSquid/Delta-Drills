@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delta Drills — Lessons (review)</title>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #161a23; --text: #d7dce5; --dim: #8b93a3;
+    --accent: #5aa9e6; --code-bg: #1c2230; --border: #2a3040;
+    --starter: #7ec97e; --misc: #e6a75a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.65 system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  #app { display: flex; min-height: 100vh; }
+  nav {
+    width: 300px; flex: none; background: var(--panel); border-right: 1px solid var(--border);
+    padding: 1rem; overflow-y: auto; height: 100vh; position: sticky; top: 0;
+  }
+  nav h1 { font-size: 1rem; color: var(--accent); margin: 0 0 1rem; }
+  nav .lesson-title { font-weight: 600; margin: .9rem 0 .25rem; cursor: pointer; }
+  nav .kp-link { display: block; padding: .15rem 0 .15rem .9rem; color: var(--dim);
+    text-decoration: none; font-size: .88rem; border-left: 2px solid transparent; }
+  nav .kp-link:hover { color: var(--text); }
+  nav .kp-link.active { color: var(--accent); border-left-color: var(--accent); }
+  main { flex: 1; padding: 2rem 3rem; max-width: 860px; }
+  main h2 { color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: .4rem; }
+  main h3 { margin-top: 2rem; color: #b8c4d6; }
+  .meta { font-size: .82rem; color: var(--dim); margin-bottom: 1.2rem; }
+  .meta code { background: var(--code-bg); padding: .1rem .35rem; border-radius: 4px; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: .9rem 1.1rem; overflow-x: auto; font-size: .86rem; line-height: 1.5; }
+  code { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; }
+  p code, li code { background: var(--code-bg); padding: .08rem .3rem; border-radius: 4px; font-size: .88em; }
+  .item { border: 1px solid var(--border); border-radius: 8px; padding: .8rem 1rem; margin: .9rem 0; }
+  .item .qid { font-size: .78rem; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; }
+  .item pre.starter { border-left: 3px solid var(--starter); }
+  details.solution summary { cursor: pointer; color: var(--dim); font-size: .85rem; margin: .4rem 0; }
+  .misconceptions { border-left: 3px solid var(--misc); padding-left: 1rem; }
+  .pill { display: inline-block; background: var(--code-bg); border-radius: 999px;
+    padding: .05rem .6rem; margin: 0 .25rem .25rem 0; font-size: .78rem; color: var(--dim); }
+  blockquote { border-left: 3px solid var(--accent); margin: 1rem 0; padding: .2rem 1rem;
+    color: #c4cbd8; background: rgba(90,169,230,.06); border-radius: 0 6px 6px 0; }
+  .empty { color: var(--dim); font-style: italic; }
+  @media (max-width: 800px) { #app { flex-direction: column; } nav { width: 100%; height: auto; position: static; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <nav id="nav"><h1>Delta Drills — Lessons</h1></nav>
+  <main id="main"><p class="empty">Loading lessons_structured.json…</p></main>
+</div>
+<script>
+// Minimal markdown renderer: enough for the KP authoring format
+// (headers, fenced code, blockquotes, lists, bold/italic/inline code).
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function inline(s) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+function md(text) {
+  if (!text) return '';
+  const lines = text.split('\n');
+  const out = [];
+  let i = 0, list = null, para = [], quote = [];
+  const flushPara = () => { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } };
+  const flushList = () => { if (list) { out.push('</' + list + '>'); list = null; } };
+  const flushQuote = () => { if (quote.length) { out.push('<blockquote>' + inline(quote.join(' ')) + '</blockquote>'); quote = []; } };
+  while (i < lines.length) {
+    const line = lines[i];
+    const fence = line.match(/^```(.*)$/);
+    if (fence) {
+      flushPara(); flushList(); flushQuote();
+      const info = fence[1].trim();
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      i++;
+      const cls = info.includes('starter') ? ' class="starter"' : '';
+      const codeHtml = '<pre' + cls + '><code>' + esc(buf.join('\n')) + '</code></pre>';
+      if (info.includes('solution')) {
+        out.push('<details class="solution"><summary>Show solution</summary>' + codeHtml + '</details>');
+      } else {
+        out.push(codeHtml);
+      }
+      continue;
+    }
+    const h = line.match(/^(#{1,6})\s+(.*)$/);
+    if (h) { flushPara(); flushList(); flushQuote(); out.push('<h4>' + inline(h[2]) + '</h4>'); i++; continue; }
+    if (/^>\s?/.test(line)) { flushPara(); flushList(); quote.push(line.replace(/^>\s?/, '')); i++; continue; }
+    const li = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
+    if (li) {
+      flushPara(); flushQuote();
+      const kind = /\d+\./.test(li[2]) ? 'ol' : 'ul';
+      if (list !== kind) { flushList(); out.push('<' + kind + '>'); list = kind; }
+      // gather hanging-indent continuation lines
+      let item = li[3]; i++;
+      while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i])) {
+        item += ' ' + lines[i].trim(); i++;
+      }
+      out.push('<li>' + inline(item) + '</li>');
+      continue;
+    }
+    if (!line.trim()) { flushPara(); flushList(); flushQuote(); i++; continue; }
+    flushQuote();
+    para.push(line.trim());
+    i++;
+  }
+  flushPara(); flushList(); flushQuote();
+  return out.join('\n');
+}
+
+function kpAnchor(kc) { return 'kp-' + kc.replace(/[^a-z0-9-]/gi, '-'); }
+
+function renderKP(kp) {
+  const bankLink = (qid) => '<span class="pill">q' + qid + '</span>';
+  let html = '<section id="' + kpAnchor(kp.kc) + '">';
+  html += '<h2>' + esc(kp.title) + '</h2>';
+  html += '<div class="meta">KC <code>' + esc(kp.kc) + '</code>';
+  if (kp.supporting_kcs.length) html += ' · supporting: ' + kp.supporting_kcs.map(s => '<code>' + esc(s) + '</code>').join(' ');
+  if (kp.new_syntax.length) html += ' · new syntax: ' + kp.new_syntax.map(s => '<code>' + esc(s) + '</code>').join(' ');
+  html += '</div>';
+  html += '<h3>Concept</h3>' + md(kp.concept_markdown);
+  html += '<h3>Worked example</h3>' + md(kp.worked_example_markdown);
+  if (kp.faded_items.length) {
+    html += '<h3>Faded practice</h3>';
+    for (const f of kp.faded_items) {
+      html += '<div class="item"><div class="qid">Faded · bank q' + f.question_id + '</div>';
+      if (f.prompt) html += '<p>' + inline(f.prompt) + '</p>';
+      html += '<pre class="starter"><code>' + esc(f.starter_code) + '</code></pre>';
+      html += '<details class="solution"><summary>Show solution</summary><pre><code>' + esc(f.solution) + '</code></pre></details>';
+      html += '</div>';
+    }
+  }
+  if (kp.guided_items.length) {
+    html += '<h3>Guided practice (hints)</h3>';
+    for (const g of kp.guided_items) {
+      html += '<div class="item"><div class="qid">Guided · bank q' + g.question_id + '</div>' + md(g.hints_markdown) + '</div>';
+    }
+  }
+  if (kp.independent_items.length) {
+    html += '<h3>Independent practice</h3><p>From the drill bank: ' + kp.independent_items.map(bankLink).join(' ') + '</p>';
+  }
+  if (kp.misconceptions_markdown) {
+    html += '<h3>Misconceptions</h3><div class="misconceptions">' + md(kp.misconceptions_markdown) + '</div>';
+  }
+  html += '</section>';
+  return html;
+}
+
+async function init() {
+  const res = await fetch('lessons_structured.json');
+  const data = await res.json();
+  const nav = document.getElementById('nav');
+  const main = document.getElementById('main');
+  const kpIndex = {};
+  for (const lesson of data.lessons) {
+    const lt = document.createElement('div');
+    lt.className = 'lesson-title';
+    lt.textContent = lesson.id + ' — ' + lesson.title + ' (' + lesson.kps.length + ')';
+    nav.appendChild(lt);
+    for (const kp of lesson.kps) {
+      kpIndex[kp.kc] = kp;
+      const a = document.createElement('a');
+      a.className = 'kp-link';
+      a.href = '#' + kpAnchor(kp.kc);
+      a.textContent = kp.title;
+      a.addEventListener('click', (e) => { e.preventDefault(); show(kp, a); });
+      nav.appendChild(a);
+    }
+  }
+  function show(kp, link) {
+    main.innerHTML = renderKP(kp);
+    document.querySelectorAll('.kp-link').forEach(el => el.classList.remove('active'));
+    if (link) link.classList.add('active');
+    history.replaceState(null, '', '#' + kpAnchor(kp.kc));
+    window.scrollTo(0, 0);
+  }
+  // Deep link support
+  const hash = location.hash.replace('#', '');
+  const initial = Object.values(kpIndex).find(kp => kpAnchor(kp.kc) === hash) || data.lessons[0].kps[0];
+  const initialLink = Array.from(document.querySelectorAll('.kp-link'))
+    .find(a => a.getAttribute('href') === '#' + kpAnchor(initial.kc));
+  show(initial, initialLink);
+}
+init().catch(err => {
+  document.getElementById('main').innerHTML =
+    '<p class="empty">Failed to load lessons_structured.json — serve this folder over HTTP ' +
+    '(e.g. <code>python3 -m http.server</code> in Local_Deployed_Shared/lessons/) and reload.<br>' +
+    esc(String(err)) + '</p>';
+});
+</script>
+</body>
+</html>
