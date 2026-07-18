@@ -234,6 +234,12 @@ const _loadNextPracticeQuestion = async () => {
   const nextCount = practiceQuestionCount + 1;
   practiceProgress.questionCount = nextCount;
   savePracticeProgress(practiceProgress);
+  // First-encounter gate: when this question's target KC has never been
+  // taught, LessonGate shows the introducing lesson first and renders the
+  // question (starting the session answer timer) only on Continue.
+  if (window.LessonGate && (await window.LessonGate.maybeShow(nextQ, () => renderQuestion(nextQ, nextCount)))) {
+    return;
+  }
   renderQuestion(nextQ, nextCount);
 };
 

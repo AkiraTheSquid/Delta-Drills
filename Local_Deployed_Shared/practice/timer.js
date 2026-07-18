@@ -62,6 +62,7 @@ const PracticeSession = (() => {
   let remaining = 0;
   let advancePoll = null;
   let resumeReady = false;
+  let resumePending = false;
 
   const isActive = () => !!state;
 
@@ -380,8 +381,34 @@ const PracticeSession = (() => {
     _showResumeOption();
   };
 
-  const resume = () => {
-    if (!pausedState || !resumeReady || _questionId() !== pausedState.questionId) return;
+  const resume = async () => {
+    if (resumePending || !pausedState || !resumeReady || _questionId() !== pausedState.questionId) return;
+    resumePending = true;
+    // A reload during the lesson-gate overlay leaves the question resumable
+    // with its KC still unexposed — re-show the lesson before the question
+    // becomes visible. Already-exposed KCs (the normal case) never gate, and
+    // review-phase resumes are post-answer so teaching first is moot.
+    try {
+      if (
+        window.LessonGate &&
+        pausedState.phase !== "review" &&
+        (await window.LessonGate.maybeShow(PracticeAPI.currentQuestion, () => {
+          resumePending = false;
+          _resumeCore();
+        }))
+      ) {
+        return;
+      }
+    } catch (err) {
+      console.warn("[session] lesson gate failed during resume:", err);
+    }
+    resumePending = false;
+    _resumeCore();
+  };
+
+  const _resumeCore = () => {
+    if (!pausedState) return;
+    resumePending = false;
     state = {
       total: pausedState.total,
       answerSecs: pausedState.answerSecs,
