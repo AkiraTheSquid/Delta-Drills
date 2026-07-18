@@ -46,3 +46,6 @@ This-Directory-Only/mathpix processor/pdf_path_convert.txt
 # Shared scripts imported by backend processing
 !Local_Deployed_Shared/chatgpt/
 !Local_Deployed_Shared/tools/
+
+# Lesson metadata for the first-encounter exposure guard (app/lessons.py)
+!Local_Deployed_Shared/lessons/

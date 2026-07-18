@@ -48,6 +48,11 @@ class NextQuestionResponse(BaseModel):
     diagnostic_probe_index: int | None = None   # 1-based index of this probe
     diagnostic_budget: int | None = None        # MAX_PROBES fatigue cap
     diagnostic_area: str | None = None          # topic area being probed
+    # First-encounter lesson gate: target KCs of this question the learner has
+    # not been exposed to yet. Each entry: {kc, kc_title, kp_title, lesson_id,
+    # lesson_title, topic}. The frontend shows the introducing KP(s) BEFORE
+    # revealing the question, then POSTs /exposure. Empty = no gate.
+    lesson_gate: list[dict] = Field(default_factory=list)
 
 
 class SubmitRequest(BaseModel):
@@ -202,3 +207,14 @@ class VisualDebugRequest(BaseModel):
 class VisualDebugResponse(BaseModel):
     success: bool
     latest: dict = Field(default_factory=dict)
+
+
+class ExposureMarkRequest(BaseModel):
+    # One question cannot target anywhere near 64 KCs. Cap payload size to
+    # avoid unbounded authenticated requests while retaining batch support.
+    kcs: list[str] = Field(max_length=64)
+
+
+class ExposureResponse(BaseModel):
+    # kc_id -> ISO-8601 UTC timestamp of first exposure
+    exposed: dict[str, str] = Field(default_factory=dict)

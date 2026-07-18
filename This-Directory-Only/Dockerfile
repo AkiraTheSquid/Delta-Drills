@@ -21,6 +21,10 @@ COPY ["This-Directory-Only/mathpix processor", "./This-Directory-Only/mathpix pr
 COPY ["This-Directory-Only/csv files of problems", "./This-Directory-Only/csv files of problems"]
 COPY Local_Deployed_Shared/chatgpt ./Local_Deployed_Shared/chatgpt
 COPY Local_Deployed_Shared/tools ./Local_Deployed_Shared/tools
+# Lesson metadata for the first-encounter exposure guard (app/lessons.py):
+# qmatrix_tags.json + kc_registry.json + lessons_structured.json. Lesson
+# CONTENT is rendered by the static frontend; the backend only reads maps.
+COPY Local_Deployed_Shared/lessons ./Local_Deployed_Shared/lessons
 # numbers.npy (the visual-fixture image data) is vendored in backend/app/data
 # — the ARENA content tree is gitignored and absent from this build context,
 # so code_runner resolves the vendored copy first.

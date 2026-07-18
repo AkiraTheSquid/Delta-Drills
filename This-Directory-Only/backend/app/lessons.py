@@ -1,0 +1,110 @@
+"""
+First-encounter lesson metadata — KC registry + Q-matrix loader.
+
+Backs the exposure guard (Pass 2 of the first-encounter course): before a
+question whose target KC the learner has never been taught is served,
+next_question attaches a lesson_gate entry pointing at the KP that
+introduces the KC. Lesson CONTENT stays on the static frontend
+(lessons/lessons_structured.json); the backend only needs the mappings
+  question_id -> target KCs        (qmatrix_tags.json)
+  kc          -> introducing KP    (lessons_structured.json)
+
+Files resolve from the repo checkout first (local dev), then the Docker
+image copy (Local_Deployed_Shared/lessons is COPY'd into the build — see
+This-Directory-Only/Dockerfile). Missing files disable the guard rather
+than break question serving.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+from pathlib import Path
+from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+# repo_root/This-Directory-Only/backend/app/lessons.py -> repo_root
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_LESSONS_DIR = _REPO_ROOT / "Local_Deployed_Shared" / "lessons"
+
+_loaded = False
+_question_target_kcs: Dict[int, List[str]] = {}
+# kc -> {"kc", "kc_title", "lesson_id", "lesson_title", "topic", "kp_title"}
+_kc_gate_info: Dict[str, dict] = {}
+
+
+def _read_json(name: str) -> Optional[dict]:
+    path = _LESSONS_DIR / name
+    if not path.exists():
+        logger.warning("Lesson metadata missing: %s — exposure guard disabled for it", path)
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        logger.error("Failed to parse %s: %s", path, e)
+        return None
+
+
+def _load() -> None:
+    global _loaded
+    if _loaded:
+        return
+    _loaded = True
+
+    qmatrix = _read_json("qmatrix_tags.json") or {}
+    for qid_str, tags in qmatrix.items():
+        try:
+            qid = int(qid_str)
+        except (TypeError, ValueError):
+            continue
+        targets = tags.get("target_kcs") or []
+        if isinstance(targets, list) and targets:
+            _question_target_kcs[qid] = [str(kc) for kc in targets]
+
+    registry = _read_json("kc_registry.json") or {}
+    kc_titles = {kc["id"]: kc.get("title", kc["id"]) for kc in registry.get("kcs", [])}
+    lesson_meta = {l["id"]: l for l in registry.get("lessons", [])}
+
+    compiled = _read_json("lessons_structured.json") or {}
+    for lesson in compiled.get("lessons", []):
+        meta = lesson_meta.get(lesson.get("id"), {})
+        for kp in lesson.get("kps", []):
+            kc = kp.get("kc")
+            if not kc:
+                continue
+            _kc_gate_info[kc] = {
+                "kc": kc,
+                "kc_title": kc_titles.get(kc, kp.get("title", kc)),
+                "kp_title": kp.get("title", kc),
+                "lesson_id": lesson.get("id", ""),
+                "lesson_title": lesson.get("title", meta.get("title", "")),
+                "topic": lesson.get("topic", meta.get("topic", "")),
+            }
+
+    logger.info(
+        "Lesson metadata: %d tagged questions, %d KCs with introducing KPs",
+        len(_question_target_kcs), len(_kc_gate_info),
+    )
+
+
+def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[dict]:
+    """Gate entries for this question's target KCs the learner has not been
+    exposed to. Empty list = no gate (untagged question, all KCs exposed, or
+    metadata unavailable)."""
+    _load()
+    gates = []
+    seen = set()
+    for kc in _question_target_kcs.get(question_id, []):
+        if kc in seen or kc in kc_exposure:
+            continue
+        seen.add(kc)
+        info = _kc_gate_info.get(kc)
+        if info:  # a KC with no introducing KP can't be taught — never gate on it
+            gates.append(info)
+    return gates
+
+
+def kc_exists(kc: str) -> bool:
+    _load()
+    return kc in _kc_gate_info

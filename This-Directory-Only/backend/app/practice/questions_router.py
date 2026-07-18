@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import diagnostic
+from app import diagnostic, lessons
 from app.adaptive import (
     COLD_START_TARGETS,
     get_user_state,
@@ -163,6 +163,10 @@ def next_question(user: User = Depends(get_current_user)) -> NextQuestionRespons
         hint=question.hint,
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,
+        # Exposure guard: placement probes are never gated (the diagnostic
+        # measures prior knowledge — teaching first would corrupt it), so
+        # this only runs on the normal adaptive-queue path.
+        lesson_gate=lessons.unexposed_target_kcs(question.id, user_state.kc_exposure),
     )
 
 
