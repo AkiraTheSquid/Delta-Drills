@@ -36,7 +36,18 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
-  // Grade landed — the strict review countdown starts now.
+  // Preserve enough of the grade UI to reconstruct this review after a pause
+  // or reload, including the learner's submitted code and failed cases.
+  PracticeSession.recordReviewResult({
+    correct: !!result.correct,
+    userCode,
+    solutionCode: solCode,
+    result: {
+      correct: !!result.correct,
+      failed_tests: Array.isArray(result.failed_tests) ? result.failed_tests : [],
+    },
+  });
+  // Grade landed — strict review countdown starts now.
   PracticeSession.beginReviewPhase();
 
   // Placement probe: the backend already recorded it at /submit — there is no

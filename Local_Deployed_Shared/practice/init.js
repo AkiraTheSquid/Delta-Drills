@@ -36,6 +36,13 @@ function invalidateLegacyBackendQuestion() {
   // preview rendering. Older cached backend questions may have the image flag
   // but not the canonical visual setup data, which leads to broken previews.
   if (practiceProgress.currentQuestion.supports_visual_output) {
+    // A v1 resumable-session snapshot proves this question was saved by the
+    // current runtime. Keep it so Pause & exit can return to visual coding
+    // work too; ordinary stale cached visual questions still refresh.
+    const resumable =
+      typeof PracticeSession !== "undefined" &&
+      PracticeSession.hasSavedQuestion(practiceProgress.currentQuestion.question_id);
+    if (resumable) return;
     // Visual questions are especially sensitive to stale cached artifacts.
     // Force a fresh backend fetch rather than trusting any restored copy.
     practiceProgress.currentQuestion = null;

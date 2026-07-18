@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="styles/courses/responsive.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/timer.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/timer.css?v=3" />
   <link rel="stylesheet" href="styles/practice/question.css?v=1" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=1" />
@@ -45,7 +45,7 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="logo">Delta Drills <span class="version-tag">v1.0.11</span></div>
+    <div class="logo">Delta Drills <span class="version-tag">v1.0.12</span></div>
     <nav class="tabs">
       <button class="tab active guest-only" data-tab="how-it-works" type="button">How It Works</button>
       <button class="tab auth-only" data-tab="knowledge-graph" type="button" title="A map of every skill and what depends on what. Use it to see why something is locked and what it unlocks — Practice picks your next problem from it automatically.">Knowledge Graph</button>
@@ -548,15 +548,14 @@
 
   <main class="page hidden session-idle" id="page-practice">
     <div class="practice-container">
-      <!-- Rigid session setup — the learner commits to a block (question
-           count + strict answer/review time per question) BEFORE any
-           question is shown. practice/timer.js owns the lifecycle. -->
+      <!-- Resumable session setup — active timers stay strict, while Pause &
+           exit preserves the current coding question for later. -->
       <div class="session-setup" id="practice-session-setup">
         <div class="session-setup-title">Set up your session</div>
         <p class="session-setup-note">
-          Decide the block before you start. Once running, the timers are strict:
-          when answer time runs out the question auto-submits, and when review
-          time runs out the next question loads. No pausing.
+          Decide the block before you start. While running, timers are strict:
+          answer time auto-submits and review time loads the next question.
+          Need to stop? Pause and resume from the same question later.
         </p>
         <div class="session-setup-fields">
           <label class="session-field">
@@ -572,7 +571,16 @@
             <input class="timer-input" id="session-review-time" type="text" inputmode="numeric" value="02:00" aria-label="Review time per question (mm:ss)" />
           </label>
         </div>
-        <button class="primary session-start-btn" id="session-start-btn" type="button">Start session</button>
+        <div class="session-time-estimate" id="session-time-estimate" aria-live="polite"></div>
+        <div class="session-resume-panel hidden" id="session-resume-panel">
+          <div class="session-resume-title">Continue where you left off</div>
+          <div class="session-resume-summary" id="session-resume-summary"></div>
+          <div class="session-resume-actions">
+            <button class="primary" id="session-resume-btn" type="button">Resume session</button>
+            <button class="ghost" id="session-discard-btn" type="button">Discard saved session</button>
+          </div>
+        </div>
+        <button class="primary session-start-btn" id="session-start-btn" type="button">Start new session</button>
         <div class="session-summary hidden" id="session-summary"></div>
       </div>
       <div class="practice-split">
@@ -596,12 +604,12 @@
             <span class="self-report-note hidden" id="self-report-note"></span>
             <button type="button" class="placement-start-btn hidden" id="placement-start-btn" title="A few adaptive questions that locate your level across all topics and seed the practice queue. Your past attempts already count as evidence, so it's shorter where you've practiced — and answers here never lower mastery you've already earned.">Take placement diagnostic</button>
           </div>
-          <!-- In-session status: progress, phase (Answering/Reviewing) and
-               the strict countdown. No pause control on purpose. -->
+          <!-- In-session status: progress, phase, countdown, pause/end. -->
           <div class="session-status-row hidden" id="session-status-row">
             <span class="session-progress" id="session-progress">0 / 0</span>
             <span class="session-phase" id="session-phase">Answering</span>
             <span class="session-countdown" id="session-countdown">05:00</span>
+            <button class="ghost session-pause-btn" id="session-pause-btn" type="button">Pause &amp; exit</button>
             <button class="ghost session-end-btn" id="session-end-btn" type="button" title="End the session early — recorded answers are kept.">End session</button>
             <div class="question-meta-top hidden" id="question-meta-top">
               <span class="subtopic-label" id="subtopic-label"></span>
@@ -819,13 +827,13 @@ np.random.seed(0)
   <script src="practice/engine.js?v=8"></script>
   <script src="practice/adaptive.js?v=10"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=14"></script>
+  <script src="practice/dom.js?v=16"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/ui.js?v=20"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=14"></script>
-  <script src="practice/timer.js?v=7"></script>
+  <script src="practice/timer.js?v=9"></script>
   <script src="practice/runner.js?v=11"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
@@ -833,8 +841,8 @@ np.random.seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=18"></script>
-  <script src="practice/init.js?v=13"></script>
+  <script src="practice/events.js?v=19"></script>
+  <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>
   <script src="stats/weights.js?v=9"></script>
