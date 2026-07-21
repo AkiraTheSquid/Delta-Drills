@@ -152,6 +152,9 @@ function renderQuestionIdChip(q) {
 }
 
 function renderQuestion(q, count) {
+  // Single-lesson demo (?lesson=): keep the previewed lesson on screen — a
+  // late session-resume render must not clobber it.
+  if (window.__lessonDemoOnly) return;
   if (curatedExcludedIds.has(q.question_id)) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
     return;

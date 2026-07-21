@@ -3,9 +3,9 @@ kc: einops.dl-flatten-heads
 title: Deep-learning shapes — flattening and attention heads
 supporting: [einops.merge-axes, einops.split-axes, einsum.attention-patterns]
 new_syntax: []
-faded: [356, 384]
+faded: [356]
 guided: [396]
-independent: [394, 349]
+independent: [384, 394, 349]
 ---
 
 ## Concept
@@ -109,27 +109,6 @@ def solve(x):
     return einops.rearrange(x, 'b c h w -> b (c h w)')
 ```
 
-### q384
-Concatenate attention heads back together per token.
-
-```python starter
-import numpy as np
-import einops
-
-def solve(x_heads):
-    """(b, nh, t, d) -> (b, t, nh*d), head 0's features first."""
-    return einops.rearrange(x_heads, '_____')
-```
-
-```python solution
-import numpy as np
-import einops
-
-def solve(x_heads):
-    """(b, nh, t, d) -> (b, t, nh*d), head 0's features first."""
-    return einops.rearrange(x_heads, 'b nh t d -> b t (nh d)')
-```
-
 ## Guided practice
 
 ### q396
@@ -141,7 +120,8 @@ def solve(x_heads):
 
 ## Independent practice
 
-From the drill bank: q394 (single image → flattened prediction shape
+From the drill bank: q384 (concatenate attention heads per token), q394
+(single image → flattened prediction shape
 (1, c·h·w) — flatten + singleton batch in one pattern), q349 (sum EVERY
 element of a 4-D tensor via reduce's empty output — '(b c h w -> )'-shaped;
 which function, which aggregation?).

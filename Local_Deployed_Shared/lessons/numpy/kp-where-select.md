@@ -3,87 +3,117 @@ kc: numpy.where-select
 title: Conditional values — np.where and where= arguments
 supporting: [numpy.boolean-masking]
 new_syntax: []
-faded: [100]
+faded: [94, 100]
 guided: []
-independent: [94]
+independent: []
 ---
 
-## Concept
+## Concept: Choose values with np.where
 
-Masked assignment (previous KP) *overwrites part of an array*. Its functional
-sibling builds a **new array by choosing, position by position, between two
-sources**:
+Masked assignment overwrites part of an array. `np.where` instead builds a
+**new array** by choosing a value at every position:
 
 > **`np.where(condition, value_if_true, value_if_false)`**
 
-Read it as a vectorized if/else: for each position, take from the second
-argument where the condition is True, from the third where it is False.
-Either argument can be a scalar or an array (broadcast as needed):
+Read it as vectorized if/else. Where the condition is `True`, NumPy takes the
+second argument. Everywhere else, it takes the third. Values may be scalars or
+arrays; normal broadcasting rules apply.
 
-- `np.where(z < 0, 0.0, z)` — ReLU, spelled as a choice.
-- `np.where(y > t, -1.0, z)` — replace z's entries by −1 wherever a
-  *different* array exceeds a threshold. (Notice: condition on `y`, values
-  from `z` — the three arguments don't have to involve the same array.)
+For example, `np.where(z < 0, 0.0, z)` replaces negative values with zero while
+leaving `z` unchanged.
 
-Because it returns a new array, `np.where` is the natural fit for "return a
-new array equal to X except…" tasks — no `.copy()` choreography needed.
+## Watch out
 
-The same idea appears as a **keyword argument on ufuncs**: `where=` restricts
-*where the operation happens at all*, and `out=` supplies the array that fills
-the untouched positions. The canonical use is division that must not divide
-by zero:
+`np.where(condition)` with only one argument does something different: it
+returns indices of `True` positions. Choosing values always needs three
+arguments.
 
-```python no-run
-np.divide(a, b, out=np.zeros_like(a), where=b != 0)
-```
+## Worked example: Replace negative readings
 
-At positions where `b == 0`, no division is performed (so no warning, no
-inf/NaN) and the `out` array's value (0.0) shows through. Unlike
-`np.where(b != 0, a / b, 0.0)` — which computes `a / b` *everywhere* first
-and only then selects, warning included — the `where=` form genuinely skips
-the bad positions.
-
-## Worked example
-
-Task: rewrite negative readings as 0 (choice form), then compute a safe
-elementwise ratio a/b that yields 0.0 where b is zero, with no warnings.
+Task: build a new array equal to `z`, except negative readings become `0.0`.
 
 ```python
 import numpy as np
 
 z = np.array([-2.0, 0.5, 3.0, -1.0])
 
-# Vectorized if/else: condition, value-if-true, value-if-false.
 relu = np.where(z < 0, 0.0, z)
+
 assert relu.tolist() == [0.0, 0.5, 3.0, 0.0]
-assert z.tolist() == [-2.0, 0.5, 3.0, -1.0]   # input untouched — new array
+assert z.tolist() == [-2.0, 0.5, 3.0, -1.0]
+print(relu)
+```
+
+Why: at `z[0]`, `z[0] < 0` is `True`, so NumPy chooses `0.0`. At
+`z[1]`, the condition is `False`, so NumPy chooses `z[1]`. Same choice runs at
+every position. `np.where` returns a new array, so no `.copy()` is needed.
+
+## Faded practice
+
+### q94
+Return `z` with `-1.0` wherever a different array, `y`, exceeds a threshold.
+
+```python starter
+import numpy as np
+
+def solve(z, y, threshold):
+    """Return z with -1.0 wherever y exceeds the threshold."""
+    return np.where(_____, _____, _____)
+```
+
+```python solution
+import numpy as np
+
+def solve(z, y, threshold):
+    """Return z with -1.0 wherever y exceeds the threshold."""
+    return np.where(y > threshold, -1.0, z)
+```
+
+## Concept: Skip unsafe ufunc positions with where=
+
+`np.where` chooses between already-computed values. A ufunc's `where=` keyword
+does something different: it controls **where the operation runs**.
+
+For safe division, combine it with `out=`:
+
+```python no-run
+np.divide(a, b, out=np.zeros_like(a), where=b != 0)
+```
+
+`where=b != 0` runs division only where the divisor is nonzero. `out=` supplies
+both the result array and the values retained at skipped positions. Starting
+with zeros therefore makes every skipped result `0.0`.
+
+## Watch out
+
+`np.where(b != 0, a / b, 0.0)` does **not** prevent division by zero. Python
+evaluates `a / b` first; `np.where` selects afterward. Ufunc `where=` skips the
+unsafe operation itself.
+
+## Worked example: Divide safely
+
+Task: compute `a / b`, producing `0.0` where `b` is zero without division
+warnings.
+
+```python
+import numpy as np
 
 a = np.array([1.0, 2.0, 3.0])
 b = np.array([2.0, 0.0, 4.0])
 
-# Safe division: out= provides the default values, where= limits the
-# operation to positions whose divisor is nonzero. b == 0 slots are never
-# divided at all — that's what keeps the warning from firing.
 ratio = np.divide(a, b, out=np.zeros_like(a), where=b != 0)
+
 assert ratio.tolist() == [0.5, 0.0, 0.75]
+print(ratio)
 ```
 
-Why each step:
-
-1. In the `np.where` call, walk one position through the sentence: "z[0] is
-   −2.0; is it < 0? yes → take 0.0." The whole array is that sentence at
-   every position simultaneously.
-2. `out=np.zeros_like(a)` does double duty: allocates the result AND sets the
-   fill for skipped positions. `zeros_like` (not `zeros(shape)`) keeps the
-   dtype aligned with `a`.
-3. Choosing between the two forms: need to *select between computed values*?
-   `np.where`. Need to *avoid computing* somewhere (division by zero, log of
-   negative)? ufunc `where=`.
+Why: division runs at positions 0 and 2. Position 1 is skipped, so its initial
+`out` value—`0.0`—remains. No invalid division occurs.
 
 ## Faded practice
 
 ### q100
-Elementwise a/b, but exactly 0.0 where b is zero — and no warnings raised.
+Compute elementwise `a / b`, but return exactly `0.0` where `b` is zero.
 
 ```python starter
 import numpy as np
@@ -100,21 +130,3 @@ def solve(a, b):
     """a / b elementwise; 0.0 where b == 0; no divide warnings."""
     return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 ```
-
-## Independent practice
-
-From the drill bank: q94 (new array equal to z except −1.0 where a DIFFERENT
-array y exceeds a threshold — either `np.where` or copy + masked assignment;
-notice the condition and the values come from different arrays).
-
-## Misconceptions
-
-- **"`np.where(cond, a, b)` short-circuits like if/else."** — Both `a` and
-  `b` are fully evaluated first; `where` only selects afterwards. If
-  evaluating one side is the problem (1/0, log(-1)), use the ufunc's `where=`
-  keyword, which actually skips positions.
-- **"One-argument `np.where(cond)` is the same thing."** — With a single
-  argument it returns *indices* of True positions (like `np.nonzero`), not
-  values. The choose-between-values form always takes three arguments.
-- **"I need `.copy()` with np.where."** — `np.where` already builds a fresh
-  array; copying is for the masked-assignment style.

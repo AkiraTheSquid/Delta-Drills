@@ -3,45 +3,24 @@ kc: numpy.geometry-transforms
 title: Geometry — coordinates and transforms
 supporting: [numpy.dot-matmul-patterns, numpy.slicing-views, numpy.tile-repeat-meshgrid]
 new_syntax: []
-faded: [66]
-guided: [182]
+faded: [66, 182]
+guided: []
 independent: [105, 201]
 ---
 
-## Concept
+## Concept: points live in rows — cartesian to polar
 
 Geometric computation over point sets is column bookkeeping plus the linear
-algebra you already have. The conventions:
-
-**Points live in rows.** An (n, 2) array is n points; `z[:, 0]` is all the
-x's, `z[:, 1]` all the y's. Formulas written on one point vectorize over the
-column vectors automatically:
+algebra you already have. The convention: **points live in rows.** An (n, 2)
+array is n points; `z[:, 0]` is all the x's, `z[:, 1]` all the y's. Formulas
+written on one point vectorize over the column vectors automatically:
 
 - **Cartesian → polar**: `r = np.sqrt(x**2 + y**2)`,
   `theta = np.arctan2(y, x)`. Note `arctan2(y, x)` takes y FIRST and handles
   all four quadrants (plain `arctan(y/x)` loses quadrant information and
   divides by zero on the y-axis).
 
-**Transforms are matmuls against row-stacked points.** A linear transform T
-applied to all points at once is `pts @ T.T` — each row (point) gets dotted
-with each row of T. For transforms that include TRANSLATION, the standard
-trick is **homogeneous coordinates**: append a 1 to every point
-(`np.c_[pts, np.ones(len(pts))]` — `np.c_` is column-wise concatenation),
-multiply by the 3×3 homogeneous matrix, then **de-homogenize** by dividing
-the first two columns by the third: `out[:, :2] / out[:, 2:3]`. (Keeping the
-divisor as a (n, 1) slice — `2:3`, not `2` — preserves the column shape so
-the division broadcasts per row.) Affine transforms leave the third column
-at 1 and the division is a formality; projective ones genuinely need it.
-
-**Fields over grids** combine this KP with meshgrid/ogrid: evaluate a
-formula like a Gaussian bump `exp(-(x² + y²)/(2σ²))` on coordinate matrices
-spanning the plane — coordinates from linspace + meshgrid, then a pointwise
-formula. Distances from points to geometric objects (lines, segments) are
-the same recipe with the object's equation vectorized over the point rows.
-
 ## Worked example
-
-Task: convert points to polar coordinates; apply a homogeneous translation.
 
 ```python
 import numpy as np
@@ -55,33 +34,12 @@ r = np.sqrt(x ** 2 + y ** 2)
 theta = np.arctan2(y, x)                 # y FIRST — full-quadrant angle
 assert r.tolist() == [1.0, 2.0]
 assert np.allclose(theta, [0.0, np.pi / 2])   # +x axis; +y axis
-
-# Homogeneous transform: translate by (+2, -1).
-t = np.array([[1.0, 0.0, 2.0],
-              [0.0, 1.0, -1.0],
-              [0.0, 0.0, 1.0]])
-pts = np.array([[0.0, 0.0],
-                [1.0, 1.0]])
-
-h = np.c_[pts, np.ones(len(pts))]        # append the 1s column: (n, 3)
-out = h @ t.T                            # transform all points at once
-result = out[:, :2] / out[:, 2:3]        # de-homogenize (w column is 1 here)
-assert result.tolist() == [[2.0, -1.0],
-                           [3.0, 0.0]]
 ```
 
-Why each step:
-
-1. Unpacking `x, y = z[:, 0], z[:, 1]` FIRST, then writing the scalar
-   formula, is the pattern: derive on one point, run on all. The arctan2
-   argument order (y, x) is checked by the two axis points — get it
-   backwards and the asserts catch it immediately.
-2. `h @ t.T` rather than looping `t @ p` per point: points-as-rows means the
-   matrix arrives transposed. Verify with the origin — it must land exactly
-   on the translation column (2, −1).
-3. The `2:3` slice (not plain `2`) in de-homogenization keeps a (n, 1)
-   column so the division broadcasts row-wise — index vs slice choosing the
-   SHAPE is an old lesson doing precision work here.
+Why: unpacking `x, y = z[:, 0], z[:, 1]` FIRST, then writing the scalar
+formula, is the pattern: derive on one point, run on all. The arctan2
+argument order (y, x) is checked by the two axis points — get it backwards
+and the asserts catch it immediately.
 
 ## Faded practice
 
@@ -110,14 +68,71 @@ def solve(z):
     return r, t
 ```
 
-## Guided practice
+## Concept: transforms are matmuls — homogeneous coordinates
+
+A linear transform T applied to all points at once is `pts @ T.T` — each row
+(point) gets dotted with each row of T. No per-point loop.
+
+For transforms that include TRANSLATION, the standard trick is
+**homogeneous coordinates**: append a 1 to every point
+(`np.c_[pts, np.ones(len(pts))]` — `np.c_` is column-wise concatenation),
+multiply by the 3×3 homogeneous matrix, then **de-homogenize** by dividing
+the first two columns by the third: `out[:, :2] / out[:, 2:3]`. Keeping the
+divisor as a (n, 1) slice — `2:3`, not `2` — preserves the column shape so
+the division broadcasts per row. Affine transforms leave the third column at
+1 and the division is a formality; projective ones genuinely need it.
+
+(Fields over grids — e.g. a Gaussian bump on meshgrid coordinates — are this
+KP's formulas evaluated on coordinate matrices; see independent practice.)
+
+## Worked example
+
+```python
+import numpy as np
+
+# Homogeneous transform: translate by (+2, -1).
+t = np.array([[1.0, 0.0, 2.0],
+              [0.0, 1.0, -1.0],
+              [0.0, 0.0, 1.0]])
+pts = np.array([[0.0, 0.0],
+                [1.0, 1.0]])
+
+h = np.c_[pts, np.ones(len(pts))]        # append the 1s column: (n, 3)
+out = h @ t.T                            # transform all points at once
+result = out[:, :2] / out[:, 2:3]        # de-homogenize (w column is 1 here)
+assert result.tolist() == [[2.0, -1.0],
+                           [3.0, 0.0]]
+```
+
+Why: `h @ t.T` rather than looping `t @ p` per point — points-as-rows means
+the matrix arrives transposed. Verify with the origin: it must land exactly
+on the translation column (2, −1). The `2:3` slice keeps a (n, 1) column so
+the division broadcasts row-wise.
+
+## Faded practice
 
 ### q182
-1. Append-1, multiply, de-homogenize — the prompt spells out the recipe;
-   your job is the shape bookkeeping.
-2. `np.c_[pts, np.ones(len(pts))]` builds the (n, 3); points-as-rows means
-   the product is `h @ t.T`.
-3. De-homogenize with a column-preserving slice: `out[:, :2] / out[:, 2:3]`.
+Apply a 3×3 homogeneous transform to (n, 2) points.
+
+```python starter
+import numpy as np
+
+def solve(pts, t):
+    """Transformed points: append 1s, multiply, de-homogenize."""
+    h = np.c_[pts, np.ones(len(pts))]
+    out = h @ _____
+    return out[:, :2] / out[:, 2:3]
+```
+
+```python solution
+import numpy as np
+
+def solve(pts, t):
+    """Transformed points: append 1s, multiply, de-homogenize."""
+    h = np.c_[pts, np.ones(len(pts))]
+    out = h @ t.T
+    return out[:, :2] / out[:, 2:3]
+```
 
 ## Independent practice
 

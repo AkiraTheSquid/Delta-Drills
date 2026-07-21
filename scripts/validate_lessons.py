@@ -3,7 +3,8 @@
 
 Checks, per KP markdown file:
   1. frontmatter kc exists in kc_registry.json; supporting KCs exist; sections known
-  2. Concept and Worked example sections non-empty
+  2. every segment has one non-empty Concept, one Python Worked example,
+     and one Faded exercise
   3. every plain ```python fence in Concept/Worked example EXECUTES (shared namespace
      per KP; ```python no-run fences are skipped)
   4. every Faded-practice ### q<id> has starter + solution fences, qid exists in the
@@ -71,7 +72,10 @@ def grade_against_bank(solution_code, question):
             setup = tc.get("setup_code", "").replace("/delta_numbers.npy", NUMBERS_NPY)
             run_code(setup, ns)
             got = eval(tc["call"], ns)
-            run_code(tc.get("expected_setup_code", ""), ns)
+            # Mirror the JS/backend graders: expected_setup falls back to
+            # re-running setup_code, so expected_expr never sees fixtures the
+            # solution mutated in place (e.g. out=-style drills).
+            run_code((tc.get("expected_setup_code") or setup), ns)
             expected = eval(tc["expected_expr"], ns)
             if not values_equal(got, expected):
                 failures.append(f"case {i}: got {got!r} expected {expected!r}")
@@ -93,34 +97,62 @@ def check_kp(path, registry, bank, errors):
     for s in kp["supporting"]:
         if s not in kc_ids:
             errors.append(f"{name}: supporting kc '{s}' not in registry")
+    if kp["concepts"]:
+        if len(kp["concepts"]) != len(kp["segments"]):
+            errors.append(
+                f"{name}: frontmatter concepts declares {len(kp['concepts'])} "
+                f"atomic concepts but file has {len(kp['segments'])} segments")
+        if len(set(kp["concepts"])) != len(kp["concepts"]):
+            errors.append(f"{name}: frontmatter concepts must be unique")
+        for si, seg in enumerate(kp["segments"]):
+            if not seg["title"]:
+                errors.append(
+                    f"{name}: declared concept {kp['concepts'][si] if si < len(kp['concepts']) else si + 1} "
+                    "needs a titled '## Concept: ...' segment")
     for sec in ("Concept", "Worked example"):
         if not kp["sections"].get(sec):
             errors.append(f"{name}: empty/missing '## {sec}'")
 
-    # 3. executable prose/worked-example code
+    # 3. executable prose/worked-example code — run fences in DOCUMENT order
+    # (segment by segment), since later segments may build on earlier ones.
     ns = {}
-    for sec in ("Concept", "Worked example"):
-        for code in code_fences(kp["sections"].get(sec, ""), "python"):
-            try:
-                run_code(code, ns)
-            except Exception:
-                tb = traceback.format_exc().strip().splitlines()[-1]
-                errors.append(f"{name}: [{sec}] fence failed: {tb}")
+    for si, seg in enumerate(kp["segments"]):
+        for label, text in (("Concept", seg["concept"]), ("Worked example", seg["worked"])):
+            for code in code_fences(text, "python"):
+                try:
+                    run_code(code, ns)
+                except Exception:
+                    tb = traceback.format_exc().strip().splitlines()[-1]
+                    errors.append(f"{name}: segment {si + 1} [{label}] fence failed: {tb}")
 
-    # 4. faded solutions pass bank tests
+    # 4. faded solutions pass bank tests; every segment teaches ONE concept
+    # then pairs exactly one worked example with exactly one faded exercise.
     faded_ids = set()
-    for qid, content in split_items(kp["sections"].get("Faded practice", "")).items():
-        faded_ids.add(qid)
-        if qid not in bank:
-            errors.append(f"{name}: faded q{qid} not in bank")
-            continue
-        starters = code_fences(content, "python starter")
-        solutions = code_fences(content, "python solution")
-        if not starters or not solutions:
-            errors.append(f"{name}: faded q{qid} missing starter/solution fence")
-            continue
-        for fail in grade_against_bank(solutions[0], bank[qid]):
-            errors.append(f"{name}: faded q{qid} solution FAILED {fail}")
+    for si, seg in enumerate(kp["segments"]):
+        seg_label = f"segment {si + 1}" + (f" ({seg['title']})" if seg["title"] else "")
+        if not seg["concept"]:
+            errors.append(f"{name}: {seg_label} has an empty '## Concept'")
+        if not seg["worked"]:
+            errors.append(f"{name}: {seg_label} has no worked example")
+        elif len(code_fences(seg["worked"], "python")) != 1:
+            errors.append(f"{name}: {seg_label} must have exactly one Python worked example")
+        items = split_items(seg["faded"])
+        if len(items) != 1:
+            errors.append(f"{name}: {seg_label} must have exactly one faded exercise")
+        for qid, content in items.items():
+            if qid in faded_ids:
+                errors.append(f"{name}: faded q{qid} appears in more than one segment")
+            faded_ids.add(qid)
+            if qid not in bank:
+                errors.append(f"{name}: faded q{qid} not in bank")
+                continue
+            starters = code_fences(content, "python starter")
+            solutions = code_fences(content, "python solution")
+            if not starters or not solutions:
+                errors.append(f"{name}: faded q{qid} missing starter/solution fence")
+                continue
+            for fail in grade_against_bank(solutions[0], bank[qid]):
+                errors.append(f"{name}: faded q{qid} solution FAILED {fail}")
 
     # 5. refs exist and are consistent
     if set(kp["faded"]) != faded_ids:

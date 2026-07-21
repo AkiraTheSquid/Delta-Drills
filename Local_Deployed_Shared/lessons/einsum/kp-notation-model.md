@@ -3,51 +3,62 @@ kc: einsum.notation-model
 title: Reading an einsum spec string
 supporting: [numpy.axis-reductions, numpy.dot-matmul-patterns, numpy.reshape-flatten]
 new_syntax: [einsum-spec-string]
-faded: [244]
+concepts: [spec-anatomy, output-order-permutation]
+faded: [244, 285]
 guided: [271]
-independent: [285]
+independent: []
 ---
 
-## Concept
+## Concept: anatomy of the spec string
 
-`np.einsum` is one function that expresses transposes, reductions, dots,
-matrix products, and most of deep learning's tensor plumbing — by letting you
-**name the axes**. The call is
+`np.einsum` does one thing: it lets you **name the axes** of your arrays, then
+describe the result by those names. Every call looks like
 
-> `np.einsum('SPEC', arr1, arr2, ...)`
+> `np.einsum('SPEC', array1, array2, ...)`
 
-where the spec string labels each input's axes with letters and declares the
-output's axes after `->`. Reading a spec is a fixed four-step ritual:
+and the whole operation lives in that `'SPEC'` string. The string has exactly
+two sides, split by `->`:
 
-1. **Left of `->`**: one letter per axis of each input, inputs separated by
-   commas. `'ij'` on a matrix means "call axis 0 `i`, axis 1 `j`". The
-   letters are arbitrary names — only their PATTERN matters.
-2. **Right of `->`**: which axes the output has, in what order.
-3. **A letter that appears in the output** is kept (and its position sets
-   the output layout).
-4. **A letter that appears in inputs but NOT in the output is SUMMED
-   over.** This is the entire computational content of the notation.
+    'ik , kj -> ij'
+     input1  input2   output
 
-With just rules 3–4 you can already read two big families:
+Read each slot:
 
-- **Pure axis permutation** (every letter kept, order changed):
-  `'ij->ji'` is the transpose — output axis 0 is what the input called `j`.
-  `'bchw->bhwc'` moves channels last: same data, relabeled positions —
-  einsum as a self-documenting alternative to `np.transpose` with axis
-  numbers.
-- (Preview of the next KP: drop a letter instead — `'ij->i'` — and you've
-  summed an axis.)
+- **Before `->` — the inputs.** One group per array you pass in, groups
+  separated by a **comma**. Each group gives **one letter per axis**, in order:
+  `ik` means "this array is 2-D; call axis 0 `i` and axis 1 `k`." The comma is
+  literally "here comes the next array." Two groups → two arrays.
+- **After `->` — the output.** The axes you want in the result, in the order
+  you want them.
+- **A letter is just a NAME for an axis** — like a loop variable. `i`, `x`, `q`
+  carry no built-in meaning; only the PATTERN of where a letter appears matters.
 
-Why bother, when transpose/sum/dot all exist? Because the spec string *is
-the documentation*: `'bchw->bhwc'` states the memory layout change in
-domain terms, and complex multi-input contractions (coming in this lesson)
-have no readable spelling without it. Deep-learning code is full of einsum
-for exactly this reason.
+Where each letter appears decides its fate — the three fates are the whole
+language:
+
+1. **Kept** — appears in the output → that axis survives (this lesson).
+2. **Summed** — appears in an input but NOT the output → that axis is added up
+   and disappears (next lesson).
+3. **Multiplied** — the same letter shared across two inputs → those axes are
+   paired and multiplied (a couple of lessons on).
+
+Why name axes instead of using `np.transpose`/`np.sum` with axis numbers?
+Because the spec string IS the documentation: `'bchw->bhwc'` says "move channels
+last" in plain axis names, where `transpose(x, (0,2,3,1))` makes you count.
+
+## Watch out
+
+- **Letters have no fixed meaning.** `'ij->ij'` and `'xy->xy'` are the same
+  program; `i` is not "rows," `b` is not "batch" — those are conventions for
+  humans reading your code, not rules NumPy knows.
+- **Always write the `->`.** Implicit mode (no arrow) exists but guesses the
+  output by sorting letters alphabetically. In this course, always state the
+  output side yourself.
 
 ## Worked example
 
-Task: transpose a matrix, and relayout a channels-first image batch to
-channels-last — both as pure relabelings.
+The clearest way to see the grammar is the spec that does NOTHING: name every
+axis, then ask for them back in the same order.
 
 ```python
 import numpy as np
@@ -55,47 +66,36 @@ import numpy as np
 a = np.array([[1, 2, 3],
               [4, 5, 6]])
 
-# 'ij->ji': axis names i (rows), j (cols); output wants (j, i).
-# Both letters survive -> nothing is summed; it's a pure permutation.
-t = np.einsum('ij->ji', a)
-assert t.tolist() == [[1, 4], [2, 5], [3, 6]]
-assert np.array_equal(t, a.T)               # same thing, named vs method
-
-# 'bchw->bhwc': 4 axes named batch, channel, height, width;
-# output keeps all four, channel moved last.
-imgs = np.arange(24).reshape(2, 3, 2, 2)     # (b=2, c=3, h=2, w=2)
-last = np.einsum('bchw->bhwc', imgs)
-assert last.shape == (2, 2, 2, 3)
-# One value check: batch 0, channel 1, position (h=1, w=0)...
-assert imgs[0, 1, 1, 0] == last[0, 1, 0, 1]  # ...is now indexed (b,h,w,c)
-
-# The ritual, applied to a spec you haven't seen: 'xy->yx' on a 2-D array
-# is ALSO the transpose — letters are names, only the pattern matters.
-assert np.array_equal(np.einsum('xy->yx', a), a.T)
+# 'ij->ij': input is 2-D (axis 0 = i, axis 1 = j); output lists i then j,
+# the same order -> every axis kept, nothing reordered = the array unchanged.
+same = np.einsum('ij->ij', a)
+print(same)
+# [[1 2 3]
+#  [4 5 6]]   <- exactly a, handed straight back
 ```
 
-Why each step:
+Why this is the anchor: `'ij->ij'` hands the array straight back — `print(same)`
+shows the same numbers you started with. That proves the grammar in isolation:
+the letters name the two axes, and the output side requests them unchanged.
+Every other einsum spec is just a DEVIATION from this do-nothing baseline:
+reorder the output letters (transpose), drop one (sum), or share one across two
+inputs (multiply). Learn the baseline, and the rest are edits to it.
 
-1. For `'ij->ji'`, say the ritual aloud: "inputs: i then j; output: j then
-   i; every letter kept → permutation only." Thirty seconds of narration per
-   spec is what builds fluency.
-2. The single-value check on the 4-D case (`imgs[0,1,1,0] == last[0,1,0,1]`)
-   is how to verify ANY relayout: pick one element, track where its indices
-   moved. Cheaper and more convincing than eyeballing whole arrays.
-3. The `'xy->yx'` variant kills the superstition that `i` and `j` are magic:
-   spec letters are bound variables, like loop variables in
-   `for i ... for j ...`.
+(The code is preloaded in the editor on the right — press Run and watch the
+Output pane print the array. That's the fastest way to convince yourself.)
 
 ## Faded practice
 
 ### q244
-The transpose, written as an axis relabeling.
+Same array, but now emit the two axes in the OPPOSITE order — rows become
+columns. You saw `'ij->ij'` return the array unchanged; change only the output
+side so the layout flips (this is the transpose).
 
 ```python starter
 import numpy as np
 
 def solve(a):
-    """Transpose via einsum: name the axes, emit them swapped."""
+    """Transpose via einsum: name the axes, then emit them in swapped order."""
     return np.einsum('_____', a)
 ```
 
@@ -103,34 +103,84 @@ def solve(a):
 import numpy as np
 
 def solve(a):
-    """Transpose via einsum: name the axes, emit them swapped."""
+    """Transpose via einsum: name the axes, then emit them in swapped order."""
     return np.einsum('ij->ji', a)
+```
+
+## Concept: reordering the output = permutation
+
+When every input letter also appears in the output — none dropped, none shared
+— nothing is summed or multiplied. The ONLY thing the output side can do is set
+the ORDER of the axes. That is a pure axis permutation.
+
+- On a 2-D array, the only reorder is the transpose: `'ij->ji'`.
+- On an N-D tensor, you can move any axis anywhere, and the spec documents the
+  move in domain terms. `'bchw->bhwc'` takes a batch of channels-FIRST images
+  `(batch, channel, height, width)` and lays them out channels-LAST
+  `(batch, height, width, channel)` — the same numbers, re-indexed. The letters
+  say exactly which axis went where; `np.transpose(x, (0, 2, 3, 1))` makes you
+  decode the tuple.
+
+No data changes — a permutation only relabels positions.
+
+## Watch out
+
+- **The output side is not decoration.** It decides which axes survive AND their
+  order. Here every letter is kept, so it only reorders — but omit a letter and
+  that axis would be SUMMED away (next lesson). Every letter you write, and every
+  one you leave out, means something.
+
+## Worked example
+
+```python
+import numpy as np
+
+imgs = np.arange(24).reshape(2, 3, 2, 2)   # (b=2, c=3, h=2, w=2), channels-first
+
+# 'bchw->bhwc': keep all four axes, move channel to the end.
+last = np.einsum('bchw->bhwc', imgs)
+print(last.shape)          # (2, 2, 2, 3)  <- channels moved to the end
+
+# Follow ONE element to see it only changed POSITION, not value:
+print(imgs[0, 1, 1, 0])    # 5   (at b=0, c=1, h=1, w=0 in the original)
+print(last[0, 1, 0, 1])    # 5   (same value, now at b=0, h=1, w=0, c=1)
+```
+
+Why: to check a relayout, print the shape and follow a single element — cheaper
+and surer than eyeballing whole arrays. The shape shows channels landed last,
+and the two prints both read `5`: the value didn't change, it only moved from
+position `(b,c,h,w)=(0,1,1,0)` to `(b,h,w,c)=(0,1,0,1)`. That's what "permutation
+relabels positions, never values" means, made concrete.
+
+## Faded practice
+
+### q285
+A 4-D tensor `(b, h, s, d)`. This time don't move an axis to the end — SWAP the
+two MIDDLE axes (`h` and `s`), leaving `b` first and `d` last. Same "reorder the
+kept letters" idea as the channels-last move, a different target order.
+
+```python starter
+import numpy as np
+
+def solve(t):
+    """(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed."""
+    return np.einsum('_____', t)
+```
+
+```python solution
+import numpy as np
+
+def solve(t):
+    """(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed."""
+    return np.einsum('bhsd->bshd', t)
 ```
 
 ## Guided practice
 
 ### q271
-1. (b, c, h, w) → (b, h, w, c): four axes in, four out — which family is
-   this, permutation or reduction?
-2. Name the input axes something meaningful ('bchw') and write the output in
-   the required order.
-3. All letters kept on both sides — nothing summed, values untouched.
-
-## Independent practice
-
-From the drill bank: q285 (swap the middle two axes of a 4-D tensor — write
-the spec, then verify one element's journey like the worked example).
-
-## Misconceptions
-
-- **"einsum's letters have fixed meanings (i = rows, b = batch)."** — They
-  are arbitrary bound names; `'ij->ji'` and `'qz->zq'` are the same program.
-  Choose letters that document YOUR tensor (b, c, h, w for images) — that's
-  convention for humans, not semantics for NumPy.
-- **"einsum always multiplies/sums something."** — A spec that keeps every
-  letter is a pure transpose/relayout. The summing behavior is triggered
-  only by DROPPING letters (next KP) or repeating them across inputs.
-- **"The output side is optional decoration."** — Everything hangs on it:
-  which axes survive, their order, and (by omission) what gets summed.
-  Implicit mode (no `->`) exists but reorders alphabetically — in this
-  course, always write the arrow.
+1. `(b, c, h, w) -> (b, h, w, c)`: four axes in, four out — permutation or
+   reduction?
+2. Name the input axes meaningfully (`bchw`) and write the output in the
+   required order.
+3. Every letter kept on both sides — nothing summed, values untouched:
+   `'bchw->bhwc'`.

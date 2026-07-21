@@ -3,82 +3,96 @@ kc: numpy.elementwise-ufuncs
 title: Elementwise math (ufuncs)
 supporting: [numpy.ndarray-model]
 new_syntax: []
-faded: [49]
-guided: [67]
-independent: [43, 192]
+faded: [192, 49, 67]
+guided: []
+independent: [43]
 ---
 
-## Concept
+## Concept: write the formula once — operators are elementwise
 
 The core promise of NumPy: **write the formula once, and it applies to every
-element** — no loop. Operations with this behavior are called *universal
-functions* (ufuncs), and they come in three flavors you'll combine constantly:
-
-1. **Operators.** `+ - * / ** %` between an array and a scalar, or between two
-   same-shaped arrays, work element by element: `z * 2` doubles everything;
-   `a * b` multiplies corresponding entries (NOT matrix multiplication —
-   that's `@`).
-2. **Named math functions.** `np.sqrt`, `np.abs`, `np.exp`, `np.log`,
-   `np.sin`, … — each maps over the whole array. Rounding is a family:
-   `np.round` (nearest), `np.floor` (largest integer ≤ x — so −0.3 → −1.0),
-   `np.ceil`, `np.trunc` (toward zero).
-3. **Elementwise choosers.** `np.maximum(a, b)` / `np.minimum(a, b)` pick the
-   larger/smaller *at each position* (contrast with `a.max()`, which reduces
-   the whole array to one number — different KP). `z.clip(min=lo, max=hi)`
-   limits values to a range; `clip(min=0)` is exactly ReLU.
+element** — no loop. Operators `+ - * / ** %` between an array and a scalar,
+or between two same-shaped arrays, work element by element: `z * 2` doubles
+everything; `a * b` multiplies corresponding entries (NOT matrix
+multiplication — that's `@`).
 
 The general procedure for any "transform each entry" task:
 
-> Express the rule for ONE element as a formula, then write that formula with
-> the whole array in place of the element.
+> Express the rule for ONE element as a formula, then write that formula
+> with the whole array in place of the element.
 
-"Replace each x by x² − 1" → `z**2 - 1`. "Floor of each entry" →
-`np.floor(z)`. If you find yourself writing `for i in range(len(z))`, stop —
-there is almost always a ufunc spelling, and it is both shorter and orders of
-magnitude faster (the loop happens in compiled code).
-
-All these return **new arrays** and leave the input untouched — which is what
-"do not modify the input" tasks expect.
+"Replace each x by x² − 1" → `z**2 - 1`. If you find yourself writing
+`for i in range(len(z))`, stop — the ufunc spelling is shorter and orders of
+magnitude faster (the loop happens in compiled code). All of these return
+**new arrays** and leave the input untouched.
 
 ## Worked example
-
-Task: given exam scores, apply a curve — add 5 points, cap at 100, and floor
-the result to whole points.
 
 ```python
 import numpy as np
 
-scores = np.array([71.5, 88.25, 97.0, 99.5])
+z = np.array([1.0, 2.0, 3.0])
 
-# One formula, applied to every element at once:
-# 1. +5 broadcasts the scalar across the array,
-# 2. clip caps anything above 100,
-# 3. floor drops the fractional part (largest integer <= x).
-curved = np.floor((scores + 5).clip(max=100.0))
+# The per-element rule "x**2 - 1", written once for the whole array:
+out = z**2 - 1
+assert out.tolist() == [0.0, 3.0, 8.0]
 
-assert curved.tolist() == [76.0, 93.0, 100.0, 100.0]
-
-# The input is untouched — every step above built a new array.
-assert scores.tolist() == [71.5, 88.25, 97.0, 99.5]
-
-# Elementwise chooser between TWO arrays: keep the larger at each slot.
-a = np.array([1.0, 5.0, 2.0])
-b = np.array([3.0, 4.0, 2.5])
-assert np.maximum(a, b).tolist() == [3.0, 5.0, 2.5]
+# The input is untouched — the expression built a new array.
+assert z.tolist() == [1.0, 2.0, 3.0]
 ```
 
-Why each step:
+Why: the expression reads exactly like the per-element rule — that
+transliteration IS the method.
 
-1. The pipeline reads exactly like the per-element rule: add, cap, floor.
-   Composing ufuncs left-to-right is normal style — each stage maps over the
-   whole array.
-2. `clip` is the idiomatic "cap/limit" tool; spelling it as
-   `np.minimum(x, 100)` is equivalent, and `clip(min=0)` ==
-   `np.maximum(x, 0)`. Recognizing these equivalences helps you read others'
-   code.
-3. `np.maximum` (two arrays → same-shape array) vs `a.max()` (one array → one
-   scalar) is a naming trap worth noticing NOW; the reduction version is the
-   next KP.
+## Faded practice
+
+### q192
+Elementwise cube.
+
+```python starter
+import numpy as np
+
+def solve(x):
+    """Each entry raised to the third power."""
+    return x _____ 3
+```
+
+```python solution
+import numpy as np
+
+def solve(x):
+    """Each entry raised to the third power."""
+    return x ** 3
+```
+
+## Concept: named math functions and the rounding family
+
+Beyond operators, named ufuncs map over the whole array: `np.sqrt`,
+`np.abs`, `np.exp`, `np.log`, `np.sin`, …
+
+Rounding is a *family*, and the members differ on negatives:
+
+- `np.round` — nearest;
+- `np.floor` — largest integer ≤ x, so −0.3 → −1.0 (away from zero);
+- `np.ceil` — smallest integer ≥ x;
+- `np.trunc` — toward zero, so −0.3 → 0.0 (same as `astype(int)`).
+
+Read the task's example values to see which member is being asked for.
+
+## Worked example
+
+```python
+import numpy as np
+
+v = np.array([1.7, -0.3, 2.5])
+
+assert np.floor(v).tolist() == [1.0, -1.0, 2.0]   # floor moves DOWN
+assert np.trunc(v).tolist() == [1.0, -0.0, 2.0]   # trunc moves toward zero
+assert np.sqrt(np.array([4.0, 9.0])).tolist() == [2.0, 3.0]
+```
+
+Why: floor vs trunc only disagree on negatives — that's exactly where tasks
+(and graders) check.
 
 ## Faded practice
 
@@ -101,20 +115,60 @@ def solve(z):
     return np.floor(z)
 ```
 
-## Guided practice
+## Concept: elementwise choosers — maximum, minimum, clip
+
+`np.maximum(a, b)` / `np.minimum(a, b)` pick the larger/smaller *at each
+position* (contrast with `a.max()`, which reduces the whole array to one
+number — different KP). `z.clip(min=lo, max=hi)` limits values to a range.
+
+These are interchangeable spellings worth recognizing in others' code:
+`clip(max=100)` == `np.minimum(x, 100)`, and `clip(min=0)` ==
+`np.maximum(x, 0)` — which is exactly ReLU.
+
+## Worked example
+
+```python
+import numpy as np
+
+# Elementwise chooser between TWO arrays: keep the larger at each slot.
+a = np.array([1.0, 5.0, 2.0])
+b = np.array([3.0, 4.0, 2.5])
+assert np.maximum(a, b).tolist() == [3.0, 5.0, 2.5]
+
+# Pipeline: curve exam scores — add 5, cap at 100, floor to whole points.
+scores = np.array([71.5, 88.25, 97.0, 99.5])
+curved = np.floor((scores + 5).clip(max=100.0))
+assert curved.tolist() == [76.0, 93.0, 100.0, 100.0]
+```
+
+Why: composing ufuncs left-to-right is normal style — each stage maps over
+the whole array, and the pipeline reads exactly like the per-element rule:
+add, cap, floor.
+
+## Faded practice
 
 ### q67
-1. Every negative entry becomes 0.0, non-negatives pass through — state that
-   as a per-element rule first.
-2. That rule is "limit from below at 0", which is one method with one keyword
-   argument (or an elementwise chooser against the scalar 0).
-3. `z.clip(min=0)` or `np.maximum(z, 0.0)` — both return a new array, which is
-   what "do not modify the input" needs.
+Negatives become 0.0, non-negatives pass through (ReLU).
+
+```python starter
+import numpy as np
+
+def solve(z):
+    """Each negative entry replaced by 0.0 (new array; z unmodified)."""
+    return z.clip(_____=0)
+```
+
+```python solution
+import numpy as np
+
+def solve(z):
+    """Each negative entry replaced by 0.0 (new array; z unmodified)."""
+    return z.clip(min=0)
+```
 
 ## Independent practice
 
-From the drill bank: q43 (elementwise larger of two arrays), q192 (elementwise
-cube).
+From the drill bank: q43 (elementwise larger of two arrays).
 
 ## Misconceptions
 

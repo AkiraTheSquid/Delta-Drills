@@ -3,12 +3,12 @@ kc: numpy.axis-reductions
 title: Reductions along an axis — and keepdims
 supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: []
-faded: [220]
-guided: [135]
+faded: [220, 135]
+guided: []
 independent: [108, 130]
 ---
 
-## Concept
+## Concept: axis= — the axis you name disappears
 
 Whole-array reductions collapse everything to one number. Add **`axis=`** and
 the reduction collapses **only that axis**, leaving the rest of the shape
@@ -28,22 +28,9 @@ on top of each other. Predict the output shape first (cross the named axis
 out of the shape tuple) and the direction sorts itself out.
 
 Everything from the aggregation KP takes `axis=`: `mean`, `min`, `max`,
-`std`, `any`, `all`, `argmax`, plus `np.quantile` and friends. Higher-rank
-arrays allow a *tuple* of axes — `x.sum(axis=(-2, -1))` collapses the last
-two dimensions at once (e.g. summing each image of a batch), and negative
-indices count from the end just like in indexing.
-
-**`keepdims=True`** keeps the reduced axis as length 1 instead of deleting
-it: shape (r, c) → (r, 1) rather than (r,). Why you'd want that: a (r, 1)
-result broadcasts back against the original (r, c) *by row*, with no manual
-`None` insertion. Reduce → keepdims → operate is the standard shape-stable
-pipeline for "compare each entry to its row/column statistic", which the next
-KP builds on.
+`std`, `any`, `all`, `argmax`, plus `np.quantile` and friends.
 
 ## Worked example
-
-Task: column sums and row means of a matrix; then per-image totals in a 4-D
-batch; then a keepdims preview.
 
 ```python
 import numpy as np
@@ -60,33 +47,11 @@ assert col_sums.tolist() == [11, 22, 33]
 row_means = x.mean(axis=1)
 assert row_means.shape == (2,)
 assert row_means.tolist() == [2.0, 20.0]
-
-# Tuple of axes on a 4-D batch (a, b, c, d): collapse the last two ->
-# one total per (a, b) slice. Negative axes save counting.
-batch = np.arange(24).reshape(2, 3, 2, 2)
-totals = batch.sum(axis=(-2, -1))
-assert totals.shape == (2, 3)
-assert totals[0, 0] == 0 + 1 + 2 + 3
-
-# keepdims: the reduced axis survives as 1, so the result still lines up
-# against the original for broadcasting.
-rm = x.mean(axis=1, keepdims=True)
-assert rm.shape == (2, 1)
-centered = x - rm                     # (2,3) - (2,1): broadcasts by row
-assert centered[0].tolist() == [-1.0, 0.0, 1.0]
 ```
 
-Why each step:
-
-1. For each reduction, the assert on `.shape` comes BEFORE the values —
-   that's the recommended order in your own code too: predict the shape by
-   crossing out the named axis, then check the numbers.
-2. The 4-D example is why `axis=` tuples + negative indices exist: "per-image"
-   or "per-channel" reductions on batched data are one call, robust to how
-   many leading axes the batch has.
-3. The keepdims preview shows the payoff: `(2, 1)` broadcasts against
-   `(2, 3)` row-wise, while a bare `(2,)` would align against the WRONG axis
-   (right-aligned → columns) — the source of a classic silent bug when r = c.
+Why: for each reduction, the assert on `.shape` comes BEFORE the values —
+that's the recommended order in your own code too: predict the shape by
+crossing out the named axis, then check the numbers.
 
 ## Faded practice
 
@@ -109,14 +74,64 @@ def solve(x):
     return x.sum(axis=0)
 ```
 
-## Guided practice
+## Concept: tuples of axes, and keepdims
+
+Higher-rank arrays allow a *tuple* of axes — `x.sum(axis=(-2, -1))` collapses
+the last two dimensions at once (e.g. summing each image of a batch), and
+negative indices count from the end just like in indexing. That makes
+"per-image" reductions one call, robust to how many leading batch axes exist.
+
+One more switch on the same call: **`keepdims=True`** keeps the reduced axis
+as length 1 instead of deleting it — shape (r, c) → (r, 1) rather than (r,).
+Why you'd want that: a (r, 1) result broadcasts back against the original
+(r, c) *by row*. The reduce → keepdims → operate pipeline is the heart of the
+next KP (centering), where you'll practice it.
+
+## Worked example
+
+```python
+import numpy as np
+
+# Tuple of axes on a 4-D batch (a, b, c, d): collapse the last two ->
+# one total per (a, b) slice. Negative axes save counting.
+batch = np.arange(24).reshape(2, 3, 2, 2)
+totals = batch.sum(axis=(-2, -1))
+assert totals.shape == (2, 3)
+assert totals[0, 0] == 0 + 1 + 2 + 3
+
+# keepdims preview: the reduced axis survives as 1, so the result still
+# lines up against the original for broadcasting.
+x = np.array([[1, 2, 3], [10, 20, 30]])
+rm = x.mean(axis=1, keepdims=True)
+assert rm.shape == (2, 1)
+centered = x - rm                     # (2,3) - (2,1): broadcasts by row
+assert centered[0].tolist() == [-1.0, 0.0, 1.0]
+```
+
+Why: a bare `(2,)` row-mean would align against the WRONG axis when
+broadcast (right-aligned → columns) — the source of a classic silent bug
+when r = c. keepdims makes the intended alignment explicit.
+
+## Faded practice
 
 ### q135
-1. From (a, b, c, d), you need one total per (i, j) — so which TWO axes must
-   disappear?
-2. `axis=` accepts a tuple; negative numbers name axes from the end without
-   caring about the leading shape.
-3. `x.sum(axis=(-2, -1))` — check: result shape should be (a, b).
+Per-slice totals of a 4-D batch: collapse the LAST two axes in one call.
+
+```python starter
+import numpy as np
+
+def solve(x):
+    """(a, b, c, d) -> (a, b): total of each c*d slice."""
+    return x.sum(axis=_____)
+```
+
+```python solution
+import numpy as np
+
+def solve(x):
+    """(a, b, c, d) -> (a, b): total of each c*d slice."""
+    return x.sum(axis=(-2, -1))
+```
 
 ## Independent practice
 

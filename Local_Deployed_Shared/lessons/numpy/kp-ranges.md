@@ -3,89 +3,47 @@ kc: numpy.ranges
 title: Numeric ranges — arange and linspace
 supporting: [numpy.constructors, numpy.slicing-views]
 new_syntax: []
-faded: [229]
-guided: [214]
-independent: [53, 242]
+faded: [229, 242, 214]
+guided: []
+independent: [53]
 ---
 
-## Concept
+## Concept: np.arange — the stop is exclusive
 
-Sequences of evenly spaced numbers come up constantly — integer indices, time
-steps, plot axes, probability breakpoints. NumPy gives you two generators, and
-choosing between them comes down to one question:
+When you know the **step**, use **`np.arange(start, stop, step)`** (step
+defaults to 1). It counts from `start` in increments of `step` and — exactly
+like Python's `range` — **stops BEFORE `stop`**. The endpoint is never
+included, even with a step: `np.arange(0, 10, 2)` is `[0, 2, 4, 6, 8]` — 10
+is left out.
 
-> **Do you know the step size, or the number of points?**
-
-- **`np.arange(start, stop, step)`** — you know the **step**. Counts from
-  `start` in increments of `step`, and — exactly like Python's `range` —
-  **excludes `stop`**. `np.arange(3, 8)` → `[3, 4, 5, 6, 7]`.
-- **`np.linspace(start, stop, num)`** — you know the **number of points**.
-  Produces exactly `num` evenly spaced values, and **includes both
-  endpoints**. `np.linspace(0.0, 1.0, 5)` → `[0.0, 0.25, 0.5, 0.75, 1.0]`.
-
-The exclusive/inclusive difference is the whole trick. Most range bugs are
-off-by-one at the endpoint:
-
-- To make `arange` include its endpoint with integer steps, extend the stop:
-  `np.arange(start, end + 1)`.
-- With **float** steps, prefer not to use `arange` at all: accumulated
-  floating-point error makes the last point unreliable (sometimes `stop`
-  sneaks in, sometimes the point before it is off by 1e-16). The robust
-  pattern is to generate exact **integers** and scale them:
-  `np.arange(n_points) * step` — or use `linspace`, which is float-exact at
-  both endpoints by construction.
-
-`linspace` also composes well with slicing when you need *interior* points:
-generate the inclusive grid, then cut the ends off with `[1:-1]`.
+That exclusive stop is the whole trick, and the source of most range bugs.
+When a task wants the endpoint *included*, you have to extend the stop past
+where you want to end.
 
 ## Worked example
-
-Task: build (a) all integers from -2 through 3 inclusive, and (b) the grid
-0.0, 0.5, 1.0, ..., 10.0 — inclusive of 10.0 — without float drift.
 
 ```python
 import numpy as np
 
-# (a) Integer range, inclusive of the endpoint.
-# arange excludes stop, so push stop one past the end we want.
-ints = np.arange(-2, 3 + 1)
-assert ints.tolist() == [-2, -1, 0, 1, 2, 3]
-
-# (b) Float grid with step 0.5 from 0 to 10 inclusive.
-# DON'T: np.arange(0, 10 + 0.5, 0.5) — float steps make the endpoint a gamble.
-# DO: count how many points there are, generate exact integers, scale once.
-stop, step = 10.0, 0.5
-n = int(round(stop / step)) + 1     # 21 points: 0.0, 0.5, ..., 10.0
-grid = np.arange(n) * step
-assert len(grid) == 21
-assert grid[0] == 0.0 and grid[-1] == 10.0
-
-# Equivalent linspace formulation: we know the point count, so:
-grid2 = np.linspace(0.0, 10.0, 21)
-assert np.allclose(grid, grid2)
+# Counting by 2 up to 10 — but 10 is the stop, so it's EXCLUDED.
+evens = np.arange(0, 10, 2)
+assert evens.tolist() == [0, 2, 4, 6, 8]
 ```
 
-Why each step:
-
-1. In (a) the `+ 1` is doing the real work — spelling it `3 + 1` instead of
-   `4` documents *why* the stop is what it is.
-2. In (b), `int(round(stop / step)) + 1` converts a step-question into a
-   count-question. The multiplication `np.arange(n) * step` performs ONE float
-   operation per element instead of accumulating additions, so the endpoint is
-   exact.
-3. When both endpoints must land exactly, `linspace` is the most direct tool —
-   its contract is "exactly `num` points, endpoints included".
+Why: notice 10 never appears. The step doesn't change the rule — `arange`
+always halts one step short of `stop`.
 
 ## Faded practice
 
 ### q229
-Every integer from start to end, INCLUDING both endpoints.
+Every integer from `start` to `end`, **including both endpoints**. (Watch the
+exclusive stop — how do you make `end` appear?)
 
 ```python starter
 import numpy as np
 
 def solve(start, end):
-    """Return the integers start..end inclusive, in order."""
+    """Integers start..end inclusive, in order."""
     return np.arange(start, _____)
 ```
 
@@ -93,25 +51,107 @@ def solve(start, end):
 import numpy as np
 
 def solve(start, end):
-    """Return the integers start..end inclusive, in order."""
+    """Integers start..end inclusive, in order."""
     return np.arange(start, end + 1)
 ```
 
-## Guided practice
+## Concept: np.linspace — you know the number of points
+
+When you know the **number of points** instead of the step, use
+**`np.linspace(start, stop, num)`**: exactly `num` evenly spaced values, and
+this time **both endpoints are included**. Mind the fencepost — `num` points
+make `num − 1` gaps, so `np.linspace(0.0, 1.0, 5)` has step 1/4, not 1/5.
+
+## Worked example
+
+```python
+import numpy as np
+
+# 5 points from 0 to 1, endpoints INCLUDED -> 4 equal gaps of 0.25.
+grid = np.linspace(0.0, 1.0, 5)
+assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
+```
+
+Why: both 0.0 and 1.0 are present — that's the opposite of `arange`. Count
+the points, not the intervals.
+
+## Faded practice
+
+### q242
+The `n` evenly spaced breakpoints **strictly inside** (0, 1) — exclude 0.0 and
+1.0. (linspace includes the endpoints; how do you get `n` points *between*
+them?)
+
+```python starter
+import numpy as np
+
+def solve(n):
+    """n interior breakpoints of (0, 1), endpoints excluded."""
+    return np.linspace(0.0, 1.0, n + _____)[1:-1]
+```
+
+```python solution
+import numpy as np
+
+def solve(n):
+    """n interior breakpoints of (0, 1), endpoints excluded."""
+    return np.linspace(0.0, 1.0, n + 2)[1:-1]
+```
+
+## Concept: float steps drift — count, then scale
+
+`np.arange` with a **float** step is a trap: each element is built by repeated
+addition, so rounding error accumulates and the endpoint may or may not show
+up. The robust recipe is to turn the step-question into a count-question:
+figure out how many points there are, generate exact **integers**, and scale
+them once — `np.arange(n_points) * step`. One multiply per element, no drift.
+
+The count uses the exclusive-stop insight again: an inclusive range of
+`step`-spaced points from 0 to `stop` has `round(stop / step) + 1` of them.
+
+## Worked example
+
+```python
+import numpy as np
+
+# 0 to 1 inclusive, spacing 0.25. Count the points, scale integers.
+n = int(round(1.0 / 0.25)) + 1        # 5 points: 0, 0.25, 0.5, 0.75, 1.0
+grid = np.arange(n) * 0.25
+assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
+```
+
+Why: `np.arange(0, 1.0 + 0.25, 0.25)` would gamble on the endpoint;
+`np.arange(n) * step` is exact because the integers are exact.
+
+## Faded practice
 
 ### q214
-1. The sequence is 0, step, 2·step, …, stop — you're asked for an INCLUSIVE
-   float range, which is exactly the fragile case for `np.arange`.
-2. Convert it to a count: how many multiples of `step` lie in [0, stop]?
-   (`stop` is promised to be an exact multiple of `step`.)
-3. Generate those integers with `np.arange(n)` and multiply by `step` once —
-   integer counting is exact, so the endpoint is too.
+`solve(stop, step)`: the inclusive float range 0, step, 2·step, …, up to **and
+including** `stop` (an exact multiple of `step`). (Why does the point count
+need a `+ 1`?)
+
+```python starter
+import numpy as np
+
+def solve(stop, step):
+    """0, step, ..., stop inclusive — exact, no float drift."""
+    n = int(round(stop / step)) + _____
+    return np.arange(n) * step
+```
+
+```python solution
+import numpy as np
+
+def solve(stop, step):
+    """0, step, ..., stop inclusive — exact, no float drift."""
+    n = int(round(stop / step)) + 1
+    return np.arange(n) * step
+```
 
 ## Independent practice
 
 From the drill bank: q53 (n evenly spaced values from exactly 0.0 to exactly
-1.0 — which tool has that contract?), q242 (the n interior breakpoints of
-(0, 1) — generate the inclusive grid, then slice the endpoints away).
+1.0 — which tool has that endpoints-included contract?).
 
 ## Misconceptions
 

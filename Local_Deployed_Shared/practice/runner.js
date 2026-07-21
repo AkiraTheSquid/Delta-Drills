@@ -123,7 +123,9 @@ async function ensureArenaNumbersInPyodide() {
 // `runtime_dependencies` / `runtime_unmet_dependencies` on each question entry
 // in arena_prereqs_structured.json. Keep this function in sync with that doc
 // when adding/removing injected globals.
-async function buildPyodidePreamble(question = PracticeAPI?.currentQuestion) {
+async function buildPyodidePreamble(
+  question = window.LessonGate?.activeQuestion || PracticeAPI?.currentQuestion,
+) {
   const needsEinops = questionNeedsEinops(question);
   const needsArenaArray = questionNeedsArenaArray(question);
   await ensurePyodidePracticePackages({ needsEinops });
@@ -234,8 +236,13 @@ runBtn.addEventListener("click", async () => {
     let actualOutput = "";
     let runFailed = false;
 
+    // During an inline lesson the editor holds optional runnable worked code.
+    // Keep experimentation local; never send lesson examples to backend runner.
+    const runQuestion = window.LessonGate?.activeQuestion || PracticeAPI?.currentQuestion;
     let useLocalPyodide =
-      practiceMode !== "backend" || questionNeedsEinops(PracticeAPI?.currentQuestion);
+      practiceMode !== "backend" ||
+      !!window.LessonGate?.activeQuestion ||
+      questionNeedsEinops(runQuestion);
 
     if (practiceMode === "backend" && !useLocalPyodide) {
       try {
@@ -256,7 +263,7 @@ runBtn.addEventListener("click", async () => {
           const stdout = normalizeOutput(data.stdout);
           const stderr = normalizeOutput(data.stderr);
           actualOutput = stdout;
-          outputArea.textContent = stdout || stderr || "(No output)";
+          outputArea.textContent = stdout || stderr || "✓ Ran successfully (no printed output)";
           if (stderr) {
             runFailed = true;
           }
@@ -275,7 +282,7 @@ runBtn.addEventListener("click", async () => {
         return;
       }
 
-      const preamble = await buildPyodidePreamble(PracticeAPI?.currentQuestion);
+      const preamble = await buildPyodidePreamble(runQuestion);
       pyodide.runPython(preamble);
 
       try {
@@ -288,9 +295,9 @@ runBtn.addEventListener("click", async () => {
           output += (output ? "\n" : "") + stderr;
           runFailed = true;
         }
-        outputArea.textContent = output || "(No output)";
+        outputArea.textContent = output || "✓ Ran successfully (no printed output)";
         if (!runFailed) {
-          await renderRunOutputVisual(pyodide, PracticeAPI?.currentQuestion);
+          await renderRunOutputVisual(pyodide, runQuestion);
         }
       } catch (pyErr) {
         const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));

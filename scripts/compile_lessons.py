@@ -17,17 +17,33 @@ def compile_lessons():
     for path in all_kp_paths():
         kp = parse_kp(path)
         kc = kc_by_id[kp["kc"]]
-        faded_items = []
-        for qid, content in split_items(kp["sections"].get("Faded practice", "")).items():
-            starters = code_fences(content, "python starter")
-            solutions = code_fences(content, "python solution")
-            prose = content.split("```", 1)[0].strip()
-            faded_items.append({
-                "question_id": qid,
-                "prompt": prose,
-                "starter_code": starters[0] if starters else "",
-                "solution": solutions[0] if solutions else "",
-            })
+
+        def _faded_items(section_text):
+            items = []
+            for qid, content in split_items(section_text).items():
+                starters = code_fences(content, "python starter")
+                solutions = code_fences(content, "python solution")
+                prose = content.split("```", 1)[0].strip()
+                items.append({
+                    "question_id": qid,
+                    "prompt": prose,
+                    "starter_code": starters[0] if starters else "",
+                    "solution": solutions[0] if solutions else "",
+                })
+            return items
+
+        # One page per single-concept segment (the in-app player steps
+        # through these); legacy aggregate fields kept for viewer.html.
+        segments = [{
+            "concept_id": kp["concepts"][i] if i < len(kp["concepts"]) else "",
+            "title": seg["title"],
+            "concept_markdown": seg["concept"],
+            "watch_out_markdown": seg["watch_out"],
+            "worked_example_markdown": seg["worked"],
+            "worked_example_code": code_fences(seg["worked"], "python")[0],
+            "faded_items": _faded_items(seg["faded"]),
+        } for i, seg in enumerate(kp["segments"])]
+        faded_items = [item for seg in segments for item in seg["faded_items"]]
         guided_items = []
         for qid, content in split_items(kp["sections"].get("Guided practice", "")).items():
             guided_items.append({"question_id": qid, "hints_markdown": content})
@@ -38,6 +54,7 @@ def compile_lessons():
             "new_syntax": kp["new_syntax"],
             "concept_markdown": kp["sections"].get("Concept", ""),
             "worked_example_markdown": kp["sections"].get("Worked example", ""),
+            "segments": segments,
             "faded_items": faded_items,
             "guided_items": guided_items,
             "independent_items": kp["independent"],

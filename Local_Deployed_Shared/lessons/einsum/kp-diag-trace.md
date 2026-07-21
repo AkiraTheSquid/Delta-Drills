@@ -3,48 +3,21 @@ kc: einsum.diag-trace
 title: Repeated indices on one operand — diagonal and trace
 supporting: [einsum.notation-model, numpy.diag-triangles]
 new_syntax: []
-faded: [277, 257]
-guided: [246]
-independent: [266, 273, 298]
+faded: [257, 277, 273, 266, 246, 298]
+guided: []
+independent: []
 ---
 
-## Concept
+## Concept: 'ii->i' — a repeated index walks the diagonal
 
-One rule remains: **a letter repeated WITHIN a single operand walks the
-diagonal** — it constrains those two axes to move together, selecting the
-entries where their indices are equal:
+A letter repeated WITHIN a single operand makes those two axes move
+**together** — einsum visits only the entries where their indices are equal.
 
-- `'ii->i'` — both of the matrix's axes named i → only entries a[i, i]
-  are visited; keeping i outputs them: the **diagonal**, as a vector.
-- `'ii->'` — same selection, then i is dropped → summed: the **trace**.
-
-Combined with everything else, this composes richly:
-
-- **Batched diagonals/traces**: `'bii->bi'` (each matrix's diagonal),
-  `'bii->b'` (each matrix's trace) — the batch letter rides along
-  untouched.
-- **Diagonal of a product, without the product**: the diagonal of a@b is
-  Σₖ a[i,k]·b[k,i] — spec `'ik,ki->i'`: k contracts, and the OUTPUT
-  constraint (only i survives, appearing in both inputs' outer positions)
-  means only matching row/column pairs are computed. Cost O(n²) instead of
-  the O(n³) full product.
-- **Trace of a product**: drop the i too — `'ij,ji->'` computes tr(a@b)
-  directly. (Note the letter pattern vs the Frobenius 'ij,ij->': transposed
-  second operand. tr(a@b) = Frobenius(a, b.T) — the notation makes the
-  identity visible.)
-
-Full rule set, now complete — every einsum you will ever read is these
-four:
-
-> 1. letter dropped from output → **summed**
-> 2. letter shared across operands → **multiplied along**
-> 3. letter unshared and kept → **combinatorial (outer)**
-> 4. letter repeated within one operand → **diagonal**
+`'ii->i'`: both of the matrix's axes are named `i`, so only entries `a[i, i]`
+are visited; keeping `i` in the output emits them. That's the **diagonal**,
+as a vector.
 
 ## Worked example
-
-Task: diagonal and trace of a matrix; diagonal of a product without forming
-the product.
 
 ```python
 import numpy as np
@@ -56,38 +29,57 @@ a = np.array([[1.0, 2.0],
 diag = np.einsum('ii->i', a)
 assert diag.tolist() == [1.0, 4.0]
 assert np.array_equal(diag, np.diag(a))
+```
 
-# 'ii->': same walk, then sum -> the trace.
+Why: the repeated `i` is the whole trick — it selects the diagonal. Keeping
+`i` on the output side means "emit what you selected".
+
+## Faded practice
+
+### q257
+The main diagonal, as a vector.
+
+```python starter
+import numpy as np
+
+def solve(a):
+    """Diagonal: walk it, keep it."""
+    return np.einsum('_____', a)
+```
+
+```python solution
+import numpy as np
+
+def solve(a):
+    """Diagonal: walk it, keep it."""
+    return np.einsum('ii->i', a)
+```
+
+## Concept: 'ii->' — drop the index to sum it (the trace)
+
+Same selection as before — walk the diagonal — but now **drop** `i` from the
+output. A letter dropped from the output is summed. So `'ii->'` selects the
+diagonal, then sums it: the **trace**, a scalar.
+
+Read every spec as selection + fate: `'ii->i'` and `'ii->'` select the same
+entries; the only difference is keep (`->i`) vs sum (`->`).
+
+## Worked example
+
+```python
+import numpy as np
+
+a = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+
+# 'ii->': same diagonal walk, then sum -> the trace.
 tr = np.einsum('ii->', a)
 assert tr == 5.0
 assert tr == np.trace(a)
-
-# Diagonal of a @ b, computed directly: 'ik,ki->i'.
-b = np.array([[5.0, 6.0],
-              [7.0, 8.0]])
-dprod = np.einsum('ik,ki->i', a, b)
-assert np.array_equal(dprod, np.diag(a @ b))     # verified vs the slow way
-
-# Trace of the product: drop i as well.
-assert np.einsum('ij,ji->', a, b) == np.trace(a @ b)
-
-# Batched: (batch, n, n) -> each matrix's trace, one letter more.
-stack = np.stack([a, b])
-assert np.einsum('bii->b', stack).tolist() == [5.0, 13.0]
 ```
 
-Why each step:
-
-1. `'ii->i'` vs `'ii->'` differ only in the output — the SELECTION (walk the
-   diagonal) is rule 4; what happens to the selected values (keep vs sum) is
-   the old rule 1. Factoring specs into selection+fate is how to read the
-   exotic ones.
-2. For `'ik,ki->i'`, trace entry 0: i=0 fixed, k ranges → Σₖ a[0,k]·b[k,0] —
-   row 0 of a dotted with COLUMN 0 of b, which is precisely (a@b)[0,0].
-   The spec computes only the n needed dots, not all n².
-3. The batched line shows the compositionality payoff: no new function
-   exists for "trace of each matrix in a stack" — but the spec is one
-   letter away from the single-matrix version.
+Why: one character (`->i` vs `->`) flips "emit the diagonal" into "sum the
+diagonal". That's the payoff of reading specs as selection + fate.
 
 ## Faded practice
 
@@ -110,14 +102,42 @@ def solve(a):
     return np.einsum('ii->', a)
 ```
 
-### q257
-The main diagonal, as a vector.
+## Concept: 'bii->bi' — a batch letter rides along
+
+Add one more letter for a batch axis and the diagonal trick works per
+matrix. For a stack of shape `(b, n, n)`, `'bii->bi'` extracts each matrix's
+diagonal: the repeated `i` still walks each matrix's diagonal, and `b` is an
+ordinary kept axis carried straight through.
+
+No new function exists for "diagonal of every matrix in a stack" — the spec
+is one letter away from the single-matrix version.
+
+## Worked example
+
+```python
+import numpy as np
+
+stack = np.stack([np.diag([1.0, 2.0]),
+                  np.diag([3.0, 4.0])])   # shape (2, 2, 2)
+
+# 'bii->bi': per-matrix diagonal; b rides along untouched.
+diags = np.einsum('bii->bi', stack)
+assert diags.tolist() == [[1.0, 2.0], [3.0, 4.0]]
+```
+
+Why: `b` is kept and unpaired, so it just indexes the batch; the `ii` does
+the same diagonal work inside each slice.
+
+## Faded practice
+
+### q273
+The diagonal of each matrix in a batch — shape (b, n).
 
 ```python starter
 import numpy as np
 
 def solve(a):
-    """Diagonal: walk it, keep it."""
+    """Batched diagonal: (b, n, n) -> (b, n)."""
     return np.einsum('_____', a)
 ```
 
@@ -125,35 +145,154 @@ def solve(a):
 import numpy as np
 
 def solve(a):
-    """Diagonal: walk it, keep it."""
-    return np.einsum('ii->i', a)
+    """Batched diagonal: (b, n, n) -> (b, n)."""
+    return np.einsum('bii->bi', a)
 ```
 
-## Guided practice
+## Concept: 'bii->b' — batch trace (drop i, keep b)
+
+Combine the two ideas: keep the batch letter, drop the diagonal letter.
+`'bii->b'` sums each matrix's diagonal and keeps one scalar per batch entry —
+the **trace of every matrix in the stack**.
+
+## Worked example
+
+```python
+import numpy as np
+
+stack = np.stack([np.eye(2), 3 * np.eye(2)])   # traces 2 and 6
+
+# 'bii->b': per-matrix trace; b kept, i dropped (summed).
+traces = np.einsum('bii->b', stack)
+assert traces.tolist() == [2.0, 6.0]
+```
+
+Why: `b` kept + `i` dropped = "one summed diagonal per batch slice". Same
+selection as `bii->bi`, different fate for `i`.
+
+## Faded practice
+
+### q266
+The trace of each matrix in a batch — length b.
+
+```python starter
+import numpy as np
+
+def solve(a):
+    """Batched trace: (b, n, n) -> (b,)."""
+    return np.einsum('_____', a)
+```
+
+```python solution
+import numpy as np
+
+def solve(a):
+    """Batched trace: (b, n, n) -> (b,)."""
+    return np.einsum('bii->b', a)
+```
+
+## Concept: 'ik,ki->i' — diagonal of a product, without the product
+
+The diagonal of `a @ b` is `Σₖ a[i,k]·b[k,i]`. Write exactly that:
+`'ik,ki->i'`. The shared `k` contracts (summed); `i` appears in BOTH operands'
+outer positions and survives, forcing row `i` of `a` to pair with column `i`
+of `b`. Only the `n` diagonal dots are computed — O(n²), not the O(n³) full
+product.
+
+## Worked example
+
+```python
+import numpy as np
+
+a = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+b = np.array([[5.0, 6.0],
+              [7.0, 8.0]])
+
+# 'ik,ki->i': entry i = row i of a . column i of b.
+dprod = np.einsum('ik,ki->i', a, b)
+assert np.array_equal(dprod, np.diag(a @ b))   # verified vs the slow way
+```
+
+Why: entry 0 is `Σₖ a[0,k]·b[k,0]` — row 0 of `a` dotted with column 0 of
+`b`, i.e. `(a@b)[0,0]`. The spec computes only the n needed dots.
+
+## Faded practice
 
 ### q246
-1. The diagonal of a @ b WITHOUT computing the product — entry i is
-   (row i of a) · (column i of b).
-2. The contraction letter k is ordinary; the trick is that i appears in
-   BOTH operands and survives — forcing the row/column indices to match.
-3. `'ik,ki->i'` — check the letter positions against b's axes carefully
-   (which axis of b is k, which is i?).
+Diagonal of a @ b, computed directly (no full product).
 
-## Independent practice
+```python starter
+import numpy as np
 
-From the drill bank: q266 (trace of each matrix in a batch), q273 (diagonal
-of each matrix in a batch), q298 (tr(a@b) as one contraction — and compare
-its spec with the Frobenius spec until the difference is obvious).
+def solve(a, b):
+    """Diagonal of a @ b: entry i = row i of a . column i of b."""
+    return np.einsum('_____', a, b)
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """Diagonal of a @ b: entry i = row i of a . column i of b."""
+    return np.einsum('ik,ki->i', a, b)
+```
+
+## Concept: 'ij,ji->' — trace of a product
+
+Drop the surviving `i` too and you sum the whole diagonal of the product:
+`'ij,ji->'` computes `tr(a @ b)` directly. Note the letter positions:
+`'ij,ji->'` transposes the second operand's axes relative to the Frobenius
+spec `'ij,ij->'`. So `tr(a@b) = Frobenius(a, b.T)` — the notation makes the
+identity visible. Read letter POSITIONS, not letter SETS.
+
+## Worked example
+
+```python
+import numpy as np
+
+a = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+b = np.array([[5.0, 6.0],
+              [7.0, 8.0]])
+
+# 'ij,ji->': sum over the whole diagonal of a @ b.
+assert np.einsum('ij,ji->', a, b) == np.trace(a @ b)
+```
+
+Why: `'ij,ji->'` pairs `a[i,j]` with `b[j,i]` and sums everything — exactly
+`Σᵢ (a@b)[i,i]`. The transposed second operand is what separates it from the
+Frobenius product.
+
+## Faded practice
+
+### q298
+Trace of a @ b as one contraction.
+
+```python starter
+import numpy as np
+
+def solve(a, b):
+    """tr(a @ b) directly — one einsum, no full product."""
+    return np.einsum('_____', a, b)
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """tr(a @ b) directly — one einsum, no full product."""
+    return np.einsum('ij,ji->', a, b)
+```
 
 ## Misconceptions
 
 - **"'ii' is illegal / a typo."** — Within one operand it's the diagonal
-  selector (rule 4). Across operands it's the pairing rule. Same letter,
-  two well-defined meanings by placement.
+  selector. Across operands it's the pairing rule. Same letter, two
+  well-defined meanings by placement.
 - **"diag(a @ b) requires computing a @ b."** — `'ik,ki->i'` computes just
   the n diagonal dots: O(n²) vs O(n³). When a drill says "without the full
   product", this is what it's fishing for.
 - **"'ij,ji->' and 'ij,ij->' are interchangeable."** — Transposed second
   operand: the first is tr(a@b), the second the Frobenius product Σ aᵢⱼbᵢⱼ.
-  They agree only for symmetric b. Reading letter POSITIONS, not letter
-  SETS, is the skill this lesson closes on.
+  They agree only for symmetric b. Read letter POSITIONS, not letter SETS.

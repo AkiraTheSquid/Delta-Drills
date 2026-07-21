@@ -1,47 +1,57 @@
-<!-- modulario:template -->
 # scripts
 
 ## Purpose
-- One or two sentences on what this folder is responsible for.
-- Describe the business/domain concern, not the technical details.
+- Authoring/build tooling for the first-encounter lesson course: parse KP markdown, validate it against the drill bank, compile it to the JSON the app serves.
 
 ## Owns
-- List the main responsibilities this folder **does own**.
-- Each item should be something that changes when this folder changes.
+- The KP markdown format contract (`lesson_lib.py` parser: frontmatter, sections, single-concept segments).
+- Lesson validation (`validate_lessons.py`): fences execute, faded solutions pass bank test cases, per-segment rules, registry acyclicity, coverage.
+- Compilation to `lessons_structured.json` (`compile_lessons.py`) and Q-matrix generation (`build_qmatrix.py`).
 
 ## Does NOT own
-- List responsibilities that live elsewhere to prevent scope creep.
-- Link to the other folder/module if relevant.
+- Lesson content itself (`Local_Deployed_Shared/lessons/`), runtime lesson gating (`Local_Deployed_Shared/practice/lessons.js`, backend `app/lessons.py`), or the drill bank.
 
 ## Key Files
-- `example.js`: short description of what this file is and when it runs.
+- `lesson_lib.py`: shared parser — frontmatter, `split_sections` (ordered, repeatable), `build_segments` (one-concept segments), bank/registry loaders. HIGH fan-in: the other three scripts import it.
+- `validate_lessons.py`: executes every code fence in document order, grades every faded solution against bank test_cases, enforces exactly one worked + one faded example per segment. Run with `--coverage` as the full gate.
+- `compile_lessons.py`: emits `lessons_structured.json` with per-KP `segments` plus legacy aggregate fields (viewer.html back-compat).
+- `build_qmatrix.py`: derives `qmatrix_tags.json` question→KC tags from KP refs + hand-assigned leftovers.
 
 ## Data & External Dependencies
-- What data models or types this area works with.
-- What external services or libraries it directly touches.
-- Any important shared modules it depends on.
+- Reads `Local_Deployed_Shared/questions_structured.json` (bank), `lessons/kc_registry.json`, `lessons/*/kp-*.md`.
+- numpy (fence execution); einops fixtures need `delta_numbers.npy` (validator rewrites the Docker path to the local copy).
 
 ## How It Works (Flow)
-1. Brief step-by-step of the main flow.
-2. Optional secondary flows if they are important.
+1. Edit KP markdown → `python3 scripts/validate_lessons.py --coverage`.
+2. `python3 scripts/compile_lessons.py` → `lessons_structured.json` feeds BOTH the frontend player and the backend guard maps.
 
 ## Invariants & Constraints
-- Rules that **must** remain true.
-- Performance or security constraints.
-- "Never do X" type rules that are easy to forget.
+- Every segment starts at `## Concept` and must carry exactly one worked example plus one faded exercise whose solution passes bank tests.
+- Optional `## Watch out` belongs to current segment and compiles into lesson-only content.
+- Compiler extracts each segment's sole Python worked fence as `worked_example_code`; LessonGate preloads it into editor.
+- Grading must mirror prod: `expected_setup_code or setup_code` re-runs before `expected_expr` (fixed 2026-07-19 — validator previously evaluated expected on solution-mutated fixtures).
+- Validate BEFORE compile; compilation does not re-check code.
+- Frontmatter faded/guided id lists must equal the section ids (validator-enforced).
 
 ## Extension Points
-- How to add a new feature in this area.
-- What file to start from when extending behavior.
+- New KP rules → add checks in `check_kp`; format changes → `lesson_lib.py` first, then both consumers.
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
-- **Short name of issue** — `ACTIVE` or `RESOLVED`
-  - When it happens: one line about the situation/context.
-  - Symptom: what you see break.
-  - Root cause: the underlying mistake or assumption.
-  - Prevention/fix: the rule, pattern, or helper to use so it doesn't come back.
-  - Status: `ACTIVE` = still a risk, `RESOLVED` = was an issue, now fixed (keep for history).
+- **Validator expected-setup fallback mismatch** — `RESOLVED`
+  - When it happens: faded solution mutates its input (out=-style drills, e.g. q59).
+  - Symptom: validator FAILs a solution that grades correct in prod.
+  - Root cause: validator evaluated `expected_expr` without re-running `setup_code` when `expected_setup_code` absent; JS/backend graders re-run it.
+  - Prevention/fix: `grade_against_bank` now uses `expected_setup_code or setup` — keep all three graders' semantics in lockstep.
+  - Status: `RESOLVED` (2026-07-19).
+- **Relative paths rejected** — `ACTIVE`
+  - When it happens: `validate_lessons.py some/relative/kp.md`.
+  - Symptom: "not in the subpath" parse error.
+  - Root cause: `path.relative_to(REPO)` needs absolute paths.
+  - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-07-20: Compiled `worked_example_code` supports inline optional-run lesson UI.
+- 2026-07-20: Segment-specific `## Watch out`; exact one-worked/one-faded validation.
+- 2026-07-19: Single-concept segment support (`build_segments`), per-segment faded enforcement, expected-setup grading fix.
 - 2026-07-06: Initial doc created.

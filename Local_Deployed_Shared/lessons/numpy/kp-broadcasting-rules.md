@@ -3,12 +3,12 @@ kc: numpy.broadcasting-rules
 title: Broadcasting rules
 supporting: [numpy.elementwise-ufuncs, numpy.reshape-flatten]
 new_syntax: [none-newaxis-indexing]
-faded: [111]
-guided: [151]
+faded: [111, 151]
+guided: []
 independent: [60, 81]
 ---
 
-## Concept
+## Concept: the right-alignment rule
 
 Elementwise operations "require matching shapes" — except NumPy will
 **stretch** certain mismatched shapes to fit, following one mechanical rule
@@ -25,29 +25,11 @@ axis 1 is 1 vs n (stretch → n) — result shape `(m, n)`, where entry [i, j] =
 outer product starts exactly like this.
 
 The stretching is *virtual* — no copies are made; NumPy just reuses the
-single row/column while iterating. That's why broadcasting is free
-performance-wise.
-
-Two everyday cases you have already been using: scalar-with-array (`z * 2` —
-the scalar is shape (), stretched everywhere) and matrix-with-row
-(`z - row` where row has shape (n,) — aligned right, it matches z's last
-axis).
-
-The craft skill is **placing the 1s yourself**. Indexing with `None` (alias
-`np.newaxis`) inserts a length-1 axis: `v[:, None]` turns shape (n,) into a
-**column** (n, 1); `v[None, :]` makes an explicit **row** (1, n). When an
-operation needs a vector to run *down* rather than *across* (or to hit a
-specific axis of a 3-D array), you reshape it with `None` until the alignment
-says what you mean.
-
-When shapes are incompatible (say (3,) with (4,)), NumPy raises rather than
-guessing — a broadcast error means your alignment is wrong, and the fix is
-almost always a well-placed `None`.
+single row/column while iterating. Two everyday cases you have already been
+using: scalar-with-array (`z * 2`) and matrix-with-row (`z - row` where row
+has shape (n,) — aligned right, it matches z's last axis).
 
 ## Worked example
-
-Task: add a column vector to a row vector to get the full (m, n) sum table,
-then scale each channel-column of a 3-D array by a 2-D map.
 
 ```python
 import numpy as np
@@ -64,34 +46,11 @@ assert table.shape == (3, 4)
 assert table.tolist() == [[0, 1, 2, 3],
                           [1, 2, 3, 4],
                           [2, 3, 4, 5]]
-
-# Same table from FLAT vectors — we place the 1-axes ourselves with None:
-va, vb = np.arange(3), np.arange(4)
-assert np.array_equal(va[:, None] + vb[None, :], table)
-
-# 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).
-# Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.
-# The map needs its stretch-axis at the END: b2[:, :, None] is (2, 2, 1).
-img = np.ones((2, 2, 3))
-scale = np.array([[1.0, 2.0],
-                  [3.0, 4.0]])
-scaled = img * scale[:, :, None]
-assert scaled.shape == (2, 2, 3)
-assert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3
 ```
 
-Why each step:
-
-1. Writing the two shapes one above the other, right-aligned, and resolving
-   each column IS the method — do it on paper until it's automatic. The
-   result shape falls out before any code runs.
-2. The `va[:, None] + vb[None, :]` form is the general recipe for "all pairs
-   f(a_i, b_j)" — with `*` it's the outer product, with a subtraction inside
-   `abs` it's a distance table.
-3. In the 3-D case, the naive `img * scale` FAILS the alignment check —
-   working the rule shows the 1 must go at the end, hence `[:, :, None]`.
-   The error message ("operands could not be broadcast") is your cue to
-   re-run the alignment, not to reshape at random.
+Why: writing the two shapes one above the other, right-aligned, and
+resolving each column IS the method — do it on paper until it's automatic.
+The result shape falls out before any code runs.
 
 ## Faded practice
 
@@ -114,15 +73,66 @@ def solve(a, b):
     return a + b
 ```
 
-## Guided practice
+## Concept: placing the 1s yourself with None
+
+The craft skill is **placing the 1s yourself**. Indexing with `None` (alias
+`np.newaxis`) inserts a length-1 axis: `v[:, None]` turns shape (n,) into a
+**column** (n, 1); `v[None, :]` makes an explicit **row** (1, n). When an
+operation needs a vector to run *down* rather than *across* (or to hit a
+specific axis of a 3-D array), you reshape it with `None` until the alignment
+says what you mean.
+
+When shapes are incompatible (say (3,) with (4,)), NumPy raises rather than
+guessing — a broadcast error means your alignment is wrong, and the fix is
+almost always a well-placed `None`. Never reshape at random until the error
+goes away: work the right-alignment on paper, decide where the 1 belongs,
+and place it deliberately.
+
+## Worked example
+
+```python
+import numpy as np
+
+# The addition table again, from FLAT vectors — we place the 1-axes:
+va, vb = np.arange(3), np.arange(4)
+table = va[:, None] + vb[None, :]
+assert table.shape == (3, 4)
+
+# 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).
+# Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.
+# The map needs its stretch-axis at the END: scale[:, :, None] is (2, 2, 1).
+img = np.ones((2, 2, 3))
+scale = np.array([[1.0, 2.0],
+                  [3.0, 4.0]])
+scaled = img * scale[:, :, None]
+assert scaled.shape == (2, 2, 3)
+assert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3
+```
+
+Why: the `va[:, None] + vb[None, :]` form is the general recipe for "all
+pairs f(a_i, b_j)". In the 3-D case, the naive `img * scale` FAILS the
+alignment check — working the rule shows the 1 must go at the end.
+
+## Faded practice
 
 ### q151
-1. (h, w, c) times (h, w): write the shapes right-aligned — which axis pair
-   clashes?
-2. The 2-D map needs a length-1 axis in the CHANNEL slot so it stretches
-   across channels instead of colliding with them.
-3. `a * b[:, :, None]` — verify by checking one pixel: every channel of
-   a[i, j] should be multiplied by the same b[i, j].
+Scale each pixel of an (h, w, c) image by a per-pixel (h, w) map.
+
+```python starter
+import numpy as np
+
+def solve(a, b):
+    """(h, w, c) image a scaled per-pixel by (h, w) map b."""
+    return a * b[_____]
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """(h, w, c) image a scaled per-pixel by (h, w) map b."""
+    return a * b[:, :, None]
+```
 
 ## Independent practice
 

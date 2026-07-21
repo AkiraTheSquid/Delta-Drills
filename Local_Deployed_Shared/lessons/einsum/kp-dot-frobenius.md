@@ -3,45 +3,41 @@ kc: einsum.dot-frobenius
 title: Dot and Frobenius inner products
 supporting: [einsum.reductions, numpy.dot-matmul-patterns]
 new_syntax: []
-faded: [245]
-guided: [267]
-independent: [270, 308]
+concepts: [dot-shared-drop, frobenius-per-entry]
+faded: [245, 267]
+guided: [270]
+independent: [308]
 ---
 
-## Concept
+## Concept: the dot product 'i,i->'
 
-Two inputs enter the spec, and one more rule activates:
+So far each spec had ONE input. With two inputs, one new rule switches on:
 
-> **A letter shared between two inputs pairs those axes elementwise —
-> the operands are multiplied along it.** Combined with the deletion rule
-> (missing from output → summed), a shared-then-dropped letter means
-> "multiply corresponding entries, then add them up."
+> **A letter shared between two inputs pairs those axes elementwise** — the
+> operands get multiplied along it.
 
-That sentence is the dot product — and its spec reads exactly that way:
+Combine that with the rule you already know — a letter missing from the output
+is summed away — and a letter that is *shared then dropped* means "multiply
+corresponding entries, then add them up." That is exactly the dot product:
 
-- `'i,i->'` — both vectors' axes share `i`; `i` is absent from the output.
-  Multiply pairwise, sum: the **dot product**, as a scalar.
-- `'ij,ij->'` — same story with two letters: multiply corresponding entries
-  of two same-shape matrices, sum everything — the **Frobenius inner
-  product** (whose square root over one matrix with itself is the Frobenius
-  norm you met in np-3).
-- `'abc,abc->'` — identical shape, any rank: the pattern generalizes by
-  adding letters, nothing else changes.
+- `'i,i->'` — both vectors carry `i`, and `i` is absent from the output.
+  So: pair entry `i` with entry `i`, multiply, sum. A single scalar falls out.
 
-This KP is deliberately narrow — one new rule — because everything that
-follows (matmul, batching, attention) is only ever combinations of the two
-rules you now hold:
+The empty right side (`->` with nothing after it) is what makes the answer a
+scalar — every letter was summed, none survived.
 
-> **shared letter = multiply along it; dropped letter = sum over it.**
+This is the whole foundation: everything later (matvec, matmul, batching,
+attention) is only ever combinations of these two rules — **shared letter =
+multiply along it; dropped letter = sum over it.**
 
-The multiply-then-reduce decomposition from np-3's dot-patterns KP
-(`(a * b).sum()`) is exactly what these specs notate — einsum is that
-pattern with names.
+## Watch out
+
+- **"`'i,i->'` is illegal because `i` is used twice."** — No. Sharing a letter
+  ACROSS two inputs is the multiplication mechanism, not a name clash. (A letter
+  repeated WITHIN one input, like `'ii'`, is a different legal thing — the
+  diagonal — which comes later.)
 
 ## Worked example
-
-Task: a dot product, and a Frobenius inner product of two matrices — plus
-the decomposition check.
 
 ```python
 import numpy as np
@@ -49,46 +45,29 @@ import numpy as np
 v1 = np.array([1.0, 2.0, 3.0])
 v2 = np.array([4.0, -5.0, 6.0])
 
-# 'i,i->': shared i pairs the entries; missing i sums the products.
+# 'i,i->': shared i pairs the entries; the empty output sums the products.
 d = np.einsum('i,i->', v1, v2)
-assert d == 12.0
-assert d == np.dot(v1, v2) == (v1 * v2).sum()    # three spellings, one atom
-
-# 'ij,ij->': the same, per-entry over a 2-D shape.
-a = np.array([[1.0, 2.0],
-              [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
-              [7.0, 8.0]])
-f = np.einsum('ij,ij->', a, b)
-assert f == 70.0                                  # 5 + 12 + 21 + 32
-assert f == (a * b).sum()
-
-# Frobenius NORM of one matrix = sqrt of its inner product with itself.
-assert np.isclose(np.sqrt(np.einsum('ij,ij->', a, a)),
-                  np.linalg.norm(a))
+assert d == 12.0                              # 1*4 + 2*-5 + 3*6
+assert d == np.dot(v1, v2) == (v1 * v2).sum() # three spellings, one atom
 ```
 
-Why each step:
-
-1. The three-spellings assert (`einsum == dot == multiply+sum`) is the
-   bridge between notations — when a spec confuses you, translate it back
-   to multiply-then-reduce and it will parse.
-2. Hand-computing one Frobenius term (1·5 = 5, 2·6 = 12, …) once makes
-   "corresponding entries" concrete: `ij` on BOTH inputs means position
-   [i, j] meets position [i, j] — no transpose, no cross terms.
-3. The norm line ties this KP to np-3: new notation, previously-learned
-   quantity. Expect drills to phrase it either way.
+Why: `1·4 + 2·(-5) + 3·6 = 4 - 10 + 18 = 12`. The three-spellings assert is the
+bridge — when a spec confuses you, translate it back to "multiply the paired
+axis, then sum" and it parses. `np.dot`, `(v1*v2).sum()`, and `'i,i->'` are the
+same operation wearing three different clothes.
 
 ## Faded practice
 
 ### q245
-The dot product of two vectors.
+The dot product of two vectors. There's no visible matrix or `.sum()` — just two
+vectors and a scalar answer. Name the shared axis, then leave the output empty so
+it collapses to a scalar.
 
 ```python starter
 import numpy as np
 
 def solve(v1, v2):
-    """Dot product: shared letter, empty output."""
+    """Dot product as a scalar: pair the shared axis, sum it away."""
     return np.einsum('_____', v1, v2)
 ```
 
@@ -96,35 +75,88 @@ def solve(v1, v2):
 import numpy as np
 
 def solve(v1, v2):
-    """Dot product: shared letter, empty output."""
+    """Dot product as a scalar: pair the shared axis, sum it away."""
     return np.einsum('i,i->', v1, v2)
+```
+
+## Concept: the Frobenius inner product 'ij,ij->'
+
+The dot generalizes with no new rule — just more shared letters. Two matrices of
+the SAME shape have two axes to pair, `i` and `j`:
+
+- `'ij,ij->'` — position `[i, j]` on the first input meets its OWN position
+  `[i, j]` on the second. Multiply every corresponding pair, sum them all. The
+  result is a single scalar: the **Frobenius inner product**.
+
+It's the dot product with one extra letter — the same "pair the shared axes,
+drop them to sum" move, now over a 2-D grid instead of a line. (And its cousin:
+dot a matrix with *itself* and square-root the result — `sqrt('ij,ij->')` — and
+you have the Frobenius norm. Same spec, nothing new to learn.)
+
+## Watch out
+
+- **`'ij,ij'` is NOT `'ij,ji'`.** `'ij,ij->'` pairs each position with its own
+  coordinates (no transpose). `'ij,ji->'` pairs `[i,j]` with `[j,i]` — a
+  transposed pairing that computes `tr(a @ b)`, a completely different number.
+  Read the letters exactly; don't pattern-match on "two matrices → one scalar."
+
+## Worked example
+
+```python
+import numpy as np
+
+a = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+b = np.array([[5.0, 6.0],
+              [7.0, 8.0]])
+
+# 'ij,ij->': position [i,j] meets [i,j] on both; multiply all, sum all.
+f = np.einsum('ij,ij->', a, b)
+assert f == 70.0                 # 1*5 + 2*6 + 3*7 + 4*8
+assert f == (a * b).sum()        # the same multiply-then-reduce, named
+```
+
+Why: hand-compute one term — `1·5 = 5` at position [0,0], `2·6 = 12` at [0,1],
+and so on: `5 + 12 + 21 + 32 = 70`. `ij` on BOTH inputs means [i,j] meets [i,j] —
+no cross terms, no transpose. It is the dot rule with a second shared letter.
+
+## Faded practice
+
+### q267
+The second matrix `b` is all ones. Multiplying by 1 changes nothing, so this
+*looks* like "just add up every entry of `a`" — and it is. But get there through
+the Frobenius spec: it's still the elementwise-multiply-and-sum of two matrices,
+`a` paired position-for-position with a matrix of ones.
+
+```python starter
+import numpy as np
+
+def solve(a, b):
+    """Sum of a*b over every corresponding entry (b is all ones here)."""
+    return np.einsum('_____', a, b)
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """Sum of a*b over every corresponding entry (b is all ones here)."""
+    return np.einsum('ij,ij->', a, b)
 ```
 
 ## Guided practice
 
-### q267
-1. Sum of products of corresponding entries of two SAME-SHAPE matrices —
-   which letters are shared, and what's left in the output?
-2. Two axes to pair: both get shared letters; the scalar answer means the
-   output side is empty.
-3. `'ij,ij->'` — the 2-D dot product, a.k.a. Frobenius inner product.
+### q270
+1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 arrays —
+   how many axes need pairing now?
+2. Three axes → three shared letters; the scalar answer means the output side is
+   empty.
+3. `'abc,abc->'` — the dot pattern generalizes by adding one letter per axis,
+   nothing else changes.
 
 ## Independent practice
 
-From the drill bank: q270 (the same contraction at rank 3 — add a letter),
-q308 (dot products of ADJACENT rows of a sequence — the spec is `'td,td->t'`
-applied to two shifted slices of the same array; the slicing does the
-"adjacent", einsum does the dots).
-
-## Misconceptions
-
-- **"'i,i->' errors because i is used twice."** — Sharing a letter ACROSS
-  inputs is the multiplication mechanism, not a clash. (A letter repeated
-  WITHIN one input — 'ii' — is a different, also-legal thing: the diagonal,
-  coming two KPs from now.)
-- **"The Frobenius product involves a transpose somewhere."** — No:
-  positions meet their own coordinates ('ij,ij'). The transposed pairing
-  'ij,ji' is a DIFFERENT operation (it computes tr(a@b) — later drill).
-  Letter patterns are precise; read them, don't pattern-match on vibes.
-- **"einsum with two inputs must produce an array."** — An empty output
-  (`->`) is legal and yields a scalar. Dot products are the canonical case.
+- q308: the dot product of ADJACENT rows of a sequence. The spec `'td,td->t'`
+  keeps a letter (`t`) that survives — a first taste of the "batch letter" you'll
+  meet in matvec/matmul. Here slicing makes the "adjacent" pairs; einsum does the
+  per-row dots.
