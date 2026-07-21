@@ -48,8 +48,7 @@ import numpy as np
 
 ## Worked example
 
-Task: given a nested Python list of numbers, build a 2-D array and inspect what
-NumPy made of it.
+Turn a nested Python list into a 2-D array:
 
 ```python
 import numpy as np
@@ -58,42 +57,15 @@ rows = [[1, 2, 3],
         [4, 5, 6]]
 
 # np.array walks the nesting: outer list -> axis 0, inner lists -> axis 1.
-# Two levels of nesting therefore produce a 2-D array.
 a = np.array(rows)
 
-# shape is (outer length, inner length): 2 rows, 3 columns.
-assert a.shape == (2, 3)
-
-# ndim is just len(shape); size is the total number of elements.
-assert a.ndim == 2
-assert a.size == 6
-
-# Every input value was an int, so NumPy chose an integer dtype for the
-# whole block. One dtype for ALL elements — that's the homogeneity rule.
-assert a.dtype == np.int64
+assert a.shape == (2, 3)      # 2 rows, 3 columns — inferred from the nesting
+assert a.dtype == np.int64    # every input was an int -> one int dtype for all
 ```
 
-Step by step:
-
-1. **Choose the constructor.** The data already exists as Python lists, so the
-   right tool is `np.array(...)` (later KPs cover constructors that build
-   arrays from scratch, like `np.zeros`).
-2. **Let nesting set the dimensions.** You do not tell `np.array` the shape —
-   it infers `(2, 3)` from the structure. Ragged inner lists (unequal lengths)
-   would be an error, because a rectangular memory block can't represent them.
-3. **Check what you got.** `a.shape`, `a.dtype` — make verifying these a
-   reflex. Most NumPy bugs are shape or dtype surprises, and both are one
-   attribute-lookup away.
-
-One more consequence of homogeneity worth seeing once — mix an int and a float
-and NumPy silently promotes everything to the common type:
-
-```python
-b = np.array([1, 2.5])
-# The int 1 was promoted to 1.0 so that one dtype fits all elements.
-assert b.dtype == np.float64
-assert b[0] == 1.0
-```
+Why: you don't tell `np.array` the shape — nesting sets the dimensions.
+Checking `shape` and `dtype` right after should become a reflex; most NumPy
+bugs are shape or dtype surprises.
 
 ## Faded practice
 

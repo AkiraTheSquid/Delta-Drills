@@ -3,46 +3,26 @@ kc: einsum.batch-dims
 title: Batch dimensions — carrying axes through
 supporting: [einsum.matvec-matmul, einsum.outer-products]
 new_syntax: []
-faded: [265]
-guided: [268]
-independent: [276, 297, 243, 287, 284]
+faded: [268, 279, 258]
+guided: []
+independent: [265, 276, 297, 243, 287, 284, 310]
 ---
 
-## Concept
+## Concept: a batch letter runs the contraction per slice
 
-Real tensors arrive in batches: (batch, n, m) stacks of matrices, (batch, d)
-stacks of vectors. In einsum, batching costs exactly one letter:
+Take a spec you know — matmul is `'ij,jk->ik'` — and prepend one letter to
+every part: `'aij,ajk->aik'`. That `a` is a **batch axis**, and here is WHY it
+batches:
 
-> **A letter appearing in every operand AND the output is a batch axis** —
-> the whole contraction runs independently at each of its positions.
-
-Take any spec you know and prepend the letter:
-
-- matmul `'ij,jk->ik'` → **batched matmul** `'aij,ajk->aik'`
-  (pairs t[0] with u[0], t[1] with u[1], …).
-- matvec `'ij,j->i'` → `'bij,bj->bi'` — each matrix times ITS OWN vector.
-- outer `'i,j->ij'` → `'bi,bj->bij'` — one outer product per batch item.
-
-Contrast three fates of a batch-like letter, using (b, i, k) × (?, k, j):
-
-1. **In both inputs and output** (`'bik,bkj->bij'`) — parallel independent
-   products: the batch.
-2. **In one input only, kept** (`'bij,jk->bik'`) — the OTHER operand is
-   shared across the batch: one constant matrix applied to every item.
-   No tiling, no loop; the letter's absence from the second input does it.
-3. **In both inputs but dropped** (`'bi,bj->ij'`) — the results are SUMMED
-   over the batch: an aggregated contraction (Σₙ outer(vₙ, vₙ) — the Gram
-   accumulation). Dropping the batch letter is how "sum over the dataset"
-   enters the spec.
-
-That three-way distinction — parallel / shared / summed — is the entire
-content of batching, and the spec states it unambiguously where looped code
-buries it.
+`j` is shared and dropped, so it's the matmul's contracted axis; `i` and `k`
+are its row and column. `a` is different — it appears in **both inputs AND the
+output**, and it is never contracted. einsum can't merge anything across `a`,
+so it simply *iterates* over it, running the whole `ij,jk->ik` matmul once at
+each position of `a`. `a=0` pairs `t[0]` with `u[0]`, `a=1` pairs `t[1]` with
+`u[1]`, and so on — independent products, stacked. No loop in your code; the
+loop lives in compiled einsum.
 
 ## Worked example
-
-Task: batched matmul; a constant matrix applied per item; a batch-summed
-outer product.
 
 ```python
 import numpy as np
@@ -50,87 +30,162 @@ import numpy as np
 t = np.arange(12.0).reshape(2, 2, 3)     # (a=2, i=2, j=3)
 u = np.arange(18.0).reshape(2, 3, 3)     # (a=2, j=3, k=3)
 
-# 1. PARALLEL: a everywhere -> item-by-item matmul.
+# 'a' everywhere -> run the matmul once per slice of a.
 batched = np.einsum('aij,ajk->aik', t, u)
 assert batched.shape == (2, 2, 3)
-assert np.allclose(batched[0], t[0] @ u[0])   # each slice is its own matmul
-assert np.allclose(batched[1], t[1] @ u[1])
-
-# 2. SHARED: m has no batch letter -> the same m for every item.
-m = np.arange(9.0).reshape(3, 3)
-shared = np.einsum('bij,jk->bik', t, m)
-assert np.allclose(shared[0], t[0] @ m)
-assert np.allclose(shared[1], t[1] @ m)       # same m both times
-
-# 3. SUMMED: batch letter dropped -> aggregate over the batch.
-v = np.array([[1.0, 2.0],
-              [3.0, 4.0]])                    # (b=2, d=2)
-gram = np.einsum('bi,bj->ij', v, v)
-by_hand = np.outer(v[0], v[0]) + np.outer(v[1], v[1])
-assert np.allclose(gram, by_hand)
+assert np.allclose(batched[0], t[0] @ u[0])   # slice 0 is its own matmul
+assert np.allclose(batched[1], t[1] @ u[1])   # slice 1 is its own matmul
 ```
 
-Why each step:
-
-1. The per-slice asserts (`batched[0] == t[0] @ u[0]`) are the definition of
-   "parallel over the batch" — and the test you should write whenever a
-   batched spec feels uncertain.
-2. In the SHARED case, notice what you did NOT do: no np.tile, no
-   broadcasting gymnastics, no loop. Omitting the batch letter from one
-   operand IS the sharing.
-3. The SUMMED case reads two ways that must agree: algebraically (Σₙ over
-   outer products) and mechanically (b shared → multiplied along; b absent
-   from output → summed). When both readings match, the spec is right.
+Why: the per-slice asserts ARE the definition of "batched" — each `batched[k]`
+equals `t[k] @ u[k]`. Write exactly that check whenever a batched spec feels
+uncertain.
 
 ## Faded practice
 
-### q265
-Item-by-item product of two matrix batches.
+### q268
+Apply the *same* batching idea to matrix-vector products: a batch of matrices
+`(b, i, j)` times a batch of vectors `(b, j)`, item n being `a[n] @ x[n]`.
+(Start from matvec `'ij,j->i'` — where does the batch letter go?)
 
 ```python starter
 import numpy as np
 
-def solve(t, u):
-    """(a,i,j) x (a,j,k) -> (a,i,k): the matmul spec plus a batch letter."""
-    return np.einsum('_____', t, u)
+def solve(a, x):
+    """(b,i,j) x (b,j) -> (b,i): each matrix times ITS OWN vector."""
+    return np.einsum('_____', a, x)
 ```
 
 ```python solution
 import numpy as np
 
-def solve(t, u):
-    """(a,i,j) x (a,j,k) -> (a,i,k): the matmul spec plus a batch letter."""
-    return np.einsum('aij,ajk->aik', t, u)
+def solve(a, x):
+    """(b,i,j) x (b,j) -> (b,i): each matrix times ITS OWN vector."""
+    return np.einsum('bij,bj->bi', a, x)
 ```
 
-## Guided practice
+## Concept: omit the batch letter from one input — sharing
 
-### q268
-1. A batch of matrices times a batch of vectors, pairwise — start from the
-   matvec spec 'ij,j->i'.
-2. The batch letter goes on BOTH inputs and the output.
-3. `'bij,bj->bi'` — check: does each output row depend only on its own
-   batch item?
+Now change one thing: leave the batch letter OFF one operand. `'bij,jk->bik'`
+— the first factor has `b`, the second (`jk`) does not. WHY this shares:
+
+The second operand has no `b`-axis, so it has nothing to vary as `b` moves —
+einsum reuses that *same* matrix at every batch position. The base matmul
+`ij,jk->ik` still runs per item, but the second factor is a single **constant**
+applied to all of them. A missing batch letter means "broadcast this operand
+across the batch" — no `np.tile`, no loop, just its absence.
+
+## Worked example
+
+```python
+import numpy as np
+
+t = np.arange(12.0).reshape(2, 2, 3)     # (b=2, i=2, j=3): a batch
+m = np.arange(9.0).reshape(3, 3)         # ONE (3,3) matrix — no batch axis
+
+# 'm' has no b -> the same m multiplies every item of the batch.
+shared = np.einsum('bij,jk->bik', t, m)
+assert np.allclose(shared[0], t[0] @ m)
+assert np.allclose(shared[1], t[1] @ m)   # same m both times
+```
+
+Why: notice what you did NOT write — no tiling of `m`, no broadcasting
+gymnastics. Omitting `b` from the second operand IS the sharing.
+
+## Faded practice
+
+### q279
+A linear layer without bias: a batch of vectors `x` of shape `(b, d)` times
+ONE transformation matrix `w` of shape `(d, e)`, giving `(b, e)`. (Which
+operand should be missing the batch letter?)
+
+```python starter
+import numpy as np
+
+def solve(x, w):
+    """(b,d) batch of vectors, ONE (d,e) matrix w -> (b,e)."""
+    return np.einsum('_____', x, w)
+```
+
+```python solution
+import numpy as np
+
+def solve(x, w):
+    """(b,d) batch of vectors, ONE (d,e) matrix w -> (b,e)."""
+    return np.einsum('bd,de->be', x, w)
+```
+
+## Concept: drop the batch letter from the OUTPUT — summing over the batch
+
+Third variation: keep the batch letter in both inputs, but leave it OUT of the
+output. `'bi,bj->ij'` — `b` is in both inputs, absent from `ij`. WHY this sums:
+
+Any letter dropped from the output is summed. `b` is shared across the inputs
+(so the per-item outer products are formed), but dropping it from the output
+collapses them: you get **Σ over the batch** of `outer(v_b, v_b)`, one `(i, j)`
+matrix — not a `(b, i, j)` stack. Dropping the batch letter is how "sum over
+the dataset" enters a spec.
+
+## Worked example
+
+```python
+import numpy as np
+
+v = np.array([[1.0, 2.0],
+              [3.0, 4.0]])               # (b=2, i=2): a batch of vectors
+
+# 'b' in both inputs, absent from output -> outer products SUMMED over b.
+gram = np.einsum('bi,bj->ij', v, v)
+by_hand = np.outer(v[0], v[0]) + np.outer(v[1], v[1])
+assert np.allclose(gram, by_hand)
+```
+
+Why: two readings must agree — algebraically it's `Σ_b outer(v_b, v_b)`;
+mechanically `b` is shared (multiplied along) and absent from the output
+(summed). When both readings match, the spec is right.
+
+## Faded practice
+
+### q258
+The Gram matrix of a feature matrix: `X` of shape `(n, d)` → the `(d, d)`
+matrix `XᵀX`, entry `[p, q]` being column p dotted with column q. (Which axis
+gets summed away — and so must be missing from the output?)
+
+```python starter
+import numpy as np
+
+def solve(x):
+    """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
+    return np.einsum('_____', x, x)
+```
+
+```python solution
+import numpy as np
+
+def solve(x):
+    """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
+    return np.einsum('nd,ne->de', x, x)
+```
 
 ## Independent practice
 
-From the drill bank: q276 (batched matmul again, different letter names —
-fluency check), q297 (ONE constant matrix applied to a whole batch — the
-shared pattern), q243 (batch of outer products), q287 (batch of SELF outer
-products), q284 (per-item sum of squares — a batched dot of each vector
-with itself).
+From the drill bank: q265 (batched matmul, the parallel case), q297 (a batch
+of matrices times one constant matrix — the shared case), q276 (batched matmul
+in the `bik,bkj->bij` naming), q243 (per-item outer products — batch letter
+KEPT in the output), q287 (per-item SELF outer products), q284 (per-item
+squared norm), q310 (the summed Gram `bi,bj->ij` from scratch).
 
 ## Misconceptions
 
 - **"Batching needs a loop or np.vectorize."** — One letter, present
-  everywhere, batches any contraction. The loop exists only in compiled
-  code.
+  everywhere, batches any contraction. The loop exists only in compiled code.
 - **"All operands must mention every letter."** — An operand OMITTING the
-  batch letter is broadcast across the batch — that's the shared-weights
-  pattern, not an error. (Only the OUTPUT omitting it changes the math, by
-  summing.)
-- **"'bi,bj->ij' is a batch of outer products."** — The batch letter is
-  dropped, so the outers are SUMMED — one (i, j) matrix, not (b, i, j).
-  Keep b in the output ('bi,bj->bij') for the per-item version. One letter
-  in the output = the difference between a dataset aggregate and per-sample
-  results.
+  batch letter is broadcast across the batch — that's the shared case, not an
+  error. Only the OUTPUT omitting it changes the math, by summing.
+- **The three fates of a batch letter** — the whole content of batching, told
+  apart by where the letter appears: in both inputs *and* the output
+  (`bik,bkj->bij`) = **parallel**, independent per-item products; in one input
+  only (`bij,jk->bik`) = **shared**, one constant applied to every item; in
+  both inputs but dropped from the output (`bi,bj->ij`) = **summed** over the
+  batch. One letter's placement is the difference between per-sample results
+  and a dataset aggregate.

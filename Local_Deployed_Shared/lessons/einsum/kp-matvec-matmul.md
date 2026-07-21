@@ -3,40 +3,40 @@ kc: einsum.matvec-matmul
 title: Matrix-vector and matrix-matrix products
 supporting: [einsum.dot-frobenius, numpy.linalg-basics]
 new_syntax: []
-faded: [262, 260]
-guided: [264]
-independent: [312, 311]
+concepts: [matvec-contract-row, matmul-row-meets-column]
+faded: [312, 260]
+guided: [262]
+independent: [264, 311]
 ---
 
-## Concept
+## Concept: matrix-vector 'ij,j->i'
 
-With dots (shared+dropped) and outers (unshared+kept) in hand, the classical
-products are just MIXTURES — some letters contract while others survive:
+You already know the dot: `'i,i->'` lines two vectors up on a shared letter,
+multiplies, and sums it away. A matrix-vector product is that SAME move, done
+once per row.
 
-- **Matrix–vector** `'ij,j->i'`: j is shared and dropped (each row dots the
-  vector); i survives (one result per row). Exactly `a @ b` for (i,j)@(j,).
-- **Matrix–matrix** `'ik,kj->ij'`: k shared+dropped (the contraction), i
-  and j each private to one input and kept — every row of the first meets
-  every column of the second. This is THE matmul spec; note how it encodes
-  the (m,k)@(k,n)→(m,n) shape rule: the shared letter is the vanishing
-  inner dimension.
-- **Chains in one call**: `'ik,km,mp->ip'` — three inputs, two contraction
-  letters. einsum contracts the whole chain a @ b @ c at once, and (a real
-  advantage) chooses a good multiplication ORDER internally via
-  `optimize=True` when arrays are large.
-- **Structured middles**: a diagonal matrix in the middle of a product
-  doesn't need materializing — `'ij,j,jk->ik'` computes a @ diag(v) @ b
-  with v staying a vector: the shared j scales each column/row pair
-  directly. Cheaper and clearer than building diag(v).
+Label the axes. A matrix is `(i, j)`; a vector is `(j,)`. Write them side by
+side: `'ij,j->i'`. Now read each letter:
 
-The reading discipline for ANY multi-input spec: for each letter ask
-(1) which inputs carry it, (2) does it survive? Contract the dead ones,
-distribute the live ones. Ten seconds per spec, no memorization.
+- **j appears in BOTH inputs** — it's the shared letter. einsum sums over any
+  letter that is shared and does not appear in the output. So j is multiplied
+  aligned and summed away. That summing IS a dot: for a fixed row, `Σ_j a[i,j]·v[j]`
+  is row i dotted with v.
+- **i appears only in the matrix, and in the output** — it's private and kept.
+  It picks WHICH row. One surviving letter → one number per row.
+
+So `'ij,j->i'` says: for each row i, dot that row with v. The notation didn't
+memorize "matrix times vector" — it fell out of "sum the shared letter, keep
+the private one."
+
+## Watch out
+
+- **Which axis is shared depends on the shapes, not habit.** A *vector times a
+  matrix* (`v @ M`, shapes `(i,)` and `(i,j)`) shares the FIRST matrix axis:
+  `'i,ij->j'`. Don't reflexively write `'ij,j->i'` — check which axis the
+  vector's length lines up with, then make THAT the shared letter.
 
 ## Worked example
-
-Task: matvec, matmul, and a three-matrix chain — each cross-checked against
-`@`.
 
 ```python
 import numpy as np
@@ -45,71 +45,107 @@ a = np.array([[1.0, 2.0],
               [3.0, 4.0]])
 v = np.array([10.0, 1.0])
 
-# 'ij,j->i': j contracts (row . vector), i survives.
+# 'ij,j->i': j is shared+dropped (row . v); i is private+kept (one per row).
 mv = np.einsum('ij,j->i', a, v)
 assert mv.tolist() == [12.0, 34.0]
-assert np.array_equal(mv, a @ v)
-
-# 'ik,kj->ij': the matmul. k is the inner dimension — shared, dropped.
-b = np.array([[5.0, 6.0],
-              [7.0, 8.0]])
-mm = np.einsum('ik,kj->ij', a, b)
-assert np.array_equal(mm, a @ b)
-
-# Chain a @ b @ c in one spec: two contraction letters, k and m.
-c = np.array([[1.0, 0.0],
-              [0.0, -1.0]])
-chain = np.einsum('ik,km,mp->ip', a, b, c)
-assert np.array_equal(chain, a @ b @ c)
-
-# Diagonal middle without building the matrix: a @ diag(d) @ b.
-d = np.array([2.0, 3.0])
-diag_mid = np.einsum('ij,j,jk->ik', a, d, b)
-assert np.array_equal(diag_mid, a @ np.diag(d) @ b)
+assert np.array_equal(mv, a @ v)   # the @-twin: always check while learning
 ```
 
-Why each step:
-
-1. Every einsum here is asserted against its `@` twin — while learning,
-   ALWAYS write the check; the specs that pass silently wrong (transposed
-   letters!) are the dangerous ones.
-2. In the matmul spec, trace entry [0, 0] by the rules: i=0, j=0 fixed,
-   k ranges → Σₖ a[0,k]·b[k,0] — the row-dot-column definition falls out of
-   the notation rather than being memorized beside it.
-3. The diagonal-middle example is the first spec that's EASIER than its
-   classical spelling — no diag allocation, and the vector's role (scale
-   index j) is visible. This "structure stays implicit" trick is much of
-   einsum's practical value.
+Why: trace entry [0] straight from the rule — i=0 fixed, j ranges:
+`Σ_j a[0,j]·v[j] = 1·10 + 2·1 = 12`. That is row 0 dotted with v. Entry [1] is
+row 1 dotted with v: `3·10 + 4·1 = 34`. The result is one dot per row — nothing
+memorized beyond "sum the shared letter."
 
 ## Faded practice
 
-### q262
-Matrix–vector product.
+### q312
+A permutation matrix `p` (each row is a single 1, the rest 0) times a vector
+`v`. It looks like it *shuffles* v rather than dotting anything — but a
+permutation matrix is still a matrix, so this is still a matrix-vector product.
+Write the spec.
 
 ```python starter
 import numpy as np
 
-def solve(a, b):
-    """(i,j) @ (j,) -> (i,): contract the shared letter."""
-    return np.einsum('_____', a, b)
+def solve(p, v):
+    """p @ v — each row of p has one 1, so row i just picks out one entry of v."""
+    return np.einsum('_____', p, v)
 ```
 
 ```python solution
 import numpy as np
 
-def solve(a, b):
-    """(i,j) @ (j,) -> (i,): contract the shared letter."""
-    return np.einsum('ij,j->i', a, b)
+def solve(p, v):
+    """p @ v — each row of p has one 1, so row i just picks out one entry of v."""
+    return np.einsum('ij,j->i', p, v)
 ```
 
+## Concept: matrix-matrix 'ik,kj->ij'
+
+Matmul is a matrix-vector product done once per *column* of the second matrix —
+i.e. a whole grid of dots, one for every (row, column) pair. The notation says
+exactly that.
+
+Label the axes: A is `(i, k)`, B is `(k, j)`. Write them: `'ik,kj->ij'`. Read
+the letters:
+
+- **k appears in both inputs and NOT in the output** — shared and dropped, so
+  einsum sums over it. k is the "inner" axis, the one A and B have in common; it
+  gets contracted away. `Σ_k a[i,k]·b[k,j]` is row i of A dotted with column j
+  of B.
+- **i appears only in A and survives** — it picks the row.
+- **j appears only in B and survives** — it picks the column.
+
+Two survivors → a 2-D result, indexed `[i, j]`. So
+`result[i, j] = Σ_k a[i,k]·b[k,j]` = "row i of A meets column j of B", for every
+i and j. That's the definition of matmul, read straight off the spec.
+
+The notation even encodes the shape rule: the shared letter k is the inner
+dimension that must match and then vanishes; the two survivors i and j become
+the output shape `(i, j)`. `(m,k) @ (k,n) → (m,n)` is just "drop the shared
+letter, keep the private ones."
+
+## Watch out
+
+- **One transposed letter is a silent, wrong matmul.** `'ik,kj->ij'` contracts
+  B's FIRST axis (correct). `'ik,jk->ij'` contracts B's SECOND axis — that's
+  `a @ b.T`. Same output shape, different numbers, no error raised. This is THE
+  einsum bug. The `@`-twin assert is how you catch it while learning.
+
+## Worked example
+
+```python
+import numpy as np
+
+a = np.array([[1.0, 2.0],
+              [3.0, 4.0]])
+b = np.array([[5.0, 6.0],
+              [7.0, 8.0]])
+
+# 'ik,kj->ij': k is shared+dropped (the contraction); i, j are private+kept.
+mm = np.einsum('ik,kj->ij', a, b)
+assert np.array_equal(mm, a @ b)   # the @-twin
+```
+
+Why: trace entry [0, 0] by the rule — i=0, j=0 fixed, k ranges:
+`Σ_k a[0,k]·b[k,0] = 1·5 + 2·7 = 19` = row 0 of A dotted with column 0 of B.
+Entry [1, 0] uses row 1 and column 0: `3·5 + 4·7 = 43`. Each output cell is one
+row-dot-column; matmul is the whole grid of them.
+
+## Faded practice
+
 ### q260
-Matrix product of (i, k) and (k, j).
+Matrix product of `c` with shape `(1, 2)` and `d` with shape `(2, 1)`. The
+result is `(1, 1)` — a single number in a 2-D box. It *looks* like a plain dot
+of a row and a column, so it's tempting to write `'i,i->'`. But both inputs are
+2-D matrices, so it's a matmul: name every axis and let the survivors decide the
+output shape.
 
 ```python starter
 import numpy as np
 
 def solve(c, d):
-    """The matmul spec: inner dimension shared and dropped."""
+    """(1,2) @ (2,1) -> (1,1). Two matrices -> matmul, not a bare dot."""
     return np.einsum('_____', c, d)
 ```
 
@@ -117,36 +153,25 @@ def solve(c, d):
 import numpy as np
 
 def solve(c, d):
-    """The matmul spec: inner dimension shared and dropped."""
+    """(1,2) @ (2,1) -> (1,1). Two matrices -> matmul, not a bare dot."""
     return np.einsum('ik,kj->ij', c, d)
 ```
 
 ## Guided practice
 
-### q264
-1. a @ b @ c with shapes (i,k), (k,m), (m,p) — one spec, three inputs.
-2. Two letters contract (the two inner dimensions); two survive.
-3. `'ik,km,mp->ip'` — each adjacent pair shares exactly one letter, like
-   dominoes.
+### q262
+1. Two inputs: a matrix with axes `(i, j)` and a vector with axis `(j,)`. Which
+   letter do they share?
+2. The shared letter j is summed away (each row dots the vector); i is private
+   to the matrix and survives, one result per row.
+3. `'ij,j->i'`.
 
 ## Independent practice
 
-From the drill bank: q312 (permutation matrix times vector — mathematically
-just a matvec; notice WHICH spec, then reflect that p @ v with a 0/1 matrix
-is a reordering), q311 (a @ diag(v) @ b without materializing the diagonal —
-the three-input spec with a bare vector in the middle).
+These COMBINE matmul rather than introduce a new atom — drill them unaided once
+the two specs above are automatic:
 
-## Misconceptions
-
-- **"'ij,jk->ik' and 'ij,kj->ik' are basically the same."** — The second
-  pairs b's FIRST axis with nothing and contracts j against b's second axis
-  — it computes a @ b.T. One transposed letter, silently different math;
-  this is THE einsum bug, and the `@`-twin assert is how you catch it.
-- **"Chained products should be separate einsum/@ calls."** — One spec is
-  clearer and (with optimize=True) lets einsum pick the cheaper
-  association order — (a@b)@c vs a@(b@c) can differ by orders of magnitude
-  in FLOPs.
-- **"A diagonal matrix must be built to multiply by it."** — A bare vector
-  in the spec ('ij,j,jk->ik') applies the diagonal implicitly. Matrices
-  with structure (diagonal, permutation, one-hot) often stay implicit in
-  einsum.
+- q264: a triple product `a @ b @ c` written as ONE einsum — two contraction
+  letters chained like dominoes, each adjacent pair sharing exactly one letter.
+- q311: `a @ diag(v) @ b` with the diagonal kept as a bare vector in the spec —
+  a matmul whose middle factor never gets materialized.

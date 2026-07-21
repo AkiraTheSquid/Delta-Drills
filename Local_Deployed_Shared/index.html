@@ -4,6 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Delta Drills v1.0.11</title>
+  <!-- Embedded/maximized practice view: when this page is loaded inside the
+       Knowledge Graph "Practice" overlay iframe (?embed=1), hide the app chrome
+       (tabs + banners) so it reads as its own focused practice page. Set on
+       <html> synchronously here so the topbar never flashes before paint. -->
+  <script>
+    try { if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("kg-embed"); } catch (e) {}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,7 +18,7 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
   <link rel="stylesheet" href="styles/components.css?v=3" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=7" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=8" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -26,7 +33,7 @@
   <link rel="stylesheet" href="styles/practice/feedback.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=6" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -402,28 +409,24 @@
   </main>
 
   <main class="page hidden" id="page-knowledge-graph">
-    <div class="container kg-container">
-      <h1>The knowledge graph</h1>
-      <p class="subtitle">
-        Every dot is a skill; every line is a dependency. The bright
-        <span class="cg-key-prereq">red links</span> are the structural
-        prerequisites that gate what unlocks; the dashed links are the
-        encompassing relationships that carry credit back down. Colour groups
-        skills by area. Click any node to trace what it connects to. It's a
-        map, not a to-do list — use it to see <em>why</em> a skill is still
-        locked (what feeds into it) and what finishing it unlocks; Practice
-        already walks this graph for you to choose each next problem. (Showing
-        the skills with mapped dependencies so far — edge coverage across the
-        full curriculum is still growing.)
-      </p>
-      <div class="hiw-graph-wrap kg-tall">
-        <div class="hiw-graph-controls">
-          <label><input type="checkbox" id="concept-graph-toggle-enc" checked /> encompassing links</label>
-          <button type="button" class="hiw-graph-fit" id="concept-graph-fit">Fit</button>
+    <div class="container kg-container kg2">
+      <div class="kg2-wrap">
+        <aside class="kg2-info" id="kg-info">
+          <div class="kg2-info-head">
+            <div class="kg2-info-head-meta" id="kg-info-meta"></div>
+            <button type="button" class="kg2-max" id="kg-maximize" hidden
+              title="Open the full practice screen for this skill">Practice&nbsp;⤢</button>
+          </div>
+          <div class="kg2-info-body" id="kg-info-body"></div>
+        </aside>
+        <div class="kg2-graph">
+          <div class="kg2-controls">
+            <button type="button" class="kg2-fit" id="kg-fit">Fit</button>
+          </div>
+          <div id="kg-cy"></div>
+          <div class="kg2-legend" id="kg-legend"></div>
+          <div class="kg2-status" id="kg-status">Loading the graph…</div>
         </div>
-        <div id="concept-graph-cy"></div>
-        <div class="hiw-graph-info" id="concept-graph-info">Loading the graph…</div>
-        <div class="hiw-graph-legend" id="concept-graph-legend"></div>
       </div>
     </div>
   </main>
@@ -819,7 +822,7 @@ np.random.seed(0)
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
-  <script src="concept-graph/graph-viz.js?v=6" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=3" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=6"></script>
@@ -831,17 +834,17 @@ np.random.seed(0)
   <script src="practice/dom.js?v=16"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
-  <script src="practice/ui.js?v=20"></script>
+  <script src="practice/ui.js?v=21"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=14"></script>
   <script src="practice/timer.js?v=11"></script>
-  <script src="practice/runner.js?v=11"></script>
+  <script src="practice/runner.js?v=14"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
-  <script src="practice/lessons.js?v=2"></script>
+  <script src="practice/lessons.js?v=11"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <script src="practice/events.js?v=20"></script>
   <script src="practice/init.js?v=14"></script>

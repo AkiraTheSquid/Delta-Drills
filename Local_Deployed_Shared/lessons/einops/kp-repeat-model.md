@@ -3,9 +3,9 @@ kc: einops.repeat-model
 title: einops.repeat — new axes and stretched axes
 supporting: [einops.split-axes, numpy.tile-repeat-meshgrid, numpy.broadcasting-rules]
 new_syntax: []
-faded: [317, 338]
+faded: [317]
 guided: [351]
-independent: [348, 385, 341, 339, 383]
+independent: [338, 348, 385, 341, 339, 383]
 ---
 
 ## Concept
@@ -114,27 +114,6 @@ def solve(img):
     return einops.repeat(img, 'c h w -> c (h 3) w')
 ```
 
-### q338
-Broadcast each class embedding across t time steps.
-
-```python starter
-import numpy as np
-import einops
-
-def solve(cls, t):
-    """(b, d) -> (b, t, d): a new axis, filled with copies."""
-    return einops.repeat(cls, '_____', t=t)
-```
-
-```python solution
-import numpy as np
-import einops
-
-def solve(cls, t):
-    """(b, d) -> (b, t, d): a new axis, filled with copies."""
-    return einops.repeat(cls, 'b d -> b t d', t=t)
-```
-
 ## Guided practice
 
 ### q351
@@ -145,7 +124,8 @@ def solve(cls, t):
 
 ## Independent practice
 
-From the drill bank: q348 (rows repeated 3× consecutively, batched),
+From the drill bank: q338 (broadcast class embeddings across time), q348
+(rows repeated 3× consecutively, batched),
 q385 (columns repeated 4× IN SEQUENCE — which order?), q341 (whole image
 stacked k times vertically — the other order), q339 (per-token scalar
 weights (b, t) expanded to (b, t, d)), q383 (duplicate the whole channel

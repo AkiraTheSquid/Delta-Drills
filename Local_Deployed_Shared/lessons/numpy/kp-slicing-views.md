@@ -3,9 +3,9 @@ kc: numpy.slicing-views
 title: Slicing, views, and slice assignment
 supporting: [numpy.ndarray-model]
 new_syntax: [slice-notation, multi-axis-indexing]
-faded: [233, 231]
+faded: [233]
 guided: [76]
-independent: [75]
+independent: [231, 75]
 ---
 
 ## Concept
@@ -105,27 +105,6 @@ def solve(x):
     return x[::-1]
 ```
 
-### q231
-Set every entry from index start up to (not including) stop to value, in place.
-
-```python starter
-import numpy as np
-
-def solve(x, start, stop, value):
-    """Set x[start:stop] to value and return x."""
-    x[_____] = value
-    return x
-```
-
-```python solution
-import numpy as np
-
-def solve(x, start, stop, value):
-    """Set x[start:stop] to value and return x."""
-    x[start:stop] = value
-    return x
-```
-
 ## Guided practice
 
 ### q76
@@ -139,7 +118,8 @@ def solve(x, start, stop, value):
 
 ## Independent practice
 
-From the drill bank: q75 (rotate a matrix 90° counterclockwise — either the
+From the drill bank: q231 (assign through a slice in place), q75 (rotate a
+matrix 90° counterclockwise — either the
 dedicated helper or a transpose composed with a flip).
 
 ## Misconceptions

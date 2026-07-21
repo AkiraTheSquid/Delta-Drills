@@ -3,9 +3,9 @@ kc: numpy.stack-concat-interleave
 title: Stacking, concatenating, interleaving
 supporting: [numpy.reshape-flatten, numpy.slicing-views]
 new_syntax: []
-faded: [84, 89]
+faded: [84]
 guided: [146]
-independent: [238, 159]
+independent: [89, 238, 159]
 ---
 
 ## Concept
@@ -111,25 +111,6 @@ def solve(a, b):
     return np.stack([a, b], axis=0).mean(axis=0)
 ```
 
-### q89
-Alternate two equal-length vectors, starting with a[0].
-
-```python starter
-import numpy as np
-
-def solve(a, b):
-    """[a0, b0, a1, b1, ...] — pair up, then unroll row-major."""
-    return np.ravel(np._____((a, b)))
-```
-
-```python solution
-import numpy as np
-
-def solve(a, b):
-    """[a0, b0, a1, b1, ...] — pair up, then unroll row-major."""
-    return np.ravel(np.column_stack((a, b)))
-```
-
 ## Guided practice
 
 ### q146
@@ -142,7 +123,8 @@ def solve(a, b):
 
 ## Independent practice
 
-From the drill bank: q238 (vertical AND horizontal combination as a tuple),
+From the drill bank: q89 (alternate two vectors), q238 (vertical AND
+horizontal combination as a tuple),
 q159 (nz zeros between consecutive entries — a zeros canvas plus ONE strided
 assignment; derive the canvas length first).
 

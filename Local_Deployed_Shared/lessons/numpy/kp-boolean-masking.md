@@ -3,77 +3,40 @@ kc: numpy.boolean-masking
 title: Boolean masks — compare, count, filter
 supporting: [numpy.slicing-views, numpy.elementwise-ufuncs, numpy.aggregations]
 new_syntax: [boolean-mask-indexing]
-faded: [236, 52]
-guided: [12]
+faded: [236, 52, 12]
+guided: []
 independent: [232]
 ---
 
-## Concept
+## Concept: the comparison IS the mask
 
 A comparison applied to an array is itself elementwise: `x > 2.5` produces a
 **boolean array** the same shape as `x` — `True` where the condition holds.
-That boolean array is called a **mask**, and it is the pivot of a
-three-step pattern behind almost every "find/count/change the entries
-where…" task:
+That boolean array is called a **mask**.
 
-> **1. Build the mask** — write the condition on the whole array.
-> **2. (Optionally) combine masks** — with `&` (and), `|` (or), `~` (not).
->    NOT Python's `and`/`or`/`not`, which fail on arrays. Because `&`/`|`
->    bind tighter than comparisons, each comparison needs parentheses:
->    `(x > 3) & (x < 8)`.
-> **3. Use the mask**, one of three ways:
->    - **count / reduce**: `np.count_nonzero(mask)` or `mask.sum()` (how
->      many?), `mask.any()` / `mask.all()` (yes/no questions);
->    - **filter**: `x[mask]` returns a 1-D array of just the selected
->      elements (a *copy*, unlike slices);
->    - **assign**: `x[mask] = value` (or `x[mask] *= -1`) rewrites only the
->      selected positions, in place.
-
-Divisibility, sign, range membership, "equal to any of…" — anything you can
-phrase as an elementwise condition becomes a mask. Note that mask indexing
-for *assignment* mutates the original array, so the usual contract applies:
-"do not modify the input" ⇒ `.copy()` first, then assign through the mask on
-the copy.
+Saying "the comparison IS the mask" kills the urge to loop: there is no
+separate "test each element" step to write. Divisibility, sign, range
+membership, "equal to any of…" — anything you can phrase as an elementwise
+condition becomes a mask in one expression.
 
 ## Worked example
-
-Task: given readings, mark which exceed a threshold, count them, pull them
-out, and (on a copy) negate everything in the range (3, 8).
 
 ```python
 import numpy as np
 
 x = np.array([1, 4, 6, 9, 3, 7])
 
-# 1. The comparison itself is the mask — same shape as x, dtype bool.
+# The comparison itself is the mask — same shape as x, dtype bool.
 mask = x > 5
 assert mask.tolist() == [False, False, True, True, False, True]
 
-# 2a. Count: True behaves as 1, so both spellings work.
-assert np.count_nonzero(mask) == 3
-assert mask.sum() == 3
-
-# 2b. Filter: mask indexing keeps just the True positions (as a copy).
-assert x[mask].tolist() == [6, 9, 7]
-
-# 3. Combined condition + masked assignment, on a copy to protect x.
-#    Parentheses around EACH comparison are mandatory with & and |.
-out = x.copy()
-out[(out > 3) & (out < 8)] *= -1
-assert out.tolist() == [1, -4, -6, 9, 3, -7]
-assert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched
+# Any elementwise condition works the same way, e.g. divisibility:
+even = x % 2 == 0
+assert even.tolist() == [False, True, True, False, False, False]
 ```
 
-Why each step:
-
-1. Saying "the comparison IS the mask" kills the urge to loop: there is no
-   separate "test each element" step to write.
-2. `count_nonzero`/`sum` on a mask is the standard "how many satisfy…?" —
-   and wrapping in `int(...)` hands back a plain Python int when required.
-3. In the combined condition, try removing the parentheses mentally:
-   `out > 3 & out < 8` would evaluate `3 & out` first (bitwise on ints!) —
-   the precedence trap is why the parenthesized form should become muscle
-   memory.
+Why: one expression, no loop — the condition is written on the whole array
+at once, and the result carries a True/False verdict per element.
 
 ## Faded practice
 
@@ -96,6 +59,37 @@ def solve(x, threshold):
     return x > threshold
 ```
 
+## Concept: using a mask — count and filter
+
+Once you have a mask, two of its three uses are read-only:
+
+- **count / reduce**: `np.count_nonzero(mask)` or `mask.sum()` (how many? —
+  True behaves as 1), `mask.any()` / `mask.all()` (yes/no questions). Wrap in
+  `int(...)` when a plain Python int is required.
+- **filter**: `x[mask]` returns a 1-D array of just the selected elements
+  (a *copy*, unlike slices) — however many there are, shape not preserved.
+
+## Worked example
+
+```python
+import numpy as np
+
+x = np.array([1, 4, 6, 9, 3, 7])
+mask = x > 5
+
+# Count: True behaves as 1, so both spellings work.
+assert np.count_nonzero(mask) == 3
+assert mask.sum() == 3
+
+# Filter: mask indexing keeps just the True positions (as a copy).
+assert x[mask].tolist() == [6, 9, 7]
+```
+
+Why: `count_nonzero`/`sum` on a mask is the standard "how many satisfy…?";
+`x[mask]` is the standard "give me those entries".
+
+## Faded practice
+
 ### q52
 Number of True entries in a boolean array, as a plain int.
 
@@ -115,15 +109,60 @@ def solve(z):
     return int(np.count_nonzero(z))
 ```
 
-## Guided practice
+## Concept: combining masks and masked assignment
+
+Masks combine with `&` (and), `|` (or), `~` (not) — NOT Python's
+`and`/`or`/`not`, which fail on arrays. Because `&`/`|` bind tighter than
+comparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.
+
+The third use of a mask is **assignment**: `x[mask] = value` (or
+`x[mask] *= -1`) rewrites only the selected positions, *in place*. That
+mutates the original array, so the usual contract applies: "do not modify
+the input" ⇒ `.copy()` first, then assign through the mask on the copy.
+
+## Worked example
+
+```python
+import numpy as np
+
+x = np.array([1, 4, 6, 9, 3, 7])
+
+# Combined condition + masked assignment, on a copy to protect x.
+# Parentheses around EACH comparison are mandatory with & and |.
+out = x.copy()
+out[(out > 3) & (out < 8)] *= -1
+assert out.tolist() == [1, -4, -6, 9, 3, -7]
+assert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched
+```
+
+Why: try removing the parentheses mentally: `out > 3 & out < 8` would
+evaluate `3 & out` first (bitwise on ints!) — the precedence trap is why the
+parenthesized form should become muscle memory.
+
+## Faded practice
 
 ### q12
-1. "Strictly greater than 3 AND strictly less than 8" — two comparisons
-   combined. Which operator combines masks, and what punctuation does each
-   comparison need?
-2. The selected entries get negated in place via the mask:
-   `arr[mask] *= -1`.
-3. The input must survive unmodified — where does the `.copy()` go?
+Entries strictly between 3 and 8 negated, input untouched.
+
+```python starter
+import numpy as np
+
+def solve(z):
+    """z with entries strictly between 3 and 8 negated (z unmodified)."""
+    out = z.copy()
+    out[(out > 3) _____ (out < 8)] *= -1
+    return out
+```
+
+```python solution
+import numpy as np
+
+def solve(z):
+    """z with entries strictly between 3 and 8 negated (z unmodified)."""
+    out = z.copy()
+    out[(out > 3) & (out < 8)] *= -1
+    return out
+```
 
 ## Independent practice
 

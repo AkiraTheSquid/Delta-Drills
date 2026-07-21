@@ -3,12 +3,12 @@ kc: numpy.linalg-basics
 title: Matrix multiply and np.linalg basics
 supporting: [numpy.aggregations, numpy.elementwise-ufuncs]
 new_syntax: [matmul-operator]
-faded: [107]
-guided: [239]
+faded: [239, 107]
+guided: []
 independent: []
 ---
 
-## Concept
+## Concept: two multiplications — * vs @
 
 Two different "multiplications" exist for matrices, and NumPy gives each its
 own operator:
@@ -20,27 +20,11 @@ own operator:
   entry `[i, j]` is the dot product of row i of `a` with column j of `b`.
   The inner dimensions (k) must agree, and they disappear in the output.
 
-The shape rule `(m, k) @ (k, n) → (m, n)` is worth chanting: it predicts both
-whether a product is legal and what comes out. It also covers matrix–vector:
-`(m, k) @ (k,) → (m,)`.
-
-Beyond `@`, the `np.linalg` submodule holds the "real linear algebra":
-
-- **`np.linalg.solve(a, b)`** — solve the system `a @ x = b` for `x`.
-  This is THE way to compute "a⁻¹ b". Numerically, solving directly is both
-  faster and more accurate than `np.linalg.inv(a) @ b`; computing an explicit
-  inverse is almost never what you want.
-- `np.linalg.inv`, `np.linalg.det`, `np.linalg.matrix_rank`,
-  `np.linalg.norm`, `np.linalg.eig` — inverse, determinant, rank, norms,
-  eigendecomposition, when a task genuinely asks for them.
-
-Sanity-checking a solve is one line: plug `x` back in and compare
-`a @ x` with `b` using `np.allclose` (float arithmetic — never `==`).
+The shape rule `(m, k) @ (k, n) → (m, n)` is worth chanting: it predicts
+both whether a product is legal and what comes out. It also covers
+matrix–vector: `(m, k) @ (k,) → (m,)`.
 
 ## Worked example
-
-Task: multiply two matrices, then solve a linear system and verify the
-solution.
 
 ```python
 import numpy as np
@@ -60,6 +44,53 @@ assert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]
 # Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.
 p = np.ones((2, 3)) @ np.ones((3, 2))
 assert p.shape == (2, 2)
+```
+
+Why: computing `mat[0, 0]` by hand once (row 0 of `a` dotted with column 0
+of `b`) is the fastest way to internalize what `@` does beyond the shape
+rule — and predicting shapes BEFORE running makes mismatches design errors
+you catch on paper.
+
+## Faded practice
+
+### q239
+Matrix product of shapes (m, k) and (k, n).
+
+```python starter
+import numpy as np
+
+def solve(a, b):
+    """The (m, n) matrix product of a (m, k) and b (k, n)."""
+    return a _____ b
+```
+
+```python solution
+import numpy as np
+
+def solve(a, b):
+    """The (m, n) matrix product of a (m, k) and b (k, n)."""
+    return a @ b
+```
+
+## Concept: np.linalg.solve — never build the inverse
+
+The `np.linalg` submodule holds the "real linear algebra":
+
+- **`np.linalg.solve(a, b)`** — solve the system `a @ x = b` for `x`.
+  This is THE way to compute "a⁻¹ b". Numerically, solving directly is both
+  faster and more accurate than `np.linalg.inv(a) @ b`; computing an
+  explicit inverse is almost never what you want.
+- `np.linalg.inv`, `np.linalg.det`, `np.linalg.matrix_rank`,
+  `np.linalg.norm`, `np.linalg.eig` — inverse, determinant, rank, norms,
+  eigendecomposition, when a task genuinely asks for them.
+
+Sanity-checking a solve is one line: plug `x` back in and compare
+`a @ x` with `b` using `np.allclose` (float arithmetic — never `==`).
+
+## Worked example
+
+```python
+import numpy as np
 
 # Solve a @ x = b_vec — NOT by computing an inverse.
 a_sys = np.array([[2.0, 0.0],
@@ -72,15 +103,8 @@ assert x.tolist() == [3.0, 2.0]
 assert np.allclose(a_sys @ x, b_vec)
 ```
 
-Why each step:
-
-1. Computing `mat[0, 0]` by hand once (row 0 of `a` dotted with column 0 of
-   `b`) is the fastest way to internalize what `@` does beyond the shape rule.
-2. The `(2,3) @ (3,2)` example isolates the shape rule from the values —
-   predict shapes BEFORE running, and mismatches become design errors you
-   catch on paper.
-3. `solve` + `allclose` verification: the pair costs one line and catches
-   both wrong answers and ill-conditioned systems.
+Why: `solve` + `allclose` verification — the pair costs one line and
+catches both wrong answers and ill-conditioned systems.
 
 ## Faded practice
 
@@ -102,14 +126,6 @@ def solve(a, b):
     """Return x such that a @ x = b (use a solver, not an inverse)."""
     return np.linalg.solve(a, b)
 ```
-
-## Guided practice
-
-### q239
-1. Matrix product of shapes (m, k) and (k, n) — which operator contracts the
-   shared k axis?
-2. Not `*` — that's elementwise and would fail on (m,k)×(k,n) shapes anyway.
-3. One binary operator between the two arrays does it.
 
 ## Misconceptions
 

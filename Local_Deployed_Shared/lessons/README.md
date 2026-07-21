@@ -1,0 +1,50 @@
+# lessons
+
+## Purpose
+- First-encounter teaching content for Delta Drills easy topics (Numpy/Einsum/Einops): the knowledge-point (KP) lessons shown by the in-app lesson gate before a learner's first question on a new concept.
+
+## Owns
+- KP markdown sources (`numpy/`, `einsum/`, `einops/`), the KC registry (`kc_registry.json`), question→KC tags (`qmatrix_tags.json`), the compiled artifact (`lessons_structured.json`), the authoring spec (`AUTHORING.md`), and the read-only review viewer (`viewer.html`).
+
+## Does NOT own
+- Parsing/validation/compilation tooling (`scripts/` at repo root), the runtime gate UI (`../practice/lessons.js`), backend exposure state (`backend/app/lessons.py`), or the drill bank (`../questions_structured.json`).
+
+## Key Files
+- `AUTHORING.md`: the format contract — read it before editing any KP.
+- `kc_registry.json`: 64 KCs across 9 lessons (np-1..4, es-1..2, eo-1..3); prereq edges must stay acyclic.
+- `qmatrix_tags.json`: per-question target/supporting KC tags; drives the gate's "unexposed KC" check in local mode.
+- `lessons_structured.json`: compiled output — NEVER hand-edit; regen via `scripts/compile_lessons.py`. Feeds both the frontend player and backend guard maps.
+- `viewer.html`: static review viewer (serve this folder with `python3 -m http.server`).
+
+## Data & External Dependencies
+- Faded/guided/independent exercises reference drill-bank question ids; faded solutions must pass those questions' test_cases.
+- Docker image COPYs this folder (root `.dockerignore` whitelists `!Local_Deployed_Shared/lessons/`).
+
+## How It Works (Flow)
+1. Author/edit a KP md as single-concept segments: explain → ONE worked example → ONE faded exercise.
+2. `python3 scripts/validate_lessons.py --coverage` → `python3 scripts/compile_lessons.py`.
+3. LessonGate renders teaching + worked explanation in left panel and preloads complete worked code in editor for optional running. Continue advances; finishing KP records KC exposure and resumes normal questions. Faded content is not rendered inside lesson.
+
+## Invariants & Constraints
+- One KP file per KC; one concept per segment; exactly ONE worked example + ONE faded exercise per segment (Seth's format rules — see AUTHORING.md).
+- Watch out renders inside lesson teaching content. Lesson screen has no popup, faded prompt, Check, or grading.
+- A faded qid appears in at most one segment; frontmatter id lists mirror the sections.
+- Never hand-edit `lessons_structured.json`; always validate before compiling.
+- Bank einops fixtures hardcode `/delta_numbers.npy` — validator rewrites the path; don't "fix" it in content.
+
+## Extension Points
+- New concept → add KC to `kc_registry.json`, write `kp-<slug>.md`, retag affected questions (scripts/build_qmatrix.py), validate with `--coverage`.
+
+## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
+
+- **Multi-concept lesson pages** — `RESOLVED`
+  - When it happens: a KP's Concept section introduced several APIs before any practice.
+  - Symptom: beginner overwhelmed; can't practice each idea separately (Seth's 2026-07-19 feedback).
+  - Root cause: original Pass-1 format allowed one big Concept per KP.
+  - Prevention/fix: segment format + validator enforcement; player pages one segment at a time.
+  - Status: `RESOLVED` for np-1 openers + 19 restructured KPs; remaining KPs render as single-segment legacy pages until converted.
+
+## Recent Changes
+- 2026-07-20: Lesson changed to inline teaching + optional runnable worked code; faded practice removed from lesson UI.
+- 2026-07-19: Segmented format introduced; ~20 numpy KPs restructured; compiled JSON gains per-KP `segments`.
+- 2026-07-15: Pass 1 content created (64 KPs).

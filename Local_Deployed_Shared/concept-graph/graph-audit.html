@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knowledge Graph — Content &amp; Structure Review</title>
+<style>
+  :root {
+    --bg: #10101b;
+    --panel: #171726;
+    --panel-2: #1e1e32;
+    --border: #2c2c45;
+    --text: #e7e7f0;
+    --muted: #a2a2bb;
+    --accent: #ffd23f;      /* prerequisite-path highlight */
+    --prereq: #e3212c;      /* structural prereq edges */
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ---- doc header ---- */
+  header {
+    padding: 12px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex: 0 0 auto;
+  }
+  header h1 { font-size: 17px; font-weight: 700; letter-spacing: .2px; }
+  header p {
+    font-size: 12.5px; color: var(--muted); margin-top: 4px; max-width: 1100px; line-height: 1.5;
+  }
+  header .tag {
+    display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .6px; color: #10101b; background: var(--accent);
+    padding: 1px 7px; border-radius: 4px; margin-right: 8px; vertical-align: middle;
+  }
+
+  /* ---- two-pane body ---- */
+  #stage { flex: 1 1 auto; display: flex; min-height: 0; }
+
+  #info {
+    flex: 0 0 37%; max-width: 560px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 22px 24px;
+  }
+  #info h2 { font-size: 20px; line-height: 1.3; margin-bottom: 4px; }
+  #info .placeholder { color: var(--muted); font-size: 14px; line-height: 1.6; }
+  #info .placeholder strong { color: var(--text); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; }
+  .chip {
+    font-size: 11.5px; padding: 3px 10px; border-radius: 999px;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+  }
+  .chip .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+  .section { margin-top: 20px; }
+  .section h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted);
+    margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border);
+  }
+  .section h3 .count { color: var(--accent); }
+  .linklist { display: flex; flex-direction: column; gap: 5px; }
+  .node-link {
+    display: block; text-align: left; width: 100%; cursor: pointer;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 7px;
+    color: var(--text); font: inherit; font-size: 13px; padding: 8px 10px; line-height: 1.35;
+    transition: border-color .12s, background .12s;
+  }
+  .node-link:hover { border-color: var(--accent); background: #242440; }
+  .node-link .nl-fam { font-size: 10.5px; color: var(--muted); display: block; margin-top: 2px; }
+  .empty { color: var(--muted); font-size: 12.5px; font-style: italic; }
+
+  /* ---- graph pane ---- */
+  #graph-wrap { flex: 1 1 auto; position: relative; min-width: 0; }
+  #cy { position: absolute; inset: 0; }
+  #controls {
+    position: absolute; top: 12px; right: 14px; z-index: 5;
+    display: flex; gap: 8px; align-items: center;
+    background: rgba(23,23,38,.9); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; font-size: 12px; backdrop-filter: blur(4px);
+  }
+  #controls label { color: var(--muted); cursor: pointer; user-select: none; }
+  #controls button {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer;
+  }
+  #controls button:hover { border-color: var(--accent); color: var(--accent); }
+  #legend {
+    position: absolute; bottom: 12px; left: 14px; z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 62%;
+    background: rgba(23,23,38,.9); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-size: 11.5px; backdrop-filter: blur(4px);
+  }
+  #legend .li { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  #legend .dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0,0,0,.25); }
+  #status {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    color: var(--muted); font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="tag">For review</span>Knowledge Graph — Content &amp; Structure</h1>
+  <p>
+    Every bubble is a skill; every arrow points from a prerequisite up to what it unlocks
+    (<span style="color:var(--prereq);font-weight:700">red</span> = structural prerequisites;
+    dashed = encompassing links that carry credit back down). Colour groups skills by area.
+    <strong style="color:var(--text)">Click any bubble</strong> to light up its full prerequisite chain and see, on the left,
+    what the skill is, what it depends on, and what it feeds into. This view is for reviewing the
+    content and the structure of the curriculum.
+  </p>
+</header>
+
+<div id="stage">
+  <aside id="info">
+    <div class="placeholder">
+      <strong>Click a bubble</strong> on the right to inspect it.<br><br>
+      The panel will show the skill, its area, its direct prerequisites, and everything it
+      unlocks — all clickable so you can walk the graph. Selecting a skill also highlights
+      its entire prerequisite chain down to the foundations.
+    </div>
+  </aside>
+
+  <div id="graph-wrap">
+    <div id="controls">
+      <label><input type="checkbox" id="toggle-enc" checked> encompassing links</label>
+      <button type="button" id="btn-fit">Fit</button>
+      <button type="button" id="btn-reset">Reset</button>
+    </div>
+    <div id="cy"></div>
+    <div id="status">Loading the graph…</div>
+    <div id="legend"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  // Light pastel fills so black labels stay readable (justinmath-style bubbles).
+  const FAMILY_COLORS = {
+    "Fundamentals":            "#f4d9a0",
+    "CNNs":                    "#bfe6f5",
+    "Ray Tracing":             "#f3c9e8",
+    "Backprop & Autograd":     "#c9f2d4",
+    "Optimization & Training": "#ffd6c2",
+    "Generative":              "#e2ccff",
+    "Distributed":             "#ffd0dd",
+    "Other":                   "#dddddd",
+  };
+  const PREREQ = "#e3212c";
+  const ACCENT = "#ffd23f";
+
+  const $ = (id) => document.getElementById(id);
+  let cy = null, nodesById = {}, parentsOf = {}, childrenOf = {};
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function ancestors(id) {
+    const seen = new Set(), out = [];
+    const q = [...(parentsOf[id] || [])];
+    for (const p of q) seen.add(p);
+    while (q.length) {
+      const cur = q.shift();
+      out.push(cur);
+      for (const p of (parentsOf[cur] || [])) if (!seen.has(p)) { seen.add(p); q.push(p); }
+    }
+    return out;
+  }
+
+  function nodeLink(id) {
+    const n = nodesById[id];
+    if (!n) return "";
+    const col = FAMILY_COLORS[n.family] || FAMILY_COLORS.Other;
+    return `<button class="node-link" data-goto="${esc(id)}">${esc(n.label)}
+      <span class="nl-fam"><span class="chip" style="padding:0;border:0;background:none">
+      <span class="swatch" style="background:${col}"></span>${esc(n.topic)} · ${esc(n.family)}</span></span></button>`;
+  }
+
+  function renderInfo(id) {
+    const n = nodesById[id];
+    if (!n) return;
+    const col = FAMILY_COLORS[n.family] || FAMILY_COLORS.Other;
+    const parents = parentsOf[id] || [];
+    const kids = childrenOf[id] || [];
+    const chainLen = ancestors(id).length;
+
+    const parentsHtml = parents.length
+      ? `<div class="linklist">${parents.map(nodeLink).join("")}</div>`
+      : `<div class="empty">None — this is a foundation skill.</div>`;
+    const kidsHtml = kids.length
+      ? `<div class="linklist">${kids.map(nodeLink).join("")}</div>`
+      : `<div class="empty">None mapped yet — nothing downstream depends on it.</div>`;
+
+    $("info").innerHTML = `
+      <h2>${esc(n.label)}</h2>
+      <div class="chips">
+        <span class="chip"><span class="swatch" style="background:${col}"></span>${esc(n.family)}</span>
+        <span class="chip">${esc(n.topic)}</span>
+        <span class="chip">tier: ${esc(n.tier || "—")}</span>
+        <span class="chip">id: ${esc(n.id)}</span>
+      </div>
+      <div class="section">
+        <h3>Prerequisites <span class="count">(${parents.length})</span> — needed first</h3>
+        ${parentsHtml}
+      </div>
+      <div class="section">
+        <h3>Unlocks <span class="count">(${kids.length})</span> — depends on this</h3>
+        ${kidsHtml}
+      </div>
+      <div class="section">
+        <h3>Full prerequisite chain</h3>
+        <div class="empty" style="font-style:normal;color:var(--muted)">
+          ${chainLen} skill${chainLen === 1 ? "" : "s"} sit below this one in the graph (highlighted on the right).
+        </div>
+      </div>`;
+
+    $("info").querySelectorAll("[data-goto]").forEach((b) =>
+      b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
+    $("info").scrollTop = 0;
+  }
+
+  function selectNode(id) {
+    const n = cy.getElementById(id);
+    if (!n || n.empty()) return;
+    const path = new Set([id, ...ancestors(id)]);
+
+    cy.batch(() => {
+      cy.elements().removeClass("hl hl-strong").addClass("faded");
+      cy.nodes().forEach((el) => {
+        if (path.has(el.id())) el.removeClass("faded").addClass(el.id() === id ? "hl-strong" : "hl");
+      });
+      // highlight prereq edges whose both ends are on the path
+      cy.edges(".prereq").forEach((e) => {
+        if (path.has(e.source().id()) && path.has(e.target().id()))
+          e.removeClass("faded").addClass("hl");
+      });
+    });
+    renderInfo(id);
+  }
+
+  function resetView() {
+    cy.elements().removeClass("faded hl hl-strong");
+    $("info").innerHTML = `<div class="placeholder"><strong>Click a bubble</strong> on the right to inspect it.</div>`;
+  }
+
+  function buildLegend(families) {
+    $("legend").innerHTML = families.map((f) =>
+      `<span class="li"><span class="dot" style="background:${FAMILY_COLORS[f] || FAMILY_COLORS.Other}"></span>${esc(f)}</span>`
+    ).join("");
+  }
+
+  async function main() {
+    try { cytoscape.use(window.cytoscapeDagre); } catch (_) {}
+
+    let data;
+    try {
+      const res = await fetch("graph-viz.json?v=audit1");
+      data = await res.json();
+    } catch (e) {
+      $("status").textContent = "Couldn't load graph-viz.json.";
+      return;
+    }
+
+    data.nodes.forEach((n) => { nodesById[n.id] = n; parentsOf[n.id] = []; childrenOf[n.id] = []; });
+    data.edges.forEach((e) => {
+      if (e.enc) return;                 // structural prereqs define the tree
+      if (!(e.target in parentsOf)) return;
+      parentsOf[e.target].push(e.source);
+      (childrenOf[e.source] = childrenOf[e.source] || []).push(e.target);
+    });
+
+    const families = [...new Set(data.nodes.map((n) => n.family))].sort();
+    buildLegend(families);
+
+    const elements = [
+      ...data.nodes.map((n) => ({ data: { id: n.id, label: n.label, family: n.family } })),
+      ...data.edges.map((e, i) => ({
+        data: { id: "e" + i, source: e.source, target: e.target },
+        classes: e.enc ? "enc" : "prereq",
+      })),
+    ];
+
+    cy = cytoscape({
+      container: $("cy"),
+      elements,
+      wheelSensitivity: 0.25,
+      minZoom: 0.08, maxZoom: 3,
+      style: [
+        { selector: "node", style: {
+            "background-color": (n) => FAMILY_COLORS[n.data("family")] || FAMILY_COLORS.Other,
+            "shape": "round-rectangle",
+            "label": "data(label)",
+            "width": "label", "height": "label",
+            "padding": "9px",
+            "text-wrap": "wrap", "text-max-width": "130px",
+            "text-valign": "center", "text-halign": "center",
+            "font-size": 10, "font-weight": 600,
+            "color": "#161622",
+            "border-width": 1, "border-color": "rgba(0,0,0,.28)",
+            "transition-property": "opacity, border-width, border-color", "transition-duration": "120ms",
+        }},
+        { selector: "edge", style: { "curve-style": "bezier", "opacity": 0.9 } },
+        { selector: "edge.prereq", style: {
+            "width": 1.8, "line-color": PREREQ,
+            "target-arrow-shape": "triangle", "target-arrow-color": PREREQ, "arrow-scale": 0.8,
+        }},
+        { selector: "edge.enc", style: {
+            "width": 0.9, "line-color": "#5a5a86", "line-style": "dashed", "opacity": 0.5,
+        }},
+        { selector: ".faded", style: { "opacity": 0.10 } },
+        { selector: "node.hl", style: {
+            "opacity": 1, "border-width": 3, "border-color": ACCENT, "z-index": 50,
+        }},
+        { selector: "node.hl-strong", style: {
+            "opacity": 1, "border-width": 5, "border-color": ACCENT,
+            "font-size": 12, "z-index": 99,
+        }},
+        { selector: "edge.hl", style: {
+            "opacity": 1, "width": 3, "line-color": ACCENT, "target-arrow-color": ACCENT, "z-index": 60,
+        }},
+      ],
+      layout: {
+        name: "dagre", rankDir: "BT",
+        nodeSep: 22, rankSep: 80, edgeSep: 10,
+        animate: false, fit: true, padding: 36,
+      },
+    });
+
+    $("status").style.display = "none";
+    cy.on("tap", "node", (evt) => selectNode(evt.target.id()));
+    cy.on("tap", (evt) => { if (evt.target === cy) resetView(); });
+
+    $("btn-fit").onclick = () => cy.fit(undefined, 36);
+    $("btn-reset").onclick = resetView;
+    $("toggle-enc").onchange = (e) =>
+      cy.edges(".enc").style("display", e.target.checked ? "element" : "none");
+  }
+
+  function boot(tries) {
+    if (typeof cytoscape !== "undefined" && window.cytoscapeDagre) { main(); return; }
+    if (tries > 100) { $("status").textContent = "Graph libraries failed to load."; return; }
+    setTimeout(() => boot(tries + 1), 60);
+  }
+  document.addEventListener("DOMContentLoaded", () => boot(0));
+})();
+</script>
+</body>
+</html>
