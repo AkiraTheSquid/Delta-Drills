@@ -33,9 +33,29 @@ const PracticeAPI = {
 
   async getNextQuestion() {
     await loadQuestionsSourceIndex();
+    // Single-KC ladder (concept-graph practice) serves its own faded →
+    // independent sequence first. It returns null once spent, and the normal
+    // adaptive queue resumes — still pinned to that subtopic.
+    if (window.KcPractice && window.KcPractice.isActive()) {
+      const ladderQ = await window.KcPractice.nextQuestion();
+      if (ladderQ) {
+        this.currentQuestion = ladderQ;
+        practiceProgress.currentQuestionId = ladderQ.question_id;
+        practiceProgress.currentQuestion = ladderQ;
+        savePracticeProgress(practiceProgress);
+        return ladderQ;
+      }
+    }
     if (practiceMode === "backend") {
       // Admin on localhost — use backend API
-      const res = await apiFetch("/api/practice/next-question");
+      // focus_subtopic pins the backend queue to one subtopic for single-KC
+      // practice. Older backends ignore the unknown query param and serve the
+      // normal queue, so this degrades instead of breaking.
+      const focus = window.__kcFocusSubtopic;
+      const res = await apiFetch(
+        "/api/practice/next-question" +
+          (focus ? "?focus_subtopic=" + encodeURIComponent(focus) : ""),
+      );
       if (res.status === 401) {
         handleExpiredToken();
         // fall through to local mode below
@@ -73,25 +93,7 @@ const PracticeAPI = {
       await saveAdaptiveState();
 
       if (result.question) {
-        const q = result.question;
-        this.currentQuestion = {
-          question_id: q.id,
-          question_text: q.question_text,
-          topic: q.topic || "",
-          subtopic: q.subtopic,
-          difficulty: q.difficulty_score,
-          expected_output: q.expected_output,
-          solution_code: q.answer_code,
-          primary_library: q.primary_library || null,
-          task_type: q.task_type || null,
-          expected_artifact_type: q.expected_artifact_type || "stdout",
-          supports_visual_output: !!q.supports_visual_output,
-          function_name: q.function_name || null,
-          starter_code: q.starter_code || null,
-          test_cases: Array.isArray(q.test_cases) ? q.test_cases : [],
-          submission_mode: q.submission_mode || "stdout",
-          target_difficulty: getTargetDifficultyFromAdaptiveState(q.subtopic) ?? q.difficulty_score,
-        };
+        this.currentQuestion = buildPracticeQuestionFromBank(result.question);
       }
     } else {
       // Fallback to hardcoded pool — a static round-robin with NO adaptivity.

@@ -11,7 +11,7 @@ Endpoints (mounted under /api/practice by the parent router):
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app import diagnostic, lessons
 from app.adaptive import (
@@ -100,16 +100,32 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
 
 
 @router.get("/next-question", response_model=NextQuestionResponse)
-def next_question(user: User = Depends(get_current_user)) -> NextQuestionResponse:
+def next_question(
+    focus_subtopic: str | None = Query(None),
+    user: User = Depends(get_current_user),
+) -> NextQuestionResponse:
+    """`focus_subtopic` pins the queue to one subtopic (single-KC practice from
+    the concept graph). It only overrides *selection*; scoring, unlock gates and
+    the placement diagnostic are untouched. Unknown values fall back to the
+    normal weakest-subtopic pick rather than 404ing."""
     user_id = str(user.id)
     user_state = get_user_state(user_id)
 
-    if diagnostic.should_run(user_state):
+    subtopic = None
+    if focus_subtopic and get_questions_by_subtopic(focus_subtopic):
+        subtopic = focus_subtopic
+
+    # A focused request skips placement probing: the learner opened ONE concept
+    # from the graph, and cross-topic probes there would look broken (and would
+    # never move that concept's competency bar). The diagnostic stays active and
+    # resumes on the normal queue; these attempts still count as evidence.
+    if subtopic is None and diagnostic.should_run(user_state):
         probe = _serve_diagnostic_probe(user_id, user_state)
         if probe is not None:
             return probe
 
-    subtopic = select_next_subtopic(user_state)
+    if subtopic is None:
+        subtopic = select_next_subtopic(user_state)
     if subtopic is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
   <link rel="stylesheet" href="styles/components.css?v=3" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=8" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=11" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/list.css?v=1" />
@@ -32,7 +32,7 @@
   <link rel="stylesheet" href="styles/practice/question.css?v=1" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=2" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=6" />
   <link rel="stylesheet" href="practice/bars.css?v=6" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
@@ -621,6 +621,11 @@
             </div>
           </div>
 
+          <!-- Single-KC practice (concept-graph "Practice ⤢") competency bar.
+               Empty + hidden in the normal adaptive queue; CompetencyBar.init()
+               fills it only in the ?lesson=<kc> focus flow. -->
+          <div class="competency-bar-container hidden" id="competency-bar-container"></div>
+
           <!-- Question Number (ID chip stays visible while answering; meta-top does not) -->
           <div class="question-number-row">
             <div class="question-number" id="question-number">Question 1</div>
@@ -822,12 +827,12 @@ np.random.seed(0)
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=3" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=7" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=6"></script>
   <script src="practice/mode.js?v=7"></script>
-  <script src="practice/questions.js?v=21"></script>
+  <script src="practice/questions.js?v=23"></script>
   <script src="practice/engine.js?v=8"></script>
   <script src="practice/adaptive.js?v=10"></script>
   <script src="practice/storage.js?v=6"></script>
@@ -836,7 +841,7 @@ np.random.seed(0)
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/ui.js?v=21"></script>
   <script src="practice/ai.js?v=6"></script>
-  <script src="practice/api.js?v=14"></script>
+  <script src="practice/api.js?v=15"></script>
   <script src="practice/timer.js?v=11"></script>
   <script src="practice/runner.js?v=14"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
@@ -844,9 +849,11 @@ np.random.seed(0)
   <script src="practice/drill-hints-manifest.js?v=1"></script>
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
-  <script src="practice/lessons.js?v=11"></script>
+  <script src="practice/competency-bar.js?v=3"></script>
+  <script src="practice/lessons.js?v=12"></script>
+  <script src="practice/kc-practice.js?v=2"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=20"></script>
+  <script src="practice/events.js?v=21"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
   <script src="stats/dom.js?v=8"></script>

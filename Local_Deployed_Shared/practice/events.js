@@ -152,6 +152,13 @@ feedbackButtons.forEach((btn) => {
       showEwmaAccuracyCalibration(q.subtopic);
     }
 
+    // Emit competency bar update (single-KC maximize mode) — includes old/new mastery
+    window.dispatchEvent(
+      new CustomEvent("competency:feedback-update", {
+        detail: { subtopic: q.subtopic, pBefore, pAfter },
+      })
+    );
+
     practiceProgress.pendingFeedback = {
       questionId: q.question_id,
       subtopic: q.subtopic,

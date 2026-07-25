@@ -37,6 +37,7 @@
 - `adaptive.py`: per-user state, target-difficulty curve, attempt recording, feedback application.
 - `prioritization.py`: subtopic-selection weights and gradient-based prioritization.
 - `questions.py`: loads the question catalog (CSV-backed) and exposes `get_question_by_id`, `get_questions_by_subtopic`.
+- `question_derivation.py`: the pure text/code inference helpers `questions.py` uses while parsing CSVs — difficulty classification, primary-library and task-type inference, fixture/test-case derivation. Stateless: no module globals, no filesystem, no question store. Re-imported by `questions.py`, so callers keep importing these names from `app.questions`.
 - `code_runner.py`: subprocess sandbox with a 5s timeout used by the practice grading flow.
 - `job_artifacts.py` + `storage.py` + `processing.py`: the PDF-job pipeline.
 - `practice/`: see `practice/README.md` — every `/api/practice/*` endpoint lives there.
@@ -94,6 +95,8 @@
   - Status: `RESOLVED` (2026-04-27).
 
 ## Recent Changes
+- 2026-07-24: Split `questions.py` (740 LOC, over the 700 ceiling) — moved the stateless derivation helpers into `question_derivation.py`, leaving 570 LOC. `compose_full_solution` / `wrap_answer_as_function` deliberately STAYED in `questions.py` because `watch.py::check_public_api` text-greps for those two defs there. Verified behaviour-neutral: all 455 questions produce an identical fingerprint over `(subtopic, difficulty_label, primary_library, task_type, submission_mode, starter_code, test_cases)` before and after.
+- 2026-07-24: `GET /api/practice/next-question` gained an optional `focus_subtopic` query param (single-KC practice from the concept graph). See `practice/README.md`.
 - 2026-04-27: Split `main.py` (243 LOC, ORANGE) into `auth_router.py`, `jobs_router.py`, `chapters_router.py`. `main.py` is now a 24-LOC assembler (LIME). `watch.py` extended to assert each router exists, declares `router = APIRouter(...)`, is mounted by `main.py`, and that `main.py` stays ≤60 LOC.
 - 2026-04-27: Split monolithic `practice_router.py` into the `app/practice/` package; updated `main.py` to import from `app.practice`.
 - 2026-04-27: Deleted `TEMP_staleness_review_REMOVE_LATER/` and its hooks in `prioritization.py`, resolving the long-standing import cycle.

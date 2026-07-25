@@ -37,6 +37,7 @@
 
 ## How It Works (Flow)
 1. Frontend calls `GET /api/practice/next-question`. `questions_router.next_question` asks `prioritization.select_next_subtopic`, computes a target difficulty via `adaptive.get_target_difficulty`, picks a question with `grading.select_question_for_difficulty`, marks it served, and returns the payload.
+   - Optional `?focus_subtopic=<subtopic>` pins step 1's *selection* to one subtopic — the concept graph's single-KC practice flow ("Practice ⤢"). It overrides only which subtopic is served: scoring, unlock gates, and attempt recording are untouched. A focused request also skips placement probing (see Invariants); an unknown subtopic falls back to the normal weakest-subtopic pick rather than 404ing.
 2. User submits code → `POST /api/practice/submit`. `grading.grade_submission` runs user code, picks the right grading strategy, and returns `(correct, actual_output, expected_output, failed_tests)`. `record_attempt` stores a pending attempt.
 3. Frontend may render an explanation in parallel by calling `POST /api/practice/ai-explanation` while the judge runs.
 4. User confirms via `POST /api/practice/feedback` (or `POST /api/practice/override` to flip correctness first). `apply_feedback` finalizes the pending attempt and updates the adaptive state.
@@ -48,6 +49,7 @@
 - Judge and explanation prompts MUST come from `prompts.py`. Never inline them in a router — the prompts diverged historically and that is what motivated the split.
 - `chatgpt_helpers` is the only place that resolves an OpenAI API key. Do not read `OPENAI_API_KEY` directly elsewhere.
 - `_latest_visual_debug_by_user` is process-local. Treat it as best-effort debug storage, not durable state.
+- The placement diagnostic outranks normal subtopic selection on `/next-question` — EXCEPT for a request carrying a valid `focus_subtopic`. Rationale: the learner opened one concept from the graph, so cross-topic probes there look broken and would never move that concept's competency bar. The diagnostic stays active and resumes on the next unfocused request; those attempts still count as evidence. Do not "simplify" this by letting the diagnostic win unconditionally, and do not disable the diagnostic outright when a focus is present.
 
 ## Extension Points
 - New endpoint, existing area: add it to the matching `*_router.py` and update the endpoint list in `__init__.py`'s docstring + `EXPECTED_PATHS` in `watch.py`.
@@ -72,4 +74,5 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-07-24: `questions_router.next_question` gained the optional `focus_subtopic` query param for the concept graph's single-KC practice flow, and a focused request now bypasses the placement diagnostic. `test_lesson_gate.py` + `test_diagnostic_history.py` still ALL PASS; verified that an unfocused request still serves probes while the diagnostic is active.
 - 2026-04-27: Split monolithic `app/practice_router.py` (495 LOC, RED) into the `app/practice/` package: `chatgpt_helpers`, `prompts`, `grading`, `questions_router`, `feedback_router`, `subtopic_router`, `ai_router`, plus an aggregating `__init__.py`. `main.py` import updated from `app.practice_router` to `app.practice`. All resulting files are GREEN/LIME/YELLOW.
