@@ -224,14 +224,55 @@ async function getNotebookHelperItems(question) {
 
 function getPracticeEligibleQuestions() {
   if (!Array.isArray(questionsBank)) return null;
+  // Single-KC practice (concept-graph maximize) pins the queue to one subtopic.
+  // Deliberately bypasses isSubtopicEnabled: the learner clicked this concept,
+  // so a stats-page toggle shouldn't empty the queue underneath them.
+  const focus = window.__kcFocusSubtopics;
+  if (Array.isArray(focus) && focus.length) {
+    const focused = questionsBank.filter((q) => focus.includes(q.subtopic));
+    if (focused.length) return focused;
+  }
   if (typeof isSubtopicEnabled !== "function") return questionsBank;
   return questionsBank.filter((q) => isSubtopicEnabled(q.subtopic, q.topic || ""));
 }
 
 function isPracticeQuestionAllowed(question) {
   if (!question) return false;
+  const focus = window.__kcFocusSubtopics;
+  if (Array.isArray(focus) && focus.length) return focus.includes(question.subtopic);
   if (typeof isSubtopicEnabled !== "function") return true;
   return isSubtopicEnabled(question.subtopic, question.topic || "");
+}
+
+// Bank record → the shape PracticeAPI.currentQuestion / renderQuestion expect.
+// Single source of truth for that mapping: the adaptive queue (api.js) and the
+// single-KC lesson ladder (lessons.js) must agree, or a faded item would grade
+// against different fields than the same question served by the queue.
+// `overrides` lets the faded tier swap in its blanked starter_code.
+function buildPracticeQuestionFromBank(q, overrides = {}) {
+  if (!q) return null;
+  return {
+    question_id: q.id,
+    question_text: q.question_text,
+    topic: q.topic || "",
+    subtopic: q.subtopic,
+    difficulty: q.difficulty_score,
+    expected_output: q.expected_output,
+    solution_code: q.answer_code,
+    primary_library: q.primary_library || null,
+    task_type: q.task_type || null,
+    expected_artifact_type: q.expected_artifact_type || "stdout",
+    supports_visual_output: !!q.supports_visual_output,
+    function_name: q.function_name || null,
+    starter_code: q.starter_code || null,
+    test_cases: Array.isArray(q.test_cases) ? q.test_cases : [],
+    submission_mode: q.submission_mode || "stdout",
+    target_difficulty:
+      (typeof getTargetDifficultyFromAdaptiveState === "function"
+        ? getTargetDifficultyFromAdaptiveState(q.subtopic)
+        : null) ?? q.difficulty_score,
+    ...overrides,
+  };
 }
 
 function getQuestionFromBank(questionId) {

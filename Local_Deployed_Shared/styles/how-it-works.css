@@ -448,6 +448,11 @@
 .kg-embed .tp-banner { display: none !important; }
 .kg-embed main.page:not(#page-practice) { display: none !important; }
 .kg-embed #page-practice { display: block !important; }
+/* Single-concept view: the adaptive-queue framing (what Practice is, where to
+   start across all topics) is about a different flow and reads as noise here.
+   The competency bar is the header for this page. */
+.kg-embed .practice-mode-intro,
+.kg-embed #self-report-row { display: none !important; }
 
 /* Parent overlay: full-screen, above everything, with a slim Minimize bar. */
 .kg-maxi { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; background: var(--bg); }
@@ -464,3 +469,50 @@
 .kg-maxi-min:hover { filter: brightness(1.1); }
 .kg-maxi-frame { flex: 1 1 auto; width: 100%; border: 0; background: var(--bg); }
 body.kg-maxi-open { overflow: hidden; }
+
+/* ============================================================
+   Knowledge Graph — mastery colouring: view toggle, hover popup, legend
+   ============================================================ */
+/* Mastery ↔ Lessons segmented toggle (in .kg2-controls) */
+.kg2-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px); }
+.kg2-seg button { background: transparent; color: var(--muted); border: 0; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+.kg2-seg button + button { border-left: 1px solid var(--border); }
+.kg2-seg button.active { background: var(--accent); color: var(--white); font-weight: 700; }
+.kg2-seg button:not(.active):hover { color: var(--text); }
+
+/* Mastery legend: gray "no estimate" chip + red→blue gradient scale */
+.kg2-legend-mastery .kg2-li-scale { display: inline-flex; align-items: center; gap: 6px; }
+.kg2-scale-bar { display: inline-block; width: 74px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #d64848 0%, #8a6597 50%, #3b82f6 100%); border: 1px solid rgba(0,0,0,.25); }
+
+/* Hover popup with learner-model data */
+.kg2-tip {
+  position: absolute; z-index: 30; min-width: 210px; max-width: 260px; pointer-events: none;
+  background: color-mix(in srgb, var(--surface) 96%, #000); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  font-size: 12.5px; color: var(--text);
+}
+.kg2-tip.hidden { display: none; }
+.kg2-tip-title { font-weight: 700; font-size: 13px; margin-bottom: 7px; line-height: 1.3; }
+.kg2-tip-row { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; color: var(--muted); }
+.kg2-tip-row strong { font-size: 13px; }
+.kg2-tip-meta { margin-top: 7px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+
+/* Mastery handoff toast — shown on the graph after the embedded practice page
+   reports a concept crossed the 0.95 mastery gate. */
+.kg2-mastered-toast {
+  position: fixed; right: 22px; bottom: 22px; z-index: 60; max-width: 330px;
+  background: color-mix(in srgb, var(--surface) 96%, #000);
+  border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 12px;
+  padding: 14px 16px; box-shadow: 0 12px 34px rgba(0, 0, 0, .5);
+  animation: kg2-toast-in .28s ease-out;
+}
+@keyframes kg2-toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.kg2-mastered-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; color: #3b82f6; }
+.kg2-mastered-body { font-size: 12.5px; line-height: 1.5; color: var(--muted); margin-bottom: 11px; }
+.kg2-mastered-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.kg2-mastered-actions button { font: inherit; font-size: 12.5px; border-radius: 7px; padding: 6px 11px; cursor: pointer; border: 1px solid var(--border); }
+.kg2-mastered-go { background: var(--accent); color: var(--white); border-color: transparent; font-weight: 700; }
+.kg2-mastered-go:hover { filter: brightness(1.1); }
+.kg2-mastered-stay { background: transparent; color: var(--muted); }
+.kg2-mastered-stay:hover { color: var(--text); }

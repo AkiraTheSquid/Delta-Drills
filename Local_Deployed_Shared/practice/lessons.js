@@ -360,9 +360,18 @@ const LessonGate = (() => {
 
   const showLesson = (kc, onDone = () => {}) => maybeShow(null, onDone, [kc]);
 
+  // Exposed for the single-KC ladder (kc-practice.js): it needs the KP's
+  // faded/independent item lists and the lesson's subtopic_key, which are the
+  // same records the gate already loads.
+  const getKpEntry = async (kc) => {
+    await _ensureLessons();
+    return _findKp(kc);
+  };
+
   return {
     maybeShow,
     showLesson,
+    getKpEntry,
     get activeQuestion() {
       return activeQuestion;
     },
@@ -371,11 +380,42 @@ const LessonGate = (() => {
 
 window.LessonGate = LessonGate;
 
-/* ?lesson=<kc> previews one KC without a session or queue. */
+/* ?lesson=<kc> — teach one KC, then drill it (kc-practice.js) until mastered.
+   No session quota or timer: this flow ends on the mastery gate, not a count. */
 (function () {
   const kc = new URLSearchParams(location.search).get("lesson");
   if (!kc) return;
+  // Suppresses renderQuestion while the lesson pages are up (a late session
+  // resume must not clobber them). KcPractice.start() clears it.
   window.__lessonDemoOnly = true;
+
+  const _fallbackMessage = (html) => {
+    const text = document.getElementById("question-text");
+    if (text) text.innerHTML = html;
+  };
+
+  const _beginLadder = async () => {
+    try {
+      const started = await window.KcPractice.start(kc);
+      if (!started) {
+        _fallbackMessage(
+          '<div class="lesson-topbar"><span class="lesson-topbar-topic">Lesson complete</span></div>' +
+          "<p>No practice problems are attached to this concept yet.</p>",
+        );
+        return;
+      }
+      const nextQ = await PracticeAPI.getNextQuestion();
+      if (!nextQ) throw new Error("no question available");
+      renderQuestion(nextQ, 1);
+    } catch (err) {
+      console.warn("[lessons] could not start KC practice:", err);
+      _fallbackMessage(
+        '<div class="lesson-topbar"><span class="lesson-topbar-topic">Lesson complete</span></div>' +
+        "<p>Practice problems could not be loaded. Reload to try again.</p>",
+      );
+    }
+  };
+
   const start = () => {
     const page = document.getElementById("page-practice");
     document.querySelectorAll(".tab").forEach((tab) =>
@@ -383,14 +423,7 @@ window.LessonGate = LessonGate;
     document.querySelectorAll(".page").forEach((candidate) =>
       candidate.classList.toggle("hidden", candidate.id !== "page-practice"));
     if (page) page.classList.remove("session-idle");
-    window.LessonGate.showLesson(kc, () => {
-      const text = document.getElementById("question-text");
-      if (text) {
-        text.innerHTML =
-          '<div class="lesson-topbar"><span class="lesson-topbar-topic">Demo lesson complete</span></div>' +
-          "<p>Reload the page to review this lesson again.</p>";
-      }
-    }).then((shown) => {
+    window.LessonGate.showLesson(kc, _beginLadder).then((shown) => {
       if (!shown) {
         const text = document.getElementById("question-text");
         if (text) text.textContent = `No lesson found for "${kc}". Check the KC id.`;

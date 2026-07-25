@@ -124,3 +124,70 @@
 .topbar-auth { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted, #9aa3b2); }
 .topbar-auth-dot { width: 8px; height: 8px; border-radius: 50%; background: #35c46a; box-shadow: 0 0 6px #35c46a; }
 .topbar-auth-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ============================================================
+   COMPETENCY BAR — single-KC practice (concept-graph "Practice ⤢")
+   Phase heading (Lesson → Faded → Independent) + mastery track with
+   the two real engine thresholds marked: 0.85 unlock, 0.95 mastered.
+   Hidden entirely in the normal adaptive queue.
+   ============================================================ */
+.competency-bar-container.hidden { display: none; }
+.competency-bar-wrap {
+  margin: 0 0 18px;
+  padding: 13px 15px 15px;
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+.competency-phase { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 11px; }
+.competency-phase-title { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
+.competency-phase-sub { font-size: 12.5px; color: var(--muted, #9aa3b2); }
+/* Phase accents: lesson = neutral, faded = amber (scaffolded), independent = blue. */
+.competency-bar-wrap[data-phase="lesson"] .competency-phase-title { color: var(--muted, #9aa3b2); }
+.competency-bar-wrap[data-phase="faded"] .competency-phase-title { color: #e0a33c; }
+.competency-bar-wrap[data-phase="independent"] .competency-phase-title { color: #3b82f6; }
+
+.competency-bar-row { display: flex; align-items: center; gap: 12px; }
+.competency-bar-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: visible;
+}
+.competency-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  /* Same red→blue ramp the graph nodes use, so the bar and the node agree. */
+  background: linear-gradient(90deg, #d64848 0%, #8a6597 55%, #3b82f6 100%);
+  background-size: 620px 100%;
+  background-repeat: no-repeat;
+}
+.competency-bar-value { flex: 0 0 auto; min-width: 42px; text-align: right; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Gate marks. Absolutely positioned by inline left:%, so they stay put while
+   the fill animates underneath them. */
+.competency-bar-gate { position: absolute; top: -4px; bottom: -4px; width: 2px; transform: translateX(-1px); }
+.competency-bar-gate.is-unlock { background: rgba(255, 255, 255, 0.38); }
+.competency-bar-gate.is-mastery { background: #3b82f6; box-shadow: 0 0 7px rgba(59, 130, 246, 0.75); }
+.competency-gate-tip {
+  position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font-size: 11px; color: var(--muted, #9aa3b2);
+  background: var(--surface, #171a21); border: 1px solid var(--border, #2a2f3a);
+  border-radius: 6px; padding: 3px 7px;
+  opacity: 0; pointer-events: none; transition: opacity 0.14s ease;
+}
+.competency-bar-gate:hover .competency-gate-tip { opacity: 1; }
+/* The rightmost tip would overflow the container at 95%; pull it back inside. */
+.competency-bar-gate.is-mastery .competency-gate-tip { left: auto; right: 0; transform: none; }
+
+/* Mastered → "next concept" handoff card, shown in-frame on gate crossing. */
+.competency-done {
+  margin: 0 0 18px; padding: 15px 17px;
+  border: 1px solid rgba(59, 130, 246, 0.45); border-radius: 12px;
+  background: rgba(59, 130, 246, 0.08);
+}
+.competency-done-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+.competency-done-body { font-size: 13px; line-height: 1.55; color: var(--muted, #9aa3b2); margin-bottom: 12px; }
+.competency-done-actions { display: flex; flex-wrap: wrap; gap: 9px; }
