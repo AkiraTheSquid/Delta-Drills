@@ -105,6 +105,19 @@
     return `${Math.round(h / 24)} d ago`;
   };
 
+  /* ---- learner-model readout (rendered into the left pane on select) ----
+     Two layers of evidence, kept visually distinct because they are NOT the
+     same measurement:
+       - concept level: the per-KC BKT posterior (`atom_mastery`). Only the
+         backend writes it today, so it is often absent offline.
+       - subtopic level: the staircase/EWMA state the practice queue actually
+         runs on (`subtopic_states`). Always present once the learner has
+         answered anything in that subtopic — but SHARED by every KC in the
+         lesson, which is why it is labelled as such rather than shown as this
+         concept's number.
+     Thresholds mirror the engine: 0.85 unlocks dependents, 0.95 = mastered. */
+  const UNLOCK_T = 0.85, MASTERY_T = 0.95;
+
   let cy = null;
   let building = false;
   let kcById = {};        // id -> {id,lesson,topic,title,prereqs}
@@ -180,6 +193,131 @@
       <span class="kg2-chip-dot" style="background:${lessonColor(kc.lesson)}"></span>${esc(kc.title)}</button>`;
   };
 
+  /* ---------------- learner model card --------------------------------- */
+  // Freshest engine state: the in-memory copy the practice scripts mutate,
+  // falling back to what was persisted (the graph tab can be opened before
+  // Practice has run this session).
+  const _learnerState = () => {
+    if (typeof adaptiveStateJson === "string" && adaptiveStateJson) {
+      try { return JSON.parse(adaptiveStateJson); } catch (_) { /* fall through */ }
+    }
+    return _persistedState();
+  };
+
+  // The bank stores a subtopic under two names: the bare one ("Core array
+  // literacy") offline, and the topic-prefixed composite ("Numpy: Core array
+  // literacy") in backend mode. Match on either — see practice/README.md.
+  const _subtopicKeys = (kc) => {
+    const key = (lessonMeta[(kcById[kc] || {}).lesson] || {}).subtopic_key;
+    if (!key) return [];
+    const bare = key.includes(": ") ? key.slice(key.indexOf(": ") + 2) : key;
+    return bare === key ? [key] : [key, bare];
+  };
+
+  const _subtopicState = (kc) => {
+    const state = _learnerState();
+    const states = state && state.subtopic_states;
+    if (!states) return null;
+    for (const k of _subtopicKeys(kc)) if (states[k]) return { key: k, ...states[k] };
+    return null;
+  };
+
+  // How many KCs share this concept's subtopic — the honest denominator for
+  // treating subtopic evidence as if it were about this one concept.
+  const _siblingCount = (kc) => {
+    const lid = (kcById[kc] || {}).lesson;
+    const key = (lessonMeta[lid] || {}).subtopic_key;
+    if (!key) return 0;
+    return Object.values(kcById).filter((k) => (lessonMeta[k.lesson] || {}).subtopic_key === key).length;
+  };
+
+  const _pct = (v) => (Number.isFinite(v) ? Math.round(v * 100) + "%" : "—");
+
+  const _masteryBar = (r) => {
+    const w = Number.isFinite(r) ? Math.max(0, Math.min(1, r)) * 100 : 0;
+    return (
+      `<div class="kg2-lm-track">` +
+        `<div class="kg2-lm-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
+        `<span class="kg2-lm-gate" style="left:${UNLOCK_T * 100}%"></span>` +
+        `<span class="kg2-lm-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
+      `</div>` +
+      `<div class="kg2-lm-scale"><span>0%</span><span>85% unlocks next</span><span>95% mastered</span></div>`
+    );
+  };
+
+  const _prereqRow = (p) => {
+    const k = kcById[p];
+    if (!k) return "";
+    const r = kcReadiness(p);
+    const ok = Number.isFinite(r) && r >= UNLOCK_T;
+    return (
+      `<button class="kg2-lm-prereq${ok ? " is-ready" : ""}" data-goto="${esc(p)}" title="${esc(k.title)}">` +
+        `<span class="kg2-lm-prereq-name">${esc(k.title)}</span>` +
+        `<span class="kg2-lm-prereq-bar"><span style="width:${Number.isFinite(r) ? Math.round(r * 100) : 0}%;background:${masteryColor(r)}"></span></span>` +
+        `<span class="kg2-lm-prereq-val" style="color:${masteryColor(r)}">${_pct(r)}</span>` +
+      `</button>`
+    );
+  };
+
+  const learnerModelHtml = (kc) => {
+    const r = kcReadiness(kc);
+    const sub = _subtopicState(kc);
+    const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
+    const parents = parentsOf[kc] || [];
+    const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
+    const attempts = Array.isArray(sub && sub.history) ? sub.history : [];
+    const rightRecent = attempts.slice(-10).filter((a) => a && a.correct).length;
+
+    let h = `<section class="kg2-lm" id="kg-lm">`;
+    h += `<div class="kg2-lm-head"><h3>Your learner model</h3>` +
+         `<span class="kg2-lm-band" style="color:${masteryColor(r)}">${esc(masteryBand(r))}</span></div>`;
+
+    h += `<div class="kg2-lm-metric">` +
+      `<div class="kg2-lm-metric-top"><span>Concept mastery — P(known)</span>` +
+      `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong></div>` +
+      _masteryBar(r) + `</div>`;
+
+    if (!Number.isFinite(r))
+      h += `<p class="kg2-lm-note">No concept-level estimate yet — nothing graded has been attributed to this bubble. ` +
+           `The evidence below is what the practice queue is actually running on.</p>`;
+
+    h += `<dl class="kg2-lm-rows">`;
+    h += `<div><dt>Last practiced</dt><dd>${last ? esc(last) : "never"}</dd></div>`;
+    h += `<div><dt>Prerequisites cleared</dt><dd>${parents.length ? `${ready} / ${parents.length}` : "none — foundation skill"}</dd></div>`;
+    if (sub) {
+      const sibs = _siblingCount(kc);
+      h += `<div><dt>Subtopic evidence</dt><dd>${esc(sub.key)}${sibs > 1 ? ` <span class="kg2-lm-dim">(shared by ${sibs} concepts)</span>` : ""}</dd></div>`;
+      h += `<div><dt>Attempts</dt><dd>${Number.isFinite(sub.n) ? sub.n : 0}${attempts.length ? ` <span class="kg2-lm-dim">· ${rightRecent}/${Math.min(10, attempts.length)} right recently</span>` : ""}</dd></div>`;
+      h += `<div><dt>Recent accuracy</dt><dd>${_pct(sub.p)}</dd></div>`;
+      h += `<div><dt>Target difficulty</dt><dd>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"} / 100</dd></div>`;
+    } else {
+      h += `<div><dt>Subtopic evidence</dt><dd class="kg2-lm-dim">nothing recorded yet</dd></div>`;
+    }
+    h += `</dl>`;
+
+    if (parents.length) {
+      h += `<h4 class="kg2-lm-sub">Prerequisite readiness</h4>` +
+           `<div class="kg2-lm-prereqs">${parents.map(_prereqRow).join("")}</div>`;
+    }
+    h += `</section>`;
+    return h;
+  };
+
+  // Repaint just the card, so a graded attempt elsewhere doesn't scroll the
+  // lesson text back to the top.
+  const refreshLearnerModel = () => {
+    if (!selectedKc) return;
+    const el = $("kg-lm");
+    if (!el) return;
+    const tmp = document.createElement("div");
+    tmp.innerHTML = learnerModelHtml(selectedKc);
+    const next = tmp.firstElementChild;
+    if (!next) return;
+    el.replaceWith(next);
+    next.querySelectorAll("[data-goto]").forEach((b) =>
+      b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
+  };
+
   /* ---------------- left content pane ---------------------------------- */
   const setPlaceholder = () => {
     selectedKc = null;
@@ -213,6 +351,7 @@
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
     let html = `<h2 class="kg2-title">${esc(kp.title || kc.title)}</h2>`;
+    html += learnerModelHtml(id);
     html += `<div class="kg2-concept">${md(kp.concept_markdown)}</div>`;
     if (kp.worked_example_markdown)
       html += `<div class="kg2-worked"><h3>Worked example</h3>${md(kp.worked_example_markdown)}</div>`;
@@ -270,6 +409,10 @@
     document.body.classList.remove("kg-maxi-open");
     const frame = overlay.querySelector("#kg-maxi-frame");
     if (frame) frame.src = "about:blank"; // tear down the embedded app (pyodide/audio)
+    // The iframe is a separate app instance: anything it graded landed in
+    // storage, not in this window's in-memory state. Re-read it so the card
+    // and the node colours reflect the practice that just happened.
+    _refreshLearnerState().then(() => { recolor(); refreshLearnerModel(); });
     // Back to the workflow: the node is still selected and its lesson is still
     // on the left — just re-centre it so focus returns cleanly.
     if (selectedKc && cy) {
@@ -606,8 +749,9 @@
     cy.on("mouseout", "node", () => tip.classList.add("hidden"));
     cy.on("pan zoom", () => tip.classList.add("hidden"));
 
-    // Recolour when the learner model changes (a graded attempt updates BKT).
-    window.addEventListener("delta:adaptive-state-changed", recolor);
+    // Recolour when the learner model changes (a graded attempt updates BKT),
+    // and repaint the selected node's learner-model card with it.
+    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshLearnerModel(); });
 
     buildLegend();
     recolor();
