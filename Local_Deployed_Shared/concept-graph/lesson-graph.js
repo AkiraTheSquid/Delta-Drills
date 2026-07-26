@@ -258,38 +258,44 @@
   const _masteryBar = (r, ci) => {
     const w = Number.isFinite(r) ? Math.max(0, Math.min(1, r)) * 100 : 0;
     const band = ci
-      ? `<span class="kg2-tip-ci" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
+      ? `<span class="kg2-dock-ci" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
       : "";
     return (
-      `<div class="kg2-tip-track">` +
-        `<div class="kg2-tip-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
+      `<div class="kg2-dock-track">` +
+        `<div class="kg2-dock-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
         band +
-        `<span class="kg2-tip-gate" style="left:${UNLOCK_T * 100}%"></span>` +
-        `<span class="kg2-tip-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
+        `<span class="kg2-dock-gate" style="left:${UNLOCK_T * 100}%"></span>` +
+        `<span class="kg2-dock-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
       `</div>` +
-      `<div class="kg2-tip-scale"><span>0%</span><span>85% unlocks</span><span>95% mastered</span></div>`
+      `<div class="kg2-dock-scale"><span>0%</span><span>85% unlocks</span><span>95% mastered</span></div>`
     );
   };
 
-  /* ---- the popup: hover to peek, click to pin it to the selected node ---- */
-  let tipEl = null;
-  let pinnedKc = null;   // node whose popup stays up (the gold-highlighted one)
+  /* ---- the readout: a panel docked across the bottom of the graph pane ----
+     Hovering a bubble previews that concept there; clicking one keeps it. The
+     panel is always present and fixed-height, so the graph never reflows under
+     the cursor — the canvas is inset by --kg2-dock-h rather than overlaid. */
+  let dockEl = null;
+  let dockedKc = null;   // node whose readout stays up (the gold-highlighted one)
 
-  const _ensureTip = () => {
-    if (tipEl) return tipEl;
-    tipEl = $("kg-tip");
-    if (!tipEl) {
-      tipEl = document.createElement("div");
-      tipEl.id = "kg-tip";
-      tipEl.className = "kg2-tip hidden";
-      (document.querySelector(".kg2-graph") || document.body).appendChild(tipEl);
+  const _ensureDock = () => {
+    if (dockEl) return dockEl;
+    dockEl = $("kg-dock");
+    if (!dockEl) {
+      dockEl = document.createElement("div");
+      dockEl.id = "kg-dock";
+      dockEl.className = "kg2-dock";
+      (document.querySelector(".kg2-graph") || document.body).appendChild(dockEl);
     }
-    return tipEl;
+    return dockEl;
   };
 
-  const tipHtml = (kc) => {
+  const dockEmptyHtml = () =>
+    `<div class="kg2-dock-empty">Hover a bubble to preview its learner model — click one to keep it here.</div>`;
+
+  const dockHtml = (kc) => {
     const k = kcById[kc];
-    if (!k) return "";
+    if (!k) return dockEmptyHtml();
     const r = kcReadiness(kc);
     const n = _evidenceN(kc);
     const ci = Number.isFinite(r) ? _wilson(r, n) : null;
@@ -297,87 +303,74 @@
     const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
     const parents = parentsOf[kc] || [];
     const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
+    const sibs = sub ? _siblingCount(kc) : 0;
 
-    let h = `<div class="kg2-tip-title">${esc(k.title)}</div>`;
-    h += `<div class="kg2-tip-headline">` +
-         `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong>` +
-         `<span class="kg2-tip-band">${esc(masteryBand(r))}</span></div>`;
-    h += _masteryBar(r, ci);
-    h += `<div class="kg2-tip-ci-label">` +
-      (ci
-        ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-tip-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}</span>`
-        : Number.isFinite(r)
-          ? `<span class="kg2-tip-dim">No graded attempts behind this estimate yet — treat it as a prior.</span>`
-          : `<span class="kg2-tip-dim">No estimate yet — nothing graded has landed on this concept.</span>`) +
-      `</div>`;
-
-    h += `<div class="kg2-tip-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
-    h += parents.length
-      ? `<div class="kg2-tip-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
-      : `<div class="kg2-tip-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
+    let rows = `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
+    rows += parents.length
+      ? `<div class="kg2-dock-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
+      : `<div class="kg2-dock-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
     if (sub) {
-      const sibs = _siblingCount(kc);
-      h += `<div class="kg2-tip-row"><span>Recent accuracy</span><span>${_pct(sub.p)}</span></div>`;
-      h += `<div class="kg2-tip-row"><span>Target difficulty</span><span>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"}/100</span></div>`;
-      // Named, because the evidence above is subtopic-wide: the count and the
-      // accuracy are shared by every concept in the lesson, not this one alone.
-      h += `<div class="kg2-tip-evidence">Evidence: ${esc(sub.key)}${sibs > 1 ? ` · shared by ${sibs} concepts` : ""}</div>`;
+      rows += `<div class="kg2-dock-row"><span>Recent accuracy</span><span>${_pct(sub.p)}</span></div>`;
+      rows += `<div class="kg2-dock-row"><span>Target difficulty</span><span>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"}/100</span></div>`;
     }
-    h += `<div class="kg2-tip-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>`;
-    return h;
+
+    return (
+      `<div class="kg2-dock-col kg2-dock-id">` +
+        `<div class="kg2-dock-title">${esc(k.title)}</div>` +
+        `<div class="kg2-dock-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>` +
+        // Named, because the numbers on the right are subtopic-wide: the count
+        // and the accuracy are shared by every concept in the lesson.
+        (sub ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}${sibs > 1 ? ` · shared by ${sibs} concepts` : ""}</div>` : "") +
+      `</div>` +
+      `<div class="kg2-dock-col kg2-dock-mastery">` +
+        `<div class="kg2-dock-headline">` +
+          `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong>` +
+          `<span class="kg2-dock-band">${esc(masteryBand(r))}</span>` +
+        `</div>` +
+        _masteryBar(r, ci) +
+        `<div class="kg2-dock-ci-label">` +
+          (ci
+            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}</span>`
+            : Number.isFinite(r)
+              ? `<span class="kg2-dock-dim">No graded attempts behind this estimate yet — treat it as a prior.</span>`
+              : `<span class="kg2-dock-dim">No estimate yet — nothing graded has landed on this concept.</span>`) +
+        `</div>` +
+      `</div>` +
+      `<div class="kg2-dock-col kg2-dock-stats">${rows}</div>`
+    );
   };
 
-  // Keep the popup inside the graph pane — near a right/bottom edge it would
-  // otherwise hang off the panel and get clipped.
-  const _placeTip = (x, y) => {
-    const el = _ensureTip();
-    const pane = document.querySelector(".kg2-graph");
-    const w = el.offsetWidth || 250, h = el.offsetHeight || 200;
-    // Clamp inside the pane AND inside the window: the pane can extend past the
-    // fold, and a popup pinned to a low node would otherwise sit off-screen.
-    const rect = pane ? pane.getBoundingClientRect() : null;
-    const maxPaneY = pane ? pane.clientHeight - h - 10 : window.innerHeight - h - 10;
-    const maxWinY = rect ? window.innerHeight - rect.top - h - 10 : maxPaneY;
-    const maxX = (pane ? pane.clientWidth : window.innerWidth) - w - 10;
-    // Flip above the node when there isn't room below it.
-    const below = y + 16, above = y - h - 16;
-    const limitY = Math.min(maxPaneY, maxWinY);
-    el.style.left = Math.max(8, Math.min(x + 16, maxX)) + "px";
-    el.style.top = Math.max(8, below > limitY && above > 8 ? above : Math.min(below, limitY)) + "px";
-  };
-
-  const _nodeRenderedPos = (kc) => {
-    if (!cy) return null;
-    const n = cy.getElementById(kc);
-    if (!n || n.empty()) return null;
-    return n.renderedPosition();
-  };
-
-  const showTip = (kc, rpos) => {
+  const showDock = (kc) => {
+    const el = _ensureDock();
     if (!kcById[kc]) return;
-    const el = _ensureTip();
-    el.innerHTML = tipHtml(kc);
-    el.classList.toggle("is-pinned", kc === pinnedKc);
-    el.classList.remove("hidden");
-    _placeTip(rpos.x, rpos.y);
+    el.innerHTML = dockHtml(kc);
+    el.classList.toggle("is-pinned", kc === dockedKc);
   };
 
-  // Pinned popup: follows the selected node, survives pan/zoom and mouse-out,
+  // Docked readout: sticks to the selected node, survives hovering elsewhere,
   // and repaints when the learner model changes.
-  const pinTip = (kc) => {
-    pinnedKc = kc;
-    const pos = _nodeRenderedPos(kc);
-    if (pos) showTip(kc, pos);
+  const pinDock = (kc) => { dockedKc = kc; showDock(kc); };
+  const unpinDock = () => {
+    dockedKc = null;
+    const el = _ensureDock();
+    el.innerHTML = dockEmptyHtml();
+    el.classList.remove("is-pinned");
   };
-  const unpinTip = () => {
-    pinnedKc = null;
-    if (tipEl) { tipEl.classList.add("hidden"); tipEl.classList.remove("is-pinned"); }
+  const restoreDock = () => { if (dockedKc) showDock(dockedKc); else unpinDock(); };
+  const refreshDock = () => { if (dockedKc) showDock(dockedKc); };
+
+  // The pane's CSS height assumes a fixed amount of chrome above it, but the
+  // guest banner isn't always there — so the pane could end below the fold.
+  // That was survivable when the readout floated; with it docked at the pane's
+  // bottom edge, an overhang hides the numbers. Size the pane to what's left.
+  const fitWrap = () => {
+    const wrap = document.querySelector(".kg2 .kg2-wrap");
+    if (!wrap) return;
+    const top = wrap.getBoundingClientRect().top;
+    if (window.innerWidth <= 820) { wrap.style.height = ""; return; }  // stacked layout scrolls
+    wrap.style.height = Math.max(480, window.innerHeight - top - 14) + "px";
+    if (cy) cy.resize();
   };
-  const restoreTip = () => {
-    if (pinnedKc) pinTip(pinnedKc);
-    else if (tipEl) tipEl.classList.add("hidden");
-  };
-  const refreshTip = () => { if (pinnedKc) pinTip(pinnedKc); };
 
   /* ---------------- left content pane ---------------------------------- */
   const setPlaceholder = () => {
@@ -448,12 +441,12 @@
       });
     });
     renderContent(id);
-    pinTip(id);   // the popup for the gold-highlighted node stays up
+    pinDock(id);   // the bottom panel keeps the gold-highlighted node
   };
 
   const resetView = () => {
     if (cy) cy.elements().removeClass("faded hl hl-strong");
-    unpinTip();
+    unpinDock();
     setPlaceholder();
   };
 
@@ -474,7 +467,7 @@
     // The iframe is a separate app instance: anything it graded landed in
     // storage, not in this window's in-memory state. Re-read it so the card
     // and the node colours reflect the practice that just happened.
-    _refreshLearnerState().then(() => { recolor(); refreshTip(); });
+    _refreshLearnerState().then(() => { recolor(); refreshDock(); });
     // Back to the workflow: the node is still selected and its lesson is still
     // on the left — just re-centre it so focus returns cleanly.
     if (selectedKc && cy) {
@@ -777,20 +770,19 @@
         }));
     }
 
-    /* ---- popup: hover to peek at any node, pinned on the selected one ---- */
-    _ensureTip();
-    cy.on("mouseover", "node", (evt) => showTip(evt.target.id(), evt.target.renderedPosition()));
-    // Hovering elsewhere borrows the popup; on mouse-out it goes back to the
-    // pinned node rather than leaving the selection without its readout.
-    cy.on("mouseout", "node", restoreTip);
-    // A pinned popup tracks its node through pan/zoom; an unpinned one is
-    // anchored to a stale point, so hide it.
-    cy.on("pan zoom", () => { if (pinnedKc) refreshTip(); else if (tipEl) tipEl.classList.add("hidden"); });
-    cy.on("position", "node", (evt) => { if (evt.target.id() === pinnedKc) refreshTip(); });
+    /* ---- bottom panel: hover to preview any node, kept on the selected one ---- */
+    unpinDock();   // creates the panel and seeds its empty state
+    fitWrap();
+    window.addEventListener("resize", fitWrap);
+    cy.on("mouseover", "node", (evt) => showDock(evt.target.id()));
+    // Hovering elsewhere borrows the panel; on mouse-out it goes back to the
+    // selected node rather than leaving the selection without its readout.
+    // The panel is docked, so pan/zoom/node-drag need no re-anchoring.
+    cy.on("mouseout", "node", restoreDock);
 
     // Recolour when the learner model changes (a graded attempt updates BKT),
-    // and repaint the pinned popup with it.
-    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshTip(); });
+    // and repaint the panel with it.
+    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshDock(); });
 
     buildLegend();
     recolor();
@@ -799,7 +791,7 @@
   }
 
   window.deltaInitConceptGraph = function () {
-    if (cy) { cy.resize(); cy.fit(undefined, 36); return; }
+    if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
     let tries = 0;
     const tick = () => { build(); if (!cy && tries++ < 80) setTimeout(tick, 120); };
     tick();
