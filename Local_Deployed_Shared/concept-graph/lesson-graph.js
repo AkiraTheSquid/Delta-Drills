@@ -233,90 +233,151 @@
 
   const _pct = (v) => (Number.isFinite(v) ? Math.round(v * 100) + "%" : "—");
 
-  const _masteryBar = (r) => {
+  // 95% Wilson score interval — how much the estimate should be trusted, given
+  // how little evidence backs it. Wilson (not the normal approximation) because
+  // n is small and p sits near the edges, where the normal interval runs off
+  // [0,1] and understates uncertainty. `n` is the count of graded attempts the
+  // estimate rests on; with none, there is no interval to draw.
+  const _wilson = (p, n, z = 1.96) => {
+    if (!Number.isFinite(p) || !Number.isFinite(n) || n <= 0) return null;
+    const d = 1 + (z * z) / n;
+    const centre = (p + (z * z) / (2 * n)) / d;
+    const half = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
+    return [Math.max(0, centre - half), Math.min(1, centre + half)];
+  };
+
+  // Evidence backing a KC's estimate. Per-attempt counts are only kept at
+  // subtopic level, so that is the honest n — noted as such in the popup.
+  const _evidenceN = (kc) => {
+    const sub = _subtopicState(kc);
+    return Number.isFinite(sub && sub.n) ? sub.n : 0;
+  };
+
+  // The mastery bar: fill = P(known), shaded band = the confidence interval,
+  // ticks = the two thresholds the engine actually acts on.
+  const _masteryBar = (r, ci) => {
     const w = Number.isFinite(r) ? Math.max(0, Math.min(1, r)) * 100 : 0;
+    const band = ci
+      ? `<span class="kg2-tip-ci" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
+      : "";
     return (
-      `<div class="kg2-lm-track">` +
-        `<div class="kg2-lm-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
-        `<span class="kg2-lm-gate" style="left:${UNLOCK_T * 100}%"></span>` +
-        `<span class="kg2-lm-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
+      `<div class="kg2-tip-track">` +
+        `<div class="kg2-tip-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
+        band +
+        `<span class="kg2-tip-gate" style="left:${UNLOCK_T * 100}%"></span>` +
+        `<span class="kg2-tip-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
       `</div>` +
-      `<div class="kg2-lm-scale"><span>0%</span><span>85% unlocks next</span><span>95% mastered</span></div>`
+      `<div class="kg2-tip-scale"><span>0%</span><span>85% unlocks</span><span>95% mastered</span></div>`
     );
   };
 
-  const _prereqRow = (p) => {
-    const k = kcById[p];
+  /* ---- the popup: hover to peek, click to pin it to the selected node ---- */
+  let tipEl = null;
+  let pinnedKc = null;   // node whose popup stays up (the gold-highlighted one)
+
+  const _ensureTip = () => {
+    if (tipEl) return tipEl;
+    tipEl = $("kg-tip");
+    if (!tipEl) {
+      tipEl = document.createElement("div");
+      tipEl.id = "kg-tip";
+      tipEl.className = "kg2-tip hidden";
+      (document.querySelector(".kg2-graph") || document.body).appendChild(tipEl);
+    }
+    return tipEl;
+  };
+
+  const tipHtml = (kc) => {
+    const k = kcById[kc];
     if (!k) return "";
-    const r = kcReadiness(p);
-    const ok = Number.isFinite(r) && r >= UNLOCK_T;
-    return (
-      `<button class="kg2-lm-prereq${ok ? " is-ready" : ""}" data-goto="${esc(p)}" title="${esc(k.title)}">` +
-        `<span class="kg2-lm-prereq-name">${esc(k.title)}</span>` +
-        `<span class="kg2-lm-prereq-bar"><span style="width:${Number.isFinite(r) ? Math.round(r * 100) : 0}%;background:${masteryColor(r)}"></span></span>` +
-        `<span class="kg2-lm-prereq-val" style="color:${masteryColor(r)}">${_pct(r)}</span>` +
-      `</button>`
-    );
-  };
-
-  const learnerModelHtml = (kc) => {
     const r = kcReadiness(kc);
+    const n = _evidenceN(kc);
+    const ci = Number.isFinite(r) ? _wilson(r, n) : null;
     const sub = _subtopicState(kc);
     const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
     const parents = parentsOf[kc] || [];
     const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
-    const attempts = Array.isArray(sub && sub.history) ? sub.history : [];
-    const rightRecent = attempts.slice(-10).filter((a) => a && a.correct).length;
 
-    let h = `<section class="kg2-lm" id="kg-lm">`;
-    h += `<div class="kg2-lm-head"><h3>Your learner model</h3>` +
-         `<span class="kg2-lm-band" style="color:${masteryColor(r)}">${esc(masteryBand(r))}</span></div>`;
+    let h = `<div class="kg2-tip-title">${esc(k.title)}</div>`;
+    h += `<div class="kg2-tip-headline">` +
+         `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong>` +
+         `<span class="kg2-tip-band">${esc(masteryBand(r))}</span></div>`;
+    h += _masteryBar(r, ci);
+    h += `<div class="kg2-tip-ci-label">` +
+      (ci
+        ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-tip-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}</span>`
+        : Number.isFinite(r)
+          ? `<span class="kg2-tip-dim">No graded attempts behind this estimate yet — treat it as a prior.</span>`
+          : `<span class="kg2-tip-dim">No estimate yet — nothing graded has landed on this concept.</span>`) +
+      `</div>`;
 
-    h += `<div class="kg2-lm-metric">` +
-      `<div class="kg2-lm-metric-top"><span>Concept mastery — P(known)</span>` +
-      `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong></div>` +
-      _masteryBar(r) + `</div>`;
-
-    if (!Number.isFinite(r))
-      h += `<p class="kg2-lm-note">No concept-level estimate yet — nothing graded has been attributed to this bubble. ` +
-           `The evidence below is what the practice queue is actually running on.</p>`;
-
-    h += `<dl class="kg2-lm-rows">`;
-    h += `<div><dt>Last practiced</dt><dd>${last ? esc(last) : "never"}</dd></div>`;
-    h += `<div><dt>Prerequisites cleared</dt><dd>${parents.length ? `${ready} / ${parents.length}` : "none — foundation skill"}</dd></div>`;
+    h += `<div class="kg2-tip-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
+    h += parents.length
+      ? `<div class="kg2-tip-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
+      : `<div class="kg2-tip-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
     if (sub) {
       const sibs = _siblingCount(kc);
-      h += `<div><dt>Subtopic evidence</dt><dd>${esc(sub.key)}${sibs > 1 ? ` <span class="kg2-lm-dim">(shared by ${sibs} concepts)</span>` : ""}</dd></div>`;
-      h += `<div><dt>Attempts</dt><dd>${Number.isFinite(sub.n) ? sub.n : 0}${attempts.length ? ` <span class="kg2-lm-dim">· ${rightRecent}/${Math.min(10, attempts.length)} right recently</span>` : ""}</dd></div>`;
-      h += `<div><dt>Recent accuracy</dt><dd>${_pct(sub.p)}</dd></div>`;
-      h += `<div><dt>Target difficulty</dt><dd>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"} / 100</dd></div>`;
-    } else {
-      h += `<div><dt>Subtopic evidence</dt><dd class="kg2-lm-dim">nothing recorded yet</dd></div>`;
+      h += `<div class="kg2-tip-row"><span>Recent accuracy</span><span>${_pct(sub.p)}</span></div>`;
+      h += `<div class="kg2-tip-row"><span>Target difficulty</span><span>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"}/100</span></div>`;
+      // Named, because the evidence above is subtopic-wide: the count and the
+      // accuracy are shared by every concept in the lesson, not this one alone.
+      h += `<div class="kg2-tip-evidence">Evidence: ${esc(sub.key)}${sibs > 1 ? ` · shared by ${sibs} concepts` : ""}</div>`;
     }
-    h += `</dl>`;
-
-    if (parents.length) {
-      h += `<h4 class="kg2-lm-sub">Prerequisite readiness</h4>` +
-           `<div class="kg2-lm-prereqs">${parents.map(_prereqRow).join("")}</div>`;
-    }
-    h += `</section>`;
+    h += `<div class="kg2-tip-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>`;
     return h;
   };
 
-  // Repaint just the card, so a graded attempt elsewhere doesn't scroll the
-  // lesson text back to the top.
-  const refreshLearnerModel = () => {
-    if (!selectedKc) return;
-    const el = $("kg-lm");
-    if (!el) return;
-    const tmp = document.createElement("div");
-    tmp.innerHTML = learnerModelHtml(selectedKc);
-    const next = tmp.firstElementChild;
-    if (!next) return;
-    el.replaceWith(next);
-    next.querySelectorAll("[data-goto]").forEach((b) =>
-      b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
+  // Keep the popup inside the graph pane — near a right/bottom edge it would
+  // otherwise hang off the panel and get clipped.
+  const _placeTip = (x, y) => {
+    const el = _ensureTip();
+    const pane = document.querySelector(".kg2-graph");
+    const w = el.offsetWidth || 250, h = el.offsetHeight || 200;
+    // Clamp inside the pane AND inside the window: the pane can extend past the
+    // fold, and a popup pinned to a low node would otherwise sit off-screen.
+    const rect = pane ? pane.getBoundingClientRect() : null;
+    const maxPaneY = pane ? pane.clientHeight - h - 10 : window.innerHeight - h - 10;
+    const maxWinY = rect ? window.innerHeight - rect.top - h - 10 : maxPaneY;
+    const maxX = (pane ? pane.clientWidth : window.innerWidth) - w - 10;
+    // Flip above the node when there isn't room below it.
+    const below = y + 16, above = y - h - 16;
+    const limitY = Math.min(maxPaneY, maxWinY);
+    el.style.left = Math.max(8, Math.min(x + 16, maxX)) + "px";
+    el.style.top = Math.max(8, below > limitY && above > 8 ? above : Math.min(below, limitY)) + "px";
   };
+
+  const _nodeRenderedPos = (kc) => {
+    if (!cy) return null;
+    const n = cy.getElementById(kc);
+    if (!n || n.empty()) return null;
+    return n.renderedPosition();
+  };
+
+  const showTip = (kc, rpos) => {
+    if (!kcById[kc]) return;
+    const el = _ensureTip();
+    el.innerHTML = tipHtml(kc);
+    el.classList.toggle("is-pinned", kc === pinnedKc);
+    el.classList.remove("hidden");
+    _placeTip(rpos.x, rpos.y);
+  };
+
+  // Pinned popup: follows the selected node, survives pan/zoom and mouse-out,
+  // and repaints when the learner model changes.
+  const pinTip = (kc) => {
+    pinnedKc = kc;
+    const pos = _nodeRenderedPos(kc);
+    if (pos) showTip(kc, pos);
+  };
+  const unpinTip = () => {
+    pinnedKc = null;
+    if (tipEl) { tipEl.classList.add("hidden"); tipEl.classList.remove("is-pinned"); }
+  };
+  const restoreTip = () => {
+    if (pinnedKc) pinTip(pinnedKc);
+    else if (tipEl) tipEl.classList.add("hidden");
+  };
+  const refreshTip = () => { if (pinnedKc) pinTip(pinnedKc); };
 
   /* ---------------- left content pane ---------------------------------- */
   const setPlaceholder = () => {
@@ -351,7 +412,6 @@
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
     let html = `<h2 class="kg2-title">${esc(kp.title || kc.title)}</h2>`;
-    html += learnerModelHtml(id);
     html += `<div class="kg2-concept">${md(kp.concept_markdown)}</div>`;
     if (kp.worked_example_markdown)
       html += `<div class="kg2-worked"><h3>Worked example</h3>${md(kp.worked_example_markdown)}</div>`;
@@ -388,10 +448,12 @@
       });
     });
     renderContent(id);
+    pinTip(id);   // the popup for the gold-highlighted node stays up
   };
 
   const resetView = () => {
     if (cy) cy.elements().removeClass("faded hl hl-strong");
+    unpinTip();
     setPlaceholder();
   };
 
@@ -412,7 +474,7 @@
     // The iframe is a separate app instance: anything it graded landed in
     // storage, not in this window's in-memory state. Re-read it so the card
     // and the node colours reflect the practice that just happened.
-    _refreshLearnerState().then(() => { recolor(); refreshLearnerModel(); });
+    _refreshLearnerState().then(() => { recolor(); refreshTip(); });
     // Back to the workflow: the node is still selected and its lesson is still
     // on the left — just re-centre it so focus returns cleanly.
     if (selectedKc && cy) {
@@ -715,43 +777,20 @@
         }));
     }
 
-    /* ---- hover popup: per-KC learner-model data ---- */
-    let tip = $("kg-tip");
-    if (!tip) {
-      tip = document.createElement("div");
-      tip.id = "kg-tip";
-      tip.className = "kg2-tip hidden";
-      (document.querySelector(".kg2-graph") || document.body).appendChild(tip);
-    }
-    const moveTip = (rpos) => { tip.style.left = (rpos.x + 16) + "px"; tip.style.top = (rpos.y + 16) + "px"; };
-    const showTip = (kc, rpos) => {
-      const k = kcById[kc];
-      if (!k) return;
-      const r = kcReadiness(kc);
-      const pct = Number.isFinite(r) ? Math.round(r * 100) + "%" : "—";
-      const parents = parentsOf[kc] || [];
-      const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= 0.85; }).length;
-      const last = relTime(kcLastTs(kc));
-      tip.innerHTML =
-        `<div class="kg2-tip-title">${esc(k.title)}</div>` +
-        `<div class="kg2-tip-row"><span>Mastery estimate</span><strong style="color:${masteryColor(r)}">${pct}</strong></div>` +
-        `<div class="kg2-tip-row"><span>State</span><span>${masteryBand(r)}</span></div>` +
-        (last ? `<div class="kg2-tip-row"><span>Last practiced</span><span>${last}</span></div>` : "") +
-        (parents.length
-          ? `<div class="kg2-tip-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
-          : `<div class="kg2-tip-row"><span>Prerequisites</span><span>none — foundation</span></div>`) +
-        `<div class="kg2-tip-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>`;
-      moveTip(rpos);
-      tip.classList.remove("hidden");
-    };
+    /* ---- popup: hover to peek at any node, pinned on the selected one ---- */
+    _ensureTip();
     cy.on("mouseover", "node", (evt) => showTip(evt.target.id(), evt.target.renderedPosition()));
-    cy.on("mousemove", "node", (evt) => moveTip(evt.target.renderedPosition()));
-    cy.on("mouseout", "node", () => tip.classList.add("hidden"));
-    cy.on("pan zoom", () => tip.classList.add("hidden"));
+    // Hovering elsewhere borrows the popup; on mouse-out it goes back to the
+    // pinned node rather than leaving the selection without its readout.
+    cy.on("mouseout", "node", restoreTip);
+    // A pinned popup tracks its node through pan/zoom; an unpinned one is
+    // anchored to a stale point, so hide it.
+    cy.on("pan zoom", () => { if (pinnedKc) refreshTip(); else if (tipEl) tipEl.classList.add("hidden"); });
+    cy.on("position", "node", (evt) => { if (evt.target.id() === pinnedKc) refreshTip(); });
 
     // Recolour when the learner model changes (a graded attempt updates BKT),
-    // and repaint the selected node's learner-model card with it.
-    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshLearnerModel(); });
+    // and repaint the pinned popup with it.
+    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshTip(); });
 
     buildLegend();
     recolor();
