@@ -60,16 +60,20 @@
     return BKT_P_INIT + (L - BKT_P_INIT) * Math.pow(0.5, days / BKT_HALF_LIFE_DAYS);
   };
   // Estimate for a KC in [0,1] plus WHERE it came from, or NaN when there is
-  // none. Two sources, in order of precision:
-  //   "atom"     — this KC's own decayed BKT posterior.
-  //   "subtopic" — the lesson subtopic's correctness rate, shared by every KC
-  //                in that lesson.
-  // The fallback exists because the graph's KC ids (`numpy.dtype-astype`, from
-  // kc_registry.json) and the backend's BKT atom ids (`argmax-prediction`, from
-  // question_atom_tags.jsonl) are disjoint id spaces — zero overlap — so a
+  // none. Three sources, in order of precision:
+  //   "atom"         — this KC's own decayed BKT posterior.
+  //   "subtopic"     — the lesson subtopic's BKT mastery, shared by every KC
+  //                    in that lesson.
+  //   "extrapolated" — no evidence on this concept at all: projected from the
+  //                    learner's overall demonstrated level, adjusted for how
+  //                    hard this concept is (see `_extrapolated`).
+  // The subtopic fallback exists because the graph's KC ids (`numpy.dtype-astype`,
+  // from kc_registry.json) and the backend's BKT atom ids (`argmax-prediction`,
+  // from question_atom_tags.jsonl) are disjoint id spaces — zero overlap — so a
   // signed-in learner with real practice history had every bubble read
   // "Not yet estimated". Callers must surface the source: a subtopic number is
-  // NOT a per-concept measurement, and presenting it as one overclaims.
+  // NOT a per-concept measurement, and an extrapolated one is not a measurement
+  // at all. Presenting either as one overclaims.
   const kcReadinessInfo = (kc) => {
     if (typeof window.computeAtomReadiness === "function") {
       // NB: computeAtomReadiness coerces a non-finite fallback to 0, so we use
@@ -93,6 +97,8 @@
     if (sub && Number.isFinite(sub.n) && sub.n > 0 && Number.isFinite(sub.p)) {
       return { r: Math.max(0, Math.min(1, sub.p)), source: "subtopic" };
     }
+    const ex = _extrapolated(kc);
+    if (ex) return { r: ex.r, source: "extrapolated" };
     return { r: NaN, source: "none" };
   };
   const kcReadiness = (kc) => kcReadinessInfo(kc).r;
@@ -279,6 +285,131 @@
     return Object.values(kcById).filter((k) => (lessonMeta[k.lesson] || {}).subtopic_key === key).length;
   };
 
+  /* ---------------- overall level → estimate for untouched concepts -------
+     BKT is per-concept and independent: a concept with no attempts on it has
+     no posterior, so every untouched bubble read "no estimate" no matter how
+     much the learner had demonstrated elsewhere. That is the wrong default —
+     if someone has missed most of what they've tried, the honest prior for the
+     next thing is low, not blank.
+
+     Same shape as the placement diagnostic's item model (diagnostic.py: 1PL on
+     the bank's 0-100 difficulty scale), applied to ordinary practice instead of
+     probes: centre the estimate on the learner's evidence-weighted mean mastery,
+     then shift it in logit space by how much harder (or easier) this concept is
+     than the ones they have actually been answering. Same level ⇒ same estimate;
+     a much harder concept ⇒ lower. The slope is per SD of concept difficulty and
+     capped — see EXTRAP_LOGIT_PER_SD.
+
+     What this is NOT: a measurement. It carries no attempts of its own, so its
+     interval is the spread of the learner's own results (floored — projecting
+     across concepts is never tighter than that), never a Wilson interval, and
+     both the bubble and the panel mark it as projected. With no graded evidence
+     anywhere (a guest, or a fresh account) there is nothing to project from and
+     the bubble stays grey. */
+  // One logit of shift per standard deviation of concept difficulty, capped at
+  // 1.5 SD. The cap matters: KC difficulties run 12→75 on a scale whose
+  // item-level slope is 10 (diagnostic.py LOGISTIC_SCALE), so the raw 1PL shift
+  // would drive a mid-range learner to 1% on the hardest concepts and 80% on the
+  // easiest — a projection asserting more than the measurements it came from.
+  // ±1.5 logits (odds ×/÷ 4.5) is as far as an inference with no attempts
+  // behind it gets to move.
+  const EXTRAP_LOGIT_PER_SD = 1.0;
+  const EXTRAP_MAX_SHIFT = 1.5;
+  const EXTRAP_MIN_SD = 0.15;            // floor on the projected interval's half-width
+  // A projection must never clear the unlock gate: "prerequisites ready" counts
+  // concepts at/above UNLOCK_T, and nothing with zero attempts should count.
+  const EXTRAP_CAP = 0.84;
+  let kcDifficulty = null;               // concept-graph/kc_difficulty.json
+
+  const _logit = (p) => { const q = Math.max(0.02, Math.min(0.98, p)); return Math.log(q / (1 - q)); };
+  const _expit = (x) => 1 / (1 + Math.exp(-x));
+
+  const _kcDifficulty = (kc) => {
+    const e = kcDifficulty && kcDifficulty.kcs ? kcDifficulty.kcs[kc] : null;
+    return e && Number.isFinite(e.d) ? e.d : NaN;
+  };
+
+  // Spread of concept difficulty across the whole map — the unit the projection
+  // shifts in, so it stays meaningful if the bank's difficulty range changes.
+  let _diffSd;
+  const _difficultySd = () => {
+    if (_diffSd !== undefined) return _diffSd;
+    const v = Object.values((kcDifficulty && kcDifficulty.kcs) || {})
+      .map((e) => e && e.d).filter(Number.isFinite);
+    if (v.length < 2) return (_diffSd = NaN);
+    const mean = v.reduce((a, b) => a + b, 0) / v.length;
+    return (_diffSd = Math.sqrt(v.reduce((s, x) => s + (x - mean) * (x - mean), 0) / v.length));
+  };
+
+  // Mean difficulty of the concepts a subtopic covers — what "the difficulty of
+  // what this learner has been practising" means. Static data, so memoised.
+  const _subDiffMemo = {};
+  const _bareName = (s) => (s.includes(": ") ? s.slice(s.indexOf(": ") + 2) : s);
+  const _subtopicDifficulty = (key) => {
+    if (!kcDifficulty || !key) return NaN;
+    if (key in _subDiffMemo) return _subDiffMemo[key];
+    const want = _bareName(key);
+    const ds = [];
+    Object.values(kcById).forEach((k) => {
+      const sk = (lessonMeta[k.lesson] || {}).subtopic_key;
+      if (!sk || _bareName(sk) !== want) return;
+      const d = _kcDifficulty(k.id);
+      if (Number.isFinite(d)) ds.push(d);
+    });
+    return (_subDiffMemo[key] = ds.length ? ds.reduce((a, b) => a + b, 0) / ds.length : NaN);
+  };
+
+  // The learner's overall level: evidence-weighted mean mastery, the difficulty
+  // that mean was earned at, and how spread out their subtopics are.
+  const learnerAbility = () => {
+    const state = _learnerState();
+    const states = state && state.subtopic_states;
+    if (!states) return null;
+    const parts = [];
+    let wSum = 0, mSum = 0, bSum = 0, bW = 0;
+    Object.keys(states).forEach((key) => {
+      const s = states[key];
+      if (!s || !Number.isFinite(s.n) || s.n <= 0 || !Number.isFinite(s.p)) return;
+      const w = s.n, m = Math.max(0, Math.min(1, s.p));
+      wSum += w; mSum += w * m;
+      const b = _subtopicDifficulty(key);
+      if (Number.isFinite(b)) { bSum += w * b; bW += w; }
+      parts.push({ w, m });
+    });
+    if (!wSum) return null;
+    const mBar = mSum / wSum;
+    let varSum = 0;
+    parts.forEach((p) => { varSum += p.w * (p.m - mBar) * (p.m - mBar); });
+    return {
+      mBar,
+      bBar: bW ? bSum / bW : (kcDifficulty && Number.isFinite(kcDifficulty.mean) ? kcDifficulty.mean : NaN),
+      sd: Math.max(EXTRAP_MIN_SD, Math.sqrt(varSum / wSum)),
+      attempts: wSum,
+      subtopics: parts.length,
+    };
+  };
+
+  // Projected estimate + its range for a concept with no evidence of its own.
+  // Null when there is nothing to project from, or no difficulty for this KC
+  // (then the shift would be a guess dressed as arithmetic).
+  const _extrapolated = (kc) => {
+    const a = learnerAbility();
+    if (!a) return null;
+    const d = _kcDifficulty(kc);
+    const sdD = _difficultySd();
+    let delta = 0;
+    if (Number.isFinite(d) && Number.isFinite(a.bBar) && Number.isFinite(sdD) && sdD > 0) {
+      delta = ((d - a.bBar) / sdD) * EXTRAP_LOGIT_PER_SD;
+      delta = Math.max(-EXTRAP_MAX_SHIFT, Math.min(EXTRAP_MAX_SHIFT, delta));
+    }
+    const shift = (m) => _expit(_logit(m) - delta);
+    return {
+      r: Math.min(EXTRAP_CAP, shift(a.mBar)),
+      ci: [shift(a.mBar - a.sd), shift(a.mBar + a.sd)],
+      d, ...a,
+    };
+  };
+
   const _pct = (v) => (Number.isFinite(v) ? Math.round(v * 100) + "%" : "—");
 
   // 95% Wilson score interval — how much the estimate should be trusted, given
@@ -346,7 +477,11 @@
     if (!k) return dockEmptyHtml();
     const { r, source } = kcReadinessInfo(kc);
     const n = _evidenceN(kc);
-    const ci = Number.isFinite(r) ? _wilson(r, n) : null;
+    // A projected estimate has no attempts of its own, so its range is the
+    // spread of the learner's own results — a Wilson interval would claim
+    // evidence that doesn't exist.
+    const ex = source === "extrapolated" ? _extrapolated(kc) : null;
+    const ci = ex ? ex.ci : (Number.isFinite(r) ? _wilson(r, n) : null);
     const sub = _subtopicState(kc);
     const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
     const parents = parentsOf[kc] || [];
@@ -360,6 +495,14 @@
     if (sub) {
       rows += `<div class="kg2-dock-row"><span>Recent accuracy</span><span>${_pct(sub.p)}</span></div>`;
       rows += `<div class="kg2-dock-row"><span>Target difficulty</span><span>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"}/100</span></div>`;
+    } else {
+      const d = _kcDifficulty(kc);
+      if (Number.isFinite(d)) {
+        rows += `<div class="kg2-dock-row"><span>Concept difficulty</span><span>${Math.round(d)}/100</span></div>`;
+      }
+      if (ex && Number.isFinite(ex.bBar)) {
+        rows += `<div class="kg2-dock-row"><span>Your practised level</span><span>${_pct(ex.mBar)} at ${Math.round(ex.bBar)}/100</span></div>`;
+      }
     }
 
     return (
@@ -373,7 +516,9 @@
             (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
             (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
             `</div>`
-          : "") +
+          : ex
+            ? `<div class="kg2-dock-evidence">Evidence: your overall level — ${ex.attempts} attempt${ex.attempts === 1 ? "" : "s"} across ${ex.subtopics} lesson${ex.subtopics === 1 ? "" : "s"}, none on this concept</div>`
+            : "") +
       `</div>` +
       `<div class="kg2-dock-col kg2-dock-mastery">` +
         `<div class="kg2-dock-headline">` +
@@ -382,11 +527,17 @@
             // The percentage is only about THIS concept when it came from a
             // per-atom posterior; say so when it didn't.
             (source === "subtopic" ? ` <span class="kg2-dock-dim">· lesson-level</span>` : "") +
+            (source === "extrapolated" ? ` <span class="kg2-dock-dim">· projected</span>` : "") +
           `</span>` +
         `</div>` +
         _masteryBar(r, ci) +
         `<div class="kg2-dock-ci-label">` +
-          (ci
+          (ex
+            ? `Projected ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· nothing graded here yet. ` +
+              (Number.isFinite(ex.d) && Number.isFinite(ex.bBar)
+                ? `This concept rates ${Math.round(ex.d)}/100 against the ${Math.round(ex.bBar)}/100 you've been practising at`
+                : `Carried straight across from your overall level`) + `.</span>`
+          : ci
             ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}` +
               (source === "subtopic" ? ` across this lesson, not this concept alone` : "") + `</span>`
             : Number.isFinite(r)
@@ -705,6 +856,7 @@
       el.classList.add("kg2-legend-mastery");
       el.innerHTML =
         '<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
+        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Projected from your level</span>' +
         '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
     } else {
       el.classList.remove("kg2-legend-mastery");
@@ -718,9 +870,20 @@
     }
   };
 
+  // Projected bubbles are washed out and dashed: they carry a colour because a
+  // blank map was the wrong default, but they must never read as measured.
+  // Border WIDTH is left to the stylesheet so the .hl prerequisite highlight
+  // still wins; only the dash pattern is set per node.
   const recolor = () => {
     if (!cy) return;
-    cy.batch(() => cy.nodes().forEach((n) => n.style("background-color", nodeColor(n.id()))));
+    cy.batch(() => cy.nodes().forEach((n) => {
+      const projected = colorMode === "mastery" && kcReadinessInfo(n.id()).source === "extrapolated";
+      n.style({
+        "background-color": nodeColor(n.id()),
+        "background-opacity": projected ? 0.42 : 1,
+        "border-style": projected ? "dashed" : "solid",
+      });
+    }));
   };
 
   /* ---------------- build ---------------------------------------------- */
@@ -743,6 +906,15 @@
       building = false;
       return;
     }
+
+    // Per-concept difficulty for the projected estimates. Optional on purpose:
+    // without it `_extrapolated` falls back to the learner's flat overall level
+    // rather than blocking the graph.
+    try {
+      kcDifficulty = await fetch("concept-graph/kc_difficulty.json", { cache: "no-cache" }).then((r) =>
+        r.ok ? r.json() : null
+      );
+    } catch (_) { kcDifficulty = null; }
 
     (registry.lessons || []).forEach((l) => { lessonMeta[l.id] = l; });
     (registry.kcs || []).forEach((k) => {

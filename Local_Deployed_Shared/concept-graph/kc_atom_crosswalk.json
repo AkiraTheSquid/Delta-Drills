@@ -1,0 +1,1808 @@
+{
+ "version": 1,
+ "generated_from": [
+  "lessons/qmatrix_tags.json target_kcs",
+  "backend/app/data/question_atom_tags.jsonl",
+  "backend/app/data/concept_graphs/arena_drillable_v1.json (atom id universe)"
+ ],
+ "method": "support(kc,atom) = sum over shared questions of tag_confidence/|target_kcs|; share = P(atom|kc), spec = P(kc|atom), w = share*spec renormalized per kc; reliability = sum_a share*spec, the evidence-weighted mean specificity",
+ "suggested_w_min": 0.15,
+ "measured_reliability_min": 0.333,
+ "thresholds_note": "both cuts are author defaults, not sourced or validated",
+ "coverage": {
+  "questions_joined": 380,
+  "kcs_covered": 64,
+  "kcs_total": 64,
+  "kcs_measured": 20,
+  "atoms_used": 56,
+  "pairs": 182
+ },
+ "kcs": {
+  "einops.channel-groups-temporal": {
+   "n": 8,
+   "reliability": 0.146,
+   "shared_with": 5.8,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "avgpool-reduce",
+     "w": 0.454,
+     "share": 0.136,
+     "spec": 0.489,
+     "n": 2
+    },
+    {
+     "a": "einops-rearrange",
+     "w": 0.423,
+     "share": 0.652,
+     "spec": 0.095,
+     "n": 6
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.123,
+     "share": 0.212,
+     "spec": 0.085,
+     "n": 2
+    }
+   ]
+  },
+  "einops.dl-flatten-heads": {
+   "n": 5,
+   "reliability": 0.288,
+   "shared_with": 2.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange-flatten",
+     "w": 0.858,
+     "share": 0.247,
+     "spec": 1.0,
+     "n": 2
+    },
+    {
+     "a": "einops-rearrange",
+     "w": 0.117,
+     "share": 0.588,
+     "spec": 0.057,
+     "n": 4
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.025,
+     "share": 0.164,
+     "spec": 0.044,
+     "n": 1
+    }
+   ]
+  },
+  "einops.grids-montage": {
+   "n": 9,
+   "reliability": 0.143,
+   "shared_with": 6.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.143,
+     "n": 9
+    }
+   ]
+  },
+  "einops.merge-axes": {
+   "n": 11,
+   "reliability": 0.175,
+   "shared_with": 4.7,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.175,
+     "n": 11
+    }
+   ]
+  },
+  "einops.patches-space-depth": {
+   "n": 10,
+   "reliability": 0.157,
+   "shared_with": 5.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.157,
+     "n": 10
+    }
+   ]
+  },
+  "einops.pattern-language": {
+   "n": 8,
+   "reliability": 0.129,
+   "shared_with": 6.8,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.129,
+     "n": 8
+    }
+   ]
+  },
+  "einops.pooling": {
+   "n": 7,
+   "reliability": 0.378,
+   "shared_with": 1.6,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "einops-reduce",
+     "w": 0.51,
+     "share": 0.652,
+     "spec": 0.296,
+     "n": 7
+    },
+    {
+     "a": "maxpool-reduce",
+     "w": 0.317,
+     "share": 0.12,
+     "spec": 1.0,
+     "n": 2
+    },
+    {
+     "a": "avgpool-reduce",
+     "w": 0.169,
+     "share": 0.125,
+     "spec": 0.511,
+     "n": 2
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.003,
+     "share": 0.052,
+     "spec": 0.022,
+     "n": 1
+    },
+    {
+     "a": "einops-rearrange",
+     "w": 0.001,
+     "share": 0.052,
+     "spec": 0.009,
+     "n": 1
+    }
+   ]
+  },
+  "einops.reduce-model": {
+   "n": 9,
+   "reliability": 0.372,
+   "shared_with": 1.7,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "einops-reduce",
+     "w": 0.829,
+     "share": 0.8,
+     "spec": 0.386,
+     "n": 9
+    },
+    {
+     "a": "global-average-pool",
+     "w": 0.144,
+     "share": 0.054,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.027,
+     "share": 0.146,
+     "spec": 0.067,
+     "n": 3
+    }
+   ]
+  },
+  "einops.repeat-model": {
+   "n": 10,
+   "reliability": 0.761,
+   "shared_with": 0.3,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "einops-repeat",
+     "w": 0.927,
+     "share": 0.944,
+     "spec": 0.747,
+     "n": 10
+    },
+    {
+     "a": "einops-repeat-broadcast",
+     "w": 0.073,
+     "share": 0.056,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "einops.singleton-and-lists": {
+   "n": 8,
+   "reliability": 0.125,
+   "shared_with": 7.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.125,
+     "n": 8
+    }
+   ]
+  },
+  "einops.split-axes": {
+   "n": 6,
+   "reliability": 0.095,
+   "shared_with": 9.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-rearrange",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.095,
+     "n": 6
+    }
+   ]
+  },
+  "einsum.attention-patterns": {
+   "n": 8,
+   "reliability": 0.117,
+   "shared_with": 7.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.117,
+     "n": 8
+    }
+   ]
+  },
+  "einsum.batch-dims": {
+   "n": 9,
+   "reliability": 0.129,
+   "shared_with": 6.8,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 0.951,
+     "share": 0.946,
+     "spec": 0.129,
+     "n": 9
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.049,
+     "share": 0.054,
+     "spec": 0.115,
+     "n": 1
+    }
+   ]
+  },
+  "einsum.broadcast-scaling": {
+   "n": 7,
+   "reliability": 0.101,
+   "shared_with": 8.9,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.101,
+     "n": 7
+    }
+   ]
+  },
+  "einsum.diag-trace": {
+   "n": 7,
+   "reliability": 0.096,
+   "shared_with": 9.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 0.893,
+     "share": 0.881,
+     "spec": 0.098,
+     "n": 7
+    },
+    {
+     "a": "diagonal-via-strides",
+     "w": 0.081,
+     "share": 0.06,
+     "spec": 0.13,
+     "n": 1
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.026,
+     "share": 0.06,
+     "spec": 0.042,
+     "n": 1
+    }
+   ]
+  },
+  "einsum.dot-frobenius": {
+   "n": 4,
+   "reliability": 0.059,
+   "shared_with": 15.9,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.059,
+     "n": 4
+    }
+   ]
+  },
+  "einsum.matrix-forms": {
+   "n": 6,
+   "reliability": 0.087,
+   "shared_with": 10.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.087,
+     "n": 6
+    }
+   ]
+  },
+  "einsum.matvec-matmul": {
+   "n": 7,
+   "reliability": 0.105,
+   "shared_with": 8.6,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.105,
+     "n": 7
+    }
+   ]
+  },
+  "einsum.notation-model": {
+   "n": 5,
+   "reliability": 0.047,
+   "shared_with": 20.1,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 0.929,
+     "share": 0.786,
+     "spec": 0.056,
+     "n": 4
+    },
+    {
+     "a": "einops-rearrange",
+     "w": 0.071,
+     "share": 0.214,
+     "spec": 0.016,
+     "n": 1
+    }
+   ]
+  },
+  "einsum.outer-products": {
+   "n": 5,
+   "reliability": 0.086,
+   "shared_with": 10.6,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 0.652,
+     "share": 0.802,
+     "spec": 0.07,
+     "n": 5
+    },
+    {
+     "a": "outer-product-grid",
+     "w": 0.329,
+     "share": 0.113,
+     "spec": 0.25,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.02,
+     "share": 0.085,
+     "spec": 0.02,
+     "n": 1
+    }
+   ]
+  },
+  "einsum.reductions": {
+   "n": 10,
+   "reliability": 0.146,
+   "shared_with": 5.9,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.146,
+     "n": 10
+    }
+   ]
+  },
+  "numpy.aggregations": {
+   "n": 4,
+   "reliability": 0.276,
+   "shared_with": 2.6,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "assert-shape-pattern",
+     "w": 0.904,
+     "share": 0.25,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.068,
+     "share": 0.5,
+     "spec": 0.038,
+     "n": 2
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.027,
+     "share": 0.25,
+     "spec": 0.03,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.argmin-argmax": {
+   "n": 7,
+   "reliability": 0.544,
+   "shared_with": 0.8,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "argmax-prediction",
+     "w": 0.977,
+     "share": 0.811,
+     "spec": 0.655,
+     "n": 6
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.023,
+     "share": 0.189,
+     "spec": 0.065,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.argsort-ranking": {
+   "n": 4,
+   "reliability": 0.111,
+   "shared_with": 8.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "index-by-tensor",
+     "w": 0.439,
+     "share": 0.568,
+     "spec": 0.086,
+     "n": 2
+    },
+    {
+     "a": "topk-predictions",
+     "w": 0.363,
+     "share": 0.182,
+     "spec": 0.222,
+     "n": 1
+    },
+    {
+     "a": "argmax-prediction",
+     "w": 0.198,
+     "share": 0.25,
+     "spec": 0.088,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.axis-reductions": {
+   "n": 5,
+   "reliability": 0.191,
+   "shared_with": 4.2,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "sum-back-expand-broadcast",
+     "w": 0.601,
+     "share": 0.237,
+     "spec": 0.484,
+     "n": 2
+    },
+    {
+     "a": "torch-where-conditional",
+     "w": 0.227,
+     "share": 0.189,
+     "spec": 0.229,
+     "n": 1
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.146,
+     "share": 0.432,
+     "spec": 0.065,
+     "n": 3
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.025,
+     "share": 0.142,
+     "spec": 0.034,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.boolean-masking": {
+   "n": 7,
+   "reliability": 0.166,
+   "shared_with": 5.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "any-reduce-axis",
+     "w": 0.501,
+     "share": 0.472,
+     "spec": 0.176,
+     "n": 4
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.391,
+     "share": 0.244,
+     "spec": 0.265,
+     "n": 2
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.108,
+     "share": 0.285,
+     "spec": 0.063,
+     "n": 3
+    }
+   ]
+  },
+  "numpy.broadcasting-rules": {
+   "n": 4,
+   "reliability": 0.108,
+   "shared_with": 8.2,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "broadcasting-rules",
+     "w": 0.952,
+     "share": 0.856,
+     "spec": 0.121,
+     "n": 4
+    },
+    {
+     "a": "einops-repeat",
+     "w": 0.048,
+     "share": 0.144,
+     "spec": 0.036,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.centering": {
+   "n": 6,
+   "reliability": 0.147,
+   "shared_with": 5.8,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "broadcasting-rules",
+     "w": 0.731,
+     "share": 0.713,
+     "spec": 0.151,
+     "n": 5
+    },
+    {
+     "a": "torch-where-conditional",
+     "w": 0.112,
+     "share": 0.096,
+     "spec": 0.172,
+     "n": 1
+    },
+    {
+     "a": "vector-normalize-keepdim",
+     "w": 0.079,
+     "share": 0.106,
+     "spec": 0.109,
+     "n": 1
+    },
+    {
+     "a": "where-clip-negative",
+     "w": 0.079,
+     "share": 0.085,
+     "spec": 0.136,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.constructors": {
+   "n": 8,
+   "reliability": 0.499,
+   "shared_with": 1.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "tensor-zeros-init",
+     "w": 0.978,
+     "share": 0.852,
+     "spec": 0.573,
+     "n": 7
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.022,
+     "share": 0.148,
+     "spec": 0.074,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.cumulative-diff": {
+   "n": 7,
+   "reliability": 0.223,
+   "shared_with": 3.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "sum-back-expand-broadcast",
+     "w": 0.607,
+     "share": 0.262,
+     "spec": 0.516,
+     "n": 2
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.382,
+     "share": 0.607,
+     "spec": 0.14,
+     "n": 4
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.011,
+     "share": 0.131,
+     "spec": 0.019,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.diag-triangles": {
+   "n": 10,
+   "reliability": 0.577,
+   "shared_with": 0.7,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "diagonal-via-strides",
+     "w": 0.752,
+     "share": 0.498,
+     "spec": 0.87,
+     "n": 5
+    },
+    {
+     "a": "inf-masking",
+     "w": 0.145,
+     "share": 0.084,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "tensor-zeros-init",
+     "w": 0.09,
+     "share": 0.26,
+     "spec": 0.199,
+     "n": 3
+    },
+    {
+     "a": "as-strided-windowing",
+     "w": 0.008,
+     "share": 0.074,
+     "spec": 0.064,
+     "n": 1
+    },
+    {
+     "a": "einops-repeat",
+     "w": 0.005,
+     "share": 0.084,
+     "spec": 0.036,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.dot-matmul-patterns": {
+   "n": 6,
+   "reliability": 0.415,
+   "shared_with": 1.4,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "matvec",
+     "w": 0.885,
+     "share": 0.367,
+     "spec": 1.0,
+     "n": 3
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.056,
+     "share": 0.152,
+     "spec": 0.154,
+     "n": 1
+    },
+    {
+     "a": "vector-normalize-keepdim",
+     "w": 0.04,
+     "share": 0.139,
+     "spec": 0.12,
+     "n": 1
+    },
+    {
+     "a": "einops-einsum",
+     "w": 0.018,
+     "share": 0.342,
+     "spec": 0.022,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.dtype-astype": {
+   "n": 5,
+   "reliability": 0.504,
+   "shared_with": 1.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "stride-zero-broadcast",
+     "w": 0.377,
+     "share": 0.19,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "tensor-unbind",
+     "w": 0.335,
+     "share": 0.169,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "tensor-wraps-ndarray",
+     "w": 0.167,
+     "share": 0.169,
+     "spec": 0.5,
+     "n": 1
+    },
+    {
+     "a": "torch-arange",
+     "w": 0.115,
+     "share": 0.304,
+     "spec": 0.191,
+     "n": 1
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.006,
+     "share": 0.169,
+     "spec": 0.019,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.elementwise-ufuncs": {
+   "n": 5,
+   "reliability": 0.771,
+   "shared_with": 0.3,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "where-clip-negative",
+     "w": 0.352,
+     "share": 0.5,
+     "spec": 0.542,
+     "n": 3
+    },
+    {
+     "a": "tensor-pow",
+     "w": 0.243,
+     "share": 0.187,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "relu-elementwise-max",
+     "w": 0.223,
+     "share": 0.172,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "maximum-backward-tie-split",
+     "w": 0.182,
+     "share": 0.141,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.fancy-indexing": {
+   "n": 9,
+   "reliability": 0.217,
+   "shared_with": 3.6,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "index-by-tensor",
+     "w": 0.716,
+     "share": 0.626,
+     "spec": 0.248,
+     "n": 5
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.253,
+     "share": 0.301,
+     "spec": 0.182,
+     "n": 3
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.031,
+     "share": 0.073,
+     "spec": 0.093,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.geometry-transforms": {
+   "n": 4,
+   "reliability": 0.127,
+   "shared_with": 6.9,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "outer-product-grid",
+     "w": 0.437,
+     "share": 0.222,
+     "spec": 0.25,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.295,
+     "share": 0.556,
+     "spec": 0.067,
+     "n": 3
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.269,
+     "share": 0.222,
+     "spec": 0.154,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.index-grids": {
+   "n": 6,
+   "reliability": 0.118,
+   "shared_with": 7.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "broadcasting-rules",
+     "w": 0.593,
+     "share": 0.649,
+     "spec": 0.108,
+     "n": 4
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.407,
+     "share": 0.351,
+     "spec": 0.137,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.inplace-out": {
+   "n": 4,
+   "reliability": 0.34,
+   "shared_with": 1.9,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "copy-inplace-_underscore",
+     "w": 0.448,
+     "share": 0.153,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "linspace-out-param",
+     "w": 0.359,
+     "share": 0.203,
+     "spec": 0.6,
+     "n": 1
+    },
+    {
+     "a": "topk-predictions",
+     "w": 0.089,
+     "share": 0.136,
+     "spec": 0.222,
+     "n": 1
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.076,
+     "share": 0.288,
+     "spec": 0.09,
+     "n": 2
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.029,
+     "share": 0.22,
+     "spec": 0.045,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.linalg-applied": {
+   "n": 5,
+   "reliability": 0.298,
+   "shared_with": 2.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "determinant-singularity-test",
+     "w": 0.493,
+     "share": 0.147,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "linalg-solve-batched",
+     "w": 0.419,
+     "share": 0.25,
+     "spec": 0.5,
+     "n": 1
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.04,
+     "share": 0.118,
+     "spec": 0.103,
+     "n": 1
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.026,
+     "share": 0.147,
+     "spec": 0.053,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.016,
+     "share": 0.176,
+     "spec": 0.027,
+     "n": 1
+    },
+    {
+     "a": "einops-einsum",
+     "w": 0.005,
+     "share": 0.162,
+     "spec": 0.009,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.linalg-basics": {
+   "n": 2,
+   "reliability": 0.362,
+   "shared_with": 1.8,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "linalg-solve-batched",
+     "w": 0.672,
+     "share": 0.486,
+     "spec": 0.5,
+     "n": 1
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.328,
+     "share": 0.514,
+     "spec": 0.231,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.memory-model": {
+   "n": 3,
+   "reliability": 0.229,
+   "shared_with": 3.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "view-vs-reshape",
+     "w": 0.565,
+     "share": 0.329,
+     "spec": 0.393,
+     "n": 1
+    },
+    {
+     "a": "torch-as-tensor-no-copy",
+     "w": 0.378,
+     "share": 0.251,
+     "spec": 0.344,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.058,
+     "share": 0.419,
+     "spec": 0.031,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.nan-handling": {
+   "n": 6,
+   "reliability": 0.449,
+   "shared_with": 1.2,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "isfinite-mask",
+     "w": 0.688,
+     "share": 0.309,
+     "spec": 1.0,
+     "n": 3
+    },
+    {
+     "a": "torch-where-conditional",
+     "w": 0.153,
+     "share": 0.189,
+     "spec": 0.363,
+     "n": 2
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.124,
+     "share": 0.382,
+     "spec": 0.146,
+     "n": 3
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.035,
+     "share": 0.12,
+     "spec": 0.133,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.ndarray-model": {
+   "n": 2,
+   "reliability": 0.264,
+   "shared_with": 2.8,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "tensor-wraps-ndarray",
+     "w": 0.948,
+     "share": 0.5,
+     "spec": 0.5,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.052,
+     "share": 0.5,
+     "spec": 0.028,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.nonzero-argwhere": {
+   "n": 3,
+   "reliability": 0.107,
+   "shared_with": 8.3,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "any-reduce-axis",
+     "w": 0.939,
+     "share": 0.789,
+     "spec": 0.128,
+     "n": 3
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.061,
+     "share": 0.211,
+     "spec": 0.031,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.onehot-bincount": {
+   "n": 5,
+   "reliability": 0.125,
+   "shared_with": 7.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "index-by-tensor",
+     "w": 0.786,
+     "share": 0.628,
+     "spec": 0.157,
+     "n": 3
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.107,
+     "share": 0.22,
+     "spec": 0.061,
+     "n": 2
+    },
+    {
+     "a": "argmax-prediction",
+     "w": 0.107,
+     "share": 0.152,
+     "spec": 0.088,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.pad-borders": {
+   "n": 4,
+   "reliability": 0.578,
+   "shared_with": 0.7,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "padding-with-new-full",
+     "w": 0.946,
+     "share": 0.547,
+     "spec": 1.0,
+     "n": 3
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.036,
+     "share": 0.172,
+     "spec": 0.122,
+     "n": 1
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.014,
+     "share": 0.156,
+     "spec": 0.053,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.004,
+     "share": 0.125,
+     "spec": 0.018,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.pairwise-metrics": {
+   "n": 7,
+   "reliability": 0.197,
+   "shared_with": 4.1,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "broadcasting-rules",
+     "w": 0.459,
+     "share": 0.599,
+     "spec": 0.151,
+     "n": 5
+    },
+    {
+     "a": "vector-normalize-keepdim",
+     "w": 0.332,
+     "share": 0.232,
+     "spec": 0.283,
+     "n": 2
+    },
+    {
+     "a": "matmul-2d",
+     "w": 0.209,
+     "share": 0.169,
+     "spec": 0.244,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.random-generator": {
+   "n": 3,
+   "reliability": 0.672,
+   "shared_with": 0.5,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "manual-seed",
+     "w": 0.572,
+     "share": 0.384,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "torch-rand-uniform",
+     "w": 0.403,
+     "share": 0.271,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.025,
+     "share": 0.345,
+     "spec": 0.048,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.random-sampling": {
+   "n": 4,
+   "reliability": 0.182,
+   "shared_with": 4.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "boolean-mask-combine",
+     "w": 0.68,
+     "share": 0.226,
+     "spec": 0.545,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.189,
+     "share": 0.434,
+     "spec": 0.079,
+     "n": 2
+    },
+    {
+     "a": "argmax-prediction",
+     "w": 0.083,
+     "share": 0.189,
+     "spec": 0.08,
+     "n": 1
+    },
+    {
+     "a": "tensor-zeros-init",
+     "w": 0.047,
+     "share": 0.151,
+     "spec": 0.057,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.ranges": {
+   "n": 4,
+   "reliability": 0.57,
+   "shared_with": 0.8,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "linspace-evenly-spaced",
+     "w": 0.617,
+     "share": 0.452,
+     "spec": 0.777,
+     "n": 2
+    },
+    {
+     "a": "torch-arange",
+     "w": 0.302,
+     "share": 0.432,
+     "spec": 0.398,
+     "n": 2
+    },
+    {
+     "a": "linspace-out-param",
+     "w": 0.081,
+     "share": 0.115,
+     "spec": 0.4,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.rescaling": {
+   "n": 8,
+   "reliability": 0.499,
+   "shared_with": 1.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "vector-normalize-keepdim",
+     "w": 0.363,
+     "share": 0.371,
+     "spec": 0.489,
+     "n": 3
+    },
+    {
+     "a": "softmax-from-logits",
+     "w": 0.264,
+     "share": 0.132,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "log-sum-exp-stability",
+     "w": 0.165,
+     "share": 0.082,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "batchnorm-running-stats-ema",
+     "w": 0.139,
+     "share": 0.069,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.036,
+     "share": 0.255,
+     "spec": 0.07,
+     "n": 3
+    },
+    {
+     "a": "where-clip-negative",
+     "w": 0.034,
+     "share": 0.091,
+     "spec": 0.186,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.reshape-flatten": {
+   "n": 3,
+   "reliability": 0.566,
+   "shared_with": 0.8,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "view-vs-reshape",
+     "w": 0.493,
+     "share": 0.459,
+     "spec": 0.607,
+     "n": 2
+    },
+    {
+     "a": "reshape-backward",
+     "w": 0.43,
+     "share": 0.243,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "torch-arange",
+     "w": 0.077,
+     "share": 0.297,
+     "spec": 0.146,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.scatter-gather": {
+   "n": 5,
+   "reliability": 0.081,
+   "shared_with": 11.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "index-by-tensor",
+     "w": 0.853,
+     "share": 0.646,
+     "spec": 0.107,
+     "n": 3
+    },
+    {
+     "a": "einops-repeat",
+     "w": 0.084,
+     "share": 0.187,
+     "spec": 0.036,
+     "n": 1
+    },
+    {
+     "a": "any-reduce-axis",
+     "w": 0.063,
+     "share": 0.167,
+     "spec": 0.03,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.set-combinatorics": {
+   "n": 10,
+   "reliability": 0.162,
+   "shared_with": 5.2,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "any-reduce-axis",
+     "w": 0.369,
+     "share": 0.365,
+     "spec": 0.163,
+     "n": 5
+    },
+    {
+     "a": "boolean-mask-combine",
+     "w": 0.239,
+     "share": 0.085,
+     "spec": 0.455,
+     "n": 1
+    },
+    {
+     "a": "broadcasting-rules",
+     "w": 0.16,
+     "share": 0.312,
+     "spec": 0.083,
+     "n": 3
+    },
+    {
+     "a": "torch-as-tensor-no-copy",
+     "w": 0.138,
+     "share": 0.068,
+     "spec": 0.328,
+     "n": 1
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.084,
+     "share": 0.102,
+     "spec": 0.133,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.012,
+     "share": 0.068,
+     "spec": 0.028,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.slicing-views": {
+   "n": 6,
+   "reliability": 0.437,
+   "shared_with": 1.3,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "permute-backward-argsort",
+     "w": 0.602,
+     "share": 0.263,
+     "spec": 1.0,
+     "n": 2
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.398,
+     "share": 0.737,
+     "spec": 0.236,
+     "n": 4
+    }
+   ]
+  },
+  "numpy.sliding-windows": {
+   "n": 4,
+   "reliability": 0.33,
+   "shared_with": 2.0,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "as-strided-windowing",
+     "w": 0.99,
+     "share": 0.843,
+     "spec": 0.388,
+     "n": 3
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.01,
+     "share": 0.157,
+     "spec": 0.021,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.sorting": {
+   "n": 1,
+   "reliability": 0.222,
+   "shared_with": 3.5,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "topk-predictions",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.222,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.stack-concat-interleave": {
+   "n": 5,
+   "reliability": 0.63,
+   "shared_with": 0.6,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "stack-vs-cat",
+     "w": 0.909,
+     "share": 0.572,
+     "spec": 1.0,
+     "n": 3
+    },
+    {
+     "a": "slice-view-mutation",
+     "w": 0.091,
+     "share": 0.428,
+     "spec": 0.134,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.structured-dtypes": {
+   "n": 6,
+   "reliability": 0.295,
+   "shared_with": 2.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "type-hints-python",
+     "w": 0.424,
+     "share": 0.125,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "torch-as-tensor-no-copy",
+     "w": 0.139,
+     "share": 0.125,
+     "spec": 0.328,
+     "n": 1
+    },
+    {
+     "a": "outer-product-grid",
+     "w": 0.134,
+     "share": 0.172,
+     "spec": 0.229,
+     "n": 1
+    },
+    {
+     "a": "linspace-evenly-spaced",
+     "w": 0.106,
+     "share": 0.141,
+     "spec": 0.223,
+     "n": 1
+    },
+    {
+     "a": "torch-arange",
+     "w": 0.101,
+     "share": 0.188,
+     "spec": 0.159,
+     "n": 1
+    },
+    {
+     "a": "tensor-zeros-init",
+     "w": 0.096,
+     "share": 0.25,
+     "spec": 0.114,
+     "n": 2
+    }
+   ]
+  },
+  "numpy.tile-repeat-meshgrid": {
+   "n": 6,
+   "reliability": 0.161,
+   "shared_with": 5.2,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "einops-repeat",
+     "w": 0.567,
+     "share": 0.632,
+     "spec": 0.144,
+     "n": 4
+    },
+    {
+     "a": "outer-product-grid",
+     "w": 0.384,
+     "share": 0.228,
+     "spec": 0.271,
+     "n": 1
+    },
+    {
+     "a": "tensor-zeros-init",
+     "w": 0.05,
+     "share": 0.14,
+     "spec": 0.057,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.topk-selection": {
+   "n": 3,
+   "reliability": 0.153,
+   "shared_with": 5.6,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "topk-predictions",
+     "w": 0.709,
+     "share": 0.324,
+     "spec": 0.333,
+     "n": 1
+    },
+    {
+     "a": "argmax-prediction",
+     "w": 0.172,
+     "share": 0.297,
+     "spec": 0.088,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.119,
+     "share": 0.378,
+     "spec": 0.048,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.unique": {
+   "n": 5,
+   "reliability": 0.081,
+   "shared_with": 11.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "any-reduce-axis",
+     "w": 0.66,
+     "share": 0.585,
+     "spec": 0.091,
+     "n": 3
+    },
+    {
+     "a": "torch-arange",
+     "w": 0.256,
+     "share": 0.195,
+     "spec": 0.106,
+     "n": 1
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.084,
+     "share": 0.22,
+     "spec": 0.031,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.where-select": {
+   "n": 3,
+   "reliability": 0.184,
+   "shared_with": 4.4,
+   "tier": "topic-proxy",
+   "atoms": [
+    {
+     "a": "torch-where-conditional",
+     "w": 0.451,
+     "share": 0.35,
+     "spec": 0.237,
+     "n": 1
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.382,
+     "share": 0.424,
+     "spec": 0.166,
+     "n": 1
+    },
+    {
+     "a": "where-clip-negative",
+     "w": 0.167,
+     "share": 0.226,
+     "spec": 0.136,
+     "n": 1
+    }
+   ]
+  },
+  "numpy.window-stencil": {
+   "n": 7,
+   "reliability": 0.536,
+   "shared_with": 0.9,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "as-strided-windowing",
+     "w": 0.652,
+     "share": 0.637,
+     "spec": 0.548,
+     "n": 5
+    },
+    {
+     "a": "conv-as-einsum",
+     "w": 0.191,
+     "share": 0.102,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "matmul-via-strides-and-sum",
+     "w": 0.139,
+     "share": 0.074,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "boolean-mask-broadcast-assignment",
+     "w": 0.012,
+     "share": 0.074,
+     "spec": 0.088,
+     "n": 1
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.006,
+     "share": 0.112,
+     "spec": 0.028,
+     "n": 1
+    }
+   ]
+  }
+ }
+}
