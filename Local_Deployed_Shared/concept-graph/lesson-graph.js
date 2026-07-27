@@ -59,21 +59,43 @@
     const days = Math.max(0, (Date.now() - prev) / 86400000);
     return BKT_P_INIT + (L - BKT_P_INIT) * Math.pow(0.5, days / BKT_HALF_LIFE_DAYS);
   };
-  // Decayed BKT posterior for a KC in [0,1], or NaN when there is no estimate.
-  // Prefers the app's in-memory computation; falls back to persisted state.
-  const kcReadiness = (kc) => {
+  // Estimate for a KC in [0,1] plus WHERE it came from, or NaN when there is
+  // none. Two sources, in order of precision:
+  //   "atom"     — this KC's own decayed BKT posterior.
+  //   "subtopic" — the lesson subtopic's correctness rate, shared by every KC
+  //                in that lesson.
+  // The fallback exists because the graph's KC ids (`numpy.dtype-astype`, from
+  // kc_registry.json) and the backend's BKT atom ids (`argmax-prediction`, from
+  // question_atom_tags.jsonl) are disjoint id spaces — zero overlap — so a
+  // signed-in learner with real practice history had every bubble read
+  // "Not yet estimated". Callers must surface the source: a subtopic number is
+  // NOT a per-concept measurement, and presenting it as one overclaims.
+  const kcReadinessInfo = (kc) => {
     if (typeof window.computeAtomReadiness === "function") {
       // NB: computeAtomReadiness coerces a non-finite fallback to 0, so we use
       // -1 as the "no posterior" sentinel (valid readiness is [0,1]). r >= 0 is
       // a real in-memory estimate; -1 falls through to the persisted read.
       const r = window.computeAtomReadiness(kc, -1);
-      if (r >= 0) return r;
+      if (r >= 0) return { r, source: "atom" };
     }
     const s = _persistedState();
     const raw = s && s.atom_mastery ? s.atom_mastery[kc] : undefined;
-    if (!Number.isFinite(raw)) return NaN;
-    return _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null);
+    if (Number.isFinite(raw)) {
+      return { r: _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null), source: "atom" };
+    }
+    // Subtopic fallback. `p` (correctness rate) is the only field on the same
+    // [0,1] scale as a posterior — `baseline` is a difficulty-weighted score in
+    // [0,100]. Requires n > 0: p defaults to 0.5, and a never-practised subtopic
+    // must stay grey rather than claim a coin-flip's worth of knowledge. No
+    // decay is applied — the server already decayed it on write, and re-decaying
+    // an EWMA with BKT's half-life would mix two different models.
+    const sub = _subtopicState(kc);
+    if (sub && Number.isFinite(sub.n) && sub.n > 0 && Number.isFinite(sub.p)) {
+      return { r: Math.max(0, Math.min(1, sub.p)), source: "subtopic" };
+    }
+    return { r: NaN, source: "none" };
   };
+  const kcReadiness = (kc) => kcReadinessInfo(kc).r;
   const kcLastTs = (kc) => {
     const s = _persistedState();
     return s && s.atom_last_ts ? s.atom_last_ts[kc] : null;
@@ -214,11 +236,37 @@
     return bare === key ? [key] : [key, bare];
   };
 
+  // Bare subtopic names are not unique: "Core array literacy" and "Applied
+  // patterns and advanced" each exist under both Numpy and Einsum. The backend
+  // strips the topic prefix before sending state (subtopic_router
+  // `_unprefix_subtopic`), so those two pairs arrive collided under one key —
+  // the numbers a KC gets are then a merge of both topics. Name the merge
+  // rather than pass it off as this lesson's own evidence.
+  const _bareCollisions = () => {
+    const byBare = {};
+    Object.values(lessonMeta).forEach((m) => {
+      const key = m && m.subtopic_key;
+      if (!key) return;
+      const bare = key.includes(": ") ? key.slice(key.indexOf(": ") + 2) : key;
+      (byBare[bare] = byBare[bare] || new Set()).add(key);
+    });
+    return byBare;
+  };
+
   const _subtopicState = (kc) => {
     const state = _learnerState();
     const states = state && state.subtopic_states;
     if (!states) return null;
-    for (const k of _subtopicKeys(kc)) if (states[k]) return { key: k, ...states[k] };
+    const keys = _subtopicKeys(kc);
+    for (const k of keys) {
+      if (!states[k]) continue;
+      // Only the bare-key match can be a merge; the composite is unambiguous.
+      const collided = k === keys[0] ? null : _bareCollisions()[k];
+      const topics = collided && collided.size > 1
+        ? [...collided].map((c) => (c.includes(": ") ? c.slice(0, c.indexOf(": ")) : c)).sort()
+        : null;
+      return { key: k, mergedTopics: topics, ...states[k] };
+    }
     return null;
   };
 
@@ -296,7 +344,7 @@
   const dockHtml = (kc) => {
     const k = kcById[kc];
     if (!k) return dockEmptyHtml();
-    const r = kcReadiness(kc);
+    const { r, source } = kcReadinessInfo(kc);
     const n = _evidenceN(kc);
     const ci = Number.isFinite(r) ? _wilson(r, n) : null;
     const sub = _subtopicState(kc);
@@ -320,17 +368,27 @@
         `<div class="kg2-dock-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>` +
         // Named, because the numbers on the right are subtopic-wide: the count
         // and the accuracy are shared by every concept in the lesson.
-        (sub ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}${sibs > 1 ? ` · shared by ${sibs} concepts` : ""}</div>` : "") +
+        (sub
+          ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}` +
+            (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
+            (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
+            `</div>`
+          : "") +
       `</div>` +
       `<div class="kg2-dock-col kg2-dock-mastery">` +
         `<div class="kg2-dock-headline">` +
           `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong>` +
-          `<span class="kg2-dock-band">${esc(masteryBand(r))}</span>` +
+          `<span class="kg2-dock-band">${esc(masteryBand(r))}` +
+            // The percentage is only about THIS concept when it came from a
+            // per-atom posterior; say so when it didn't.
+            (source === "subtopic" ? ` <span class="kg2-dock-dim">· lesson-level</span>` : "") +
+          `</span>` +
         `</div>` +
         _masteryBar(r, ci) +
         `<div class="kg2-dock-ci-label">` +
           (ci
-            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}</span>`
+            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}` +
+              (source === "subtopic" ? ` across this lesson, not this concept alone` : "") + `</span>`
             : Number.isFinite(r)
               ? `<span class="kg2-dock-dim">No graded attempts behind this estimate yet — treat it as a prior.</span>`
               : `<span class="kg2-dock-dim">No estimate yet — nothing graded has landed on this concept.</span>`) +
