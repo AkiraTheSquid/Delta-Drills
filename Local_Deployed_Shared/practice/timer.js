@@ -516,6 +516,10 @@ const PracticeSession = (() => {
 
   return {
     isActive,
+    // True when a session was paused and is waiting to be resumed. switchTab
+    // needs this to know the question on screen belongs to that session and
+    // must not be replaced by a preference refresh.
+    hasPausedSession: () => !!pausedState,
     start,
     pause,
     resume,

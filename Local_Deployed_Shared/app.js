@@ -39,7 +39,22 @@ const switchTab = (tabName) => {
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
-  if (tabName === "practice" && typeof refreshPracticeQuestionForPreferences === "function") {
+  // Returning to Practice normally re-fetches the question so a preference
+  // change takes effect. But that fetch is DESTRUCTIVE to a session in
+  // progress: the timer's resume check is
+  // `resumeReady = _questionId() === pausedState.questionId`, so swapping in a
+  // different question makes the saved one look gone — Resume greys out with
+  // "Saved question is no longer available", and the re-render leaves the
+  // submit area hidden, which is the "no submit button" dead end. A session
+  // that is running or paused owns the question; leave it alone.
+  const sessionHoldsQuestion =
+    typeof PracticeSession !== "undefined" &&
+    (PracticeSession.isActive() || PracticeSession.hasPausedSession?.());
+  if (
+    tabName === "practice" &&
+    !sessionHoldsQuestion &&
+    typeof refreshPracticeQuestionForPreferences === "function"
+  ) {
     refreshPracticeQuestionForPreferences().catch((err) => {
       console.warn("[practice] failed to refresh preferences:", err);
     });
