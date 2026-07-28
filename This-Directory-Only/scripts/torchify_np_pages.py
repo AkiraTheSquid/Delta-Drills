@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Translate the code fences of the np-2 + np-3 KP pages to PyTorch.
+"""Translate the code fences of a lesson group's KP pages to PyTorch.
 
 Only fenced code is touched.  Prose is left exactly as written and reported at
 the end for hand review, because the prose makes claims — about dtypes, about
@@ -8,27 +8,42 @@ business rewriting.
 
 The page set is read from the KC registry rather than hardcoded, so a KC moving
 between lessons cannot silently leave a page behind in the other dialect.
+
+    .../python torchify_np_pages.py --lessons np-4
 """
+import argparse
 import json
 import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from torchify_np23 import translate  # noqa: E402
+from torchify_np_drills import translate  # noqa: E402
 
 REPO = Path("/home/stellar-thread/Applications/Delta-Drills-Local")
 LESSON_DIR = REPO / "Local_Deployed_Shared/lessons/numpy"
 REGISTRY = REPO / "Local_Deployed_Shared/lessons/kc_registry.json"
-LESSONS = {"np-2", "np-3"}
 
 FENCE = re.compile(r"(```python[^\n]*\n)(.*?)(```)", re.S)
 
 
-def pages() -> list[Path]:
+def lesson_args(argv: list[str] | None = None) -> tuple[set[str], set[str]]:
+    """The CLI flags, shared with the prose pass that imports pages()."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--lessons", nargs="+", required=True,
+                    help="registry lesson ids, e.g. np-4")
+    ap.add_argument("--skip-kc", nargs="*", default=[],
+                    help="KC ids to leave in the NumPy dialect — for a KC whose "
+                         "drills have no torch translation, where converting "
+                         "the page alone would split the page from its drills")
+    args = ap.parse_args(argv)
+    return set(args.lessons), set(args.skip_kc)
+
+
+def pages(lessons: set[str], skip: set[str] = frozenset()) -> list[Path]:
     registry = json.loads(REGISTRY.read_text())
     names = [kc["id"].split(".", 1)[1] for kc in registry["kcs"]
-             if kc["lesson"] in LESSONS]
+             if kc["lesson"] in lessons and kc["id"] not in skip]
     found, missing = [], []
     for name in sorted(names):
         path = LESSON_DIR / f"kp-{name}.md"
@@ -40,8 +55,10 @@ def pages() -> list[Path]:
 
 
 def main() -> int:
-    targets = pages()
-    print(f"{len(targets)} page(s) in {sorted(LESSONS)}")
+    lessons, skip = lesson_args()
+    targets = pages(lessons, skip)
+    print(f"{len(targets)} page(s) in {sorted(lessons)}"
+          + (f", skipping {sorted(skip)}" if skip else ""))
     changed = 0
     for path in targets:
         src = path.read_text()

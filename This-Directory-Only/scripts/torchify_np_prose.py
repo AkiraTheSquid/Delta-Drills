@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mechanical half of the np-2/np-3 prose conversion.
+"""Mechanical half of a lesson group's prose conversion.
 
 Renames ONLY the numpy symbols that torch spells identically, outside code
 fences and outside the frontmatter's KC keys (`kc:`, `supporting:` and friends
@@ -8,13 +8,15 @@ are registry identifiers — renaming them would unhook the page from the graph)
 Everything torch spells differently, or does differently, is deliberately NOT
 in this table: those sentences make claims that have to be rewritten by hand,
 not renamed.  They are printed at the end as the hand-review list.
+
+    .../python torchify_np_prose.py --lessons np-4
 """
 import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from torchify_lessons_np23 import FENCE, pages  # noqa: E402
+from torchify_np_pages import FENCE, lesson_args, pages  # noqa: E402
 
 # Verified present in torch 2.12 under the same name, same meaning.
 SAME_NAME = [
@@ -58,8 +60,9 @@ def split_frontmatter(src: str):
 
 
 def main() -> int:
+    targets = pages(*lesson_args())
     changed = 0
-    for path in pages():
+    for path in targets:
         src = path.read_text()
         front, body = split_frontmatter(src)
         # In the frontmatter only `title:` is prose; the rest are KC ids.
@@ -79,7 +82,7 @@ def main() -> int:
     print(f"{changed} page(s) had prose symbols renamed")
 
     print("\nHAND-REVIEW — prose still naming numpy or a numpy-only API:")
-    for path in pages():
+    for path in targets:
         body = FENCE.sub("", split_frontmatter(path.read_text())[1])
         hits = [ln.strip() for ln in body.splitlines()
                 if re.search(r"\bnumpy\b|\bNumPy\b|\bnp\.|\bndarray\b", ln)]

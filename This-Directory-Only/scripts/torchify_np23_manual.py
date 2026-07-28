@@ -3,7 +3,7 @@
 
 Data, not machinery: everything here is a drill whose numpy function has no
 torch spelling, so a regex cannot translate it.  Kept beside
-`torchify_np23.py` rather than inside it because the two change for different
+`torchify_np_drills.py` rather than inside it because the two change for different
 reasons — the rules change when a numpy API is discovered, these change one
 drill at a time — and because a table of 30-odd rewrites drowns the ~200 lines
 of logic that use it.
@@ -263,6 +263,29 @@ EXCLUDE = {65: "ndarray.flags.writeable has no torch equivalent (read-only tenso
 # A variable named `t` shadows `import torch as t` and makes the drill
 # unrunnable; renamed before translation, since afterwards `t` is the alias.
 SHADOW_RENAMES = {236: ("t", "cutoff")}
+
+
+# --------------------------------------------------------------------------
+# Prompts that instruct the learner in the dialect the drill no longer grades.
+# Nothing executes a prompt, so this is the one kind of leftover numpy the
+# cross-check cannot catch — it surfaces in the learner's head, halfway through
+# an exercise whose grader is testing something else.
+TEXT_PATCHES: dict[int, list[tuple[str, str]]] = {
+    # The drill's promise is that no new tensor is allocated, and in torch it is
+    # the trailing-underscore method that keeps that promise; the four ufuncs
+    # named here have no torch spelling to reach for at all.
+    59: [("use the out= argument of PyTorch's ufuncs (np.add, np.divide, "
+          "np.negative, np.multiply)",
+          "use PyTorch's in-place methods (add_, div_, neg_, mul_)")],
+    # There is no iterator to try: nditer was numpy's way to spell a manual
+    # broadcast loop, so the aside pointed at the one thing the torch answer
+    # never does.  What the learner has to produce is unchanged.
+    111: [("(The classic exercise does this with np.nditer([a, b, None]) — try "
+           "the iterator, though any broadcasting approach grades the same.)",
+           "(Broadcasting is the whole answer: shapes (m, 1) and (1, n) line up "
+           "to (m, n) on their own, so adding the two tensors directly grades "
+           "the same as any explicit loop.)")],
+}
 
 
 # --------------------------------------------------------------------------

@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
-"""Translate the np-2 + np-3 drills from the NumPy dialect to PyTorch.
+"""Translate the array-lesson drills from the NumPy dialect to PyTorch.
 
-Same design rule as the np-1 and einops/einsum passes: *nothing* about an
-expected value is authored.  Every ``expected_output`` and every
-``expected_expr`` in the emitted layer is produced by executing the translated
-answer, and every question is additionally cross-checked by running the
-ORIGINAL numpy answer and the TRANSLATED torch answer over the same inputs.
-That cross-check is what makes the hand-written translations below safe: a
-rewrite that changed the meaning disagrees with numpy and the question is
-refused rather than emitted.
+One lesson group per run: `--lessons np-2 np-3` did np-2/np-3, `--lessons np-4`
+does np-4.  The translation RULES are shared; what differs per group is the set
+of drills whose numpy function has no torch spelling at all, and those live in a
+per-group `--manual` data module.
 
-np-2/np-3 differ from the earlier passes in *kind*, not just in size.  einops
-and einsum are one API each; these two lessons range over masking, selection,
-reductions, broadcasting and linear algebra, and roughly a quarter of the
-drills use a numpy function with no torch spelling at all (``np.ogrid``,
-``np.nditer``, ``np.apply_along_axis``, ``np.argpartition``, ``np.intersect1d``
-…).  Regex cannot translate those, so they are rewritten by hand in MANUAL and
-verified by the same cross-check as everything else.
+Same design rule as every earlier pass: *nothing* about an expected value is
+authored.  Every ``expected_output`` and every ``expected_expr`` in the emitted
+layer is produced by executing the translated answer, and every question is
+additionally cross-checked by running the ORIGINAL numpy answer and the
+TRANSLATED torch answer over the same inputs.  That cross-check is what makes
+the hand-written translations safe: a rewrite that changed the meaning disagrees
+with numpy and the question is refused rather than emitted.
+
+These lessons differ from the einops/einsum passes in *kind*, not just in size.
+einops and einsum are one API each; the array lessons range over masking,
+selection, reductions, broadcasting, linear algebra and applied patterns, and a
+sizeable minority of the drills use a numpy function with no torch spelling at
+all (``np.ogrid``, ``np.nditer``, ``np.apply_along_axis``, ``np.argpartition``,
+``np.intersect1d``, ``np.add.reduceat``, ``np.r_`` …).  Regex cannot translate
+those, so they are rewritten by hand in the manual module and verified by the
+same cross-check as everything else.
 
 Usage — snapshot the PRE-conversion bank first, or the script reads its own
 output:
@@ -24,7 +29,9 @@ output:
     git show <pre-conversion-sha>:Local_Deployed_Shared/questions.json \\
         > This-Directory-Only/scripts/questions_base.json
     This-Directory-Only/backend/.venv/bin/python \\
-        This-Directory-Only/scripts/torchify_np23.py
+        This-Directory-Only/scripts/torchify_np_drills.py \\
+        --lessons np-4 --manual torchify_np4_manual \\
+        --out torch_dialect_overrides_np4.jsonl
 
 Then verify the emitted layer through the real grader:
 
@@ -32,12 +39,15 @@ Then verify the emitted layer through the real grader:
 """
 from __future__ import annotations
 
+import argparse
 import contextlib
+import importlib
 import io
 import json
 import math
 import re
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -54,19 +64,31 @@ from torchify_einops_einsum import (  # noqa: E402
     translate as base_translate,
     _as_tensor,
 )
-from torchify_np23_manual import (  # noqa: E402
-    EXCLUDE,
-    MANUAL,
-    NO_CROSSCHECK,
-    SHADOW_RENAMES,
-)
 
 REPO = Path("/home/stellar-thread/Applications/Delta-Drills-Local")
 BANK = Path(__file__).with_name("questions_base.json")
-OUT = REPO / "This-Directory-Only/chatgpt/torch_dialect_overrides_np23.jsonl"
+CHATGPT = REPO / "This-Directory-Only/chatgpt"
 REGISTRY = REPO / "Local_Deployed_Shared/lessons/kc_registry.json"
 QTAGS = REPO / "Local_Deployed_Shared/lessons/qmatrix_tags.json"
-LESSONS = {"np-2", "np-3"}
+
+
+@dataclass
+class Config:
+    """What changes between lesson groups.  The rules below do not."""
+
+    lessons: frozenset[str]
+    out: Path
+    ids: frozenset[int] = frozenset()
+    manual: dict[int, str] = field(default_factory=dict)
+    exclude: dict[int, str] = field(default_factory=dict)
+    no_crosscheck: dict[int, str] = field(default_factory=dict)
+    shadow_renames: dict[int, tuple[str, str]] = field(default_factory=dict)
+    call_patches: dict[int, list[tuple[str, str]]] = field(default_factory=dict)
+    text_patches: dict[int, list[tuple[str, str]]] = field(default_factory=dict)
+
+
+# Set by main() before anything below runs.
+CFG = Config(lessons=frozenset(), out=CHATGPT / "unset.jsonl")
 
 CROSSCHECKED: dict = {}
 
@@ -122,6 +144,11 @@ _POST_RULES: list[tuple[str, str]] = [
     (r"\bnp\.result_type\(", "t.result_type("),
     (r"\bnp\.quantile\(", "t.quantile("),
     (r"\bnp\.isin\(", "t.isin("),
+    (r"\bnp\.arctan2\(", "t.arctan2("),
+    (r"\bnp\.linalg\.matrix_rank\(", "t.linalg.matrix_rank("),
+    # numpy's `mod` follows the SIGN OF THE DIVISOR, which is torch's
+    # `remainder`, not its `fmod` (that one follows the dividend).
+    (r"\bnp\.mod\(", "t.remainder("),
     (r"\bnp\.linalg\.norm\(", "t.linalg.norm("),
     (r"\bnp\.linalg\.inv\(", "t.linalg.inv("),
     (r"\bnp\.linalg\.det\(", "t.linalg.det("),
@@ -181,6 +208,25 @@ def _fix_diagonal_kwarg(code: str) -> str:
         lambda args: (f"t.round({args[0]}, decimals={args[1]})"
                       if len(args) == 2 and "=" not in args[1]
                       else "t.round(" + ", ".join(args) + ")"),
+    )
+    # numpy reads `full(5, 3.0)` as a length; torch demands a shape tuple.
+    # Only a literal count is wrapped — a NAME there is already a shape in
+    # every drill that uses one, and wrapping it nests a tuple inside a tuple.
+    code = _rewrite_calls(
+        code, "t.full",
+        lambda args: ("t.full(({},), {})".format(args[0], ", ".join(args[1:]))
+                      if args and args[0].isdigit()
+                      else "t.full(" + ", ".join(args) + ")"),
+    )
+    # numpy counts a plain list; torch wants the tensor.  Only bincount: for
+    # zeros/ones/reshape a leading list IS the shape, and wrapping it would be
+    # wrong.
+    code = _rewrite_calls(
+        code, "t.bincount",
+        lambda args: ("t.bincount(t.tensor({}){})".format(
+            args[0], "".join(", " + a for a in args[1:]))
+            if args and args[0][:1] == "["
+            else "t.bincount(" + ", ".join(args) + ")"),
     )
     return code
 
@@ -387,6 +433,17 @@ def derandomize(code: str, keep: str = "") -> str:
                     lambda m: _unit_fixture(_dims(m.group(1))))
     code = _sub_all(code, r"\w+\.standard_normal\(\(([^)]*)\)\)",
                     lambda m: _signed_fixture(_dims(m.group(1))))
+    code = _sub_all(code, r"\w+\.uniform\(([^,]+),\s*([^,]+),\s*\(([^)]*)\)\)",
+                    lambda m: _unit_fixture(_dims(m.group(3))))
+    # A dirichlet draw is a matrix of PROBABILITY ROWS, and the drill that
+    # takes one samples a category per row — a stand-in that does not sum to 1
+    # per row is not the same question, so the fixture is normalized.
+    code = _sub_all(
+        code, r"\w+\.dirichlet\((?:np|t)\.ones\((\d+)\),\s*size=(\d+)\)",
+        lambda m: (f"({_unit_fixture([int(m.group(2)), int(m.group(1))])})"
+                   ".div(({}).sum(dim=1, keepdim=True))".format(
+                       _unit_fixture([int(m.group(2)), int(m.group(1))]))),
+    )
 
     # Drop the generator only once nothing still uses it.  #101 is handed one
     # as an argument, so there its assignment survives and becomes the torch
@@ -419,13 +476,47 @@ def targets() -> list[dict]:
     picked = []
     for qid, tag in tags.items():
         lessons = {lesson_of.get(k) for k in tag.get("target_kcs", [])}
-        if lessons & LESSONS and int(qid) in bank:
+        if lessons & CFG.lessons and int(qid) in bank:
             picked.append(bank[int(qid)])
+    # `--ids` reaches the questions no lesson claims: the parked CNN/backprop
+    # pool has no KC tags yet, so it is unreachable by lesson.
+    picked += [bank[qid] for qid in sorted(CFG.ids) if qid in bank]
     picked.sort(key=lambda q: q["id"])
     return picked
 
 
-def main() -> int:
+def load_config(argv: list[str] | None = None) -> Config:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--lessons", nargs="*", default=[],
+                    help="registry lesson ids to convert, e.g. np-4")
+    ap.add_argument("--ids", nargs="*", type=int, default=[],
+                    help="explicit question ids, for questions no lesson tags")
+    ap.add_argument("--manual", required=True,
+                    help="module beside this script holding the hand-written "
+                         "translations (MANUAL/EXCLUDE/NO_CROSSCHECK/"
+                         "SHADOW_RENAMES)")
+    ap.add_argument("--out", required=True,
+                    help="layer filename, written into This-Directory-Only/chatgpt/")
+    args = ap.parse_args(argv)
+    if not args.lessons and not args.ids:
+        ap.error("give --lessons, --ids, or both")
+    mod = importlib.import_module(args.manual)
+    return Config(
+        lessons=frozenset(args.lessons),
+        ids=frozenset(args.ids),
+        out=CHATGPT / args.out,
+        manual=getattr(mod, "MANUAL", {}),
+        exclude=getattr(mod, "EXCLUDE", {}),
+        no_crosscheck=getattr(mod, "NO_CROSSCHECK", {}),
+        shadow_renames=getattr(mod, "SHADOW_RENAMES", {}),
+        call_patches=getattr(mod, "CALL_PATCHES", {}),
+        text_patches=getattr(mod, "TEXT_PATCHES", {}),
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
+    global CFG
+    CFG = load_config(argv)
     picked = targets()
     records, failures = [], []
     for q in picked:
@@ -434,14 +525,14 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 — report, do not emit
             failures.append((q["id"], f"{type(exc).__name__}: {exc}"))
 
-    OUT.write_text("".join(json.dumps(r) + "\n" for r in records))
-    print(f"emitted {len(records)} / {len(picked)} -> {OUT.name}")
+    CFG.out.write_text("".join(json.dumps(r) + "\n" for r in records))
+    print(f"emitted {len(records)} / {len(picked)} -> {CFG.out.name}")
     checked = sum(c for c, _ in CROSSCHECKED.values())
     total = sum(n for _, n in CROSSCHECKED.values())
     print(f"cross-checked numpy-vs-torch on {checked} / {total} test cases")
     weak = sorted(q for q, (c, n) in CROSSCHECKED.items() if c < n)
     print(f"questions with any unchecked case: {len(weak)} -> {weak}")
-    print(f"hand-written translations: {sorted(MANUAL)}")
+    print(f"hand-written translations: {sorted(CFG.manual)}")
     if failures:
         print(f"\n{len(failures)} FAILED:")
         for qid, msg in failures:
@@ -454,9 +545,35 @@ def main() -> int:
 _ROW_ASSIGN = re.compile(r"^(\s*\w+\[[^\]]*\]\s*=\s*)(\[[^\]]*\])\s*$", re.M)
 
 
+# A derandomized fixture, as emitted by the _*_fixture helpers above.
+_FIXTURE_ASSIGN = re.compile(r"^(\s*\w+\s*=\s*)(\(+t\.arange\(.*)$", re.M)
+
+
+def decollide(code: str) -> str:
+    """Keep two independent random fixtures from collapsing to one array.
+
+    Derandomizing is per-CALL, not per-variable, so a setup drawing `a` and `b`
+    from the same distribution gets the same stand-in for both.  That silently
+    guts the test: #84 averages two arrays, and with a == b the average IS a, so
+    a learner who returns the first argument passes.  Rolling the duplicate
+    keeps the distribution, the range and the dyadic values — only the order
+    changes, which is enough to make the two arrays genuinely different.
+    """
+    seen: dict[str, int] = {}
+
+    def fix(m: re.Match) -> str:
+        expr = m.group(2)
+        n = seen.get(expr, 0)
+        seen[expr] = n + 1
+        return m.group(0) if n == 0 else f"{m.group(1)}({expr}).roll({n})"
+
+    return _FIXTURE_ASSIGN.sub(fix, code)
+
+
 def translate_setup(code: str, keep: str = "") -> str:
     code = derandomize(translate(code), keep)
     code = _ROW_ASSIGN.sub(r"\1t.tensor(\2)", code)
+    code = decollide(code)
     if "import torch as t" not in code:
         code = "import torch as t\n" + code
     return code
@@ -481,21 +598,21 @@ def demo_block(original: str) -> str:
 
 def convert(q: dict) -> dict:
     qid = q["id"]
-    if qid in EXCLUDE:
-        raise ValueError(f"excluded by design: {EXCLUDE[qid]}")
+    if qid in CFG.exclude:
+        raise ValueError(f"excluded by design: {CFG.exclude[qid]}")
 
-    ren = SHADOW_RENAMES.get(qid)
+    ren = CFG.shadow_renames.get(qid)
 
     def unshadow(text: str) -> str:
         return re.sub(rf"\b{re.escape(ren[0])}\b", ren[1], text) if ren else text
 
     answer_np = q["answer_code"]
-    if qid in MANUAL:
+    if qid in CFG.manual:
         # Keep the original demo block.  These are stdout_prediction drills:
         # the trailing `print(solve(...))` IS the question's expected output,
         # and an answer without one exports an empty stdout, so the exporter
         # keeps the stale NUMPY-formatted string against a torch drill.
-        answer = ("import torch as t\n" + MANUAL[qid].strip() + "\n\n\n"
+        answer = ("import torch as t\n" + CFG.manual[qid].strip() + "\n\n\n"
                   + demo_block(answer_np)).rstrip() + "\n"
     else:
         # The demo block at the bottom of an answer builds its own fixture, so
@@ -504,8 +621,12 @@ def convert(q: dict) -> dict:
 
     # The starter carries the same demo block as the answer, so it needs the
     # list-assignment fix too — the audit gate execs starters, and a raw list
-    # assigned into a tensor is a blocking setup_exec_error.
-    starter = _ROW_ASSIGN.sub(r"\1t.tensor(\2)", translate(unshadow(q["starter_code"])))
+    # assigned into a tensor is a blocking setup_exec_error.  It also needs
+    # derandomizing: the sandbox preloads numpy, so a starter still handing
+    # `solve` a numpy Generator RUNS, and then fails the moment the learner
+    # writes the torch call the grader is actually testing.
+    starter = _ROW_ASSIGN.sub(
+        r"\1t.tensor(\2)", derandomize(translate(unshadow(q["starter_code"]))))
 
     stripped = re.sub(r"np\.load\('/delta_numbers\.npy'\)", "", answer)
     if "np." in stripped or "from numpy" in stripped:
@@ -523,6 +644,7 @@ def convert(q: dict) -> dict:
     solve_np = env_np["solve"]
 
     cases = []
+    patched_used: set[str] = set()
     for case in q.get("test_cases") or []:
         args = call_args(case["call"])
         if args is None:
@@ -536,7 +658,17 @@ def convert(q: dict) -> dict:
 
         raw = f"solve({args})"
         raw_value = eval(raw, senv)
-        body = translate_call(unshadow(case["call"]))
+        # A few calls assert something numpy-only about the RESULT — its dtype
+        # spelling, or that it shares memory with the input.  Those claims are
+        # the point of the drill, so they are re-spelled in torch rather than
+        # dropped, and they cannot be a rule: the torch spelling depends on
+        # which fixture the call is comparing against.
+        patched = unshadow(case["call"])
+        for old, new in CFG.call_patches.get(qid, ()):
+            if old in patched:
+                patched = patched.replace(old, new)
+                patched_used.add(old)
+        body = translate_call(patched)
 
         # Bind the result to a name and call solve() exactly ONCE.  Several of
         # these drills mutate in place, and a call expression that mentions
@@ -581,11 +713,38 @@ def convert(q: dict) -> dict:
 
         cases.append({"setup_code": setup, "call": call, "expected_expr": lit})
 
+    # A patch that matched nothing is a stale entry pointing at a call that has
+    # since been rewritten — silently keeping it would leave the numpy-only
+    # assertion in place on the next question that inherits it.
+    unused = [old for old, _ in CFG.call_patches.get(qid, ())
+              if old not in patched_used]
+    if unused:
+        raise ValueError(f"call patch never matched any case: {unused}")
+
     verify_equivalence(q, solve_np, solve_t)
+
+    # The PROMPT can name a numpy API too, and unlike the code nothing executes
+    # it — a drill telling the learner to reach for `np.nditer` while the
+    # grader tests a torch answer fails silently, in the learner's head.
+    text = fix_text(unshadow(q.get("question_text") or ""))
+    for old, new in CFG.text_patches.get(qid, ()):
+        if old not in text:
+            raise ValueError(f"text patch never matched: {old!r}")
+        text = text.replace(old, new)
+    # Only a DOTTED name is refused, and every question is checked including
+    # the patched ones — a patch that fixes one sentence must not buy the rest
+    # of the prompt an exemption.  fix_text has already rewritten every bare
+    # `numpy`/`NumPy` to `PyTorch`, so the library's name cannot reach here on
+    # its own; what survives is `np.something`, which is an instruction to call
+    # the dialect this pass just left.  A deliberate contrast names the LIBRARY
+    # ("unlike numpy, torch …") and a patch is free to write that — it is not
+    # free to leave a call behind.
+    if re.search(r"\bnp\.", text):
+        raise ValueError(f"prompt still names a numpy API: {text[:160]!r}")
 
     return {
         "id": qid,
-        "question_text": fix_text(unshadow(q.get("question_text") or "")),
+        "question_text": text,
         "function_name": q.get("function_name", "solve"),
         "submission_mode": "function",
         "starter_code": starter,
@@ -595,10 +754,25 @@ def convert(q: dict) -> dict:
     }
 
 
+def _torchify_arg(v):
+    """The torch form of one numpy argument, for the cross-check.
+
+    A LIST of arrays is an argument in its own right — np-4 hands `solve` a
+    list of blocks to assemble — so the list is rebuilt with tensor elements
+    rather than passed through as numpy, which fails on the first assignment
+    into a tensor.
+    """
+    if isinstance(v, np.ndarray):
+        return _as_tensor(v.copy())
+    if isinstance(v, list) and v and all(isinstance(e, np.ndarray) for e in v):
+        return [_as_tensor(e.copy()) for e in v]
+    return v
+
+
 def verify_equivalence(q: dict, solve_np, solve_t) -> None:
     """Run both dialects over identical inputs and require agreement."""
     qid = q["id"]
-    if qid in NO_CROSSCHECK:
+    if qid in CFG.no_crosscheck:
         CROSSCHECKED[qid] = (0, 0)
         return
 
@@ -625,8 +799,7 @@ def verify_equivalence(q: dict, solve_np, solve_t) -> None:
         # Only arrays become tensors.  Shapes, dicts and scalars pass through
         # untouched: turning a `(3, 3)` shape tuple or a lookup dict into a
         # tensor changes what the drill is being asked.
-        t_vals = [_as_tensor(v.copy()) if isinstance(v, np.ndarray) else v
-                  for v in np_vals]
+        t_vals = [_torchify_arg(v) for v in np_vals]
         try:
             got_np = solve_np(*np_vals)
         except Exception:

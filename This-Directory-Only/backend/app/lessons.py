@@ -169,16 +169,14 @@ def torch_only_serving() -> bool:
     That makes "add more problems as needed" mechanically safe: converting a
     question unparks it, and nothing has to be remembered or maintained.
 
-    Default is OFF, unlike kc_only_serving, and the asymmetry is deliberate.
-    Parking un-tagged questions is safe because tagged ones remain; parking
-    un-converted ones is NOT safe until conversion has produced something to
-    serve — with zero torch questions in the bank this gate empties the
-    selection pool entirely (by-id stays complete, so history and in-flight
-    attempts still resolve, but nothing is selectable). There is also no mixed
-    state to protect against yet: the lessons are still numpy.
+    Default is ON as of 2026-07-28: every served lesson (np-1..np-4, einsum,
+    einops) now teaches torch, so a numpy drill can only contradict the lesson
+    that just ran. What this parks is the residue that has no torch form at
+    all — q65's `ndarray.flags.writeable` and the retired structured-dtypes
+    drills (record dtypes, datetime64, genfromtxt: a tensor is homogeneous) —
+    plus any un-tagged numpy question outside the course. By-id lookup stays
+    complete, so history and in-flight attempts still resolve; only the
+    SELECTION pools narrow.
 
-    FLIP THIS DEFAULT TO "1" when the first lesson's conversion lands — at
-    that point the numpy drills start contradicting a torch lesson, and the
-    protection is worth more than the questions it parks. Until then set
-    DELTA_TORCH_ONLY=1 to preview the converted-only pool."""
-    return os.environ.get("DELTA_TORCH_ONLY", "0").strip().lower() not in {"0", "false", "no"}
+    Set DELTA_TORCH_ONLY=0 to serve the numpy residue again."""
+    return os.environ.get("DELTA_TORCH_ONLY", "1").strip().lower() not in {"0", "false", "no"}

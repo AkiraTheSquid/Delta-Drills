@@ -18,30 +18,36 @@ tools you own:
 
 > 1. **Where do runs start?** At index 0, and wherever an element differs
 >    from its predecessor: `a[1:] != a[:-1]` (shifted-slice comparison),
->    positions via `np.flatnonzero` (+1 for the shift).
+>    positions via `t.nonzero(..., as_tuple=True)[0]` (+1 for the shift).
 > 2. **Values** = the elements at the start positions: `a[starts]`.
-> 3. **Counts** = differences between consecutive starts (with the array
->    length appended as the final fence): `np.diff(np.r_[starts, a.size])`.
+> 3. **Counts** = differences between consecutive starts (with the tensor
+>    length appended as the final fence):
+>    `t.diff(t.cat([starts, t.tensor([a.numel()])]))`.
 
-`np.r_[...]` is the row-concatenation shorthand (`np.r_[0, idx]` prepends a
-0). The whole encoder is three lines of slicing, nonzero, and diff — a
-model example of composing primitives. Related one-liners: collapse
-consecutive duplicates = `a[np.r_[True, a[1:] != a[:-1]]]` (keep each run's
-first element); decode an RLE = `np.repeat(values, counts)`.
+Where numpy had `np.r_[...]` as concatenation shorthand, torch has `t.cat`,
+and `cat` takes TENSORS only — a bare `0` or `True` has to become
+`t.zeros(1, dtype=t.int64)` or `t.tensor([True])` first. That is the one real
+friction in this pattern; the rest is identical. The whole encoder is three
+lines of slicing, nonzero, and diff — a model example of composing
+primitives. Related one-liners: collapse consecutive duplicates =
+`a[t.cat([t.tensor([True]), a[1:] != a[:-1]])]` (keep each run's first
+element); decode an RLE = `t.repeat_interleave(values, counts)`.
 
 **Cartesian products.** Every combination of one element per array:
-`np.meshgrid(*arrays, indexing='ij')` builds one coordinate grid per input
+`t.meshgrid(*arrays, indexing='ij')` builds one coordinate grid per input
 (`'ij'` keeps the first array's axis FIRST — the ordering that makes output
-rows lexicographic), then ravel each grid and stack as columns → shape
+rows lexicographic; torch REQUIRES you to say which, where numpy defaulted to
+`'xy'`), then ravel each grid and stack as columns → shape
 (∏ lengths, n_arrays).
 
-**Row-level set operations.** unique-with-axis handles distinct rows; for
-"rows in both a and b" the standard trick converts each row to a single
-comparable unit — e.g. a *structured view* (each row becomes one record) so
-`np.intersect1d` applies, or for small integer alphabets, encode rows as
-scalars (base-K positional encoding) and intersect those. Order-of-first-
-appearance variants combine `return_index=True` with a sort of the indices
-(as in the unique KP).
+**Row-level set operations.** `t.unique(z, dim=0)` handles distinct rows. For
+"rows in both a and b" torch has no `intersect1d` at all — compose instead:
+`ua = t.unique(a); ua[t.isin(ua, b)]` for values, or for rows, encode each
+row as a single comparable scalar (base-K positional encoding for small
+integer alphabets) and intersect those. Order-of-first-appearance variants
+need work, because `t.unique` has **no `return_index`**: ask for
+`return_inverse=True` instead and recover each value's first position by
+scattering positions back with `reduce="amin"` (as in the unique KP).
 
 ## Worked example
 
@@ -49,41 +55,43 @@ Task: RLE-encode a vector, verify by decoding; build a cartesian product of
 two arrays.
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([1, 1, 2, 3, 3, 3])
+a = t.tensor([1, 1, 2, 3, 3, 3])
 
 # 1. Run starts: index 0 plus every "different from predecessor" position.
-starts = np.r_[0, 1 + np.flatnonzero(a[1:] != a[:-1])]
+changes = t.nonzero(a[1:] != a[:-1], as_tuple=True)[0] + 1
+starts = t.cat([t.zeros(1, dtype=t.int64), changes])
 assert starts.tolist() == [0, 2, 3]
 
 # 2-3. Values at the starts; counts as fenced differences.
 values = a[starts]
-counts = np.diff(np.r_[starts, a.size])
+counts = t.diff(t.cat([starts, t.tensor([a.numel()])]))
 assert values.tolist() == [1, 2, 3]
 assert counts.tolist() == [2, 1, 3]
 
-# Round-trip check: repeat decodes RLE exactly.
-assert np.repeat(values, counts).tolist() == a.tolist()
+# Round-trip check: repeat_interleave decodes RLE exactly.
+assert t.repeat_interleave(values, counts).tolist() == a.tolist()
 
 # Cartesian product of [1,2] x [10,20,30]: 6 rows, lexicographic.
-arrays = [np.array([1, 2]), np.array([10, 20, 30])]
-grids = np.meshgrid(*arrays, indexing='ij')
-prod = np.stack([g.ravel() for g in grids], axis=1)
-assert prod.shape == (6, 2)
+arrays = [t.tensor([1, 2]), t.tensor([10, 20, 30])]
+grids = t.meshgrid(*arrays, indexing='ij')
+prod = t.stack([g.ravel() for g in grids], dim=1)
+assert tuple(prod.shape) == (6, 2)
 assert prod.tolist() == [[1, 10], [1, 20], [1, 30],
                          [2, 10], [2, 20], [2, 30]]
 ```
 
 Why each step:
 
-1. The `+1` on the flatnonzero result compensates for the slice shift
+1. The `+1` on the nonzero result compensates for the slice shift
    (`a[1:] != a[:-1]` compares position i+1 with i) — narrate it or you'll
    drop it. The prepended 0 encodes "the first run starts at 0", which the
-   comparison can't see.
-2. The fence `np.r_[starts, a.size]` turns "count = next start − this start"
-   into a uniform diff, final run included — the same prepend/append move as
-   the cumsum windows trick.
+   comparison can't see, and it has to be `t.zeros(1, dtype=t.int64)` so
+   `cat` sees a tensor of the index dtype.
+2. The fence `t.cat([starts, t.tensor([a.numel()])])` turns "count = next
+   start − this start" into a uniform diff, final run included — the same
+   prepend/append move as the cumsum windows trick.
 3. In the cartesian product, `indexing='ij'` is what makes the FIRST array
    vary slowest (lexicographic rows); the default 'xy' swaps the first two
    axes and scrambles the expected order.
@@ -94,24 +102,26 @@ Why each step:
 Run-length encoding as (values, counts).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """(run values in order, run lengths)."""
-    starts = np.r_[0, 1 + np.flatnonzero(a[1:] != a[:-1])]
+    changes = t.nonzero(a[1:] != a[:-1], as_tuple=True)[0] + 1
+    starts = t.cat([t.zeros(1, dtype=t.int64), changes])
     values = a[_____]
-    counts = np.diff(np.r_[_____, a.size])
+    counts = t.diff(t.cat([_____, t.tensor([a.numel()])]))
     return values, counts
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """(run values in order, run lengths)."""
-    starts = np.r_[0, 1 + np.flatnonzero(a[1:] != a[:-1])]
+    changes = t.nonzero(a[1:] != a[:-1], as_tuple=True)[0] + 1
+    starts = t.cat([t.zeros(1, dtype=t.int64), changes])
     values = a[starts]
-    counts = np.diff(np.r_[starts, a.size])
+    counts = t.diff(t.cat([starts, t.tensor([a.numel()])]))
     return values, counts
 ```
 
@@ -126,20 +136,20 @@ def solve(a):
 
 ## Independent practice
 
-From the drill bank: q199 (rows common to two 2-D arrays — make rows
+From the drill bank: q199 (rows common to two 2-D tensors — make rows
 comparable units first), q205 (distinct rows in order of FIRST appearance —
-unique axis=0 + return_index + sort), q143 (collapse consecutive duplicates —
-the keep-run-starts mask).
+`unique(dim=0, return_inverse=True)`, then recover first positions), q143
+(collapse consecutive duplicates — the keep-run-starts mask).
 
 ## Misconceptions
 
 - **"RLE needs itertools.groupby."** — The shifted-slice comparison +
-  flatnonzero + diff pipeline is fully vectorized; groupby iterates in
-  Python. Same information, orders of magnitude apart on long arrays.
-- **"np.unique solves 'distinct rows in appearance order'."** — Bare unique
-  SORTS (lexicographically with axis=0). Appearance order requires
-  return_index and re-sorting by those indices — two extra steps the sorted
-  default hides.
+  nonzero + diff pipeline is fully vectorized; groupby iterates in
+  Python. Same information, orders of magnitude apart on long tensors.
+- **"t.unique solves 'distinct rows in appearance order'."** — Bare unique
+  SORTS (lexicographically with `dim=0`). Appearance order needs the inverse
+  map and a first-position recovery — and torch gives you no `return_index`
+  shortcut, so this is genuinely more work than it was in numpy.
 - **"Cartesian products need nested loops."** — meshgrid + ravel + stack;
   the loops exist only inside compiled code. For 3+ arrays, unpack the list:
-  `np.meshgrid(*arrays, indexing='ij')`.
+  `t.meshgrid(*arrays, indexing='ij')`.
