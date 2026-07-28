@@ -2,7 +2,7 @@
 
 ## Purpose
 - The array-programming knowledge-point lessons (44 KPs across registry lessons np-1..np-4): first-encounter teaching for every array KC in the drill course.
-- **Mid-migration to the PyTorch dialect.** np-1 ("Arrays from the ground up", 12 KPs) is converted: it teaches `import torch as t`, matching ARENA 0.0, which the 64-KC graph mirrors. np-2..np-4 still teach NumPy. The folder name is historical.
+- **Mid-migration to the PyTorch dialect.** np-1 ("Arrays from the ground up", 12 KPs), np-2 ("Indexing and selection", 11 KPs) and np-3 ("Vectorization and broadcasting", 11 KPs) are converted: they teach `import torch as t`, matching ARENA 0.0, which the 64-KC graph mirrors. Only np-4 ("Applied patterns", 9 KPs) still teaches NumPy. The folder name is historical.
 
 ## Owns
 - One `kp-<slug>.md` per NumPy KC — concept prose, worked examples, faded/guided/independent exercise assignments, misconceptions.
@@ -46,6 +46,7 @@
   - Prevention/fix: use dyadic values in worked examples (0.25, 0.5, 0.75, 3.5, 9.5 — exact in binary), or assert with a tolerance. The grader itself is tolerant; only the lesson fences use bare `==`.
 
 ## Recent Changes
+- 2026-07-28: np-2 and np-3's 22 KPs converted to the PyTorch dialect alongside their 120 bank questions. Several pages changed in SUBSTANCE, not just spelling, because the torch behaviour is the opposite of what they taught: `kp-centering` (torch `std` divides by n−1, NumPy by n — the population version now needs `correction=0`), `kp-inplace-out` (torch marks in-place with a trailing underscore, and `x.sort()` is NOT in place — there is no `sort_`), `kp-nonzero-argwhere` (torch's default is coordinate rows; the NumPy tuple layout needs `as_tuple=True`), `kp-topk-selection` (no partition/argpartition — `t.topk` returns values AND indices, already sorted), `kp-where-select` and `kp-rescaling` (no ufunc `where=` — masked assignment instead), `kp-sliding-windows` (`Tensor.unfold`, no stride_tricks or `convolve`), `kp-pad-borders` (`t.nn.functional.pad` takes LAST-dimension-first pairs), `kp-index-grids` (no `ogrid`), `kp-cumulative-diff` (`cummax`/`cummin` instead of `ufunc.accumulate`; `cumsum` requires `dim`) and `kp-unique` (no `intersect1d`/`union1d`/`setdiff1d` — compose `unique` with `isin`). q65 was dropped from `kp-inplace-out`'s independent list: `ndarray.flags.writeable` has no torch equivalent, so that one drill stays NumPy.
 - 2026-07-27: np-1's 12 KPs converted to the PyTorch dialect alongside their 49 bank questions. Several KPs gained torch-specific content the NumPy version had no reason to teach: `t.flip` (negative slice steps are rejected), `.repeat` vs `repeat_interleave` (the names swap meaning against NumPy), `t.sort` returning a (values, indices) pair, `meshgrid`'s mandatory `indexing=`, and float32-vs-float64 defaults. `watch.py` filled with the lesson↔drill dialect check.
 - 2026-07-19: ~20 KPs restructured into single-concept segments; np-1 openers trimmed to one-worked-example rhythm (pilot for Seth's review).
 - 2026-07-15: Initial 33 KPs authored (Pass 1).

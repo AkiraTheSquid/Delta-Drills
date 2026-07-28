@@ -13,27 +13,28 @@ independent: [24, 61]
 `min`/`max` tell you the extreme **value**; the `arg` twins tell you **where
 it lives**:
 
-- **`np.argmin(v)` / `v.argmin()`** — index of the smallest element.
-- **`np.argmax(v)` / `v.argmax()`** — index of the largest.
+- **`t.argmin(v)` / `v.argmin()`** — index of the smallest element.
+- **`t.argmax(v)` / `v.argmax()`** — index of the largest.
 
 **Ties break to the first occurrence.** If the extreme value appears more
 than once, you get the smallest index — deterministically. Many drills state
 "replace only the first occurrence"; argmin/argmax gives exactly that for
 free.
 
-Like other reductions, the result is a NumPy scalar; wrap in `int(...)` when
+Like other reductions, the result is a 0-dim TENSOR, not a Python int;
+wrap in `int(...)` when
 a plain Python int is required. (Per-row/column argmax with `axis=` appears
 in the broadcasting lesson — same idea, one axis at a time.)
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-v = np.array([4.0, 2.0, 7.0, 2.0, 9.0])
+v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
 # Index of the minimum. 2.0 appears twice — argmin reports the FIRST.
-i = int(np.argmin(v))
+i = int(t.argmin(v))
 assert i == 1
 
 # The value at that index is the min itself.
@@ -41,7 +42,7 @@ assert v[i] == v.min()
 ```
 
 Why: `int(...)` at the boundary again — graders asking for "a plain Python
-int" reject `np.int64`. And `v[v.argmax()]` is how you get the value back
+int" reject `t.int64`. And `v[v.argmax()]` is how you get the value back
 when you need both.
 
 ## Faded practice
@@ -50,19 +51,19 @@ when you need both.
 Index of the smallest element (first occurrence on ties), as a plain int.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(v):
     """Index of v's smallest element, first occurrence on ties."""
-    return int(np._____(v))
+    return int(t._____(v))
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(v):
     """Index of v's smallest element, first occurrence on ties."""
-    return int(np.argmin(v))
+    return int(t.argmin(v))
 ```
 
 ## Concept: the index as a handle for surgery
@@ -77,12 +78,12 @@ assign through the index. It reads cleanest and never backfires.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-v = np.array([4.0, 2.0, 7.0, 2.0, 9.0])
+v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
 # Replace the max with 0 on a copy: the index is the handle.
-out = v.copy()
+out = v.clone()
 out[out.argmax()] = 0.0          # argmax -> 4; out[4] = 0
 assert out.tolist() == [4.0, 2.0, 7.0, 2.0, 0.0]
 assert v.tolist() == [4.0, 2.0, 7.0, 2.0, 9.0]   # input intact
@@ -97,29 +98,29 @@ Why: the copy-then-assign order matters when the input must survive —
 Largest entry replaced with 0 (first occurrence only), input untouched.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """x with its largest entry replaced by 0.0, without mutating x."""
     result = x._____()
-    result[np.argmax(x)] = 0.0
+    result[t.argmax(x)] = 0.0
     return result
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """x with its largest entry replaced by 0.0, without mutating x."""
-    result = x.copy()
-    result[np.argmax(x)] = 0.0
+    result = x.clone()
+    result[t.argmax(x)] = 0.0
     return result
 ```
 
 ## Concept: closest-to-target — argmin on a transformed array
 
 argmin/argmax compose with transformed arrays. The pattern
-`np.argmin(np.abs(z - target))` answers "which entry is *closest to*
+`t.argmin(t.abs(z - target))` answers "which entry is *closest to*
 target?" — build the quantity you want minimized, then ask where its minimum
 sits. Any "closest / best / most-similar" task is this pattern with a
 different transform.
@@ -130,13 +131,13 @@ Keep the roles straight: the *transformed* array chooses the index; the
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-v = np.array([4.0, 2.0, 7.0, 2.0, 9.0])
+v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
 # "Closest to target" = argmin of a transformed array.
 target = 6.5
-j = int(np.argmin(np.abs(v - target)))
+j = int(t.argmin(t.abs(v - target)))
 assert j == 2                     # |7.0 - 6.5| = 0.5 is the smallest gap
 closest_value = v[j]
 assert closest_value == 7.0
@@ -151,19 +152,19 @@ Why: no sorting needed — sorting is O(n log n) and loses positions;
 The INDEX of the entry closest to target, as a plain int.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, target):
     """Index of the entry of z closest to target."""
-    return int(np.argmin(np._____(z - target)))
+    return int(t.argmin(t._____(z - target)))
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, target):
     """Index of the entry of z closest to target."""
-    return int(np.argmin(np.abs(z - target)))
+    return int(t.argmin(t.abs(z - target)))
 ```
 
 ## Independent practice

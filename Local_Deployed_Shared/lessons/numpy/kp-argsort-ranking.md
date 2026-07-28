@@ -10,7 +10,7 @@ independent: [183]
 
 ## Concept: sort-by — argsort as a row order
 
-`np.sort` rearranges values. **`np.argsort` returns the indices that WOULD
+`t.sort` rearranges values. **`t.argsort` returns the indices that WOULD
 sort them** — and that indirection is the tool.
 
 First use: **sort one thing by another ("sort-by")**. To reorder a matrix's
@@ -19,15 +19,15 @@ inside out — argsort of the key column gives the row order; fancy indexing
 applies that order to whole rows. The rows travel intact; only their sequence
 changes. Any "sort records by field" task is this two-step.
 
-Note what is NOT happening: no row contents are sorted — `np.sort(z, axis=0)`
+Note what is NOT happening: no row contents are sorted — `t.sort(z, axis=0)`
 would destroy the records by sorting each column independently.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([[10, 3],
+z = t.tensor([[10, 3],
               [20, 1],
               [30, 2]])
 
@@ -48,7 +48,7 @@ readable forever after.
 Reorder rows so that column k is ascending.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, k):
     """Rows of z reordered so column k comes out ascending."""
@@ -56,7 +56,7 @@ def solve(z, k):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, k):
     """Rows of z reordered so column k comes out ascending."""
@@ -65,7 +65,7 @@ def solve(z, k):
 
 ## Concept: ranks — argsort twice
 
-**Ranks.** The composition `np.argsort(np.argsort(z))` assigns each element
+**Ranks.** The composition `t.argsort(t.argsort(z))` assigns each element
 its 0-based rank (0 = smallest). First argsort: "who is in each sorted
 position"; second: "what position does each element hold" — the inverse
 permutation. For distinct values this is THE rank formula worth memorizing.
@@ -76,11 +76,11 @@ i?", ranks answer the inverse question — hence argsort twice.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Ranks (0 = smallest) via double argsort — the inverse permutation.
-v = np.array([30.0, 10.0, 20.0])
-ranks = np.argsort(np.argsort(v))
+v = t.tensor([30.0, 10.0, 20.0])
+ranks = t.argsort(t.argsort(v))
 assert ranks.tolist() == [2, 0, 1]       # 30 is largest -> rank 2
 ```
 
@@ -94,7 +94,7 @@ elements→positions.
 Each element's 0-based rank (values distinct), reported at its own position.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """0-based rank of each element: smallest -> 0, at each element's slot."""
@@ -102,7 +102,7 @@ def solve(z):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """0-based rank of each element: smallest -> 0, at each element's slot."""
@@ -111,24 +111,24 @@ def solve(z):
 
 ## Concept: top-k — the tail of an argsort
 
-**Top-k.** The k largest values' indices: `np.argsort(z)[-k:][::-1]`
+**Top-k.** The k largest values' indices: `t.argsort(z)[-k:][::-1]`
 (ascending order → take the tail → flip to largest-first). When k is small
-and n is huge, `np.argpartition(z, -k)` finds an unordered top-k in linear
+and n is huge, `t.topk(z, k)` finds the top-k in linear
 time — partial ordering for free; sort just those k afterwards if order
 matters.
 
 Direction control, since argsort has no `descending=`: argsort the negated
-array (`np.argsort(-z)`) or flip the result (`[::-1]`) — same options as
+array (`t.argsort(-z)`) or flip the result (`[::-1]`) — same options as
 sort.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Indices of the top-2 values, largest first.
-w = np.array([5.0, 9.0, 1.0, 7.0])
-top2 = np.argsort(w)[-2:][::-1]
+w = t.tensor([5.0, 9.0, 1.0, 7.0])
+top2 = t.argsort(w)[-2:].flip(0)
 assert top2.tolist() == [1, 3]           # 9.0 at index 1, then 7.0 at 3
 assert w[top2].tolist() == [9.0, 7.0]    # indices recover the values
 ```
@@ -143,19 +143,19 @@ final sort.
 Indices of the k largest elements, largest first (values distinct).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, k):
     """Indices of the k largest entries of z, largest first."""
-    return np.argsort(z)[-k:]_____
+    return t.argsort(z)[-k:]_____
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, k):
     """Indices of the k largest entries of z, largest first."""
-    return np.argsort(z)[-k:][::-1]
+    return t.argsort(z)[-k:].flip(0)
 ```
 
 ## Independent practice
@@ -165,10 +165,10 @@ with `axis=1` on both).
 
 ## Misconceptions
 
-- **"argsort returns sorted values."** — It returns INDICES. `z[np.argsort(z)]`
+- **"argsort returns sorted values."** — It returns INDICES. `z[t.argsort(z)]`
   is the sorted array; the indices themselves are the tool for sort-by, ranks,
   and top-k.
-- **"Sorting a table by a column = np.sort(z, axis=0)."** — That sorts every
+- **"Sorting a table by a column = t.sort(z, axis=0)."** — That sorts every
   column independently, tearing rows apart. Row-preserving sort-by is
   argsort-the-key + fancy-index-the-rows.
 - **"One argsort gives ranks."** — One argsort answers "which element is at

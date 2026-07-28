@@ -13,26 +13,26 @@ independent: [150, 124]
 Integer **class labels** (0, 1, …, K−1) have two canonical transformations,
 and both are one-liners once you see the trick.
 
-**One-hot encoding: `np.eye(k)[labels]`.**
+**One-hot encoding: `t.eye(k)[labels]`.**
 A one-hot row for class c is a length-k vector of zeros with a 1 in slot c —
 which is precisely **row c of the k×k identity matrix**. So encoding a whole
 label vector is a lookup-table read (fancy-indexing KP) where the table is
-`np.eye(k)`: each label picks its identity row, and the result stacks them
+`t.eye(k)`: each label picks its identity row, and the result stacks them
 into shape (len(labels), k). Need integers instead of floats? Build the table
-that way: `np.eye(k, dtype=int)`. Don't know k? The labels tell you:
+that way: `t.eye(k, dtype=int)`. Don't know k? The labels tell you:
 `k = labels.max() + 1`.
 
-**Counting labels: `np.bincount(labels)`.**
+**Counting labels: `t.bincount(labels)`.**
 Returns an array where entry v is *how many times value v occurs* — a
-histogram over the non-negative integers 0..max. Unlike `np.unique`'s counts
+histogram over the non-negative integers 0..max. Unlike `t.unique`'s counts
 (which list only values that appear), bincount's output is **dense**: absent
 values get an explicit 0, and the position IS the value. That density powers
 compositions:
 
-- **Mode** (most frequent value): `np.bincount(x).argmax()` — and because
+- **Mode** (most frequent value): `t.bincount(x).argmax()` — and because
   argmax breaks ties at the first index, ties resolve to the SMALLEST value
   automatically.
-- **Weighted sums per class**: `np.bincount(labels, weights=v)` sums v's
+- **Weighted sums per class**: `t.bincount(labels, weights=v)` sums v's
   entries per class — grouped aggregation in one call (the applied lesson
   builds on this).
 
@@ -46,13 +46,13 @@ Task: one-hot a label vector; count label occurrences; find the mode with
 smallest-value tie-breaking.
 
 ```python
-import numpy as np
+import torch as t
 
-labels = np.array([0, 2, 1, 2])
+labels = t.tensor([0, 2, 1, 2])
 k = 3
 
 # One-hot: the identity matrix as lookup table, labels as row selectors.
-onehot = np.eye(k)[labels]
+onehot = t.eye(k)[labels]
 assert onehot.shape == (4, 3)
 assert onehot.tolist() == [[1.0, 0.0, 0.0],
                            [0.0, 0.0, 1.0],
@@ -60,23 +60,23 @@ assert onehot.tolist() == [[1.0, 0.0, 0.0],
                            [0.0, 0.0, 1.0]]
 
 # bincount: entry v = multiplicity of v. Dense — class 0,1,2 all present.
-counts = np.bincount(labels)
+counts = t.bincount(labels)
 assert counts.tolist() == [1, 1, 2]
 
 # The two views agree: summing one-hot rows counts the classes.
-assert np.array_equal(onehot.sum(axis=0), counts)
+assert t.equal(onehot.sum(dim=0), counts)
 
 # Mode with smallest-on-tie: argmax over the dense counts.
-x = np.array([3, 1, 3, 2, 3, 1])
-mode = int(np.bincount(x).argmax())
+x = t.tensor([3, 1, 3, 2, 3, 1])
+mode = int(t.bincount(x).argmax())
 assert mode == 3
 # Tie case: 1 and 2 both appear twice -> argmax hits index 1 first.
-assert int(np.bincount(np.array([1, 2, 1, 2])).argmax()) == 1
+assert int(t.bincount(t.tensor([1, 2, 1, 2])).argmax()) == 1
 ```
 
 Why each step:
 
-1. Seeing `np.eye(k)[labels]` as "lookup table = identity" connects three
+1. Seeing `t.eye(k)[labels]` as "lookup table = identity" connects three
    prior KPs (constructors, fancy indexing) into an idiom you can re-derive
    under exam conditions rather than memorize.
 2. The `onehot.sum(axis=0) == bincount` identity is a genuine consistency
@@ -91,19 +91,19 @@ Why each step:
 One-hot rows for a label vector, class count given.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(labels, k):
     """(len(labels), k) one-hot matrix: row i encodes labels[i]."""
-    return np._____(k)[labels]
+    return t._____(k)[labels]
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(labels, k):
     """(len(labels), k) one-hot matrix: row i encodes labels[i]."""
-    return np.eye(k)[labels]
+    return t.eye(k)[labels]
 ```
 
 ## Guided practice
@@ -113,20 +113,20 @@ def solve(labels, k):
    — which counting tool gives you position-is-value output?
 2. Once counts are dense, "most frequent value" is the INDEX of the largest
    count.
-3. `int(np.bincount(x).argmax())` — convince yourself why ties come out
+3. `int(t.bincount(x).argmax())` — convince yourself why ties come out
    smallest for free.
 
 ## Independent practice
 
 From the drill bank: q150 (one-hot where k must be INFERRED from the labels,
 integer dtype required), q124 (per-row argmax one-hot of a matrix — a 2-D
-cousin: zeros canvas + fancy indexing with `np.arange(rows)` paired against
+cousin: zeros canvas + fancy indexing with `t.arange(rows)` paired against
 the row argmaxes).
 
 ## Misconceptions
 
 - **"One-hot needs a loop setting out[i, labels[i]] = 1."** — That loop is
-  exactly what `np.eye(k)[labels]` performs in one vectorized gather. (The
+  exactly what `t.eye(k)[labels]` performs in one vectorized gather. (The
   explicit-canvas form does have its place — see the per-row variant in
   q124.)
 - **"bincount == unique counts."** — unique's counts are COMPACT (only values

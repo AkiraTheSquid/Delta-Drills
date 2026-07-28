@@ -1,6 +1,6 @@
 ---
 kc: numpy.unique
-title: Distinct values — np.unique and friends
+title: Distinct values — t.unique and friends
 supporting: [numpy.boolean-masking, numpy.sorting]
 new_syntax: []
 faded: [14]
@@ -10,7 +10,7 @@ independent: [102, 148, 79]
 
 ## Concept
 
-**`np.unique(z)`** returns the distinct values of an array, **sorted
+**`t.unique(z)`** returns the distinct values of an array, **sorted
 ascending** — deduplication and ordering in one call. Its real depth is in
 the optional outputs, each answering a different question about the
 duplicates it collapsed:
@@ -27,16 +27,21 @@ duplicates it collapsed:
 
 Two generalizations worth knowing now:
 
-- **Rows as units**: `np.unique(z, axis=0)` deduplicates whole ROWS of a 2-D
-  array (sorted lexicographically — first column, then second…). Without
-  `axis=`, a 2-D input is flattened and you get distinct *scalars*.
-- **Set operations between arrays**: the same sorted-distinct worldview gives
-  `np.intersect1d(a, b)` (values in both, sorted, deduplicated),
-  `np.union1d`, `np.setdiff1d`, and elementwise membership `np.isin(a, b)`.
+- **Rows as units**: `t.unique(z, dim=0)` deduplicates whole ROWS of a 2-D
+  tensor (sorted lexicographically — first column, then second…). Without
+  `dim=`, a 2-D input is flattened and you get distinct *scalars*.
+- **Set operations between tensors**: PyTorch ships only the membership test,
+  **`t.isin(a, b)`** — a boolean mask over `a`. There is no `intersect1d`,
+  `union1d` or `setdiff1d`, and you do not need them: composing `unique` with
+  `isin` covers the family.
 
-The mental model: `unique` and the `*1d` set functions treat arrays as
-multisets and hand back canonical (sorted, deduplicated) forms — if a task
-says "each value exactly once, ascending", it is describing this family.
+  - intersection: `ua = t.unique(a); ua[t.isin(ua, b)]`
+  - difference:   `ua = t.unique(a); ua[~t.isin(ua, b)]`
+  - union:        `t.unique(t.cat([a, b]))`
+
+The mental model: `unique` hands back a canonical (sorted, deduplicated)
+form, and `isin` filters it — if a task says "each value exactly once,
+ascending", it is describing this family.
 
 ## Worked example
 
@@ -44,12 +49,12 @@ Task: get the vocabulary of a measurement vector with occurrence counts, and
 find which values two arrays share.
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([3, 1, 2, 3, 1, 3])
+z = t.tensor([3, 1, 2, 3, 1, 3])
 
 # Distinct values, sorted — and their aligned counts.
-values, counts = np.unique(z, return_counts=True)
+values, counts = t.unique(z, return_counts=True)
 assert values.tolist() == [1, 2, 3]
 assert counts.tolist() == [2, 1, 3]      # counts[i] belongs to values[i]
 
@@ -57,13 +62,15 @@ assert counts.tolist() == [2, 1, 3]      # counts[i] belongs to values[i]
 assert values[counts.argmax()] == 3
 
 # return_inverse: codes that rebuild the input from the vocabulary.
-values2, inverse = np.unique(z, return_inverse=True)
+values2, inverse = t.unique(z, return_inverse=True)
 assert values2[inverse].tolist() == z.tolist()
 
-# Set intersection of two arrays: shared values, once each, ascending.
-a = np.array([4, 1, 3, 2, 3])
-b = np.array([3, 4, 4, 8, 0])
-assert np.intersect1d(a, b).tolist() == [3, 4]
+# Set intersection of two tensors: shared values, once each, ascending.
+# unique gives the sorted vocabulary; isin filters it down to the shared part.
+a = t.tensor([4, 1, 3, 2, 3])
+b = t.tensor([3, 4, 4, 8, 0])
+ua = t.unique(a)
+assert ua[t.isin(ua, b)].tolist() == [3, 4]
 ```
 
 Why each step:
@@ -85,19 +92,19 @@ Why each step:
 Distinct values ascending, with aligned occurrence counts.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """(distinct values ascending, counts aligned with them)."""
-    return np.unique(z, _____=True)
+    return t.unique(z, _____=True)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """(distinct values ascending, counts aligned with them)."""
-    return np.unique(z, return_counts=True)
+    return t.unique(z, return_counts=True)
 ```
 
 ## Guided practice
@@ -122,7 +129,7 @@ output?), q79 (distinct ROWS, lexicographic — remember the axis keyword).
   indices — the sorted-values default is the contract, not a coincidence.
 - **"unique on a matrix gives unique rows."** — Without `axis=0` the array is
   flattened first and you get distinct scalars. Row-level deduplication is
-  explicitly `np.unique(z, axis=0)`.
-- **"Intersection = loop with `in`."** — `np.intersect1d(a, b)` (or
-  `np.isin(a, b)` when you want a mask on `a`). The Python-level loop is
-  quadratic and unvectorized.
+  explicitly `t.unique(z, axis=0)`.
+- **"Intersection = loop with `in`."** — `t.unique(a)` filtered by
+  `t.isin(...)` (or `t.isin(a, b)` alone when you want a mask on `a`). The
+  Python-level loop is quadratic and unvectorized.

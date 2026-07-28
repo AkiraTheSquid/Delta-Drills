@@ -1,46 +1,56 @@
 ---
 kc: numpy.inplace-out
-title: In-place operations and the out= argument
+title: In-place operations and the trailing underscore
 supporting: [numpy.elementwise-ufuncs, numpy.slicing-views, numpy.fancy-indexing]
-new_syntax: []
+new_syntax: [trailing-underscore-inplace]
 faded: [235, 138, 59]
 guided: []
-independent: [65]
+independent: []
 ---
 
-## Concept: in-place methods and operators
+## Concept: the trailing underscore
 
-Most NumPy expressions allocate a fresh array per step. Usually fine — but
+Most PyTorch expressions allocate a fresh tensor per step. Usually fine — but
 "in place" tasks (and memory-tight code) need the alternatives.
 
-The first pair of tools: **in-place methods and augmented operators.**
-`x.sort()` (vs `np.sort(x)`, which returns a sorted copy), `x += 1`,
-`x *= 2` — these modify the existing buffer. The augmented operators (`+=`)
-reuse memory where their spelled-out forms (`x = x + 1`) allocate and
-rebind. Mind that in-place methods return `None`: `x = x.sort()` throws the
-data away.
+PyTorch marks in-place operations with a **trailing underscore**: `add_`,
+`mul_`, `div_`, `neg_`, `clamp_`, `copy_`. Every one of them writes into the
+existing buffer and returns that same tensor. Augmented operators (`x += 1`,
+`x *= 2`) are the operator spelling of the same thing, where their written-out
+forms (`x = x + 1`) allocate a new tensor and rebind the name.
+
+The underscore is the whole signal, and it is worth trusting: a method without
+one **never** modifies its receiver. `x.sort()` returns a sorted copy and
+leaves `x` alone — there is no `sort_`, so sorting a tensor in place means
+copying the sorted values back with `x.copy_(...)`.
 
 The mirror-image rule from the slicing KP still applies: "do not modify the
-input" → copy first. This KP is the deliberate OPPOSITE — recognize which
+input" → clone first. This KP is the deliberate OPPOSITE — recognize which
 contract a task states before choosing tools.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-# In-place sort: the METHOD, and mind that it returns None.
-x = np.array([3.0, 1.0, 2.0])
-x.sort()
-assert x.tolist() == [1.0, 2.0, 3.0]
+# Trailing underscore: same buffer, values doubled.
+x = t.tensor([3.0, 1.0, 2.0])
+x.mul_(2)
+assert x.tolist() == [6.0, 2.0, 4.0]
 
-# Augmented operator: same buffer, values doubled.
-x *= 2
+# No underscore: sort() returns a (values, indices) pair and x is untouched.
+result = x.sort()
+assert x.tolist() == [6.0, 2.0, 4.0]
+assert result.values.tolist() == [2.0, 4.0, 6.0]
+
+# So an in-place sort is "sort, then copy the values back into the buffer".
+x.copy_(x.sort().values)
 assert x.tolist() == [2.0, 4.0, 6.0]
 ```
 
-Why: in-place = call and DON'T assign. New-array = `np.sort(x)`. The two
-spellings answer two different task contracts.
+Why: the underscore is a contract, not a style. `x.sort()` looks like it
+should sort x — in NumPy the same spelling does — and here it quietly does
+not.
 
 ## Faded practice
 
@@ -48,20 +58,20 @@ spellings answer two different task contracts.
 Ascending order, in place — the passed-in object itself must change.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
-    """Sort x itself (no new array), then return it."""
-    x._____()
+    """Sort x itself (no new tensor), then return it."""
+    x._____(x.sort().values)
     return x
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
-    """Sort x itself (no new array), then return it."""
-    x.sort()
+    """Sort x itself (no new tensor), then return it."""
+    x.copy_(x.sort().values)
     return x
 ```
 
@@ -77,12 +87,12 @@ copies first.)
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # In-place row permutation: write INTO the buffer via z[:].
-z = np.arange(6).reshape(3, 2)
+z = t.arange(6).reshape(3, 2)
 alias = z                        # a second reference to the same buffer
-p = np.array([2, 0, 1])
+p = t.tensor([2, 0, 1])
 z[:] = z[p]                      # rebinding (z = z[p]) would NOT affect alias
 assert alias.tolist() == [[4, 5], [0, 1], [2, 3]]
 ```
@@ -97,7 +107,7 @@ names watch the same memory, so only the `z[:] =` spelling changes what
 Reorder rows by permutation p, in place.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, p):
     """Row i becomes old row p[i] — INSIDE z's own buffer."""
@@ -106,7 +116,7 @@ def solve(z, p):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, p):
     """Row i becomes old row p[i] — INSIDE z's own buffer."""
@@ -114,33 +124,30 @@ def solve(z, p):
     return z
 ```
 
-## Concept: out= — zero-allocation ufunc chains
+## Concept: chaining underscores for zero allocations
 
-Every ufunc accepts a destination: `np.add(a, b, out=b)` computes a+b and
-stores it in b's buffer — zero new allocations. Chains of these
-(`np.divide(a, 2, out=a)`, `np.negative(a, out=a)`, …) evaluate multi-step
-formulas entirely within the input buffers.
+Because each underscore method returns the buffer it just wrote, they chain:
+`b.add_(a)` computes a+b and stores it in b — zero new tensors. A run of these
+(`a.div_(2)`, `a.neg_()`, …) evaluates a multi-step formula entirely inside
+the input buffers.
 
-Two disciplines make out= code correct: track *what each buffer now holds*
-(after `np.add(a, b, out=b)`, the NAME b no longer means the original b),
-and order by DATAFLOW — a value must be captured before the buffer holding
-its ingredient is overwritten.
-
-A related switch: `z.flags.writeable = False` freezes an array — any later
-assignment raises `ValueError`. Useful for guarding shared data.
+Two disciplines make such code correct: track *what each buffer now holds*
+(after `b.add_(a)`, the NAME b no longer means the original b), and order by
+DATAFLOW — a value must be captured before the buffer holding its ingredient
+is overwritten.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-# ((a + b) * (-a / 2)) with out= only. Track buffer contents per step:
-a = np.array([1.0, 2.0])
-b = np.array([3.0, 4.0])
-np.add(a, b, out=b)              # b now holds a + b
-np.divide(a, 2.0, out=a)         # a now holds a / 2
-np.negative(a, out=a)            # a now holds -a/2
-np.multiply(a, b, out=a)         # a now holds (a+b) * (-a/2)
+# ((a + b) * (-a / 2)) in place only. Track buffer contents per step:
+a = t.tensor([1.0, 2.0])
+b = t.tensor([3.0, 4.0])
+b.add_(a)                        # b now holds a + b
+a.div_(2)                        # a now holds a / 2
+a.neg_()                         # a now holds -a/2
+a.mul_(b)                        # a now holds (a+b) * (-a/2)
 assert a.tolist() == [-2.0, -6.0]
 ```
 
@@ -155,42 +162,38 @@ result; dataflow, not formula layout, dictates sequence.
 b's buffer.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Compute ((a + b) * (-a / 2)) using only the two given buffers."""
-    np.add(a, b, out=_____)
-    np.divide(a, 2.0, out=a)
-    np.negative(a, out=a)
-    np.multiply(a, b, out=a)
+    b.add_(_____)
+    a.div_(2)
+    a.neg_()
+    a.mul_(b)
     return a
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Compute ((a + b) * (-a / 2)) using only the two given buffers."""
-    np.add(a, b, out=b)
-    np.divide(a, 2.0, out=a)
-    np.negative(a, out=a)
-    np.multiply(a, b, out=a)
+    b.add_(a)
+    a.div_(2)
+    a.neg_()
+    a.mul_(b)
     return a
 ```
-
-## Independent practice
-
-From the drill bank: q65 (make an array refuse subsequent writes — one flag).
 
 ## Misconceptions
 
 - **"`z = z[p]` modifies z in place."** — It rebinds the NAME; the original
   buffer (and every other reference to it) is unchanged. In-place is
   `z[:] = z[p]` — assignment through the full slice.
-- **"`x = x.sort()` sorts and keeps the array."** — The method returns None;
-  that assignment throws the data away. In-place: call and DON'T assign.
-  New-array: `np.sort(x)`.
-- **"out= is just an optimization hint."** — It's a hard contract: the
+- **"`x.sort()` sorts x."** — It does in NumPy; in PyTorch it returns a
+  (values, indices) pair and leaves x untouched. There is no `sort_`, so an
+  in-place sort is `x.copy_(x.sort().values)`.
+- **"The underscore is a naming convention."** — It's a hard contract: the
   result is written into that exact buffer. Aliasing consequences included —
-  `np.add(a, b, out=b)` destroys the old b for all readers. Powerful,
-  deliberate, and exactly what no-allocation drills demand.
+  `b.add_(a)` destroys the old b for all readers. Powerful, deliberate, and
+  exactly what no-allocation drills demand.

@@ -12,10 +12,10 @@ independent: [141]
 
 The **dot product** of two equal-length vectors — multiply corresponding
 entries, add them up — is the atom that all of linear algebra's products are
-built from. NumPy spells it three interchangeable ways:
+built from. PyTorch spells it three interchangeable ways:
 
 ```python no-run
-np.dot(a, b)      ==  a @ b  ==  (a * b).sum()
+t.dot(a, b)      ==  a @ b  ==  (a * b).sum()
 ```
 
 The third spelling is the important one conceptually: *dot = elementwise
@@ -26,13 +26,13 @@ that may not exist.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([1.0, 2.0, 3.0])
-b = np.array([4.0, -5.0, 6.0])
+a = t.tensor([1.0, 2.0, 3.0])
+b = t.tensor([4.0, -5.0, 6.0])
 
 # The atom, three spellings — same number.
-d = float(np.dot(a, b))
+d = float(t.dot(a, b))
 assert d == float(a @ b) == float((a * b).sum()) == 12.0
 ```
 
@@ -45,19 +45,19 @@ when you see `(x * w).sum()` in someone's code, you now read "dot".
 Dot product of two vectors, as a plain float.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """The dot product of vectors a and b."""
-    return float(np._____(a, b))
+    return float(t._____(a, b))
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """The dot product of vectors a and b."""
-    return float(np.dot(a, b))
+    return float(t.dot(a, b))
 ```
 
 ## Concept: matrix @ vector — one dot per row
@@ -72,12 +72,12 @@ row, so an (n, m) matrix against a length-m vector yields n dots.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Matrix @ vector: row i of the result = (row i of z) . v
-z = np.array([[1.0, 2.0],
+z = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-v = np.array([10.0, 1.0])
+v = t.tensor([10.0, 1.0])
 zv = z @ v
 assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
 ```
@@ -92,7 +92,7 @@ rule.
 Each row of z dotted with v.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, v):
     """Length-n array: entry i = (row i of z) . v."""
@@ -100,7 +100,7 @@ def solve(z, v):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, v):
     """Length-n array: entry i = (row i of z) . v."""
@@ -115,7 +115,7 @@ of `b`" (same shapes) is not `a @ b` — matmul dots every row with every
 COLUMN. But per the atom: multiply elementwise, then reduce each row:
 
 ```python no-run
-(a * b).sum(axis=1)          # row-wise dots
+(a * b).sum(dim=1)          # row-wise dots
 ```
 
 That multiply-then-reduce-an-axis maneuver covers the "batch of dots" tasks
@@ -125,14 +125,14 @@ next course topic.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.
-p = np.array([[1.0, 2.0],
+p = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-q = np.array([[5.0, 6.0],
+q = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
-row_dots = (p * q).sum(axis=1)
+row_dots = (p * q).sum(dim=1)
 assert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8
 ```
 
@@ -147,42 +147,42 @@ don't match the pairing you need.
 Dot each row of a with the corresponding row of b.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Length-n array: entry i = (row i of a) . (row i of b)."""
-    return (a * b).sum(axis=_____)
+    return (a * b).sum(dim=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Length-n array: entry i = (row i of a) . (row i of b)."""
-    return (a * b).sum(axis=1)
+    return (a * b).sum(dim=1)
 ```
 
 ## Concept: norms — a dot with itself, rooted
 
 **Norms** are the same atom again: a vector's Euclidean length is
-`np.sqrt(v @ v)`. Applied to a whole matrix's entries — √(sum of all
-squares) — it's the **Frobenius norm**, `np.linalg.norm(z)` with no
+`t.sqrt(v @ v)`. Applied to a whole matrix's entries — √(sum of all
+squares) — it's the **Frobenius norm**, `t.linalg.norm(z)` with no
 arguments (as if the matrix were one long vector). Operator norms exist
 behind `ord=`, but Frobenius is the drills' default meaning of "the norm".
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Frobenius norm: sqrt of the sum of ALL squared entries.
-f = np.array([[3.0, 4.0],
+f = t.tensor([[3.0, 4.0],
               [0.0, 0.0]])
-assert np.linalg.norm(f) == 5.0
-assert np.isclose(np.linalg.norm(f), np.sqrt((f * f).sum()))
+assert t.linalg.norm(f) == 5.0
+assert t.isclose(t.linalg.norm(f), t.sqrt((f * f).sum()))
 ```
 
-Why: the first-principles spelling `np.sqrt((z * z).sum())` is
+Why: the first-principles spelling `t.sqrt((z * z).sum())` is
 multiply+reduce again — the whole KP is one atom wearing different hats.
 
 ## Faded practice
@@ -191,19 +191,19 @@ multiply+reduce again — the whole KP is one atom wearing different hats.
 The Frobenius norm of a matrix.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """Square root of the sum of squares of ALL entries of z."""
-    return np.linalg._____(z)
+    return t.linalg._____(z)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """Square root of the sum of squares of ALL entries of z."""
-    return np.linalg.norm(z)
+    return t.linalg.norm(z)
 ```
 
 ## Independent practice
@@ -220,7 +220,7 @@ with COLUMN i of b).
 - **"The dot product is its own primitive."** — It's multiply + sum. Holding
   the decomposition lets you build variants (weighted dots, masked dots,
   batch dots) instead of hunting for a function that may not exist.
-- **"norm of a matrix = largest row norm."** — Default `np.linalg.norm(z)` on
+- **"norm of a matrix = largest row norm."** — Default `t.linalg.norm(z)` on
   2-D is FROBENIUS: all entries squared, summed, rooted — as if the matrix
   were one long vector. Operator norms exist behind `ord=`, but Frobenius is
   the drills' default meaning of "the norm".
