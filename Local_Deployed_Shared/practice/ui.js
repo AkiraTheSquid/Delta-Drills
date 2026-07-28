@@ -23,7 +23,16 @@ function questionIsTorch(q) {
 // torch questions there use the normal editor flow. Offline/Supabase practice
 // runs on Pyodide, which cannot import torch at all → Colab.
 function torchNeedsColab(q) {
-  return questionIsTorch(q) && practiceMode !== "backend";
+  // Routing a torch drill to Colab hides the WHOLE right panel — editor, aids,
+  // submit. That was survivable when torch drills were a rare fork, but the
+  // bank is now 448/448 torch, so this condition fires on every question the
+  // moment the runtime is not the backend, and it strands the learner on a
+  // prompt with no controls and no way forward.
+  //
+  // Only route away when there is somewhere to route TO. With no notebook the
+  // old behaviour was a dead end, not a fallback.
+  if (!questionIsTorch(q) || practiceMode === "backend") return false;
+  return !!(q && (q.problem_notebook_path || q.solution_notebook_path));
 }
 
 function _escapeHtml(s) {
