@@ -10,22 +10,30 @@ independent: [231, 75]
 
 ## Concept
 
-Slicing is how you name a rectangular piece of an array. The syntax
+Slicing is how you name a rectangular piece of a tensor. The syntax
 generalizes Python's list slicing in two ways, and adds one semantic twist
 that trips everyone at least once.
 
 **Syntax.** A slice is `start:stop:step` (stop exclusive, any part omittable),
-and a multi-dimensional array takes **one slice per axis, separated by
+and a multi-dimensional tensor takes **one slice per axis, separated by
 commas** inside a single pair of brackets:
 
 - `x[2:5]` — elements 2, 3, 4 of a vector.
 - `z[0, :]` — row 0, all columns. `z[:, -1]` — every row, last column.
-- `x[::-1]` — the whole axis, stepped backwards: a reversed view.
-- `z[:, ::-1]` — every row reversed (mirror left-right);
-  `z[::-1, :]` — row order reversed (mirror top-bottom).
+- `x[::2]` — every second element.
 
-Negative indices count from the end (`-1` is the last element), exactly as in
+Negative *indices* count from the end (`-1` is the last element), exactly as in
 Python.
+
+**Negative *steps* are the exception.** NumPy reverses an axis with `x[::-1]`;
+PyTorch refuses — it raises `ValueError: step must be greater than zero`. This
+is probably the single most common surprise when moving NumPy habits to torch.
+Reversal has its own function:
+
+- **`t.flip(x, [0])`** — reverse along axis 0. `t.flip(z, [1])` mirrors each
+  row left-right; `t.flip(z, [0])` reverses the row order (mirror top-bottom).
+- **`t.rot90(z)`** — rotate 90° counterclockwise, the composition of a
+  transpose and a flip.
 
 **The twist: slices are *views*, not copies.** A slice doesn't copy data — it
 is a new window onto the *same* memory block. Two consequences:
@@ -34,12 +42,12 @@ is a new window onto the *same* memory block. Two consequences:
    most useful idiom in this KP, **slice assignment**:
    `x[start:stop] = value` sets a whole range at once (the scalar is
    broadcast to every selected position — no loop).
-2. **"Return a new array" tasks need an explicit `.copy()`** if you would
+2. **"Return a new tensor" tasks need an explicit `.clone()`** if you would
    otherwise be returning or mutating a view of the caller's data. Rule of
-   thumb: mutate → `.copy()` first, unless the task says to modify in place.
+   thumb: mutate → `.clone()` first, unless the task says to modify in place.
 
-Some named helpers are just packaged slices: `np.rot90(z)` (rotate 90° CCW),
-`np.flipud`/`np.fliplr` — all expressible with `::-1` and transposes.
+`t.flip` is not in that category: it always returns a **copy**, so writing into
+its result never touches the input.
 
 ## Worked example
 
@@ -47,88 +55,97 @@ Task: given a vector, produce a reversed copy; then blank out the middle of
 another vector in place.
 
 ```python
-import numpy as np
+import torch as t
 
-x = np.array([1.0, 2.0, 3.0, 4.0])
+x = t.tensor([1.0, 2.0, 3.0, 4.0])
 
-# Reverse = take the whole axis with step -1. This is a VIEW of x — no copy
-# has happened yet, and building it costs nothing regardless of length.
-rev = x[::-1]
+# The NumPy reflex does not work here.
+try:
+    x[::-1]
+    raised = False
+except ValueError:
+    raised = True
+assert raised, "torch rejects negative slice steps"
+
+# Reverse with flip instead — and flip hands back a COPY.
+rev = t.flip(x, [0])
 assert rev.tolist() == [4.0, 3.0, 2.0, 1.0]
+rev[0] = 99.0                    # writes only into rev
+assert x.tolist() == [1.0, 2.0, 3.0, 4.0]
 
-# Proof it's a view: writing through rev changes x itself.
-rev[0] = 99.0                    # rev[0] is x[-1]!
-assert x[-1] == 99.0
-x[-1] = 4.0                      # undo
-
-# The task said "the input must not be modified" — so hand back a copy.
-safe = x[::-1].copy()
-safe[0] = -1                     # touches only the copy
-assert x[-1] == 4.0
+# A plain slice, by contrast, IS a view: writing through it writes x.
+window = x[1:3]
+window[0] = 99.0                 # window[0] is x[1]!
+assert x[1] == 99.0
+x[1] = 2.0                       # undo
 
 # Slice ASSIGNMENT: set positions 1..3 (stop 4 exclusive) to 0 — in place,
 # no loop. The scalar 0.0 is broadcast across the selected range.
-y = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+y = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 y[1:4] = 0.0
 assert y.tolist() == [1.0, 0.0, 0.0, 0.0, 5.0, 6.0]
 ```
 
 Why each step:
 
-1. `[::-1]` reads as "everything, stepping backwards" — start/stop omitted,
-   step −1. The same pattern reverses any single axis of any array; you pick
-   *which* axis by which comma slot it sits in.
-2. The view demonstration is the mental model to keep: a slice is a window,
+1. The failed `x[::-1]` is worth writing once deliberately. It is the fastest
+   way to stop reaching for it by reflex later.
+2. `t.flip(x, dims)` names the axes to reverse as a list — you pick *which*
+   axis by what you put in that list, the same choice you would have made by
+   which comma slot got the `::-1`.
+3. The view demonstration is the mental model to keep: a slice is a window,
    not a photocopy. Cheap to make, dangerous to mutate casually.
-3. Slice assignment replaces the `for i in range(start, stop)` loop entirely —
+4. Slice assignment replaces the `for i in range(start, stop)` loop entirely —
    and it is the building block for border/checkerboard/striping patterns in
    the next lesson.
 
 ## Faded practice
 
 ### q233
-Reversed copy of a 1-D array (input unmodified).
+Reversed copy of a 1-D tensor (input unmodified).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
-    """Return a new array with x's elements in reverse order."""
-    return x[_____]
+    """Return a new tensor with x's elements in reverse order."""
+    return t._____(x, [0])
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
-    """Return a new array with x's elements in reverse order."""
-    return x[::-1]
+    """Return a new tensor with x's elements in reverse order."""
+    return t.flip(x, [0])
 ```
 
 ## Guided practice
 
 ### q76
-1. Two mirrors of a 2-D array: left-right (reverse within each row) and
-   top-bottom (reverse the order of rows). Both are single slices.
-2. In `z[rows, cols]` notation: which slot gets the `::-1` to reverse each
-   row? Which to reverse the row order?
-3. `z[:, ::-1]` and `z[::-1, :]` — check whether the task requires copies
-   (it says the input must not be modified — are you modifying it, or just
-   returning views?).
+1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and
+   top-bottom (reverse the order of rows). Both are single `t.flip` calls.
+2. `t.flip` takes the axes to reverse as a list. Which axis number reverses
+   each row? Which reverses the row order?
+3. `t.flip(z, [1])` and `t.flip(z, [0])` — and because flip copies, the
+   "input must not be modified" requirement is already satisfied.
 
 ## Independent practice
 
 From the drill bank: q231 (assign through a slice in place), q75 (rotate a
-matrix 90° counterclockwise — either the
-dedicated helper or a transpose composed with a flip).
+matrix 90° counterclockwise — either the dedicated helper or a transpose
+composed with a flip).
 
 ## Misconceptions
 
+- **"`x[::-1]` reverses a tensor."** — It raises `ValueError: step must be
+  greater than zero`. PyTorch supports no negative slice steps at all;
+  `t.flip(x, [0])` is the operation.
 - **"A slice is a copy."** — It's a view of the same memory. Mutating a slice
-  mutates the original. When a task says "return a new array" or "do not
-  modify the input" and you plan to write into the result, `.copy()` first.
+  mutates the original. When a task says "return a new tensor" or "do not
+  modify the input" and you plan to write into the result, `.clone()` first.
+- **"`.copy()` makes the copy."** — That's the NumPy name. Tensors clone with
+  `.clone()`.
 - **"2-D indexing is `z[i][j]`."** — That works but chains two operations;
-  the NumPy idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`,
-  `z[:, j]`. The chained form also breaks down for slice-then-assign patterns.
-- **"Reversing needs a loop or `reversed()`."** — `[::-1]` on the relevant
-  axis. Omitted start/stop with a negative step means "whole axis, backwards".
+  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.
+  The chained form also breaks down for slice-then-assign patterns.

@@ -1,6 +1,6 @@
 ---
 kc: numpy.sorting
-title: Sorting arrays
+title: Sorting tensors
 supporting: [numpy.ndarray-model, numpy.slicing-views]
 new_syntax: []
 faded: [58]
@@ -10,26 +10,30 @@ independent: []
 
 ## Concept
 
-Sorting in NumPy comes in two forms, and the difference is who gets modified:
+**`t.sort(z)` does not return a sorted tensor.** It returns a *pair* — the
+sorted values and the indices that produced them — and forgetting that is the
+mistake this KP exists to prevent:
 
-- **`np.sort(z)`** — the function. Returns a **new** sorted array; `z` is
-  untouched. This is what "return a new array, leave the input unmodified"
-  tasks want.
-- **`z.sort()`** — the method. Sorts **in place**, returns `None` (a classic
-  trap: `z = z.sort()` leaves you holding `None`). This is what "rearrange the
-  array object itself" tasks want.
+```python no-run
+t.sort(z)          # -> torch.return_types.sort(values=..., indices=...)
+t.sort(z).values   # the sorted tensor you actually wanted
+```
 
-Both sort ascending. There is no `descending=` flag — the idiom for descending
-order is to sort ascending and reverse with the slice you already know:
-`np.sort(z)[::-1]`.
+You can unpack it either way: `values, indices = t.sort(z)`, or reach for
+`.values` / `.indices` by name. The indices half is not a consolation prize —
+it is what "sort one thing by another" tasks need, and it is the same thing
+`t.argsort(z)` gives you on its own.
 
-Two related tools to know about now (each gets real coverage later):
+Sorting never modifies the input: `t.sort(z)` and the method form `z.sort()`
+both leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)
 
-- `np.argsort(z)` returns the *indices* that would sort `z` — the key to
-  "sort one thing by another" tasks (order-statistics KP).
-- On 2-D arrays, `np.sort(z, axis=...)` sorts each row or column
-  independently — mind that this scrambles rows as units; reordering whole
-  rows is argsort + fancy indexing, not `sort`.
+Two more things worth knowing now:
+
+- **`descending=True`** sorts largest-first — a real keyword, unlike NumPy,
+  where you have to sort ascending and reverse afterwards.
+- On 2-D tensors, **`dim=`** sorts each row or column independently — mind
+  that this scrambles rows as units; reordering whole rows is argsort plus
+  fancy indexing, not `sort`.
 
 ## Worked example
 
@@ -37,34 +41,37 @@ Task: produce a sorted copy of a vector, confirm the original is intact, then
 get the same values descending.
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([0.4, 0.1, 0.9])
+z = t.tensor([0.5, 0.25, 0.75])
 
-# The FUNCTION returns a new array...
-asc = np.sort(z)
-assert asc.tolist() == [0.1, 0.4, 0.9]
-# ...and the input keeps its original order (the grader often checks this).
-assert z.tolist() == [0.4, 0.1, 0.9]
+# sort returns a PAIR — take .values for the sorted tensor.
+result = t.sort(z)
+assert result.values.tolist() == [0.25, 0.5, 0.75]
+assert result.indices.tolist() == [1, 0, 2]     # where each value came from
 
-# Descending = ascending + reverse. No keyword exists for it.
-desc = np.sort(z)[::-1]
-assert desc.tolist() == [0.9, 0.4, 0.1]
+# The input keeps its original order (the grader often checks this).
+assert z.tolist() == [0.5, 0.25, 0.75]
 
-# The METHOD sorts in place and returns None — never assign its result.
-w = np.array([3.0, 1.0, 2.0])
-result = w.sort()
-assert result is None
-assert w.tolist() == [1.0, 2.0, 3.0]   # w itself was reordered
+# Descending is a keyword here — no reverse step needed.
+desc = t.sort(z, descending=True).values
+assert desc.tolist() == [0.75, 0.5, 0.25]
+
+# Unpacking works too, and reads well when you want both halves.
+values, indices = t.sort(z)
+assert values.tolist() == [0.25, 0.5, 0.75]
 ```
 
 Why each step:
 
-1. Function vs method is a *contract* question, not a style question: read the
-   task for "new array" vs "in place" and pick accordingly.
-2. The descending idiom reuses `[::-1]` — one more payoff of the slicing KP.
-3. The `result is None` check is worth seeing once, because `z = z.sort()`
-   silently destroys your data reference and is a genuinely common bug.
+1. Taking `.values` is the habit to build. Returning `t.sort(z)` straight from
+   a function hands the caller a pair, and the failure looks like a type error
+   far from the line that caused it.
+2. The indices are the bridge to the order-statistics KP: they say *where*
+   each sorted value came from, which is how you carry a second tensor along.
+3. `descending=True` is one of the places PyTorch is friendlier than NumPy —
+   worth knowing so you don't write the reverse-slice workaround (which
+   wouldn't work here anyway, since negative slice steps are rejected).
 
 ## Faded practice
 
@@ -72,28 +79,31 @@ Why each step:
 Sorted copy, smallest to largest, input left unmodified.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
-    """Return a NEW array with z's values in ascending order."""
-    return np._____(z)
+    """Return a NEW tensor with z's values in ascending order."""
+    return t.sort(z)._____
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
-    """Return a NEW array with z's values in ascending order."""
-    return np.sort(z)
+    """Return a NEW tensor with z's values in ascending order."""
+    return t.sort(z).values
 ```
 
 ## Misconceptions
 
-- **"`z.sort()` returns the sorted array."** — It returns `None` and sorts
-  `z` in place. If you need a sorted copy, use the function `np.sort(z)`.
-- **"There's a reverse/descending flag."** — There isn't; use
-  `np.sort(z)[::-1]`.
-- **"Sorting a 2-D array sorts the rows as units."** — `np.sort(z, axis=1)`
+- **"`t.sort(z)` returns the sorted tensor."** — It returns a
+  `(values, indices)` pair. Take `.values`, or unpack both.
+- **"`z.sort()` sorts in place, like the NumPy method."** — It does not. There
+  is no in-place sort; the input is never modified.
+- **"There's no descending option, so I'll reverse the result."** — There is:
+  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here
+  anyway.
+- **"Sorting a 2-D tensor sorts the rows as units."** — `t.sort(z, dim=1)`
   sorts *within* each row independently, destroying row integrity. Keeping
   rows intact while reordering them is an argsort + indexing pattern (later
   KP).

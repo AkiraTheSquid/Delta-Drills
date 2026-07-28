@@ -1,6 +1,6 @@
 ---
 kc: numpy.linalg-basics
-title: Matrix multiply and np.linalg basics
+title: Matrix multiply and t.linalg basics
 supporting: [numpy.aggregations, numpy.elementwise-ufuncs]
 new_syntax: [matmul-operator]
 faded: [239, 107]
@@ -10,7 +10,7 @@ independent: []
 
 ## Concept: two multiplications — * vs @
 
-Two different "multiplications" exist for matrices, and NumPy gives each its
+Two different "multiplications" exist for matrices, and PyTorch gives each its
 own operator:
 
 - **`a * b` — elementwise**: multiplies corresponding entries; shapes must
@@ -24,14 +24,17 @@ The shape rule `(m, k) @ (k, n) → (m, n)` is worth chanting: it predicts
 both whether a product is legal and what comes out. It also covers
 matrix–vector: `(m, k) @ (k,) → (m,)`.
 
+`t.matmul(a, b)` is the same operation spelled as a function, and in model
+code you will meet `a.T` for the transpose that so often precedes it.
+
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # Elementwise vs matrix product — same operands, different operations:
@@ -42,7 +45,7 @@ assert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]
 # Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19. Row 0 · column 0.
 
 # Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.
-p = np.ones((2, 3)) @ np.ones((3, 2))
+p = t.ones((2, 3)) @ t.ones((3, 2))
 assert p.shape == (2, 2)
 ```
 
@@ -57,7 +60,7 @@ you catch on paper.
 Matrix product of shapes (m, k) and (k, n).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """The (m, n) matrix product of a (m, k) and b (k, n)."""
@@ -65,42 +68,48 @@ def solve(a, b):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """The (m, n) matrix product of a (m, k) and b (k, n)."""
     return a @ b
 ```
 
-## Concept: np.linalg.solve — never build the inverse
+## Concept: t.linalg.solve — never build the inverse
 
-The `np.linalg` submodule holds the "real linear algebra":
+The `t.linalg` submodule holds the "real linear algebra", and its names match
+NumPy's `np.linalg` almost one for one:
 
-- **`np.linalg.solve(a, b)`** — solve the system `a @ x = b` for `x`.
+- **`t.linalg.solve(a, b)`** — solve the system `a @ x = b` for `x`.
   This is THE way to compute "a⁻¹ b". Numerically, solving directly is both
-  faster and more accurate than `np.linalg.inv(a) @ b`; computing an
+  faster and more accurate than `t.linalg.inv(a) @ b`; computing an
   explicit inverse is almost never what you want.
-- `np.linalg.inv`, `np.linalg.det`, `np.linalg.matrix_rank`,
-  `np.linalg.norm`, `np.linalg.eig` — inverse, determinant, rank, norms,
+- `t.linalg.inv`, `t.linalg.det`, `t.linalg.matrix_rank`,
+  `t.linalg.norm`, `t.linalg.eig` — inverse, determinant, rank, norms,
   eigendecomposition, when a task genuinely asks for them.
 
+One dtype caveat that is easy to trip over here: these routines want floats,
+and the default float is 32-bit. Ill-conditioned systems lose accuracy sooner
+than the float64 you may be used to from NumPy — if a solve looks wrong,
+checking the dtype is a reasonable first move.
+
 Sanity-checking a solve is one line: plug `x` back in and compare
-`a @ x` with `b` using `np.allclose` (float arithmetic — never `==`).
+`a @ x` with `b` using `t.allclose` (float arithmetic — never `==`).
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Solve a @ x = b_vec — NOT by computing an inverse.
-a_sys = np.array([[2.0, 0.0],
+a_sys = t.tensor([[2.0, 0.0],
                   [0.0, 4.0]])
-b_vec = np.array([6.0, 8.0])
-x = np.linalg.solve(a_sys, b_vec)
+b_vec = t.tensor([6.0, 8.0])
+x = t.linalg.solve(a_sys, b_vec)
 assert x.tolist() == [3.0, 2.0]
 
 # Verification pattern: substitute back, compare with float tolerance.
-assert np.allclose(a_sys @ x, b_vec)
+assert t.allclose(a_sys @ x, b_vec)
 ```
 
 Why: `solve` + `allclose` verification — the pair costs one line and
@@ -112,19 +121,19 @@ catches both wrong answers and ill-conditioned systems.
 Solve the linear system a @ x = b (a is invertible).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Return x such that a @ x = b (use a solver, not an inverse)."""
-    return np.linalg._____(a, b)
+    return t.linalg._____(a, b)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Return x such that a @ x = b (use a solver, not an inverse)."""
-    return np.linalg.solve(a, b)
+    return t.linalg.solve(a, b)
 ```
 
 ## Misconceptions
@@ -132,9 +141,11 @@ def solve(a, b):
 - **"`*` multiplies matrices."** — `*` is elementwise; `@` is the matrix
   product. Mixing them up usually *doesn't* crash (broadcasting can make `*`
   legal), it just silently computes the wrong thing — the worst kind of bug.
-- **"To solve a @ x = b, compute inv(a) @ b."** — `np.linalg.solve(a, b)` is
+- **"To solve a @ x = b, compute inv(a) @ b."** — `t.linalg.solve(a, b)` is
   more accurate and faster; explicit inverses amplify rounding error and cost
   more. Reach for `inv` only when the inverse itself is the deliverable.
 - **"If `@` runs, the shapes were right."** — `@` between wrong-but-compatible
   shapes (e.g. transposed operands, square matrices) runs happily and returns
   garbage. Predict `(m, k) @ (k, n) → (m, n)` on paper first.
+- **"Integer tensors are fine for linalg."** — They are not; the solvers
+  require floating point and will raise. Convert with `.to(t.float32)` first.

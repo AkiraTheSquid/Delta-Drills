@@ -1,7 +1,8 @@
 # numpy
 
 ## Purpose
-- The NumPy knowledge-point lessons (33 KPs across registry lessons np-1..np-4): first-encounter teaching for every NumPy KC in the drill course.
+- The array-programming knowledge-point lessons (44 KPs across registry lessons np-1..np-4): first-encounter teaching for every array KC in the drill course.
+- **Mid-migration to the PyTorch dialect.** np-1 ("Arrays from the ground up", 12 KPs) is converted: it teaches `import torch as t`, matching ARENA 0.0, which the 64-KC graph mirrors. np-2..np-4 still teach NumPy. The folder name is historical.
 
 ## Owns
 - One `kp-<slug>.md` per NumPy KC — concept prose, worked examples, faded/guided/independent exercise assignments, misconceptions.
@@ -22,6 +23,7 @@
 2. Validate (`--coverage`) then compile; the app's lesson gate pages through segments.
 
 ## Invariants & Constraints
+- **One dialect per page, and it must match the drills it fades into.** A page teaching `np.repeat` while its exercise grades `t.repeat_interleave` still passes every test and simply confuses the learner, so `watch.py` compares each KP's fence imports against the `answer_code` of every question id in its frontmatter. Convert a lesson and its bank questions in the same pass.
 - One concept per segment; exactly ONE worked example per segment; every segment has a faded exercise whose solution passes bank tests.
 - Concept prose teaches the GENERAL procedure before the example (never example-only).
 - Fences execute top-to-bottom in a shared namespace per file — later segments may rely on earlier definitions, so don't reorder segments without re-validating.
@@ -37,6 +39,13 @@
   - Root cause: question text/tests differ from what the prose suggests.
   - Prevention/fix: always dump the bank question's test_cases first; let the validator be the gate.
 
+- **Exact float equality in a torch fence** — `ACTIVE`
+  - When it happens: writing `assert x.tolist() == [0.1, 0.4, 0.9]` in a converted KP.
+  - Symptom: `validate_lessons.py` reports `fence failed: AssertionError` with no further detail; the code is correct.
+  - Root cause: torch's default float is **float32**, so `0.4` round-trips as `0.4000000059604645`. NumPy's float64 hid this.
+  - Prevention/fix: use dyadic values in worked examples (0.25, 0.5, 0.75, 3.5, 9.5 — exact in binary), or assert with a tolerance. The grader itself is tolerant; only the lesson fences use bare `==`.
+
 ## Recent Changes
+- 2026-07-27: np-1's 12 KPs converted to the PyTorch dialect alongside their 49 bank questions. Several KPs gained torch-specific content the NumPy version had no reason to teach: `t.flip` (negative slice steps are rejected), `.repeat` vs `repeat_interleave` (the names swap meaning against NumPy), `t.sort` returning a (values, indices) pair, `meshgrid`'s mandatory `indexing=`, and float32-vs-float64 defaults. `watch.py` filled with the lesson↔drill dialect check.
 - 2026-07-19: ~20 KPs restructured into single-concept segments; np-1 openers trimmed to one-worked-example rhythm (pilot for Seth's review).
 - 2026-07-15: Initial 33 KPs authored (Pass 1).
