@@ -630,6 +630,10 @@
           <div class="question-number-row">
             <div class="question-number" id="question-number">Question 1</div>
             <button class="question-id-chip" id="question-id-chip" type="button" title="Copy stable problem ID">ID --</button>
+            <!-- Audit hook: open the concept this question is tagged to, so the
+                 tutor's choice can be checked against the map it claims to
+                 follow. Hidden when the question carries no KC tag. -->
+            <button class="question-id-chip" id="practice-graph-jump" type="button" hidden>See in knowledge graph</button>
           </div>
 
           <!-- Cold Start Badge (hidden when not calibrating) -->
@@ -840,7 +844,8 @@ np.random.seed(0)
   <script src="practice/dom.js?v=16"></script>
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
-  <script src="practice/ui.js?v=21"></script>
+  <script src="practice/graph-jump.js?v=1"></script>
+  <script src="practice/ui.js?v=22"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=15"></script>
   <script src="practice/timer.js?v=11"></script>
