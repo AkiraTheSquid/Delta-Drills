@@ -56,7 +56,7 @@ import json
 import logging
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from app import bkt_mastery
 
@@ -123,7 +123,13 @@ def _registry() -> Dict[str, dict]:
 
 @lru_cache(maxsize=1)
 def _qmatrix() -> Dict[int, dict]:
-    """Question id -> {target_kcs, supporting_kcs}."""
+    """Question id -> {target_kcs, supporting_kcs, source}.
+
+    `source` records WHICH list of a KP's frontmatter claimed the question —
+    faded / guided / independent — which is the scaffolding ladder `ladder_rank`
+    orders by. It is carried through verbatim; an unrecognised value sorts last
+    rather than being silently treated as a rung.
+    """
     raw = _read_json(_QMATRIX_PATH)
     out: Dict[int, dict] = {}
     for qid, row in raw.items():
@@ -136,6 +142,7 @@ def _qmatrix() -> Dict[int, dict]:
         out[key] = {
             "target_kcs": [k for k in (row.get("target_kcs") or []) if isinstance(k, str)],
             "supporting_kcs": [k for k in (row.get("supporting_kcs") or []) if isinstance(k, str)],
+            "source": row.get("source") if isinstance(row.get("source"), str) else None,
         }
     return out
 
@@ -346,6 +353,39 @@ def select_next_kc(user_state, eligible=None) -> Optional[str]:
 
 def questions_for_kc(kc: str) -> Sequence[int]:
     return _questions_by_kc().get(kc, ())
+
+
+# Scaffolding rungs, in the order a learner should meet them. The KP frontmatter
+# already declares which drills are faded (fill in a blank), guided, and
+# independent (write it unaided); `build_qmatrix.py` records that choice as the
+# tag's `source`. Ranking by it is what turns "the questions on this KC" into the
+# expertise-reversal ladder the lesson author actually wrote.
+#
+# `leftover-assignment` is not a rung: those tags were hand-assigned to drills no
+# KP references, so nothing has been faded for them. They sort last, after every
+# authored rung.
+_LADDER_RANK = {"kp-faded": 0, "kp-guided": 1, "kp-independent": 2}
+_LADDER_UNRANKED = 3
+
+
+def ladder_rank(qid: int) -> int:
+    row = _qmatrix().get(int(qid)) or {}
+    return _LADDER_RANK.get(row.get("source"), _LADDER_UNRANKED)
+
+
+def lowest_rung(qids: Iterable[int]) -> List[int]:
+    """The questions on the least-scaffolded rung still available.
+
+    Called with the questions a learner can actually be served right now, so an
+    exhausted faded rung falls through to guided and then independent instead of
+    dead-ending. Returns [] for an empty input, which callers read as "this KC
+    has nothing left" rather than as an ordering result.
+    """
+    pool = list(qids)
+    if not pool:
+        return []
+    floor = min(ladder_rank(q) for q in pool)
+    return [q for q in pool if ladder_rank(q) == floor]
 
 
 def subtopics_for_kc(kc: str) -> List[str]:

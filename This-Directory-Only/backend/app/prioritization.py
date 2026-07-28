@@ -107,7 +107,19 @@ def narrow_to_next_kc(
     if not next_kc:
         return candidates
     narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
-    return narrowed or candidates
+    if not narrowed:
+        return candidates
+
+    # Within the KC, follow the scaffolding ladder the KP author wrote: a faded
+    # drill (fill in the blank) before an independent one (write it unaided).
+    # Ranking over the UNSERVED questions only, so a spent faded rung falls
+    # through to the next rung instead of stalling — and so the fallback below
+    # still has the full narrowed list to hand back when everything is spent.
+    unserved = [q for q in narrowed if q.id not in served]
+    if unserved:
+        rung = set(kc_graph.lowest_rung([q.id for q in unserved]))
+        return [q for q in unserved if q.id in rung]
+    return narrowed
 
 
 def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:

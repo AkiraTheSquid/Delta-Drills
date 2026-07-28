@@ -2,10 +2,10 @@
 kc: numpy.ndarray-model
 title: What a tensor is — data + shape + dtype
 supporting: []
-new_syntax: [import-torch-as-t, tensor-attributes]
+new_syntax: [torch.tensor, Tensor.shape, Tensor.dtype, Tensor.ndim, Tensor.numel, torch.int64, torch.float32]
 faded: [224]
 guided: []
-independent: []
+independent: [480]
 ---
 
 ## Concept
@@ -59,20 +59,53 @@ Turn a nested Python list into a 2-D tensor:
 ```python
 import torch as t
 
-rows = [[1, 2, 3],
-        [4, 5, 6]]
+# A nested Python list: two inner lists of three integers each.
+rows = [[1, 2, 3], [4, 5, 6]]
+
+# The input is still an ordinary Python list — nothing has changed yet.
+print("input:", rows)
 
 # t.tensor walks the nesting: outer list -> axis 0, inner lists -> axis 1.
 a = t.tensor(rows)
 
-assert a.shape == (2, 3)      # 2 rows, 3 columns — inferred from the nesting
-assert a.dtype == t.int64     # every input was an int -> one int dtype for all
-assert a.ndim == 2 and a.numel() == 6
+# Printing a tensor shows the values AND the structure the nesting produced.
+print(a)
+
+# shape is a tuple: (length of axis 0, length of axis 1) = (rows, columns).
+print("shape:", a.shape)
+
+# dtype is the ONE element type shared by every entry. Every input was an
+# int, so PyTorch picked a single integer type for the whole block.
+print("dtype:", a.dtype)
+
+# ndim counts the axes; numel() counts the elements (the product of shape).
+print("ndim:", a.ndim, "numel:", a.numel())
+
+# Mixing an int with a float forces ONE common type for the whole block:
+# the integer is widened to a float rather than kept as an int.
+print("mixed dtype:", t.tensor([1, 2.5]).dtype)
 ```
 
-Why: you don't tell `t.tensor` the shape — nesting sets the dimensions.
-Checking `shape` and `dtype` right after should become a reflex; most tensor
-bugs are shape or dtype surprises.
+Run that and PyTorch prints:
+
+```output
+input: [[1, 2, 3], [4, 5, 6]]
+tensor([[1, 2, 3],
+        [4, 5, 6]])
+shape: torch.Size([2, 3])
+dtype: torch.int64
+ndim: 2 numel: 6
+mixed dtype: torch.float32
+```
+
+Read the output line by line. You never told `t.tensor` the shape — the
+nesting set it, and `torch.Size([2, 3])` is PyTorch reporting back what it
+inferred. `torch.int64` is the single type it chose for all six entries. The
+last line is the same rule biting: ask for one int and one float in one
+tensor and you get `torch.float32` for both, because the block can only hold
+one type. Printing `shape` and `dtype` right after you build a tensor should
+become a reflex — most tensor bugs are a shape or dtype surprise, and they are
+invisible until you look.
 
 ## Faded practice
 

@@ -27,7 +27,13 @@ LEFTOVER_TARGETS = {
     160: "numpy.diag-triangles", 164: "numpy.index-grids",
     177: "numpy.fancy-indexing", 240: "numpy.where-select",
     # Numpy: Indexing and selection
-    73: "numpy.ndarray-model", 78: "numpy.diag-triangles",
+    # 73 was assigned numpy.ndarray-model, which put a double comprehension
+    # over z[i, j] plus .item() at the ROOT of the whole prerequisite lattice —
+    # it became the first question in the course when KC gating went live.
+    # Its actual subject is building index pairs from a tensor's shape, and
+    # numpy.index-grids is the KC whose lesson owns that AND whose subtopic
+    # matches the question's own ("Numpy: Indexing and selection").
+    73: "numpy.index-grids", 78: "numpy.diag-triangles",
     87: "numpy.dtype-astype", 91: "numpy.random-sampling",
     103: "numpy.rescaling", 126: "numpy.window-stencil",
     129: "numpy.pairwise-metrics", 136: "numpy.fancy-indexing",
@@ -44,7 +50,10 @@ LEFTOVER_TARGETS = {
     # Einsum
     249: "einsum.reductions", 250: "einsum.batch-dims",
     253: "einsum.broadcast-scaling", 261: "einsum.reductions",
-    279: "einsum.batch-dims", 286: "einsum.matvec-matmul",
+    # 279 is no longer here: kp-batch-dims.md now names it as a faded item, and
+    # a KP reference already assigns the same KC. Keeping both made the build
+    # abort ("both referenced and in LEFTOVER_TARGETS").
+    286: "einsum.matvec-matmul",
     290: "einsum.reductions", 293: "einsum.diag-trace",
     294: "einsum.matvec-matmul", 300: "einsum.notation-model",
     302: "einsum.reductions", 303: "einsum.notation-model",

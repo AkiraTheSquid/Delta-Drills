@@ -55,6 +55,10 @@ EINOPS_CSV_PATH = (
     else _CSV_DIR / "einops_problems.csv"
 )
 CNN_CSV_PATH = _CSV_DIR / "cnn_problems.csv"
+# Course-authored questions, loaded LAST so their positional ids sit above the
+# whole imported bank and appending one can never renumber an existing question.
+# Keep in sync with pipeline/export_questions_json.py::CSV_SOURCES.
+CURATED_ADDITIONS_CSV_PATH = _CSV_DIR / "curated_additions.csv"
 
 
 def _chatgpt_runtime_dir() -> Path:
@@ -152,6 +156,11 @@ def _load_function_overrides() -> Dict[int, dict]:
         # eleven of them only ever had a vestigial `import numpy as np`. Keep in
         # sync with pipeline/export_questions_json.py.
         "torch_dialect_overrides_parked.jsonl",
+        # Hand-authored payloads for course-written questions (curated_additions.csv)
+        # plus targeted fixes the generated layers cannot express. Layered LAST so
+        # a deliberate hand edit is never re-overwritten by a bulk pass. Keep in
+        # sync with pipeline/export_questions_json.py.
+        "curated_overrides.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():
@@ -662,8 +671,12 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             EINOPS_CSV_PATH, questions, start_id=next_id, skip_rows=0,
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
-        _load_csv_into(
+        next_id = _load_csv_into(
             CNN_CSV_PATH, questions, start_id=next_id, skip_rows=0,
+            overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
+        )
+        _load_csv_into(
+            CURATED_ADDITIONS_CSV_PATH, questions, start_id=next_id, skip_rows=0,
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
 

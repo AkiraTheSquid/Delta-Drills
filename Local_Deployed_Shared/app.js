@@ -47,9 +47,13 @@ const switchTab = (tabName) => {
   // "Saved question is no longer available", and the re-render leaves the
   // submit area hidden, which is the "no submit button" dead end. A session
   // that is running or paused owns the question; leave it alone.
+  // A lesson page is held the same way. The "See in knowledge graph" button in
+  // the lesson topbar switches tabs on purpose; refetching on the way back would
+  // replace the lesson the learner is mid-way through with a question.
   const sessionHoldsQuestion =
-    typeof PracticeSession !== "undefined" &&
-    (PracticeSession.isActive() || PracticeSession.hasPausedSession?.());
+    document.body.classList.contains("lesson-mode") ||
+    (typeof PracticeSession !== "undefined" &&
+      (PracticeSession.isActive() || PracticeSession.hasPausedSession?.()));
   if (
     tabName === "practice" &&
     !sessionHoldsQuestion &&
