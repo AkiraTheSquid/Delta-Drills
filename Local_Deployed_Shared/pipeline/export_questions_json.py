@@ -455,6 +455,12 @@ def load_function_overrides() -> dict[int, dict]:
         # np-1 pass stays reviewable on its own. Keep in sync with
         # backend/app/questions.py::_load_function_overrides.
         "torch_dialect_overrides_einops_einsum.jsonl",
+        # Third conversion pass (2026-07-28): np-2 "Indexing and selection" and
+        # np-3 "Vectorization and broadcasting". These two carry the numpy
+        # functions with no torch spelling, so ~30 of them are hand-translated
+        # in This-Directory-Only/scripts/torchify_np23_manual.py. Keep in sync
+        # with backend/app/questions.py::_load_function_overrides.
+        "torch_dialect_overrides_np23.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():

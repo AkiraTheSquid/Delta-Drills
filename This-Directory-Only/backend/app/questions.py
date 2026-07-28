@@ -134,6 +134,12 @@ def _load_function_overrides() -> Dict[int, dict]:
         # are ARENA 0.0's own exercise material. Kept in its own layer so the
         # np-1 pass stays reviewable on its own.
         "torch_dialect_overrides_einops_einsum.jsonl",
+        # Third conversion pass (2026-07-28): np-2 "Indexing and selection" and
+        # np-3 "Vectorization and broadcasting". These two carry the numpy
+        # functions with no torch spelling, so ~30 of them are hand-translated
+        # in This-Directory-Only/scripts/torchify_np23_manual.py. Keep in sync
+        # with pipeline/export_questions_json.py.
+        "torch_dialect_overrides_np23.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():

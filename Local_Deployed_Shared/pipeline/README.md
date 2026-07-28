@@ -73,6 +73,7 @@
   - Status: `ACTIVE` — structural, no automated check enforces it.
 
 ## Recent Changes
+- 2026-07-28: `torch_dialect_overrides_np23.jsonl` registered as the third dialect layer (np-2 + np-3, 120 questions). The bank is now 390 torch / 58 numpy; the remaining numpy is np-4 plus q65, whose `ndarray.flags.writeable` content has no torch equivalent. `audit_question_bank.py --gate` earns its keep here: converted STARTERS carry the same demo block as answers, and a raw list assigned into a tensor (`img[0, 0] = [255.0, ...]`) is a blocking `setup_exec_error` that no other gate sees.
 - 2026-07-27: `torch_dialect_overrides.jsonl` now carries all 49 of np-1's questions in the PyTorch dialect. The staleness entry above was corrected: the earlier 118/364 figure was measured against bare `exec` instead of the grading harness, and the real post-export count is 1.
 - 2026-07-27: `expected_output` added to the override whitelist in both the exporter and the backend; new `torch_dialect_overrides.jsonl` layer registered last.
 - 2026-04-29: Initial doc created.
