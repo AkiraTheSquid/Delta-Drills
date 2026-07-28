@@ -544,6 +544,12 @@ def load_questions() -> list[dict]:
                 submission_mode = override.get("submission_mode", submission_mode)
                 question_text = override.get("question_text", question_text)
                 answer_code = override.get("answer_code", answer_code)
+                # Reference stdout shown beside the drill. Override-able because
+                # a rewrite that changes answer_code invalidates the CSV's
+                # Output column — a torch conversion changes the repr itself
+                # (`tensor([1., 1.])`, not `[1. 1.]`). Keep in sync with
+                # backend/app/questions.py.
+                expected_output = override.get("expected_output", expected_output)
                 if "difficulty_score" in override:
                     try:
                         difficulty_score = int(override["difficulty_score"])

@@ -552,6 +552,12 @@ def _load_csv_into(
                 task_type = override.get("task_type", task_type)
                 question_text = override.get("question_text", question_text)
                 answer_code = override.get("answer_code", answer_code)
+                # Reference stdout shown beside the drill. Override-able because
+                # a rewrite that changes answer_code invalidates the CSV's
+                # Output column — a torch conversion changes the repr itself
+                # (`tensor([1., 1.])`, not `[1. 1.]`). Keep in sync with the
+                # exporter.
+                expected_output = override.get("expected_output", expected_output)
                 if "expected_artifact_type" in override:
                     expected_artifact_type = override["expected_artifact_type"]
                 if "supports_visual_output" in override:
