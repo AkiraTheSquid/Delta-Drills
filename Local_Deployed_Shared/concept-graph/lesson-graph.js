@@ -87,6 +87,14 @@
     if (Number.isFinite(raw)) {
       return { r: _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null), source: "atom" };
     }
+    // Crosswalk read: this KC's own evidence, held under atom ids the graph
+    // does not share. Only the `measured` tier qualifies — for a topic proxy
+    // the atoms are coarser than the concept, so this returns null and the
+    // subtopic fallback below handles it, which at least says what it is.
+    if (s && s.atom_mastery && typeof window.kcCrosswalkReadiness === "function") {
+      const x = window.kcCrosswalkReadiness(kc, s.atom_mastery, s.atom_last_ts, _decay);
+      if (x) return { r: x.r, source: "atom", via: x.atoms, ts: x.ts };
+    }
     // Subtopic fallback. `p` (correctness rate) is the only field on the same
     // [0,1] scale as a posterior — `baseline` is a difficulty-weighted score in
     // [0,100]. Requires n > 0: p defaults to 0.5, and a never-practised subtopic
@@ -104,7 +112,16 @@
   const kcReadiness = (kc) => kcReadinessInfo(kc).r;
   const kcLastTs = (kc) => {
     const s = _persistedState();
-    return s && s.atom_last_ts ? s.atom_last_ts[kc] : null;
+    if (!s || !s.atom_last_ts) return null;
+    if (s.atom_last_ts[kc]) return s.atom_last_ts[kc];
+    // Same disjoint-id problem as the mastery read: for a measured KC the
+    // timestamps live under the atom ids, so "last seen" was blank on exactly
+    // the nodes with real evidence.
+    if (typeof window.kcCrosswalkReadiness === "function") {
+      const x = window.kcCrosswalkReadiness(kc, s.atom_mastery, s.atom_last_ts, _decay);
+      if (x && x.ts) return x.ts;
+    }
+    return null;
   };
   // red (low) → muted purple → blue (high); gray for no estimate.
   const masteryColor = (r) => {
@@ -915,6 +932,14 @@
         r.ok ? r.json() : null
       );
     } catch (_) { kcDifficulty = null; }
+
+    // The KC->atom join, so the 20 measurable concepts can read the mastery the
+    // backend already holds instead of falling through to a lesson average.
+    // Optional for the same reason as kc_difficulty: a missing file costs
+    // precision, not the graph.
+    try {
+      if (typeof window.loadKcCrosswalk === "function") await window.loadKcCrosswalk();
+    } catch (_) {}
 
     (registry.lessons || []).forEach((l) => { lessonMeta[l.id] = l; });
     (registry.kcs || []).forEach((k) => {
