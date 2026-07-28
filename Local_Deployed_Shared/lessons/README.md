@@ -26,6 +26,8 @@
 3. LessonGate renders teaching + worked explanation in left panel and preloads complete worked code in editor for optional running. Continue advances; finishing KP records KC exposure and resumes normal questions. Faded content is not rendered inside lesson.
 
 ## Invariants & Constraints
+- **This directory is the SOURCE OF TRUTH for what the tutor may teach.** As of 2026-07-27 the ITS serves only questions carrying a `target_kcs` entry in `qmatrix_tags.json`; the 75 questions without one (CNN, PyTorch Fundamentals, Autograd, Optimizers) are parked until their chapter's KCs are authored and validated. So a question's presence here is what makes it reachable — adding `target_kcs` unparks it, removing them hides it. The older ARENA concept graph is demoted, not deleted; it is retained as the diff target for blind-authoring later chapters. See `docs/decision-kc-only-serving.md` and `docs/method-anchoring-controls-for-kc-authoring.md`.
+- **Author later chapters blind.** The ARENA concept graph must not be in the authoring context — anchoring cannot be prompted away (Lou & Sun 2024: CoT, Thoughts-of-Principles, Ignore-Anchor-Hint and Reflection all failed, and authored structure is an "expert opinion" anchor, the strongest kind). Author fresh, then diff against ARENA as a check.
 - One KP file per KC; one concept per segment; exactly ONE worked example + ONE faded exercise per segment (Seth's format rules — see AUTHORING.md).
 - Watch out renders inside lesson teaching content. Lesson screen has no popup, faded prompt, Check, or grading.
 - A faded qid appears in at most one segment; frontmatter id lists mirror the sections.
@@ -45,6 +47,7 @@
   - Status: `RESOLVED` for np-1 openers + 19 restructured KPs; remaining KPs render as single-segment legacy pages until converted.
 
 ## Recent Changes
+- 2026-07-27: `lessons/` promoted to **source of truth** for the tutor. The ITS now serves only KC-tagged questions (380 servable, 75 parked); the ARENA concept graph is demoted but retained. Validation runs chapter by chapter with the learner in the loop — walk the 64-KC chapter 1, fix/add what's missing, then blind-author the next chapter. See the two new invariants above.
 - 2026-07-20: Lesson changed to inline teaching + optional runnable worked code; faded practice removed from lesson UI.
 - 2026-07-19: Segmented format introduced; ~20 numpy KPs restructured; compiled JSON gains per-KP `segments`.
 - 2026-07-15: Pass 1 content created (64 KPs).
