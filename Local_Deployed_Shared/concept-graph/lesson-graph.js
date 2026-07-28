@@ -33,6 +33,11 @@
   };
   const FALLBACK = "#dddddd";
   const ACCENT = "#ffd23f"; // prerequisite-path highlight
+  // "Next up" reuses the same yellow on purpose — it is the map's one attention
+  // colour. The two never compete for meaning: the path highlight only exists
+  // while a node is selected, and next-up is the standing marker, drawn with an
+  // outer glow the path highlight does not have.
+  const NEXT_UP = ACCENT;
 
   const $ = (id) => document.getElementById(id);
   const lessonColor = (lid) => LESSON_COLORS[lid] || FALLBACK;
@@ -420,9 +425,19 @@
       delta = Math.max(-EXTRAP_MAX_SHIFT, Math.min(EXTRAP_MAX_SHIFT, delta));
     }
     const shift = (m) => _expit(_logit(m) - delta);
+    const r = Math.min(EXTRAP_CAP, shift(a.mBar));
+    // The learner-spread band alone is NOT an uncertainty about this concept —
+    // it is how varied their other results were, and a consistent learner
+    // collapses it to the EXTRAP_MIN_SD floor. That made untouched concepts
+    // draw a TIGHTER band than concepts with two real attempts behind them,
+    // which is backwards: zero evidence is the most uncertain state on the map,
+    // not the least. Floor the half-width at what a single graded attempt would
+    // earn, so the band can only narrow as evidence arrives.
+    const spreadHalf = (shift(a.mBar + a.sd) - shift(a.mBar - a.sd)) / 2;
+    const half = Math.max(spreadHalf, _noEvidenceHalf(r));
     return {
-      r: Math.min(EXTRAP_CAP, shift(a.mBar)),
-      ci: [shift(a.mBar - a.sd), shift(a.mBar + a.sd)],
+      r,
+      ci: [Math.max(0, r - half), Math.min(1, r + half)],
       d, ...a,
     };
   };
@@ -440,6 +455,15 @@
     const centre = (p + (z * z) / (2 * n)) / d;
     const half = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
     return [Math.max(0, centre - half), Math.min(1, centre + half)];
+  };
+
+  // The widest honest band: what one graded attempt would earn. A concept with
+  // NO attempts must be at least this uncertain, or the bar tells the learner
+  // the opposite of the truth. Wilson at n=1 is ~±0.45, i.e. "almost anything",
+  // which is the correct thing to say about a concept nobody has tested.
+  const _noEvidenceHalf = (p) => {
+    const w = _wilson(Number.isFinite(p) ? p : 0.5, 1);
+    return w ? (w[1] - w[0]) / 2 : 0.45;
   };
 
   // Evidence backing a KC's estimate. Per-attempt counts are only kept at
@@ -505,7 +529,12 @@
     const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
     const sibs = sub ? _siblingCount(kc) : 0;
 
-    let rows = `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
+    let rows = "";
+    if (kc === nextUpKc) {
+      rows += `<div class="kg2-dock-row is-next-up"><span>Next up</span>` +
+              `<span>the queue's weakest unlocked concept</span></div>`;
+    }
+    rows += `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
     rows += parents.length
       ? `<div class="kg2-dock-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
       : `<div class="kg2-dock-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
@@ -901,6 +930,57 @@
         "border-style": projected ? "dashed" : "solid",
       });
     }));
+    markNextUp();
+  };
+
+  /* ---------------- "next up": where the queue is pointing ----------------
+     The practice queue picks weakest-first among what the learner can actually
+     attempt, so this mirrors that rule on the graph: the lowest-readiness
+     concept whose prerequisites all clear the unlock gate, ties broken by the
+     easiest entry point. Concepts already at mastery drop out.
+
+     It MIRRORS the queue, it is not the server's literal pick — the queue
+     selects a subtopic and then a question inside it, and it may serve a
+     placement probe instead. So the dock says "next up", not "you will be
+     asked this". Getting that wrong would be a promise the app then breaks. */
+  const _nextUpKc = () => {
+    if (!kcById || !Object.keys(kcById).length) return null;
+    let best = null;
+    Object.keys(kcById).forEach((kc) => {
+      const r = kcReadiness(kc);
+      // No estimate at all still competes — an untouched concept is exactly
+      // the kind of thing to practise next — at BKT's own prior.
+      const score = Number.isFinite(r) ? r : BKT_P_INIT;
+      if (score >= MASTERY_T) return;
+      const parents = parentsOf[kc] || [];
+      const locked = parents.some((p) => {
+        const pr = kcReadiness(p);
+        return !(Number.isFinite(pr) && pr >= UNLOCK_T);
+      });
+      if (locked) return;
+      const d = _kcDifficulty(kc);
+      const tie = Number.isFinite(d) ? d : 101;
+      if (!best || score < best.score - 1e-9 ||
+          (Math.abs(score - best.score) < 1e-9 && tie < best.tie)) {
+        best = { kc, score, tie };
+      }
+    });
+    return best ? best.kc : null;
+  };
+
+  let nextUpKc = null;
+
+  // Yellow ring on the concept, and the same yellow along the edges feeding it,
+  // so the route INTO it is visible rather than just the destination.
+  const markNextUp = () => {
+    if (!cy) return;
+    cy.elements(".next-up, .next-up-edge").removeClass("next-up next-up-edge");
+    nextUpKc = colorMode === "mastery" ? _nextUpKc() : null;
+    if (!nextUpKc) return;
+    const node = cy.getElementById(nextUpKc);
+    if (!node || !node.length) return;
+    node.addClass("next-up");
+    node.incomers("edge").addClass("next-up-edge");
   };
 
   /* ---------------- build ---------------------------------------------- */
@@ -993,6 +1073,18 @@
         { selector: "node.hl", style: { "opacity": 1, "border-width": 3, "border-color": ACCENT, "z-index": 50 } },
         { selector: "node.hl-strong", style: { "opacity": 1, "border-width": 5, "border-color": ACCENT, "font-size": 12, "z-index": 99 } },
         { selector: "edge.hl", style: { "opacity": 1, "width": 3, "line-color": ACCENT, "target-arrow-color": ACCENT, "z-index": 60 } },
+        // Where the queue is pointing. The outline sits OUTSIDE the border, so
+        // a dashed projected node keeps showing that it is projected instead of
+        // having the marker overwrite that fact.
+        { selector: "node.next-up", style: {
+            "border-width": 4, "border-color": NEXT_UP, "border-style": "solid",
+            "outline-width": 6, "outline-color": NEXT_UP, "outline-opacity": 0.35,
+            "z-index": 80,
+        }},
+        { selector: "edge.next-up-edge", style: {
+            "width": 3.5, "line-color": NEXT_UP, "target-arrow-color": NEXT_UP,
+            "opacity": 1, "z-index": 70,
+        }},
       ],
       layout: { name: window.cytoscapeDagre ? "dagre" : "cose",
         rankDir: "BT", nodeSep: 26, rankSep: 150, edgeSep: 12, animate: false, fit: true, padding: 40 },
