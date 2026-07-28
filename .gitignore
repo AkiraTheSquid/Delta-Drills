@@ -125,3 +125,6 @@ graphify-out/
 # on demand with `git show <sha>:Local_Deployed_Shared/questions.json`, never commit
 # (the deploy script runs `git add -A`).
 This-Directory-Only/scripts/questions_base.json
+
+# Scratch bank snapshots for the torchify generators (see scripts/README.md).
+This-Directory-Only/scripts/questions_base*.json
