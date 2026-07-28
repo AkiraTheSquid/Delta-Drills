@@ -124,9 +124,11 @@ number — different KP). `z.clamp(min=lo, max=hi)` limits values to a range;
 NumPy calls this `clip`, and PyTorch accepts that spelling as an alias, but
 `clamp` is the name you will read in model code.
 
-These are interchangeable spellings worth recognizing in others' code:
-`clamp(max=100)` == `t.minimum(x, t.tensor(100.0))`, and `clamp(min=0)` ==
-ReLU.
+These overlap: `clamp(max=100)` and `t.minimum(x, ...)` compute the same
+thing, and `clamp(min=0)` is ReLU. Prefer `clamp` for a constant bound — it
+takes a plain Python number, whereas `t.minimum` wants a second tensor, and a
+tensor you construct on the spot lands on the CPU and will not match an input
+living on a GPU.
 
 ## Worked example
 

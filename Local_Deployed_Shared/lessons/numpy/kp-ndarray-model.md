@@ -16,9 +16,12 @@ this one object, so it pays to know exactly what it is.
 
 A Python list is a bag of pointers: each element can be a different type, live
 anywhere in memory, and even be another list of a different length. A tensor is
-the opposite: **one contiguous block of memory holding elements that are all the
-same type**, plus a small amount of metadata describing how to interpret that
-block. The three pieces of metadata you will use constantly:
+the opposite: **one block of memory holding elements that are all the same
+type**, plus a small amount of metadata describing how to interpret that block.
+A freshly built tensor lays those elements out contiguously; operations that
+only re-describe the block — transposing, slicing with a step — hand back a
+tensor that shares the same memory in a different reading order, which is why
+`.contiguous()` exists. The three pieces of metadata you will use constantly:
 
 - **`shape`** — a tuple giving the length along each dimension (axis). A 3×4
   matrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4

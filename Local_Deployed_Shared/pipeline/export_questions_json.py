@@ -36,6 +36,10 @@ FUNCTION_OVERRIDES_PATH = CHATGPT_RUNTIME_DIR / "function_mode_overrides.jsonl"
 DELETED_IDS_PATH = CHATGPT_RUNTIME_DIR / "function_mode_deleted_ids.json"
 BROKEN_IDS_PATH = CHATGPT_RUNTIME_DIR / "function_mode_broken_ids.json"
 
+# Same marker backend/app/lessons.py uses: a question is a torch drill when its
+# own code imports torch, not when a label says so.
+TORCH_IMPORT_RE = re.compile(r"(?m)^\s*(?:import\s+torch\b|from\s+torch[\s.])")
+
 CSV_SOURCES = [
     {
         "path": CSV_DIR / "Export of numpy problems with outputs.csv",
@@ -550,6 +554,17 @@ def load_questions() -> list[dict]:
                 # (`tensor([1., 1.])`, not `[1. 1.]`). Keep in sync with
                 # backend/app/questions.py.
                 expected_output = override.get("expected_output", expected_output)
+                # A dialect conversion changes what library the drill actually
+                # uses, and primary_library was inferred above from the CSV's
+                # NumPy answer (topic "Numpy" wins outright there). Re-derive it
+                # from the code that will really be served, or a torch drill
+                # keeps announcing itself as numpy. Serving and Colab routing
+                # both sniff the code rather than this field, so this is
+                # metadata hygiene — but analytics and fixture inference read it.
+                if TORCH_IMPORT_RE.search(answer_code or "") or TORCH_IMPORT_RE.search(
+                    starter_code or ""
+                ):
+                    primary_library = "torch"
                 if "difficulty_score" in override:
                     try:
                         difficulty_score = int(override["difficulty_score"])

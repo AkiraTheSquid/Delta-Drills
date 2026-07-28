@@ -136,8 +136,13 @@ def check_invariants():
             f'{name}: a single code fence imports both numpy and torch'
         assert len(dialects) <= 1, \
             f'{name}: mixes dialects across fences: {sorted(dialects)}'
-        if not dialects:
-            continue
+        # An undeclared page would slip past the drill comparison below, so it
+        # is a failure rather than a skip. Every KP in this course opens its
+        # fences with the import; a page without one is unfinished.
+        assert dialects, (
+            f'{name}: no fence declares a dialect — add the import so the '
+            'lesson can be checked against its drills'
+        )
         page = dialects.pop()
 
         # And it must be the dialect of the drills it fades into — this is the

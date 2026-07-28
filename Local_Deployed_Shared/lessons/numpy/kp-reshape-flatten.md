@@ -124,10 +124,12 @@ From the drill bank: q23 (list all entries in COLUMN-major order — there is no
 
 ## Misconceptions
 
-- **"Reshape can rearrange values."** — Reshape never moves data; it only
-  re-labels positions. The flat sequence of elements is identical before and
-  after. If the values need to move (transpose, sort, flip), reshape is the
-  wrong tool.
+- **"Reshape can rearrange values."** — Reshape never *reorders* values: the
+  flat row-major sequence of elements is identical before and after, and only
+  the shape metadata changes. (It may still copy that sequence into fresh
+  memory when the input is a non-contiguous view — same order, new buffer.)
+  If the values need to move (transpose, sort, flip), reshape is the wrong
+  tool.
 - **"reshape(3, 4) on 11 elements will pad or truncate."** — It raises a
   `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,
   it can't invent elements.
