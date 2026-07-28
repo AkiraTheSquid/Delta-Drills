@@ -252,6 +252,15 @@ const LessonGate = (() => {
     return pages;
   };
 
+  /* The lessons under the "Numpy" topic teach PyTorch — every drill was
+     converted to `import torch as t` in the July dialect passes — but the topic
+     string is NOT free to rename. `questions.py` builds backend subtopic keys as
+     `f"{topic}: {subtopic}"`, so that word is the key every learner's stored BKT
+     mastery is filed under; changing it in place orphans their history. Rename
+     the LABEL only, and leave the key alone until there is a state migration. */
+  const TOPIC_LABELS = { Numpy: "PyTorch tensors" };
+  const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
+
   const _pageHtml = (page) => {
     const { lesson, kp, seg } = page;
     const pageTitle = seg.title || kp.title;
@@ -260,7 +269,11 @@ const LessonGate = (() => {
     const isLast = page.pageIndex === page.pageTotal - 1;
     let html =
       '<div class="lesson-topbar">' +
-      `<span class="lesson-topbar-topic">${esc(lesson.topic)} · ${esc(pageTitle)}</span>` +
+      `<span class="lesson-topbar-topic">${esc(_topicLabel(lesson.topic))} · ${esc(pageTitle)}</span>` +
+      // The lesson already knows its own KC, so unlike the practice-view button
+      // this needs no q-matrix lookup — it can always land somewhere real.
+      `<button type="button" class="lesson-graph-jump" data-kc="${esc(kp.kc)}" ` +
+      `title="Open “${esc(kp.kc)}” in the knowledge graph">See in knowledge graph</button>` +
       `<span class="lesson-topbar-progress">Lesson ${page.pageIndex + 1} of ${page.pageTotal}</span>` +
       "</div>";
     html += `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
@@ -332,6 +345,21 @@ const LessonGate = (() => {
         editor.value = page.seg.worked_example_code ||
           _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR;
         if (output) output.textContent = "";
+
+        const jump = questionText.querySelector(".lesson-graph-jump");
+        if (jump) {
+          jump.onclick = () => {
+            if (typeof switchTab === "function") switchTab("knowledge-graph");
+            // The graph can only size itself once its page is visible, and on a
+            // first visit it still has to build — deltaFocusConceptGraphKc waits
+            // for both. Same contract the practice-view button uses.
+            requestAnimationFrame(() => {
+              if (typeof window.deltaFocusConceptGraphKc === "function") {
+                window.deltaFocusConceptGraphKc(jump.dataset.kc);
+              }
+            });
+          };
+        }
 
         const button = _el("lesson-continue-btn");
         let advancing = false;

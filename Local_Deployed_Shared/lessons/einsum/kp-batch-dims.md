@@ -3,9 +3,9 @@ kc: einsum.batch-dims
 title: Batch dimensions — carrying axes through
 supporting: [einsum.matvec-matmul, einsum.outer-products]
 new_syntax: []
-faded: [268, 279, 258]
+faded: [268, 279, 310]
 guided: []
-independent: [265, 276, 297, 243, 287, 284, 310]
+independent: [265, 276, 297, 243, 287, 284]
 ---
 
 ## Concept: a batch letter runs the contraction per slice
@@ -146,25 +146,25 @@ mechanically `b` is shared (multiplied along) and absent from the output
 
 ## Faded practice
 
-### q258
-The Gram matrix of a feature matrix: `X` of shape `(n, d)` → the `(d, d)`
-matrix `XᵀX`, entry `[p, q]` being column p dotted with column q. (Which axis
-gets summed away — and so must be missing from the output?)
+### q310
+A batch of vectors `v` of shape `(b, d)` → the SINGLE `(d, d)` matrix that sums
+every vector's self outer product. (The batch letter is in both inputs. Where
+must it NOT appear, so that the per-item matrices collapse into one?)
 
 ```python starter
 import torch as t
 
-def solve(x):
-    """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
-    return t.einsum('_____', x, x)
+def solve(v):
+    """(b,d) -> (d,d): sum over the batch of outer(v[n], v[n])."""
+    return t.einsum('_____', v, v)
 ```
 
 ```python solution
 import torch as t
 
-def solve(x):
-    """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
-    return t.einsum('nd,ne->de', x, x)
+def solve(v):
+    """(b,d) -> (d,d): sum over the batch of outer(v[n], v[n])."""
+    return t.einsum('bi,bj->ij', v, v)
 ```
 
 ## Independent practice
@@ -173,7 +173,7 @@ From the drill bank: q265 (batched matmul, the parallel case), q297 (a batch
 of matrices times one constant matrix — the shared case), q276 (batched matmul
 in the `bik,bkj->bij` naming), q243 (per-item outer products — batch letter
 KEPT in the output), q287 (per-item SELF outer products), q284 (per-item
-squared norm), q310 (the summed Gram `bi,bj->ij` from scratch).
+squared norm).
 
 ## Misconceptions
 

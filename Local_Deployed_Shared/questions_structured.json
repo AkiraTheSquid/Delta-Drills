@@ -9932,7 +9932,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Convert a nested list of equal-length integer lists into a 2-D tensor.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Convert a nested list of equal-length integer lists into a 2-D tensor.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx = [[1, 2, 3], [4, 5, 6]]",
@@ -9961,7 +9961,7 @@
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "import torch as t\n\ndef solve(rows):\n    return t.tensor(rows)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    return t.tensor(rows)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
       "expected_output": "tensor([[1, 2, 3],\n        [4, 5, 6]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -21937,6 +21937,60 @@
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model, idx):\n    model.requires_grad_(False)\n    model[idx].requires_grad_(True)\n    flags = [p.requires_grad for p in model.parameters()]\n    n_on = sum(int(p.requires_grad) for p in model.parameters())\n    return (flags, n_on)\n\nmodel = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2))\nprint(solve(model, 1))\n",
       "expected_output": "[False, False, True, True]\n2",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 480,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that takes a nested Python list of equal-length inner lists of numbers and returns a tuple (a, shape, is_float). `a` is the 2-D PyTorch tensor built from rows. `shape` is a's shape as a plain Python tuple of ints, not a torch.Size. `is_float` is True when a's dtype is torch.float32 and False otherwise — remember that a tensor holds ONE type for every element, so a single float among the numbers changes the dtype of the whole tensor.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (tensor, shape-as-plain-tuple, True if dtype is float32).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = [[1, 2, 3], [4, 5, 6]]",
+          "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+          "expected_expr": "([[1, 2, 3], [4, 5, 6]], (2, 3), True, False)"
+        },
+        {
+          "setup_code": "import torch as t\nx = [[1, 2.5], [3, 4]]",
+          "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+          "expected_expr": "([[1.0, 2.5], [3.0, 4.0]], (2, 2), True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nx = [[7, -2, 0, 5]]",
+          "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+          "expected_expr": "([[7, -2, 0, 5]], (1, 4), True, False)"
+        },
+        {
+          "setup_code": "import torch as t\nx = [[3], [-1], [4]]",
+          "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+          "expected_expr": "([[3], [-1], [4]], (3, 1), True, False)"
+        },
+        {
+          "setup_code": "import torch as t\nx = [[0.5]]",
+          "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+          "expected_expr": "([[0.5]], (1, 1), True, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    a = t.tensor(rows)\n    return (a, tuple(a.shape), a.dtype == t.float32)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "expected_output": "(tensor([[1, 2, 3],\n        [4, 5, 6]]), (2, 3), False)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }

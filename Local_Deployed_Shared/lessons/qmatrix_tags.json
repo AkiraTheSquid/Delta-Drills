@@ -43,7 +43,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "6": {
   "target_kcs": [
@@ -112,7 +112,7 @@
   "new_syntax": [
    "boolean-mask-indexing"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "14": {
   "target_kcs": [
@@ -134,7 +134,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "16": {
   "target_kcs": [
@@ -187,8 +187,20 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "kp-independent"
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "Tensor.values",
+   "Tensor.indices",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
+  "source": "kp-faded"
  },
  "23": {
   "target_kcs": [
@@ -222,7 +234,7 @@
   "new_syntax": [
    "integer-array-indexing"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "26": {
   "target_kcs": [
@@ -253,7 +265,7 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "29": {
   "target_kcs": [
@@ -263,7 +275,7 @@
    "numpy.reshape-flatten"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "30": {
   "target_kcs": [
@@ -286,7 +298,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "32": {
   "target_kcs": [
@@ -453,7 +465,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "52": {
   "target_kcs": [
@@ -500,8 +512,10 @@
    "numpy.slicing-views",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "kp-guided"
+  "new_syntax": [
+   "trailing-underscore-inplace"
+  ],
+  "source": "kp-faded"
  },
  "60": {
   "target_kcs": [
@@ -555,7 +569,7 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "66": {
   "target_kcs": [
@@ -577,7 +591,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "68": {
   "target_kcs": [
@@ -610,7 +624,7 @@
   "new_syntax": [
    "integer-array-indexing"
   ],
-  "source": "kp-guided"
+  "source": "kp-independent"
  },
  "71": {
   "target_kcs": [
@@ -638,9 +652,13 @@
  },
  "73": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.index-grids"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.constructors",
+   "numpy.boolean-masking"
+  ],
   "new_syntax": [],
   "source": "leftover-assignment"
  },
@@ -689,7 +707,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "78": {
   "target_kcs": [
@@ -745,7 +763,19 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "Tensor.values",
+   "Tensor.indices",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
   "source": "kp-independent"
  },
  "84": {
@@ -800,7 +830,7 @@
    "numpy.slicing-views"
   ],
   "new_syntax": [],
-  "source": "kp-faded"
+  "source": "kp-independent"
  },
  "90": {
   "target_kcs": [
@@ -857,7 +887,7 @@
    "numpy.boolean-masking"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "95": {
   "target_kcs": [
@@ -891,7 +921,7 @@
    "numpy.slicing-views"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "99": {
   "target_kcs": [
@@ -980,7 +1010,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "107": {
   "target_kcs": [
@@ -1073,7 +1103,7 @@
    "numpy.fancy-indexing"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "115": {
   "target_kcs": [
@@ -1096,7 +1126,7 @@
    "numpy.boolean-masking"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "117": {
   "target_kcs": [
@@ -1130,7 +1160,7 @@
    "numpy.fancy-indexing"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "120": {
   "target_kcs": [
@@ -1153,7 +1183,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "122": {
   "target_kcs": [
@@ -1306,7 +1336,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "136": {
   "target_kcs": [
@@ -1338,7 +1368,9 @@
    "numpy.slicing-views",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "trailing-underscore-inplace"
+  ],
   "source": "kp-faded"
  },
  "139": {
@@ -1465,7 +1497,19 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "Tensor.values",
+   "Tensor.indices",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
   "source": "kp-independent"
  },
  "150": {
@@ -1491,7 +1535,7 @@
   "new_syntax": [
    "none-newaxis-indexing"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "152": {
   "target_kcs": [
@@ -1501,8 +1545,20 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "kp-guided"
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "Tensor.values",
+   "Tensor.indices",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
+  "source": "kp-faded"
  },
  "153": {
   "target_kcs": [
@@ -1800,7 +1856,7 @@
    "numpy.tile-repeat-meshgrid"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "183": {
   "target_kcs": [
@@ -1855,7 +1911,9 @@
    "numpy.argsort-ranking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "topk"
+  ],
   "source": "kp-independent"
  },
  "189": {
@@ -1877,7 +1935,7 @@
    "numpy.constructors"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "191": {
   "target_kcs": [
@@ -1900,7 +1958,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "193": {
   "target_kcs": [
@@ -1922,7 +1980,9 @@
    "numpy.argsort-ranking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "topk"
+  ],
   "source": "kp-independent"
  },
  "195": {
@@ -2033,7 +2093,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "205": {
   "target_kcs": [
@@ -2056,7 +2116,9 @@
    "numpy.argsort-ranking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "topk"
+  ],
   "source": "kp-faded"
  },
  "207": {
@@ -2081,7 +2143,7 @@
    "numpy.constructors"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "209": {
   "target_kcs": [
@@ -2129,7 +2191,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "213": {
   "target_kcs": [
@@ -2150,7 +2212,7 @@
    "numpy.slicing-views"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "215": {
   "target_kcs": [
@@ -2160,7 +2222,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "216": {
   "target_kcs": [
@@ -2203,7 +2265,7 @@
    "numpy.slicing-views"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "220": {
   "target_kcs": [
@@ -2222,8 +2284,13 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "import-numpy-as-np",
-   "array-attributes"
+   "torch.tensor",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
   ],
   "source": "kp-faded"
  },
@@ -2255,7 +2322,7 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "229": {
   "target_kcs": [
@@ -2289,7 +2356,7 @@
    "slice-notation",
    "multi-axis-indexing"
   ],
-  "source": "kp-faded"
+  "source": "kp-independent"
  },
  "232": {
   "target_kcs": [
@@ -2326,7 +2393,19 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "Tensor.values",
+   "Tensor.indices",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
   "source": "kp-faded"
  },
  "235": {
@@ -2338,7 +2417,9 @@
    "numpy.slicing-views",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "trailing-underscore-inplace"
+  ],
   "source": "kp-faded"
  },
  "236": {
@@ -2388,7 +2469,7 @@
   "new_syntax": [
    "matmul-operator"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "240": {
   "target_kcs": [
@@ -2420,7 +2501,7 @@
    "numpy.slicing-views"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "243": {
   "target_kcs": [
@@ -2467,7 +2548,7 @@
    "numpy.diag-triangles"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "247": {
   "target_kcs": [
@@ -2647,7 +2728,7 @@
    "numpy.linalg-basics"
   ],
   "new_syntax": [],
-  "source": "kp-faded"
+  "source": "kp-guided"
  },
  "263": {
   "target_kcs": [
@@ -2669,7 +2750,7 @@
    "numpy.linalg-basics"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-independent"
  },
  "265": {
   "target_kcs": [
@@ -2680,7 +2761,7 @@
    "einsum.outer-products"
   ],
   "new_syntax": [],
-  "source": "kp-faded"
+  "source": "kp-independent"
  },
  "266": {
   "target_kcs": [
@@ -2691,7 +2772,7 @@
    "numpy.diag-triangles"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "267": {
   "target_kcs": [
@@ -2702,7 +2783,7 @@
    "numpy.dot-matmul-patterns"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "268": {
   "target_kcs": [
@@ -2713,7 +2794,7 @@
    "einsum.outer-products"
   ],
   "new_syntax": [],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "269": {
   "target_kcs": [
@@ -2735,7 +2816,7 @@
    "numpy.dot-matmul-patterns"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-guided"
  },
  "271": {
   "target_kcs": [
@@ -2771,7 +2852,7 @@
    "numpy.diag-triangles"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "274": {
   "target_kcs": [
@@ -2837,7 +2918,7 @@
    "einsum.outer-products"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-faded"
  },
  "280": {
   "target_kcs": [
@@ -2848,7 +2929,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "282": {
   "target_kcs": [
@@ -2859,7 +2940,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "283": {
   "target_kcs": [
@@ -2895,7 +2976,7 @@
   "new_syntax": [
    "einsum-spec-string"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "286": {
   "target_kcs": [
@@ -3005,7 +3086,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "296": {
   "target_kcs": [
@@ -3038,7 +3119,7 @@
    "numpy.diag-triangles"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "299": {
   "target_kcs": [
@@ -3155,15 +3236,14 @@
  },
  "310": {
   "target_kcs": [
-   "einsum.matrix-forms"
+   "einsum.batch-dims"
   ],
   "supporting_kcs": [
    "einsum.matvec-matmul",
-   "einsum.batch-dims",
-   "numpy.centering"
+   "einsum.outer-products"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "311": {
   "target_kcs": [
@@ -3185,7 +3265,7 @@
    "numpy.linalg-basics"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "313": {
   "target_kcs": [
@@ -3473,7 +3553,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [],
-  "source": "kp-faded"
+  "source": "kp-independent"
  },
  "339": {
   "target_kcs": [
@@ -3982,7 +4062,7 @@
    "einsum.attention-patterns"
   ],
   "new_syntax": [],
-  "source": "kp-faded"
+  "source": "kp-independent"
  },
  "385": {
   "target_kcs": [
@@ -4207,6 +4287,22 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "480": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
   "source": "kp-independent"
  }
 }

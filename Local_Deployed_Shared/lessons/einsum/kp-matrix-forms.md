@@ -5,7 +5,7 @@ supporting: [einsum.matvec-matmul, einsum.batch-dims, numpy.centering]
 new_syntax: []
 faded: [252]
 guided: [258]
-independent: [259, 248, 310, 306]
+independent: [259, 248, 306]
 ---
 
 ## Concept
@@ -115,9 +115,13 @@ def solve(x, w):
 ## Independent practice
 
 From the drill bank: q259 (sample covariance — centering + Gram + n−1),
-q248 (all pairwise row dots between two matrices), q310 (Σ of self outer
-products over a batch — which letter is dropped?), q306 (a quadratic form
+q248 (all pairwise row dots between two matrices), q306 (a quadratic form
 per batch item against one shared matrix — 'bi,ij,bj->b').
+
+q310 (Σ of self outer products over a batch) teaches the same spec from the
+batching side — a batch letter dropped from the output — so `einsum.batch-dims`
+owns it as that segment's faded exercise. A question can be claimed by exactly
+one KP; two claims abort `build_qmatrix.py`.
 
 ## Misconceptions
 

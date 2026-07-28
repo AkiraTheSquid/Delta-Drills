@@ -44,6 +44,28 @@ body.lesson-mode #practice-mode-intro {
   white-space: nowrap;
 }
 
+/* Sits between the topic and the progress counter, so it stays reachable on the
+   narrow layout where the topbar wraps (see the media query at the foot). */
+.lesson-graph-jump {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-left: auto;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.lesson-graph-jump:hover,
+.lesson-graph-jump:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .lesson-kp-title {
   color: var(--white);
   font-size: 20px;

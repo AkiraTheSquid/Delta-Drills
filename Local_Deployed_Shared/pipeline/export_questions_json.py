@@ -61,6 +61,15 @@ CSV_SOURCES = [
         "path": CSV_DIR / "cnn_problems.csv",
         "skip_rows": 0,
     },
+    # Questions authored for THIS course rather than imported from Alex's
+    # sheets. Ids are positional, so this source must stay LAST: appending
+    # here mints ids above every existing one and cannot renumber the bank
+    # (which would silently re-point every qmatrix tag and every stored
+    # served_question_id). Keep in sync with backend/app/questions.py.
+    {
+        "path": CSV_DIR / "curated_additions.csv",
+        "skip_rows": 0,
+    },
 ]
 
 CURATED_EXCLUDED_IDS = {9, 20, 21, 33, 39, 44, 45, 57, 88, 161, 188, 203, 221, 222, 223, 226}
@@ -473,6 +482,11 @@ def load_function_overrides() -> dict[int, dict]:
         # eleven of them only ever had a vestigial `import numpy as np`. Keep in
         # sync with backend/app/questions.py::_load_function_overrides.
         "torch_dialect_overrides_parked.jsonl",
+        # Hand-authored payloads for course-written questions (curated_additions.csv)
+        # plus targeted fixes the generated layers cannot express. Layered LAST so
+        # a deliberate hand edit is never re-overwritten by a bulk pass. Keep in
+        # sync with backend/app/questions.py::_load_function_overrides.
+        "curated_overrides.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
