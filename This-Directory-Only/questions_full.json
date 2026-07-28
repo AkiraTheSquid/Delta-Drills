@@ -19271,28 +19271,28 @@
     "test_cases": [
       {
         "setup_code": "import torch as t\nx = [[1, 2, 3], [4, 5, 6]]",
-        "call": "(solve(x)[0].tolist(), solve(x)[1], solve(x)[2])",
-        "expected_expr": "([[1, 2, 3], [4, 5, 6]], (2, 3), False)"
+        "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "expected_expr": "([[1, 2, 3], [4, 5, 6]], (2, 3), True, False)"
       },
       {
         "setup_code": "import torch as t\nx = [[1, 2.5], [3, 4]]",
-        "call": "(solve(x)[0].tolist(), solve(x)[1], solve(x)[2])",
-        "expected_expr": "([[1.0, 2.5], [3.0, 4.0]], (2, 2), True)"
+        "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "expected_expr": "([[1.0, 2.5], [3.0, 4.0]], (2, 2), True, True)"
       },
       {
         "setup_code": "import torch as t\nx = [[7, -2, 0, 5]]",
-        "call": "(solve(x)[0].tolist(), solve(x)[1], solve(x)[2])",
-        "expected_expr": "([[7, -2, 0, 5]], (1, 4), False)"
+        "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "expected_expr": "([[7, -2, 0, 5]], (1, 4), True, False)"
       },
       {
         "setup_code": "import torch as t\nx = [[3], [-1], [4]]",
-        "call": "(isinstance(solve(x)[0], t.Tensor), solve(x)[1], solve(x)[2])",
-        "expected_expr": "(True, (3, 1), False)"
+        "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "expected_expr": "([[3], [-1], [4]], (3, 1), True, False)"
       },
       {
         "setup_code": "import torch as t\nx = [[0.5]]",
-        "call": "(solve(x)[0].tolist(), solve(x)[1], solve(x)[2])",
-        "expected_expr": "([[0.5]], (1, 1), True)"
+        "call": "(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "expected_expr": "([[0.5]], (1, 1), True, True)"
       }
     ],
     "submission_mode": "function",
