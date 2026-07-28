@@ -1,48 +1,6 @@
 {
  "total": 455,
  "questions": {
-  "264": [
-   {
-    "check": "precompute_leak",
-    "var": "b",
-    "detail": "post-setup var 'b' already equals the expected value"
-   }
-  ],
-  "268": [
-   {
-    "check": "precompute_leak",
-    "var": "x",
-    "detail": "post-setup var 'x' already equals the expected value"
-   }
-  ],
-  "272": [
-   {
-    "check": "precompute_leak",
-    "var": "x",
-    "detail": "post-setup var 'x' already equals the expected value"
-   }
-  ],
-  "279": [
-   {
-    "check": "precompute_leak",
-    "var": "x",
-    "detail": "post-setup var 'x' already equals the expected value"
-   }
-  ],
-  "283": [
-   {
-    "check": "precompute_leak",
-    "var": "x",
-    "detail": "post-setup var 'x' already equals the expected value"
-   }
-  ],
-  "305": [
-   {
-    "check": "precompute_leak",
-    "var": "h",
-    "detail": "post-setup var 'h' already equals the expected value"
-   }
-  ],
   "448": [
    {
     "check": "precompute_leak",
@@ -52,6 +10,6 @@
   ]
  },
  "counts": {
-  "precompute_leak": 7
+  "precompute_leak": 1
  }
 }

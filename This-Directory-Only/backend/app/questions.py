@@ -130,6 +130,10 @@ def _load_function_overrides() -> Dict[int, dict]:
         # question — see lessons.is_torch_dialect / torch_only_serving.
         # Keep in sync with pipeline/export_questions_json.py.
         "torch_dialect_overrides.jsonl",
+        # Second conversion pass (2026-07-27): the einops + einsum drills, which
+        # are ARENA 0.0's own exercise material. Kept in its own layer so the
+        # np-1 pass stays reviewable on its own.
+        "torch_dialect_overrides_einops_einsum.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():

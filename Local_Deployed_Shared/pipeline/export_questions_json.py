@@ -450,6 +450,11 @@ def load_function_overrides() -> dict[int, dict]:
         # question — see backend/app/lessons.py::is_torch_dialect. Keep in
         # sync with backend/app/questions.py::_load_function_overrides.
         "torch_dialect_overrides.jsonl",
+        # Second conversion pass (2026-07-27): the einops + einsum drills, which
+        # are ARENA 0.0's own exercise material. Kept in its own layer so the
+        # np-1 pass stays reviewable on its own. Keep in sync with
+        # backend/app/questions.py::_load_function_overrides.
+        "torch_dialect_overrides_einops_einsum.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
