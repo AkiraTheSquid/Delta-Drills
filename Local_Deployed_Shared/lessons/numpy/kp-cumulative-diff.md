@@ -2,7 +2,7 @@
 kc: numpy.cumulative-diff
 title: Cumulative ops and discrete differences
 supporting: [numpy.aggregations, numpy.axis-reductions]
-new_syntax: []
+new_syntax: [torch.cumsum, torch.cumsum#dim, torch.cummax, torch.cummax#dim, torch.cummin, torch.cumprod, Tensor.values, Tensor.indices, torch.diff, torch.diff#dim, torch.diff#n]
 faded: [234, 152, 22]
 guided: []
 independent: [82, 149]
@@ -10,14 +10,15 @@ independent: [82, 149]
 
 ## Concept: cumsum — running totals
 
-Given a 1-D tensor `x` — a single row of numbers, like five days of sales —
-`t.cumsum(x, dim=0)` returns its running sum: entry i is `x[0] + … + x[i]`.
-The result is the same length as `x`, and its last entry equals `x.sum()`.
-It is the vectorized replacement for the "total so far" loop.
+Take a 1-D tensor `x` — one row of numbers, like five days of sales.
+`t.cumsum(x, dim=0)` returns its **running total**: entry i is
+`x[0] + … + x[i]`. The result is the same length as `x`, and its last entry is
+the same number `x.sum()` would give you. It is the vectorized replacement for
+the "total so far" loop.
 
-`dim=0` says which direction to accumulate along. `x` has only one direction,
-so it is the only choice here — but unlike NumPy, torch REQUIRES you to say
-so: there is no flatten-by-default.
+`dim=0` says which direction to add along. A 1-D tensor has only one direction,
+so `dim=0` is the only choice here — but torch makes you say it. NumPy would
+have flattened the tensor and guessed; torch never guesses.
 
 Reading a task: "running / so far / cumulative" is the tell for this family.
 
@@ -26,22 +27,37 @@ Reading a task: "running / so far / cumulative" is the tell for this family.
 ```python
 import torch as t
 
+# Five days of sales, as a 1-D tensor — one number per day.
 sales = t.tensor([2, 3, 5, 1, 4])
+print(sales)
 
-# Running total: same length, entry i = sum of entries 0..i.
+# The running total. Entry i is the sum of days 0 through i, so entry 2 is
+# 2 + 3 + 5 = 10. Same length as sales: one running total per day.
 totals = t.cumsum(sales, dim=0)
-assert totals.tolist() == [2, 5, 10, 11, 15]
-assert totals[-1] == sales.sum()          # the last entry IS the total
+print(totals)
+
+# The LAST running total is the total of everything...
+print(totals[-1])
+
+# ...which is exactly what sum() gives you in one step.
+print(sales.sum())
 ```
 
-Why: `totals[-1] == sales.sum()` is the sanity anchor connecting cumsum to
-the plain reduction — cumsum is "all the partial answers", sum is the last
-one.
+```output
+tensor([2, 3, 5, 1, 4])
+tensor([ 2,  5, 10, 11, 15])
+tensor(15)
+tensor(15)
+```
+
+Why: those last two prints are the anchor. `sum` gives you the final answer;
+`cumsum` gives you every partial answer along the way, and its last entry is
+the final one. Same computation, different amount of it kept.
 
 ## Faded practice
 
 ### q234
-Running total of a 1-D array.
+Running total of a 1-D tensor.
 
 ```python starter
 import torch as t
@@ -61,38 +77,52 @@ def solve(x):
 
 ## Concept: the cum* family — running ANYTHING
 
-cumsum has siblings. **`t.cummax(x, dim)`** is the *running maximum*
-("largest value seen so far") and **`t.cummin`** the running minimum;
-`t.cumprod` the running product. Like `t.sort` and `t.topk`, the cum-extrema
-return a `(values, indices)` pair, so the running values are `.values` and
-`.indices` tells you WHERE each record was set.
+cumsum has siblings, and they all mean "so far". `t.cummax(x, dim)` is the
+running **maximum** — the largest value seen up to that point. `t.cummin` is
+the running minimum, and `t.cumprod` the running product.
 
-NumPy generalizes this as `np.ufunc.accumulate` over any binary ufunc;
-PyTorch instead ships the four that matter as named functions, and every one
-of them requires an explicit `dim`.
+The two extrema return a *pair*, not a single tensor: `.values` holds the
+running values and `.indices` tells you where each new record was set. That is
+the same shape `t.sort` and `t.topk` return, so the `.values` step will keep
+coming up.
 
-When a task asks for a running-anything, reach for a `cum*` before writing a
-loop.
+Every one of them requires an explicit `dim`, exactly like cumsum.
 
 ## Worked example
 
 ```python
 import torch as t
 
+# The same five days of sales.
 sales = t.tensor([2, 3, 5, 1, 4])
+print(sales)
 
-# Running maximum: cummax — "record high so far". Note .values.
-records = t.cummax(sales, dim=0).values
-assert records.tolist() == [2, 3, 5, 5, 5]
+# cummax returns a PAIR, so this is not the tensor you want yet.
+record_pair = t.cummax(sales, dim=0)
+print(record_pair)
 
-# Per-row on a matrix: the accumulation runs along dim 1.
-z = t.tensor([[3, 1, 4], [2, 6, 0]])
-assert t.cummax(z, dim=1).values.tolist() == [[3, 3, 4], [2, 6, 6]]
+# .values pulls out the running maximum: the best day so far. It never goes
+# down — once you have seen a 5, the best-so-far stays at least 5.
+records = record_pair.values
+print(records)
+
+# .indices says WHICH day set each record. Days 3 and 4 did not beat day 2,
+# so both still point back at index 2.
+print(record_pair.indices)
 ```
 
-Why: `amax(dim=...)` collapses the dimension to ONE value; the running
-version keeps every prefix's answer. "So far" in the task text is the tell
-that you want a `cum*`, not a reduction.
+```output
+tensor([2, 3, 5, 1, 4])
+torch.return_types.cummax(
+values=tensor([2, 3, 5, 5, 5]),
+indices=tensor([0, 1, 2, 2, 2]))
+tensor([2, 3, 5, 5, 5])
+tensor([0, 1, 2, 2, 2])
+```
+
+Why: `sales.amax()` collapses the whole tensor to one number, 5. The running
+version keeps the answer at every point instead. "So far" in a task is the
+tell that you want a `cum*` and not a plain reduction.
 
 ## Faded practice
 
@@ -117,39 +147,48 @@ def solve(z):
 
 ## Concept: t.diff — adjacent differences
 
-`t.diff(x)` returns `x[1:] - x[:-1]`: entry i is the step from element i to
-i+1. Length shrinks by 1 — n elements have n−1 adjacent gaps. It's the
-discrete derivative, the inverse-ish of cumsum (`t.diff(t.cumsum(x, dim=0))`
-recovers `x[1:]`). Options mirror the family: `axis=` chooses the direction
-on matrices, and `n=k` applies the operation k times (second differences of
-a quadratic sequence are constant — a classic check).
+`t.diff(x)` gives the **step between neighbours**: entry i is
+`x[i+1] - x[i]`. The result is one shorter than the input, because n numbers
+have only n−1 gaps between them.
 
-The manual spelling `x[1:] - x[:-1]` is worth recognizing too:
-shifted-slice arithmetic generalizes to gaps other than 1. Reading a task:
-"successive / adjacent / change between neighbors" → diff.
+It is the opposite of cumsum. cumsum adds a sequence up; diff reads back the
+individual steps. `n=k` applies diff k times, and on a matrix `dim=` picks the
+direction, the same argument cumsum takes.
+
+Reading a task: "successive / adjacent / change between neighbours" → diff.
 
 ## Worked example
 
 ```python
 import torch as t
 
+# The same five days of sales.
 sales = t.tensor([2, 3, 5, 1, 4])
+print(sales)
 
-# Adjacent differences: one shorter, entry i = step i -> i+1.
+# The day-to-day change. 2 -> 3 is +1, 3 -> 5 is +2, 5 -> 1 is -4, 1 -> 4 is
+# +3. Four gaps between five days, so the result is one shorter.
 changes = t.diff(sales)
-assert changes.tolist() == [1, 2, -4, 3]
-assert len(changes) == len(sales) - 1
+print(changes)
 
-# diff undoes cumsum (up to the first element):
-assert t.diff(t.cumsum(sales, dim=0)).tolist() == sales[1:].tolist()
+# diff undoes cumsum: the steps of a running total ARE the original numbers,
+# starting from the second one.
+print(t.diff(t.cumsum(sales, dim=0)))
 
-# On matrices, dim= picks the direction. Along each ROW:
-z = t.arange(6).reshape(2, 3)
-assert t.diff(z, dim=1).tolist() == [[1, 1], [1, 1]]
+# ...which is sales without its first entry.
+print(sales[1:])
 ```
 
-Why: the diff/cumsum round-trip and the explicit length bookkeeping (n vs
-n−1) preempt the two standard off-by-one surprises in this family.
+```output
+tensor([2, 3, 5, 1, 4])
+tensor([ 1,  2, -4,  3])
+tensor([3, 5, 1, 4])
+tensor([3, 5, 1, 4])
+```
+
+Why: the round trip is the point — cumsum and diff are inverses, and the
+length bookkeeping (n going to n−1) is the off-by-one this family is famous
+for.
 
 ## Faded practice
 
@@ -180,12 +219,13 @@ difference — one keyword, or the operation applied k times).
 ## Misconceptions
 
 - **"cumsum needs a loop with a running variable."** — `t.cumsum` IS that
-  loop, in compiled code. Same for running max/min/product via
-  `ufunc.accumulate`.
+  loop, in compiled code. Same for the running max, min and product.
 - **"diff returns the same length."** — One shorter per application: n
-  elements have n−1 adjacent gaps. `diff(x, n=k)` shrinks by k. Plan output
-  shapes accordingly.
-- **"Running maximum = amax with dim."** — `amax(dim=...)` collapses the
-  axis to ONE value; the running version keeps every prefix's answer. "So
-  far" in the task text is the tell that you want accumulate, not a
-  reduction.
+  numbers have n−1 gaps. `t.diff(x, n=k)` shrinks by k. Plan output shapes
+  accordingly.
+- **"Running maximum = amax with a dim."** — `amax(dim=...)` collapses the
+  dimension to ONE value; the running version keeps the answer at every point.
+  "So far" in the task text is the tell that you want a `cum*`.
+- **"cummax returns a tensor."** — It returns a `(values, indices)` pair.
+  Forgetting `.values` is the standard first mistake, and the error it causes
+  shows up later, wherever the pair is finally used as a tensor.
