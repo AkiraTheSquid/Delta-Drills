@@ -36,7 +36,12 @@ from app.practice_schemas import (
     SubmitRequest,
     SubmitResponse,
 )
-from app.prioritization import question_is_unlocked, select_next_subtopic, target_difficulty
+from app.prioritization import (
+    narrow_to_next_kc,
+    question_is_unlocked,
+    select_next_subtopic,
+    target_difficulty,
+)
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
 
 router = APIRouter()
@@ -139,6 +144,11 @@ def next_question(
         q for q in get_questions_by_subtopic(subtopic)
         if question_is_unlocked(user_state, q)
     ]
+    # A focused request is the learner explicitly opening one concept, so honour
+    # that over the queue's own idea of what comes next; on the normal path,
+    # keep the served question on the same KC the graph is highlighting.
+    if focus_subtopic is None:
+        candidates = narrow_to_next_kc(user_state, candidates)
     served = set(sub_state.served_question_ids)
     question = select_question_for_difficulty(candidates, target_diff, served)
     if question is None:

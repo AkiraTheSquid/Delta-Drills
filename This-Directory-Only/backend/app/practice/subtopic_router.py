@@ -12,6 +12,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 
 from app import bkt_mastery
+from app import kc_graph
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -164,3 +165,19 @@ def atom_gates(user: User = Depends(get_current_user)) -> dict:
         "mastered": mastered,
         "threshold": bkt_mastery.UNLOCK_THRESHOLD,
     }
+
+
+@router.get("/kc-lattice")
+def kc_lattice(user: User = Depends(get_current_user)) -> dict:
+    """The knowledge graph's ACTUAL state for this learner.
+
+    Returned straight from `kc_graph.kc_report`, which is the same code that
+    gates practice — so whatever the graph draws from this is what the queue
+    will really do, not a parallel guess that can drift from it. Per KC:
+    `state` (locked / frontier / learned), `mastery`, `tier` (measured vs
+    topic-proxy — 43 of 63 KCs are proxied and must not be drawn as measured),
+    `evidenced`, `coreness`, `frontier_rank`, `n_questions`. Plus `next_kc`,
+    the single node the selector will serve from next.
+    """
+    user_state = get_user_state(str(user.id))
+    return kc_graph.kc_report(user_state)

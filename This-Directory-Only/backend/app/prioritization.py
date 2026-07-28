@@ -19,6 +19,7 @@ import logging
 from typing import Dict, List, Optional, Tuple
 
 from app import bkt_mastery
+from app import kc_graph
 from app.adaptive import UserPracticeState
 from app.questions import (
     get_atoms_for_subtopic,
@@ -43,12 +44,32 @@ def _get_weight(user_state: UserPracticeState, st_name: str, uniform_weight: flo
 
 
 def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
-    """Unified per-atom PREREQUISITE gate for a bank question: servable iff every
-    atom it is tagged with is READY (all that atom's gating prerequisites are
-    mastered ≥ UNLOCK_THRESHOLD). Untagged questions are ungated. Root-atom
-    questions are servable from the start (no prereqs) — the cold-start entry
-    points; composite-atom questions (e.g. conv2d-module) stay locked until their
-    prereq atoms are mastered."""
+    """PREREQUISITE gate for a bank question. ONE lattice decides, never two.
+
+    The **KC lattice** (`kc_graph`) is the authority whenever the question is
+    tagged into it: the knowledge graph is the structure the course was authored
+    against and the structure the learner is shown, so it is the structure that
+    gets to say what is servable.
+
+    The **atom lattice** (`bkt_mastery`) applies only to questions the q-matrix
+    does not place — where the KC graph has nothing to say, the finer BKT
+    prerequisite index is better than no gate at all.
+
+    Intersecting the two was tried and is wrong. They disagree: the KC registry
+    makes `numpy.ndarray-model` a root with no prerequisites, while the atom
+    graph gives its atom `tensor-wraps-ndarray` unmet prerequisites. Requiring
+    both left a fresh learner exactly ONE servable question in a 373-question
+    bank. Two prerequisite structures voting produces the stricter of two
+    disagreements rather than an answer, so the graph decides alone and the
+    disagreement becomes a data bug to fix in the atom graph, not a lock.
+
+    Untagged questions pass. Locking out content the q-matrix never placed
+    would delete it from the course rather than order it, which The Math Academy
+    Way ch. 32 is explicit about not doing ("no topics are skipped").
+    """
+    qid = getattr(question, "id", None)
+    if kc_graph.question_kcs(qid):
+        return kc_graph.question_kc_gate(user_state, qid)
     tags = getattr(question, "atom_tags", None) or []
     if not tags:
         return True
@@ -58,6 +79,27 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
         )
         for t in tags
     )
+
+
+def narrow_to_next_kc(user_state: UserPracticeState, candidates: List) -> List:
+    """Restrict a subtopic's servable questions to the frontier KC the tutor
+    actually intends to teach next, when the subtopic carries any.
+
+    A subtopic can hold questions for several frontier KCs at once, so passing
+    the gate is not the same as being the next thing to learn. Without this the
+    graph could truthfully highlight one node while the queue served a sibling —
+    the exact "visualisation that does not represent the system" problem. If the
+    next KC has nothing left unserved here, the unnarrowed list is returned so
+    the learner is never stalled by the preference.
+    """
+    next_kc = kc_graph.select_next_kc(user_state)
+    if not next_kc:
+        return candidates
+    wanted = set(kc_graph.questions_for_kc(next_kc))
+    if not wanted:
+        return candidates
+    narrowed = [q for q in candidates if q.id in wanted]
+    return narrowed or candidates
 
 
 def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
@@ -134,6 +176,26 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
             priority = weight * (1.0 - subtopic_mastery(user_state, st_name)) * reach
             out.append((st_name, priority, easiest))
         return out
+
+    # KC LATTICE FIRST. The knowledge graph decides what comes next; the
+    # weakest-first machinery below is the fallback for when the lattice has
+    # nothing to say (frontier exhausted, or a KC with no servable questions
+    # left). Ordering the frontier is `kc_graph`'s job — coreness then depth,
+    # per The Math Academy Way ch. 32 — so this only has to translate the KC it
+    # picks into a subtopic that actually has an unserved question for it.
+    for kc in kc_graph.frontier(user_state):
+        wanted = set(kc_graph.questions_for_kc(kc))
+        if not wanted:
+            continue
+        for st_name in subtopics:
+            if _get_weight(user_state, st_name, uniform_weight) <= 0:
+                continue
+            served = set(user_state.get_subtopic_state(st_name).served_question_ids)
+            if any(
+                q.id in wanted and q.id not in served and question_is_unlocked(user_state, q)
+                for q in get_questions_by_subtopic(st_name)
+            ):
+                return st_name
 
     cands = _candidates(skip_served=True)
     if not cands:
