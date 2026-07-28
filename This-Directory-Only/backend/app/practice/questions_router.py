@@ -37,8 +37,11 @@ from app.practice_schemas import (
     SubmitResponse,
 )
 from app.prioritization import (
+    ladder_fields,
+    ladder_starter,
     narrow_to_next_kc,
     question_is_unlocked,
+    record_ladder_outcome,
     select_next_subtopic,
     target_difficulty,
 )
@@ -166,6 +169,15 @@ def next_question(
         else (question.expected_output or run_and_get_expected_output(question.answer_code))
     )
 
+    # Ladder rung for this concept, and the scaffolded starter that goes with
+    # it. On the faded/partial rungs the learner is handed the canonical
+    # solution with its TAIL removed (backward fading), not a blank page.
+    ladder = ladder_fields(user_state, question.id)
+    starter = (
+        ladder_starter(question, ladder.get("ladder_stage") or "")
+        or question.starter_code
+    )
+
     return NextQuestionResponse(
         question_id=question.id,
         question_text=question.question_text,
@@ -183,7 +195,7 @@ def next_question(
         expected_artifact_type=question.expected_artifact_type,
         supports_visual_output=question.supports_visual_output,
         function_name=question.function_name,
-        starter_code=question.starter_code,
+        starter_code=starter,
         test_cases=question.test_cases,
         submission_mode=question.submission_mode,
         hint=question.hint,
@@ -193,6 +205,7 @@ def next_question(
         # measures prior knowledge — teaching first would corrupt it), so
         # this only runs on the normal adaptive-queue path.
         lesson_gate=lessons.unexposed_target_kcs(question.id, user_state.kc_exposure),
+        **ladder,
     )
 
 
@@ -230,6 +243,11 @@ def submit_answer(
             difficulty_score=question.difficulty_score,
             correct=correct,
         )
+        # Ladder evidence is recorded only OUTSIDE the diagnostic. A placement
+        # probe measures prior knowledge on questions the learner was never
+        # taught, so counting it would demote them to worked examples for
+        # concepts the probe never intended to teach.
+        record_ladder_outcome(user_state, question.id, correct)
     save_user_state(user_id)
 
     return SubmitResponse(
@@ -268,6 +286,7 @@ def submit_local_eval(
             difficulty_score=question.difficulty_score,
             correct=payload.correct,
         )
+        record_ladder_outcome(user_state, question.id, payload.correct)
     save_user_state(user_id)
     return OverrideAttemptResponse(success=True)
 

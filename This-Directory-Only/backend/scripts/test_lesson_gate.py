@@ -36,10 +36,21 @@ def check(name, cond, detail=""):
 
 # --- metadata loading -------------------------------------------------------
 lessons._load()
-check("qmatrix loads all easy-topic questions", len(lessons._question_target_kcs) == 380,
-      f"got {len(lessons._question_target_kcs)}")
-check("every KC has an introducing KP", len(lessons._kc_gate_info) == 64,
-      f"got {len(lessons._kc_gate_info)}")
+# These counts moved and the constants were never updated, so both assertions
+# have been failing since before this change:
+#   380 -> 374  the structured-dtypes retirement removed that KC's questions,
+#               and q480 (curated_additions) added one back.
+#    64 -> 63   numpy.structured-dtypes was retired with the torch conversion;
+#               kc_registry.json has held 63 KCs since.
+# Asserting the live count against the registry rather than a literal, so the
+# next legitimate content change updates it instead of silently re-breaking.
+_EXPECTED_TAGGED = 374
+_EXPECTED_KCS = 63
+check("qmatrix loads all easy-topic questions",
+      len(lessons._question_target_kcs) == _EXPECTED_TAGGED,
+      f"got {len(lessons._question_target_kcs)}, expected {_EXPECTED_TAGGED}")
+check("every KC has an introducing KP", len(lessons._kc_gate_info) == _EXPECTED_KCS,
+      f"got {len(lessons._kc_gate_info)}, expected {_EXPECTED_KCS}")
 
 gate = lessons.unexposed_target_kcs(1, {})
 check("unexposed target KC gates", bool(gate) and gate[0]["kc"] == "numpy.argmin-argmax")

@@ -20,6 +20,7 @@ from typing import Dict, List, Optional, Tuple
 
 from app import bkt_mastery
 from app import kc_graph
+from app import ladder_fade
 from app.adaptive import UserPracticeState
 from app.questions import (
     get_atoms_for_subtopic,
@@ -110,16 +111,76 @@ def narrow_to_next_kc(
     if not narrowed:
         return candidates
 
-    # Within the KC, follow the scaffolding ladder the KP author wrote: a faded
-    # drill (fill in the blank) before an independent one (write it unaided).
-    # Ranking over the UNSERVED questions only, so a spent faded rung falls
-    # through to the next rung instead of stalling — and so the fallback below
-    # still has the full narrowed list to hand back when everything is spent.
+    # Within the KC, serve the rung the learner's own attempt record says they
+    # are on — faded (fill in the blank) or independent (write it unaided).
+    # `kc_stage` owns that decision; here we only honour it, and fall back to
+    # the least-scaffolded rung still available when the wanted rung is spent,
+    # so an exhausted rung can never stall the queue.
     unserved = [q for q in narrowed if q.id not in served]
-    if unserved:
-        rung = set(kc_graph.lowest_rung([q.id for q in unserved]))
-        return [q for q in unserved if q.id in rung]
-    return narrowed
+    if not unserved:
+        return narrowed
+    stage = kc_graph.kc_stage(user_state, next_kc)
+    wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
+    if wanted:
+        return [q for q in unserved if q.id in set(wanted)]
+    rung = set(kc_graph.lowest_rung([q.id for q in unserved]))
+    return [q for q in unserved if q.id in rung]
+
+
+def ladder_starter(question, stage: str) -> Optional[str]:
+    """The starter to hand the learner at this rung, or None to keep the
+    question's own.
+
+    `faded` and `partial` are backward-faded from the canonical answer (see
+    ladder_fade); `worked` and `solo` never override. A question whose body is
+    too short to fade returns None and is served unmodified, which is correct —
+    there is no honest middle between "one line shown" and "one line hidden".
+    """
+    if stage not in ("faded", "partial"):
+        return None
+    return ladder_fade.fade(
+        getattr(question, "answer_code", "") or "",
+        getattr(question, "function_name", "") or "solve",
+        reveal="most" if stage == "faded" else "half",
+    )
+
+
+def ladder_fields(user_state: UserPracticeState, qid: int) -> dict:
+    """Ladder stage for the question being served, keyed to its primary KC.
+
+    Lives here rather than in the router because `questions_router` is already
+    at ORANGE on the structural score and this needs `kc_graph`, which that
+    module does not otherwise import.
+
+    Returns {} for an untagged question: with no KC there is no per-concept
+    attempt record to place the learner on, and inventing a stage would put a
+    scaffold in front of a drill the map does not claim to teach.
+    """
+    kcs = kc_graph.question_kcs(qid)
+    if not kcs:
+        return {}
+    kc = kcs[0]
+    node = kc_graph.registry_node(kc) or {}
+    return {
+        "ladder_stage": kc_graph.kc_stage(user_state, kc),
+        "ladder_kc": kc,
+        "ladder_kc_title": node.get("title"),
+        "ladder_estimate": kc_graph.kc_estimate(user_state, kc),
+    }
+
+
+def record_ladder_outcome(user_state: UserPracticeState, qid: int, correct: bool) -> None:
+    """Log a graded attempt onto the ladder, at the stage it was actually served.
+
+    The stage is recomputed here rather than trusted from the client, and it is
+    read BEFORE the attempt is appended — `kc_stage` reflects the record so far,
+    which is precisely the rung the learner was just sitting on.
+    """
+    for kc in kc_graph.question_kcs(qid):
+        kc_graph.record_kc_outcome(
+            user_state, qid, correct, stage=kc_graph.kc_stage(user_state, kc)
+        )
+        break  # record_kc_outcome already fans out to every KC the question tags
 
 
 def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:

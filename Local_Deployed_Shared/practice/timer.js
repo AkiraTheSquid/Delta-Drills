@@ -306,11 +306,15 @@ const PracticeSession = (() => {
   const onQuestionRendered = () => {
     if (!isActive()) {
       if (pausedState) {
-        resumeReady = _questionId() === pausedState.questionId;
-        sessionResumeSummary.textContent = resumeReady
-          ? _resumeSummary(pausedState)
-          : "Saved question is no longer available. Discard this session and start a new one.";
-        sessionResumeBtn.disabled = !resumeReady;
+        // Resume no longer depends on the saved question happening to be the
+        // one on screen — `_restoreSavedQuestion` puts it back from the bank.
+        // Tying the button to a coincidence of rendering is what made it dead:
+        // any tab switch, reload, or background fetch swapped the question out
+        // and the button greyed itself with "no longer available" while the
+        // session was perfectly resumable.
+        resumeReady = true;
+        sessionResumeSummary.textContent = _resumeSummary(pausedState);
+        sessionResumeBtn.disabled = false;
       }
       return;
     }
@@ -381,9 +385,49 @@ const PracticeSession = (() => {
     _showResumeOption();
   };
 
+  /* Put the saved question back on screen. The paused snapshot stores only the
+     id, but the static question bank is complete in BOTH modes (backend mode
+     still ships questions.json for offline grading), so the question can always
+     be rebuilt from it — no server round-trip and no dependence on whatever the
+     queue happens to be holding.
+
+     Returns false only when the id genuinely is not in the bank any more, which
+     is the one case where "saved question is no longer available" is true. */
+  const _restoreSavedQuestion = async () => {
+    if (!pausedState) return false;
+    if (_questionId() === pausedState.questionId) return true;
+    try {
+      if (typeof loadQuestionsBank === "function") await loadQuestionsBank();
+      const bankQ =
+        typeof getQuestionFromBank === "function"
+          ? getQuestionFromBank(Number(pausedState.questionId))
+          : null;
+      if (!bankQ) return false;
+      const restored = buildPracticeQuestionFromBank(bankQ);
+      PracticeAPI.currentQuestion = restored;
+      practiceProgress.currentQuestion = restored;
+      practiceProgress.currentQuestionId = restored.question_id;
+      savePracticeProgress(practiceProgress);
+      // Render before the lesson gate runs, so the gate sees the right KC.
+      renderQuestion(restored, pausedState.served);
+      return _questionId() === pausedState.questionId;
+    } catch (err) {
+      console.warn("[session] could not restore the saved question:", err);
+      return false;
+    }
+  };
+
   const resume = async () => {
-    if (resumePending || !pausedState || !resumeReady || _questionId() !== pausedState.questionId) return;
+    if (resumePending || !pausedState) return;
     resumePending = true;
+    if (!(await _restoreSavedQuestion())) {
+      resumePending = false;
+      resumeReady = false;
+      sessionResumeSummary.textContent =
+        "Saved question is no longer available. Discard this session and start a new one.";
+      sessionResumeBtn.disabled = true;
+      return;
+    }
     // A reload during the lesson-gate overlay leaves the question resumable
     // with its KC still unexposed — re-show the lesson before the question
     // becomes visible. Already-exposed KCs (the normal case) never gate, and
@@ -512,6 +556,11 @@ const PracticeSession = (() => {
   _updateEstimate();
 
   pausedState = _readSaved();
+  // A restored session is resumable the moment it loads. It used to stay
+  // disabled until some later render happened to put the saved question on
+  // screen, which on a fresh page load never happens — the queue renders
+  // whatever comes next, not what was paused.
+  resumeReady = !!pausedState;
   _showResumeOption();
 
   return {

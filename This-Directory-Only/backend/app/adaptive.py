@@ -140,6 +140,14 @@ class UserPracticeState:
     # completed the introducing KP. Drives the lesson gate (lessons.py) —
     # a question whose target KC is absent here triggers lesson-first.
     kc_exposure: Dict[str, str] = field(default_factory=dict)
+    # Expertise-reversal ladder state, per KC:
+    #   {kc: {"worked_seen": int, "attempts": [{"correct": bool, "stage": str,
+    #                                           "ts": str}, ...]}}
+    # Owned and interpreted by kc_graph.py (kc_stage / record_kc_outcome). Kept
+    # separate from subtopic history because the ladder is a PER-CONCEPT
+    # decision: a subtopic holds many KCs, and a learner fluent in one of them
+    # must not have the scaffolding pulled out from under a different one.
+    kc_ladder: Dict[str, dict] = field(default_factory=dict)
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -180,6 +188,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "self_reported_level": state.self_reported_level,
         "diagnostic": state.diagnostic,
         "kc_exposure": state.kc_exposure,
+        "kc_ladder": state.kc_ladder,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -214,6 +223,10 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.self_reported_level = data.get("self_reported_level")
         state.diagnostic = data.get("diagnostic") or {}
         state.kc_exposure = data.get("kc_exposure") or {}
+        # Additive, back-compat: saves predating the ladder simply start it
+        # empty, which reads as "no worked example seen" — the correct cold
+        # state, so an existing learner re-enters each concept at its example.
+        state.kc_ladder = data.get("kc_ladder") or {}
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(

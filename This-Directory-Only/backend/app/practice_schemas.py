@@ -53,6 +53,18 @@ class NextQuestionResponse(BaseModel):
     # lesson_title, topic}. The frontend shows the introducing KP(s) BEFORE
     # revealing the question, then POSTs /exposure. Empty = no gate.
     lesson_gate: list[dict] = Field(default_factory=list)
+    # Expertise-reversal ladder (kc_graph.kc_stage). `ladder_stage` is one of
+    # worked | faded | independent and `ladder_kc` is the concept it was decided
+    # for. On "worked" the frontend shows that KC's solved example BEFORE this
+    # question — the drill still ships in the same response so no second
+    # round-trip is needed once the learner clicks through.
+    # `ladder_estimate` is {n, correct, p, ci, worked_seen}: the per-KC interval
+    # the stage was chosen from, exposed so the decision is auditable rather
+    # than a number the learner has to take on trust.
+    ladder_stage: str | None = None
+    ladder_kc: str | None = None
+    ladder_kc_title: str | None = None
+    ladder_estimate: dict | None = None
 
 
 class SubmitRequest(BaseModel):

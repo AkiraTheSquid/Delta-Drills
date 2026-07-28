@@ -54,6 +54,8 @@ from __future__ import annotations
 
 import json
 import logging
+import math
+from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
@@ -373,6 +375,168 @@ def ladder_rank(qid: int) -> int:
     return _LADDER_RANK.get(row.get("source"), _LADDER_UNRANKED)
 
 
+# ---------------------------------------------------------------------------
+# Expertise-reversal ladder
+#
+# A concept is met three times with decreasing support:
+#
+#   worked      — a solved example, read not answered. Not graded.
+#   faded       — the same shape of problem with the key step blanked out.
+#   independent — write it unaided.
+#
+# Which rung a learner is on is decided per KC from that KC's OWN graded
+# attempts, as an interval rather than a point estimate. Promotion requires the
+# Wilson LOWER bound to clear PROMOTE_LO: being probably-fine is not enough to
+# remove support, you have to be confidently fine. Demotion uses the UPPER
+# bound, so support returns only when the learner is confidently struggling
+# rather than on one unlucky answer — except for the immediate rule below,
+# which is what a learner actually expects: get it wrong, see an example again.
+#
+# Why an interval and not a mastery cutoff. Delta-Learning's courses ladder
+# (lib/courses-scaffold.ts) originally staged on a skill estimate and had to
+# abandon it: faded attempts are recorded at a fixed low difficulty, so the
+# skill estimate saturated below the promotion cutoff and learners were trapped
+# on scaffolded cards forever. Scoring the ladder on the KC's own attempt
+# record — not a global skill number the ladder itself depresses — is what
+# avoids that trap here. The bounds below are calibrated so three consecutive
+# correct answers promote (Wilson lower at 3/3 = 0.438), matching that project's
+# 2-to-4 pacing, and four consecutive wrong answers force re-teaching
+# (Wilson upper at 0/4 = 0.49).
+LADDER_STAGES = ("worked", "faded", "partial", "solo")
+
+# Wilson LOWER bound needed to climb off each rung. Calibrated against the
+# bound at k/k so the pacing is legible in answers, not in probabilities:
+#   faded   -> partial  at 0.34 = two consecutive correct
+#   partial -> solo     at 0.51 = four consecutive correct
+# which is Delta-Learning's PROMOTE_TO_PARTIAL=2 / PROMOTE_TO_SOLO=4 pacing,
+# arrived at there by trial on real learners. Using the lower bound rather than
+# the point estimate means a lucky streak of one does not strip support.
+PROMOTE_LO = {"faded": 0.34, "partial": 0.51}
+DEMOTE_HI = 0.50  # Wilson UPPER; 0/4 = 0.49, so four straight wrong re-teaches
+_LADDER_WINDOW = 20  # recent attempts the estimate rests on
+
+
+def _wilson(k: int, n: int, z: float = 1.96) -> Tuple[float, float]:
+    """95% Wilson score interval. Wilson rather than the normal approximation
+    because n here is tiny and p sits near the edges, where the normal interval
+    runs outside [0, 1] and reports far more confidence than the data supports.
+    """
+    if n <= 0:
+        return 0.0, 1.0
+    p = k / n
+    d = 1.0 + z * z / n
+    centre = (p + z * z / (2 * n)) / d
+    half = (z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / d
+    return max(0.0, centre - half), min(1.0, centre + half)
+
+
+def ladder_row(user_state, kc: str) -> dict:
+    store = getattr(user_state, "kc_ladder", None)
+    if store is None:
+        store = {}
+        try:
+            user_state.kc_ladder = store
+        except Exception:
+            pass
+    row = store.get(kc)
+    if not isinstance(row, dict):
+        row = {"worked_seen": 0, "attempts": []}
+        store[kc] = row
+    row.setdefault("worked_seen", 0)
+    row.setdefault("attempts", [])
+    return row
+
+
+def kc_estimate(user_state, kc: str) -> dict:
+    """The learner's level on ONE concept, as an interval over its own attempts."""
+    row = ladder_row(user_state, kc)
+    recent = row["attempts"][-_LADDER_WINDOW:]
+    n = len(recent)
+    k = sum(1 for a in recent if a.get("correct"))
+    lo, hi = _wilson(k, n)
+    return {
+        "n": n,
+        "correct": k,
+        "p": (k / n) if n else None,
+        "ci": [round(lo, 4), round(hi, 4)],
+        "worked_seen": int(row.get("worked_seen") or 0),
+    }
+
+
+def _step_down(stage: str) -> str:
+    i = LADDER_STAGES.index(stage) if stage in LADDER_STAGES else 1
+    return LADDER_STAGES[max(0, i - 1)]
+
+
+def kc_stage(user_state, kc: str) -> str:
+    """Which rung to serve for this concept right now."""
+    est = kc_estimate(user_state, kc)
+    row = ladder_row(user_state, kc)
+
+    # Cold start: the example comes first, always. A concept nobody has been
+    # shown cannot be assessed, and guessing at it is not assessment.
+    if est["worked_seen"] == 0:
+        return "worked"
+
+    attempts = row["attempts"]
+    if attempts and not attempts[-1].get("correct"):
+        # The rule a learner actually expects: miss one, drop back a rung and
+        # see the support again. Stepping down from the stage the MISSED
+        # attempt was made at, not from today's computed stage, so a wrong
+        # answer on an independent problem lands on faded rather than skipping
+        # straight back to the example.
+        return _step_down(attempts[-1].get("stage") or "faded")
+
+    lo, hi = est["ci"]
+    if est["n"] and hi < DEMOTE_HI:
+        return "worked"
+    # Climb one rung at a time: clearing the solo bar also clears the partial
+    # bar, so test from the top down and take the highest rung earned.
+    if lo >= PROMOTE_LO["partial"]:
+        return "solo"
+    if lo >= PROMOTE_LO["faded"]:
+        return "partial"
+    return "faded"
+
+
+def note_worked_seen(user_state, kc: str) -> None:
+    ladder_row(user_state, kc)["worked_seen"] += 1
+
+
+def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "independent") -> List[str]:
+    """Log a graded attempt against every KC the question targets.
+
+    Returns the KCs touched, so a caller can report what moved. Placement
+    probes must NOT come through here: the diagnostic measures prior knowledge,
+    and feeding ungated probes into the ladder would demote a learner to worked
+    examples for concepts the probe was never trying to teach.
+    """
+    touched = question_kcs(qid)
+    for kc in touched:
+        row = ladder_row(user_state, kc)
+        row["attempts"].append({
+            "correct": bool(correct),
+            "stage": stage if stage in LADDER_STAGES else "independent",
+            "ts": datetime.now(timezone.utc).isoformat(),
+        })
+        del row["attempts"][:-_LADDER_WINDOW]
+    return touched
+
+
+# Which authored rung serves which ladder stage. "worked" is not a drill at all
+# — it is a page the frontend renders — so it has no entry and never selects a
+# question. `guided` counts as faded-side support: it still shows the learner
+# how, which is the property that matters when support is what they need.
+_STAGE_TO_RANKS = {"faded": (0, 1), "partial": (0, 1, 2, 3), "solo": (2, 3)}
+
+
+def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
+    ranks = _STAGE_TO_RANKS.get(stage)
+    if not ranks:
+        return []
+    return [q for q in qids if ladder_rank(q) in ranks]
+
+
 def lowest_rung(qids: Iterable[int]) -> List[int]:
     """The questions on the least-scaffolded rung still available.
 
@@ -386,6 +550,11 @@ def lowest_rung(qids: Iterable[int]) -> List[int]:
         return []
     floor = min(ladder_rank(q) for q in pool)
     return [q for q in pool if ladder_rank(q) == floor]
+
+
+def registry_node(kc: str) -> Optional[dict]:
+    """The KC's registry entry (title, lesson, topic, prereqs), or None."""
+    return _registry().get(kc)
 
 
 def subtopics_for_kc(kc: str) -> List[str]:

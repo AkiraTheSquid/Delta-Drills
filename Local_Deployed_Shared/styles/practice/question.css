@@ -265,6 +265,14 @@
   opacity: 0.55;
 }
 
+/* A question the tutor cannot place on its own map. Marked, not hidden — the
+   whole point of this control is that a mismatch between what was served and
+   what the graph claims stays visible. */
+.question-id-chip.is-untagged {
+  border-style: dashed;
+  opacity: 0.75;
+}
+
 /* Cold Start Badge */
 .cold-start-badge {
   display: flex;

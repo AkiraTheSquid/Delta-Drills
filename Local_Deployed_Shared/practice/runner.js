@@ -156,15 +156,61 @@ ${testSetup}
 }
 
 // Tab inside the code editor indents instead of jumping to the Run button.
-// Tab => insert a real tab character (or indent every selected line);
-// Shift+Tab => dedent one tab or up to one Python indent of spaces.
+// Tab => insert FOUR SPACES (or indent every selected line);
+// Shift+Tab => dedent one Python indent.
 // Accessibility escape hatch: press Escape first, then Tab moves focus out of
 // the editor as usual (so keyboard-only users are never trapped).
+//
+// The indent unit is spaces, not "\t". Every starter in the bank is indented
+// with 4 spaces — a scan of all 449 questions finds ZERO tab characters in any
+// starter_code, answer_code or question_text. So a Tab keypress used to drop a
+// real tab into space-indented code, and Python answered with
+// `TabError: inconsistent use of tabs and spaces in indentation`. The learner
+// had done nothing wrong; the editor manufactured the error. Matching the bank
+// is the fix, and it has to stay matched: if starters are ever re-indented,
+// change this with them.
 let _editorTabEscapes = false;
-const EDITOR_INDENT = "\t";
 const EDITOR_SPACE_INDENT_WIDTH = 4;
+const EDITOR_INDENT = " ".repeat(EDITOR_SPACE_INDENT_WIDTH);
+// Lines that end a block. After one of these, the next line dedents a level —
+// nothing can follow `return` at the same depth inside the same suite.
+const EDITOR_DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
+
 if (codeEditor) {
   codeEditor.addEventListener("keydown", (e) => {
+    // Enter keeps the indent you are already at, so the learner does not have
+    // to re-tab into a function body on every single line. `:` opens a suite so
+    // the next line goes one level deeper; a block-ending statement closes one.
+    // Only fires on a bare Enter with no selection — Shift/Ctrl/Alt+Enter and
+    // Enter-over-a-selection keep their normal behaviour.
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey &&
+      codeEditor.selectionStart === codeEditor.selectionEnd
+    ) {
+      const el = codeEditor;
+      const at = el.selectionStart;
+      const lineStart = el.value.lastIndexOf("\n", at - 1) + 1;
+      const line = el.value.slice(lineStart, at);
+      let indent = (line.match(/^[ \t]*/) || [""])[0];
+      // Only the code BEFORE the caret decides the next indent — pressing Enter
+      // mid-line splits it, and the trailing half is what moves down.
+      const codeBefore = line.replace(/#.*$/, "").trimEnd();
+      if (codeBefore.endsWith(":")) {
+        indent += EDITOR_INDENT;
+      } else if (EDITOR_DEDENT_AFTER.test(line) && indent.length >= EDITOR_INDENT.length) {
+        indent = indent.slice(0, indent.length - EDITOR_INDENT.length);
+      }
+      if (indent) {
+        e.preventDefault();
+        const insert = "\n" + indent;
+        el.value = el.value.slice(0, at) + insert + el.value.slice(el.selectionEnd);
+        el.selectionStart = el.selectionEnd = at + insert.length;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      _editorTabEscapes = false;
+      return;
+    }
     if (e.key === "Escape") {
       // Arm a one-shot "let Tab leave the field" so keyboard users can escape.
       _editorTabEscapes = true;
