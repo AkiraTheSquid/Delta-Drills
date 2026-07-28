@@ -722,7 +722,8 @@
     // The iframe is a separate app instance: anything it graded landed in
     // storage, not in this window's in-memory state. Re-read it so the card
     // and the node colours reflect the practice that just happened.
-    _refreshLearnerState().then(() => { recolor(); refreshDock(); });
+    Promise.all([_refreshLearnerState(), refreshLattice()])
+      .then(() => { recolor(); refreshDock(); });
     // Back to the workflow: the node is still selected and its lesson is still
     // on the left — just re-centre it so focus returns cleanly.
     if (selectedKc && cy) {
@@ -970,12 +971,54 @@
 
   let nextUpKc = null;
 
+  /* ---------------- server truth ----------------------------------------
+     `_nextUpKc` above is a MIRROR of the selection rule, recomputed in the
+     browser. A mirror drifts: it was written against a weakest-first queue and
+     the queue now gates on the KC lattice, so the two could highlight different
+     nodes and the graph would be showing something the app was not doing.
+
+     /api/practice/kc-lattice returns the backend's own `kc_graph.kc_report` —
+     the same function that gates practice. When it answers, it WINS: the ring
+     lands on the node the queue will actually serve from, and locked nodes are
+     drawn locked because the server says they are locked, not because the
+     browser guessed. The local mirror stays as the offline/guest fallback,
+     where there is no server to ask. */
+  let lattice = null;
+
+  async function refreshLattice() {
+    try {
+      const fn = typeof window.apiFetch === "function" ? window.apiFetch : fetch;
+      const res = await fn("/api/practice/kc-lattice");
+      if (!res || !res.ok) { lattice = null; return; }
+      const data = await res.json();
+      lattice = data && data.kcs ? data : null;
+    } catch (_) {
+      lattice = null;   // guest / offline — fall back to the local mirror
+    }
+  }
+
   // Yellow ring on the concept, and the same yellow along the edges feeding it,
   // so the route INTO it is visible rather than just the destination.
   const markNextUp = () => {
     if (!cy) return;
     cy.elements(".next-up, .next-up-edge").removeClass("next-up next-up-edge");
-    nextUpKc = colorMode === "mastery" ? _nextUpKc() : null;
+
+    // Gate state, straight from the server's report. This is the difference
+    // between a diagram of the curriculum and a picture of the tutor: a locked
+    // node is one the learner genuinely cannot be served yet.
+    cy.nodes().removeClass("kc-locked kc-frontier");
+    if (lattice && colorMode === "mastery") {
+      cy.nodes().forEach((n) => {
+        const row = lattice.kcs[n.id()];
+        if (!row) return;
+        if (row.state === "locked") n.addClass("kc-locked");
+        else if (row.state === "frontier") n.addClass("kc-frontier");
+      });
+    }
+
+    nextUpKc = colorMode === "mastery"
+      ? ((lattice && lattice.next_kc) || _nextUpKc())
+      : null;
     if (!nextUpKc) return;
     const node = cy.getElementById(nextUpKc);
     if (!node || !node.length) return;
@@ -1081,6 +1124,16 @@
             "outline-width": 6, "outline-color": NEXT_UP, "outline-opacity": 0.35,
             "z-index": 80,
         }},
+        // Gate state. Locked = the queue will not serve this yet, so it is
+        // dimmed and desaturated; frontier = unlocked and unfinished, the set
+        // the next-up ring is chosen from, so it keeps full presence.
+        { selector: "node.kc-locked", style: {
+            "opacity": 0.32, "border-style": "dotted", "z-index": 1,
+        }},
+        { selector: "node.kc-frontier", style: {
+            "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,
+            "border-opacity": 0.55, "z-index": 40,
+        }},
         { selector: "edge.next-up-edge", style: {
             "width": 3.5, "line-color": NEXT_UP, "target-arrow-color": NEXT_UP,
             "opacity": 1, "z-index": 70,
@@ -1129,9 +1182,15 @@
 
     // Recolour when the learner model changes (a graded attempt updates BKT),
     // and repaint the panel with it.
-    window.addEventListener("delta:adaptive-state-changed", () => { recolor(); refreshDock(); });
+    // A graded attempt can move a KC over the unlock threshold, which changes
+    // the gate for everything downstream — so re-ask the server what the
+    // lattice looks like now instead of repainting stale state.
+    window.addEventListener("delta:adaptive-state-changed", () => {
+      refreshLattice().then(() => { recolor(); refreshDock(); });
+    });
 
     buildLegend();
+    refreshLattice().then(() => recolor());
     recolor();
     setPlaceholder();
     building = false;
