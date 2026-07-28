@@ -18,8 +18,8 @@ three-step recipe built entirely from broadcasting:
 > `x[:, None, :]` is (n, 1, d); `y[None, :, :]` is (1, m, d).
 > **2. Combine.** Subtracting gives `diff` of shape (n, m, d): slot [i, j]
 > holds the elementwise difference of row i and row j.
-> **3. Reduce the feature axis.** `(diff ** 2).sum(axis=-1)` collapses d,
-> leaving the (n, m) table; `np.sqrt` finishes Euclidean distance.
+> **3. Reduce the feature axis.** `(diff ** 2).sum(dim=-1)` collapses d,
+> leaving the (n, m) table; `t.sqrt` finishes Euclidean distance.
 
 The same skeleton with a different step 2/3 yields the whole family:
 
@@ -29,8 +29,10 @@ The same skeleton with a different step 2/3 yields the whole family:
   `xn @ yn.T`. No 3-D intermediate needed: the matmul does the pairing.
 - **Self-pairwise** (all points against themselves): use the same array
   twice — diagonal 0 for distance, 1 for cosine.
-- **Correlation of columns**: packaged as `np.corrcoef(x, rowvar=False)` —
-  center + normalize + dot under the hood.
+- **Correlation of columns**: `t.corrcoef(x.T)` — center + normalize + dot
+  under the hood. Torch's `corrcoef` always treats ROWS as the variables and
+  has no `rowvar` switch, so column-variables means transposing first; the
+  transpose IS the switch.
 
 Two practical notes. First, `a @ b.T` versus the 3-D broadcast: when the
 combination is a *dot product*, matmul already computes all pairs — cheaper
@@ -45,27 +47,27 @@ Task: all pairwise distances between two point sets; then cosine similarity
 between rows of one matrix.
 
 ```python
-import numpy as np
+import torch as t
 
-x = np.array([[0.0, 0.0]])            # (1, 2): one point
-y = np.array([[3.0, 4.0],
+x = t.tensor([[0.0, 0.0]])            # (1, 2): one point
+y = t.tensor([[3.0, 4.0],
               [6.0, 8.0]])            # (2, 2): two points
 
 # 1-2. Insert axes and subtract: (1,1,2) - (1,2,2) -> (1, 2, 2).
 diff = x[:, None, :] - y[None, :, :]
-assert diff.shape == (1, 2, 2)
+assert tuple(diff.shape) == (1, 2, 2)
 
 # 3. Square, reduce the last (feature) axis, root -> (1, 2) table.
-d = np.sqrt((diff ** 2).sum(axis=-1))
+d = t.sqrt((diff ** 2).sum(dim=-1))
 assert d.tolist() == [[5.0, 10.0]]     # the 3-4-5 triangles
 
 # Cosine similarity of rows with themselves: unit-normalize, then X @ X.T.
-m = np.array([[1.0, 0.0],
+m = t.tensor([[1.0, 0.0],
               [1.0, 1.0]])
-mn = m / np.linalg.norm(m, axis=1, keepdims=True)
+mn = m / t.linalg.norm(m, dim=1, keepdim=True)
 cos = mn @ mn.T
-assert np.allclose(np.diag(cos), 1.0)             # every row vs itself
-assert np.isclose(cos[0, 1], 1.0 / np.sqrt(2.0))  # 45 degrees apart
+assert t.allclose(t.diag(cos), t.ones(2))        # every row vs itself
+assert t.isclose(cos[0, 1], 1.0 / t.sqrt(t.tensor(2.0)))  # 45 degrees apart
 ```
 
 Why each step:
@@ -87,21 +89,21 @@ Why each step:
 Pairwise Euclidean distances between rows of x (n, d) and rows of y (m, d).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x, y):
     """(n, m) distances: [i, j] = ||x[i] - y[j]||."""
     diff = x[:, _____, :] - y[_____, :, :]
-    return np.sqrt((diff ** 2).sum(axis=_____))
+    return t.sqrt((diff ** 2).sum(dim=_____))
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x, y):
     """(n, m) distances: [i, j] = ||x[i] - y[j]||."""
     diff = x[:, None, :] - y[None, :, :]
-    return np.sqrt((diff ** 2).sum(axis=-1))
+    return t.sqrt((diff ** 2).sum(dim=-1))
 ```
 
 ## Guided practice

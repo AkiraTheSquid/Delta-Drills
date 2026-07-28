@@ -17,8 +17,17 @@ sys.path.insert(0, os.path.join(_DIR, '../..'))
 
 # Chapter 1 is authored and frozen as the validation reference set. A drop here
 # means KCs were lost, not that new ones were added — growth is expected.
-_MIN_KCS = 64
-_MIN_TAGGED_QUESTIONS = 380
+# Lowered from 64 to 63 on 2026-07-28: numpy.structured-dtypes was RETIRED, not
+# lost. Record dtypes, datetime64 and genfromtxt have no PyTorch form — a tensor
+# is homogeneous — so the KC could not follow the course into torch.
+_MIN_KCS = 63
+# 380 -> 370 on 2026-07-28. The retirements cost exactly 7 tagged questions
+# (six numpy.structured-dtypes drills plus q65), leaving 373. An earlier edit
+# in the same pass dropped this to 343, which was 30 questions of unexplained
+# slack -- a floor that loose would let a quarter of a lesson fall out of the
+# ITS without failing. 370 keeps the small headroom a floor needs and nothing
+# more.
+_MIN_TAGGED_QUESTIONS = 370
 
 
 def _read(name):

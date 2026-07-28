@@ -52,7 +52,6 @@
 
     { "id": "numpy.pairwise-metrics", "lesson": "np-4", "title": "Pairwise distances and similarities", "syntax": false, "prereqs": ["numpy.broadcasting-rules", "numpy.axis-reductions"] },
     { "id": "numpy.scatter-gather", "lesson": "np-4", "title": "Scatter/gather: np.add.at and grouped aggregation", "syntax": false, "prereqs": ["numpy.fancy-indexing", "numpy.onehot-bincount"] },
-    { "id": "numpy.structured-dtypes", "lesson": "np-4", "title": "Structured dtypes, text input, datetime64", "syntax": true, "prereqs": ["numpy.dtype-astype"] },
     { "id": "numpy.memory-model", "lesson": "np-4", "title": "Memory model: views, reinterpreting bytes, bit unpacking", "syntax": false, "prereqs": ["numpy.dtype-astype", "numpy.slicing-views"] },
     { "id": "numpy.set-combinatorics", "lesson": "np-4", "title": "Set operations, cartesian products, run-length encoding", "syntax": false, "prereqs": ["numpy.unique", "numpy.cumulative-diff"] },
     { "id": "numpy.window-stencil", "lesson": "np-4", "title": "2-D windows and stencils: block sums, correlation, Life", "syntax": false, "prereqs": ["numpy.sliding-windows", "numpy.pad-borders"] },

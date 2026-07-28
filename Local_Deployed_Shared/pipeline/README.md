@@ -11,7 +11,7 @@
 
 ## Does NOT own
 - Runtime grading — that is `This-Directory-Only/backend/app/code_runner.py`. This folder only *tests* it (`test_torch_grading.py`).
-- Question serving, selection, or parking policy — `backend/app/questions.py` and `backend/app/lessons.py`.
+- Question serving, selection, or parking policy — `backend/app/questions.py` and `backend/app/lessons.py`. Worth knowing while working on the bank: `lessons.torch_only_serving()` DEFAULTS ON as of 2026-07-28 (`DELTA_TORCH_ONLY` defaults to `"1"`), and it drops every question that does not import torch out of the SELECTION pools — the by-subtopic lists the ITS picks from. Lookup by id is deliberately untouched, so history and in-flight attempts still resolve a parked question. Dialect is read off the question's own `answer_code`/`starter_code` rather than a stored field, so it cannot drift out of sync with what the question actually asks, and converting a question unparks it with no schema change. Export a NumPy question today and the app will simply never offer it.
 - Lesson/KC content — `Local_Deployed_Shared/lessons/`.
 - The override JSONL files themselves — they live in `This-Directory-Only/chatgpt/` (gitignored dir, individually force-added).
 
@@ -37,9 +37,9 @@
 
 ## Invariants & Constraints
 - **`questions.json` is generated, never authored.** It is rewritten on every deploy — hand edits are silently erased. All question changes go in an override layer.
-- **The layer list is duplicated and must stay in sync**: `load_function_overrides()` here and `_load_function_overrides()` in `backend/app/questions.py`. Adding a layer to one and not the other makes local and prod disagree about what the bank says.
+- **The layer list is duplicated and must stay in sync**: `load_function_overrides()` here and `_load_function_overrides()` in `backend/app/questions.py`. Adding a layer to one and not the other makes local and prod disagree about what the bank says. **Order matters as much as membership** — layers merge last-wins, so the same filenames in a different sequence still resolve a conflicting id differently, and `watch.py` compares the two lists as ordered sequences for that reason.
 - **The field whitelist is also duplicated** across those same two files. A field not in the whitelist is silently ignored in an override — it does not error.
-- New override layers live in `This-Directory-Only/chatgpt/`, which is **gitignored**. Every sibling layer is individually force-added; a new one needs `git add -f` or it will never reach the deploy.
+- New override layers live in `This-Directory-Only/chatgpt/`, which is **gitignored**. Every sibling layer is individually force-added; a new one needs `git add -f` or it will never reach the deploy. This is the half of the registration footgun that no check catches: `watch.py` verifies that a registered layer EXISTS on disk, which it does locally the moment the generator writes it, and nothing looks at whether git can see it. A layer can therefore pass every gate here and still be absent from the deployed bank.
 - A non-empty `function_mode_broken_ids.json` makes the export silently DROP those ids. The deploy script refuses to run on a stale one — do not work around that check.
 - Torch-dependent scripts must be run with the backend venv interpreter, not `python3`.
 
@@ -69,10 +69,11 @@
   - When it happens: a layer is registered in one of the two override-layer lists only.
   - Symptom: local and deployed banks disagree; a conversion or fix appears to "not take" in one environment.
   - Root cause: the merge order is intentionally duplicated rather than shared, to keep the backend free of a pipeline import.
-  - Prevention/fix: edit both lists in the same commit; both carry a "keep in sync" comment naming the other file.
-  - Status: `ACTIVE` — structural, no automated check enforces it.
+  - Prevention/fix: edit both lists in the same commit; both carry a "keep in sync" comment naming the other file. `watch.py` (run by `mod watch`) now parses both files — without importing them, since importing the exporter would rewrite the bank as a side effect of a health check — and fails on any difference in membership OR order, and on a registered layer that does not exist on disk.
+  - Status: `ACTIVE` for the part a checker cannot see. The divergence itself is caught; what is not caught is a layer that exists locally but was never `git add -f`'d out of the gitignored `chatgpt/` directory, which fails only in the deployed bank.
 
 ## Recent Changes
+- 2026-07-28: `torch_dialect_overrides_np4.jsonl` (45 np-4 drills) and `torch_dialect_overrides_parked.jsonl` (the 17 untagged CNN/backprop drills) registered as the fourth and fifth dialect layers, in that order, in **both** override-layer lists. That finishes the migration: the bank is a single dialect, 448 questions, 448 torch, no NumPy left. The seven questions that could not cross — the six `numpy.structured-dtypes` drills plus q65's `ndarray.flags.writeable` — were retired through `function_mode_deleted_ids.json` rather than converted, which is why the bank went 455 → 448. Registering a new layer is still the sharpest edge in this folder and now has three steps, not two: add it to `load_function_overrides()` here, add it in the same position to `_load_function_overrides()` in `backend/app/questions.py`, and `git add -f` the file itself. `watch.py` catches the first two failures; nothing catches the third.
 - 2026-07-28: `torch_dialect_overrides_np23.jsonl` registered as the third dialect layer (np-2 + np-3, 120 questions). The bank is now 390 torch / 58 numpy; the remaining numpy is np-4 plus q65, whose `ndarray.flags.writeable` content has no torch equivalent. `audit_question_bank.py --gate` earns its keep here: converted STARTERS carry the same demo block as answers, and a raw list assigned into a tensor (`img[0, 0] = [255.0, ...]`) is a blocking `setup_exec_error` that no other gate sees.
 - 2026-07-27: `torch_dialect_overrides.jsonl` now carries all 49 of np-1's questions in the PyTorch dialect. The staleness entry above was corrected: the earlier 118/364 figure was measured against bare `exec` instead of the grading harness, and the real post-export count is 1.
 - 2026-07-27: `expected_output` added to the override whitelist in both the exporter and the backend; new `torch_dialect_overrides.jsonl` layer registered last.

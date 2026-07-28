@@ -461,6 +461,18 @@ def load_function_overrides() -> dict[int, dict]:
         # in This-Directory-Only/scripts/torchify_np23_manual.py. Keep in sync
         # with backend/app/questions.py::_load_function_overrides.
         "torch_dialect_overrides_np23.jsonl",
+        # Fourth conversion pass (2026-07-28): np-4 "Applied patterns", 45 of
+        # its 51 drills. The other 6 are the whole numpy.structured-dtypes KC —
+        # record dtypes, datetime64 and genfromtxt have no torch form at all,
+        # so they stay NumPy and are listed in
+        # This-Directory-Only/scripts/torchify_np4_manual.py::EXCLUDE. Keep in
+        # sync with backend/app/questions.py::_load_function_overrides.
+        "torch_dialect_overrides_np4.jsonl",
+        # Fifth conversion pass (2026-07-28): the 17 parked CNN/backprop drills
+        # that no lesson tags yet. Converted so the bank holds ONE dialect —
+        # eleven of them only ever had a vestigial `import numpy as np`. Keep in
+        # sync with backend/app/questions.py::_load_function_overrides.
+        "torch_dialect_overrides_parked.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():

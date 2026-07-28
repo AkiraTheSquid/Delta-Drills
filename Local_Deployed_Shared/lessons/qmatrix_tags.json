@@ -22,19 +22,6 @@
   "new_syntax": [],
   "source": "kp-faded"
  },
- "3": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
-  "source": "kp-faded"
- },
  "4": {
   "target_kcs": [
    "numpy.diag-triangles"
@@ -493,19 +480,6 @@
   "new_syntax": [],
   "source": "kp-independent"
  },
- "55": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
-  "source": "kp-independent"
- },
  "58": {
   "target_kcs": [
    "numpy.sorting"
@@ -579,18 +553,6 @@
   ],
   "supporting_kcs": [
    "numpy.elementwise-ufuncs"
-  ],
-  "new_syntax": [],
-  "source": "kp-independent"
- },
- "65": {
-  "target_kcs": [
-   "numpy.inplace-out"
-  ],
-  "supporting_kcs": [
-   "numpy.elementwise-ufuncs",
-   "numpy.slicing-views",
-   "numpy.fancy-indexing"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -786,19 +748,6 @@
   "new_syntax": [],
   "source": "kp-independent"
  },
- "83": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
-  "source": "kp-independent"
- },
  "84": {
   "target_kcs": [
    "numpy.stack-concat-interleave"
@@ -921,19 +870,6 @@
   ],
   "new_syntax": [],
   "source": "leftover-assignment"
- },
- "96": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
-  "source": "kp-guided"
  },
  "97": {
   "target_kcs": [
@@ -1253,19 +1189,6 @@
    "numpy.argmin-argmax"
   ],
   "new_syntax": [],
-  "source": "kp-independent"
- },
- "125": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
   "source": "kp-independent"
  },
  "126": {
@@ -1624,19 +1547,6 @@
   ],
   "new_syntax": [],
   "source": "kp-guided"
- },
- "157": {
-  "target_kcs": [
-   "numpy.structured-dtypes"
-  ],
-  "supporting_kcs": [
-   "numpy.dtype-astype",
-   "numpy.constructors"
-  ],
-  "new_syntax": [
-   "structured-dtype-syntax"
-  ],
-  "source": "kp-independent"
  },
  "158": {
   "target_kcs": [
