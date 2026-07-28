@@ -58,7 +58,7 @@ assert outer.tolist() == [[10.0, 20.0, 30.0],
 # Same thing via broadcasting — einsum names this exact pattern:
 assert t.equal(outer, v1[:, None] * v2[None, :])
 
-# Self outer product: same array in both slots, different letters.
+# Self outer product: same tensor in both slots, different letters.
 v = t.tensor([1.0, 2.0, 3.0])
 self_outer = t.einsum('i,j->ij', v, v)
 assert self_outer[1, 2] == 6.0                 # v[1] * v[2]

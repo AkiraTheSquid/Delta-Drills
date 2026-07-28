@@ -53,7 +53,7 @@ batch = einops.rearrange(imgs, 'b h w c -> b h w c')
 assert batch.shape == (4, 2, 3, 1)
 assert batch[2, 0, 0, 0] == 2.0                      # list order preserved
 
-# Singleton insertion: a plain 2-D array gains a leading axis.
+# Singleton insertion: a plain 2-D tensor gains a leading axis.
 x2d = t.arange(6).reshape(2, 3)
 x3d = einops.rearrange(x2d, 'h w -> 1 h w')
 assert x3d.shape == (1, 2, 3)

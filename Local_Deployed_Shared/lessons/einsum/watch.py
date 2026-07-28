@@ -166,6 +166,12 @@ def check_invariants():
 
 
 if __name__ == '__main__':
+    # These checks are written as asserts, which `python -O` strips entirely —
+    # a stripped run reports success having verified nothing. Refuse instead.
+    if not __debug__:
+        print('FAIL: watch.py needs assertions enabled (do not run under -O)',
+              file=sys.stderr)
+        sys.exit(1)
     checks = [check_imports, check_public_api, check_invariants]
     for fn in checks:
         try:

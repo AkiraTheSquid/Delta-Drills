@@ -14,7 +14,7 @@ independent: []
 `t.einsum` does one thing: it lets you **name the axes** of your tensors, then
 describe the result by those names. Every call looks like
 
-> `t.einsum('SPEC', array1, array2, ...)`
+> `t.einsum('SPEC', tensor1, tensor2, ...)`
 
 and the whole operation lives in that `'SPEC'` string. The string has exactly
 two sides, split by `->`:
@@ -67,11 +67,11 @@ a = t.tensor([[1, 2, 3],
               [4, 5, 6]])
 
 # 'ij->ij': input is 2-D (axis 0 = i, axis 1 = j); output lists i then j,
-# the same order -> every axis kept, nothing reordered = the array unchanged.
+# the same order -> every axis kept, nothing reordered = the tensor unchanged.
 same = t.einsum('ij->ij', a)
 print(same)
-# [[1 2 3]
-#  [4 5 6]]   <- exactly a, handed straight back
+# tensor([[1, 2, 3],
+#         [4, 5, 6]])   <- exactly a, handed straight back
 ```
 
 Why this is the anchor: `'ij->ij'` hands the tensor straight back — `print(same)`
@@ -82,7 +82,9 @@ reorder the output letters (transpose), drop one (sum), or share one across two
 inputs (multiply). Learn the baseline, and the rest are edits to it.
 
 (The code is preloaded in the editor on the right — press Run and watch the
-Output pane print the tensor. That's the fastest way to convince yourself.)
+Output pane print the tensor — PyTorch wraps it in `tensor(...)`, which
+is the surest sign you are looking at a tensor and not a list. That's the
+fastest way to convince yourself.)
 
 ## Faded practice
 

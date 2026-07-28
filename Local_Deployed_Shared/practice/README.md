@@ -70,6 +70,12 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
+- **Run routed torch code to a runtime that has no torch** — `RESOLVED`
+  - When it happens: pressing Run on any converted Einops/Einsum drill, or on a torch lesson's worked example, in backend mode.
+  - Symptom: `ModuleNotFoundError: No module named 'torch'` from Run, while Submit grades the same code correctly.
+  - Root cause: `runner.js` forced local Pyodide for lessons ("keep experimentation local") and for `questionNeedsEinops` (which keys on the Einops/Einsum TOPIC, not the library). Both rules predate the torch conversion and silently began covering torch code. Pyodide cannot import torch at all.
+  - Prevention/fix: both rules now yield when the question or the editor contents import torch, so it runs on the backend fork runner. Outside backend mode there is no fallback, so Run says so plainly instead of surfacing the import error. When adding a "keep this local" rule, ask what happens to torch code under it.
+  - Status: RESOLVED (2026-07-27).
 - **Image preview blank when Pyodide errors** — `RESOLVED`
   - When it happens: visual-output question, Pyodide fetch/exec fails.
   - Symptom: empty canvas with only an error string.
@@ -92,6 +98,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-07-27 (torch Run routing): `runner.js` no longer pins torch code to Pyodide. The lesson rule and the `questionNeedsEinops` rule both defer when the question or editor imports torch; guest mode gets an explicit "open it in Colab" message rather than an import error. Needed because the 159 Einops/Einsum drills are now torch while keeping their Einops/Einsum topic.
 - 2026-07-27 (KC-only serving): `questions.js` now parks questions with no `target_kcs` — `loadKcTaggedIds()`, `servableQuestions()`, `isKcServable()`, wired into `getPracticeEligibleQuestions()` and `isPracticeQuestionAllowed()`. 380 servable / 75 parked (CNN, PyTorch Fundamentals, Autograd, Optimizers). `lessons/` is now the source of truth for what the tutor may teach, validated chapter by chapter; the parked questions return when their chapter's KCs are authored and validated. Cache-bust `questions.js?v=24`.
 - 2026-07-24 (single-KC practice ladder + competency bar): Replaced the `?lesson=<kc>` preview dead-end (it ended on "Demo lesson complete") with the real lesson → faded → independent flow. New `kc-practice.js` + `competency-bar.js`; `questions.js` gained `buildPracticeQuestionFromBank()` (extracted from `api.js`) and the `__kcFocusSubtopics` filter; `api.js` routes through the ladder and sends `focus_subtopic` to the backend; `events.js` emits `competency:feedback-update`; `lessons.js` exports `getKpEntry()`. No session quota or timer here — this flow ends on the 0.95 mastery gate, not a question count, so `PracticeSession` stays inactive throughout. Known limits: the bar is per-SUBTOPIC (BKT's granularity), not per-concept, so KCs sharing a subtopic share a bar; and the local Pyodide engine never writes `atom_mastery`, so the graph's node recolouring only moves in backend mode.
 - 2026-07-12 (rigid practice sessions): Replaced optional timed mode with mandatory session setup. Question count and per-question answer/review limits stay strict while active; answer expiry auto-submits, review expiry auto-rates "About right" + advances, and the block ends at its committed count.

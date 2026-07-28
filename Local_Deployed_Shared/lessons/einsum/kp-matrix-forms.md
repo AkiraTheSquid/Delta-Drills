@@ -54,7 +54,7 @@ qf = t.einsum('i,ij,j->', x, w, x)
 assert qf == float(x @ w @ x)
 assert qf == 13.0        # 1*3*1 + 1*1*2 + 2*0*1 + 2*2*2
 
-# Gram matrix of columns: same array twice, observation axis contracted.
+# Gram matrix of columns: same tensor twice, observation axis contracted.
 data = t.tensor([[1.0, 10.0],
                  [2.0, 20.0],
                  [3.0, 30.0]])          # (n=3, d=2)

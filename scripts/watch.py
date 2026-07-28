@@ -14,7 +14,6 @@ is checked rather than remembered.
 
 Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
-import inspect
 import sys
 import os
 
@@ -49,20 +48,37 @@ def check_public_api():
 def check_invariants():
     import validate_lessons
 
-    src = inspect.getsource(validate_lessons.grade_against_bank)
+    # Both mirrorings are checked by GRADING something, not by reading the
+    # source: a check that greps for `import numpy as np` still passes if the
+    # call is deleted and the comment stays, which is precisely the drift it
+    # exists to catch.
+    def graded(solution, setup, call, expected_expr, expected_setup=None):
+        case = {'setup_code': setup, 'call': call, 'expected_expr': expected_expr}
+        if expected_setup is not None:
+            case['expected_setup_code'] = expected_setup
+        return validate_lessons.grade_against_bank(
+            solution, {'exercise': {'test_cases': [case]}})
 
-    # Mirror 1: the runtime preamble always provides numpy, so fixtures may use
-    # it even in a torch drill (np.load is the only route to the ARENA image).
-    assert 'import numpy as np' in src, (
+    # Mirror 1: the runtime preamble always provides numpy, so a fixture may
+    # use it even in a torch drill — np.load is the only route to the ARENA
+    # image. A torch solution imports torch, never numpy, so if the validator
+    # does not seed numpy itself this setup dies with NameError.
+    failures = graded('def solve(x):\n    return x * 2\n',
+                      'v = np.array([1, 2, 3])', 'list(solve(v))', '[2, 4, 6]')
+    assert not failures, (
         'grade_against_bank no longer seeds numpy — torch-dialect lessons whose '
-        'fixtures load /delta_numbers.npy will fail here but pass in the sandbox'
+        f'fixtures load /delta_numbers.npy will fail here but pass in the sandbox: {failures}'
     )
 
     # Mirror 2: expected_expr is evaluated against a FRESH setup run, so a
-    # solution that mutates its input cannot poison its own expectation.
-    assert 'expected_setup_code' in src, (
+    # solution that mutates its input cannot poison its own expectation. This
+    # solution empties the list it is handed; the expectation only holds if
+    # setup is re-run before expected_expr is evaluated.
+    failures = graded('def solve(xs):\n    out = list(xs)\n    xs.clear()\n    return out\n',
+                      'xs = [1, 2, 3]', 'solve(xs)', 'xs')
+    assert not failures, (
         'grade_against_bank stopped re-running setup before expected_expr — '
-        'in-place drills will grade differently here than in prod'
+        f'in-place drills will grade differently here than in prod: {failures}'
     )
 
     # The bank fixture path rewrite has to point at a file that exists, or every
@@ -74,6 +90,12 @@ def check_invariants():
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
+    # These checks are written as asserts, which `python -O` strips entirely —
+    # a stripped run reports success having verified nothing. Refuse instead.
+    if not __debug__:
+        print('FAIL: watch.py needs assertions enabled (do not run under -O)',
+              file=sys.stderr)
+        sys.exit(1)
     checks = [check_imports, check_public_api, check_invariants]
     for fn in checks:
         try:

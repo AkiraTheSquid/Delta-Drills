@@ -18,7 +18,7 @@ reduce: the output may contain names (or factors) the input DOESN'T have**
 
 > `repeat(cls, 'b d -> b t d', t=8)`
 > — each (b, d) embedding is broadcast across 8 new time steps. This is
-> einops' t.broadcast_to / "unsqueeze + expand": the classic use is
+> einops' answer to `broadcast_to` / `unsqueeze` + `expand`: the classic use is
 > spreading a class token or per-token weights across a new dimension.
 
 **2. Stretching an existing axis** — a factor inside output parens that

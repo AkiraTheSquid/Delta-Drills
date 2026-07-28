@@ -239,10 +239,24 @@ runBtn.addEventListener("click", async () => {
     // During an inline lesson the editor holds optional runnable worked code.
     // Keep experimentation local; never send lesson examples to backend runner.
     const runQuestion = window.LessonGate?.activeQuestion || PracticeAPI?.currentQuestion;
+
+    // ...with one exception: Pyodide cannot import torch AT ALL. Both of the
+    // "keep it local" rules above predate the torch conversion, and each one
+    // now covers torch code — lessons because np-1/eo-*/es-* worked examples
+    // are torch, and questionNeedsEinops because it keys on the Einops/Einsum
+    // topic, which the converted drills keep. Left alone, Run answers every
+    // one of those with ModuleNotFoundError while Submit grades them fine on
+    // the backend fork runner. The editor is sniffed too, not just the
+    // question, so a learner who types `import torch` anywhere still gets a
+    // runtime that can execute it.
+    const runIsTorch =
+      questionIsTorch(runQuestion) ||
+      /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(codeEditor.value || "");
+
     let useLocalPyodide =
       practiceMode !== "backend" ||
-      !!window.LessonGate?.activeQuestion ||
-      questionNeedsEinops(runQuestion);
+      ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(runQuestion)) &&
+        !runIsTorch);
 
     if (practiceMode === "backend" && !useLocalPyodide) {
       try {
@@ -272,6 +286,18 @@ runBtn.addEventListener("click", async () => {
         // Backend unreachable — fall back to in-browser Pyodide
         useLocalPyodide = true;
       }
+    }
+
+    if (useLocalPyodide && runIsTorch) {
+      // Offline/guest practice has no backend to fall back to. Say so plainly
+      // instead of letting Pyodide answer with ModuleNotFoundError.
+      outputArea.textContent =
+        "This code uses PyTorch, which can't run in the browser sandbox. " +
+        "Open it in Colab (Show Answer / the solution notebook) to run it, " +
+        "or sign in to use the full runner.";
+      runBtn.disabled = false;
+      runBtn.textContent = "Run";
+      return;
     }
 
     if (useLocalPyodide) {
