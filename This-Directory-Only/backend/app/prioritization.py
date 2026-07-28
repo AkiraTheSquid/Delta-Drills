@@ -81,7 +81,9 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     )
 
 
-def narrow_to_next_kc(user_state: UserPracticeState, candidates: List) -> List:
+def narrow_to_next_kc(
+    user_state: UserPracticeState, candidates: List, served: Optional[set] = None
+) -> List:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, when the subtopic carries any.
 
@@ -92,13 +94,19 @@ def narrow_to_next_kc(user_state: UserPracticeState, candidates: List) -> List:
     next KC has nothing left unserved here, the unnarrowed list is returned so
     the learner is never stalled by the preference.
     """
-    next_kc = kc_graph.select_next_kc(user_state)
+    here = {q.id for q in candidates}
+    served = served or set()
+    # Eligibility must match what the caller can actually serve, or the
+    # narrowing targets a KC whose questions are all spent and hands back a
+    # list the difficulty picker then rejects — a 404 with fresh sibling work
+    # sitting right there. `select_next_subtopic` chose this subtopic because
+    # SOME frontier KC has unserved work in it; find that same KC.
+    next_kc = kc_graph.select_next_kc(
+        user_state, eligible=lambda qid: qid in here and qid not in served
+    )
     if not next_kc:
         return candidates
-    wanted = set(kc_graph.questions_for_kc(next_kc))
-    if not wanted:
-        return candidates
-    narrowed = [q for q in candidates if q.id in wanted]
+    narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
     return narrowed or candidates
 
 

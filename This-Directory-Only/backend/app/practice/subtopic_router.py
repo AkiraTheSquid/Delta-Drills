@@ -25,7 +25,7 @@ from app.practice_schemas import (
     WeightsUpdateRequest,
 )
 from app.prioritization import get_subtopic_weights
-from app.questions import get_topic_for_subtopic
+from app.questions import get_subtopics, get_topic_for_subtopic
 
 router = APIRouter()
 
@@ -180,4 +180,13 @@ def kc_lattice(user: User = Depends(get_current_user)) -> dict:
     the single node the selector will serve from next.
     """
     user_state = get_user_state(str(user.id))
-    return kc_graph.kc_report(user_state)
+
+    # Served-question awareness, so the node the graph rings is the node the
+    # queue can actually reach. A KC whose questions the learner has already
+    # seen this cycle is not what comes next, however low its mastery is.
+    served = {
+        qid
+        for st in get_subtopics()
+        for qid in user_state.get_subtopic_state(st).served_question_ids
+    }
+    return kc_graph.kc_report(user_state, eligible=lambda qid: qid not in served)

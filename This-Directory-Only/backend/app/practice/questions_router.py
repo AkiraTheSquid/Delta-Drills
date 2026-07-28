@@ -147,9 +147,9 @@ def next_question(
     # A focused request is the learner explicitly opening one concept, so honour
     # that over the queue's own idea of what comes next; on the normal path,
     # keep the served question on the same KC the graph is highlighting.
-    if focus_subtopic is None:
-        candidates = narrow_to_next_kc(user_state, candidates)
     served = set(sub_state.served_question_ids)
+    if focus_subtopic is None:
+        candidates = narrow_to_next_kc(user_state, candidates, served)
     question = select_question_for_difficulty(candidates, target_diff, served)
     if question is None:
         raise HTTPException(

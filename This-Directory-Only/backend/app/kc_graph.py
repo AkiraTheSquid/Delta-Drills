@@ -324,12 +324,24 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
     return out
 
 
-def select_next_kc(user_state) -> Optional[str]:
-    """The single KC the tutor intends to serve next. This is the one function
-    the graph's highlight and the practice queue must agree on; anything that
-    computes its own answer will drift from what the learner is actually shown."""
-    f = frontier(user_state)
-    return f[0] if f else None
+def select_next_kc(user_state, eligible=None) -> Optional[str]:
+    """The single KC the tutor intends to serve next — the one answer the
+    graph's highlight and the practice queue must both use.
+
+    `eligible(qid) -> bool` filters to questions that can actually be served
+    right now (unserved, in a weighted subtopic). Without it this returns the
+    frontier head, which is the *theoretical* next concept and can differ from
+    what the queue can deliver: once the head's questions are all served but its
+    mastery has not yet cleared the threshold, the queue moves to the next
+    frontier KC while an eligibility-blind answer keeps naming the head. That
+    divergence is what makes a highlight a lie, so callers that are about to
+    serve a question must pass `eligible`.
+    """
+    for kc in frontier(user_state):
+        qs = questions_for_kc(kc)
+        if eligible is None or any(eligible(q) for q in qs):
+            return kc
+    return None
 
 
 def questions_for_kc(kc: str) -> Sequence[int]:
@@ -350,7 +362,7 @@ def subtopics_for_kc(kc: str) -> List[str]:
     return out
 
 
-def kc_report(user_state) -> dict:
+def kc_report(user_state, eligible=None) -> dict:
     """Full lattice state for the API — one row per KC, plus the selection the
     queue will actually make. This is what lets the knowledge graph draw the
     system's real state instead of a decorative model: every field the graph
@@ -360,6 +372,11 @@ def kc_report(user_state) -> dict:
     descendants, depth = _closure()
     by_kc = _questions_by_kc()
     order = {kc: i for i, kc in enumerate(frontier(user_state))}
+    # `eligible` makes the reported next_kc the one the QUEUE will reach, not
+    # the frontier head it would like to reach. Without it the graph can ring a
+    # concept whose questions are all spent while practice serves the next one
+    # along — a highlight that promises something the app then does not do.
+    next_kc = select_next_kc(user_state, eligible=eligible)
 
     rows = {}
     for kc, node in reg.items():
@@ -384,7 +401,7 @@ def kc_report(user_state) -> dict:
 
     return {
         "learned_threshold": LEARNED_THRESHOLD,
-        "next_kc": select_next_kc(user_state),
+        "next_kc": next_kc,
         "frontier": frontier(user_state),
         "kcs": rows,
     }
