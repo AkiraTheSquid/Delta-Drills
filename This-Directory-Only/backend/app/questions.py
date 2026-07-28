@@ -40,6 +40,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from app import lessons
+
 logger = logging.getLogger(__name__)
 
 _THIS_DIR_ONLY = Path(__file__).resolve().parents[3] / "This-Directory-Only"
@@ -633,12 +635,23 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
     _apply_atom_tags(questions)
     _apply_solution_aids(questions)
 
-    _questions = questions
+    # By-id stays COMPLETE even when serving is restricted: past attempts,
+    # served_question_ids in stored state, and an in-flight question a client
+    # already holds must all still resolve. Only the SELECTION pools below are
+    # narrowed — see lessons.kc_only_serving().
     _questions_by_id = {q.id: q for q in questions}
+
+    parked = 0
+    if lessons.kc_only_serving():
+        servable = [q for q in questions if lessons.has_target_kcs(q.id)]
+        parked = len(questions) - len(servable)
+    else:
+        servable = questions
+    _questions = servable
 
     by_sub: Dict[str, List[Question]] = {}
     sub_to_topic: Dict[str, str] = {}
-    for q in questions:
+    for q in servable:
         by_sub.setdefault(q.subtopic, []).append(q)
         sub_to_topic[q.subtopic] = q.topic
     _questions_by_subtopic = by_sub
@@ -646,9 +659,10 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
     _subtopic_to_topic = sub_to_topic
 
     logger.info(
-        "Loaded %d questions across %d subtopics",
-        len(questions),
+        "Loaded %d questions across %d subtopics (%d parked: no lesson-graph KC)",
+        len(servable),
         len(_subtopics),
+        parked,
     )
     _questions_loaded = True
 

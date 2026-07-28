@@ -4,6 +4,9 @@
 
 let questionsBank = null; // array of question objects from questions.json
 let questionsBankJson = null; // JSON string for passing to Pyodide engine
+// Ids tagged to at least one lesson-graph KC (lessons/qmatrix_tags.json).
+// null = q-matrix unavailable, see servableQuestions().
+let kcTaggedIds = null;
 let questionsSourceIndex = null; // Map from question id -> ARENA prereq source record
 let questionsSourceJson = null; // JSON string for passing to Pyodide engine when needed
 const PRACTICE_ARENA_CONTENT_BASE =
@@ -48,8 +51,13 @@ async function loadQuestionsBank() {
         };
       });
     }
-    questionsBankJson = JSON.stringify(questionsBank);
-    console.log(`[practice] loaded ${questionsBank.length} questions from questions.json`);
+    await loadKcTaggedIds();
+    questionsBankJson = JSON.stringify(servableQuestions() || questionsBank);
+    const parked = kcTaggedIds ? questionsBank.length - (servableQuestions() || []).length : 0;
+    console.log(
+      `[practice] loaded ${questionsBank.length} questions from questions.json` +
+        (parked ? ` (${parked} parked: no lesson-graph KC)` : "")
+    );
   } catch (e) {
     console.warn("[practice] failed to load questions.json, using fallback pool:", e.message);
     questionsBank = null;
@@ -222,22 +230,67 @@ async function getNotebookHelperItems(question) {
   }
 }
 
+/* The lesson graph is being validated chapter by chapter. A question with no
+   target KC has no validated structure to be scheduled against, so it is
+   PARKED: still in the bank and still resolvable by id (saved/in-flight
+   questions keep hydrating), but never selected. Mirrors the backend's
+   lessons.kc_only_serving() — see This-Directory-Only/backend/app/lessons.py.
+
+   Failure mode is deliberate: if qmatrix_tags.json cannot be fetched,
+   kcTaggedIds stays null and NOTHING is filtered. An unfiltered offline queue
+   is a smaller harm than an empty one, and the backend enforces the parking
+   authoritatively for signed-in practice, which is the path that matters. */
+async function loadKcTaggedIds() {
+  if (kcTaggedIds) return kcTaggedIds;
+  try {
+    const res = await fetch("lessons/qmatrix_tags.json", { cache: "force-cache" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const qmatrix = await res.json();
+    const ids = new Set();
+    for (const [qid, tags] of Object.entries(qmatrix || {})) {
+      if (tags?.target_kcs?.length) ids.add(Number(qid));
+    }
+    // An EMPTY set is a real answer ("nothing is tagged yet") and must park
+    // everything. Only a fetch/parse failure leaves kcTaggedIds null, which is
+    // what disables parking — see the note above. Conflating the two would
+    // reopen the whole bank the moment the q-matrix was emptied.
+    kcTaggedIds = ids;
+  } catch (e) {
+    kcTaggedIds = null;
+    console.warn("[practice] q-matrix unavailable — KC parking disabled locally:", e.message);
+  }
+  return kcTaggedIds;
+}
+
+function servableQuestions() {
+  if (!Array.isArray(questionsBank)) return null;
+  if (!kcTaggedIds) return questionsBank;
+  return questionsBank.filter((q) => kcTaggedIds.has(Number(q.id)));
+}
+
+function isKcServable(question) {
+  if (!kcTaggedIds) return true;
+  return kcTaggedIds.has(Number(question?.id));
+}
+
 function getPracticeEligibleQuestions() {
   if (!Array.isArray(questionsBank)) return null;
+  const bank = servableQuestions() || questionsBank;
   // Single-KC practice (concept-graph maximize) pins the queue to one subtopic.
   // Deliberately bypasses isSubtopicEnabled: the learner clicked this concept,
   // so a stats-page toggle shouldn't empty the queue underneath them.
   const focus = window.__kcFocusSubtopics;
   if (Array.isArray(focus) && focus.length) {
-    const focused = questionsBank.filter((q) => focus.includes(q.subtopic));
+    const focused = bank.filter((q) => focus.includes(q.subtopic));
     if (focused.length) return focused;
   }
-  if (typeof isSubtopicEnabled !== "function") return questionsBank;
-  return questionsBank.filter((q) => isSubtopicEnabled(q.subtopic, q.topic || ""));
+  if (typeof isSubtopicEnabled !== "function") return bank;
+  return bank.filter((q) => isSubtopicEnabled(q.subtopic, q.topic || ""));
 }
 
 function isPracticeQuestionAllowed(question) {
   if (!question) return false;
+  if (!isKcServable(question)) return false;
   const focus = window.__kcFocusSubtopics;
   if (Array.isArray(focus) && focus.length) return focus.includes(question.subtopic);
   if (typeof isSubtopicEnabled !== "function") return true;

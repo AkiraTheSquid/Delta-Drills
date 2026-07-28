@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -108,3 +109,30 @@ def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[
 def kc_exists(kc: str) -> bool:
     _load()
     return kc in _kc_gate_info
+
+
+def has_target_kcs(question_id: int) -> bool:
+    """True when this question is tagged to at least one KC of the lesson graph
+    (lessons/kc_registry.json via qmatrix_tags.json)."""
+    _load()
+    return bool(_question_target_kcs.get(question_id))
+
+
+def kc_only_serving() -> bool:
+    """Whether the ITS may serve ONLY questions tagged to a lesson-graph KC.
+
+    The lesson graph is being validated chapter by chapter, by the learner
+    working through it. Until a chapter's KCs exist and have been walked, its
+    questions have no validated structure to be scheduled against — no
+    prerequisites, no difficulty ordering, no mastery target — so serving them
+    would be guessing dressed as a curriculum. They stay in the bank and stay
+    resolvable by id (history and in-flight attempts keep working); they are
+    simply not selectable.
+
+    Today that parks the 75 CNN / PyTorch Fundamentals / Autograd / Optimizer
+    questions and leaves the 380 Numpy / Einops / Einsum ones servable.
+
+    Set DELTA_KC_ONLY=0 to lift the restriction (e.g. after authoring and
+    validating the next chapter's KCs). Default is ON — parking is the safe
+    state, so a missing env var must not silently reopen the whole bank."""
+    return os.environ.get("DELTA_KC_ONLY", "1").strip().lower() not in {"0", "false", "no"}
