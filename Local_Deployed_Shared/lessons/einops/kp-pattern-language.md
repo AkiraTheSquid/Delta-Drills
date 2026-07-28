@@ -28,7 +28,7 @@ does is exactly what the name-shuffle says:
 - `'b t d -> t b d'` — batch-first to time-first.
 - `'h w -> w h'` — a 2-D transpose.
 
-Why this beats `np.transpose(x, (0, 3, 1, 2))`: the pattern is
+Why this beats `x.permute(0, 3, 1, 2)`: the pattern is
 self-verifying documentation. It states what each axis MEANS, the library
 checks that the input really has 4 axes, and six months later the intent is
 still legible. In deep-learning code, layout bugs (bhwc vs bchw) are among
@@ -48,10 +48,10 @@ Task: channels-last batch → channels-first, and batch-first sequence →
 time-first — with one-element verification.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-arr = np.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST
+arr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST
 
 # Name the four axes; emit them with c pulled to the front block.
 first = einops.rearrange(arr, 'b h w c -> b c h w')
@@ -60,7 +60,7 @@ assert first.shape == (2, 3, 2, 2)
 assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 
 # Sequence layout swap: batch-first -> time-first.
-seq = np.arange(12).reshape(2, 3, 2)         # (b, t, d)
+seq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)
 tfirst = einops.rearrange(seq, 'b t d -> t b d')
 assert tfirst.shape == (3, 2, 2)
 assert seq[1, 2, 0] == tfirst[2, 1, 0]
@@ -92,7 +92,7 @@ Why each step:
 Channels-last batch to channels-first.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(arr):
@@ -101,7 +101,7 @@ def solve(arr):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(arr):

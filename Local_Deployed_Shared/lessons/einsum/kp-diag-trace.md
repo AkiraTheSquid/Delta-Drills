@@ -20,15 +20,15 @@ as a vector.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
 
 # 'ii->i': both axes locked together -> visit a[0,0], a[1,1]; keep them.
-diag = np.einsum('ii->i', a)
+diag = t.einsum('ii->i', a)
 assert diag.tolist() == [1.0, 4.0]
-assert np.array_equal(diag, np.diag(a))
+assert t.equal(diag, t.diag(a))
 ```
 
 Why: the repeated `i` is the whole trick — it selects the diagonal. Keeping
@@ -40,19 +40,19 @@ Why: the repeated `i` is the whole trick — it selects the diagonal. Keeping
 The main diagonal, as a vector.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """Diagonal: walk it, keep it."""
-    return np.einsum('_____', a)
+    return t.einsum('_____', a)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """Diagonal: walk it, keep it."""
-    return np.einsum('ii->i', a)
+    return t.einsum('ii->i', a)
 ```
 
 ## Concept: 'ii->' — drop the index to sum it (the trace)
@@ -67,15 +67,15 @@ entries; the only difference is keep (`->i`) vs sum (`->`).
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
 
 # 'ii->': same diagonal walk, then sum -> the trace.
-tr = np.einsum('ii->', a)
+tr = t.einsum('ii->', a)
 assert tr == 5.0
-assert tr == np.trace(a)
+assert tr == t.trace(a)
 ```
 
 Why: one character (`->i` vs `->`) flips "emit the diagonal" into "sum the
@@ -87,19 +87,19 @@ diagonal". That's the payoff of reading specs as selection + fate.
 The trace, via the repeated-index convention.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """Trace: walk the diagonal, sum it."""
-    return np.einsum('_____', a)
+    return t.einsum('_____', a)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """Trace: walk the diagonal, sum it."""
-    return np.einsum('ii->', a)
+    return t.einsum('ii->', a)
 ```
 
 ## Concept: 'bii->bi' — a batch letter rides along
@@ -115,13 +115,13 @@ is one letter away from the single-matrix version.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-stack = np.stack([np.diag([1.0, 2.0]),
-                  np.diag([3.0, 4.0])])   # shape (2, 2, 2)
+stack = t.stack([t.diag(t.tensor([1.0, 2.0])),
+                  t.diag(t.tensor([3.0, 4.0]))])   # shape (2, 2, 2)
 
 # 'bii->bi': per-matrix diagonal; b rides along untouched.
-diags = np.einsum('bii->bi', stack)
+diags = t.einsum('bii->bi', stack)
 assert diags.tolist() == [[1.0, 2.0], [3.0, 4.0]]
 ```
 
@@ -134,19 +134,19 @@ the same diagonal work inside each slice.
 The diagonal of each matrix in a batch — shape (b, n).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """Batched diagonal: (b, n, n) -> (b, n)."""
-    return np.einsum('_____', a)
+    return t.einsum('_____', a)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """Batched diagonal: (b, n, n) -> (b, n)."""
-    return np.einsum('bii->bi', a)
+    return t.einsum('bii->bi', a)
 ```
 
 ## Concept: 'bii->b' — batch trace (drop i, keep b)
@@ -158,12 +158,12 @@ the **trace of every matrix in the stack**.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-stack = np.stack([np.eye(2), 3 * np.eye(2)])   # traces 2 and 6
+stack = t.stack([t.eye(2), 3 * t.eye(2)])   # traces 2 and 6
 
 # 'bii->b': per-matrix trace; b kept, i dropped (summed).
-traces = np.einsum('bii->b', stack)
+traces = t.einsum('bii->b', stack)
 assert traces.tolist() == [2.0, 6.0]
 ```
 
@@ -176,19 +176,19 @@ selection as `bii->bi`, different fate for `i`.
 The trace of each matrix in a batch — length b.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """Batched trace: (b, n, n) -> (b,)."""
-    return np.einsum('_____', a)
+    return t.einsum('_____', a)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """Batched trace: (b, n, n) -> (b,)."""
-    return np.einsum('bii->b', a)
+    return t.einsum('bii->b', a)
 ```
 
 ## Concept: 'ik,ki->i' — diagonal of a product, without the product
@@ -202,16 +202,16 @@ product.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # 'ik,ki->i': entry i = row i of a . column i of b.
-dprod = np.einsum('ik,ki->i', a, b)
-assert np.array_equal(dprod, np.diag(a @ b))   # verified vs the slow way
+dprod = t.einsum('ik,ki->i', a, b)
+assert t.equal(dprod, t.diag(a @ b))   # verified vs the slow way
 ```
 
 Why: entry 0 is `Σₖ a[0,k]·b[k,0]` — row 0 of `a` dotted with column 0 of
@@ -223,19 +223,19 @@ Why: entry 0 is `Σₖ a[0,k]·b[k,0]` — row 0 of `a` dotted with column 0 of
 Diagonal of a @ b, computed directly (no full product).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Diagonal of a @ b: entry i = row i of a . column i of b."""
-    return np.einsum('_____', a, b)
+    return t.einsum('_____', a, b)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Diagonal of a @ b: entry i = row i of a . column i of b."""
-    return np.einsum('ik,ki->i', a, b)
+    return t.einsum('ik,ki->i', a, b)
 ```
 
 ## Concept: 'ij,ji->' — trace of a product
@@ -249,15 +249,15 @@ identity visible. Read letter POSITIONS, not letter SETS.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # 'ij,ji->': sum over the whole diagonal of a @ b.
-assert np.einsum('ij,ji->', a, b) == np.trace(a @ b)
+assert t.einsum('ij,ji->', a, b) == t.trace(a @ b)
 ```
 
 Why: `'ij,ji->'` pairs `a[i,j]` with `b[j,i]` and sums everything — exactly
@@ -270,19 +270,19 @@ Frobenius product.
 Trace of a @ b as one contraction.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """tr(a @ b) directly — one einsum, no full product."""
-    return np.einsum('_____', a, b)
+    return t.einsum('_____', a, b)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """tr(a @ b) directly — one einsum, no full product."""
-    return np.einsum('ij,ji->', a, b)
+    return t.einsum('ij,ji->', a, b)
 ```
 
 ## Misconceptions

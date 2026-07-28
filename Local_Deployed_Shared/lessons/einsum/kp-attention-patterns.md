@@ -48,36 +48,36 @@ Task: single-head attention scores, then the weighted value mix — on tiny
 tensors where every number is checkable.
 
 ```python
-import numpy as np
+import torch as t
 
 # One batch item, sequences of 2 queries / 2 keys, feature dim 3.
-q = np.array([[[1.0, 0.0, 0.0],
+q = t.tensor([[[1.0, 0.0, 0.0],
                [0.0, 1.0, 0.0]]])          # (b=1, q=2, d=3)
-k = np.array([[[1.0, 0.0, 0.0],
+k = t.tensor([[[1.0, 0.0, 0.0],
                [1.0, 1.0, 0.0]]])          # (b=1, k=2, d=3)
 
 # Scores: d contracts; q and k combine -> (1, 2, 2) table of dots.
-scores = np.einsum('bqd,bkd->bqk', q, k)
+scores = t.einsum('bqd,bkd->bqk', q, k)
 assert scores.shape == (1, 2, 2)
 assert scores[0].tolist() == [[1.0, 1.0],    # q0.k0, q0.k1
                               [0.0, 1.0]]    # q1.k0, q1.k1
 
 # (Real attention: scale by 1/sqrt(d), softmax over k. Both live OUTSIDE
 # einsum — they're not contractions.)
-s = np.array([[[0.5, 0.5],
+s = t.tensor([[[0.5, 0.5],
                [0.0, 1.0]]])               # a fake attention matrix (b,q,k)
-v = np.array([[[10.0, 0.0],
+v = t.tensor([[[10.0, 0.0],
                [0.0, 10.0]]])              # (b, k, d2=2)
 
 # Mixing: k contracts -> each query gets its weighted sum of value rows.
-out = np.einsum('bqk,bkd->bqd', s, v)
+out = t.einsum('bqk,bkd->bqd', s, v)
 assert out[0, 0].tolist() == [5.0, 5.0]     # 0.5*v0 + 0.5*v1
 assert out[0, 1].tolist() == [0.0, 10.0]    # 1.0*v1 — query 1 attends key 1
 
 # Projection: one (d2, f) matrix shared across batch and sequence.
-w = np.array([[1.0, 0.0, 0.0],
+w = t.tensor([[1.0, 0.0, 0.0],
               [0.0, 1.0, 1.0]])            # (d2=2, f=3)
-proj = np.einsum('bqd,df->bqf', out, w)
+proj = t.einsum('bqd,df->bqf', out, w)
 assert proj.shape == (1, 2, 3)
 assert proj[0, 1].tolist() == [0.0, 10.0, 10.0]
 ```
@@ -100,19 +100,19 @@ Why each step:
 Single-head attention scores: all query-key dots.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(q, k):
     """(b,q,d) x (b,k,d) -> (b,q,k): d contracts, q/k combine."""
-    return np.einsum('_____', q, k)
+    return t.einsum('_____', q, k)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(q, k):
     """(b,q,d) x (b,k,d) -> (b,q,k): d contracts, q/k combine."""
-    return np.einsum('bqd,bkd->bqk', q, k)
+    return t.einsum('bqd,bkd->bqk', q, k)
 ```
 
 ## Guided practice
@@ -139,7 +139,7 @@ in the output?), q283 (two-layer chain x @ w1 @ w2 in one spec).
   rank 4.
 - **"Softmax/scaling can be folded into the spec."** — einsum is
   multiply-and-sum only. Scale (÷√d) and softmax happen between the two
-  contractions, in ordinary NumPy.
+  contractions, in ordinary PyTorch.
 - **"The letters q and k are special keywords."** — Still just names —
   but GOOD names: matching the letters to the domain (batch, head, query,
   key, depth) is what makes five-axis specs readable. Adopt the convention;

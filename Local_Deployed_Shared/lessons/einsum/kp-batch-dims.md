@@ -18,27 +18,27 @@ batches:
 are its row and column. `a` is different — it appears in **both inputs AND the
 output**, and it is never contracted. einsum can't merge anything across `a`,
 so it simply *iterates* over it, running the whole `ij,jk->ik` matmul once at
-each position of `a`. `a=0` pairs `t[0]` with `u[0]`, `a=1` pairs `t[1]` with
+each position of `a`. `a=0` pairs `x[0]` with `u[0]`, `a=1` pairs `x[1]` with
 `u[1]`, and so on — independent products, stacked. No loop in your code; the
 loop lives in compiled einsum.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-t = np.arange(12.0).reshape(2, 2, 3)     # (a=2, i=2, j=3)
-u = np.arange(18.0).reshape(2, 3, 3)     # (a=2, j=3, k=3)
+x = t.arange(12.0).reshape(2, 2, 3)     # (a=2, i=2, j=3)
+u = t.arange(18.0).reshape(2, 3, 3)     # (a=2, j=3, k=3)
 
 # 'a' everywhere -> run the matmul once per slice of a.
-batched = np.einsum('aij,ajk->aik', t, u)
+batched = t.einsum('aij,ajk->aik', x, u)
 assert batched.shape == (2, 2, 3)
-assert np.allclose(batched[0], t[0] @ u[0])   # slice 0 is its own matmul
-assert np.allclose(batched[1], t[1] @ u[1])   # slice 1 is its own matmul
+assert t.allclose(batched[0], x[0] @ u[0])   # slice 0 is its own matmul
+assert t.allclose(batched[1], x[1] @ u[1])   # slice 1 is its own matmul
 ```
 
 Why: the per-slice asserts ARE the definition of "batched" — each `batched[k]`
-equals `t[k] @ u[k]`. Write exactly that check whenever a batched spec feels
+equals `x[k] @ u[k]`. Write exactly that check whenever a batched spec feels
 uncertain.
 
 ## Faded practice
@@ -49,19 +49,19 @@ Apply the *same* batching idea to matrix-vector products: a batch of matrices
 (Start from matvec `'ij,j->i'` — where does the batch letter go?)
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, x):
     """(b,i,j) x (b,j) -> (b,i): each matrix times ITS OWN vector."""
-    return np.einsum('_____', a, x)
+    return t.einsum('_____', a, x)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, x):
     """(b,i,j) x (b,j) -> (b,i): each matrix times ITS OWN vector."""
-    return np.einsum('bij,bj->bi', a, x)
+    return t.einsum('bij,bj->bi', a, x)
 ```
 
 ## Concept: omit the batch letter from one input — sharing
@@ -73,20 +73,20 @@ The second operand has no `b`-axis, so it has nothing to vary as `b` moves —
 einsum reuses that *same* matrix at every batch position. The base matmul
 `ij,jk->ik` still runs per item, but the second factor is a single **constant**
 applied to all of them. A missing batch letter means "broadcast this operand
-across the batch" — no `np.tile`, no loop, just its absence.
+across the batch" — no `t.tile`, no loop, just its absence.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-t = np.arange(12.0).reshape(2, 2, 3)     # (b=2, i=2, j=3): a batch
-m = np.arange(9.0).reshape(3, 3)         # ONE (3,3) matrix — no batch axis
+x = t.arange(12.0).reshape(2, 2, 3)     # (b=2, i=2, j=3): a batch
+m = t.arange(9.0).reshape(3, 3)         # ONE (3,3) matrix — no batch axis
 
 # 'm' has no b -> the same m multiplies every item of the batch.
-shared = np.einsum('bij,jk->bik', t, m)
-assert np.allclose(shared[0], t[0] @ m)
-assert np.allclose(shared[1], t[1] @ m)   # same m both times
+shared = t.einsum('bij,jk->bik', x, m)
+assert t.allclose(shared[0], x[0] @ m)
+assert t.allclose(shared[1], x[1] @ m)   # same m both times
 ```
 
 Why: notice what you did NOT write — no tiling of `m`, no broadcasting
@@ -100,19 +100,19 @@ ONE transformation matrix `w` of shape `(d, e)`, giving `(b, e)`. (Which
 operand should be missing the batch letter?)
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x, w):
     """(b,d) batch of vectors, ONE (d,e) matrix w -> (b,e)."""
-    return np.einsum('_____', x, w)
+    return t.einsum('_____', x, w)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x, w):
     """(b,d) batch of vectors, ONE (d,e) matrix w -> (b,e)."""
-    return np.einsum('bd,de->be', x, w)
+    return t.einsum('bd,de->be', x, w)
 ```
 
 ## Concept: drop the batch letter from the OUTPUT — summing over the batch
@@ -129,15 +129,15 @@ the dataset" enters a spec.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-v = np.array([[1.0, 2.0],
+v = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])               # (b=2, i=2): a batch of vectors
 
 # 'b' in both inputs, absent from output -> outer products SUMMED over b.
-gram = np.einsum('bi,bj->ij', v, v)
-by_hand = np.outer(v[0], v[0]) + np.outer(v[1], v[1])
-assert np.allclose(gram, by_hand)
+gram = t.einsum('bi,bj->ij', v, v)
+by_hand = t.outer(v[0], v[0]) + t.outer(v[1], v[1])
+assert t.allclose(gram, by_hand)
 ```
 
 Why: two readings must agree — algebraically it's `Σ_b outer(v_b, v_b)`;
@@ -152,19 +152,19 @@ matrix `XᵀX`, entry `[p, q]` being column p dotted with column q. (Which axis
 gets summed away — and so must be missing from the output?)
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
-    return np.einsum('_____', x, x)
+    return t.einsum('_____', x, x)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """(n,d) -> (d,d): X^T X, summing the outer products over the n rows."""
-    return np.einsum('nd,ne->de', x, x)
+    return t.einsum('nd,ne->de', x, x)
 ```
 
 ## Independent practice
@@ -177,7 +177,7 @@ squared norm), q310 (the summed Gram `bi,bj->ij` from scratch).
 
 ## Misconceptions
 
-- **"Batching needs a loop or np.vectorize."** — One letter, present
+- **"Batching needs a loop or `vmap`."** — One letter, present
   everywhere, batches any contraction. The loop exists only in compiled code.
 - **"All operands must mention every letter."** — An operand OMITTING the
   batch letter is broadcast across the batch — that's the shared case, not an

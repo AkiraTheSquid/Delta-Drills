@@ -18,11 +18,11 @@ them — and you say HOW the dropped values collapse**:
 > over everything that vanished. The third argument names the aggregation:
 > `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.
 
-This is numpy's `axis=` reductions with the einsum-style deletion rule, in
+This is PyTorch's `dim=` reductions with the einsum-style deletion rule, in
 einops clothing — three notations, one concept:
 
-- `x.mean(axis=(1, 2, 3))` — axes by number.
-- `np.einsum('bchw->b', x) / (c*h*w)` — sum by deletion, mean by hand.
+- `x.mean(dim=(1, 2, 3))` — axes by number.
+- `t.einsum('bchw->b', x) / (c*h*w)` — sum by deletion, mean by hand.
 - `reduce(x, 'b c h w -> b', 'mean')` — deletion by name, aggregation
   declared. (Note: unlike einsum, reduce does means/maxes natively — no
   divide-outside dance.)
@@ -33,8 +33,8 @@ Details that matter in the drills:
   `'b c h w -> b c'` averages each channel map. Any subset of axes can go.
 - **Keep a singleton**: writing `1` (or `()` — same thing) in the output
   where the dropped axis was — `'h w c -> 1 w c'` — keeps the result
-  broadcast-ready against the input, einops' keepdims. This is exactly the
-  numpy keepdims=True story: reduce-then-broadcast pipelines (subtract each
+  broadcast-ready against the input, einops' keepdim. This is exactly the
+  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each
   column's max…) want the singleton kept.
 - **Reduce + rearrange compose**: the pattern can still permute the
   survivors while reducing (`'b c h w -> c b'` is legal), and — the next
@@ -46,15 +46,15 @@ Task: per-image scalar means; per-column max keeping a singleton row; and a
 grayscale via mean-over-channels with the channel kept.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-x = np.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)
+x = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)
 
 # All of c, h, w collapse under 'mean' -> one number per image.
 per_image = einops.reduce(x, 'b c h w -> b', 'mean')
 assert per_image.tolist() == [5.5, 17.5]
-assert np.allclose(per_image, x.mean(axis=(1, 2, 3)))   # the numpy twin
+assert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin
 
 # Partial drop: mean over spatial only -> per-channel statistics.
 per_channel = einops.reduce(x, 'b c h w -> b c', 'mean')
@@ -62,7 +62,7 @@ assert per_channel.shape == (2, 3)
 assert per_channel[0, 0] == x[0, 0].mean()
 
 # Keep-a-singleton: per-column max of an image, row axis kept as 1.
-img = np.array([[1.0, 5.0],
+img = t.tensor([[1.0, 5.0],
                 [7.0, 2.0]])
 colmax = einops.reduce(img, 'h w -> 1 w', 'max')
 assert colmax.shape == (1, 2)
@@ -71,14 +71,14 @@ assert colmax.tolist() == [[7.0, 5.0]]
 assert (img - colmax).shape == (2, 2)
 
 # Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).
-imgs = np.ones((2, 2, 2, 3))
+imgs = t.ones((2, 2, 2, 3))
 gray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')
 assert gray.shape == (2, 2, 2, 1)
 ```
 
 Why each step:
 
-1. The numpy twin assert carries your existing axis intuition into the new
+1. The `dim=` twin assert carries your existing axis intuition into the new
    notation: names deleted ↔ axis numbers listed. After a few reps the
    named form usually reads faster — especially at rank 4+.
 2. In the singleton example, the follow-up subtraction is the POINT: the
@@ -94,7 +94,7 @@ Why each step:
 Each image of a channels-first batch → one scalar mean.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(arr):
@@ -103,7 +103,7 @@ def solve(arr):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(arr):

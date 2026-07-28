@@ -26,14 +26,14 @@ Keeping a REDUCED axis as a singleton (`'h w c -> 1 w c'` in reduce) also
 uses this — the reduce KP picks that up.
 
 **A Python list as the first axis.** Handing einops a LIST of same-shape
-arrays makes the list index axis 0 — pattern it like any other axis:
+tensors makes the list index axis 0 — pattern it like any other axis:
 
 - `einops.rearrange([img_a, img_b], 'b h w c -> h (b w) c')` — two images
-  side by side, no explicit np.stack first.
-- `'b h w c -> b h w c'` on a list is exactly np.stack: the identity
-  pattern, with the list→array conversion as the entire point.
+  side by side, no explicit t.stack first.
+- `'b h w c -> b h w c'` on a list is exactly t.stack: the identity
+  pattern, with the list→tensor conversion as the entire point.
 
-Together these subsume np.stack / np.expand_dims / np.squeeze with the
+Together these subsume t.stack / t.unsqueeze / t.squeeze with the
 same pattern language you're already using — one notation for the whole
 shape-plumbing toolbox.
 
@@ -43,23 +43,23 @@ Task: stack a list of images into a batch; add a singleton channel axis;
 combine both in one pattern.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-imgs = [np.ones((2, 3, 1)) * i for i in range(4)]   # list of (h, w, c)
+imgs = [t.ones((2, 3, 1)) * i for i in range(4)]   # list of (h, w, c)
 
 # List -> batch axis: the identity pattern DOES the stacking.
 batch = einops.rearrange(imgs, 'b h w c -> b h w c')
 assert batch.shape == (4, 2, 3, 1)
 assert batch[2, 0, 0, 0] == 2.0                      # list order preserved
 
-# Singleton insertion: a plain 2-D array gains a leading axis.
-x2d = np.arange(6).reshape(2, 3)
+# Singleton insertion: a plain 2-D tensor gains a leading axis.
+x2d = t.arange(6).reshape(2, 3)
 x3d = einops.rearrange(x2d, 'h w -> 1 h w')
 assert x3d.shape == (1, 2, 3)
 
 # Both at once: stack a list AND lay the images out side by side.
-pair = [np.zeros((2, 2, 1)), np.ones((2, 2, 1))]
+pair = [t.zeros((2, 2, 1)), t.ones((2, 2, 1))]
 wide = einops.rearrange(pair, 'b h w c -> h (b w) c')
 assert wide.shape == (2, 4, 1)
 assert wide[0, :, 0].tolist() == [0.0, 0.0, 1.0, 1.0]  # a then b, left to right
@@ -83,7 +83,7 @@ Why each step:
    to slow in `(b w)`: first list element leftmost.
 3. The verified squeeze failing on 2-D data is einops' shape checking
    again — `'1 h w -> h w'` documents an EXPECTATION about the input, and
-   the library enforces it. `np.squeeze` would have silently done something.
+   the library enforces it. `t.squeeze` would have silently done something.
 
 ## Faded practice
 
@@ -91,7 +91,7 @@ Why each step:
 A Python list of (h, w, c) images → one (b, h, w, c) batch.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(imgs):
@@ -100,7 +100,7 @@ def solve(imgs):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(imgs):
@@ -123,13 +123,13 @@ q376 (exactly two images side by side — a two-element list works).
 
 ## Misconceptions
 
-- **"I must np.stack a list before einops can touch it."** — A list of
-  same-shape arrays is accepted directly; its index becomes the first
+- **"I must t.stack a list before einops can touch it."** — A list of
+  same-shape tensors is accepted directly; its index becomes the first
   axis. The stack is the pattern's job.
 - **"`1` in a pattern is a size I'm asserting for a normal axis."** — It's
   a LITERAL singleton: inserted on the right, consumed (with verification)
   on the left. Naming it (like 'c') instead would bind a real axis.
-- **"Squeezing with einops is overkill — np.squeeze is fine."** —
-  np.squeeze removes ALL singletons, including ones you didn't expect
+- **"Squeezing with einops is overkill — t.squeeze is fine."** —
+  t.squeeze removes ALL singletons, including ones you didn't expect
   (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly
   the declared one and errors otherwise — overkill is the feature.

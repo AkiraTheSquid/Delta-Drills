@@ -38,8 +38,8 @@ Variants the drills exercise:
 
 One requirement: non-overlapping windows must TILE the axis — sizes must
 divide exactly (drills guarantee it; real code pads first). Overlapping /
-strided pooling is outside reduce's power — that's numpy's
-sliding-window territory.
+strided pooling is outside reduce's power — that's `x.unfold(...)`
+and the pooling layers' territory.
 
 ## Worked example
 
@@ -47,10 +47,10 @@ Task: 2×2 average pooling on a batch; then halving width by averaging
 adjacent column pairs.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-x = np.arange(16.0).reshape(1, 1, 4, 4)      # (b, c, H, W)
+x = t.arange(16.0).reshape(1, 1, 4, 4)      # (b, c, H, W)
 
 # Split H into (2 blocks x 2 rows), W likewise; reduce the window names.
 pooled = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)
@@ -65,7 +65,7 @@ assert mx[0, 0].tolist() == [[5.0, 7.0],
                              [13.0, 15.0]]
 
 # One-axis pooling: average adjacent COLUMN pairs, everything else intact.
-imgs = np.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
+imgs = t.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
 halved = einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)
 assert halved.shape == (1, 2, 2, 1)
 assert halved[0, 0, :, 0].tolist() == [0.5, 2.5]   # (0+1)/2, (2+3)/2
@@ -89,7 +89,7 @@ Why each step:
 2×2 non-overlapping average pooling on (B, C, H, W).
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(x):
@@ -98,7 +98,7 @@ def solve(x):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(x):
@@ -132,5 +132,5 @@ not a pooling; recognize the difference).
   kept block-count names are the ones that survive.
 - **"reduce can do stride-1 (overlapping) pooling too."** — No: factored
   axes tile the input disjointly. Overlap = sliding_window_view + reduction
-  in numpy. The word "non-overlapping" in a task is your green light for
+  on `x.unfold(...)`. "Non-overlapping" in a task is your green light for
   the einops form.

@@ -11,10 +11,10 @@ independent: []
 
 ## Concept: anatomy of the spec string
 
-`np.einsum` does one thing: it lets you **name the axes** of your arrays, then
+`t.einsum` does one thing: it lets you **name the axes** of your tensors, then
 describe the result by those names. Every call looks like
 
-> `np.einsum('SPEC', array1, array2, ...)`
+> `t.einsum('SPEC', tensor1, tensor2, ...)`
 
 and the whole operation lives in that `'SPEC'` string. The string has exactly
 two sides, split by `->`:
@@ -24,10 +24,10 @@ two sides, split by `->`:
 
 Read each slot:
 
-- **Before `->` — the inputs.** One group per array you pass in, groups
+- **Before `->` — the inputs.** One group per tensor you pass in, groups
   separated by a **comma**. Each group gives **one letter per axis**, in order:
-  `ik` means "this array is 2-D; call axis 0 `i` and axis 1 `k`." The comma is
-  literally "here comes the next array." Two groups → two arrays.
+  `ik` means "this tensor is 2-D; call axis 0 `i` and axis 1 `k`." The comma is
+  literally "here comes the next tensor." Two groups → two tensors.
 - **After `->` — the output.** The axes you want in the result, in the order
   you want them.
 - **A letter is just a NAME for an axis** — like a loop variable. `i`, `x`, `q`
@@ -42,7 +42,7 @@ language:
 3. **Multiplied** — the same letter shared across two inputs → those axes are
    paired and multiplied (a couple of lessons on).
 
-Why name axes instead of using `np.transpose`/`np.sum` with axis numbers?
+Why name axes instead of using `permute`/`sum` with axis numbers?
 Because the spec string IS the documentation: `'bchw->bhwc'` says "move channels
 last" in plain axis names, where `transpose(x, (0,2,3,1))` makes you count.
 
@@ -50,7 +50,7 @@ last" in plain axis names, where `transpose(x, (0,2,3,1))` makes you count.
 
 - **Letters have no fixed meaning.** `'ij->ij'` and `'xy->xy'` are the same
   program; `i` is not "rows," `b` is not "batch" — those are conventions for
-  humans reading your code, not rules NumPy knows.
+  humans reading your code, not rules PyTorch knows.
 - **Always write the `->`.** Implicit mode (no arrow) exists but guesses the
   output by sorting letters alphabetically. In this course, always state the
   output side yourself.
@@ -61,20 +61,20 @@ The clearest way to see the grammar is the spec that does NOTHING: name every
 axis, then ask for them back in the same order.
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1, 2, 3],
+a = t.tensor([[1, 2, 3],
               [4, 5, 6]])
 
 # 'ij->ij': input is 2-D (axis 0 = i, axis 1 = j); output lists i then j,
-# the same order -> every axis kept, nothing reordered = the array unchanged.
-same = np.einsum('ij->ij', a)
+# the same order -> every axis kept, nothing reordered = the tensor unchanged.
+same = t.einsum('ij->ij', a)
 print(same)
-# [[1 2 3]
-#  [4 5 6]]   <- exactly a, handed straight back
+# tensor([[1, 2, 3],
+#         [4, 5, 6]])   <- exactly a, handed straight back
 ```
 
-Why this is the anchor: `'ij->ij'` hands the array straight back — `print(same)`
+Why this is the anchor: `'ij->ij'` hands the tensor straight back — `print(same)`
 shows the same numbers you started with. That proves the grammar in isolation:
 the letters name the two axes, and the output side requests them unchanged.
 Every other einsum spec is just a DEVIATION from this do-nothing baseline:
@@ -82,29 +82,31 @@ reorder the output letters (transpose), drop one (sum), or share one across two
 inputs (multiply). Learn the baseline, and the rest are edits to it.
 
 (The code is preloaded in the editor on the right — press Run and watch the
-Output pane print the array. That's the fastest way to convince yourself.)
+Output pane print the tensor — PyTorch wraps it in `tensor(...)`, which
+is the surest sign you are looking at a tensor and not a list. That's the
+fastest way to convince yourself.)
 
 ## Faded practice
 
 ### q244
-Same array, but now emit the two axes in the OPPOSITE order — rows become
-columns. You saw `'ij->ij'` return the array unchanged; change only the output
+Same tensor, but now emit the two axes in the OPPOSITE order — rows become
+columns. You saw `'ij->ij'` return the tensor unchanged; change only the output
 side so the layout flips (this is the transpose).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a):
     """Transpose via einsum: name the axes, then emit them in swapped order."""
-    return np.einsum('_____', a)
+    return t.einsum('_____', a)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a):
     """Transpose via einsum: name the axes, then emit them in swapped order."""
-    return np.einsum('ij->ji', a)
+    return t.einsum('ij->ji', a)
 ```
 
 ## Concept: reordering the output = permutation
@@ -113,12 +115,12 @@ When every input letter also appears in the output — none dropped, none shared
 — nothing is summed or multiplied. The ONLY thing the output side can do is set
 the ORDER of the axes. That is a pure axis permutation.
 
-- On a 2-D array, the only reorder is the transpose: `'ij->ji'`.
+- On a 2-D tensor, the only reorder is the transpose: `'ij->ji'`.
 - On an N-D tensor, you can move any axis anywhere, and the spec documents the
   move in domain terms. `'bchw->bhwc'` takes a batch of channels-FIRST images
   `(batch, channel, height, width)` and lays them out channels-LAST
   `(batch, height, width, channel)` — the same numbers, re-indexed. The letters
-  say exactly which axis went where; `np.transpose(x, (0, 2, 3, 1))` makes you
+  say exactly which axis went where; `x.permute(0, 2, 3, 1)` makes you
   decode the tuple.
 
 No data changes — a permutation only relabels positions.
@@ -133,12 +135,12 @@ No data changes — a permutation only relabels positions.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-imgs = np.arange(24).reshape(2, 3, 2, 2)   # (b=2, c=3, h=2, w=2), channels-first
+imgs = t.arange(24).reshape(2, 3, 2, 2)   # (b=2, c=3, h=2, w=2), channels-first
 
 # 'bchw->bhwc': keep all four axes, move channel to the end.
-last = np.einsum('bchw->bhwc', imgs)
+last = t.einsum('bchw->bhwc', imgs)
 print(last.shape)          # (2, 2, 2, 3)  <- channels moved to the end
 
 # Follow ONE element to see it only changed POSITION, not value:
@@ -147,7 +149,7 @@ print(last[0, 1, 0, 1])    # 5   (same value, now at b=0, h=1, w=0, c=1)
 ```
 
 Why: to check a relayout, print the shape and follow a single element — cheaper
-and surer than eyeballing whole arrays. The shape shows channels landed last,
+and surer than eyeballing whole tensors. The shape shows channels landed last,
 and the two prints both read `5`: the value didn't change, it only moved from
 position `(b,c,h,w)=(0,1,1,0)` to `(b,h,w,c)=(0,1,0,1)`. That's what "permutation
 relabels positions, never values" means, made concrete.
@@ -160,19 +162,19 @@ two MIDDLE axes (`h` and `s`), leaving `b` first and `d` last. Same "reorder the
 kept letters" idea as the channels-last move, a different target order.
 
 ```python starter
-import numpy as np
+import torch as t
 
-def solve(t):
+def solve(x):
     """(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed."""
-    return np.einsum('_____', t)
+    return t.einsum('_____', x)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
-def solve(t):
+def solve(x):
     """(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed."""
-    return np.einsum('bhsd->bshd', t)
+    return t.einsum('bhsd->bshd', x)
 ```
 
 ## Guided practice

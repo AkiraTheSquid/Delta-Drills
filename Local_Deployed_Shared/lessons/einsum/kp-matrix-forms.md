@@ -18,11 +18,11 @@ as translation practice between math notation and einsum:
   every letter dropped: a fully contracted scalar. The spec is literally
   the double sum with the Σs removed.
 - **Gram matrix** XᵀX for X of shape (n, d): entry [p, q] = column p ·
-  column q = Σₙ XₙₚXₙₙq → `'nd,ne->de'` — the same array twice, the shared
+  column q = Σₙ XₙₚXₙₙq → `'nd,ne->de'` — the same tensor twice, the shared
   observation axis n contracted, the two FEATURE axes kept under different
   letters (d, e — same size, distinct roles).
 - **Sample covariance**: the Gram of the COLUMN-CENTERED data, divided by
-  n−1 — `np.einsum('nd,ne->de', xc, xc) / (n - 1)` where
+  n−1 — `t.einsum('nd,ne->de', xc, xc) / (n - 1)` where
   `xc = x - x.mean(axis=0)`. einsum does the contraction; centering
   (np-3) and the 1/(n−1) live outside — the familiar division-outside rule.
 - **Pairwise row dots** between two sets: `'nd,md->nm'` — the linear-algebra
@@ -43,29 +43,29 @@ Task: a quadratic form, a Gram matrix, and a covariance — each checked
 against its classical spelling.
 
 ```python
-import numpy as np
+import torch as t
 
-x = np.array([1.0, 2.0])
-w = np.array([[3.0, 1.0],
+x = t.tensor([1.0, 2.0])
+w = t.tensor([[3.0, 1.0],
               [0.0, 2.0]])
 
 # x^T W x: the double sum, fully contracted.
-qf = np.einsum('i,ij,j->', x, w, x)
+qf = t.einsum('i,ij,j->', x, w, x)
 assert qf == float(x @ w @ x)
 assert qf == 13.0        # 1*3*1 + 1*1*2 + 2*0*1 + 2*2*2
 
-# Gram matrix of columns: same array twice, observation axis contracted.
-data = np.array([[1.0, 10.0],
+# Gram matrix of columns: same tensor twice, observation axis contracted.
+data = t.tensor([[1.0, 10.0],
                  [2.0, 20.0],
                  [3.0, 30.0]])          # (n=3, d=2)
-gram = np.einsum('nd,ne->de', data, data)
-assert np.allclose(gram, data.T @ data)
+gram = t.einsum('nd,ne->de', data, data)
+assert t.allclose(gram, data.T @ data)
 assert gram[0, 1] == 1*10 + 2*20 + 3*30    # col 0 . col 1
 
 # Sample covariance: center columns first, contract, divide by n-1.
-xc = data - data.mean(axis=0)
-cov = np.einsum('nd,ne->de', xc, xc) / (data.shape[0] - 1)
-assert np.allclose(cov, np.cov(data, rowvar=False))
+xc = data - data.mean(dim=0)
+cov = t.einsum('nd,ne->de', xc, xc) / (data.shape[0] - 1)
+assert t.allclose(cov, t.cov(data.T))
 ```
 
 Why each step:
@@ -74,11 +74,11 @@ Why each step:
    the three-operand spec: each (i, j) pair contributes xᵢWᵢⱼxⱼ; einsum
    enumerates and sums them. The `x @ w @ x` twin confirms it.
 2. In the Gram spec, the deliberate oddity is d vs e for axes of the SAME
-   array: einsum needs distinct names for distinct roles (output row vs
+   tensor: einsum needs distinct names for distinct roles (output row vs
    column), even when sizes coincide. 'nd,nd->dd' would instead walk a
    diagonal — wrong operation.
 3. The covariance assembles three lessons — centering (np-3), the Gram
-   contraction, division outside — and lands exactly on `np.cov`. Building
+   contraction, division outside — and lands exactly on `t.cov`. Building
    library functions from primitives, then checking against the library, is
    the final form of validate-don't-assert.
 
@@ -88,19 +88,19 @@ Why each step:
 The quadratic form xᵀWx.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x, w):
     """Sum_ij x_i W_ij x_j — fully contracted."""
-    return np.einsum('_____', x, w, x)
+    return t.einsum('_____', x, w, x)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x, w):
     """Sum_ij x_i W_ij x_j — fully contracted."""
-    return np.einsum('i,ij,j->', x, w, x)
+    return t.einsum('i,ij,j->', x, w, x)
 ```
 
 ## Guided practice
