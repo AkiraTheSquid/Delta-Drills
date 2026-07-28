@@ -33,30 +33,52 @@
     return Array.isArray(targets) ? targets : [];
   }
 
-  /* Called from renderQuestion. Hides the button when the question carries no
-   * KC tag at all: offering a jump that lands nowhere is worse than no button,
-   * and an untagged question is itself worth noticing (it means the ITS is
-   * serving something outside its own map). */
+  /* Called from renderQuestion. The button is ALWAYS shown for a real question.
+   *
+   * It used to hide itself whenever the question carried no KC tag, on the
+   * reasoning that a jump landing nowhere is worse than no button. That was
+   * backwards for the one job this control has. Its purpose is auditing — "the
+   * queue picked this; the graph claims that; do they agree?" — and a control
+   * that silently disappears on exactly the questions the tutor cannot place is
+   * a control you cannot audit with. Worse, absence is ambiguous: the learner
+   * cannot tell "this question is off the map" from "the button is broken".
+   *
+   * 75 of the 449 bank questions carry no tag (the CNN/PyTorch-Fundamentals
+   * rows no KP references), and placement probes can serve any of them. So the
+   * untagged case is common, not exotic. It now says so out loud. */
   function updateGraphJump(q) {
     var btn = document.getElementById("practice-graph-jump");
     if (!btn) return;
     var qid = q && (q.question_id != null ? q.question_id : q.id);
     if (qid == null) { btn.hidden = true; return; }
+    btn.hidden = false;
+    btn.textContent = "See in knowledge graph";
+    btn.classList.remove("is-untagged");
+    btn.title = "Looking up this question's concept…";
     loadTags().then(function (tags) {
       currentKcs = kcsForQuestion(tags, qid);
-      btn.hidden = currentKcs.length === 0;
-      if (currentKcs.length) {
-        btn.title = currentKcs.length > 1
-          ? "This question is tagged to " + currentKcs.length + " concepts: " +
-            currentKcs.join(", ") + ". Opens the first."
-          : "Open “" + currentKcs[0] + "” in the knowledge graph";
+      if (!currentKcs.length) {
+        btn.textContent = "Not on the map";
+        btn.classList.add("is-untagged");
+        btn.title =
+          "Question " + qid + " carries no concept tag, so the tutor cannot say " +
+          "what it teaches. Opens the knowledge graph anyway.";
+        return;
       }
+      btn.textContent = "See in knowledge graph";
+      btn.classList.remove("is-untagged");
+      btn.title = currentKcs.length > 1
+        ? "This question is tagged to " + currentKcs.length + " concepts: " +
+          currentKcs.join(", ") + ". Opens the first."
+        : "Open “" + currentKcs[0] + "” in the knowledge graph";
     });
   }
 
   function onClick() {
-    if (!currentKcs.length) return;
     if (typeof switchTab === "function") switchTab("knowledge-graph");
+    // Untagged question: open the map with nothing focused. Seeing the graph
+    // and finding no node for what you were just asked IS the audit result.
+    if (!currentKcs.length) return;
     // The graph can only size itself once its page is visible, and on a first
     // visit it still has to build — deltaFocusConceptGraphKc waits for both.
     requestAnimationFrame(function () {

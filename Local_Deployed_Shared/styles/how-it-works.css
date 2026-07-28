@@ -533,6 +533,14 @@ body.kg-maxi-open { overflow: hidden; }
     rgba(255,255,255,.34) 0 3px, rgba(255,255,255,.10) 3px 6px);
   border-left: 1px solid rgba(255,255,255,.7); border-right: 1px solid rgba(255,255,255,.7);
 }
+/* Inferred band — no graded attempt has landed on this concept, so the interval
+   is nearly the whole scale. Drawn flatter and unbordered so a full-width stripe
+   reads as "we don't know" rather than as a very wide measurement. */
+.kg2-dock-ci.is-inferred {
+  background: repeating-linear-gradient(135deg,
+    rgba(255,255,255,.16) 0 2px, rgba(255,255,255,.04) 2px 7px);
+  border-left: 0; border-right: 0;
+}
 .kg2-dock-gate { position: absolute; top: 0; bottom: 0; width: 2px; background: color-mix(in srgb, var(--text) 60%, transparent); }
 .kg2-dock-gate.is-mastery { background: #ffd23f; }
 .kg2-dock-scale { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 3px; }

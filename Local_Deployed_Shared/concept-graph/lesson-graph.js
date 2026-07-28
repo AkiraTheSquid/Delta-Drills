@@ -65,7 +65,11 @@
     return BKT_P_INIT + (L - BKT_P_INIT) * Math.pow(0.5, days / BKT_HALF_LIFE_DAYS);
   };
   // Estimate for a KC in [0,1] plus WHERE it came from, or NaN when there is
-  // none. Three sources, in order of precision:
+  // none. Also returns `coveredW` — the share of THIS KC's own evidence that
+  // actually exists — because the source alone does not size the confidence
+  // band; see kc_interval.js. A "subtopic" or "extrapolated" reading carries
+  // coveredW 0 by construction: neither rests on an observation of this concept.
+  // Three sources, in order of precision:
   //   "atom"         — this KC's own decayed BKT posterior.
   //   "subtopic"     — the lesson subtopic's BKT mastery, shared by every KC
   //                    in that lesson.
@@ -85,12 +89,12 @@
       // -1 as the "no posterior" sentinel (valid readiness is [0,1]). r >= 0 is
       // a real in-memory estimate; -1 falls through to the persisted read.
       const r = window.computeAtomReadiness(kc, -1);
-      if (r >= 0) return { r, source: "atom" };
+      if (r >= 0) return { r, source: "atom", coveredW: 1 };
     }
     const s = _persistedState();
     const raw = s && s.atom_mastery ? s.atom_mastery[kc] : undefined;
     if (Number.isFinite(raw)) {
-      return { r: _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null), source: "atom" };
+      return { r: _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null), source: "atom", coveredW: 1 };
     }
     // Crosswalk read: this KC's own evidence, held under atom ids the graph
     // does not share. Only the `measured` tier qualifies — for a topic proxy
@@ -98,7 +102,7 @@
     // subtopic fallback below handles it, which at least says what it is.
     if (s && s.atom_mastery && typeof window.kcCrosswalkReadiness === "function") {
       const x = window.kcCrosswalkReadiness(kc, s.atom_mastery, s.atom_last_ts, _decay);
-      if (x) return { r: x.r, source: "atom", via: x.atoms, ts: x.ts };
+      if (x) return { r: x.r, source: "atom", via: x.atoms, ts: x.ts, coveredW: x.coveredW };
     }
     // Subtopic fallback. `p` (correctness rate) is the only field on the same
     // [0,1] scale as a posterior — `baseline` is a difficulty-weighted score in
@@ -108,11 +112,14 @@
     // an EWMA with BKT's half-life would mix two different models.
     const sub = _subtopicState(kc);
     if (sub && Number.isFinite(sub.n) && sub.n > 0 && Number.isFinite(sub.p)) {
-      return { r: Math.max(0, Math.min(1, sub.p)), source: "subtopic" };
+      // coveredW 0: the number is the LESSON's, borrowed. Whether this concept
+      // has any evidence of its own is a separate question, answered per KC by
+      // the lattice's covered_w in `_evidence` below.
+      return { r: Math.max(0, Math.min(1, sub.p)), source: "subtopic", coveredW: 0 };
     }
     const ex = _extrapolated(kc);
-    if (ex) return { r: ex.r, source: "extrapolated" };
-    return { r: NaN, source: "none" };
+    if (ex) return { r: ex.r, source: "extrapolated", coveredW: 0 };
+    return { r: NaN, source: "none", coveredW: 0 };
   };
   const kcReadiness = (kc) => kcReadinessInfo(kc).r;
   const kcLastTs = (kc) => {
@@ -337,7 +344,7 @@
   // behind it gets to move.
   const EXTRAP_LOGIT_PER_SD = 1.0;
   const EXTRAP_MAX_SHIFT = 1.5;
-  const EXTRAP_MIN_SD = 0.15;            // floor on the projected interval's half-width
+  const EXTRAP_MIN_SD = 0.15;            // floor on the learner's own result spread
   // A projection must never clear the unlock gate: "prerequisites ready" counts
   // concepts at/above UNLOCK_T, and nothing with zero attempts should count.
   const EXTRAP_CAP = 0.84;
@@ -428,57 +435,100 @@
     const r = Math.min(EXTRAP_CAP, shift(a.mBar));
     // The learner-spread band alone is NOT an uncertainty about this concept —
     // it is how varied their other results were, and a consistent learner
-    // collapses it to the EXTRAP_MIN_SD floor. That made untouched concepts
-    // draw a TIGHTER band than concepts with two real attempts behind them,
-    // which is backwards: zero evidence is the most uncertain state on the map,
-    // not the least. Floor the half-width at what a single graded attempt would
-    // earn, so the band can only narrow as evidence arrives.
+    // collapses it to the EXTRAP_MIN_SD floor. So it is handed to the interval
+    // code as a WIDENING term only; the width itself comes from the effective
+    // sample size of a structural prior (kc_interval.js), which is a fortieth of
+    // one graded attempt. This function no longer computes its own band — one
+    // place owns interval width for every source, or the sources drift apart
+    // again, which is the bug this replaced.
     const spreadHalf = (shift(a.mBar + a.sd) - shift(a.mBar - a.sd)) / 2;
-    const half = Math.max(spreadHalf, _noEvidenceHalf(r));
-    return {
-      r,
-      ci: [Math.max(0, r - half), Math.min(1, r + half)],
-      d, ...a,
-    };
+    return { r, spreadHalf, d, ...a };
   };
 
   const _pct = (v) => (Number.isFinite(v) ? Math.round(v * 100) + "%" : "—");
+  // Attempts bearing on a concept is an ATTRIBUTED quantity, not a row count —
+  // the lesson's attempts scaled by how much of this KC they observed. Show one
+  // decimal below 10 so "1.4" doesn't round to a whole attempt that never
+  // happened; "~" keeps it from reading as a tally.
+  const _nAttempts = (n) =>
+    !Number.isFinite(n) ? "—" : n >= 10 ? "~" + Math.round(n) : "~" + (Math.round(n * 10) / 10);
 
-  // 95% Wilson score interval — how much the estimate should be trusted, given
-  // how little evidence backs it. Wilson (not the normal approximation) because
-  // n is small and p sits near the edges, where the normal interval runs off
-  // [0,1] and understates uncertainty. `n` is the count of graded attempts the
-  // estimate rests on; with none, there is no interval to draw.
-  const _wilson = (p, n, z = 1.96) => {
-    if (!Number.isFinite(p) || !Number.isFinite(n) || n <= 0) return null;
-    const d = 1 + (z * z) / n;
-    const centre = (p + (z * z) / (2 * n)) / d;
-    const half = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
-    return [Math.max(0, centre - half), Math.min(1, centre + half)];
-  };
+  /* ---- how wide the band should be (see concept-graph/kc_interval.js) ------
+     The band used to be a Wilson interval over `subtopic_states[key].n` — the
+     lesson's attempt count — for every KC in that lesson. A concept nobody had
+     ever been tested on therefore drew the same band as one with real evidence,
+     which is exactly backwards. Width is now driven by per-KC evidence:
+     `covered_w` from the server's own KC report, discounted by how specific
+     that evidence is to this concept, plus the (tiny) effective sample size of
+     a structural prior. */
+  const _ivl = () => window.DeltaKcInterval || null;
 
-  // The widest honest band: what one graded attempt would earn. A concept with
-  // NO attempts must be at least this uncertain, or the bar tells the learner
-  // the opposite of the truth. Wilson at n=1 is ~±0.45, i.e. "almost anything",
-  // which is the correct thing to say about a concept nobody has tested.
-  const _noEvidenceHalf = (p) => {
-    const w = _wilson(Number.isFinite(p) ? p : 0.5, 1);
-    return w ? (w[1] - w[0]) / 2 : 0.45;
-  };
-
-  // Evidence backing a KC's estimate. Per-attempt counts are only kept at
-  // subtopic level, so that is the honest n — noted as such in the popup.
-  const _evidenceN = (kc) => {
+  // Per-KC evidence, assembled from every source that measures THIS concept
+  // rather than its lesson.
+  //   covered_w   — server truth (/api/practice/kc-lattice → kc_graph.kc_mastery).
+  //                 Offline/guest it is not sent, so fall back to what the read
+  //                 itself knew: a crosswalk hit reports its own covered weight,
+  //                 a subtopic/extrapolated read has none by definition.
+  //   reliability — the crosswalk's specificity of that evidence to this KC
+  //                 (`shared_with` = 1/reliability − 1 sibling KCs share it).
+  //   siblings    — the lesson-level denominator, used only when the crosswalk
+  //                 has nothing to say about this KC.
+  const _evidence = (kc, info) => {
     const sub = _subtopicState(kc);
-    return Number.isFinite(sub && sub.n) ? sub.n : 0;
+    const nSub = Number.isFinite(sub && sub.n) ? sub.n : 0;
+    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
+    const coveredW = row && Number.isFinite(row.covered_w)
+      ? row.covered_w
+      : (info && Number.isFinite(info.coveredW) ? info.coveredW : 0);
+    const cw = typeof window.kcCrosswalkInfo === "function" ? window.kcCrosswalkInfo(kc) : null;
+    const reliability = cw && Number.isFinite(cw.reliability) ? cw.reliability : NaN;
+    const siblings = _siblingCount(kc);
+    const ivl = _ivl();
+    const nDirect = ivl
+      ? ivl.directEvidenceN({ nSub, coveredW, reliability, siblings })
+      : 0;
+    return {
+      nSub, coveredW, reliability, siblings, nDirect,
+      tier: (row && row.tier) || (cw && cw.tier) || null,
+    };
+  };
+
+  // The one place a confidence band is computed, for every estimate source.
+  // Returns {ci, half, nDirect, measured, ev, ex} — `ex` present only for a
+  // projected estimate, whose learner-spread can widen (never narrow) the band.
+  const _bandFor = (kc, info) => {
+    const ev = _evidence(kc, info);
+    const ex = info.source === "extrapolated" ? _extrapolated(kc) : null;
+    const ivl = _ivl();
+    if (!Number.isFinite(info.r)) return { ci: null, half: NaN, nDirect: ev.nDirect, measured: false, ev, ex };
+    // kc_interval.js missing (a load failure) degrades to "we don't know", never
+    // to a confident-looking band — the whole point of this change.
+    if (!ivl) return { ci: [0, 1], half: 0.5, nDirect: ev.nDirect, measured: false, ev, ex };
+    const band = ivl.kcInterval({
+      r: info.r,
+      nDirect: ev.nDirect,
+      spreadHalf: ex ? ex.spreadHalf : NaN,
+    });
+    return { ...band, ev, ex };
+  };
+
+  // "Is this concept actually measured?" — one attempt's worth of direct
+  // evidence is the threshold, matching the invariant kc_interval.js enforces.
+  const _isMeasured = (kc) => {
+    const ivl = _ivl();
+    if (!ivl) return false;
+    return _evidence(kc, kcReadinessInfo(kc)).nDirect >= 1;
   };
 
   // The mastery bar: fill = P(known), shaded band = the confidence interval,
   // ticks = the two thresholds the engine actually acts on.
-  const _masteryBar = (r, ci) => {
+  // `measured` false ⇒ the band is an inference, not a measurement; it is drawn
+  // in a distinct hatch so a nearly-full-width stripe cannot be mistaken for a
+  // very confident wide measurement.
+  const _masteryBar = (r, ci, measured) => {
     const w = Number.isFinite(r) ? Math.max(0, Math.min(1, r)) * 100 : 0;
     const band = ci
-      ? `<span class="kg2-dock-ci" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
+      ? `<span class="kg2-dock-ci${measured ? "" : " is-inferred"}" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
       : "";
     return (
       `<div class="kg2-dock-track">` +
@@ -516,13 +566,15 @@
   const dockHtml = (kc) => {
     const k = kcById[kc];
     if (!k) return dockEmptyHtml();
-    const { r, source } = kcReadinessInfo(kc);
-    const n = _evidenceN(kc);
-    // A projected estimate has no attempts of its own, so its range is the
-    // spread of the learner's own results — a Wilson interval would claim
-    // evidence that doesn't exist.
-    const ex = source === "extrapolated" ? _extrapolated(kc) : null;
-    const ci = ex ? ex.ci : (Number.isFinite(r) ? _wilson(r, n) : null);
+    const info = kcReadinessInfo(kc);
+    const { r, source } = info;
+    // ONE band function for every source. `nDirect` is attempts bearing on THIS
+    // concept — 0 when the estimate is inherited from the lesson or projected
+    // from the learner's overall level, which is what makes those bands wide.
+    const band = _bandFor(kc, info);
+    const { ci, ev, ex } = band;
+    const measured = band.measured;
+    const nDirect = ev.nDirect;
     const sub = _subtopicState(kc);
     const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
     const parents = parentsOf[kc] || [];
@@ -561,6 +613,8 @@
           ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}` +
             (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
             (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
+            // The band is sized by what landed on THIS concept, so say what did.
+            (measured ? "" : ` · <strong>${nDirect > 0 ? "under one attempt's worth" : "nothing"} on this concept</strong>`) +
             `</div>`
           : ex
             ? `<div class="kg2-dock-evidence">Evidence: your overall level — ${ex.attempts} attempt${ex.attempts === 1 ? "" : "s"} across ${ex.subtopics} lesson${ex.subtopics === 1 ? "" : "s"}, none on this concept</div>`
@@ -574,21 +628,33 @@
             // per-atom posterior; say so when it didn't.
             (source === "subtopic" ? ` <span class="kg2-dock-dim">· lesson-level</span>` : "") +
             (source === "extrapolated" ? ` <span class="kg2-dock-dim">· projected</span>` : "") +
+            // A per-atom read can still be thin: the crosswalk may have covered
+            // only a sliver of this KC's weight, or shared it with a dozen
+            // siblings. Say so rather than let "atom" imply "measured".
+            (source === "atom" && !measured ? ` <span class="kg2-dock-dim">· not measured here</span>` : "") +
           `</span>` +
         `</div>` +
-        _masteryBar(r, ci) +
+        _masteryBar(r, ci, measured) +
+        // Three readouts, because there are three genuinely different states and
+        // the old one only distinguished two. A measured concept gets a real CI
+        // and the attempt count behind it; an unmeasured one says outright that
+        // the number is inferred and why the band is nearly the whole scale.
         `<div class="kg2-dock-ci-label">` +
-          (ex
-            ? `Projected ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· nothing graded here yet. ` +
-              (Number.isFinite(ex.d) && Number.isFinite(ex.bBar)
-                ? `This concept rates ${Math.round(ex.d)}/100 against the ${Math.round(ex.bBar)}/100 you've been practising at`
-                : `Carried straight across from your overall level`) + `.</span>`
-          : ci
-            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${n} graded attempt${n === 1 ? "" : "s"}` +
-              (source === "subtopic" ? ` across this lesson, not this concept alone` : "") + `</span>`
-            : Number.isFinite(r)
-              ? `<span class="kg2-dock-dim">No graded attempts behind this estimate yet — treat it as a prior.</span>`
-              : `<span class="kg2-dock-dim">No estimate yet — nothing graded has landed on this concept.</span>`) +
+          (!ci
+            ? `<span class="kg2-dock-dim">No estimate yet — nothing graded has landed on this concept.</span>`
+          : measured
+            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${_nAttempts(nDirect)} graded attempt${nDirect >= 1.5 ? "s" : ""} bearing on this concept` +
+              (ev.nSub > nDirect + 0.5 ? ` (of ${Math.round(ev.nSub)} in this lesson)` : "") + `</span>`
+          : `No direct evidence — inferred from related work. ` +
+            `<span class="kg2-dock-dim">Range ${_pct(ci[0])}–${_pct(ci[1])}: as wide as it gets, because nothing graded has tested this concept. ` +
+            (ex
+              ? (Number.isFinite(ex.d) && Number.isFinite(ex.bBar)
+                  ? `Projected from your overall level — this concept rates ${Math.round(ex.d)}/100 against the ${Math.round(ex.bBar)}/100 you've been practising at.`
+                  : `Carried straight across from your overall level.`)
+              : source === "subtopic"
+                ? `The figure is this lesson's accuracy, shared by ${sibs || "several"} concepts.`
+                : `Treat it as a prior, not a measurement.`) +
+            `</span>`) +
         `</div>` +
       `</div>` +
       `<div class="kg2-dock-col kg2-dock-stats">${rows}</div>`
@@ -903,7 +969,7 @@
       el.classList.add("kg2-legend-mastery");
       el.innerHTML =
         '<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
-        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Projected from your level</span>' +
+        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>' +
         '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
     } else {
       el.classList.remove("kg2-legend-mastery");
@@ -917,18 +983,22 @@
     }
   };
 
-  // Projected bubbles are washed out and dashed: they carry a colour because a
+  // Unmeasured bubbles are washed out and dashed: they carry a colour because a
   // blank map was the wrong default, but they must never read as measured.
+  // This used to key on `source === "extrapolated"` only, which let a concept
+  // wearing its LESSON's number — the far commoner case — look solid. The test
+  // is now the same one the band uses: less than one attempt's worth of
+  // evidence bearing on this concept.
   // Border WIDTH is left to the stylesheet so the .hl prerequisite highlight
   // still wins; only the dash pattern is set per node.
   const recolor = () => {
     if (!cy) return;
     cy.batch(() => cy.nodes().forEach((n) => {
-      const projected = colorMode === "mastery" && kcReadinessInfo(n.id()).source === "extrapolated";
+      const inferred = colorMode === "mastery" && !_isMeasured(n.id());
       n.style({
         "background-color": nodeColor(n.id()),
-        "background-opacity": projected ? 0.42 : 1,
-        "border-style": projected ? "dashed" : "solid",
+        "background-opacity": inferred ? 0.42 : 1,
+        "border-style": inferred ? "dashed" : "solid",
       });
     }));
     markNextUp();
