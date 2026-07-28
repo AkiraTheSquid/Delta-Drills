@@ -1,6 +1,6 @@
 ---
 kc: numpy.where-select
-title: Conditional values — np.where and where= arguments
+title: Conditional values — t.where and where= arguments
 supporting: [numpy.boolean-masking]
 new_syntax: []
 faded: [94, 100]
@@ -8,23 +8,23 @@ guided: []
 independent: []
 ---
 
-## Concept: Choose values with np.where
+## Concept: Choose values with t.where
 
-Masked assignment overwrites part of an array. `np.where` instead builds a
+Masked assignment overwrites part of an array. `t.where` instead builds a
 **new array** by choosing a value at every position:
 
-> **`np.where(condition, value_if_true, value_if_false)`**
+> **`t.where(condition, value_if_true, value_if_false)`**
 
-Read it as vectorized if/else. Where the condition is `True`, NumPy takes the
+Read it as vectorized if/else. Where the condition is `True`, PyTorch takes the
 second argument. Everywhere else, it takes the third. Values may be scalars or
 arrays; normal broadcasting rules apply.
 
-For example, `np.where(z < 0, 0.0, z)` replaces negative values with zero while
+For example, `t.where(z < 0, 0.0, z)` replaces negative values with zero while
 leaving `z` unchanged.
 
 ## Watch out
 
-`np.where(condition)` with only one argument does something different: it
+`t.where(condition)` with only one argument does something different: it
 returns indices of `True` positions. Choosing values always needs three
 arguments.
 
@@ -33,20 +33,20 @@ arguments.
 Task: build a new array equal to `z`, except negative readings become `0.0`.
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([-2.0, 0.5, 3.0, -1.0])
+z = t.tensor([-2.0, 0.5, 3.0, -1.0])
 
-relu = np.where(z < 0, 0.0, z)
+relu = t.where(z < 0, 0.0, z)
 
 assert relu.tolist() == [0.0, 0.5, 3.0, 0.0]
 assert z.tolist() == [-2.0, 0.5, 3.0, -1.0]
 print(relu)
 ```
 
-Why: at `z[0]`, `z[0] < 0` is `True`, so NumPy chooses `0.0`. At
-`z[1]`, the condition is `False`, so NumPy chooses `z[1]`. Same choice runs at
-every position. `np.where` returns a new array, so no `.copy()` is needed.
+Why: at `z[0]`, `z[0] < 0` is `True`, so PyTorch chooses `0.0`. At
+`z[1]`, the condition is `False`, so PyTorch chooses `z[1]`. Same choice runs at
+every position. `t.where` returns a new array, so no `.copy()` is needed.
 
 ## Faded practice
 
@@ -54,41 +54,45 @@ every position. `np.where` returns a new array, so no `.copy()` is needed.
 Return `z` with `-1.0` wherever a different array, `y`, exceeds a threshold.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z, y, threshold):
     """Return z with -1.0 wherever y exceeds the threshold."""
-    return np.where(_____, _____, _____)
+    return t.where(_____, _____, _____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z, y, threshold):
     """Return z with -1.0 wherever y exceeds the threshold."""
-    return np.where(y > threshold, -1.0, z)
+    return t.where(y > threshold, -1.0, z)
 ```
 
-## Concept: Skip unsafe ufunc positions with where=
+## Concept: Skip unsafe positions with masked assignment
 
-`np.where` chooses between already-computed values. A ufunc's `where=` keyword
-does something different: it controls **where the operation runs**.
+`t.where` chooses between already-computed values. Sometimes you need the
+unsafe value never to be COMPUTED — division by zero being the standard case.
 
-For safe division, combine it with `out=`:
+PyTorch has no `where=` keyword on its operators (NumPy's ufuncs do). The
+torch spelling is a zeros canvas plus masked assignment, which runs the
+operation only at the selected positions:
 
 ```python no-run
-np.divide(a, b, out=np.zeros_like(a), where=b != 0)
+out = t.zeros_like(a)
+nz = b != 0
+out[nz] = a[nz] / b[nz]
 ```
 
-`where=b != 0` runs division only where the divisor is nonzero. `out=` supplies
-both the result array and the values retained at skipped positions. Starting
-with zeros therefore makes every skipped result `0.0`.
+`a[nz] / b[nz]` divides only the safe entries — the zero divisors are never
+handed to the division at all. The canvas supplies the value left at every
+skipped position, so starting from `zeros_like` makes each of them `0.0`.
 
 ## Watch out
 
-`np.where(b != 0, a / b, 0.0)` does **not** prevent division by zero. Python
-evaluates `a / b` first; `np.where` selects afterward. Ufunc `where=` skips the
-unsafe operation itself.
+`t.where(b != 0, a / b, 0.0)` does **not** prevent division by zero. Python
+evaluates `a / b` first — producing `inf` or `nan` — and `t.where` only
+selects afterward. Masked assignment skips the unsafe operation itself.
 
 ## Worked example: Divide safely
 
@@ -96,19 +100,22 @@ Task: compute `a / b`, producing `0.0` where `b` is zero without division
 warnings.
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([1.0, 2.0, 3.0])
-b = np.array([2.0, 0.0, 4.0])
+a = t.tensor([1.0, 2.0, 3.0])
+b = t.tensor([2.0, 0.0, 4.0])
 
-ratio = np.divide(a, b, out=np.zeros_like(a), where=b != 0)
+ratio = t.zeros_like(a)
+nz = b != 0
+ratio[nz] = a[nz] / b[nz]
 
 assert ratio.tolist() == [0.5, 0.0, 0.75]
 print(ratio)
 ```
 
-Why: division runs at positions 0 and 2. Position 1 is skipped, so its initial
-`out` value—`0.0`—remains. No invalid division occurs.
+Why: division runs at positions 0 and 2 only — `a[nz]` and `b[nz]` are
+length-2 tensors that never contain the zero divisor. Position 1 keeps the
+canvas value `0.0`. No invalid division occurs.
 
 ## Faded practice
 
@@ -116,17 +123,23 @@ Why: division runs at positions 0 and 2. Position 1 is skipped, so its initial
 Compute elementwise `a / b`, but return exactly `0.0` where `b` is zero.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
-    """a / b elementwise; 0.0 where b == 0; no divide warnings."""
-    return np.divide(a, b, out=_____, where=_____)
+    """a / b elementwise; 0.0 where b == 0; no division by zero."""
+    out = t.zeros_like(a)
+    nz = _____
+    out[nz] = a[nz] / b[nz]
+    return out
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
-    """a / b elementwise; 0.0 where b == 0; no divide warnings."""
-    return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
+    """a / b elementwise; 0.0 where b == 0; no division by zero."""
+    out = t.zeros_like(a)
+    nz = b != 0
+    out[nz] = a[nz] / b[nz]
+    return out
 ```

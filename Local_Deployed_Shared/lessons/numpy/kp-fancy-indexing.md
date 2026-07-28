@@ -16,7 +16,7 @@ elements at exactly those positions, *in the order you listed them,
 repetitions allowed*:
 
 ```python no-run
-x[np.array([3, 0, 0, 2])]   # elements 3, 0, 0, 2 — any order, any repeats
+x[t.tensor([3, 0, 0, 2])]   # elements 3, 0, 0, 2 — any order, any repeats
 ```
 
 **Reordering is indexing.** Rows of a matrix in a new order: `z[perm]` where
@@ -29,13 +29,13 @@ and unlike a slice, fancy indexing always returns a **copy**.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.arange(6).reshape(3, 2)      # [[0,1],[2,3],[4,5]]
+z = t.arange(6).reshape(3, 2)      # [[0,1],[2,3],[4,5]]
 
 # Rows in the order 2, 0, 1. Read it as: "give me row 2, then row 0,
 # then row 1" — the index array IS the new row order.
-perm = np.array([2, 0, 1])
+perm = t.tensor([2, 0, 1])
 reordered = z[perm]
 assert reordered.tolist() == [[4, 5], [0, 1], [2, 3]]
 
@@ -53,7 +53,7 @@ direction confusion that otherwise haunts permutation tasks.
 Exactly the rows named by idx, in idx's order (repeats and negatives legal).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x, idx):
     """Rows of x selected and ordered by idx."""
@@ -61,7 +61,7 @@ def solve(x, idx):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x, idx):
     """Rows of x selected and ordered by idx."""
@@ -81,17 +81,17 @@ indexed. Output shape always follows the indexer.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Lookup table: labels index into values. Output has labels' shape.
-values = np.array([10, 20, 30])
-labels = np.array([0, 2, 1, 2, 0])
+values = t.tensor([10, 20, 30])
+labels = t.tensor([0, 2, 1, 2, 0])
 decoded = values[labels]
 assert decoded.tolist() == [10, 30, 20, 30, 10]
 ```
 
 Why: this is a single vectorized gather in C — if you're writing
-`np.array([values[l] for l in labels])`, replace it.
+`t.tensor([values[l] for l in labels])`, replace it.
 
 ## Faded practice
 
@@ -99,7 +99,7 @@ Why: this is a single vectorized gather in C — if you're writing
 Replace every label by its value from a lookup table.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(labels, values):
     """values[labels[i]] for every i — as one indexing expression."""
@@ -107,7 +107,7 @@ def solve(labels, values):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(labels, values):
     """values[labels[i]] for every i — as one indexing expression."""
@@ -128,16 +128,16 @@ second still needs.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Simultaneous swap of first and last rows — RHS gathered before write.
-w = np.array([[1, 2], [3, 4], [5, 6]])
+w = t.tensor([[1, 2], [3, 4], [5, 6]])
 w[[0, -1]] = w[[-1, 0]]
 assert w.tolist() == [[5, 6], [3, 4], [1, 2]]
 ```
 
 Why: the list form `[[0, -1]]` is fancy indexing with a 2-element index
-array — by the time NumPy writes `w[[0, -1]]`, the old rows are already
+tensor — by the time PyTorch writes `w[[0, -1]]`, the old rows are already
 safely gathered.
 
 ## Faded practice
@@ -146,21 +146,21 @@ safely gathered.
 First and last rows exchanged (new array, input unmodified).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """x with its first and last rows swapped, x unmodified."""
-    out = x.copy()
+    out = x.clone()
     out[[0, -1]] = out[_____]
     return out
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """x with its first and last rows swapped, x unmodified."""
-    out = x.copy()
+    out = x.clone()
     out[[0, -1]] = out[[-1, 0]]
     return out
 ```
@@ -184,4 +184,4 @@ indexing).
   overwrites data the second still needs, because each `z[i]` is a view.)
 - **"values[labels] loops over labels under the hood in Python."** — It's a
   single vectorized gather in C. If you're writing
-  `np.array([values[l] for l in labels])`, replace it.
+  `t.tensor([values[l] for l in labels])`, replace it.

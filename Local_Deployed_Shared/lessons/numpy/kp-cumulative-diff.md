@@ -10,10 +10,12 @@ independent: [82, 149]
 
 ## Concept: cumsum — running totals
 
-`np.cumsum(x)` returns the running sum: entry i is `x[0] + … + x[i]`. Same
+`t.cumsum(x, dim=0)` returns the running sum: entry i is `x[0] + … + x[i]`.
+Unlike NumPy, the dimension is REQUIRED — there is no flatten-by-default. Same
 length as the input; the last entry equals `x.sum()`. It is the vectorized
-replacement for the "total so far" loop. `np.cumprod` is the running
-product. On 2-D data both take `axis=`: `z.cumsum(axis=1)` runs along each
+replacement for the "total so far" loop. `t.cumprod` is the running
+product. On 2-D data the same argument picks the direction:
+`z.cumsum(dim=1)` runs along each
 row.
 
 Reading a task: "running / so far / cumulative" is the tell for this family.
@@ -21,12 +23,12 @@ Reading a task: "running / so far / cumulative" is the tell for this family.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-sales = np.array([2, 3, 5, 1, 4])
+sales = t.tensor([2, 3, 5, 1, 4])
 
 # Running total: same length, entry i = sum of entries 0..i.
-totals = np.cumsum(sales)
+totals = t.cumsum(sales, dim=0)
 assert totals.tolist() == [2, 5, 10, 11, 15]
 assert totals[-1] == sales.sum()          # the last entry IS the total
 ```
@@ -41,51 +43,55 @@ one.
 Running total of a 1-D array.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """Entry i = total of x[0..i] inclusive."""
-    return np._____(x)
+    return t._____(x, dim=0)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """Entry i = total of x[0..i] inclusive."""
-    return np.cumsum(x)
+    return t.cumsum(x, dim=0)
 ```
 
-## Concept: ufunc.accumulate — running ANYTHING
+## Concept: the cum* family — running ANYTHING
 
-cumsum is one member of a general form: **`np.ufunc.accumulate`** — any
-binary ufunc can run cumulatively. `np.maximum.accumulate(x)` is the
-*running maximum* ("largest value seen so far"), a pattern with no dedicated
-function of its own; `np.minimum.accumulate` the running minimum. All take
-`axis=` on matrices.
+cumsum has siblings. **`t.cummax(x, dim)`** is the *running maximum*
+("largest value seen so far") and **`t.cummin`** the running minimum;
+`t.cumprod` the running product. Like `t.sort` and `t.topk`, the cum-extrema
+return a `(values, indices)` pair, so the running values are `.values` and
+`.indices` tells you WHERE each record was set.
 
-When a task asks for a running-anything, ask "which ufunc, accumulated?"
-before writing a loop.
+NumPy generalizes this as `np.ufunc.accumulate` over any binary ufunc;
+PyTorch instead ships the four that matter as named functions, and every one
+of them requires an explicit `dim`.
+
+When a task asks for a running-anything, reach for a `cum*` before writing a
+loop.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-sales = np.array([2, 3, 5, 1, 4])
+sales = t.tensor([2, 3, 5, 1, 4])
 
-# Running maximum: maximum.accumulate — "record high so far".
-records = np.maximum.accumulate(sales)
+# Running maximum: cummax — "record high so far". Note .values.
+records = t.cummax(sales, dim=0).values
 assert records.tolist() == [2, 3, 5, 5, 5]
 
-# Per-row on a matrix: the accumulation runs along axis 1.
-z = np.array([[3, 1, 4], [2, 6, 0]])
-assert np.maximum.accumulate(z, axis=1).tolist() == [[3, 3, 4], [2, 6, 6]]
+# Per-row on a matrix: the accumulation runs along dim 1.
+z = t.tensor([[3, 1, 4], [2, 6, 0]])
+assert t.cummax(z, dim=1).values.tolist() == [[3, 3, 4], [2, 6, 6]]
 ```
 
-Why: `max(axis=...)` collapses the axis to ONE value; the running version
-keeps every prefix's answer. "So far" in the task text is the tell that you
-want accumulate, not a reduction.
+Why: `amax(dim=...)` collapses the dimension to ONE value; the running
+version keeps every prefix's answer. "So far" in the task text is the tell
+that you want a `cum*`, not a reduction.
 
 ## Faded practice
 
@@ -93,26 +99,26 @@ want accumulate, not a reduction.
 Running maximum of each row, scanning left to right.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """Entry [i, j] = max of row i's columns 0..j."""
-    return np.maximum._____(z, axis=1)
+    return t._____(z, dim=1).values
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """Entry [i, j] = max of row i's columns 0..j."""
-    return np.maximum.accumulate(z, axis=1)
+    return t.cummax(z, dim=1).values
 ```
 
-## Concept: np.diff — adjacent differences
+## Concept: t.diff — adjacent differences
 
-`np.diff(x)` returns `x[1:] - x[:-1]`: entry i is the step from element i to
+`t.diff(x)` returns `x[1:] - x[:-1]`: entry i is the step from element i to
 i+1. Length shrinks by 1 — n elements have n−1 adjacent gaps. It's the
-discrete derivative, the inverse-ish of cumsum (`np.diff(np.cumsum(x))`
+discrete derivative, the inverse-ish of cumsum (`t.diff(t.cumsum(x, dim=0))`
 recovers `x[1:]`). Options mirror the family: `axis=` chooses the direction
 on matrices, and `n=k` applies the operation k times (second differences of
 a quadratic sequence are constant — a classic check).
@@ -124,21 +130,21 @@ shifted-slice arithmetic generalizes to gaps other than 1. Reading a task:
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-sales = np.array([2, 3, 5, 1, 4])
+sales = t.tensor([2, 3, 5, 1, 4])
 
 # Adjacent differences: one shorter, entry i = step i -> i+1.
-changes = np.diff(sales)
+changes = t.diff(sales)
 assert changes.tolist() == [1, 2, -4, 3]
 assert len(changes) == len(sales) - 1
 
 # diff undoes cumsum (up to the first element):
-assert np.diff(np.cumsum(sales)).tolist() == sales[1:].tolist()
+assert t.diff(t.cumsum(sales, dim=0)).tolist() == sales[1:].tolist()
 
-# On matrices, axis= picks the direction. Along each ROW:
-z = np.arange(6).reshape(2, 3)
-assert np.diff(z, axis=1).tolist() == [[1, 1], [1, 1]]
+# On matrices, dim= picks the direction. Along each ROW:
+z = t.arange(6).reshape(2, 3)
+assert t.diff(z, dim=1).tolist() == [[1, 1], [1, 1]]
 ```
 
 Why: the diff/cumsum round-trip and the explicit length bookkeeping (n vs
@@ -150,19 +156,19 @@ n−1) preempt the two standard off-by-one surprises in this family.
 Differences between adjacent columns within each row: result (r, c-1).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """Entry [i, j] = z[i, j+1] - z[i, j]."""
-    return np.diff(z, axis=_____)
+    return t.diff(z, dim=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """Entry [i, j] = z[i, j+1] - z[i, j]."""
-    return np.diff(z, axis=1)
+    return t.diff(z, dim=1)
 ```
 
 ## Independent practice
@@ -172,13 +178,13 @@ difference — one keyword, or the operation applied k times).
 
 ## Misconceptions
 
-- **"cumsum needs a loop with a running variable."** — `np.cumsum` IS that
+- **"cumsum needs a loop with a running variable."** — `t.cumsum` IS that
   loop, in compiled code. Same for running max/min/product via
   `ufunc.accumulate`.
 - **"diff returns the same length."** — One shorter per application: n
   elements have n−1 adjacent gaps. `diff(x, n=k)` shrinks by k. Plan output
   shapes accordingly.
-- **"Running maximum = np.max with axis."** — `max(axis=...)` collapses the
+- **"Running maximum = amax with dim."** — `amax(dim=...)` collapses the
   axis to ONE value; the running version keeps every prefix's answer. "So
   far" in the task text is the tell that you want accumulate, not a
   reduction.

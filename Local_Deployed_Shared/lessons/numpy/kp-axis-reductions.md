@@ -27,25 +27,28 @@ The naming feels backwards until you anchor it: `axis=0` does NOT mean
 on top of each other. Predict the output shape first (cross the named axis
 out of the shape tuple) and the direction sorts itself out.
 
-Everything from the aggregation KP takes `axis=`: `mean`, `min`, `max`,
-`std`, `any`, `all`, `argmax`, plus `np.quantile` and friends.
+Everything from the aggregation KP takes `dim=`: `mean`, `amin`, `amax`,
+`std`, `any`, `all`, `argmax`, plus `t.quantile` and friends. Two PyTorch
+wrinkles carry through this whole KP: `mean` refuses an integer tensor (cast
+with `.to(t.float32)` first), and `std` divides by n−1 unless you pass
+`correction=0`.
 
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-x = np.array([[1, 2, 3],
-              [10, 20, 30]])          # shape (2, 3)
+x = t.tensor([[1.0, 2.0, 3.0],
+              [10.0, 20.0, 30.0]])    # shape (2, 3) — float, so mean works
 
-# axis=0 -> the 2 rows collapse onto each other -> one sum PER COLUMN.
-col_sums = x.sum(axis=0)
-assert col_sums.shape == (3,)         # (2, 3) with axis 0 crossed out
-assert col_sums.tolist() == [11, 22, 33]
+# dim=0 -> the 2 rows collapse onto each other -> one sum PER COLUMN.
+col_sums = x.sum(dim=0)
+assert tuple(col_sums.shape) == (3,)  # (2, 3) with dim 0 crossed out
+assert col_sums.tolist() == [11.0, 22.0, 33.0]
 
-# axis=1 -> the 3 columns collapse -> one value PER ROW.
-row_means = x.mean(axis=1)
-assert row_means.shape == (2,)
+# dim=1 -> the 3 columns collapse -> one value PER ROW.
+row_means = x.mean(dim=1)
+assert tuple(row_means.shape) == (2,)
 assert row_means.tolist() == [2.0, 20.0]
 ```
 
@@ -59,19 +62,19 @@ crossing out the named axis, then check the numbers.
 One sum per column.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """Column sums of a 2-D matrix: which axis disappears?"""
-    return x.sum(axis=_____)
+    return x.sum(dim=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """Column sums of a 2-D matrix: which axis disappears?"""
-    return x.sum(axis=0)
+    return x.sum(dim=0)
 ```
 
 ## Concept: tuples of axes, and keepdims
@@ -90,20 +93,21 @@ next KP (centering), where you'll practice it.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
 # Tuple of axes on a 4-D batch (a, b, c, d): collapse the last two ->
 # one total per (a, b) slice. Negative axes save counting.
-batch = np.arange(24).reshape(2, 3, 2, 2)
-totals = batch.sum(axis=(-2, -1))
+batch = t.arange(24).reshape(2, 3, 2, 2)
+totals = batch.sum(dim=(-2, -1))
 assert totals.shape == (2, 3)
 assert totals[0, 0] == 0 + 1 + 2 + 3
 
-# keepdims preview: the reduced axis survives as 1, so the result still
+# keepdim preview: the reduced dim survives as 1, so the result still
 # lines up against the original for broadcasting.
-x = np.array([[1, 2, 3], [10, 20, 30]])
-rm = x.mean(axis=1, keepdims=True)
-assert rm.shape == (2, 1)
+# (t.mean needs a float tensor — it will not promote ints the way numpy does.)
+x = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
+rm = x.mean(dim=1, keepdim=True)
+assert tuple(rm.shape) == (2, 1)
 centered = x - rm                     # (2,3) - (2,1): broadcasts by row
 assert centered[0].tolist() == [-1.0, 0.0, 1.0]
 ```
@@ -118,24 +122,24 @@ when r = c. keepdims makes the intended alignment explicit.
 Per-slice totals of a 4-D batch: collapse the LAST two axes in one call.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """(a, b, c, d) -> (a, b): total of each c*d slice."""
-    return x.sum(axis=_____)
+    return x.sum(dim=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """(a, b, c, d) -> (a, b): total of each c*d slice."""
-    return x.sum(axis=(-2, -1))
+    return x.sum(dim=(-2, -1))
 ```
 
 ## Independent practice
 
-From the drill bank: q108 (row quantiles — `np.quantile` takes `axis=` like
+From the drill bank: q108 (row quantiles — `t.quantile` takes `axis=` like
 everything else; watch which axis gives per-row results), q130 (index of each
 row's first nonzero — build a boolean mask, then argmax along the right axis;
 why does argmax find the FIRST True?).
@@ -146,7 +150,7 @@ why does argmax find the FIRST True?).
   together, yielding one result per column. Cross the axis out of the shape
   tuple and read what's left.
 - **"keepdims is cosmetic."** — It preserves alignment for broadcasting.
-  `x - x.mean(axis=1)` on a square matrix runs WITHOUT error and quietly
+  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly
   subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the
   intended row-wise alignment explicit and correct.
 - **"Reducing two axes needs two calls."** — `axis=(1, 2)` collapses both in

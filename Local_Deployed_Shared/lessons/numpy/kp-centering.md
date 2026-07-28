@@ -24,14 +24,14 @@ overall mean is 0, whatever z's shape.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([[1.0, 2.0, 3.0],
+z = t.tensor([[1.0, 2.0, 3.0],
               [10.0, 20.0, 30.0]])
 
 # Global centering: one scalar mean, subtracted everywhere.
 centered = z - z.mean()
-assert np.allclose(centered.mean(), 0.0)
+assert t.allclose(centered.mean(), t.tensor(0.0))
 ```
 
 Why: the postcondition assertion (`mean ≈ 0`) restates the task's
@@ -44,7 +44,7 @@ arithmetic.
 Subtract the global mean (any input shape).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """z minus its overall mean; result's mean is 0."""
@@ -52,7 +52,7 @@ def solve(z):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """z minus its overall mean; result's mean is 0."""
@@ -77,20 +77,20 @@ keepdims is never wrong.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.array([[1.0, 2.0, 3.0],
+z = t.tensor([[1.0, 2.0, 3.0],
               [10.0, 20.0, 30.0]])
 
-# ROW centering: statistic per row -> axis=1, kept as a column (2, 1)
+# ROW centering: statistic per row -> dim=1, kept as a column (2, 1)
 # so it broadcasts back across each row.
-row_mu = z.mean(axis=1, keepdims=True)
+row_mu = z.mean(dim=1, keepdim=True)
 assert row_mu.tolist() == [[2.0], [20.0]]
 centered = z - row_mu
 assert centered.tolist() == [[-1.0, 0.0, 1.0],
                              [-10.0, 0.0, 10.0]]
 # Postcondition worth checking in real code: every row now averages 0.
-assert np.allclose(centered.mean(axis=1), 0.0)
+assert t.allclose(centered.mean(dim=1), t.zeros(2))
 ```
 
 Why: materializing `row_mu` and asserting its SHAPE (2, 1) before
@@ -103,19 +103,19 @@ subtracting is the discipline that prevents the classic square-matrix bug
 Subtract each row's own mean.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """Every entry minus its row's mean; each result row averages 0."""
-    return z - z.mean(axis=_____, keepdims=_____)
+    return z - z.mean(dim=_____, keepdim=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """Every entry minus its row's mean; each result row averages 0."""
-    return z - z.mean(axis=1, keepdims=True)
+    return z - z.mean(dim=1, keepdim=True)
 ```
 
 ## Concept: standardizing — apply the template twice
@@ -132,20 +132,23 @@ the where-select KP — statistics and safe division compose cleanly.
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-# COLUMN standardizing: both statistics per column (axis=0).
-x = np.array([[1.0, 10.0],
+# COLUMN standardizing: both statistics per column (dim=0).
+x = t.tensor([[1.0, 10.0],
               [3.0, 30.0]])
-zscores = (x - x.mean(axis=0)) / x.std(axis=0)
-assert np.allclose(zscores, [[-1.0, -1.0],
-                             [1.0, 1.0]])
-assert np.allclose(zscores.mean(axis=0), 0.0)
-assert np.allclose(zscores.std(axis=0), 1.0)
+zscores = (x - x.mean(dim=0)) / x.std(dim=0, correction=0)
+assert t.allclose(zscores, t.tensor([[-1.0, -1.0],
+                                     [1.0, 1.0]]))
+assert t.allclose(zscores.mean(dim=0), t.zeros(2))
+assert t.allclose(zscores.std(dim=0, correction=0), t.ones(2))
 ```
 
-Why: the two postconditions (`mean ≈ 0`, `std ≈ 1`) catch axis mistakes
-instantly. NumPy's `std` is the POPULATION std (divide by n) by default.
+Why: the two postconditions (`mean ≈ 0`, `std ≈ 1`) catch dim mistakes
+instantly. Note the `correction=0`: PyTorch's `std` defaults to the SAMPLE
+standard deviation (divide by n−1), so the population version these drills
+want has to be asked for by name. Leaving it off does not raise — it just
+returns slightly different numbers, which is the worst way to be wrong.
 
 ## Faded practice
 
@@ -153,19 +156,19 @@ instantly. NumPy's `std` is the POPULATION std (divide by n) by default.
 Standardize each column (no constant columns).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(x):
     """Each column standardized: mean 0, std 1."""
-    return (x - x.mean(axis=_____)) / x.std(axis=_____)
+    return (x - x.mean(dim=_____)) / x.std(dim=_____, correction=0)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(x):
     """Each column standardized: mean 0, std 1."""
-    return (x - x.mean(axis=0)) / x.std(axis=0)
+    return (x - x.mean(dim=0)) / x.std(dim=0, correction=0)
 ```
 
 ## Independent practice
@@ -176,12 +179,14 @@ ZERO, not NaN — compose the template with safe division).
 
 ## Misconceptions
 
-- **"`z - z.mean(axis=1)` centers the rows."** — On a non-square matrix it
+- **"`z - z.mean(dim=1)` centers the rows."** — On a non-square matrix it
   ERRORS; on a square one it silently centers the wrong way (the bare (r,)
-  aligns with columns). Row statistics need `keepdims=True` (or `[:, None]`).
-- **"Standardizing uses n−1 by default."** — NumPy's `std` is the POPULATION
-  std (divide by n). The sample version is `std(ddof=1)`. Drills say which
-  they want; NumPy's default answers most of them.
+  aligns with columns). Row statistics need `keepdim=True` (or `[:, None]`).
+- **"`std()` divides by n."** — PyTorch divides by n−1 by default
+  (`correction=1`, the SAMPLE std). The population version is
+  `std(correction=0)`. This is the opposite of NumPy's default, so a formula
+  carried over from the numpy dialect changes its answer without complaining
+  — always state `correction` explicitly.
 - **"Center-then-scale needs a loop over rows."** — The statistic/broadcast
   template does any per-row/per-column normalization in one expression;
   loops over rows are a sign the axis machinery isn't being used.

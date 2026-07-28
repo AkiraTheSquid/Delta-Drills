@@ -13,21 +13,21 @@ independent: [89, 238, 159]
 Combining arrays into one splits on a single question: **does the result have
 a NEW axis, or grow an EXISTING one?**
 
-- **Grow an existing axis — `np.concatenate` and its 2-D shorthands.**
-  `np.vstack([a, b])` stacks rows (b's rows below a's);
-  `np.hstack([a, b])` extends rows sideways. Shapes must agree on the other
+- **Grow an existing dimension — `t.cat` and its 2-D shorthands.**
+  `t.vstack([a, b])` stacks rows (b's rows below a's);
+  `t.hstack([a, b])` extends rows sideways. Shapes must agree on the other
   axis; the combined axis just adds up. General form:
-  `np.concatenate([a, b], axis=k)`.
-- **Create a new axis — `np.stack`.**
-  `np.stack([a, b], axis=0)` piles k same-shape arrays into a (k, …) array.
+  `t.cat([a, b], dim=k)`.
+- **Create a new axis — `t.stack`.**
+  `t.stack([a, b], axis=0)` piles k same-shape arrays into a (k, …) array.
   Nothing merges; you gain a dimension. This is the bridge to *reductions
   over the pile*: the elementwise average of two arrays is
-  `np.stack([a, b]).mean(axis=0)` — stack, then reduce the new axis. Any
+  `t.stack([a, b]).mean(axis=0)` — stack, then reduce the new axis. Any
   "combine k arrays by taking the elementwise mean/max/median" is this
   two-step.
 - **Interleave — stack + reshape, or strided assignment.**
   Alternating elements `[a0, b0, a1, b1, …]` has two idiomatic spellings:
-  - `np.column_stack((a, b)).ravel()` — pair up (each row `[a_i, b_i]`),
+  - `t.column_stack((a, b)).ravel()` — pair up (each row `[a_i, b_i]`),
     then read row-major: the pairs unroll in exactly alternating order.
     (Reshape's fill order doing real work!)
   - Preallocate and stride: `out[0::2] = a; out[1::2] = b` — allocate the
@@ -45,33 +45,33 @@ Task: stack two matrices vertically and horizontally; average them
 elementwise via a stack; interleave two vectors.
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # Grow axis 0 (rows below) / axis 1 (columns to the right).
-v = np.vstack([a, b])
-h = np.hstack([a, b])
+v = t.vstack([a, b])
+h = t.hstack([a, b])
 assert v.shape == (4, 2) and h.shape == (2, 4)
 
 # NEW axis then reduce it: elementwise average of the two arrays.
-piled = np.stack([a, b], axis=0)        # shape (2, 2, 2) — nothing merged
+piled = t.stack([a, b], dim=0)        # shape (2, 2, 2) — nothing merged
 assert piled.shape == (2, 2, 2)
-avg = piled.mean(axis=0)                # collapse the pile
+avg = piled.mean(dim=0)                # collapse the pile
 assert avg.tolist() == [[3.0, 4.0], [5.0, 6.0]]
 
 # Interleave two vectors: pair rows, then row-major ravel unrolls
 # them alternately.
-x = np.array([1, 3, 5])
-y = np.array([2, 4, 6])
-inter = np.column_stack((x, y)).ravel()
+x = t.tensor([1, 3, 5])
+y = t.tensor([2, 4, 6])
+inter = t.column_stack((x, y)).ravel()
 assert inter.tolist() == [1, 2, 3, 4, 5, 6]
 
 # Same result by strided assignment — the form that scales to 3+ streams.
-out = np.empty(6, dtype=x.dtype)
+out = t.empty(6, dtype=x.dtype)
 out[0::2] = x
 out[1::2] = y
 assert out.tolist() == [1, 2, 3, 4, 5, 6]
@@ -96,19 +96,19 @@ Why each step:
 Elementwise average of two same-shape arrays, via a new axis.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Elementwise average: stack on a new axis, then reduce it."""
-    return np.stack([a, b], axis=0)._____(axis=0)
+    return t.stack([a, b], dim=0)._____(dim=0)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Elementwise average: stack on a new axis, then reduce it."""
-    return np.stack([a, b], axis=0).mean(axis=0)
+    return t.stack([a, b], dim=0).mean(dim=0)
 ```
 
 ## Guided practice
@@ -117,8 +117,8 @@ def solve(a, b):
 1. Three streams interleaved position by position — the pair-and-ravel trick
    still works, but the strided form is clearer: what are the three residue
    classes?
-2. Allocate the result (`np.empty(3 * n, dtype=...)` — dtype from the inputs
-   via `np.result_type`), then one slice assignment per stream.
+2. Allocate the result (`t.empty(3 * n, dtype=...)` — dtype from the inputs
+   via `t.result_type`), then one slice assignment per stream.
 3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`.
 
 ## Independent practice
@@ -136,7 +136,7 @@ assignment; derive the canvas length first).
 - **"Interleaving needs a Python loop."** — Either pair-and-ravel
   (column_stack + row-major flatten) or strided slice assignment. Both are
   single-pass, loop-free.
-- **"np.empty is dangerous here."** — It's uninitialized memory, which is
+- **"t.empty is dangerous here."** — It's uninitialized memory, which is
   fine EXACTLY when every slot gets written before any read — as in the
   residue-class pattern. If any slot might stay untouched (the zeros-between
-  drill!), start from `np.zeros` instead.
+  drill!), start from `t.zeros` instead.

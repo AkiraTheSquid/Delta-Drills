@@ -12,22 +12,26 @@ independent: [90]
 
 Border tasks come in two mirror-image forms, each with its own tool:
 
-**Growing — add a border AROUND the data: `np.pad`.**
+**Growing — add a border AROUND the data: `t.nn.functional.pad`.**
 
-> `np.pad(z, pad_width=1, mode="constant", constant_values=0)`
+> `t.nn.functional.pad(z, (1, 1, 1, 1), mode="constant", value=0)`
 
 wraps `z` in a one-cell-thick frame of zeros: shape (r, c) → (r+2, c+2).
-`pad_width` can differ per side (`((top, bottom), (left, right))`),
-`constant_values` sets the fill, and other modes (`edge`, `reflect`, `wrap`)
-extend the data instead of a constant — `pad` is the standard prelude to
-sliding-window and stencil operations, where the window must not fall off the
-edge.
+
+Mind the argument order — it is the one real trap on this page. The pad
+tuple runs **last dimension first**, in (before, after) pairs:
+`(left, right, top, bottom)` for a 2-D tensor. Pass a shorter tuple and only
+the trailing dimensions get padded, which is a quiet way to pad columns and
+wonder where your rows went. `value` sets the fill, and other modes
+(`replicate`, `reflect`, `circular`) extend the data instead of a constant —
+padding is the standard prelude to sliding-window and stencil operations,
+where the window must not fall off the edge.
 
 **Marking — modify the border WITHIN the existing shape: slice assignment.**
 The frame of a matrix is four slices, or — the cleaner inverse — everything
 *except* the frame is ONE slice, the interior `z[1:-1, 1:-1]`. So:
 
-- ring of ones, hollow inside: start from `np.ones`, zero the interior:
+- ring of ones, hollow inside: start from `t.ones`, zero the interior:
   `z[1:-1, 1:-1] = 0`.
 - overwrite the frame with a value: start from the data, assign the four
   edge slices `z[0, :]`, `z[-1, :]`, `z[:, 0]`, `z[:, -1]`.
@@ -46,13 +50,13 @@ Task: (a) surround a matrix of ones with a zero border — shape grows;
 (b) build a same-shape "picture frame": ones on the border, zeros inside.
 
 ```python
-import numpy as np
+import torch as t
 
-z = np.ones((2, 2))
+z = t.ones((2, 2))
 
 # (a) GROW: pad adds cells around the data. (2,2) -> (4,4).
-framed = np.pad(z, pad_width=1, mode="constant", constant_values=0)
-assert framed.shape == (4, 4)
+framed = t.nn.functional.pad(z, (1, 1, 1, 1), mode="constant", value=0)
+assert tuple(framed.shape) == (4, 4)
 assert framed.tolist() == [[0.0, 0.0, 0.0, 0.0],
                            [0.0, 1.0, 1.0, 0.0],
                            [0.0, 1.0, 1.0, 0.0],
@@ -60,7 +64,7 @@ assert framed.tolist() == [[0.0, 0.0, 0.0, 0.0],
 
 # (b) SAME SHAPE: build all-ones, then blank the interior with ONE slice.
 n = 4
-ring = np.ones((n, n))
+ring = t.ones((n, n))
 ring[1:-1, 1:-1] = 0.0            # interior = rows 1..-2, cols 1..-2
 assert ring.tolist() == [[1.0, 1.0, 1.0, 1.0],
                          [1.0, 0.0, 0.0, 1.0],
@@ -68,7 +72,7 @@ assert ring.tolist() == [[1.0, 1.0, 1.0, 1.0],
                          [1.0, 1.0, 1.0, 1.0]]
 
 # The degenerate case is free: a 2x2 has no interior, so nothing changes.
-small = np.ones((2, 2))
+small = t.ones((2, 2))
 small[1:-1, 1:-1] = 0.0           # empty selection — assignment is a no-op
 assert small.tolist() == [[1.0, 1.0], [1.0, 1.0]]
 ```
@@ -76,8 +80,8 @@ assert small.tolist() == [[1.0, 1.0], [1.0, 1.0]]
 Why each step:
 
 1. In (a) note who supplies the border values: `pad` does — the original
-   array is unchanged in the middle. Padding never mutates; it returns a new,
-   larger array.
+   tensor is unchanged in the middle. Padding never mutates; it returns a
+   new, larger tensor. The four 1s are (left, right, top, bottom).
 2. In (b) the insight is *invert the selection*: four border slices are
    fiddly, one interior slice is clean. `1:-1` reads "skip the first, skip
    the last" on each axis.
@@ -91,19 +95,19 @@ Why each step:
 Zero border AROUND the data: (r, c) → (r+2, c+2).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(z):
     """Surround z with a one-cell-thick border of zeros."""
-    return np.pad(z, pad_width=_____, mode="constant", constant_values=_____)
+    return t.nn.functional.pad(z, _____, mode="constant", value=_____)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(z):
     """Surround z with a one-cell-thick border of zeros."""
-    return np.pad(z, pad_width=1, mode="constant", constant_values=0)
+    return t.nn.functional.pad(z, (1, 1, 1, 1), mode="constant", value=0)
 ```
 
 ## Guided practice
@@ -121,8 +125,11 @@ pad again, one keyword different).
 
 ## Misconceptions
 
-- **"np.pad modifies in place."** — It returns a new, bigger array (it must —
+- **"pad modifies in place."** — It returns a new, bigger tensor (it must —
   the shape changes). The original is one of its ingredients, not its victim.
+- **"The pad tuple is (top, bottom, left, right)."** — It is LAST DIMENSION
+  FIRST: `(left, right, top, bottom)` for 2-D. Getting this backwards pads a
+  valid-looking tensor with the frame on the wrong axis.
 - **"The border needs four assignments."** — Assigning the border is four
   slices, but most frame tasks invert: fill everything, then overwrite the
   single interior slice `z[1:-1, 1:-1]`.
