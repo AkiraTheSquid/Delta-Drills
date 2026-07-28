@@ -224,6 +224,49 @@ def uncommented_example_lines(path: Path) -> list[str]:
     return out
 
 
+# A worked example that only asserts runs green and shows the learner nothing:
+# "Ran successfully (no printed output)" is the same screen whether the concept
+# is obvious or baffling. An example earns its place by DISPLAYING the thing it
+# is teaching, so every value the example computes has to be printed.
+def silent_example_gaps(path: Path) -> list[str]:
+    text = path.read_text(encoding="utf-8")
+    out: list[str] = []
+    for section in re.split(r"^## ", text, flags=re.M)[1:]:
+        if not section.lower().startswith("worked example"):
+            continue
+        for block in FENCE.findall(section):
+            if "_____" in block:
+                continue
+            try:
+                tree = ast.parse(block)
+            except SyntaxError:
+                continue
+            assigned: list[str] = []
+            printed: set[str] = set()
+            prints = 0
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assign):
+                    for tgt in node.targets:
+                        if isinstance(tgt, ast.Name):
+                            assigned.append(tgt.id)
+                elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) \
+                        and node.func.id == "print":
+                    prints += 1
+                    for arg in node.args:
+                        for sub in ast.walk(arg):
+                            if isinstance(sub, ast.Name):
+                                printed.add(sub.id)
+            if prints == 0:
+                out.append(f"{path.name}: worked example prints nothing at all")
+                continue
+            unseen = [n for n in dict.fromkeys(assigned) if n not in printed]
+            if unseen:
+                out.append(
+                    f"{path.name}: computes but never shows {', '.join(unseen[:6])}"
+                )
+    return out
+
+
 def lesson_order(kc_of_page: dict[str, str]) -> dict[str, int]:
     """Topological rank of each KC over the prerequisite lattice — the order the
     graph itself claims, so the checker cannot disagree with the map."""
@@ -298,6 +341,8 @@ def audit(suggest: bool = False) -> int:
 
     uncommented = {p: uncommented_example_lines(p) for p in ordered}
     uncommented = {p: v for p, v in uncommented.items() if v}
+    silent = {p: silent_example_gaps(p) for p in ordered}
+    silent = {p: v for p, v in silent.items() if v}
 
     print(f"KP pages audited: {len(pages)}")
     print(f"distinct symbols shown to learners: "
@@ -306,6 +351,8 @@ def audit(suggest: bool = False) -> int:
     print(f"uses that precede their own lesson: {len(too_late)}")
     print(f"worked-example lines with no explanation: "
           f"{sum(len(v) for v in uncommented.values())} across {len(uncommented)} page(s)")
+    print(f"worked examples that show the learner nothing: "
+          f"{sum(len(v) for v in silent.values())} across {len(silent)} page(s)")
     if errors:
         print(f"\nunparseable code blocks: {len(errors)}")
         for e in errors[:10]:
@@ -328,7 +375,13 @@ def audit(suggest: bool = False) -> int:
             for line in lines[:6]:
                 print(f"      {line}")
 
-    return 1 if (undeclared or too_late or uncommented) else 0
+    if silent:
+        print("\n-- worked examples that print nothing, or hide what they compute --")
+        for p, lines in list(silent.items())[:10]:
+            for line in lines[:3]:
+                print(f"  {line}")
+
+    return 1 if (undeclared or too_late or uncommented or silent) else 0
 
 
 if __name__ == "__main__":
