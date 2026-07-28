@@ -183,6 +183,7 @@ function renderQuestion(q, count) {
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   renderQuestionIdChip(q);
+  if (typeof updateGraphJump === "function") updateGraphJump(q);
   questionMetaTop.classList.add("hidden");
 
   // Placement diagnostic badge (backend ALEKS-style placement) takes priority

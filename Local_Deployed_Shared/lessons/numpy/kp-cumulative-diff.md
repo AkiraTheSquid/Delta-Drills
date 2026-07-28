@@ -10,13 +10,14 @@ independent: [82, 149]
 
 ## Concept: cumsum — running totals
 
-`t.cumsum(x, dim=0)` returns the running sum: entry i is `x[0] + … + x[i]`.
-Unlike NumPy, the dimension is REQUIRED — there is no flatten-by-default. Same
-length as the input; the last entry equals `x.sum()`. It is the vectorized
-replacement for the "total so far" loop. `t.cumprod` is the running
-product. On 2-D data the same argument picks the direction:
-`z.cumsum(dim=1)` runs along each
-row.
+Given a 1-D tensor `x` — a single row of numbers, like five days of sales —
+`t.cumsum(x, dim=0)` returns its running sum: entry i is `x[0] + … + x[i]`.
+The result is the same length as `x`, and its last entry equals `x.sum()`.
+It is the vectorized replacement for the "total so far" loop.
+
+`dim=0` says which direction to accumulate along. `x` has only one direction,
+so it is the only choice here — but unlike NumPy, torch REQUIRES you to say
+so: there is no flatten-by-default.
 
 Reading a task: "running / so far / cumulative" is the tell for this family.
 

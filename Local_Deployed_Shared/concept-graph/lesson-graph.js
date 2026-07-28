@@ -1137,6 +1137,33 @@
     building = false;
   }
 
+  /* Jump straight to one concept from outside the graph — the Practice tab's
+     "See in knowledge graph" button, so a question can be audited against the
+     node the tutor thinks it is teaching. Builds the graph first if this is the
+     first visit; an unknown id leaves the view untouched rather than clearing
+     the selection, which would look like the concept does not exist. */
+  window.deltaFocusConceptGraphKc = function (kc) {
+    if (!kc) return false;
+    let tries = 0;
+    const focus = () => {
+      if (!cy) {
+        build();
+        if (tries++ < 80) setTimeout(focus, 120);
+        return;
+      }
+      if (!kcById[kc]) return;
+      fitWrap();
+      cy.resize();
+      selectNode(kc);
+      const node = cy.getElementById(kc);
+      if (node && node.length) {
+        cy.animate({ center: { eles: node }, zoom: 1.15 }, { duration: 260 });
+      }
+    };
+    focus();
+    return true;
+  };
+
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
     let tries = 0;
