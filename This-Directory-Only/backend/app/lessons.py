@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -136,3 +137,48 @@ def kc_only_serving() -> bool:
     validating the next chapter's KCs). Default is ON — parking is the safe
     state, so a missing env var must not silently reopen the whole bank."""
     return os.environ.get("DELTA_KC_ONLY", "1").strip().lower() not in {"0", "false", "no"}
+
+
+_TORCH_IMPORT_RE = re.compile(r"(?m)^\s*(?:import\s+torch\b|from\s+torch[\s.])")
+
+
+def is_torch_dialect(answer_code: Optional[str], starter_code: Optional[str] = "") -> bool:
+    """True when a question drills the PyTorch dialect (torch tensors).
+
+    Derived from the question's own code rather than a hand-set field: a
+    converted question imports torch and an unconverted one does not, so the
+    marker cannot drift out of sync with what the question actually asks, and
+    conversion needs no schema change. Mirrors code_runner.code_uses_torch —
+    kept local so two high-fan-in modules don't gain a dependency edge.
+    """
+    return bool(
+        _TORCH_IMPORT_RE.search(answer_code or "")
+        or _TORCH_IMPORT_RE.search(starter_code or "")
+    )
+
+
+def torch_only_serving() -> bool:
+    """Whether the ITS may serve ONLY PyTorch-dialect questions.
+
+    ARENA is written in torch (`import torch as t`; the 0.0 exercises say
+    "using only t.arange and einops.rearrange"), and the lessons are being
+    converted to match. A torch lesson followed by a numpy drill teaches the
+    wrong muscle memory, so questions the conversion has not reached yet hide
+    themselves instead of contradicting the lesson that just ran.
+
+    That makes "add more problems as needed" mechanically safe: converting a
+    question unparks it, and nothing has to be remembered or maintained.
+
+    Default is OFF, unlike kc_only_serving, and the asymmetry is deliberate.
+    Parking un-tagged questions is safe because tagged ones remain; parking
+    un-converted ones is NOT safe until conversion has produced something to
+    serve — with zero torch questions in the bank this gate empties the
+    selection pool entirely (by-id stays complete, so history and in-flight
+    attempts still resolve, but nothing is selectable). There is also no mixed
+    state to protect against yet: the lessons are still numpy.
+
+    FLIP THIS DEFAULT TO "1" when the first lesson's conversion lands — at
+    that point the numpy drills start contradicting a torch lesson, and the
+    protection is worth more than the questions it parks. Until then set
+    DELTA_TORCH_ONLY=1 to preview the converted-only pool."""
+    return os.environ.get("DELTA_TORCH_ONLY", "0").strip().lower() not in {"0", "false", "no"}

@@ -123,6 +123,13 @@ def _load_function_overrides() -> Dict[int, dict]:
         # questions demoted to ordinary function grading (visual flags off);
         # 7 duplicate-image keepers get distinct fixtures (digit swaps).
         "einops_visual_fixes.jsonl",
+        # PyTorch dialect conversion (2026-07-27): re-expresses drills in the
+        # dialect ARENA actually uses (`import torch as t`), lesson by lesson.
+        # Layered last so a conversion wins over every earlier numpy-era
+        # repair. The torch import it introduces is itself what unparks the
+        # question — see lessons.is_torch_dialect / torch_only_serving.
+        # Keep in sync with pipeline/export_questions_json.py.
+        "torch_dialect_overrides.jsonl",
     ):
         layer = _load_jsonl_overrides(layer_name)
         for qid, record in layer.items():
@@ -641,12 +648,19 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
     # narrowed — see lessons.kc_only_serving().
     _questions_by_id = {q.id: q for q in questions}
 
-    parked = 0
     if lessons.kc_only_serving():
         servable = [q for q in questions if lessons.has_target_kcs(q.id)]
-        parked = len(questions) - len(servable)
     else:
         servable = questions
+    # Dialect gate: a torch lesson followed by a numpy drill teaches the wrong
+    # muscle memory, so un-converted questions park themselves rather than
+    # contradict the lesson that just ran — see lessons.torch_only_serving().
+    if lessons.torch_only_serving():
+        servable = [
+            q for q in servable
+            if lessons.is_torch_dialect(q.answer_code, q.starter_code)
+        ]
+    parked = len(questions) - len(servable)
     _questions = servable
 
     by_sub: Dict[str, List[Question]] = {}
@@ -659,10 +673,12 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
     _subtopic_to_topic = sub_to_topic
 
     logger.info(
-        "Loaded %d questions across %d subtopics (%d parked: no lesson-graph KC)",
+        "Loaded %d questions across %d subtopics (%d parked; kc_only=%s torch_only=%s)",
         len(servable),
         len(_subtopics),
         parked,
+        lessons.kc_only_serving(),
+        lessons.torch_only_serving(),
     )
     _questions_loaded = True
 

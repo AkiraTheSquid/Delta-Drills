@@ -10089,42 +10089,42 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a function solve(rows) that takes a Python nested list — a list of equal-length inner lists of integers — and returns a 2-D NumPy array in which each inner list becomes one row, in the same order. The input is a plain Python list, not an array, and your function must return an actual NumPy array, not a list.",
+      "question_text": "Write a function solve(rows) that takes a Python nested list — a list of equal-length inner lists of integers — and returns a 2-D PyTorch tensor in which each inner list becomes one row, in the same order. The input is a plain Python list, not a tensor, and your function must return an actual torch.Tensor, not a list.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve(rows):\n    \"\"\"Convert a nested list of equal-length integer lists into a 2-D NumPy array.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different nested lists,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Convert a nested list of equal-length integer lists into a 2-D tensor.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different nested lists,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
       "test_cases": [
         {
-          "setup_code": "import numpy as np\nx = [[1, 2, 3], [4, 5, 6]]",
-          "call": "(lambda r: (isinstance(r, np.ndarray), r.ndim, r.tolist()))(solve(x))",
+          "setup_code": "import torch as t\nx = [[1, 2, 3], [4, 5, 6]]",
+          "call": "(lambda r: (isinstance(r, t.Tensor), r.ndim, r.tolist()))(solve(x))",
           "expected_expr": "(True, 2, [[1, 2, 3], [4, 5, 6]])"
         },
         {
-          "setup_code": "import numpy as np\nx = [[7, -2, 0, 5]]",
-          "call": "(lambda r: (isinstance(r, np.ndarray), r.ndim, r.tolist()))(solve(x))",
+          "setup_code": "import torch as t\nx = [[7, -2, 0, 5]]",
+          "call": "(lambda r: (isinstance(r, t.Tensor), r.ndim, r.tolist()))(solve(x))",
           "expected_expr": "(True, 2, [[7, -2, 0, 5]])"
         },
         {
-          "setup_code": "import numpy as np\nx = [[3], [-1], [4]]",
-          "call": "(lambda r: (isinstance(r, np.ndarray), r.ndim, r.tolist()))(solve(x))",
+          "setup_code": "import torch as t\nx = [[3], [-1], [4]]",
+          "call": "(lambda r: (isinstance(r, t.Tensor), r.ndim, r.tolist()))(solve(x))",
           "expected_expr": "(True, 2, [[3], [-1], [4]])"
         },
         {
-          "setup_code": "import numpy as np\nx = [[-9]]",
-          "call": "(lambda r: (isinstance(r, np.ndarray), r.ndim, r.tolist()))(solve(x))",
+          "setup_code": "import torch as t\nx = [[-9]]",
+          "call": "(lambda r: (isinstance(r, t.Tensor), r.ndim, r.tolist()))(solve(x))",
           "expected_expr": "(True, 2, [[-9]])"
         },
         {
-          "setup_code": "import numpy as np\nx = [[10, -3], [0, 8], [6, 6], [-7, 2]]",
-          "call": "(lambda r: (isinstance(r, np.ndarray), r.ndim, r.tolist()))(solve(x))",
-          "expected_expr": "(True, 2, [[10, -3], [0, 8], [6, 6], [-7, 2]])"
+          "setup_code": "import torch as t\nx = [[0, 0], [0, 0], [1, 2]]",
+          "call": "(lambda r: (isinstance(r, t.Tensor), r.ndim, r.tolist()))(solve(x))",
+          "expected_expr": "(True, 2, [[0, 0], [0, 0], [1, 2]])"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "import numpy as np\n\ndef solve(rows):\n    return np.array(rows)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
-      "expected_output": "[[1 2 3]\n [4 5 6]]",
+      "canonical_solution": "import torch as t\n\ndef solve(rows):\n    return t.tensor(rows)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "expected_output": "[[1 2]\n [3 4]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -10143,37 +10143,42 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a function solve(n) that takes a non-negative integer n and returns a 1-D numpy array of length n in which every entry is 1.0. The result must use numpy's default floating-point dtype, not integers. The grader checks the values, the shape, and the dtype for several different lengths.",
+      "question_text": "Write a function solve(n) that takes a non-negative integer n and returns a 1-D PyTorch tensor of length n in which every entry is 1.0. The result must use torch's default floating-point dtype, not integers. The grader checks the values, the shape, and the dtype for several different lengths.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve(n):\n    \"\"\"Return a 1-D float array of length n where every entry is 1.0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different lengths,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
+      "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return a 1-D float tensor of length n where every entry is 1.0.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different lengths,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
       "test_cases": [
         {
-          "setup_code": "import numpy as np\nn = 4",
-          "call": "(str(np.asarray(solve(n)).dtype), np.asarray(solve(n)).tolist())",
-          "expected_expr": "(str(np.ones(n).dtype), np.ones(n).tolist())"
+          "setup_code": "import torch as t\nn = 4",
+          "call": "(str(t.as_tensor(solve(n)).dtype), t.as_tensor(solve(n)).tolist())",
+          "expected_expr": "(str(t.ones(n).dtype), t.ones(n).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nn = 1",
-          "call": "(str(np.asarray(solve(n)).dtype), np.asarray(solve(n)).tolist())",
-          "expected_expr": "(str(np.ones(n).dtype), np.ones(n).tolist())"
+          "setup_code": "import torch as t\nn = 1",
+          "call": "(str(t.as_tensor(solve(n)).dtype), t.as_tensor(solve(n)).tolist())",
+          "expected_expr": "(str(t.ones(n).dtype), t.ones(n).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nn = 0",
-          "call": "(str(np.asarray(solve(n)).dtype), np.asarray(solve(n)).tolist())",
-          "expected_expr": "(str(np.ones(n).dtype), np.ones(n).tolist())"
+          "setup_code": "import torch as t\nn = 0",
+          "call": "(str(t.as_tensor(solve(n)).dtype), t.as_tensor(solve(n)).tolist())",
+          "expected_expr": "(str(t.ones(n).dtype), t.ones(n).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nn = 12",
-          "call": "(str(np.asarray(solve(n)).dtype), np.asarray(solve(n)).tolist())",
-          "expected_expr": "(str(np.ones(n).dtype), np.ones(n).tolist())"
+          "setup_code": "import torch as t\nn = 12",
+          "call": "(str(t.as_tensor(solve(n)).dtype), t.as_tensor(solve(n)).tolist())",
+          "expected_expr": "(str(t.ones(n).dtype), t.ones(n).tolist())"
+        },
+        {
+          "setup_code": "import torch as t\nn = 7",
+          "call": "(str(t.as_tensor(solve(n)).dtype), t.as_tensor(solve(n)).tolist())",
+          "expected_expr": "(str(t.ones(n).dtype), t.ones(n).tolist())"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "import numpy as np\n\ndef solve(n):\n    return np.ones(n)\n\n\nexample = 4\nprint(solve(example))\n",
-      "expected_output": "[1. 1. 1. 1.]",
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    return t.ones(n)\n\n\nexample = 4\nprint(solve(example))\n",
+      "expected_output": "[1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -10290,42 +10295,42 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a function solve(start, end) that returns a 1-D numpy array containing every consecutive integer from start to end, including both endpoints, in increasing order. Both start and end are Python integers, and you may assume start <= end. The result must be an integer array, and it must still work when start and end are equal or negative.",
+      "question_text": "Write a function solve(start, end) that returns a 1-D PyTorch tensor containing every consecutive integer from start to end, including both endpoints, in increasing order. Both start and end are Python integers, and you may assume start <= end. The result must be an integer tensor, and it must still work when start and end are equal or negative.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "numpy",
       "function_name": "solve",
-      "starter_code": "import numpy as np\n\ndef solve(start, end):\n    \"\"\"Return a 1-D integer array of consecutive values from start to end inclusive.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
+      "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Return a 1-D integer tensor of consecutive values from start to end inclusive.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
       "test_cases": [
         {
-          "setup_code": "import numpy as np\nstart = 3\nend = 8",
-          "call": "np.asarray(solve(start, end)).tolist()",
-          "expected_expr": "np.arange(start, end + 1).tolist()"
+          "setup_code": "import torch as t\nstart = 3\nend = 8",
+          "call": "(str(t.as_tensor(solve(start, end)).dtype), t.as_tensor(solve(start, end)).tolist())",
+          "expected_expr": "(str(t.arange(start, end + 1).dtype), t.arange(start, end + 1).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nstart = -4\nend = 2",
-          "call": "np.asarray(solve(start, end)).tolist()",
-          "expected_expr": "np.arange(start, end + 1).tolist()"
+          "setup_code": "import torch as t\nstart = -4\nend = 2",
+          "call": "(str(t.as_tensor(solve(start, end)).dtype), t.as_tensor(solve(start, end)).tolist())",
+          "expected_expr": "(str(t.arange(start, end + 1).dtype), t.arange(start, end + 1).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nstart = 5\nend = 5",
-          "call": "np.asarray(solve(start, end)).tolist()",
-          "expected_expr": "np.arange(start, end + 1).tolist()"
+          "setup_code": "import torch as t\nstart = 5\nend = 5",
+          "call": "(str(t.as_tensor(solve(start, end)).dtype), t.as_tensor(solve(start, end)).tolist())",
+          "expected_expr": "(str(t.arange(start, end + 1).dtype), t.arange(start, end + 1).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nstart = -7\nend = -3",
-          "call": "np.asarray(solve(start, end)).tolist()",
-          "expected_expr": "np.arange(start, end + 1).tolist()"
+          "setup_code": "import torch as t\nstart = -7\nend = -3",
+          "call": "(str(t.as_tensor(solve(start, end)).dtype), t.as_tensor(solve(start, end)).tolist())",
+          "expected_expr": "(str(t.arange(start, end + 1).dtype), t.arange(start, end + 1).tolist())"
         },
         {
-          "setup_code": "import numpy as np\nstart = 0\nend = 6",
-          "call": "(np.asarray(solve(start, end)).dtype.kind, np.asarray(solve(start, end)).tolist())",
-          "expected_expr": "('i', np.arange(start, end + 1).tolist())"
+          "setup_code": "import torch as t\nstart = 0\nend = 1",
+          "call": "(str(t.as_tensor(solve(start, end)).dtype), t.as_tensor(solve(start, end)).tolist())",
+          "expected_expr": "(str(t.arange(start, end + 1).dtype), t.arange(start, end + 1).tolist())"
         }
       ],
       "submission_mode": "function",
-      "canonical_solution": "import numpy as np\n\ndef solve(start, end):\n    return np.arange(start, end + 1)\n\n\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
-      "expected_output": "[3 4 5 6 7 8]",
+      "canonical_solution": "import torch as t\n\ndef solve(start, end):\n    return t.arange(start, end + 1)\n\n\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
+      "expected_output": "[10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33\n 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }

@@ -382,12 +382,39 @@ def _delta_to_jsonable(value):
         return {{k: _delta_to_jsonable(v) for k, v in value.items()}}
     return value
 
+_DELTA_RTOL = 1e-5
+_DELTA_ATOL = 1e-6
+
+def _delta_numeric_close(a2, b2):
+    # Tolerance compare, but ONLY when a float (or complex) is involved.
+    # torch defaults to float32 where numpy defaults to float64, and two honest
+    # answers can differ in reduction order, so exact equality makes correct
+    # solutions fail. Integer and boolean results stay exact — index answers
+    # (argmax, nonzero, searchsorted) must never be fudged by a tolerance.
+    # Returns None to mean "not a float comparison — use exact equality".
+    try:
+        fl = any(np.issubdtype(x.dtype, np.floating) or np.issubdtype(x.dtype, np.complexfloating)
+                 for x in (a2, b2))
+        if not fl:
+            return None
+        if a2.shape != b2.shape:
+            return False
+        return bool(np.allclose(a2, b2, rtol=_DELTA_RTOL, atol=_DELTA_ATOL, equal_nan=True))
+    except Exception:
+        return None
+
+def _delta_array_equal(a2, b2):
+    close = _delta_numeric_close(a2, b2)
+    if close is not None:
+        return close
+    return bool(np.array_equal(a2, b2))
+
 def _delta_equal(a, b):
     if _delta_torch_tensor(a) or _delta_torch_tensor(b):
         try:
             a2 = a.detach().cpu().numpy() if _delta_torch_tensor(a) else np.asarray(a)
             b2 = b.detach().cpu().numpy() if _delta_torch_tensor(b) else np.asarray(b)
-            return bool(np.array_equal(a2, b2))
+            return _delta_array_equal(a2, b2)
         except Exception:
             # dtypes numpy can't hold (bfloat16, conj views): equal tensors must
             # not grade as unequal — fall back to torch's own comparison.
@@ -400,11 +427,17 @@ def _delta_equal(a, b):
                     return False
             return False
     if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
-        return bool(np.array_equal(np.asarray(a), np.asarray(b)))
+        return _delta_array_equal(np.asarray(a), np.asarray(b))
     if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
         if len(a) != len(b):
             return False
         return all(_delta_equal(x, y) for x, y in zip(a, b))
+    # Scalar tail: floats reach here as plain float / np.float32 / np.float64,
+    # so route them through the same tolerance rule. Strings, dicts and objects
+    # yield a non-float dtype and fall through to exact equality unchanged.
+    _delta_close = _delta_numeric_close(np.asarray(a), np.asarray(b))
+    if _delta_close is not None:
+        return _delta_close
     return bool(a == b)
 
 def _delta_seed():

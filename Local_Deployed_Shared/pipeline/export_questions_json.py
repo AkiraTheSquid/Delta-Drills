@@ -439,6 +439,13 @@ def load_function_overrides() -> dict[int, dict]:
         # Einops visual triage (2026-07-07): 41 demotions to non-visual +
         # 7 duplicate-image fixture swaps. Keep in sync with backend.
         "einops_visual_fixes.jsonl",
+        # PyTorch dialect conversion (2026-07-27): re-expresses drills in the
+        # dialect ARENA actually uses (`import torch as t`), lesson by lesson.
+        # Layered last so a conversion wins over every earlier numpy-era
+        # repair. The torch import it introduces is itself what unparks the
+        # question — see backend/app/lessons.py::is_torch_dialect. Keep in
+        # sync with backend/app/questions.py::_load_function_overrides.
+        "torch_dialect_overrides.jsonl",
     ):
         layer = _read_jsonl_overrides(CHATGPT_RUNTIME_DIR / layer_name)
         for qid, record in layer.items():
