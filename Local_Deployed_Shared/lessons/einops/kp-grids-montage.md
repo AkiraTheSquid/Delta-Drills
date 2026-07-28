@@ -45,11 +45,11 @@ Task: six images into a 3-row × 2-column grid, row-major — verified by
 locating specific images.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
 # Six 2x2 single-channel images; image k is constant k (easy to locate).
-imgs = np.stack([np.full((2, 2, 1), float(k)) for k in range(6)])
+imgs = t.stack([t.full((2, 2, 1), float(k)) for k in range(6)])
 assert imgs.shape == (6, 2, 2, 1)
 
 grid = einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)
@@ -65,7 +65,7 @@ assert grid[4, 2, 0] == 5.0                  # bottom-right = image 5
 # hides two unknowns, so each group needs one keyword: g1 (fixes h) AND
 # g2 (fixes w).
 back = einops.rearrange(grid, '(g1 h) (g2 w) c -> (g1 g2) h w c', g1=3, g2=2)
-assert np.array_equal(back, imgs)
+assert t.equal(back, imgs)
 ```
 
 Why each step:
@@ -86,7 +86,7 @@ Why each step:
 Six images → 3×2 grid, row-major.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(imgs):
@@ -95,7 +95,7 @@ def solve(imgs):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(imgs):

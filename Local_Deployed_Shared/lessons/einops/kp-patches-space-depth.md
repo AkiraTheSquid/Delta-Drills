@@ -50,10 +50,10 @@ Task: extract 2×2 patches from an image, reassemble them, and run a
 space-to-depth.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-img = np.arange(16.0).reshape(4, 4, 1)     # (H, W, c=1), values = positions
+img = t.arange(16.0).reshape(4, 4, 1)     # (H, W, c=1), values = positions
 
 # PATCHES: split H into 2 blocks of 2, W likewise; block coords -> patch axis.
 patches = einops.rearrange(img, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=2, p2=2)
@@ -64,10 +64,10 @@ assert patches[1, 0, 0, 0] == 2.0          # patch 1 starts at column 2
 
 # REASSEMBLE: the same pattern, sides swapped (this is q323's shape).
 back = einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=2)
-assert np.array_equal(back, img)
+assert t.equal(back, img)
 
 # SPACE-TO-DEPTH on a batch: blocks fold into channels; H, W halve.
-x = np.arange(32.0).reshape(1, 2, 4, 4)    # (b, c=2, H, W)
+x = t.arange(32.0).reshape(1, 2, 4, 4)    # (b, c=2, H, W)
 s2d = einops.rearrange(x, 'b c (h p) (w q) -> b (c p q) h w', p=2, q=2)
 assert s2d.shape == (1, 8, 2, 2)           # channels x4, spatial /2
 # The new channel block for output pixel (0,0) holds input block [0:2, 0:2]:
@@ -95,7 +95,7 @@ Why each step:
 Reassemble a row-major tile stack into the image.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(patches, h, w):
@@ -104,7 +104,7 @@ def solve(patches, h, w):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(patches, h, w):
@@ -134,7 +134,7 @@ within-patch names, merge back).
 
 - **"Patch extraction needs sliding-window machinery."** — NON-overlapping
   patches are a pure reshape (split + merge); no windows, no copies of
-  copies. Sliding (overlapping) windows are the numpy KP's tool — different
+  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job — different
   task, check the word "non-overlapping".
 - **"Space-to-depth loses spatial information."** — It's a bijection: every
   pixel gets a unique (channel, position) address, and depth-to-space

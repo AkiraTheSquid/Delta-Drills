@@ -1,7 +1,7 @@
 # einsum
 
 ## Purpose
-- First-encounter Einsum knowledge-point lessons (registry lessons es-1..es-2): teaching `np.einsum` notation one rule at a time.
+- First-encounter Einsum knowledge-point lessons (registry lessons es-1..es-2): teaching `t.einsum` notation one rule at a time. The notation itself is library-independent; these pages teach it in the PyTorch dialect ARENA uses (`import torch as t`).
 
 ## Owns
 - One `kp-<slug>.md` per Einsum KC — concept, worked example, faded/independent exercises, misconceptions.
@@ -28,6 +28,8 @@
 - Watch out belongs to concept's lesson screen; no faded prompt or grading appears there.
 - Introduce spec rules in dependency order — later specs build on earlier ones (e.g. `bii->b` after `ii->`).
 - Read letter POSITIONS not letter SETS — misconceptions must reinforce this.
+- **One dialect per page, and it must match the drills the page fades into.** `watch.py` parses each fence's imports and compares against every referenced question's `answer_code`; converting a page without its questions (or the reverse) fails the folder check. It also fails a page whose fences no longer call einsum at all.
+- Never name a variable `t` in a fence or a drill signature: it shadows `import torch as t`, and the next `t.einsum` call dies with `'Tensor' object has no attribute 'einsum'`. Four bank questions had exactly this and were renamed during the conversion.
 
 ## Extension Points
 - Splitting a legacy einsum KP: promote its guided/independent bank ids to per-segment faded exercises; dump each qid's test_cases first (contracts vary); update frontmatter to match.
@@ -42,6 +44,7 @@
   - Status: `ACTIVE` for remaining legacy einsum KPs.
 
 ## Recent Changes
+- 2026-07-27: Converted all 10 KP pages and the 68 einsum drills to the PyTorch dialect. `watch.py` filled in: one dialect per page, page-vs-drill dialect match, and every page must still demonstrate einsum.
 - 2026-07-20: `kp-reductions.md` split into 4 atomic concept/worked sequences; worked code runs optionally on right.
 - 2026-07-20: `kp-diag-trace.md` rewritten into 6 atomic single-concept segments.
 - 2026-07-19: Initial doc created.

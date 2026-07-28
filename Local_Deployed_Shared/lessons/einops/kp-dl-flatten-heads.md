@@ -49,10 +49,10 @@ Task: flatten conv features for a classifier; merge attention heads; split
 them back.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-feats = np.arange(24.0).reshape(2, 3, 2, 2)     # (b, c, h, w)
+feats = t.arange(24.0).reshape(2, 3, 2, 2)     # (b, c, h, w)
 
 # Classifier flatten: batch survives, (c h w) merge in that order.
 flat = einops.rearrange(feats, 'b c h w -> b (c h w)')
@@ -61,7 +61,7 @@ assert flat.shape == (2, 12)
 assert flat[0, :4].tolist() == feats[0, 0].ravel().tolist()
 
 # Heads merge: (b, nh, t, d) -> (b, t, (nh d)).
-heads = np.arange(16.0).reshape(1, 2, 2, 4)     # (b, nh=2, t, d=4)
+heads = t.arange(16.0).reshape(1, 2, 2, 4)     # (b, nh=2, t, d=4)
 merged = einops.rearrange(heads, 'b nh t d -> b t (nh d)')
 assert merged.shape == (1, 2, 8)
 # Token 0's vector = head 0's features then head 1's (nh slow):
@@ -70,7 +70,7 @@ assert merged[0, 0].tolist() == (heads[0, 0, 0].tolist()
 
 # The inverse split — declare how the packed axis factors.
 unmerged = einops.rearrange(merged, 'b t (nh d) -> b nh t d', nh=2)
-assert np.array_equal(unmerged, heads)          # round trip exact
+assert t.equal(unmerged, heads)          # round trip exact
 ```
 
 Why each step:
@@ -92,7 +92,7 @@ Why each step:
 Flatten each image of a batch for a linear layer.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(x):
@@ -101,7 +101,7 @@ def solve(x):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(x):

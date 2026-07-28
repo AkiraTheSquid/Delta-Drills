@@ -44,6 +44,12 @@
   - Root cause: validator evaluated `expected_expr` without re-running `setup_code` when `expected_setup_code` absent; JS/backend graders re-run it.
   - Prevention/fix: `grade_against_bank` now uses `expected_setup_code or setup` — keep all three graders' semantics in lockstep.
   - Status: `RESOLVED` (2026-07-19).
+- **Validator missing the runtime's numpy preamble** — `RESOLVED`
+  - When it happens: a torch-dialect lesson whose bank fixture loads the ARENA image (`np.load('/delta_numbers.npy')`).
+  - Symptom: `NameError: name 'np' is not defined` from the validator on a drill that grades fine in the sandbox.
+  - Root cause: `grade_against_bank` seeded its namespace from the solution's own imports only, while `code_runner.CODE_PREAMBLE` always injects numpy. A torch solution imports torch, so `np` never existed.
+  - Prevention/fix: the grading namespace now imports numpy first — same lockstep rule as the expected-setup fix above. If the runtime preamble grows, mirror it here.
+  - Status: `RESOLVED` (2026-07-27).
 - **Relative paths rejected** — `ACTIVE`
   - When it happens: `validate_lessons.py some/relative/kp.md`.
   - Symptom: "not in the subpath" parse error.
@@ -51,6 +57,7 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-07-27: `grade_against_bank` mirrors the runtime numpy preamble, so torch-dialect lessons using the ARENA fixture validate. `watch.py` filled in.
 - 2026-07-20: Compiled `worked_example_code` supports inline optional-run lesson UI.
 - 2026-07-20: Segment-specific `## Watch out`; exact one-worked/one-faded validation.
 - 2026-07-19: Single-concept segment support (`build_segments`), per-segment faded enforcement, expected-setup grading fix.

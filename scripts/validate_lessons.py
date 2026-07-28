@@ -65,8 +65,13 @@ def grade_against_bank(solution_code, question):
     """Run solution against the bank question's test_cases. Returns list of failures."""
     failures = []
     for i, tc in enumerate(question["exercise"]["test_cases"]):
+        # The runtime grader always injects numpy (code_runner.CODE_PREAMBLE),
+        # so fixtures may use it even in a torch drill — np.load is the only
+        # way to reach the ARENA image. Mirror that, or torch lessons fail here
+        # for a reason that cannot happen in the sandbox.
         ns = {}
         try:
+            run_code("import numpy as np", ns)
             run_code(solution_code, ns)
             # Bank fixtures use the Docker-image path; point at the local copy.
             setup = tc.get("setup_code", "").replace("/delta_numbers.npy", NUMBERS_NPY)

@@ -44,24 +44,24 @@ Task: restore a flattened image given its height; split a sequence into
 chunks; reassemble tiles into an image.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
 # Round-trip: flatten (merge), then restore (split) with one known factor.
-img = np.arange(12).reshape(3, 2, 2)                  # (c, h, w)
+img = t.arange(12).reshape(3, 2, 2)                  # (c, h, w)
 flat = einops.rearrange(img, 'c h w -> c (h w)')      # (3, 4)
 back = einops.rearrange(flat, 'c (h w) -> c h w', h=2)
-assert np.array_equal(back, img)                       # perfect inverse
+assert t.equal(back, img)                       # perfect inverse
 
 # Split a sequence into p-token segments: t = n segments of length p.
-seq = np.arange(24).reshape(2, 6, 2)                  # (b, t=6, d)
+seq = t.arange(24).reshape(2, 6, 2)                  # (b, t=6, d)
 chunks = einops.rearrange(seq, 'b (n p) d -> b n p d', p=3)
 assert chunks.shape == (2, 2, 3, 2)
-assert np.array_equal(chunks[0, 0], seq[0, :3])       # first 3 tokens
+assert t.equal(chunks[0, 0], seq[0, :3])       # first 3 tokens
 
 # Split AND merge at once: tile stack -> image.
 # 6 tiles of shape (2, 2), listed row-major from a (2x3)-tile image.
-tiles = np.arange(24).reshape(6, 2, 2)                # ((h w), p1, p2)
+tiles = t.arange(24).reshape(6, 2, 2)                # ((h w), p1, p2)
 image = einops.rearrange(tiles, '(h w) p1 p2 -> (h p1) (w p2)', h=2)
 assert image.shape == (4, 6)                          # (2*2, 3*2)
 # Tile 0 occupies the top-left 2x2 block:
@@ -87,7 +87,7 @@ Why each step:
 Restore (c, h·w) to (c, h, w), given h.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(flat, h):
@@ -96,7 +96,7 @@ def solve(flat, h):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(flat, h):

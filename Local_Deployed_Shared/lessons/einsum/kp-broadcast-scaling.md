@@ -43,31 +43,31 @@ Task: weighted sum over channels (grayscale-style), and per-channel scaling
 — same operands, one letter's fate apart.
 
 ```python
-import numpy as np
+import torch as t
 
-img = np.arange(12.0).reshape(3, 2, 2)     # (c=3, h=2, w=2)
-w = np.array([0.5, 0.25, 0.25])            # one weight per channel
+img = t.arange(12.0).reshape(3, 2, 2)     # (c=3, h=2, w=2)
+w = t.tensor([0.5, 0.25, 0.25])            # one weight per channel
 
 # COLLAPSE: c pairs with the weights and is dropped -> weighted sum.
-gray = np.einsum('chw,c->hw', img, w)
+gray = t.einsum('chw,c->hw', img, w)
 assert gray.shape == (2, 2)
 # pixel (0,0): 0.5*img[0,0,0] + 0.25*img[1,0,0] + 0.25*img[2,0,0]
 assert gray[0, 0] == 0.5 * 0.0 + 0.25 * 4.0 + 0.25 * 8.0
 
 # KEEP: same pairing, c survives -> per-channel scaling.
-s = np.array([1.0, 10.0, 100.0])
-scaled = np.einsum('chw,c->chw', img, s)
+s = t.tensor([1.0, 10.0, 100.0])
+scaled = t.einsum('chw,c->chw', img, s)
 assert scaled.shape == img.shape
 assert scaled[1, 0, 0] == img[1, 0, 0] * 10.0     # channel 1 scaled by 10
 # Broadcasting twin — the letters replaced None-counting:
-assert np.allclose(scaled, img * s[:, None, None])
+assert t.allclose(scaled, img * s[:, None, None])
 
 # Weighted AVERAGE of rows: weighted sum / total weight — divide outside.
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-wr = np.array([3.0, 1.0])
-wavg = np.einsum('n,nd->d', wr, a) / wr.sum()
-assert np.allclose(wavg, [1.5, 2.5])
+wr = t.tensor([3.0, 1.0])
+wavg = t.einsum('n,nd->d', wr, a) / wr.sum()
+assert t.allclose(wavg, t.tensor([1.5, 2.5]))
 ```
 
 Why each step:
@@ -88,19 +88,19 @@ Why each step:
 Weighted sum over channels: (c,h,w) and weights (c,) → (h,w).
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(img, w):
     """Per-pixel weighted sum across channels."""
-    return np.einsum('_____', img, w)
+    return t.einsum('_____', img, w)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(img, w):
     """Per-pixel weighted sum across channels."""
-    return np.einsum('chw,c->hw', img, w)
+    return t.einsum('chw,c->hw', img, w)
 ```
 
 ## Guided practice

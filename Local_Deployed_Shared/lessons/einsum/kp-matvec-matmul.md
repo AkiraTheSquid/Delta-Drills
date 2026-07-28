@@ -39,16 +39,16 @@ the private one."
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-v = np.array([10.0, 1.0])
+v = t.tensor([10.0, 1.0])
 
 # 'ij,j->i': j is shared+dropped (row . v); i is private+kept (one per row).
-mv = np.einsum('ij,j->i', a, v)
+mv = t.einsum('ij,j->i', a, v)
 assert mv.tolist() == [12.0, 34.0]
-assert np.array_equal(mv, a @ v)   # the @-twin: always check while learning
+assert t.equal(mv, a @ v)   # the @-twin: always check while learning
 ```
 
 Why: trace entry [0] straight from the rule — i=0 fixed, j ranges:
@@ -65,19 +65,19 @@ permutation matrix is still a matrix, so this is still a matrix-vector product.
 Write the spec.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(p, v):
     """p @ v — each row of p has one 1, so row i just picks out one entry of v."""
-    return np.einsum('_____', p, v)
+    return t.einsum('_____', p, v)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(p, v):
     """p @ v — each row of p has one 1, so row i just picks out one entry of v."""
-    return np.einsum('ij,j->i', p, v)
+    return t.einsum('ij,j->i', p, v)
 ```
 
 ## Concept: matrix-matrix 'ik,kj->ij'
@@ -115,16 +115,16 @@ letter, keep the private ones."
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # 'ik,kj->ij': k is shared+dropped (the contraction); i, j are private+kept.
-mm = np.einsum('ik,kj->ij', a, b)
-assert np.array_equal(mm, a @ b)   # the @-twin
+mm = t.einsum('ik,kj->ij', a, b)
+assert t.equal(mm, a @ b)   # the @-twin
 ```
 
 Why: trace entry [0, 0] by the rule — i=0, j=0 fixed, k ranges:
@@ -142,19 +142,19 @@ of a row and a column, so it's tempting to write `'i,i->'`. But both inputs are
 output shape.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(c, d):
     """(1,2) @ (2,1) -> (1,1). Two matrices -> matmul, not a bare dot."""
-    return np.einsum('_____', c, d)
+    return t.einsum('_____', c, d)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(c, d):
     """(1,2) @ (2,1) -> (1,1). Two matrices -> matmul, not a bare dot."""
-    return np.einsum('ik,kj->ij', c, d)
+    return t.einsum('ik,kj->ij', c, d)
 ```
 
 ## Guided practice

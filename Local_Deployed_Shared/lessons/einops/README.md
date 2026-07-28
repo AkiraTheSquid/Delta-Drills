@@ -37,7 +37,10 @@
 
 ## Data & External Dependencies
 
-- Uses NumPy arrays plus `einops` APIs in executable worked/faded code fences.
+- Uses PyTorch tensors (`import torch as t`) plus `einops` APIs in executable
+  worked/faded code fences. einops itself is dialect-agnostic, so only the
+  fixtures moved. NumPy is still importable at runtime and fixtures may use it
+  to reach `/delta_numbers.npy` — that is the one sanctioned `np.` in a fence.
 - Exercise IDs resolve against `../../questions_structured.json`; faded
   solutions must satisfy those exact test cases.
 - `scripts/lesson_lib.py` parses Markdown segments; `validate_lessons.py`
@@ -73,6 +76,15 @@
   segments can break later examples.
 - Some bank fixtures reference `/delta_numbers.npy`; validator rewrites path for
   local execution. Do not change source contracts to hide fixture mismatch.
+- **One dialect per page, and it must match the drills the page fades into.**
+  `watch.py` enforces both by parsing the fences' imports and comparing against
+  each referenced question's `answer_code`. Converting a page without its
+  questions (or the reverse) fails the folder check.
+- Never name a variable `t` in a fence: it shadows `import torch as t` and the
+  next `t.arange` call dies with `'Tensor' object has no attribute 'arange'`.
+- Every fence that calls `rearrange`/`reduce`/`repeat` must import einops
+  itself; fences share a namespace when executed, so a missing import only
+  shows up once someone reorders segments.
 
 ## Extension Points
 
@@ -107,6 +119,10 @@
 
 ## Recent Changes
 
+- 2026-07-27: Converted all 11 KP pages and the 91 einops drills to the PyTorch
+  dialect ARENA uses. `watch.py` filled in: enforces one dialect per page, that
+  the page matches the drills it fades into, and that every einops-calling fence
+  imports einops.
 - 2026-07-20: Documented inline teaching + optional runnable worked-code flow;
   faded examples no longer appear in lesson screen.
 - 2026-07-20: `kp-dl-flatten-heads` and `kp-repeat-model` reduced to one faded

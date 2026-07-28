@@ -46,24 +46,24 @@ Task: split interleaved channel groups; swap group blocks; average-pool
 time pairs.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
 # 6 channels = 3 channels x 2 groups, GROUP INDEX FASTEST (interleaved):
 # channel order is g0c0, g1c0, g0c1, g1c1, g0c2, g1c2.
-x = np.arange(12.0).reshape(1, 6, 1, 2)          # (b, 6, h, w)
+x = t.arange(12.0).reshape(1, 6, 1, 2)          # (b, 6, h, w)
 
 split = einops.rearrange(x, 'b (c g) h w -> g b c h w', g=2)
 assert split.shape == (2, 1, 3, 1, 2)
 # Group 0 must hold original channels 0, 2, 4 (every second one):
-assert np.array_equal(split[0, 0, :, 0, 0], x[0, ::2, 0, 0])
+assert t.equal(split[0, 0, :, 0, 0], x[0, ::2, 0, 0])
 
 # Same data read as GROUP SLOWEST would give a different (wrong here) split:
 wrong = einops.rearrange(x, 'b (g c) h w -> g b c h w', g=2)
-assert not np.array_equal(split, wrong)          # conventions matter!
+assert not t.equal(split, wrong)          # conventions matter!
 
 # Temporal pooling: average adjacent pairs of time steps.
-seq = np.arange(8.0).reshape(1, 1, 8)            # (b, c, t=8)
+seq = t.arange(8.0).reshape(1, 1, 8)            # (b, c, t=8)
 halved = einops.reduce(seq, 'b c (t two) -> b c t', 'mean', two=2)
 assert halved[0, 0].tolist() == [0.5, 2.5, 4.5, 6.5]
 ```
@@ -87,7 +87,7 @@ Why each step:
 Split out interleaved channel groups (group index FASTEST).
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(x, split):
@@ -96,7 +96,7 @@ def solve(x, split):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(x, split):

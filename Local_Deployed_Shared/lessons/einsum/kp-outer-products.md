@@ -23,7 +23,7 @@ the sum of the input ranks. That single idea covers the family:
 
 - **Self outer product**: pass the same vector twice — `'i,j->ij'` with
   (v, v) gives the symmetric all-pairs product matrix. (The two slots get
-  different letters even though the DATA is the same array — letters label
+  different letters even though the DATA is the same tensor — letters label
   axes-of-slots, not variables.)
 - **Tensor outer product of matrices**: `'pq,rs->prqs'` — four independent
   axes, kept in whatever output order the task demands. Axis order on the
@@ -45,29 +45,29 @@ Task: an outer product, its self- variant, and the shared-and-kept mixed
 form.
 
 ```python
-import numpy as np
+import torch as t
 
-v1 = np.array([1.0, 2.0])
-v2 = np.array([10.0, 20.0, 30.0])
+v1 = t.tensor([1.0, 2.0])
+v2 = t.tensor([10.0, 20.0, 30.0])
 
 # 'i,j->ij': independent letters, both kept -> all pairs.
-outer = np.einsum('i,j->ij', v1, v2)
+outer = t.einsum('i,j->ij', v1, v2)
 assert outer.shape == (2, 3)
 assert outer.tolist() == [[10.0, 20.0, 30.0],
                           [20.0, 40.0, 60.0]]
 # Same thing via broadcasting — einsum names this exact pattern:
-assert np.array_equal(outer, v1[:, None] * v2[None, :])
+assert t.equal(outer, v1[:, None] * v2[None, :])
 
 # Self outer product: same array in both slots, different letters.
-v = np.array([1.0, 2.0, 3.0])
-self_outer = np.einsum('i,j->ij', v, v)
+v = t.tensor([1.0, 2.0, 3.0])
+self_outer = t.einsum('i,j->ij', v, v)
 assert self_outer[1, 2] == 6.0                 # v[1] * v[2]
-assert np.array_equal(self_outer, self_outer.T)  # symmetric by construction
+assert t.equal(self_outer, self_outer.T)  # symmetric by construction
 
 # Shared AND kept: 'id,jd->ijd' — d pairs elementwise, i/j combine.
-x = np.array([[1.0, 2.0],
+x = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])                     # (t=2, d=2)
-pairs = np.einsum('id,jd->ijd', x, x)
+pairs = t.einsum('id,jd->ijd', x, x)
 assert pairs.shape == (2, 2, 2)
 assert pairs[0, 1].tolist() == [3.0, 8.0]      # row0 * row1, elementwise
 ```
@@ -92,19 +92,19 @@ Why each step:
 The (i, j) outer-product matrix of two vectors.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(v1, v2):
     """All pairwise products: independent letters, both kept."""
-    return np.einsum('_____', v1, v2)
+    return t.einsum('_____', v1, v2)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(v1, v2):
     """All pairwise products: independent letters, both kept."""
-    return np.einsum('i,j->ij', v1, v2)
+    return t.einsum('i,j->ij', v1, v2)
 ```
 
 ## Guided practice
@@ -112,8 +112,8 @@ def solve(v1, v2):
 ### q278
 1. All pairwise products of ONE vector's entries — an outer product of the
    vector with which second operand?
-2. The same array can fill both slots; the spec doesn't change.
-3. `np.einsum('i,j->ij', v, v)` — and the result should equal its own
+2. The same tensor can fill both slots; the spec doesn't change.
+3. `t.einsum('i,j->ij', v, v)` — and the result should equal its own
    transpose (why?).
 
 ## Independent practice
@@ -126,8 +126,8 @@ every row pair).
 
 ## Misconceptions
 
-- **"Passing the same array twice needs the same letter."** — Letters name
-  slot axes, not arrays. Self-outer is 'i,j->ij' with (v, v); using 'i,i'
+- **"Passing the same tensor twice needs the same letter."** — Letters name
+  slot axes, not tensors. Self-outer is 'i,j->ij' with (v, v); using 'i,i'
   would elementwise-pair instead. Decide by the COMPUTATION, not the
   operand identity.
 - **"Output rank = input rank."** — Unshared kept letters ADD ranks:

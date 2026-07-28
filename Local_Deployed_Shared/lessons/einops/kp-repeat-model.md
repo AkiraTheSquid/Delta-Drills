@@ -18,7 +18,7 @@ reduce: the output may contain names (or factors) the input DOESN'T have**
 
 > `repeat(cls, 'b d -> b t d', t=8)`
 > — each (b, d) embedding is broadcast across 8 new time steps. This is
-> einops' np.broadcast_to / "unsqueeze + expand": the classic use is
+> einops' t.broadcast_to / "unsqueeze + expand": the classic use is
 > spreading a class token or per-token weights across a new dimension.
 
 **2. Stretching an existing axis** — a factor inside output parens that
@@ -28,8 +28,9 @@ wasn't in the input:
 > (h slow, 3 fast: row, its copies, next row). Nearest-neighbor upscaling
 > is this on both axes: `'h w c -> (h 2) (w 2) c'`.
 > `repeat(img, 'c h w -> c (3 h) w')` — the WHOLE image stacked 3 times
-> (3 slow: full copy, then full copy). numpy's repeat-vs-tile distinction,
-> decided by paren ORDER instead of function choice.
+> (3 slow: full copy, then full copy). PyTorch's
+> `repeat_interleave`-vs-`repeat` distinction, decided by paren ORDER
+> instead of function choice.
 
 The order rule is the one you already own from merging: **left = slow =
 blocks, right = fast = within-block.** `(h k)` interleaves copies per row;
@@ -45,18 +46,18 @@ Task: broadcast an embedding across time; stretch rows; whole-image stack —
 the three moves, distinguished.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
 # 1. NEW AXIS: (b, d) -> (b, t, d), each embedding copied t times.
-cls = np.array([[1.0, 2.0],
+cls = t.tensor([[1.0, 2.0],
                 [3.0, 4.0]])                # (b=2, d=2)
 seq = einops.repeat(cls, 'b d -> b t d', t=3)
 assert seq.shape == (2, 3, 2)
 assert seq[0].tolist() == [[1.0, 2.0]] * 3   # identical copies down t
 
 # 2. STRETCH, factor fast: each ROW repeats consecutively.
-img = np.array([[1, 2],
+img = t.tensor([[1, 2],
                 [3, 4]])                     # (h, w) for clarity
 rows3 = einops.repeat(img, 'h w -> (h r) w', r=2)
 assert rows3.tolist() == [[1, 2],
@@ -81,10 +82,10 @@ assert up.tolist() == [[1, 1, 2, 2],
 
 Why each step:
 
-1. `(h r)` vs `(r h)` on the same data is numpy's repeat-vs-tile shootout
+1. `(h r)` vs `(r h)` on the same data is the `repeat_interleave`-vs-`repeat` shootout
    resettled by one convention (left slow) instead of two function names —
    run both once, then trust the rule.
-2. The new-axis case allocates real copies (unlike numpy broadcasting's
+2. The new-axis case allocates real copies (unlike `expand`'s
    virtual stretch) — fine for drills; in memory-tight code you'd reach
    for broadcast_to semantics knowingly.
 3. The upscale's per-axis factors (a, b) show the moves composing — each
@@ -97,7 +98,7 @@ Why each step:
 Triple an image's height by repeating each row consecutively.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(img):
@@ -106,7 +107,7 @@ def solve(img):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(img):
@@ -142,6 +143,6 @@ BLOCK r times — slow or fast?).
   "consecutively"/"each row" vs "whole image again" — map the words to
   the order.
 - **"Broadcasting makes repeat unnecessary."** — Broadcasting stretches
-  virtually within an operation; repeat materializes an actual array with
+  virtually within an operation; repeat materializes an actual tensor with
   the new shape — which is what a drill's return-shape contract (and much
   downstream code) requires. Know which one you're producing.

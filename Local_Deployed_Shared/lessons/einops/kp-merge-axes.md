@@ -38,7 +38,7 @@ The classic instances:
 - Channel unroll: `'c h w -> (c h) w'` — all of channel 0's rows, then
   channel 1's… (c slow, h fast).
 
-In raw NumPy each of these is a transpose+reshape pair you must derive;
+In raw PyTorch each of these is a permute+reshape pair you must derive;
 in einops the pattern is the derivation.
 
 ## Worked example
@@ -47,10 +47,10 @@ Task: flatten an image's spatial axes per channel; lay a batch out side by
 side.
 
 ```python
-import numpy as np
+import torch as t
 import einops
 
-img = np.arange(12).reshape(3, 2, 2)      # (c, h, w)
+img = t.arange(12).reshape(3, 2, 2)      # (c, h, w)
 
 # Merge h and w, h varying slowest: each channel flattens in reading order.
 flat = einops.rearrange(img, 'c h w -> c (h w)')
@@ -62,7 +62,7 @@ flat_cols = einops.rearrange(img, 'c h w -> c (w h)')
 assert flat_cols[0].tolist() == [0, 2, 1, 3]
 
 # Merge NON-adjacent axes: batch into width -> images side by side.
-batch = np.arange(16).reshape(2, 2, 2, 2)  # (b, h, w, c)
+batch = t.arange(16).reshape(2, 2, 2, 2)  # (b, h, w, c)
 wide = einops.rearrange(batch, 'b h w c -> h (b w) c')
 assert wide.shape == (2, 4, 2)
 # Row 0: image 0's two columns, THEN image 1's two columns (b is slow).
@@ -87,7 +87,7 @@ Why each step:
 Flatten spatial axes per channel, reading order.
 
 ```python starter
-import numpy as np
+import torch as t
 import einops
 
 def solve(img):
@@ -96,7 +96,7 @@ def solve(img):
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 import einops
 
 def solve(img):
@@ -126,7 +126,7 @@ height), q314 (batch side by side in a channels-LAST layout).
   "column by column" / "X's block first" picks the order for you.
 - **"Axes must be adjacent to merge."** — The pattern happily merges
   distant axes ('b h w c -> h (b w) c'); einops inserts the implied
-  transpose. In NumPy you'd have to move them together first — that
+  transpose. By hand you'd have to permute them together first — that
   two-step is exactly what the pattern hides.
 - **"Merging loses information."** — It's a pure relabeling; every element
   keeps a unique address. The inverse operation (splitting, next KP)

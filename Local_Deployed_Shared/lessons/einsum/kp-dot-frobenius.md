@@ -40,20 +40,20 @@ multiply along it; dropped letter = sum over it.**
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-v1 = np.array([1.0, 2.0, 3.0])
-v2 = np.array([4.0, -5.0, 6.0])
+v1 = t.tensor([1.0, 2.0, 3.0])
+v2 = t.tensor([4.0, -5.0, 6.0])
 
 # 'i,i->': shared i pairs the entries; the empty output sums the products.
-d = np.einsum('i,i->', v1, v2)
+d = t.einsum('i,i->', v1, v2)
 assert d == 12.0                              # 1*4 + 2*-5 + 3*6
-assert d == np.dot(v1, v2) == (v1 * v2).sum() # three spellings, one atom
+assert d == t.dot(v1, v2) == (v1 * v2).sum() # three spellings, one atom
 ```
 
 Why: `1·4 + 2·(-5) + 3·6 = 4 - 10 + 18 = 12`. The three-spellings assert is the
 bridge — when a spec confuses you, translate it back to "multiply the paired
-axis, then sum" and it parses. `np.dot`, `(v1*v2).sum()`, and `'i,i->'` are the
+axis, then sum" and it parses. `t.dot`, `(v1*v2).sum()`, and `'i,i->'` are the
 same operation wearing three different clothes.
 
 ## Faded practice
@@ -64,19 +64,19 @@ vectors and a scalar answer. Name the shared axis, then leave the output empty s
 it collapses to a scalar.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(v1, v2):
     """Dot product as a scalar: pair the shared axis, sum it away."""
-    return np.einsum('_____', v1, v2)
+    return t.einsum('_____', v1, v2)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(v1, v2):
     """Dot product as a scalar: pair the shared axis, sum it away."""
-    return np.einsum('i,i->', v1, v2)
+    return t.einsum('i,i->', v1, v2)
 ```
 
 ## Concept: the Frobenius inner product 'ij,ij->'
@@ -103,15 +103,15 @@ you have the Frobenius norm. Same spec, nothing new to learn.)
 ## Worked example
 
 ```python
-import numpy as np
+import torch as t
 
-a = np.array([[1.0, 2.0],
+a = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
-b = np.array([[5.0, 6.0],
+b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
 # 'ij,ij->': position [i,j] meets [i,j] on both; multiply all, sum all.
-f = np.einsum('ij,ij->', a, b)
+f = t.einsum('ij,ij->', a, b)
 assert f == 70.0                 # 1*5 + 2*6 + 3*7 + 4*8
 assert f == (a * b).sum()        # the same multiply-then-reduce, named
 ```
@@ -129,25 +129,25 @@ the Frobenius spec: it's still the elementwise-multiply-and-sum of two matrices,
 `a` paired position-for-position with a matrix of ones.
 
 ```python starter
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Sum of a*b over every corresponding entry (b is all ones here)."""
-    return np.einsum('_____', a, b)
+    return t.einsum('_____', a, b)
 ```
 
 ```python solution
-import numpy as np
+import torch as t
 
 def solve(a, b):
     """Sum of a*b over every corresponding entry (b is all ones here)."""
-    return np.einsum('ij,ij->', a, b)
+    return t.einsum('ij,ij->', a, b)
 ```
 
 ## Guided practice
 
 ### q270
-1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 arrays —
+1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 tensors —
    how many axes need pairing now?
 2. Three axes → three shared letters; the scalar answer means the output side is
    empty.
