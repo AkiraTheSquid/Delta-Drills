@@ -50,12 +50,13 @@
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
-- **Stale `expected_output`** — `ACTIVE`
-  - When it happens: a rewrite changes `answer_code` or the canonical example without refreshing the reference stdout carried from the CSV `Output` column.
+- **Stale `expected_output` in the committed bank** — `ACTIVE (local only)`
+  - When it happens: a rewrite changes `answer_code` or the canonical example, and the committed `questions.json` is not re-exported afterwards.
   - Symptom: the reference output shown beside a drill contradicts the drill's own example (e.g. an example printing a 2×3 with a 2×2 output). Grading is unaffected — function-mode grades via `test_cases`.
-  - Root cause: `expected_output` was not override-able, so rewrite layers could not correct it, and the 07-07 parameterized regeneration never refreshed it.
-  - Prevention/fix: `expected_output` is now in the override whitelist, and generators should **derive it by executing the canonical example** rather than hand-writing it.
-  - Status: `ACTIVE` — 118 of the 364 questions carrying both fields still disagree with what their own `answer_code` prints (Einsum 64, PyTorch Fundamentals 17, Numpy 11, CNN 9, Autograd 9, CNNs 5, Optimizers 3).
+  - Root cause: the CSV `Output` column was captured out-of-harness and drifts as questions are rewritten.
+  - Prevention/fix: **already handled at export time.** `recompute_expected_outputs()` re-runs every stdout-graded question's `answer_code` through the grading harness and overwrites the stored string, so any deploy self-heals. Generators should still derive the value by execution rather than hand-writing it.
+  - Status: `ACTIVE` only in the sense that the *committed artifact* drifts between deploys — the last export corrected 189 entries. Measured against the harness immediately after export, exactly **1** question mismatches (#42, genuinely random) and #65 errors by design.
+  - **Measurement footgun:** comparing `expected_output` against a plain `exec()` of `answer_code` reports ~142 false positives. The reference is the harness (preamble + seeding), not bare exec — an earlier pass in this repo mis-measured this as "118 stale" for exactly that reason.
 
 - **Precompute leak** — `RESOLVED`
   - When it happens: an `expected_expr` restates the solution, so the test passes without the learner solving anything.
@@ -72,5 +73,6 @@
   - Status: `ACTIVE` — structural, no automated check enforces it.
 
 ## Recent Changes
-- 2026-07-27: `expected_output` added to the override whitelist in both the exporter and the backend; new `torch_dialect_overrides.jsonl` layer registered last, carrying the PyTorch dialect conversion. Bank-wide `expected_output` staleness measured at 118/364 and recorded above.
+- 2026-07-27: `torch_dialect_overrides.jsonl` now carries all 49 of np-1's questions in the PyTorch dialect. The staleness entry above was corrected: the earlier 118/364 figure was measured against bare `exec` instead of the grading harness, and the real post-export count is 1.
+- 2026-07-27: `expected_output` added to the override whitelist in both the exporter and the backend; new `torch_dialect_overrides.jsonl` layer registered last.
 - 2026-04-29: Initial doc created.
