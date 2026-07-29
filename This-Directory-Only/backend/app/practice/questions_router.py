@@ -153,7 +153,9 @@ def next_question(
     served = set(sub_state.served_question_ids)
     if focus_subtopic is None:
         candidates = narrow_to_next_kc(user_state, candidates, served)
-    question = select_question_for_difficulty(candidates, target_diff, served)
+    question = select_question_for_difficulty(
+        candidates, target_diff, served, sub_state.served_question_ids
+    )
     if question is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

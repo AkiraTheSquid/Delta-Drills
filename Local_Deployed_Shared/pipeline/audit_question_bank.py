@@ -405,6 +405,52 @@ def check_atom_graph(questions: list[dict], graph: dict | None = None,
         cycle_atoms = [a for a in exc.args[1] if a in atom_qids] or list(atom_qids)[:1]
         flag(cycle_atoms[0], "atom_graph_cycle", f"prerequisite cycle: {exc.args[1]}")
 
+    findings = _flag_untagged_kc_questions(bank_ids, tag_rows, findings)
+    return findings
+
+
+def _flag_untagged_kc_questions(
+    bank_ids: set, tag_rows: list[dict], findings: dict[int, list[dict]],
+) -> dict[int, list[dict]]:
+    """A question the q-matrix places into a KC, but that carries no atom tag.
+
+    Answering such a question moves NOTHING. Mastery is the weighted mean of
+    BKT posteriors over a KC's atoms, and the atoms come from these tags, so an
+    untagged drill is graded, recorded, and then contributes nothing toward
+    unlocking its own concept — the learner works and the bar does not move.
+
+    That is not hypothetical. q480 was authored through curated_additions.csv,
+    which extends the CSV bank and the q-matrix but not this tag file, and it
+    was one of only two questions on the lattice ROOT. Half the entry concept's
+    evidence went nowhere, and the whole course sits behind that concept.
+
+    Untagged questions the q-matrix does not place are fine and deliberate — 75
+    of them exist, they are ordered by the atom lattice instead, and
+    prioritization.question_is_unlocked says so explicitly.
+    """
+    qmatrix_path = _sys_path_root / "lessons" / "qmatrix_tags.json"
+    if not qmatrix_path.exists():
+        return findings
+    qmatrix = json.loads(qmatrix_path.read_text(encoding="utf-8"))
+    rows = qmatrix.get("questions", qmatrix) if isinstance(qmatrix, dict) else {}
+    tagged = {row["question_id"] for row in tag_rows if row.get("atoms")}
+    for key, row in rows.items():
+        try:
+            qid = int(key)
+        except (TypeError, ValueError):
+            continue
+        if qid not in bank_ids or qid in tagged:
+            continue
+        if not (isinstance(row, dict) and row.get("target_kcs")):
+            continue
+        findings.setdefault(qid, []).append({
+            "check": "atom_tag_missing",
+            "atom": None,
+            "detail": (
+                f"placed in KC(s) {list(row['target_kcs'])} but has no row in "
+                "question_atom_tags.jsonl — correct answers move no mastery"
+            ),
+        })
     return findings
 
 
@@ -502,7 +548,8 @@ def audit(confirm: bool) -> dict:
 BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
                    "expected_eval_error", "setup_exec_error", "identity_expected",
                    "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error",
-                   "atom_tag_unwired", "atom_prereq_untrainable", "atom_graph_cycle"}
+                   "atom_tag_unwired", "atom_prereq_untrainable", "atom_graph_cycle",
+                   "atom_tag_missing"}
 
 
 def main() -> None:

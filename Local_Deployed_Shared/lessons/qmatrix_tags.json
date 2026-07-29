@@ -2285,6 +2285,7 @@
   "supporting_kcs": [],
   "new_syntax": [
    "torch.tensor",
+   "torch.tensor#dtype",
    "Tensor.shape",
    "Tensor.dtype",
    "Tensor.ndim",
@@ -4296,6 +4297,109 @@
   "supporting_kcs": [],
   "new_syntax": [
    "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-independent"
+ },
+ "481": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-independent"
+ },
+ "482": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-faded"
+ },
+ "483": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-independent"
+ },
+ "484": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-faded"
+ },
+ "485": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
+   "Tensor.shape",
+   "Tensor.dtype",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "torch.int64",
+   "torch.float32"
+  ],
+  "source": "kp-independent"
+ },
+ "486": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "torch.tensor",
+   "torch.tensor#dtype",
    "Tensor.shape",
    "Tensor.dtype",
    "Tensor.ndim",

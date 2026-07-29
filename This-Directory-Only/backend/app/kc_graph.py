@@ -267,8 +267,61 @@ def kc_mastery(user_state, kc: str) -> Tuple[float, float, str]:
     return acc / total_w, covered / total_w, row.get("tier") or "topic-proxy"
 
 
+def kc_evidence_exhausted(user_state, kc: str) -> bool:
+    """The learner has given every piece of evidence this concept can ask for.
+
+    A KC's question pool is finite, and some are tiny — `numpy.sorting` owns one
+    drill and the lattice root `numpy.ndarray-model` owns two. The atom-BKT bar
+    (LEARNED_THRESHOLD, from a self-reported beginner's prior) wants roughly
+    seven mastery-moving correct answers before it clears. A two-question
+    concept therefore cannot reach it without re-serving the same two drills six
+    times over, and until it clears, every concept downstream of it stays
+    locked: at cold start the frontier is exactly one KC wide, so the whole
+    448-question course sat behind two problems shown on a loop.
+
+    Asking for more evidence than the bank can supply is not rigour, it is a
+    dead end. So a concept also counts as learned when BOTH hold:
+
+      * EVERY question the concept owns has been served — the pool has nothing
+        new left to show them; and
+      * the ladder has them on `solo`, its top rung, which by PROMOTE_LO takes
+        four consecutive correct answers with no scaffold.
+
+    The first clause has to be distinct-question coverage and not an attempt
+    COUNT. Counting attempts reads as a coverage test and is not one: reaching
+    `solo` already costs four attempts, so on the small pools this exists to
+    rescue — `numpy.sorting` owns one drill, `numpy.linalg-basics` two — a
+    count-based clause is satisfied before it is ever consulted and constrains
+    nothing at all.
+
+    The second clause is the performance bar, measured on the concept's own
+    attempts. A small pool therefore buys a faster unlock but never a free one:
+    missing once drops the rung, and the credit goes with it.
+    """
+    pool = set(questions_for_kc(kc))
+    if not pool:
+        return False
+    if not pool <= _served_question_ids(user_state):
+        return False
+    return kc_stage(user_state, kc) == "solo"
+
+
+def _served_question_ids(user_state) -> set:
+    """Every question this learner has been handed, across all subtopics.
+
+    A KC's questions can sit in more than one subtopic, so the union is the
+    only honest answer to "has the bank shown them everything it has".
+    """
+    out = set()
+    for sub_state in (getattr(user_state, "subtopic_states", None) or {}).values():
+        out.update(getattr(sub_state, "served_question_ids", None) or ())
+    return out
+
+
 def kc_is_learned(user_state, kc: str) -> bool:
-    return kc_mastery(user_state, kc)[0] >= LEARNED_THRESHOLD
+    if kc_mastery(user_state, kc)[0] >= LEARNED_THRESHOLD:
+        return True
+    return kc_evidence_exhausted(user_state, kc)
 
 
 def kc_is_unlocked(user_state, kc: str) -> bool:
@@ -590,7 +643,9 @@ def kc_report(user_state, eligible=None) -> dict:
     rows = {}
     for kc, node in reg.items():
         m, covered, tier = kc_mastery(user_state, kc)
-        learned = m >= LEARNED_THRESHOLD
+        # Same predicate the practice gate uses, exhaustion credit included —
+        # a node the queue treats as cleared must not draw as still-frontier.
+        learned = kc_is_learned(user_state, kc)
         unlocked = kc_is_unlocked(user_state, kc)
         rows[kc] = {
             "title": node["title"],

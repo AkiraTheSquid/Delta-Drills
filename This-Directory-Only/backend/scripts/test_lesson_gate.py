@@ -40,11 +40,13 @@ lessons._load()
 # have been failing since before this change:
 #   380 -> 374  the structured-dtypes retirement removed that KC's questions,
 #               and q480 (curated_additions) added one back.
+#   374 -> 380  six new drills for numpy.ndarray-model, the lattice root. It
+#               owned two questions against a mastery bar wanting ~7 correct
+#               answers, so the queue had to recycle them and the rest of the
+#               course stayed locked behind the loop.
 #    64 -> 63   numpy.structured-dtypes was retired with the torch conversion;
 #               kc_registry.json has held 63 KCs since.
-# Asserting the live count against the registry rather than a literal, so the
-# next legitimate content change updates it instead of silently re-breaking.
-_EXPECTED_TAGGED = 374
+_EXPECTED_TAGGED = 380
 _EXPECTED_KCS = 63
 check("qmatrix loads all easy-topic questions",
       len(lessons._question_target_kcs) == _EXPECTED_TAGGED,

@@ -10,3 +10,77 @@ example = [[1, 2, 3], [4, 5, 6]]
 print(solve(example))
 ",12,"(tensor([[1, 2, 3],
         [4, 5, 6]]), (2, 3), False)"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT Python list of numbers and returns a tuple (a, ndim). `a` is the tensor built from values, and `ndim` is its number of axes as a plain int. A flat list has one level of nesting, so think about what that makes ndim before you run it.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (tensor built from values, its number of axes).""""""
+    a = t.tensor(values)
+    return (a, a.ndim)
+
+
+example = [4, 1, 7]
+print(solve(example))
+",9,"(tensor([4, 1, 7]), 1)"
+Numpy,Core array literacy,"Write a function solve(rows) that takes a nested Python list of equal-length inner lists and returns a tuple (ndim, numel) for the tensor built from it. `ndim` is the number of axes; `numel` is the total element count. Both must be plain Python ints. numel is the product of the shape, not the length of the outer list.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (number of axes, total element count) for the tensor from rows.""""""
+    a = t.tensor(rows)
+    return (a.ndim, a.numel())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",16,"(2, 6)"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT Python list of numbers and returns a tuple (dtype_name, numel). `dtype_name` is str() of the tensor's dtype — the string 'torch.int64' or 'torch.float32'. `numel` is the element count as a plain int. A tensor holds ONE type for every element, so a single float anywhere in the list decides the type of the whole block.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (str of the tensor's dtype, its element count).""""""
+    a = t.tensor(values)
+    return (str(a.dtype), a.numel())
+
+
+example = [1, 2, 3]
+print(solve(example))
+",20,"('torch.int64', 3)"
+Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that builds a tensor from each nested list and returns a tuple (same_shape, same_dtype) of two bools: whether the two tensors agree on shape, and whether they agree on dtype. Two tensors can hold the same numbers in the same layout and still disagree on dtype, which is the mismatch that bites in real code.","import torch
+import torch as t
+
+def solve(rows_a, rows_b):
+    """"""Return (do the shapes match?, do the dtypes match?).""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return (a.shape == b.shape, a.dtype == b.dtype)
+
+
+example = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])
+print(solve(*example))
+",24,"(True, True)"
+Numpy,Core array literacy,"Write a function solve(cube) that takes a TRIPLY nested Python list — a list of equal-length lists of equal-length lists of numbers — and returns a tuple (ndim, shape, numel). `shape` must be a plain Python tuple of ints, not a torch.Size. Nesting depth becomes the number of axes: the outermost list is axis 0.","import torch
+import torch as t
+
+def solve(cube):
+    """"""Return (number of axes, shape as a plain tuple, element count).""""""
+    a = t.tensor(cube)
+    return (a.ndim, tuple(a.shape), a.numel())
+
+
+example = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+print(solve(example))
+",30,"(3, (2, 2, 2), 8)"
+Numpy,Core array literacy,"Write a function solve(rows) that returns a tuple (inferred_name, forced_name, unchanged). Build one tensor from rows and let PyTorch infer the dtype; build a second from the same rows but force it to torch.float32 by passing dtype=. The first two entries are str() of each tensor's dtype; `unchanged` is True when the two dtypes are equal. Forcing is how you stop an all-integer input from silently giving you an integer tensor where the rest of your code expects floats.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (inferred dtype name, forced float32 dtype name, are they equal?).""""""
+    inferred = t.tensor(rows)
+    forced = t.tensor(rows, dtype=t.float32)
+    return (str(inferred.dtype), str(forced.dtype), inferred.dtype == forced.dtype)
+
+
+example = [[1, 2], [3, 4]]
+print(solve(example))
+",36,"('torch.int64', 'torch.float32', False)"

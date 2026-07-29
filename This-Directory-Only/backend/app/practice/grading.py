@@ -36,19 +36,51 @@ def select_question_for_difficulty(
     candidates: List[Question],
     target_difficulty: float,
     served_ids: set[int],
+    served_order: Optional[List[int]] = None,
 ) -> Optional[Question]:
-    """Pick a question close to target_difficulty, preferring unseen ones."""
+    """Pick a question close to target_difficulty, preferring unseen ones.
+
+    When every candidate has been served the pick is a REPEAT, and which repeat
+    matters. `served_order` is the subtopic's append-ordered service log, so a
+    recycle can go to the question the learner has seen least often and least
+    recently instead of a coin flip among all of them. Without it a two-question
+    concept alternates at random and lands the same drill twice in a row about
+    half the time — which reads, correctly, as the app having forgotten what was
+    already solved.
+    """
     unseen = [q for q in candidates if q.id not in served_ids]
     pool = unseen if unseen else candidates
     if not pool:
         return None
-    ranked = sorted(pool, key=lambda q: abs(q.difficulty_score - target_difficulty))
-    # Explore only within a band of the target. The old flat top-3 was uniform
-    # random in a 3-question subtopic — a self-reported beginner (target ~22)
-    # could draw the 45-difficulty variant on the first exposure.
-    band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= 15]
-    top_n = (band or ranked[:1])[:3]
-    return random.choice(top_n)
+
+    if unseen:
+        ranked = sorted(pool, key=lambda q: abs(q.difficulty_score - target_difficulty))
+        # Explore only within a band of the target. The old flat top-3 was uniform
+        # random in a 3-question subtopic — a self-reported beginner (target ~22)
+        # could draw the 45-difficulty variant on the first exposure.
+        band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= 15]
+        top_n = (band or ranked[:1])[:3]
+        return random.choice(top_n)
+
+    # Recycling. Rank by how stale the repeat is first and difficulty second:
+    # seen-once beats seen-twice, and among equals the longest-ago wins. This is
+    # deterministic on purpose — randomness here is what produced back-to-back
+    # duplicates, and there is no exploration value left in a spent pool.
+    order = served_order or []
+    counts = {qid: 0 for qid in served_ids}
+    last_at = {}
+    for position, qid in enumerate(order):
+        counts[qid] = counts.get(qid, 0) + 1
+        last_at[qid] = position
+    return min(
+        pool,
+        key=lambda q: (
+            counts.get(q.id, 0),
+            last_at.get(q.id, -1),
+            abs(q.difficulty_score - target_difficulty),
+            q.id,
+        ),
+    )
 
 
 def grade_submission(

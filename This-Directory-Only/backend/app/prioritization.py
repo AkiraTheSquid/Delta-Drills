@@ -124,8 +124,17 @@ def narrow_to_next_kc(
     wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
     if wanted:
         return [q for q in unserved if q.id in set(wanted)]
-    rung = set(kc_graph.lowest_rung([q.id for q in unserved]))
-    return [q for q in unserved if q.id in rung]
+    rung = [q for q in unserved if q.id in set(kc_graph.lowest_rung([q.id for q in unserved]))]
+    if stage == "worked" and rung:
+        # The `worked` rung is the concept's first contact, and the question
+        # attached to it is what the learner meets the moment they finish
+        # reading the example. There is no evidence yet, so `target_difficulty`
+        # is only reporting the BKT prior — letting it choose here picks at
+        # random inside its band, which on a rung with several drills can open a
+        # brand-new concept on its hardest one. Serve the easiest instead; the
+        # difficulty ladder starts moving on the next question, from evidence.
+        return [min(rung, key=lambda q: (q.difficulty_score, q.id))]
+    return rung
 
 
 def ladder_starter(question, stage: str) -> Optional[str]:
@@ -291,9 +300,18 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
 
     cands = _candidates(skip_served=True)
     if not cands:
-        # Everything served — reset and retry over the full set.
-        for st_name in subtopics:
-            user_state.get_subtopic_state(st_name).served_question_ids.clear()
+        # Nothing UNLOCKED and unserved is left, so the next question has to be
+        # a repeat. It used to be a repeat with amnesia: this branch cleared
+        # `served_question_ids` for every subtopic in the course, which is the
+        # only record of what the learner has already solved. A beginner hits
+        # this on their second question — the lattice opens with one root KC, so
+        # "everything unlocked is served" is the normal state early on, not an
+        # end-of-bank condition — and from then on the app genuinely could not
+        # tell a solved question from a fresh one.
+        #
+        # So: no wipe. Fall through to the full set and let
+        # select_question_for_difficulty pick the least-recently-served repeat,
+        # with the service log intact.
         cands = _candidates(skip_served=False)
     if not cands:
         return None
