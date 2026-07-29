@@ -247,6 +247,15 @@ const _loadNextPracticeQuestion = async () => {
   if (window.LessonGate && (await window.LessonGate.maybeShow(nextQ, () => renderQuestion(nextQ, nextCount)))) {
     return;
   }
+  // Ladder `worked` rung — runs only when the gate above did NOT fire. If it
+  // did, the learner has just read this KP's example and LessonGate already
+  // credited the rung, so re-showing it would teach the same page twice.
+  if (
+    window.LadderUI &&
+    (await window.LadderUI.maybeShowWorked(nextQ, () => renderQuestion(nextQ, nextCount)))
+  ) {
+    return;
+  }
   renderQuestion(nextQ, nextCount);
 };
 

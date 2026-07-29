@@ -175,6 +175,10 @@ function renderQuestion(q, count) {
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
   renderQuestionBody(q);
+  // Names the concept under test and, on the scaffolded rungs, puts the worked
+  // example back on screen beside the problem. Must run AFTER renderQuestionBody
+  // — that call replaces #question-text wholesale.
+  if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
   codeEditor.value =
