@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Tuple
 from app import bkt_mastery
 from app import kc_graph
 from app import ladder_fade
+from app import lessons
 from app.adaptive import UserPracticeState
 from app.questions import (
     get_atoms_for_subtopic,
@@ -131,13 +132,23 @@ def ladder_starter(question, stage: str) -> Optional[str]:
     """The starter to hand the learner at this rung, or None to keep the
     question's own.
 
-    `faded` and `partial` are backward-faded from the canonical answer (see
-    ladder_fade); `worked` and `solo` never override. A question whose body is
-    too short to fade returns None and is served unmodified, which is correct —
-    there is no honest middle between "one line shown" and "one line hidden".
+    `worked` and `solo` never override — one has no question yet, the other is
+    the rung defined by having no support.
+
+    At `faded`, an authored starter from the KP wins when one exists: it was cut
+    by hand for the idea the lesson just taught, and for a one-statement
+    solution it is the only faded form there is (nothing to remove but the whole
+    answer). Otherwise, and always at `partial`, the starter is backward-faded
+    from the canonical answer (see ladder_fade). A body too short to fade
+    returns None and is served unmodified, which is correct — there is no honest
+    middle between "one line shown" and "one line hidden".
     """
     if stage not in ("faded", "partial"):
         return None
+    if stage == "faded":
+        authored = lessons.authored_faded_starter(getattr(question, "id", -1))
+        if authored:
+            return authored
     return ladder_fade.fade(
         getattr(question, "answer_code", "") or "",
         getattr(question, "function_name", "") or "solve",

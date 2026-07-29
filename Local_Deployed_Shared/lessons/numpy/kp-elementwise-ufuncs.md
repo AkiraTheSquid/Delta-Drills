@@ -144,11 +144,19 @@ assert t.maximum(a, b).tolist() == [3.0, 5.0, 2.5]
 scores = t.tensor([71.5, 88.25, 97.0, 99.5])
 curved = t.floor((scores + 5).clamp(max=100.0))
 assert curved.tolist() == [76.0, 93.0, 100.0, 100.0]
+
+# The other bound. `min=` sets a FLOOR, `max=` sets a CEILING — and the two
+# read backwards from how they sound: min= raises everything below it.
+readings = t.tensor([-2.0, 0.5, 7.0])
+assert readings.clamp(min=0.0).tolist() == [0.0, 0.5, 7.0]
 ```
 
 Why: composing these left-to-right is normal style — each stage maps over
 the whole tensor, and the pipeline reads exactly like the per-element rule:
 add, cap, floor.
+
+The last line is the one worth memorising: `clamp(min=0.0)` is ReLU, the
+single most common nonlinearity in the whole field.
 
 ## Faded practice
 

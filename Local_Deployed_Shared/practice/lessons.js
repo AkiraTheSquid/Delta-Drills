@@ -327,10 +327,24 @@ const LessonGate = (() => {
       document.body.classList.add("lesson-mode");
       let index = 0;
       let finished = false;
+      // KPs whose worked example the learner actually read through to the end.
+      const taught = [];
 
-      const finishAll = () => {
+      const finishAll = async () => {
         if (finished) return;
         finished = true;
+        // Credit the ladder BEFORE handing back. This screen WAS the worked
+        // example, so the concept comes off the `worked` rung here — and the
+        // question `onDone` is about to render was staged for the rung the
+        // learner has just left. LadderUI re-stages it in place, which is why
+        // this is awaited rather than fired and forgotten.
+        if (window.LadderUI && typeof window.LadderUI.creditTaught === "function") {
+          try {
+            await window.LadderUI.creditTaught(taught, question);
+          } catch (err) {
+            console.warn("[lessons] could not credit worked examples:", err);
+          }
+        }
         _cleanup();
         onDone();
       };
@@ -370,6 +384,14 @@ const LessonGate = (() => {
           if (page.lastOfKp) {
             _markLocalExposure([page.kp.kc]);
             _markBackendExposure([page.kp.kc]);
+            // Also credits the ladder's `worked` rung — but in finishAll, not
+            // here, because the response re-stages the pending question and
+            // that has to land before it renders. Without any crediting at
+            // all, the gate would teach a KP and the ladder would immediately
+            // re-teach the identical page: the two counters track different
+            // things (exposure fires once ever, worked_seen re-arms on every
+            // demotion), so neither one implies the other.
+            taught.push(page.kp.kc);
           }
           index++;
           if (index < pages.length) showPage();
@@ -386,7 +408,12 @@ const LessonGate = (() => {
     }
   };
 
-  const showLesson = (kc, onDone = () => {}) => maybeShow(null, onDone, [kc]);
+  /* `question` is optional and is NOT used to pick the lesson (`kc` does
+     that) — it is the card waiting behind this screen, so finishAll can hand
+     it to the ladder to be re-staged before it renders. Omit it and the
+     lesson still shows; the caller is then responsible for the re-staging. */
+  const showLesson = (kc, onDone = () => {}, question = null) =>
+    maybeShow(question, onDone, [kc]);
 
   // Exposed for the single-KC ladder (kc-practice.js): it needs the KP's
   // faded/independent item lists and the lesson's subtopic_key, which are the
@@ -400,6 +427,11 @@ const LessonGate = (() => {
     maybeShow,
     showLesson,
     getKpEntry,
+    // The ladder renders the same worked-example markdown beside faded and
+    // partial problems. Sharing this renderer keeps that example looking
+    // identical to the one taught on the lesson screen — a second, subtly
+    // different markdown subset would read as a different example.
+    renderMarkdown: md,
     get activeQuestion() {
       return activeQuestion;
     },

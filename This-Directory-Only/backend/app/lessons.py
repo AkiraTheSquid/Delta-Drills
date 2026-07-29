@@ -34,6 +34,9 @@ _loaded = False
 _question_target_kcs: Dict[int, List[str]] = {}
 # kc -> {"kc", "kc_title", "lesson_id", "lesson_title", "topic", "kp_title"}
 _kc_gate_info: Dict[str, dict] = {}
+# question_id -> the KP author's own faded starter (the `_____` blanks).
+# Hand-cut for the concept, so it beats a mechanical fade wherever it exists.
+_authored_faded: Dict[int, str] = {}
 
 
 def _read_json(name: str) -> Optional[dict]:
@@ -83,11 +86,41 @@ def _load() -> None:
                 "lesson_title": lesson.get("title", meta.get("title", "")),
                 "topic": lesson.get("topic", meta.get("topic", "")),
             }
+            # Segment-level lists shadow the KP-level one (same items, grouped),
+            # so read both and let the later write win — they agree by
+            # construction, and taking either alone misses single-segment KPs.
+            item_lists = [kp.get("faded_items") or []]
+            item_lists += [seg.get("faded_items") or [] for seg in kp.get("segments") or []]
+            for items in item_lists:
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    starter = item.get("starter_code")
+                    try:
+                        qid = int(item.get("question_id"))
+                    except (TypeError, ValueError):
+                        continue
+                    if isinstance(starter, str) and starter.strip():
+                        _authored_faded[qid] = starter
 
     logger.info(
-        "Lesson metadata: %d tagged questions, %d KCs with introducing KPs",
-        len(_question_target_kcs), len(_kc_gate_info),
+        "Lesson metadata: %d tagged questions, %d KCs with introducing KPs, "
+        "%d authored faded starters",
+        len(_question_target_kcs), len(_kc_gate_info), len(_authored_faded),
     )
+
+
+def authored_faded_starter(question_id: int) -> Optional[str]:
+    """The KP author's faded version of this question, if one was written.
+
+    These are the `_____` blank-filling starters in the lesson frontmatter.
+    They are cut by hand for the specific idea the KP teaches, so where one
+    exists it is a better `faded` rung than anything derived mechanically from
+    the answer — and for a one-statement solution it is the ONLY faded form
+    available, since there is no tail to remove.
+    """
+    _load()
+    return _authored_faded.get(question_id)
 
 
 def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[dict]:

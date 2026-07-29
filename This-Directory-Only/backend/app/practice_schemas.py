@@ -230,3 +230,25 @@ class ExposureMarkRequest(BaseModel):
 class ExposureResponse(BaseModel):
     # kc_id -> ISO-8601 UTC timestamp of first exposure
     exposed: dict[str, str] = Field(default_factory=dict)
+
+
+class WorkedSeenRequest(BaseModel):
+    """The learner finished reading a worked example for `kc`.
+
+    `question_id` is optional and is NOT what the ladder records — it only says
+    which question is on screen, so the response can hand back that question's
+    re-staged starter. Marking the example seen promotes the concept off the
+    `worked` rung, and the starter the client was given a moment ago was cut for
+    the rung the learner has just left.
+    """
+
+    kc: str
+    question_id: int | None = None
+
+
+class WorkedSeenResponse(BaseModel):
+    ladder_stage: str
+    ladder_estimate: dict | None = None
+    # The same question, faded for the rung the learner just climbed onto.
+    # None means "keep what you have" (the question's own starter is correct).
+    starter_code: str | None = None
