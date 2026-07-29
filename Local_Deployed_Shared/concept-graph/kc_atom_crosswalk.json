@@ -10,10 +10,10 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 373,
+  "questions_joined": 380,
   "kcs_covered": 63,
   "kcs_total": 63,
-  "kcs_measured": 20,
+  "kcs_measured": 21,
   "atoms_used": 55,
   "pairs": 176
  },
@@ -276,22 +276,22 @@
    ]
   },
   "einsum.batch-dims": {
-   "n": 9,
-   "reliability": 0.129,
-   "shared_with": 6.8,
+   "n": 10,
+   "reliability": 0.142,
+   "shared_with": 6.1,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-einsum",
-     "w": 0.951,
-     "share": 0.946,
-     "spec": 0.129,
-     "n": 9
+     "w": 0.96,
+     "share": 0.95,
+     "spec": 0.143,
+     "n": 10
     },
     {
      "a": "matmul-2d",
-     "w": 0.049,
-     "share": 0.054,
+     "w": 0.04,
+     "share": 0.05,
      "spec": 0.115,
      "n": 1
     }
@@ -357,17 +357,17 @@
    ]
   },
   "einsum.matrix-forms": {
-   "n": 6,
-   "reliability": 0.087,
-   "shared_with": 10.4,
+   "n": 5,
+   "reliability": 0.074,
+   "shared_with": 12.6,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-einsum",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.087,
-     "n": 6
+     "spec": 0.074,
+     "n": 5
     }
    ]
   },
@@ -787,41 +787,41 @@
   },
   "numpy.dtype-astype": {
    "n": 5,
-   "reliability": 0.515,
-   "shared_with": 0.9,
+   "reliability": 0.443,
+   "shared_with": 1.3,
    "tier": "measured",
    "atoms": [
     {
      "a": "stride-zero-broadcast",
-     "w": 0.369,
+     "w": 0.428,
      "share": 0.19,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "tensor-unbind",
-     "w": 0.328,
+     "w": 0.381,
      "share": 0.169,
      "spec": 1.0,
      "n": 1
     },
     {
-     "a": "tensor-wraps-ndarray",
-     "w": 0.164,
-     "share": 0.169,
-     "spec": 0.5,
-     "n": 1
-    },
-    {
      "a": "torch-arange",
-     "w": 0.134,
+     "w": 0.156,
      "share": 0.304,
      "spec": 0.227,
      "n": 1
     },
     {
+     "a": "tensor-wraps-ndarray",
+     "w": 0.028,
+     "share": 0.169,
+     "spec": 0.075,
+     "n": 1
+    },
+    {
      "a": "einops-reduce",
-     "w": 0.006,
+     "w": 0.007,
      "share": 0.169,
      "spec": 0.019,
      "n": 1
@@ -923,24 +923,31 @@
    ]
   },
   "numpy.index-grids": {
-   "n": 6,
-   "reliability": 0.12,
-   "shared_with": 7.3,
+   "n": 7,
+   "reliability": 0.111,
+   "shared_with": 8.0,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "broadcasting-rules",
-     "w": 0.582,
-     "share": 0.649,
+     "w": 0.568,
+     "share": 0.585,
      "spec": 0.108,
      "n": 4
     },
     {
      "a": "slice-view-mutation",
-     "w": 0.418,
-     "share": 0.351,
+     "w": 0.408,
+     "share": 0.317,
      "spec": 0.143,
      "n": 2
+    },
+    {
+     "a": "index-by-tensor",
+     "w": 0.024,
+     "share": 0.098,
+     "spec": 0.028,
+     "n": 1
     }
    ]
   },
@@ -1125,24 +1132,17 @@
    ]
   },
   "numpy.ndarray-model": {
-   "n": 2,
-   "reliability": 0.264,
-   "shared_with": 2.8,
-   "tier": "topic-proxy",
+   "n": 8,
+   "reliability": 0.925,
+   "shared_with": 0.1,
+   "tier": "measured",
    "atoms": [
     {
      "a": "tensor-wraps-ndarray",
-     "w": 0.948,
-     "share": 0.5,
-     "spec": 0.5,
-     "n": 1
-    },
-    {
-     "a": "index-by-tensor",
-     "w": 0.052,
-     "share": 0.5,
-     "spec": 0.028,
-     "n": 1
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.925,
+     "n": 8
     }
    ]
   },
