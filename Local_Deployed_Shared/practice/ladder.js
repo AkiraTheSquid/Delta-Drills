@@ -176,16 +176,38 @@ const LadderUI = (() => {
     if (!bar) return;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
+    // `getTargetDifficultyForQuestion` already resolves the backend field, the
+    // local adaptive state and the item's own rating in that order, so the
+    // guest path gets a sensible answer without a second code path here.
+    const target =
+      typeof getTargetDifficultyForQuestion === "function"
+        ? getTargetDifficultyForQuestion(question)
+        : question.target_difficulty;
     if (!kc || !stage) {
-      // No ladder context on this question (a diagnostic probe, or a KC-less
-      // item). Hiding is the honest move: leaving the previous concept's bar up
-      // would label this problem with a concept it has nothing to do with.
-      bar.hide();
+      // No ladder context on this question — a diagnostic probe, a KC-less
+      // item, or the guest queue, which serves straight from the local bank and
+      // has no ladder at all. The concept half of the strip must not survive
+      // that: leaving the previous concept's name and rung up would label this
+      // problem with a concept it has nothing to do with.
+      //
+      // The difficulty half is not a claim about a concept, so it stays. Drop
+      // it here and a guest would have no difficulty readout anywhere on the
+      // page, which is the one number that is meaningful for every problem the
+      // app can serve.
+      if (Number.isFinite(question.difficulty)) {
+        bar.show({ difficulty: question.difficulty, target });
+      } else {
+        bar.hide();
+      }
       return;
     }
     bar.show({
       kc,
       title: question.ladder_kc_title || kc,
+      // This item's own rating, and where the adaptive queue is aiming — the
+      // number that moves between questions.
+      difficulty: question.difficulty,
+      target,
       // Just "Concept". The rung itself is named by the dots, which speak the
       // learner-facing vocabulary; labelling it a second time here in the
       // backend's vocabulary would put two different names for one rung side

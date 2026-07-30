@@ -15,6 +15,9 @@
      * WHICH concept is this?          — named, and clickable into the graph
      * WHERE am I in the sequence?     — four dots, all four always visible
      * HOW WELL am I doing on it?      — the interval, not the point estimate
+     * HOW HARD is this one?           — the problem's rating out of 100, on a
+                                         track whose fill is the difficulty the
+                                         queue is currently aiming at
 
    THE FOUR RUNGS
 
@@ -120,6 +123,57 @@ const ConceptTopbar = (() => {
     );
   };
 
+  /* The difficulty of the problem on screen, and the difficulty being aimed at.
+
+     Two different numbers, deliberately shown together. `problem` is what this
+     question is rated — a fixed property of the item, out of 100. `target` is
+     where the adaptive queue currently thinks the learner is, which is the
+     number that moves: answer correctly and the next question is pulled from
+     higher up the scale. Showing only the first would make the ladder look
+     static; showing only the second would not tell the learner anything about
+     the problem actually in front of them.
+
+     The fill is the target and the tick is the problem, so the gap between
+     them is readable at a glance: tick ahead of the fill means this one is a
+     stretch, tick behind it means it is consolidation.
+
+     A question with no rating hides the whole segment rather than drawing an
+     empty track — an unrated problem is not a zero-difficulty problem. */
+  const _diffHtml = (problem, target) => {
+    const p = Number.isFinite(problem) ? Math.max(0, Math.min(100, problem)) : null;
+    if (p === null) return "";
+    const t = Number.isFinite(target) ? Math.max(0, Math.min(100, target)) : null;
+    const title =
+      `This problem is rated ${Math.round(p)} out of 100.` +
+      (t === null
+        ? ""
+        : ` The bar is the difficulty being served to you right now (${Math.round(t)}), ` +
+          "which moves as you answer.");
+    return (
+      `<span class="concept-topbar-diff-label" title="${esc(title)}">Difficulty</span>` +
+      `<span class="concept-topbar-diff-bar" title="${esc(title)}" aria-hidden="true">` +
+      (t === null
+        ? ""
+        : `<span class="concept-topbar-diff-fill" style="width:${t.toFixed(1)}%"></span>`) +
+      `<span class="concept-topbar-diff-tick" style="left:${p.toFixed(1)}%"></span>` +
+      "</span>" +
+      `<span class="concept-topbar-diff-value">${Math.round(p)}<span ` +
+      'class="concept-topbar-diff-max">/100</span></span>'
+    );
+  };
+
+  /* Redraw the difficulty segment on its own. Separate from `show` for the
+     same reason `setEstimate` is: a submit moves the target, and re-rendering
+     the concept name and dots to move one bar would flash the part of the
+     strip that is supposed to hold still. */
+  const setDifficulty = (problem, target) => {
+    const host = _el("concept-topbar-diff");
+    if (!host) return;
+    const html = _diffHtml(problem, target);
+    host.innerHTML = html;
+    host.hidden = !html;
+  };
+
   const _stagesHtml = (stage) => {
     const active = _index(stage);
     return STAGES.map((s, i) => {
@@ -140,14 +194,18 @@ const ConceptTopbar = (() => {
      `stage` accepts either vocabulary. An unrecognised stage hides the dots
      rather than guessing a position — showing the learner the wrong rung is
      worse than showing them none. */
-  const show = ({ kc, title, eyebrow, stage, estimate } = {}) => {
+  const show = ({ kc, title, eyebrow, stage, estimate, difficulty, target } = {}) => {
     const host = _el("concept-topbar");
     if (!host) return;
     const normalized = normalizeStage(stage);
     current = { kc: kc || null, stage: normalized };
 
     const eyebrowEl = _el("concept-topbar-eyebrow");
-    if (eyebrowEl) eyebrowEl.textContent = eyebrow || "Concept";
+    if (eyebrowEl) {
+      // With no concept there is nothing to label, and "Concept" above an empty
+      // name reads as a failed load. The difficulty-only strip says what it is.
+      eyebrowEl.textContent = kc ? eyebrow || "Concept" : "This problem";
+    }
 
     const kcBtn = _el("concept-topbar-kc");
     if (kcBtn) {
@@ -164,7 +222,15 @@ const ConceptTopbar = (() => {
       stagesEl.hidden = !normalized;
     }
 
-    setEstimate(estimate);
+    // The estimate is a per-concept record, so without a concept there is
+    // nothing it could be an estimate OF — "no attempts yet" beside a nameless
+    // problem invites the reading that the learner has done nothing at all.
+    const estEl = _el("concept-topbar-est");
+    if (estEl) estEl.hidden = !kc;
+    if (kc) setEstimate(estimate);
+    // Lesson screens pass neither number — a page of prose has no difficulty
+    // rating, and inventing one would be the strip's only dishonest field.
+    setDifficulty(difficulty, target);
     host.classList.remove("hidden");
   };
 
@@ -197,7 +263,16 @@ const ConceptTopbar = (() => {
 
   const activeKc = () => current.kc;
 
-  return { show, hide, setEstimate, setStage, activeKc, normalizeStage, STAGES };
+  return {
+    show,
+    hide,
+    setEstimate,
+    setDifficulty,
+    setStage,
+    activeKc,
+    normalizeStage,
+    STAGES,
+  };
 })();
 
 window.ConceptTopbar = ConceptTopbar;

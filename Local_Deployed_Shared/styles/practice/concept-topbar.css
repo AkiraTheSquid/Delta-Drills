@@ -69,6 +69,13 @@
   padding: 0;
 }
 
+/* Same reason as `.concept-topbar-est[hidden]` below: `display: flex` outranks
+   the UA `[hidden]` rule, so without this the dots would only LOOK hidden for
+   as long as the script also happens to empty them. */
+.stage-dots[hidden] {
+  display: none;
+}
+
 .stage-dot {
   align-items: center;
   display: flex;
@@ -116,6 +123,82 @@
   color: var(--white);
 }
 
+/* ---- difficulty -------------------------------------------------------- */
+
+/* Sits between the rungs and the estimate. `margin-left: auto` on .stage-dots
+   already pushes everything after it to the right; this segment keeps its own
+   spacing from the estimate rather than claiming the gap. */
+/* `margin-left: auto` so the segment stays right-aligned whether or not the
+   dots are there to push it. A concept-less strip has no dots and no estimate,
+   and without this the difficulty would pack left against the eyebrow instead
+   of holding the right-hand side where the readouts live. */
+.concept-topbar-diff {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.concept-topbar-diff[hidden] {
+  display: none;
+}
+
+.concept-topbar-diff-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.concept-topbar-diff-bar {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  display: inline-block;
+  height: 6px;
+  position: relative;
+  width: 96px;
+}
+
+/* The fill is the TARGET — where the queue is aiming — so it grows and shrinks
+   between questions. Muted rather than accent-coloured: the tick is the thing
+   the learner is being asked to read, and two saturated marks on one 96px
+   track compete instead of comparing. */
+.concept-topbar-diff-fill {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 3px;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transition: width 420ms ease;
+}
+
+/* The tick is THIS problem. Taller than the track on both sides so it stays
+   findable when it sits inside the fill. */
+.concept-topbar-diff-tick {
+  background: var(--accent);
+  border-radius: 1px;
+  height: 12px;
+  margin-left: -1.5px;
+  position: absolute;
+  top: -3px;
+  width: 3px;
+}
+
+.concept-topbar-diff-value {
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.concept-topbar-diff-max {
+  color: var(--muted);
+  font-weight: 500;
+}
+
 /* ---- estimate ---------------------------------------------------------- */
 
 .concept-topbar-est {
@@ -124,6 +207,13 @@
   gap: 8px;
   margin-left: auto;
   white-space: nowrap;
+}
+
+/* `display: flex` above outranks the UA stylesheet's `[hidden] {display:none}`,
+   so hiding this segment from script needs its own rule. Without it a strip
+   with no concept still shows the previous concept's record. */
+.concept-topbar-est[hidden] {
+  display: none;
 }
 
 .concept-topbar-est-count {
@@ -178,6 +268,10 @@
   .concept-topbar-est-bar {
     width: 70px;
   }
+
+  .concept-topbar-diff-bar {
+    width: 64px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -191,5 +285,11 @@
 
   .concept-topbar-est {
     margin-left: 0;
+  }
+
+  /* At this width the strip is already wrapping. The label is the first thing
+     to go — the tick on a 0-100 track plus the number carries the meaning. */
+  .concept-topbar-diff-label {
+    display: none;
   }
 }

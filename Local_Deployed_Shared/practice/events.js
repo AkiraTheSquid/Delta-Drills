@@ -146,6 +146,14 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
+    // Move the topbar's difficulty fill to match. That strip stays on screen
+    // through the whole feedback flow, so leaving it on the pre-answer target
+    // would have it contradicting the bar directly below it. The tick does not
+    // move — this problem's rating is a property of the problem, not of how it
+    // just went.
+    if (window.ConceptTopbar) {
+      window.ConceptTopbar.setDifficulty(q.difficulty, newTarget);
+    }
     if (!calibrationQuestion && Number.isFinite(pAfter)) {
       showEwmaAccuracy(pBefore, pAfter, q.subtopic);
     } else {
