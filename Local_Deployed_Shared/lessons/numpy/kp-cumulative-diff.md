@@ -2,7 +2,7 @@
 kc: numpy.cumulative-diff
 title: Cumulative ops and discrete differences
 supporting: [numpy.aggregations, numpy.axis-reductions]
-new_syntax: [torch.cumsum, torch.cumsum#dim, torch.cummax, torch.cummax#dim, torch.cummin, torch.cumprod, Tensor.values, Tensor.indices, torch.diff, torch.diff#dim, torch.diff#n]
+new_syntax: [torch.cumsum, torch.cumsum#dim, torch.cummax, torch.cummax#dim, torch.cummin, torch.cumprod, torch.diff, torch.diff#dim, torch.diff#n]
 faded: [234, 152, 22]
 guided: []
 independent: [82, 149]

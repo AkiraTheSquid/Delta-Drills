@@ -2,10 +2,10 @@
 kc: numpy.slicing-views
 title: Slicing, views, and slice assignment
 supporting: [numpy.ndarray-model]
-new_syntax: [slice-notation, multi-axis-indexing]
+new_syntax: [slice-notation, multi-axis-indexing, syntax.slice, syntax.slice-step, torch.flip]
 faded: [233]
-guided: [76]
-independent: [231, 75]
+guided: [76, 506]
+independent: [231, 75, 507]
 ---
 
 ## Concept
@@ -130,11 +130,18 @@ def solve(x):
 3. `t.flip(z, [1])` and `t.flip(z, [0])` — and because flip copies, the
    "input must not be modified" requirement is already satisfied.
 
+### q506
+1. A slice, not an index — you want a run of elements, not one element.
+2. Leaving the start empty means 'from the beginning'.
+3. `x[:k]`.
+
 ## Independent practice
 
 From the drill bank: q231 (assign through a slice in place), q75 (rotate a
 matrix 90° counterclockwise — either the dedicated helper or a transpose
 composed with a flip).
+
+From the drill bank: q507 (one column of a matrix — note which axis indexing with an int removes).
 
 ## Misconceptions
 

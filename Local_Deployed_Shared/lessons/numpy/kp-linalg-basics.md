@@ -2,10 +2,10 @@
 kc: numpy.linalg-basics
 title: Matrix multiply and t.linalg basics
 supporting: [numpy.aggregations, numpy.elementwise-ufuncs]
-new_syntax: [matmul-operator]
+new_syntax: [matmul-operator, syntax.matmul, torch.linalg, torch.linalg.solve]
 faded: [239, 107]
-guided: []
-independent: []
+guided: [508, 509]
+independent: [510, 511, 512, 513]
 ---
 
 ## Concept: two multiplications — * vs @
@@ -135,6 +135,26 @@ def solve(a, b):
     """Return x such that a @ x = b (use a solver, not an inverse)."""
     return t.linalg.solve(a, b)
 ```
+
+## Guided practice
+
+### q508
+1. This is the multiplication that is NOT matrix multiplication.
+2. Entry [i][j] depends only on the two entries at [i][j] — nothing is summed,
+   so no axis is contracted.
+3. `a * b`.
+
+### q509
+1. Both answers come from the same two matrices; only the operator changes.
+2. `*` pairs entries in place; `@` contracts a's columns against b's rows.
+3. `((a * b).tolist(), (a @ b).tolist())`.
+
+## Independent practice
+
+From the drill bank: q510 (transpose a matrix and read back its new shape).
+From the drill bank: q511 (matrix @ vector — which axis vanishes?).
+From the drill bank: q512 (solve a @ x = b, then verify a @ x really does reproduce b).
+From the drill bank: q513 (apply a whole BATCH of matrices to one vector with a single @).
 
 ## Misconceptions
 

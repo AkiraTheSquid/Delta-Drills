@@ -2,10 +2,10 @@
 kc: numpy.reshape-flatten
 title: Reshape, flatten, and element order
 supporting: [numpy.ndarray-model, numpy.ranges]
-new_syntax: []
+new_syntax: [Tensor.T, Tensor.flatten, Tensor.reshape, torch.arange]
 faded: [46]
-guided: [36]
-independent: [23]
+guided: [36, 490, 491]
+independent: [23, 492, 493, 494]
 ---
 
 ## Concept
@@ -117,10 +117,26 @@ def solve(n):
    describing reshape's DEFAULT fill order — no reordering needed on your part.
 3. One method call on the input tensor does the whole job.
 
+### q490
+1. Any shape in, exactly one axis out.
+2. You are not choosing a new shape, you are removing all structure — so no
+   dimensions need naming.
+3. `x.flatten()`.
+
+### q491
+1. You know one of the two numbers in the target shape. You do not know the
+   other, and you should not compute it.
+2. Reshape accepts -1 in exactly one position, meaning 'work this out'.
+3. `x.reshape(-1, cols)`.
+
 ## Independent practice
 
 From the drill bank: q23 (list all entries in COLUMN-major order — there is no
 `order=` keyword to reach for, so which axis rearrangement gets you there?).
+
+From the drill bank: q492 (lay 0..n-1 out with a given row count — build the run, then reshape it).
+From the drill bank: q493 (return the flattened values AND the shape they came from).
+From the drill bank: q494 (write into a reshaped result and see what happens to the original).
 
 ## Misconceptions
 
