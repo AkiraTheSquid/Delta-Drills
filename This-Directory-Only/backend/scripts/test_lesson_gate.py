@@ -44,9 +44,12 @@ lessons._load()
 #               owned two questions against a mastery bar wanting ~7 correct
 #               answers, so the queue had to recycle them and the rest of the
 #               course stayed locked behind the loop.
+#   380 -> 416  36 drills across the nine thinnest concepts on the learner's
+#               path, so each of the first ten reaches the ~8 the four-rung
+#               ladder needs before it starts recycling.
 #    64 -> 63   numpy.structured-dtypes was retired with the torch conversion;
 #               kc_registry.json has held 63 KCs since.
-_EXPECTED_TAGGED = 380
+_EXPECTED_TAGGED = 416
 _EXPECTED_KCS = 63
 check("qmatrix loads all easy-topic questions",
       len(lessons._question_target_kcs) == _EXPECTED_TAGGED,

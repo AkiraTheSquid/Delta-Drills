@@ -2,10 +2,10 @@
 kc: numpy.elementwise-ufuncs
 title: Elementwise math
 supporting: [numpy.ndarray-model]
-new_syntax: []
+new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.floor, torch.maximum, torch.sqrt, torch.trunc]
 faded: [192, 49, 67]
-guided: []
-independent: [43]
+guided: [487, 488]
+independent: [43, 489]
 ---
 
 ## Concept: write the formula once — operators are elementwise
@@ -182,6 +182,21 @@ def solve(z):
 ## Independent practice
 
 From the drill bank: q43 (elementwise larger of two tensors).
+
+From the drill bank: q489 (pull every element into [lo, hi] — mind which of min=/max= is the floor).
+
+## Guided practice
+
+### q487
+1. The whole tensor at once — there is no index to loop over.
+2. An arithmetic operator applied to a tensor is applied to every element.
+3. `x * 2`.
+
+### q488
+1. You need the magnitude of each element, sign discarded.
+2. It is a method on the tensor, and it returns a NEW tensor rather than
+   editing yours — which is what keeps the input unchanged.
+3. `x.abs()`.
 
 ## Misconceptions
 

@@ -390,7 +390,12 @@
       "numpy.ndarray-model",
       "numpy.ranges"
      ],
-     "new_syntax": [],
+     "new_syntax": [
+      "Tensor.T",
+      "Tensor.flatten",
+      "Tensor.reshape",
+      "torch.arange"
+     ],
      "concept_markdown": "A tensor's data is one flat block of memory; the shape is just metadata saying\nhow to read it. **Reshaping changes the metadata without touching the data** \u2014\nwhich is why it's usually free (no copy) and why the one hard rule is:\n\n> the new shape's element count must equal the old one\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe two directions:\n\n- **`x.reshape(shape)`** \u2014 reinterpret the flat data as a new shape.\n  A convenience worth memorizing: one dimension may be **`-1`**, meaning\n  \"compute this one for me\": `x.reshape(3, -1)` figures out the columns.\n- **`x.flatten()`** \u2014 collapse any shape back to 1-D.\n\nYou will also meet **`x.view(shape)`**, which is reshape's stricter sibling: it\n*only* ever re-labels the existing memory and raises if that is impossible.\n`reshape` falls back to copying in that case. Prefer `reshape` unless you\nspecifically want the error.\n\nThe question that makes reshape make sense is: **in what order do elements\nfill the new shape?** PyTorch's order is **row-major (\"C order\")**: the\n*last* axis varies fastest. Reading a 2-D tensor in row-major order means\nwalking across row 0 left to right, then row 1, and so on. So\n\n```python no-run\nt.arange(6).reshape(2, 3)   # \u2192 [[0, 1, 2],\n                            #    [3, 4, 5]]\n```\n\nfills row 0 first. This single fact explains most reshape results, including\nhigher-dimensional ones: `reshape(2, 2, 3)` fills the last axis (length 3)\nfastest, the first axis slowest.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by changing the axis\norder first and then flattening: `z.T.flatten()` reads the matrix column by\ncolumn.",
      "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom \u2014 then flatten it back both ways.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat sequence 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). Row-major fill means 0,1,2 land in row 0 \u2014\n# exactly the \"reading order\" the task describes. No data is copied.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n\n# Step 3: flatten undoes it \u2014 row-major walk gives back 0..8 in order.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Column-major walk reads DOWN each column instead. No order= keyword\n# exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then organize\n   them. It works because reshape's fill order IS reading order.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.\n3. The two flattens show that \"flatten\" is not one operation until you say the\n   order. The default matches how the matrix prints; the column-by-column read\n   is a transpose away.",
      "segments": [
@@ -423,10 +428,21 @@
       {
        "question_id": 36,
        "hints_markdown": "1. You get a 1-D tensor and a target 3-D shape whose product equals its length \u2014\n   this is a pure reorganize-the-metadata task.\n2. \"Same row-major order (the last axis varies fastest)\" in the prompt is\n   describing reshape's DEFAULT fill order \u2014 no reordering needed on your part.\n3. One method call on the input tensor does the whole job."
+      },
+      {
+       "question_id": 490,
+       "hints_markdown": "1. Any shape in, exactly one axis out.\n2. You are not choosing a new shape, you are removing all structure \u2014 so no\n   dimensions need naming.\n3. `x.flatten()`."
+      },
+      {
+       "question_id": 491,
+       "hints_markdown": "1. You know one of the two numbers in the target shape. You do not know the\n   other, and you should not compute it.\n2. Reshape accepts -1 in exactly one position, meaning 'work this out'.\n3. `x.reshape(-1, cols)`."
       }
      ],
      "independent_items": [
-      23
+      23,
+      492,
+      493,
+      494
      ],
      "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read."
     },
@@ -438,7 +454,10 @@
      ],
      "new_syntax": [
       "slice-notation",
-      "multi-axis-indexing"
+      "multi-axis-indexing",
+      "syntax.slice",
+      "syntax.slice-step",
+      "torch.flip"
      ],
      "concept_markdown": "Slicing is how you name a rectangular piece of a tensor. The syntax\ngeneralizes Python's list slicing in two ways, and adds one semantic twist\nthat trips everyone at least once.\n\n**Syntax.** A slice is `start:stop:step` (stop exclusive, any part omittable),\nand a multi-dimensional tensor takes **one slice per axis, separated by\ncommas** inside a single pair of brackets:\n\n- `x[2:5]` \u2014 elements 2, 3, 4 of a vector.\n- `z[0, :]` \u2014 row 0, all columns. `z[:, -1]` \u2014 every row, last column.\n- `x[::2]` \u2014 every second element.\n\nNegative *indices* count from the end (`-1` is the last element), exactly as in\nPython.\n\n**Negative *steps* are the exception.** NumPy reverses an axis with `x[::-1]`;\nPyTorch refuses \u2014 it raises `ValueError: step must be greater than zero`. This\nis probably the single most common surprise when moving NumPy habits to torch.\nReversal has its own function:\n\n- **`t.flip(x, [0])`** \u2014 reverse along axis 0. `t.flip(z, [1])` mirrors each\n  row left-right; `t.flip(z, [0])` reverses the row order (mirror top-bottom).\n- **`t.rot90(z)`** \u2014 rotate 90\u00b0 counterclockwise, the composition of a\n  transpose and a flip.\n\n**The twist: slices are *views*, not copies.** A slice doesn't copy data \u2014 it\nis a new window onto the *same* memory block. Two consequences:\n\n1. **Writing through a slice writes the original.** That enables the single\n   most useful idiom in this KP, **slice assignment**:\n   `x[start:stop] = value` sets a whole range at once (the scalar is\n   broadcast to every selected position \u2014 no loop).\n2. **\"Return a new tensor\" tasks need an explicit `.clone()`** if you would\n   otherwise be returning or mutating a view of the caller's data. Rule of\n   thumb: mutate \u2192 `.clone()` first, unless the task says to modify in place.\n\n`t.flip` is not in that category: it always returns a **copy**, so writing into\nits result never touches the input.",
      "worked_example_markdown": "Task: given a vector, produce a reversed copy; then blank out the middle of\nanother vector in place.\n\n```python\nimport torch as t\n\nx = t.tensor([1.0, 2.0, 3.0, 4.0])\n\n# The NumPy reflex does not work here.\ntry:\n    x[::-1]\n    raised = False\nexcept ValueError:\n    raised = True\nassert raised, \"torch rejects negative slice steps\"\n\n# Reverse with flip instead \u2014 and flip hands back a COPY.\nrev = t.flip(x, [0])\nassert rev.tolist() == [4.0, 3.0, 2.0, 1.0]\nrev[0] = 99.0                    # writes only into rev\nassert x.tolist() == [1.0, 2.0, 3.0, 4.0]\n\n# A plain slice, by contrast, IS a view: writing through it writes x.\nwindow = x[1:3]\nwindow[0] = 99.0                 # window[0] is x[1]!\nassert x[1] == 99.0\nx[1] = 2.0                       # undo\n\n# Slice ASSIGNMENT: set positions 1..3 (stop 4 exclusive) to 0 \u2014 in place,\n# no loop. The scalar 0.0 is broadcast across the selected range.\ny = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])\ny[1:4] = 0.0\nassert y.tolist() == [1.0, 0.0, 0.0, 0.0, 5.0, 6.0]\n```\n\nWhy each step:\n\n1. The failed `x[::-1]` is worth writing once deliberately. It is the fastest\n   way to stop reaching for it by reflex later.\n2. `t.flip(x, dims)` names the axes to reverse as a list \u2014 you pick *which*\n   axis by what you put in that list, the same choice you would have made by\n   which comma slot got the `::-1`.\n3. The view demonstration is the mental model to keep: a slice is a window,\n   not a photocopy. Cheap to make, dangerous to mutate casually.\n4. Slice assignment replaces the `for i in range(start, stop)` loop entirely \u2014\n   and it is the building block for border/checkerboard/striping patterns in\n   the next lesson.",
@@ -472,11 +491,16 @@
       {
        "question_id": 76,
        "hints_markdown": "1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and\n   top-bottom (reverse the order of rows). Both are single `t.flip` calls.\n2. `t.flip` takes the axes to reverse as a list. Which axis number reverses\n   each row? Which reverses the row order?\n3. `t.flip(z, [1])` and `t.flip(z, [0])` \u2014 and because flip copies, the\n   \"input must not be modified\" requirement is already satisfied."
+      },
+      {
+       "question_id": 506,
+       "hints_markdown": "1. A slice, not an index \u2014 you want a run of elements, not one element.\n2. Leaving the start empty means 'from the beginning'.\n3. `x[:k]`."
       }
      ],
      "independent_items": [
       231,
-      75
+      75,
+      507
      ],
      "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns."
     },
@@ -486,7 +510,15 @@
      "supporting_kcs": [
       "numpy.ndarray-model"
      ],
-     "new_syntax": [],
+     "new_syntax": [
+      "Tensor.clamp",
+      "Tensor.clamp#max",
+      "Tensor.clamp#min",
+      "torch.floor",
+      "torch.maximum",
+      "torch.sqrt",
+      "torch.trunc"
+     ],
      "concept_markdown": "The core promise of tensor programming: **write the formula once, and it\napplies to every element** \u2014 no loop. Operators `+ - * / ** %` between a\ntensor and a scalar, or between two same-shaped tensors, work element by\nelement: `z * 2` doubles everything; `a * b` multiplies corresponding entries\n(NOT matrix multiplication \u2014 that's `@`).\n\nThe general procedure for any \"transform each entry\" task:\n\n> Express the rule for ONE element as a formula, then write that formula\n> with the whole tensor in place of the element.\n\n\"Replace each x by x\u00b2 \u2212 1\" \u2192 `z**2 - 1`. If you find yourself writing\n`for i in range(len(z))`, stop \u2014 the elementwise spelling is shorter and\norders of magnitude faster (the loop happens in compiled code, and on a GPU it\nhappens in parallel). All of these return **new tensors** and leave the input\nuntouched.\n\nBeyond operators, named functions map over the whole tensor: `t.sqrt`,\n`t.abs`, `t.exp`, `t.log`, `t.sin`, \u2026\n\nRounding is a *family*, and the members differ on negatives:\n\n- `t.round` \u2014 nearest;\n- `t.floor` \u2014 largest integer \u2264 x, so \u22120.3 \u2192 \u22121.0 (away from zero);\n- `t.ceil` \u2014 smallest integer \u2265 x;\n- `t.trunc` \u2014 toward zero, so \u22120.3 \u2192 \u22120.0 (same as `.to(t.int64)`).\n\nRead the task's example values to see which member is being asked for.\n\n`t.maximum(a, b)` / `t.minimum(a, b)` pick the larger/smaller *at each\nposition* (contrast with `a.max()`, which reduces the whole tensor to one\nnumber \u2014 different KP). `z.clamp(min=lo, max=hi)` limits values to a range;\nNumPy calls this `clip`, and PyTorch accepts that spelling as an alias, but\n`clamp` is the name you will read in model code.\n\nThese overlap: `clamp(max=100)` and `t.minimum(x, ...)` compute the same\nthing, and `clamp(min=0)` is ReLU. Prefer `clamp` for a constant bound \u2014 it\ntakes a plain Python number, whereas `t.minimum` wants a second tensor, and a\ntensor you construct on the spot lands on the CPU and will not match an input\nliving on a GPU.",
      "worked_example_markdown": "```python\nimport torch as t\n\nz = t.tensor([1.0, 2.0, 3.0])\n\n# The per-element rule \"x**2 - 1\", written once for the whole tensor:\nout = z**2 - 1\nassert out.tolist() == [0.0, 3.0, 8.0]\n\n# The input is untouched \u2014 the expression built a new tensor.\nassert z.tolist() == [1.0, 2.0, 3.0]\n```\n\nWhy: the expression reads exactly like the per-element rule \u2014 that\ntransliteration IS the method.\n\n```python\nimport torch as t\n\nv = t.tensor([1.7, -0.3, 2.5])\n\nassert t.floor(v).tolist() == [1.0, -1.0, 2.0]   # floor moves DOWN\nassert t.trunc(v).tolist() == [1.0, -0.0, 2.0]   # trunc moves toward zero\nassert t.sqrt(t.tensor([4.0, 9.0])).tolist() == [2.0, 3.0]\n```\n\nWhy: floor vs trunc only disagree on negatives \u2014 that's exactly where tasks\n(and graders) check.\n\n```python\nimport torch as t\n\n# Elementwise chooser between TWO tensors: keep the larger at each slot.\na = t.tensor([1.0, 5.0, 2.0])\nb = t.tensor([3.0, 4.0, 2.5])\nassert t.maximum(a, b).tolist() == [3.0, 5.0, 2.5]\n\n# Pipeline: curve exam scores \u2014 add 5, cap at 100, floor to whole points.\nscores = t.tensor([71.5, 88.25, 97.0, 99.5])\ncurved = t.floor((scores + 5).clamp(max=100.0))\nassert curved.tolist() == [76.0, 93.0, 100.0, 100.0]\n\n# The other bound. `min=` sets a FLOOR, `max=` sets a CEILING \u2014 and the two\n# read backwards from how they sound: min= raises everything below it.\nreadings = t.tensor([-2.0, 0.5, 7.0])\nassert readings.clamp(min=0.0).tolist() == [0.0, 0.5, 7.0]\n```\n\nWhy: composing these left-to-right is normal style \u2014 each stage maps over\nthe whole tensor, and the pipeline reads exactly like the per-element rule:\nadd, cap, floor.\n\nThe last line is the one worth memorising: `clamp(min=0.0)` is ReLU, the\nsingle most common nonlinearity in the whole field.",
      "segments": [
@@ -559,9 +591,19 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(min=0.0)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 487,
+       "hints_markdown": "1. The whole tensor at once \u2014 there is no index to loop over.\n2. An arithmetic operator applied to a tensor is applied to every element.\n3. `x * 2`."
+      },
+      {
+       "question_id": 488,
+       "hints_markdown": "1. You need the magnitude of each element, sign discarded.\n2. It is a method on the tensor, and it returns a NEW tensor rather than\n   editing yours \u2014 which is what keeps the input unchanged.\n3. `x.abs()`."
+      }
+     ],
      "independent_items": [
-      43
+      43,
+      489
      ],
      "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data."
     },
@@ -571,7 +613,16 @@
      "supporting_kcs": [
       "numpy.elementwise-ufuncs"
      ],
-     "new_syntax": [],
+     "new_syntax": [
+      "Tensor.any",
+      "Tensor.max",
+      "Tensor.mean",
+      "Tensor.min",
+      "Tensor.sum",
+      "torch.allclose",
+      "torch.equal",
+      "torch.full"
+     ],
      "concept_markdown": "Where an elementwise operation maps a tensor to a same-shaped tensor, an\n**aggregation (reduction)** collapses a tensor down to a single number:\n`x.sum()`, `x.mean()`, `x.min()`, `x.max()`, `x.std()` \u2014 the workhorses.\n\nCalled with no arguments, each of these reduces over **all** elements\nregardless of shape \u2014 a 2-D tensor's `x.max()` is the max of the whole matrix.\n(Reducing along just one axis is the `dim=` keyword, which gets its own KP in\nthe broadcasting lesson \u2014 walk before running.)\n\nOne practical wrinkle, and it bites harder here than in NumPy: reductions\nreturn a **0-dimensional tensor**, not a number. It prints as\n`tensor(1.5833)` and it still carries a dtype, a device, and possibly a\ngradient. Graders, JSON encoders, and f-strings care.\n\nWhen a task says \"return a plain Python int/float/bool\", convert explicitly:\n\n> `float(x.mean())`, `int(x.sum())`, `bool((x > 0).any())`\n> \u2014 or `x.item()`, the generic \"unwrap this 0-d result\".\n\nKeep tensors *inside* your computation; convert exactly at the boundary\nwhere a plain Python value is required. Unwrapping early is how you\naccidentally break the autograd chain in real model code.\n\nYes/no questions about tensors have two standard shapes:\n\n- **Comparison, then reduce.** A comparison builds a boolean tensor (previous\n  KP); `x.any()` (is at least one entry True?) or `x.all()` (are they all\n  True?) collapses it to one answer. `(x > 0).all()` asks \"is everything\n  positive?\".\n- **Whole-tensor equality.** `t.equal(a, b)` is an exact match of shape\n  and values; `t.allclose(a, b)` is equality within floating-point tolerance\n  \u2014 the right check after float arithmetic.\n\n`a == b` alone is NOT a verdict \u2014 it's elementwise and yields a boolean\ntensor (and `if` on it raises an error).",
      "worked_example_markdown": "Task: global min and max of a matrix of sensor readings.\n\n```python\nimport torch as t\n\nreadings = t.tensor([[3.5, -2.0, 7.25],\n                     [0.0,  9.5, -8.75]])\n\n# min/max with no dim argument scan the WHOLE tensor, ignoring shape.\nlo, hi = readings.min(), readings.max()\nassert (lo.item(), hi.item()) == (-8.75, 9.5)\n```\n\nWhy: no dim argument = one value for the whole tensor, shape ignored. That's\nthe default to internalize before `dim=` complicates things.\n\n```python\nimport torch as t\n\nreadings = t.tensor([[3.5, -2.0, 7.25],\n                     [0.0,  9.5, -8.75]])\n\n# mean returns a 0-d TENSOR. Usually fine, but when the contract says\n# \"a single float scalar\", unwrap it explicitly.\nraw = readings.mean()\nassert raw.ndim == 0 and isinstance(raw, t.Tensor)\n\navg = float(raw)\nassert isinstance(avg, float)\nassert abs(avg - 1.5833333) < 1e-5\n```\n\nWhy: `float(...)` at the boundary \u2014 the computation stays in torch, only the\nreturned value is unwrapped.\n\n```python\nimport torch as t\n\nreadings = t.tensor([[3.5, -2.0, 7.25],\n                     [0.0,  9.5, -8.75]])\n\n# Boolean pipeline: comparison (elementwise) then reduction (any).\n# Read it aloud: \"readings less than zero \u2014 any?\"\nhas_negative = bool((readings < 0).any())\nassert has_negative is True\n\n# Float-safe equality: after arithmetic, prefer allclose. Ten 0.1s summed\n# in float32 land just past 1.0.\na = t.full((10,), 0.1).sum()\nb = t.tensor(1.0)\nassert not t.equal(a, b)         # bitwise-exact? no \u2014 accumulated float error\nassert t.allclose(a, b)          # equal within tolerance? yes\n```\n\nWhy: exact equality is for ints/bools and provenance checks; `allclose` is\nfor anything that went through float arithmetic \u2014 and float32 has fewer\ndigits to spare than the float64 you may be used to.",
      "segments": [
@@ -644,9 +695,20 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(close within float tolerance?, exactly equal?) as plain bools.\"\"\"\n    return (bool(t.allclose(a, b)), bool(t.equal(a, b)))\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 495,
+       "hints_markdown": "1. Two steps: collapse the tensor to one number, then leave PyTorch behind.\n2. A whole-tensor reduction returns a 0-dimensional TENSOR, not a Python\n   number \u2014 the test checks which one you handed back.\n3. `x.sum().item()`."
+      },
+      {
+       "question_id": 496,
+       "hints_markdown": "1. Both halves are whole-tensor questions, so neither needs an axis.\n2. The count is metadata you already know how to read \u2014 it is not a\n   reduction, and it does not need .item().\n3. `(x.mean().item(), x.numel())`."
+      }
+     ],
      "independent_items": [
-      62
+      62,
+      497,
+      498
      ],
      "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`."
     },
@@ -657,14 +719,24 @@
       "numpy.ndarray-model",
       "numpy.slicing-views"
      ],
-     "new_syntax": [],
-     "concept_markdown": "**`t.sort(z)` does not return a sorted tensor.** It returns a *pair* \u2014 the\nsorted values and the indices that produced them \u2014 and forgetting that is the\nmistake this KP exists to prevent:\n\n```python no-run\nt.sort(z)          # -> torch.return_types.sort(values=..., indices=...)\nt.sort(z).values   # the sorted tensor you actually wanted\n```\n\nYou can unpack it either way: `values, indices = t.sort(z)`, or reach for\n`.values` / `.indices` by name. The indices half is not a consolation prize \u2014\nit is what \"sort one thing by another\" tasks need, and it is the same thing\n`t.argsort(z)` gives you on its own.\n\nSorting never modifies the input: `t.sort(z)` and the method form `z.sort()`\nboth leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)\n\nTwo more things worth knowing now:\n\n- **`descending=True`** sorts largest-first \u2014 a real keyword, unlike NumPy,\n  where you have to sort ascending and reverse afterwards.\n- On 2-D tensors, **`dim=`** sorts each row or column independently \u2014 mind\n  that this scrambles rows as units; reordering whole rows is argsort plus\n  fancy indexing, not `sort`.",
-     "worked_example_markdown": "Task: produce a sorted copy of a vector, confirm the original is intact, then\nget the same values descending.\n\n```python\nimport torch as t\n\nz = t.tensor([0.5, 0.25, 0.75])\n\n# sort returns a PAIR \u2014 take .values for the sorted tensor.\nresult = t.sort(z)\nassert result.values.tolist() == [0.25, 0.5, 0.75]\nassert result.indices.tolist() == [1, 0, 2]     # where each value came from\n\n# The input keeps its original order (the grader often checks this).\nassert z.tolist() == [0.5, 0.25, 0.75]\n\n# Descending is a keyword here \u2014 no reverse step needed.\ndesc = t.sort(z, descending=True).values\nassert desc.tolist() == [0.75, 0.5, 0.25]\n\n# Unpacking works too, and reads well when you want both halves.\nvalues, indices = t.sort(z)\nassert values.tolist() == [0.25, 0.5, 0.75]\n```\n\nWhy each step:\n\n1. Taking `.values` is the habit to build. Returning `t.sort(z)` straight from\n   a function hands the caller a pair, and the failure looks like a type error\n   far from the line that caused it.\n2. The indices are the bridge to the order-statistics KP: they say *where*\n   each sorted value came from, which is how you carry a second tensor along.\n3. `descending=True` is one of the places PyTorch is friendlier than NumPy \u2014\n   worth knowing so you don't write the reverse-slice workaround (which\n   wouldn't work here anyway, since negative slice steps are rejected).",
+     "new_syntax": [
+      "torch.sort",
+      "torch.sort#descending",
+      "torch.sort#dim",
+      "torch.argsort",
+      "torch.argsort#descending",
+      "torch.argsort#dim",
+      "torch.topk",
+      "Tensor.values",
+      "Tensor.indices"
+     ],
+     "concept_markdown": "**`t.sort(z)` does not return a sorted tensor.** It returns a *pair* \u2014 the\nsorted values and the indices that produced them \u2014 and forgetting that is the\nmistake this KP exists to prevent:\n\n```python no-run\nt.sort(z)          # -> torch.return_types.sort(values=..., indices=...)\nt.sort(z).values   # the sorted tensor you actually wanted\n```\n\nYou can unpack it either way: `values, indices = t.sort(z)`, or reach for\n`.values` / `.indices` by name. The indices half is not a consolation prize \u2014\nit is what \"sort one thing by another\" tasks need, and it is the same thing\n`t.argsort(z)` gives you on its own.\n\nSorting never modifies the input: `t.sort(z)` and the method form `z.sort()`\nboth leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)\n\n**`descending=True`** sorts largest-first \u2014 a real keyword, unlike NumPy, where\nyou have to sort ascending and reverse afterwards.\n\n`t.argsort(z)` gives you the indices half on its own: `order[0]` is the position\nof the smallest element, `order[1]` the next, and so on. On a single tensor that\nis just a slower route to `t.sort(z).values` \u2014 you would still have to index with\nit.\n\nIts real job is **carrying a second tensor along**. When two tensors are parallel\n\u2014 names and scores, boxes and confidences, tokens and logits \u2014 sorting one of\nthem independently destroys the correspondence. So you rank once, get the order,\nand index *every* tensor with that same order. They stay lined up because they\nall moved the same way.\n\nIndexing a tensor with an index tensor is the \"fancy indexing\" you have already\nmet: `names[order]` builds a new tensor by reading `names` at each position in\n`order`, in that order.\n\nOn a tensor with more than one axis, **`dim=`** says which axis to sort along,\nand every lane along that axis is sorted independently. `t.sort(m, dim=1)` sorts\n*within* each row \u2014 which means it scrambles each row's contents and destroys any\ncorrespondence between columns. That is usually not what you want from \"sort the\nmatrix\"; reordering whole rows is the argsort-plus-indexing pattern from the last\nsegment, applied to axis 0.\n\n**`t.topk(z, k)`** answers a narrower question: the k largest values, already\nordered largest first, plus their positions. Sorting the whole tensor to slice\noff k of them does strictly more work \u2014 and on a long vector, a great deal more.\nLike `sort`, it hands back a `(values, indices)` pair.",
+     "worked_example_markdown": "Task: produce a sorted copy of a vector, confirm the original is intact, then\nget the same values descending.\n\n```python\nimport torch as t\n\nz = t.tensor([0.5, 0.25, 0.75])\n\n# sort returns a PAIR \u2014 take .values for the sorted tensor.\nresult = t.sort(z)\nassert result.values.tolist() == [0.25, 0.5, 0.75]\nassert result.indices.tolist() == [1, 0, 2]     # where each value came from\n\n# The input keeps its original order (the grader often checks this).\nassert z.tolist() == [0.5, 0.25, 0.75]\n\n# Descending is a keyword here \u2014 no reverse step needed.\ndesc = t.sort(z, descending=True).values\nassert desc.tolist() == [0.75, 0.5, 0.25]\n\n# Unpacking works too, and reads well when you want both halves.\nvalues, indices = t.sort(z)\nassert values.tolist() == [0.25, 0.5, 0.75]\n```\n\nWhy each step:\n\n1. Taking `.values` is the habit to build. Returning `t.sort(z)` straight from\n   a function hands the caller a pair, and the failure looks like a type error\n   far from the line that caused it.\n2. The indices are the bridge to the order-statistics KP: they say *where*\n   each sorted value came from, which is how you carry a second tensor along.\n3. `descending=True` is one of the places PyTorch is friendlier than NumPy \u2014\n   worth knowing so you don't write the reverse-slice workaround (which\n   wouldn't work here anyway, since negative slice steps are rejected).\n\n```python\nimport torch as t\n\nnames = t.tensor([10, 20, 30])\nscores = t.tensor([0.5, 0.25, 0.75])\n\n# The positions that WOULD sort scores ascending \u2014 not the values.\norder = t.argsort(scores)\nassert order.tolist() == [1, 0, 2]\n\n# Index both tensors with the SAME order and they stay in correspondence.\nassert scores[order].tolist() == [0.25, 0.5, 0.75]\nassert names[order].tolist() == [20, 10, 30]\n\n# argsort takes the same direction keyword sort does.\nbest_first = t.argsort(scores, descending=True)\nassert best_first.tolist() == [2, 0, 1]\nassert names[best_first].tolist() == [30, 10, 20]\n```\n\nRead the last two lines: name 30 comes first because score 0.75 is the highest,\nand nothing about `names` was sorted. That is the whole pattern \u2014 rank one\ntensor, index all of them.\n\n```python\nimport torch as t\n\nm = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])\n\n# dim=1 sorts WITHIN each row, independently of the other rows.\nassert t.sort(m, dim=1).values.tolist() == [[1.0, 2.0, 3.0], [7.0, 8.0, 9.0]]\n\n# dim=0 does the same down the columns.\nassert t.sort(m, dim=0).values.tolist() == [[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]]\n\n# argsort takes the same dim= keyword, and answers with positions not values.\nassert t.argsort(m, dim=1).tolist() == [[1, 2, 0], [1, 2, 0]]\n\n# ...and the same descending= keyword you met a segment ago.\nz = t.tensor([0.5, 0.25, 0.75, 0.125])\nassert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]\n\n# topk: the k largest, largest first \u2014 a pair again, so take .values.\ntop = t.topk(z, 2)\nassert top.values.tolist() == [0.75, 0.5]\nassert top.indices.tolist() == [2, 0]\n```\n\nThe second assertion is the one to sit with: sorting down the columns left this\nmatrix unchanged, because every column was already ascending. Sorting along an\naxis tells you nothing about the other axis.",
      "segments": [
       {
        "concept_id": "",
-       "title": "",
-       "concept_markdown": "**`t.sort(z)` does not return a sorted tensor.** It returns a *pair* \u2014 the\nsorted values and the indices that produced them \u2014 and forgetting that is the\nmistake this KP exists to prevent:\n\n```python no-run\nt.sort(z)          # -> torch.return_types.sort(values=..., indices=...)\nt.sort(z).values   # the sorted tensor you actually wanted\n```\n\nYou can unpack it either way: `values, indices = t.sort(z)`, or reach for\n`.values` / `.indices` by name. The indices half is not a consolation prize \u2014\nit is what \"sort one thing by another\" tasks need, and it is the same thing\n`t.argsort(z)` gives you on its own.\n\nSorting never modifies the input: `t.sort(z)` and the method form `z.sort()`\nboth leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)\n\nTwo more things worth knowing now:\n\n- **`descending=True`** sorts largest-first \u2014 a real keyword, unlike NumPy,\n  where you have to sort ascending and reverse afterwards.\n- On 2-D tensors, **`dim=`** sorts each row or column independently \u2014 mind\n  that this scrambles rows as units; reordering whole rows is argsort plus\n  fancy indexing, not `sort`.",
+       "title": "sort returns a pair, not a tensor",
+       "concept_markdown": "**`t.sort(z)` does not return a sorted tensor.** It returns a *pair* \u2014 the\nsorted values and the indices that produced them \u2014 and forgetting that is the\nmistake this KP exists to prevent:\n\n```python no-run\nt.sort(z)          # -> torch.return_types.sort(values=..., indices=...)\nt.sort(z).values   # the sorted tensor you actually wanted\n```\n\nYou can unpack it either way: `values, indices = t.sort(z)`, or reach for\n`.values` / `.indices` by name. The indices half is not a consolation prize \u2014\nit is what \"sort one thing by another\" tasks need, and it is the same thing\n`t.argsort(z)` gives you on its own.\n\nSorting never modifies the input: `t.sort(z)` and the method form `z.sort()`\nboth leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)\n\n**`descending=True`** sorts largest-first \u2014 a real keyword, unlike NumPy, where\nyou have to sort ascending and reverse afterwards.",
        "watch_out_markdown": "",
        "worked_example_markdown": "Task: produce a sorted copy of a vector, confirm the original is intact, then\nget the same values descending.\n\n```python\nimport torch as t\n\nz = t.tensor([0.5, 0.25, 0.75])\n\n# sort returns a PAIR \u2014 take .values for the sorted tensor.\nresult = t.sort(z)\nassert result.values.tolist() == [0.25, 0.5, 0.75]\nassert result.indices.tolist() == [1, 0, 2]     # where each value came from\n\n# The input keeps its original order (the grader often checks this).\nassert z.tolist() == [0.5, 0.25, 0.75]\n\n# Descending is a keyword here \u2014 no reverse step needed.\ndesc = t.sort(z, descending=True).values\nassert desc.tolist() == [0.75, 0.5, 0.25]\n\n# Unpacking works too, and reads well when you want both halves.\nvalues, indices = t.sort(z)\nassert values.tolist() == [0.25, 0.5, 0.75]\n```\n\nWhy each step:\n\n1. Taking `.values` is the habit to build. Returning `t.sort(z)` straight from\n   a function hands the caller a pair, and the failure looks like a type error\n   far from the line that caused it.\n2. The indices are the bridge to the order-statistics KP: they say *where*\n   each sorted value came from, which is how you carry a second tensor along.\n3. `descending=True` is one of the places PyTorch is friendlier than NumPy \u2014\n   worth knowing so you don't write the reverse-slice workaround (which\n   wouldn't work here anyway, since negative slice steps are rejected).",
        "worked_example_code": "import torch as t\n\nz = t.tensor([0.5, 0.25, 0.75])\n\n# sort returns a PAIR \u2014 take .values for the sorted tensor.\nresult = t.sort(z)\nassert result.values.tolist() == [0.25, 0.5, 0.75]\nassert result.indices.tolist() == [1, 0, 2]     # where each value came from\n\n# The input keeps its original order (the grader often checks this).\nassert z.tolist() == [0.5, 0.25, 0.75]\n\n# Descending is a keyword here \u2014 no reverse step needed.\ndesc = t.sort(z, descending=True).values\nassert desc.tolist() == [0.75, 0.5, 0.25]\n\n# Unpacking works too, and reads well when you want both halves.\nvalues, indices = t.sort(z)\nassert values.tolist() == [0.25, 0.5, 0.75]\n",
@@ -676,6 +748,38 @@
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
         }
        ]
+      },
+      {
+       "concept_id": "",
+       "title": "argsort \u2014 the positions, and reordering by them",
+       "concept_markdown": "`t.argsort(z)` gives you the indices half on its own: `order[0]` is the position\nof the smallest element, `order[1]` the next, and so on. On a single tensor that\nis just a slower route to `t.sort(z).values` \u2014 you would still have to index with\nit.\n\nIts real job is **carrying a second tensor along**. When two tensors are parallel\n\u2014 names and scores, boxes and confidences, tokens and logits \u2014 sorting one of\nthem independently destroys the correspondence. So you rank once, get the order,\nand index *every* tensor with that same order. They stay lined up because they\nall moved the same way.\n\nIndexing a tensor with an index tensor is the \"fancy indexing\" you have already\nmet: `names[order]` builds a new tensor by reading `names` at each position in\n`order`, in that order.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\n\nnames = t.tensor([10, 20, 30])\nscores = t.tensor([0.5, 0.25, 0.75])\n\n# The positions that WOULD sort scores ascending \u2014 not the values.\norder = t.argsort(scores)\nassert order.tolist() == [1, 0, 2]\n\n# Index both tensors with the SAME order and they stay in correspondence.\nassert scores[order].tolist() == [0.25, 0.5, 0.75]\nassert names[order].tolist() == [20, 10, 30]\n\n# argsort takes the same direction keyword sort does.\nbest_first = t.argsort(scores, descending=True)\nassert best_first.tolist() == [2, 0, 1]\nassert names[best_first].tolist() == [30, 10, 20]\n```\n\nRead the last two lines: name 30 comes first because score 0.75 is the highest,\nand nothing about `names` was sorted. That is the whole pattern \u2014 rank one\ntensor, index all of them.",
+       "worked_example_code": "import torch as t\n\nnames = t.tensor([10, 20, 30])\nscores = t.tensor([0.5, 0.25, 0.75])\n\n# The positions that WOULD sort scores ascending \u2014 not the values.\norder = t.argsort(scores)\nassert order.tolist() == [1, 0, 2]\n\n# Index both tensors with the SAME order and they stay in correspondence.\nassert scores[order].tolist() == [0.25, 0.5, 0.75]\nassert names[order].tolist() == [20, 10, 30]\n\n# argsort takes the same direction keyword sort does.\nbest_first = t.argsort(scores, descending=True)\nassert best_first.tolist() == [2, 0, 1]\nassert names[best_first].tolist() == [30, 10, 20]\n",
+       "faded_items": [
+        {
+         "question_id": 520,
+         "prompt": "Rank by score, then move both tensors with the same order.",
+         "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n",
+         "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "",
+       "title": "picking an axis, and taking only the top k",
+       "concept_markdown": "On a tensor with more than one axis, **`dim=`** says which axis to sort along,\nand every lane along that axis is sorted independently. `t.sort(m, dim=1)` sorts\n*within* each row \u2014 which means it scrambles each row's contents and destroys any\ncorrespondence between columns. That is usually not what you want from \"sort the\nmatrix\"; reordering whole rows is the argsort-plus-indexing pattern from the last\nsegment, applied to axis 0.\n\n**`t.topk(z, k)`** answers a narrower question: the k largest values, already\nordered largest first, plus their positions. Sorting the whole tensor to slice\noff k of them does strictly more work \u2014 and on a long vector, a great deal more.\nLike `sort`, it hands back a `(values, indices)` pair.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\n\nm = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])\n\n# dim=1 sorts WITHIN each row, independently of the other rows.\nassert t.sort(m, dim=1).values.tolist() == [[1.0, 2.0, 3.0], [7.0, 8.0, 9.0]]\n\n# dim=0 does the same down the columns.\nassert t.sort(m, dim=0).values.tolist() == [[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]]\n\n# argsort takes the same dim= keyword, and answers with positions not values.\nassert t.argsort(m, dim=1).tolist() == [[1, 2, 0], [1, 2, 0]]\n\n# ...and the same descending= keyword you met a segment ago.\nz = t.tensor([0.5, 0.25, 0.75, 0.125])\nassert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]\n\n# topk: the k largest, largest first \u2014 a pair again, so take .values.\ntop = t.topk(z, 2)\nassert top.values.tolist() == [0.75, 0.5]\nassert top.indices.tolist() == [2, 0]\n```\n\nThe second assertion is the one to sit with: sorting down the columns left this\nmatrix unchanged, because every column was already ascending. Sorting along an\naxis tells you nothing about the other axis.",
+       "worked_example_code": "import torch as t\n\nm = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])\n\n# dim=1 sorts WITHIN each row, independently of the other rows.\nassert t.sort(m, dim=1).values.tolist() == [[1.0, 2.0, 3.0], [7.0, 8.0, 9.0]]\n\n# dim=0 does the same down the columns.\nassert t.sort(m, dim=0).values.tolist() == [[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]]\n\n# argsort takes the same dim= keyword, and answers with positions not values.\nassert t.argsort(m, dim=1).tolist() == [[1, 2, 0], [1, 2, 0]]\n\n# ...and the same descending= keyword you met a segment ago.\nz = t.tensor([0.5, 0.25, 0.75, 0.125])\nassert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]\n\n# topk: the k largest, largest first \u2014 a pair again, so take .values.\ntop = t.topk(z, 2)\nassert top.values.tolist() == [0.75, 0.5]\nassert top.indices.tolist() == [2, 0]\n",
+       "faded_items": [
+        {
+         "question_id": 521,
+         "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, _____=1, _____=True)\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
+        }
+       ]
       }
      ],
      "faded_items": [
@@ -684,10 +788,35 @@
        "prompt": "Sorted copy, smallest to largest, input left unmodified.",
        "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z)._____\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
+      },
+      {
+       "question_id": 520,
+       "prompt": "Rank by score, then move both tensors with the same order.",
+       "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n",
+       "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
+      },
+      {
+       "question_id": 521,
+       "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, _____=1, _____=True)\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
       }
      ],
-     "guided_items": [],
-     "independent_items": [],
+     "guided_items": [
+      {
+       "question_id": 516,
+       "hints_markdown": "1. A NEW tensor, so the input has to survive untouched.\n2. Sorting returns both values and the positions they came from; you want\n   the values half, and there is a keyword for the direction.\n3. `t.sort(z, descending=True).values`."
+      },
+      {
+       "question_id": 517,
+       "hints_markdown": "1. Not the sorted values \u2014 where each sorted value WOULD have come from.\n2. The result is an index tensor the same length as z, and result[0] is the\n   position of the smallest element.\n3. `t.argsort(z)`."
+      }
+     ],
+     "independent_items": [
+      518,
+      519,
+      522
+     ],
      "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP)."
     },
     {
@@ -834,7 +963,10 @@
       "numpy.elementwise-ufuncs"
      ],
      "new_syntax": [
-      "matmul-operator"
+      "matmul-operator",
+      "syntax.matmul",
+      "torch.linalg",
+      "torch.linalg.solve"
      ],
      "concept_markdown": "Two different \"multiplications\" exist for matrices, and PyTorch gives each its\nown operator:\n\n- **`a * b` \u2014 elementwise**: multiplies corresponding entries; shapes must\n  match (or broadcast). No summing happens.\n- **`a @ b` \u2014 matrix multiplication**: row-times-column with a sum inside.\n  For `a` of shape (m, k) and `b` of shape (k, n), the result is (m, n):\n  entry `[i, j]` is the dot product of row i of `a` with column j of `b`.\n  The inner dimensions (k) must agree, and they disappear in the output.\n\nThe shape rule `(m, k) @ (k, n) \u2192 (m, n)` is worth chanting: it predicts\nboth whether a product is legal and what comes out. It also covers\nmatrix\u2013vector: `(m, k) @ (k,) \u2192 (m,)`.\n\n`t.matmul(a, b)` is the same operation spelled as a function, and in model\ncode you will meet `a.T` for the transpose that so often precedes it.\n\nThe `t.linalg` submodule holds the \"real linear algebra\", and its names match\nNumPy's `np.linalg` almost one for one:\n\n- **`t.linalg.solve(a, b)`** \u2014 solve the system `a @ x = b` for `x`.\n  This is THE way to compute \"a\u207b\u00b9 b\". Numerically, solving directly is both\n  faster and more accurate than `t.linalg.inv(a) @ b`; computing an\n  explicit inverse is almost never what you want.\n- `t.linalg.inv`, `t.linalg.det`, `t.linalg.matrix_rank`,\n  `t.linalg.norm`, `t.linalg.eig` \u2014 inverse, determinant, rank, norms,\n  eigendecomposition, when a task genuinely asks for them.\n\nOne dtype caveat that is easy to trip over here: these routines want floats,\nand the default float is 32-bit. Ill-conditioned systems lose accuracy sooner\nthan the float64 you may be used to from NumPy \u2014 if a solve looks wrong,\nchecking the dtype is a reasonable first move.\n\nSanity-checking a solve is one line: plug `x` back in and compare\n`a @ x` with `b` using `t.allclose` (float arithmetic \u2014 never `==`).",
      "worked_example_markdown": "```python\nimport torch as t\n\na = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nb = t.tensor([[5.0, 6.0],\n              [7.0, 8.0]])\n\n# Elementwise vs matrix product \u2014 same operands, different operations:\nelem = a * b            # [[5, 12], [21, 32]] \u2014 corresponding entries\nmat = a @ b             # row\u00b7column with a sum inside\nassert elem.tolist() == [[5.0, 12.0], [21.0, 32.0]]\nassert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]\n# Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19. Row 0 \u00b7 column 0.\n\n# Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.\np = t.ones((2, 3)) @ t.ones((3, 2))\nassert p.shape == (2, 2)\n```\n\nWhy: computing `mat[0, 0]` by hand once (row 0 of `a` dotted with column 0\nof `b`) is the fastest way to internalize what `@` does beyond the shape\nrule \u2014 and predicting shapes BEFORE running makes mismatches design errors\nyou catch on paper.\n\n```python\nimport torch as t\n\n# Solve a @ x = b_vec \u2014 NOT by computing an inverse.\na_sys = t.tensor([[2.0, 0.0],\n                  [0.0, 4.0]])\nb_vec = t.tensor([6.0, 8.0])\nx = t.linalg.solve(a_sys, b_vec)\nassert x.tolist() == [3.0, 2.0]\n\n# Verification pattern: substitute back, compare with float tolerance.\nassert t.allclose(a_sys @ x, b_vec)\n```\n\nWhy: `solve` + `allclose` verification \u2014 the pair costs one line and\ncatches both wrong answers and ill-conditioned systems.",
@@ -886,8 +1018,22 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t.linalg.solve(a, b)\n"
       }
      ],
-     "guided_items": [],
-     "independent_items": [],
+     "guided_items": [
+      {
+       "question_id": 508,
+       "hints_markdown": "1. This is the multiplication that is NOT matrix multiplication.\n2. Entry [i][j] depends only on the two entries at [i][j] \u2014 nothing is summed,\n   so no axis is contracted.\n3. `a * b`."
+      },
+      {
+       "question_id": 509,
+       "hints_markdown": "1. Both answers come from the same two matrices; only the operator changes.\n2. `*` pairs entries in place; `@` contracts a's columns against b's rows.\n3. `((a * b).tolist(), (a @ b).tolist())`."
+      }
+     ],
+     "independent_items": [
+      510,
+      511,
+      512,
+      513
+     ],
      "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first."
     }
    ]
@@ -1693,18 +1839,21 @@
       "numpy.reshape-flatten"
      ],
      "new_syntax": [
-      "none-newaxis-indexing"
+      "none-newaxis-indexing",
+      "syntax.multi-axis-index",
+      "torch.ones",
+      "torch.broadcast_shapes"
      ],
      "concept_markdown": "Elementwise operations \"require matching shapes\" \u2014 except PyTorch will\n**stretch** certain mismatched shapes to fit, following one mechanical rule\nset called **broadcasting**. It is the engine under half of idiomatic\ntensor code,\nand it is fully predictable:\n\n> **Align the two shapes from the RIGHT. For each axis pair, the sizes are\n> compatible if they are equal, or if one of them is 1** (that axis gets\n> conceptually copied to match). **A missing leading axis counts as 1.**\n\nWork `(m, 1) + (1, n)` by hand: align \u2192 axis 0 is m vs 1 (stretch the 1 \u2192 m),\naxis 1 is 1 vs n (stretch \u2192 n) \u2014 result shape `(m, n)`, where entry [i, j] =\n`a[i, 0] + b[0, j]`. Every pairwise-combination table, distance matrix, and\nouter product starts exactly like this.\n\nThe stretching is *virtual* \u2014 no copies are made; PyTorch just reuses the\nsingle row/column while iterating. Two everyday cases you have already been\nusing: scalar-with-array (`z * 2`) and matrix-with-row (`z - row` where row\nhas shape (n,) \u2014 aligned right, it matches z's last axis).\n\nThe craft skill is **placing the 1s yourself**. Indexing with `None` (alias\n`None`, which is what NumPy spells `np.newaxis`) inserts a length-1 axis:\n`v[:, None]` turns shape (n,) into a\n**column** (n, 1); `v[None, :]` makes an explicit **row** (1, n). When an\noperation needs a vector to run *down* rather than *across* (or to hit a\nspecific axis of a 3-D array), you reshape it with `None` until the alignment\nsays what you mean.\n\nWhen shapes are incompatible (say (3,) with (4,)), PyTorch raises rather than\nguessing \u2014 a broadcast error means your alignment is wrong, and the fix is\nalmost always a well-placed `None`. Never reshape at random until the error\ngoes away: work the right-alignment on paper, decide where the 1 belongs,\nand place it deliberately.",
-     "worked_example_markdown": "```python\nimport torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n```\n\nWhy: writing the two shapes one above the other, right-aligned, and\nresolving each column IS the method \u2014 do it on paper until it's automatic.\nThe result shape falls out before any code runs.\n\n```python\nimport torch as t\n\n# The addition table again, from FLAT vectors \u2014 we place the 1-axes:\nva, vb = t.arange(3), t.arange(4)\ntable = va[:, None] + vb[None, :]\nassert table.shape == (3, 4)\n\n# 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).\n# Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.\n# The map needs its stretch-axis at the END: scale[:, :, None] is (2, 2, 1).\nimg = t.ones((2, 2, 3))\nscale = t.tensor([[1.0, 2.0],\n                  [3.0, 4.0]])\nscaled = img * scale[:, :, None]\nassert scaled.shape == (2, 2, 3)\nassert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3\n```\n\nWhy: the `va[:, None] + vb[None, :]` form is the general recipe for \"all\npairs f(a_i, b_j)\". In the 3-D case, the naive `img * scale` FAILS the\nalignment check \u2014 working the rule shows the 1 must go at the end.",
+     "worked_example_markdown": "```python\nimport torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n\n# The result SHAPE is decidable from the two input shapes alone, with nothing\n# allocated \u2014 which is what you want when the real tensors are large and you\n# only need to know whether they will fit together.\nassert t.broadcast_shapes(a.shape, b.shape) == (3, 4)\n\n# Incompatible shapes fail here too, and fail early.\ntry:\n    t.broadcast_shapes((3, 4), (5, 4))\nexcept RuntimeError:\n    pass\nelse:\n    raise AssertionError(\"(3, 4) and (5, 4) should not broadcast\")\n```\n\nWhy: writing the two shapes one above the other, right-aligned, and\nresolving each column IS the method \u2014 do it on paper until it's automatic.\nThe result shape falls out before any code runs, which is exactly what\n`t.broadcast_shapes` is for: it answers the shape question without touching a\nsingle element, so reach for it instead of building a result you intend to\nthrow away.\n\n```python\nimport torch as t\n\n# The addition table again, from FLAT vectors \u2014 we place the 1-axes:\nva, vb = t.arange(3), t.arange(4)\ntable = va[:, None] + vb[None, :]\nassert table.shape == (3, 4)\n\n# 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).\n# Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.\n# The map needs its stretch-axis at the END: scale[:, :, None] is (2, 2, 1).\nimg = t.ones((2, 2, 3))\nscale = t.tensor([[1.0, 2.0],\n                  [3.0, 4.0]])\nscaled = img * scale[:, :, None]\nassert scaled.shape == (2, 2, 3)\nassert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3\n```\n\nWhy: the `va[:, None] + vb[None, :]` form is the general recipe for \"all\npairs f(a_i, b_j)\". In the 3-D case, the naive `img * scale` FAILS the\nalignment check \u2014 working the rule shows the 1 must go at the end.",
      "segments": [
       {
        "concept_id": "",
        "title": "the right-alignment rule",
        "concept_markdown": "Elementwise operations \"require matching shapes\" \u2014 except PyTorch will\n**stretch** certain mismatched shapes to fit, following one mechanical rule\nset called **broadcasting**. It is the engine under half of idiomatic\ntensor code,\nand it is fully predictable:\n\n> **Align the two shapes from the RIGHT. For each axis pair, the sizes are\n> compatible if they are equal, or if one of them is 1** (that axis gets\n> conceptually copied to match). **A missing leading axis counts as 1.**\n\nWork `(m, 1) + (1, n)` by hand: align \u2192 axis 0 is m vs 1 (stretch the 1 \u2192 m),\naxis 1 is 1 vs n (stretch \u2192 n) \u2014 result shape `(m, n)`, where entry [i, j] =\n`a[i, 0] + b[0, j]`. Every pairwise-combination table, distance matrix, and\nouter product starts exactly like this.\n\nThe stretching is *virtual* \u2014 no copies are made; PyTorch just reuses the\nsingle row/column while iterating. Two everyday cases you have already been\nusing: scalar-with-array (`z * 2`) and matrix-with-row (`z - row` where row\nhas shape (n,) \u2014 aligned right, it matches z's last axis).",
        "watch_out_markdown": "",
-       "worked_example_markdown": "```python\nimport torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n```\n\nWhy: writing the two shapes one above the other, right-aligned, and\nresolving each column IS the method \u2014 do it on paper until it's automatic.\nThe result shape falls out before any code runs.",
-       "worked_example_code": "import torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n",
+       "worked_example_markdown": "```python\nimport torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n\n# The result SHAPE is decidable from the two input shapes alone, with nothing\n# allocated \u2014 which is what you want when the real tensors are large and you\n# only need to know whether they will fit together.\nassert t.broadcast_shapes(a.shape, b.shape) == (3, 4)\n\n# Incompatible shapes fail here too, and fail early.\ntry:\n    t.broadcast_shapes((3, 4), (5, 4))\nexcept RuntimeError:\n    pass\nelse:\n    raise AssertionError(\"(3, 4) and (5, 4) should not broadcast\")\n```\n\nWhy: writing the two shapes one above the other, right-aligned, and\nresolving each column IS the method \u2014 do it on paper until it's automatic.\nThe result shape falls out before any code runs, which is exactly what\n`t.broadcast_shapes` is for: it answers the shape question without touching a\nsingle element, so reach for it instead of building a result you intend to\nthrow away.",
+       "worked_example_code": "import torch as t\n\na = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)\nb = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)\n\n# Align right:  (3, 1)\n#               (1, 4)\n# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b\n# down rows. Result (3, 4): the \"addition table\" of the two vectors.\ntable = a + b\nassert table.shape == (3, 4)\nassert table.tolist() == [[0, 1, 2, 3],\n                          [1, 2, 3, 4],\n                          [2, 3, 4, 5]]\n\n# The result SHAPE is decidable from the two input shapes alone, with nothing\n# allocated \u2014 which is what you want when the real tensors are large and you\n# only need to know whether they will fit together.\nassert t.broadcast_shapes(a.shape, b.shape) == (3, 4)\n\n# Incompatible shapes fail here too, and fail early.\ntry:\n    t.broadcast_shapes((3, 4), (5, 4))\nexcept RuntimeError:\n    pass\nelse:\n    raise AssertionError(\"(3, 4) and (5, 4) should not broadcast\")\n",
        "faded_items": [
         {
          "question_id": 111,
@@ -1745,10 +1894,21 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(h, w, c) image a scaled per-pixel by (h, w) map b.\"\"\"\n    return a * b[:, :, None]\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 499,
+       "hints_markdown": "1. Do NOT tile the bias. Write the addition and let the shapes meet.\n2. Shapes align from the RIGHT: a (cols,) vector already lines up with the\n   last axis of a (rows, cols) matrix, and the missing axis is treated as 1.\n3. `x + bias`."
+      },
+      {
+       "question_id": 500,
+       "hints_markdown": "1. You are asked for the resulting shape, not for a rule recited back.\n2. There is a function that takes the two SHAPES and returns the combined one,\n   without building anything \u2014 then convert its torch.Size to a plain tuple.\n3. `tuple(t.broadcast_shapes(a.shape, b.shape))`."
+      }
+     ],
      "independent_items": [
       60,
-      81
+      81,
+      501,
+      502
      ],
      "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately."
     },
@@ -1759,7 +1919,11 @@
       "numpy.aggregations",
       "numpy.broadcasting-rules"
      ],
-     "new_syntax": [],
+     "new_syntax": [
+      "Tensor.mean#dim",
+      "Tensor.mean#keepdim",
+      "Tensor.sum#dim"
+     ],
      "concept_markdown": "Whole-array reductions collapse everything to one number. Add **`axis=`** and\nthe reduction collapses **only that axis**, leaving the rest of the shape\nintact:\n\n> **The axis you name is the axis that DISAPPEARS.**\n\nFor a (r, c) matrix:\n\n- `x.sum(axis=0)` \u2014 axis 0 (rows) disappears \u2192 shape (c,): **column sums**\n  (you summed *down* each column).\n- `x.sum(axis=1)` \u2014 axis 1 disappears \u2192 shape (r,): **row sums**.\n\nThe naming feels backwards until you anchor it: `axis=0` does NOT mean\n\"per-row results\", it means \"reduce ALONG axis 0\" \u2014 the r rows are collapsed\non top of each other. Predict the output shape first (cross the named axis\nout of the shape tuple) and the direction sorts itself out.\n\nEverything from the aggregation KP takes `dim=`: `mean`, `amin`, `amax`,\n`std`, `any`, `all`, `argmax`, plus `t.quantile` and friends. Two PyTorch\nwrinkles carry through this whole KP: `mean` refuses an integer tensor (cast\nwith `.to(t.float32)` first), and `std` divides by n\u22121 unless you pass\n`correction=0`.\n\nHigher-rank arrays allow a *tuple* of axes \u2014 `x.sum(axis=(-2, -1))` collapses\nthe last two dimensions at once (e.g. summing each image of a batch), and\nnegative indices count from the end just like in indexing. That makes\n\"per-image\" reductions one call, robust to how many leading batch axes exist.\n\nOne more switch on the same call: **`keepdims=True`** keeps the reduced axis\nas length 1 instead of deleting it \u2014 shape (r, c) \u2192 (r, 1) rather than (r,).\nWhy you'd want that: a (r, 1) result broadcasts back against the original\n(r, c) *by row*. The reduce \u2192 keepdims \u2192 operate pipeline is the heart of the\nnext KP (centering), where you'll practice it.",
      "worked_example_markdown": "```python\nimport torch as t\n\nx = t.tensor([[1.0, 2.0, 3.0],\n              [10.0, 20.0, 30.0]])    # shape (2, 3) \u2014 float, so mean works\n\n# dim=0 -> the 2 rows collapse onto each other -> one sum PER COLUMN.\ncol_sums = x.sum(dim=0)\nassert tuple(col_sums.shape) == (3,)  # (2, 3) with dim 0 crossed out\nassert col_sums.tolist() == [11.0, 22.0, 33.0]\n\n# dim=1 -> the 3 columns collapse -> one value PER ROW.\nrow_means = x.mean(dim=1)\nassert tuple(row_means.shape) == (2,)\nassert row_means.tolist() == [2.0, 20.0]\n```\n\nWhy: for each reduction, the assert on `.shape` comes BEFORE the values \u2014\nthat's the recommended order in your own code too: predict the shape by\ncrossing out the named axis, then check the numbers.\n\n```python\nimport torch as t\n\n# Tuple of axes on a 4-D batch (a, b, c, d): collapse the last two ->\n# one total per (a, b) slice. Negative axes save counting.\nbatch = t.arange(24).reshape(2, 3, 2, 2)\ntotals = batch.sum(dim=(-2, -1))\nassert totals.shape == (2, 3)\nassert totals[0, 0] == 0 + 1 + 2 + 3\n\n# keepdim preview: the reduced dim survives as 1, so the result still\n# lines up against the original for broadcasting.\n# (t.mean needs a float tensor \u2014 it will not promote ints the way numpy does.)\nx = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nrm = x.mean(dim=1, keepdim=True)\nassert tuple(rm.shape) == (2, 1)\ncentered = x - rm                     # (2,3) - (2,1): broadcasts by row\nassert centered[0].tolist() == [-1.0, 0.0, 1.0]\n```\n\nWhy: a bare `(2,)` row-mean would align against the WRONG axis when\nbroadcast (right-aligned \u2192 columns) \u2014 the source of a classic silent bug\nwhen r = c. keepdims makes the intended alignment explicit.",
      "segments": [
@@ -1810,10 +1974,20 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(dim=(-2, -1))\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 503,
+       "hints_markdown": "1. One number per row means the COLUMN axis has to go.\n2. The axis you name in `dim=` is the one that disappears, so name the one\n   you are collapsing, not the one you are keeping.\n3. `x.sum(dim=1)`."
+      },
+      {
+       "question_id": 504,
+       "hints_markdown": "1. Same reduction as before, but the result must still have two axes.\n2. There is a keyword that leaves the collapsed axis behind at length 1,\n   which is exactly what a later broadcast needs.\n3. `x.sum(dim=1, keepdim=True)`."
+      }
+     ],
      "independent_items": [
       108,
-      130
+      130,
+      505
      ],
      "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely."
     },
@@ -1968,8 +2142,6 @@
       "torch.cummax#dim",
       "torch.cummin",
       "torch.cumprod",
-      "Tensor.values",
-      "Tensor.indices",
       "torch.diff",
       "torch.diff#dim",
       "torch.diff#n"
@@ -2061,7 +2233,11 @@
       "numpy.axis-reductions",
       "numpy.broadcasting-rules"
      ],
-     "new_syntax": [],
+     "new_syntax": [
+      "torch.dot",
+      "torch.isclose",
+      "torch.linalg.norm"
+     ],
      "concept_markdown": "The **dot product** of two equal-length vectors \u2014 multiply corresponding\nentries, add them up \u2014 is the atom that all of linear algebra's products are\nbuilt from. PyTorch spells it three interchangeable ways:\n\n```python no-run\nt.dot(a, b)      ==  a @ b  ==  (a * b).sum()\n```\n\nThe third spelling is the important one conceptually: *dot = elementwise\nmultiply + reduction.* Holding the decomposition lets you build variants\n(weighted dots, masked dots, batch dots) instead of hunting for a function\nthat may not exist.\n\n**Matrix @ vector** (`z @ v`, shapes (n, m) @ (m,)): one dot per row of z \u2014\n\"each row dotted with v\" in a single call. Result shape (n,). (Matrix @\nmatrix is one dot per (row, column) pair \u2014 the previous KP.)\n\nCheck one output by hand and the shape rule follows: matmul = a dot per\nrow, so an (n, m) matrix against a length-m vector yields n dots.\n\nWhen the pattern you need is *not* one of the packaged shapes, the\ndecomposition rescues you. \"Dot each row of `a` with the CORRESPONDING row\nof `b`\" (same shapes) is not `a @ b` \u2014 matmul dots every row with every\nCOLUMN. But per the atom: multiply elementwise, then reduce each row:\n\n```python no-run\n(a * b).sum(dim=1)          # row-wise dots\n```\n\nThat multiply-then-reduce-an-axis maneuver covers the \"batch of dots\" tasks\n\u2014 and it is the exact pattern einsum notation will name concisely in the\nnext course topic.\n\n**Norms** are the same atom again: a vector's Euclidean length is\n`t.sqrt(v @ v)`. Applied to a whole matrix's entries \u2014 \u221a(sum of all\nsquares) \u2014 it's the **Frobenius norm**, `t.linalg.norm(z)` with no\narguments (as if the matrix were one long vector). Operator norms exist\nbehind `ord=`, but Frobenius is the drills' default meaning of \"the norm\".",
      "worked_example_markdown": "```python\nimport torch as t\n\na = t.tensor([1.0, 2.0, 3.0])\nb = t.tensor([4.0, -5.0, 6.0])\n\n# The atom, three spellings \u2014 same number.\nd = float(t.dot(a, b))\nassert d == float(a @ b) == float((a * b).sum()) == 12.0\n```\n\nWhy: verifying the three dot spellings agree once buys permanent fluency:\nwhen you see `(x * w).sum()` in someone's code, you now read \"dot\".\n\n```python\nimport torch as t\n\n# Matrix @ vector: row i of the result = (row i of z) . v\nz = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nv = t.tensor([10.0, 1.0])\nzv = z @ v\nassert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1\n```\n\nWhy: checking one output by hand (1\u00b710 + 2\u00b71 = 12) anchors \"matmul = a dot\nper row\" \u2014 and predicts the result's shape (n,) without memorizing another\nrule.\n\n```python\nimport torch as t\n\n# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.\np = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nq = t.tensor([[5.0, 6.0],\n              [7.0, 8.0]])\nrow_dots = (p * q).sum(dim=1)\nassert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8\n```\n\nWhy: this case is deliberately a trap \u2014 `p @ q` runs on these square\nmatrices and returns the WRONG thing (full matrix product). Decomposing to\nmultiply+sum(axis=1) is the general escape whenever the packaged products\ndon't match the pairing you need.\n\n```python\nimport torch as t\n\n# Frobenius norm: sqrt of the sum of ALL squared entries.\nf = t.tensor([[3.0, 4.0],\n              [0.0, 0.0]])\nassert t.linalg.norm(f) == 5.0\nassert t.isclose(t.linalg.norm(f), t.sqrt((f * f).sum()))\n```\n\nWhy: the first-principles spelling `t.sqrt((z * z).sum())` is\nmultiply+reduce again \u2014 the whole KP is one atom wearing different hats.",
      "segments": [
@@ -2156,9 +2332,15 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Square root of the sum of squares of ALL entries of z.\"\"\"\n    return t.linalg.norm(z)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 514,
+       "hints_markdown": "1. Do not reach for the built-in dot product \u2014 the question wants the two\n   steps it is made of.\n2. Multiply the pairs elementwise, then collapse the result to one number.\n3. `float((a * b).sum())`."
+      }
+     ],
      "independent_items": [
-      141
+      141,
+      515
      ],
      "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\"."
     },

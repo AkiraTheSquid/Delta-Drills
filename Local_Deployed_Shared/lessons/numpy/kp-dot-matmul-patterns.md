@@ -2,10 +2,10 @@
 kc: numpy.dot-matmul-patterns
 title: Dot products and matrix-multiply patterns
 supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rules]
-new_syntax: []
+new_syntax: [torch.dot, torch.isclose, torch.linalg.norm]
 faded: [37, 144, 121, 5]
-guided: []
-independent: [141]
+guided: [514]
+independent: [141, 515]
 ---
 
 ## Concept: the dot product — multiply, then sum
@@ -211,6 +211,16 @@ def solve(z):
 From the drill bank: q141 (diagonal of a @ b WITHOUT computing the full
 product — think about which dots the diagonal actually needs: row i of a
 with COLUMN i of b).
+
+From the drill bank: q515 (rescale every row to unit length).
+
+## Guided practice
+
+### q514
+1. Do not reach for the built-in dot product — the question wants the two
+   steps it is made of.
+2. Multiply the pairs elementwise, then collapse the result to one number.
+3. `float((a * b).sum())`.
 
 ## Misconceptions
 

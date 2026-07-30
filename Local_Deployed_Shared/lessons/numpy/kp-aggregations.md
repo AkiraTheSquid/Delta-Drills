@@ -2,10 +2,10 @@
 kc: numpy.aggregations
 title: Whole-tensor aggregations and Python scalars
 supporting: [numpy.elementwise-ufuncs]
-new_syntax: []
+new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.allclose, torch.equal, torch.full]
 faded: [26, 28, 64]
-guided: []
-independent: [62]
+guided: [495, 496]
+independent: [62, 497, 498]
 ---
 
 ## Concept: reductions — collapsing a tensor to one number
@@ -182,6 +182,23 @@ def solve(a, b):
 
 From the drill bank: q62 (sum of an integer tensor as a plain Python int —
 reduction plus the scalar boundary in one task).
+
+From the drill bank: q497 (any element above a threshold, and how many — one mask, two answers).
+From the drill bank: q498 (min, max and the span between them, as plain Python floats).
+
+## Guided practice
+
+### q495
+1. Two steps: collapse the tensor to one number, then leave PyTorch behind.
+2. A whole-tensor reduction returns a 0-dimensional TENSOR, not a Python
+   number — the test checks which one you handed back.
+3. `x.sum().item()`.
+
+### q496
+1. Both halves are whole-tensor questions, so neither needs an axis.
+2. The count is metadata you already know how to read — it is not a
+   reduction, and it does not need .item().
+3. `(x.mean().item(), x.numel())`.
 
 ## Misconceptions
 

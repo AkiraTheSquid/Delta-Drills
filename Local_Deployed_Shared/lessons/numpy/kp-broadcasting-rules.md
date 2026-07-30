@@ -2,10 +2,10 @@
 kc: numpy.broadcasting-rules
 title: Broadcasting rules
 supporting: [numpy.elementwise-ufuncs, numpy.reshape-flatten]
-new_syntax: [none-newaxis-indexing]
+new_syntax: [none-newaxis-indexing, syntax.multi-axis-index, torch.ones, torch.broadcast_shapes]
 faded: [111, 151]
-guided: []
-independent: [60, 81]
+guided: [499, 500]
+independent: [60, 81, 501, 502]
 ---
 
 ## Concept: the right-alignment rule
@@ -47,11 +47,27 @@ assert table.shape == (3, 4)
 assert table.tolist() == [[0, 1, 2, 3],
                           [1, 2, 3, 4],
                           [2, 3, 4, 5]]
+
+# The result SHAPE is decidable from the two input shapes alone, with nothing
+# allocated — which is what you want when the real tensors are large and you
+# only need to know whether they will fit together.
+assert t.broadcast_shapes(a.shape, b.shape) == (3, 4)
+
+# Incompatible shapes fail here too, and fail early.
+try:
+    t.broadcast_shapes((3, 4), (5, 4))
+except RuntimeError:
+    pass
+else:
+    raise AssertionError("(3, 4) and (5, 4) should not broadcast")
 ```
 
 Why: writing the two shapes one above the other, right-aligned, and
 resolving each column IS the method — do it on paper until it's automatic.
-The result shape falls out before any code runs.
+The result shape falls out before any code runs, which is exactly what
+`t.broadcast_shapes` is for: it answers the shape question without touching a
+single element, so reach for it instead of building a result you intend to
+throw away.
 
 ## Faded practice
 
@@ -142,6 +158,23 @@ From the drill bank: q60 (matrix whose every row is 0..cols-1 — one arange
 plus broadcasting against a zeros column... or think about what `+` does),
 q81 (a matrix whose rows are all copies of v — broadcasting or tile, then
 consider which is cheaper).
+
+From the drill bank: q501 (scale each ROW by its own factor — right-alignment is not what you want).
+From the drill bank: q502 (a multiplication table from two ranges and no loop).
+
+## Guided practice
+
+### q499
+1. Do NOT tile the bias. Write the addition and let the shapes meet.
+2. Shapes align from the RIGHT: a (cols,) vector already lines up with the
+   last axis of a (rows, cols) matrix, and the missing axis is treated as 1.
+3. `x + bias`.
+
+### q500
+1. You are asked for the resulting shape, not for a rule recited back.
+2. There is a function that takes the two SHAPES and returns the combined one,
+   without building anything — then convert its torch.Size to a plain tuple.
+3. `tuple(t.broadcast_shapes(a.shape, b.shape))`.
 
 ## Misconceptions
 

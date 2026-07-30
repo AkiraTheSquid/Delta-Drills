@@ -84,3 +84,390 @@ def solve(rows):
 example = [[1, 2], [3, 4]]
 print(solve(example))
 ",36,"('torch.int64', 'torch.float32', False)"
+Numpy,Vectorization and broadcasting,Write a function solve(x) that takes a PyTorch tensor and returns a new tensor with every element doubled. Write the formula once for the whole tensor — there is no loop to write.,"import torch as t
+
+def solve(x):
+    """"""Return x with every element doubled.""""""
+    return x * 2
+
+
+example = t.tensor([1.0, -2.0, 3.5])
+print(solve(example))
+",10,"tensor([ 2., -4.,  7.])"
+Numpy,Vectorization and broadcasting,Write a function solve(x) that takes a PyTorch tensor of floats and returns a new tensor holding the absolute value of each element. The original must be left unchanged.,"import torch as t
+
+def solve(x):
+    """"""Return the absolute value of every element.""""""
+    return x.abs()
+
+
+example = t.tensor([-1.5, 2.0, -3.25])
+print(solve(example))
+",14,"tensor([1.5000, 2.0000, 3.2500])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, lo, hi) that takes a float tensor and two floats, and returns a new tensor in which every element below lo has been raised to lo and every element above hi lowered to hi. Values already inside the range are left alone. Remember that min= sets the FLOOR and max= the CEILING — they read backwards from how they sound.","import torch as t
+
+def solve(x, lo, hi):
+    """"""Return x with every element pulled into [lo, hi].""""""
+    return x.clamp(min=lo, max=hi)
+
+
+example = (t.tensor([-3.0, 0.5, 9.0]), 0.0, 5.0)
+print(solve(*example))
+",26,"tensor([0.0000, 0.5000, 5.0000])"
+Numpy,Core array literacy,Write a function solve(x) that takes a PyTorch tensor of any shape and returns a 1-D tensor holding the same values. Elements come out in row-major order: the LAST axis varies fastest.,"import torch as t
+
+def solve(x):
+    """"""Return x collapsed to a single axis.""""""
+    return x.flatten()
+
+
+example = t.tensor([[1, 2, 3], [4, 5, 6]])
+print(solve(example))
+",10,"tensor([1, 2, 3, 4, 5, 6])"
+Numpy,Core array literacy,"Write a function solve(x, cols) that takes a tensor and a column count, and returns it reshaped into a 2-D tensor with exactly `cols` columns. Do not compute the row count yourself — pass -1 for it and let PyTorch infer the only value that can work.","import torch as t
+
+def solve(x, cols):
+    """"""Return x reshaped to `cols` columns, inferring the row count.""""""
+    return x.reshape(-1, cols)
+
+
+example = (t.arange(6), 3)
+print(solve(*example))
+",14,"tensor([[0, 1, 2],
+        [3, 4, 5]])"
+Numpy,Core array literacy,"Write a function solve(n, rows) that returns a 2-D tensor holding the integers 0 through n-1 in order, arranged into `rows` rows. n is always divisible by rows. Build the run of values first, then re-describe its shape.","import torch as t
+
+def solve(n, rows):
+    """"""Return 0..n-1 laid out with `rows` rows.""""""
+    return t.arange(n).reshape(rows, -1)
+
+
+example = (6, 2)
+print(solve(*example))
+",18,"tensor([[0, 1, 2],
+        [3, 4, 5]])"
+Numpy,Core array literacy,"Write a function solve(x) that returns a tuple (values, shape). `values` is a plain Python list of x's elements in row-major order; `shape` is x's shape as a plain tuple of ints. Together these are everything you would need to rebuild x — which is the whole point of reshape being free: the values never move.","import torch as t
+
+def solve(x):
+    """"""Return (flattened copy, shape before flattening).""""""
+    return (x.flatten().tolist(), tuple(x.shape))
+
+
+example = t.tensor([[1, 2, 3], [4, 5, 6]])
+print(solve(example))
+",24,"([1, 2, 3, 4, 5, 6], (2, 3))"
+Numpy,Core array literacy,"Write a function solve(x) that takes a CONTIGUOUS 2-D integer tensor — one built directly, not a transpose or other rearranged view — reshapes it to 1-D, writes 99 into the first element of the RESULT, and returns a tuple (result_values, x_values_now) with both as plain lists. Reshaping a contiguous tensor hands back a view over the same memory, so watch what happens to x. The contiguity restriction is the point, not fine print: reshape can only give you a view when the values are already laid out in the order the new shape wants, and it silently copies when they are not.","import torch as t
+
+def solve(x):
+    """"""Return a reshaped VIEW and prove it shares storage.""""""
+    v = x.reshape(-1)
+    v[0] = 99
+    return (v.tolist(), x.flatten().tolist())
+
+
+example = t.tensor([[1, 2], [3, 4]])
+print(solve(example))
+",32,"([99, 2, 3, 4], [99, 2, 3, 4])"
+Numpy,Core array literacy,"Write a function solve(x) that takes a PyTorch tensor and returns the sum of ALL its elements as a plain Python number, not a tensor. A whole-tensor reduction gives you a 0-dimensional tensor; .item() is how you get the number out of it.","import torch as t
+
+def solve(x):
+    """"""Return the sum of every element as a Python number.""""""
+    return x.sum().item()
+
+
+example = t.tensor([[1.0, 2.0], [3.0, 4.0]])
+print(solve(example))
+",10,10.0
+Numpy,Core array literacy,"Write a function solve(x) that returns a tuple (mean, count): the mean of every element as a plain Python float, and the total number of elements as a plain int. Both are whole-tensor questions — no axis is involved.","import torch as t
+
+def solve(x):
+    """"""Return (mean, count) over the whole tensor.""""""
+    return (x.mean().item(), x.numel())
+
+
+example = t.tensor([[1.0, 2.0], [3.0, 4.0]])
+print(solve(example))
+",16,"(2.5, 4)"
+Numpy,Core array literacy,"Write a function solve(x, threshold) that returns a tuple (any_above, how_many): a plain Python bool saying whether ANY element exceeds the threshold, and a plain int counting how many do. Both come from the same boolean tensor — build it once. True counts as 1 when you sum it.","import torch as t
+
+def solve(x, threshold):
+    """"""Return (any above threshold?, how many).""""""
+    mask = x > threshold
+    return (bool(mask.any()), int(mask.sum()))
+
+
+example = (t.tensor([1.0, 5.0, 9.0]), 4.0)
+print(solve(*example))
+",20,"(True, 2)"
+Numpy,Core array literacy,"Write a function solve(x) that returns a tuple (min, max, span) of plain Python floats: the smallest element, the largest, and the distance between them. Reduce twice and do the subtraction in Python — the span is not itself a reduction.","import torch as t
+
+def solve(x):
+    """"""Return (min, max, span) as plain Python floats.""""""
+    lo = x.min().item()
+    hi = x.max().item()
+    return (lo, hi, hi - lo)
+
+
+example = t.tensor([[3.5, -2.0], [7.25, 0.0]])
+print(solve(example))
+",28,"(-2.0, 7.25, 9.25)"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, bias) where x has shape (rows, cols) and bias has shape (cols,), returning x with bias added to EVERY row. No loop and no tiling: shapes line up from the RIGHT, so a length-cols vector already matches x's last axis.","import torch as t
+
+def solve(x, bias):
+    """"""Add a per-column bias vector to every row.""""""
+    return x + bias
+
+
+example = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([10.0, 20.0]))
+print(solve(*example))
+",12,"tensor([[11., 22.],
+        [13., 24.]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that returns, as a plain tuple of ints, the shape you get from combining a and b elementwise. Answer it without building the result: the shape follows from the two input shapes alone, and materialising a combination you are going to throw away can cost real memory on real tensors.","import torch as t
+
+def solve(a, b):
+    """"""Return the shape broadcasting a and b together produces.""""""
+    return tuple(t.broadcast_shapes(a.shape, b.shape))
+
+
+
+example = (t.zeros(3, 1), t.zeros(1, 4))
+print(solve(*example))
+",16,"(3, 4)"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, scale) where x has shape (rows, cols) and scale has shape (rows,), returning x with row i multiplied by scale[i]. Right-alignment would pair scale against the COLUMNS, which is not what you want — insert a length-1 axis with None so it lines up against the rows instead.","import torch as t
+
+def solve(x, scale):
+    """"""Scale every ROW by its own factor.""""""
+    return x * scale[:, None]
+
+
+example = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([10.0, 100.0]))
+print(solve(*example))
+",22,"tensor([[ 10.,  20.],
+        [300., 400.]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(rows, cols) returning a (rows, cols) integer tensor whose [i][j] entry is i*j. Build two 1-D ranges and give each a length-1 axis on the side the other one varies along — the outer product falls out of broadcasting, with no loop and no tiling.","import torch as t
+
+def solve(rows, cols):
+    """"""Build a multiplication table from two 1-D ranges.""""""
+    r = t.arange(rows)
+    c = t.arange(cols)
+    return r[:, None] * c[None, :]
+
+
+example = (3, 4)
+print(solve(*example))
+",34,"tensor([[0, 0, 0, 0],
+        [0, 1, 2, 3],
+        [0, 2, 4, 6]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x) that takes a 2-D integer tensor and returns a 1-D tensor holding the sum of each row, so the result has one entry per row. The axis you name is the one that DISAPPEARS — name the columns to collapse them.","import torch as t
+
+def solve(x):
+    """"""Return the sum of each ROW.""""""
+    return x.sum(dim=1)
+
+
+example = t.tensor([[1, 2, 3], [10, 20, 30]])
+print(solve(example))
+",12,"tensor([ 6, 60])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x) that returns the per-row sums of a 2-D tensor but with the reduced axis kept as a length-1 axis, so a (3, 4) input gives a (3, 1) result rather than (3,). Keeping it is what lets the answer broadcast back against the original — which is the whole reason keepdim exists.","import torch as t
+
+def solve(x):
+    """"""Return the row sums with the reduced axis KEPT.""""""
+    return x.sum(dim=1, keepdim=True)
+
+
+example = t.tensor([[1, 2, 3], [10, 20, 30]])
+print(solve(example))
+",22,"tensor([[ 6],
+        [60]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x) that takes a 2-D float tensor with no zero row-sums and returns a tensor of the same shape in which every row sums to 1. Reduce along the columns, keep the axis so the result still has two, and divide — the length-1 axis broadcasts back across the row it came from.","import torch as t
+
+def solve(x):
+    """"""Make every row of a float tensor sum to 1.""""""
+    return x / x.sum(dim=1, keepdim=True)
+
+
+example = t.tensor([[1.0, 3.0], [2.0, 2.0]])
+print(solve(example))
+",40,"tensor([[0.2500, 0.7500],
+        [0.5000, 0.5000]])"
+Numpy,Indexing and selection,"Write a function solve(x, k) that takes a 1-D tensor and an int, and returns the first k elements. A slice with no start means 'from the beginning'.","import torch as t
+
+def solve(x, k):
+    """"""Return the first k elements.""""""
+    return x[:k]
+
+
+example = (t.tensor([1, 2, 3, 4, 5]), 3)
+print(solve(*example))
+",10,"tensor([1, 2, 3])"
+Numpy,Indexing and selection,"Write a function solve(x, col) that returns a tuple (values, shape) for column `col` of the 2-D tensor x: the column's values as a plain list, and its shape as a plain tuple. Indexing an axis with a plain int REMOVES that axis, so the result is 1-D, not a column-shaped 2-D tensor.","import torch as t
+
+def solve(x, col):
+    """"""Return one column of a 2-D tensor, and its shape.""""""
+    c = x[:, col]
+    return (c.tolist(), tuple(c.shape))
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]), 1)
+print(solve(*example))
+",26,"([2, 5], (2,))"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two float matrices of the same shape and returns their elementwise product — entry [i][j] is a[i][j] * b[i][j]. This is the multiplication that is NOT matrix multiplication, and telling the two apart is the whole point.","import torch as t
+
+def solve(a, b):
+    """"""Return the ELEMENTWISE product of two same-shaped matrices.""""""
+    return a * b
+
+
+example = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[5.0, 6.0], [7.0, 8.0]]))
+print(solve(*example))
+",12,"tensor([[ 5., 12.],
+        [21., 32.]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two square float matrices and returns a tuple (elementwise, matmul) of plain nested lists: first a * b, then a @ b. Run them side by side once and the difference stops being something you have to remember.","import torch as t
+
+def solve(a, b):
+    """"""Return (elementwise product, matrix product) for two square matrices.""""""
+    return ((a * b).tolist(), (a @ b).tolist())
+
+
+example = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[5.0, 6.0], [7.0, 8.0]]))
+print(solve(*example))
+",20,"([[5.0, 12.0], [21.0, 32.0]], [[19.0, 22.0], [43.0, 50.0]])"
+Numpy,Vectorization and broadcasting,"Write a function solve(a) that returns a tuple (values, shape) for the transpose of the 2-D tensor a. A transpose only re-describes the block — the numbers never move — so the shape comes back with its two axes swapped.","import torch as t
+
+def solve(a):
+    """"""Return the transpose of a 2-D tensor, and its shape.""""""
+    tr = a.T
+    return (tr.tolist(), tuple(tr.shape))
+
+
+example = t.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+print(solve(example))
+",26,"([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]], (3, 2))"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, x) where a has shape (m, n) and x has shape (n,), returning a tuple (values, shape) for the matrix-vector product. The shared axis vanishes, so an (m, n) against an (n,) leaves you with (m,) — one number per row.","import torch as t
+
+def solve(a, x):
+    """"""Return a @ x for a matrix and a vector, plus the result shape.""""""
+    r = a @ x
+    return (r.tolist(), tuple(r.shape))
+
+
+example = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([1.0, 1.0]))
+print(solve(*example))
+",32,"([3.0, 7.0], (2,))"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that solves the linear system a @ x = b for x, and returns a tuple (x_rounded, checks_out): x's entries rounded to 4 decimal places as a plain list, and a plain bool saying whether a @ x really does reproduce b. Solve the system directly — never build the inverse and multiply, which is slower and less accurate for the same answer.","import torch as t
+
+def solve(a, b):
+    """"""Solve a @ x = b, and confirm the solution satisfies it.""""""
+    x = t.linalg.solve(a, b)
+    return ([round(v, 4) for v in x.tolist()], bool(t.allclose(a @ x, b, atol=1e-4)))
+
+
+example = (t.tensor([[2.0, 0.0], [0.0, 4.0]]), t.tensor([6.0, 8.0]))
+print(solve(*example))
+",44,"([3.0, 2.0], True)"
+Numpy,Vectorization and broadcasting,"Write a function solve(mats, x) where mats has shape (batch, m, n) and x has shape (n,), returning a tuple (values, shape) for the result of applying every matrix in the batch to x. @ treats all but the last two axes as batch dimensions, so this is one operator, not a loop.","import torch as t
+
+def solve(mats, x):
+    """"""Apply a BATCH of matrices to one vector.""""""
+    r = mats @ x
+    return (r.tolist(), tuple(r.shape))
+
+
+example = (t.tensor([[[1.0, 0.0], [0.0, 1.0]], [[2.0, 0.0], [0.0, 2.0]]]), t.tensor([3.0, 4.0]))
+print(solve(*example))
+",50,"([[3.0, 4.0], [6.0, 8.0]], (2, 2))"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two 1-D float tensors of the same length and returns their dot product as a plain Python float — but build it from the two steps it actually is: multiply the pairs, then sum the results. Seeing the pattern in the open is what lets you recognise it later in shapes that @ will not take.","import torch as t
+
+def solve(a, b):
+    """"""Return the dot product built by hand: multiply, then sum.""""""
+    return float((a * b).sum())
+
+
+example = (t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, -5.0, 6.0]))
+print(solve(*example))
+",14,12.0
+Numpy,Vectorization and broadcasting,"Write a function solve(x) that takes a 2-D float tensor with no all-zero rows and returns it with each row rescaled to length 1. A row's length is the square root of its dot product with itself — reduce along the columns, keep the axis so it broadcasts back, and divide.","import torch as t
+
+def solve(x):
+    """"""Scale every row to unit length.""""""
+    return x / x.pow(2).sum(dim=1, keepdim=True).sqrt()
+
+
+example = t.tensor([[3.0, 4.0], [0.0, 2.0]])
+print(solve(example))
+",30,"tensor([[0.6000, 0.8000],
+        [0.0000, 1.0000]])"
+Numpy,Indexing and selection,Write a function solve(z) that takes a 1-D float tensor and returns a NEW tensor with the same values ordered from largest to smallest. The input must be left unchanged.,"import torch as t
+
+def solve(z):
+    """"""Return the values of z, largest first.""""""
+    return t.sort(z, descending=True).values
+
+
+example = t.tensor([0.5, 2.0, 1.0])
+print(solve(example))
+",12,"tensor([2.0000, 1.0000, 0.5000])"
+Numpy,Indexing and selection,Write a function solve(z) that takes a 1-D float tensor and returns a tensor of indices: the position each element would come from if z were sorted smallest to largest. Sorting gives you the values; argsort gives you where they came from — which is what you need when a second tensor has to be reordered the same way.,"import torch as t
+
+def solve(z):
+    """"""Return the POSITIONS that would sort z ascending.""""""
+    return t.argsort(z)
+
+
+example = t.tensor([0.4, 0.1, 0.9])
+print(solve(example))
+",20,"tensor([1, 0, 2])"
+Numpy,Indexing and selection,Write a function solve(x) that takes a 2-D float tensor and returns a tensor of the same shape in which each row has been sorted ascending on its own. Rows do not mix — name the axis you want sorted along.,"import torch as t
+
+def solve(x):
+    """"""Sort each ROW of a 2-D tensor independently.""""""
+    return t.sort(x, dim=1).values
+
+
+example = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])
+print(solve(example))
+",24,"tensor([[1., 2., 3.],
+        [7., 8., 9.]])"
+Numpy,Indexing and selection,"Write a function solve(z, k) that takes a 1-D float tensor and an int, and returns the k largest values ordered largest first. Sorting the whole tensor to take k of them does more work than the question asks for; there is an operation that answers exactly this.","import torch as t
+
+def solve(z, k):
+    """"""Return the k largest values, largest first.""""""
+    return t.topk(z, k).values
+
+
+example = (t.tensor([0.4, 0.9, 0.1, 0.7]), 2)
+print(solve(*example))
+",30,"tensor([0.9000, 0.7000])"
+Numpy,Indexing and selection,"Write a function solve(names, scores) that takes two 1-D tensors of the same length and returns a tuple (names_sorted, scores_sorted) as plain lists, both reordered so the highest score comes first. This is what argsort is FOR: you get the positions once and use them to index every tensor that has to travel together.","import torch as t
+
+def solve(names, scores):
+    """"""Reorder one tensor by another's ranking.""""""
+    order = t.argsort(scores, descending=True)
+    return (names[order].tolist(), scores[order].tolist())
+
+
+example = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))
+print(solve(*example))
+",38,"([20, 10, 30], [0.8999999761581421, 0.4000000059604645, 0.10000000149011612])"
+Numpy,Indexing and selection,"Write a function solve(x) that takes a 2-D float tensor and returns an integer tensor of the same shape where row i holds the column indices of row i's values ordered largest first. Combine the two things you have seen separately: an axis, and a direction.","import torch as t
+
+def solve(x):
+    """"""Return each row's ranking positions, descending.""""""
+    return t.argsort(x, dim=1, descending=True)
+
+
+example = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])
+print(solve(example))
+",46,"tensor([[1, 0, 2],
+        [0, 2, 1]])"
+Numpy,Indexing and selection,"Write a function solve(x, col) that returns the rows of the 2-D float tensor x reordered so that column `col` is ascending, as a plain nested list. Rows must stay intact — pull the key column out, rank it, and use that ranking to index the whole matrix along axis 0.","import torch as t
+
+def solve(x, col):
+    """"""Sort the ROWS of a matrix by one column's values.""""""
+    order = t.argsort(x[:, col])
+    return x[order].tolist()
+
+
+example = (t.tensor([[3.0, 1.0], [1.0, 2.0], [2.0, 3.0]]), 0)
+print(solve(*example))
+",54,"[[1.0, 2.0], [2.0, 3.0], [3.0, 1.0]]"

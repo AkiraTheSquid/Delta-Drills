@@ -2,10 +2,10 @@
 kc: numpy.axis-reductions
 title: Reductions along an axis — and keepdims
 supporting: [numpy.aggregations, numpy.broadcasting-rules]
-new_syntax: []
+new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim]
 faded: [220, 135]
-guided: []
-independent: [108, 130]
+guided: [503, 504]
+independent: [108, 130, 505]
 ---
 
 ## Concept: axis= — the axis you name disappears
@@ -143,6 +143,22 @@ From the drill bank: q108 (row quantiles — `t.quantile` takes `axis=` like
 everything else; watch which axis gives per-row results), q130 (index of each
 row's first nonzero — build a boolean mask, then argmax along the right axis;
 why does argmax find the FIRST True?).
+
+From the drill bank: q505 (make every row sum to 1 — this is what keepdim was for).
+
+## Guided practice
+
+### q503
+1. One number per row means the COLUMN axis has to go.
+2. The axis you name in `dim=` is the one that disappears, so name the one
+   you are collapsing, not the one you are keeping.
+3. `x.sum(dim=1)`.
+
+### q504
+1. Same reduction as before, but the result must still have two axes.
+2. There is a keyword that leaves the collapsed axis behind at length 1,
+   which is exactly what a later broadcast needs.
+3. `x.sum(dim=1, keepdim=True)`.
 
 ## Misconceptions
 
