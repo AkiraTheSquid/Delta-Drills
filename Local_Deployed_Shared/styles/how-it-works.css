@@ -400,6 +400,15 @@
 .kg2-watch { background: color-mix(in srgb, var(--accent) 8%, transparent); border-radius: 10px; padding: 2px 14px 12px; margin-top: 18px; }
 .kg2-watch h3 { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
 
+/* One block per lesson segment — the same units the practice screen pages
+   through, so the dock and the lesson agree on where one concept ends. */
+.kg2-seg + .kg2-seg { border-top: 1px solid var(--border); margin-top: 26px; padding-top: 20px; }
+.kg2-seg-num {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .7px;
+  color: var(--muted); font-weight: 700; margin-bottom: 4px;
+}
+.kg2-seg-title { font-size: 16px; line-height: 1.35; color: var(--text); margin: 0 0 10px; }
+
 /* prereq / unlock nav */
 .kg2-nav { display: flex; gap: 18px; margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
 .kg2-nav-col { flex: 1 1 200px; min-width: 0; }
