@@ -500,10 +500,30 @@ def ladder_row(user_state, kc: str) -> dict:
     return row
 
 
+def ladder_view(user_state, kc: str) -> dict:
+    """A KC's ladder row for READING, without creating one that does not exist.
+
+    `ladder_row` is the write path: it installs a fresh row in `kc_ladder` as a
+    side effect, which is right when an attempt is about to be appended and
+    wrong everywhere else. The lattice endpoint asks for every KC's stage and
+    estimate on each load, so routing those reads through the write path would
+    stamp all 63 concepts into every learner's stored state — sixty-three empty
+    rows recording that nothing has happened, written on a GET.
+
+    Returns a detached default for an absent row, so a caller that mutates the
+    result cannot silently half-create state either.
+    """
+    store = getattr(user_state, "kc_ladder", None)
+    row = store.get(kc) if isinstance(store, dict) else None
+    if not isinstance(row, dict):
+        return {"worked_seen": 0, "attempts": []}
+    return row
+
+
 def kc_estimate(user_state, kc: str) -> dict:
     """The learner's level on ONE concept, as an interval over its own attempts."""
-    row = ladder_row(user_state, kc)
-    recent = row["attempts"][-_LADDER_WINDOW:]
+    row = ladder_view(user_state, kc)
+    recent = (row.get("attempts") or [])[-_LADDER_WINDOW:]
     n = len(recent)
     k = sum(1 for a in recent if a.get("correct"))
     lo, hi = _wilson(k, n)
@@ -513,6 +533,12 @@ def kc_estimate(user_state, kc: str) -> dict:
         "p": (k / n) if n else None,
         "ci": [round(lo, 4), round(hi, 4)],
         "worked_seen": int(row.get("worked_seen") or 0),
+        # When this concept was last answered, from its own record. The graph's
+        # "last practiced" line reads BKT atom timestamps, which exist for the
+        # 20 crosswalked KCs and nowhere else — so a concept with nine attempts
+        # behind it still displayed "never". This is the timestamp that always
+        # exists when the record does.
+        "last_ts": (recent[-1].get("ts") if n else None),
     }
 
 
@@ -521,17 +547,20 @@ def _step_down(stage: str) -> str:
     return LADDER_STAGES[max(0, i - 1)]
 
 
-def kc_stage(user_state, kc: str) -> str:
-    """Which rung to serve for this concept right now."""
-    est = kc_estimate(user_state, kc)
-    row = ladder_row(user_state, kc)
+def _stage_from(est: dict, row: dict) -> str:
+    """The rung, given a KC's estimate and its ladder row.
 
+    Split out from `kc_stage` so a caller holding both can reuse them. The
+    lattice report wants the stage AND the estimate for all 63 concepts, and
+    going through `kc_stage` there would recompute the estimate — the window
+    slice, the count and the Wilson interval — a second time for every row.
+    """
     # Cold start: the example comes first, always. A concept nobody has been
     # shown cannot be assessed, and guessing at it is not assessment.
     if est["worked_seen"] == 0:
         return "worked"
 
-    attempts = row["attempts"]
+    attempts = row.get("attempts") or []
     if attempts and not attempts[-1].get("correct"):
         # The rule a learner actually expects: miss one, drop back a rung and
         # see the support again. Stepping down from the stage the MISSED
@@ -550,6 +579,11 @@ def kc_stage(user_state, kc: str) -> str:
     if lo >= PROMOTE_LO["faded"]:
         return "partial"
     return "faded"
+
+
+def kc_stage(user_state, kc: str) -> str:
+    """Which rung to serve for this concept right now."""
+    return _stage_from(kc_estimate(user_state, kc), ladder_view(user_state, kc))
 
 
 def note_worked_seen(user_state, kc: str) -> None:
@@ -647,6 +681,22 @@ def kc_report(user_state, eligible=None) -> dict:
         # a node the queue treats as cleared must not draw as still-frontier.
         learned = kc_is_learned(user_state, kc)
         unlocked = kc_is_unlocked(user_state, kc)
+        ladder_est = kc_estimate(user_state, kc)
+        # The concept's OWN graded record, alongside the crosswalk mastery.
+        #
+        # These answer different questions and the graph has only ever had the
+        # first. `mastery` is a BKT posterior over the ATOMS a KC's questions
+        # exercise, and the crosswalk that joins concepts to atoms separates
+        # only 20 of 63 — for the other 43 the number shown is the topic's,
+        # which is why a learner with real drill history still saw bubbles that
+        # claimed nothing had been measured about them.
+        #
+        # The ladder record has no such gap: `record_ladder_outcome` writes one
+        # row per graded attempt against every KC the question tags, for all 63.
+        # It is a smaller claim than a posterior — k correct out of n, on this
+        # concept, recently — but it is this concept's, always, and it is the
+        # same quantity the practice topbar draws and the rung gate promotes on.
+        # Shipping it here is what lets the graph and the practice screen agree.
         rows[kc] = {
             "title": node["title"],
             "lesson": node["lesson"],
@@ -661,6 +711,8 @@ def kc_report(user_state, eligible=None) -> dict:
             "depth": depth.get(kc, 0),
             "n_questions": len(by_kc.get(kc, ())),
             "frontier_rank": order.get(kc),
+            "ladder_stage": _stage_from(ladder_est, ladder_view(user_state, kc)),
+            "ladder_estimate": ladder_est,
         }
 
     return {

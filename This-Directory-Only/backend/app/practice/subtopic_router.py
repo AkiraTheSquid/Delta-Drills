@@ -178,6 +178,13 @@ def kc_lattice(user: User = Depends(get_current_user)) -> dict:
     topic-proxy — 43 of 63 KCs are proxied and must not be drawn as measured),
     `evidenced`, `coreness`, `frontier_rank`, `n_questions`. Plus `next_kc`,
     the single node the selector will serve from next.
+
+    Also `ladder_stage` and `ladder_estimate` — the concept's OWN graded record
+    (k of n, as a Wilson interval) and the rung it puts the learner on. Unlike
+    `mastery`, which is a posterior over crosswalked atoms and so is a topic
+    proxy for 43 of the 63 KCs, this exists for every concept the learner has
+    ever answered a question on, and it is the same quantity the practice
+    screen's topbar draws.
     """
     user_state = get_user_state(str(user.id))
 
