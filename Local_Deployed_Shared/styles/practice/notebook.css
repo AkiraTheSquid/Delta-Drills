@@ -95,6 +95,40 @@ body.lesson-mode #question-text {
   opacity: 0.55;
 }
 
+/* The In[] prompt. Monospaced and tabular so a page of cells keeps one column
+   of numbers rather than a ragged one, and empty until the cell has run — an
+   unrun cell showing "In [ ]" is noise on a page that is mostly prose. */
+.nb-count {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.2px;
+}
+
+.nb-cell.has-run .nb-count {
+  color: var(--accent);
+}
+
+.nb-cell.has-failed .nb-count {
+  color: #f2a3a3;
+}
+
+/* A run leaves a mark on the cell itself, not only in the bar, so the learner
+   can see which parts of the page they have executed while scrolling past the
+   collapsed output. */
+.nb-cell.has-run {
+  border-color: rgba(227, 33, 44, 0.45);
+}
+
+.nb-cell.has-failed {
+  border-color: rgba(242, 163, 163, 0.55);
+}
+
+.nb-cell.is-running {
+  border-color: var(--accent);
+}
+
 .nb-status {
   color: var(--muted);
   font-size: 11px;

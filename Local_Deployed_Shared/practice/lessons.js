@@ -158,7 +158,21 @@ const LessonGate = (() => {
           i++;
         }
         i++;
-        if (renderCode) out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>");
+        // The info string is carried into the DOM rather than dropped. It is
+        // the authoring format's own runnable marker: a plain ```python fence
+        // is executed by validate_lessons.py against a shared per-file
+        // namespace, top to bottom, and ```python no-run is skipped. That
+        // makes it exactly the right signal for which blocks get a Run button,
+        // so practice/notebook.js reads it off the rendered element. Deciding
+        // it here would make the one shared renderer notebook-aware, and the
+        // ladder's inline example and lessons/viewer.html use it too.
+        if (renderCode) {
+          out.push(
+            '<pre data-fence="' + esc(fence[1].trim()) + '"><code>' +
+              esc(buf.join("\n")) +
+              "</code></pre>",
+          );
+        }
         continue;
       }
       const heading = line.match(/^(#{1,6})\s+(.*)$/);
@@ -272,7 +286,12 @@ const LessonGate = (() => {
     // spans the page and survives this innerHTML being replaced — see
     // practice/concept-topbar.js and `_showTopbar` below.
     let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
-    html += '<div class="lesson-body">' + md(seg.concept_markdown) + "</div>";
+    // `nb-scope` marks the regions whose ```python fences are programs rather
+    // than illustrations — the same two sections validate_lessons.py executes
+    // against one shared namespace. LessonNotebook turns those into cells; a
+    // fence in "Watch out" is outside the scope and stays static, because CI
+    // never runs it and a Run button on unrun code is a trap.
+    html += '<div class="lesson-body nb-scope">' + md(seg.concept_markdown) + "</div>";
     if (watchOut) {
       html += '<div class="lesson-watch-out"><h3>Watch out</h3>' + md(watchOut) + "</div>";
     }
@@ -281,7 +300,7 @@ const LessonGate = (() => {
     // panel. `renderCode: false` used to strip it precisely because it lived
     // over there; keeping the two in one column is the whole point of the
     // notebook layout, so the fences stay and LessonNotebook makes them run.
-    html += '<div class="lesson-worked"><h3>Worked example</h3>' +
+    html += '<div class="lesson-worked nb-scope"><h3>Worked example</h3>' +
       md(seg.worked_example_markdown) +
       '<p class="lesson-example-note">Run any block to see it execute. A block runs ' +
       "everything above it too, so the variables it needs already exist.</p></div>";
@@ -391,14 +410,15 @@ const LessonGate = (() => {
         activeQuestion = _runtimeContext(page);
         if (questionNumber) questionNumber.textContent = "Lesson";
         questionText.innerHTML = _pageHtml(page);
-        // The worked example's code blocks become runnable cells. Scoped to
-        // `.lesson-worked` on purpose: the explanation's fences are fragments
-        // written to be read (`x.reshape(3, -1)  # → …`), and a Run button on
-        // one of those only ever produces a traceback. Done after the
-        // innerHTML rather than inside _pageHtml because it rewrites rendered
-        // DOM, which keeps the markdown renderer shared and notebook-unaware.
+        // Every runnable block on the page becomes a cell, explanation blocks
+        // included, and they share state top to bottom. Mounting the whole
+        // page rather than `.lesson-worked` is what lets a concept be taught
+        // as a sequence of things the learner can run at the point the prose
+        // raises them; `no-run` fences stay static. Done after the innerHTML
+        // rather than inside _pageHtml because it rewrites rendered DOM, which
+        // keeps the markdown renderer shared and notebook-unaware.
         if (window.LessonNotebook) {
-          window.LessonNotebook.mount(questionText.querySelector(".lesson-worked"));
+          window.LessonNotebook.mount(questionText);
         }
         questionText.scrollTop = 0;
         window.scrollTo({ top: 0 });
