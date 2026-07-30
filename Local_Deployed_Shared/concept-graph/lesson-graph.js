@@ -135,6 +135,13 @@
     }
     return null;
   };
+  // The ladder's own last attempt, for the 43 concepts the crosswalk cannot see.
+  // Without it "last practiced" reads `never` on a concept the learner answered
+  // this morning, directly above the row reporting how many they got right.
+  const _ladderLastTs = (kc) => {
+    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
+    return (row && row.ladder_estimate && row.ladder_estimate.last_ts) || null;
+  };
   // red (low) → muted purple → blue (high); gray for no estimate.
   const masteryColor = (r) => {
     if (!Number.isFinite(r)) return UNKNOWN_COLOR;
@@ -541,6 +548,70 @@
     );
   };
 
+  /* ---- the concept's own graded record ------------------------------------
+     Everything above this point measures a concept through the atom crosswalk,
+     which separates only 20 of the 63 KCs; for the other 43 the honest answer
+     has been "no direct evidence — inferred from related work", even for a
+     learner who has answered a dozen drills tagged with that exact concept.
+
+     The ladder does not have that gap. `record_ladder_outcome` writes one row
+     per graded attempt against every KC the question tags, for all 63, and
+     `/api/practice/kc-lattice` now returns it. It is a smaller claim than a
+     posterior — k correct out of n on this concept, over a 20-attempt window —
+     so it is reported as a plain record beside the estimate rather than folded
+     into it. Two evidence models, kept visibly separate, is the same discipline
+     the mastery/subtopic split above already follows.
+
+     Rendered only when the server sent it: guests have no lattice, and an empty
+     row here is better than an invented zero. */
+
+  // How many graded attempts the ladder holds for this concept. Read by the
+  // mastery copy above as well as by the rows below, because several of its
+  // sentences ("nothing graded has landed on this concept") are true of the
+  // crosswalk and false of the learner, and printing one directly above a row
+  // saying `7/9 correct` is worse than printing nothing at all.
+  const _ladderN = (kc) => {
+    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
+    const n = row && row.ladder_estimate ? row.ladder_estimate.n : 0;
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const _ladderRows = (kc) => {
+    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
+    const est = row && row.ladder_estimate;
+    if (!est) return "";
+
+    let out = `<div class="kg2-dock-row"><span>Your record here</span><span>`;
+    if (est.n > 0) {
+      const ci = Array.isArray(est.ci) ? est.ci : null;
+      out += `${est.correct}/${est.n} correct` + (ci ? ` · ${_pct(ci[0])}–${_pct(ci[1])}` : "");
+    } else {
+      // `worked_seen` counts lesson screens read, which is exposure, not
+      // evidence — the distinction the ladder itself makes before it will
+      // promote anyone. Say which of the two states this is.
+      out += est.worked_seen ? "example seen, nothing graded yet" : "not attempted";
+    }
+    out += `</span></div>`;
+
+    // The rung, in the vocabulary the practice screen uses. ConceptTopbar owns
+    // that mapping — the backend's stored names are one rung out of step with
+    // the learner-facing ones, and having two places translate them is how the
+    // graph and the practice page start disagreeing about what rung someone is
+    // on. If the topbar has not loaded, no rung is shown rather than a raw
+    // internal name.
+    const bar = window.ConceptTopbar;
+    const stages = (bar && bar.STAGES) || [];
+    const id = bar && typeof bar.normalizeStage === "function"
+      ? bar.normalizeStage(row.ladder_stage)
+      : null;
+    const stage = id ? stages.find((s) => s.id === id) : null;
+    if (stage) {
+      out += `<div class="kg2-dock-row" title="${esc(stage.blurb)}">` +
+             `<span>Scaffold</span><span>${esc(stage.label)}</span></div>`;
+    }
+    return out;
+  };
+
   /* ---- the readout: a panel docked across the bottom of the graph pane ----
      Hovering a bubble previews that concept there; clicking one keeps it. The
      panel is always present and fixed-height, so the graph never reflows under
@@ -576,10 +647,21 @@
     const measured = band.measured;
     const nDirect = ev.nDirect;
     const sub = _subtopicState(kc);
-    const last = relTime(kcLastTs(kc)) || (sub ? relTime(sub.last_update_ts) : null);
+    // Atom timestamp first (it is this concept's, when it exists), then the
+    // ladder's own last attempt, then the lesson's — narrowest source first.
+    const last = relTime(kcLastTs(kc))
+      || relTime(_ladderLastTs(kc))
+      || (sub ? relTime(sub.last_update_ts) : null);
     const parents = parentsOf[kc] || [];
     const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
     const sibs = sub ? _siblingCount(kc) : 0;
+    // Graded attempts the ladder holds here. Where this is non-zero, the copy
+    // below has to say the mastery MODEL cannot see them — not that they do
+    // not exist, which is what it used to say.
+    const ladderN = _ladderN(kc);
+    const attemptsPhrase = ladderN
+      ? `your ${ladderN} graded attempt${ladderN === 1 ? "" : "s"} here are not among the atoms this model measures`
+      : "nothing graded has landed on this concept";
 
     let rows = "";
     if (kc === nextUpKc) {
@@ -587,6 +669,7 @@
               `<span>the queue's weakest unlocked concept</span></div>`;
     }
     rows += `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
+    rows += _ladderRows(kc);
     rows += parents.length
       ? `<div class="kg2-dock-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
       : `<div class="kg2-dock-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
@@ -614,7 +697,11 @@
             (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
             (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
             // The band is sized by what landed on THIS concept, so say what did.
-            (measured ? "" : ` · <strong>${nDirect > 0 ? "under one attempt's worth" : "nothing"} on this concept</strong>`) +
+            (measured
+              ? ""
+              : ` · <strong>${nDirect > 0
+                  ? "under one attempt's worth"
+                  : (ladderN ? "nothing measurable" : "nothing")} on this concept</strong>`) +
             `</div>`
           : ex
             ? `<div class="kg2-dock-evidence">Evidence: your overall level — ${ex.attempts} attempt${ex.attempts === 1 ? "" : "s"} across ${ex.subtopics} lesson${ex.subtopics === 1 ? "" : "s"}, none on this concept</div>`
@@ -641,12 +728,12 @@
         // the number is inferred and why the band is nearly the whole scale.
         `<div class="kg2-dock-ci-label">` +
           (!ci
-            ? `<span class="kg2-dock-dim">No estimate yet — nothing graded has landed on this concept.</span>`
+            ? `<span class="kg2-dock-dim">No estimate yet — ${esc(attemptsPhrase)}.</span>`
           : measured
             ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${_nAttempts(nDirect)} graded attempt${nDirect >= 1.5 ? "s" : ""} bearing on this concept` +
               (ev.nSub > nDirect + 0.5 ? ` (of ${Math.round(ev.nSub)} in this lesson)` : "") + `</span>`
           : `No direct evidence — inferred from related work. ` +
-            `<span class="kg2-dock-dim">Range ${_pct(ci[0])}–${_pct(ci[1])}: as wide as it gets, because nothing graded has tested this concept. ` +
+            `<span class="kg2-dock-dim">Range ${_pct(ci[0])}–${_pct(ci[1])}: as wide as it gets, because ${esc(attemptsPhrase)}. ` +
             (ex
               ? (Number.isFinite(ex.d) && Number.isFinite(ex.bBar)
                   ? `Projected from your overall level — this concept rates ${Math.round(ex.d)}/100 against the ${Math.round(ex.bBar)}/100 you've been practising at.`
@@ -707,6 +794,39 @@
          to jump into the full practice screen for that skill.</div>`;
   };
 
+  /* The KP's teaching content, segment by segment — the same units, in the same
+     order, that the practice screen pages through.
+
+     `concept_markdown` and `worked_example_markdown` at the KP level are the
+     segments CONCATENATED (compile_lessons.py builds them that way for the
+     back-compat single-page renderers). Printing those two fields gave the dock
+     one wall of every concept in the KP followed by one wall of every worked
+     example — which is not a view the learner meets anywhere else, and reads as
+     a different lesson from the one the practice page is showing. Walk the
+     segments instead, so clicking a bubble shows the concept the lesson
+     actually teaches, in the shape it teaches it. */
+  const renderSegments = (kp) => {
+    const segments = (kp.segments && kp.segments.length) ? kp.segments : null;
+    if (!segments) {
+      // Single-segment KPs never split, so the KP-level fields ARE the segment.
+      return `<div class="kg2-concept">${md(kp.concept_markdown)}</div>` +
+        (kp.worked_example_markdown
+          ? `<div class="kg2-worked"><h3>Worked example</h3>${md(kp.worked_example_markdown)}</div>`
+          : "");
+    }
+    return segments.map((seg, i) => {
+      let out = `<div class="kg2-seg">`;
+      out += `<div class="kg2-seg-num">Lesson ${i + 1} of ${segments.length}</div>`;
+      if (seg.title) out += `<h3 class="kg2-seg-title">${esc(seg.title)}</h3>`;
+      out += `<div class="kg2-concept">${md(seg.concept_markdown)}</div>`;
+      if (seg.worked_example_markdown)
+        out += `<div class="kg2-worked"><h3>Worked example</h3>${md(seg.worked_example_markdown)}</div>`;
+      if (seg.watch_out_markdown)
+        out += `<div class="kg2-watch"><h3>Watch out</h3>${md(seg.watch_out_markdown)}</div>`;
+      return out + `</div>`;
+    }).join("");
+  };
+
   const renderContent = (id) => {
     const kc = kcById[id];
     const kp = contentByKc[id];
@@ -726,9 +846,7 @@
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
     let html = `<h2 class="kg2-title">${esc(kp.title || kc.title)}</h2>`;
-    html += `<div class="kg2-concept">${md(kp.concept_markdown)}</div>`;
-    if (kp.worked_example_markdown)
-      html += `<div class="kg2-worked"><h3>Worked example</h3>${md(kp.worked_example_markdown)}</div>`;
+    html += renderSegments(kp);
     if (kp.misconceptions_markdown)
       html += `<div class="kg2-watch"><h3>Watch out</h3>${md(kp.misconceptions_markdown)}</div>`;
 

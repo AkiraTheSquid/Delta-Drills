@@ -7,14 +7,24 @@
   padding: 0;
 }
 
+/* A column, so the concept topbar (#concept-topbar, above .practice-split) can
+   take its natural height and hand what is left to the panels. With the old
+   `height: 100%` on the split, the topbar's height was ADDED to a split that
+   already claimed the full container, and the surplus disappeared into
+   `overflow: hidden` — the bottom of both panels was simply cut off. */
 .practice-container {
+  display: flex;
+  flex-direction: column;
   height: calc(100vh - 56px - 40px);
   overflow: hidden;
 }
 
 .practice-split {
   display: flex;
-  height: 100%;
+  flex: 1 1 auto;
+  /* Without this, a flex item refuses to shrink below its content's height and
+     the panels' own `overflow-y: auto` never engages. */
+  min-height: 0;
 }
 
 /* Left Panel */
