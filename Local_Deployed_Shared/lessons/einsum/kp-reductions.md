@@ -5,7 +5,7 @@ supporting: [einsum.notation-model, numpy.axis-reductions]
 new_syntax: []
 faded: [274, 280, 295, 282]
 guided: [247]
-independent: [289]
+independent: [289, 249, 261, 290, 302]
 ---
 
 ## Concept: One missing index sums one axis
@@ -214,3 +214,10 @@ def solve(data):
 ## Independent practice
 
 q289 sums batch axis from `(b, t, d)` while keeping `(t, d)`.
+
+Also from the bank: q249 (per-image sum of squares — the same tensor
+twice, everything but the batch summed), q261 (the full contraction: every
+index summed away to a scalar total), q290 (rank-GENERIC mean — sum every
+axis, then divide by the element count), q302 (video (b, t, c, h, w) mean
+over time and both spatial axes).
+

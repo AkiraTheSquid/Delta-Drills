@@ -6,7 +6,8 @@
    reversal ladder that lessons_structured.json has always carried but
    nothing ever served:
 
-     lesson pages  →  faded_items  →  independent_items  →  focused queue
+     lesson pages  →  faded_items  →  guided_items  →  independent_items
+                                                    →  focused queue
 
    Scaffolding is chosen by the learner's BKT posterior for this KC's
    subtopic, using the same ERE bands as arena-unlock.js (< 0.75 ⇒ faded).
@@ -62,19 +63,37 @@ const KcPractice = (() => {
     return null;
   };
 
-  // Faded first for a learner who is still below the independent band; above
-  // it, go straight to unscaffolded problems and keep faded items in reserve
-  // (they are still useful practice, just not the entry point).
+  // The KP's numbered hints are one markdown list; the practice card shows a
+  // single hint string. Keep the numbering — the hints are written to escalate
+  // (conceptual nudge → names the function → near-solution), so a learner who
+  // reads only the first line has still been helped the least.
+  const _hintText = (markdown) =>
+    String(markdown || "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join("\n");
+
+  // Three rungs, decreasing support: faded hands over a blanked solution,
+  // guided hands over a hint, independent hands over nothing. Below the
+  // independent band a learner climbs up; above it they start at the top and
+  // the scaffolded items stay in reserve (still useful, just not the entry
+  // point). Guided sits in the middle either way.
   const _buildQueue = (kp) => {
     const faded = (kp.faded_items || [])
       .filter((it) => Number.isFinite(it?.question_id))
       .map((it) => ({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null }));
+    const guided = (kp.guided_items || [])
+      .filter((it) => Number.isFinite(it?.question_id))
+      .map((it) => ({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) }));
     const independent = (kp.independent_items || [])
       .filter((id) => Number.isFinite(id))
       .map((id) => ({ kind: "independent", questionId: id, starter: null }));
     const p = _mastery();
     const scaffoldFirst = !Number.isFinite(p) || p < FADED_CEIL;
-    return scaffoldFirst ? [...faded, ...independent] : [...independent, ...faded];
+    return scaffoldFirst
+      ? [...faded, ...guided, ...independent]
+      : [...independent, ...guided, ...faded];
   };
 
   // Any bank record for this KP — used only to read its subtopic naming.
@@ -82,6 +101,7 @@ const KcPractice = (() => {
     if (typeof getQuestionFromBank !== "function") return null;
     const ids = [
       ...(kp.faded_items || []).map((it) => it && it.question_id),
+      ...(kp.guided_items || []).map((it) => it && it.question_id),
       ...(kp.independent_items || []),
     ].filter((id) => Number.isFinite(id));
     for (const id of ids) {
@@ -98,6 +118,9 @@ const KcPractice = (() => {
     // Only override the starter when the faded item actually supplies one —
     // an empty string would wipe the question's own scaffold.
     if (item.kind === "faded" && item.starter) overrides.starter_code = item.starter;
+    // Guided items carry the KP's authored hints. The bank question may have
+    // its own hint; the lesson's is the specific one, so it wins.
+    if (item.kind === "guided" && item.hint) overrides.hint = item.hint;
     return buildPracticeQuestionFromBank(bankQ, overrides);
   };
 

@@ -5,7 +5,7 @@ supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim]
 faded: [220, 135]
 guided: [503, 504]
-independent: [108, 130, 505]
+independent: [108, 130, 505, 174]
 ---
 
 ## Concept: axis= — the axis you name disappears
@@ -145,6 +145,9 @@ row's first nonzero — build a boolean mask, then argmax along the right axis;
 why does argmax find the FIRST True?).
 
 From the drill bank: q505 (make every row sum to 1 — this is what keepdim was for).
+
+Also from the bank: q174 (per-row median with an odd column count — a
+reduction torch spells differently from mean).
 
 ## Guided practice
 

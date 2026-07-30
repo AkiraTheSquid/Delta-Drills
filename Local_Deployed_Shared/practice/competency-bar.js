@@ -61,6 +61,7 @@ const CompetencyBar = (() => {
   const PHASE_TEXT = {
     lesson: ["Lesson", "Read the worked explanation — nothing graded yet."],
     faded: ["Faded drills", "Scaffolded problems — some of the work is done for you."],
+    guided: ["Guided problems", "You write all of it — a hint is there if you want it."],
     independent: ["Independent problems", "No scaffolding — solve it end to end."],
   };
 
@@ -190,7 +191,9 @@ const CompetencyBar = (() => {
    *  band predicts they should be looking at (those disagree once the faded
    *  items run out and independent problems start). */
   const setPhaseKind = (kind) => {
-    const next = kind === "faded" ? "faded" : kind === "independent" ? "independent" : phase;
+    const next = Object.prototype.hasOwnProperty.call(PHASE_TEXT, kind) && kind !== "lesson"
+      ? kind
+      : phase;
     if (next === phase) return;
     phase = next;
     _renderPhase();

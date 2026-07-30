@@ -6,7 +6,7 @@ new_syntax: []
 concepts: [matvec-contract-row, matmul-row-meets-column]
 faded: [312, 260]
 guided: [262]
-independent: [264, 311]
+independent: [264, 311, 286, 294]
 ---
 
 ## Concept: matrix-vector 'ij,j->i'
@@ -175,3 +175,8 @@ the two specs above are automatic:
   letters chained like dominoes, each adjacent pair sharing exactly one letter.
 - q311: `a @ diag(v) @ b` with the diagonal kept as a bare vector in the spec —
   a matmul whose middle factor never gets materialized.
+
+Also from the bank: q286 (one query vector against a memory matrix — the
+length-n similarity vector), q294 (contract a conv-shaped (o, i, h, w)
+weight against an (i, h, w) input; three axes pair at once).
+

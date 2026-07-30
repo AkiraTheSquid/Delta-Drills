@@ -6,7 +6,7 @@ new_syntax: []
 concepts: [repeat-elements, tile-blocks, coordinate-grids]
 faded: [35, 34, 29]
 guided: [217]
-independent: [69]
+independent: [69, 155]
 ---
 
 ## Concept: Repeat each element with t.repeat_interleave
@@ -215,6 +215,9 @@ One `block.repeat(reps_r, reps_c)` call does it — and note that this is the
 From the drill bank: q69 (pass a tensor of repetition counts to
 `t.repeat_interleave`, so each input element may receive a different number of
 copies).
+
+Also from the bank: q155 (decode a run-length encoding — values repeated
+by their counts, zero counts vanishing).
 
 ## Misconceptions
 

@@ -5,7 +5,7 @@ supporting: [numpy.ndarray-model]
 new_syntax: [slice-notation, multi-axis-indexing, syntax.slice, syntax.slice-step, torch.flip]
 faded: [233]
 guided: [76, 506]
-independent: [231, 75, 507]
+independent: [231, 75, 507, 74, 189]
 ---
 
 ## Concept
@@ -142,6 +142,9 @@ matrix 90° counterclockwise — either the dedicated helper or a transpose
 composed with a flip).
 
 From the drill bank: q507 (one column of a matrix — note which axis indexing with an int removes).
+
+Also from the bank: q74 (overwrite every step-th element without touching
+the input), q189 (rotate by k quarter-turns, k taken modulo 4).
 
 ## Misconceptions
 

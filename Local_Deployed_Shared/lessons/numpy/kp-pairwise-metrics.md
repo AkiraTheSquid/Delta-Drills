@@ -5,7 +5,7 @@ supporting: [numpy.broadcasting-rules, numpy.axis-reductions, numpy.rescaling]
 new_syntax: []
 faded: [181]
 guided: [127]
-independent: [169, 128, 122, 193]
+independent: [169, 128, 122, 193, 129]
 ---
 
 ## Concept
@@ -123,6 +123,9 @@ normalize both, then one matmul), q128 (cosine similarity within one set),
 q122 (Pearson correlation between COLUMNS — a packaged one-liner; find the
 keyword that flips rows/columns), q193 (k nearest neighbors per point —
 distance matrix, then per-row argsort, minding the self-distance).
+
+Also from the bank: q129 (each point's TWO nearest neighbours, itself
+excluded).
 
 ## Misconceptions
 

@@ -5,7 +5,7 @@ supporting: [einops.pattern-language]
 new_syntax: []
 faded: [361]
 guided: [360]
-independent: [358, 374, 376]
+independent: [358, 374, 376, 333, 334, 365]
 ---
 
 ## Concept
@@ -120,6 +120,10 @@ def solve(imgs):
 From the drill bank: q358 (insert a singleton just after the batch axis),
 q374 (list of images concatenated side by side — list axis + merge),
 q376 (exactly two images side by side — a two-element list works).
+
+Also from the bank: q333 (a PYTHON LIST of channels-first images to one
+channels-last batch), q334 (two images whose rows INTERLEAVE — '(h b)' on
+a list), q365 (list stacked and rearranged so the list axis lands LAST).
 
 ## Misconceptions
 

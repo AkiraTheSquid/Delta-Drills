@@ -4,7 +4,7 @@ title: Dtypes, .to(), and memory size
 supporting: [numpy.ndarray-model]
 new_syntax: []
 faded: [230, 215, 51]
-guided: []
+guided: [87]
 independent: [19]
 ---
 
@@ -163,6 +163,17 @@ def solve(z):
     """Return z's data-buffer size as e.g. '24 bytes'."""
     return f"{z.numel() * z.element_size()} bytes"
 ```
+
+## Guided practice
+
+### q87
+1. Torch has a histogram counter that takes the bin count and the range
+   directly — no bucketing by hand.
+2. It returns FLOAT counts. The drill wants integers, so the last step is
+   a dtype conversion.
+3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` — this is the
+   dtype lesson in miniature: the numbers were already right, only their
+   type was wrong.
 
 ## Independent practice
 

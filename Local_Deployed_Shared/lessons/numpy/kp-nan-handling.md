@@ -5,7 +5,7 @@ supporting: [numpy.boolean-masking, numpy.where-select]
 new_syntax: []
 faded: [32]
 guided: [18]
-independent: [115, 142]
+independent: [115, 142, 120, 170]
 ---
 
 ## Concept
@@ -117,6 +117,10 @@ def solve(x):
 From the drill bank: q115 (per-COLUMN flags for columns made ENTIRELY of NaN —
 isnan mask + `all(axis=0)`), q142 (row indices containing any NaN or ±Inf —
 think `isfinite`, `all(axis=1)`, invert, then nonzero).
+
+Also from the bank: q120 (replace every NaN by its own COLUMN's mean of
+the finite entries), q170 (the same fill written with keepdims so the
+statistics broadcast — compare the two shapes).
 
 ## Misconceptions
 

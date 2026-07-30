@@ -4,8 +4,8 @@ title: Diagonals, triangles, and trace
 supporting: [numpy.constructors, numpy.aggregations]
 new_syntax: []
 faded: [77, 237, 47, 31]
-guided: []
-independent: [140, 16, 4]
+guided: [78]
+independent: [140, 16, 4, 160, 180]
 ---
 
 ## Concept: extracting a diagonal with t.diag
@@ -227,12 +227,27 @@ def solve(n):
     return t.triu(t.ones((n, n)))
 ```
 
+## Guided practice
+
+### q78
+1. Upper-triangular INCLUDING the diagonal is the default offset — no
+   `diagonal=` argument needed.
+2. Build a full tensor of the right dtype first, then let the triangular
+   helper zero out the lower part.
+3. `t.triu(t.ones((n, n), dtype=t.bool))` — set the dtype at construction;
+   converting afterwards is an extra pass, and an int tensor would fail
+   the bool check.
+
 ## Independent practice
 
 From the drill bank: q140 (SUM of the k-th diagonal — extract then sum, mind
 the plain-int contract), q16 (ones strictly BELOW the diagonal — which
 function, which k?), q4 (the values 1..n-1 placed just below the diagonal —
 diag's build mode with an offset).
+
+Also from the bank: q160 (lower-triangular matrix whose row i is the first
+i+1 entries of v), q180 (the tridiagonal stencil — d0 on the main
+diagonal, d1 on both neighbours).
 
 ## Misconceptions
 

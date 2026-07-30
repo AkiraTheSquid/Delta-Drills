@@ -5,7 +5,7 @@ supporting: [einsum.batch-dims, einsum.reductions]
 new_syntax: []
 faded: [269]
 guided: [291]
-independent: [251, 304, 309, 255]
+independent: [251, 304, 309, 255, 253]
 ---
 
 ## Concept
@@ -117,6 +117,9 @@ From the drill bank: q251 (project every token's features onto a vector —
 which letter pairs, which survive?), q304 (per-timestep weights, summed over
 time), q309 (weight attention heads by importance and sum them out),
 q255 (weighted average of rows — numerator by einsum, denominator outside).
+
+Also from the bank: q253 (multiply two (c, h, w) stacks elementwise and
+sum over the CHANNEL axis only).
 
 ## Misconceptions
 

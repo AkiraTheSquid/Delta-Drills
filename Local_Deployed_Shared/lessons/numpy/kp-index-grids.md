@@ -4,8 +4,8 @@ title: Index-pattern grids — checkerboards and coordinate masks
 supporting: [numpy.slicing-views, numpy.constructors, numpy.boolean-masking]
 new_syntax: []
 faded: [2, 116]
-guided: []
-independent: [112, 72, 11]
+guided: [73]
+independent: [112, 72, 11, 164]
 ---
 
 ## Concept: periodic patterns — strided slice assignment
@@ -155,12 +155,26 @@ def solve(n):
     return t.abs(y - c) + t.abs(x - c)
 ```
 
+## Guided practice
+
+### q73
+1. Torch has no `ndenumerate`, so the (row, col) pairs have to come from
+   the shape itself.
+2. Row-major order is just the outer loop over rows and the inner loop
+   over columns — a nested comprehension gives that ordering for free.
+3. `rows, cols = z.shape`, then `[((i, j), z[i, j].item()) for i in
+   range(rows) for j in range(cols)]`. `.item()` is required: the drill
+   wants plain Python numbers, not 0-d tensors.
+
 ## Independent practice
 
 From the drill bank: q112 (keep values within one step of the main diagonal —
 band mask times the matrix), q72 (checkerboard with a CHOSEN top-left value —
 same slices, think about which parity gets 1... or an (i+j) formula),
 q11 (every entry equals its own row index — the simplest coordinate formula).
+
+Also from the bank: q164 (the symmetric Toeplitz matrix T[i, j] = c[|i -
+j|], loop-free).
 
 ## Misconceptions
 

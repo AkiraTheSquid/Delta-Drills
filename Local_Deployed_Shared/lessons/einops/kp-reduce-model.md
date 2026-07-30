@@ -5,7 +5,7 @@ supporting: [einops.pattern-language, numpy.axis-reductions]
 new_syntax: []
 faded: [325]
 guided: [328]
-independent: [326, 367, 399, 402, 332]
+independent: [326, 367, 399, 402, 332, 340, 370]
 ---
 
 ## Concept
@@ -125,6 +125,10 @@ q367 (per-channel spatial means → (b, c)), q399 (grayscale with trailing
 singleton — the '-> b h w 1' form), q402 (per-column max keeping the height
 axis as a singleton — '() w c' or '1 w c'), q332 (row maxima with BOTH other
 axes as singletons — read the required output shape carefully).
+
+Also from the bank: q340 (centre each (batch, channel) map by its OWN mean
+— reduce to 'b c 1 1' so it broadcasts back), q370 (centre each channel
+across the WHOLE batch — '1 c 1 1', BatchNorm-style; contrast with q340).
 
 ## Misconceptions
 

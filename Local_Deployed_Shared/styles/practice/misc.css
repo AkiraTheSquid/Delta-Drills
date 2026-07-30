@@ -8,7 +8,10 @@
   border: 1px solid var(--border, #2a2f3a);
 }
 .hint-label { font-size: 12px; font-weight: 600; opacity: .7; margin-bottom: 4px; }
-.hint-text { font-size: 14px; line-height: 1.5; }
+/* Lesson guided items supply a NUMBERED hint list, one hint per line, ordered
+   least-help-first. textContent keeps the newlines, so preserve them or the
+   escalation collapses into one run-on paragraph. */
+.hint-text { font-size: 14px; line-height: 1.5; white-space: pre-line; }
 .answer-aids { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .colab-solution-link { display: inline-block; text-decoration: none; align-self: flex-start; }
 .answer-aids-note { font-size: 12px; opacity: .65; }
@@ -145,6 +148,7 @@
 /* Phase accents: lesson = neutral, faded = amber (scaffolded), independent = blue. */
 .competency-bar-wrap[data-phase="lesson"] .competency-phase-title { color: var(--muted, #9aa3b2); }
 .competency-bar-wrap[data-phase="faded"] .competency-phase-title { color: #e0a33c; }
+.competency-bar-wrap[data-phase="guided"] .competency-phase-title { color: #7cc4a4; }
 .competency-bar-wrap[data-phase="independent"] .competency-phase-title { color: #3b82f6; }
 
 .competency-bar-row { display: flex; align-items: center; gap: 12px; }

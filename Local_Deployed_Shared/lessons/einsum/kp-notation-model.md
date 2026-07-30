@@ -6,7 +6,7 @@ new_syntax: [einsum-spec-string]
 concepts: [spec-anatomy, output-order-permutation]
 faded: [244, 285]
 guided: [271]
-independent: []
+independent: [300, 303]
 ---
 
 ## Concept: anatomy of the spec string
@@ -186,3 +186,9 @@ def solve(x):
    required order.
 3. Every letter kept on both sides — nothing summed, values untouched:
    `'bchw->bhwc'`.
+
+## Independent practice
+
+From the drill bank: q300 (flatten the two spatial axes, channels
+preserved), q303 (the antisymmetric part a - a.T, straight from the
+transpose subscript).

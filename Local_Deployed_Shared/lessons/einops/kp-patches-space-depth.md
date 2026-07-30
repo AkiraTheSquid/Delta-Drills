@@ -5,7 +5,7 @@ supporting: [einops.split-axes, einops.grids-montage]
 new_syntax: []
 faded: [323]
 guided: [313]
-independent: [401, 404, 343, 350]
+independent: [401, 404, 343, 350, 321, 395, 398, 403]
 ---
 
 ## Concept
@@ -129,6 +129,12 @@ image), q404 (extract patches from a channels-FIRST image), q343
 (depth-to-space: channel groups ordered c-slowest unfold into space),
 q350 (transpose WITHIN each 2×2 patch — split both axes, swap the two
 within-patch names, merge back).
+
+Also from the bank: q321 (depth-to-space: h1*w1 channel groups become
+sub-positions of an enlarged pixel grid), q395 (space-to-depth, the other
+direction — block position folded INTO the channel axis), q398 (reassemble
+a channels-FIRST patch stack into one image), q403 (fold width chunks into
+height AHEAD of h — 'b h (w w4) c -> b (w4 h) w c').
 
 ## Misconceptions
 

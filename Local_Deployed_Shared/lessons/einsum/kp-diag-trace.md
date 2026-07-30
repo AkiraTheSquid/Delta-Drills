@@ -4,7 +4,7 @@ title: Repeated indices on one operand — diagonal and trace
 supporting: [einsum.notation-model, numpy.diag-triangles]
 new_syntax: []
 faded: [257, 277, 273, 266, 246, 298]
-guided: []
+guided: [293]
 independent: []
 ---
 
@@ -284,6 +284,18 @@ def solve(a, b):
     """tr(a @ b) directly — one einsum, no full product."""
     return t.einsum('ij,ji->', a, b)
 ```
+
+## Guided practice
+
+### q293
+1. Read the target carefully: a[k, 0, 0] fixes two indices at a CONSTANT.
+   Einsum's subscripts can repeat an index or drop it, but they cannot pin
+   one to zero.
+2. So this one is not a contraction at all. Which plain indexing
+   expression keeps the batch axis and takes position 0 of the other two?
+3. `a[:, 0, 0]` — the drill is here to mark the boundary: repeated-letter
+   tricks like `'bii->bi'` read the diagonal, not an arbitrary fixed
+   position.
 
 ## Misconceptions
 

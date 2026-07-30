@@ -5,7 +5,7 @@ supporting: [numpy.reshape-flatten, einsum.notation-model]
 new_syntax: [einops-pattern-string]
 faded: [345]
 guided: [388]
-independent: [335, 330, 379]
+independent: [335, 330, 379, 319, 327, 344]
 ---
 
 ## Concept
@@ -122,6 +122,11 @@ def solve(arr):
 From the drill bank: q335 (channels-last image → channels-first — one image,
 no batch axis), q330 (move the batch axis to the END), q379 (swap height and
 width within each image of a batch).
+
+Also from the bank: q319 (channels-first batch to channels-last — the
+single most common layout flip), q327 ((h, w, c) to (h, c, w) — colour
+lands between height and width), q344 (transpose H and W WITHIN each
+channel).
 
 ## Misconceptions
 

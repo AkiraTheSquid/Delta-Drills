@@ -204,7 +204,12 @@
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n-by-n identity matrix.\"\"\"\n    return t.eye(n)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 48,
+       "hints_markdown": "1. Nothing is being constructed from scratch here \u2014 you need a COPY of v\n   that you are allowed to write into.\n2. Odd indices are a slice with a step, and assigning a scalar into a\n   slice broadcasts it across every selected position.\n3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates\n   the caller's tensor, which the drill checks for."
+      }
+     ],
      "independent_items": [
       225,
       50,
@@ -377,7 +382,12 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return z's data-buffer size as e.g. '24 bytes'.\"\"\"\n    return f\"{z.numel() * z.element_size()} bytes\"\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 87,
+       "hints_markdown": "1. Torch has a histogram counter that takes the bin count and the range\n   directly \u2014 no bucketing by hand.\n2. It returns FLOAT counts. The drill wants integers, so the last step is\n   a dtype conversion.\n3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` \u2014 this is the\n   dtype lesson in miniature: the numbers were already right, only their\n   type was wrong."
+      }
+     ],
      "independent_items": [
       19
      ],
@@ -500,7 +510,9 @@
      "independent_items": [
       231,
       75,
-      507
+      507,
+      74,
+      189
      ],
      "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns."
     },
@@ -603,7 +615,8 @@
      ],
      "independent_items": [
       43,
-      489
+      489,
+      63
      ],
      "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data."
     },
@@ -905,7 +918,8 @@
       }
      ],
      "independent_items": [
-      69
+      69,
+      155
      ],
      "misconceptions_markdown": "- **\"`x.repeat(3)` repeats each element three times.\"** \u2014 That is NumPy's\n  `repeat`. In PyTorch `.repeat` tiles whole copies; per-element repetition is\n  `t.repeat_interleave`. The two produce the same *length* from the same\n  input, so length checks won't catch the mix-up.\n- **\"`t.meshgrid(x, y)` matches `np.meshgrid(x, y)`.\"** \u2014 Only with\n  `indexing='xy'`. The default is `'ij'`, which gives you the transpose."
     },
@@ -1127,9 +1141,16 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"z with entries strictly between 3 and 8 negated (z unmodified).\"\"\"\n    out = z.clone()\n    out[(out > 3) & (out < 8)] *= -1\n    return out\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 85,
+       "hints_markdown": "1. Build the per-row test first: a row is dropped when EVERY entry is\n   zero. That is a reduction over dim=1 producing one bool per row.\n2. You want to keep the rows where that is false \u2014 negate the mask with\n   `~`, then index the tensor with it.\n3. `z[~(z == 0).all(dim=1)]` \u2014 an all-zero input drops to a (0, c) tensor\n   by itself, which is exactly the required empty result."
+      }
+     ],
      "independent_items": [
-      232
+      232,
+      145,
+      202
      ],
      "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`."
     },
@@ -1190,7 +1211,12 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"a / b elementwise; 0.0 where b == 0; no division by zero.\"\"\"\n    out = t.zeros_like(a)\n    nz = b != 0\n    out[nz] = a[nz] / b[nz]\n    return out\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 240,
+       "hints_markdown": "1. Rounding away from zero is two different roundings depending on sign \u2014\n   which is a selection problem, not an arithmetic one.\n2. One way avoids the branch entirely: round the MAGNITUDE up, then put\n   the sign back.\n3. `t.sign(x) * t.ceil(t.abs(x))` \u2014 and check zero: sign(0) is 0, so exact\n   zeros stay exactly zero."
+      }
+     ],
      "independent_items": [],
      "misconceptions_markdown": ""
     },
@@ -1320,10 +1346,16 @@
        "solution": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t.argmin(t.abs(z - target)))\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 1,
+       "hints_markdown": "1. Per row means the reduction runs ALONG the columns \u2014 which axis number\n   is that for a 2-D tensor?\n2. You want the position of the max, not the max itself, and torch already\n   breaks ties leftmost.\n3. `z.argmax(dim=1)` \u2014 first-occurrence tie-breaking is the documented\n   default, so no extra work is needed."
+      }
+     ],
      "independent_items": [
       24,
-      61
+      61,
+      168
      ],
      "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner."
     },
@@ -1408,11 +1440,18 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its first and last rows swapped, x unmodified.\"\"\"\n    out = x.clone()\n    out[[0, -1]] = out[[-1, 0]]\n    return out\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 136,
+       "hints_markdown": "1. Row swap is a fancy-index assignment: read the two rows in one order,\n   write them back in the other.\n2. Work on a clone \u2014 the drill checks the input is untouched \u2014 and\n   remember i may equal j, which must still be a no-op.\n3. `out = z.clone()`, then `out[[i, j]] = out[[j, i]]`. The right-hand\n   side is materialized before the write, so no aliasing problem."
+      }
+     ],
      "independent_items": [
       70,
       30,
-      101
+      101,
+      177,
+      184
      ],
      "misconceptions_markdown": "- **\"Fancy indexing returns a view like slicing.\"** \u2014 It returns a COPY.\n  Consequence: `z[idx][0] = 5` modifies the copy and silently discards it;\n  write through the original (`z[idx_of_target] = 5`) when mutation is the\n  goal.\n- **\"Swapping rows needs a temporary.\"** \u2014 `z[[i, j]] = z[[j, i]]` is safe:\n  the right side is fully read before the write. (The pure-Python idiom\n  `z[i], z[j] = z[j], z[i]` is NOT safe on arrays \u2014 the first assignment\n  overwrites data the second still needs, because each `z[i]` is a view.)\n- **\"values[labels] loops over labels under the hood in Python.\"** \u2014 It's a\n  single vectorized gather in C. If you're writing\n  `t.tensor([values[l] for l in labels])`, replace it."
     },
@@ -1567,11 +1606,18 @@
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t.triu(t.ones((n, n)))\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 78,
+       "hints_markdown": "1. Upper-triangular INCLUDING the diagonal is the default offset \u2014 no\n   `diagonal=` argument needed.\n2. Build a full tensor of the right dtype first, then let the triangular\n   helper zero out the lower part.\n3. `t.triu(t.ones((n, n), dtype=t.bool))` \u2014 set the dtype at construction;\n   converting afterwards is an extra pass, and an int tensor would fail\n   the bool check."
+      }
+     ],
      "independent_items": [
       140,
       16,
-      4
+      4,
+      160,
+      180
      ],
      "misconceptions_markdown": "- **\"t.diag always extracts.\"** \u2014 With 1-D input it BUILDS a matrix. The\n  function is two-way, switched by input rank; a stray reshape can flip you\n  into the wrong mode.\n- **\"triu deletes the diagonal too.\"** \u2014 Default k=0 KEEPS the diagonal.\n  \"Strictly above/below\" needs k=1 / k=-1 \u2014 read the task for whether the\n  diagonal is in or out.\n- **\"Positive k means below.\"** \u2014 Positive is ABOVE the main diagonal,\n  negative below, consistently across diag/trace/triu/tril/eye. When unsure,\n  test on `t.arange(9).reshape(3,3)` where every entry announces its\n  position."
     },
@@ -1705,7 +1751,9 @@
      ],
      "independent_items": [
       115,
-      142
+      142,
+      120,
+      170
      ],
      "misconceptions_markdown": "- **\"Find NaNs with `x == t.nan`.\"** \u2014 NaN \u2260 NaN by IEEE definition, so that\n  comparison is False everywhere. Only `t.isnan` detects them.\n- **\"Inf is a kind of NaN.\"** \u2014 Different animals: Inf is a well-ordered\n  value (`t.inf > 1e300` is True) from overflow/division-by-zero; NaN is\n  unordered missingness. `isnan`, `isinf`, `isfinite` slice the three cases\n  cleanly.\n- **\"mean() skips missing values like pandas.\"** \u2014 PyTorch propagates: one NaN\n  makes the whole mean NaN. Skipping is opt-in via `t.nanmean` and friends."
     },
@@ -1752,7 +1800,8 @@
       }
      ],
      "independent_items": [
-      90
+      90,
+      186
      ],
      "misconceptions_markdown": "- **\"pad modifies in place.\"** \u2014 It returns a new, bigger tensor (it must \u2014\n  the shape changes). The original is one of its ingredients, not its victim.\n- **\"The pad tuple is (top, bottom, left, right).\"** \u2014 It is LAST DIMENSION\n  FIRST: `(left, right, top, bottom)` for 2-D. Getting this backwards pads a\n  valid-looking tensor with the frame on the wrong axis.\n- **\"The border needs four assignments.\"** \u2014 Assigning the border is four\n  slices, but most frame tasks invert: fill everything, then overwrite the\n  single interior slice `z[1:-1, 1:-1]`.\n- **\"Small matrices need an if-statement.\"** \u2014 `z[1:-1, 1:-1]` on a 1\u00d7n or\n  2\u00d7n array selects nothing, and assigning to an empty selection is a legal\n  no-op. The slice formulation handles the degenerate cases by construction."
     },
@@ -1815,11 +1864,17 @@
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Entry [i, j] = |i - n//2| + |j - n//2|.\"\"\"\n    y = t.arange(n)[:, None]\n    x = t.arange(n)[None, :]\n    c = n // 2\n    return t.abs(y - c) + t.abs(x - c)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 73,
+       "hints_markdown": "1. Torch has no `ndenumerate`, so the (row, col) pairs have to come from\n   the shape itself.\n2. Row-major order is just the outer loop over rows and the inner loop\n   over columns \u2014 a nested comprehension gives that ordering for free.\n3. `rows, cols = z.shape`, then `[((i, j), z[i, j].item()) for i in\n   range(rows) for j in range(cols)]`. `.item()` is required: the drill\n   wants plain Python numbers, not 0-d tensors."
+      }
+     ],
      "independent_items": [
       112,
       72,
-      11
+      11,
+      164
      ],
      "misconceptions_markdown": "- **\"Patterned matrices need nested loops.\"** \u2014 Periodic patterns are strided\n  slice assignments; coordinate formulas are index-vector arithmetic.\n  Python-level cell visits are never required in this family.\n- **\"The coordinate vectors have to be full matrices.\"** \u2014 They are SKINNY \u2014\n  shape (n, 1) and (1, n) \u2014 and expand only when combined, so the (n, n)\n  grid never exists in memory. `t.meshgrid` builds the full pair when you\n  actually want it.\n- **\"`z[::2]` means the first two rows.\"** \u2014 It means every SECOND row\n  (step 2, from row 0). `z[:2]` is the first two. Step lives in the third\n  slot: start:stop:step."
     }
@@ -1987,7 +2042,8 @@
      "independent_items": [
       108,
       130,
-      505
+      505,
+      174
      ],
      "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely."
     },
@@ -2071,7 +2127,12 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(dim=0)) / x.std(dim=0, correction=0)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 154,
+       "hints_markdown": "1. Two steps, in order: standardize per COLUMN, then clip. Column\n   statistics reduce over dim=0.\n2. Population std means dividing by n, not n-1 \u2014 torch's default is the\n   sample version, so one keyword has to change.\n3. `(z - z.mean(dim=0)) / z.std(dim=0, correction=0)`, then `t.clip(...,\n   -limit, limit)`."
+      }
+     ],
      "independent_items": [
       109,
       218
@@ -2124,7 +2185,9 @@
       6,
       97,
       153,
-      10
+      10,
+      103,
+      147
      ],
      "misconceptions_markdown": "- **\"Normalize means divide by the max.\"** \u2014 `z / z.max()` sends the max to 1\n  but the min to min/max, not 0. True min-max subtracts the min first. Read\n  which endpoints the task pins down.\n- **\"norm(v) is the sum of absolute values.\"** \u2014 Default is the EUCLIDEAN\n  (L2) norm: \u221a\u03a3x\u00b2. The L1 norm is `t.linalg.norm(v, 1)` \u2014 and a\n  \"probability\" scaling divides by the plain SUM, which for non-negative\n  data equals L1.\n- **\"Guard zero divisors with `if z.sum() == 0`.\"** \u2014 Per-row that's a loop\n  in disguise. The vectorized guard is a zeros canvas plus a row mask, which\n  handles mixed zero/nonzero rows without an if-statement. (NumPy spells this\n  `np.divide(..., out=..., where=...)`; PyTorch has no `where=` keyword.)"
     },
@@ -2218,10 +2281,16 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t.diff(z, dim=1)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 68,
+       "hints_markdown": "1. Non-decreasing is a statement about consecutive PAIRS, and the pairwise\n   gaps are exactly what one function gives you.\n2. Once you have the gaps, the whole question is whether all of them are\n   >= 0.\n3. `bool(t.all(t.diff(z) >= 0))` \u2014 the `bool()` matters, the drill wants a\n   Python bool. A length-1 tensor gives an empty diff, and `all()` of\n   nothing is True, which is the answer you want."
+      }
+     ],
      "independent_items": [
       82,
-      149
+      149,
+      163
      ],
      "misconceptions_markdown": "- **\"cumsum needs a loop with a running variable.\"** \u2014 `t.cumsum` IS that\n  loop, in compiled code. Same for the running max, min and product.\n- **\"diff returns the same length.\"** \u2014 One shorter per application: n\n  numbers have n\u22121 gaps. `t.diff(x, n=k)` shrinks by k. Plan output shapes\n  accordingly.\n- **\"Running maximum = amax with a dim.\"** \u2014 `amax(dim=...)` collapses the\n  dimension to ONE value; the running version keeps the answer at every point.\n  \"So far\" in the task text is the tell that you want a `cum*`.\n- **\"cummax returns a tensor.\"** \u2014 It returns a `(values, indices)` pair.\n  Forgetting `.values` is the standard first mistake, and the error it causes\n  shows up later, wherever the pair is finally used as a tensor."
     },
@@ -2340,7 +2409,8 @@
      ],
      "independent_items": [
       141,
-      515
+      515,
+      95
      ],
      "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\"."
     },
@@ -2438,7 +2508,8 @@
      ],
      "independent_items": [
       150,
-      124
+      124,
+      172
      ],
      "misconceptions_markdown": "- **\"One-hot needs a loop setting out[i, labels[i]] = 1.\"** \u2014 That loop is\n  exactly what `t.eye(k)[labels]` performs in one vectorized gather. (The\n  explicit-canvas form does have its place \u2014 see the per-row variant in\n  q124.)\n- **\"bincount == unique counts.\"** \u2014 unique's counts are COMPACT (only values\n  present, paired with a values array); bincount is DENSE (every integer\n  0..max gets a slot, position = value). Mode-finding and class-vector tasks\n  want the dense layout.\n- **\"bincount works on any integers.\"** \u2014 Non-negative only; negatives raise.\n  Shift first (`x - x.min()`) if the data can dip below zero, and shift the\n  interpretation back afterwards."
     },
@@ -2678,7 +2749,8 @@
       169,
       128,
       122,
-      193
+      193,
+      129
      ],
      "misconceptions_markdown": "- **\"Pairwise tables need double loops.\"** \u2014 Two `None`-insertions and a\n  reduction replace both loops. The 3-D intermediate IS the pair table,\n  before reduction.\n- **\"x[:, None] vs x[None, :] doesn't matter \u2014 broadcasting figures it\n  out.\"** \u2014 It determines which array varies down rows vs across columns.\n  Swap them and the table transposes; with different metrics for x and y\n  roles, that's a wrong answer, not a style choice.\n- **\"Cosine similarity needs the 3-D broadcast too.\"** \u2014 It's all DOT\n  products, so `xn @ yn.T` after row normalization does every pair with no\n  (n, m, d) tensor. Reserve the broadcast for subtract-style metrics."
     },
@@ -2843,7 +2915,12 @@
      "independent_items": [
       199,
       205,
-      143
+      143,
+      133,
+      158,
+      198,
+      207,
+      211
      ],
      "misconceptions_markdown": "- **\"RLE needs itertools.groupby.\"** \u2014 The shifted-slice comparison +\n  nonzero + diff pipeline is fully vectorized; groupby iterates in\n  Python. Same information, orders of magnitude apart on long tensors.\n- **\"t.unique solves 'distinct rows in appearance order'.\"** \u2014 Bare unique\n  SORTS (lexicographically with `dim=0`). Appearance order needs the inverse\n  map and a first-position recovery \u2014 and torch gives you no `return_index`\n  shortcut, so this is genuinely more work than it was in numpy.\n- **\"Cartesian products need nested loops.\"** \u2014 meshgrid + ravel + stack;\n  the loops exist only inside compiled code. For 3+ arrays, unpack the list:\n  `t.meshgrid(*arrays, indexing='ij')`."
     },
@@ -2894,7 +2971,8 @@
       167,
       176,
       196,
-      209
+      209,
+      126
      ],
      "misconceptions_markdown": "- **\"Block operations require divisible shapes.\"** \u2014 reshape-based blocking\n  does; `split` doesn't \u2014 the last chunk is simply shorter than the rest.\n  Check the task for ragged edges before choosing.\n- **\"2-D windows mean nested loops over (i, j).\"** \u2014 Two `unfold` calls\n  materialize every window in the last two axes; statistics are reductions\n  from there.\n- **\"Convolution and correlation are interchangeable.\"** \u2014 Convolution flips\n  the kernel; correlation doesn't. The window-view formula computes\n  CORRELATION; flip the kernel (`kern.flip(0).flip(1)` \u2014 torch rejects a\n  negative slice step) if a task genuinely wants convolution. Drills usually\n  say \"cross-correlation\" precisely to spare you the flip."
     },
@@ -2943,7 +3021,8 @@
       }
      ],
      "independent_items": [
-      210
+      210,
+      91
      ],
      "misconceptions_markdown": "- **\"Bootstrap = a for-loop of resamples.\"** \u2014 One (n_samples, n) index draw\n  + gather + dim-1 statistic. The loop is the shape.\n- **\"Quantile levels are percentages.\"** \u2014 In torch they are fractions:\n  `0.025`, not `2.5`. A level above 1 raises rather than rescaling, which is\n  the one mercy here \u2014 the same mistake in the other direction (asking for\n  `0.025` from numpy's `percentile`) returns a plausible wrong number.\n- **\"Sampling a categorical needs a `choice` call per row.\"** \u2014 torch has no\n  `choice` at all, and it wouldn't vectorize over per-row probability\n  vectors anyway; the inverse-CDF broadcast (uniform column vs cumsum\n  matrix) samples all rows in one expression.\n- **\"Verify random-looking data by re-simulating it.\"** \u2014 Tasks that ask\n  \"could this be a draw from X?\" want the deterministic PROPERTIES of X\n  checked (support, integrality, sums). Simulation can't prove membership;\n  properties can."
     },
@@ -3175,7 +3254,10 @@
        "hints_markdown": "1. `(b, c, h, w) -> (b, h, w, c)`: four axes in, four out \u2014 permutation or\n   reduction?\n2. Name the input axes meaningfully (`bchw`) and write the output in the\n   required order.\n3. Every letter kept on both sides \u2014 nothing summed, values untouched:\n   `'bchw->bhwc'`."
       }
      ],
-     "independent_items": [],
+     "independent_items": [
+      300,
+      303
+     ],
      "misconceptions_markdown": ""
     },
     {
@@ -3287,7 +3369,11 @@
       }
      ],
      "independent_items": [
-      289
+      289,
+      249,
+      261,
+      290,
+      302
      ],
      "misconceptions_markdown": ""
     },
@@ -3475,7 +3561,9 @@
      ],
      "independent_items": [
       264,
-      311
+      311,
+      286,
+      294
      ],
      "misconceptions_markdown": ""
     },
@@ -3625,7 +3713,12 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"tr(a @ b) directly \u2014 one einsum, no full product.\"\"\"\n    return t.einsum('ij,ji->', a, b)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 293,
+       "hints_markdown": "1. Read the target carefully: a[k, 0, 0] fixes two indices at a CONSTANT.\n   Einsum's subscripts can repeat an index or drop it, but they cannot pin\n   one to zero.\n2. So this one is not a contraction at all. Which plain indexing\n   expression keeps the batch axis and takes position 0 of the other two?\n3. `a[:, 0, 0]` \u2014 the drill is here to mark the boundary: repeated-letter\n   tricks like `'bii->bi'` read the diagonal, not an arbitrary fixed\n   position."
+      }
+     ],
      "independent_items": [],
      "misconceptions_markdown": "- **\"'ii' is illegal / a typo.\"** \u2014 Within one operand it's the diagonal\n  selector. Across operands it's the pairing rule. Same letter, two\n  well-defined meanings by placement.\n- **\"diag(a @ b) requires computing a @ b.\"** \u2014 `'ik,ki->i'` computes just\n  the n diagonal dots: O(n\u00b2) vs O(n\u00b3). When a drill says \"without the full\n  product\", this is what it's fishing for.\n- **\"'ij,ji->' and 'ij,ij->' are interchangeable.\"** \u2014 Transposed second\n  operand: the first is tr(a@b), the second the Frobenius product \u03a3 a\u1d62\u2c7cb\u1d62\u2c7c.\n  They agree only for symmetric b. Read letter POSITIONS, not letter SETS."
     }
@@ -3717,7 +3810,12 @@
        "solution": "import torch as t\n\ndef solve(v):\n    \"\"\"(b,d) -> (d,d): sum over the batch of outer(v[n], v[n]).\"\"\"\n    return t.einsum('bi,bj->ij', v, v)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 250,
+       "hints_markdown": "1. Every batch item needs its OWN similarity matrix, so the batch index\n   survives to the output \u2014 it is not one of the summed indices.\n2. You need two views of the same tensor: one indexed `b i d`, one `b j\n   d`. Which single letter is missing from the output side?\n3. `t.einsum('bid,bjd->bij', a, a)` \u2014 `d` is contracted, `b` is carried,\n   `i` and `j` are the two vector slots."
+      }
+     ],
      "independent_items": [
       265,
       276,
@@ -3774,7 +3872,8 @@
       251,
       304,
       309,
-      255
+      255,
+      253
      ],
      "misconceptions_markdown": "- **\"The weight vector needs reshaping to match the tensor.\"** \u2014 In einsum\n  the LETTER aligns it; `'chw,c->\u2026'` is the whole alignment. Reshaping with\n  None is the broadcasting spelling of the same thing \u2014 fine too, but count\n  your Nones.\n- **\"Scale vs weighted-sum are different kinds of operation.\"** \u2014 Same\n  multiply along the paired axis; the output side's keep/drop is the only\n  difference. Task words map directly: \"scale/weight each X\" \u2192 keep;\n  \"combine/sum/average over X\" \u2192 drop.\n- **\"einsum can compute the weighted average directly.\"** \u2014 No division in\n  the notation. Weighted sum inside, `/ w.sum()` outside \u2014 and use the\n  WEIGHTS' total, not the item count."
     },
@@ -3935,7 +4034,10 @@
      "independent_items": [
       335,
       330,
-      379
+      379,
+      319,
+      327,
+      344
      ],
      "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon."
     },
@@ -3986,7 +4088,13 @@
      "independent_items": [
       347,
       342,
-      314
+      314,
+      346,
+      353,
+      373,
+      380,
+      392,
+      400
      ],
      "misconceptions_markdown": "- **\"`(h w)` and `(w h)` give the same flattening.\"** \u2014 Same length,\n  different order: left-slow/right-fast. The task's phrase \"row-major\" /\n  \"column by column\" / \"X's block first\" picks the order for you.\n- **\"Axes must be adjacent to merge.\"** \u2014 The pattern happily merges\n  distant axes ('b h w c -> h (b w) c'); einops inserts the implied\n  transpose. By hand you'd have to permute them together first \u2014 that\n  two-step is exactly what the pattern hides.\n- **\"Merging loses information.\"** \u2014 It's a pure relabeling; every element\n  keeps a unique address. The inverse operation (splitting, next KP)\n  recovers the original \u2014 provided you remember one of the factor sizes."
     },
@@ -4034,7 +4142,8 @@
      "independent_items": [
       337,
       320,
-      393
+      393,
+      331
      ],
      "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work."
     },
@@ -4082,7 +4191,10 @@
      "independent_items": [
       358,
       374,
-      376
+      376,
+      333,
+      334,
+      365
      ],
      "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature."
     },
@@ -4132,7 +4244,9 @@
       329,
       382,
       318,
-      381
+      381,
+      322,
+      371
      ],
      "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick."
     },
@@ -4182,7 +4296,11 @@
       401,
       404,
       343,
-      350
+      350,
+      321,
+      395,
+      398,
+      403
      ],
      "misconceptions_markdown": "- **\"Patch extraction needs sliding-window machinery.\"** \u2014 NON-overlapping\n  patches are a pure reshape (split + merge); no windows, no copies of\n  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job \u2014 different\n  task, check the word \"non-overlapping\".\n- **\"Space-to-depth loses spatial information.\"** \u2014 It's a bijection: every\n  pixel gets a unique (channel, position) address, and depth-to-space\n  inverts it exactly. What changes is which axis \"sees\" the detail.\n- **\"The channel packing order after s2d doesn't matter.\"** \u2014 Downstream\n  code (or the grader) reads channels by index; (c p q) vs (p q c) are\n  different tensors with equal shapes. The paren order IS the file format \u2014\n  get it from the task, verify with a position-valued example."
     }
@@ -4241,7 +4359,9 @@
       367,
       399,
       402,
-      332
+      332,
+      340,
+      370
      ],
      "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade."
     },
@@ -4290,7 +4410,9 @@
      "independent_items": [
       386,
       368,
-      354
+      354,
+      336,
+      377
      ],
      "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form."
     }
@@ -4351,7 +4473,9 @@
       385,
       341,
       339,
-      383
+      383,
+      352,
+      355
      ],
      "misconceptions_markdown": "- **\"repeat is rearrange with bigger numbers.\"** \u2014 rearrange is a\n  bijection (every input element appears once); repeat COPIES. The\n  found-on-the-right-only names/factors are what license the copying.\n- **\"'(h 2)' and '(2 h)' both just double the axis.\"** \u2014 Same length,\n  different layout: h-slow keeps copies adjacent to their source row\n  (stretch); 2-slow lays whole blocks end to end (tile). Tasks say\n  \"consecutively\"/\"each row\" vs \"whole image again\" \u2014 map the words to\n  the order.\n- **\"Broadcasting makes repeat unnecessary.\"** \u2014 Broadcasting stretches\n  virtually within an operation; repeat materializes an actual tensor with\n  the new shape \u2014 which is what a drill's return-shape contract (and much\n  downstream code) requires. Know which one you're producing."
     },
@@ -4451,7 +4575,9 @@
       369,
       372,
       378,
-      397
+      397,
+      316,
+      359
      ],
      "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters."
     }

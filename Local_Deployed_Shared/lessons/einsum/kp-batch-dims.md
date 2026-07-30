@@ -4,7 +4,7 @@ title: Batch dimensions — carrying axes through
 supporting: [einsum.matvec-matmul, einsum.outer-products]
 new_syntax: []
 faded: [268, 279, 310]
-guided: []
+guided: [250]
 independent: [265, 276, 297, 243, 287, 284]
 ---
 
@@ -166,6 +166,16 @@ def solve(v):
     """(b,d) -> (d,d): sum over the batch of outer(v[n], v[n])."""
     return t.einsum('bi,bj->ij', v, v)
 ```
+
+## Guided practice
+
+### q250
+1. Every batch item needs its OWN similarity matrix, so the batch index
+   survives to the output — it is not one of the summed indices.
+2. You need two views of the same tensor: one indexed `b i d`, one `b j
+   d`. Which single letter is missing from the output side?
+3. `t.einsum('bid,bjd->bij', a, a)` — `d` is contracted, `b` is carried,
+   `i` and `j` are the two vector slots.
 
 ## Independent practice
 

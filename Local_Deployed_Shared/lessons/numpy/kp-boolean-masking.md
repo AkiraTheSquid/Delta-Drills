@@ -4,8 +4,8 @@ title: Boolean masks — compare, count, filter
 supporting: [numpy.slicing-views, numpy.elementwise-ufuncs, numpy.aggregations]
 new_syntax: [boolean-mask-indexing]
 faded: [236, 52, 12]
-guided: []
-independent: [232]
+guided: [85]
+independent: [232, 145, 202]
 ---
 
 ## Concept: the comparison IS the mask
@@ -164,10 +164,24 @@ def solve(z):
     return out
 ```
 
+## Guided practice
+
+### q85
+1. Build the per-row test first: a row is dropped when EVERY entry is
+   zero. That is a reduction over dim=1 producing one bool per row.
+2. You want to keep the rows where that is false — negate the mask with
+   `~`, then index the tensor with it.
+3. `z[~(z == 0).all(dim=1)]` — an all-zero input drops to a (0, c) tensor
+   by itself, which is exactly the required empty result.
+
 ## Independent practice
 
 From the drill bank: q232 (divisibility mask — the condition is a modulo
 comparison).
+
+Also from the bank: q145 (local peaks: strictly greater than BOTH
+neighbours, endpoints excluded), q202 (keep the rows that are NOT
+constant).
 
 ## Misconceptions
 

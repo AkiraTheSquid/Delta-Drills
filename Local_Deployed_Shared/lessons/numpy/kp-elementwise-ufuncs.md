@@ -5,7 +5,7 @@ supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.floor, torch.maximum, torch.sqrt, torch.trunc]
 faded: [192, 49, 67]
 guided: [487, 488]
-independent: [43, 489]
+independent: [43, 489, 63]
 ---
 
 ## Concept: write the formula once — operators are elementwise
@@ -184,6 +184,9 @@ def solve(z):
 From the drill bank: q43 (elementwise larger of two tensors).
 
 From the drill bank: q489 (pull every element into [lo, hi] — mind which of min=/max= is the floor).
+
+Also from the bank: q63 (the integer part of positive floats (3.7 becomes
+3.0) — several idioms work).
 
 ## Guided practice
 

@@ -4,7 +4,7 @@ title: Tensor constructors — zeros, ones, full, eye, *_like
 supporting: [numpy.ndarray-model]
 new_syntax: []
 faded: [227, 212, 41, 228]
-guided: []
+guided: [48]
 independent: [225, 50, 213]
 ---
 
@@ -206,6 +206,16 @@ def solve(n):
     """n-by-n identity matrix."""
     return t.eye(n)
 ```
+
+## Guided practice
+
+### q48
+1. Nothing is being constructed from scratch here — you need a COPY of v
+   that you are allowed to write into.
+2. Odd indices are a slice with a step, and assigning a scalar into a
+   slice broadcasts it across every selected position.
+3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates
+   the caller's tensor, which the drill checks for.
 
 ## Independent practice
 

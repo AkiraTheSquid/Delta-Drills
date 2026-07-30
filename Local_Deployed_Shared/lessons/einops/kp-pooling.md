@@ -5,7 +5,7 @@ supporting: [einops.reduce-model, einops.split-axes]
 new_syntax: []
 faded: [324]
 guided: [363]
-independent: [386, 368, 354]
+independent: [386, 368, 354, 336, 377]
 ---
 
 ## Concept
@@ -121,6 +121,10 @@ channels-last), q368 (2×2×2 max-pool of a 5-D volume — three factored
 axes), q354 (subtract each (batch, channel) pair's spatial MINIMUM from its
 own map — a reduce with kept singletons feeding a broadcast subtraction,
 not a pooling; recognize the difference).
+
+Also from the bank: q336 (max-pool AND tile the batch into a grid in ONE
+reduce), q377 (max-pool then flatten everything but the batch, also in one
+reduce).
 
 ## Misconceptions
 
