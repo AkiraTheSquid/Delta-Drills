@@ -2,101 +2,17 @@
    LADDER — concept header + the worked example kept beside the problem
    (practice/ladder.js)
 
-   Two pieces, both inside #question-text:
-     .ladder-header   — one strip above the prompt: concept, rung, interval
-     .ladder-example  — the worked example, below the prompt, on the faded and
-                        partial rungs only
+   One piece, inside #question-text: `.ladder-example`, the worked example kept
+   below the prompt on the supported rungs. The concept/rung/interval strip that
+   used to sit above the prompt moved to the page-wide concept topbar
+   (styles/practice/concept-topbar.css) so it spans both panels and survives a
+   re-render.
 
    The example is styled to read as REFERENCE, not as more prompt: dimmer
    surface, a left rule, and a smaller type scale. A learner scanning the card
    has to be able to tell at a glance which block is the thing they are being
    asked to do and which is the thing they are allowed to copy from.
    ================================================================ */
-
-.ladder-header {
-  align-items: center;
-  background: var(--surface-2, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  margin-bottom: 14px;
-  padding: 7px 12px;
-}
-
-.ladder-header-label {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-}
-
-/* The concept name IS the control — a separate icon button beside a label the
-   learner already wants to click is one target too many on a narrow card. */
-.ladder-header-kc {
-  background: transparent;
-  border: none;
-  border-bottom: 1px dotted var(--muted);
-  color: var(--white);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 0 0 1px;
-  text-align: left;
-}
-
-.ladder-header-kc:hover,
-.ladder-header-kc:focus-visible {
-  border-bottom-color: var(--accent);
-  color: var(--accent);
-}
-
-.ladder-header-stage {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  padding: 2px 9px;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-/* The rungs read as a ramp: supported rungs are cool and quiet, the
-   unsupported one is the accent. Colour is redundant with the words, never
-   the only carrier of the state. */
-.ladder-header-stage.is-worked,
-.ladder-header-stage.is-faded {
-  border-color: #3d6ea8;
-  color: #9ec7f0;
-}
-
-.ladder-header-stage.is-partial {
-  border-color: #4a7c59;
-  color: #9fd6ae;
-}
-
-.ladder-header-stage.is-solo {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.ladder-header-est {
-  color: var(--muted);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  margin-left: auto;
-  white-space: nowrap;
-}
-
-.ladder-header-est.is-new {
-  font-style: italic;
-}
 
 /* --- the worked example, beside the problem ------------------------------ */
 
@@ -174,10 +90,4 @@
   border-radius: 4px;
   font-size: 0.9em;
   padding: 1px 5px;
-}
-
-@media (max-width: 720px) {
-  .ladder-header-est {
-    margin-left: 0;
-  }
 }

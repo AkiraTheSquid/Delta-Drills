@@ -262,21 +262,16 @@ const LessonGate = (() => {
   const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
 
   const _pageHtml = (page) => {
-    const { lesson, kp, seg } = page;
+    const { kp, seg } = page;
     const pageTitle = seg.title || kp.title;
     const watchOut = seg.watch_out_markdown ||
       (page.segCount === 1 ? kp.misconceptions_markdown : "");
     const isLast = page.pageIndex === page.pageTotal - 1;
-    let html =
-      '<div class="lesson-topbar">' +
-      `<span class="lesson-topbar-topic">${esc(_topicLabel(lesson.topic))} · ${esc(pageTitle)}</span>` +
-      // The lesson already knows its own KC, so unlike the practice-view button
-      // this needs no q-matrix lookup — it can always land somewhere real.
-      `<button type="button" class="lesson-graph-jump" data-kc="${esc(kp.kc)}" ` +
-      `title="Open “${esc(kp.kc)}” in the knowledge graph">See in knowledge graph</button>` +
-      `<span class="lesson-topbar-progress">Lesson ${page.pageIndex + 1} of ${page.pageTotal}</span>` +
-      "</div>";
-    html += `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
+    // The concept name, the graph button and the progress counter used to be
+    // built here, inside the panel. They now live in #concept-topbar, which
+    // spans the page and survives this innerHTML being replaced — see
+    // practice/concept-topbar.js and `_showTopbar` below.
+    let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
     html += '<div class="lesson-body">' + md(seg.concept_markdown) + "</div>";
     if (watchOut) {
       html += '<div class="lesson-watch-out"><h3>Watch out</h3>' + md(watchOut) + "</div>";
@@ -288,6 +283,42 @@ const LessonGate = (() => {
       (isLast ? "Continue to the question →" : "Next concept →") +
       "</button></div>";
     return html;
+  };
+
+  /* Point the page-wide topbar at the concept this page teaches.
+
+     The estimate is fetched rather than read off the pending question, for two
+     reasons: the lesson may teach several KPs and at most one of them is the
+     concept that question is staged on, and the ?lesson=<kc> entry point has no
+     question at all. A failed fetch leaves the estimate blank rather than
+     falling back to the staged question's number — labelling one concept's
+     record with another concept's attempts would be worse than showing none.
+
+     Guest mode has no backend to ask, so the fetch is skipped entirely there. */
+  const _showTopbar = async (page) => {
+    const bar = window.ConceptTopbar;
+    if (!bar) return;
+    const { lesson, kp, seg } = page;
+    bar.show({
+      kc: kp.kc,
+      title: seg.title || kp.title,
+      eyebrow: `${_topicLabel(lesson.topic)} · Lesson ${page.pageIndex + 1} of ${page.pageTotal}`,
+      stage: "lesson",
+      estimate: null,
+    });
+    if (typeof apiFetch !== "function" || practiceMode !== "backend") return;
+    try {
+      const res = await apiFetch(
+        `/api/practice/kc-estimate?kc=${encodeURIComponent(kp.kc)}`,
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      // The learner may have paged on while this was in flight. Only apply the
+      // estimate if the topbar is still showing the concept it belongs to.
+      if (bar.activeKc() === kp.kc) bar.setEstimate(data.ladder_estimate);
+    } catch (err) {
+      console.warn("[lessons] concept estimate unavailable:", err);
+    }
   };
 
   const _runtimeContext = (page) => ({
@@ -360,20 +391,10 @@ const LessonGate = (() => {
           _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR;
         if (output) output.textContent = "";
 
-        const jump = questionText.querySelector(".lesson-graph-jump");
-        if (jump) {
-          jump.onclick = () => {
-            if (typeof switchTab === "function") switchTab("knowledge-graph");
-            // The graph can only size itself once its page is visible, and on a
-            // first visit it still has to build — deltaFocusConceptGraphKc waits
-            // for both. Same contract the practice-view button uses.
-            requestAnimationFrame(() => {
-              if (typeof window.deltaFocusConceptGraphKc === "function") {
-                window.deltaFocusConceptGraphKc(jump.dataset.kc);
-              }
-            });
-          };
-        }
+        // Not awaited: the page is already rendered and the estimate fills in
+        // when it arrives. Blocking the render on a network call would make a
+        // slow connection look like a broken lesson.
+        _showTopbar(page);
 
         const button = _el("lesson-continue-btn");
         let advancing = false;
@@ -459,7 +480,7 @@ window.LessonGate = LessonGate;
       const started = await window.KcPractice.start(kc);
       if (!started) {
         _fallbackMessage(
-          '<div class="lesson-topbar"><span class="lesson-topbar-topic">Lesson complete</span></div>' +
+          '<h2 class="lesson-kp-title">Lesson complete</h2>' +
           "<p>No practice problems are attached to this concept yet.</p>",
         );
         return;
@@ -470,7 +491,7 @@ window.LessonGate = LessonGate;
     } catch (err) {
       console.warn("[lessons] could not start KC practice:", err);
       _fallbackMessage(
-        '<div class="lesson-topbar"><span class="lesson-topbar-topic">Lesson complete</span></div>' +
+        '<h2 class="lesson-kp-title">Lesson complete</h2>' +
         "<p>Practice problems could not be loaded. Reload to try again.</p>",
       );
     }

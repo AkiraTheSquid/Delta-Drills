@@ -246,6 +246,20 @@ class WorkedSeenRequest(BaseModel):
     question_id: int | None = None
 
 
+class KcEstimateResponse(BaseModel):
+    """Where one concept stands, with no question attached.
+
+    The concept topbar needs this on the lesson screen, which is served before
+    any question exists — reading the estimate off a question object works only
+    once a drill has been staged, and a lesson may teach several concepts that
+    the pending question does not cover.
+    """
+
+    kc: str
+    ladder_stage: str
+    ladder_estimate: dict
+
+
 class WorkedSeenResponse(BaseModel):
     ladder_stage: str
     ladder_estimate: dict | None = None

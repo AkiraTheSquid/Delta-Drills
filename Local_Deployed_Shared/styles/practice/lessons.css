@@ -17,54 +17,9 @@ body.lesson-mode #practice-mode-intro {
   display: none !important;
 }
 
-.lesson-topbar {
-  align-items: center;
-  background: var(--surface-2, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  margin-bottom: 14px;
-  padding: 8px 14px;
-}
-
-.lesson-topbar-topic {
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.lesson-topbar-progress {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* Sits between the topic and the progress counter, so it stays reachable on the
-   narrow layout where the topbar wraps (see the media query at the foot). */
-.lesson-graph-jump {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  margin-left: auto;
-  padding: 4px 10px;
-  white-space: nowrap;
-}
-
-.lesson-graph-jump:hover,
-.lesson-graph-jump:focus-visible {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+/* The concept name, graph button and progress counter that used to live in a
+   `.lesson-topbar` inside this panel are now in the page-wide concept topbar
+   (styles/practice/concept-topbar.css), which spans both panels. */
 
 .lesson-kp-title {
   color: var(--white);
@@ -148,11 +103,6 @@ body.lesson-mode #practice-mode-intro {
 }
 
 @media (max-width: 700px) {
-  .lesson-topbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .lesson-actions button {
     width: 100%;
   }

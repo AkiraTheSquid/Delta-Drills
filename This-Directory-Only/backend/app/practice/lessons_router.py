@@ -5,6 +5,7 @@ worked-example acknowledgement.
 Endpoints (mounted under /api/practice by the parent router):
   GET  /exposure     — the learner's kc -> first-exposure timestamp map
   POST /exposure     — record introducing-KP completion for one or more KCs
+  GET  /kc-estimate  — one concept's rung + interval, with no question attached
   POST /worked-seen  — record that a worked example was read for one KC
 
 Exposure only ever accumulates; there is no unexpose (re-reading a lesson
@@ -31,6 +32,7 @@ from app.models import User
 from app.practice_schemas import (
     ExposureMarkRequest,
     ExposureResponse,
+    KcEstimateResponse,
     WorkedSeenRequest,
     WorkedSeenResponse,
 )
@@ -64,6 +66,30 @@ def mark_exposure(
     if changed:
         save_user_state(user_id)
     return ExposureResponse(exposed=dict(user_state.kc_exposure))
+
+
+@router.get("/kc-estimate", response_model=KcEstimateResponse)
+def get_kc_estimate(
+    kc: str,
+    user: User = Depends(get_current_user),
+) -> KcEstimateResponse:
+    """Where one concept stands right now — no question involved.
+
+    Read-only, and deliberately so: it must be safe for the topbar to call on
+    every lesson page turn. In particular it does NOT call `note_worked_seen`,
+    which would promote a concept merely for having been looked at.
+    """
+    user_state = get_user_state(str(user.id))
+    if not kc_graph.registry_node(kc):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Unknown concept '{kc}'",
+        )
+    return KcEstimateResponse(
+        kc=kc,
+        ladder_stage=kc_graph.kc_stage(user_state, kc),
+        ladder_estimate=kc_graph.kc_estimate(user_state, kc),
+    )
 
 
 @router.post("/worked-seen", response_model=WorkedSeenResponse)

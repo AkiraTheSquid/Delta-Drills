@@ -1,0 +1,195 @@
+/* Concept topbar — the full-width strip above the practice split.
+   Markup in index.html (#concept-topbar), behaviour in practice/concept-topbar.js. */
+
+/* The column layout that lets this strip sit above the split without pushing
+   the page into an overflow lives in styles/practice/layout.css, which owns
+   .practice-container and .practice-split. */
+
+.concept-topbar {
+  align-items: center;
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  padding: 9px 32px;
+}
+
+.concept-topbar.hidden {
+  display: none;
+}
+
+.concept-topbar-main {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.concept-topbar-eyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.concept-topbar-kc {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed var(--border);
+  color: var(--white);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  padding: 0 0 1px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.concept-topbar-kc:hover,
+.concept-topbar-kc:focus-visible {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- the four rungs ---------------------------------------------------- */
+
+.stage-dots {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 0 auto 0 0;
+  padding: 0;
+}
+
+.stage-dot {
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  padding-right: 6px;
+}
+
+/* Connector between rungs, so the four read as one sequence rather than four
+   separate badges. */
+.stage-dot + .stage-dot::before {
+  background: var(--border);
+  content: "";
+  height: 1px;
+  margin-right: 4px;
+  width: 12px;
+}
+
+.stage-dot-mark {
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  flex: 0 0 auto;
+  height: 9px;
+  width: 9px;
+}
+
+.stage-dot-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.stage-dot.is-done .stage-dot-mark {
+  background: var(--muted);
+  border-color: var(--muted);
+}
+
+.stage-dot.is-active .stage-dot-mark {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(227, 33, 44, 0.18);
+}
+
+.stage-dot.is-active .stage-dot-label {
+  color: var(--white);
+}
+
+/* ---- estimate ---------------------------------------------------------- */
+
+.concept-topbar-est {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.concept-topbar-est-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* The bar is the INTERVAL, not the point estimate: its position shows where
+   the learner is, its width shows how little that rests on. A 2-for-2 streak
+   draws a very wide bar, which is the honest picture. */
+.concept-topbar-est-bar {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  display: inline-block;
+  height: 6px;
+  overflow: hidden;
+  position: relative;
+  width: 110px;
+}
+
+.concept-topbar-est-fill {
+  background: var(--accent);
+  border-radius: 3px;
+  height: 100%;
+  opacity: 0.75;
+  position: absolute;
+  top: 0;
+}
+
+.concept-topbar-est-range {
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.concept-topbar-est-new {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* ---- narrow ------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+  .concept-topbar {
+    padding: 8px 16px;
+  }
+
+  .concept-topbar-est-bar {
+    width: 70px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stage-dot-label {
+    display: none;
+  }
+
+  .stage-dot + .stage-dot::before {
+    width: 8px;
+  }
+
+  .concept-topbar-est {
+    margin-left: 0;
+  }
+}

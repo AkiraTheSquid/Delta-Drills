@@ -5,8 +5,8 @@
    worked -> faded -> partial -> solo, promoted on a Wilson lower bound and
    demoted on a miss). This file is the part the learner sees:
 
-     1. a concept header on every card, naming what is being tested and
-        linking to that concept in the knowledge graph;
+     1. pointing the page-wide concept topbar (practice/concept-topbar.js) at
+        whatever concept and rung the current card is on;
      2. the worked example itself at the `worked` rung, before any question;
      3. that same worked example kept ON SCREEN through the faded and partial
         rungs, beside the problem.
@@ -30,13 +30,6 @@ const LadderUI = (() => {
   // absent on purpose: the whole point of that rung is that support is gone.
   const SUPPORTED_STAGES = new Set(["faded", "partial"]);
 
-  const STAGE_LABEL = {
-    worked: "Worked example",
-    faded: "Finish the solution",
-    partial: "Fill in the rest",
-    solo: "On your own",
-  };
-
   const STAGE_BLURB = {
     faded: "Most of the solution is written for you — supply the last step.",
     partial: "Half of the solution is written for you — finish it.",
@@ -57,17 +50,6 @@ const LadderUI = (() => {
 
   const _kcOf = (q) => (q && q.ladder_kc) || null;
   const _stageOf = (q) => (q && q.ladder_stage) || null;
-
-  const _openGraph = (kc) => {
-    if (typeof switchTab === "function") switchTab("knowledge-graph");
-    // The graph sizes itself only once its page is visible, and on a first
-    // visit it still has to build — deltaFocusConceptGraphKc waits for both.
-    requestAnimationFrame(() => {
-      if (typeof window.deltaFocusConceptGraphKc === "function") {
-        window.deltaFocusConceptGraphKc(kc);
-      }
-    });
-  };
 
   /* ---------- worked-example acknowledgement --------------------------- */
 
@@ -174,33 +156,34 @@ const LadderUI = (() => {
 
   /* ---------- per-card decoration -------------------------------------- */
 
-  const _headerHtml = (question) => {
+  /* The in-card header this file used to build — concept name, rung, interval —
+     now lives in the page-wide topbar (practice/concept-topbar.js), which does
+     not scroll away and is shared with the lesson screen. Rendering both would
+     put the concept and its estimate on screen twice, three inches apart, with
+     the card's copy going stale the moment a submit updated the other. */
+  const _syncTopbar = (question) => {
+    const bar = window.ConceptTopbar;
+    if (!bar) return;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
-    const title = question.ladder_kc_title || kc;
-    const est = question.ladder_estimate;
-    let meta = "";
-    if (est && est.n) {
-      const lo = Math.round((est.ci?.[0] ?? 0) * 100);
-      const hi = Math.round((est.ci?.[1] ?? 1) * 100);
-      // The interval, not the point estimate — a 2-for-2 streak reads as 100%
-      // and tells the learner nothing about how little that rests on.
-      meta =
-        `<span class="ladder-header-est" title="95% interval on ${est.correct}/${est.n} ` +
-        `attempts at this concept. The ladder promotes on the LOWER bound.">` +
-        `${est.correct}/${est.n} · ${lo}–${hi}%</span>`;
-    } else {
-      meta = '<span class="ladder-header-est is-new" title="No graded attempts at this concept yet.">new</span>';
+    if (!kc || !stage) {
+      // No ladder context on this question (a diagnostic probe, or a KC-less
+      // item). Hiding is the honest move: leaving the previous concept's bar up
+      // would label this problem with a concept it has nothing to do with.
+      bar.hide();
+      return;
     }
-    return (
-      '<div class="ladder-header">' +
-      '<span class="ladder-header-label">Concept</span>' +
-      `<button type="button" class="ladder-header-kc" data-kc="${esc(kc)}" ` +
-      `title="Open “${esc(kc)}” in the knowledge graph">${esc(title)}</button>` +
-      `<span class="ladder-header-stage is-${esc(stage)}">${esc(STAGE_LABEL[stage] || stage)}</span>` +
-      meta +
-      "</div>"
-    );
+    bar.show({
+      kc,
+      title: question.ladder_kc_title || kc,
+      // Just "Concept". The rung itself is named by the dots, which speak the
+      // learner-facing vocabulary; labelling it a second time here in the
+      // backend's vocabulary would put two different names for one rung side
+      // by side ("Fill in the rest" beside a dot reading "Faded").
+      eyebrow: "Concept",
+      stage,
+      estimate: question.ladder_estimate || null,
+    });
   };
 
   const _exampleHtml = (kp, seg, stage) => {
@@ -251,11 +234,9 @@ const LadderUI = (() => {
     const token = ++_decorateToken;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
-    if (!kc || !stage) return;
 
-    host.insertAdjacentHTML("afterbegin", _headerHtml(question));
-    const kcBtn = host.querySelector(".ladder-header-kc");
-    if (kcBtn) kcBtn.onclick = () => _openGraph(kcBtn.dataset.kc);
+    _syncTopbar(question);
+    if (!kc || !stage) return;
 
     if (!SUPPORTED_STAGES.has(stage)) return;
     if (!window.LessonGate || typeof window.LessonGate.getKpEntry !== "function") return;
