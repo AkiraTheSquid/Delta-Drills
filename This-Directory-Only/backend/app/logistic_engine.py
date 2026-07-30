@@ -709,6 +709,12 @@ def step(
 
     `days_elapsed` is the gap since the previous graded attempt for this KC, not
     since the last time anything happened.
+
+    `timestamp` MUST be the same value the caller writes to the attempt log for
+    this attempt. It lands in `Posterior.last_seen`, and replay takes it from the
+    logged row — so a live caller that omits it (or passes a different clock
+    reading) produces state that differs from its own replay in a field the
+    equivalence check must therefore compare.
     """
     state: Dict[str, Posterior] = dict(posteriors)
     if days_elapsed > 0:

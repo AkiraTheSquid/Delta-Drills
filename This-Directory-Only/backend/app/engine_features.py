@@ -46,30 +46,29 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 from app import bkt_mastery, kc_graph
 from app import logistic_engine as E
+from app.attempt_log import parse_ts
 
 logger = logging.getLogger(__name__)
 
 
-def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
-    if not ts:
-        return None
-    try:
-        return datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
-    except ValueError:
-        return None
-
-
 def _days_since(ts: Optional[str], now: Optional[datetime] = None) -> Optional[float]:
-    parsed = _parse_ts(ts)
+    """Days between `ts` and now, using the log's own timestamp parser.
+
+    Deliberately NOT a second implementation. This module and `attempt_log` both
+    need to read the same timestamps out of the same state, and two parsers with
+    different naive/aware handling would make the recency feature and the replay
+    clock disagree about when an attempt happened.
+    """
+    parsed = parse_ts(ts)
     if parsed is None:
         return None
     ref = now or datetime.now(timezone.utc)
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
+    if ref.tzinfo is None:
+        ref = ref.replace(tzinfo=timezone.utc)
     return max((ref - parsed).total_seconds() / 86400.0, 0.0)
 
 
@@ -78,28 +77,34 @@ def _days_since(ts: Optional[str], now: Optional[datetime] = None) -> Optional[f
 # ---------------------------------------------------------------------------
 
 
-def prereq_mastery(user_state, kc: str) -> Tuple[List[float], List[str]]:
-    """Mastery of each direct prerequisite of `kc`.
+def prereq_mastery(user_state, kc: str) -> Dict[str, float]:
+    """Mastery of each direct prerequisite of `kc`, keyed by prerequisite id.
 
     Direct parents only, not the transitive closure. Transitive prerequisites
     are already reflected in the direct parents' own mastery, so summing the
     closure would count a grandparent twice and let deep chains dominate the
     feature purely by being deep.
+
+    Returns a mapping rather than two parallel lists. The parallel-list version
+    dropped failed lookups from the values while keeping every id in the names,
+    so one unreadable parent shifted the zip and attributed each remaining
+    mastery figure to the WRONG concept — an explanation that names the wrong
+    prerequisite is worse than no explanation. A dict cannot desynchronise.
     """
     node = kc_graph.registry_node(kc) or {}
     parents = [p for p in (node.get("prereqs") or []) if isinstance(p, str)]
-    values: List[float] = []
+    out: Dict[str, float] = {}
     for p in parents:
         try:
             m, _covered, _tier = kc_graph.kc_mastery(user_state, p)
         except Exception:  # noqa: BLE001 — a graph read must never fail a serve
             logger.exception("engine_features: kc_mastery failed for prereq %s", p)
             continue
-        values.append(float(m))
-    return values, parents
+        out[p] = float(m)
+    return out
 
 
-def encompassed_mastery(user_state, kc: str) -> Tuple[List[float], List[str]]:
+def encompassed_mastery(user_state, kc: str) -> Dict[str, float]:
     """Mastery of the simpler atoms this KC's atoms encompass.
 
     Direction matters and is easy to get backwards: `encompassed_by(advanced)`
@@ -120,7 +125,7 @@ def encompassed_mastery(user_state, kc: str) -> Tuple[List[float], List[str]]:
             simpler[simple_atom] = bkt_mastery.current_mastery(
                 user_state.atom_mastery, user_state.atom_last_ts, simple_atom, params=params
             )
-    return list(simpler.values()), list(simpler.keys())
+    return simpler
 
 
 def item_prereq_tags(question: Mapping) -> Tuple[List[str], List[str]]:
@@ -192,53 +197,56 @@ def build(
     }
     sources: Dict = {"kc": kc, "stage": E.normalize_stage(stage)}
 
+    # Prerequisites are accumulated into ONE dict keyed by concept id, so a
+    # concept named by both the graph and the item's own tags is counted once.
+    # Averaging two parallel lists instead let overlap double a parent's weight:
+    # with parents A=1.0, B=0.0 and an item tag also naming A, the mean became
+    # 2/3 rather than 1/2 — the prediction moved on duplicated metadata rather
+    # than on anything the learner did.
+    prereqs: Dict[str, float] = {}
+
     if kc:
-        prereq_vals, prereq_ids = prereq_mastery(user_state, kc)
-        values["prereq"] = E.centred_mastery(prereq_vals)
-        sources["prereqs"] = dict(zip(prereq_ids, prereq_vals))
+        prereqs.update(prereq_mastery(user_state, kc))
 
-        enc_vals, enc_ids = encompassed_mastery(user_state, kc)
-        values["encompassing"] = E.centred_mastery(enc_vals)
-        sources["encompassed"] = dict(zip(enc_ids, enc_vals))
+        encompassed = encompassed_mastery(user_state, kc)
+        values["encompassing"] = E.centred_mastery(encompassed.values())
+        sources["encompassed"] = encompassed
 
-        values["recency"] = E.recency_value(_last_practised_days(user_state, kc, now), config)
-        sources["days_since_kc"] = _last_practised_days(user_state, kc, now)
+        # One clock read, used for both the feature and its provenance. Reading
+        # twice let the logged explanation disagree with the number it explains.
+        days = _last_practised_days(user_state, kc, now)
+        values["recency"] = E.recency_value(days, config)
+        sources["days_since_kc"] = days
     else:
-        values["prereq"] = 0.0
         values["encompassing"] = 0.0
         values["recency"] = 0.0
 
     if question is not None:
         on_graph, off_graph = item_prereq_tags(question)
-        if on_graph:
+        for tag in on_graph:
+            if tag in prereqs:
+                continue  # already counted from the graph
+            try:
+                m, _c, _t = kc_graph.kc_mastery(user_state, tag)
+            except Exception:  # noqa: BLE001
+                logger.exception("engine_features: item prereq %s unreadable", tag)
+                continue
             # Item-declared prerequisites fold into the SAME feature as the
-            # graph's, averaged together. They are the same kind of claim — "the
-            # learner needs this to do that" — and giving them a separate weight
-            # would mean fitting two coefficients for one relation on data that
-            # cannot separate them.
-            extra = []
-            for tag in on_graph:
-                try:
-                    m, _c, _t = kc_graph.kc_mastery(user_state, tag)
-                    extra.append(float(m))
-                except Exception:  # noqa: BLE001
-                    logger.exception("engine_features: item prereq %s unreadable", tag)
-            if extra:
-                combined = list(_source_values(sources.get("prereqs"))) + extra
-                values["prereq"] = E.centred_mastery(combined)
-                sources["item_prereqs"] = on_graph
+            # graph's. They are the same kind of claim — "the learner needs this
+            # to do that" — and giving them a separate weight would mean fitting
+            # two coefficients for one relation on data that cannot separate them.
+            prereqs[tag] = float(m)
+        if on_graph:
+            sources["item_prereqs"] = on_graph
         if off_graph:
             # Scored neutral, recorded loudly. This list is the backlog of
             # concepts the bank depends on and the graph does not model.
             sources["off_graph_prereqs"] = off_graph
 
+    values["prereq"] = E.centred_mastery(prereqs.values())
+    sources["prereqs"] = prereqs
+
     return FeatureVector(values, sources)
-
-
-def _source_values(mapping) -> Iterable[float]:
-    if isinstance(mapping, Mapping):
-        return [float(v) for v in mapping.values()]
-    return []
 
 
 def _last_practised_days(user_state, kc: str, now: Optional[datetime] = None) -> Optional[float]:

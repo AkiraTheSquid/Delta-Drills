@@ -53,7 +53,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-import tempfile
+
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -177,15 +177,26 @@ class AttemptRow:
     def is_graded(self) -> bool:
         """Does this row carry evidence the estimator may consume?
 
-        Three conditions, all required. A lesson view is not evidence. An
-        attempt with no outcome is not evidence (it is an in-flight serve). An
-        attempt at an unrecognised rung is not evidence, because the stage
-        offset would be wrong and a wrong offset biases ability directly.
+        Four conditions, all required. A lesson view is not evidence. An attempt
+        with no outcome is not evidence (it is an in-flight serve). An attempt at
+        an unrecognised rung is not evidence, because the stage offset would be
+        wrong and a wrong offset biases ability directly.
+
+        And — the condition this originally got wrong — an attempt with no
+        recorded feature values is not evidence either. Backfilled rows have a
+        valid stage and a real outcome but an empty `features` dict, so the first
+        three checks passed them straight into replay. They contributed no
+        information to the mean (a zero design row cannot) while still advancing
+        replay's clock, so each one inflated the variance of an
+        already-estimated posterior: the reconstruction came out *less*
+        confident the more history was backfilled. Requiring a usable design row
+        is what makes the docstring on `backfill_from_state` true.
         """
         return (
             self.kind == KIND_ATTEMPT
             and self.correct is not None
             and E.normalize_stage(self.stage) in E.GRADED_STAGES
+            and bool(self.features)
         )
 
 
@@ -205,6 +216,17 @@ def append(row: AttemptRow, base_dir: Optional[Path] = None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     line = row.to_json()
     with path.open("a", encoding="utf-8") as fh:
+        # Heal a torn tail before appending. An interrupted write can leave a
+        # fragment with no trailing newline; appending straight onto it would
+        # fuse the fragment and this row into ONE malformed line, so the reader
+        # would drop BOTH — turning a corrupt tail into the silent loss of a
+        # good record. That is the exact failure the append-only design exists
+        # to prevent, so pay one seek per append to rule it out.
+        if fh.tell() > 0:
+            with path.open("rb") as probe:
+                probe.seek(-1, os.SEEK_END)
+                if probe.read(1) != b"\n":
+                    fh.write("\n")
         fh.write(line + "\n")
         # Durability over throughput. The whole value of this file is that it
         # survives; a lost tail after a machine restart would be silent and
@@ -358,7 +380,12 @@ def replay(
     live path exactly rather than approximating it.
     """
     source = list(rows) if rows is not None else rows_for_kc(user_id, kc, base_dir)
-    graded = [r for r in source if r.is_graded]
+    # Filter by KC even when rows were injected. The file-backed path already
+    # scopes to one concept, so an injected path that did not would make the
+    # same call mean two different things — and the natural way to use the
+    # parameter (hand it a learner's whole history to avoid re-reading the file)
+    # would silently reconstruct this KC out of every other concept's attempts.
+    graded = [r for r in source if r.is_graded and (r.kc == kc or r.kc is None)]
 
     posteriors: Dict[str, E.Posterior] = {
         f.name: E.initial_posterior(f) for f in config.learned_features
@@ -387,13 +414,26 @@ def replay(
     return posteriors, consumed
 
 
-def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
+def parse_ts(ts: Optional[str]) -> Optional[datetime]:
+    """Parse an ISO-8601 timestamp to an **aware UTC** datetime.
+
+    Normalising to aware is not cosmetic. Legacy state and backfilled rows carry
+    naive timestamps while everything this module writes carries `Z`; replay
+    subtracts consecutive timestamps, and subtracting a naive from an aware
+    datetime raises TypeError — which would abort the reconstruction of a
+    learner's entire history at the first legacy row. A naive timestamp is
+    assumed UTC, which is what every producer in this app actually writes.
+    """
     if not ts:
         return None
     try:
-        return datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
     except ValueError:
         return None
+    return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed
+
+
+_parse_ts = parse_ts  # legacy alias
 
 
 # ---------------------------------------------------------------------------
@@ -530,12 +570,29 @@ def backfill_from_state(
 
     written.sort(key=lambda r: r.ts)
 
+    # Not idempotent by nature — appending the same history twice would double
+    # every backfilled row, and the log is append-only so there is no undo. A
+    # migration is exactly the kind of thing that gets run twice (a retry, a
+    # second machine, a nervous operator), so refuse rather than trust.
+    already = sum(1 for r in iter_rows(user_id, base_dir) if r.note and r.note.startswith("backfill"))
+    if already:
+        return {
+            "dry_run": dry_run,
+            "skipped": True,
+            "reason": f"log already holds {already} backfilled rows",
+            "rows": 0,
+            "attempts": 0,
+            "lesson_views": 0,
+            "path": str(log_path(user_id, base_dir)),
+        }
+
     if not dry_run:
         for row in written:
             append(row, base_dir)
 
     return {
         "dry_run": dry_run,
+        "skipped": False,
         "rows": len(written),
         "attempts": sum(1 for r in written if r.kind == KIND_ATTEMPT),
         "lesson_views": sum(1 for r in written if r.kind == KIND_LESSON_VIEW),

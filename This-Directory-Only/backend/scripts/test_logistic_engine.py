@@ -308,15 +308,19 @@ try:
 
     for i, (ok, st) in enumerate(zip(outcomes, stages)):
         vals = row(difficulty=E.difficulty_to_logits(40 + i), stage=E.stage_offset(st))
+        stamp = f"2026-07-{10+i:02d}T12:00:00Z"
         # Driven through `step`, exactly as the live serving path must be —
         # attempts are one day apart, so the elapsed-time inflation is live here
-        # too. Using `update` directly would make this test pass while the real
-        # equivalence it is asserting was false.
-        new_live, prediction = E.step(vals, live, ok, CFG, days_elapsed=1.0 if i else 0.0)
+        # too, and the SAME timestamp goes to the estimator and to the log.
+        # Using `update` directly, or letting the two take different clock
+        # readings, would make this test pass while the equivalence it asserts
+        # was false.
+        new_live, prediction = E.step(
+            vals, live, ok, CFG, days_elapsed=1.0 if i else 0.0, timestamp=stamp
+        )
         L.record_attempt(
             USER, KC, 400 + i, st, vals, prediction, ok,
-            difficulty_score=40 + i, base_dir=tmp,
-            ts=f"2026-07-{10+i:02d}T12:00:00Z",
+            difficulty_score=40 + i, base_dir=tmp, ts=stamp,
         )
         live = new_live
 
@@ -340,6 +344,16 @@ try:
     check(
         "replay(log) reproduces the live posterior variance",
         abs(replayed["ability"].var - live["ability"].var) < 1e-9,
+    )
+    # Compare the SERIALIZED state, not just mean and variance. `last_seen`
+    # diverged for a while behind a mean/variance-only assertion: the live path
+    # was not passing its timestamp to the estimator while replay took one from
+    # each logged row, so the two states were unequal in a field the narrower
+    # check could not see.
+    check(
+        "replay(log) reproduces the full serialized posterior",
+        replayed["ability"].to_dict() == live["ability"].to_dict(),
+        f"replay={replayed['ability'].to_dict()} live={live['ability'].to_dict()}",
     )
 
     # Lesson views: recorded, never scored.
@@ -375,8 +389,144 @@ try:
     pending = L.AttemptRow(ts="2026-07-30T00:00:00Z", kind="attempt", user_id="u", stage="solo")
     check("an ungraded (in-flight) attempt is not evidence", not pending.is_graded)
 
+    # --- regressions for defects found by cross-model review (codex) --------
+
+    # A torn tail must not swallow the NEXT good row. The original code appended
+    # straight onto an unterminated fragment, fusing them into one bad line and
+    # losing both.
+    _, pr = E.step(row(), fresh(), True, CFG)
+    L.record_attempt("torn", "kc", 1, "solo", row(), pr, True, base_dir=tmp, ts="2026-07-01T00:00:00Z")
+    with L.log_path("torn", tmp).open("a", encoding="utf-8") as fh:
+        fh.write('{"ts":"2026-07-01T12:00:00Z","kind":"att')  # no newline
+    L.record_attempt("torn", "kc", 2, "solo", row(), pr, True, base_dir=tmp, ts="2026-07-02T00:00:00Z")
+    torn_rows = list(L.iter_rows("torn", base_dir=tmp))
+    check(
+        "a good row appended after a torn tail survives",
+        [r.question_id for r in torn_rows] == [1, 2],
+        f"got {[r.question_id for r in torn_rows]}",
+    )
+
+    class _State:
+        kc_ladder = {
+            "kc": {"attempts": [
+                {"ts": "2026-06-01T00:00:00Z", "stage": "faded", "correct": True, "question_id": 9},
+                {"ts": "2026-06-02T00:00:00", "stage": "partial", "correct": False, "question_id": 10},
+            ]}
+        }
+        kc_exposure = {"kc": "2026-05-30T00:00:00Z"}
+
+    res = L.backfill_from_state("bf", _State(), base_dir=tmp, dry_run=False)
+    check("backfill writes attempts and lesson views", res["attempts"] == 2 and res["lesson_views"] == 1)
+    bf_attempts = [r for r in L.iter_rows("bf", base_dir=tmp) if r.kind == L.KIND_ATTEMPT]
+    check(
+        "backfilled rows are NOT graded evidence (they carry no features)",
+        not any(r.is_graded for r in bf_attempts),
+    )
+    check(
+        "so replay consumes none of them",
+        L.replay("bf", "kc", CFG, base_dir=tmp)[1] == 0,
+    )
+    check(
+        "backfill still records the lesson view",
+        L.has_seen_lesson("bf", "kc", base_dir=tmp),
+    )
+    # Mixed naive/aware timestamps (legacy state writes naive) must not abort a
+    # learner's whole reconstruction with a TypeError.
+    L.record_attempt("bf", "kc", 11, "solo", row(), pr, True, base_dir=tmp, ts="2026-06-03T00:00:00")
+    L.record_attempt("bf", "kc", 12, "solo", row(), pr, True, base_dir=tmp, ts="2026-06-04T00:00:00Z")
+    try:
+        _, n_mixed = L.replay("bf", "kc", CFG, base_dir=tmp)
+        check("replay survives mixed naive/aware timestamps", n_mixed == 2, f"consumed {n_mixed}")
+    except TypeError as exc:
+        check("replay survives mixed naive/aware timestamps", False, str(exc))
+    check(
+        "naive timestamps are normalised to aware UTC",
+        L.parse_ts("2026-06-03T00:00:00").tzinfo is not None,
+    )
+
+    # Re-running a migration must not double a learner's history.
+    again = L.backfill_from_state("bf", _State(), base_dir=tmp, dry_run=False)
+    check("a second backfill is refused, not duplicated", again.get("skipped") is True, str(again))
+
+    # Injected rows must respect the requested KC.
+    foreign = [L.AttemptRow(
+        ts="2026-07-01T00:00:00Z", kind="attempt", user_id="u", kc="OTHER",
+        stage="solo", correct=True, features=row(),
+    )]
+    check(
+        "injected rows for another KC are filtered out",
+        L.replay(USER, KC, CFG, base_dir=tmp, rows=foreign)[1] == 0,
+    )
+
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
+
+# ---------------------------------------------------------------------------
+print("\nI. GRAPH BRIDGE — features off the real concept graph")
+
+from app import adaptive, engine_features as F  # noqa: E402
+
+state = adaptive.UserPracticeState(user_id="engine-test")
+KC_ROOT = "numpy.ndarray-model"
+KC_CHILD = "numpy.broadcasting-rules"
+
+vec = F.build(state, KC_CHILD, "worked", difficulty_score=55)
+check("build returns every configured feature", set(vec) == {f.name for f in CFG.features}, str(sorted(vec)))
+check("ability is the unit design entry", vec["ability"] == 1.0)
+check("provenance names the prerequisites used", isinstance(vec.sources.get("prereqs"), dict))
+check(
+    "a real KC with parents produces a non-neutral prereq term",
+    vec["prereq"] != 0.0 and len(vec.sources["prereqs"]) > 0,
+    f"prereq={vec['prereq']:+.3f} from {list(vec.sources['prereqs'])}",
+)
+root_vec = F.build(state, KC_ROOT, "worked", difficulty_score=55)
+check("a lattice root has no prerequisites and scores neutral", root_vec["prereq"] == 0.0)
+
+# The duplicate-weighting defect: an item tag naming a concept the graph already
+# lists as a parent must not count that concept twice.
+parents = list(vec.sources["prereqs"])
+dup_vec = F.build(state, KC_CHILD, "worked", difficulty_score=55,
+                  question={"prereq_tags": [parents[0]]})
+check(
+    "an item tag duplicating a graph prereq does not double its weight",
+    abs(dup_vec["prereq"] - vec["prereq"]) < 1e-12,
+    f"{vec['prereq']:+.6f} -> {dup_vec['prereq']:+.6f}",
+)
+check(
+    "prereq provenance is deduplicated too",
+    len(dup_vec.sources["prereqs"]) == len(vec.sources["prereqs"]),
+)
+
+off_vec = F.build(state, KC_CHILD, "worked", difficulty_score=55,
+                  question={"prereq_tags": ["for-loops", "tuple-unpacking"]})
+check(
+    "off-graph prereq tags are recorded, not scored",
+    off_vec.sources.get("off_graph_prereqs") == ["for-loops", "tuple-unpacking"]
+    and abs(off_vec["prereq"] - vec["prereq"]) < 1e-12,
+)
+check("build tolerates a null KC", F.build(state, None, "solo")["prereq"] == 0.0)
+
+enc = F.encompassed_mastery(state, "numpy.reshape-flatten")
+check("encompassing edges resolve to atoms", isinstance(enc, dict) and len(enc) > 0, f"{len(enc)} atoms")
+
+check("pooling weight falls as own evidence accumulates",
+      F.pooling_weight(0) > F.pooling_weight(5) > F.pooling_weight(50))
+check("probe priority falls with own evidence",
+      F.probe_priority(0) > F.probe_priority(5) > F.probe_priority(50))
+check("a perfectly trusted edge is never worth probing", F.probe_priority(0, kappa=1.0) == 0.0)
+
+probe = F.select_probe_kc(state, KC_CHILD)
+check("a struggling concept yields a prerequisite probe", probe is not None and probe["kc"] in parents, str(probe and probe["kc"]))
+check("a lattice root has nothing to probe", F.select_probe_kc(state, KC_ROOT) is None)
+check(
+    "exclusion is honoured",
+    (lambda p: p is None or p["kc"] != parents[0])(
+        F.select_probe_kc(state, KC_CHILD, exclude=[parents[0]])
+    ),
+)
+pred_f, vals_f = F.predict_for(state, KC_CHILD, "worked", fresh(), difficulty_score=55)
+check("predict_for returns a usable probability and its inputs",
+      0.0 < pred_f.p < 1.0 and vals_f["ability"] == 1.0, f"P={pred_f.p:.3f}")
 
 # ---------------------------------------------------------------------------
 print("\nH. HELPERS — scale definitions")
