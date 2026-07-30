@@ -24,7 +24,7 @@
 
 ## How It Works (Flow)
 1. `index.html` links all six files (after `../components.css`, so same-specificity practice rules win).
-2. `#page-practice.session-idle` (set in markup, toggled by `practice/timer.js`) shows the setup panel and hides `.practice-split`; starting a session flips it.
+2. `#page-practice.session-idle` (set in markup, toggled by `practice/timer.js`) shows the setup panel and hides `.practice-split` **and `.concept-topbar`**; starting a session flips it.
 
 ## Invariants & Constraints
 - Load order: these files must come AFTER `styles/components.css` — several rules rely on overriding it by order.
@@ -36,6 +36,13 @@
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
+- **Page-state rules that name only `.practice-split`** — `RESOLVED`
+  - When it happens: a new element is added to `.practice-container` as a SIBLING of `.practice-split` rather than a child of it.
+  - Symptom: the setup screen shows a strip of leftover question state (concept name, rung, difficulty) for a question that is not on screen.
+  - Root cause: `#page-practice.session-idle .practice-split { display: none }` hides the split's subtree only. `.concept-topbar` was deliberately lifted out of the split so it could span both panels, which also lifted it out of that rule.
+  - Prevention/fix: any new direct child of `.practice-container` that belongs to the question view needs its own `#page-practice.session-idle` rule. `watch.py` asserts the topbar's.
+  - Status: RESOLVED (2026-07-30).
+
 - **ID selector defeats `.hidden`** — `RESOLVED`
   - When it happens: a rule like `#practice-submit-area { display: flex }` styles an element JS hides via `classList.add("hidden")`.
   - Symptom: element never disappears.
@@ -44,4 +51,5 @@
   - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
+- 2026-07-30: `timer.css` hides `.concept-topbar` in the `session-idle` state. The topbar is a sibling of `.practice-split`, so the existing idle rule never reached it and the setup screen displayed the paused session's concept strip. `watch.py` now asserts the new rule.
 - 2026-07-12: Folder created — `practice.css` split into layout/timer/question/feedback/editor/misc. `timer.css` rewritten from the old timed-mode toggle to the rigid session setup/status UI. Added `#practice-submit-area.hidden` specificity fix.

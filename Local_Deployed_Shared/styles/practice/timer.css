@@ -8,6 +8,15 @@
   display: none;
 }
 
+/* The concept topbar is a sibling of the split, not a child, so hiding the
+   split leaves it behind. On the setup screen that stranded the paused
+   session's concept, rung and difficulty under the setup card — describing a
+   question that is not on screen, on a page where nothing has started yet.
+   It belongs to the split, so it goes when the split goes. */
+#page-practice.session-idle .concept-topbar {
+  display: none;
+}
+
 #page-practice:not(.session-idle) .session-setup {
   display: none;
 }

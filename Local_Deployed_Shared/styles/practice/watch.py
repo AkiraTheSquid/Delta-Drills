@@ -78,6 +78,13 @@ def check_invariants():
     assert ":not(.session-idle) .session-setup" in timer, (
         "timer.css lost the rule hiding the setup panel during a session"
     )
+    # The topbar is a SIBLING of the split, so the rule above does not cover it.
+    # Without its own rule the setup screen shows the paused session's concept,
+    # rung and difficulty for a question that is not on screen.
+    assert "#page-practice.session-idle .concept-topbar" in timer, (
+        "timer.css lost the session-idle rule that hides the concept topbar — "
+        "the setup screen will show the previous question's concept strip"
+    )
 
 
 # ── Run all checks ────────────────────────────
