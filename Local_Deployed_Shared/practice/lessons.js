@@ -276,9 +276,15 @@ const LessonGate = (() => {
     if (watchOut) {
       html += '<div class="lesson-watch-out"><h3>Watch out</h3>' + md(watchOut) + "</div>";
     }
+    // The worked example's code is rendered INLINE now, where the prose that
+    // explains it is, rather than being shipped off to the editor in the other
+    // panel. `renderCode: false` used to strip it precisely because it lived
+    // over there; keeping the two in one column is the whole point of the
+    // notebook layout, so the fences stay and LessonNotebook makes them run.
     html += '<div class="lesson-worked"><h3>Worked example</h3>' +
-      md(seg.worked_example_markdown, { renderCode: false }) +
-      '<p class="lesson-example-note">Example code is preloaded on the right. Run or edit it only if useful.</p></div>';
+      md(seg.worked_example_markdown) +
+      '<p class="lesson-example-note">Run any block to see it execute. A block runs ' +
+      "everything above it too, so the variables it needs already exist.</p></div>";
     html += '<div class="lesson-actions"><button type="button" class="primary" id="lesson-continue-btn">' +
       (isLast ? "Continue to the question →" : "Next concept →") +
       "</button></div>";
@@ -385,6 +391,15 @@ const LessonGate = (() => {
         activeQuestion = _runtimeContext(page);
         if (questionNumber) questionNumber.textContent = "Lesson";
         questionText.innerHTML = _pageHtml(page);
+        // The worked example's code blocks become runnable cells. Scoped to
+        // `.lesson-worked` on purpose: the explanation's fences are fragments
+        // written to be read (`x.reshape(3, -1)  # → …`), and a Run button on
+        // one of those only ever produces a traceback. Done after the
+        // innerHTML rather than inside _pageHtml because it rewrites rendered
+        // DOM, which keeps the markdown renderer shared and notebook-unaware.
+        if (window.LessonNotebook) {
+          window.LessonNotebook.mount(questionText.querySelector(".lesson-worked"));
+        }
         questionText.scrollTop = 0;
         window.scrollTo({ top: 0 });
         editor.value = page.seg.worked_example_code ||

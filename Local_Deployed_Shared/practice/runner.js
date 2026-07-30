@@ -272,6 +272,107 @@ if (codeEditor) {
   });
 }
 
+const TORCH_IMPORT = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
+
+const TORCH_UNAVAILABLE =
+  "This code uses PyTorch, which can't run in the browser sandbox. " +
+  "Open it in Colab (Show Answer / the solution notebook) to run it, " +
+  "or sign in to use the full runner.";
+
+/* Execute one block of Python and report what happened.
+
+   The single place that decides WHERE code runs, so the editor's Run button
+   and the lesson notebook's per-cell Run buttons cannot drift apart on that
+   question. The rules, in order:
+
+     * A lesson's example code and einops code stay in the browser — neither is
+       being graded, and there is no reason to spend a backend round trip on
+       experimentation.
+     * ...unless it is torch, which Pyodide cannot import AT ALL. That covers
+       most of the bank since the July conversion, so torch code goes to the
+       backend fork runner even though the two rules above would keep it local.
+       The code is sniffed as well as the question, so a learner who types
+       `import torch` themselves still lands on a runtime that can execute it.
+     * A guest has no backend to fall back to. Say so plainly rather than
+       letting Pyodide answer torch with a bare ModuleNotFoundError.
+
+   Returns { text, failed, blocked, pyodide }. `text` is always something worth
+   showing. `pyodide` is the instance when the run happened locally, so a
+   caller that wants to read variables back out of it (the visual renderer) can.
+*/
+async function runSnippet(code, { question = null, onStatus = null } = {}) {
+  const say = (message) => {
+    if (typeof onStatus === "function") onStatus(message);
+  };
+  const isTorch = questionIsTorch(question) || TORCH_IMPORT.test(code || "");
+  let useLocalPyodide =
+    practiceMode !== "backend" ||
+    ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(question)) && !isTorch);
+
+  if (practiceMode === "backend" && !useLocalPyodide) {
+    try {
+      const res = await apiFetch("/api/practice/run-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (res.status === 401) {
+        handleExpiredToken();
+        useLocalPyodide = true; // fall back to in-browser Pyodide
+      } else if (!res.ok) {
+        const detail = await res.text();
+        return { text: detail || "Failed to run code.", failed: true, blocked: false, pyodide: null };
+      } else {
+        const data = await res.json();
+        const stdout = normalizeOutput(data.stdout);
+        const stderr = normalizeOutput(data.stderr);
+        return {
+          text: stdout || stderr || "✓ Ran successfully (no printed output)",
+          failed: !!stderr,
+          blocked: false,
+          pyodide: null,
+        };
+      }
+    } catch (_fetchErr) {
+      useLocalPyodide = true; // backend unreachable
+    }
+  }
+
+  if (useLocalPyodide && isTorch) {
+    return { text: TORCH_UNAVAILABLE, failed: true, blocked: true, pyodide: null };
+  }
+
+  say("Loading Python...");
+  const pyodide = await initPyodide();
+  if (!pyodide) {
+    return { text: "Failed to load Python.", failed: true, blocked: false, pyodide: null };
+  }
+  say("");
+
+  const preamble = await buildPyodidePreamble(question);
+  pyodide.runPython(preamble);
+  try {
+    pyodide.runPython(code);
+    const stdout = normalizeOutput(pyodide.runPython("sys.stdout.getvalue()"));
+    const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));
+    let text = stdout || "";
+    if (stderr) text += (text ? "\n" : "") + stderr;
+    return {
+      text: text || "✓ Ran successfully (no printed output)",
+      failed: !!stderr,
+      blocked: false,
+      pyodide,
+    };
+  } catch (pyErr) {
+    const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));
+    return { text: stderr || pyErr.message, failed: true, blocked: false, pyodide };
+  } finally {
+    pyodide.runPython("sys.stdout = sys.__stdout__\nsys.stderr = sys.__stderr__\n");
+  }
+}
+
+window.DeltaRunner = { runSnippet };
+
 runBtn.addEventListener("click", async () => {
   runBtn.disabled = true;
   runBtn.textContent = "Running...";
@@ -279,112 +380,20 @@ runBtn.addEventListener("click", async () => {
   hideOutputVisual();
 
   try {
-    let actualOutput = "";
-    let runFailed = false;
-
     // During an inline lesson the editor holds optional runnable worked code.
-    // Keep experimentation local; never send lesson examples to backend runner.
     const runQuestion = window.LessonGate?.activeQuestion || PracticeAPI?.currentQuestion;
-
-    // ...with one exception: Pyodide cannot import torch AT ALL. Both of the
-    // "keep it local" rules above predate the torch conversion, and each one
-    // now covers torch code — lessons because np-1/eo-*/es-* worked examples
-    // are torch, and questionNeedsEinops because it keys on the Einops/Einsum
-    // topic, which the converted drills keep. Left alone, Run answers every
-    // one of those with ModuleNotFoundError while Submit grades them fine on
-    // the backend fork runner. The editor is sniffed too, not just the
-    // question, so a learner who types `import torch` anywhere still gets a
-    // runtime that can execute it.
-    const runIsTorch =
-      questionIsTorch(runQuestion) ||
-      /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(codeEditor.value || "");
-
-    let useLocalPyodide =
-      practiceMode !== "backend" ||
-      ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(runQuestion)) &&
-        !runIsTorch);
-
-    if (practiceMode === "backend" && !useLocalPyodide) {
-      try {
-        const res = await apiFetch("/api/practice/run-code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: codeEditor.value }),
-        });
-        if (res.status === 401) {
-          handleExpiredToken();
-          useLocalPyodide = true; // fall back to in-browser Pyodide
-        } else if (!res.ok) {
-          const detail = await res.text();
-          outputArea.textContent = detail || "Failed to run code.";
-          runFailed = true;
-        } else {
-          const data = await res.json();
-          const stdout = normalizeOutput(data.stdout);
-          const stderr = normalizeOutput(data.stderr);
-          actualOutput = stdout;
-          outputArea.textContent = stdout || stderr || "✓ Ran successfully (no printed output)";
-          if (stderr) {
-            runFailed = true;
-          }
-        }
-      } catch (_fetchErr) {
-        // Backend unreachable — fall back to in-browser Pyodide
-        useLocalPyodide = true;
-      }
+    const result = await runSnippet(codeEditor.value, {
+      question: runQuestion,
+      onStatus: (message) => {
+        outputArea.textContent = message;
+      },
+    });
+    outputArea.textContent = result.text;
+    if (!result.failed && result.pyodide) {
+      await renderRunOutputVisual(result.pyodide, runQuestion);
+    } else {
+      hideOutputVisual();
     }
-
-    if (useLocalPyodide && runIsTorch) {
-      // Offline/guest practice has no backend to fall back to. Say so plainly
-      // instead of letting Pyodide answer with ModuleNotFoundError.
-      outputArea.textContent =
-        "This code uses PyTorch, which can't run in the browser sandbox. " +
-        "Open it in Colab (Show Answer / the solution notebook) to run it, " +
-        "or sign in to use the full runner.";
-      runBtn.disabled = false;
-      runBtn.textContent = "Run";
-      return;
-    }
-
-    if (useLocalPyodide) {
-      const pyodide = await initPyodide();
-      if (!pyodide) {
-        runBtn.disabled = false;
-        runBtn.textContent = "Run";
-        return;
-      }
-
-      const preamble = await buildPyodidePreamble(runQuestion);
-      pyodide.runPython(preamble);
-
-      try {
-        pyodide.runPython(codeEditor.value);
-        const stdout = normalizeOutput(pyodide.runPython("sys.stdout.getvalue()"));
-        const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));
-        actualOutput = stdout;
-        let output = stdout || "";
-        if (stderr) {
-          output += (output ? "\n" : "") + stderr;
-          runFailed = true;
-        }
-        outputArea.textContent = output || "✓ Ran successfully (no printed output)";
-        if (!runFailed) {
-          await renderRunOutputVisual(pyodide, runQuestion);
-        }
-      } catch (pyErr) {
-        const stderr = normalizeOutput(pyodide.runPython("sys.stderr.getvalue()"));
-        outputArea.textContent = stderr || pyErr.message;
-        runFailed = true;
-        hideOutputVisual();
-      } finally {
-        // Reset stdout/stderr
-        pyodide.runPython(`
-sys.stdout = sys.__stdout__
-sys.stderr = sys.__stderr__
-`);
-      }
-    }
-
   } catch (e) {
     outputArea.textContent = "Error: " + e.message;
   }
