@@ -67,6 +67,8 @@ assert out.tolist() == [0.0, 3.0, 8.0]
 
 # The input is untouched — the expression built a new tensor.
 assert z.tolist() == [1.0, 2.0, 3.0]
+print("z  ", z)
+print("out", out)
 ```
 
 Why: the expression reads exactly like the per-element rule — that
@@ -138,6 +140,9 @@ v = t.tensor([1.7, -0.3, 2.5])
 assert t.floor(v).tolist() == [1.0, -1.0, 2.0]   # floor moves DOWN
 assert t.trunc(v).tolist() == [1.0, -0.0, 2.0]   # trunc moves toward zero
 assert t.sqrt(t.tensor([4.0, 9.0])).tolist() == [2.0, 3.0]
+print("input", v)
+print("floor", t.floor(v))
+print("trunc", t.trunc(v), "  <- differs only at the negative")
 ```
 
 Why: floor vs trunc only disagree on negatives — that's exactly where tasks
@@ -209,11 +214,15 @@ assert t.maximum(a, b).tolist() == [3.0, 5.0, 2.5]
 scores = t.tensor([71.5, 88.25, 97.0, 99.5])
 curved = t.floor((scores + 5).clamp(max=100.0))
 assert curved.tolist() == [76.0, 93.0, 100.0, 100.0]
+print("raw   ", scores)
+print("curved", curved)
 
 # The other bound. `min=` sets a FLOOR, `max=` sets a CEILING — and the two
 # read backwards from how they sound: min= raises everything below it.
 readings = t.tensor([-2.0, 0.5, 7.0])
 assert readings.clamp(min=0.0).tolist() == [0.0, 0.5, 7.0]
+print("readings   ", readings)
+print("clamp(min=0)", readings.clamp(min=0.0), " <- this is ReLU")
 ```
 
 Why: composing these left-to-right is normal style — each stage maps over

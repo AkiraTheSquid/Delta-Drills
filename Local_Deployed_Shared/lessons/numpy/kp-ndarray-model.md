@@ -86,6 +86,8 @@ a = t.tensor(rows)
 
 # The values survive the trip unchanged — .tolist() reads them back out.
 assert a.tolist() == [[1, 2, 3], [4, 5, 6]]
+print(a)
+print("back to a list:", a.tolist())
 ```
 
 You never told `t.tensor` how big the result should be, and you never told it
@@ -169,6 +171,8 @@ assert grid.numel() == 6
 # shape reports as torch.Size, which IS a tuple subclass — so it compares
 # equal to a plain tuple, and tuple() converts it when you need the real thing.
 assert tuple(grid.shape) == (2, 3)
+print("flat: shape", flat.shape, "ndim", flat.ndim, "numel", flat.numel())
+print("grid: shape", grid.shape, "ndim", grid.ndim, "numel", grid.numel())
 ```
 
 ## Faded practice
@@ -262,6 +266,9 @@ assert ints.dtype != mixed.dtype
 
 # dtype= overrides the inference rather than relying on the input's spelling.
 assert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32
+print("all ints ->", ints.dtype)
+print("one float ->", mixed.dtype, "  (the whole block, not just that entry)")
+print(mixed)
 ```
 
 ## Faded practice

@@ -53,6 +53,7 @@ readings = t.tensor([[3.5, -2.0, 7.25],
 # min/max with no dim argument scan the WHOLE tensor, ignoring shape.
 lo, hi = readings.min(), readings.max()
 assert (lo.item(), hi.item()) == (-8.75, 9.5)
+print("min", lo.item(), "| max", hi.item())
 ```
 
 Why: no dim argument = one value for the whole tensor, shape ignored. That's
@@ -131,6 +132,7 @@ assert raw.ndim == 0 and isinstance(raw, t.Tensor)
 avg = float(raw)
 assert isinstance(avg, float)
 assert abs(avg - 1.5833333) < 1e-5
+print("as a tensor:", raw, "| as a float:", avg)
 ```
 
 Why: `float(...)` at the boundary — the computation stays in torch, only the
@@ -217,6 +219,9 @@ a = t.full((10,), 0.1).sum()
 b = t.tensor(1.0)
 assert not t.equal(a, b)         # bitwise-exact? no — accumulated float error
 assert t.allclose(a, b)          # equal within tolerance? yes
+print("any negative?", has_negative)
+print("ten 0.1s summed:", a.item(), "| equal:", bool(t.equal(a, b)),
+      "| allclose:", bool(t.allclose(a, b)))
 ```
 
 Why: exact equality is for ints/bools and provenance checks; `allclose` is
