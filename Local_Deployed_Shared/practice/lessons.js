@@ -424,9 +424,8 @@ const LessonGate = (() => {
             // here, because the response re-stages the pending question and
             // that has to land before it renders. Without any crediting at
             // all, the gate would teach a KP and the ladder would immediately
-            // re-teach the identical page: the two counters track different
-            // things (exposure fires once ever, worked_seen re-arms on every
-            // demotion), so neither one implies the other.
+            // re-teach the identical page: the two counters are written by
+            // different endpoints and neither one implies the other.
             taught.push(page.kp.kc);
           }
           index++;

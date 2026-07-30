@@ -453,8 +453,12 @@ def ladder_rank(qid: int) -> int:
 # record — not a global skill number the ladder itself depresses — is what
 # avoids that trap here. The bounds below are calibrated so three consecutive
 # correct answers promote (Wilson lower at 3/3 = 0.438), matching that project's
-# 2-to-4 pacing, and four consecutive wrong answers force re-teaching
-# (Wilson upper at 0/4 = 0.49).
+# 2-to-4 pacing, and four consecutive wrong answers drop the learner all the way
+# back to full support (Wilson upper at 0/4 = 0.49).
+#
+# `worked` is entered once and never re-entered — see `_stage_from`. It is the
+# teaching page rather than a drill, so demotion floors at `faded`, the lowest
+# rung that is still a problem the learner answers.
 LADDER_STAGES = ("worked", "faded", "partial", "solo")
 
 # Wilson LOWER bound needed to climb off each rung. Calibrated against the
@@ -465,7 +469,7 @@ LADDER_STAGES = ("worked", "faded", "partial", "solo")
 # arrived at there by trial on real learners. Using the lower bound rather than
 # the point estimate means a lucky streak of one does not strip support.
 PROMOTE_LO = {"faded": 0.34, "partial": 0.51}
-DEMOTE_HI = 0.50  # Wilson UPPER; 0/4 = 0.49, so four straight wrong re-teaches
+DEMOTE_HI = 0.50  # Wilson UPPER; 0/4 = 0.49, so four straight wrong restore support
 _LADDER_WINDOW = 20  # recent attempts the estimate rests on
 
 
@@ -542,9 +546,15 @@ def kc_estimate(user_state, kc: str) -> dict:
     }
 
 
-def _step_down(stage: str) -> str:
+def _step_down(stage: str, floor: str) -> str:
+    """One rung down from `stage`, but never below `floor`.
+
+    `floor` is required rather than defaulting to the bottom of the ladder:
+    the bottom rung is the lesson page, and a caller that lands a learner
+    there by accident re-teaches a concept they have already read.
+    """
     i = LADDER_STAGES.index(stage) if stage in LADDER_STAGES else 1
-    return LADDER_STAGES[max(0, i - 1)]
+    return LADDER_STAGES[max(LADDER_STAGES.index(floor), i - 1)]
 
 
 def _stage_from(est: dict, row: dict) -> str:
@@ -554,9 +564,27 @@ def _stage_from(est: dict, row: dict) -> str:
     lattice report wants the stage AND the estimate for all 63 concepts, and
     going through `kc_stage` there would recompute the estimate — the window
     slice, the count and the Wilson interval — a second time for every row.
+
+    ONE-WAY DOOR AT `worked`. This rung is not a drill: it is the teaching
+    page, the one `LessonGate` takes over the screen to show. Every path below
+    the cold-start check therefore floors at `faded`, so a learner who has
+    already been taught a concept is never handed its lesson again by the
+    scheduler. Support still comes back on a miss — `faded` keeps the worked
+    example on screen beside the problem (LadderUI.SUPPORTED_STAGES) — but the
+    thing that comes back is the example, not the explanation.
+
+    Why not re-teach on a bad streak. The learner has read this page; replaying
+    it is the system asserting they did not, which is both wrong (a miss says
+    they cannot yet APPLY the idea, not that they never met it) and unskippable
+    — the demotion re-fires from `attempts[-1]` on every subsequent question,
+    so one miss put the lesson in front of them again and again until they
+    happened to answer correctly. Re-reading a lesson stays available, but as
+    something the learner chooses: the concept graph's node opens it, and so
+    does `?lesson=<kc>`.
     """
     # Cold start: the example comes first, always. A concept nobody has been
-    # shown cannot be assessed, and guessing at it is not assessment.
+    # shown cannot be assessed, and guessing at it is not assessment. This is
+    # the only branch that may return `worked`.
     if est["worked_seen"] == 0:
         return "worked"
 
@@ -566,12 +594,14 @@ def _stage_from(est: dict, row: dict) -> str:
         # see the support again. Stepping down from the stage the MISSED
         # attempt was made at, not from today's computed stage, so a wrong
         # answer on an independent problem lands on faded rather than skipping
-        # straight back to the example.
-        return _step_down(attempts[-1].get("stage") or "faded")
+        # straight back past the scaffolded rungs.
+        return _step_down(attempts[-1].get("stage") or "faded", floor="faded")
 
     lo, hi = est["ci"]
     if est["n"] and hi < DEMOTE_HI:
-        return "worked"
+        # Confidently struggling: all the support there is, which is the fully
+        # visible worked example at `faded`.
+        return "faded"
     # Climb one rung at a time: clearing the solo bar also clears the partial
     # bar, so test from the top down and take the highest rung earned.
     if lo >= PROMOTE_LO["partial"]:

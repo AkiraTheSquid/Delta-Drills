@@ -108,6 +108,71 @@ check("an empty row reads as no evidence", est["n"] == 0 and est["worked_seen"] 
 check("no attempts means no last_ts", est["last_ts"] is None, repr(est["last_ts"]))
 check("an empty row still yields a stage", kc_graph.kc_stage(st, SOME_KC) == "worked")
 
+print("\n--- demotion never lands back on the lesson rung ---")
+
+# `worked` is the teaching page, not a drill. Once a concept has been taught,
+# no amount of failing may put that page back in front of the learner: the
+# demotion re-derives from `attempts[-1]` on every question, so a single miss
+# used to replay the whole lesson before every subsequent question on that KC
+# until they happened to answer one correctly.
+
+check("_step_down respects the floor",
+      kc_graph._step_down("faded", floor="faded") == "faded")
+check("_step_down still steps where there is room",
+      kc_graph._step_down("solo", floor="faded") == "partial")
+
+st = fresh_state()
+st.kc_ladder[SOME_KC] = {
+    "worked_seen": 1,
+    "attempts": [{"correct": False, "stage": "faded", "ts": "2026-07-30T00:00:00+00:00"}],
+}
+check("a miss on the lowest drill rung stays on that rung",
+      kc_graph.kc_stage(st, SOME_KC) == "faded", kc_graph.kc_stage(st, SOME_KC))
+
+# The other demotion path: not one miss but a confidently bad record. Wilson
+# upper at 1/8 is 0.42, under DEMOTE_HI. The last attempt is CORRECT so the
+# miss rule above does not fire and this branch is the one under test.
+st = fresh_state()
+st.kc_ladder[SOME_KC] = {
+    "worked_seen": 1,
+    "attempts": (
+        [{"correct": False, "stage": "solo", "ts": "2026-07-30T00:00:00+00:00"}] * 7
+        + [{"correct": True, "stage": "solo", "ts": "2026-07-30T00:07:00+00:00"}]
+    ),
+}
+est = kc_graph.kc_estimate(st, SOME_KC)
+check("the confidently-struggling branch is the one being exercised",
+      est["ci"][1] < kc_graph.DEMOTE_HI, f"upper={est['ci'][1]}")
+check("a bad record restores full support without re-teaching",
+      kc_graph.kc_stage(st, SOME_KC) == "faded", kc_graph.kc_stage(st, SOME_KC))
+
+# The one branch that may still return `worked`: nobody has been taught yet.
+st = fresh_state()
+st.kc_ladder[SOME_KC] = {
+    "worked_seen": 0,
+    "attempts": [{"correct": False, "stage": "faded", "ts": "2026-07-30T00:00:00+00:00"}],
+}
+check("an untaught concept still opens on the lesson",
+      kc_graph.kc_stage(st, SOME_KC) == "worked", kc_graph.kc_stage(st, SOME_KC))
+
+# And the property that matters, stated directly: across every shape of record
+# a taught concept can hold, the lesson rung is unreachable.
+taught_rows = []
+for stage in kc_graph.LADDER_STAGES:
+    for correct in (True, False):
+        for n in (1, 4, 12):
+            taught_rows.append([
+                {"correct": correct, "stage": stage, "ts": "2026-07-30T00:00:00+00:00"}
+            ] * n)
+offenders = []
+for attempts in taught_rows:
+    st = fresh_state()
+    st.kc_ladder[SOME_KC] = {"worked_seen": 1, "attempts": attempts}
+    if kc_graph.kc_stage(st, SOME_KC) == "worked":
+        offenders.append((attempts[0]["stage"], attempts[0]["correct"], len(attempts)))
+check(f"no taught record reaches the lesson rung ({len(taught_rows)} shapes)",
+      not offenders, repr(offenders))
+
 print("\n--- kc_report carries the ladder for every KC ---")
 
 st = fresh_state()

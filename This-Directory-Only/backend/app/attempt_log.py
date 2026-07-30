@@ -344,10 +344,14 @@ def rows_for_kc(user_id: str, kc: str, base_dir: Optional[Path] = None) -> List[
 def has_seen_lesson(user_id: str, kc: str, base_dir: Optional[Path] = None) -> bool:
     """Has this learner ever been shown the lesson for `kc`?
 
-    One counter, one source. The bug this exists to prevent: `kc_exposure` fires
-    once ever while `kc_ladder[kc]["worked_seen"]` re-arms on every demotion, so
-    the two disagree the moment a learner is demoted — and the lesson gets
-    re-taught to someone who has already read it.
+    One counter, one source. The bug this exists to prevent: two independent
+    "has been taught" counters (`kc_exposure` and `kc_ladder[kc]["worked_seen"]`)
+    that can disagree, so a lesson gets re-taught to someone who has already
+    read it. As of 2026-07-30 the ladder no longer demotes anyone back to the
+    lesson rung (`kc_graph._stage_from` floors demotion at `faded`), which
+    closes the way the two used to drift apart — but they remain separate
+    fields written by separate endpoints, so read the question through here
+    rather than trusting either one.
     """
     return any(r.kind == KIND_LESSON_VIEW and r.kc == kc for r in iter_rows(user_id, base_dir))
 

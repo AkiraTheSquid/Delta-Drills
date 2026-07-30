@@ -15,8 +15,11 @@ is always allowed client-side, but the gate never re-arms).
 that module is already ORANGE on the structural score, and this is the same
 kind of "the learner read the teaching material" signal `/exposure` records.
 The two are deliberately separate counters — exposure fires once, ever, and
-gates a concept's FIRST question; worked_seen fires again every time a miss
-knocks the learner back down to the example.
+gates a concept's FIRST question; worked_seen counts every time the teaching
+page was actually read, which the ladder reads as "this concept has been
+taught at least once" (`kc_graph._stage_from`). It can still be incremented
+more than once, because a learner may re-open a lesson from the concept graph
+or `?lesson=<kc>` — but the scheduler no longer forces that on them.
 """
 
 from __future__ import annotations

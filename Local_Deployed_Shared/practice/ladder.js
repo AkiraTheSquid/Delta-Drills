@@ -124,7 +124,17 @@ const LadderUI = (() => {
     if (staged && taught.includes(staged)) await applyWorkedSeen(question, staged);
   };
 
-  /* The `worked` rung: teach before asking.
+  /* The `worked` rung: teach before asking. FIRST CONTACT ONLY.
+
+     The backend reaches this rung only when a concept has never been taught
+     (kc_graph._stage_from returns it on `worked_seen == 0` and floors every
+     demotion at `faded`), so getting here means the learner has genuinely not
+     read this page before. That is deliberate: replaying a lesson after a miss
+     is the system telling a learner they never read something they did read,
+     and because the demotion re-derived from the last attempt it repeated
+     before every question until they happened to answer correctly. Support
+     after a miss now comes back as the example beside the problem, which is
+     what `decorate` attaches on the supported rungs.
 
      The backend still attaches a question to this rung — it has to pick
      something to hand back — so rather than discarding it (which would burn a
