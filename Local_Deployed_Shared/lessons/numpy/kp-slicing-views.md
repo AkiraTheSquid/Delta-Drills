@@ -25,6 +25,27 @@ commas** inside a single pair of brackets:
 Negative *indices* count from the end (`-1` is the last element), exactly as in
 Python.
 
+```python
+import torch as t
+
+x = t.arange(10)
+print("x        ", x)
+print("x[2:5]   ", x[2:5])
+print("x[::2]   ", x[::2])
+print("x[-3:]   ", x[-3:])
+```
+
+One slice per axis, comma-separated — and note what an *int* in a slot does
+that a slice does not: it removes that axis.
+
+```python
+z = t.arange(12).reshape(3, 4)
+print(z)
+print("z[0, :]  ", z[0, :],  " shape", z[0, :].shape)     # int -> 1-D
+print("z[:, -1] ", z[:, -1], " shape", z[:, -1].shape)
+print("z[0:1, :]", z[0:1, :]," shape", z[0:1, :].shape)   # slice -> stays 2-D
+```
+
 **Negative *steps* are the exception.** NumPy reverses an axis with `x[::-1]`;
 PyTorch refuses — it raises `ValueError: step must be greater than zero`. This
 is probably the single most common surprise when moving NumPy habits to torch.
@@ -34,6 +55,20 @@ Reversal has its own function:
   row left-right; `t.flip(z, [0])` reverses the row order (mirror top-bottom).
 - **`t.rot90(z)`** — rotate 90° counterclockwise, the composition of a
   transpose and a flip.
+
+```python
+try:
+    x[::-1]
+except ValueError as err:
+    print("ValueError:", err)
+
+print("flip axis 0", t.flip(x, [0]))
+print("mirror rows left-right")
+print(t.flip(z, [1]))
+print("rot90")
+print(t.rot90(z))
+assert t.equal(t.rot90(z), t.flip(z.T, [0]))
+```
 
 **The twist: slices are *views*, not copies.** A slice doesn't copy data — it
 is a new window onto the *same* memory block. Two consequences:
@@ -48,6 +83,30 @@ is a new window onto the *same* memory block. Two consequences:
 
 `t.flip` is not in that category: it always returns a **copy**, so writing into
 its result never touches the input.
+
+```python
+data = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+window = data[1:3]
+window[0] = 99.0                 # window[0] IS data[1]
+print("data after writing through the view:", data)
+assert data[1].item() == 99.0
+
+safe = data[1:3].clone()
+safe[0] = -1.0
+print("data after writing through the clone:", data)
+assert data[1].item() == 99.0
+```
+
+Slice assignment is the same fact used deliberately — a whole range set at
+once, the scalar broadcast across every selected position, no loop:
+
+```python
+y = t.zeros(6)
+y[1:4] = 5.0
+y[::2] = -1.0
+print(y)
+assert y.tolist() == [-1.0, 5.0, -1.0, 5.0, -1.0, 0.0]
+```
 
 ## Worked example
 

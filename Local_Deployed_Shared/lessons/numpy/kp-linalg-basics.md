@@ -20,9 +20,33 @@ own operator:
   entry `[i, j]` is the dot product of row i of `a` with column j of `b`.
   The inner dimensions (k) must agree, and they disappear in the output.
 
+```python
+import torch as t
+
+a = t.tensor([[1.0, 2.0], [3.0, 4.0]])
+b = t.tensor([[5.0, 6.0], [7.0, 8.0]])
+print("a * b (elementwise)")
+print(a * b)
+print("a @ b (matrix product)")
+print(a @ b)
+```
+
+`a*b` entry [0,0] is 1·5. `a@b` entry [0,0] is 1·5 + 2·7 = 19 — the row met
+the column and the k axis was summed away.
+
 The shape rule `(m, k) @ (k, n) → (m, n)` is worth chanting: it predicts
 both whether a product is legal and what comes out. It also covers
 matrix–vector: `(m, k) @ (k,) → (m,)`.
+
+```python
+print((t.ones((2, 3)) @ t.ones((3, 4))).shape)     # (2,4): the 3s vanish
+print((t.ones((2, 3)) @ t.ones(3)).shape)          # (2,): matrix times vector
+
+try:
+    t.ones((2, 3)) @ t.ones((2, 3))                # inner dims 3 vs 2
+except RuntimeError as err:
+    print("RuntimeError:", err)
+```
 
 `t.matmul(a, b)` is the same operation spelled as a function, and in model
 code you will meet `a.T` for the transpose that so often precedes it.
@@ -93,8 +117,35 @@ and the default float is 32-bit. Ill-conditioned systems lose accuracy sooner
 than the float64 you may be used to from NumPy — if a solve looks wrong,
 checking the dtype is a reasonable first move.
 
+```python
+import torch as t
+
+a_sys = t.tensor([[3.0, 1.0],
+                  [1.0, 2.0]])
+b_vec = t.tensor([9.0, 8.0])
+x = t.linalg.solve(a_sys, b_vec)
+print("x =", x)
+```
+
 Sanity-checking a solve is one line: plug `x` back in and compare
 `a @ x` with `b` using `t.allclose` (float arithmetic — never `==`).
+
+```python
+print("a @ x =", a_sys @ x, " b =", b_vec)
+print("exactly equal? ", bool(t.equal(a_sys @ x, b_vec)))
+print("close enough?  ", bool(t.allclose(a_sys @ x, b_vec)))
+assert t.allclose(a_sys @ x, b_vec)
+```
+
+The inverse route reaches the same answer and does more work to get there —
+run it once so the equivalence is concrete, then stop writing it:
+
+```python
+via_inverse = t.linalg.inv(a_sys) @ b_vec
+print("solve:  ", x)
+print("inverse:", via_inverse)
+assert t.allclose(x, via_inverse)
+```
 
 ## Worked example
 

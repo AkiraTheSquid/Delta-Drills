@@ -19,16 +19,40 @@ t.sort(z)          # -> torch.return_types.sort(values=..., indices=...)
 t.sort(z).values   # the sorted tensor you actually wanted
 ```
 
+```python
+import torch as t
+
+z = t.tensor([0.5, 0.25, 0.75])
+print(t.sort(z))
+```
+
+That printout is the pair, and it is what a function returns if you forget
+`.values`.
+
 You can unpack it either way: `values, indices = t.sort(z)`, or reach for
 `.values` / `.indices` by name. The indices half is not a consolation prize —
 it is what "sort one thing by another" tasks need, and it is the same thing
 `t.argsort(z)` gives you on its own.
+
+```python
+values, indices = t.sort(z)
+print("values ", values)
+print("indices", indices)
+assert t.equal(indices, t.argsort(z))
+assert t.equal(z[indices], values)      # the indices reconstruct the values
+```
 
 Sorting never modifies the input: `t.sort(z)` and the method form `z.sort()`
 both leave `z` alone and hand back a new pair. (There is no in-place `sort_`.)
 
 **`descending=True`** sorts largest-first — a real keyword, unlike NumPy, where
 you have to sort ascending and reverse afterwards.
+
+```python
+print("z is still", z)
+print("descending", t.sort(z, descending=True).values)
+assert z.tolist() == [0.5, 0.25, 0.75]
+```
 
 ## Worked example
 
@@ -106,6 +130,27 @@ Indexing a tensor with an index tensor is the "fancy indexing" you have already
 met: `names[order]` builds a new tensor by reading `names` at each position in
 `order`, in that order.
 
+```python
+import torch as t
+
+ids = t.tensor([10, 11, 12, 13])
+scores = t.tensor([0.4, 0.9, 0.1, 0.7])
+
+order = t.argsort(scores, descending=True)
+print("order  ", order)
+print("ids    ", ids[order])
+print("scores ", scores[order])
+```
+
+Both tensors moved by the SAME order, so row-by-row they still describe the
+same items. Sorting them separately is the bug this pattern prevents:
+
+```python
+broken = t.sort(ids, descending=True).values
+print("independently sorted ids:", broken, "— no longer paired with anything")
+assert t.equal(scores[order], t.sort(scores, descending=True).values)
+```
+
 ## Worked example
 
 ```python
@@ -164,10 +209,29 @@ correspondence between columns. That is usually not what you want from "sort the
 matrix"; reordering whole rows is the argsort-plus-indexing pattern from the last
 segment, applied to axis 0.
 
+```python
+import torch as t
+
+m = t.tensor([[3.0, 1.0, 2.0],
+              [9.0, 7.0, 8.0]])
+print("dim=1 (within each row)")
+print(t.sort(m, dim=1).values)
+print("dim=0 (down each column)")
+print(t.sort(m, dim=0).values)
+```
+
 **`t.topk(z, k)`** answers a narrower question: the k largest values, already
 ordered largest first, plus their positions. Sorting the whole tensor to slice
 off k of them does strictly more work — and on a long vector, a great deal more.
 Like `sort`, it hands back a `(values, indices)` pair.
+
+```python
+v = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])
+top = t.topk(v, 2)
+print(top)
+assert top.values.tolist() == [9.0, 7.0]
+assert t.equal(top.values, t.sort(v, descending=True).values[:2])
+```
 
 ## Worked example
 

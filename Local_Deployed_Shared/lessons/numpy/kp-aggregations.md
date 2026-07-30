@@ -19,6 +19,27 @@ regardless of shape — a 2-D tensor's `x.max()` is the max of the whole matrix.
 (Reducing along just one axis is the `dim=` keyword, which gets its own KP in
 the broadcasting lesson — walk before running.)
 
+```python
+import torch as t
+
+grid = t.tensor([[3.0, 8.0, 1.0],
+                 [6.0, 2.0, 9.0]])
+print("sum ", grid.sum())
+print("mean", grid.mean())
+print("min ", grid.min())
+print("max ", grid.max())
+```
+
+Six values in, one value out, every time — and notice the shape never came
+into it:
+
+```python
+flat = grid.reshape(6)
+assert t.equal(flat.max(), grid.max())
+assert t.equal(flat.sum(), grid.sum())
+print(grid.shape, "and", flat.shape, "→ same answers")
+```
+
 ## Worked example
 
 Task: global min and max of a matrix of sensor readings.
@@ -70,6 +91,25 @@ When a task says "return a plain Python int/float/bool", convert explicitly:
 
 > `float(x.mean())`, `int(x.sum())`, `bool((x > 0).any())`
 > — or `x.item()`, the generic "unwrap this 0-d result".
+
+```python
+import torch as t
+
+grid = t.tensor([[3.0, 8.0, 1.0],
+                 [6.0, 2.0, 9.0]])
+raw = grid.mean()
+print(raw, "| ndim", raw.ndim, "| type", type(raw).__name__)
+print(float(raw), "| type", type(float(raw)).__name__)
+```
+
+The first line still says `tensor(...)`. That is the whole distinction:
+
+```python
+assert raw.ndim == 0 and isinstance(raw, t.Tensor)
+assert isinstance(raw.item(), float)
+assert int(grid.sum()) == 29
+assert bool((grid > 0).all()) is True
+```
 
 Keep tensors *inside* your computation; convert exactly at the boundary
 where a plain Python value is required. Unwrapping early is how you
@@ -129,8 +169,34 @@ Yes/no questions about tensors have two standard shapes:
   and values; `t.allclose(a, b)` is equality within floating-point tolerance
   — the right check after float arithmetic.
 
+```python
+import torch as t
+
+grid = t.tensor([[3.0, -8.0, 1.0],
+                 [6.0, 2.0, -9.0]])
+print("negatives present?", bool((grid < 0).any()))
+print("all positive?    ", bool((grid > 0).all()))
+```
+
 `a == b` alone is NOT a verdict — it's elementwise and yields a boolean
 tensor (and `if` on it raises an error).
+
+```python
+a = t.tensor([1.0, 2.0])
+b = t.tensor([1.0, 5.0])
+print(a == b)                 # a tensor, not an answer
+print(t.equal(a, b))          # one bool
+```
+
+And the reason `allclose` exists at all — float arithmetic does not land
+where the arithmetic says it should:
+
+```python
+summed = t.full((10,), 0.1).sum()
+print(summed.item(), "vs", 1.0)
+assert not t.equal(summed, t.tensor(1.0))
+assert t.allclose(summed, t.tensor(1.0))
+```
 
 ## Worked example
 

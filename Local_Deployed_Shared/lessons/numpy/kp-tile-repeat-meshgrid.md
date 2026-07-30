@@ -18,8 +18,24 @@ next element.
 [1, 2, 3] → [1, 1, 1, 2, 2, 2, 3, 3, 3]
 ```
 
+```python
+import torch as t
+
+x = t.tensor([1, 2, 3])
+print(t.repeat_interleave(x, 3))
+```
+
 Use it when output groups copies of each individual value. `k` may also be a
 tensor containing one repetition count per element.
+
+```python
+counts = t.tensor([1, 0, 4])
+print(t.repeat_interleave(x, counts))
+assert t.repeat_interleave(x, counts).tolist() == [1, 3, 3, 3, 3]
+```
+
+A count of 0 makes that value vanish — which is exactly how run-length
+decoding handles an empty run.
 
 ## Watch out
 
@@ -76,9 +92,28 @@ def solve(x, k):
 [1, 2, 3] → [1, 2, 3, 1, 2, 3]
 ```
 
+```python
+import torch as t
+
+x = t.tensor([1, 2, 3])
+print("repeat          ", x.repeat(2))
+print("repeat_interleave", t.repeat_interleave(x, 2))
+```
+
+Same six numbers, different order — that is the entire distinction, and it is
+worth seeing on one screen.
+
 For a 2-D tensor, pass one repetition count per axis:
 `block.repeat(row_repeats, column_repeats)`. `t.tile` is a NumPy-compatible
 alias for the same behaviour, and it takes the counts as a tuple.
+
+```python
+block = t.tensor([[0, 1],
+                  [1, 0]])
+print(block.repeat(2, 3))
+assert block.repeat(2, 3).shape == (4, 6)
+assert t.equal(block.repeat(2, 3), t.tile(block, (2, 3)))
+```
 
 ## Watch out
 
@@ -148,6 +183,34 @@ matrices.
 
 Pairing `X[i, j]` with `Y[i, j]` gives one point from every possible
 combination of `x` and `y`.
+
+```python
+import torch as t
+
+x = t.tensor([1.0, 2.0, 3.0])
+y = t.tensor([10.0, 20.0])
+X, Y = t.meshgrid(x, y, indexing='xy')
+print(X)
+print(Y)
+print("shapes:", X.shape, Y.shape)
+```
+
+Two matrices, not one tensor of pairs. Stack them and the points read out
+directly — every combination, once each:
+
+```python
+print(t.stack([X, Y], dim=-1).reshape(-1, 2))
+assert X.numel() == len(x) * len(y)
+```
+
+The `indexing` keyword is not decoration. Ask for `'ij'` and the same call
+hands back the transpose:
+
+```python
+Xij, Yij = t.meshgrid(x, y, indexing='ij')
+print("xy shape", X.shape, " ij shape", Xij.shape)
+assert t.equal(Xij, X.T)
+```
 
 ## Watch out
 
