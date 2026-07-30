@@ -5,7 +5,7 @@ supporting: [numpy.axis-reductions, numpy.where-select]
 new_syntax: []
 faded: [80]
 guided: [162]
-independent: [6, 97, 153, 10]
+independent: [6, 97, 153, 10, 103, 147]
 ---
 
 ## Concept
@@ -126,6 +126,10 @@ From the drill bank: q6 (unit vector), q97 (rescale to a target length L —
 one multiplicative constant), q153 (unit-length ROWS with zero rows safe —
 norm takes dim/keepdim), q10 (global min-max on an array of ANY shape —
 does the formula even care about shape?).
+
+Also from the bank: q103 (softmax that survives logits like 1000 — the
+stable form, not the naive one), q147 (winsorize to a percentile band:
+clamp the tails, leave the middle alone).
 
 ## Misconceptions
 

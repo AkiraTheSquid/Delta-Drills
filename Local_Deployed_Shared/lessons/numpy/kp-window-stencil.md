@@ -5,7 +5,7 @@ supporting: [numpy.sliding-windows, numpy.pad-borders, numpy.cumulative-diff]
 new_syntax: []
 faded: [195]
 guided: [156]
-independent: [167, 176, 196, 209]
+independent: [167, 176, 196, 209, 126]
 ---
 
 ## Concept
@@ -130,6 +130,8 @@ view, then merge the two window-index axes), q176 (per-window maxima —
 window view + max over the inside axes), q196 (valid cross-correlation with
 an arbitrary kernel), q209 (Game of Life step — pad, count the eight
 neighbors, apply the birth/survival masks).
+
+Also from the bank: q126 (block sums over non-overlapping bh x bw tiles).
 
 ## Misconceptions
 

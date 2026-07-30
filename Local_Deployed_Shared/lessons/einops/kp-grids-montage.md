@@ -5,7 +5,7 @@ supporting: [einops.split-axes, einops.merge-axes]
 new_syntax: []
 faded: [389]
 guided: [364]
-independent: [329, 382, 318, 381]
+independent: [329, 382, 318, 381, 322, 371]
 ---
 
 ## Concept
@@ -117,6 +117,10 @@ From the drill bank: q329 (channels-FIRST montage — where does c sit?),
 q382 (3×2 grid again, channels-last — fluency rep), q318 (twelve
 channels-first images in a 4×3 grid), q381 (four SEPARATE image arguments
 into a 2×2 grid — combine the list-as-axis trick with the montage).
+
+Also from the bank: q322 (carve H into hs strips and W into ws strips,
+subgrid indices moved OUT into the batch axis, subgrid-major), q371 (the
+inverse — subgrids packed in the batch axis, unpacked back into space).
 
 ## Misconceptions
 

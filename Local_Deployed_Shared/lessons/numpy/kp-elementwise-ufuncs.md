@@ -5,7 +5,7 @@ supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.floor, torch.maximum, torch.sqrt, torch.trunc]
 faded: [192, 49, 67]
 guided: [487, 488]
-independent: [43, 489]
+independent: [43, 489, 63]
 ---
 
 ## Concept: write the formula once — operators are elementwise
@@ -21,11 +21,38 @@ The general procedure for any "transform each entry" task:
 > Express the rule for ONE element as a formula, then write that formula
 > with the whole tensor in place of the element.
 
+```python
+import torch as t
+
+z = t.tensor([1.0, 2.0, 3.0, 4.0])
+print(z * 2)
+print(z ** 2 - 1)
+print(z % 2)
+```
+
 "Replace each x by x² − 1" → `z**2 - 1`. If you find yourself writing
 `for i in range(len(z))`, stop — the elementwise spelling is shorter and
 orders of magnitude faster (the loop happens in compiled code, and on a GPU it
 happens in parallel). All of these return **new tensors** and leave the input
 untouched.
+
+```python
+before = z.tolist()
+squared = z ** 2 - 1
+print("z after the expression:", z)
+assert z.tolist() == before          # nothing was written back
+```
+
+And the one operator that is NOT elementwise, so the contrast lands early:
+
+```python
+a = t.tensor([[1.0, 2.0], [3.0, 4.0]])
+print("a * a (elementwise):")
+print(a * a)
+print("a @ a (matrix product):")
+print(a @ a)
+assert not t.equal(a * a, a @ a)
+```
 
 ## Worked example
 
@@ -78,7 +105,28 @@ Rounding is a *family*, and the members differ on negatives:
 - `t.ceil` — smallest integer ≥ x;
 - `t.trunc` — toward zero, so −0.3 → −0.0 (same as `.to(t.int64)`).
 
-Read the task's example values to see which member is being asked for.
+Read the task's example values to see which member is being asked for — and
+the fastest way to tell them apart is to run all four on the same negatives:
+
+```python
+import torch as t
+
+v = t.tensor([1.7, -0.3, 2.5, -2.5])
+print("input", v)
+print("round", t.round(v))
+print("floor", t.floor(v))
+print("ceil ", t.ceil(v))
+print("trunc", t.trunc(v))
+```
+
+The only column where floor and trunc disagree is the negative one, which is
+exactly where a grader will look:
+
+```python
+assert t.floor(v).tolist() == [1.0, -1.0, 2.0, -3.0]
+assert t.trunc(v).tolist() == [1.0, -0.0, 2.0, -2.0]
+assert t.equal(t.trunc(v).to(t.int64), v.to(t.int64))
+```
 
 ## Worked example
 
@@ -124,11 +172,28 @@ number — different KP). `z.clamp(min=lo, max=hi)` limits values to a range;
 NumPy calls this `clip`, and PyTorch accepts that spelling as an alias, but
 `clamp` is the name you will read in model code.
 
+```python
+import torch as t
+
+a = t.tensor([1.0, 5.0, 2.0])
+b = t.tensor([3.0, 4.0, 2.5])
+print("maximum:", t.maximum(a, b))     # one answer per position
+print("a.max():", a.max())             # one answer, full stop
+```
+
 These overlap: `clamp(max=100)` and `t.minimum(x, ...)` compute the same
 thing, and `clamp(min=0)` is ReLU. Prefer `clamp` for a constant bound — it
 takes a plain Python number, whereas `t.minimum` wants a second tensor, and a
 tensor you construct on the spot lands on the CPU and will not match an input
 living on a GPU.
+
+```python
+readings = t.tensor([-2.0, 0.5, 7.0, 12.0])
+print("clamp(min=0):     ", readings.clamp(min=0.0))       # ReLU
+print("clamp(max=10):    ", readings.clamp(max=10.0))
+print("clamp(0, 10):     ", readings.clamp(min=0.0, max=10.0))
+assert t.equal(readings.clamp(max=10.0), t.minimum(readings, t.tensor(10.0)))
+```
 
 ## Worked example
 
@@ -179,12 +244,6 @@ def solve(z):
     return z.clamp(min=0.0)
 ```
 
-## Independent practice
-
-From the drill bank: q43 (elementwise larger of two tensors).
-
-From the drill bank: q489 (pull every element into [lo, hi] — mind which of min=/max= is the floor).
-
 ## Guided practice
 
 ### q487
@@ -197,6 +256,12 @@ From the drill bank: q489 (pull every element into [lo, hi] — mind which of mi
 2. It is a method on the tensor, and it returns a NEW tensor rather than
    editing yours — which is what keeps the input unchanged.
 3. `x.abs()`.
+
+## Independent practice
+
+From the drill bank: q43 (elementwise larger of two tensors), q489 (pull every
+element into [lo, hi] — mind which of min=/max= is the floor), q63 (the
+integer part of positive floats, 3.7 becoming 3.0 — several idioms work).
 
 ## Misconceptions
 

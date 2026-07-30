@@ -4,8 +4,8 @@ title: Locating extremes — argmin and argmax
 supporting: [numpy.aggregations, numpy.slicing-views]
 new_syntax: []
 faded: [38, 219, 98]
-guided: []
-independent: [24, 61]
+guided: [1]
+independent: [24, 61, 168]
 ---
 
 ## Concept: argmin/argmax — the index, not the value
@@ -167,11 +167,24 @@ def solve(z, target):
     return int(t.argmin(t.abs(z - target)))
 ```
 
+## Guided practice
+
+### q1
+1. Per row means the reduction runs ALONG the columns — which axis number
+   is that for a 2-D tensor?
+2. You want the position of the max, not the max itself, and torch already
+   breaks ties leftmost.
+3. `z.argmax(dim=1)` — first-occurrence tie-breaking is the documented
+   default, so no extra work is needed.
+
 ## Independent practice
 
 From the drill bank: q24 (the max-replacement surgery, stated slightly
 differently), q61 (the VALUE closest to v — transform, argmin, then read the
 original).
+
+Also from the bank: q168 (per-row argmax breaking ties by the LAST
+occurrence — argmax's default is the opposite).
 
 ## Misconceptions
 

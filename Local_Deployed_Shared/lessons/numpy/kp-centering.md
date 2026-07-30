@@ -4,7 +4,7 @@ title: Centering and standardizing rows/columns
 supporting: [numpy.axis-reductions, numpy.broadcasting-rules]
 new_syntax: []
 faded: [15, 7, 106]
-guided: []
+guided: [154]
 independent: [109, 218]
 ---
 
@@ -170,6 +170,16 @@ def solve(x):
     """Each column standardized: mean 0, std 1."""
     return (x - x.mean(dim=0)) / x.std(dim=0, correction=0)
 ```
+
+## Guided practice
+
+### q154
+1. Two steps, in order: standardize per COLUMN, then clip. Column
+   statistics reduce over dim=0.
+2. Population std means dividing by n, not n-1 — torch's default is the
+   sample version, so one keyword has to change.
+3. `(z - z.mean(dim=0)) / z.std(dim=0, correction=0)`, then `t.clip(...,
+   -limit, limit)`.
 
 ## Independent practice
 

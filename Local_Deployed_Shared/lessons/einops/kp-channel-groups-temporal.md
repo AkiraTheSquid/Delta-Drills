@@ -5,7 +5,7 @@ supporting: [einops.dl-flatten-heads, einops.pooling]
 new_syntax: []
 faded: [362]
 guided: [375]
-independent: [369, 372, 378, 397]
+independent: [369, 372, 378, 397, 316, 359]
 ---
 
 ## Concept
@@ -119,6 +119,10 @@ axis — both stay packed), q372 (transpose groups against within-group
 channels: (g c) → (c g)), q378 (average-pool time with window length w),
 q397 (spatial axes leading, batch and channels merged with batch slowest —
 a pure but rank-heavy rearrange).
+
+Also from the bank: q316 (channel axis interleaves `coord` groups of k,
+group index SLOWEST — split the group out and move it to the front), q359
+(same split, phrased for unpacking: `part1, part2 = solve(x, 2)`).
 
 ## Misconceptions
 

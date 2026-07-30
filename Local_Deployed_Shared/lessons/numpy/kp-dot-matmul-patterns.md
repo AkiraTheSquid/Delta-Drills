@@ -5,7 +5,7 @@ supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rule
 new_syntax: [torch.dot, torch.isclose, torch.linalg.norm]
 faded: [37, 144, 121, 5]
 guided: [514]
-independent: [141, 515]
+independent: [141, 515, 95]
 ---
 
 ## Concept: the dot product — multiply, then sum
@@ -213,6 +213,9 @@ product — think about which dots the diagonal actually needs: row i of a
 with COLUMN i of b).
 
 From the drill bank: q515 (rescale every row to unit length).
+
+Also from the bank: q95 (RGB to grayscale — a weighted sum over the
+channel axis, no loops).
 
 ## Guided practice
 

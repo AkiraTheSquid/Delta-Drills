@@ -5,7 +5,7 @@ supporting: [einops.merge-axes]
 new_syntax: []
 faded: [390]
 guided: [315]
-independent: [337, 320, 393]
+independent: [337, 320, 393, 331]
 ---
 
 ## Concept
@@ -118,6 +118,9 @@ From the drill bank: q337 (split b images back OUT of a side-by-side strip
 (h, b·w, c) — which packing order was used?), q320 (halve each image's
 height into two batch entries — split then merge into b), q393 (split an
 even channel axis into pairs, pair-member axis to the front).
+
+Also from the bank: q331 (slice to the even-indexed images, then tile them
+into an r-row grid).
 
 ## Misconceptions
 

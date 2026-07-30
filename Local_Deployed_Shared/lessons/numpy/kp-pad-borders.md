@@ -5,7 +5,7 @@ supporting: [numpy.slicing-views, numpy.constructors]
 new_syntax: []
 faded: [17]
 guided: [27]
-independent: [90]
+independent: [90, 186]
 ---
 
 ## Concept
@@ -122,6 +122,9 @@ def solve(z):
 
 From the drill bank: q90 (border of a FILL VALUE around existing data —
 pad again, one keyword different).
+
+Also from the bank: q186 (an odd-sized window centred anywhere, with fill
+wherever it hangs off the edge).
 
 ## Misconceptions
 

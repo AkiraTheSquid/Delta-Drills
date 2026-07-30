@@ -5,7 +5,7 @@ supporting: [numpy.random-generator, numpy.fancy-indexing, numpy.cumulative-diff
 new_syntax: []
 faded: [191]
 guided: [200]
-independent: [210]
+independent: [210, 91]
 ---
 
 ## Concept
@@ -133,6 +133,9 @@ def solve(x, n_samples, rng):
 
 From the drill bank: q210 (keep the rows that could be multinomial(n) draws —
 no sampling, just property verification with masks and row sums).
+
+Also from the bank: q91 (exactly p ones at distinct random positions,
+placed with a Generator).
 
 ## Misconceptions
 

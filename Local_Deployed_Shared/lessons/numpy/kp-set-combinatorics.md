@@ -5,7 +5,7 @@ supporting: [numpy.unique, numpy.cumulative-diff, numpy.tile-repeat-meshgrid, nu
 new_syntax: []
 faded: [185]
 guided: [171]
-independent: [199, 205, 143]
+independent: [199, 205, 143, 133, 158, 198, 207, 211]
 ---
 
 ## Concept
@@ -140,6 +140,12 @@ From the drill bank: q199 (rows common to two 2-D tensors — make rows
 comparable units first), q205 (distinct rows in order of FIRST appearance —
 `unique(dim=0, return_inverse=True)`, then recover first positions), q143
 (collapse consecutive duplicates — the keep-run-starts mask).
+
+Also from the bank: q133 (count DISTINCT colours in an image — a row of
+three is one item), q158 (distinct values per row), q198 (pairwise Jaccard
+distances between binary subset rows, loop-free), q207 (unique undirected
+edges of a triangle mesh, sorted and deduplicated), q211 (rows of a
+containing at least one element from EVERY row of b).
 
 ## Misconceptions
 

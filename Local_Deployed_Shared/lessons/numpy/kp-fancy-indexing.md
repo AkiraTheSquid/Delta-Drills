@@ -4,8 +4,8 @@ title: Fancy indexing — index arrays and lookup tables
 supporting: [numpy.slicing-views]
 new_syntax: [integer-array-indexing]
 faded: [139, 71, 25]
-guided: []
-independent: [70, 30, 101]
+guided: [136]
+independent: [70, 30, 101, 177, 184]
 ---
 
 ## Concept: index with an array — select and reorder at once
@@ -165,12 +165,26 @@ def solve(x):
     return out
 ```
 
+## Guided practice
+
+### q136
+1. Row swap is a fancy-index assignment: read the two rows in one order,
+   write them back in the other.
+2. Work on a clone — the drill checks the input is untouched — and
+   remember i may equal j, which must still be a no-op.
+3. `out = z.clone()`, then `out[[i, j]] = out[[j, i]]`. The right-hand
+   side is materialized before the write, so no aliasing problem.
+
 ## Independent practice
 
 From the drill bank: q70 (reorder rows by a permutation — the segment-1
 pattern as a full task), q30 (swap first and last COLUMNS — same idea, other
 axis, mind the `:` slot), q101 (sample k distinct rows with rng.choice + row
 indexing).
+
+Also from the bank: q177 (remap values through a dict WITHOUT looping over
+the data), q184 (set a symmetric pair z[i, j] and z[j, i] together,
+diagonal case included).
 
 ## Misconceptions
 

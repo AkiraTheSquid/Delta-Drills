@@ -16,12 +16,27 @@ like Python's `range` — **stops BEFORE `stop`**. The endpoint is never
 included, even with a step: `t.arange(0, 10, 2)` is `[0, 2, 4, 6, 8]` — 10
 is left out.
 
+```python
+import torch as t
+
+print(t.arange(5))
+print(t.arange(0, 10, 2))          # 10 is the stop, so 10 is missing
+print(t.arange(0, 11, 2))          # push the stop past it to get it back
+```
+
 That exclusive stop is the whole trick, and the source of most range bugs.
 When a task wants the endpoint *included*, you have to extend the stop past
 where you want to end.
 
 `t.arange` over integers gives you an **integer** tensor (`int64`), which
 matters because integer tensors are what you index with.
+
+```python
+idx = t.arange(3)
+letters = t.tensor([10, 20, 30, 40])
+print(idx.dtype, "->", letters[idx])
+assert idx.dtype == t.int64
+```
 
 ## Worked example
 
@@ -65,6 +80,25 @@ When you know the **number of points** instead of the step, use
 **`t.linspace(start, stop, num)`**: exactly `num` evenly spaced values, and
 this time **both endpoints are included**. Mind the fencepost — `num` points
 make `num − 1` gaps, so `t.linspace(0.0, 1.0, 5)` has step 1/4, not 1/5.
+
+```python
+import torch as t
+
+grid = t.linspace(0.0, 1.0, 5)
+print(grid)
+print("gaps:", t.diff(grid))
+assert grid[0].item() == 0.0 and grid[-1].item() == 1.0
+```
+
+Both ends present, four gaps between five points. Side by side with `arange`
+the two conventions are hard to confuse again:
+
+```python
+print("arange  ", t.arange(0.0, 1.0, 0.25))     # stop excluded -> 4 values
+print("linspace", t.linspace(0.0, 1.0, 5))      # stop included -> 5 values
+assert len(t.arange(0.0, 1.0, 0.25)) == 4
+assert len(t.linspace(0.0, 1.0, 5)) == 5
+```
 
 ## Worked example
 
@@ -112,6 +146,26 @@ up. It is a sharper trap here than in NumPy, because the default float is
 The robust recipe is to turn the step-question into a count-question:
 figure out how many points there are, generate exact **integers**, and scale
 them once — `t.arange(n_points) * step`. One multiply per element, no drift.
+
+```python
+import torch as t
+
+drifty = t.arange(0.0, 1.0 + 0.1, 0.1)
+print(drifty)
+print("last value:", drifty[-1].item(), "| point count:", len(drifty))
+```
+
+The last entry is not the clean `1.0` the call asked for, and whether an
+eleventh point appears at all is decided by rounding error. Counting first
+removes the gamble:
+
+```python
+n = int(round(1.0 / 0.1)) + 1
+exact = t.arange(n) * 0.1
+print(exact)
+print("point count:", len(exact))
+assert len(exact) == 11
+```
 
 The count uses the exclusive-stop insight again: an inclusive range of
 `step`-spaced points from 0 to `stop` has `round(stop / step) + 1` of them.

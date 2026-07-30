@@ -4,7 +4,7 @@ title: Dtypes, .to(), and memory size
 supporting: [numpy.ndarray-model]
 new_syntax: []
 faded: [230, 215, 51]
-guided: []
+guided: [87]
 independent: [19]
 ---
 
@@ -22,9 +22,33 @@ original is untouched; there is no in-place dtype change. Converting
 float→int **truncates toward zero** rather than rounding: `1.9 → 1`,
 `-1.9 → -1`.
 
+```python
+import torch as t
+
+x = t.tensor([1, 2, 3])
+y = x.to(t.float32)
+print(x, x.dtype)
+print(y, y.dtype)
+assert x.dtype == t.int64          # the original never changed
+```
+
+Truncation is the part that surprises people — it is not rounding:
+
+```python
+print(t.tensor([1.9, -1.9, 0.5]).to(t.int64))
+assert t.tensor([1.9]).to(t.int64).item() == 1
+assert t.tensor([-1.9]).to(t.int64).item() == -1
+```
+
 One wrinkle worth knowing: if the dtype you ask for is the one it already
 has, `.to()` hands back the *same* tensor rather than a copy. It promises a
 tensor of that dtype, not a fresh buffer.
+
+```python
+same = x.to(t.int64)
+print("same object?", same is x)
+assert same is x
+```
 
 ## Worked example
 
@@ -73,11 +97,34 @@ Rather than build-then-convert, request the dtype at creation: every
 constructor accepts `dtype=`, e.g. `t.arange(n, dtype=t.int32)` — one
 step, no copy.
 
+```python
+import torch as t
+
+built = t.arange(4, dtype=t.int32)
+print(built, built.dtype)
+```
+
 Here PyTorch is stricter than NumPy. NumPy accepts the *string* `'float32'`
 anywhere a dtype is wanted; PyTorch does not — `t.arange(3, dtype='float32')`
-raises a `TypeError`. When the dtype arrives as **data** (from a config, a
-file header, a function argument), you have to turn the name into the dtype
-object first, and `getattr(t, name)` does exactly that.
+raises a `TypeError`. Watch it happen:
+
+```python
+try:
+    t.arange(3, dtype='float32')
+except TypeError as err:
+    print("TypeError:", err)
+```
+
+When the dtype arrives as **data** (from a config, a file header, a function
+argument), you have to turn the name into the dtype object first, and
+`getattr(t, name)` does exactly that.
+
+```python
+for name in ('int32', 'float32', 'float64'):
+    z = t.arange(3, dtype=getattr(t, name))
+    print(f"{name:8} -> {z} {z.dtype}")
+assert t.arange(3, dtype=getattr(t, 'float32')).dtype == t.float32
+```
 
 ## Worked example
 
@@ -126,6 +173,23 @@ The number in a dtype's name is bits: `int32` = 4 bytes per element,
 are memory choices: halving precision halves the buffer, which is the whole
 reason models train in float32 (or bfloat16) rather than float64.
 
+```python
+import torch as t
+
+grid = t.zeros((10, 10))
+for dtype in (t.float64, t.float32, t.int16, t.bool):
+    z = grid.to(dtype)
+    print(f"{str(dtype):15} {z.numel()} x {z.element_size()} = "
+          f"{z.numel() * z.element_size()} bytes")
+```
+
+Same 100 numbers, an 8× spread in what they cost:
+
+```python
+assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
+assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
+```
+
 ## Worked example
 
 ```python
@@ -163,6 +227,17 @@ def solve(z):
     """Return z's data-buffer size as e.g. '24 bytes'."""
     return f"{z.numel() * z.element_size()} bytes"
 ```
+
+## Guided practice
+
+### q87
+1. Torch has a histogram counter that takes the bin count and the range
+   directly — no bucketing by hand.
+2. It returns FLOAT counts. The drill wants integers, so the last step is
+   a dtype conversion.
+3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` — this is the
+   dtype lesson in miniature: the numbers were already right, only their
+   type was wrong.
 
 ## Independent practice
 

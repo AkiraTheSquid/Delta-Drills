@@ -5,7 +5,7 @@ supporting: [einops.pattern-language, numpy.reshape-flatten]
 new_syntax: [einops-axis-composition]
 faded: [391]
 guided: [357]
-independent: [347, 342, 314]
+independent: [347, 342, 314, 346, 353, 373, 380, 392, 400]
 ---
 
 ## Concept
@@ -118,6 +118,14 @@ def solve(img):
 From the drill bank: q347 (channels laid out horizontally: (c,h,w) →
 (h, c·w) — which two merge, which is slow?), q342 (batch merged into
 height), q314 (batch side by side in a channels-LAST layout).
+
+Also from the bank: q346 (side by side WITHIN channels-first: 'b c h w ->
+c h (b w)'), q353 (merge the chunk axes of (b, n, p, d) back into one
+sequence), q373 (unroll the CHANNEL axis along height, plus a trailing
+singleton — '(c h) w ()'), q380 (batch into height AND channels-last in
+the same pattern), q392 (stack vertically in channels-first — 'c (b h)
+w'), q400 (batch merged into width with the batch index INNERMOST, so
+columns interleave instead of images concatenating).
 
 ## Misconceptions
 

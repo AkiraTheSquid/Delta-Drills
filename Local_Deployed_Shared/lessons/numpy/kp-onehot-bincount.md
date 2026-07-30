@@ -5,7 +5,7 @@ supporting: [numpy.fancy-indexing, numpy.constructors, numpy.argmin-argmax]
 new_syntax: []
 faded: [93]
 guided: [134]
-independent: [150, 124]
+independent: [150, 124, 172]
 ---
 
 ## Concept
@@ -122,6 +122,9 @@ From the drill bank: q150 (one-hot where k must be INFERRED from the labels,
 integer dtype required), q124 (per-row argmax one-hot of a matrix — a 2-D
 cousin: zeros canvas + fancy indexing with `t.arange(rows)` paired against
 the row argmaxes).
+
+Also from the bank: q172 (per-row MODE, ties broken toward the smallest
+value).
 
 ## Misconceptions
 

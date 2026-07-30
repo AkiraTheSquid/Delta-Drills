@@ -4,8 +4,8 @@ title: Cumulative ops and discrete differences
 supporting: [numpy.aggregations, numpy.axis-reductions]
 new_syntax: [torch.cumsum, torch.cumsum#dim, torch.cummax, torch.cummax#dim, torch.cummin, torch.cumprod, torch.diff, torch.diff#dim, torch.diff#n]
 faded: [234, 152, 22]
-guided: []
-independent: [82, 149]
+guided: [68]
+independent: [82, 149, 163]
 ---
 
 ## Concept: cumsum — running totals
@@ -211,10 +211,24 @@ def solve(z):
     return t.diff(z, dim=1)
 ```
 
+## Guided practice
+
+### q68
+1. Non-decreasing is a statement about consecutive PAIRS, and the pairwise
+   gaps are exactly what one function gives you.
+2. Once you have the gaps, the whole question is whether all of them are
+   >= 0.
+3. `bool(t.all(t.diff(z) >= 0))` — the `bool()` matters, the drill wants a
+   Python bool. A length-1 tensor gives an empty diff, and `all()` of
+   nothing is True, which is the answer you want.
+
 ## Independent practice
 
 From the drill bank: q82 (running total along each row), q149 (k-th order
 difference — one keyword, or the operation applied k times).
+
+Also from the bank: q163 (keep the rows that are STRICTLY increasing left
+to right).
 
 ## Misconceptions
 

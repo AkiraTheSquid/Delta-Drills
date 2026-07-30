@@ -4,7 +4,7 @@ title: Tensor constructors — zeros, ones, full, eye, *_like
 supporting: [numpy.ndarray-model]
 new_syntax: []
 faded: [227, 212, 41, 228]
-guided: []
+guided: [48]
 independent: [225, 50, 213]
 ---
 
@@ -24,11 +24,28 @@ convention:
   whatever bytes were in memory). Only worth it when you will overwrite
   every entry immediately.
 
+Three of them side by side — same call shape, different fill:
+
+```python
+import torch as t
+
+print(t.zeros((2, 3)))
+print(t.ones((2, 3)))
+print(t.full((2, 3), 7.0))
+```
+
 PyTorch accepts the shape **either way**: `t.zeros(2, 3)` and `t.zeros((2, 3))`
 both give a 2×3 tensor. That is worth noticing precisely because NumPy does
 *not* allow it — `np.zeros(2, 3)` is a `TypeError`, since NumPy reads the
 second positional argument as the dtype. Code translated from NumPy will use
 the tuple form, and it keeps working.
+
+```python
+loose = t.zeros(3, 4)
+tupled = t.zeros((3, 4))
+assert loose.shape == tupled.shape == (3, 4)
+print(loose.shape, "==", tupled.shape)
+```
 
 ## Worked example
 
@@ -74,10 +91,29 @@ like integers. This is a real difference from NumPy, whose default is
 `float64` — the same line of code gives you half the precision here, which is
 deliberate, because neural networks are trained in 32-bit.
 
+```python
+import torch as t
+
+default = t.ones(3)
+print(default, default.dtype)
+assert default.dtype == t.float32
+```
+
+The values printed as `1.` with a trailing dot, and that dot is the whole
+warning: they are floats, not the integers they look like.
+
 Pass `dtype=` to override: `t.ones((2, 2), dtype=t.bool)` is a matrix of `True`
 (1 as a boolean is `True`); `t.zeros(4, dtype=t.int64)` is integer zeros.
 Checking `dtype` right after construction is the habit that catches the
 float-by-default surprise before it propagates.
+
+```python
+flags = t.ones((2, 2), dtype=t.bool)
+counts = t.zeros(4, dtype=t.int64)
+print(flags)
+print(counts, counts.dtype)
+assert bool(flags.all()) and flags.dtype == t.bool
+```
 
 ## Worked example
 
@@ -127,6 +163,23 @@ shaped like this one". Reaching for `*_like` is both shorter and safer than
 reading off `.shape` and `.dtype` yourself, and in real model code it also
 carries across the device the original lives on.
 
+```python
+import torch as t
+
+x = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)
+print("zeros_like:", t.zeros_like(x).dtype)
+print("zeros(x.shape):", t.zeros(x.shape).dtype)
+```
+
+Same shape from both, but only one of them still knows the tensor was
+integer. Every `*_like` behaves that way:
+
+```python
+print(t.ones_like(x))
+print(t.full_like(x, 7))
+assert t.full_like(x, 7).dtype == x.dtype == t.int32
+```
+
 ## Worked example
 
 ```python
@@ -172,6 +225,25 @@ puts a constant v on the diagonal, and indexing its rows with a permutation
 turns it into a permutation matrix (a trick you will use in the random-number
 KP).
 
+```python
+import torch as t
+
+print(t.eye(3))
+print(5.0 * t.eye(3))
+```
+
+The permutation trick, since it is the least obvious one — reordering the
+identity's ROWS builds the matrix that reorders a vector the same way:
+
+```python
+order = t.tensor([2, 0, 1])
+P = t.eye(3)[order]
+v = t.tensor([10.0, 20.0, 30.0])
+print(P)
+print(P @ v)
+assert (P @ v).tolist() == [30.0, 10.0, 20.0]
+```
+
 ## Worked example
 
 ```python
@@ -206,6 +278,16 @@ def solve(n):
     """n-by-n identity matrix."""
     return t.eye(n)
 ```
+
+## Guided practice
+
+### q48
+1. Nothing is being constructed from scratch here — you need a COPY of v
+   that you are allowed to write into.
+2. Odd indices are a slice with a step, and assigning a scalar into a
+   slice broadcasts it across every selected position.
+3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates
+   the caller's tensor, which the drill checks for.
 
 ## Independent practice
 

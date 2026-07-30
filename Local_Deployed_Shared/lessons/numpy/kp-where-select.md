@@ -4,7 +4,7 @@ title: Conditional values — t.where and where= arguments
 supporting: [numpy.boolean-masking]
 new_syntax: []
 faded: [94, 100]
-guided: []
+guided: [240]
 independent: []
 ---
 
@@ -143,3 +143,13 @@ def solve(a, b):
     out[nz] = a[nz] / b[nz]
     return out
 ```
+
+## Guided practice
+
+### q240
+1. Rounding away from zero is two different roundings depending on sign —
+   which is a selection problem, not an arithmetic one.
+2. One way avoids the branch entirely: round the MAGNITUDE up, then put
+   the sign back.
+3. `t.sign(x) * t.ceil(t.abs(x))` — and check zero: sign(0) is 0, so exact
+   zeros stay exactly zero.

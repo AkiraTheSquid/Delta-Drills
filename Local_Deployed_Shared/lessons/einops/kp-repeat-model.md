@@ -5,7 +5,7 @@ supporting: [einops.split-axes, numpy.tile-repeat-meshgrid, numpy.broadcasting-r
 new_syntax: []
 faded: [317]
 guided: [351]
-independent: [338, 348, 385, 341, 339, 383]
+independent: [338, 348, 385, 341, 339, 383, 352, 355]
 ---
 
 ## Concept
@@ -131,6 +131,10 @@ q385 (columns repeated 4× IN SEQUENCE — which order?), q341 (whole image
 stacked k times vertically — the other order), q339 (per-token scalar
 weights (b, t) expanded to (b, t, d)), q383 (duplicate the whole channel
 BLOCK r times — slow or fast?).
+
+Also from the bank: q352 (stretch vertically by duplicating each ROW in
+place — '(h k)', new index FASTEST), q355 (slice, stack two images
+vertically, then repeat the strip horizontally).
 
 ## Misconceptions
 

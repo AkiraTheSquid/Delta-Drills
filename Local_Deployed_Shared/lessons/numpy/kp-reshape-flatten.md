@@ -24,6 +24,24 @@ The two directions:
   "compute this one for me": `x.reshape(3, -1)` figures out the columns.
 - **`x.flatten()`** — collapse any shape back to 1-D.
 
+```python
+import torch as t
+
+x = t.arange(12)
+print(x.reshape(3, 4))
+print("(2, 6) ", x.reshape(2, 6).shape)
+print("(3, -1)", x.reshape(3, -1).shape)
+print("flatten", x.reshape(3, 4).flatten())
+
+try:
+    x.reshape(5, 3)                      # 15 != 12
+except RuntimeError as err:
+    print("RuntimeError:", err)
+```
+
+The count rule is not a guideline — a mismatch raises rather than padding or
+truncating.
+
 You will also meet **`x.view(shape)`**, which is reshape's stricter sibling: it
 *only* ever re-labels the existing memory and raises if that is impossible.
 `reshape` falls back to copying in that case. Prefer `reshape` unless you
@@ -43,10 +61,37 @@ fills row 0 first. This single fact explains most reshape results, including
 higher-dimensional ones: `reshape(2, 2, 3)` fills the last axis (length 3)
 fastest, the first axis slowest.
 
+```python
+print(t.arange(6).reshape(2, 3))
+print(t.arange(12).reshape(2, 2, 3))
+```
+
+Read the 3-D print bottom-up: the innermost brackets (length 3) count by one,
+so that axis moves fastest; the outermost changes only once.
+
 Column-major ("Fortran") order — first axis fastest — has **no keyword** in
 PyTorch. NumPy spells it `order='F'`; here you get it by changing the axis
 order first and then flattening: `z.T.flatten()` reads the matrix column by
 column.
+
+```python
+z = t.arange(6).reshape(2, 3)
+print(z)
+print("row-major   ", z.flatten())
+print("column-major", z.T.flatten())
+assert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]
+```
+
+Since reshape only re-labels memory, a reshaped tensor is often a **view** —
+writing into it writes the original:
+
+```python
+base = t.zeros(6)
+grid = base.reshape(2, 3)
+grid[0, 0] = 9.0
+print("base:", base)
+assert base[0].item() == 9.0
+```
 
 ## Worked example
 
