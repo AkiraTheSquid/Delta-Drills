@@ -47,6 +47,7 @@ import torch as t
 evens = t.arange(0, 10, 2)
 assert evens.tolist() == [0, 2, 4, 6, 8]
 assert evens.dtype == t.int64
+print(evens, evens.dtype, "  <- no 10")
 ```
 
 Why: notice 10 never appears. The step doesn't change the rule — `arange`
@@ -108,6 +109,7 @@ import torch as t
 # 5 points from 0 to 1, endpoints INCLUDED -> 4 equal gaps of 0.25.
 grid = t.linspace(0.0, 1.0, 5)
 assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
+print(grid, " 5 points,", len(grid) - 1, "gaps")
 ```
 
 Why: both 0.0 and 1.0 are present — that's the opposite of `arange`. Count
@@ -179,6 +181,7 @@ import torch as t
 n = int(round(1.0 / 0.25)) + 1        # 5 points: 0, 0.25, 0.5, 0.75, 1.0
 grid = t.arange(n) * 0.25
 assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
+print("n =", n, "->", grid)
 ```
 
 Why: `t.arange(0, 1.0 + 0.25, 0.25)` would gamble on the endpoint;

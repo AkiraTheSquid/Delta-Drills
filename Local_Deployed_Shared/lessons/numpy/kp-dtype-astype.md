@@ -64,6 +64,8 @@ assert x.dtype == t.int64           # default integer dtype
 y = x.to(t.float32)
 assert y.dtype == t.float32
 assert x.dtype == t.int64           # original unchanged — .to() copies
+print("x", x, x.dtype)
+print("y", y, y.dtype)
 ```
 
 Why: checking `x.dtype` first tells you what conversion is actually needed —
@@ -138,6 +140,7 @@ name = 'float32'
 # PyTorch wants the dtype OBJECT, so look it up from the name.
 z = t.arange(3, dtype=getattr(t, name))
 assert z.dtype == t.float32
+print(repr(name), "->", getattr(t, name), "->", z)
 ```
 
 Why: when a function receives `dtype_str` as an argument, one `getattr` turns
@@ -202,6 +205,8 @@ assert x.numel() * x.element_size() == 3 * 8
 y = x.to(t.float32)
 assert y.element_size() == 4
 assert y.numel() * y.element_size() == 3 * 4
+print(x.dtype, x.numel() * x.element_size(), "bytes")
+print(y.dtype, y.numel() * y.element_size(), "bytes")
 ```
 
 Why: `numel × element_size` makes the cost concrete — a 10×10 float32

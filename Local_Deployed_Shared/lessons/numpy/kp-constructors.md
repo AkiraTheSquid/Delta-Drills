@@ -58,6 +58,8 @@ import torch as t
 board = t.zeros((3, 4))
 same = t.zeros(3, 4)
 assert board.shape == (3, 4) == same.shape
+print(board)
+print("both spellings give", tuple(board.shape), "and", tuple(same.shape))
 ```
 
 Why: shape comes first and everything else is keyword-only, so the constructor
@@ -125,9 +127,11 @@ import torch as t
 # ones gives every entry the value 1 — and 1 as a boolean is True.
 mask = t.ones((3, 4), dtype=t.bool)
 assert bool(mask.all()) and mask.dtype == t.bool
+print(mask)
 
 # The default, for contrast — float32, not float64 and not int.
 assert t.ones(3).dtype == t.float32
+print("asked for bool:", mask.dtype, "| default:", t.ones(3).dtype)
 ```
 
 Why: without `dtype=t.bool` this would be a float tensor of 1.0s that merely
@@ -191,6 +195,9 @@ x = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)
 blank = t.zeros_like(x)
 assert blank.shape == x.shape
 assert blank.dtype == t.int32
+print(blank)
+print("copied dtype:", blank.dtype, "| t.zeros(x.shape) would give:",
+      t.zeros(x.shape).dtype)
 ```
 
 Why: `t.zeros(x.shape)` would lose the dtype (float default) — `_like`
@@ -253,6 +260,7 @@ I = t.eye(3)
 assert I.tolist() == [[1.0, 0.0, 0.0],
                       [0.0, 1.0, 0.0],
                       [0.0, 0.0, 1.0]]
+print(I)
 ```
 
 Why: the identity is a constructor, not something you assemble by loop —

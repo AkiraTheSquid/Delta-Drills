@@ -119,6 +119,9 @@ assert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
 # Column-major walk reads DOWN each column instead. No order= keyword
 # exists, so transpose first and let the row-major walk do the work.
 assert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]
+print(grid)
+print("row-major   ", grid.flatten())
+print("column-major", grid.T.flatten())
 ```
 
 Why each step:

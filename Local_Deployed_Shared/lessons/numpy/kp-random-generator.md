@@ -99,10 +99,13 @@ first_b = t.rand(3, generator=rng_b)
 assert t.equal(first_a, first_b)          # same stream position, same values
 assert first_a.shape == (3,)
 assert bool(((0 <= first_a) & (first_a < 1)).all())   # uniform in [0, 1)
+print("rng_a first draw:", first_a)
+print("rng_b first draw:", first_b)
 
 # Each draw CONSUMES stream: the next request continues where we left off.
 second_a = t.rand(3, generator=rng_a)
 assert not t.equal(first_a, second_a)
+print("rng_a second draw:", second_a)
 
 # A function that receives a generator must use it as given —
 # this is what "use the next n draws from rng" means in the drills.
@@ -112,6 +115,8 @@ def noisy_zeros(rng, n):
 out1 = noisy_zeros(t.Generator().manual_seed(7), 4)
 out2 = noisy_zeros(t.Generator().manual_seed(7), 4)
 assert t.equal(out1, out2)                # reproducible: caller owns the seed
+print("seed 7, run 1:", out1)
+print("seed 7, run 2:", out2)
 ```
 
 Why each step:

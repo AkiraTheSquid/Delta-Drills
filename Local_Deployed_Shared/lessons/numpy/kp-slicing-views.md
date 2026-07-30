@@ -126,16 +126,20 @@ except ValueError:
     raised = True
 assert raised, "torch rejects negative slice steps"
 
+print("x[::-1] raised ValueError:", raised)
+
 # Reverse with flip instead — and flip hands back a COPY.
 rev = t.flip(x, [0])
 assert rev.tolist() == [4.0, 3.0, 2.0, 1.0]
 rev[0] = 99.0                    # writes only into rev
 assert x.tolist() == [1.0, 2.0, 3.0, 4.0]
+print("wrote 99 into the flipped COPY:", rev, "-> x is still", x)
 
 # A plain slice, by contrast, IS a view: writing through it writes x.
 window = x[1:3]
 window[0] = 99.0                 # window[0] is x[1]!
 assert x[1] == 99.0
+print("wrote 99 through a VIEW:       ", window, "-> x is now  ", x)
 x[1] = 2.0                       # undo
 
 # Slice ASSIGNMENT: set positions 1..3 (stop 4 exclusive) to 0 — in place,
@@ -143,6 +147,7 @@ x[1] = 2.0                       # undo
 y = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 y[1:4] = 0.0
 assert y.tolist() == [1.0, 0.0, 0.0, 0.0, 5.0, 6.0]
+print("after y[1:4] = 0:              ", y)
 ```
 
 Why each step:

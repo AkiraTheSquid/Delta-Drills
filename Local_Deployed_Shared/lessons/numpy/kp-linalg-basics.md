@@ -67,6 +67,10 @@ mat = a @ b             # row·column with a sum inside
 assert elem.tolist() == [[5.0, 12.0], [21.0, 32.0]]
 assert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]
 # Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19. Row 0 · column 0.
+print("a * b")
+print(elem)
+print("a @ b")
+print(mat)
 
 # Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.
 p = t.ones((2, 3)) @ t.ones((3, 2))
@@ -158,9 +162,11 @@ a_sys = t.tensor([[2.0, 0.0],
 b_vec = t.tensor([6.0, 8.0])
 x = t.linalg.solve(a_sys, b_vec)
 assert x.tolist() == [3.0, 2.0]
+print("x =", x)
 
 # Verification pattern: substitute back, compare with float tolerance.
 assert t.allclose(a_sys @ x, b_vec)
+print("a @ x =", a_sys @ x, " b =", b_vec)
 ```
 
 Why: `solve` + `allclose` verification — the pair costs one line and

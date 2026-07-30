@@ -148,6 +148,7 @@ assert t.tile(block, (2, 2)).tolist() == mosaic.tolist()
 # And the contrast that matters — same input, other operation:
 assert t.repeat_interleave(t.tensor([1, 2, 3]), 2).tolist() == [1, 1, 2, 2, 3, 3]
 assert t.tensor([1, 2, 3]).repeat(2).tolist() == [1, 2, 3, 1, 2, 3]
+print(mosaic)
 ```
 
 Why: `(2, 2)` lays out two copies along rows and two copies along columns.

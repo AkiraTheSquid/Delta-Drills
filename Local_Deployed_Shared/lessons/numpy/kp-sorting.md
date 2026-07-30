@@ -79,6 +79,10 @@ assert desc.tolist() == [0.75, 0.5, 0.25]
 # Unpacking works too, and reads well when you want both halves.
 values, indices = t.sort(z)
 assert values.tolist() == [0.25, 0.5, 0.75]
+print("input     ", z)
+print("values    ", values)
+print("indices   ", indices)
+print("descending", desc)
 ```
 
 Why each step:
@@ -171,6 +175,9 @@ assert names[order].tolist() == [20, 10, 30]
 best_first = t.argsort(scores, descending=True)
 assert best_first.tolist() == [2, 0, 1]
 assert names[best_first].tolist() == [30, 10, 20]
+print("scores       ", scores, " names", names)
+print("best-first   ", best_first)
+print("names ranked ", names[best_first], " scores", scores[best_first])
 ```
 
 Read the last two lines: name 30 comes first because score 0.75 is the highest,
@@ -257,6 +264,11 @@ assert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]
 top = t.topk(z, 2)
 assert top.values.tolist() == [0.75, 0.5]
 assert top.indices.tolist() == [2, 0]
+print("dim=1 (within rows)")
+print(t.sort(m, dim=1).values)
+print("dim=0 (down columns) — unchanged, columns were already ascending")
+print(t.sort(m, dim=0).values)
+print("topk:", top)
 ```
 
 The second assertion is the one to sit with: sorting down the columns left this
