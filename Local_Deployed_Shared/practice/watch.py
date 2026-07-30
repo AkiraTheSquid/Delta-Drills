@@ -219,6 +219,39 @@ def check_invariants():
         "runner.js no longer uses questionNeedsEinops gating — update RUNTIME_CONTRACT.md"
     )
 
+    # notebook.js recognises a silent-but-successful run by matching the exact
+    # string runner.js substitutes for empty output, so it can report the cell's
+    # assertion count instead. Reword it in one file only and every quiet cell
+    # silently goes back to saying "no printed output".
+    notebook = _read(os.path.join(HERE, "notebook.js"))
+    no_output = "✓ Ran successfully (no printed output)"
+    assert no_output in runner, (
+        f"runner.js no longer emits {no_output!r} — notebook.js matches on it"
+    )
+    assert no_output in notebook, (
+        f"notebook.js lost its copy of {no_output!r} — silent cells will stop "
+        "reporting their passed checks"
+    )
+
+    # Every cell is executed through the harness: it is what gives a bare
+    # trailing expression its Jupyter-style echo, what reports the names a
+    # silent cell bound, and what keeps traceback line numbers cell-relative.
+    for marker in ("_delta_cell", "_delta_bound", "redirect_stdout"):
+        assert marker in notebook, f"notebook.js lost the run harness piece {marker!r}"
+
+    # The runnable/static split is the authoring format's own marker, produced
+    # by md() in lessons.js and consumed here. If either half goes, every fence
+    # becomes a cell or none of them do.
+    lessons = _read(os.path.join(HERE, "lessons.js"))
+    assert 'data-fence=' in lessons, (
+        "lessons.js md() no longer emits data-fence — notebook.js cannot tell a "
+        "runnable ```python fence from a ```python no-run one"
+    )
+    assert "nb-scope" in lessons and "nb-scope" in notebook, (
+        "the nb-scope contract is broken — lessons.js marks the regions whose "
+        "fences validate_lessons.py executes, notebook.js only mounts inside them"
+    )
+
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':

@@ -5,8 +5,8 @@ Checks, per KP markdown file:
   1. frontmatter kc exists in kc_registry.json; supporting KCs exist; sections known
   2. every segment has one non-empty Concept, one Python Worked example,
      and one Faded exercise
-  3. every plain ```python fence in Concept/Worked example EXECUTES (shared namespace
-     per KP; ```python no-run fences are skipped)
+  3. every plain ```python fence in Concept/Worked example EXECUTES, with a fresh
+     namespace PER SEGMENT (```python no-run fences are skipped)
   4. every Faded-practice ### q<id> has starter + solution fences, qid exists in the
      bank, and the solution PASSES the bank question's test_cases
   5. guided/independent qids exist in the bank
@@ -119,9 +119,19 @@ def check_kp(path, registry, bank, errors):
             errors.append(f"{name}: empty/missing '## {sec}'")
 
     # 3. executable prose/worked-example code — run fences in DOCUMENT order
-    # (segment by segment), since later segments may build on earlier ones.
-    ns = {}
+    # within each segment, against a namespace that is FRESH PER SEGMENT.
+    #
+    # This mirrors what the learner gets. practice/notebook.js turns every one
+    # of these fences into a runnable notebook cell, and the lesson screen shows
+    # ONE SEGMENT PER PAGE — so the only cells in scope when someone presses Run
+    # are that segment's. A fence that quietly depended on a name defined in an
+    # earlier segment would pass a KP-wide namespace here and hand the learner a
+    # NameError, which is the failure this check exists to make impossible.
+    #
+    # Practically it costs nothing: every segment already opens with its own
+    # import (122 of 122 passed the day this was tightened).
     for si, seg in enumerate(kp["segments"]):
+        ns = {}
         for label, text in (("Concept", seg["concept"]), ("Worked example", seg["worked"])):
             for code in code_fences(text, "python"):
                 try:

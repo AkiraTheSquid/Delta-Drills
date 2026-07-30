@@ -21,14 +21,24 @@ independent: [144, 84]              # bank ids for unaided practice
 
 ## Concept
 Prose teaching the general idea/procedure. Plain ```python fences here are
-EXECUTED by the validator (shared namespace per file, top to bottom).
-Use ```python no-run for fences that intentionally error or are pseudocode.
+EXECUTED by the validator and become RUNNABLE NOTEBOOK CELLS for the learner —
+those are the same thing, so break the prose up with as many small fences as the
+explanation has moving parts. Cells within a segment share state top to bottom,
+but each SEGMENT starts fresh (it is its own page), so every segment repeats its
+own imports. Use ```python no-run for fences that intentionally error or are
+pseudocode: those are illustrative only and get no Run button.
+
+Write fences that show something — print, end in a bare expression, or `assert`
+a claim worth proving. Nothing is "just setup"; a silent cell reports the names
+it bound, but a cell that demonstrates its point is better.
 
 ## Watch out
 - **Short trap name** — concept-specific misconception and correction.
 
 ## Worked example
-Heavily commented code + step-by-step walkthrough. Fences executed too.
+Heavily commented code + step-by-step walkthrough. Exactly one plain ```python
+fence; it is executed and runnable like the Concept ones, and it continues the
+same namespace.
 
 ## Faded practice
 ### q111

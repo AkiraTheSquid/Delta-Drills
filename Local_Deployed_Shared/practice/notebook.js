@@ -14,16 +14,24 @@
 
    WHICH BLOCKS BECOME CELLS
 
-   Only the ones inside the worked example. A lesson's explanation also
-   contains fenced code, but those are illustrations, not programs — snippets
-   like `t.arange(6).reshape(2, 3)   # → [[0, 1, 2], [3, 4, 5]]`, written to be
-   read beside the sentence that explains them. They name no imports and often
-   are not even whole statements, so a Run button on one is a button that is
-   guaranteed to produce a traceback. Measured across the current content:
-   122 segments carry 122 worked-example blocks, every one of which opens with
-   its own import and runs standalone, against 13 illustrative blocks in the
-   explanation bodies. The split is not a heuristic about the text; it is the
-   structural distinction the lesson format already makes.
+   Every fenced block on the page except the ones the author marked `no-run`.
+
+   That marker is not new and it is not a heuristic about the text. The lesson
+   authoring format already draws exactly this line: `validate_lessons.py`
+   executes every plain ```python fence in a KP — explanation and worked
+   example alike — against one shared namespace, in document order, and skips
+   ```python no-run fences, which exist precisely for pseudocode and blocks
+   written to raise. So every cell this file mounts is a block CI already
+   proves runs, in the order CI already proves it runs in. `md()` in
+   practice/lessons.js carries the info string through as `data-fence` so it
+   can be read here.
+
+   This used to be scoped to `.lesson-worked`, on the reasoning that
+   explanation fences were fragments that would only produce tracebacks. The
+   marker makes that unnecessary, and the old scoping had a cost that showed
+   up the first time anyone read a lesson: a page with one runnable block at
+   the bottom, and the four places in the prose where the learner most wants
+   to try something — "which is why `.contiguous()` exists" — left inert.
 
    HOW STATE WORKS ACROSS CELLS
 
@@ -32,18 +40,49 @@
    that says `flat = t.arange(9)` and a later one that says `flat.reshape(3, 3)`
    would fail on its own.
 
-   Running a cell therefore executes every cell above it as well, concatenated,
-   and shows only the output. That gives ordinary notebook semantics on a
-   stateless runner. The cost is honest and worth naming: editing an early cell
-   changes what the later ones see, exactly as it would in Jupyter, and a slow
-   early cell is paid for again by every cell below it. The alternative — a
-   persistent per-learner interpreter — is a server-side session to build,
-   expire and secure, which is not worth it for optional experimentation.
+   Running a cell therefore executes every cell above it as well, and shows
+   only the clicked cell's own output — the prefix is a way of rebuilding
+   state, and its prints already sit under its own Run buttons. That gives
+   ordinary notebook semantics on a stateless runner. The cost is honest and
+   worth naming: editing an early cell changes what the later ones see, exactly
+   as it would in Jupyter, and a slow early cell is paid for again by every
+   cell below it. The alternative — a persistent per-learner interpreter — is a
+   server-side session to build, expire and secure, which is not worth it for
+   optional experimentation.
 
-   Every worked example in the bank today holds exactly one block, so this
-   never actually fires. It is here because the moment a lesson is authored
-   with two, the alternative is a second block that fails on a name the first
-   one defined — a failure the author would have no reason to expect.
+   WHY THE CELLS ARE EXECUTED THROUGH A HARNESS
+
+   Concatenating the prefix and handing the runner one string would work, but
+   it loses two things a notebook is expected to have.
+
+   The first is the echo. In Jupyter a cell ending in a bare expression prints
+   its value; that is why `a.shape` is a useful thing to type. Plain `exec` of
+   a script prints nothing, so before this the honest report for most cells was
+   "no printed output" — a Run button whose whole reward was being told nothing
+   happened. `_delta_cell` parses the cell, and when its last statement is an
+   expression it evaluates that separately and prints the repr, skipping None
+   so `print(...)` and in-place calls do not echo a spurious "None".
+
+   The second is line numbers. A traceback from a concatenated program counts
+   lines from the top of the PROGRAM, so an error in the cell the learner
+   clicked is reported at a line they cannot see. Compiling each cell with its
+   own `<cell N>` filename makes the reported line the line in that cell.
+
+   Both are done with `ast` in the runtime rather than by pattern-matching the
+   source in JavaScript. A regex that tries to decide "is this last line an
+   expression?" gets multi-line calls, decorators and trailing comments wrong,
+   and gets them wrong silently.
+
+   WHAT "IT RAN" LOOKS LIKE
+
+   A cell that has run keeps an execution counter (`In [3]`), the way a
+   notebook does, so the page shows at a glance what has been run and in what
+   order. The counter is shared across the page and increments per run, so
+   re-running a cell moves it to the front.
+
+   When a run prints nothing at all, saying "no printed output" is true but
+   useless. If the cell contained assertions, the count of them is reported
+   instead — those are checks that just passed, which is the actual result.
 
    WHAT RUNS, AND FOR WHOM
 
@@ -65,6 +104,114 @@ const LessonNotebook = (() => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
+  /* The exact text `DeltaRunner.runSnippet` substitutes when a run succeeded
+     and wrote nothing to stdout or stderr. Matched rather than imported
+     because the runner returns one already-collapsed string; the alternative
+     is a second return field threaded through both of its branches for this
+     one caller. styles/practice/watch.py asserts runner.js still contains it,
+     so the coupling fails loudly instead of silently reporting every quiet
+     cell as an ordinary empty run. */
+  const NO_OUTPUT = "✓ Ran successfully (no printed output)";
+
+  /* Longest repr shown per name in the fallback summary. A tensor's repr runs
+     to many lines, and the summary is a reminder of what the cell bound, not a
+     substitute for printing the thing. */
+  const SUMMARY_WIDTH = 160;
+  const SUMMARY_MAX = 6;
+
+  /* Executed ahead of the cells on every run. Kept to one definition with
+     reserved names rather than inlined per cell, so a learner reading a
+     traceback sees their own code and one frame they can ignore.
+
+     Every name here is `_delta_`-prefixed because this shares a namespace with
+     the learner's code: a helper called `names` would be clobbered by, or
+     would clobber, a cell that used that word. */
+  const HARNESS = [
+    "import ast as _delta_ast",
+    "import contextlib as _delta_ctx",
+    "import io as _delta_io",
+    "import sys as _delta_sys",
+    "",
+    "",
+    // Top-level names a cell binds, in source order. Used only to say what a
+    // silent cell did; nested and conditional bindings are deliberately not
+    // chased, because the summary describes the cell as written.
+    "def _delta_bound(_delta_body):",
+    "    _delta_out = []",
+    "    for _delta_node in _delta_body:",
+    "        if isinstance(_delta_node, _delta_ast.Assign):",
+    "            for _delta_tgt in _delta_node.targets:",
+    "                if isinstance(_delta_tgt, _delta_ast.Name):",
+    "                    _delta_out.append(_delta_tgt.id)",
+    "        elif isinstance(_delta_node, (_delta_ast.AnnAssign, _delta_ast.AugAssign)):",
+    "            if isinstance(_delta_node.target, _delta_ast.Name):",
+    "                _delta_out.append(_delta_node.target.id)",
+    "        elif isinstance(_delta_node, (_delta_ast.FunctionDef, _delta_ast.ClassDef)):",
+    "            _delta_out.append(_delta_node.name)",
+    "    return _delta_out",
+    "",
+    "",
+    "def _delta_show(_delta_value):",
+    "    try:",
+    "        _delta_text = repr(_delta_value)",
+    "    except Exception:",
+    "        return '<unprintable>'",
+    "    _delta_text = ' '.join(_delta_text.split())",
+    `    if len(_delta_text) > ${SUMMARY_WIDTH}:`,
+    `        _delta_text = _delta_text[:${SUMMARY_WIDTH - 1}] + '…'`,
+    "    return _delta_text",
+    "",
+    "",
+    "def _delta_cell(_delta_src, _delta_name, _delta_echo):",
+    "    _delta_tree = _delta_ast.parse(_delta_src, _delta_name)",
+    "    _delta_ns = globals()",
+    "    _delta_body = _delta_tree.body",
+    // Captured rather than written straight through, for two reasons. The cell
+    // can be asked afterwards whether it said anything; and the prefix cells'
+    // output is DISCARDED, because their output already sits under their own
+    // Run buttons — replaying it into the clicked cell's pane would mean cell 4
+    // showed cells 1-3's prints above its own, growing with every cell down the
+    // page. A prefix that RAISED is the exception: whatever it printed before
+    // failing is the context for the traceback, so that gets written out.
+    "    _delta_buf = _delta_io.StringIO()",
+    "    _delta_ok = False",
+    "    try:",
+    "        with _delta_ctx.redirect_stdout(_delta_buf):",
+    "            if _delta_echo and _delta_body and isinstance(_delta_body[-1], _delta_ast.Expr):",
+    "                _delta_head = _delta_ast.Module(body=_delta_body[:-1], type_ignores=[])",
+    "                exec(compile(_delta_head, _delta_name, 'exec'), _delta_ns)",
+    "                _delta_tail = _delta_ast.Expression(_delta_body[-1].value)",
+    "                _delta_val = eval(compile(_delta_tail, _delta_name, 'eval'), _delta_ns)",
+    // Jupyter does not echo None either: it is what a call with no return
+    // value gives back, and printing it would put "None" under every cell
+    // that ends in print() or an in-place operation.
+    "                if _delta_val is not None:",
+    "                    print(repr(_delta_val))",
+    "            else:",
+    "                exec(compile(_delta_tree, _delta_name, 'exec'), _delta_ns)",
+    "        _delta_ok = True",
+    "    finally:",
+    "        if _delta_echo or not _delta_ok:",
+    "            _delta_sys.stdout.write(_delta_buf.getvalue())",
+    // Nothing printed and nothing to echo — the cell built something. Say what
+    // it built, rather than reporting the run as empty.
+    "    if _delta_echo and not _delta_buf.getvalue().strip():",
+    "        _delta_seen = []",
+    "        for _delta_key in _delta_bound(_delta_body):",
+    "            if _delta_key in _delta_ns and _delta_key not in _delta_seen:",
+    "                _delta_seen.append(_delta_key)",
+    `        for _delta_key in _delta_seen[:${SUMMARY_MAX}]:`,
+    "            print(_delta_key, '=', _delta_show(_delta_ns[_delta_key]))",
+    "",
+  ].join("\n");
+
+  /* JSON string syntax is a subset of Python string syntax — the escapes
+     JSON.stringify emits (\", \\, \n, \t, \uXXXX) all mean the same thing in a
+     Python literal, and it leaves other non-ASCII as literal UTF-8, which is
+     what a Python 3 source file is read as. So this is a safe way to hand a
+     cell's source to the runtime as data rather than as code to be spliced. */
+  const _pyLiteral = (text) => JSON.stringify(String(text == null ? "" : text));
+
   /* One cell's markup. The code is rendered as plain text rather than an
      editable field: these are the lesson's examples, and an edit box invites
      the learner to lose the example they were given. `contenteditable` on the
@@ -79,6 +226,9 @@ const LessonNotebook = (() => {
     "</div>" +
     '<div class="nb-cell-bar">' +
     '<button type="button" class="nb-run">Run</button>' +
+    // Empty until the cell has run, then it keeps its execution number the way
+    // a notebook's In[] prompt does, so the page shows what has been run.
+    '<span class="nb-count" aria-hidden="true"></span>' +
     '<span class="nb-status" aria-live="polite"></span>' +
     "</div>" +
     '<pre class="nb-out hidden"></pre>' +
@@ -89,27 +239,54 @@ const LessonNotebook = (() => {
     return node ? node.innerText.replace(/ /g, " ") : "";
   };
 
-  /* Every cell up to and including this one, joined. See the note above on why
-     the whole prefix is re-run rather than only the cell that was clicked. */
+  /* Every cell up to and including this one, each handed to the harness as
+     data. See the note above on why the whole prefix is re-run rather than
+     only the cell that was clicked, and why the harness exists at all.
+
+     Only the clicked cell echoes. Re-running the prefix is a means of
+     rebuilding state, not something the learner asked to see the value of. */
   const _programUpTo = (cells, index) =>
+    HARNESS +
     cells
       .slice(0, index + 1)
-      .map(_codeOf)
-      .join("\n\n");
+      .map(
+        (cell, i) =>
+          `_delta_cell(${_pyLiteral(_codeOf(cell))}, ` +
+          `${_pyLiteral(`<cell ${i + 1}>`)}, ${i === index ? "True" : "False"})`,
+      )
+      .join("\n");
+
+  /* Assertions that a silent run just passed.
+
+     Counted from the source rather than reported by the runtime, which is a
+     real limitation worth stating: an `assert` inside a function that is never
+     called is counted here and never checked. Lesson cells assert at the top
+     level, and the alternative — an audited counter in the harness — would
+     mean rewriting the learner's code to instrument it. */
+  const _checkCount = (code) => (String(code).match(/^[ \t]*assert\b/gm) || []).length;
+
+  /* The whole page shares one counter, incremented per run, exactly like a
+     notebook's In[] prompt: the numbers say what ran and in what order rather
+     than how many times each cell has been clicked. */
+  let runSeq = 0;
 
   const _runCell = async (cells, index) => {
     const cell = cells[index];
     const button = cell.querySelector(".nb-run");
     const status = cell.querySelector(".nb-status");
+    const count = cell.querySelector(".nb-count");
     const out = cell.querySelector(".nb-out");
     if (!button || !out) return;
 
     button.disabled = true;
     button.textContent = "Running…";
     status.textContent = index > 0 ? `running cells 1–${index + 1}` : "";
+    if (count) count.textContent = "In [*]";
+    cell.classList.add("is-running");
     out.classList.remove("hidden", "is-error");
     out.textContent = "";
 
+    let failed = false;
     try {
       const result = await window.DeltaRunner.runSnippet(_programUpTo(cells, index), {
         question: window.LessonGate?.activeQuestion || null,
@@ -117,22 +294,49 @@ const LessonNotebook = (() => {
           if (message) out.textContent = message;
         },
       });
-      out.textContent = result.text;
-      out.classList.toggle("is-error", !!result.failed);
+      failed = !!result.failed;
+      const checks = _checkCount(_codeOf(cell));
+      out.textContent =
+        !failed && result.text === NO_OUTPUT && checks
+          ? `✓ ${checks} check${checks === 1 ? "" : "s"} passed`
+          : result.text;
+      out.classList.toggle("is-error", failed);
     } catch (err) {
+      failed = true;
       out.textContent = "Error: " + err.message;
       out.classList.add("is-error");
     }
 
+    runSeq += 1;
+    cell.classList.remove("is-running");
+    cell.classList.add("has-run");
+    cell.classList.toggle("has-failed", failed);
+    if (count) count.textContent = `In [${runSeq}]`;
     status.textContent = "";
     button.disabled = false;
     button.textContent = "Run";
   };
 
-  /* Turn the fenced code blocks inside `host` into runnable cells.
+  /* Exactly the fences `validate_lessons.py` executes.
 
-     `host` is the worked-example container, NOT the whole page — see the note
-     above on why the explanation's illustrative blocks stay static.
+     It filters on the info string being the bare word `python`, so `python
+     no-run` is skipped and so is anything else. Matching that exactly, rather
+     than "anything not marked no-run", keeps one rule: a block gets a Run
+     button if and only if CI runs it. A `text` fence or a `## Watch out`
+     snippet that CI never touches would otherwise get a button whose failure
+     nobody would find until a learner pressed it. */
+  const _isRunnable = (pre) => (pre?.dataset?.fence || "") === "python";
+
+  /* Turn the runnable fenced blocks inside `host` into cells.
+
+     Scope comes from the caller, which marks the regions whose fences CI
+     executes with `.nb-scope` — the concept body and the worked example. That
+     keeps the two decisions apart: the lesson page knows which of its sections
+     are programs, this file knows what makes a block runnable.
+
+     Document order IS execution order, and it is the same order
+     `validate_lessons.py` uses, so the state a cell inherits on screen is the
+     state CI proved it inherits.
 
      Operates on rendered DOM rather than on markdown so there is exactly one
      markdown renderer in the app: the lesson body, the ladder's inline example
@@ -140,8 +344,9 @@ const LessonNotebook = (() => {
      this decides which of those become interactive. */
   const mount = (host) => {
     if (!host || !window.DeltaRunner) return 0;
-    const blocks = Array.from(host.querySelectorAll("pre > code")).filter(
-      (node) => !node.closest(".nb-cell"),
+    runSeq = 0;
+    const blocks = Array.from(host.querySelectorAll(".nb-scope pre > code")).filter(
+      (node) => !node.closest(".nb-cell") && _isRunnable(node.parentElement),
     );
     blocks.forEach((node, index) => {
       const pre = node.parentElement;

@@ -18,10 +18,39 @@ A Python list is a bag of pointers: each element can be a different type, live
 anywhere in memory, and even be another list of a different length. A tensor is
 the opposite: **one block of memory holding elements that are all the same
 type**, plus a small amount of metadata describing how to interpret that block.
-A freshly built tensor lays those elements out contiguously; operations that
+
+By convention PyTorch is imported once per file as `import torch as t`. That
+short alias is what the ARENA exercises use, so every `t.` below is the same
+library you would import as `torch`.
+
+```python
+import torch as t
+
+# A list can hold three different types at once.
+print([type(item).__name__ for item in [1, "two", [3]]])
+
+# A tensor holds one, for every element, and says which one.
+a = t.tensor([[1, 2, 3], [4, 5, 6]])
+print(a)
+print("dtype of the whole block:", a.dtype)
+```
+
+A freshly built tensor lays those elements out contiguously. Operations that
 only re-describe the block — transposing, slicing with a step — hand back a
-tensor that shares the same memory in a different reading order, which is why
-`.contiguous()` exists.
+tensor that *shares the same memory* in a different reading order. That is
+cheap, and it is why `.contiguous()` exists: it is how you ask for the copy.
+
+```python
+at = a.T  # `a` is still defined — this cell continues the one above.
+
+# Same numbers, same memory, read down the columns instead of along the rows.
+print("shares storage with a:", at.data_ptr() == a.data_ptr())
+print("still in reading order:", at.is_contiguous())
+
+packed = at.contiguous()
+print("the copy owns its memory:", packed.data_ptr() != a.data_ptr())
+assert t.equal(packed, at)
+```
 
 Why this design? Because when every element is the same type and sits at a
 predictable memory address, PyTorch can hand whole-tensor operations to fast
@@ -31,11 +60,16 @@ here avoids writing Python `for` loops over elements.
 
 The general procedure for turning existing Python data into a tensor is
 `t.tensor(data)`: it walks the (possibly nested) sequence, finds a common
-element type, and copies the values into one block.
+element type, and copies the values into one block. Nesting of any depth goes
+through the same procedure.
 
-By convention PyTorch is imported once per file as `import torch as t`. That
-short alias is what the ARENA exercises use, so every `t.` you see below is the
-same library you would import as `torch`.
+```python
+cube = t.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+print("shape:", cube.shape)
+
+# A cell ending in a bare expression prints its value, the way a notebook does.
+cube * 10
+```
 
 ## Worked example
 
@@ -86,6 +120,15 @@ matrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4
 (columns). Axis 0 is always the outermost nesting level, so a flat list becomes
 1-D, a list of equal-length lists becomes 2-D, and a list of those becomes 3-D.
 
+```python
+import torch as t
+
+grid = t.tensor([[1, 2, 3], [4, 5, 6]])
+print("shape:", grid.shape)
+print("axis 0 (rows)   :", grid.shape[0])
+print("axis 1 (columns):", grid.shape[1])
+```
+
 Two smaller readings come off the same metadata:
 
 - **`ndim`** — how many axes there are. This is the nesting depth, and it is an
@@ -96,6 +139,14 @@ Two smaller readings come off the same metadata:
 
 Getting those two confused is the classic first-week error, and it is worth
 fixing now: `ndim` counts axes, `numel()` counts numbers.
+
+```python
+# Four numbers, three nestings, three different answers for ndim — and the same
+# answer for numel every time.
+for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
+    x = t.tensor(data)
+    print(tuple(x.shape), "ndim", x.ndim, "numel", x.numel())
+```
 
 ## Worked example
 
@@ -154,11 +205,38 @@ That has a consequence people meet by accident: when you build a tensor from
 mixed Python numbers, PyTorch cannot keep some entries as ints and some as
 floats. It picks ONE type that can hold everything, so a single float anywhere
 in the input turns the whole tensor into `torch.float32`. All-integer input
-gives you `torch.int64` instead. Ordinary division still works on that —
-`a / 2` quietly hands back a float tensor — but anything that has to *write* a
-float back into an integer block does not: `a /= 2` and `a.mean()` both raise
-rather than silently rounding. When you know you want floats, say so up front
-by passing `dtype=` instead of relying on how the input happened to be typed.
+gives you `torch.int64` instead.
+
+```python
+import torch as t
+
+print(t.tensor([1, 2, 3]).dtype)
+print(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block
+
+# Say what you want up front rather than relying on how the input is spelled.
+print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
+```
+
+Ordinary division still works on an integer tensor — `a / 2` quietly hands back
+a *new* float tensor — but anything that has to write a float back into the
+integer block does not. `a /= 2` and `a.mean()` raise rather than silently
+rounding, and the error is the useful kind: it happens where the type is wrong,
+not three steps later where the numbers are.
+
+```python
+ints = t.tensor([2, 4, 6])
+print("ints / 2   ->", (ints / 2).dtype, "(a new tensor)")
+
+try:
+    ints /= 2
+except RuntimeError as exc:
+    print("ints /= 2  ->", type(exc).__name__)
+
+try:
+    ints.mean()
+except RuntimeError as exc:
+    print("ints.mean()->", type(exc).__name__)
+```
 
 Two tensors can hold the same numbers in the same layout and still disagree on
 dtype. Shape and dtype are independent, and code that checks only one of them
