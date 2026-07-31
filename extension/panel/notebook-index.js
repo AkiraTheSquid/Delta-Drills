@@ -579,257 +579,68 @@ window.DD_NOTEBOOKS = {
     "einops.channel-groups-temporal": "eo-3"
   },
   "kps": {
-    "numpy.ndarray-model": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-ndarray-model"
-    },
-    "numpy.constructors": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-constructors"
-    },
-    "numpy.slicing-views": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-slicing-views"
-    },
-    "numpy.ranges": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-ranges"
-    },
-    "numpy.dtype-astype": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-dtype-astype"
-    },
-    "numpy.reshape-flatten": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-reshape-flatten"
-    },
-    "numpy.elementwise-ufuncs": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-elementwise-ufuncs"
-    },
-    "numpy.aggregations": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-aggregations"
-    },
-    "numpy.sorting": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-sorting"
-    },
-    "numpy.tile-repeat-meshgrid": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-tile-repeat-meshgrid"
-    },
-    "numpy.random-generator": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-random-generator"
-    },
-    "numpy.linalg-basics": {
-      "lesson": "np-1",
-      "anchor": "dd-kp-numpy-linalg-basics"
-    },
-    "numpy.boolean-masking": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-boolean-masking"
-    },
-    "numpy.where-select": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-where-select"
-    },
-    "numpy.nonzero-argwhere": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-nonzero-argwhere"
-    },
-    "numpy.argmin-argmax": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-argmin-argmax"
-    },
-    "numpy.fancy-indexing": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-fancy-indexing"
-    },
-    "numpy.unique": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-unique"
-    },
-    "numpy.diag-triangles": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-diag-triangles"
-    },
-    "numpy.argsort-ranking": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-argsort-ranking"
-    },
-    "numpy.nan-handling": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-nan-handling"
-    },
-    "numpy.pad-borders": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-pad-borders"
-    },
-    "numpy.index-grids": {
-      "lesson": "np-2",
-      "anchor": "dd-kp-numpy-index-grids"
-    },
-    "numpy.broadcasting-rules": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-broadcasting-rules"
-    },
-    "numpy.axis-reductions": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-axis-reductions"
-    },
-    "numpy.centering": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-centering"
-    },
-    "numpy.rescaling": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-rescaling"
-    },
-    "numpy.cumulative-diff": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-cumulative-diff"
-    },
-    "numpy.dot-matmul-patterns": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-dot-matmul-patterns"
-    },
-    "numpy.stack-concat-interleave": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-stack-concat-interleave"
-    },
-    "numpy.onehot-bincount": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-onehot-bincount"
-    },
-    "numpy.topk-selection": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-topk-selection"
-    },
-    "numpy.inplace-out": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-inplace-out"
-    },
-    "numpy.sliding-windows": {
-      "lesson": "np-3",
-      "anchor": "dd-kp-numpy-sliding-windows"
-    },
-    "numpy.pairwise-metrics": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-pairwise-metrics"
-    },
-    "numpy.scatter-gather": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-scatter-gather"
-    },
-    "numpy.memory-model": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-memory-model"
-    },
-    "numpy.set-combinatorics": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-set-combinatorics"
-    },
-    "numpy.window-stencil": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-window-stencil"
-    },
-    "numpy.random-sampling": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-random-sampling"
-    },
-    "numpy.geometry-transforms": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-geometry-transforms"
-    },
-    "numpy.linalg-applied": {
-      "lesson": "np-4",
-      "anchor": "dd-kp-numpy-linalg-applied"
-    },
-    "einsum.notation-model": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-notation-model"
-    },
-    "einsum.reductions": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-reductions"
-    },
-    "einsum.dot-frobenius": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-dot-frobenius"
-    },
-    "einsum.outer-products": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-outer-products"
-    },
-    "einsum.matvec-matmul": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-matvec-matmul"
-    },
-    "einsum.diag-trace": {
-      "lesson": "es-1",
-      "anchor": "dd-kp-einsum-diag-trace"
-    },
-    "einsum.batch-dims": {
-      "lesson": "es-2",
-      "anchor": "dd-kp-einsum-batch-dims"
-    },
-    "einsum.broadcast-scaling": {
-      "lesson": "es-2",
-      "anchor": "dd-kp-einsum-broadcast-scaling"
-    },
-    "einsum.attention-patterns": {
-      "lesson": "es-2",
-      "anchor": "dd-kp-einsum-attention-patterns"
-    },
-    "einsum.matrix-forms": {
-      "lesson": "es-2",
-      "anchor": "dd-kp-einsum-matrix-forms"
-    },
-    "einops.pattern-language": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-pattern-language"
-    },
-    "einops.merge-axes": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-merge-axes"
-    },
-    "einops.split-axes": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-split-axes"
-    },
-    "einops.singleton-and-lists": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-singleton-and-lists"
-    },
-    "einops.grids-montage": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-grids-montage"
-    },
-    "einops.patches-space-depth": {
-      "lesson": "eo-1",
-      "anchor": "dd-kp-einops-patches-space-depth"
-    },
-    "einops.reduce-model": {
-      "lesson": "eo-2",
-      "anchor": "dd-kp-einops-reduce-model"
-    },
-    "einops.pooling": {
-      "lesson": "eo-2",
-      "anchor": "dd-kp-einops-pooling"
-    },
-    "einops.repeat-model": {
-      "lesson": "eo-3",
-      "anchor": "dd-kp-einops-repeat-model"
-    },
-    "einops.dl-flatten-heads": {
-      "lesson": "eo-3",
-      "anchor": "dd-kp-einops-dl-flatten-heads"
-    },
-    "einops.channel-groups-temporal": {
-      "lesson": "eo-3",
-      "anchor": "dd-kp-einops-channel-groups-temporal"
-    }
+    "numpy.ndarray-model": "dd-kp-numpy-ndarray-model",
+    "numpy.constructors": "dd-kp-numpy-constructors",
+    "numpy.slicing-views": "dd-kp-numpy-slicing-views",
+    "numpy.ranges": "dd-kp-numpy-ranges",
+    "numpy.dtype-astype": "dd-kp-numpy-dtype-astype",
+    "numpy.reshape-flatten": "dd-kp-numpy-reshape-flatten",
+    "numpy.elementwise-ufuncs": "dd-kp-numpy-elementwise-ufuncs",
+    "numpy.aggregations": "dd-kp-numpy-aggregations",
+    "numpy.sorting": "dd-kp-numpy-sorting",
+    "numpy.tile-repeat-meshgrid": "dd-kp-numpy-tile-repeat-meshgrid",
+    "numpy.random-generator": "dd-kp-numpy-random-generator",
+    "numpy.linalg-basics": "dd-kp-numpy-linalg-basics",
+    "numpy.boolean-masking": "dd-kp-numpy-boolean-masking",
+    "numpy.where-select": "dd-kp-numpy-where-select",
+    "numpy.nonzero-argwhere": "dd-kp-numpy-nonzero-argwhere",
+    "numpy.argmin-argmax": "dd-kp-numpy-argmin-argmax",
+    "numpy.fancy-indexing": "dd-kp-numpy-fancy-indexing",
+    "numpy.unique": "dd-kp-numpy-unique",
+    "numpy.diag-triangles": "dd-kp-numpy-diag-triangles",
+    "numpy.argsort-ranking": "dd-kp-numpy-argsort-ranking",
+    "numpy.nan-handling": "dd-kp-numpy-nan-handling",
+    "numpy.pad-borders": "dd-kp-numpy-pad-borders",
+    "numpy.index-grids": "dd-kp-numpy-index-grids",
+    "numpy.broadcasting-rules": "dd-kp-numpy-broadcasting-rules",
+    "numpy.axis-reductions": "dd-kp-numpy-axis-reductions",
+    "numpy.centering": "dd-kp-numpy-centering",
+    "numpy.rescaling": "dd-kp-numpy-rescaling",
+    "numpy.cumulative-diff": "dd-kp-numpy-cumulative-diff",
+    "numpy.dot-matmul-patterns": "dd-kp-numpy-dot-matmul-patterns",
+    "numpy.stack-concat-interleave": "dd-kp-numpy-stack-concat-interleave",
+    "numpy.onehot-bincount": "dd-kp-numpy-onehot-bincount",
+    "numpy.topk-selection": "dd-kp-numpy-topk-selection",
+    "numpy.inplace-out": "dd-kp-numpy-inplace-out",
+    "numpy.sliding-windows": "dd-kp-numpy-sliding-windows",
+    "numpy.pairwise-metrics": "dd-kp-numpy-pairwise-metrics",
+    "numpy.scatter-gather": "dd-kp-numpy-scatter-gather",
+    "numpy.memory-model": "dd-kp-numpy-memory-model",
+    "numpy.set-combinatorics": "dd-kp-numpy-set-combinatorics",
+    "numpy.window-stencil": "dd-kp-numpy-window-stencil",
+    "numpy.random-sampling": "dd-kp-numpy-random-sampling",
+    "numpy.geometry-transforms": "dd-kp-numpy-geometry-transforms",
+    "numpy.linalg-applied": "dd-kp-numpy-linalg-applied",
+    "einsum.notation-model": "dd-kp-einsum-notation-model",
+    "einsum.reductions": "dd-kp-einsum-reductions",
+    "einsum.dot-frobenius": "dd-kp-einsum-dot-frobenius",
+    "einsum.outer-products": "dd-kp-einsum-outer-products",
+    "einsum.matvec-matmul": "dd-kp-einsum-matvec-matmul",
+    "einsum.diag-trace": "dd-kp-einsum-diag-trace",
+    "einsum.batch-dims": "dd-kp-einsum-batch-dims",
+    "einsum.broadcast-scaling": "dd-kp-einsum-broadcast-scaling",
+    "einsum.attention-patterns": "dd-kp-einsum-attention-patterns",
+    "einsum.matrix-forms": "dd-kp-einsum-matrix-forms",
+    "einops.pattern-language": "dd-kp-einops-pattern-language",
+    "einops.merge-axes": "dd-kp-einops-merge-axes",
+    "einops.split-axes": "dd-kp-einops-split-axes",
+    "einops.singleton-and-lists": "dd-kp-einops-singleton-and-lists",
+    "einops.grids-montage": "dd-kp-einops-grids-montage",
+    "einops.patches-space-depth": "dd-kp-einops-patches-space-depth",
+    "einops.reduce-model": "dd-kp-einops-reduce-model",
+    "einops.pooling": "dd-kp-einops-pooling",
+    "einops.repeat-model": "dd-kp-einops-repeat-model",
+    "einops.dl-flatten-heads": "dd-kp-einops-dl-flatten-heads",
+    "einops.channel-groups-temporal": "dd-kp-einops-channel-groups-temporal"
   }
 };

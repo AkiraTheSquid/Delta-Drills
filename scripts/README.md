@@ -30,8 +30,9 @@
   **This script is the whole student-facing surface now.** Since 2026-07-31 the
   practice panel renders no problem text, no worked example and no lesson: the
   notebooks it writes carry all of it, and the panel only routes to them. The
-  map it emits therefore carries a `kps` entry (`kc -> {lesson, anchor}`) so
-  the first-encounter gate can link to the section that teaches a concept. The
+  map it emits therefore carries a `kps` entry (`kc -> "dd-kp-<slug(kc)>"`) so
+  the first-encounter gate can link to the section that teaches a concept —
+  the anchor only, since `kcs` already says which notebook it is in. The
   anchor is computed here and shipped, never re-derived in JavaScript — a slug
   that drifted by one character is an anchor Colab silently ignores.
 - `publish_colab_notebooks.sh`: pushes those notebooks to
@@ -81,8 +82,8 @@
 
 ## Recent Changes
 - 2026-07-31 (notebooks are the student-facing surface): `build_index` gained a
-  `kps` map — `kc -> {lesson, anchor}` with the same `dd-kp-<slug(kc)>` string
-  written onto the KP header cell — so `practice/lessons.js` can send a learner
+  `kps` map — `kc -> "dd-kp-<slug(kc)>"`, the same string written onto the KP
+  header cell — so `practice/lessons.js` can send a learner
   to the concept section instead of rendering the lesson in the app. Ships in
   both index outputs. No notebook content changed: the compiled notebooks
   already carried concept prose, watch-outs, multi-cell worked examples, faded /

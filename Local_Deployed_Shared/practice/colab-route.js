@@ -206,21 +206,22 @@
      sends the learner to the KP section instead, and this is the address.
 
      `index.kps` is generated alongside the notebooks, so the anchor here and
-     the cell id there are the same string by construction. */
-  function kpFor(kc) {
-    if (!index || !index.kps || !kc) return null;
-    return index.kps[kc] || null;
-  }
-
-  function urlForKc(kc) {
-    var kp = kpFor(kc);
-    if (!kp) return "";
-    return notebookUrl(lessonById(kp.lesson), kp.anchor);
+     the cell id there are the same string by construction. It holds the ANCHOR
+     only — which notebook the concept is in comes from `index.kcs`, keyed by
+     the same string, so the two never disagree about it. */
+  function anchorForKc(kc) {
+    return (index && index.kps && kc && index.kps[kc]) || "";
   }
 
   function lessonForKc(kc) {
-    var kp = kpFor(kc);
-    return kp ? lessonById(kp.lesson) : null;
+    if (!index || !index.kcs || !kc) return null;
+    return lessonById(index.kcs[kc]);
+  }
+
+  function urlForKc(kc) {
+    var anchor = anchorForKc(kc);
+    if (!anchor) return "";
+    return notebookUrl(lessonForKc(kc), anchor);
   }
 
   /* ---------- opening -------------------------------------------------- */

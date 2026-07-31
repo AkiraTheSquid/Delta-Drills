@@ -409,11 +409,12 @@ def build_index(records: list[dict], out_dir: Path) -> dict:
         # second implementation of `slug()` that drifted by one character
         # would produce an anchor Colab silently ignores — the learner would
         # land at the top of a 500-cell notebook with no error anywhere.
-        "kps": {
-            kc: {"lesson": r["id"], "anchor": f"dd-kp-{slug(kc)}"}
-            for r in records
-            for kc in r["kcs"]
-        },
+        #
+        # Anchor ONLY. Which notebook a concept is in is already `kcs` above,
+        # keyed identically; carrying the lesson id here too would be the same
+        # fact written twice, and the copy that went stale would be the one
+        # nothing checks.
+        "kps": {kc: f"dd-kp-{slug(kc)}" for r in records for kc in r["kcs"]},
     }
     return index
 
