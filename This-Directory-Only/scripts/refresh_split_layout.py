@@ -29,6 +29,8 @@ ALLOWED_ROOT_NAMES = {
     ".directory",            # KDE Dolphin folder-icon metadata (dev-only). Added 2026-07-18.
     "CLAUDE.md",             # Claude Code project instructions (graphify). Added 2026-07-11.
     "graphify-out",          # graphify knowledge graph output (dev-only)
+    "extension",             # Chrome MV3 side panel — loaded unpacked from disk,
+                             # never served by Vercel. Added 2026-07-31.
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
