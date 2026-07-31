@@ -19,10 +19,15 @@ the rejected options were rejected.
 - Task tracking. That is `mod goals`.
 
 ## Key Files
+- `spec-e2b-inline-execution.md`: running ARENA chapters 0–3 inside the app on
+  E2B sandboxes — session store, routes, idle reaper, sandbox image, and the
+  changes to `practice/notebook.js`. DRAFT, sequenced after the prerequisite
+  work.
 - `spec-in-app-execution-and-colab-routing.md`: three linked threads — showing
   expected output in the generated drill notebooks, wiring knowledge-graph nodes
   to Colab sections, and a costed comparison of in-app execution on Modal
-  against the existing Fly fork runner. DRAFT.
+  against the existing Fly fork runner. SUPERSEDED; kept for its chapter/GPU
+  measurements and the expected-output cache trap.
 
 ## Data & External Dependencies
 Specs here read from, but never write to:
@@ -91,6 +96,9 @@ items with effort and cost, then open questions.
   - Status: `RESOLVED` in the current spec §D.2.
 
 ## Recent Changes
+- 2026-07-31: Added `spec-e2b-inline-execution.md` (DRAFT) after Seth chose E2B
+  over Modal and a self-hosted Fly kernel gateway. Marked the earlier spec
+  SUPERSEDED.
 - 2026-07-31: Folder created. Added
   `spec-in-app-execution-and-colab-routing.md` (DRAFT) covering expected-output
   display in generated notebooks, graph→Colab routing, and the Modal vs Fly
