@@ -77,6 +77,11 @@ d = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 s = t.tensor([0, 1, 0, 1, 2, 2])
 means = t.bincount(s, weights=d) / t.bincount(s)
 assert means.tolist() == [2.0, 3.0, 5.5]
+print("values", x, "-> bins", i)
+print("bincount   ", f)
+print("out[i] += x", out, " <- WRONG, bin 0 lost a contribution")
+print("index_add_ ", out2)
+print("grouped means", means)
 ```
 
 Why each step:

@@ -35,6 +35,9 @@ batched = t.einsum('aij,ajk->aik', x, u)
 assert batched.shape == (2, 2, 3)
 assert t.allclose(batched[0], x[0] @ u[0])   # slice 0 is its own matmul
 assert t.allclose(batched[1], x[1] @ u[1])   # slice 1 is its own matmul
+print("aij,ajk->aik :", tuple(x.shape), tuple(u.shape), "->",
+      tuple(batched.shape))
+print(batched)
 ```
 
 Why: the per-slice asserts ARE the definition of "batched" — each `batched[k]`
@@ -87,6 +90,9 @@ m = t.arange(9.0).reshape(3, 3)         # ONE (3,3) matrix — no batch axis
 shared = t.einsum('bij,jk->bik', x, m)
 assert t.allclose(shared[0], x[0] @ m)
 assert t.allclose(shared[1], x[1] @ m)   # same m both times
+print("m has no b, so one matrix serves the whole batch:",
+      tuple(m.shape), "->", tuple(shared.shape))
+print(shared)
 ```
 
 Why: notice what you did NOT write — no tiling of `m`, no broadcasting
@@ -138,6 +144,9 @@ v = t.tensor([[1.0, 2.0],
 gram = t.einsum('bi,bj->ij', v, v)
 by_hand = t.outer(v[0], v[0]) + t.outer(v[1], v[1])
 assert t.allclose(gram, by_hand)
+print("b is in the inputs but not the output, so it is SUMMED away:")
+print(gram)
+print("outer(v0,v0) + outer(v1,v1) agrees:", bool(t.allclose(gram, by_hand)))
 ```
 
 Why: two readings must agree — algebraically it's `Σ_b outer(v_b, v_b)`;

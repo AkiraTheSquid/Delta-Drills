@@ -37,6 +37,8 @@ a = t.tensor([[1, 2, 3],
 column_sums = t.einsum('ij->j', a)
 assert column_sums.tolist() == [11, 22, 33]
 assert t.equal(column_sums, a.sum(dim=0))
+print(a)
+print("'ij->j' drops i ->", column_sums, "| a.sum(dim=0) ->", a.sum(dim=0))
 ```
 
 `j` stays in output, so result has one value per column. Missing `i` is axis
@@ -84,6 +86,9 @@ x = t.arange(12).reshape(2, 3, 2)
 per_batch_feature = t.einsum('btf->bf', x)
 assert t.equal(per_batch_feature, x.sum(dim=1))
 assert per_batch_feature.shape == (2, 2)
+print("'btf->bf':", tuple(x.shape), "-> ", tuple(per_batch_feature.shape),
+      " (t was the missing letter)")
+print(per_batch_feature)
 ```
 
 Only `t` disappears, so only time is reduced.
@@ -131,6 +136,10 @@ video = t.arange(32).reshape(2, 2, 2, 2, 2)
 per_batch_channel = t.einsum('btchw->bc', video)
 assert t.equal(per_batch_channel, video.sum(dim=(1, 3, 4)))
 assert per_batch_channel.shape == (2, 2)
+print("'btchw->bc' drops three axes at once:", tuple(video.shape), "->",
+      tuple(per_batch_channel.shape))
+print(per_batch_channel)
+print("the dim= spelling needs you to count: dim=(1, 3, 4)")
 ```
 
 `b` and `c` survive. Missing `t`, `h`, and `w` all collapse.
@@ -179,6 +188,8 @@ a = t.tensor([[1.0, 3.0],
               [5.0, 7.0]])
 column_means = t.einsum('ij->j', a) / a.shape[0]
 assert t.allclose(column_means, a.mean(dim=0))
+print("einsum sums; the division is yours to write:")
+print("sum", t.einsum('ij->j', a), "/", a.shape[0], "->", column_means)
 ```
 
 Missing `i` performs column sums; `a.shape[0]` converts those sums to means.

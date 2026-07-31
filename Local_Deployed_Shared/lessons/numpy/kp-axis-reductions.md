@@ -50,6 +50,9 @@ assert col_sums.tolist() == [11.0, 22.0, 33.0]
 row_means = x.mean(dim=1)
 assert tuple(row_means.shape) == (2,)
 assert row_means.tolist() == [2.0, 20.0]
+print("x shape", tuple(x.shape))
+print("sum(dim=0) ", col_sums,  "shape", tuple(col_sums.shape))
+print("mean(dim=1)", row_means, "shape", tuple(row_means.shape))
 ```
 
 Why: for each reduction, the assert on `.shape` comes BEFORE the values —
@@ -110,6 +113,10 @@ rm = x.mean(dim=1, keepdim=True)
 assert tuple(rm.shape) == (2, 1)
 centered = x - rm                     # (2,3) - (2,1): broadcasts by row
 assert centered[0].tolist() == [-1.0, 0.0, 1.0]
+print("(2,3,2,2) summed over the last two ->", tuple(totals.shape))
+print(totals)
+print("keepdim=True keeps the axis as 1:", tuple(rm.shape), "->", rm.tolist())
+print(centered)
 ```
 
 Why: a bare `(2,)` row-mean would align against the WRONG axis when

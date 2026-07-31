@@ -32,6 +32,9 @@ z = t.tensor([[1.0, 2.0, 3.0],
 # Global centering: one scalar mean, subtracted everywhere.
 centered = z - z.mean()
 assert t.allclose(centered.mean(), t.tensor(0.0))
+print("one scalar mean:", z.mean().item())
+print(centered)
+print("new mean:", centered.mean().item())
 ```
 
 Why: the postcondition assertion (`mean ≈ 0`) restates the task's
@@ -91,6 +94,9 @@ assert centered.tolist() == [[-1.0, 0.0, 1.0],
                              [-10.0, 0.0, 10.0]]
 # Postcondition worth checking in real code: every row now averages 0.
 assert t.allclose(centered.mean(dim=1), t.zeros(2))
+print("row means, kept as a column", tuple(row_mu.shape), ":", row_mu.tolist())
+print(centered)
+print("each row now averages", centered.mean(dim=1).tolist())
 ```
 
 Why: materializing `row_mu` and asserting its SHAPE (2, 1) before
@@ -142,6 +148,11 @@ assert t.allclose(zscores, t.tensor([[-1.0, -1.0],
                                      [1.0, 1.0]]))
 assert t.allclose(zscores.mean(dim=0), t.zeros(2))
 assert t.allclose(zscores.std(dim=0, correction=0), t.ones(2))
+print("column means", x.mean(dim=0), "| column sds",
+      x.std(dim=0, correction=0))
+print(zscores)
+print("after: means", zscores.mean(dim=0), "sds",
+      zscores.std(dim=0, correction=0))
 ```
 
 Why: the two postconditions (`mean ≈ 0`, `std ≈ 1`) catch dim mistakes

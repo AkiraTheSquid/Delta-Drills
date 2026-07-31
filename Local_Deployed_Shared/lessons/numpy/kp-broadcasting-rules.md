@@ -54,10 +54,13 @@ assert table.tolist() == [[0, 1, 2, 3],
 assert t.broadcast_shapes(a.shape, b.shape) == (3, 4)
 
 # Incompatible shapes fail here too, and fail early.
+print("(3,1) + (1,4) ->", tuple(table.shape))
+print(table)
+
 try:
     t.broadcast_shapes((3, 4), (5, 4))
-except RuntimeError:
-    pass
+except RuntimeError as err:
+    print("RuntimeError:", err)
 else:
     raise AssertionError("(3, 4) and (5, 4) should not broadcast")
 ```
@@ -125,6 +128,11 @@ scale = t.tensor([[1.0, 2.0],
 scaled = img * scale[:, :, None]
 assert scaled.shape == (2, 2, 3)
 assert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3
+print("flat vectors, 1-axes placed by hand ->", tuple(table.shape))
+print(table)
+print("scale", tuple(scale.shape), "-> scale[:, :, None]",
+      tuple(scale[:, :, None].shape), "-> img * it", tuple(scaled.shape))
+print("pixel [1, 0] scaled by 3:", scaled[1, 0])
 ```
 
 Why: the `va[:, None] + vb[None, :]` form is the general recipe for "all

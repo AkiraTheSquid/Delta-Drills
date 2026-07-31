@@ -75,6 +75,11 @@ assert ring.tolist() == [[1.0, 1.0, 1.0, 1.0],
 small = t.ones((2, 2))
 small[1:-1, 1:-1] = 0.0           # empty selection — assignment is a no-op
 assert small.tolist() == [[1.0, 1.0], [1.0, 1.0]]
+print("(a) padded — shape grew to", tuple(framed.shape))
+print(framed)
+print("(b) same shape, interior blanked")
+print(ring)
+print("(c) 2x2 has no interior, so nothing changed:", small.tolist())
 ```
 
 Why each step:

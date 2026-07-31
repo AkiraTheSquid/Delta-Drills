@@ -72,6 +72,13 @@ s2d = einops.rearrange(x, 'b c (h p) (w q) -> b (c p q) h w', p=2, q=2)
 assert s2d.shape == (1, 8, 2, 2)           # channels x4, spatial /2
 # The new channel block for output pixel (0,0) holds input block [0:2, 0:2]:
 assert s2d[0, :4, 0, 0].tolist() == [0.0, 1.0, 4.0, 5.0]
+print("image", tuple(img.shape), "-> patches", tuple(patches.shape))
+print("patch 0 =", patches[0, :, :, 0].tolist(),
+      "| patch 1 starts at", patches[1, 0, 0, 0].item())
+print("reassembled to the original:", bool(t.equal(back, img)))
+print("space-to-depth", tuple(x.shape), "->", tuple(s2d.shape),
+      "(channels x4, spatial /2)")
+print("pixel (0,0)'s new channels:", s2d[0, :4, 0, 0])
 ```
 
 Why each step:

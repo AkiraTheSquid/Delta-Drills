@@ -58,6 +58,10 @@ assert y.untyped_storage().data_ptr() == z.untyped_storage().data_ptr()
 src = t.tensor([1.5, 2.5], dtype=t.float32)
 w = src.to(t.int32)
 assert w.untyped_storage().data_ptr() != src.untyped_storage().data_ptr()
+print("through the view:", y, "-> same storage as z:",
+      y.untyped_storage().data_ptr() == z.untyped_storage().data_ptr())
+print(".to(t.int32):   ", w, "-> same storage as src:",
+      w.untyped_storage().data_ptr() == src.untyped_storage().data_ptr())
 ```
 
 Why: the two-step in-place conversion (view, then assign through it) is
@@ -120,6 +124,9 @@ bits = ((v.reshape(-1, 1) & (2 ** t.arange(8))) != 0).to(t.int64)
 msb_first = bits.flip(1)
 assert msb_first[0].tolist() == [0, 0, 0, 0, 0, 0, 0, 1]   # 1
 assert msb_first[1].tolist() == [1, 0, 0, 0, 0, 0, 0, 0]   # 128
+print("values", v)
+print("bits, most significant first:")
+print(msb_first)
 ```
 
 Why: the bit matrix is broadcasting doing systems work — column of values ×

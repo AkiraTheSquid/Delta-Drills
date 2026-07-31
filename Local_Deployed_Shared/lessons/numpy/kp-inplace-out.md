@@ -44,8 +44,10 @@ assert x.tolist() == [6.0, 2.0, 4.0]
 assert result.values.tolist() == [2.0, 4.0, 6.0]
 
 # So an in-place sort is "sort, then copy the values back into the buffer".
+print("after mul_(2):", x)
 x.copy_(x.sort().values)
 assert x.tolist() == [2.0, 4.0, 6.0]
+print("after copy_(sorted values):", x)
 ```
 
 Why: the underscore is a contract, not a style. `x.sort()` looks like it
@@ -95,6 +97,8 @@ alias = z                        # a second reference to the same buffer
 p = t.tensor([2, 0, 1])
 z[:] = z[p]                      # rebinding (z = z[p]) would NOT affect alias
 assert alias.tolist() == [[4, 5], [0, 1], [2, 3]]
+print("alias sees the permutation too:")
+print(alias)
 ```
 
 Why: the `alias` variable is the proof of what "in place" means — both
@@ -149,6 +153,8 @@ a.div_(2)                        # a now holds a / 2
 a.neg_()                         # a now holds -a/2
 a.mul_(b)                        # a now holds (a+b) * (-a/2)
 assert a.tolist() == [-2.0, -6.0]
+print("b holds a+b:", b)
+print("a holds the final product:", a)
 ```
 
 Why: order matters — b must absorb (a+b) BEFORE a is halved, since the

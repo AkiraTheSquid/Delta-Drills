@@ -32,6 +32,9 @@ X = t.linalg.solve(a, B)
 assert X.tolist() == [[1.0, 2.0, 3.0],
                       [2.0, 3.0, 4.0]]
 assert t.allclose(a @ X, B)            # verify all three at once
+print("three systems solved in one call:")
+print(X)
+print("a @ X reproduces B:", bool(t.allclose(a @ X, B)))
 ```
 
 Why: `a @ X ≈ B` verifies all the numbers in one allclose — the
@@ -88,6 +91,10 @@ total = (ms @ vs).sum(dim=0)          # 2*[2,4] + 4*[4,8] = [20, 40]
 assert total.tolist() == [[20.0], [40.0]]
 # einsum preview — same contraction, named explicitly:
 assert t.equal(t.einsum('pij,pjk->ik', ms, vs), total)
+print("batch shapes:", tuple(ms.shape), "and", tuple(vs.shape),
+      "-> solutions", tuple(xs.shape))
+print(xs[:, :, 0])
+print("summed over the batch:", total.squeeze(1))
 ```
 
 Why: watch the shapes — (p, n, n) and (p, n, 1) share the leading p, and
@@ -144,6 +151,9 @@ assert int(t.linalg.matrix_rank(z)) == 1
 full = t.tensor([[1.0, 0.0],
                  [0.0, 1.0]])
 assert int(t.linalg.matrix_rank(full)) == 2
+print("no zero rows, but rank", int(t.linalg.matrix_rank(z)),
+      "— row 2 is 2x row 1")
+print("independent rows -> rank", int(t.linalg.matrix_rank(full)))
 ```
 
 Why: the [[1,2],[2,4]] example is the canonical trap — visually "two rows

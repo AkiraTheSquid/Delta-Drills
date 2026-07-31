@@ -68,6 +68,11 @@ a = t.tensor([[1.0, 2.0],
 wr = t.tensor([3.0, 1.0])
 wavg = t.einsum('n,nd->d', wr, a) / wr.sum()
 assert t.allclose(wavg, t.tensor([1.5, 2.5]))
+print("chw,c->hw  (c dropped)  ", tuple(gray.shape))
+print(gray)
+print("chw,c->chw (c kept)     ", tuple(scaled.shape),
+      "channel 1 scaled by 10:", scaled[1, 0, 0].item())
+print("weighted average with weights", wr, ":", wavg)
 ```
 
 Why each step:

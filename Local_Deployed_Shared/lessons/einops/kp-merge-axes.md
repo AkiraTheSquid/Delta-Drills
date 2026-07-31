@@ -67,6 +67,10 @@ wide = einops.rearrange(batch, 'b h w c -> h (b w) c')
 assert wide.shape == (2, 4, 2)
 # Row 0: image 0's two columns, THEN image 1's two columns (b is slow).
 assert wide[0, :, 0].tolist() == [0, 2, 8, 10]
+print("'(h w)' reads across rows:", flat[0])
+print("'(w h)' reads down columns:", flat_cols[0])
+print("batch merged into width", tuple(wide.shape), "-> row 0:",
+      wide[0, :, 0])
 ```
 
 Why each step:

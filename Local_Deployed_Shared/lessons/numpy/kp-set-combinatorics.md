@@ -80,6 +80,11 @@ prod = t.stack([g.ravel() for g in grids], dim=1)
 assert tuple(prod.shape) == (6, 2)
 assert prod.tolist() == [[1, 10], [1, 20], [1, 30],
                          [2, 10], [2, 20], [2, 30]]
+print("a       ", a)
+print("starts  ", starts, "values", values, "counts", counts)
+print("decoded ", t.repeat_interleave(values, counts))
+print("cartesian product:")
+print(prod)
 ```
 
 Why each step:

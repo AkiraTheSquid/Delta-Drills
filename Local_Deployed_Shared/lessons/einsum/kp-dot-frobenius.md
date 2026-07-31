@@ -49,6 +49,8 @@ v2 = t.tensor([4.0, -5.0, 6.0])
 d = t.einsum('i,i->', v1, v2)
 assert d == 12.0                              # 1*4 + 2*-5 + 3*6
 assert d == t.dot(v1, v2) == (v1 * v2).sum() # three spellings, one atom
+print("paired products:", v1 * v2)
+print("'i,i->' ->", d.item(), "| t.dot ->", t.dot(v1, v2).item())
 ```
 
 Why: `1·4 + 2·(-5) + 3·6 = 4 - 10 + 18 = 12`. The three-spellings assert is the
@@ -114,6 +116,9 @@ b = t.tensor([[5.0, 6.0],
 f = t.einsum('ij,ij->', a, b)
 assert f == 70.0                 # 1*5 + 2*6 + 3*7 + 4*8
 assert f == (a * b).sum()        # the same multiply-then-reduce, named
+print("a * b, before the sum:")
+print(a * b)
+print("'ij,ij->' ->", f.item())
 ```
 
 Why: hand-compute one term — `1·5 = 5` at position [0,0], `2·6 = 12` at [0,1],

@@ -71,6 +71,11 @@ assert merged[0, 0].tolist() == (heads[0, 0, 0].tolist()
 # The inverse split — declare how the packed axis factors.
 unmerged = einops.rearrange(merged, 'b t (nh d) -> b nh t d', nh=2)
 assert t.equal(unmerged, heads)          # round trip exact
+print("feats", tuple(feats.shape), "-> flat", tuple(flat.shape))
+print("item 0 starts with channel 0's pixels:", flat[0, :4])
+print("heads", tuple(heads.shape), "-> merged", tuple(merged.shape))
+print("token 0 =", merged[0, 0], " (head 0's four, then head 1's)")
+print("split back exactly:", bool(t.equal(unmerged, heads)))
 ```
 
 Why each step:

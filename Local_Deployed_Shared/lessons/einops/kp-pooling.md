@@ -69,6 +69,11 @@ imgs = t.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
 halved = einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)
 assert halved.shape == (1, 2, 2, 1)
 assert halved[0, 0, :, 0].tolist() == [0.5, 2.5]   # (0+1)/2, (2+3)/2
+print(x[0, 0], "\n")
+print("mean-pooled 2x2 ->\n", pooled[0, 0])
+print("max-pooled  2x2 ->\n", mx[0, 0])
+print("column pairs averaged:", imgs[0, 0, :, 0].tolist(), "->",
+      halved[0, 0, :, 0].tolist())
 ```
 
 Why each step:

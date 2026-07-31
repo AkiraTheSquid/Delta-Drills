@@ -66,6 +66,9 @@ assert grid[4, 2, 0] == 5.0                  # bottom-right = image 5
 # g2 (fixes w).
 back = einops.rearrange(grid, '(g1 h) (g2 w) c -> (g1 g2) h w c', g1=3, g2=2)
 assert t.equal(back, imgs)
+print("6 images", tuple(imgs.shape), "-> montage", tuple(grid.shape))
+print(grid[:, :, 0])          # each image is a constant block, so read them off
+print("carved back to the batch exactly:", bool(t.equal(back, imgs)))
 ```
 
 Why each step:

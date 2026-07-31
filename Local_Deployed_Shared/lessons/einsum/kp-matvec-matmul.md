@@ -49,6 +49,7 @@ v = t.tensor([10.0, 1.0])
 mv = t.einsum('ij,j->i', a, v)
 assert mv.tolist() == [12.0, 34.0]
 assert t.equal(mv, a @ v)   # the @-twin: always check while learning
+print("'ij,j->i' ->", mv, "| a @ v ->", a @ v)
 ```
 
 Why: trace entry [0] straight from the rule — i=0 fixed, j ranges:
@@ -125,6 +126,8 @@ b = t.tensor([[5.0, 6.0],
 # 'ik,kj->ij': k is shared+dropped (the contraction); i, j are private+kept.
 mm = t.einsum('ik,kj->ij', a, b)
 assert t.equal(mm, a @ b)   # the @-twin
+print("'ik,kj->ij' — k contracted away, i and j kept:")
+print(mm)
 ```
 
 Why: trace entry [0, 0] by the rule — i=0, j=0 fixed, k ranges:

@@ -29,6 +29,8 @@ a = t.tensor([[1.0, 2.0],
 diag = t.einsum('ii->i', a)
 assert diag.tolist() == [1.0, 4.0]
 assert t.equal(diag, t.diag(a))
+print(a)
+print("'ii->i' ->", diag, "| t.diag ->", t.diag(a))
 ```
 
 Why: the repeated `i` is the whole trick — it selects the diagonal. Keeping
@@ -76,6 +78,8 @@ a = t.tensor([[1.0, 2.0],
 tr = t.einsum('ii->', a)
 assert tr == 5.0
 assert tr == t.trace(a)
+print("'ii->i' keeps the walk:", t.einsum('ii->i', a))
+print("'ii->'  sums it:      ", tr, "| t.trace ->", t.trace(a))
 ```
 
 Why: one character (`->i` vs `->`) flips "emit the diagonal" into "sum the
@@ -123,6 +127,8 @@ stack = t.stack([t.diag(t.tensor([1.0, 2.0])),
 # 'bii->bi': per-matrix diagonal; b rides along untouched.
 diags = t.einsum('bii->bi', stack)
 assert diags.tolist() == [[1.0, 2.0], [3.0, 4.0]]
+print("stack", tuple(stack.shape), "-> 'bii->bi'", tuple(diags.shape))
+print(diags)
 ```
 
 Why: `b` is kept and unpaired, so it just indexes the batch; the `ii` does
@@ -165,6 +171,8 @@ stack = t.stack([t.eye(2), 3 * t.eye(2)])   # traces 2 and 6
 # 'bii->b': per-matrix trace; b kept, i dropped (summed).
 traces = t.einsum('bii->b', stack)
 assert traces.tolist() == [2.0, 6.0]
+print("'bii->bi' keeps i:", t.einsum('bii->bi', stack).tolist())
+print("'bii->b'  sums it:", traces)
 ```
 
 Why: `b` kept + `i` dropped = "one summed diagonal per batch slice". Same
@@ -212,6 +220,9 @@ b = t.tensor([[5.0, 6.0],
 # 'ik,ki->i': entry i = row i of a . column i of b.
 dprod = t.einsum('ik,ki->i', a, b)
 assert t.equal(dprod, t.diag(a @ b))   # verified vs the slow way
+print("a @ b in full — we only wanted its diagonal:")
+print(a @ b)
+print("'ik,ki->i' computes just that:", dprod)
 ```
 
 Why: entry 0 is `Σₖ a[0,k]·b[k,0]` — row 0 of `a` dotted with column 0 of
@@ -258,6 +269,8 @@ b = t.tensor([[5.0, 6.0],
 
 # 'ij,ji->': sum over the whole diagonal of a @ b.
 assert t.einsum('ij,ji->', a, b) == t.trace(a @ b)
+print("'ij,ji->' ->", t.einsum('ij,ji->', a, b).item(),
+      "| t.trace(a @ b) ->", t.trace(a @ b).item())
 ```
 
 Why: `'ij,ji->'` pairs `a[i,j]` with `b[j,i]` and sums everything — exactly

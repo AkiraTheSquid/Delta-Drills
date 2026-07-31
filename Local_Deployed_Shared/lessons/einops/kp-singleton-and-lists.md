@@ -68,9 +68,16 @@ assert wide[0, :, 0].tolist() == [0.0, 0.0, 1.0, 1.0]  # a then b, left to right
 try:
     einops.rearrange(x2d, '1 h w -> h w')            # x2d is 2-D — no 1 axis
     raised = False
-except Exception:
+except Exception as err:
     raised = True
+    print("squeezing an axis that isn't there ->", type(err).__name__)
 assert raised
+
+print("list of 4 images -> batch", tuple(batch.shape),
+      "| image 2's first pixel:", batch[2, 0, 0, 0].item())
+print("singleton insert:", tuple(x2d.shape), "->", tuple(x3d.shape))
+print("stack + side by side:", tuple(wide.shape), "| row 0 =",
+      wide[0, :, 0].tolist())
 ```
 
 Why each step:
