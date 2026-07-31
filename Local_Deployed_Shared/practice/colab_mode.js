@@ -178,6 +178,30 @@
    * feature. Rewritten in place rather than forked into a second markup block,
    * which would then have to be kept in step with the first.
    */
+  /**
+   * Say which edition this is, on screen.
+   *
+   * The two deploys are byte-identical apart from the routing, so they look the
+   * same in every way a person can check at a glance — same version tag, same
+   * tabs, same everything. That cost an evening: a drill opened its editor on
+   * the normal app and read as the Colab routing being broken. A badge and a
+   * tab title are the whole fix.
+   */
+  function markEdition() {
+    document.title = `${document.title.replace(/ — Colab edition$/, "")} — Colab edition`;
+    const version = document.querySelector(".version-tag");
+    if (!version || document.getElementById("dd-edition-badge")) return;
+    const badge = document.createElement("span");
+    badge.id = "dd-edition-badge";
+    badge.textContent = "Colab edition";
+    // Inline, because this file must stay droppable into either deploy without
+    // a stylesheet following it around.
+    badge.style.cssText = "margin-left:8px;padding:1px 7px;border-radius:999px;"
+      + "background:rgba(255,127,80,0.18);border:1px solid rgba(255,127,80,0.5);"
+      + "color:#ff9c78;font-size:11px;font-weight:600;vertical-align:middle;";
+    version.insertAdjacentElement("afterend", badge);
+  }
+
   function retitleNotice() {
     const notice = document.getElementById("torch-colab-notice");
     if (!notice) return;
@@ -194,10 +218,11 @@
   if (active) {
     document.documentElement.classList.add("dd-colab-edition");
     console.log("[colab-mode] Colab edition active on", location.hostname);
+    const onReady = () => { markEdition(); retitleNotice(); };
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", retitleNotice, { once: true });
+      document.addEventListener("DOMContentLoaded", onReady, { once: true });
     } else {
-      retitleNotice();
+      onReady();
     }
   }
   load();
