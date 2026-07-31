@@ -4,19 +4,19 @@
 - Stylesheets for the Practice tab (the adaptive-queue question page), split out of the former monolithic `practice.css` (972 LOC) into per-concern files.
 
 ## Owns
-- All CSS for the practice page shell, session setup/status, question display, feedback/rating UI, code editor/output, and the tab's smaller extras.
+- All CSS for the practice page shell, session setup/status, question display, feedback/rating UI, the solution/explanation block, and the tab's smaller extras.
 
 ## Does NOT own
 - Progress-bar styles (`../../practice/bars.css`), ARENA unlock interstitial styles (`../../practice/arena-unlock.css`, `arena-unlock-timer.css`), Targeted Practice styles (`../../targeted-practice/targeted-practice.css`).
 - Global utilities — `.hidden`, buttons, variables live in `../components.css`, `../base.css`, `../variables.css`.
 
 ## Key Files
-- `layout.css`: page container, left/right split panels, responsive stacking under 900px.
+- `layout.css`: page container and the (now single-column) `.practice-split`, capped at 900px and centred, with responsive rules at 900px and 520px. The 520px rule is for the Chrome side panel, where the app runs full-width at ~400px.
 - `timer.css`: rigid-session UI — the pre-session setup panel (question count, answer/review time), the in-session status row (progress, phase, strict countdown), and the `session-idle` page-state rules.
 - `question.css`: question number/text, imported-helpers pills + detail, target-image visual, meta chips, cold-start badge, prose/code-block split.
-- `feedback.css`: submit/skip/don't-know row, result badge, felt-difficulty rating buttons, problem quality flags, missed-fact row, failed-tests block.
-- `editor.css`: code editor, Run button, output area + output visual, solution section, AI explanation.
-- `misc.css`: hint/answer aids, practice-mode intro, self-report row, placement entry button, torch Colab notice, mode-demotion notice, topbar auth indicator.
+- `feedback.css`: the report/skip/don't-know row (`#practice-submit-area`), result badge, felt-difficulty rating buttons, problem quality flags, missed-fact row, failed-tests block.
+- `result.css`: the solution block and the AI explanation shown after a result is reported. Was `editor.css`; the code editor, Run button, output area and output canvas it styled were deleted on 2026-07-31 when practice stopped running code.
+- `misc.css`: hint/answer aids, practice-mode intro, experience-level row, placement entry button, mode-demotion notice, topbar auth indicator, plus `.colab-card` (which notebook this problem lives in) and `.report-btn` (the two result buttons). **Watch the names:** `.self-report-btn` here is the *experience level* chip (Complete beginner / Experienced), which is why the result buttons had to be `.report-btn` — the obvious name was taken.
 
 ## Data & External Dependencies
 - CSS custom properties from `../variables.css` (`--border`, `--surface`, `--muted`, `--accent`, …).
@@ -51,5 +51,11 @@
   - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
+- 2026-07-31: `editor.css` → `result.css`, keeping only the solution + AI
+  explanation rules. `layout.css` is single-column (`.practice-right` deleted,
+  `.practice-left` capped at 900px and centred) with a new `max-width: 520px`
+  rule that stacks the two result buttons for the ~400px Chrome side panel.
+  `misc.css` swapped `.torch-colab-notice` for `.colab-card` + `.report-btn`.
+  `watch.py` updated for all of it.
 - 2026-07-30: `timer.css` hides `.concept-topbar` in the `session-idle` state. The topbar is a sibling of `.practice-split`, so the existing idle rule never reached it and the setup screen displayed the paused session's concept strip. `watch.py` now asserts the new rule.
 - 2026-07-12: Folder created — `practice.css` split into layout/timer/question/feedback/editor/misc. `timer.css` rewritten from the old timed-mode toggle to the rigid session setup/status UI. Added `#practice-submit-area.hidden` specificity fix.

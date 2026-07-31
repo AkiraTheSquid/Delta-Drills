@@ -9,7 +9,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
-CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css", "misc.css"]
+CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "result.css", "misc.css"]
 
 
 def _read(path):
@@ -42,12 +42,12 @@ def check_imports():
 # right file — renaming one silently unstyles the element.
 def check_public_api():
     expected = {
-        "layout.css": [".practice-container", ".practice-split", ".practice-left", ".practice-right"],
+        "layout.css": [".practice-container", ".practice-split", ".practice-left"],
         "timer.css": [".session-setup", ".session-status-row", ".session-countdown", ".timer-input", "session-idle"],
         "question.css": [".question-text", ".question-imports", ".question-visual", ".cold-start-badge"],
         "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row", ".practice-mode-notice"],
-        "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
-        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
+        "result.css": [".solution-code", ".ai-explanation-text"],
+        "misc.css": [".colab-card", ".colab-card-link", ".report-btn", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
     }
     for fname, selectors in expected.items():
         css = _read(os.path.join(HERE, fname))

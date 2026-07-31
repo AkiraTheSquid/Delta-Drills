@@ -108,7 +108,7 @@ const LessonNotebook = (() => {
      and wrote nothing to stdout or stderr. Matched rather than imported
      because the runner returns one already-collapsed string; the alternative
      is a second return field threaded through both of its branches for this
-     one caller. styles/practice/watch.py asserts runner.js still contains it,
+     one caller. practice/watch.py asserts pyodide-boot.js still contains it,
      so the coupling fails loudly instead of silently reporting every quiet
      cell as an ordinary empty run. */
   const NO_OUTPUT = "✓ Ran successfully (no printed output)";
