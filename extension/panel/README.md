@@ -1,9 +1,18 @@
 # panel
 
 ## Purpose
-The side panel itself — what the student looks at while working. It renders the
-problem the tutor chose, runs the countdown, takes the two self-grade buttons,
-and offers a brief undo before moving on.
+The side panel itself. Two of them, and the distinction matters:
+
+- **`app.html` + `app.js` + `app.css` — the shell, and the default.** A 36px
+  strip over an iframe holding the deployed web app. Everything the student sees
+  is the app; this is a frame, an address bar's worth of controls and a fallback
+  screen. MV3 will not take a URL as `side_panel.default_path`, so a local page
+  holding a frame is the only way to put a remote UI in a panel.
+- **`panel.html` + `api.js` + `navigate.js` + `panel.js` — the hand-built tutor
+  UI.** A narrow one-problem-at-a-time surface that drives Colab notebooks
+  directly. Still works; no longer the default. Reached from the shell's ⚙.
+
+The rest of this file is about the second one unless it says otherwise.
 
 ## Owns
 - The view state machine: `connect → loading → gate → problem → settled`, plus `error`.
@@ -22,8 +31,16 @@ and offers a brief undo before moving on.
   the map and the anchors can never drift apart.
 
 ## Key Files
-Load order is a dependency chain, not a style choice — each file destructures
-the previous one's global at its top level:
+
+**The shell** — `app.html` loads exactly one script, which is why it cannot hit
+the redeclaration trap below. `app.js` knows the app's address
+(`dd_app_url`, `dd_app_compact` in `chrome.storage.local`), whether the frame
+committed a document, and how to escape into a full tab. It must never reach
+into the frame: the app is another origin, so it cannot, and the attempt is the
+first step back toward maintaining the app twice.
+
+**The tutor UI.** Load order is a dependency chain, not a style choice — each
+file destructures the previous one's global at its top level, **under an alias**:
 
 1. `notebook-index.js`: **generated**, `window.DD_NOTEBOOKS`. The
    `question → lesson → file` map. Never hand-edit; rerun
@@ -34,7 +51,11 @@ the previous one's global at its top level:
    it. Nothing here renders.
 3. `navigate.js`: `window.DDNav`. Switching notebooks and finding cells —
    `jumpTo`, `ensureNotebook`, the notebook row and the Settings list.
-4. `panel.js`: the view state machine and all event wiring.
+4. `panel.js`: the view state machine and all event wiring. Imports as
+   `api: ddApi`, `slugKc: navSlugKc` and so on — **never under the original
+   name**. These are classic scripts sharing one global scope, so a bare
+   `const {api} = window.DD` redeclares api.js's own `const api` and kills the
+   entire file at parse time, leaving a blank panel.
 
 Plus `panel.html` (every view as a `<section id="view-…">`, toggled by class)
 and `panel.css` (dark, sized for a ~360px Chrome side panel).
@@ -122,7 +143,17 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     the Settings list shows `remembered` vs `repo` per lesson so you can tell
     which route is in play before clearing anything.
 
+- **A blank panel with a dead ⚙** — `RESOLVED`
+  - Cause: a bare (unaliased) destructure at the top of `panel.js`. See Key
+    Files. `node --check` per file does not catch it; concatenate the four
+    scripts and check that, which is what `../watch.py` approximates.
+
 ## Recent Changes
+- 2026-07-31: Added the shell (`app.html`/`app.js`/`app.css`) and made it the
+  default panel — the panel is now the deployed web app. Verified the app boots
+  inside a cross-origin 400px frame.
+- 2026-07-31: Fixed the parse-time redeclaration that rendered `panel.html`
+  blank; every import in `panel.js` is now aliased.
 - 2026-07-31: Cross-notebook transitions — `notebooks` resolver in `api.js`,
   routing split out into `navigate.js`, the 📓 row in the problem and gate
   views, and the Settings notebook list.

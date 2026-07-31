@@ -53,11 +53,11 @@ def check_invariants():
        are backend-owned; a threshold constant appearing here would mean two
        sources of truth for what a learner knows.
     """
-    html = os.path.join(HERE, "panel", "panel.html")
-    with open(html, encoding="utf-8") as fh:
-        markup = fh.read()
-    remote = re.findall(r'(?:src|href)\s*=\s*"(https?:)?//[^"]+"', markup)
-    assert not remote, f"remote asset in panel.html (MV3 CSP blocks it): {remote}"
+    for page in ("panel.html", "app.html"):
+        with open(os.path.join(HERE, "panel", page), encoding="utf-8") as fh:
+            markup = fh.read()
+        remote = re.findall(r'(?:src|href)\s*=\s*"(?:https?:)?//[^"]+"', markup)
+        assert not remote, f"remote asset in {page} (MV3 CSP blocks it): {remote}"
 
     banned = re.compile(
         r"\b(P_TRANSIT|P_GUESS|P_SLIP|UNLOCK_THRESHOLD|MASTERY_THRESHOLD|HALF_LIFE_DAYS)\b"
@@ -77,8 +77,53 @@ def check_invariants():
             )
 
 
+def check_no_shadowed_globals():
+    """panel.html loads four classic scripts into ONE global lexical scope.
+
+    `api.js` declares `const api`; `navigate.js` declares `const slugKc`. If
+    `panel.js` then writes `const {api} = window.DD`, that is a redeclaration and
+    the entire file throws a SyntaxError at parse time — no handlers wired, no
+    view activated, so the panel renders as a blank page with a dead ⚙. It looks
+    like a CSS or manifest fault and is neither, and `node --check` on the files
+    individually cannot see it. Hence a check.
+    """
+    with open(os.path.join(HERE, "panel", "panel.js"), encoding="utf-8") as fh:
+        src = fh.read()
+    for name in ("api", "tab", "notebooks", "slugKc", "whoIsOpen", "jumpTo",
+                 "paintNotebook", "renderNotebookList"):
+        bare = re.search(rf"^\s*{name}\s*[,}}]", src, re.M)
+        assert not bare, (
+            f"panel.js destructures `{name}` under its own name — that redeclares "
+            f"the const api.js/navigate.js already made and kills the whole file. "
+            f"Alias it (`{name}: dd{name[0].upper()}{name[1:]}`)."
+        )
+
+
+def check_side_panel_shell():
+    """The default panel is the shell that hosts the real web app.
+
+    The app is a remote page, and MV3 will not accept a URL as
+    `side_panel.default_path`, so the panel has to be a local page holding an
+    iframe. If the default_path ever swings back to `panel.html`, the student
+    gets the hand-built Colab UI instead of the app and nobody will guess why.
+    """
+    m = _manifest()
+    assert m["side_panel"]["default_path"] == "panel/app.html", (
+        "side_panel.default_path must be panel/app.html — the shell that frames "
+        "the deployed web app"
+    )
+    with open(os.path.join(HERE, "panel", "app.js"), encoding="utf-8") as fh:
+        src = fh.read()
+    assert "delta-drills.vercel.app" in src, "app.js lost its default app address"
+    # The frame is another origin; reaching into it cannot work and would mean
+    # the shell had quietly become a second copy of the app.
+    for reach in ("contentDocument", "contentWindow"):
+        assert reach not in src, f"app.js touches {reach} — the frame is cross-origin"
+
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_no_shadowed_globals, check_side_panel_shell]
     for fn in checks:
         try:
             fn()

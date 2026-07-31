@@ -16,8 +16,25 @@
    Nothing here decides what comes next. `nextQuestion()` is the scheduler.
    ================================================================ */
 
-const { api, tab, notebooks } = window.DD;
-const { slugKc, whoIsOpen, jumpTo, paintNotebook, renderNotebookList } = window.DDNav;
+/* Everything is renamed on the way in, and that is load-bearing.
+   These are classic <script> tags, not modules, so api.js, navigate.js and this
+   file all share ONE global lexical scope. Destructuring `api` or `slugKc` under
+   its own name redeclares the `const` the earlier file already made, and the
+   whole of panel.js dies with a SyntaxError before a single handler is wired.
+   The symptom is an empty panel with a ⚙ that does nothing — it reads like a CSS
+   or a manifest problem and it is neither.
+   Verify after touching any of these files:
+       cat panel/notebook-index.js panel/api.js panel/navigate.js panel/panel.js \
+         | node --check /dev/stdin
+   `node --check` on the files one at a time cannot see this. */
+const { api: ddApi, tab: ddTab, notebooks: ddNotebooks } = window.DD;
+const {
+  slugKc: navSlugKc,
+  whoIsOpen: navWhoIsOpen,
+  jumpTo: navJumpTo,
+  paintNotebook: navPaintNotebook,
+  renderNotebookList: navRenderNotebookList,
+} = window.DDNav;
 
 const DEFAULT_SECONDS = 180;
 const SETTLE_SECONDS = 4;
@@ -157,8 +174,8 @@ function renderProblem(q) {
 
   // Paint the notebook the problem lives in immediately from the index, then
   // fill in whether it is the open one once the tab answers.
-  const target = notebooks.forQuestion(q);
-  paintNotebook("p", target, null);
+  const target = ddNotebooks.forQuestion(q);
+  navPaintNotebook("p", target, null);
   refreshOpenNotebook("p", target);
 
   $("btn-right").disabled = false;
@@ -176,8 +193,8 @@ function renderGate(q) {
   $("gate-status").textContent = "";
   $("gate-status").className = "status small";
 
-  const target = notebooks.forGate(g);
-  paintNotebook("gate", target, null);
+  const target = ddNotebooks.forGate(g);
+  navPaintNotebook("gate", target, null);
   refreshOpenNotebook("gate", target);
 
   show("gate");
@@ -191,9 +208,9 @@ function renderGate(q) {
  */
 async function refreshOpenNotebook(prefix, target) {
   const seq = ++state.nav;
-  const open = await whoIsOpen();
+  const open = await navWhoIsOpen();
   if (seq !== state.nav) return;
-  paintNotebook(prefix, target, open);
+  navPaintNotebook(prefix, target, open);
   if (prefix === "p") {
     const same = !target || (open.ok && open.lessonId === target.id);
     $("btn-goto").textContent = same ? "Go to the cell ↓" : "Open the notebook & go ↗";
@@ -206,13 +223,13 @@ async function advance() {
   clearTimers();
   show("loading", "Asking the tutor what's next…");
   try {
-    const q = await api.nextQuestion();
+    const q = await ddApi.nextQuestion();
     setConn(true);
     if (q.lesson_gate && q.lesson_gate.length) renderGate(q);
     else renderProblem(q);
   } catch (err) {
     if (err.status === 401) {
-      await api.signOut();
+      await ddApi.signOut();
       show("connect");
       $("connect-status").textContent = "Session expired — sign in again.";
       $("connect-status").className = "status err";
@@ -238,7 +255,7 @@ async function grade(correct, note) {
   show("settled");
 
   try {
-    await api.submitLocal(qid, correct);
+    await ddApi.submitLocal(qid, correct);
   } catch (err) {
     fail(err);
     return;
@@ -263,7 +280,7 @@ async function grade(correct, note) {
     clearTimers();
     $("btn-undo").disabled = true;
     try {
-      await api.override(qid, !correct);
+      await ddApi.override(qid, !correct);
       $("s-text").textContent = `Flipped to ${!correct ? "correct" : "wrong"}.`;
     } catch (err) {
       fail(err);
@@ -282,15 +299,15 @@ async function grade(correct, note) {
 async function goToCurrentCell() {
   const q = state.q;
   if (!q) return;
-  const target = notebooks.forQuestion(q);
-  const out = await jumpTo({
+  const target = ddNotebooks.forQuestion(q);
+  const out = await navJumpTo({
     target,
     anchor: `dd-q${q.question_id}`,
     text: `Problem ${q.question_id}`,
     status: $("goto-status"),
     arrived: "There it is — run the cell.",
   });
-  if (out.open || out.switched) paintNotebook("p", target, out.open);
+  if (out.open || out.switched) navPaintNotebook("p", target, out.open);
 }
 
 /* ── connect ─────────────────────────────────────────────────── */
@@ -308,9 +325,9 @@ async function doLogin() {
   status.className = "status";
   $("btn-login").disabled = true;
   try {
-    await api.setBase($("in-base").value.trim());
-    await notebooks.setRepo($("in-repo").value);
-    await api.login(email, pass);
+    await ddApi.setBase($("in-base").value.trim());
+    await ddNotebooks.setRepo($("in-repo").value);
+    await ddApi.login(email, pass);
     $("in-pass").value = "";
     advance();
   } catch (err) {
@@ -324,9 +341,9 @@ async function doLogin() {
 async function useToken() {
   const token = $("in-token").value.trim();
   if (!token) return;
-  await api.setBase($("in-base").value.trim());
-  await notebooks.setRepo($("in-repo").value);
-  await api.setToken(token);
+  await ddApi.setBase($("in-base").value.trim());
+  await ddNotebooks.setRepo($("in-repo").value);
+  await ddApi.setToken(token);
   advance();
 }
 
@@ -344,43 +361,43 @@ $("btn-wrong").onclick = () => grade(false);
 $("btn-retry").onclick = advance;
 
 $("btn-signout").onclick = async () => {
-  await api.signOut();
+  await ddApi.signOut();
   setConn(false);
   show("connect");
 };
 $("settings-btn").onclick = async () => {
   clearTimers();
-  const { base } = await api.load();
-  await notebooks.load();
+  const { base } = await ddApi.load();
+  await ddNotebooks.load();
   $("in-base").value = base;
-  $("in-repo").value = notebooks.repo;
-  renderNotebookList();
+  $("in-repo").value = ddNotebooks.repo;
+  navRenderNotebookList();
   show("connect");
 };
 
 $("in-repo").addEventListener("change", async () => {
-  await notebooks.setRepo($("in-repo").value);
-  $("in-repo").value = notebooks.repo;
-  renderNotebookList();
+  await ddNotebooks.setRepo($("in-repo").value);
+  $("in-repo").value = ddNotebooks.repo;
+  navRenderNotebookList();
 });
 
 $("btn-forget-nb").onclick = async () => {
-  await notebooks.forget();
-  renderNotebookList();
+  await ddNotebooks.forget();
+  navRenderNotebookList();
 };
 
 $("btn-gate-goto").onclick = async () => {
   const g = state.q?.lesson_gate?.[0];
   if (!g) return;
-  const target = notebooks.forGate(g);
-  const out = await jumpTo({
+  const target = ddNotebooks.forGate(g);
+  const out = await navJumpTo({
     target,
-    anchor: `dd-kp-${slugKc(g.kc)}`,
+    anchor: `dd-kp-${navSlugKc(g.kc)}`,
     text: g.kp_title || g.kc_title,
     status: $("gate-status"),
     arrived: "Read this, then come back.",
   });
-  if (out.open || out.switched) paintNotebook("gate", target, out.open);
+  if (out.open || out.switched) navPaintNotebook("gate", target, out.open);
 };
 
 $("btn-gate-done").onclick = async () => {
@@ -389,11 +406,11 @@ $("btn-gate-done").onclick = async () => {
   if (!g) return;
   show("loading", "Recording that you've read it…");
   try {
-    await api.markExposed(q.lesson_gate.map((x) => x.kc));
+    await ddApi.markExposed(q.lesson_gate.map((x) => x.kc));
     // worked_seen is a separate counter from exposure: exposure fires once and
     // gates the KC's first question, worked_seen tells the ladder the concept
     // has been taught and lets it leave the `worked` rung.
-    await api.workedSeen(g.kc, q.question_id);
+    await ddApi.workedSeen(g.kc, q.question_id);
     renderProblem(q);
   } catch (err) {
     fail(err);
@@ -403,11 +420,11 @@ $("btn-gate-done").onclick = async () => {
 /* ── boot ────────────────────────────────────────────────────── */
 
 (async function boot() {
-  const { base, token } = await api.load();
-  await notebooks.load();
+  const { base, token } = await ddApi.load();
+  await ddNotebooks.load();
   $("in-base").value = base;
-  $("in-repo").value = notebooks.repo;
-  renderNotebookList();
+  $("in-repo").value = ddNotebooks.repo;
+  navRenderNotebookList();
   if (!token) {
     setConn(false);
     show("connect");

@@ -14,7 +14,7 @@
     "service_worker": "background.js"
   },
   "side_panel": {
-    "default_path": "panel/panel.html"
+    "default_path": "panel/app.html"
   },
   "action": {
     "default_title": "Open the Delta Drills tutor"

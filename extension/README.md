@@ -1,19 +1,30 @@
 # extension
 
 ## Purpose
-The Chrome MV3 side panel that turns Google Colab into the student-facing surface
-of the Delta Drills intelligent tutoring system. The panel asks the tutor what to
-practise next, sends the student to the right cell — switching notebooks when the
-next problem lives in a different one — times the attempt, and reports how it went.
+The Chrome MV3 side panel that puts Delta Drills beside whatever the student is
+reading. **The panel is the deployed web app**, framed in a side panel — the same
+`https://delta-drills.vercel.app/` the browser tab shows, with its tabs, its
+practice loop, its knowledge graph and its stats. The extension supplies the
+surface; the app supplies the product.
+
+A second, hand-built panel also lives here (`panel/panel.html`) — a narrow tutor
+UI that drives Colab notebooks directly. It is no longer the default. Reach it
+from ⚙ → *Built-in tutor UI*.
 
 ## Install (unpacked)
 No build step, no npm, no store listing.
 
 1. `chrome://extensions` → turn on **Developer mode** (top right).
 2. **Load unpacked** → select this `extension/` folder.
-3. Pin "Delta Drills — ARENA tutor" and click it to open the side panel.
-4. Sign in with your Delta Drills email and password. The panel stores the JWT in
-   `chrome.storage.local` and immediately asks the tutor for a problem.
+3. Pin "Delta Drills — ARENA tutor" and click it. The app loads in the panel.
+4. Sign in inside the panel — the same sign-in the website has.
+
+**Signing in here is separate from signing in on the website.** The app runs as a
+cross-site frame under a `chrome-extension://` top level, so Chrome gives it its
+own partitioned storage. It persists; it just does not carry over from a normal
+tab, and vice versa. If the panel stays empty, the usual cause is Chrome's *Block
+third-party cookies* setting denying the frame its storage — allow site data for
+`delta-drills.vercel.app`.
 
 After editing any file, hit the reload arrow on the extension card. **If a Colab
 tab was already open, reload that tab too** — content scripts inject at
@@ -65,6 +76,7 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
 ## Key Files
 - `manifest.json`: MV3 declaration. `sidePanel` + `tabs` + `storage`, host
   permissions for Colab and the backend (plus localhost for dev).
+  `side_panel.default_path` is `panel/app.html` — the shell, not the tutor UI.
 - `background.js`: service worker. Its only real job is
   `sidePanel.setPanelBehavior({openPanelOnActionClick: true})`, which cannot be
   declared in the manifest.
@@ -158,7 +170,28 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
     index by hand. `panel/watch.py` fails if the file is missing entirely, but
     it cannot tell a stale index from a current one.
 
+- **Panel renders blank with a dead ⚙** — `RESOLVED`
+  - When it happens: any edit to `panel/panel.js` that pulls a name out of
+    `window.DD` or `window.DDNav` under that name.
+  - Symptom: an empty panel. No view, no handlers, and the cog does nothing —
+    which reads as a CSS or manifest fault and is neither.
+  - Root cause: `panel.html` loads four **classic** scripts, so they share one
+    global lexical scope. `const {api} = window.DD` redeclares the `const api`
+    that `api.js` already made, and the whole file dies at parse time.
+    `node --check` per file cannot see it.
+  - Prevention/fix: alias every import (`api: ddApi`, `slugKc: navSlugKc`).
+    `watch.py`'s `check_no_shadowed_globals` fails on a bare one; to check by
+    hand, `cat` the four files together and `node --check /dev/stdin`.
+    `app.html` is immune — it loads exactly one script.
+
 ## Recent Changes
+- 2026-07-31: **The panel is now the web app.** `panel/app.html` frames
+  `https://delta-drills.vercel.app/` and is the new `side_panel.default_path`;
+  the hand-built tutor UI stays as an opt-in. Verified live: the app boots inside
+  a cross-origin frame at 400px — Pyodide loads, the engine loads, 499 questions
+  load, no framing refusal (the deploy sends neither `X-Frame-Options` nor
+  `frame-ancestors`).
+- 2026-07-31: Fixed the blank-panel SyntaxError in `panel/panel.js` (see above).
 - 2026-07-31: Cross-notebook transitions. `dd:identify` reports which notebook a
   tab holds; the panel resolves the target from a generated index, switches the
   tab and waits for Colab to mount before jumping. Notebook routing split into
