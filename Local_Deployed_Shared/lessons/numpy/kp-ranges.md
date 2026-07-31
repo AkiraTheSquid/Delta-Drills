@@ -4,7 +4,7 @@ title: Numeric ranges — arange and linspace
 supporting: [numpy.constructors, numpy.slicing-views]
 new_syntax: [torch.arange, torch.linspace]
 faded: [229, 242, 214]
-guided: []
+guided: [524]
 independent: [53]
 ---
 
@@ -211,6 +211,16 @@ def solve(stop, step):
     n = int(round(stop / step)) + 1
     return t.arange(n) * step
 ```
+
+## Guided practice
+
+### q524
+1. The exclusive stop does not care which way you are counting. Going down,
+   "stops before the stop" means the stop has to sit one step PAST `low`.
+2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what
+   `?` makes `low` the last value actually produced.
+3. `t.arange(high, low - 1, -1)` — the `- 1` is the inclusive-endpoint fix
+   from q229, pointed the other way.
 
 ## Independent practice
 

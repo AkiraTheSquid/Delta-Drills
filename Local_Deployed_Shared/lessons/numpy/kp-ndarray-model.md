@@ -4,7 +4,7 @@ title: What a tensor is — data + shape + dtype
 supporting: []
 new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
 faded: [224, 482, 484]
-guided: []
+guided: [523]
 independent: [480, 481, 483, 485, 486]
 ---
 
@@ -296,6 +296,19 @@ def solve(rows_a, rows_b):
     b = t.tensor(rows_b)
     return (a.shape == b.shape, a.dtype == b.dtype)
 ```
+
+## Guided practice
+
+### q523
+1. Two of the three answers are memory questions, not value questions: does
+   the tensor you got back read the ORIGINAL block, or a fresh one?
+   Transposing never moves data; `.contiguous()` exists precisely to ask for
+   the move.
+2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;
+   `.data_ptr()` reports which block each one reads.
+3. `view = a.T`, `packed = view.contiguous()`, then return
+   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),
+   packed.tolist())`.
 
 ## Misconceptions
 

@@ -18893,7 +18893,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(conv):\n    return conv.bias is None\n\nconv = nn.Conv2d(3, 16, kernel_size=3, bias=False)\nprint(solve(conv))\n",
-      "expected_output": "bias is None: True",
+      "expected_output": "True",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19167,7 +19167,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    return x.mean(dim=(2, 3))\n\nx = torch.zeros(1, 64, 7, 7)\nprint(solve(x))\n",
-      "expected_output": "(1, 64)",
+      "expected_output": "tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19211,7 +19211,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(x):\n    return nn.Flatten()(x)\n\nx = torch.zeros(8, 16, 4, 4)\nout = solve(x)\nprint(out)\n",
-      "expected_output": "(8, 256)",
+      "expected_output": "tensor([[0., 0., 0.,  ..., 0., 0., 0.],\n        [0., 0., 0.,  ..., 0., 0., 0.],\n        [0., 0., 0.,  ..., 0., 0., 0.],\n        ...,\n        [0., 0., 0.,  ..., 0., 0., 0.],\n        [0., 0., 0.,  ..., 0., 0., 0.],\n        [0., 0., 0.,  ..., 0., 0., 0.]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19524,7 +19524,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    with torch.inference_mode():\n        y = x.sum()\n    return (y.requires_grad, round(float(y), 4))\n\nx = torch.ones(3)\nprint(solve(x))\n",
-      "expected_output": "False",
+      "expected_output": "(False, 3.0)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19568,7 +19568,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model):\n    for p in model.parameters():\n        p.requires_grad_(False)\n    flags = [p.requires_grad for p in model.parameters()]\n    return (sum(1 for f in flags if f), flags)\n\nmodel = nn.Linear(4, 2)\nprint(solve(model))\n",
-      "expected_output": "0",
+      "expected_output": "(0, [False, False])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19612,7 +19612,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model):\n    model.eval()\n    return (model.training, [m.training for m in model])\n\nmodel = nn.Sequential(nn.Linear(4, 2), nn.Dropout(0.5))\nprint(solve(model))\n",
-      "expected_output": "False",
+      "expected_output": "(False, [False, False])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19661,7 +19661,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    return x.amax(dim=1)\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
-      "expected_output": "[5.0, 6.0]",
+      "expected_output": "tensor([5., 6.])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19705,7 +19705,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    vals = x.amax(dim=0)\n    return (vals, isinstance(x.max(dim=0), torch.Tensor), isinstance(vals, torch.Tensor))\n\nx = torch.tensor([[1.0, 5.0, 3.0], [4.0, 2.0, 6.0]])\nprint(solve(x))\n",
-      "expected_output": "[4.0, 5.0, 6.0]\nmax",
+      "expected_output": "(tensor([4., 5., 6.]), False, True)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19754,7 +19754,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    w = x.unfold(2, 2, 2).unfold(3, 2, 2)\n    return w.amax(dim=(4, 5))\n\nx = torch.tensor([[[[1., 7., 2., 0.],\n                    [3., 4., 6., 5.],\n                    [8., 1., 9., 2.],\n                    [0., 4., 3., 7.]]]])\nprint(solve(x))\n",
-      "expected_output": "[[[[7.0, 6.0], [8.0, 9.0]]]]",
+      "expected_output": "tensor([[[[7., 6.],\n          [8., 9.]]]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19798,7 +19798,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(w, value):\n    torch.nn.init.constant_(w, value)\n    return w\n\nw = torch.empty(2, 3)\nprint(solve(w, 0.25))\n",
-      "expected_output": "[[0.25, 0.25, 0.25], [0.25, 0.25, 0.25]]",
+      "expected_output": "tensor([[0.2500, 0.2500, 0.2500],\n        [0.2500, 0.2500, 0.2500]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19842,7 +19842,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(w, mean):\n    torch.nn.init.normal_(w, mean=mean, std=0.0)\n    return w\n\nw = torch.empty(5)\nprint(solve(w, 2.0))\n",
-      "expected_output": "[2.0, 2.0, 2.0, 2.0, 2.0]",
+      "expected_output": "tensor([2., 2., 2., 2., 2.])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19886,7 +19886,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(n, c):\n    torch.manual_seed(0)\n    w = torch.empty(n)\n    torch.nn.init.normal_(w, mean=0.0, std=1.0)\n    b = torch.empty(4)\n    torch.nn.init.constant_(b, c)\n    return (round(float(w.mean()), 2), round(float(w.std()), 2), b.tolist())\n\nprint(solve(10000, 0.0))\n",
-      "expected_output": "-0.01 1.0 [0.0, 0.0, 0.0, 0.0]",
+      "expected_output": "(-0.01, 1.0, [0.0, 0.0, 0.0, 0.0])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -19930,7 +19930,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x, grad_out):\n    out = x * x * x\n    out.backward(grad_out)\n    return x.grad\n\nx = torch.tensor([2.0, -3.0, 4.0], requires_grad=True)\ngrad_out = torch.tensor([1.0, 1.0, 1.0])\nprint(solve(x, grad_out))\n",
-      "expected_output": "[12.0, 27.0, 48.0]",
+      "expected_output": "tensor([12., 27., 48.])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20116,7 +20116,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn.functional as F\n\ndef solve(logits, target):\n    manual = -F.log_softmax(logits, dim=0)[target]\n    builtin = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))\n    return (round(float(manual), 4), round(float(builtin), 4))\n\nlogits = torch.tensor([3.0, 1.0, 0.2, -2.0])\ntarget = torch.tensor(0)\nprint(solve(logits, target))\n",
-      "expected_output": "[0.1847, 0.1847]",
+      "expected_output": "(0.1847, 0.1847)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20214,7 +20214,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(theta, grad, lr):\n    return theta - lr * grad\n\ntheta = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64)\ngrad = torch.tensor([0.5, -1.0, 2.0], dtype=torch.float64)\nprint(solve(theta, grad, 0.1))\n",
-      "expected_output": "[0.95, 2.1, 2.8]",
+      "expected_output": "tensor([0.9500, 2.1000, 2.8000], dtype=torch.float64)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20400,7 +20400,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model, lr, steps):\n    params = list(model.parameters())\n    for _ in range(steps):\n        with torch.no_grad():\n            for p in params:\n                p -= lr * p.grad\n    return model.weight.detach()\n\nmodel = nn.Linear(3, 2, bias=False)\nwith torch.no_grad():\n    model.weight.copy_(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))\nmodel.weight.grad = torch.ones_like(model.weight)\nprint(solve(model, 0.1, 3))\n",
-      "expected_output": "[0.7, 1.7, 2.7, 3.7, 4.7, 5.7]",
+      "expected_output": "tensor([[0.7000, 1.7000, 2.7000],\n        [3.7000, 4.7000, 5.7000]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20635,7 +20635,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(X, Y, dLdM):\n    M = X @ Y\n    M.backward(dLdM)\n    return (X.grad, Y.grad)\n\nX = torch.tensor([[1., 2., 3.], [4., 5., 6.]], requires_grad=True)\nY = torch.tensor([[1., 0.], [0., 1.], [1., 1.]], requires_grad=True)\ndLdM = torch.tensor([[1., 2.], [3., 4.]])\nprint(solve(X, Y, dLdM))\n",
-      "expected_output": "[[1.0, 2.0, 3.0], [3.0, 4.0, 7.0]]\n[[13.0, 18.0], [17.0, 24.0], [21.0, 30.0]]",
+      "expected_output": "(tensor([[1., 2., 3.],\n        [3., 4., 7.]]), tensor([[13., 18.],\n        [17., 24.],\n        [21., 30.]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20679,7 +20679,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(X, Y, dLdM):\n    dLdX = dLdM @ Y.t()\n    dLdY = X.t() @ dLdM\n    return (dLdX, dLdY)\n\nX = torch.tensor([[2., 0., 1.], [1., 3., 2.]])\nY = torch.tensor([[1., 2.], [0., 1.], [3., 0.]])\ndLdM = torch.tensor([[1., 1.], [2., 0.]])\nprint(solve(X, Y, dLdM))\n",
-      "expected_output": "[[3.0, 1.0, 3.0], [2.0, 0.0, 6.0]]\n[[4.0, 2.0], [6.0, 0.0], [5.0, 1.0]]",
+      "expected_output": "(tensor([[3., 1., 3.],\n        [2., 0., 6.]]), tensor([[4., 2.],\n        [6., 0.],\n        [5., 1.]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20723,7 +20723,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(X, Y):\n    M = X @ Y\n    L = 0.5 * (M * M).sum()\n    L.backward()\n    gX = (M @ Y.t()).detach()\n    gY = (X.t() @ M).detach()\n    return (round(float((X.grad - gX).abs().max()), 4), round(float((Y.grad - gY).abs().max()), 4), X.grad)\n\nX = torch.tensor([[1., 2.], [3., 4.], [5., 6.]], requires_grad=True)\nY = torch.tensor([[2., 1., 0., 1.], [1., 0., 2., 3.]], requires_grad=True)\nprint(solve(X, Y))\n",
-      "expected_output": "0.0\n0.0\n[[16.0, 33.0], [38.0, 71.0], [60.0, 109.0]]",
+      "expected_output": "(0.0, 0.0, tensor([[ 16.,  33.],\n        [ 38.,  71.],\n        [ 60., 109.]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20767,7 +20767,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    vb = x.var(unbiased=False)\n    vu = x.var(unbiased=True)\n    return (round(float(vb), 4), round(float(vu), 4))\n\nx = torch.tensor([[1., 2., 3., 4.], [5., 6., 7., 8.]])\nprint(solve(x))\n",
-      "expected_output": "[5.25, 6.0]",
+      "expected_output": "(5.25, 6.0)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20811,7 +20811,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    mean = x.mean(dim=(0, 2, 3))\n    var = x.var(dim=(0, 2, 3), unbiased=False)\n    return (mean, var)\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nprint(solve(x))\n",
-      "expected_output": "[7.5, 11.5, 15.5]\n[37.25, 37.25, 37.25]",
+      "expected_output": "(tensor([ 7.5000, 11.5000, 15.5000]), tensor([37.2500, 37.2500, 37.2500]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -20855,7 +20855,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(x):\n    eps = 1e-5\n    bn = nn.BatchNorm2d(x.shape[1], affine=False, eps=eps)\n    bn.train()\n    out = bn(x)\n    mean = x.mean(dim=(0, 2, 3), keepdim=True)\n    var = x.var(dim=(0, 2, 3), keepdim=True, unbiased=False)\n    manual = (x - mean) / torch.sqrt(var + eps)\n    return (bool(torch.allclose(out, manual, atol=1e-5)), out)\n\nx = torch.tensor([[[[1., 2.], [3., 4.]]], [[[5., 6.], [7., 8.]]]])\nprint(solve(x))\n",
-      "expected_output": "[5.25]\nTrue\n[-1.5275, -1.0911, -0.6547, -0.2182, 0.2182, 0.6547, 1.0911, 1.5275]",
+      "expected_output": "(True, tensor([[[[-1.5275, -1.0911],\n          [-0.6547, -0.2182]]],\n\n\n        [[[ 0.2182,  0.6547],\n          [ 1.0911,  1.5275]]]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21002,7 +21002,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(m, beta, grads):\n    for g in grads:\n        m = beta * m + (1 - beta) * g\n    return m\n\nm = torch.zeros(2)\ngrads = [torch.tensor([1.0, -2.0]), torch.tensor([3.0, 0.0]), torch.tensor([-1.0, 4.0])]\nprint(solve(m, 0.9, grads))\n",
-      "expected_output": "[0.251, 0.238]",
+      "expected_output": "tensor([0.2510, 0.2380])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21046,7 +21046,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x, weight, bias, mean, var):\n    C = x.shape[1]\n    w = weight.reshape(1, C, 1, 1)\n    b = bias.reshape(1, C, 1, 1)\n    m = mean.reshape(1, C, 1, 1)\n    v = var.reshape(1, C, 1, 1)\n    return (x - m) / torch.sqrt(v) * w + b\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\nprint(solve(x, weight, bias, mean, var))\n",
-      "expected_output": "[0.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 4.0, -1.0, -0.875, -0.75, -0.625, 12.0, 13.0, 14.0, 15.0, 13.0, 14.0, 15.0, 16.0, 0.5, 0.625, 0.75, 0.875]",
+      "expected_output": "tensor([[[[ 0.0000,  1.0000],\n          [ 2.0000,  3.0000]],\n\n         [[ 1.0000,  2.0000],\n          [ 3.0000,  4.0000]],\n\n         [[-1.0000, -0.8750],\n          [-0.7500, -0.6250]]],\n\n\n        [[[12.0000, 13.0000],\n          [14.0000, 15.0000]],\n\n         [[13.0000, 14.0000],\n          [15.0000, 16.0000]],\n\n         [[ 0.5000,  0.6250],\n          [ 0.7500,  0.8750]]]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21090,7 +21090,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(weight):\n    return weight.reshape(1, weight.shape[0], 1, 1)\n\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(weight))\n",
-      "expected_output": "[1, 4, 1, 1]",
+      "expected_output": "tensor([[[[1.]],\n\n         [[2.]],\n\n         [[3.]],\n\n         [[4.]]]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21134,7 +21134,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x, bias):\n    C = x.shape[1]\n    try:\n        bad = x + bias\n        return ('no error', x + bias.reshape(1, C, 1, 1))\n    except RuntimeError:\n        return ('raised', x + bias.reshape(1, C, 1, 1))\n\nx = torch.ones(1, 2, 2, 3)\nbias = torch.tensor([10.0, 20.0])\nprint(solve(x, bias))\n",
-      "expected_output": "[11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0]",
+      "expected_output": "('raised', tensor([[[[11., 11., 11.],\n          [11., 11., 11.]],\n\n         [[21., 21., 21.],\n          [21., 21., 21.]]]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21178,7 +21178,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn.functional as F\n\ndef solve(x, pad_value):\n    padded = F.pad(x, (1, 1), value=pad_value)\n    return padded.unfold(1, 3, 1).max(dim=2).values\n\nx = torch.tensor([[-3.0, -1.0, -7.0, -2.0]])\nprint(solve(x, float('-inf')))\n",
-      "expected_output": "[[-1.0, -1.0, -1.0, -2.0], [0.0, -1.0, -1.0, 0.0]]",
+      "expected_output": "tensor([[-1., -1., -1., -2.]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21222,7 +21222,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(x):\n    pool = nn.MaxPool1d(kernel_size=2, stride=2, padding=1)\n    return pool(x)\n\nx = torch.tensor([[[-5.0, -2.0, -9.0, -1.0, -6.0, -8.0]]])\nprint(solve(x))\n",
-      "expected_output": "[[-5.0, -2.0, -1.0, -8.0]]",
+      "expected_output": "tensor([[[-5., -2., -1., -8.]]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21320,7 +21320,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(grad, shape):\n    while grad.dim() > len(shape):\n        grad = grad.sum(0)\n    for i, s in enumerate(shape):\n        if s == 1:\n            grad = grad.sum(i, keepdim=True)\n    return grad\n\nout_grad = torch.ones(3, 2)\nprint(solve(out_grad, (3, 1)))\n",
-      "expected_output": "[[2.0], [2.0], [2.0]]",
+      "expected_output": "tensor([[2.],\n        [2.],\n        [2.]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21364,7 +21364,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(grad, shape):\n    while grad.dim() > len(shape):\n        grad = grad.sum(0)\n    for i, s in enumerate(shape):\n        if s == 1:\n            grad = grad.sum(i, keepdim=True)\n    return grad\n\nout_grad = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])\nprint(solve(out_grad, (1, 2)))\n",
-      "expected_output": "[[9.0, 12.0]]",
+      "expected_output": "tensor([[ 9., 12.]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21408,7 +21408,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x, y):\n    z = (x + y).sum()\n    z.backward()\n    return (x.grad, y.grad)\n\nx = torch.tensor([[1.0, 2.0, 3.0]], requires_grad=True)\ny = torch.tensor([[1.0], [2.0]], requires_grad=True)\nprint(solve(x, y))\n",
-      "expected_output": "[[2.0, 2.0, 2.0]] [[3.0], [3.0]]",
+      "expected_output": "(tensor([[2., 2., 2.]]), tensor([[3.],\n        [3.]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21452,7 +21452,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features, bias):\n    class Linear(nn.Module):\n        def __init__(self, i, o, b):\n            super().__init__()\n            self.in_features = i\n            self.out_features = o\n            self.bias = b\n        def extra_repr(self):\n            return f\"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias}\"\n    return Linear(in_features, out_features, bias)\n\nm = solve(8, 4, False)\nprint(m)\n",
-      "expected_output": "in_features=8, out_features=4, bias=False",
+      "expected_output": "Linear(in_features=8, out_features=4, bias=False)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21584,7 +21584,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(x):\n    prev = torch.is_grad_enabled()\n    torch.set_grad_enabled(False)\n    y = (x * x).sum()\n    torch.set_grad_enabled(prev)\n    return (y.requires_grad, round(float(y), 4))\n\nx = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nprint(solve(x))\n",
-      "expected_output": "False\n14.0",
+      "expected_output": "(False, 14.0)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21672,7 +21672,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(w, lr, step):\n    with torch.no_grad():\n        w -= lr * step\n    return (w, w.requires_grad)\n\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nprint(solve(w, 0.1, torch.ones(3)))\n",
-      "expected_output": "[0.9, 1.9, 2.9]\nTrue",
+      "expected_output": "(tensor([0.9000, 1.9000, 2.9000], requires_grad=True), True)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21716,7 +21716,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(w, x):\n    loss = (w * x).sum()\n    loss.backward()\n    return (round(float(loss), 4), w.grad)\n\nw = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)\nx = torch.tensor([4.0, 5.0, 6.0])\nprint(solve(w, x))\n",
-      "expected_output": "[4.0, 5.0, 6.0]",
+      "expected_output": "(32.0, tensor([4., 5., 6.]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21760,7 +21760,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(W, x):\n    loss = (W @ x).pow(2).sum()\n    loss.backward()\n    return (W.grad.shape == W.shape, W.grad)\n\nW = torch.tensor([[1.0, 2.0], [3.0, 4.0]], requires_grad=True)\nx = torch.tensor([1.0, 1.0])\nprint(solve(W, x))\n",
-      "expected_output": "True\n[[6.0, 6.0], [14.0, 14.0]]",
+      "expected_output": "(True, tensor([[ 6.,  6.],\n        [14., 14.]]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21804,7 +21804,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\n\ndef solve(b, target, lr):\n    loss = ((b - target) ** 2).mean()\n    loss.backward()\n    with torch.no_grad():\n        updated = b - lr * b.grad\n    return (b.grad, updated)\n\nb = torch.tensor([2.0, -1.0], requires_grad=True)\ntarget = torch.tensor([0.0, 0.0])\nprint(solve(b, target, 0.1))\n",
-      "expected_output": "2.0 -1.0\n[1.8, -0.9]",
+      "expected_output": "(tensor([ 2., -1.]), tensor([ 1.8000, -0.9000]))",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21848,7 +21848,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model):\n    model.requires_grad_(False)\n    flags = [p.requires_grad for p in model.parameters()]\n    n_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)\n    return (flags, n_trainable)\n\nmodel = nn.Sequential(nn.Linear(3, 4), nn.ReLU(), nn.Linear(4, 2))\nprint(solve(model))\n",
-      "expected_output": "[False, False, False, False]\n0",
+      "expected_output": "([False, False, False, False], 0)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21892,7 +21892,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model, x):\n    model.requires_grad_(False)\n    y = model(x).sum()\n    return (y.requires_grad, y.grad_fn is None)\n\ntorch.manual_seed(0)\nmodel = nn.Linear(4, 1)\nx = torch.tensor([[1.0, 2.0, 3.0, 4.0]])\nprint(solve(model, x))\n",
-      "expected_output": "False\nTrue",
+      "expected_output": "(False, True)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -21936,7 +21936,7 @@
       ],
       "submission_mode": "function",
       "canonical_solution": "import torch\nimport torch.nn as nn\n\ndef solve(model, idx):\n    model.requires_grad_(False)\n    model[idx].requires_grad_(True)\n    flags = [p.requires_grad for p in model.parameters()]\n    n_on = sum(int(p.requires_grad) for p in model.parameters())\n    return (flags, n_on)\n\nmodel = nn.Sequential(nn.Linear(2, 3), nn.Linear(3, 2))\nprint(solve(model, 1))\n",
-      "expected_output": "[False, False, True, True]\n2",
+      "expected_output": "([False, False, True, True], 2)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -24049,6 +24049,398 @@
       "submission_mode": "function",
       "canonical_solution": "import torch as t\n\ndef solve(x, col):\n    \"\"\"Sort the ROWS of a matrix by one column's values.\"\"\"\n    order = t.argsort(x[:, col])\n    return x[order].tolist()\n\n\nexample = (t.tensor([[3.0, 1.0], [1.0, 2.0], [2.0, 3.0]]), 0)\nprint(solve(*example))\n",
       "expected_output": "[[1.0, 2.0], [2.0, 3.0], [3.0, 1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 523,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that takes a nested Python list of at least two equal-length inner lists of at least two integers each, builds the tensor a from it, and returns a tuple (view_shares, copy_shares, values). Take the transpose a.T and then make a contiguous copy of that transpose. `view_shares` is True when the transpose reads the same memory block as a, `copy_shares` is True when the contiguous copy does, and `values` is the transposed data as a nested Python list. Transposing only re-describes the existing block; .contiguous() is how you ask for the copy. Compare buffers with .data_ptr().",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (does a.T share a's buffer?, does its copy?, the transposed values).\"\"\"\n    a = t.tensor(rows)\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, [[1, 4], [2, 5], [3, 6]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, [[1, 3], [2, 4]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[5, 6], [7, 8], [9, 10]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, [[5, 7, 9], [6, 8, 10]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[0, 1, 2, 3], [4, 5, 6, 7]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, [[0, 4], [1, 5], [2, 6], [3, 7]])"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (does a.T share a's buffer?, does its copy?, the transposed values).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (view.data_ptr() == a.data_ptr(),\n            packed.data_ptr() == a.data_ptr(),\n            packed.tolist())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+      "expected_output": "(True, False, [[1, 4], [2, 5], [3, 6]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 524,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 18,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(high, low) that takes two integers with high >= low and returns a 1-D integer tensor counting DOWN from high to low with BOTH endpoints included: high, high - 1, ..., low. Use a single t.arange call with a negative step. The stop is exclusive when counting down too, so decide which side of low the stop has to sit on.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(high, low):\n    \"\"\"Integers from high down to low, both endpoints included.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 1)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nhigh, low = 5, 1",
+          "call": "solve(high, low).tolist()",
+          "expected_expr": "[5, 4, 3, 2, 1]"
+        },
+        {
+          "setup_code": "import torch as t\nhigh, low = 3, 3",
+          "call": "solve(high, low).tolist()",
+          "expected_expr": "[3]"
+        },
+        {
+          "setup_code": "import torch as t\nhigh, low = 0, -2",
+          "call": "solve(high, low).tolist()",
+          "expected_expr": "[0, -1, -2]"
+        },
+        {
+          "setup_code": "import torch as t\nhigh, low = 10, 7",
+          "call": "solve(high, low).tolist()",
+          "expected_expr": "[10, 9, 8, 7]"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(high, low):\n    \"\"\"Integers from high down to low, both endpoints included.\"\"\"\n    return t.arange(high, low - 1, -1)\n\n\nexample = (5, 1)\nprint(solve(*example))\n",
+      "expected_output": "tensor([5, 4, 3, 2, 1])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 525,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(z, k) that takes a 2-D tensor z and a column index k, and returns z's ROWS reordered so that column k comes out DESCENDING (largest first). Each row must keep its own contents — only the order of the rows changes. Build the ascending row order with argsort on the key column and reverse it before indexing. Sorting the columns independently would tear the rows apart.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(z, k):\n    \"\"\"Rows of z reordered so column k is descending.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[10, 3], [20, 1], [30, 2]]), 1)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[10, 3], [20, 1], [30, 2]])\nk = 1",
+          "call": "solve(z, k).tolist()",
+          "expected_expr": "[[10, 3], [30, 2], [20, 1]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 5, 9], [2, 7, 8], [3, 6, 4]])\nk = 2",
+          "call": "solve(z, k).tolist()",
+          "expected_expr": "[[1, 5, 9], [2, 7, 8], [3, 6, 4]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[4.0, 1.0], [2.0, 9.0]])\nk = 1",
+          "call": "solve(z, k).tolist()",
+          "expected_expr": "[[2.0, 9.0], [4.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[7, 5], [1, 2], [4, 9]])\nk = 1",
+          "call": "solve(z, k).tolist()",
+          "expected_expr": "[[4, 9], [7, 5], [1, 2]]"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(z, k):\n    \"\"\"Rows of z reordered so column k is descending.\"\"\"\n    order = z[:, k].argsort().flip(0)\n    return z[order]\n\n\nexample = (t.tensor([[10, 3], [20, 1], [30, 2]]), 1)\nprint(solve(*example))\n",
+      "expected_output": "tensor([[10,  3],\n        [30,  2],\n        [20,  1]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 526,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(z, k) that takes a 1-D tensor z with distinct values and returns a tuple (values, indices) holding the k SMALLEST entries of z, smallest first, together with the positions they came from. One call to t.topk answers both halves: a keyword argument flips it to the small end, and the ordering it returns by default is already the one asked for here. Do not sort the whole tensor.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(z, k):\n    \"\"\"(k smallest values, their positions) — smallest first.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([5.0, 1.0, 9.0, 3.0]), 2)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([5.0, 1.0, 9.0, 3.0])\nk = 2",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(z, k))",
+          "expected_expr": "([1.0, 3.0], [1, 3])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([2, 8, 4, 6, 0])\nk = 3",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(z, k))",
+          "expected_expr": "([0, 2, 4], [4, 0, 2])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([1.5, -2.5])\nk = 1",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(z, k))",
+          "expected_expr": "([-2.5], [1])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([10, 20, 30])\nk = 3",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(z, k))",
+          "expected_expr": "([10, 20, 30], [0, 1, 2])"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(z, k):\n    \"\"\"(k smallest values, their positions) — smallest first.\"\"\"\n    small = t.topk(z, k, largest=False)\n    return (small.values, small.indices)\n\n\nexample = (t.tensor([5.0, 1.0, 9.0, 3.0]), 2)\nprint(solve(*example))\n",
+      "expected_output": "(tensor([1., 3.]), tensor([1, 3]))",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 527,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(x, lo, hi) that clamps every entry of the float tensor x into the range [lo, hi] IN PLACE and returns that same tensor. The caller's own tensor object must change — building a clamped copy and returning it is a different contract and fails here. PyTorch marks the in-place version of an operation with a trailing underscore, and clamping has one.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(x, lo, hi):\n    \"\"\"Clamp x into [lo, hi] inside its own buffer, and return x.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([-1.0, 2.0, 7.0]), 0.0, 5.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-1.0, 2.0, 7.0])\nlo, hi = 0.0, 5.0",
+          "call": "(lambda r: (r.data_ptr() == x.data_ptr(), r.tolist()))(solve(x, lo, hi))",
+          "expected_expr": "(True, [0.0, 2.0, 5.0])"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[3.0, -4.0], [9.0, 1.0]])\nlo, hi = -1.0, 5.0",
+          "call": "(lambda r: (r.data_ptr() == x.data_ptr(), r.tolist()))(solve(x, lo, hi))",
+          "expected_expr": "(True, [[3.0, -1.0], [5.0, 1.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0.5, 0.25])\nlo, hi = 0.0, 1.0",
+          "call": "(lambda r: (r.data_ptr() == x.data_ptr(), r.tolist()))(solve(x, lo, hi))",
+          "expected_expr": "(True, [0.5, 0.25])"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-8.0, 8.0])\nlo, hi = -2.0, 2.0",
+          "call": "(lambda r: (r.data_ptr() == x.data_ptr(), r.tolist()))(solve(x, lo, hi))",
+          "expected_expr": "(True, [-2.0, 2.0])"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(x, lo, hi):\n    \"\"\"Clamp x into [lo, hi] inside its own buffer, and return x.\"\"\"\n    x.clamp_(lo, hi)\n    return x\n\n\nexample = (t.tensor([-1.0, 2.0, 7.0]), 0.0, 5.0)\nprint(solve(*example))\n",
+      "expected_output": "tensor([0., 2., 5.])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 528,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(z) that takes a 1-D tensor of length at least two and returns a tuple (same_storage, same_data_ptr, tail_values) comparing z with the slice z[1:]. `same_storage` compares the two tensors' .untyped_storage().data_ptr(); `same_data_ptr` compares their .data_ptr(); `tail_values` is the slice's contents as a Python list. The slice is a view, so it shares every byte it can see with z — but one of the two pointer checks also carries the view's own starting offset, and that one disagrees.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(z):\n    \"\"\"(do z and z[1:] share a buffer?, do their data pointers match?, the slice).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0])\nprint(solve(example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([1.0, 2.0, 3.0])",
+          "call": "solve(z)",
+          "expected_expr": "(True, False, [2.0, 3.0])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.arange(5)",
+          "call": "solve(z)",
+          "expected_expr": "(True, False, [1, 2, 3, 4])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([9, 9])",
+          "call": "solve(z)",
+          "expected_expr": "(True, False, [9])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([-1.5, 0.0, 2.5, 4.0])",
+          "call": "solve(z)",
+          "expected_expr": "(True, False, [0.0, 2.5, 4.0])"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(z):\n    \"\"\"(do z and z[1:] share a buffer?, do their data pointers match?, the slice).\"\"\"\n    tail = z[1:]\n    return (tail.untyped_storage().data_ptr() == z.untyped_storage().data_ptr(),\n            tail.data_ptr() == z.data_ptr(),\n            tail.tolist())\n\n\nexample = t.tensor([1.0, 2.0, 3.0])\nprint(solve(example))\n",
+      "expected_output": "(True, False, [2.0, 3.0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 529,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(r, theta) that takes two 1-D float tensors of the same length — polar radii and angles in radians — and returns the (n, 2) tensor of the matching cartesian points, ONE POINT PER ROW, with x in column 0 and y in column 1. Use the vectorized formulas x = r * cos(theta) and y = r * sin(theta), then assemble the two columns into rows with t.stack. No Python loop over points.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(r, theta):\n    \"\"\"(n, 2) cartesian points, one per row, from polar radii and angles.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.0, 2.0]), t.tensor([0.0, t.pi / 2]))\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nr = t.tensor([1.0, 2.0])\ntheta = t.tensor([0.0, t.pi / 2])",
+          "call": "((t.round(solve(r, theta) * 1000) / 1000) + 0.0).tolist()",
+          "expected_expr": "[[1.0, 0.0], [0.0, 2.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nr = t.tensor([3.0, 1.0, 2.0])\ntheta = t.tensor([t.pi, -t.pi / 2, 0.0])",
+          "call": "((t.round(solve(r, theta) * 1000) / 1000) + 0.0).tolist()",
+          "expected_expr": "[[-3.0, 0.0], [0.0, -1.0], [2.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nr = t.tensor([4.0])\ntheta = t.tensor([t.pi / 2])",
+          "call": "((t.round(solve(r, theta) * 1000) / 1000) + 0.0).tolist()",
+          "expected_expr": "[[0.0, 4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nr = t.tensor([0.0, 5.0])\ntheta = t.tensor([1.0, 0.0])",
+          "call": "((t.round(solve(r, theta) * 1000) / 1000) + 0.0).tolist()",
+          "expected_expr": "[[0.0, 0.0], [5.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(r, theta):\n    \"\"\"(n, 2) cartesian points, one per row, from polar radii and angles.\"\"\"\n    x = r * t.cos(theta)\n    y = r * t.sin(theta)\n    return t.stack([x, y], dim=1)\n\n\nexample = (t.tensor([1.0, 2.0]), t.tensor([0.0, t.pi / 2]))\nprint(solve(*example))\n",
+      "expected_output": "tensor([[ 1.0000e+00,  0.0000e+00],\n        [-8.7423e-08,  2.0000e+00]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 530,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(ms, vs) that takes a stack of p square matrices ms of shape (p, n, n) and a stack of right-hand sides vs of shape (p, n, 1), and returns the (p, n, 1) stack of solutions whose i-th entry solves ms[i] @ x = vs[i]. Torch's linalg functions broadcast over LEADING axes, so this is one call and no loop over p — and the trailing 1 on vs is what keeps each right-hand side a column.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch\nimport torch as t\n\ndef solve(ms, vs):\n    \"\"\"(p, n, 1) stack of solutions, one per batched system.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.stack([t.eye(2) * 2.0, t.eye(2) * 4.0]),\n           t.tensor([[[2.0], [4.0]], [[4.0], [8.0]]]))\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nms = t.stack([t.eye(2) * 2.0, t.eye(2) * 4.0])\nvs = t.tensor([[[2.0], [4.0]], [[4.0], [8.0]]])",
+          "call": "solve(ms, vs).tolist()",
+          "expected_expr": "[[[1.0], [2.0]], [[1.0], [2.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\nms = t.stack([t.tensor([[2.0, 0.0], [0.0, 0.5]]),\n              t.tensor([[1.0, 0.0], [0.0, 8.0]]),\n              t.tensor([[4.0, 0.0], [0.0, 2.0]])])\nvs = t.tensor([[[6.0], [2.0]], [[3.0], [16.0]], [[8.0], [-6.0]]])",
+          "call": "solve(ms, vs).tolist()",
+          "expected_expr": "[[[3.0], [4.0]], [[3.0], [2.0]], [[2.0], [-3.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\nms = t.eye(3).reshape(1, 3, 3) * 2.0\nvs = t.tensor([[[2.0], [4.0], [6.0]]])",
+          "call": "solve(ms, vs).tolist()",
+          "expected_expr": "[[[1.0], [2.0], [3.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\nms = t.stack([t.tensor([[1.0, 1.0], [0.0, 1.0]]),\n              t.tensor([[1.0, 0.0], [1.0, 1.0]])])\nvs = t.tensor([[[3.0], [1.0]], [[2.0], [5.0]]])",
+          "call": "solve(ms, vs).tolist()",
+          "expected_expr": "[[[2.0], [1.0]], [[2.0], [3.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(ms, vs):\n    \"\"\"(p, n, 1) stack of solutions, one per batched system.\"\"\"\n    return t.linalg.solve(ms, vs)\n\n\nexample = (t.stack([t.eye(2) * 2.0, t.eye(2) * 4.0]),\n           t.tensor([[[2.0], [4.0]], [[4.0], [8.0]]]))\nprint(solve(*example))\n",
+      "expected_output": "tensor([[[1.],\n         [2.]],\n\n        [[1.],\n         [2.]]])",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }

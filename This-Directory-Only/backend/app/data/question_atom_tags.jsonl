@@ -496,3 +496,11 @@
 {"question_id": 520, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.8}]}
 {"question_id": 521, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.85}]}
 {"question_id": 522, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.75}]}
+{"question_id": 523, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.7}]}
+{"question_id": 524, "atoms": [{"atom_id": "torch-arange", "confidence": 0.85}]}
+{"question_id": 525, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.7}]}
+{"question_id": 526, "atoms": [{"atom_id": "topk-predictions", "confidence": 0.8}]}
+{"question_id": 527, "atoms": [{"atom_id": "copy-inplace-_underscore", "confidence": 0.8}]}
+{"question_id": 528, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.65}]}
+{"question_id": 529, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.7}]}
+{"question_id": 530, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.9}]}

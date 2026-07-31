@@ -107,7 +107,19 @@ def build():
 
     for qid, kc_id in LEFTOVER_TARGETS.items():
         if qid in tags:
-            raise SystemExit(f"q{qid} both referenced and in LEFTOVER_TARGETS")
+            # A KP has since claimed this question. That is the normal way a
+            # leftover retires, and the KP reference wins — it carries the
+            # role and the page's new_syntax, which the hand assignment
+            # cannot. The entry stays in the table so the question keeps a
+            # target if the KP ever drops it again. Only a DISAGREEMENT is an
+            # error: two sources naming different KCs for one question means
+            # one of them is wrong and the build must not pick silently.
+            if tags[qid]["target_kcs"] != [kc_id]:
+                raise SystemExit(
+                    f"q{qid}: LEFTOVER_TARGETS says {kc_id}, but a KP claims it "
+                    f"for {tags[qid]['target_kcs']} — fix one of them."
+                )
+            continue
         if kc_id not in kc_meta:
             raise SystemExit(f"q{qid}: unknown kc {kc_id}")
         kp = kp_by_kc.get(kc_id)

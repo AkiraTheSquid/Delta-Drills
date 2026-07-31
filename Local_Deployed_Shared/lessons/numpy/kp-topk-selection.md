@@ -2,9 +2,9 @@
 kc: numpy.topk-selection
 title: Top-k selection — topk vs sort
 supporting: [numpy.argsort-ranking, numpy.sorting]
-new_syntax: [topk]
+new_syntax: [torch.topk#dim, torch.topk#largest]
 faded: [206]
-guided: []
+guided: [526]
 independent: [187, 194]
 ---
 
@@ -102,6 +102,16 @@ def solve(z, n):
     """n largest values, ascending — topk gives them descending."""
     return t.topk(z, n).values.flip(0)
 ```
+
+## Guided practice
+
+### q526
+1. Same call, other end of the range. `topk` takes a keyword that decides
+   which end it keeps — no negation, no sort.
+2. `largest=False`. And with `sorted` left at its default the k smallest come
+   back ascending already, so there is nothing to flip here.
+3. `small = t.topk(z, k, largest=False)`, then return
+   `(small.values, small.indices)` — both halves off the one result.
 
 ## Independent practice
 

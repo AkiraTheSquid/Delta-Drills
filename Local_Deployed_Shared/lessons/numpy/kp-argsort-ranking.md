@@ -2,9 +2,9 @@
 kc: numpy.argsort-ranking
 title: Order statistics — argsort, ranks, sort-by
 supporting: [numpy.sorting, numpy.fancy-indexing]
-new_syntax: [Tensor.argsort]
+new_syntax: [Tensor.argsort, Tensor.flip]
 faded: [92, 114, 119]
-guided: []
+guided: [525]
 independent: [183]
 ---
 
@@ -163,6 +163,16 @@ def solve(z, k):
     """Indices of the k largest entries of z, largest first."""
     return t.argsort(z)[-k:].flip(0)
 ```
+
+## Guided practice
+
+### q525
+1. The sort-by recipe is unchanged — argsort the key column, fancy-index the
+   rows. Only the DIRECTION differs, and direction is a property of the
+   order, not of the indexing.
+2. `z[:, k].argsort()` is the ascending row order; reversing an order is the
+   same `.flip(0)` the top-k segment used.
+3. `z[z[:, k].argsort().flip(0)]` — one expression, rows still intact.
 
 ## Independent practice
 

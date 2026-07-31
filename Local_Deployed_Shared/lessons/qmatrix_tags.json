@@ -7,8 +7,12 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-guided"
  },
  "2": {
   "target_kcs": [
@@ -19,7 +23,9 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.abs"
+  ],
   "source": "kp-faded"
  },
  "4": {
@@ -30,7 +36,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-independent"
  },
  "5": {
@@ -57,7 +73,9 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
   "source": "kp-independent"
  },
  "7": {
@@ -68,7 +86,11 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
   "source": "kp-faded"
  },
  "8": {
@@ -78,7 +100,18 @@
   "supporting_kcs": [
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.manual_seed",
+   "torch.Generator",
+   "torch.rand",
+   "torch.rand#generator",
+   "torch.randint",
+   "torch.randint#generator",
+   "torch.randn",
+   "torch.randn#generator",
+   "torch.randperm",
+   "torch.randperm#generator"
+  ],
   "source": "kp-faded"
  },
  "10": {
@@ -89,7 +122,9 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
   "source": "kp-independent"
  },
  "11": {
@@ -101,7 +136,9 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.abs"
+  ],
   "source": "kp-independent"
  },
  "12": {
@@ -114,7 +151,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "boolean-mask-indexing"
+   "torch.count_nonzero"
   ],
   "source": "kp-faded"
  },
@@ -126,7 +163,12 @@
    "numpy.boolean-masking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isin",
+   "torch.unique",
+   "torch.unique#return_counts",
+   "torch.unique#return_inverse"
+  ],
   "source": "kp-faded"
  },
  "15": {
@@ -137,7 +179,11 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
   "source": "kp-faded"
  },
  "16": {
@@ -148,7 +194,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-independent"
  },
  "17": {
@@ -159,7 +215,13 @@
    "numpy.slicing-views",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.nn",
+   "torch.nn.functional",
+   "torch.nn.functional.pad",
+   "torch.nn.functional.pad#mode",
+   "torch.nn.functional.pad#value"
+  ],
   "source": "kp-faded"
  },
  "18": {
@@ -170,7 +232,13 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
   "source": "kp-guided"
  },
  "19": {
@@ -180,7 +248,14 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
   "source": "kp-independent"
  },
  "22": {
@@ -213,10 +288,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-independent"
  },
@@ -228,7 +301,11 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
   "source": "kp-independent"
  },
  "25": {
@@ -252,13 +329,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-faded"
  },
@@ -270,7 +348,13 @@
    "numpy.slicing-views",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.nn",
+   "torch.nn.functional",
+   "torch.nn.functional.pad",
+   "torch.nn.functional.pad#mode",
+   "torch.nn.functional.pad#value"
+  ],
   "source": "kp-guided"
  },
  "28": {
@@ -282,13 +366,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-faded"
  },
@@ -299,7 +384,13 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
   "source": "kp-faded"
  },
  "30": {
@@ -322,7 +413,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-faded"
  },
  "32": {
@@ -333,7 +434,13 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
   "source": "kp-faded"
  },
  "34": {
@@ -343,7 +450,13 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
   "source": "kp-faded"
  },
  "35": {
@@ -353,7 +466,13 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
   "source": "kp-faded"
  },
  "36": {
@@ -365,10 +484,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-guided"
  },
@@ -396,7 +513,11 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
   "source": "kp-faded"
  },
  "40": {
@@ -406,7 +527,11 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.argwhere",
+   "torch.nonzero",
+   "torch.nonzero#as_tuple"
+  ],
   "source": "kp-faded"
  },
  "41": {
@@ -416,7 +541,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-faded"
  },
  "42": {
@@ -426,7 +564,18 @@
   "supporting_kcs": [
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.manual_seed",
+   "torch.Generator",
+   "torch.rand",
+   "torch.rand#generator",
+   "torch.randint",
+   "torch.randint#generator",
+   "torch.randn",
+   "torch.randn#generator",
+   "torch.randperm",
+   "torch.randperm#generator"
+  ],
   "source": "kp-guided"
  },
  "43": {
@@ -440,8 +589,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -456,10 +608,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-faded"
  },
@@ -471,7 +621,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-faded"
  },
  "48": {
@@ -481,8 +641,21 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-guided"
  },
  "49": {
   "target_kcs": [
@@ -495,8 +668,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -509,7 +685,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-independent"
  },
  "51": {
@@ -519,7 +708,14 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
   "source": "kp-faded"
  },
  "52": {
@@ -532,7 +728,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "boolean-mask-indexing"
+   "torch.count_nonzero"
   ],
   "source": "kp-faded"
  },
@@ -544,7 +740,10 @@
    "numpy.constructors",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arange",
+   "torch.linspace"
+  ],
   "source": "kp-independent"
  },
  "58": {
@@ -578,7 +777,13 @@
    "numpy.fancy-indexing"
   ],
   "new_syntax": [
-   "trailing-underscore-inplace"
+   "Tensor.add_",
+   "Tensor.clamp_",
+   "Tensor.copy_",
+   "Tensor.div_",
+   "Tensor.mul_",
+   "Tensor.neg_",
+   "Tensor.sort"
   ],
   "source": "kp-faded"
  },
@@ -592,8 +797,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-independent"
@@ -606,7 +809,11 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
   "source": "kp-independent"
  },
  "62": {
@@ -618,13 +825,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-independent"
  },
@@ -635,8 +843,19 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
  },
  "64": {
   "target_kcs": [
@@ -647,13 +866,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-faded"
  },
@@ -666,7 +886,13 @@
    "numpy.slicing-views",
    "numpy.tile-repeat-meshgrid"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arctan2",
+   "torch.cat#dim",
+   "torch.cos",
+   "torch.pi",
+   "torch.sin"
+  ],
   "source": "kp-faded"
  },
  "67": {
@@ -680,8 +906,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -695,8 +924,18 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
+  "source": "kp-guided"
  },
  "69": {
   "target_kcs": [
@@ -705,7 +944,13 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
   "source": "kp-independent"
  },
  "70": {
@@ -741,7 +986,9 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.abs"
+  ],
   "source": "kp-independent"
  },
  "73": {
@@ -753,8 +1000,10 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.abs"
+  ],
+  "source": "kp-guided"
  },
  "74": {
   "target_kcs": [
@@ -763,8 +1012,15 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
  },
  "75": {
   "target_kcs": [
@@ -774,11 +1030,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-independent"
  },
@@ -790,11 +1047,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-guided"
  },
@@ -806,7 +1064,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-faded"
  },
  "78": {
@@ -817,8 +1085,18 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
+  "source": "kp-guided"
  },
  "79": {
   "target_kcs": [
@@ -828,7 +1106,12 @@
    "numpy.boolean-masking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isin",
+   "torch.unique",
+   "torch.unique#return_counts",
+   "torch.unique#return_inverse"
+  ],
   "source": "kp-independent"
  },
  "80": {
@@ -839,7 +1122,9 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
   "source": "kp-faded"
  },
  "81": {
@@ -852,8 +1137,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-independent"
@@ -887,7 +1170,16 @@
    "numpy.reshape-flatten",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
   "source": "kp-faded"
  },
  "85": {
@@ -899,8 +1191,10 @@
    "numpy.elementwise-ufuncs",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.count_nonzero"
+  ],
+  "source": "kp-guided"
  },
  "86": {
   "target_kcs": [
@@ -909,7 +1203,11 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.argwhere",
+   "torch.nonzero",
+   "torch.nonzero#as_tuple"
+  ],
   "source": "kp-guided"
  },
  "87": {
@@ -919,8 +1217,15 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-guided"
  },
  "89": {
   "target_kcs": [
@@ -930,7 +1235,16 @@
    "numpy.reshape-flatten",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
   "source": "kp-independent"
  },
  "90": {
@@ -941,7 +1255,13 @@
    "numpy.slicing-views",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.nn",
+   "torch.nn.functional",
+   "torch.nn.functional.pad",
+   "torch.nn.functional.pad#mode",
+   "torch.nn.functional.pad#value"
+  ],
   "source": "kp-independent"
  },
  "91": {
@@ -954,8 +1274,12 @@
    "numpy.cumulative-diff",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.argmax#dim",
+   "Tensor.squeeze",
+   "torch.quantile"
+  ],
+  "source": "kp-independent"
  },
  "92": {
   "target_kcs": [
@@ -965,7 +1289,10 @@
    "numpy.sorting",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argsort",
+   "Tensor.flip"
+  ],
   "source": "kp-faded"
  },
  "93": {
@@ -977,7 +1304,9 @@
    "numpy.constructors",
    "numpy.argmin-argmax"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.bincount"
+  ],
   "source": "kp-faded"
  },
  "94": {
@@ -987,7 +1316,9 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.where"
+  ],
   "source": "kp-faded"
  },
  "95": {
@@ -999,8 +1330,12 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.dot",
+   "torch.isclose",
+   "torch.linalg.norm"
+  ],
+  "source": "kp-independent"
  },
  "97": {
   "target_kcs": [
@@ -1010,8 +1345,10 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
-  "source": "kp-independent"
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
+  "source": "kp-faded"
  },
  "98": {
   "target_kcs": [
@@ -1021,7 +1358,11 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
   "source": "kp-faded"
  },
  "99": {
@@ -1033,7 +1374,9 @@
    "numpy.slicing-views",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.unfold"
+  ],
   "source": "kp-independent"
  },
  "100": {
@@ -1043,7 +1386,9 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.where"
+  ],
   "source": "kp-faded"
  },
  "101": {
@@ -1066,7 +1411,12 @@
    "numpy.boolean-masking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isin",
+   "torch.unique",
+   "torch.unique#return_counts",
+   "torch.unique#return_inverse"
+  ],
   "source": "kp-independent"
  },
  "103": {
@@ -1077,8 +1427,10 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
+  "source": "kp-independent"
  },
  "104": {
   "target_kcs": [
@@ -1087,7 +1439,18 @@
   "supporting_kcs": [
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.manual_seed",
+   "torch.Generator",
+   "torch.rand",
+   "torch.rand#generator",
+   "torch.randint",
+   "torch.randint#generator",
+   "torch.randn",
+   "torch.randn#generator",
+   "torch.randperm",
+   "torch.randperm#generator"
+  ],
   "source": "kp-independent"
  },
  "105": {
@@ -1099,7 +1462,13 @@
    "numpy.slicing-views",
    "numpy.tile-repeat-meshgrid"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arctan2",
+   "torch.cat#dim",
+   "torch.cos",
+   "torch.pi",
+   "torch.sin"
+  ],
   "source": "kp-independent"
  },
  "106": {
@@ -1110,7 +1479,11 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
   "source": "kp-faded"
  },
  "107": {
@@ -1122,9 +1495,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-faded"
@@ -1152,7 +1525,11 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
   "source": "kp-independent"
  },
  "110": {
@@ -1162,7 +1539,11 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.argwhere",
+   "torch.nonzero",
+   "torch.nonzero#as_tuple"
+  ],
   "source": "kp-independent"
  },
  "111": {
@@ -1175,8 +1556,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-faded"
@@ -1190,7 +1569,9 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.abs"
+  ],
   "source": "kp-independent"
  },
  "113": {
@@ -1202,7 +1583,10 @@
    "numpy.slicing-views",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.untyped_storage",
+   "Tensor.view"
+  ],
   "source": "kp-independent"
  },
  "114": {
@@ -1213,7 +1597,10 @@
    "numpy.sorting",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argsort",
+   "Tensor.flip"
+  ],
   "source": "kp-faded"
  },
  "115": {
@@ -1224,7 +1611,13 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
   "source": "kp-independent"
  },
  "116": {
@@ -1236,7 +1629,9 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.abs"
+  ],
   "source": "kp-faded"
  },
  "117": {
@@ -1248,7 +1643,9 @@
    "numpy.slicing-views",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.unfold"
+  ],
   "source": "kp-faded"
  },
  "118": {
@@ -1259,7 +1656,9 @@
    "numpy.linalg-basics",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
   "source": "kp-independent"
  },
  "119": {
@@ -1270,7 +1669,10 @@
    "numpy.sorting",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argsort",
+   "Tensor.flip"
+  ],
   "source": "kp-faded"
  },
  "120": {
@@ -1281,8 +1683,14 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
+  "source": "kp-independent"
  },
  "121": {
   "target_kcs": [
@@ -1309,7 +1717,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-independent"
  },
  "123": {
@@ -1321,7 +1732,10 @@
    "numpy.slicing-views",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.untyped_storage",
+   "Tensor.view"
+  ],
   "source": "kp-faded"
  },
  "124": {
@@ -1333,7 +1747,9 @@
    "numpy.constructors",
    "numpy.argmin-argmax"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.bincount"
+  ],
   "source": "kp-independent"
  },
  "126": {
@@ -1345,8 +1761,11 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
+  "source": "kp-independent"
  },
  "127": {
   "target_kcs": [
@@ -1357,7 +1776,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-guided"
  },
  "128": {
@@ -1369,7 +1791,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-independent"
  },
  "129": {
@@ -1381,8 +1806,11 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
+  "source": "kp-independent"
  },
  "130": {
   "target_kcs": [
@@ -1407,7 +1835,10 @@
    "numpy.onehot-bincount",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.index_add_",
+   "torch.bincount#weights"
+  ],
   "source": "kp-independent"
  },
  "132": {
@@ -1418,7 +1849,10 @@
    "numpy.onehot-bincount",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.index_add_",
+   "torch.bincount#weights"
+  ],
   "source": "kp-faded"
  },
  "133": {
@@ -1431,8 +1865,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cat"
+  ],
+  "source": "kp-independent"
  },
  "134": {
   "target_kcs": [
@@ -1443,7 +1879,9 @@
    "numpy.constructors",
    "numpy.argmin-argmax"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.bincount"
+  ],
   "source": "kp-guided"
  },
  "135": {
@@ -1468,8 +1906,10 @@
   "supporting_kcs": [
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-guided"
  },
  "137": {
   "target_kcs": [
@@ -1479,7 +1919,10 @@
    "numpy.onehot-bincount",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.index_add_",
+   "torch.bincount#weights"
+  ],
   "source": "kp-guided"
  },
  "138": {
@@ -1492,7 +1935,13 @@
    "numpy.fancy-indexing"
   ],
   "new_syntax": [
-   "trailing-underscore-inplace"
+   "Tensor.add_",
+   "Tensor.clamp_",
+   "Tensor.copy_",
+   "Tensor.div_",
+   "Tensor.mul_",
+   "Tensor.neg_",
+   "Tensor.sort"
   ],
   "source": "kp-faded"
  },
@@ -1516,7 +1965,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-independent"
  },
  "141": {
@@ -1543,7 +2002,13 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
   "source": "kp-independent"
  },
  "143": {
@@ -1556,7 +2021,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cat"
+  ],
   "source": "kp-independent"
  },
  "144": {
@@ -1584,8 +2051,10 @@
    "numpy.elementwise-ufuncs",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.count_nonzero"
+  ],
+  "source": "kp-independent"
  },
  "146": {
   "target_kcs": [
@@ -1595,7 +2064,16 @@
    "numpy.reshape-flatten",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
   "source": "kp-guided"
  },
  "147": {
@@ -1606,8 +2084,10 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
+  "source": "kp-independent"
  },
  "148": {
   "target_kcs": [
@@ -1617,7 +2097,12 @@
    "numpy.boolean-masking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isin",
+   "torch.unique",
+   "torch.unique#return_counts",
+   "torch.unique#return_inverse"
+  ],
   "source": "kp-independent"
  },
  "149": {
@@ -1650,7 +2135,9 @@
    "numpy.constructors",
    "numpy.argmin-argmax"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.bincount"
+  ],
   "source": "kp-independent"
  },
  "151": {
@@ -1663,8 +2150,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-faded"
@@ -1698,7 +2183,9 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
   "source": "kp-independent"
  },
  "154": {
@@ -1709,8 +2196,12 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
+  "source": "kp-guided"
  },
  "155": {
   "target_kcs": [
@@ -1719,8 +2210,14 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
+  "source": "kp-independent"
  },
  "156": {
   "target_kcs": [
@@ -1731,7 +2228,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-guided"
  },
  "158": {
@@ -1744,8 +2244,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cat"
+  ],
+  "source": "kp-independent"
  },
  "159": {
   "target_kcs": [
@@ -1755,7 +2257,16 @@
    "numpy.reshape-flatten",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
   "source": "kp-independent"
  },
  "160": {
@@ -1766,8 +2277,18 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
+  "source": "kp-independent"
  },
  "162": {
   "target_kcs": [
@@ -1777,7 +2298,9 @@
    "numpy.axis-reductions",
    "numpy.where-select"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.sum#keepdim"
+  ],
   "source": "kp-guided"
  },
  "163": {
@@ -1788,8 +2311,18 @@
    "numpy.aggregations",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cumsum",
+   "torch.cumsum#dim",
+   "torch.cummax",
+   "torch.cummax#dim",
+   "torch.cummin",
+   "torch.cumprod",
+   "torch.diff",
+   "torch.diff#dim",
+   "torch.diff#n"
+  ],
+  "source": "kp-independent"
  },
  "164": {
   "target_kcs": [
@@ -1800,8 +2333,10 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.abs"
+  ],
+  "source": "kp-independent"
  },
  "165": {
   "target_kcs": [
@@ -1811,7 +2346,10 @@
    "numpy.onehot-bincount",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.index_add_",
+   "torch.bincount#weights"
+  ],
   "source": "kp-independent"
  },
  "166": {
@@ -1823,7 +2361,9 @@
    "numpy.slicing-views",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.unfold"
+  ],
   "source": "kp-guided"
  },
  "167": {
@@ -1835,7 +2375,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-independent"
  },
  "168": {
@@ -1846,8 +2389,12 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-independent"
  },
  "169": {
   "target_kcs": [
@@ -1858,7 +2405,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-independent"
  },
  "170": {
@@ -1869,8 +2419,14 @@
    "numpy.boolean-masking",
    "numpy.where-select"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.isnan",
+   "torch.nan",
+   "torch.nan_to_num",
+   "torch.nan_to_num#nan",
+   "torch.nanmean"
+  ],
+  "source": "kp-independent"
  },
  "171": {
   "target_kcs": [
@@ -1882,7 +2438,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cat"
+  ],
   "source": "kp-guided"
  },
  "172": {
@@ -1894,8 +2452,10 @@
    "numpy.constructors",
    "numpy.argmin-argmax"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.bincount"
+  ],
+  "source": "kp-independent"
  },
  "173": {
   "target_kcs": [
@@ -1905,7 +2465,9 @@
    "numpy.linalg-basics",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
   "source": "kp-faded"
  },
  "174": {
@@ -1916,8 +2478,12 @@
    "numpy.aggregations",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim"
+  ],
+  "source": "kp-independent"
  },
  "175": {
   "target_kcs": [
@@ -1928,7 +2494,9 @@
    "numpy.slicing-views",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.unfold"
+  ],
   "source": "kp-independent"
  },
  "176": {
@@ -1940,7 +2508,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-independent"
  },
  "177": {
@@ -1950,8 +2521,10 @@
   "supporting_kcs": [
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-independent"
  },
  "180": {
   "target_kcs": [
@@ -1961,8 +2534,18 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
+  "source": "kp-independent"
  },
  "181": {
   "target_kcs": [
@@ -1973,7 +2556,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-faded"
  },
  "182": {
@@ -1985,7 +2571,13 @@
    "numpy.slicing-views",
    "numpy.tile-repeat-meshgrid"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arctan2",
+   "torch.cat#dim",
+   "torch.cos",
+   "torch.pi",
+   "torch.sin"
+  ],
   "source": "kp-faded"
  },
  "183": {
@@ -1996,7 +2588,10 @@
    "numpy.sorting",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argsort",
+   "Tensor.flip"
+  ],
   "source": "kp-independent"
  },
  "184": {
@@ -2006,8 +2601,10 @@
   "supporting_kcs": [
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "integer-array-indexing"
+  ],
+  "source": "kp-independent"
  },
  "185": {
   "target_kcs": [
@@ -2019,7 +2616,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cat"
+  ],
   "source": "kp-faded"
  },
  "186": {
@@ -2030,8 +2629,14 @@
    "numpy.slicing-views",
    "numpy.constructors"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.nn",
+   "torch.nn.functional",
+   "torch.nn.functional.pad",
+   "torch.nn.functional.pad#mode",
+   "torch.nn.functional.pad#value"
+  ],
+  "source": "kp-independent"
  },
  "187": {
   "target_kcs": [
@@ -2042,7 +2647,8 @@
    "numpy.sorting"
   ],
   "new_syntax": [
-   "topk"
+   "torch.topk#dim",
+   "torch.topk#largest"
   ],
   "source": "kp-independent"
  },
@@ -2053,8 +2659,15 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
  },
  "190": {
   "target_kcs": [
@@ -2064,7 +2677,9 @@
    "numpy.linalg-basics",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
   "source": "kp-faded"
  },
  "191": {
@@ -2077,7 +2692,11 @@
    "numpy.cumulative-diff",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax#dim",
+   "Tensor.squeeze",
+   "torch.quantile"
+  ],
   "source": "kp-faded"
  },
  "192": {
@@ -2091,8 +2710,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -2107,7 +2729,10 @@
    "numpy.axis-reductions",
    "numpy.rescaling"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.norm#dim",
+   "torch.linalg.norm#keepdim"
+  ],
   "source": "kp-independent"
  },
  "194": {
@@ -2119,7 +2744,8 @@
    "numpy.sorting"
   ],
   "new_syntax": [
-   "topk"
+   "torch.topk#dim",
+   "torch.topk#largest"
   ],
   "source": "kp-independent"
  },
@@ -2132,7 +2758,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-faded"
  },
  "196": {
@@ -2144,7 +2773,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-independent"
  },
  "197": {
@@ -2155,7 +2787,9 @@
    "numpy.linalg-basics",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
   "source": "kp-independent"
  },
  "198": {
@@ -2168,8 +2802,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cat"
+  ],
+  "source": "kp-independent"
  },
  "199": {
   "target_kcs": [
@@ -2181,7 +2817,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cat"
+  ],
   "source": "kp-independent"
  },
  "200": {
@@ -2194,7 +2832,11 @@
    "numpy.cumulative-diff",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax#dim",
+   "Tensor.squeeze",
+   "torch.quantile"
+  ],
   "source": "kp-guided"
  },
  "201": {
@@ -2206,7 +2848,13 @@
    "numpy.slicing-views",
    "numpy.tile-repeat-meshgrid"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arctan2",
+   "torch.cat#dim",
+   "torch.cos",
+   "torch.pi",
+   "torch.sin"
+  ],
   "source": "kp-independent"
  },
  "202": {
@@ -2218,8 +2866,10 @@
    "numpy.elementwise-ufuncs",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.count_nonzero"
+  ],
+  "source": "kp-independent"
  },
  "204": {
   "target_kcs": [
@@ -2230,7 +2880,10 @@
    "numpy.slicing-views",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.untyped_storage",
+   "Tensor.view"
+  ],
   "source": "kp-faded"
  },
  "205": {
@@ -2243,7 +2896,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cat"
+  ],
   "source": "kp-independent"
  },
  "206": {
@@ -2255,7 +2910,8 @@
    "numpy.sorting"
   ],
   "new_syntax": [
-   "topk"
+   "torch.topk#dim",
+   "torch.topk#largest"
   ],
   "source": "kp-faded"
  },
@@ -2269,8 +2925,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cat"
+  ],
+  "source": "kp-independent"
  },
  "208": {
   "target_kcs": [
@@ -2280,7 +2938,9 @@
    "numpy.linalg-basics",
    "numpy.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
   "source": "kp-faded"
  },
  "209": {
@@ -2292,7 +2952,10 @@
    "numpy.pad-borders",
    "numpy.cumulative-diff"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.split",
+   "Tensor.split#dim"
+  ],
   "source": "kp-independent"
  },
  "210": {
@@ -2305,7 +2968,11 @@
    "numpy.cumulative-diff",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax#dim",
+   "Tensor.squeeze",
+   "torch.quantile"
+  ],
   "source": "kp-independent"
  },
  "211": {
@@ -2318,8 +2985,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.cat"
+  ],
+  "source": "kp-independent"
  },
  "212": {
   "target_kcs": [
@@ -2328,7 +2997,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-faded"
  },
  "213": {
@@ -2338,7 +3020,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-independent"
  },
  "214": {
@@ -2349,7 +3044,10 @@
    "numpy.constructors",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arange",
+   "torch.linspace"
+  ],
   "source": "kp-faded"
  },
  "215": {
@@ -2359,7 +3057,14 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
   "source": "kp-faded"
  },
  "216": {
@@ -2370,7 +3075,10 @@
    "numpy.onehot-bincount",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.index_add_",
+   "torch.bincount#weights"
+  ],
   "source": "kp-independent"
  },
  "217": {
@@ -2380,7 +3088,13 @@
   "supporting_kcs": [
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.repeat",
+   "torch.meshgrid",
+   "torch.meshgrid#indexing",
+   "torch.repeat_interleave",
+   "torch.tile"
+  ],
   "source": "kp-guided"
  },
  "218": {
@@ -2391,7 +3105,11 @@
    "numpy.axis-reductions",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.std",
+   "Tensor.std#correction",
+   "Tensor.std#dim"
+  ],
   "source": "kp-independent"
  },
  "219": {
@@ -2402,7 +3120,11 @@
    "numpy.aggregations",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.argmax",
+   "torch.argmin"
+  ],
   "source": "kp-faded"
  },
  "220": {
@@ -2426,14 +3148,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-faded"
  },
@@ -2444,7 +3171,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-independent"
  },
  "227": {
@@ -2454,7 +3194,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-faded"
  },
  "228": {
@@ -2464,7 +3217,20 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
   "source": "kp-faded"
  },
  "229": {
@@ -2475,7 +3241,10 @@
    "numpy.constructors",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arange",
+   "torch.linspace"
+  ],
   "source": "kp-faded"
  },
  "230": {
@@ -2485,7 +3254,14 @@
   "supporting_kcs": [
    "numpy.ndarray-model"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
   "source": "kp-faded"
  },
  "231": {
@@ -2496,11 +3272,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-independent"
  },
@@ -2514,7 +3291,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "boolean-mask-indexing"
+   "torch.count_nonzero"
   ],
   "source": "kp-independent"
  },
@@ -2526,11 +3303,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-faded"
  },
@@ -2565,7 +3343,13 @@
    "numpy.fancy-indexing"
   ],
   "new_syntax": [
-   "trailing-underscore-inplace"
+   "Tensor.add_",
+   "Tensor.clamp_",
+   "Tensor.copy_",
+   "Tensor.div_",
+   "Tensor.mul_",
+   "Tensor.neg_",
+   "Tensor.sort"
   ],
   "source": "kp-faded"
  },
@@ -2579,7 +3363,7 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "boolean-mask-indexing"
+   "torch.count_nonzero"
   ],
   "source": "kp-faded"
  },
@@ -2591,7 +3375,17 @@
    "numpy.constructors",
    "numpy.aggregations"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.as_tensor",
+   "torch.diag",
+   "torch.diag#diagonal",
+   "torch.diagonal",
+   "torch.diagonal#offset",
+   "torch.trace",
+   "torch.tril",
+   "torch.tril#diagonal",
+   "torch.triu"
+  ],
   "source": "kp-faded"
  },
  "238": {
@@ -2602,7 +3396,16 @@
    "numpy.reshape-flatten",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
   "source": "kp-independent"
  },
  "239": {
@@ -2614,9 +3417,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-faded"
@@ -2628,8 +3431,10 @@
   "supporting_kcs": [
    "numpy.boolean-masking"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.where"
+  ],
+  "source": "kp-guided"
  },
  "241": {
   "target_kcs": [
@@ -2639,7 +3444,12 @@
    "numpy.boolean-masking",
    "numpy.sorting"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.isin",
+   "torch.unique",
+   "torch.unique#return_counts",
+   "torch.unique#return_inverse"
+  ],
   "source": "kp-guided"
  },
  "242": {
@@ -2650,7 +3460,10 @@
    "numpy.constructors",
    "numpy.slicing-views"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.arange",
+   "torch.linspace"
+  ],
   "source": "kp-faded"
  },
  "243": {
@@ -2661,7 +3474,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "244": {
@@ -2674,7 +3489,7 @@
    "numpy.reshape-flatten"
   ],
   "new_syntax": [
-   "einsum-spec-string"
+   "torch.einsum"
   ],
   "source": "kp-faded"
  },
@@ -2720,7 +3535,9 @@
    "einsum.batch-dims",
    "numpy.centering"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cov"
+  ],
   "source": "kp-independent"
  },
  "249": {
@@ -2732,7 +3549,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "250": {
   "target_kcs": [
@@ -2742,8 +3559,10 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.outer"
+  ],
+  "source": "kp-guided"
  },
  "251": {
   "target_kcs": [
@@ -2765,7 +3584,9 @@
    "einsum.batch-dims",
    "numpy.centering"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cov"
+  ],
   "source": "kp-faded"
  },
  "253": {
@@ -2777,7 +3598,7 @@
    "einsum.reductions"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "254": {
   "target_kcs": [
@@ -2832,7 +3653,9 @@
    "einsum.batch-dims",
    "numpy.centering"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cov"
+  ],
   "source": "kp-guided"
  },
  "259": {
@@ -2844,7 +3667,9 @@
    "einsum.batch-dims",
    "numpy.centering"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cov"
+  ],
   "source": "kp-independent"
  },
  "260": {
@@ -2867,7 +3692,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "262": {
   "target_kcs": [
@@ -2910,7 +3735,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "266": {
@@ -2943,7 +3770,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-faded"
  },
  "269": {
@@ -2978,7 +3807,7 @@
    "numpy.reshape-flatten"
   ],
   "new_syntax": [
-   "einsum-spec-string"
+   "torch.einsum"
   ],
   "source": "kp-guided"
  },
@@ -3034,7 +3863,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "277": {
@@ -3067,7 +3898,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-faded"
  },
  "280": {
@@ -3111,7 +3944,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "285": {
@@ -3124,7 +3959,7 @@
    "numpy.reshape-flatten"
   ],
   "new_syntax": [
-   "einsum-spec-string"
+   "torch.einsum"
   ],
   "source": "kp-faded"
  },
@@ -3137,7 +3972,7 @@
    "numpy.linalg-basics"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-faded"
  },
  "287": {
   "target_kcs": [
@@ -3147,7 +3982,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "288": {
@@ -3181,7 +4018,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "291": {
   "target_kcs": [
@@ -3214,7 +4051,7 @@
    "numpy.diag-triangles"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-guided"
  },
  "294": {
   "target_kcs": [
@@ -3225,7 +4062,7 @@
    "numpy.linalg-basics"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "295": {
   "target_kcs": [
@@ -3257,7 +4094,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-independent"
  },
  "298": {
@@ -3291,8 +4130,10 @@
    "numpy.dot-matmul-patterns",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.einsum"
+  ],
+  "source": "kp-independent"
  },
  "301": {
   "target_kcs": [
@@ -3314,7 +4155,7 @@
    "numpy.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "303": {
   "target_kcs": [
@@ -3325,8 +4166,10 @@
    "numpy.dot-matmul-patterns",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "torch.einsum"
+  ],
+  "source": "kp-independent"
  },
  "304": {
   "target_kcs": [
@@ -3359,7 +4202,9 @@
    "einsum.batch-dims",
    "numpy.centering"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.cov"
+  ],
   "source": "kp-independent"
  },
  "308": {
@@ -3392,7 +4237,9 @@
    "einsum.matvec-matmul",
    "einsum.outer-products"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "torch.outer"
+  ],
   "source": "kp-faded"
  },
  "311": {
@@ -3460,7 +4307,7 @@
    "einops.pooling"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "317": {
   "target_kcs": [
@@ -3471,7 +4318,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-faded"
  },
  "318": {
@@ -3493,8 +4342,10 @@
    "numpy.reshape-flatten",
    "einsum.notation-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-independent"
  },
  "320": {
   "target_kcs": [
@@ -3515,7 +4366,7 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "322": {
   "target_kcs": [
@@ -3526,7 +4377,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "323": {
   "target_kcs": [
@@ -3558,7 +4409,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-faded"
  },
  "326": {
@@ -3569,7 +4422,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-independent"
  },
  "327": {
@@ -3580,8 +4435,10 @@
    "numpy.reshape-flatten",
    "einsum.notation-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-independent"
  },
  "328": {
   "target_kcs": [
@@ -3591,7 +4448,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-guided"
  },
  "329": {
@@ -3614,7 +4473,7 @@
    "einsum.notation-model"
   ],
   "new_syntax": [
-   "einops-pattern-string"
+   "einops.rearrange"
   ],
   "source": "kp-independent"
  },
@@ -3626,7 +4485,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "332": {
   "target_kcs": [
@@ -3636,7 +4495,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-independent"
  },
  "333": {
@@ -3647,7 +4508,7 @@
    "einops.pattern-language"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "334": {
   "target_kcs": [
@@ -3657,7 +4518,7 @@
    "einops.pattern-language"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "335": {
   "target_kcs": [
@@ -3668,7 +4529,7 @@
    "einsum.notation-model"
   ],
   "new_syntax": [
-   "einops-pattern-string"
+   "einops.rearrange"
   ],
   "source": "kp-independent"
  },
@@ -3681,7 +4542,7 @@
    "einops.split-axes"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "337": {
   "target_kcs": [
@@ -3702,7 +4563,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "339": {
@@ -3714,7 +4577,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "340": {
@@ -3725,8 +4590,10 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-independent"
  },
  "341": {
   "target_kcs": [
@@ -3737,7 +4604,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "342": {
@@ -3772,8 +4641,10 @@
    "numpy.reshape-flatten",
    "einsum.notation-model"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-independent"
  },
  "345": {
   "target_kcs": [
@@ -3784,22 +4655,11 @@
    "einsum.notation-model"
   ],
   "new_syntax": [
-   "einops-pattern-string"
+   "einops.rearrange"
   ],
   "source": "kp-faded"
  },
  "346": {
-  "target_kcs": [
-   "einops.merge-axes"
-  ],
-  "supporting_kcs": [
-   "einops.pattern-language",
-   "numpy.reshape-flatten"
-  ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
- },
- "347": {
   "target_kcs": [
    "einops.merge-axes"
   ],
@@ -3812,6 +4672,19 @@
   ],
   "source": "kp-independent"
  },
+ "347": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-faded"
+ },
  "348": {
   "target_kcs": [
    "einops.repeat-model"
@@ -3821,7 +4694,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "349": {
@@ -3856,7 +4731,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-guided"
  },
  "352": {
@@ -3868,8 +4745,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-independent"
  },
  "353": {
   "target_kcs": [
@@ -3879,8 +4758,10 @@
    "einops.pattern-language",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
  },
  "354": {
   "target_kcs": [
@@ -3902,8 +4783,10 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-independent"
  },
  "356": {
   "target_kcs": [
@@ -3949,7 +4832,7 @@
    "einops.pooling"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "360": {
   "target_kcs": [
@@ -4012,7 +4895,7 @@
    "einops.pattern-language"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "367": {
   "target_kcs": [
@@ -4022,7 +4905,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-independent"
  },
  "368": {
@@ -4055,8 +4940,10 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-independent"
  },
  "371": {
   "target_kcs": [
@@ -4067,7 +4954,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "372": {
   "target_kcs": [
@@ -4088,8 +4975,10 @@
    "einops.pattern-language",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
  },
  "374": {
   "target_kcs": [
@@ -4131,7 +5020,7 @@
    "einops.split-axes"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "378": {
   "target_kcs": [
@@ -4153,7 +5042,7 @@
    "einsum.notation-model"
   ],
   "new_syntax": [
-   "einops-pattern-string"
+   "einops.rearrange"
   ],
   "source": "kp-independent"
  },
@@ -4165,8 +5054,10 @@
    "einops.pattern-language",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
  },
  "381": {
   "target_kcs": [
@@ -4199,7 +5090,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "384": {
@@ -4223,7 +5116,9 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.broadcasting-rules"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.repeat"
+  ],
   "source": "kp-independent"
  },
  "386": {
@@ -4257,7 +5152,7 @@
    "einsum.notation-model"
   ],
   "new_syntax": [
-   "einops-pattern-string"
+   "einops.rearrange"
   ],
   "source": "kp-guided"
  },
@@ -4303,8 +5198,10 @@
    "einops.pattern-language",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
  },
  "393": {
   "target_kcs": [
@@ -4337,7 +5234,7 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "396": {
   "target_kcs": [
@@ -4371,7 +5268,7 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "399": {
   "target_kcs": [
@@ -4381,7 +5278,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-independent"
  },
  "400": {
@@ -4392,8 +5291,10 @@
    "einops.pattern-language",
    "numpy.reshape-flatten"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-independent"
  },
  "401": {
   "target_kcs": [
@@ -4414,7 +5315,9 @@
    "einops.pattern-language",
    "numpy.axis-reductions"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "einops.reduce"
+  ],
   "source": "kp-independent"
  },
  "403": {
@@ -4426,7 +5329,7 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
-  "source": "leftover-assignment"
+  "source": "kp-independent"
  },
  "404": {
   "target_kcs": [
@@ -4445,14 +5348,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-independent"
  },
@@ -4462,14 +5370,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-independent"
  },
@@ -4479,14 +5392,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-faded"
  },
@@ -4496,14 +5414,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-independent"
  },
@@ -4513,14 +5436,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-faded"
  },
@@ -4530,14 +5458,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-independent"
  },
@@ -4547,14 +5480,19 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "torch.tensor",
-   "torch.tensor#dtype",
-   "Tensor.shape",
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
    "Tensor.dtype",
+   "Tensor.is_contiguous",
    "Tensor.ndim",
    "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
    "torch.int64",
-   "torch.float32"
+   "torch.tensor",
+   "torch.tensor#dtype"
   ],
   "source": "kp-independent"
  },
@@ -4569,8 +5507,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -4587,8 +5528,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -4605,8 +5549,11 @@
    "Tensor.clamp",
    "Tensor.clamp#max",
    "Tensor.clamp#min",
+   "torch.ceil",
    "torch.floor",
    "torch.maximum",
+   "torch.minimum",
+   "torch.round",
    "torch.sqrt",
    "torch.trunc"
   ],
@@ -4621,10 +5568,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-guided"
  },
@@ -4637,10 +5582,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-guided"
  },
@@ -4653,10 +5596,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-independent"
  },
@@ -4669,10 +5610,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-independent"
  },
@@ -4685,10 +5624,8 @@
    "numpy.ranges"
   ],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.flatten",
-   "Tensor.reshape",
-   "torch.arange"
+   "Tensor.reshape"
   ],
   "source": "kp-independent"
  },
@@ -4701,13 +5638,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-guided"
  },
@@ -4720,13 +5658,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-guided"
  },
@@ -4739,13 +5678,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-independent"
  },
@@ -4758,13 +5698,14 @@
   ],
   "new_syntax": [
    "Tensor.any",
+   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
+   "torch.Tensor",
    "torch.allclose",
-   "torch.equal",
-   "torch.full"
+   "torch.equal"
   ],
   "source": "kp-independent"
  },
@@ -4778,8 +5719,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-guided"
@@ -4794,8 +5733,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-guided"
@@ -4810,8 +5747,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-independent"
@@ -4826,8 +5761,6 @@
   ],
   "new_syntax": [
    "none-newaxis-indexing",
-   "syntax.multi-axis-index",
-   "torch.ones",
    "torch.broadcast_shapes"
   ],
   "source": "kp-independent"
@@ -4885,11 +5818,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-guided"
  },
@@ -4901,11 +5835,12 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "slice-notation",
-   "multi-axis-indexing",
+   "Tensor.clone",
+   "syntax.multi-axis-index",
    "syntax.slice",
    "syntax.slice-step",
-   "torch.flip"
+   "torch.flip",
+   "torch.rot90"
   ],
   "source": "kp-independent"
  },
@@ -4918,9 +5853,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-guided"
@@ -4934,9 +5869,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-guided"
@@ -4950,9 +5885,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-independent"
@@ -4966,9 +5901,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-independent"
@@ -4982,9 +5917,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-independent"
@@ -4998,9 +5933,9 @@
    "numpy.elementwise-ufuncs"
   ],
   "new_syntax": [
-   "matmul-operator",
    "syntax.matmul",
    "torch.linalg",
+   "torch.linalg.inv",
    "torch.linalg.solve"
   ],
   "source": "kp-independent"
@@ -5183,5 +6118,135 @@
    "Tensor.indices"
   ],
   "source": "kp-independent"
+ },
+ "523": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-guided"
+ },
+ "524": {
+  "target_kcs": [
+   "numpy.ranges"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.arange",
+   "torch.linspace"
+  ],
+  "source": "kp-guided"
+ },
+ "525": {
+  "target_kcs": [
+   "numpy.argsort-ranking"
+  ],
+  "supporting_kcs": [
+   "numpy.sorting",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [
+   "Tensor.argsort",
+   "Tensor.flip"
+  ],
+  "source": "kp-guided"
+ },
+ "526": {
+  "target_kcs": [
+   "numpy.topk-selection"
+  ],
+  "supporting_kcs": [
+   "numpy.argsort-ranking",
+   "numpy.sorting"
+  ],
+  "new_syntax": [
+   "torch.topk#dim",
+   "torch.topk#largest"
+  ],
+  "source": "kp-guided"
+ },
+ "527": {
+  "target_kcs": [
+   "numpy.inplace-out"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs",
+   "numpy.slicing-views",
+   "numpy.fancy-indexing"
+  ],
+  "new_syntax": [
+   "Tensor.add_",
+   "Tensor.clamp_",
+   "Tensor.copy_",
+   "Tensor.div_",
+   "Tensor.mul_",
+   "Tensor.neg_",
+   "Tensor.sort"
+  ],
+  "source": "kp-guided"
+ },
+ "528": {
+  "target_kcs": [
+   "numpy.memory-model"
+  ],
+  "supporting_kcs": [
+   "numpy.dtype-astype",
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.untyped_storage",
+   "Tensor.view"
+  ],
+  "source": "kp-guided"
+ },
+ "529": {
+  "target_kcs": [
+   "numpy.geometry-transforms"
+  ],
+  "supporting_kcs": [
+   "numpy.dot-matmul-patterns",
+   "numpy.slicing-views",
+   "numpy.tile-repeat-meshgrid"
+  ],
+  "new_syntax": [
+   "torch.arctan2",
+   "torch.cat#dim",
+   "torch.cos",
+   "torch.pi",
+   "torch.sin"
+  ],
+  "source": "kp-guided"
+ },
+ "530": {
+  "target_kcs": [
+   "numpy.linalg-applied"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.linalg.matrix_rank"
+  ],
+  "source": "kp-guided"
  }
 }
