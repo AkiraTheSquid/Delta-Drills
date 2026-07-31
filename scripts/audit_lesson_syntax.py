@@ -382,7 +382,17 @@ def audit(suggest: bool = False) -> int:
 
     undeclared: dict[str, list[str]] = defaultdict(list)
     too_late: list[str] = []
+    previewed: list[str] = []
     for idx, p in enumerate(ordered):
+        # `previews:` is the page saying "I show this before its lesson, on
+        # purpose" — the contrast demos (`*` vs `@`, elementwise `maximum` vs
+        # the `max` reduction) that lose their point if the second half is
+        # removed. It exempts the use from the check below and is reported on
+        # its own line instead, so a deliberate forward reference stays
+        # visible and countable rather than either raising a permanent alarm
+        # or vanishing. validate_lessons.py enforces that each entry is real:
+        # shown on this page, not declared by it, and declared by a LATER one.
+        previews = set(info[p][0].get("previews") or [])
         for sym in sorted(info[p][1]):
             if sym in ASSUMED:
                 continue
@@ -391,6 +401,9 @@ def audit(suggest: bool = False) -> int:
                 undeclared[sym].append(p.name)
                 continue
             if all(ordered.index(h) > idx for h in homes):
+                if sym in previews:
+                    previewed.append(f"{p.name} previews {sym} ({homes[0].name})")
+                    continue
                 too_late.append(
                     f"{p.name} uses {sym}, first taught later in {homes[0].name}"
                 )
@@ -405,6 +418,7 @@ def audit(suggest: bool = False) -> int:
           f"{len({s for _, u in info.values() for s in u} - ASSUMED)}")
     print(f"symbols with NO lesson declaring them: {len(undeclared)}")
     print(f"uses that precede their own lesson: {len(too_late)}")
+    print(f"  of which declared as deliberate previews: {len(previewed)}")
     print(f"worked-example lines with no explanation: "
           f"{sum(len(v) for v in uncommented.values())} across {len(uncommented)} page(s)")
     print(f"worked examples that show the learner nothing: "
@@ -422,6 +436,11 @@ def audit(suggest: bool = False) -> int:
     if too_late:
         print("\n-- shown before it is taught --")
         for line in too_late[:40]:
+            print(f"  {line}")
+
+    if previewed:
+        print("\n-- declared previews (deliberate forward references) --")
+        for line in previewed:
             print(f"  {line}")
 
     if uncommented:

@@ -163,6 +163,7 @@ def parse_kp(path):
         "title": meta.get("title"),
         "supporting": meta.get("supporting", []),
         "new_syntax": meta.get("new_syntax", []),
+        "previews": meta.get("previews", []),
         "concepts": meta.get("concepts", []),
         "faded": meta.get("faded", []),
         "guided": meta.get("guided", []),

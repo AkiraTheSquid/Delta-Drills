@@ -3,6 +3,7 @@ kc: numpy.random-generator
 title: Random numbers with a Generator
 supporting: [numpy.constructors]
 new_syntax: [Tensor.manual_seed, torch.Generator, torch.rand, torch.rand#generator, torch.randint, torch.randint#generator, torch.randn, torch.randn#generator, torch.randperm, torch.randperm#generator]
+previews: [Tensor.sum#dim]
 faded: [8]
 guided: [42]
 independent: [104]

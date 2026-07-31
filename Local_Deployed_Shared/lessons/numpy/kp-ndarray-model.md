@@ -2,7 +2,7 @@
 kc: numpy.ndarray-model
 title: What a tensor is — data + shape + dtype
 supporting: []
-new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
+new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.equal, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
 faded: [224, 482, 484]
 guided: [523]
 independent: [480, 481, 483, 485, 486]
@@ -69,6 +69,26 @@ print("shape:", cube.shape)
 
 # A cell ending in a bare expression prints its value, the way a notebook does.
 cube * 10
+```
+
+Two ways of reading a tensor back out come up constantly from here on, so name
+them now. **`t.equal(x, y)`** answers "same shape AND same values?" as one
+bool — the whole-tensor comparison, which is what a check wants. **`x.item()`**
+pulls a single element out as a plain Python number, and it refuses unless the
+tensor holds exactly one; that refusal is the point, because a silent "first
+element" would be a guess.
+
+```python
+same = t.tensor([[1, 2], [3, 4]])
+also = t.tensor([[1, 2], [3, 4]])
+print("t.equal ->", t.equal(same, also), "  one answer for the whole tensor")
+
+one = t.tensor([7])
+print("one.item() ->", one.item(), "as a", type(one.item()).__name__)
+try:
+    same.item()
+except RuntimeError as exc:
+    print("four elements ->", type(exc).__name__, "- item() wants exactly one")
 ```
 
 ## Worked example
@@ -223,9 +243,9 @@ print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
 
 Ordinary division still works on an integer tensor — `a / 2` quietly hands back
 a *new* float tensor — but anything that has to write a float back into the
-integer block does not. `a /= 2` and `a.mean()` raise rather than silently
-rounding, and the error is the useful kind: it happens where the type is wrong,
-not three steps later where the numbers are.
+integer block does not. `a /= 2` raises rather than silently rounding, and the
+error is the useful kind: it happens where the type is wrong, not three steps
+later where the numbers are.
 
 ```python
 ints = t.tensor([2, 4, 6])
@@ -235,11 +255,6 @@ try:
     ints /= 2
 except RuntimeError as exc:
     print("ints /= 2  ->", type(exc).__name__)
-
-try:
-    ints.mean()
-except RuntimeError as exc:
-    print("ints.mean()->", type(exc).__name__)
 ```
 
 Two tensors can hold the same numbers in the same layout and still disagree on

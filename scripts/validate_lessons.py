@@ -11,6 +11,10 @@ Checks, per KP markdown file:
      bank, and the solution PASSES the bank question's test_cases
   5. guided/independent qids exist in the bank
 
+Corpus-level checks (full runs only, not single-file runs):
+  5b. every `previews:` entry is shown by that page, not declared by it, and
+      declared by a LATER lesson
+
 Registry-level checks:
   6. KC prereq graph is acyclic; prereqs/lessons resolve
   7. --coverage: every registry KC has exactly one KP file; every easy-topic bank
@@ -221,6 +225,54 @@ def check_registry(registry, errors):
                 stack.pop()
 
 
+def check_previews(paths, errors):
+    """A `previews:` entry is a claim, so hold it to the claim's terms.
+
+    Declaring a preview exempts a use from the audit's "shown before it is
+    taught" list, which is only honest while all three parts hold: the page
+    really shows the symbol, it does NOT declare it (that would be a lesson,
+    not a preview), and some LATER page does. Without this, `previews:` would
+    be a mute button, and a stale entry left behind by an edit would keep a
+    real regression quiet.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from audit_lesson_syntax import ASSUMED, lesson_order, page_symbols
+
+    kc_of_page, fms, shown = {}, {}, {}
+    for p in paths:
+        fm, used, _ = page_symbols(p)
+        kc_of_page[p.name] = str(fm.get("kc") or "")
+        fms[p.name] = fm
+        shown[p.name] = used
+    rank = lesson_order(kc_of_page)
+
+    declared_by = {}
+    for name, fm in fms.items():
+        for sym in fm.get("new_syntax") or []:
+            declared_by.setdefault(sym, []).append(name)
+
+    for name, fm in fms.items():
+        here = rank.get(kc_of_page[name], 99)
+        for sym in fm.get("previews") or []:
+            if sym in ASSUMED:
+                errors.append(f"{name}: previews {sym}, which is in ASSUMED — no lesson owns it")
+                continue
+            if sym not in shown[name]:
+                errors.append(f"{name}: previews {sym} but never shows it — stale entry")
+                continue
+            if name in declared_by.get(sym, []):
+                errors.append(f"{name}: previews {sym} and also declares it — pick one")
+                continue
+            homes = declared_by.get(sym) or []
+            if not homes:
+                errors.append(f"{name}: previews {sym}, but no lesson declares it")
+            elif not all(rank.get(kc_of_page[h], 99) > here for h in homes):
+                errors.append(
+                    f"{name}: previews {sym}, but {homes[0]} teaches it no later — "
+                    "that is not a forward reference"
+                )
+
+
 def check_coverage(registry, bank, kps, errors):
     kp_kcs = [kp["kc"] for kp in kps if kp]
     dupes = {k for k in kp_kcs if kp_kcs.count(k) > 1}
@@ -256,6 +308,8 @@ def main(argv):
     check_registry(registry, errors)
     paths = files or all_kp_paths()
     kps = [check_kp(p, registry, bank, errors) for p in paths]
+    if not files:
+        check_previews(paths, errors)
     if coverage:
         check_coverage(registry, bank, kps, errors)
     if errors:

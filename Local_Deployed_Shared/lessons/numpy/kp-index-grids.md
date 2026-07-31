@@ -2,7 +2,7 @@
 kc: numpy.index-grids
 title: Index-pattern grids — checkerboards and coordinate masks
 supporting: [numpy.slicing-views, numpy.constructors, numpy.boolean-masking]
-new_syntax: [torch.abs]
+new_syntax: []
 faded: [2, 116]
 guided: [73]
 independent: [112, 72, 11, 164]

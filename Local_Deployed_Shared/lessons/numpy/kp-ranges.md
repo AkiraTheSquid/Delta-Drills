@@ -87,7 +87,7 @@ import torch as t
 
 grid = t.linspace(0.0, 1.0, 5)
 print(grid)
-print("gaps:", t.diff(grid))
+print("gaps:", grid[1:] - grid[:-1])   # 5 points, so 4 of them
 assert grid[0].item() == 0.0 and grid[-1].item() == 1.0
 ```
 

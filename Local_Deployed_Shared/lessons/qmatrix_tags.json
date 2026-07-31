@@ -9,6 +9,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -23,9 +24,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-faded"
  },
  "4": {
@@ -37,7 +36,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -59,9 +57,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-faded"
  },
@@ -74,7 +70,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-independent"
  },
@@ -123,7 +122,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-independent"
  },
@@ -136,9 +138,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "12": {
@@ -195,7 +195,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -303,6 +302,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -329,14 +329,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-faded"
  },
@@ -366,14 +364,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-faded"
  },
@@ -414,7 +410,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -499,9 +494,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-faded"
  },
@@ -515,6 +508,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -529,6 +523,7 @@
   ],
   "new_syntax": [
    "torch.argwhere",
+   "torch.as_tensor",
    "torch.nonzero",
    "torch.nonzero#as_tuple"
   ],
@@ -622,7 +617,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -811,6 +805,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -825,14 +820,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-independent"
  },
@@ -866,14 +859,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-faded"
  },
@@ -888,7 +879,6 @@
   ],
   "new_syntax": [
    "torch.arctan2",
-   "torch.cat#dim",
    "torch.cos",
    "torch.pi",
    "torch.sin"
@@ -986,9 +976,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "73": {
@@ -1000,9 +988,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-guided"
  },
  "74": {
@@ -1065,7 +1051,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -1086,7 +1071,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -1123,7 +1107,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-faded"
  },
@@ -1172,6 +1159,8 @@
   ],
   "new_syntax": [
    "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
    "torch.column_stack",
    "torch.empty",
    "torch.empty#dtype",
@@ -1205,6 +1194,7 @@
   ],
   "new_syntax": [
    "torch.argwhere",
+   "torch.as_tensor",
    "torch.nonzero",
    "torch.nonzero#as_tuple"
   ],
@@ -1237,6 +1227,8 @@
   ],
   "new_syntax": [
    "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
    "torch.column_stack",
    "torch.empty",
    "torch.empty#dtype",
@@ -1276,7 +1268,6 @@
   ],
   "new_syntax": [
    "Tensor.argmax#dim",
-   "Tensor.squeeze",
    "torch.quantile"
   ],
   "source": "kp-independent"
@@ -1331,9 +1322,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-independent"
  },
@@ -1346,7 +1335,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-faded"
  },
@@ -1360,6 +1352,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -1428,7 +1421,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-independent"
  },
@@ -1464,7 +1460,6 @@
   ],
   "new_syntax": [
    "torch.arctan2",
-   "torch.cat#dim",
    "torch.cos",
    "torch.pi",
    "torch.sin"
@@ -1541,6 +1536,7 @@
   ],
   "new_syntax": [
    "torch.argwhere",
+   "torch.as_tensor",
    "torch.nonzero",
    "torch.nonzero#as_tuple"
   ],
@@ -1569,9 +1565,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "113": {
@@ -1629,9 +1623,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-faded"
  },
  "117": {
@@ -1702,9 +1694,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-faded"
  },
@@ -1865,9 +1855,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "134": {
@@ -1966,7 +1954,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -1988,9 +1975,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-independent"
  },
@@ -2021,9 +2006,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "144": {
@@ -2036,9 +2019,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-faded"
  },
@@ -2066,6 +2047,8 @@
   ],
   "new_syntax": [
    "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
    "torch.column_stack",
    "torch.empty",
    "torch.empty#dtype",
@@ -2085,7 +2068,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-independent"
  },
@@ -2184,7 +2170,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-independent"
  },
@@ -2244,9 +2233,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "159": {
@@ -2259,6 +2246,8 @@
   ],
   "new_syntax": [
    "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
    "torch.column_stack",
    "torch.empty",
    "torch.empty#dtype",
@@ -2278,7 +2267,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -2299,7 +2287,10 @@
    "numpy.where-select"
   ],
   "new_syntax": [
-   "Tensor.sum#keepdim"
+   "Tensor.squeeze",
+   "Tensor.sum#keepdim",
+   "torch.isclose",
+   "torch.linalg.norm"
   ],
   "source": "kp-guided"
  },
@@ -2333,9 +2324,7 @@
    "numpy.constructors",
    "numpy.boolean-masking"
   ],
-  "new_syntax": [
-   "torch.abs"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "165": {
@@ -2391,6 +2380,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -2438,9 +2428,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-guided"
  },
  "172": {
@@ -2535,7 +2523,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -2573,7 +2560,6 @@
   ],
   "new_syntax": [
    "torch.arctan2",
-   "torch.cat#dim",
    "torch.cos",
    "torch.pi",
    "torch.sin"
@@ -2616,9 +2602,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-faded"
  },
  "186": {
@@ -2694,7 +2678,6 @@
   ],
   "new_syntax": [
    "Tensor.argmax#dim",
-   "Tensor.squeeze",
    "torch.quantile"
   ],
   "source": "kp-faded"
@@ -2802,9 +2785,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "199": {
@@ -2817,9 +2798,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "200": {
@@ -2834,7 +2813,6 @@
   ],
   "new_syntax": [
    "Tensor.argmax#dim",
-   "Tensor.squeeze",
    "torch.quantile"
   ],
   "source": "kp-guided"
@@ -2850,7 +2828,6 @@
   ],
   "new_syntax": [
    "torch.arctan2",
-   "torch.cat#dim",
    "torch.cos",
    "torch.pi",
    "torch.sin"
@@ -2896,9 +2873,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "206": {
@@ -2925,9 +2900,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "208": {
@@ -2970,7 +2943,6 @@
   ],
   "new_syntax": [
    "Tensor.argmax#dim",
-   "Tensor.squeeze",
    "torch.quantile"
   ],
   "source": "kp-independent"
@@ -2985,9 +2957,7 @@
    "numpy.tile-repeat-meshgrid",
    "numpy.fancy-indexing"
   ],
-  "new_syntax": [
-   "torch.cat"
-  ],
+  "new_syntax": [],
   "source": "kp-independent"
  },
  "212": {
@@ -3122,6 +3092,7 @@
   ],
   "new_syntax": [
    "Tensor.argmax",
+   "torch.abs",
    "torch.argmax",
    "torch.argmin"
   ],
@@ -3153,10 +3124,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -3376,7 +3349,6 @@
    "numpy.aggregations"
   ],
   "new_syntax": [
-   "torch.as_tensor",
    "torch.diag",
    "torch.diag#diagonal",
    "torch.diagonal",
@@ -3398,6 +3370,8 @@
   ],
   "new_syntax": [
    "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
    "torch.column_stack",
    "torch.empty",
    "torch.empty#dtype",
@@ -5342,10 +5316,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5364,10 +5340,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5386,10 +5364,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5408,10 +5388,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5430,10 +5412,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5452,10 +5436,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5474,10 +5460,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -5627,14 +5615,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-guided"
  },
@@ -5647,14 +5633,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-guided"
  },
@@ -5667,14 +5651,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-independent"
  },
@@ -5687,14 +5669,12 @@
   ],
   "new_syntax": [
    "Tensor.any",
-   "Tensor.item",
    "Tensor.max",
    "Tensor.mean",
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose",
-   "torch.equal"
+   "torch.allclose"
   ],
   "source": "kp-independent"
  },
@@ -5939,9 +5919,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-guided"
  },
@@ -5955,9 +5933,7 @@
    "numpy.broadcasting-rules"
   ],
   "new_syntax": [
-   "torch.dot",
-   "torch.isclose",
-   "torch.linalg.norm"
+   "torch.dot"
   ],
   "source": "kp-independent"
  },
@@ -6119,10 +6095,12 @@
    "Tensor.data_ptr",
    "Tensor.dtype",
    "Tensor.is_contiguous",
+   "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
    "Tensor.shape",
    "Tensor.tolist",
+   "torch.equal",
    "torch.float32",
    "torch.int64",
    "torch.tensor",
@@ -6218,7 +6196,6 @@
   ],
   "new_syntax": [
    "torch.arctan2",
-   "torch.cat#dim",
    "torch.cos",
    "torch.pi",
    "torch.sin"

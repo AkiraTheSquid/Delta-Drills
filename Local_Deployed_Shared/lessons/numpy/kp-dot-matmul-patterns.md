@@ -2,7 +2,7 @@
 kc: numpy.dot-matmul-patterns
 title: Dot products and matrix-multiply patterns
 supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rules]
-new_syntax: [torch.dot, torch.isclose, torch.linalg.norm]
+new_syntax: [torch.dot]
 faded: [37, 144, 121, 5]
 guided: [514]
 independent: [141, 515, 95]

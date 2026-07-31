@@ -2,7 +2,7 @@
 kc: numpy.stack-concat-interleave
 title: Stacking, concatenating, interleaving
 supporting: [numpy.reshape-flatten, numpy.slicing-views]
-new_syntax: [Tensor.ravel, torch.column_stack, torch.empty, torch.empty#dtype, torch.hstack, torch.stack, torch.stack#dim, torch.vstack]
+new_syntax: [Tensor.ravel, torch.cat, torch.cat#dim, torch.column_stack, torch.empty, torch.empty#dtype, torch.hstack, torch.stack, torch.stack#dim, torch.vstack]
 faded: [84]
 guided: [146]
 independent: [89, 238, 159]
@@ -17,7 +17,16 @@ a NEW axis, or grow an EXISTING one?**
   `t.vstack([a, b])` stacks rows (b's rows below a's);
   `t.hstack([a, b])` extends rows sideways. Shapes must agree on the other
   axis; the combined axis just adds up. General form:
-  `t.cat([a, b], dim=k)`.
+  `t.cat([a, b], dim=k)` — the shorthands are that call with `k` fixed.
+
+```python
+import torch as t
+
+pair = [t.tensor([[1, 2]]), t.tensor([[3, 4]])]
+print("dim=0 (taller):", t.cat(pair, dim=0).shape, t.cat(pair, dim=0).tolist())
+print("dim=1 (wider): ", t.cat(pair, dim=1).shape, t.cat(pair, dim=1).tolist())
+print("vstack is dim=0:", t.equal(t.vstack(pair), t.cat(pair, dim=0)))
+```
 - **Create a new axis — `t.stack`.**
   `t.stack([a, b], axis=0)` piles k same-shape arrays into a (k, …) array.
   Nothing merges; you gain a dimension. This is the bridge to *reductions

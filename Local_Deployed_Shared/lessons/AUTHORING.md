@@ -13,6 +13,7 @@ kc: numpy.broadcasting-rules        # must exist in kc_registry.json
 title: Broadcasting rules
 supporting: [numpy.ndarray-model]   # KCs used but not taught here
 new_syntax: []                      # symbols this page is the lesson for
+previews: []                        # symbols shown here but taught LATER, on purpose
 concepts: [repeat-elements]         # stable id per atomic segment, in order
 faded: [111, 151]                   # bank question ids used as faded practice
 guided: [90]                        # bank ids used as guided (hinted) practice
@@ -76,6 +77,16 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
   decide each one: the default owner is the first page that shows it, and a
   later page wins only if the symbol is what that page is ABOUT. Plain Python
   belongs in the script's ASSUMED set instead.
+- `previews:` is the escape hatch for a symbol shown BEFORE its lesson on
+  purpose — the contrast demos that lose their point without the second
+  half (`*` beside `@`, elementwise `t.maximum` beside the `max` reduction).
+  It exempts that use from `audit_lesson_syntax.py`'s "shown before it is
+  taught" list and reports it on its own line instead. It is a claim, not a
+  mute button: `validate_lessons.py` requires the page to actually show the
+  symbol, to NOT declare it, and some LATER page to declare it. If a demo can
+  be rewritten to avoid the forward reference without losing the teaching,
+  rewrite it — reach for `previews:` only when the forward reference IS the
+  lesson.
 - Each segment teaches exactly ONE new idea (one function, one mode, one rule).
   If the prose says "also" or introduces a second API, split the segment.
 - `concepts:` declares one stable id per reviewed atomic segment. Its count
