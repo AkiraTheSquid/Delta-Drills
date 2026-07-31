@@ -4,9 +4,9 @@ title: Matrix-vector and matrix-matrix products
 supporting: [einsum.dot-frobenius, numpy.linalg-basics]
 new_syntax: []
 concepts: [matvec-contract-row, matmul-row-meets-column]
-faded: [312, 260]
+faded: [312, 286, 260]
 guided: [262]
-independent: [264, 311, 286, 294]
+independent: [264, 311, 294]
 ---
 
 ## Concept: matrix-vector 'ij,j->i'
@@ -79,6 +79,30 @@ import torch as t
 def solve(p, v):
     """p @ v — each row of p has one 1, so row i just picks out one entry of v."""
     return t.einsum('ij,j->i', p, v)
+```
+
+### q286
+Same contraction, arguments the other way round: a single query vector `q` of
+length d against a memory matrix `m` of shape (n, d), giving one similarity
+per memory row. The example's spec will not transfer letter for letter — the
+vector is the FIRST operand here, and the shared axis is d, not the matrix's
+first axis. Name the axes of each operand as they actually are, then keep the
+one the output needs.
+
+```python starter
+import torch as t
+
+def solve(q, m):
+    """Length-n vector: entry i is the dot product of q with row i of m."""
+    return t.einsum('_____', q, m)
+```
+
+```python solution
+import torch as t
+
+def solve(q, m):
+    """Length-n vector: entry i is the dot product of q with row i of m."""
+    return t.einsum('d,nd->n', q, m)
 ```
 
 ## Concept: matrix-matrix 'ik,kj->ij'
@@ -179,7 +203,6 @@ the two specs above are automatic:
 - q311: `a @ diag(v) @ b` with the diagonal kept as a bare vector in the spec —
   a matmul whose middle factor never gets materialized.
 
-Also from the bank: q286 (one query vector against a memory matrix — the
-length-n similarity vector), q294 (contract a conv-shaped (o, i, h, w)
-weight against an (i, h, w) input; three axes pair at once).
+Also from the bank: q294 (contract a conv-shaped (o, i, h, w) weight against
+an (i, h, w) input; three axes pair at once).
 

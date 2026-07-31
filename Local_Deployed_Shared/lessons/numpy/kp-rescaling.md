@@ -3,9 +3,9 @@ kc: numpy.rescaling
 title: Rescaling — min-max, unit norm, probability rows
 supporting: [numpy.axis-reductions, numpy.where-select]
 new_syntax: []
-faded: [80]
+faded: [80, 97]
 guided: [162]
-independent: [6, 97, 153, 10, 103, 147]
+independent: [6, 153, 10, 103, 147]
 ---
 
 ## Concept
@@ -114,6 +114,28 @@ def solve(z):
     return (z - z.min()) / (z.max() - z.min())
 ```
 
+### q97
+Same template, one step further out. The example divides by the norm, which
+pins the length at exactly 1. Here the target length is an argument — so the
+scale factor is no longer "the norm", it is whatever sends the norm to
+`length`. Write that factor; the direction takes care of itself.
+
+```python starter
+import torch as t
+
+def solve(v, length):
+    """v rescaled so its Euclidean norm is exactly `length`, direction kept."""
+    return v * (_____ / t.linalg.norm(v))
+```
+
+```python solution
+import torch as t
+
+def solve(v, length):
+    """v rescaled so its Euclidean norm is exactly `length`, direction kept."""
+    return v * (length / t.linalg.norm(v))
+```
+
 ## Guided practice
 
 ### q162
@@ -126,10 +148,9 @@ def solve(z):
 
 ## Independent practice
 
-From the drill bank: q6 (unit vector), q97 (rescale to a target length L —
-one multiplicative constant), q153 (unit-length ROWS with zero rows safe —
-norm takes dim/keepdim), q10 (global min-max on an array of ANY shape —
-does the formula even care about shape?).
+From the drill bank: q6 (unit vector), q153 (unit-length ROWS with zero rows
+safe — norm takes dim/keepdim), q10 (global min-max on an array of ANY shape
+— does the formula even care about shape?).
 
 Also from the bank: q103 (softmax that survives logits like 1000 — the
 stable form, not the naive one), q147 (winsorize to a percentile band:

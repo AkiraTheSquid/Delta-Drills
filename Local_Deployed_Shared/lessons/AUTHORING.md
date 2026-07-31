@@ -77,7 +77,14 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
   single small demo of the one idea, not a tour of variations. The rhythm is:
   teach one concept → inspect or optionally run one worked example → continue.
   Extra variations belong in practice, not lesson screen.
-- Each segment MUST have exactly one faded exercise (validator-enforced).
+- Each segment MUST have one or two faded exercises (validator-enforced).
+  Two is a FADING SERIES, not two drills: the first sits adjacent to the
+  worked example, the second asks for the same idea one step out, so the blank
+  cannot be filled by transcription. `audit_ladder_pairing.py` measures that
+  step ("series never reaching distance"). A third belongs in independent
+  practice — a segment teaches one idea, and more completions of it are drill.
+  PILOT as of 2026-07-30: 3 of 122 segments have a second item; awaiting
+  Seth's review before the rest follow.
 - Faded exercise is downstream practice metadata. LessonGate does NOT render or
   grade it immediately after teaching.
 - `## Watch out` is optional segment content. It renders only inside that

@@ -141,7 +141,14 @@ def check_kp(path, registry, bank, errors):
                     errors.append(f"{name}: segment {si + 1} [{label}] fence failed: {tb}")
 
     # 4. faded solutions pass bank tests; every segment teaches ONE concept
-    # then pairs exactly one worked example with exactly one faded exercise.
+    # then pairs one worked example with a fading SERIES of one or two items.
+    #
+    # Two, not one, because of what audit_ladder_pairing.py measures: a first
+    # completion item sitting adjacent to the example is correct fading, but a
+    # series that never grows past it is transcription, and the ladder promotes
+    # on that. The second item is where the distance lives. Two is the ceiling
+    # on purpose — a segment teaches one concept, and a third completion of the
+    # same concept is drill, which is what the independent rung is for.
     faded_ids = set()
     for si, seg in enumerate(kp["segments"]):
         seg_label = f"segment {si + 1}" + (f" ({seg['title']})" if seg["title"] else "")
@@ -152,8 +159,8 @@ def check_kp(path, registry, bank, errors):
         elif len(code_fences(seg["worked"], "python")) != 1:
             errors.append(f"{name}: {seg_label} must have exactly one Python worked example")
         items = split_items(seg["faded"])
-        if len(items) != 1:
-            errors.append(f"{name}: {seg_label} must have exactly one faded exercise")
+        if not 1 <= len(items) <= 2:
+            errors.append(f"{name}: {seg_label} must have one or two faded exercises")
         for qid, content in items.items():
             if qid in faded_ids:
                 errors.append(f"{name}: faded q{qid} appears in more than one segment")

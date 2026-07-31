@@ -222,6 +222,8 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
 
     problems: list[tuple[str, int, str, str]] = []  # kc, qid, kind, detail
     pairs = 0
+    segments = 0
+    flat_segments: list[tuple[str, str]] = []
 
     for lesson in data.get("lessons", []):
         for kp in lesson.get("kps", []):
@@ -236,9 +238,12 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
                     for block in FENCE.findall(seg.get("worked_example_markdown", "") or "")
                     for s in expression_shapes(block)
                 }
+                seg_faded = False
+                seg_has_distance = False
                 for item in seg.get("faded_items") or []:
                     if not isinstance(item, dict):
                         continue
+                    seg_faded = True
                     qid = item.get("question_id")
                     starter = item.get("starter_code") or ""
                     solution = item.get("solution") or ""
@@ -279,6 +284,19 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
                         problems.append((kc, qid, "distance",
                                          "every expression the solution computes already "
                                          "appears in the example — completing it is copying"))
+                    else:
+                        seg_has_distance = True
+
+                # A segment is the unit the LEARNER experiences, and one
+                # near-copy completion is correct fading — what breaks the rung
+                # is a series that stops there. So track both: the per-item
+                # count says how much of the bank restates its example, and this
+                # says how many segments never hand the learner anything past
+                # transcription. The second is the one that has to reach zero.
+                if seg_faded:
+                    segments += 1
+                    if not seg_has_distance:
+                        flat_segments.append((kc, seg.get("title") or "(untitled)"))
 
     by_kind: dict[str, int] = {}
     for _kc, _qid, kind, _detail in problems:
@@ -294,6 +312,13 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
     for kind in ("coverage", "distance", "blank"):
         print(f"  {kind:9s}: {by_kind.get(kind, 0)}")
     print(f"distinct questions affected   : {len({p[1] for p in problems})}")
+    print(f"segments with a faded series  : {segments}")
+    print(f"  series never reaching distance: {len(flat_segments)}")
+
+    if not summary and flat_segments:
+        print("\n-- segments whose completion items never get past the example --")
+        for kc, title in flat_segments:
+            print(f"  {kc} — {title}")
 
     # `distance` is a KNOWN CONTENT BACKLOG, not a regression: the lesson bank
     # was authored before this rule existed and a large share of faded items

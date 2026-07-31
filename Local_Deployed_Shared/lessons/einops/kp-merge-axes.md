@@ -3,9 +3,9 @@ kc: einops.merge-axes
 title: Merging axes with (parentheses)
 supporting: [einops.pattern-language, numpy.reshape-flatten]
 new_syntax: [einops-axis-composition]
-faded: [391]
+faded: [391, 347]
 guided: [357]
-independent: [347, 342, 314, 346, 353, 373, 380, 392, 400]
+independent: [342, 314, 346, 353, 373, 380, 392, 400]
 ---
 
 ## Concept
@@ -108,6 +108,30 @@ def solve(img):
     return einops.rearrange(img, 'c h w -> c (h w)')
 ```
 
+### q347
+Same input, a different merge: lay the channels out HORIZONTALLY, so channel
+0's whole image sits left of channel 1's. Shape (c, h, w) -> (h, c·w). Two
+decisions the flatten above did not ask for — WHICH pair of axes merges (they
+are not adjacent in the input), and which of them is the slow one.
+
+```python starter
+import torch as t
+import einops
+
+def solve(img):
+    """(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side."""
+    return einops.rearrange(img, '_____')
+```
+
+```python solution
+import torch as t
+import einops
+
+def solve(img):
+    """(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side."""
+    return einops.rearrange(img, 'c h w -> h (c w)')
+```
+
 ## Guided practice
 
 ### q357
@@ -119,9 +143,8 @@ def solve(img):
 
 ## Independent practice
 
-From the drill bank: q347 (channels laid out horizontally: (c,h,w) →
-(h, c·w) — which two merge, which is slow?), q342 (batch merged into
-height), q314 (batch side by side in a channels-LAST layout).
+From the drill bank: q342 (batch merged into height), q314 (batch side by
+side in a channels-LAST layout).
 
 Also from the bank: q346 (side by side WITHIN channels-first: 'b c h w ->
 c h (b w)'), q353 (merge the chunk axes of (b, n, p, d) back into one

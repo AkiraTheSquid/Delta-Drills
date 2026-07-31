@@ -2163,6 +2163,12 @@
          "prompt": "Linear rescale so min \u2192 0.0 and max \u2192 1.0.",
          "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Min-max rescale to [0, 1].\"\"\"\n    return (z - _____) / (_____ - _____)\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Min-max rescale to [0, 1].\"\"\"\n    return (z - z.min()) / (z.max() - z.min())\n"
+        },
+        {
+         "question_id": 97,
+         "prompt": "Same template, one step further out. The example divides by the norm, which\npins the length at exactly 1. Here the target length is an argument \u2014 so the\nscale factor is no longer \"the norm\", it is whatever sends the norm to\n`length`. Write that factor; the direction takes care of itself.",
+         "starter_code": "import torch as t\n\ndef solve(v, length):\n    \"\"\"v rescaled so its Euclidean norm is exactly `length`, direction kept.\"\"\"\n    return v * (_____ / t.linalg.norm(v))\n",
+         "solution": "import torch as t\n\ndef solve(v, length):\n    \"\"\"v rescaled so its Euclidean norm is exactly `length`, direction kept.\"\"\"\n    return v * (length / t.linalg.norm(v))\n"
         }
        ]
       }
@@ -2173,6 +2179,12 @@
        "prompt": "Linear rescale so min \u2192 0.0 and max \u2192 1.0.",
        "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Min-max rescale to [0, 1].\"\"\"\n    return (z - _____) / (_____ - _____)\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Min-max rescale to [0, 1].\"\"\"\n    return (z - z.min()) / (z.max() - z.min())\n"
+      },
+      {
+       "question_id": 97,
+       "prompt": "Same template, one step further out. The example divides by the norm, which\npins the length at exactly 1. Here the target length is an argument \u2014 so the\nscale factor is no longer \"the norm\", it is whatever sends the norm to\n`length`. Write that factor; the direction takes care of itself.",
+       "starter_code": "import torch as t\n\ndef solve(v, length):\n    \"\"\"v rescaled so its Euclidean norm is exactly `length`, direction kept.\"\"\"\n    return v * (_____ / t.linalg.norm(v))\n",
+       "solution": "import torch as t\n\ndef solve(v, length):\n    \"\"\"v rescaled so its Euclidean norm is exactly `length`, direction kept.\"\"\"\n    return v * (length / t.linalg.norm(v))\n"
       }
      ],
      "guided_items": [
@@ -2183,7 +2195,6 @@
      ],
      "independent_items": [
       6,
-      97,
       153,
       10,
       103,
@@ -3519,6 +3530,12 @@
          "prompt": "A permutation matrix `p` (each row is a single 1, the rest 0) times a vector\n`v`. It looks like it *shuffles* v rather than dotting anything \u2014 but a\npermutation matrix is still a matrix, so this is still a matrix-vector product.\nWrite the spec.",
          "starter_code": "import torch as t\n\ndef solve(p, v):\n    \"\"\"p @ v \u2014 each row of p has one 1, so row i just picks out one entry of v.\"\"\"\n    return t.einsum('_____', p, v)\n",
          "solution": "import torch as t\n\ndef solve(p, v):\n    \"\"\"p @ v \u2014 each row of p has one 1, so row i just picks out one entry of v.\"\"\"\n    return t.einsum('ij,j->i', p, v)\n"
+        },
+        {
+         "question_id": 286,
+         "prompt": "Same contraction, arguments the other way round: a single query vector `q` of\nlength d against a memory matrix `m` of shape (n, d), giving one similarity\nper memory row. The example's spec will not transfer letter for letter \u2014 the\nvector is the FIRST operand here, and the shared axis is d, not the matrix's\nfirst axis. Name the axes of each operand as they actually are, then keep the\none the output needs.",
+         "starter_code": "import torch as t\n\ndef solve(q, m):\n    \"\"\"Length-n vector: entry i is the dot product of q with row i of m.\"\"\"\n    return t.einsum('_____', q, m)\n",
+         "solution": "import torch as t\n\ndef solve(q, m):\n    \"\"\"Length-n vector: entry i is the dot product of q with row i of m.\"\"\"\n    return t.einsum('d,nd->n', q, m)\n"
         }
        ]
       },
@@ -3547,6 +3564,12 @@
        "solution": "import torch as t\n\ndef solve(p, v):\n    \"\"\"p @ v \u2014 each row of p has one 1, so row i just picks out one entry of v.\"\"\"\n    return t.einsum('ij,j->i', p, v)\n"
       },
       {
+       "question_id": 286,
+       "prompt": "Same contraction, arguments the other way round: a single query vector `q` of\nlength d against a memory matrix `m` of shape (n, d), giving one similarity\nper memory row. The example's spec will not transfer letter for letter \u2014 the\nvector is the FIRST operand here, and the shared axis is d, not the matrix's\nfirst axis. Name the axes of each operand as they actually are, then keep the\none the output needs.",
+       "starter_code": "import torch as t\n\ndef solve(q, m):\n    \"\"\"Length-n vector: entry i is the dot product of q with row i of m.\"\"\"\n    return t.einsum('_____', q, m)\n",
+       "solution": "import torch as t\n\ndef solve(q, m):\n    \"\"\"Length-n vector: entry i is the dot product of q with row i of m.\"\"\"\n    return t.einsum('d,nd->n', q, m)\n"
+      },
+      {
        "question_id": 260,
        "prompt": "Matrix product of `c` with shape `(1, 2)` and `d` with shape `(2, 1)`. The\nresult is `(1, 1)` \u2014 a single number in a 2-D box. It *looks* like a plain dot\nof a row and a column, so it's tempting to write `'i,i->'`. But both inputs are\n2-D matrices, so it's a matmul: name every axis and let the survivors decide the\noutput shape.",
        "starter_code": "import torch as t\n\ndef solve(c, d):\n    \"\"\"(1,2) @ (2,1) -> (1,1). Two matrices -> matmul, not a bare dot.\"\"\"\n    return t.einsum('_____', c, d)\n",
@@ -3562,7 +3585,6 @@
      "independent_items": [
       264,
       311,
-      286,
       294
      ],
      "misconceptions_markdown": ""
@@ -4067,6 +4089,12 @@
          "prompt": "Flatten spatial axes per channel, reading order.",
          "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, 'c h w -> c (h w)')\n"
+        },
+        {
+         "question_id": 347,
+         "prompt": "Same input, a different merge: lay the channels out HORIZONTALLY, so channel\n0's whole image sits left of channel 1's. Shape (c, h, w) -> (h, c\u00b7w). Two\ndecisions the flatten above did not ask for \u2014 WHICH pair of axes merges (they\nare not adjacent in the input), and which of them is the slow one.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, 'c h w -> h (c w)')\n"
         }
        ]
       }
@@ -4077,6 +4105,12 @@
        "prompt": "Flatten spatial axes per channel, reading order.",
        "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, 'c h w -> c (h w)')\n"
+      },
+      {
+       "question_id": 347,
+       "prompt": "Same input, a different merge: lay the channels out HORIZONTALLY, so channel\n0's whole image sits left of channel 1's. Shape (c, h, w) -> (h, c\u00b7w). Two\ndecisions the flatten above did not ask for \u2014 WHICH pair of axes merges (they\nare not adjacent in the input), and which of them is the slow one.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, 'c h w -> h (c w)')\n"
       }
      ],
      "guided_items": [
@@ -4086,7 +4120,6 @@
       }
      ],
      "independent_items": [
-      347,
       342,
       314,
       346,
