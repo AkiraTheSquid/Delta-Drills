@@ -2,28 +2,34 @@
 
 ## Purpose
 The Chrome MV3 side panel that puts Delta Drills beside whatever the student is
-reading. **The panel is the deployed web app**, framed in a side panel — the same
-`https://delta-drills.vercel.app/` the browser tab shows, with its tabs, its
-practice loop, its knowledge graph and its stats. The extension supplies the
-surface; the app supplies the product.
+reading. **The panel is the live website.** Not a copy of it, not a client of its
+API — `https://delta-drills.vercel.app/` itself, in a frame that fills the panel:
+its tab bar, its Sign in with Google, its practice loop, its knowledge graph, its
+stats. There is no panel front end, and there is not supposed to be one.
 
-A second, hand-built panel also lives here (`panel/panel.html`) — a narrow tutor
-UI that drives Colab notebooks directly. It is no longer the default. Reach it
-from ⚙ → *Built-in tutor UI*.
+`panel/app.html` is the entire thing: a `<style>` block and one `<iframe>`. No
+script.
+
+A separate hand-built tutor UI also lives here (`panel/panel.html`) — a narrow
+one-problem-at-a-time surface that drives Colab notebooks directly. It is not
+wired to anything. Open it deliberately at
+`chrome-extension://<id>/panel/panel.html`, or point `side_panel.default_path`
+at it.
 
 ## Install (unpacked)
 No build step, no npm, no store listing.
 
 1. `chrome://extensions` → turn on **Developer mode** (top right).
 2. **Load unpacked** → select this `extension/` folder.
-3. Pin "Delta Drills — ARENA tutor" and click it. The app loads in the panel.
-4. Sign in inside the panel — the same sign-in the website has.
+3. Pin "Delta Drills — ARENA tutor" and click it. The site loads in the panel.
+4. Sign in with Google, exactly as on the site.
 
-**Signing in here is separate from signing in on the website.** The app runs as a
-cross-site frame under a `chrome-extension://` top level, so Chrome gives it its
-own partitioned storage. It persists; it just does not carry over from a normal
-tab, and vice versa. If the panel stays empty, the usual cause is Chrome's *Block
-third-party cookies* setting denying the frame its storage — allow site data for
+**Signing in here is separate from signing in on the website.** The site runs as
+a cross-site frame under a `chrome-extension://` top level, so Chrome gives it
+its own partitioned storage. It persists; it just does not carry over from a
+normal tab, and vice versa — the panel starts in GUEST. If the panel stays empty
+or sign-in never sticks, the usual cause is Chrome's *Block third-party cookies*
+setting denying the frame its storage — allow site data for
 `delta-drills.vercel.app`.
 
 After editing any file, hit the reload arrow on the extension card. **If a Colab
@@ -76,7 +82,8 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
 ## Key Files
 - `manifest.json`: MV3 declaration. `sidePanel` + `tabs` + `storage`, host
   permissions for Colab and the backend (plus localhost for dev).
-  `side_panel.default_path` is `panel/app.html` — the shell, not the tutor UI.
+  `side_panel.default_path` is `panel/app.html` — the framed site, not the
+  tutor UI.
 - `background.js`: service worker. Its only real job is
   `sidePanel.setPanelBehavior({openPanelOnActionClick: true})`, which cannot be
   declared in the manifest.
@@ -184,13 +191,24 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
     hand, `cat` the four files together and `node --check /dev/stdin`.
     `app.html` is immune — it loads exactly one script.
 
+- **Sign in with Google fails inside the panel** — `RESOLVED`
+  - When it happens: the frame's `allow` attribute loses
+    `identity-credentials-get`.
+  - Symptom: the Google button renders normally and then the flow dies.
+  - Root cause: GSI negotiates over FedCM, and FedCM in a cross-origin frame is
+    denied unless the embedder delegates it through Permissions Policy.
+  - Prevention/fix: keep `allow="identity-credentials-get; …"` on the iframe.
+    `watch.py` fails without it.
+
 ## Recent Changes
-- 2026-07-31: **The panel is now the web app.** `panel/app.html` frames
-  `https://delta-drills.vercel.app/` and is the new `side_panel.default_path`;
-  the hand-built tutor UI stays as an opt-in. Verified live: the app boots inside
-  a cross-origin frame at 400px — Pyodide loads, the engine loads, 499 questions
-  load, no framing refusal (the deploy sends neither `X-Frame-Options` nor
-  `frame-ancestors`).
+- 2026-07-31: **The panel is the website.** `panel/app.html` is one `<iframe>`
+  over `https://delta-drills.vercel.app/`, with no script and no panel chrome —
+  an earlier pass wrapped it in a toolbar and a settings sheet, which was a
+  second front end by another name and is gone. Verified live at 400px: the site
+  renders edge to edge with its own tab bar, Pyodide loads, the practice engine
+  loads, 499 questions load, and the `accounts.google.com/gsi/button` frame
+  mounts inside it. The deploy sends neither `X-Frame-Options` nor
+  `frame-ancestors`, so framing needs nothing from the server.
 - 2026-07-31: Fixed the blank-panel SyntaxError in `panel/panel.js` (see above).
 - 2026-07-31: Cross-notebook transitions. `dd:identify` reports which notebook a
   tab holds; the panel resolves the target from a generated index, switches the

@@ -53,11 +53,19 @@ def check_invariants():
        are backend-owned; a threshold constant appearing here would mean two
        sources of truth for what a learner knows.
     """
+    # Scripts and stylesheets only. A remote <iframe src> is not an asset the
+    # page CSP governs — it is a nested browsing context, and in app.html it is
+    # the entire point of the file.
+    remote_script = re.compile(r'<script[^>]*\ssrc\s*=\s*"(?:https?:)?//', re.I)
+    remote_style = re.compile(r'<link[^>]*\shref\s*=\s*"(?:https?:)?//', re.I)
     for page in ("panel.html", "app.html"):
         with open(os.path.join(HERE, "panel", page), encoding="utf-8") as fh:
             markup = fh.read()
-        remote = re.findall(r'(?:src|href)\s*=\s*"(?:https?:)?//[^"]+"', markup)
-        assert not remote, f"remote asset in {page} (MV3 CSP blocks it): {remote}"
+        for what, rx in (("script", remote_script), ("stylesheet", remote_style)):
+            assert not rx.search(markup), (
+                f"remote {what} in {page} — MV3's CSP blocks it and the page "
+                f"renders blank"
+            )
 
     banned = re.compile(
         r"\b(P_TRANSIT|P_GUESS|P_SLIP|UNLOCK_THRESHOLD|MASTERY_THRESHOLD|HALF_LIFE_DAYS)\b"
@@ -100,25 +108,41 @@ def check_no_shadowed_globals():
 
 
 def check_side_panel_shell():
-    """The default panel is the shell that hosts the real web app.
+    """The side panel is the live website, framed — and nothing else.
 
-    The app is a remote page, and MV3 will not accept a URL as
-    `side_panel.default_path`, so the panel has to be a local page holding an
-    iframe. If the default_path ever swings back to `panel.html`, the student
-    gets the hand-built Colab UI instead of the app and nobody will guess why.
+    MV3 will not accept a URL as `side_panel.default_path`, so the panel has to
+    be a local page holding the site in an iframe. Everything about that page is
+    load-bearing and easy to erode:
+
+    * If `default_path` swings back to `panel.html`, the student gets the
+      hand-built Colab UI instead of the site and nobody will guess why.
+    * Without `identity-credentials-get` in the frame's `allow`, Sign in with
+      Google renders and then fails — FedCM is denied inside a cross-origin
+      frame unless the embedder grants it via Permissions Policy.
+    * Any script in this page is the start of a second front end. There is not
+      supposed to be one; the site already has tabs, auth and navigation.
     """
     m = _manifest()
     assert m["side_panel"]["default_path"] == "panel/app.html", (
-        "side_panel.default_path must be panel/app.html — the shell that frames "
-        "the deployed web app"
+        "side_panel.default_path must be panel/app.html — the page that frames "
+        "the live site"
     )
-    with open(os.path.join(HERE, "panel", "app.js"), encoding="utf-8") as fh:
-        src = fh.read()
-    assert "delta-drills.vercel.app" in src, "app.js lost its default app address"
-    # The frame is another origin; reaching into it cannot work and would mean
-    # the shell had quietly become a second copy of the app.
-    for reach in ("contentDocument", "contentWindow"):
-        assert reach not in src, f"app.js touches {reach} — the frame is cross-origin"
+    with open(os.path.join(HERE, "panel", "app.html"), encoding="utf-8") as fh:
+        markup = fh.read()
+
+    frame = re.search(r"<iframe\b[^>]*>", markup, re.I | re.S)
+    assert frame, "app.html has no <iframe> — the panel IS the website"
+    frame = frame.group(0)
+
+    assert "delta-drills.vercel.app" in frame, "app.html lost the site address"
+    assert "identity-credentials-get" in frame, (
+        "the frame needs allow=\"identity-credentials-get …\" or Sign in with "
+        "Google fails inside the panel"
+    )
+    assert not re.search(r"<script\b", markup, re.I), (
+        "app.html grew a script — the panel is meant to be the site, not a "
+        "front end wrapped around it"
+    )
 
 
 if __name__ == '__main__':

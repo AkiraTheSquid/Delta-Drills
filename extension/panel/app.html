@@ -3,85 +3,44 @@
   <head>
     <meta charset="utf-8" />
     <title>Delta Drills</title>
-    <link rel="stylesheet" href="app.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #14161a;
+        overflow: hidden;
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+    </style>
   </head>
   <body>
-    <header class="bar">
-      <button id="btn-home" class="icon-btn" title="Back to the app's home">⌂</button>
-      <button id="btn-reload" class="icon-btn" title="Reload">⟳</button>
-      <span id="where" class="where">Delta Drills</span>
-      <button id="btn-tab" class="icon-btn" title="Open this in a full tab">⧉</button>
-      <button id="btn-settings" class="icon-btn" title="Settings">⚙</button>
-    </header>
+    <!-- This page is the whole side panel, and it is deliberately nothing but a
+         frame. The panel shows the real delta-drills.vercel.app — its own tab
+         bar, its own Google sign-in, its own everything. There is no panel UI to
+         maintain, and nothing here to drift out of sync with the site.
 
-    <!-- Settings. Hidden until ⚙ is pressed; it overlays the app rather than
-         replacing it, so pressing ⚙ again puts you back exactly where you were
-         without reloading the page underneath. -->
-    <section id="settings" class="sheet">
-      <h2>Settings</h2>
+         Why a frame at all: MV3 only accepts an extension-relative path for
+         `side_panel.default_path`, so a local page holding the site is the only
+         way to put a live website in a Chrome side panel.
 
-      <label for="in-url">App address</label>
-      <input id="in-url" type="url" spellcheck="false" placeholder="https://delta-drills.vercel.app/" />
-      <p class="muted small">
-        The deployed app. Point this at <code>http://localhost:8770</code> to work
-        against a local build.
-      </p>
+         `identity-credentials-get` is load-bearing. Sign in with Google now
+         negotiates over FedCM, and FedCM inside a cross-origin frame is denied
+         unless the embedder grants it through Permissions Policy — without this
+         attribute the button renders and then fails. `publickey-credentials-get`
+         covers the passkey path Google falls back to.
 
-      <label class="check">
-        <input id="in-compact" type="checkbox" />
-        <span>Compact mode — hide the app's tab bar (<code>?embed=1</code>)</span>
-      </label>
-
-      <div class="row">
-        <button id="btn-save" class="primary">Save &amp; reload</button>
-        <button id="btn-reset" class="ghost">Reset</button>
-      </div>
-
-      <p id="settings-status" class="status small"></p>
-
-      <hr />
-      <p class="muted small">
-        Signing in here is separate from signing in at delta-drills.vercel.app in a
-        normal tab — Chrome keeps an extension panel's storage in its own
-        compartment. Sign in once inside this panel and it sticks.
-      </p>
-      <details class="alt">
-        <summary>Built-in tutor UI (experimental)</summary>
-        <p class="muted small">
-          The narrow panel that drives Colab notebooks directly, instead of the
-          full web app.
-        </p>
-        <button id="btn-native" class="ghost">Open the Colab tutor panel</button>
-      </details>
-    </section>
-
-    <div class="stage">
-      <iframe
-        id="app"
-        title="Delta Drills"
-        allow="clipboard-read; clipboard-write; fullscreen"
-        referrerpolicy="no-referrer"
-      ></iframe>
-
-      <!-- Shown only if the app never finishes loading. Framing is allowed today
-           (no X-Frame-Options, no frame-ancestors), but that is a header on
-           someone else's deploy and a broken panel with no explanation is the
-           worst possible failure. -->
-      <div id="blocked" class="blocked">
-        <h2>The app didn't load</h2>
-        <p class="muted" id="blocked-why"></p>
-        <button id="btn-retry" class="primary">Try again</button>
-        <button id="btn-blocked-tab" class="ghost">Open it in a full tab</button>
-        <p class="muted small">
-          If it loads in a tab but not here, the usual cause is Chrome's
-          <em>Block third-party cookies</em> setting. Allow site data for
-          <code>delta-drills.vercel.app</code> and reload.
-        </p>
-      </div>
-
-      <div id="spinner" class="spinner-wrap"><div class="spinner"></div></div>
-    </div>
-
-    <script src="app.js"></script>
+         Do not add a toolbar, a settings sheet or any other chrome to this file.
+         The site has navigation; a second set competes with it. -->
+    <iframe
+      src="https://delta-drills.vercel.app/"
+      title="Delta Drills"
+      allow="identity-credentials-get; publickey-credentials-get; clipboard-read; clipboard-write; fullscreen"
+    ></iframe>
   </body>
 </html>

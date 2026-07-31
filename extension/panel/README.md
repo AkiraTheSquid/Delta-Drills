@@ -3,14 +3,15 @@
 ## Purpose
 The side panel itself. Two of them, and the distinction matters:
 
-- **`app.html` + `app.js` + `app.css` — the shell, and the default.** A 36px
-  strip over an iframe holding the deployed web app. Everything the student sees
-  is the app; this is a frame, an address bar's worth of controls and a fallback
-  screen. MV3 will not take a URL as `side_panel.default_path`, so a local page
-  holding a frame is the only way to put a remote UI in a panel.
+- **`app.html` — the default, and the whole panel.** A `<style>` block and one
+  `<iframe>` over `https://delta-drills.vercel.app/`. No script. The student sees
+  the live site, with the site's own tabs and the site's own Google sign-in. MV3
+  will not take a URL as `side_panel.default_path`, which is the only reason a
+  local page exists at all.
 - **`panel.html` + `api.js` + `navigate.js` + `panel.js` — the hand-built tutor
   UI.** A narrow one-problem-at-a-time surface that drives Colab notebooks
-  directly. Still works; no longer the default. Reached from the shell's ⚙.
+  directly. Works, but nothing points at it; open it by URL or repoint
+  `default_path`.
 
 The rest of this file is about the second one unless it says otherwise.
 
@@ -32,12 +33,16 @@ The rest of this file is about the second one unless it says otherwise.
 
 ## Key Files
 
-**The shell** — `app.html` loads exactly one script, which is why it cannot hit
-the redeclaration trap below. `app.js` knows the app's address
-(`dd_app_url`, `dd_app_compact` in `chrome.storage.local`), whether the frame
-committed a document, and how to escape into a full tab. It must never reach
-into the frame: the app is another origin, so it cannot, and the attempt is the
-first step back toward maintaining the app twice.
+**`app.html`** — no scripts, so none of the load-order hazards below apply. Two
+things in it are load-bearing and neither is obvious:
+
+- `allow="identity-credentials-get; …"` on the frame. Sign in with Google
+  negotiates over FedCM, and FedCM inside a cross-origin frame is denied unless
+  the embedder delegates it through Permissions Policy. Drop the attribute and
+  the button still renders — it just stops working.
+- The absence of everything else. A toolbar, a settings sheet or a "which app
+  address" input is a second front end growing back, and it competes with the
+  site's own navigation. An earlier pass had all three; they were removed.
 
 **The tutor UI.** Load order is a dependency chain, not a style choice — each
 file destructures the previous one's global at its top level, **under an alias**:
@@ -149,9 +154,11 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
-- 2026-07-31: Added the shell (`app.html`/`app.js`/`app.css`) and made it the
-  default panel — the panel is now the deployed web app. Verified the app boots
-  inside a cross-origin 400px frame.
+- 2026-07-31: The panel is the live site. `app.html` reduced to one framed
+  `<iframe>`; the toolbar, settings sheet and fallback screen that wrapped it —
+  and `app.js`/`app.css` with them — are deleted. Added
+  `identity-credentials-get` so Google sign-in works in the frame. Verified at
+  400px against the live deploy.
 - 2026-07-31: Fixed the parse-time redeclaration that rendered `panel.html`
   blank; every import in `panel.js` is now aliased.
 - 2026-07-31: Cross-notebook transitions — `notebooks` resolver in `api.js`,
