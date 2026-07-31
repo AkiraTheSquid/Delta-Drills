@@ -59,6 +59,12 @@ fi
 info "Preflight: extension checks..."
 python3 "$REPO_DIR/extension/watch.py"
 
+# Every question this deploy will route to Colab must exist in the notebook
+# PUBLISHED on GitHub. Routing hides the editor and the submit bar, so a question
+# whose cell was never published is a dead end wearing the face of a feature.
+info "Preflight: notebook index vs published notebooks..."
+python3 "$REPO_DIR/This-Directory-Only/scripts/audit_colab_notebook_index.py"
+
 # --- 2. Sync the shared frontend into the colab worktree ---
 info "Syncing Local_Deployed_Shared into $BRANCH..."
 git -C "$COLAB_DIR" checkout "$BRANCH"
