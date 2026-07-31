@@ -31,6 +31,8 @@ ALLOWED_ROOT_NAMES = {
     "graphify-out",          # graphify knowledge graph output (dev-only)
     "extension",             # Chrome MV3 side panel — loaded unpacked from disk,
                              # never served by Vercel. Added 2026-07-31.
+    "instructions",          # written specs awaiting sign-off (dev-only, prose
+                             # only, nothing importable). Added 2026-07-31.
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
