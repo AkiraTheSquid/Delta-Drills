@@ -22,6 +22,15 @@ function questionIsTorch(q) {
 // grades torch in-process now (fork runner, torch preimported at boot), so
 // torch questions there use the normal editor flow. Offline/Supabase practice
 // runs on Pyodide, which cannot import torch at all → Colab.
+// The Colab edition's answer for this question, or "" — either because this is
+// the normal app, or because the question's lesson has no published notebook.
+// See practice/colab_mode.js; `window.DDColab` is absent on any page that does
+// not load it, so every call site must tolerate that.
+function colabForkHref(q) {
+  const dd = window.DDColab;
+  return dd && dd.active() ? dd.hrefFor(q) : "";
+}
+
 function torchNeedsColab(q) {
   // Routing a torch drill to Colab hides the WHOLE right panel — editor, aids,
   // submit. That was survivable when torch drills were a rare fork, but the
@@ -31,7 +40,14 @@ function torchNeedsColab(q) {
   //
   // Only route away when there is somewhere to route TO. With no notebook the
   // old behaviour was a dead end, not a fallback.
-  if (!questionIsTorch(q) || practiceMode === "backend") return false;
+  if (!questionIsTorch(q)) return false;
+  // The Colab edition routes on PURPOSE, so it ignores practiceMode — the point
+  // of that deploy is that the notebook is where you work, whether or not the
+  // backend could have graded it here. It still routes only where a notebook
+  // exists: the 112 questions whose lessons have none stay on the editor, which
+  // is the same "somewhere to route TO" rule as below.
+  if (colabForkHref(q)) return true;
+  if (practiceMode === "backend") return false;
   return !!(q && (q.problem_notebook_path || q.solution_notebook_path));
 }
 
@@ -112,7 +128,11 @@ function applyTorchRouting(q) {
   // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall
   // back to the solution notebook only if no problem notebook exists.
   if (torchColabLink) {
-    const href = toHref(q && (q.problem_notebook_path || q.solution_notebook_path));
+    // The bank's own notebook paths first (all empty today, but they are the
+    // per-question answer and outrank a lesson-level one), then the Colab
+    // edition's lesson notebook.
+    const href = toHref(q && (q.problem_notebook_path || q.solution_notebook_path))
+      || colabForkHref(q);
     torchColabLink.classList.toggle("hidden", !href);
     if (href) torchColabLink.href = href;
   }
@@ -124,6 +144,19 @@ function applyTorchRouting(q) {
     torchSolutionLink.hidden = !showSolution;
     if (showSolution) torchSolutionLink.href = solHref;
   }
+}
+
+// The notebook index arrives over the network, and the first question can render
+// before it lands — which would resolve to "no notebook" and leave the learner on
+// an editor that cannot import torch. Re-run the routing for whatever is on
+// screen once the index settles. Fires immediately on the normal app.
+if (window.DDColab && window.DDColab.active()) {
+  window.DDColab.whenReady(() => {
+    const current = (typeof practiceProgress === "object" && practiceProgress)
+      ? practiceProgress.currentQuestion
+      : null;
+    if (current) applyTorchRouting(current);
+  });
 }
 
 function stableQuestionId(q) {
