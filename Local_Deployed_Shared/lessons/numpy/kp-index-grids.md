@@ -40,6 +40,7 @@ assert z.tolist() == [[0, 1, 0, 1],
                       [1, 0, 1, 0],
                       [0, 1, 0, 1]]
 # Sanity: (i + j) odd <=> cell is 1 — exactly "no equal neighbors".
+print(z)
 ```
 
 Why: the two assignments partition the 1-cells by row parity — walking one
@@ -121,6 +122,12 @@ assert kept.tolist() == [[0, 1, 0, 0],
                          [4, 5, 6, 0],
                          [0, 9, 10, 11],
                          [0, 0, 14, 15]]
+print("y shape", tuple(y.shape), "x shape", tuple(x.shape),
+      "-> broadcast to", tuple(manhattan.shape))
+print("manhattan distance from centre")
+print(manhattan)
+print("band mask |i - j| <= 1, applied")
+print(kept)
 ```
 
 Why: the SHAPES carry the meaning — the column `y` varies down, the row `x`

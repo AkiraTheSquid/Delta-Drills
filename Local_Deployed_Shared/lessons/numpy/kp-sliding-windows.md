@@ -66,6 +66,10 @@ assert ma1.tolist() == [1.0, 2.0, 3.0, 4.0, 5.0]
 c = t.cumsum(t.cat([t.zeros(1), x]), dim=0)   # c[i] = sum of first i elements
 ma2 = (c[3:] - c[:-3]) / 3.0
 assert t.allclose(ma2, ma1)
+print("windows", tuple(wins.shape))
+print(wins)
+print("unfold+mean", ma1)
+print("cumsum diff", ma2)
 ```
 
 Why each step:

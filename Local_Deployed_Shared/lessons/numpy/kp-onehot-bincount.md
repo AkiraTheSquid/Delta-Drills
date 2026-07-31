@@ -72,6 +72,10 @@ mode = int(t.bincount(x).argmax())
 assert mode == 3
 # Tie case: 1 and 2 both appear twice -> argmax hits index 1 first.
 assert int(t.bincount(t.tensor([1, 2, 1, 2])).argmax()) == 1
+print("labels", labels)
+print(onehot)
+print("bincount", counts, "| one-hot columns summed", onehot.sum(dim=0))
+print("mode of", x.tolist(), "is", mode)
 ```
 
 Why each step:

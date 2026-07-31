@@ -33,6 +33,9 @@ assert mask.tolist() == [False, False, True, True, False, True]
 # Any elementwise condition works the same way, e.g. divisibility:
 even = x % 2 == 0
 assert even.tolist() == [False, True, True, False, False, False]
+print("x      ", x)
+print("x > 5  ", mask, mask.dtype)
+print("x even ", even)
 ```
 
 Why: one expression, no loop — the condition is written on the whole array
@@ -83,6 +86,7 @@ assert mask.sum() == 3
 
 # Filter: mask indexing keeps just the True positions (as a copy).
 assert x[mask].tolist() == [6, 9, 7]
+print("count", int(mask.sum()), "| kept", x[mask])
 ```
 
 Why: `count_nonzero`/`sum` on a mask is the standard "how many satisfy…?";
@@ -133,6 +137,9 @@ out = x.clone()
 out[(out > 3) & (out < 8)] *= -1
 assert out.tolist() == [1, -4, -6, 9, 3, -7]
 assert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched
+print("(x > 3) & (x < 8) ->", (x > 3) & (x < 8))
+print("out", out)
+print("x  ", x, " <- untouched")
 ```
 
 Why: try removing the parentheses mentally: `out > 3 & out < 8` would

@@ -74,6 +74,10 @@ probs[nz] = scores[nz] / sums[nz]
 assert probs.tolist() == [[0.25, 0.75],
                           [0.0, 0.0]]
 assert t.isclose(probs[0].sum(), t.tensor(1.0))
+print("min-max  ", z, "->", mm)
+print("unit     ", v, "->", unit, "norm", t.linalg.norm(unit).item())
+print("row sums ", sums.squeeze(1), "-> divisible rows:", nz)
+print(probs, " <- the all-zero row stayed zero instead of becoming nan")
 ```
 
 Why each step:

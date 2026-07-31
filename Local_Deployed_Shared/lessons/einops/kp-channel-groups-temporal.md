@@ -66,6 +66,10 @@ assert not t.equal(split, wrong)          # conventions matter!
 seq = t.arange(8.0).reshape(1, 1, 8)            # (b, c, t=8)
 halved = einops.reduce(seq, 'b c (t two) -> b c t', 'mean', two=2)
 assert halved[0, 0].tolist() == [0.5, 2.5, 4.5, 6.5]
+print("channels        ", x[0, :, 0, 0])
+print("'(c g)' group 0 ", split[0, 0, :, 0, 0], " <- every second channel")
+print("'(g c)' group 0 ", wrong[0, 0, :, 0, 0], " <- a contiguous half")
+print("seq", seq[0, 0], "-> pairwise mean", halved[0, 0])
 ```
 
 Why each step:

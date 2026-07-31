@@ -75,6 +75,11 @@ out = t.empty(6, dtype=x.dtype)
 out[0::2] = x
 out[1::2] = y
 assert out.tolist() == [1, 2, 3, 4, 5, 6]
+print("vstack", tuple(v.shape), "| hstack", tuple(h.shape),
+      "| stack", tuple(piled.shape), "<- stack ADDS an axis")
+print("averaged over the new axis:")
+print(avg)
+print("interleaved:", inter, "| by strided assignment:", out)
 ```
 
 Why each step:

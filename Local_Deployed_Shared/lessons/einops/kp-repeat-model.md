@@ -78,6 +78,11 @@ assert up.tolist() == [[1, 1, 2, 2],
                        [1, 1, 2, 2],
                        [3, 3, 4, 4],
                        [3, 3, 4, 4]]
+print("new axis:", tuple(cls.shape), "->", tuple(seq.shape),
+      "| item 0 =", seq[0].tolist())
+print("'(h r)' factor FAST — each row repeats:\n", rows3)
+print("'(r h)' factor SLOW — the block repeats:\n", whole)
+print("2x nearest-neighbor upscale:\n", up)
 ```
 
 Why each step:

@@ -69,9 +69,16 @@ assert seq[1, 2, 0] == tfirst[2, 1, 0]
 try:
     einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern
     raised = False
-except Exception:
+except Exception as err:
     raised = True
+    print("4-name pattern on 3-D data ->", type(err).__name__)
 assert raised
+
+print("channels-last", tuple(arr.shape), "-> channels-first",
+      tuple(first.shape))
+print("element (1,0,1,2) moved to (1,2,0,1):",
+      arr[1, 0, 1, 2].item(), "==", first[1, 2, 0, 1].item())
+print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
 ```
 
 Why each step:

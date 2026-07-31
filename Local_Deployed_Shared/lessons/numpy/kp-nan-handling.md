@@ -68,6 +68,11 @@ assert out.tolist() == [0.5, 0.0, 1.0]
 # NaN poisons plain reductions; the nan* family ignores it.
 assert t.isnan(x.mean())                # NaN propagates
 assert t.nanmean(x) == 0.75             # mean of 0.5 and 1.0
+print("x            ", x)
+print("x == t.nan   ", x == t.nan, " <- never True, not even at the NaN")
+print("t.isnan(x)   ", t.isnan(x))
+print("nan_to_num   ", fixed)
+print("mean", x.mean().item(), "| nanmean", t.nanmean(x).item())
 ```
 
 Why each step:

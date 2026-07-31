@@ -66,6 +66,9 @@ w = t.tensor([5.0, 9.0, 1.0, 7.0])
 ordered = t.topk(w, 2).indices
 assert ordered.tolist() == [1, 3]
 assert w[ordered].tolist() == [9.0, 7.0]
+print("z", z, "-> topk", top)
+print("ascending instead:", top.values.flip(0))
+print("w", w, "-> top-2 positions", ordered, "-> values", w[ordered])
 ```
 
 Why each step:

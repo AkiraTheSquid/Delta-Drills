@@ -74,6 +74,12 @@ assert (img - colmax).shape == (2, 2)
 imgs = t.ones((2, 2, 2, 3))
 gray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')
 assert gray.shape == (2, 2, 2, 1)
+print("'b c h w -> b'  ", per_image, " (one number per image)")
+print("'b c h w -> b c'", tuple(per_channel.shape), per_channel[0])
+print("'h w -> 1 w'    ", colmax, "shape", tuple(colmax.shape),
+      "-> broadcasts back to", tuple((img - colmax).shape))
+print("grayscale keeps the channel axis:", tuple(imgs.shape), "->",
+      tuple(gray.shape))
 ```
 
 Why each step:

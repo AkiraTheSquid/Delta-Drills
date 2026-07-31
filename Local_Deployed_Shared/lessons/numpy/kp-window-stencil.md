@@ -77,6 +77,10 @@ corr = (wins * kern).sum(dim=(-2, -1))                # reduce window axes
 assert tuple(corr.shape) == (3, 3)
 assert corr[0, 0] == x[0, 0] + x[1, 1]                # 0 + 5
 assert corr[2, 2] == x[2, 2] + x[3, 3]                # 10 + 15
+print("2x2 block sums of a 5x5 — last band is the ragged remainder:")
+print(blocks)
+print("windows", tuple(wins.shape), "-> correlation", tuple(corr.shape))
+print(corr)
 ```
 
 Why each step:

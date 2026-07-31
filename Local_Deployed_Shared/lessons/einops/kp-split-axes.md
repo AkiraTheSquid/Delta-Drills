@@ -66,6 +66,11 @@ image = einops.rearrange(tiles, '(h w) p1 p2 -> (h p1) (w p2)', h=2)
 assert image.shape == (4, 6)                          # (2*2, 3*2)
 # Tile 0 occupies the top-left 2x2 block:
 assert image[:2, :2].tolist() == tiles[0].tolist()
+print("merge then split round-trips:", bool(t.equal(back, img)))
+print("sequence", tuple(seq.shape), "-> chunks", tuple(chunks.shape),
+      "| chunk 0 =", chunks[0, 0].tolist())
+print("6 tiles -> one", tuple(image.shape), "image:")
+print(image)
 ```
 
 Why each step:

@@ -191,6 +191,10 @@ Same 100 numbers, an 8× spread in what they cost:
 ```python
 assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
 assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
+print("float64 is exactly", grid.to(t.float64).element_size(), "bytes/element,",
+      "float32", grid.to(t.float32).element_size())
+print("100 float32 elements =",
+      grid.to(t.float32).numel() * grid.to(t.float32).element_size(), "bytes")
 ```
 
 ## Worked example

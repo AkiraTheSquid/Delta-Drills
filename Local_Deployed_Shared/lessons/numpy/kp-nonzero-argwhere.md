@@ -76,6 +76,10 @@ assert rows.tolist() == [0, 1] and cols.tolist() == [1, 0]
 
 # Geometry from index arrays: bounding box of the nonzero region.
 assert (rows.min(), rows.max(), cols.min(), cols.max()) == (0, 1, 0, 1)
+print("as_tuple=True ->", pos, "-> values", x[pos])
+print("argwhere(z) — one [row, col] per hit")
+print(coords)
+print("as_tuple=True on 2-D -> rows", rows, "cols", cols)
 ```
 
 Why each step:

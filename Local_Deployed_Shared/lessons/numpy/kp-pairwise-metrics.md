@@ -68,6 +68,11 @@ mn = m / t.linalg.norm(m, dim=1, keepdim=True)
 cos = mn @ mn.T
 assert t.allclose(t.diag(cos), t.ones(2))        # every row vs itself
 assert t.isclose(cos[0, 1], 1.0 / t.sqrt(t.tensor(2.0)))  # 45 degrees apart
+print(tuple(x.shape), "vs", tuple(y.shape), "-> diff", tuple(diff.shape),
+      "-> distances", tuple(d.shape))
+print("distance table", d)
+print("cosine similarities")
+print(cos)
 ```
 
 Why each step:

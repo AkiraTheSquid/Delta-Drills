@@ -34,6 +34,9 @@ b = t.tensor([4.0, -5.0, 6.0])
 # The atom, three spellings — same number.
 d = float(t.dot(a, b))
 assert d == float(a @ b) == float((a * b).sum()) == 12.0
+print("a * b (no sum yet):", a * b)
+print("t.dot:", d, "| a @ b:", float(a @ b), "| (a*b).sum():",
+      float((a * b).sum()))
 ```
 
 Why: verifying the three dot spellings agree once buys permanent fluency:
@@ -80,6 +83,7 @@ z = t.tensor([[1.0, 2.0],
 v = t.tensor([10.0, 1.0])
 zv = z @ v
 assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
+print(tuple(z.shape), "@", tuple(v.shape), "->", tuple(zv.shape), ":", zv)
 ```
 
 Why: checking one output by hand (1·10 + 2·1 = 12) anchors "matmul = a dot
@@ -134,6 +138,9 @@ q = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 row_dots = (p * q).sum(dim=1)
 assert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8
+print("row-wise dots", row_dots)
+print("p @ q would be something else entirely:")
+print(p @ q)
 ```
 
 Why: this case is deliberately a trap — `p @ q` runs on these square
@@ -180,6 +187,8 @@ f = t.tensor([[3.0, 4.0],
               [0.0, 0.0]])
 assert t.linalg.norm(f) == 5.0
 assert t.isclose(t.linalg.norm(f), t.sqrt((f * f).sum()))
+print("norm", t.linalg.norm(f).item(), "| sqrt((f*f).sum())",
+      t.sqrt((f * f).sum()).item())
 ```
 
 Why: the first-principles spelling `t.sqrt((z * z).sum())` is

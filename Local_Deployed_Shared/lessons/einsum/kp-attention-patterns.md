@@ -80,6 +80,12 @@ w = t.tensor([[1.0, 0.0, 0.0],
 proj = t.einsum('bqd,df->bqf', out, w)
 assert proj.shape == (1, 2, 3)
 assert proj[0, 1].tolist() == [0.0, 10.0, 10.0]
+print("bqd,bkd->bqk  scores", tuple(scores.shape))
+print(scores[0])
+print("bqk,bkd->bqd  mixed ", tuple(out.shape))
+print(out[0])
+print("bqd,df->bqf   proj  ", tuple(proj.shape))
+print(proj[0])
 ```
 
 Why each step:

@@ -66,6 +66,11 @@ assert gram[0, 1] == 1*10 + 2*20 + 3*30    # col 0 . col 1
 xc = data - data.mean(dim=0)
 cov = t.einsum('nd,ne->de', xc, xc) / (data.shape[0] - 1)
 assert t.allclose(cov, t.cov(data.T))
+print("quadratic form x^T W x =", qf.item())
+print("gram 'nd,ne->de'")
+print(gram)
+print("covariance")
+print(cov)
 ```
 
 Why each step:

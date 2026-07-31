@@ -70,6 +70,12 @@ x = t.tensor([[1.0, 2.0],
 pairs = t.einsum('id,jd->ijd', x, x)
 assert pairs.shape == (2, 2, 2)
 assert pairs[0, 1].tolist() == [3.0, 8.0]      # row0 * row1, elementwise
+print("'i,j->ij' — nothing contracted, so both axes survive:")
+print(outer)
+print("self outer product is symmetric:")
+print(self_outer)
+print("'id,jd->ijd' — d is shared AND kept:", tuple(pairs.shape))
+print(pairs[0, 1])
 ```
 
 Why each step:

@@ -42,6 +42,9 @@ assert reordered.tolist() == [[4, 5], [0, 1], [2, 3]]
 # Fancy indexing copies — mutating the result leaves z alone.
 reordered[0, 0] = 99
 assert z[2, 0] == 4
+print("order", perm)
+print(reordered, " <- 99 written here")
+print("z unchanged:", z.tolist())
 ```
 
 Why: verbalizing `z[perm]` ("row perm[i] lands at position i") resolves the
@@ -88,6 +91,8 @@ values = t.tensor([10, 20, 30])
 labels = t.tensor([0, 2, 1, 2, 0])
 decoded = values[labels]
 assert decoded.tolist() == [10, 30, 20, 30, 10]
+print("labels ", labels, "shape", tuple(labels.shape))
+print("decoded", decoded, "shape", tuple(decoded.shape), "<- labels' shape")
 ```
 
 Why: this is a single vectorized gather in C — if you're writing
@@ -134,6 +139,7 @@ import torch as t
 w = t.tensor([[1, 2], [3, 4], [5, 6]])
 w[[0, -1]] = w[[-1, 0]]
 assert w.tolist() == [[5, 6], [3, 4], [1, 2]]
+print(w)
 ```
 
 Why: the list form `[[0, -1]]` is fancy indexing with a 2-element index

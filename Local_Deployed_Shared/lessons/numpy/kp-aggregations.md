@@ -110,6 +110,10 @@ assert raw.ndim == 0 and isinstance(raw, t.Tensor)
 assert isinstance(raw.item(), float)
 assert int(grid.sum()) == 29
 assert bool((grid > 0).all()) is True
+print("raw.ndim", raw.ndim, "-> still a tensor:", isinstance(raw, t.Tensor))
+print("int(grid.sum())", int(grid.sum()), type(int(grid.sum())).__name__)
+print("bool((grid > 0).all())", bool((grid > 0).all()),
+      type(bool((grid > 0).all())).__name__)
 ```
 
 Keep tensors *inside* your computation; convert exactly at the boundary

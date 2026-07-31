@@ -71,6 +71,12 @@ a = t.tensor([4, 1, 3, 2, 3])
 b = t.tensor([3, 4, 4, 8, 0])
 ua = t.unique(a)
 assert ua[t.isin(ua, b)].tolist() == [3, 4]
+print("z       ", z)
+print("values  ", values, "counts", counts)
+print("most common:", values[counts.argmax()].item())
+print("inverse ", inverse, "-> rebuilt", values2[inverse])
+print("intersection of", a.tolist(), "and", b.tolist(), ":",
+      ua[t.isin(ua, b)])
 ```
 
 Why each step:

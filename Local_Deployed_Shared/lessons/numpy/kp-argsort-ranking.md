@@ -37,6 +37,8 @@ order = key.argsort()            # row order that sorts it: [1, 2, 0]
 sorted_rows = z[order]           # fancy indexing moves whole rows
 assert sorted_rows.tolist() == [[20, 1], [30, 2], [10, 3]]
 # One-liner form you'll actually write: z[z[:, 1].argsort()]
+print("key column", key, "-> row order", order)
+print(sorted_rows)
 ```
 
 Why: unpacking the sort-by into key/order/apply once makes the one-liner
@@ -82,6 +84,8 @@ import torch as t
 v = t.tensor([30.0, 10.0, 20.0])
 ranks = t.argsort(t.argsort(v))
 assert ranks.tolist() == [2, 0, 1]       # 30 is largest -> rank 2
+print("values", v)
+print("ranks ", ranks, " (0 = smallest)")
 ```
 
 Why: trace one element — 30.0 sits at sorted position 2, so its rank is 2.
@@ -131,6 +135,8 @@ w = t.tensor([5.0, 9.0, 1.0, 7.0])
 top2 = t.argsort(w)[-2:].flip(0)
 assert top2.tolist() == [1, 3]           # 9.0 at index 1, then 7.0 at 3
 assert w[top2].tolist() == [9.0, 7.0]    # indices recover the values
+print("w", w)
+print("top-2 indices", top2, "-> values", w[top2])
 ```
 
 Why: each stage of the chain is checkable — ascending indices, keep the last

@@ -36,6 +36,10 @@ z = t.arange(1, 10).reshape(3, 3)   # [[1,2,3],[4,5,6],[7,8,9]]
 assert t.diag(z).tolist() == [1, 5, 9]        # k=0, main
 assert t.diag(z, diagonal=1).tolist() == [2, 6]      # one above
 assert t.diag(z, diagonal=-1).tolist() == [4, 8]     # one below
+print(z)
+print("k= 0", t.diag(z))
+print("k= 1", t.diag(z, diagonal=1))
+print("k=-1", t.diag(z, diagonal=-1))
 ```
 
 Why: `t.arange(1, 10).reshape(3, 3)` is the perfect test matrix — every
@@ -85,6 +89,9 @@ assert t.diag(z).sum() == 15
 
 # t.trace has NO offset argument — for any other diagonal, compose:
 assert t.diagonal(z, offset=1).sum() == 8
+print("trace       ", int(t.trace(z)))
+print("diag().sum()", int(t.diag(z).sum()))
+print("offset=1 sum", int(t.diagonal(z, offset=1).sum()))
 ```
 
 Why: "sum of the k-th diagonal" is the composition habit this whole toolkit
@@ -141,6 +148,9 @@ assert d.tolist() == [[1.0, 0.0, 0.0],
 assert t.diag(t.tensor([7, 8]), diagonal=-1).tolist() == [[0, 0, 0],
                                           [7, 0, 0],
                                           [0, 8, 0]]
+print(d)
+print("two values on k=-1 grow a 3x3:")
+print(t.diag(t.tensor([7, 8]), diagonal=-1))
 ```
 
 Why: the offset build is how you make shift/step matrices (e.g. the values
@@ -201,6 +211,12 @@ tri = t.triu(t.ones((3, 3)))
 assert tri.tolist() == [[1.0, 1.0, 1.0],
                         [0.0, 1.0, 1.0],
                         [0.0, 0.0, 1.0]]
+print("triu(z)")
+print(t.triu(z))
+print("tril(z, diagonal=-1) — strictly below")
+print(t.tril(z, diagonal=-1))
+print("triu(ones)")
+print(tri)
 ```
 
 Why: "strictly above/below" is expressed by shifting the cut (k=1 / k=-1),

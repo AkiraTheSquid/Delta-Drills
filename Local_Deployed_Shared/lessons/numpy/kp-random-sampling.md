@@ -73,6 +73,11 @@ cs = t.cumsum(p, dim=1)                  # rows: [0.2, 1.0], [1.0, 1.0]
 cats = (u < cs).to(t.int64).argmax(dim=1)  # first cumsum bin exceeding u
 assert cats[1] == 0                      # row 2 puts all mass on category 0
 assert tuple(cats.shape) == (2,)
+print("1000 resample means, 95% CI: [", round(float(lo), 3), ",",
+      round(float(hi), 3), "] around the true mean", x.mean().item())
+print("cumulative probabilities per row:")
+print(cs)
+print("uniforms", u.squeeze(1), "-> categories", cats)
 ```
 
 Why each step:

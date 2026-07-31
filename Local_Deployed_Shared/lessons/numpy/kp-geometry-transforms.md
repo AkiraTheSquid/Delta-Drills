@@ -37,6 +37,8 @@ r = t.sqrt(x ** 2 + y ** 2)
 theta = t.arctan2(y, x)                 # y FIRST — full-quadrant angle
 assert r.tolist() == [1.0, 2.0]
 assert t.allclose(theta, t.tensor([0.0, t.pi / 2]))   # +x axis; +y axis
+print("x", x, "y", y)
+print("r", r, "theta", theta)
 ```
 
 Why: unpacking `x, y = z[:, 0], z[:, 1]` FIRST, then writing the scalar
@@ -108,6 +110,10 @@ out = h @ m.T                            # transform all points at once
 result = out[:, :2] / out[:, 2:3]        # de-homogenize (w column is 1 here)
 assert result.tolist() == [[2.0, -1.0],
                            [3.0, 0.0]]
+print("points with the 1s column appended:")
+print(h)
+print("after translating by (+2, -1):")
+print(result)
 ```
 
 Why: `h @ m.T` rather than looping `m @ p` per point — points-as-rows means
