@@ -22,12 +22,11 @@ const sessionPauseBtn = document.getElementById("session-pause-btn");
 const sessionEndBtn = document.getElementById("session-end-btn");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");
-const questionText = document.getElementById("question-text");
-const questionImports = document.getElementById("question-imports");
-const questionImportsList = document.getElementById("question-imports-list");
-const questionVisual = document.getElementById("question-visual");
-const questionVisualNote = document.getElementById("question-visual-note");
-const questionVisualCanvas = document.getElementById("question-visual-canvas");
+// #question-text, #question-imports* and #question-visual* are gone (2026-07-31):
+// the problem statement, its helper imports and its target image are cells in
+// the Colab notebook the problem is worked in. #lesson-gate replaces the
+// in-panel lesson screen and points at that notebook's concept section.
+const lessonGate = document.getElementById("lesson-gate");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
 const questionIdChip = document.getElementById("question-id-chip");
@@ -86,9 +85,7 @@ const problemFeedbackRow = document.getElementById("problem-feedback-row");
 const problemFlagButtons = document.querySelectorAll(".problem-flag-btn");
 const problemFeedbackNote = document.getElementById("problem-feedback-note");
 const problemFeedbackStatus = document.getElementById("problem-feedback-status");
-const showHintBtn = document.getElementById("show-hint-btn");
 const showAnswerBtn = document.getElementById("show-answer-btn");
-const hintSection = document.getElementById("hint-section");
-const hintText = document.getElementById("hint-text");
+// No hint elements: hints are a <details> cell under the problem in Colab.
 const answerAids = document.getElementById("answer-aids");
 const colabSolutionLink = document.getElementById("colab-solution-link");

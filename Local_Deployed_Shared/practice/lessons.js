@@ -1,11 +1,18 @@
 /* ================================================================
    LESSON GATE — first-encounter exposure guard
 
-   Before revealing a question whose target KC is new, use the normal
-   practice split as a lesson screen. Left side teaches one concept and
-   explains one worked example. Right-side editor receives that example's
-   complete runnable code. Running/editing it is optional. No faded exercise,
-   grading, or popup appears inside the lesson.
+   Before revealing a question whose target KC is new, stop and send the
+   learner to the notebook section that teaches it. The panel shows one card
+   per pending concept — its name, where it lives, a link into the notebook and
+   a "I've read it" button — and nothing else.
+
+   IT DOES NOT RENDER THE LESSON. It used to (2026-07-31): concept prose and
+   the worked example went into #question-text, and the example's code went
+   into the right-hand editor. Both are gone, because a worked example is
+   commonly several code blocks that each build on the state the previous one
+   left behind, and the only place that behaves correctly is a notebook. So the
+   content lives in the `dd-kp-<kc>` section of the generated Colab notebook and
+   this file routes to it.
 
    Backend mode gets pending KCs from `question.lesson_gate`; local mode
    derives them from qmatrix tags + local exposure. Finishing a KP records
@@ -16,8 +23,6 @@ const LessonGate = (() => {
   let lessonsData = null;
   let qmatrix = null;
   let loadFailed = false;
-  let activeQuestion = null; // Truthy during lesson → Run uses local Pyodide.
-  const DEFAULT_EDITOR = "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
 
   const _exposureKey = () => `${getPracticeStorageKey()}_kc_exposure`;
 
@@ -106,165 +111,7 @@ const LessonGate = (() => {
     return [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))];
   };
 
-  /* ---------- Markdown subset (mirrors lessons/viewer.html) ------------ */
-
-  const esc = (value) =>
-    String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  const inline = (value) =>
-    esc(value)
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
-      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*([^*]+)\*/g, "<em>$1</em>");
-
-  const md = (text, { renderCode = true } = {}) => {
-    if (!text) return "";
-    const lines = text.split("\n");
-    const out = [];
-    let i = 0;
-    let list = null;
-    let para = [];
-    let quote = [];
-    const flushPara = () => {
-      if (para.length) {
-        out.push("<p>" + inline(para.join(" ")) + "</p>");
-        para = [];
-      }
-    };
-    const flushList = () => {
-      if (list) {
-        out.push("</" + list + ">");
-        list = null;
-      }
-    };
-    const flushQuote = () => {
-      if (quote.length) {
-        out.push("<blockquote>" + inline(quote.join(" ")) + "</blockquote>");
-        quote = [];
-      }
-    };
-
-    while (i < lines.length) {
-      const line = lines[i];
-      const fence = line.match(/^```(.*)$/);
-      if (fence) {
-        flushPara();
-        flushList();
-        flushQuote();
-        const buf = [];
-        i++;
-        while (i < lines.length && !/^```/.test(lines[i])) {
-          buf.push(lines[i]);
-          i++;
-        }
-        i++;
-        // The info string is carried into the DOM rather than dropped. It is
-        // the authoring format's own runnable marker: a plain ```python fence
-        // is executed by validate_lessons.py against a shared per-file
-        // namespace, top to bottom, and ```python no-run is skipped. That
-        // makes it exactly the right signal for which blocks get a Run button,
-        // so practice/notebook.js reads it off the rendered element. Deciding
-        // it here would make the one shared renderer notebook-aware, and the
-        // ladder's inline example and lessons/viewer.html use it too.
-        if (renderCode) {
-          out.push(
-            '<pre data-fence="' + esc(fence[1].trim()) + '"><code>' +
-              esc(buf.join("\n")) +
-              "</code></pre>",
-          );
-        }
-        continue;
-      }
-      const heading = line.match(/^(#{1,6})\s+(.*)$/);
-      if (heading) {
-        flushPara();
-        flushList();
-        flushQuote();
-        out.push("<h4>" + inline(heading[2]) + "</h4>");
-        i++;
-        continue;
-      }
-      if (/^>\s?/.test(line)) {
-        flushPara();
-        flushList();
-        quote.push(line.replace(/^>\s?/, ""));
-        i++;
-        continue;
-      }
-      const item = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
-      if (item) {
-        flushPara();
-        flushQuote();
-        const kind = /\d+\./.test(item[2]) ? "ol" : "ul";
-        if (list !== kind) {
-          flushList();
-          out.push("<" + kind + ">");
-          list = kind;
-        }
-        let itemText = item[3];
-        i++;
-        while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i])) {
-          itemText += " " + lines[i].trim();
-          i++;
-        }
-        out.push("<li>" + inline(itemText) + "</li>");
-        continue;
-      }
-      if (!line.trim()) {
-        flushPara();
-        flushList();
-        flushQuote();
-        i++;
-        continue;
-      }
-      flushQuote();
-      para.push(line.trim());
-      i++;
-    }
-    flushPara();
-    flushList();
-    flushQuote();
-    return out.join("\n");
-  };
-
-  const _firstPythonFence = (text) => {
-    const match = String(text || "").match(/```python\s*\n([\s\S]*?)```/);
-    return match ? match[1].replace(/\s+$/, "") + "\n" : "";
-  };
-
-  /* ---------- One inline screen per concept segment -------------------- */
-
-  const _buildPages = (kcs) => {
-    const pages = [];
-    for (const kc of kcs) {
-      const found = _findKp(kc);
-      if (!found) continue;
-      const { lesson, kp } = found;
-      const segments = kp.segments?.length
-        ? kp.segments
-        : [{
-            title: "",
-            concept_markdown: kp.concept_markdown,
-            watch_out_markdown: "",
-            worked_example_markdown: kp.worked_example_markdown,
-            worked_example_code: _firstPythonFence(kp.worked_example_markdown),
-          }];
-      segments.forEach((seg, index) => {
-        pages.push({
-          lesson,
-          kp,
-          seg,
-          segCount: segments.length,
-          lastOfKp: index === segments.length - 1,
-        });
-      });
-    }
-    pages.forEach((page, index) => {
-      page.pageIndex = index;
-      page.pageTotal = pages.length;
-    });
-    return pages;
-  };
+  /* ---------- The gate ------------------------------------------------- */
 
   /* The lessons under the "Numpy" topic teach PyTorch — every drill was
      converted to `import torch as t` in the July dialect passes — but the topic
@@ -275,94 +122,108 @@ const LessonGate = (() => {
   const TOPIC_LABELS = { Numpy: "PyTorch tensors" };
   const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
 
-  const _pageHtml = (page) => {
-    const { kp, seg } = page;
-    const pageTitle = seg.title || kp.title;
-    const watchOut = seg.watch_out_markdown ||
-      (page.segCount === 1 ? kp.misconceptions_markdown : "");
-    const isLast = page.pageIndex === page.pageTotal - 1;
-    // The concept name, the graph button and the progress counter used to be
-    // built here, inside the panel. They now live in #concept-topbar, which
-    // spans the page and survives this innerHTML being replaced — see
-    // practice/concept-topbar.js and `_showTopbar` below.
-    let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
-    // `nb-scope` marks the regions whose ```python fences are programs rather
-    // than illustrations — the same two sections validate_lessons.py executes
-    // against one shared namespace. LessonNotebook turns those into cells; a
-    // fence in "Watch out" is outside the scope and stays static, because CI
-    // never runs it and a Run button on unrun code is a trap.
-    html += '<div class="lesson-body nb-scope">' + md(seg.concept_markdown) + "</div>";
-    if (watchOut) {
-      html += '<div class="lesson-watch-out"><h3>Watch out</h3>' + md(watchOut) + "</div>";
+  /* Escapes both quote forms as well as the angle brackets, because some of
+     these values land inside a double-quoted attribute (`href=`, `target=`)
+     rather than in element text — a bare `"` there closes the attribute early
+     and lets the rest of the value become markup. */
+  const esc = (value) =>
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const _el = (id) => document.getElementById(id);
+
+  /* One card per pending concept.
+
+     This screen used to BE the lesson: it rendered the concept prose, the
+     "watch out" note and the worked example into #question-text, and pushed the
+     example's code into the editor in the right-hand panel. That is gone
+     (2026-07-31). A worked example is regularly a sequence of code blocks that
+     each depend on the state the previous one left behind, and reproducing that
+     faithfully means reproducing a notebook — so the example lives in the
+     notebook, and this screen's job shrank to: say which concept is next, send
+     the learner to the section that teaches it, and wait for them to come back.
+
+     What did NOT shrink is the bookkeeping. Finishing a concept still records
+     exposure (locally and, in backend mode, server-side) and still credits the
+     ladder's `worked` rung through LadderUI, because the rung the pending
+     question is staged on depends on it. */
+  const _pendingList = (kcs) => {
+    const items = [];
+    for (const kc of kcs) {
+      const found = _findKp(kc);
+      if (!found) continue;
+      items.push({ kc, lesson: found.lesson, kp: found.kp });
     }
-    // The worked example's code is rendered INLINE now, where the prose that
-    // explains it is, rather than being shipped off to the editor in the other
-    // panel. `renderCode: false` used to strip it precisely because it lived
-    // over there; keeping the two in one column is the whole point of the
-    // notebook layout, so the fences stay and LessonNotebook makes them run.
-    html += '<div class="lesson-worked nb-scope"><h3>Worked example</h3>' +
-      md(seg.worked_example_markdown) +
-      '<p class="lesson-example-note">Run any block to see it execute. A block runs ' +
-      "everything above it too, so the variables it needs already exist.</p></div>";
-    html += '<div class="lesson-actions"><button type="button" class="primary" id="lesson-continue-btn">' +
-      (isLast ? "Continue to the question →" : "Next concept →") +
-      "</button></div>";
-    return html;
+    return items;
   };
 
-  /* Point the page-wide topbar at the concept this page teaches.
+  const _cardHtml = (item, index, total) => {
+    const url = window.ColabRoute ? window.ColabRoute.urlForKc(item.kc) : "";
+    const counter = total > 1 ? ` · concept ${index + 1} of ${total}` : "";
+    const where = url
+      ? `<a class="lesson-gate-link" id="lesson-gate-link" href="${esc(url)}"
+            target="${esc(window.ColabRoute.TARGET)}">Read it in the notebook ↗</a>`
+      // No mapping for this KC. Say so plainly instead of showing a dead link:
+      // the learner can still continue, they just get no reading first.
+      : '<span class="lesson-gate-note" id="lesson-gate-link">This concept has no notebook section yet.</span>';
+    return (
+      '<div class="lesson-gate-card">' +
+      `<div class="lesson-gate-eyebrow">New concept${esc(counter)}</div>` +
+      `<h2 class="lesson-gate-title" id="lesson-gate-title" tabindex="-1">${esc(item.kp.title)}</h2>` +
+      `<div class="lesson-gate-where">${esc(_topicLabel(item.lesson.topic))} · ` +
+      `${esc(item.lesson.title)}</div>` +
+      '<p class="lesson-gate-blurb">Read this section and run its examples in the notebook, ' +
+      'then come back here.</p>' +
+      `<div class="lesson-gate-actions">${where}` +
+      '<button type="button" class="primary" id="lesson-gate-continue-btn">' +
+      (index === total - 1 ? "I've read it — continue to the question →" : "I've read it — next concept →") +
+      "</button></div></div>"
+    );
+  };
 
-     The estimate is fetched rather than read off the pending question, for two
-     reasons: the lesson may teach several KPs and at most one of them is the
-     concept that question is staged on, and the ?lesson=<kc> entry point has no
-     question at all. A failed fetch leaves the estimate blank rather than
-     falling back to the staged question's number — labelling one concept's
-     record with another concept's attempts would be worse than showing none.
+  /* Point the page-wide topbar at the concept this gate is about.
 
-     Guest mode has no backend to ask, so the fetch is skipped entirely there. */
-  const _showTopbar = async (page) => {
+     The estimate is fetched rather than read off the pending question because
+     the gate may cover several concepts and at most one of them is the one that
+     question is staged on — labelling one concept's record with another's
+     attempts would be worse than showing none. Guest mode has no backend to
+     ask, so the fetch is skipped there. */
+  const _showTopbar = async (item, index, total) => {
     const bar = window.ConceptTopbar;
     if (!bar) return;
-    const { lesson, kp, seg } = page;
     bar.show({
-      kc: kp.kc,
-      title: seg.title || kp.title,
-      eyebrow: `${_topicLabel(lesson.topic)} · Lesson ${page.pageIndex + 1} of ${page.pageTotal}`,
+      kc: item.kc,
+      title: item.kp.title,
+      eyebrow: `${_topicLabel(item.lesson.topic)} · Concept ${index + 1} of ${total}`,
       stage: "lesson",
       estimate: null,
     });
     if (typeof apiFetch !== "function" || practiceMode !== "backend") return;
     try {
       const res = await apiFetch(
-        `/api/practice/kc-estimate?kc=${encodeURIComponent(kp.kc)}`,
+        `/api/practice/kc-estimate?kc=${encodeURIComponent(item.kc)}`,
       );
       if (!res.ok) return;
       const data = await res.json();
-      // The learner may have paged on while this was in flight. Only apply the
+      // The learner may have moved on while this was in flight. Only apply the
       // estimate if the topbar is still showing the concept it belongs to.
-      if (bar.activeKc() === kp.kc) bar.setEstimate(data.ladder_estimate);
+      if (bar.activeKc() === item.kc) bar.setEstimate(data.ladder_estimate);
     } catch (err) {
       console.warn("[lessons] concept estimate unavailable:", err);
     }
   };
 
-  const _runtimeContext = (page) => ({
-    topic: "Lesson",
-    lesson_topic: page.lesson.topic,
-    primary_library: page.lesson.topic === "Einops" ? "einops" : "numpy",
-    supports_visual_output: false,
-    test_cases: [],
-  });
-
-  const _el = (id) => document.getElementById(id);
-
   const _cleanup = () => {
     document.body.classList.remove("lesson-mode");
-    activeQuestion = null;
-    const editor = _el("code-editor");
-    if (editor) editor.value = DEFAULT_EDITOR;
-    const out = _el("output-area");
-    if (out) out.textContent = "";
+    const host = _el("lesson-gate");
+    if (host) {
+      host.innerHTML = "";
+      host.classList.add("hidden");
+    }
   };
 
   const maybeShow = async (question, onDone, forceKcs = null) => {
@@ -371,27 +232,29 @@ const LessonGate = (() => {
       if (!kcs.length) return false;
       await _ensureLessons();
       if (!lessonsData) return false;
-      const pages = _buildPages(kcs);
-      if (!pages.length) return false;
+      const items = _pendingList(kcs);
+      if (!items.length) return false;
 
-      const questionText = _el("question-text");
-      const questionNumber = _el("question-number");
-      const editor = _el("code-editor");
-      const output = _el("output-area");
-      if (!questionText || !editor) return false;
+      const host = _el("lesson-gate");
+      if (!host) return false;
+      // The URLs come out of the generated notebook map, which is fetched
+      // once. Awaiting it here means the very first gate of a session still
+      // renders a working link instead of the "no notebook section" fallback.
+      if (window.ColabRoute) await window.ColabRoute.load();
 
       document.body.classList.add("lesson-mode");
+      host.classList.remove("hidden");
       let index = 0;
       let finished = false;
-      // KPs whose worked example the learner actually read through to the end.
+      // Concepts the learner actually clicked through to the end.
       const taught = [];
 
       const finishAll = async () => {
         if (finished) return;
         finished = true;
-        // Credit the ladder BEFORE handing back. This screen WAS the worked
-        // example, so the concept comes off the `worked` rung here — and the
-        // question `onDone` is about to render was staged for the rung the
+        // Credit the ladder BEFORE handing back. This gate stands in for the
+        // worked example, so the concept comes off the `worked` rung here — and
+        // the question `onDone` is about to render was staged for the rung the
         // learner has just left. LadderUI re-stages it in place, which is why
         // this is awaited rather than fired and forgotten.
         if (window.LadderUI && typeof window.LadderUI.creditTaught === "function") {
@@ -405,56 +268,48 @@ const LessonGate = (() => {
         onDone();
       };
 
-      const showPage = () => {
-        const page = pages[index];
-        activeQuestion = _runtimeContext(page);
-        if (questionNumber) questionNumber.textContent = "Lesson";
-        questionText.innerHTML = _pageHtml(page);
-        // Every runnable block on the page becomes a cell, explanation blocks
-        // included, and they share state top to bottom. Mounting the whole
-        // page rather than `.lesson-worked` is what lets a concept be taught
-        // as a sequence of things the learner can run at the point the prose
-        // raises them; `no-run` fences stay static. Done after the innerHTML
-        // rather than inside _pageHtml because it rewrites rendered DOM, which
-        // keeps the markdown renderer shared and notebook-unaware.
-        if (window.LessonNotebook) {
-          window.LessonNotebook.mount(questionText);
-        }
-        questionText.scrollTop = 0;
+      const showCard = () => {
+        const item = items[index];
+        host.innerHTML = _cardHtml(item, index, items.length);
         window.scrollTo({ top: 0 });
-        editor.value = page.seg.worked_example_code ||
-          _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR;
-        if (output) output.textContent = "";
+        const title = _el("lesson-gate-title");
+        if (title) title.focus();
 
-        // Not awaited: the page is already rendered and the estimate fills in
-        // when it arrives. Blocking the render on a network call would make a
-        // slow connection look like a broken lesson.
-        _showTopbar(page);
+        // Steer the shared Colab tab to the concept, so the reading is one
+        // click away rather than a hunt through a 500-cell notebook. Only ever
+        // best-effort — a browser allows window.open during a user gesture, and
+        // the click that advanced to this card is one, but a popup blocker may
+        // still decline. The link above is the guaranteed way through, which is
+        // why it is rendered as a real anchor rather than a button.
+        if (window.ColabRoute) window.ColabRoute.openKc(item.kc);
 
-        const button = _el("lesson-continue-btn");
+        // Not awaited: the card is already on screen and the estimate fills in
+        // when it arrives. Blocking on a network call would make a slow
+        // connection look like a broken gate.
+        _showTopbar(item, index, items.length);
+
+        const button = _el("lesson-gate-continue-btn");
         let advancing = false;
         button.onclick = () => {
           if (advancing || finished) return;
           advancing = true;
           button.disabled = true;
-          if (page.lastOfKp) {
-            _markLocalExposure([page.kp.kc]);
-            _markBackendExposure([page.kp.kc]);
-            // Also credits the ladder's `worked` rung — but in finishAll, not
-            // here, because the response re-stages the pending question and
-            // that has to land before it renders. Without any crediting at
-            // all, the gate would teach a KP and the ladder would immediately
-            // re-teach the identical page: the two counters are written by
-            // different endpoints and neither one implies the other.
-            taught.push(page.kp.kc);
-          }
+          _markLocalExposure([item.kc]);
+          _markBackendExposure([item.kc]);
+          // Also credits the ladder's `worked` rung — but in finishAll, not
+          // here, because the response re-stages the pending question and that
+          // has to land before it renders. Without any crediting at all, the
+          // gate would teach a KP and the ladder would immediately re-teach the
+          // identical concept: the two counters are written by different
+          // endpoints and neither one implies the other.
+          taught.push(item.kc);
           index++;
-          if (index < pages.length) showPage();
+          if (index < items.length) showCard();
           else finishAll();
         };
       };
 
-      showPage();
+      showCard();
       return true;
     } catch (err) {
       console.warn("[lessons] gate error — continuing without lesson:", err);
@@ -482,14 +337,12 @@ const LessonGate = (() => {
     maybeShow,
     showLesson,
     getKpEntry,
-    // The ladder renders the same worked-example markdown beside faded and
-    // partial problems. Sharing this renderer keeps that example looking
-    // identical to the one taught on the lesson screen — a second, subtly
-    // different markdown subset would read as a different example.
-    renderMarkdown: md,
-    get activeQuestion() {
-      return activeQuestion;
-    },
+    // `renderMarkdown` and `activeQuestion` were exported here. The first was
+    // this file's markdown subset, shared with the ladder so its inline worked
+    // example matched the lesson screen's; the second told the Pyodide
+    // bootstrap that a LESSON's example was running rather than a question.
+    // Neither has a caller now — lesson prose and worked examples are notebook
+    // cells, and nothing in the panel renders or runs them.
   };
 })();
 
@@ -504,9 +357,23 @@ window.LessonGate = LessonGate;
   // resume must not clobber them). KcPractice.start() clears it.
   window.__lessonDemoOnly = true;
 
-  const _fallbackMessage = (html) => {
-    const text = document.getElementById("question-text");
-    if (text) text.innerHTML = html;
+  /* #question-text is gone, so the demo path's own messages go in the gate
+     host — the one element on this page that still holds prose.
+
+     `title` and `body` are set with textContent, NEVER interpolated into the
+     markup. `kc` comes straight off `?lesson=` in the URL and one of these
+     messages quotes it back, so building this as an HTML string would let a
+     crafted link run script in the app's origin. The markup here is fixed and
+     the variable parts are text. */
+  const _fallbackMessage = (title, body) => {
+    const host = document.getElementById("lesson-gate");
+    if (!host) return;
+    host.classList.remove("hidden");
+    host.innerHTML =
+      '<div class="lesson-gate-card">' +
+      '<h2 class="lesson-gate-title"></h2><p class="lesson-gate-blurb"></p></div>';
+    host.querySelector(".lesson-gate-title").textContent = title;
+    host.querySelector(".lesson-gate-blurb").textContent = body;
   };
 
   const _beginLadder = async () => {
@@ -514,8 +381,8 @@ window.LessonGate = LessonGate;
       const started = await window.KcPractice.start(kc);
       if (!started) {
         _fallbackMessage(
-          '<h2 class="lesson-kp-title">Lesson complete</h2>' +
-          "<p>No practice problems are attached to this concept yet.</p>",
+          "Lesson complete",
+          "No practice problems are attached to this concept yet.",
         );
         return;
       }
@@ -525,8 +392,8 @@ window.LessonGate = LessonGate;
     } catch (err) {
       console.warn("[lessons] could not start KC practice:", err);
       _fallbackMessage(
-        '<h2 class="lesson-kp-title">Lesson complete</h2>' +
-        "<p>Practice problems could not be loaded. Reload to try again.</p>",
+        "Lesson complete",
+        "Practice problems could not be loaded. Reload to try again.",
       );
     }
   };
@@ -540,8 +407,10 @@ window.LessonGate = LessonGate;
     if (page) page.classList.remove("session-idle");
     window.LessonGate.showLesson(kc, _beginLadder).then((shown) => {
       if (!shown) {
-        const text = document.getElementById("question-text");
-        if (text) text.textContent = `No lesson found for "${kc}". Check the KC id.`;
+        _fallbackMessage(
+          "No lesson found",
+          `No lesson found for "${kc}". Check the KC id.`,
+        );
       }
     });
   };

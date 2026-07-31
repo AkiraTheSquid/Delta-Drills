@@ -168,78 +168,14 @@ function getNotebookCellIndex(cells, targetCell) {
   return Math.max(0, cells.indexOf(targetCell));
 }
 
-function extractNotebookHelperItems(question, notebook) {
-  const cells = Array.isArray(notebook?.cells) ? notebook.cells : [];
-  const items = [];
+/* `extractNotebookHelperItems` / `getNotebookHelperItems` were here. They
+   mined the source ARENA notebook for the helper definitions a question leaned
+   on and rendered them as the "Imported helpers" pills under the prompt. The
+   prompt is a notebook cell now, and the helpers are real import lines in the
+   cell beside it, so there is nothing left to reconstruct. The lower-level
+   notebook accessors above them are kept — arena-unlock and targeted-practice
+   still read cells. */
 
-  const importCell = cells.find((cell) => {
-    const source = getNotebookCellSource(cell);
-    return cell?.cell_type === "code" && /import\s+einops\b/.test(source);
-  });
-  if (question?.primary_library === "einops" || question?.primary_library === "einops.einsum" || question?.topic === "Einops" || question?.topic === "Einsum") {
-    if (importCell) {
-      for (const line of getNotebookCellSourceLines(importCell)) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-        if (!/^(import|from)\s+/.test(trimmed)) continue;
-        if (/^import\s+numpy\b/.test(trimmed)) continue;
-        items.push({
-          label: trimmed,
-          code: trimmed,
-          note: "Notebook cell " + (getNotebookCellIndex(cells, importCell) + 1),
-          context: "",
-        });
-      }
-    }
-  }
-
-  if (questionNeedsArenaArray(question)) {
-    const arrayCell = cells.find((cell) => {
-      const source = getNotebookCellSource(cell);
-      return cell?.cell_type === "code" && /numbers\.npy|delta_numbers\.npy/.test(source);
-    });
-    if (arrayCell) {
-      const sourceLines = getNotebookCellSourceLines(arrayCell);
-      const loadLine = sourceLines.find((line) => /numbers\.npy|delta_numbers\.npy/.test(line));
-      if (loadLine) {
-        const nextCell = cells[getNotebookCellIndex(cells, arrayCell) + 1];
-        const context =
-          nextCell?.cell_type === "markdown" ? getNotebookCellText(nextCell).slice(0, 500) : "";
-        items.push({
-          label: "numbers.npy",
-          code: loadLine.trim(),
-          note: "Notebook cell " + (getNotebookCellIndex(cells, arrayCell) + 1),
-          context,
-          kind: "arena-array",
-          dataUrl: PRACTICE_PREREQ_NUMBERS_URL,
-        });
-      }
-    }
-  }
-
-  return items;
-}
-
-async function getNotebookHelperItems(question) {
-  try {
-    const notebook = await loadPracticeNotebookData();
-    return extractNotebookHelperItems(question, notebook);
-  } catch (err) {
-    console.warn("[practice] failed to load prereq notebook helpers:", err.message);
-    return [];
-  }
-}
-
-/* The lesson graph is being validated chapter by chapter. A question with no
-   target KC has no validated structure to be scheduled against, so it is
-   PARKED: still in the bank and still resolvable by id (saved/in-flight
-   questions keep hydrating), but never selected. Mirrors the backend's
-   lessons.kc_only_serving() — see This-Directory-Only/backend/app/lessons.py.
-
-   Failure mode is deliberate: if qmatrix_tags.json cannot be fetched,
-   kcTaggedIds stays null and NOTHING is filtered. An unfiltered offline queue
-   is a smaller harm than an empty one, and the backend enforces the parking
-   authoritatively for signed-in practice, which is the path that matters. */
 async function loadKcTaggedIds() {
   if (kcTaggedIds) return kcTaggedIds;
   try {

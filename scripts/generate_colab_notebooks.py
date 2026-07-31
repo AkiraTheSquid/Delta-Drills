@@ -400,6 +400,20 @@ def build_index(records: list[dict], out_dir: Path) -> dict:
         "questions": {str(q): r["id"] for r in records for q in r["questions"]},
         "subtopics": {r["subtopic_key"]: r["id"] for r in records if r["subtopic_key"]},
         "kcs": {kc: r["id"] for r in records for kc in r["kcs"]},
+        # The concept sections, by the anchor that actually reaches them.
+        #
+        # The panel's lesson gate sends the learner to the KP section instead
+        # of rendering the concept itself, so it needs the same `dd-kp-<slug>`
+        # id this script writes onto the header cell. The slug is computed
+        # HERE and shipped, rather than re-derived in JavaScript, because a
+        # second implementation of `slug()` that drifted by one character
+        # would produce an anchor Colab silently ignores — the learner would
+        # land at the top of a 500-cell notebook with no error anywhere.
+        "kps": {
+            kc: {"lesson": r["id"], "anchor": f"dd-kp-{slug(kc)}"}
+            for r in records
+            for kc in r["kcs"]
+        },
     }
     return index
 

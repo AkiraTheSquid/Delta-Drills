@@ -24,9 +24,16 @@
   Both consumers navigate by that map, so it must come from the same pass that
   wrote the `.ipynb` files; `Local_Deployed_Shared/practice/watch.py` fails if
   the two copies disagree. Emits nbformat 4.5 with a deterministic
-  `metadata.id` per cell (`dd-q<question_id>`) — that id is what Colab's
-  `#scrollTo=` matches, and it is the only reason a link can land on a specific
-  problem.
+  `metadata.id` per cell (`dd-q<question_id>` for a problem, `dd-kp-<slug(kc)>`
+  for a concept section) — that id is what Colab's `#scrollTo=` matches, and it
+  is the only reason a link can land on a specific problem.
+  **This script is the whole student-facing surface now.** Since 2026-07-31 the
+  practice panel renders no problem text, no worked example and no lesson: the
+  notebooks it writes carry all of it, and the panel only routes to them. The
+  map it emits therefore carries a `kps` entry (`kc -> {lesson, anchor}`) so
+  the first-encounter gate can link to the section that teaches a concept. The
+  anchor is computed here and shipped, never re-derived in JavaScript — a slug
+  that drifted by one character is an anchor Colab silently ignores.
 - `publish_colab_notebooks.sh`: pushes those notebooks to
   `<owner>/arena-book-colab/ARENA_5.0/ch-1-foundations`. Colab can only open a
   notebook from a URL, so **regenerating is not enough — unpublished changes are
@@ -73,6 +80,14 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-07-31 (notebooks are the student-facing surface): `build_index` gained a
+  `kps` map — `kc -> {lesson, anchor}` with the same `dd-kp-<slug(kc)>` string
+  written onto the KP header cell — so `practice/lessons.js` can send a learner
+  to the concept section instead of rendering the lesson in the app. Ships in
+  both index outputs. No notebook content changed: the compiled notebooks
+  already carried concept prose, watch-outs, multi-cell worked examples, faded /
+  guided / independent problems, `<details>` hints and common mistakes, which is
+  why the panel could drop all of it in one pass.
 - 2026-07-31: `previews:` added to the KP frontmatter contract. `audit_lesson_syntax.py` exempts a listed symbol from "shown before it is taught" and reports it under "declared previews" instead; `validate_lessons.py` gained `check_previews`, which runs on full-corpus runs only (it needs every page to know who declares what) and rejects an entry that the page does not show, that the page also declares, or that no later page declares. Without those three checks the key would be a mute button, and a stale entry left behind by an edit would silence a real regression.
 - 2026-07-30: `build_qmatrix.py` was unrunnable and nobody noticed. It aborted on the first question that appeared BOTH in a KP's `faded`/`guided`/`independent` list and in `LEFTOVER_TARGETS` — and 76 of them did, because that is exactly how a leftover retires: a KP claims the question later. All 76 agreed on the KC, so the abort was protecting nothing. A KP reference now supersedes a leftover silently (it carries the role and the page's `new_syntax`, which a hand assignment cannot), and only a DISAGREEMENT — two sources naming different KCs — is fatal. The stale committed `qmatrix_tags.json` this hid was 274 entries behind on `new_syntax` and 79 on `source`; `target_kcs` and `supporting_kcs` were correct throughout, so no question had been gated to the wrong KC. Rebuild it whenever KP refs change, or `validate_lessons.py --coverage` fails on untagged questions.
 - 2026-07-27: `grade_against_bank` mirrors the runtime numpy preamble, so torch-dialect lessons using the ARENA fixture validate. `watch.py` filled in.

@@ -150,7 +150,11 @@ async function refreshPracticeQuestionForPreferences() {
     const nextQ = await PracticeAPI.getNextQuestion();
     renderQuestion(nextQ, practiceQuestionCount);
   } catch (err) {
-    questionText.textContent = err.message || "No enabled practice sections.";
+    // This used to write into #question-text, which no longer exists — the
+    // prompt is a Colab notebook cell. `showColabNote` owns the panel's one
+    // remaining message surface, so the failure is reported there instead of
+    // throwing a ReferenceError on top of the error it was trying to explain.
+    showColabNote(err.message || "No enabled practice sections.");
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.add("hidden");
   }

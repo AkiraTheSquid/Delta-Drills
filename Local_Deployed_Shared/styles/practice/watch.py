@@ -9,7 +9,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
-CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "result.css", "misc.css"]
+CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "result.css", "misc.css", "lessons.css"]
 
 
 def _read(path):
@@ -44,10 +44,16 @@ def check_public_api():
     expected = {
         "layout.css": [".practice-container", ".practice-split", ".practice-left"],
         "timer.css": [".session-setup", ".session-status-row", ".session-countdown", ".timer-input", "session-idle"],
-        "question.css": [".question-text", ".question-imports", ".question-visual", ".cold-start-badge"],
+        # .question-text/.question-imports/.question-visual are NOT here any more:
+        # the prompt, its helper pills and its target image are Colab notebook
+        # cells now (2026-07-31), so this file styles only the identity strip.
+        "question.css": [".question-number-row", ".question-id-chip", ".cold-start-badge"],
         "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row", ".practice-mode-notice"],
         "result.css": [".solution-code", ".ai-explanation-text"],
-        "misc.css": [".colab-card", ".colab-card-link", ".report-btn", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
+        # The first-encounter gate: a card pointing at the notebook section that
+        # teaches the concept, NOT a rendered lesson.
+        "lessons.css": [".lesson-gate-card", ".lesson-gate-link", "body.lesson-mode"],
+        "misc.css": [".colab-card", ".colab-card-link", ".report-btn", ".self-report-btn", ".placement-start-btn"],
     }
     for fname, selectors in expected.items():
         css = _read(os.path.join(HERE, fname))

@@ -147,8 +147,7 @@
     return "";
   }
 
-  function lessonFor(q) {
-    var id = lessonIdFor(q);
+  function lessonById(id) {
     if (!id || !index || !Array.isArray(index.lessons)) return null;
     for (var i = 0; i < index.lessons.length; i++) {
       if (index.lessons[i].id === id) return index.lessons[i];
@@ -156,12 +155,14 @@
     return null;
   }
 
-  /* The cell anchor. `metadata.id` on every generated cell is `dd-q<id>`, which
-     is exactly what Colab's `#scrollTo=` matches — that is the whole reason the
-     generator emits nbformat 4.5 instead of copying ARENA's 4.2 notebooks,
-     which have no stable ids and cannot be linked into. */
-  function urlFor(q) {
-    var lesson = lessonFor(q);
+  function lessonFor(q) {
+    return lessonById(lessonIdFor(q));
+  }
+
+  /* The notebook URL for a lesson file, with an optional cell anchor already
+     encoded. Both the problem route and the concept route end here, so there
+     is one place that knows the Colab URL shape. */
+  function notebookUrl(lesson, anchor) {
     if (!lesson) return "";
     var r = parseRepo(repo());
     if (!r) return "";
@@ -171,6 +172,16 @@
       encodeURIComponent(r.owner) + "/" + encodeURIComponent(r.name) +
       "/blob/" + encodeURIComponent(r.branch) + "/" +
       path.split("/").map(encodeURIComponent).join("/");
+    return anchor ? url + "#scrollTo=" + encodeURIComponent(anchor) : url;
+  }
+
+  /* The cell anchor. `metadata.id` on every generated cell is `dd-q<id>`, which
+     is exactly what Colab's `#scrollTo=` matches — that is the whole reason the
+     generator emits nbformat 4.5 instead of copying ARENA's 4.2 notebooks,
+     which have no stable ids and cannot be linked into. */
+  function urlFor(q) {
+    var url = notebookUrl(lessonFor(q), null);
+    if (!url) return "";
     // Anchor ONLY on an exact question -> notebook hit. An inferred lesson
     // (matched by subtopic or KC) is very likely the right notebook but carries
     // no promise that THIS question has a cell in it, and a `#scrollTo=` naming
@@ -184,10 +195,37 @@
       : url;
   }
 
-  /* Best-effort. Returns true only when the browser actually gave us a window,
-     so the caller can say so plainly instead of pretending it worked. */
-  function open(q) {
-    var url = urlFor(q);
+  /* ---------- concepts ------------------------------------------------- */
+
+  /* Where a CONCEPT is taught, as opposed to where a problem is worked.
+
+     The lesson gate used to render the concept and its worked example inside
+     the panel. It does not any more: a worked example that is split across
+     several code cells only behaves like a worked example in a notebook, where
+     each cell runs against the state the one above it left behind. So the gate
+     sends the learner to the KP section instead, and this is the address.
+
+     `index.kps` is generated alongside the notebooks, so the anchor here and
+     the cell id there are the same string by construction. */
+  function kpFor(kc) {
+    if (!index || !index.kps || !kc) return null;
+    return index.kps[kc] || null;
+  }
+
+  function urlForKc(kc) {
+    var kp = kpFor(kc);
+    if (!kp) return "";
+    return notebookUrl(lessonById(kp.lesson), kp.anchor);
+  }
+
+  function lessonForKc(kc) {
+    var kp = kpFor(kc);
+    return kp ? lessonById(kp.lesson) : null;
+  }
+
+  /* ---------- opening -------------------------------------------------- */
+
+  function openUrl(url) {
     if (!url) return false;
     var win;
     try {
@@ -205,11 +243,24 @@
     return true;
   }
 
+  /* Best-effort. Returns true only when the browser actually gave us a window,
+     so the caller can say so plainly instead of pretending it worked. */
+  function open(q) {
+    return openUrl(urlFor(q));
+  }
+
+  function openKc(kc) {
+    return openUrl(urlForKc(kc));
+  }
+
   window.ColabRoute = {
     load: load,
     lessonFor: lessonFor,
+    lessonForKc: lessonForKc,
     urlFor: urlFor,
+    urlForKc: urlForKc,
     open: open,
+    openKc: openKc,
     repo: repo,
     setRepo: setRepo,
     TARGET: TARGET,
