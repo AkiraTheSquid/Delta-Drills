@@ -128,6 +128,10 @@ exactly where a grader will look:
 assert t.floor(v).tolist() == [1.0, -1.0, 2.0, -3.0]
 assert t.trunc(v).tolist() == [1.0, -0.0, 2.0, -2.0]
 assert t.equal(t.trunc(v).to(t.int64), v.to(t.int64))
+print("at -0.3: floor ->", t.floor(v)[1].item(),
+      "but trunc ->", t.trunc(v)[1].item())
+print("trunc == .to(t.int64):", bool(t.equal(t.trunc(v).to(t.int64),
+                                             v.to(t.int64))))
 ```
 
 ## Worked example
