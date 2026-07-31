@@ -1,0 +1,348 @@
+/* ================================================================
+   API.JS — the Delta Drills backend client, and the tab bridge.
+
+   Every mastery decision in this panel is made server-side. Nothing here
+   scores, gates, or schedules anything; it moves JSON. That is the point of
+   the Colab port — the engine (prerequisite gating, BKT + FIRe, decay-driven
+   resurfacing, the expertise-reversal ladder) stays exactly where it already
+   runs and the panel becomes a second client of the same endpoints the web app
+   uses.
+
+   Exposed as `window.DD`.
+   ================================================================ */
+
+const DEFAULT_BASE = "https://delta-drills-backend.fly.dev";
+
+const store = {
+  async get(keys) {
+    return chrome.storage.local.get(keys);
+  },
+  async set(obj) {
+    return chrome.storage.local.set(obj);
+  },
+  async clear(keys) {
+    return chrome.storage.local.remove(keys);
+  },
+};
+
+class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+
+const api = {
+  base: DEFAULT_BASE,
+  token: "",
+
+  async load() {
+    const { dd_base, dd_token } = await store.get(["dd_base", "dd_token"]);
+    this.base = dd_base || DEFAULT_BASE;
+    this.token = dd_token || "";
+    return { base: this.base, token: this.token };
+  },
+
+  async setBase(base) {
+    this.base = (base || DEFAULT_BASE).replace(/\/+$/, "");
+    await store.set({ dd_base: this.base });
+  },
+
+  async setToken(token) {
+    this.token = token || "";
+    await store.set({ dd_token: this.token });
+  },
+
+  async signOut() {
+    this.token = "";
+    await store.clear(["dd_token"]);
+  },
+
+  async request(path, { method = "GET", body } = {}) {
+    const headers = { Accept: "application/json" };
+    if (body) headers["Content-Type"] = "application/json";
+    if (this.token) headers.Authorization = `Bearer ${this.token}`;
+
+    let res;
+    try {
+      res = await fetch(`${this.base}${path}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (err) {
+      throw new ApiError(`Can't reach ${this.base} — ${err.message}`, 0);
+    }
+
+    if (res.status === 401) throw new ApiError("Session expired.", 401);
+    if (!res.ok) {
+      let detail = `${res.status} ${res.statusText}`;
+      try {
+        const j = await res.json();
+        if (j.detail) detail = typeof j.detail === "string" ? j.detail : detail;
+      } catch (_) {
+        /* non-JSON error body */
+      }
+      throw new ApiError(detail, res.status);
+    }
+    return res.status === 204 ? null : res.json();
+  },
+
+  // ── auth ──────────────────────────────────────────────────────
+  async login(email, password) {
+    const data = await this.request("/auth/login", {
+      method: "POST",
+      body: { email, password },
+    });
+    await this.setToken(data.access_token);
+    return data;
+  },
+
+  // ── the tutor ─────────────────────────────────────────────────
+  //
+  // /next-question is the whole scheduler in one call: it picks the subtopic
+  // weakest-first over decayed BKT posteriors, narrows to the next KC on the
+  // knowledge frontier, targets a difficulty, resolves the ladder rung, cuts a
+  // scaffolded starter for that rung, and attaches `lesson_gate` when the
+  // learner has never been taught the target KC.
+  nextQuestion(focusSubtopic) {
+    const q = focusSubtopic
+      ? `?focus_subtopic=${encodeURIComponent(focusSubtopic)}`
+      : "";
+    return this.request(`/api/practice/next-question${q}`);
+  },
+
+  // The self-grade path. Identical downstream chain to server-side grading:
+  // record_attempt (EWMA + BKT observe + FIRe propagation + decay) and
+  // record_ladder_outcome (rung advancement).
+  submitLocal(questionId, correct) {
+    return this.request("/api/practice/submit-local-eval", {
+      method: "POST",
+      body: { question_id: questionId, correct },
+    });
+  },
+
+  override(questionId, correct) {
+    return this.request("/api/practice/override", {
+      method: "POST",
+      body: { question_id: questionId, correct },
+    });
+  },
+
+  markExposed(kcs) {
+    return this.request("/api/practice/exposure", {
+      method: "POST",
+      body: { kcs },
+    });
+  },
+
+  workedSeen(kc, questionId) {
+    return this.request("/api/practice/worked-seen", {
+      method: "POST",
+      body: { kc, question_id: questionId ?? null },
+    });
+  },
+
+  kcLattice() {
+    return this.request("/api/practice/kc-lattice");
+  },
+};
+
+/* ── the notebook map ───────────────────────────────────────────
+   `/next-question` answers with a subtopic, a KC and a question id — never
+   with a file. The tutor selects weakest-first across every subtopic and one
+   lesson is one subtopic, so consecutive problems land in different notebooks
+   as a matter of routine, not as an edge case. This is what turns the tutor's
+   answer into "which notebook, and where do I open it".
+
+   `notebook-index.js` is generated by scripts/generate_colab_notebooks.py and
+   loaded as a plain script before this file. */
+
+const EMPTY_INDEX = { dir: "", lessons: [], questions: {}, subtopics: {}, kcs: {} };
+
+// Where scripts/publish_colab_notebooks.sh puts them. A default rather than a
+// blank field because a panel that cannot open a notebook until you configure
+// it is a panel that looks broken on first run; override it in ⚙ to point at
+// your own fork.
+const DEFAULT_REPO = "AkiraTheSquid/arena-book-colab/ARENA_5.0/ch-1-foundations";
+
+const encodePath = (p) => String(p).split("/").map(encodeURIComponent).join("/");
+
+const notebooks = {
+  index: EMPTY_INDEX,
+  repo: "", // "owner/repo", optionally "owner/repo@branch"
+  urls: {}, // lesson_id -> a URL that actually opened this notebook
+
+  async load() {
+    this.index = window.DD_NOTEBOOKS || EMPTY_INDEX;
+    const { dd_nb_repo, dd_nb_urls } = await store.get(["dd_nb_repo", "dd_nb_urls"]);
+    // `undefined` means never set, so take the default; an empty string means
+    // deliberately cleared, and is left alone.
+    this.repo = dd_nb_repo === undefined ? DEFAULT_REPO : dd_nb_repo;
+    this.urls = dd_nb_urls || {};
+    return this;
+  },
+
+  async setRepo(repo) {
+    this.repo = (repo || "").trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/+$/, "");
+    await store.set({ dd_nb_repo: this.repo });
+  },
+
+  lesson(id) {
+    return this.index.lessons.find((l) => l.id === id) || null;
+  },
+
+  /**
+   * Which notebook holds this question?
+   *
+   * Three keys in falling order of certainty. `questions` is exact — it was
+   * read back off the anchors actually written into the notebooks. The other
+   * two are for a question the bank grew after the notebooks were last
+   * compiled: it still belongs to a subtopic, and a lesson gate names a KC
+   * rather than a question at all.
+   */
+  forQuestion(q) {
+    if (!q) return null;
+    const byId = this.index.questions[String(q.question_id)];
+    if (byId) return this.lesson(byId);
+    const bySub = this.index.subtopics[q.subtopic];
+    if (bySub) return this.lesson(bySub);
+    const byKc = q.ladder_kc && this.index.kcs[q.ladder_kc];
+    return byKc ? this.lesson(byKc) : null;
+  },
+
+  forGate(gate) {
+    if (!gate) return null;
+    return this.lesson(gate.lesson_id) || this.lesson(this.index.kcs[gate.kc]) || null;
+  },
+
+  /**
+   * A URL that opens this notebook in Colab, or "" if we cannot build one.
+   *
+   * The setting reads `owner/repo[@branch]/[path/inside/the/repo]`. The
+   * optional trailing path exists because where the notebooks sit depends on
+   * what was pushed: publishing this repo leaves them under the generator's
+   * output directory, publishing only `arena-book-colab/` puts them somewhere
+   * shallower. Given a path, it replaces the generated one; given none, the
+   * generated one is right.
+   */
+  urlFor(lessonId) {
+    if (this.urls[lessonId]) return this.urls[lessonId];
+    const lesson = this.lesson(lessonId);
+    if (!lesson || !this.repo) return "";
+    // `@branch` binds to the repo segment, not to the whole string, so that a
+    // path can follow it: owner/repo@branch/dir/dir.
+    const [owner, repoSeg, ...rest] = this.repo.split("/").filter(Boolean);
+    const [repo, branch = "main"] = (repoSeg || "").split("@");
+    if (!owner || !repo) return "";
+    const dir = rest.length ? rest.join("/") : this.index.dir;
+    const path = dir ? `${dir}/${lesson.file}` : lesson.file;
+    return `https://colab.research.google.com/github/${owner}/${repo}/blob/${branch}/${encodePath(path)}`;
+  },
+
+  /**
+   * Remember the URL a notebook was actually reachable at.
+   *
+   * Whatever route the student used — a GitHub link, Drive, a local upload —
+   * that URL is proven to work, so it outranks anything computed. This is also
+   * the whole configuration story for someone who never sets a repo: open each
+   * notebook once and switching works from then on.
+   */
+  async learn(lessonId, url) {
+    if (!lessonId || !url || this.urls[lessonId] === url) return false;
+    this.urls = { ...this.urls, [lessonId]: url };
+    await store.set({ dd_nb_urls: this.urls });
+    return true;
+  },
+
+  async forget() {
+    this.urls = {};
+    await store.clear(["dd_nb_urls"]);
+  },
+};
+
+/* ── tab bridge ─────────────────────────────────────────────────
+   The content script lives in the Colab tab; the panel is an extension page.
+   They talk through `chrome.tabs.sendMessage`. A missing receiver is the
+   normal case (no Colab tab open, or the tab loaded before the extension
+   did), so it resolves to a reason rather than throwing. */
+
+const tab = {
+  async colabTab() {
+    const tabs = await chrome.tabs.query({
+      url: "https://colab.research.google.com/*",
+    });
+    if (!tabs.length) return null;
+    // Prefer the active one; otherwise the most recently used.
+    return tabs.find((t) => t.active) || tabs[0];
+  },
+
+  async sendTo(tabId, msg) {
+    try {
+      const res = await chrome.tabs.sendMessage(tabId, msg);
+      return res || { ok: false, reason: "no-response" };
+    } catch (err) {
+      // Thrown when no content script is listening — almost always a tab that
+      // was already open when the extension was loaded or reloaded, or one
+      // that is still mid-navigation.
+      return { ok: false, reason: "no-receiver", detail: String(err.message) };
+    }
+  },
+
+  async send(msg) {
+    const t = await this.colabTab();
+    if (!t) return { ok: false, reason: "no-colab-tab" };
+    return this.sendTo(t.id, msg);
+  },
+
+  async focus() {
+    const t = await this.colabTab();
+    if (!t) return false;
+    await chrome.tabs.update(t.id, { active: true });
+    await chrome.windows.update(t.windowId, { focused: true });
+    return true;
+  },
+
+  /**
+   * Point a Colab tab at `url`, reusing the open one rather than piling up tabs.
+   *
+   * Reuse is deliberate: the student works in one notebook at a time and a new
+   * tab per switch would leave a dozen stale kernels behind by the end of a
+   * session.
+   */
+  async navigate(url) {
+    const t = await this.colabTab();
+    if (t) {
+      await chrome.tabs.update(t.id, { url, active: true });
+      await chrome.windows.update(t.windowId, { focused: true });
+      return t.id;
+    }
+    const created = await chrome.tabs.create({ url, active: true });
+    return created.id;
+  },
+
+  /**
+   * Wait for `tabId` to be a mounted Colab notebook, optionally a specific one.
+   *
+   * Colab loading a notebook off GitHub is a fetch, a parse and a full render,
+   * and the content script starts answering well before the cells exist — so
+   * polling identity is the only honest readiness signal. Returns the identify
+   * payload, or null on timeout.
+   */
+  async waitForNotebook(tabId, lessonId, { timeout = 45000, every = 700 } = {}) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, every));
+      const res = await this.sendTo(tabId, { type: "dd:identify" });
+      if (res && res.ok && res.ready) {
+        if (!lessonId || res.lessonId === lessonId) return res;
+        // A mounted notebook that is the wrong one is a settled answer, not a
+        // slow one — keep waiting only while it is still unidentified.
+        if (res.lessonId) return res;
+      }
+    }
+    return null;
+  },
+};
+
+window.DD = { api, tab, notebooks, store, ApiError, DEFAULT_BASE, DEFAULT_REPO };

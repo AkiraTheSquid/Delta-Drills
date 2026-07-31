@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Delta Drills — ARENA tutor",
+  "version": "0.1.0",
+  "description": "Side panel that drives Colab notebooks from the Delta Drills intelligent tutoring system.",
+  "permissions": ["sidePanel", "tabs", "storage"],
+  "host_permissions": [
+    "https://colab.research.google.com/*",
+    "https://delta-drills-backend.fly.dev/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "panel/panel.html"
+  },
+  "action": {
+    "default_title": "Open the Delta Drills tutor"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://colab.research.google.com/*"],
+      "js": ["content/colab.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

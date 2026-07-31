@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Delta Drills</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <span class="brand">Delta Drills</span>
+      <span id="conn" class="conn" title="Connection">·</span>
+      <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
+    </header>
+
+    <!-- ── connect ─────────────────────────────────────────────── -->
+    <section id="view-connect" class="view">
+      <h2>Connect</h2>
+      <p class="muted">
+        Sign in with your Delta Drills account. The tutor decides what you
+        practise next; this panel just drives the notebook.
+      </p>
+      <label>Backend</label>
+      <input id="in-base" type="url" spellcheck="false" />
+      <label>Notebook repo <span class="muted small">owner/repo, or owner/repo@branch</span></label>
+      <input id="in-repo" type="text" spellcheck="false" placeholder="your-name/arena-book-colab" />
+      <details class="alt">
+        <summary id="nb-summary">Notebooks</summary>
+        <ul id="nb-list" class="nb-list"></ul>
+        <button id="btn-forget-nb" class="ghost">Forget remembered notebook links</button>
+      </details>
+      <label>Email</label>
+      <input id="in-email" type="email" autocomplete="username" spellcheck="false" />
+      <label>Password</label>
+      <input id="in-pass" type="password" autocomplete="current-password" />
+      <button id="btn-login" class="primary">Sign in</button>
+      <details class="alt">
+        <summary>Paste a token instead</summary>
+        <input id="in-token" type="text" spellcheck="false" placeholder="eyJhbGciOi…" />
+        <button id="btn-token" class="ghost">Use this token</button>
+      </details>
+      <p id="connect-status" class="status"></p>
+    </section>
+
+    <!-- ── loading ─────────────────────────────────────────────── -->
+    <section id="view-loading" class="view">
+      <div class="spinner"></div>
+      <p class="muted" id="loading-text">Asking the tutor what's next…</p>
+    </section>
+
+    <!-- ── lesson gate ─────────────────────────────────────────── -->
+    <section id="view-gate" class="view">
+      <div class="pill pill-teach">New concept</div>
+      <h2 id="gate-title"></h2>
+      <p class="muted" id="gate-sub"></p>
+      <div class="notebook">
+        <span class="nb-icon">📓</span>
+        <span id="gate-nb-title" class="nb-title"></span>
+        <span id="gate-nb-state" class="nb-state"></span>
+      </div>
+      <button id="btn-gate-goto" class="primary">Take me to the lesson</button>
+      <p id="gate-status" class="status small"></p>
+      <button id="btn-gate-done" class="ghost">I've read it — give me the problem</button>
+    </section>
+
+    <!-- ── problem ─────────────────────────────────────────────── -->
+    <section id="view-problem" class="view">
+      <div class="meta">
+        <span id="p-kc" class="kc"></span>
+        <span id="p-rung" class="pill"></span>
+      </div>
+
+      <div class="mastery">
+        <div class="mastery-bar"><i id="p-mastery-fill"></i></div>
+        <span id="p-mastery-label" class="muted small"></span>
+      </div>
+
+      <p id="p-text" class="qtext"></p>
+
+      <div id="p-scaffold" class="scaffold"></div>
+
+      <div class="notebook">
+        <span class="nb-icon">📓</span>
+        <span id="p-nb-title" class="nb-title"></span>
+        <span id="p-nb-state" class="nb-state"></span>
+      </div>
+
+      <button id="btn-goto" class="primary">Go to the cell ↓</button>
+      <p id="goto-status" class="status small"></p>
+
+      <div class="timer">
+        <div class="timer-bar"><i id="t-fill"></i></div>
+        <span id="t-label" class="mono"></span>
+      </div>
+
+      <div class="grade">
+        <button id="btn-wrong" class="wrong">Mark wrong</button>
+        <button id="btn-right" class="right">Mark correct</button>
+      </div>
+      <p class="muted small center">
+        Run the cell, read the output, then say how it went.
+      </p>
+    </section>
+
+    <!-- ── settled (undo window) ───────────────────────────────── -->
+    <section id="view-settled" class="view center-all">
+      <div id="s-mark" class="verdict"></div>
+      <p class="muted" id="s-text"></p>
+      <button id="btn-undo" class="ghost">Undo</button>
+      <p class="muted small" id="s-count"></p>
+    </section>
+
+    <!-- ── error ───────────────────────────────────────────────── -->
+    <section id="view-error" class="view">
+      <h2>Stuck</h2>
+      <p id="err-text" class="status"></p>
+      <button id="btn-retry" class="primary">Try again</button>
+      <button id="btn-signout" class="ghost">Sign out</button>
+    </section>
+
+    <script src="notebook-index.js"></script>
+    <script src="api.js"></script>
+    <script src="navigate.js"></script>
+    <script src="panel.js"></script>
+  </body>
+</html>
