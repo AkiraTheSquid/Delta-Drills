@@ -78,9 +78,16 @@ html.dd-theme .notebook-cell-list {
 /* Selection: coral at ~35%, matching the app. */
 html.dd-theme .monaco-editor .selected-text,
 html.dd-theme .monaco-editor .view-overlays .selected-text,
-html.dd-theme .monaco-editor .view-overlays .selected-text.inactive,
+html.dd-theme .monaco-editor .view-overlays .selected-text.inactive {
+  background-color: #ff7f5059 !important;
+}
+
+/* Native selection outside Monaco. `color: inherit` is the load-bearing half:
+   without it the browser picks its own foreground for selected text, and at 35%
+   opacity that lands as grey-on-grey. */
 html.dd-theme ::selection {
   background-color: #ff7f5059 !important;
+  color: inherit !important;
 }
 
 html.dd-theme .code .codecell-input-output,
