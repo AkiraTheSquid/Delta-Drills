@@ -152,17 +152,21 @@ are all unchanged.
   - Prevention/fix: route questions with non-empty `runtime_unmet_dependencies` to the backend, OR inject a torch/numpy compat shim in `buildPyodidePreamble`. See `RUNTIME_CONTRACT.md` for the full unmet-dep table.
   - Status: ACTIVE.
 
-- **A question with no notebook has nowhere to send you** — `ACTIVE`
-  - When it happens: the served question is one of the 75 bank questions with no
-    lesson-graph KC (CNN, PyTorch Fundamentals, Autograd, Optimizers), or a
-    placement probe drawn from them. 424 of 499 are anchored in a notebook.
-  - Symptom: the Colab card is absent; the problem is still readable and both
-    result buttons still work.
+- **A question with no notebook has nowhere to send you** — `ACTIVE` (contained)
+  - When it happens: NOT from the adaptive queue — the KC-tag filter and the
+    notebook map cover the same 424 questions, so every question the queue can
+    serve is routable. It happens on a **backend placement probe**, which draws
+    from the whole 499-question bank including the 75 parked ones.
+  - Symptom: no Colab card; the problem is still readable and both result
+    buttons still work (the learner may have run it somewhere of their own).
   - Root cause: `colab_notebooks.json` only maps questions the nine compiled
     notebooks actually contain.
-  - Prevention/fix: intentional — a dead link is worse than no link. The gap
-    closes when those chapters' KCs are authored and the notebooks regenerated.
-    Do NOT make `renderColabCard` invent a URL.
+  - Prevention/fix: a dead link is worse than no link, so the card stays absent
+    — but the **answer timer must not auto-report a miss** for a problem the app
+    never gave a way to attempt. `_forceSubmitOrAdvance` checks
+    `questionHasColabRoute()` and advances without recording (same contract as
+    Skip) when there is no route; `watch.py` asserts that check exists. Do NOT
+    make `renderColabCard` invent a URL, and do not drop the timer guard.
 
 - **Popup blocking stops the auto-open** — `ACTIVE`
   - When it happens: the answer timer advances on its own, or the browser
@@ -172,7 +176,11 @@ are all unchanged.
     countdown does not.
   - Prevention/fix: by design. The visible **Open in Colab ↗** link is the
     fallback and must stay a real anchor — do not replace it with a button that
-    only calls `ColabRoute.open`.
+    only calls `ColabRoute.open`. It must also **never carry
+    `rel="noopener"`/`"noreferrer"`**: both imply noopener, and a noopener
+    navigation ignores the target NAME and opens a fresh context, so the
+    fallback would spawn a new Colab tab on every click. `watch.py` asserts the
+    attribute is absent.
 
 - **Question gives away answer in starter docstring** — `ACTIVE` (design call)
   - When it happens: function-impl questions where the docstring shows expected output literally (e.g. id 9).

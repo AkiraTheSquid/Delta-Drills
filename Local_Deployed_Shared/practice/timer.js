@@ -215,7 +215,23 @@ const PracticeSession = (() => {
      this advances instead — same contract as Skip. */
   const _forceSubmitOrAdvance = () => {
     if (!isActive()) return;
-    if (!practiceSubmitArea.classList.contains("hidden") && !selfReportNoBtn.disabled) {
+    // ...but only when the learner actually had somewhere to run it.
+    //
+    // 424 of the 499 bank questions are anchored in a notebook, and the adaptive
+    // queue serves exactly those (the KC-tag filter and the notebook map cover
+    // the same 424). A BACKEND PLACEMENT PROBE, though, draws from the whole
+    // bank, so it can serve one of the 75 with no notebook. Auto-recording a
+    // miss there would write a false negative into BKT for a problem the app
+    // never gave the learner a way to attempt. Advance without recording
+    // instead — the same contract as Skip.
+    const routable =
+      typeof questionHasColabRoute !== "function" ||
+      questionHasColabRoute(PracticeAPI?.currentQuestion);
+    if (
+      routable &&
+      !practiceSubmitArea.classList.contains("hidden") &&
+      !selfReportNoBtn.disabled
+    ) {
       selfReportNoBtn.click();
       return;
     }

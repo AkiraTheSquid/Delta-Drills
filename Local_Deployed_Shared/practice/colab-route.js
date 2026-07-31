@@ -115,6 +115,15 @@
      does not always hand back the same key. `questions` is exact; `subtopics`
      still lands on the right notebook for a bank question added after the map
      was generated; `kcs` is what a lesson gate resolves through. */
+  /* Was this question found by its own id, or only inferred?
+     Only an exact hit proves the notebook contains a `dd-q<id>` cell — the map
+     and the cells come from one generator pass. A subtopic/KC fallback names
+     the right LESSON but says nothing about this particular question, so the
+     anchor must be dropped for those (see urlFor). */
+  function isExactMatch(q) {
+    return !!(index && index.questions && index.questions[questionId(q)]);
+  }
+
   function lessonIdFor(q) {
     if (!index || !q) return "";
     var byId = index.questions && index.questions[questionId(q)];
@@ -162,8 +171,17 @@
       encodeURIComponent(r.owner) + "/" + encodeURIComponent(r.name) +
       "/blob/" + encodeURIComponent(r.branch) + "/" +
       path.split("/").map(encodeURIComponent).join("/");
+    // Anchor ONLY on an exact question -> notebook hit. An inferred lesson
+    // (matched by subtopic or KC) is very likely the right notebook but carries
+    // no promise that THIS question has a cell in it, and a `#scrollTo=` naming
+    // a cell that does not exist is worse than none: Colab silently ignores it,
+    // so the learner lands at the top of a ~500-cell notebook believing they
+    // were taken to their problem. Without the anchor they at least know they
+    // have to look.
     var qid = questionId(q);
-    return qid ? url + "#scrollTo=dd-q" + encodeURIComponent(qid) : url;
+    return qid && isExactMatch(q)
+      ? url + "#scrollTo=dd-q" + encodeURIComponent(qid)
+      : url;
   }
 
   /* Best-effort. Returns true only when the browser actually gave us a window,

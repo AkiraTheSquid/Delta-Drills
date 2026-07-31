@@ -103,11 +103,26 @@ function renderColabCard(q) {
   var lesson = window.ColabRoute ? window.ColabRoute.lessonFor(q) : null;
   colabCard.classList.toggle("hidden", !url);
   hideColabNote();
-  if (!url) return;
-  if (colabOpenLink) colabOpenLink.href = url;
-  if (colabCardLabel) {
-    colabCardLabel.textContent = lesson && lesson.title ? lesson.title : "Notebook";
+  // CLEAR the link when there is no route, do not just hide it. `showColabNote`
+  // un-hides this card to report an error, and a stale href left behind by the
+  // previous question would then be offered as if it were this problem's
+  // notebook — the worst possible wrong answer, because it looks right.
+  if (colabOpenLink) {
+    colabOpenLink.href = url || "#";
+    colabOpenLink.classList.toggle("hidden", !url);
   }
+  if (colabCardLabel) {
+    colabCardLabel.textContent = !url
+      ? ""
+      : (lesson && lesson.title ? lesson.title : "Notebook");
+  }
+}
+
+/* Is there anywhere to work this problem?
+   Used by the answer timer: running out of time only means "was not able to run
+   the result" if there was a result to run. */
+function questionHasColabRoute(q) {
+  return !!(window.ColabRoute && window.ColabRoute.urlFor(q));
 }
 
 /* Steer the one Colab tab to this problem.
@@ -140,7 +155,9 @@ function openColabForQuestion(q) {
 function showColabNote(message) {
   if (!colabCardNote) return;
   // The card itself may be hidden (unmapped question); the note still has to be
-  // readable, since this is now the page's only error surface.
+  // readable, since this is now the page's only error surface. `renderColabCard`
+  // has already emptied the link and label in that case, so revealing the card
+  // here shows the message alone rather than a previous problem's notebook.
   if (colabCard) colabCard.classList.remove("hidden");
   colabCardNote.textContent = message;
   colabCardNote.classList.remove("hidden");

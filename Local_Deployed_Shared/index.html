@@ -680,7 +680,13 @@
           <div class="colab-card hidden" id="colab-card">
             <div class="colab-card-main">
               <span class="colab-card-label" id="colab-card-label">Notebook</span>
-              <a class="colab-card-link" id="colab-open-link" href="#" target="delta-drills-colab" rel="noreferrer">Open in Colab ↗</a>
+              <!-- NO rel="noopener"/"noreferrer" here, deliberately. Both imply
+                   noopener, and the HTML spec has a noopener navigation ignore
+                   the target NAME and open a fresh context — so this fallback
+                   link would spawn a new Colab tab on every click, which is the
+                   one thing the named target exists to prevent. The destination
+                   is a URL this app builds, pointing at Google Colab. -->
+              <a class="colab-card-link" id="colab-open-link" href="#" target="delta-drills-colab">Open in Colab ↗</a>
             </div>
             <div class="colab-card-note hidden" id="colab-card-note"></div>
           </div>
@@ -862,16 +868,16 @@
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=17"></script>
   <script src="practice/graph-jump.js?v=2"></script>
-  <script src="practice/ui.js?v=24"></script>
+  <script src="practice/ui.js?v=25"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=16"></script>
-  <script src="practice/timer.js?v=14"></script>
+  <script src="practice/timer.js?v=15"></script>
   <!-- Pyodide bootstrap ONLY. This used to be runner.js, which also ran and
        graded the learner's code; that half is gone. What remains is the
        interpreter the local/guest adaptive engine (engine.js → practice_engine.py)
        and the target-image preview (visuals.js) both need. -->
   <script src="practice/pyodide-boot.js?v=1"></script>
-  <script src="practice/colab-route.js?v=1"></script>
+  <script src="practice/colab-route.js?v=2"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>

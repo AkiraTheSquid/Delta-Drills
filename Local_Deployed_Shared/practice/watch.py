@@ -355,6 +355,25 @@ def check_colab_route():
         "will open a Colab tab before the learner starts a session"
     )
 
+    # A timeout must not write a miss for a problem with nowhere to run it.
+    # Backend placement probes draw from the whole 499-question bank while only
+    # 424 are anchored in a notebook, so this path is reachable.
+    timer = _read(os.path.join(HERE, "timer.js"))
+    assert "questionHasColabRoute" in timer, (
+        "timer.js no longer checks questionHasColabRoute before auto-reporting "
+        "a miss — an unroutable question would record a false negative in BKT"
+    )
+
+    # rel=noopener/noreferrer makes a named-target navigation open a NEW context
+    # (HTML spec), which would defeat the single reused Colab tab entirely.
+    markup = _read(os.path.join(os.path.dirname(HERE), "index.html"))
+    markup_link = re.search(r'<a[^>]*id="colab-open-link"[^>]*>', markup)
+    assert markup_link, "index.html lost #colab-open-link"
+    assert "noopener" not in markup_link.group(0) and "noreferrer" not in markup_link.group(0), (
+        "#colab-open-link has rel=noopener/noreferrer — that makes the browser "
+        "ignore target=\"delta-drills-colab\" and open a new tab every click"
+    )
+
     route = _read(os.path.join(HERE, "colab-route.js"))
     # Colab scrolls to a cell by its metadata id; the generator emits dd-q<id>
     # precisely so this anchor works. Losing it silently drops the learner at
@@ -364,6 +383,12 @@ def check_colab_route():
         "would open the notebook but not the problem"
     )
     # One reused tab is what makes this work from wherever the learner is.
+    # An inferred (subtopic/KC) match names the lesson but proves nothing about
+    # this question having a cell, so the anchor must be gated on an exact hit.
+    assert "isExactMatch" in route, (
+        "colab-route.js no longer gates #scrollTo on an exact question match — "
+        "an inferred lesson would get an anchor for a cell that may not exist"
+    )
     assert 'var TARGET = "delta-drills-colab"' in route, (
         "colab-route.js lost its named window target — every jump would open a "
         "new Colab tab"
