@@ -148,6 +148,10 @@ where to go: the Colab card.
   `slug()` in JavaScript: an anchor that drifts by one character is one Colab
   silently ignores, and the learner lands at the top of a 500-cell notebook
   with no error to explain it.
+- **`kps` holds the anchor, `kcs` holds the notebook — one fact per map.** Both
+  are keyed by KC. Do not fold the lesson id back into `kps`: it would be the
+  same fact written twice, and the copy that went stale would be the one
+  nothing checks. `watch.py` asserts the two cover the same concept set.
 - **Subtopic naming differs by mode and BKT is keyed by whatever `question.subtopic` says.** Backend `question.subtopic` is composite (`"Numpy: Core array literacy"` — `app/questions.py` prefixes the topic so Numpy/Einops subtopics stay distinct); the local `questions.json` bank uses the bare name and keeps the composite in a separate `subtopic_key` field. Anything matching against a subtopic across both modes must accept EITHER form — that is why `window.__kcFocusSubtopics` is a list and `CompetencyBar.init()` takes an array. `window.__kcFocusSubtopic` (singular) is the composite form only, for the backend's `focus_subtopic` query param.
 - **Questions with no lesson-graph KC are PARKED, not served.** `questions.js` builds `kcTaggedIds` from `lessons/qmatrix_tags.json`; `servableQuestions()` / `isKcServable()` back `getPracticeEligibleQuestions()` and `isPracticeQuestionAllowed()`. `questionsBank` itself stays complete so saved/in-flight questions still hydrate — mirror of the backend's complete-by-id / narrowed-pools split. This filter **fails OPEN on purpose**: if the q-matrix can't be fetched nothing is filtered, because an unfiltered offline queue beats an empty one and the backend enforces parking authoritatively for signed-in practice. See `docs/decision-kc-only-serving.md`.
 - **No grading in the client, ever.** `recordSelfReport()` takes the learner's
@@ -309,9 +313,10 @@ where to go: the Colab card.
   interpreter stays because the guest/local adaptive engine is Python.
 
   Generator: `colab_notebooks.json` and `notebook-index.js` gained a `kps` map
-  (`kc -> {lesson, anchor}`) so the gate links by the same `dd-kp-<slug>` string
-  the generator writes onto the KP header cell — the slug is never re-derived in
-  JS. `ColabRoute` gained `urlForKc` / `openKc` / `lessonForKc`.
+  (`kc -> "dd-kp-<slug>"`) so the gate links by the same anchor string the
+  generator writes onto the KP header cell — the slug is never re-derived in JS.
+  It carries the anchor only; the notebook comes from the existing `kcs` map,
+  keyed identically. `ColabRoute` gained `urlForKc` / `openKc` / `lessonForKc`.
 
   Verified live end-to-end at 400px panel width: gate fires with the right
   anchor → continue → question renders with only the identity strip, Colab card

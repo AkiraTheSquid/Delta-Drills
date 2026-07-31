@@ -421,7 +421,7 @@ def check_lesson_routing():
     # cell. It is shipped in the map rather than re-derived, so a JS slug cannot
     # drift from the Python one into an anchor Colab silently ignores.
     route = _read(os.path.join(HERE, "colab-route.js"))
-    assert "urlForKc" in route and "index.kps" in route, (
+    assert "urlForKc" in route and "index.kps" in route and "index.kcs" in route, (
         "colab-route.js lost the concept route — the lesson gate cannot link to "
         "the notebook section that teaches the KC"
     )
@@ -429,11 +429,16 @@ def check_lesson_routing():
         index = json.load(f)
     kps = index.get("kps") or {}
     assert kps, "colab_notebooks.json has no kps map — rerun scripts/generate_colab_notebooks.py"
+    # kps holds the ANCHOR only and kcs holds the notebook, keyed identically —
+    # one fact per map. A concept present in one and not the other would route
+    # to a notebook with no anchor, or an anchor with no notebook.
     assert set(kps) == set(index.get("kcs") or {}), (
         "colab_notebooks.json kps and kcs cover different concepts"
     )
-    for kc, entry in kps.items():
-        assert entry.get("anchor", "").startswith("dd-kp-"), f"kps[{kc!r}] has no dd-kp- anchor"
+    for kc, anchor in kps.items():
+        assert isinstance(anchor, str) and anchor.startswith("dd-kp-"), (
+            f"kps[{kc!r}] is not a dd-kp- anchor string: {anchor!r}"
+        )
 
     # LadderUI must not start rendering the example again next to the problem.
     ladder = _read(os.path.join(HERE, "ladder.js"))
