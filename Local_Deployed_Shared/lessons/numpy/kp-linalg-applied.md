@@ -4,7 +4,7 @@ title: Applied linear algebra — multi-RHS, batched solve, block matrices
 supporting: [numpy.linalg-basics, numpy.constructors]
 new_syntax: [torch.linalg.matrix_rank]
 faded: [173, 208, 190]
-guided: []
+guided: [530]
 independent: [197, 118]
 ---
 
@@ -179,6 +179,16 @@ def solve(z):
     """Number of linearly independent rows/columns of z."""
     return int(t.linalg.matrix_rank(z))
 ```
+
+## Guided practice
+
+### q530
+1. Nothing new is needed. Leading axes broadcast, so the batched call is
+   spelled exactly like the single-system one — the shapes carry the batch.
+2. `t.linalg.solve(ms, vs)` with (p, n, n) against (p, n, 1): the shared
+   leading p is what makes it p independent systems rather than one big one.
+3. `return t.linalg.solve(ms, vs)` — one call, no loop over p, and the
+   (p, n, 1) result keeps each solution a column.
 
 ## Independent practice
 

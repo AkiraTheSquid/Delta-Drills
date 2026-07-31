@@ -98,7 +98,12 @@
        "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 523,
+       "hints_markdown": "1. Two of the three answers are memory questions, not value questions: does\n   the tensor you got back read the ORIGINAL block, or a fresh one?\n   Transposing never moves data; `.contiguous()` exists precisely to ask for\n   the move.\n2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;\n   `.data_ptr()` reports which block each one reads.\n3. `view = a.T`, `packed = view.contiguous()`, then return\n   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),\n   packed.tolist())`."
+      }
+     ],
      "independent_items": [
       480,
       481,
@@ -318,7 +323,12 @@
        "solution": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + 1\n    return t.arange(n) * step\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 524,
+       "hints_markdown": "1. The exclusive stop does not care which way you are counting. Going down,\n   \"stops before the stop\" means the stop has to sit one step PAST `low`.\n2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what\n   `?` makes `low` the last value actually produced.\n3. `t.arange(high, low - 1, -1)` \u2014 the `- 1` is the inclusive-endpoint fix\n   from q229, pointed the other way."
+      }
+     ],
      "independent_items": [
       53
      ],
@@ -1702,7 +1712,8 @@
       "numpy.fancy-indexing"
      ],
      "new_syntax": [
-      "Tensor.argsort"
+      "Tensor.argsort",
+      "Tensor.flip"
      ],
      "concept_markdown": "`t.sort` rearranges values. **`t.argsort` returns the indices that WOULD\nsort them** \u2014 and that indirection is the tool.\n\nFirst use: **sort one thing by another (\"sort-by\")**. To reorder a matrix's\nROWS so that column k comes out ascending: `z[z[:, k].argsort()]`. Read it\ninside out \u2014 argsort of the key column gives the row order; fancy indexing\napplies that order to whole rows. The rows travel intact; only their sequence\nchanges. Any \"sort records by field\" task is this two-step.\n\nNote what is NOT happening: no row contents are sorted \u2014 `t.sort(z, axis=0)`\nwould destroy the records by sorting each column independently.\n\n**Ranks.** The composition `t.argsort(t.argsort(z))` assigns each element\nits 0-based rank (0 = smallest). First argsort: \"who is in each sorted\nposition\"; second: \"what position does each element hold\" \u2014 the inverse\npermutation. For distinct values this is THE rank formula worth memorizing.\n\nOne argsort is *not* ranks: it answers \"which element is at sorted position\ni?\", ranks answer the inverse question \u2014 hence argsort twice.\n\n**Top-k.** The k largest values' indices: `t.argsort(z)[-k:][::-1]`\n(ascending order \u2192 take the tail \u2192 flip to largest-first). When k is small\nand n is huge, `t.topk(z, k)` finds the top-k in linear\ntime \u2014 partial ordering for free; sort just those k afterwards if order\nmatters.\n\nDirection control, since argsort has no `descending=`: argsort the negated\narray (`t.argsort(-z)`) or flip the result (`[::-1]`) \u2014 same options as\nsort.",
      "worked_example_markdown": "```python\nimport torch as t\n\nz = t.tensor([[10, 3],\n              [20, 1],\n              [30, 2]])\n\n# Sort ROWS by column 1. Inside out:\nkey = z[:, 1]                    # the key column: [3, 1, 2]\norder = key.argsort()            # row order that sorts it: [1, 2, 0]\nsorted_rows = z[order]           # fancy indexing moves whole rows\nassert sorted_rows.tolist() == [[20, 1], [30, 2], [10, 3]]\n# One-liner form you'll actually write: z[z[:, 1].argsort()]\nprint(\"key column\", key, \"-> row order\", order)\nprint(sorted_rows)\n```\n\nWhy: unpacking the sort-by into key/order/apply once makes the one-liner\nreadable forever after.\n\n```python\nimport torch as t\n\n# Ranks (0 = smallest) via double argsort \u2014 the inverse permutation.\nv = t.tensor([30.0, 10.0, 20.0])\nranks = t.argsort(t.argsort(v))\nassert ranks.tolist() == [2, 0, 1]       # 30 is largest -> rank 2\nprint(\"values\", v)\nprint(\"ranks \", ranks, \" (0 = smallest)\")\n```\n\nWhy: trace one element \u2014 30.0 sits at sorted position 2, so its rank is 2.\nThe first argsort maps positions\u2192elements; the second inverts it to\nelements\u2192positions.\n\n```python\nimport torch as t\n\n# Indices of the top-2 values, largest first.\nw = t.tensor([5.0, 9.0, 1.0, 7.0])\ntop2 = t.argsort(w)[-2:].flip(0)\nassert top2.tolist() == [1, 3]           # 9.0 at index 1, then 7.0 at 3\nassert w[top2].tolist() == [9.0, 7.0]    # indices recover the values\nprint(\"w\", w)\nprint(\"top-2 indices\", top2, \"-> values\", w[top2])\n```\n\nWhy: each stage of the chain is checkable \u2014 ascending indices, keep the last\nk, reverse. When the task says \"any order is fine\", argpartition saves the\nfinal sort.",
@@ -1776,7 +1787,12 @@
        "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t.argsort(z)[-k:].flip(0)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 525,
+       "hints_markdown": "1. The sort-by recipe is unchanged \u2014 argsort the key column, fancy-index the\n   rows. Only the DIRECTION differs, and direction is a property of the\n   order, not of the indexing.\n2. `z[:, k].argsort()` is the ascending row order; reversing an order is the\n   same `.flip(0)` the top-k segment used.\n3. `z[z[:, k].argsort().flip(0)]` \u2014 one expression, rows still intact."
+      }
+     ],
      "independent_items": [
       183
      ],
@@ -2636,7 +2652,8 @@
       "numpy.sorting"
      ],
      "new_syntax": [
-      "topk"
+      "torch.topk#dim",
+      "torch.topk#largest"
      ],
      "concept_markdown": "\"The k largest values\" does not require sorting everything, and PyTorch packs\nthe whole operation into one call:\n\n> **`t.topk(z, k)`** \u2192 a `(values, indices)` pair holding the k largest\n> entries, **largest first**.\n\nBoth halves come back together, so the two questions a top-k task can ask \u2014\n*which values* and *at which positions* \u2014 are answered by reading `.values`\nor `.indices` off the same result. Cost is O(len + k log k) rather than a\nfull O(len log len) sort; for small k on a big tensor that gap is what the\nword \"efficiently\" in a task is pointing at.\n\nTwo knobs matter:\n\n- **`largest=False`** flips it to the k SMALLEST.\n- **`sorted=False`** drops the ordering guarantee, returning the top-k SET\n  slightly cheaper \u2014 use it when you only need membership.\n\nBecause the default is already sorted descending, \"largest first\" needs no\nfollow-up step, and ascending order is just a `.flip(0)`:\n\n```python no-run\nt.topk(z, k).values.flip(0)      # k largest, ascending\nt.topk(z, k, dim=1).indices      # per-row top-k indices, largest first\n```\n\nPer-row top-k on matrices: `topk` takes `dim=`, so `t.topk(z, k, dim=1)`\ngives a (rows, k) block directly. For the k-th largest *single* value,\n`t.kthvalue(z, k)` is the one-element cousin.\n\nDecision rule: **full order over everything \u2192 sort/argsort; only the top k \u2192\ntopk** (and `.flip(0)` if the task wants them ascending).",
      "worked_example_markdown": "Task: the 2 largest values in ascending order; then their indices ordered\nlargest-first.\n\n```python\nimport torch as t\n\nz = t.tensor([5, 1, 9, 3, 7])\n\n# topk returns both halves at once, largest first.\ntop = t.topk(z, 2)\nassert top.values.tolist() == [9, 7]\nassert top.indices.tolist() == [2, 4]\n\n# The task wants ascending \u2014 reverse the (already sorted) k values.\nassert top.values.flip(0).tolist() == [7, 9]\n\n# Index version: which POSITIONS hold the top-2, largest first?\nw = t.tensor([5.0, 9.0, 1.0, 7.0])\nordered = t.topk(w, 2).indices\nassert ordered.tolist() == [1, 3]\nassert w[ordered].tolist() == [9.0, 7.0]\nprint(\"z\", z, \"-> topk\", top)\nprint(\"ascending instead:\", top.values.flip(0))\nprint(\"w\", w, \"-> top-2 positions\", ordered, \"-> values\", w[ordered])\n```\n\nWhy each step:\n\n1. Reading `.values` and `.indices` off one result is the habit to build \u2014\n   NumPy needed two separate calls (`partition` and `argpartition`) that\n   could disagree; here they cannot.\n2. `flip(0)` costs nothing on k elements. Reaching for a second `sort` is the\n   common reflex and is pure waste, since topk already ordered them.\n3. Only k elements are ever ordered; that asymmetry (linear scan + tiny sort)\n   is the entire efficiency argument, and stating it is usually what a\n   drill's \"efficiently\" phrasing wants.",
@@ -2666,7 +2683,12 @@
        "solution": "import torch as t\n\ndef solve(z, n):\n    \"\"\"n largest values, ascending \u2014 topk gives them descending.\"\"\"\n    return t.topk(z, n).values.flip(0)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 526,
+       "hints_markdown": "1. Same call, other end of the range. `topk` takes a keyword that decides\n   which end it keeps \u2014 no negation, no sort.\n2. `largest=False`. And with `sorted` left at its default the k smallest come\n   back ascending already, so there is nothing to flip here.\n3. `small = t.topk(z, k, largest=False)`, then return\n   `(small.values, small.indices)` \u2014 both halves off the one result."
+      }
+     ],
      "independent_items": [
       187,
       194
@@ -2683,6 +2705,7 @@
      ],
      "new_syntax": [
       "Tensor.add_",
+      "Tensor.clamp_",
       "Tensor.copy_",
       "Tensor.div_",
       "Tensor.mul_",
@@ -2761,7 +2784,12 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b.add_(a)\n    a.div_(2)\n    a.neg_()\n    a.mul_(b)\n    return a\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 527,
+       "hints_markdown": "1. Read the contract first: the caller's own object has to change. That rules\n   out every spelling that builds a clamped tensor and hands it back.\n2. Clamping has a trailing-underscore form, `clamp_(lo, hi)`, and like every\n   underscore method it writes into the receiver's buffer.\n3. `x.clamp_(lo, hi)` and then `return x` \u2014 the call already returns that\n   same tensor, so returning `x` is just saying so plainly."
+      }
+     ],
      "independent_items": [],
      "misconceptions_markdown": "- **\"`z = z[p]` modifies z in place.\"** \u2014 It rebinds the NAME; the original\n  buffer (and every other reference to it) is unchanged. In-place is\n  `z[:] = z[p]` \u2014 assignment through the full slice.\n- **\"`x.sort()` sorts x.\"** \u2014 It does in NumPy; in PyTorch it returns a\n  (values, indices) pair and leaves x untouched. There is no `sort_`, so an\n  in-place sort is `x.copy_(x.sort().values)`.\n- **\"The underscore is a naming convention.\"** \u2014 It's a hard contract: the\n  result is written into that exact buffer. Aliasing consequences included \u2014\n  `b.add_(a)` destroys the old b for all readers. Powerful, deliberate, and\n  exactly what no-allocation drills demand."
     },
@@ -2940,7 +2968,6 @@
       "numpy.broadcasting-rules"
      ],
      "new_syntax": [
-      "Tensor.flip",
       "Tensor.untyped_storage",
       "Tensor.view"
      ],
@@ -2994,7 +3021,12 @@
        "solution": "import torch as t\n\ndef solve(v):\n    \"\"\"(len(v), 8) matrix of bits, MSB first.\"\"\"\n    bits = ((v.reshape(-1, 1) & (2 ** t.arange(8))) != 0).to(t.int64)\n    return bits.flip(1)\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 528,
+       "hints_markdown": "1. `z[1:]` is a view, so it shares bytes with z. Two different pointer\n   questions can be asked about that sharing, and they do not agree \u2014 which\n   is the whole reason this KP names both.\n2. `.untyped_storage().data_ptr()` names the BUFFER; `.data_ptr()` names\n   where this particular tensor starts reading, offset included.\n3. Storage pointers match; data pointers do not, because the slice starts one\n   element in. `tail.tolist()` is the third entry."
+      }
+     ],
      "independent_items": [
       113
      ],
@@ -3178,15 +3210,17 @@
      "new_syntax": [
       "torch.arctan2",
       "torch.cat#dim",
-      "torch.pi"
+      "torch.cos",
+      "torch.pi",
+      "torch.sin"
      ],
-     "concept_markdown": "Geometric computation over point sets is column bookkeeping plus the linear\nalgebra you already have. The convention: **points live in rows.** An (n, 2)\narray is n points; `z[:, 0]` is all the x's, `z[:, 1]` all the y's. Formulas\nwritten on one point vectorize over the column vectors automatically:\n\n- **Cartesian \u2192 polar**: `r = t.sqrt(x**2 + y**2)`,\n  `theta = t.arctan2(y, x)`. Note `arctan2(y, x)` takes y FIRST and handles\n  all four quadrants (plain `arctan(y/x)` loses quadrant information and\n  divides by zero on the y-axis).\n\nOne naming trap before the code: `t` is the torch alias here, so a geometry\ndrill cannot call its angle `t` the way the maths does. Name it `theta`.\n\nA linear transform T applied to all points at once is `pts @ T.T` \u2014 each row\n(point) gets dotted with each row of T. No per-point loop.\n\nFor transforms that include TRANSLATION, the standard trick is\n**homogeneous coordinates**: append a 1 to every point\n(`t.cat([pts, t.ones(len(pts), 1)], dim=1)` \u2014 note the `1` in `ones`: `cat`\nglues tensors of the same rank, so the new column has to BE a column, not a\nflat vector), multiply by the 3\u00d73 homogeneous matrix, then **de-homogenize**\nby dividing\nthe first two columns by the third: `out[:, :2] / out[:, 2:3]`. Keeping the\ndivisor as a (n, 1) slice \u2014 `2:3`, not `2` \u2014 preserves the column shape so\nthe division broadcasts per row. Affine transforms leave the third column at\n1 and the division is a formality; projective ones genuinely need it.\n\n(Fields over grids \u2014 e.g. a Gaussian bump on meshgrid coordinates \u2014 are this\nKP's formulas evaluated on coordinate matrices; see independent practice.)",
+     "concept_markdown": "Geometric computation over point sets is column bookkeeping plus the linear\nalgebra you already have. The convention: **points live in rows.** An (n, 2)\narray is n points; `z[:, 0]` is all the x's, `z[:, 1]` all the y's. Formulas\nwritten on one point vectorize over the column vectors automatically:\n\n- **Cartesian \u2192 polar**: `r = t.sqrt(x**2 + y**2)`,\n  `theta = t.arctan2(y, x)`. Note `arctan2(y, x)` takes y FIRST and handles\n  all four quadrants (plain `arctan(y/x)` loses quadrant information and\n  divides by zero on the y-axis).\n\nThe way back is the same bookkeeping run in reverse:\n`x = r * t.cos(theta)`, `y = r * t.sin(theta)`. Both directions operate on\nwhole COLUMNS, so neither needs a loop over points.\n\nOne naming trap before the code: `t` is the torch alias here, so a geometry\ndrill cannot call its angle `t` the way the maths does. Name it `theta`.\n\n```python\nimport torch as t\n\n# Polar -> cartesian, whole columns at a time.\nr = t.tensor([1.0, 2.0])\ntheta = t.tensor([0.0, t.pi / 2])\nprint(\"x\", r * t.cos(theta), \" <- cos(pi/2) is 0 only up to float error\")\nprint(\"y\", r * t.sin(theta), \" <- so the second point is (0, 2)\")\n```\n\nA linear transform T applied to all points at once is `pts @ T.T` \u2014 each row\n(point) gets dotted with each row of T. No per-point loop.\n\nFor transforms that include TRANSLATION, the standard trick is\n**homogeneous coordinates**: append a 1 to every point\n(`t.cat([pts, t.ones(len(pts), 1)], dim=1)` \u2014 note the `1` in `ones`: `cat`\nglues tensors of the same rank, so the new column has to BE a column, not a\nflat vector), multiply by the 3\u00d73 homogeneous matrix, then **de-homogenize**\nby dividing\nthe first two columns by the third: `out[:, :2] / out[:, 2:3]`. Keeping the\ndivisor as a (n, 1) slice \u2014 `2:3`, not `2` \u2014 preserves the column shape so\nthe division broadcasts per row. Affine transforms leave the third column at\n1 and the division is a formality; projective ones genuinely need it.\n\n(Fields over grids \u2014 e.g. a Gaussian bump on meshgrid coordinates \u2014 are this\nKP's formulas evaluated on coordinate matrices; see independent practice.)",
      "worked_example_markdown": "```python\nimport torch as t\n\nz = t.tensor([[1.0, 0.0],\n              [0.0, 2.0]])\n\n# Column bookkeeping: x's and y's as vectors, then per-point formulas.\nx, y = z[:, 0], z[:, 1]\nr = t.sqrt(x ** 2 + y ** 2)\ntheta = t.arctan2(y, x)                 # y FIRST \u2014 full-quadrant angle\nassert r.tolist() == [1.0, 2.0]\nassert t.allclose(theta, t.tensor([0.0, t.pi / 2]))   # +x axis; +y axis\nprint(\"x\", x, \"y\", y)\nprint(\"r\", r, \"theta\", theta)\n```\n\nWhy: unpacking `x, y = z[:, 0], z[:, 1]` FIRST, then writing the scalar\nformula, is the pattern: derive on one point, run on all. The arctan2\nargument order (y, x) is checked by the two axis points \u2014 get it backwards\nand the asserts catch it immediately.\n\n```python\nimport torch as t\n\n# Homogeneous transform: translate by (+2, -1).  The matrix is `m`, not `t` \u2014\n# `t` is torch.\nm = t.tensor([[1.0, 0.0, 2.0],\n              [0.0, 1.0, -1.0],\n              [0.0, 0.0, 1.0]])\npts = t.tensor([[0.0, 0.0],\n                [1.0, 1.0]])\n\nh = t.cat([pts, t.ones(len(pts), 1)], dim=1)  # append the 1s column: (n, 3)\nout = h @ m.T                            # transform all points at once\nresult = out[:, :2] / out[:, 2:3]        # de-homogenize (w column is 1 here)\nassert result.tolist() == [[2.0, -1.0],\n                           [3.0, 0.0]]\nprint(\"points with the 1s column appended:\")\nprint(h)\nprint(\"after translating by (+2, -1):\")\nprint(result)\n```\n\nWhy: `h @ m.T` rather than looping `m @ p` per point \u2014 points-as-rows means\nthe matrix arrives transposed. Verify with the origin: it must land exactly\non the translation column (2, \u22121). The `2:3` slice keeps a (n, 1) column so\nthe division broadcasts row-wise.",
      "segments": [
       {
        "concept_id": "",
        "title": "points live in rows \u2014 cartesian to polar",
-       "concept_markdown": "Geometric computation over point sets is column bookkeeping plus the linear\nalgebra you already have. The convention: **points live in rows.** An (n, 2)\narray is n points; `z[:, 0]` is all the x's, `z[:, 1]` all the y's. Formulas\nwritten on one point vectorize over the column vectors automatically:\n\n- **Cartesian \u2192 polar**: `r = t.sqrt(x**2 + y**2)`,\n  `theta = t.arctan2(y, x)`. Note `arctan2(y, x)` takes y FIRST and handles\n  all four quadrants (plain `arctan(y/x)` loses quadrant information and\n  divides by zero on the y-axis).\n\nOne naming trap before the code: `t` is the torch alias here, so a geometry\ndrill cannot call its angle `t` the way the maths does. Name it `theta`.",
+       "concept_markdown": "Geometric computation over point sets is column bookkeeping plus the linear\nalgebra you already have. The convention: **points live in rows.** An (n, 2)\narray is n points; `z[:, 0]` is all the x's, `z[:, 1]` all the y's. Formulas\nwritten on one point vectorize over the column vectors automatically:\n\n- **Cartesian \u2192 polar**: `r = t.sqrt(x**2 + y**2)`,\n  `theta = t.arctan2(y, x)`. Note `arctan2(y, x)` takes y FIRST and handles\n  all four quadrants (plain `arctan(y/x)` loses quadrant information and\n  divides by zero on the y-axis).\n\nThe way back is the same bookkeeping run in reverse:\n`x = r * t.cos(theta)`, `y = r * t.sin(theta)`. Both directions operate on\nwhole COLUMNS, so neither needs a loop over points.\n\nOne naming trap before the code: `t` is the torch alias here, so a geometry\ndrill cannot call its angle `t` the way the maths does. Name it `theta`.\n\n```python\nimport torch as t\n\n# Polar -> cartesian, whole columns at a time.\nr = t.tensor([1.0, 2.0])\ntheta = t.tensor([0.0, t.pi / 2])\nprint(\"x\", r * t.cos(theta), \" <- cos(pi/2) is 0 only up to float error\")\nprint(\"y\", r * t.sin(theta), \" <- so the second point is (0, 2)\")\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "```python\nimport torch as t\n\nz = t.tensor([[1.0, 0.0],\n              [0.0, 2.0]])\n\n# Column bookkeeping: x's and y's as vectors, then per-point formulas.\nx, y = z[:, 0], z[:, 1]\nr = t.sqrt(x ** 2 + y ** 2)\ntheta = t.arctan2(y, x)                 # y FIRST \u2014 full-quadrant angle\nassert r.tolist() == [1.0, 2.0]\nassert t.allclose(theta, t.tensor([0.0, t.pi / 2]))   # +x axis; +y axis\nprint(\"x\", x, \"y\", y)\nprint(\"r\", r, \"theta\", theta)\n```\n\nWhy: unpacking `x, y = z[:, 0], z[:, 1]` FIRST, then writing the scalar\nformula, is the pattern: derive on one point, run on all. The arctan2\nargument order (y, x) is checked by the two axis points \u2014 get it backwards\nand the asserts catch it immediately.",
        "worked_example_code": "import torch as t\n\nz = t.tensor([[1.0, 0.0],\n              [0.0, 2.0]])\n\n# Column bookkeeping: x's and y's as vectors, then per-point formulas.\nx, y = z[:, 0], z[:, 1]\nr = t.sqrt(x ** 2 + y ** 2)\ntheta = t.arctan2(y, x)                 # y FIRST \u2014 full-quadrant angle\nassert r.tolist() == [1.0, 2.0]\nassert t.allclose(theta, t.tensor([0.0, t.pi / 2]))   # +x axis; +y axis\nprint(\"x\", x, \"y\", y)\nprint(\"r\", r, \"theta\", theta)\n",
@@ -3230,7 +3264,12 @@
        "solution": "import torch as t\n\ndef solve(pts, m):\n    \"\"\"Transformed points: append 1s, multiply, de-homogenize.\"\"\"\n    h = t.cat([pts, t.ones(len(pts), 1)], dim=1)\n    out = h @ m.T\n    return out[:, :2] / out[:, 2:3]\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 529,
+       "hints_markdown": "1. This is the first segment run backwards. Derive x and y for ONE point from\n   its r and theta, then let the vectors carry all n at once \u2014 same column\n   bookkeeping, opposite direction.\n2. `x = r * t.cos(theta)` and `y = r * t.sin(theta)` give two 1-D vectors.\n   The task wants points in ROWS, so those two now have to become COLUMNS.\n3. `t.stack([x, y], dim=1)` \u2014 `dim=1` makes them columns; `dim=0` would give\n   (2, n), the transpose of what was asked."
+      }
+     ],
      "independent_items": [
       105,
       201
@@ -3319,7 +3358,12 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Number of linearly independent rows/columns of z.\"\"\"\n    return int(t.linalg.matrix_rank(z))\n"
       }
      ],
-     "guided_items": [],
+     "guided_items": [
+      {
+       "question_id": 530,
+       "hints_markdown": "1. Nothing new is needed. Leading axes broadcast, so the batched call is\n   spelled exactly like the single-system one \u2014 the shapes carry the batch.\n2. `t.linalg.solve(ms, vs)` with (p, n, n) against (p, n, 1): the shared\n   leading p is what makes it p independent systems rather than one big one.\n3. `return t.linalg.solve(ms, vs)` \u2014 one call, no loop over p, and the\n   (p, n, 1) result keeps each solution a column."
+      }
+     ],
      "independent_items": [
       197,
       118

@@ -163,4 +163,10 @@ Example skeleton:
 - Starter code blanks use `_____` and must be syntactically obvious to fill.
 - Faded/guided/independent ids should come from the same subtopic as the KC's
   lesson where possible (keeps BKT mapping clean).
+- Every KP carries all three rungs. When the subtopic's pool is exhausted —
+  every question already spoken for by some KP — author a NEW bank question
+  rather than serving one twice; the recipe (curated CSV → overrides →
+  export → qmatrix → atom tags) is in `pipeline/README.md`. Pick a move the
+  KP teaches that no existing item asks for, and vary the expected value
+  across test cases so a constant-return answer cannot pass.
 - One KP introduces one target KC (research doc: one worked example ↔ one KC).

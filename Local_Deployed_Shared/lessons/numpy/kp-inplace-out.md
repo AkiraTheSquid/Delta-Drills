@@ -2,9 +2,9 @@
 kc: numpy.inplace-out
 title: In-place operations and the trailing underscore
 supporting: [numpy.elementwise-ufuncs, numpy.slicing-views, numpy.fancy-indexing]
-new_syntax: [Tensor.add_, Tensor.copy_, Tensor.div_, Tensor.mul_, Tensor.neg_, Tensor.sort]
+new_syntax: [Tensor.add_, Tensor.clamp_, Tensor.copy_, Tensor.div_, Tensor.mul_, Tensor.neg_, Tensor.sort]
 faded: [235, 138, 59]
-guided: []
+guided: [527]
 independent: []
 ---
 
@@ -190,6 +190,16 @@ def solve(a, b):
     a.mul_(b)
     return a
 ```
+
+## Guided practice
+
+### q527
+1. Read the contract first: the caller's own object has to change. That rules
+   out every spelling that builds a clamped tensor and hands it back.
+2. Clamping has a trailing-underscore form, `clamp_(lo, hi)`, and like every
+   underscore method it writes into the receiver's buffer.
+3. `x.clamp_(lo, hi)` and then `return x` — the call already returns that
+   same tensor, so returning `x` is just saying so plainly.
 
 ## Misconceptions
 

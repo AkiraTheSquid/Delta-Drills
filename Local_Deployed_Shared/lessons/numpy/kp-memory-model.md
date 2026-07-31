@@ -2,9 +2,9 @@
 kc: numpy.memory-model
 title: Memory model — views, reinterpreting bytes, bit unpacking
 supporting: [numpy.dtype-astype, numpy.slicing-views, numpy.broadcasting-rules]
-new_syntax: [Tensor.flip, Tensor.untyped_storage, Tensor.view]
+new_syntax: [Tensor.untyped_storage, Tensor.view]
 faded: [123, 204]
-guided: []
+guided: [528]
 independent: [113]
 ---
 
@@ -155,6 +155,17 @@ def solve(v):
     bits = ((v.reshape(-1, 1) & (2 ** t.arange(8))) != 0).to(t.int64)
     return bits.flip(1)
 ```
+
+## Guided practice
+
+### q528
+1. `z[1:]` is a view, so it shares bytes with z. Two different pointer
+   questions can be asked about that sharing, and they do not agree — which
+   is the whole reason this KP names both.
+2. `.untyped_storage().data_ptr()` names the BUFFER; `.data_ptr()` names
+   where this particular tensor starts reading, offset included.
+3. Storage pointers match; data pointers do not, because the slice starts one
+   element in. `tail.tolist()` is the third entry.
 
 ## Independent practice
 

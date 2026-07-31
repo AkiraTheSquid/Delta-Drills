@@ -2,9 +2,9 @@
 kc: numpy.geometry-transforms
 title: Geometry — coordinates and transforms
 supporting: [numpy.dot-matmul-patterns, numpy.slicing-views, numpy.tile-repeat-meshgrid]
-new_syntax: [torch.arctan2, torch.cat#dim, torch.pi]
+new_syntax: [torch.arctan2, torch.cat#dim, torch.cos, torch.pi, torch.sin]
 faded: [66, 182]
-guided: []
+guided: [529]
 independent: [105, 201]
 ---
 
@@ -20,8 +20,22 @@ written on one point vectorize over the column vectors automatically:
   all four quadrants (plain `arctan(y/x)` loses quadrant information and
   divides by zero on the y-axis).
 
+The way back is the same bookkeeping run in reverse:
+`x = r * t.cos(theta)`, `y = r * t.sin(theta)`. Both directions operate on
+whole COLUMNS, so neither needs a loop over points.
+
 One naming trap before the code: `t` is the torch alias here, so a geometry
 drill cannot call its angle `t` the way the maths does. Name it `theta`.
+
+```python
+import torch as t
+
+# Polar -> cartesian, whole columns at a time.
+r = t.tensor([1.0, 2.0])
+theta = t.tensor([0.0, t.pi / 2])
+print("x", r * t.cos(theta), " <- cos(pi/2) is 0 only up to float error")
+print("y", r * t.sin(theta), " <- so the second point is (0, 2)")
+```
 
 ## Worked example
 
@@ -145,6 +159,17 @@ def solve(pts, m):
     out = h @ m.T
     return out[:, :2] / out[:, 2:3]
 ```
+
+## Guided practice
+
+### q529
+1. This is the first segment run backwards. Derive x and y for ONE point from
+   its r and theta, then let the vectors carry all n at once — same column
+   bookkeeping, opposite direction.
+2. `x = r * t.cos(theta)` and `y = r * t.sin(theta)` give two 1-D vectors.
+   The task wants points in ROWS, so those two now have to become COLUMNS.
+3. `t.stack([x, y], dim=1)` — `dim=1` makes them columns; `dim=0` would give
+   (2, n), the transpose of what was asked.
 
 ## Independent practice
 
