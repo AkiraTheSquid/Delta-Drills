@@ -13,7 +13,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-REQUIRED_PERMISSIONS = {"sidePanel", "tabs", "storage", "system.display"}
+REQUIRED_PERMISSIONS = {"sidePanel", "tabs", "storage"}
 
 # The deploy this extension is built around. The panel frames it and the toolbar
 # button opens it — see check_side_panel_shell and check_study_layout.
@@ -153,59 +153,41 @@ def check_side_panel_shell():
     )
 
 
-def check_study_layout():
-    """The toolbar button tiles two windows — app left, Colab right.
+def check_button_opens_the_panel():
+    """The toolbar button opens the SIDE PANEL, and the worker does nothing else.
 
-    Four things make that work, and three of them fail silently:
+    On 2026-07-31 this briefly opened two tiled `chrome.windows` instead — app
+    left, Colab right — to satisfy "app on the left". It worked and it was
+    wrong: separate windows are not a side pane, they pop out of the browser
+    rather than splitting it, and the user has to manage two windows for one
+    task. The panel is the design.
 
-    * `openPanelOnActionClick` MUST be false. With the default, Chrome consumes
-      the toolbar click to open the side panel and `action.onClicked` never
-      fires — the button simply stops doing anything new, with no error.
-    * `action.onClicked` has to be registered at the top level of the worker.
-      The service worker is torn down constantly; a listener added inside a
-      promise callback is not there when the event arrives.
-    * The app pane must be the Colab edition. Tiling the normal deploy next to
-      Colab puts an in-page editor beside a notebook — two places to solve the
-      same drill.
-    * A stray Colab tab has to be moved into the right-hand window. "Open in
-      Colab" is a plain link, so without the move the notebook opens beside the
-      app on the LEFT and the layout is gone one click in.
+    Which SIDE the panel sits on is a Chrome setting (Settings → Appearance →
+    "Side panel position"), and its width is a drag. Neither is reachable from
+    an extension — `chrome.sidePanel` has `setOptions` and `setPanelBehavior`
+    and nothing else. So a worker that starts creating or moving windows is
+    always re-implementing a preference that already exists, and this check is
+    what stops that from creeping back.
     """
     with open(os.path.join(HERE, "background.js"), encoding="utf-8") as fh:
         src = fh.read()
 
-    assert "openPanelOnActionClick: false" in src, (
-        "background.js must set openPanelOnActionClick:false — otherwise Chrome "
-        "eats the toolbar click for the side panel and action.onClicked never "
-        "fires"
+    assert "openPanelOnActionClick: true" in src, (
+        "background.js must set openPanelOnActionClick:true — that is what makes "
+        "the toolbar button open the side panel"
     )
-    assert re.search(r"^chrome\.action\.onClicked\.addListener", src, re.M), (
-        "chrome.action.onClicked must be registered at the top level of the "
-        "worker, or it is missing whenever the worker has been torn down"
-    )
-    assert COLAB_APP_ORIGIN in src, (
-        f"the app pane must open {COLAB_APP_ORIGIN} — the edition that routes a "
-        f"drill to its notebook"
-    )
-    assert "chrome.tabs.move" in src, (
-        "nothing moves a stray Colab tab into the notebook window — the first "
-        "'Open in Colab' click will land the notebook on the left and undo the "
-        "layout"
-    )
-    # The Colab pane receives moved tabs, and Chrome refuses to move a tab into
-    # a popup. Only the app pane may be one.
-    popups = re.findall(r'type:\s*"popup"', src)
-    assert len(popups) == 1, (
-        f'expected exactly one type:"popup" window (the app pane); found '
-        f"{len(popups)}. The Colab pane must be a normal window or tabs cannot "
-        f"be moved into it"
-    )
+    for api in ("chrome.windows.create", "chrome.windows.update", "chrome.tabs.move"):
+        assert api not in src, (
+            f"background.js calls {api} — the button opens the side panel, it "
+            f"does not arrange windows. Panel side and width are Chrome "
+            f"settings, not extension behaviour"
+        )
 
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_no_shadowed_globals, check_side_panel_shell,
-              check_study_layout]
+              check_button_opens_the_panel]
     for fn in checks:
         try:
             fn()

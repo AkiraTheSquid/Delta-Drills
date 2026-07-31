@@ -3,7 +3,7 @@
   "name": "Delta Drills — ARENA tutor",
   "version": "0.1.0",
   "description": "Side panel that drives Colab notebooks from the Delta Drills intelligent tutoring system.",
-  "permissions": ["sidePanel", "tabs", "storage", "system.display"],
+  "permissions": ["sidePanel", "tabs", "storage"],
   "host_permissions": [
     "https://colab.research.google.com/*",
     "https://delta-drills-colab.vercel.app/*",
@@ -19,7 +19,7 @@
     "default_path": "panel/app.html"
   },
   "action": {
-    "default_title": "Delta Drills beside a notebook — app left, Colab right"
+    "default_title": "Open the Delta Drills tutor"
   },
   "content_scripts": [
     {

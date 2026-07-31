@@ -1,20 +1,28 @@
 # extension
 
 ## Purpose
-Puts Delta Drills beside the Colab notebook the student is working in. Two ways,
-and the toolbar button is now the first:
+The Chrome MV3 **side panel** that puts Delta Drills beside the Colab notebook
+the student is working in. Toolbar click opens the panel; the notebook fills the
+rest of the window beside it.
 
-- **The study layout (toolbar click).** Two tiled Chrome windows — the app on the
-  left half of the screen, the notebook on the right. Two real windows because
-  Colab sends `X-Frame-Options` and cannot be framed at all, and because the side
-  panel is ~400px on a side that only the USER can choose. `background.js` owns
-  it, and also moves every Colab tab that opens anywhere else into the right-hand
-  window — otherwise the first "Open in Colab ↗" click puts the notebook beside
-  the app on the left and the layout is gone.
-- **The side panel**, still there, reachable from Chrome's own side-panel menu.
-  Better on one small screen.
+**Which side the panel is on, and how wide it is, are CHROME settings — not this
+extension's.** `chrome.sidePanel` has `setOptions` and `setPanelBehavior` and
+nothing about position or width; there is no API to ask for. The student sets it
+once:
 
-**Both show the live website.** Not a copy of it, not a client of its API —
+- **Left instead of right:** Settings → Appearance → *Side panel position* →
+  "Show on left" (or right-click the panel and pick it there).
+- **Wider:** drag the panel's inner edge. Chrome caps how far it goes, so a true
+  50/50 split may not be reachable.
+
+⚠️ **Do not "solve" either of those in code.** A pass on 2026-07-31 made the
+toolbar button tile two `chrome.windows` — app left, notebook right — to get the
+app onto the left. It worked and it was wrong: separate windows are not a side
+pane, they pop out of the browser instead of splitting it, and it left the
+student managing two windows for one task. Reverted; `watch.py` fails on
+`chrome.windows.create` in the worker so it cannot creep back.
+
+**The panel shows the live website.** Not a copy of it, not a client of its API —
 `https://delta-drills-colab.vercel.app/` itself: its tab bar, its Sign in with
 Google, its practice loop, its knowledge graph. There is no panel front end, and
 there is not supposed to be one.
@@ -104,15 +112,9 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
   permissions for Colab and the backend (plus localhost for dev).
   `side_panel.default_path` is `panel/app.html` — the framed site, not the
   tutor UI.
-- `background.js`: service worker. Owns the **study layout** — `action.onClicked`
-  tiles the app window (left half, a chromeless `popup`) and the notebook window
-  (right half, a `normal` window, because tabs get moved into it and Chrome
-  refuses to move a tab into a popup), sized from `system.display`'s work area
-  with the focused window's bounds as the fallback. Window ids live in
-  `chrome.storage.session` — a window id means nothing after a restart. It also
-  sets `setPanelBehavior({openPanelOnActionClick: false})`: with the default,
-  Chrome consumes the toolbar click for the side panel and `action.onClicked`
-  never fires, so this is one behaviour or the other, not both.
+- `background.js`: service worker. Its only real job is
+  `sidePanel.setPanelBehavior({openPanelOnActionClick: true})`, which cannot be
+  declared in the manifest. It must not grow window management — see Purpose.
 - `panel/`: the UI, the backend client, notebook routing and the generated
   notebook index. See `panel/README.md`.
 - `content/`: the Colab DOM adapter. See `content/README.md`.
@@ -227,15 +229,16 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
     `watch.py` fails without it.
 
 ## Recent Changes
-- 2026-07-31: **App left, Colab right — and the app is the Colab edition.** The
-  toolbar button now opens two tiled windows instead of the side panel
-  (`background.js`, +`system.display`); the panel frames
-  `delta-drills-colab.vercel.app`, a second Vercel project serving the same code
-  with notebook routing on. Stray Colab tabs are moved into the right-hand
-  window, which is what keeps the layout after an "Open in Colab" click.
-  `watch.py` gained `check_study_layout` for the four things that fail silently:
-  `openPanelOnActionClick:false`, a top-level `action.onClicked`, the app pane
-  pointing at the Colab edition, and exactly one `popup` window.
+- 2026-07-31 (later): **Reverted the tiled-windows experiment.** The button opens
+  the side panel again and `background.js` is back to one call; `system.display`
+  dropped. Panel side and width are Chrome settings and always were — putting the
+  panel on the left is Settings → Appearance → *Side panel position*. `watch.py`'s
+  `check_study_layout` became `check_button_opens_the_panel`, which now fails on
+  any `chrome.windows.*` / `chrome.tabs.move` call in the worker.
+- 2026-07-31: **The panel frames the Colab edition.**
+  `delta-drills-colab.vercel.app` — a second Vercel project serving the same code
+  with notebook routing on, so a drill opens in its lesson notebook instead of the
+  in-page editor. `watch.py` fails if the address drifts back to the normal app.
 - 2026-07-31: **The panel is the website.** `panel/app.html` is one `<iframe>`
   over `https://delta-drills.vercel.app/`, with no script and no panel chrome —
   an earlier pass wrapped it in a toolbar and a settings sheet, which was a

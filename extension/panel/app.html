@@ -29,10 +29,12 @@
          normal app: this extension exists to put the tutor beside a notebook,
          and on that deploy a drill routes to its lesson notebook instead of the
          in-page editor. Same bank, same backend, same mastery record — see
-         Local_Deployed_Shared/practice/colab_mode.js. The toolbar button now
-         opens the tiled two-window layout instead of this panel; the panel is
-         still reachable from Chrome's side-panel menu, and is the better
-         surface on one small screen.
+         Local_Deployed_Shared/practice/colab_mode.js.
+
+         Which SIDE this panel opens on is a Chrome setting (Settings →
+         Appearance → "Side panel position"), and its width is a drag on its
+         inner edge. No extension API reaches either — do not try to fake it
+         with windows; that was tried and reverted (see ../README.md).
 
          Why a frame at all: MV3 only accepts an extension-relative path for
          `side_panel.default_path`, so a local page holding the site is the only
