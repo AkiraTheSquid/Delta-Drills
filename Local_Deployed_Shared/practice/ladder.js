@@ -7,30 +7,46 @@
 
      1. pointing the page-wide concept topbar (practice/concept-topbar.js) at
         whatever concept and rung the current card is on;
-     2. gating the `worked` rung — handing off to LessonGate so the learner
-        reads the example before the first question on that concept, and
-        crediting the rung when they have.
+     2. the worked example itself at the `worked` rung, before any question;
+     3. that same worked example kept ON SCREEN through the faded and partial
+        rungs, beside the problem.
 
-   Rendering the example is no longer part of it (2026-07-31). Renkl &
-   Atkinson's completion problems are completion problems because the example
-   stays visible while the learner fills in the missing step, and that property
-   is preserved by the notebook's own layout: `generate_colab_notebooks.py`
-   emits each concept as prose → worked example → that segment's faded problems,
-   in one file, in that order. The example is a few cells above the problem the
-   whole time — and unlike the panel's old copy, it can be run.
+   (3) is the load-bearing one. Renkl & Atkinson's completion problems are
+   completion problems because the example is still visible — the learner is
+   filling in a solution they can see the shape of. Show the example, take it
+   away, then ask for the missing step and you have not built a scaffold, you
+   have built a recall test with extra ceremony. The example only disappears at
+   `solo`, which is the rung that is supposed to be unsupported.
 
-   The KP records still come from `lessons_structured.json` through LessonGate,
-   which already loads and caches them — no second copy, and no new payload on
-   the question response.
+   The lesson content comes from `lessons_structured.json` through LessonGate,
+   which already loads and caches it — no second copy of the KP records, and no
+   new payload on the question response.
    ================================================================ */
 
 const LadderUI = (() => {
   "use strict";
 
-  /* `SUPPORTED_STAGES`, `STAGE_BLURB` and `esc` were here — the rung list the
-     panel kept an example visible on, the one-line description of each rung,
-     and the attribute escaper that rendered them. All three belonged to the
-     in-panel example, which the notebook now carries. */
+  // Rungs on which the worked example stays beside the problem. `solo` is
+  // absent on purpose: the whole point of that rung is that support is gone.
+  const SUPPORTED_STAGES = new Set(["faded", "partial"]);
+
+  const STAGE_BLURB = {
+    faded: "Most of the solution is written for you — supply the last step.",
+    partial: "Half of the solution is written for you — finish it.",
+    solo: "No scaffold on this one. You have earned it.",
+  };
+
+  // Quotes matter here: every one of these values is interpolated into a
+  // double-quoted HTML attribute (title=, data-kc=), and a concept title
+  // carrying an apostrophe-free `"` would close the attribute early and
+  // scramble the header. Escaping both quote forms costs nothing.
+  const esc = (value) =>
+    String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
 
   const _kcOf = (q) => (q && q.ladder_kc) || null;
   const _stageOf = (q) => (q && q.ladder_stage) || null;
@@ -202,25 +218,69 @@ const LadderUI = (() => {
     });
   };
 
-  /* `_exampleHtml` and `_segmentFor` were here. They inserted the KP's worked
-     example into #question-text beside faded and partial problems, picking the
-     segment whose example matched the question being asked.
+  const _exampleHtml = (kp, seg, stage) => {
+    const render =
+      (window.LessonGate && window.LessonGate.renderMarkdown) ||
+      ((text) => "<pre>" + esc(text) + "</pre>");
+    const blurb = STAGE_BLURB[stage] || "";
+    return (
+      '<details class="ladder-example" open>' +
+      `<summary>Worked example — ${esc(seg.title || kp.title)}</summary>` +
+      (blurb ? `<p class="ladder-example-blurb">${esc(blurb)}</p>` : "") +
+      '<div class="ladder-example-body">' +
+      render(seg.worked_example_markdown) +
+      "</div></details>"
+    );
+  };
 
-     Both are gone (2026-07-31), and the scaffold they existed to provide is
-     NOT: the generated notebook lays each concept out as prose, then its worked
-     example, then that segment's faded problems, in that order in one file. The
-     example is therefore still on screen above the problem while the learner
-     completes it — which is what makes a completion problem a completion
-     problem — and it is there as runnable cells rather than a static excerpt.
-     Keeping a second copy in the panel would have shown the example twice, and
-     the panel's copy could not be run. */
+  /* Pick the segment whose example matches the problem being asked.
+
+     29 of the 63 KPs hold several segments, each with its own example. Showing
+     segment 1's example next to segment 3's problem is worse than showing
+     none — it invites the learner to map a solution onto a problem it does not
+     fit. A segment's `faded_items` name the questions it owns, so use that
+     when it answers; otherwise fall back to the last segment, which is the
+     KP's most complete example. */
+  const _segmentFor = (kp, questionId) => {
+    const segments = kp.segments && kp.segments.length ? kp.segments : null;
+    if (!segments) {
+      return {
+        title: kp.title,
+        worked_example_markdown: kp.worked_example_markdown,
+      };
+    }
+    const owns = (seg) =>
+      (seg.faded_items || []).some(
+        (item) => item && Number(item.question_id) === Number(questionId),
+      );
+    return segments.find(owns) || segments[segments.length - 1];
+  };
+
+  // Guards against a stale async insert: by the time the KP JSON arrives the
+  // learner may already be on the next question.
+  let _decorateToken = 0;
 
   const decorate = (question) => {
-    if (!question) return;
-    // The topbar is the whole of it now: which concept, which rung, where the
-    // difficulty is aimed. The worked example that used to be inserted here
-    // lives in the notebook, above this problem's cell.
+    const host = document.getElementById("question-text");
+    if (!host || !question) return;
+    const token = ++_decorateToken;
+    const kc = _kcOf(question);
+    const stage = _stageOf(question);
+
     _syncTopbar(question);
+    if (!kc || !stage) return;
+
+    if (!SUPPORTED_STAGES.has(stage)) return;
+    if (!window.LessonGate || typeof window.LessonGate.getKpEntry !== "function") return;
+
+    window.LessonGate.getKpEntry(kc)
+      .then((found) => {
+        if (!found || token !== _decorateToken) return;
+        const seg = _segmentFor(found.kp, question.question_id);
+        if (!seg || !seg.worked_example_markdown) return;
+        host.insertAdjacentHTML("beforeend", _exampleHtml(found.kp, seg, stage));
+      })
+      .catch((err) => console.warn("[ladder] example unavailable:", err));
   };
 
   return {
@@ -229,6 +289,7 @@ const LadderUI = (() => {
     applyWorkedSeen,
     creditTaught,
     noteWorkedSeen,
+    SUPPORTED_STAGES,
   };
 })();
 

@@ -2,62 +2,56 @@
    PRACTICE EVENTS — submit + feedback actions
    ================================================================ */
 
-/* SELF-REPORT — the two buttons that replaced Submit.
-
-   The learner worked the problem in its Colab notebook; this is how the result
-   comes back. Everything after the verdict is the flow that already existed:
-   solution revealed, review countdown started, felt-difficulty rating, Next.
-
-   `_selfReport` is also what the answer timer fires (through a click on
-   #self-report-no), so the timeout path and the "didn't get it" path are one
-   code path and cannot drift.
-*/
-const _selfReport = async (correct) => {
+practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
-  if (!q) return;
+  const userCode = codeEditor.value;
   PracticeSession.pauseForGrading();
-  selfReportNoBtn.disabled = true;
-  selfReportYesBtn.disabled = true;
+  practiceSubmitBtn.disabled = true;
   let result;
   try {
-    result = await PracticeAPI.recordSelfReport(q.question_id, correct);
+    result = await PracticeAPI.submitAnswer(q.question_id, userCode);
   } catch (err) {
     if (PracticeAPI.currentQuestion !== q) return;
-    // The old failure surface was the editor's output pane, which no longer
-    // exists. Say it where the learner is actually looking.
-    showColabNote("Could not record that: " + err.message + " — try again.");
-    selfReportNoBtn.disabled = false;
-    selfReportYesBtn.disabled = false;
+    outputArea.textContent = "Submit failed: " + err.message;
+    practiceSubmitBtn.disabled = false;
     PracticeSession.resumeAnswerPhase();
     return;
   }
 
-  // The question can change while the report is in flight (Skip, End session →
-  // new session). A stale result must not repaint the current question or
+  // The question can change while grading is in flight (Skip, End session →
+  // new session). A stale grade must not repaint the current question or
   // start its review countdown.
   if (PracticeAPI.currentQuestion !== q) return;
 
-  const solCode = q.solution_code || "";
+  const solCode = q.solution_code || result.solution_code || "";
+  const actualOutput = result.actual_output || "";
+  const expectedOutput = result.expected_output || q.expected_output || "";
+
   solutionCode.textContent = solCode;
   practiceSubmitArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("hidden");
 
   applyResult(result.correct);
+  if (typeof renderFailedTests === "function") renderFailedTests(result, q);
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
-  // Enough of the review to rebuild it after a pause or reload. There is no
-  // submitted code to preserve any more, so `userCode` is gone from the
-  // snapshot; timer.js tolerates its absence.
+  // Preserve enough of the grade UI to reconstruct this review after a pause
+  // or reload, including the learner's submitted code and failed cases.
   PracticeSession.recordReviewResult({
     correct: !!result.correct,
+    userCode,
     solutionCode: solCode,
-    result: { correct: !!result.correct, failed_tests: [] },
+    result: {
+      correct: !!result.correct,
+      failed_tests: Array.isArray(result.failed_tests) ? result.failed_tests : [],
+    },
   });
-  // Verdict landed — strict review countdown starts now.
+  // Grade landed — strict review countdown starts now.
   PracticeSession.beginReviewPhase();
 
-  // Placement probe: the backend already recorded it — no felt-difficulty step.
+  // Placement probe: the backend already recorded it at /submit — there is no
+  // pending attempt and no felt-difficulty step. Go straight to Next.
   if (q.diagnostic_active && practiceMode === "backend") {
     feedbackPrompt.textContent = result.correct
       ? "Placement recorded — on to the next probe."
@@ -69,30 +63,28 @@ const _selfReport = async (correct) => {
     showNextProblemButton();
     _notifyIfPlacementDone();
   }
-
-  // AI explanation. It used to contrast the learner's code with the solution;
-  // there is no submitted code now, so it explains the solution itself, which
-  // is the part that was doing the teaching anyway. Signed-in modes only.
   if (practiceMode === "backend" || practiceMode === "supabase") {
     aiExplanationSection.classList.remove("hidden");
     aiExplanationText.textContent = "Loading explanation...";
-    fetchAIExplanation(q.question_text, solCode, "", "", q.expected_output || "");
+    fetchAIExplanation(q.question_text, solCode, userCode, actualOutput, expectedOutput);
   }
 
-  // Warm the subtopic-score cache so the Next-problem click can evaluate ARENA
-  // unlock gates without a network round trip.
+  // NOTE: ARENA unlock interstitial does NOT fire on Submit — student
+  // needs to see feedback + give a difficulty rating first. The unlock
+  // pops on the Next-problem click (handler below). We do, however,
+  // warm the backend subtopic-score cache here in the background so
+  // the Next-problem click can evaluate gates instantly without a
+  // network round-trip.
   if (window.ArenaUnlock && typeof window.ArenaUnlock.refreshScores === "function") {
     window.ArenaUnlock.refreshScores().catch(() => {});
   }
-};
+});
 
-selfReportNoBtn.addEventListener("click", () => _selfReport(false));
-selfReportYesBtn.addEventListener("click", () => _selfReport(true));
-
-/* The "Show hint" listener was here. Hints are a collapsible cell directly
-   under the problem in the notebook now, so the reveal happens where the
-   learner is already working rather than in a panel they would have to look
-   away to read. */
+if (showHintBtn) {
+  showHintBtn.addEventListener("click", () => {
+    if (hintSection) hintSection.classList.toggle("hidden");
+  });
+}
 
 overrideCorrectBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
@@ -130,7 +122,7 @@ feedbackButtons.forEach((btn) => {
     try {
       response = await PracticeAPI.sendFeedback(q.question_id, feedback);
     } catch (err) {
-      showColabNote("Feedback failed: " + err.message);
+      outputArea.textContent = "Feedback failed: " + err.message;
       feedbackButtons.forEach((b) => (b.disabled = false));
       btn.classList.remove("feedback-btn--pressed");
       return;
@@ -248,10 +240,9 @@ const _loadNextPracticeQuestion = async () => {
   if (typeof hideFailedTests === "function") hideFailedTests();
   questionMetaTop.classList.add("hidden");
 
-  // Re-arm the self-report buttons for the incoming question.
-  selfReportNoBtn.disabled = false;
-  selfReportYesBtn.disabled = false;
-  hideColabNote();
+  // Reset code editor
+  codeEditor.value = "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  outputArea.textContent = "";
 
   // Load next question
   const nextQ = await PracticeAPI.getNextQuestion();
@@ -355,7 +346,7 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
         await _loadNextPracticeQuestion();
       }
     } catch (err) {
-      showColabNote("Could not start the placement diagnostic: " + err.message);
+      outputArea.textContent = "Could not start the placement diagnostic: " + err.message;
       placementStartBtn.disabled = false;
     }
   });
@@ -375,7 +366,7 @@ if (typeof practiceDontKnowBtn !== "undefined" && practiceDontKnowBtn) {
       await _notifyIfPlacementDone();
       await _loadNextPracticeQuestion();
     } catch (err) {
-      showColabNote("Could not record the answer: " + err.message);
+      outputArea.textContent = "Could not record the answer: " + err.message;
       practiceDontKnowBtn.disabled = false;
     }
   });
@@ -389,19 +380,35 @@ if (practiceSkipBtn) {
     try {
       await _loadNextPracticeQuestion();
     } catch (err) {
-      showColabNote("Could not load the next question: " + err.message);
+      outputArea.textContent = "Could not load the next question: " + err.message;
     } finally {
       practiceSkipBtn.disabled = false;
     }
   });
 }
 
-/* The torch self-rating buttons used to live here. They were the one flow that
-   already worked the way everything works now — run it in Colab, say how it
-   went — so they were folded into `_selfReport` above rather than kept as a
-   parallel path. Note the behaviour change that came with the merge: rating a
-   torch drill used to advance immediately, and now it goes through the review
-   screen and the felt-difficulty rating like every other problem. */
+// --- Torch self-rating (P0.1): torch drills run in Colab, not in-app. Record a
+// local-eval attempt (no doomed server grading) when in backend mode, then
+// advance. In guest/local mode recordLocalEval is a no-op; we still advance.
+const _rateTorchAndAdvance = async (correct) => {
+  const q = PracticeAPI.currentQuestion;
+  if (!q) return;
+  if (torchRateSolved) torchRateSolved.disabled = true;
+  if (torchRateLookedUp) torchRateLookedUp.disabled = true;
+  try {
+    if (typeof PracticeAPI.recordLocalEval === "function") {
+      await PracticeAPI.recordLocalEval(q.question_id, correct);
+    }
+  } catch (_) {
+    /* best-effort — still advance so the learner isn't stuck */
+  } finally {
+    if (torchRateSolved) torchRateSolved.disabled = false;
+    if (torchRateLookedUp) torchRateLookedUp.disabled = false;
+  }
+  await _loadNextPracticeQuestion();
+};
+if (torchRateSolved) torchRateSolved.addEventListener("click", () => _rateTorchAndAdvance(true));
+if (torchRateLookedUp) torchRateLookedUp.addEventListener("click", () => _rateTorchAndAdvance(false));
 
 // --- "Missed one concrete thing" (P1.5): a separate signal so a single missed
 // fact isn't read as "too hard". Rides the non-blocking problem-feedback channel.

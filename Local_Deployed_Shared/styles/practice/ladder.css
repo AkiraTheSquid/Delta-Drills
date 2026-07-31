@@ -1,0 +1,93 @@
+/* ================================================================
+   LADDER — concept header + the worked example kept beside the problem
+   (practice/ladder.js)
+
+   One piece, inside #question-text: `.ladder-example`, the worked example kept
+   below the prompt on the supported rungs. The concept/rung/interval strip that
+   used to sit above the prompt moved to the page-wide concept topbar
+   (styles/practice/concept-topbar.css) so it spans both panels and survives a
+   re-render.
+
+   The example is styled to read as REFERENCE, not as more prompt: dimmer
+   surface, a left rule, and a smaller type scale. A learner scanning the card
+   has to be able to tell at a glance which block is the thing they are being
+   asked to do and which is the thing they are allowed to copy from.
+   ================================================================ */
+
+/* --- the worked example, beside the problem ------------------------------ */
+
+.ladder-example {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--border);
+  border-left: 3px solid #3d6ea8;
+  border-radius: 8px;
+  margin-top: 18px;
+  padding: 0 14px;
+}
+
+.ladder-example > summary {
+  color: #9ec7f0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  list-style: none;
+  padding: 10px 0;
+  text-transform: uppercase;
+}
+
+.ladder-example > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ladder-example > summary::before {
+  content: "▾ ";
+  display: inline-block;
+  font-size: 10px;
+  transform: translateY(-1px);
+}
+
+.ladder-example:not([open]) > summary::before {
+  content: "▸ ";
+}
+
+.ladder-example-blurb {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.ladder-example-body {
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.6;
+  padding-bottom: 12px;
+}
+
+.ladder-example-body h4 {
+  color: var(--text);
+  font-size: 13px;
+  margin: 12px 0 5px;
+}
+
+.ladder-example-body p,
+.ladder-example-body li {
+  margin: 0 0 8px;
+}
+
+.ladder-example-body pre {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  font-size: 12.5px;
+  margin: 8px 0;
+  overflow-x: auto;
+  padding: 10px 12px;
+}
+
+.ladder-example-body p code,
+.ladder-example-body li code {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 1px 5px;
+}

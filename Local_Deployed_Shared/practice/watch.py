@@ -14,18 +14,16 @@ SHARED = os.path.dirname(HERE)
 
 REQUIRED_JS = [
     "init.js", "dom.js", "events.js", "engine.js", "api.js",
-    "pyodide-boot.js", "colab-route.js", "ui.js", "ai.js", "mode.js",
-    "lessons.js", "ladder.js",
+    "runner.js", "visuals.js", "ui.js", "ai.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
     "bars.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
 ]
-# RUNTIME_CONTRACT.md is gone (2026-07-31). It documented what the Pyodide
-# preamble injected into a learner's snippet; there is no preamble and no
-# snippet — problems are worked in Colab, on the learner's runtime.
-REQUIRED_DOCS = ["README.md"]
+REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [
+    os.path.join(SHARED, "delta_numbers.npy"),
+    os.path.join(SHARED, "numbers_stacked.png"),
     os.path.join(SHARED, "questions_structured.json"),
     os.path.join(SHARED, "arena_prereqs_structured.json"),
 ]
@@ -52,20 +50,17 @@ def check_imports():
 # Verify the runtime-contract surface stays intact: preamble builder is exported,
 # fallback rendering helpers are present, and the question JSON is parseable.
 def check_public_api():
-    # pyodide-boot.js is down to the interpreter itself. It exists so the
-    # guest/local adaptive engine (engine.js -> practice_engine.py) has a Python
-    # to run in; everything that executed a learner's or a lesson's code was
-    # removed on 2026-07-31 when both moved into Colab.
-    runner = _read(os.path.join(HERE, "pyodide-boot.js"))
-    assert "async function initPyodide()" in runner, "pyodide-boot.js missing initPyodide"
-    # Match on definitions, not mentions — the file's own comment explains what
-    # was removed and names all three.
-    for gone in ("async function runSnippet(", "window.DeltaRunner =",
-                 "async function buildPyodidePreamble("):
-        assert gone not in runner, (
-            f"pyodide-boot.js grew {gone!r} back — practice runs no code in the page; "
-            "problems are worked in the Colab notebook (see README.md)"
-        )
+    runner = _read(os.path.join(HERE, "runner.js"))
+    assert "buildPyodidePreamble" in runner, "runner.js missing buildPyodidePreamble"
+    assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
+
+    ui_js = _read(os.path.join(HERE, "ui.js"))
+    assert "renderQuestionImports" in ui_js, "ui.js missing imports renderer"
+
+    visuals = _read(os.path.join(HERE, "visuals.js"))
+    assert "renderQuestionVisual" in visuals, "visuals.js missing renderQuestionVisual"
+    assert "renderFallbackImage" in visuals, "visuals.js missing PNG fallback (renderFallbackImage)"
+    assert "getArenaNumbersPngCandidates" in visuals, "visuals.js missing PNG candidate resolver"
 
     unlock = _read(os.path.join(HERE, "arena-unlock.js"))
     for needle in (
@@ -148,7 +143,6 @@ def check_public_api():
         "timer.js beginReviewPhase lost its grading-phase guard — a stale grade "
         "after End session → Start session hijacks the new session's first question"
     )
-    ui_js = _read(os.path.join(HERE, "ui.js"))
     assert "PracticeSession.onQuestionRendered" in ui_js, (
         "ui.js renderQuestion no longer starts the session answer countdown"
     )
@@ -211,249 +205,57 @@ def check_invariants():
     assert id27 is not None, "missing question id 27"
     assert id27["exercise"].get("canonical_solution"), "id-27 canonical_solution still null"
 
-    # The RUNTIME_CONTRACT.md surface used to be checked here: the injected
-    # names in the Pyodide preamble, the einops dispatch, notebook.js's run
-    # harness and the data-fence/nb-scope split that told a runnable lesson
-    # fence from an illustrative one.
-    #
-    # None of it exists (2026-07-31). There is no preamble, no cell runner and
-    # no in-panel lesson: a worked example is a sequence of notebook cells now,
-    # and the panel routes to it instead of re-rendering it. What replaced these
-    # assertions is check_lesson_routing() below, which checks the routing.
+    runner = _read(os.path.join(HERE, "runner.js"))
+    contract = _read(os.path.join(HERE, "RUNTIME_CONTRACT.md"))
+    # Names that the doc claims are always/conditionally injected.
+    for name in ("import numpy as np", "display_array_as_img", "delta_numbers.npy"):
+        assert name in runner, f"runner.js no longer injects expected name: {name!r}"
+        assert name.split()[-1].split("/")[-1] in contract or name in contract, (
+            f"RUNTIME_CONTRACT.md does not mention {name!r}"
+        )
+
+    # The dispatch line that forces einops-questions to Pyodide is the documented gotcha.
+    assert re.search(r"questionNeedsEinops\(", runner), (
+        "runner.js no longer uses questionNeedsEinops gating — update RUNTIME_CONTRACT.md"
+    )
+
+    # notebook.js recognises a silent-but-successful run by matching the exact
+    # string runner.js substitutes for empty output, so it can report the cell's
+    # assertion count instead. Reword it in one file only and every quiet cell
+    # silently goes back to saying "no printed output".
+    notebook = _read(os.path.join(HERE, "notebook.js"))
+    no_output = "✓ Ran successfully (no printed output)"
+    assert no_output in runner, (
+        f"runner.js no longer emits {no_output!r} — notebook.js matches on it"
+    )
+    assert no_output in notebook, (
+        f"notebook.js lost its copy of {no_output!r} — silent cells will stop "
+        "reporting their passed checks"
+    )
+
+    # Every cell is executed through the harness: it is what gives a bare
+    # trailing expression its Jupyter-style echo, what reports the names a
+    # silent cell bound, and what keeps traceback line numbers cell-relative.
+    for marker in ("_delta_cell", "_delta_bound", "redirect_stdout"):
+        assert marker in notebook, f"notebook.js lost the run harness piece {marker!r}"
+
+    # The runnable/static split is the authoring format's own marker, produced
+    # by md() in lessons.js and consumed here. If either half goes, every fence
+    # becomes a cell or none of them do.
     lessons = _read(os.path.join(HERE, "lessons.js"))
-    for gone in ("const md = (text", "window.LessonNotebook.", "data-fence="):
-        assert gone not in lessons, (
-            f"lessons.js grew {gone!r} back — lesson prose and worked examples are "
-            "Colab notebook cells; the gate links to them (see README.md)"
-        )
-
-
-# ── Self-report loop ──────────────────────────
-def check_self_report_loop():
-    """Practice does not run or grade code. Keep it that way.
-
-    The editor, the Run button, the output pane and the in-browser graders were
-    removed on 2026-07-31: the learner works the problem in its Colab notebook
-    and reports whether it ran. Each assertion below is one way that has already
-    been, or could quietly be, undone.
-    """
-    root = os.path.dirname(HERE)
-    markup = _read(os.path.join(root, "index.html"))
-
-    # 1. The editor half must stay gone. A textarea reappearing means someone
-    #    started rebuilding the runner, and two ways to answer a question means
-    #    two things that can disagree about what was answered.
-    for dead in ('id="code-editor"', 'id="run-btn"', 'id="output-area"',
-                 'id="output-visual"', 'class="practice-right"'):
-        assert dead not in markup, (
-            f"index.html has {dead} again — practice is self-report only; "
-            f"see practice/README.md before adding a runner back"
-        )
-
-    # 2. Both result buttons, in the order the learner reads them. LEFT is the
-    #    negative one because the expiring answer timer clicks it.
-    no_at = markup.find('id="self-report-no"')
-    yes_at = markup.find('id="self-report-yes"')
-    assert no_at > 0 and yes_at > 0, "index.html lost a self-report button"
-    assert no_at < yes_at, (
-        "the self-report buttons swapped order — 'was not able' must render "
-        "left of 'was able'; the timer default and the visual default are "
-        "supposed to be the same control"
+    assert 'data-fence=' in lessons, (
+        "lessons.js md() no longer emits data-fence — notebook.js cannot tell a "
+        "runnable ```python fence from a ```python no-run one"
     )
-
-    # 3. Timer expiry must record a miss, not silently skip. This is a mastery
-    #    write: an expiry that advances without reporting loses the attempt.
-    timer = _read(os.path.join(HERE, "timer.js"))
-    assert "selfReportNoBtn.click()" in timer, (
-        "timer.js no longer clicks #self-report-no when the answer time runs "
-        "out — an expiry must record 'was not able to run the result'"
-    )
-
-    # 4. One grading entry point, and it is not a grader.
-    api = _read(os.path.join(HERE, "api.js"))
-    assert "recordSelfReport" in api, "api.js lost recordSelfReport"
-    assert "submit-local-eval" in api, (
-        "api.js no longer posts /submit-local-eval — that endpoint is what runs "
-        "the same BKT/FIRe chain as server-side grading"
-    )
-    for gone in ("submitAnswer", "fetchAIJudge", "outputsMatch"):
-        assert gone not in api, (
-            f"api.js has {gone} again — code grading belongs to the backend, "
-            f"not to a second in-browser path"
-        )
-
-
-# ── Colab routing ─────────────────────────────
-def check_colab_route():
-    """The learner has to be able to GET to the problem.
-
-    Reporting "was able to run the result" only means something if there was
-    somewhere to run it. The map is generated next to the notebooks
-    (scripts/generate_colab_notebooks.py) so the two cannot drift; these checks
-    catch the file going missing, going stale, or losing the cell anchor.
-    """
-    root = os.path.dirname(HERE)
-    index_path = os.path.join(root, "lessons", "colab_notebooks.json")
-    assert os.path.exists(index_path), (
-        "lessons/colab_notebooks.json is missing — regenerate with "
-        "`python3 scripts/generate_colab_notebooks.py`"
-    )
-    with open(index_path, encoding="utf-8") as fh:
-        index = json.load(fh)
-    for key in ("lessons", "questions", "subtopics", "kcs"):
-        assert index.get(key), f"colab_notebooks.json has no {key!r}"
-
-    # Every notebook the map names must be one the generator actually wrote.
-    files = {l["file"] for l in index["lessons"]}
-    assert len(files) == len(index["lessons"]), "two lessons claim one notebook file"
-
-    # The map must agree with the extension's copy — same generator, same run.
-    ext = os.path.join(os.path.dirname(root), "extension", "panel", "notebook-index.js")
-    if os.path.exists(ext):
-        ext_src = _read(ext)
-        ext_index = json.loads(ext_src[ext_src.index("{"):].rstrip().rstrip(";"))
-        assert ext_index.get("questions") == index.get("questions"), (
-            "colab_notebooks.json and extension/panel/notebook-index.js disagree "
-            "about which notebook a question is in — rerun "
-            "scripts/generate_colab_notebooks.py, which writes both"
-        )
-
-    # Auto-open must be gated on the problem actually being on screen.
-    # initPractice() renders a question during boot so a session can start
-    # instantly; that render is invisible (the page may not even be the open
-    # tab, and session-idle hides it behind the setup panel). Without this
-    # guard, merely loading the app hijacked a browser tab to a notebook for a
-    # problem the learner had not been asked yet.
-    ui = _read(os.path.join(HERE, "ui.js"))
-    assert 'page.classList.contains("session-idle")' in ui and 'page.classList.contains("hidden")' in ui, (
-        "ui.js openColabForQuestion lost its visibility guard — loading the app "
-        "will open a Colab tab before the learner starts a session"
-    )
-
-    # A timeout must not write a miss for a problem with nowhere to run it.
-    # Backend placement probes draw from the whole 499-question bank while only
-    # 424 are anchored in a notebook, so this path is reachable.
-    timer = _read(os.path.join(HERE, "timer.js"))
-    assert "questionHasColabRoute" in timer, (
-        "timer.js no longer checks questionHasColabRoute before auto-reporting "
-        "a miss — an unroutable question would record a false negative in BKT"
-    )
-
-    # rel=noopener/noreferrer makes a named-target navigation open a NEW context
-    # (HTML spec), which would defeat the single reused Colab tab entirely.
-    markup = _read(os.path.join(os.path.dirname(HERE), "index.html"))
-    markup_link = re.search(r'<a[^>]*id="colab-open-link"[^>]*>', markup)
-    assert markup_link, "index.html lost #colab-open-link"
-    assert "noopener" not in markup_link.group(0) and "noreferrer" not in markup_link.group(0), (
-        "#colab-open-link has rel=noopener/noreferrer — that makes the browser "
-        "ignore target=\"delta-drills-colab\" and open a new tab every click"
-    )
-
-    route = _read(os.path.join(HERE, "colab-route.js"))
-    # Colab scrolls to a cell by its metadata id; the generator emits dd-q<id>
-    # precisely so this anchor works. Losing it silently drops the learner at
-    # the top of a 500-cell notebook.
-    assert "#scrollTo=dd-q" in route, (
-        "colab-route.js no longer builds a #scrollTo=dd-q<id> anchor — the link "
-        "would open the notebook but not the problem"
-    )
-    # One reused tab is what makes this work from wherever the learner is.
-    # An inferred (subtopic/KC) match names the lesson but proves nothing about
-    # this question having a cell, so the anchor must be gated on an exact hit.
-    assert "isExactMatch" in route, (
-        "colab-route.js no longer gates #scrollTo on an exact question match — "
-        "an inferred lesson would get an anchor for a cell that may not exist"
-    )
-    assert 'var TARGET = "delta-drills-colab"' in route, (
-        "colab-route.js lost its named window target — every jump would open a "
-        "new Colab tab"
+    assert "nb-scope" in lessons and "nb-scope" in notebook, (
+        "the nb-scope contract is broken — lessons.js marks the regions whose "
+        "fences validate_lessons.py executes, notebook.js only mounts inside them"
     )
 
 
 # ── Run all checks ────────────────────────────
-# ── Lesson routing ────────────────────────────
-def check_lesson_routing():
-    """Concepts, worked examples and problem prose live in the notebook.
-
-    The panel used to render all three: LessonGate drew the concept and its
-    worked example into #question-text, LadderUI re-inserted that example beside
-    faded and partial problems, and renderQuestionBody drew the prompt. They all
-    moved into the generated Colab notebook on 2026-07-31, because a worked
-    example is regularly several code blocks that each build on the state the
-    one above them left behind — which only behaves correctly where the cells
-    actually run.
-
-    The scaffold that removal could have cost is preserved by the notebook's own
-    ordering, not by anything in this panel: the generator emits, per concept,
-    prose then worked example then that segment's faded problems, in one file.
-    """
-    markup = _read(os.path.join(SHARED, "index.html"))
-    for gone in ('id="question-text"', 'id="question-imports"', 'id="question-visual"',
-                 'id="practice-aids"', 'id="show-hint-btn"', 'id="hint-section"'):
-        assert gone not in markup, (
-            f"index.html grew {gone} back — the prompt, its helper imports, its "
-            "target image and its hints are Colab notebook cells (see README.md)"
-        )
-    assert 'id="lesson-gate"' in markup, (
-        "index.html lost #lesson-gate — practice/lessons.js has nowhere to render "
-        "the first-encounter card and the gate silently stops firing"
-    )
-
-    # THE REGRESSION THIS EXISTS TO CATCH. The gate used to bail on a missing
-    # #code-editor, so deleting the editor in the first Colab pass turned the
-    # first-encounter lesson off with no error anywhere. Nothing in the gate may
-    # depend on an element the practice page no longer has.
-    lessons = _read(os.path.join(HERE, "lessons.js"))
-    for dead_el in ("code-editor", "output-area", "question-text"):
-        assert f'_el("{dead_el}")' not in lessons and f'getElementById("{dead_el}")' not in lessons, (
-            f"lessons.js still looks up #{dead_el}, which does not exist — the "
-            "gate will return false and first-encounter lessons stop appearing"
-        )
-    assert "lesson-gate-continue-btn" in lessons, "lessons.js lost the gate's continue button"
-
-    # Exposure + ladder crediting are the mastery-visible half of the gate and
-    # survived the rewrite. Losing either re-teaches a concept forever, or
-    # parks it on a rung whose screen no longer exists.
-    for needle in ("_markLocalExposure", "_markBackendExposure", "creditTaught"):
-        assert needle in lessons, f"lessons.js gate lost {needle!r}"
-
-    # The gate routes by the SAME anchor the generator writes onto the KP header
-    # cell. It is shipped in the map rather than re-derived, so a JS slug cannot
-    # drift from the Python one into an anchor Colab silently ignores.
-    route = _read(os.path.join(HERE, "colab-route.js"))
-    assert "urlForKc" in route and "index.kps" in route and "index.kcs" in route, (
-        "colab-route.js lost the concept route — the lesson gate cannot link to "
-        "the notebook section that teaches the KC"
-    )
-    with open(os.path.join(SHARED, "lessons", "colab_notebooks.json"), encoding="utf-8") as f:
-        index = json.load(f)
-    kps = index.get("kps") or {}
-    assert kps, "colab_notebooks.json has no kps map — rerun scripts/generate_colab_notebooks.py"
-    # kps holds the ANCHOR only and kcs holds the notebook, keyed identically —
-    # one fact per map. A concept present in one and not the other would route
-    # to a notebook with no anchor, or an anchor with no notebook.
-    assert set(kps) == set(index.get("kcs") or {}), (
-        "colab_notebooks.json kps and kcs cover different concepts"
-    )
-    for kc, anchor in kps.items():
-        assert isinstance(anchor, str) and anchor.startswith("dd-kp-"), (
-            f"kps[{kc!r}] is not a dd-kp- anchor string: {anchor!r}"
-        )
-
-    # LadderUI must not start rendering the example again next to the problem.
-    ladder = _read(os.path.join(HERE, "ladder.js"))
-    # Definitions, not mentions — the file's tombstone comment names both.
-    for gone in ("const _exampleHtml =", "const _segmentFor =", "insertAdjacentHTML("):
-        assert gone not in ladder, (
-            f"ladder.js grew {gone!r} back — the worked example sits above the "
-            "problem in the notebook, where it can be run"
-        )
-
-
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants,
-              check_self_report_loop, check_colab_route,
-              check_lesson_routing]
+    checks = [check_imports, check_public_api, check_invariants]
     for fn in checks:
         try:
             fn()

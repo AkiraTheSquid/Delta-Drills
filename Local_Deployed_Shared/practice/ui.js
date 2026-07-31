@@ -9,105 +9,121 @@ function isCalibrationQuestion(q) {
   return isColdStart(q.subtopic, overrideN);
 }
 
-/* `questionIsTorch` and `torchNeedsColab` were here. Both answered questions
-   about running code in the page — is this torch, and does that mean Pyodide
-   cannot run it — and the page runs no question code at all now. */
+// A question is "torch" if the bank tags it so, or its starter/solution imports
+// torch.
+function questionIsTorch(q) {
+  if (!q) return false;
+  if (q.primary_library === "torch") return true;
+  const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
+  return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
+}
+
+// Colab routing applies ONLY where the runner can't grade torch. Backend mode
+// grades torch in-process now (fork runner, torch preimported at boot), so
+// torch questions there use the normal editor flow. Offline/Supabase practice
+// runs on Pyodide, which cannot import torch at all → Colab.
+function torchNeedsColab(q) {
+  // Routing a torch drill to Colab hides the WHOLE right panel — editor, aids,
+  // submit. That was survivable when torch drills were a rare fork, but the
+  // bank is now 448/448 torch, so this condition fires on every question the
+  // moment the runtime is not the backend, and it strands the learner on a
+  // prompt with no controls and no way forward.
+  //
+  // Only route away when there is somewhere to route TO. With no notebook the
+  // old behaviour was a dead end, not a fallback.
+  if (!questionIsTorch(q) || practiceMode === "backend") return false;
+  return !!(q && (q.problem_notebook_path || q.solution_notebook_path));
+}
 
 function _escapeHtml(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-/* `renderQuestionBody`, `renderQuestionImports` and `setupQuestionAids` were
-   here. They rendered the problem statement, its "Imported helpers" pills and
-   its hint into the panel. All three moved into the notebook on 2026-07-31 —
-   the prose is the `dd-q<id>` cell, the imports are real import lines in the
-   cell below it, and the hint is a `<details>` cell the generator writes right
-   after the problem. Rendering them here as well would have given the learner
-   a second, inert copy of everything they are already reading in Colab. */
-
-/* THE COLAB CARD — where this problem gets worked.
-
-   Every question routes to a notebook now. `applyTorchRouting` used to sit
-   here and did the opposite job: it decided whether ONE library's questions
-   needed Colab and, when they did, hid the editor, the hints and the submit
-   controls. There is no editor left to hide and no per-library decision left
-   to make, so what remains is: name the notebook, point at the exact cell.
-
-   Silent when there is no mapping. 424 of the 499 bank questions are anchored
-   in a notebook; a question that is not (a placement probe from a parked
-   chapter, say) still renders and is still answerable — it just has nowhere to
-   send you, and claiming otherwise with a dead link would be worse. */
-function renderColabCard(q) {
-  if (!colabCard) return;
-  var url = window.ColabRoute ? window.ColabRoute.urlFor(q) : "";
-  var lesson = window.ColabRoute ? window.ColabRoute.lessonFor(q) : null;
-  colabCard.classList.toggle("hidden", !url);
-  hideColabNote();
-  // CLEAR the link when there is no route, do not just hide it. `showColabNote`
-  // un-hides this card to report an error, and a stale href left behind by the
-  // previous question would then be offered as if it were this problem's
-  // notebook — the worst possible wrong answer, because it looks right.
-  if (colabOpenLink) {
-    colabOpenLink.href = url || "#";
-    colabOpenLink.classList.toggle("hidden", !url);
+// Render a question prompt as separated prose + code instead of one wall of
+// text, and let KaTeX render the $…$ math (it was showing raw before). Fenced
+// ```code``` blocks become a styled <pre>; inline `code` becomes <code>; math
+// is left for KaTeX. Returns nothing — writes into #question-text.
+function renderQuestionBody(q) {
+  const raw = (q && q.question_text) || "";
+  // Pull fenced code blocks out first so we don't KaTeX/escape-mangle them.
+  const parts = [];
+  const fence = /```[a-zA-Z0-9]*\n?([\s\S]*?)```/g;
+  let last = 0;
+  let m;
+  while ((m = fence.exec(raw)) !== null) {
+    if (m.index > last) parts.push({ type: "prose", text: raw.slice(last, m.index) });
+    parts.push({ type: "code", text: m[1].replace(/\n$/, "") });
+    last = fence.lastIndex;
   }
-  if (colabCardLabel) {
-    colabCardLabel.textContent = !url
-      ? ""
-      : (lesson && lesson.title ? lesson.title : "Notebook");
-  }
-}
+  if (last < raw.length) parts.push({ type: "prose", text: raw.slice(last) });
 
-/* Is there anywhere to work this problem?
-   Used by the answer timer: running out of time only means "was not able to run
-   the result" if there was a result to run. */
-function questionHasColabRoute(q) {
-  return !!(window.ColabRoute && window.ColabRoute.urlFor(q));
-}
+  const html = parts.map((p) => {
+    if (p.type === "code") {
+      return `<pre class="question-code-block"><code>${_escapeHtml(p.text)}</code></pre>`;
+    }
+    // Escape HTML, then turn inline `backtick` spans into <code>. Math ($…$) is
+    // left untouched for KaTeX auto-render below. Blank lines split paragraphs
+    // (each its own div — .question-prose has no pre-wrap, so raw \n collapses).
+    return p.text
+      .split(/\n{2,}/)
+      .map((para) => para.trim())
+      .filter(Boolean)
+      .map((para) => {
+        const escaped = _escapeHtml(para).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+        return `<div class="question-prose">${escaped}</div>`;
+      })
+      .join("");
+  }).join("");
 
-/* Steer the one Colab tab to this problem.
+  questionText.innerHTML = html || _escapeHtml(raw);
 
-   Only ever best-effort — see the header of practice/colab-route.js. A browser
-   permits window.open during a user gesture; the click that advanced to this
-   question is one, an expiring answer timer is not. When it does not open we
-   say so rather than leaving the learner waiting for a tab, because the link
-   right next to the note is a working way through. */
-function openColabForQuestion(q) {
-  if (!window.ColabRoute || !colabCard || colabCard.classList.contains("hidden")) return;
-  // ONLY when the problem is actually in front of the learner.
-  //
-  // `initPractice` renders a question during boot so the page has something to
-  // show the moment a session starts. That render is invisible — the practice
-  // page may not even be the open tab, and `session-idle` hides the question
-  // behind the setup panel — and it used to fire this, so merely loading the
-  // app hijacked a tab to a notebook for a problem nobody had been asked yet.
-  // Both conditions are needed: `session-idle` alone misses the boot render on
-  // another tab, and visibility alone misses the setup screen.
-  var page = document.getElementById("page-practice");
-  if (!page || page.classList.contains("hidden") || page.classList.contains("session-idle")) {
-    return;
-  }
-  if (!window.ColabRoute.open(q)) {
-    showColabNote("Couldn't open the notebook automatically — use the link above.");
+  // Render the math. auto-render.min.js loads `defer`, so it's usually ready by
+  // the time a question renders; guard in case it isn't.
+  if (typeof window.renderMathInElement === "function") {
+    try {
+      window.renderMathInElement(questionText, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    } catch (_) { /* malformed LaTeX — leave the raw text */ }
   }
 }
 
-function showColabNote(message) {
-  if (!colabCardNote) return;
-  // The card itself may be hidden (unmapped question); the note still has to be
-  // readable, since this is now the page's only error surface. `renderColabCard`
-  // has already emptied the link and label in that case, so revealing the card
-  // here shows the message alone rather than a previous problem's notebook.
-  if (colabCard) colabCard.classList.remove("hidden");
-  colabCardNote.textContent = message;
-  colabCardNote.classList.remove("hidden");
-}
-
-function hideColabNote() {
-  if (!colabCardNote) return;
-  colabCardNote.textContent = "";
-  colabCardNote.classList.add("hidden");
+// BINARY interface per question: either the Colab card (offline torch) or the
+// full editor flow (everything else) — never both half-shown at once (a torch
+// card next to a live editor read as contradictory; tester feedback).
+function applyTorchRouting(q) {
+  const colabRoute = torchNeedsColab(q);
+  if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !colabRoute);
+  // The whole right editor panel + hint aids + submit/skip swap out together.
+  const rightPanel = document.querySelector(".practice-right");
+  if (rightPanel) rightPanel.classList.toggle("hidden", colabRoute);
+  const aids = document.getElementById("practice-aids");
+  if (aids) aids.classList.toggle("hidden", colabRoute);
+  practiceSubmitArea.classList.toggle("hidden", colabRoute);
+  if (!colabRoute) return;
+  const toHref = (p) => (p && typeof colabUpstreamHref === "function") ? colabUpstreamHref(p) : "";
+  // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall
+  // back to the solution notebook only if no problem notebook exists.
+  if (torchColabLink) {
+    const href = toHref(q && (q.problem_notebook_path || q.solution_notebook_path));
+    torchColabLink.classList.toggle("hidden", !href);
+    if (href) torchColabLink.href = href;
+  }
+  // Separate "Show solution" → the worked-answer notebook, only when we have a
+  // distinct problem notebook (otherwise the primary link already IS the solution).
+  if (torchSolutionLink) {
+    const solHref = toHref(q && q.solution_notebook_path);
+    const showSolution = !!(solHref && q && q.problem_notebook_path);
+    torchSolutionLink.hidden = !showSolution;
+    if (showSolution) torchSolutionLink.href = solHref;
+  }
 }
 
 function stableQuestionId(q) {
@@ -158,14 +174,16 @@ function renderQuestion(q, count) {
   }
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
-  // Names the concept under test in the page-wide topbar. It no longer puts a
-  // worked example on screen: the example sits in the notebook immediately
-  // above this problem's cell, which is both where it belongs and the only
-  // place a multi-cell example actually runs.
+  renderQuestionBody(q);
+  // Names the concept under test and, on the scaffolded rungs, puts the worked
+  // example back on screen beside the problem. Must run AFTER renderQuestionBody
+  // — that call replaces #question-text wholesale.
   if (window.LadderUI) window.LadderUI.decorate(q);
-  // Neither the problem statement, its imports, its target image nor its
-  // starter code is rendered here — all four are cells in the notebook the
-  // Colab card points at. See the comment on #lesson-gate in index.html.
+  renderQuestionImports(q);
+  renderQuestionVisual(q);
+  codeEditor.value =
+    q.starter_code ||
+    "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   renderQuestionIdChip(q);
@@ -208,12 +226,12 @@ function renderQuestion(q, count) {
   }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   solutionCode.textContent = q.solution_code;
+  setupQuestionAids(q);
   overrideRow.classList.add("hidden");
 
-  // Reset to pre-report state
+  // Reset to pre-submit state
   practiceSubmitArea.classList.remove("hidden");
-  selfReportNoBtn.disabled = false;
-  selfReportYesBtn.disabled = false;
+  practiceSubmitBtn.disabled = false;
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
   ewmaAccuracy.classList.add("hidden");
@@ -221,11 +239,9 @@ function renderQuestion(q, count) {
   showFeedbackButtons();
   resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
-  // Point at the notebook cell this problem lives in, then steer the Colab tab
-  // there. Rendering first matters: the auto-open reads the card's visibility
-  // to decide whether there is anywhere to go.
-  renderColabCard(q);
-  openColabForQuestion(q);
+  // Torch drills swap the submit flow for the Colab-routing notice (must run
+  // AFTER the submit area is un-hidden above so it can re-hide it for torch).
+  applyTorchRouting(q);
 
   // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
   // Backend mode: use p_current from the question response (adaptiveStateJson is null).
@@ -256,6 +272,17 @@ function renderQuestion(q, count) {
       savePracticeProgress(practiceProgress);
     }
   }
+}
+
+// Configure the Show Hint aid for the current question and reset its reveal
+// state. Hint comes straight off the question payload. (In-browser bank
+// questions reveal their solution code after submit; the Colab solution link
+// lives on the procedural-drill cards, not the practice tab.)
+function setupQuestionAids(q) {
+  const hint = q && typeof q.hint === "string" ? q.hint.trim() : "";
+  if (hintText) hintText.textContent = hint;
+  if (showHintBtn) showHintBtn.classList.toggle("hidden", !hint);
+  if (hintSection) hintSection.classList.add("hidden");
 }
 
 function getTargetDifficultyForQuestion(q) {
@@ -309,6 +336,138 @@ function parseStarterImports(source) {
     }
   }
   return imports;
+}
+
+async function loadNotebookArrayPreview(dataUrl, tempFilePath) {
+  const pyodide = await initPyodide();
+  if (!pyodide) throw new Error("Python runtime unavailable.");
+  const response = await fetch(dataUrl, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${dataUrl} (${response.status})`);
+  }
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  pyodide.FS.writeFile(tempFilePath, bytes);
+  const payload = await pyodide.runPythonAsync(`
+import json
+import numpy as np
+json.dumps(np.load(${JSON.stringify(tempFilePath)}).tolist())
+`);
+  return JSON.parse(payload);
+}
+
+let questionHelperRenderSeq = 0;
+
+async function renderQuestionImports(q) {
+  if (!questionImports || !questionImportsList) return;
+  const renderSeq = ++questionHelperRenderSeq;
+  questionImports.classList.add("hidden");
+  questionImportsList.innerHTML = "";
+  const helperItems = await getNotebookHelperItems(q);
+  const visibleItems = helperItems.filter((item) => {
+    if (item.kind === "arena-array") return true;
+    const code = (item.code || "").trim();
+    const label = (item.label || "").trim();
+    return !!item.context && code !== label;
+  });
+  if (renderSeq !== questionHelperRenderSeq) return;
+  if (!visibleItems.length) {
+    questionImports.classList.add("hidden");
+    return;
+  }
+  for (const item of visibleItems) {
+    const itemWrap = document.createElement("div");
+    itemWrap.className = "question-import-item";
+
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = "question-import";
+    pill.textContent = item.label;
+    pill.setAttribute("aria-expanded", "false");
+
+    const detail = document.createElement("div");
+    detail.className = "question-import-detail hidden";
+    const note = document.createElement("div");
+    note.className = "question-import-detail-note";
+    note.textContent = item.note;
+    detail.appendChild(note);
+    if (item.context) {
+      const context = document.createElement("div");
+      context.className = "question-import-detail-context";
+      context.textContent = item.context;
+      detail.appendChild(context);
+    }
+
+    let previewState = null;
+    if (item.kind === "arena-array" && item.dataUrl) {
+      const preview = document.createElement("div");
+      preview.className = "question-import-detail-preview";
+      const previewNote = document.createElement("div");
+      previewNote.className = "question-import-detail-preview-note";
+      previewNote.textContent = `Source data: ${item.dataUrl}`;
+      const previewCanvas = document.createElement("canvas");
+      previewCanvas.className = "question-import-detail-preview-canvas hidden";
+      const previewText = document.createElement("pre");
+      previewText.className = "question-import-detail-preview-json hidden";
+      preview.appendChild(previewNote);
+      preview.appendChild(previewCanvas);
+      preview.appendChild(previewText);
+      detail.appendChild(preview);
+      previewState = {
+        loaded: false,
+        loading: false,
+        previewNote,
+        previewCanvas,
+        previewText,
+      };
+    }
+
+    const shouldShowCode = item.kind === "arena-array" || (item.code && item.code.trim() !== item.label.trim());
+    if (shouldShowCode) {
+      const pre = document.createElement("pre");
+      pre.className = "question-import-detail-code";
+      const code = document.createElement("code");
+      code.textContent = item.code;
+      pre.appendChild(code);
+      detail.appendChild(pre);
+    }
+
+    pill.addEventListener("click", () => {
+      const expanded = !detail.classList.contains("hidden");
+      detail.classList.toggle("hidden", expanded);
+      pill.setAttribute("aria-expanded", String(!expanded));
+      itemWrap.classList.toggle("expanded", !expanded);
+
+      if (!expanded && previewState && !previewState.loaded && !previewState.loading) {
+        previewState.loading = true;
+        previewState.previewNote.textContent = "Loading actual notebook array...";
+        loadNotebookArrayPreview(
+          item.dataUrl,
+          `/tmp/delta-drills-helper-${renderSeq}-${Math.random().toString(36).slice(2)}.npy`
+        )
+          .then((arrayData) => {
+            if (renderSeq !== questionHelperRenderSeq) return;
+            previewState.loaded = true;
+            previewState.previewNote.textContent = "Loaded from notebook data file.";
+            window.renderDeltaArrayToCanvas(previewState.previewCanvas, arrayData);
+            previewState.previewCanvas.classList.remove("hidden");
+            const rawJson = JSON.stringify(arrayData, null, 2);
+            previewState.previewText.textContent =
+              rawJson.length > 16000 ? rawJson.slice(0, 16000) + "\n...\n(truncated)" : rawJson;
+            previewState.previewText.classList.remove("hidden");
+          })
+          .catch((err) => {
+            if (renderSeq !== questionHelperRenderSeq) return;
+            previewState.previewNote.textContent =
+              "Failed to load notebook array: " + (err.message || String(err));
+          });
+      }
+    });
+
+    itemWrap.appendChild(pill);
+    itemWrap.appendChild(detail);
+    questionImportsList.appendChild(itemWrap);
+  }
+  questionImports.classList.remove("hidden");
 }
 
 function shortSubtopicName(subtopic) {

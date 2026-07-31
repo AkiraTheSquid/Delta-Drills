@@ -22,11 +22,12 @@ const sessionPauseBtn = document.getElementById("session-pause-btn");
 const sessionEndBtn = document.getElementById("session-end-btn");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");
-// #question-text, #question-imports* and #question-visual* are gone (2026-07-31):
-// the problem statement, its helper imports and its target image are cells in
-// the Colab notebook the problem is worked in. #lesson-gate replaces the
-// in-panel lesson screen and points at that notebook's concept section.
-const lessonGate = document.getElementById("lesson-gate");
+const questionText = document.getElementById("question-text");
+const questionImports = document.getElementById("question-imports");
+const questionImportsList = document.getElementById("question-imports-list");
+const questionVisual = document.getElementById("question-visual");
+const questionVisualNote = document.getElementById("question-visual-note");
+const questionVisualCanvas = document.getElementById("question-visual-canvas");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
 const questionIdChip = document.getElementById("question-id-chip");
@@ -39,19 +40,16 @@ const targetDifficultyMarkerNew = document.getElementById("target-difficulty-mar
 const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
 const targetDifficultyValue = document.getElementById("target-difficulty-value");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
-// The two self-report buttons. NO is first because it is also the timeout
-// default — practice/timer.js clicks it when the answer countdown expires.
-const selfReportNoBtn = document.getElementById("self-report-no");
-const selfReportYesBtn = document.getElementById("self-report-yes");
+const practiceSubmitBtn = document.getElementById("practice-submit-btn");
 const practiceSkipBtn = document.getElementById("practice-skip-btn");
 const practiceDontKnowBtn = document.getElementById("practice-dontknow-btn");
 const placementStartBtn = document.getElementById("placement-start-btn");
-// Where this problem is worked. Every question routes to Colab now, so this
-// card is part of the normal flow rather than a per-library special case.
-const colabCard = document.getElementById("colab-card");
-const colabCardLabel = document.getElementById("colab-card-label");
-const colabOpenLink = document.getElementById("colab-open-link");
-const colabCardNote = document.getElementById("colab-card-note");
+// Torch-drill Colab routing (torch can't run in the in-app sandbox).
+const torchColabNotice = document.getElementById("torch-colab-notice");
+const torchColabLink = document.getElementById("torch-colab-link");
+const torchSolutionLink = document.getElementById("torch-solution-link");
+const torchRateSolved = document.getElementById("torch-rate-solved");
+const torchRateLookedUp = document.getElementById("torch-rate-lookedup");
 // Difficulty-rating helpers (clear default + "missed one concrete thing").
 const feedbackHelp = document.getElementById("feedback-help");
 const missedFactRow = document.getElementById("missed-fact-row");
@@ -75,17 +73,21 @@ const aiExplanationText = document.getElementById("ai-explanation-text");
 const coldStartBadge = document.getElementById("cold-start-badge");
 const coldStartLabel = document.getElementById("cold-start-label");
 const coldStartNote = document.getElementById("cold-start-note");
-// No codeEditor / runBtn / outputArea / outputVisual* here any more — the
-// editor panel was removed on 2026-07-31. Code is written and run in Colab.
-// If you are adding one back, you are rebuilding the runner; read
-// practice/README.md first.
+const codeEditor = document.getElementById("code-editor");
+const runBtn = document.getElementById("run-btn");
+const outputArea = document.getElementById("output-area");
+const outputVisual = document.getElementById("output-visual");
+const outputVisualNote = document.getElementById("output-visual-note");
+const outputVisualCanvas = document.getElementById("output-visual-canvas");
 const feedbackPrompt = document.getElementById("feedback-prompt");
 const feedbackButtons = document.querySelectorAll(".feedback-btn");
 const problemFeedbackRow = document.getElementById("problem-feedback-row");
 const problemFlagButtons = document.querySelectorAll(".problem-flag-btn");
 const problemFeedbackNote = document.getElementById("problem-feedback-note");
 const problemFeedbackStatus = document.getElementById("problem-feedback-status");
+const showHintBtn = document.getElementById("show-hint-btn");
 const showAnswerBtn = document.getElementById("show-answer-btn");
-// No hint elements: hints are a <details> cell under the problem in Colab.
+const hintSection = document.getElementById("hint-section");
+const hintText = document.getElementById("hint-text");
 const answerAids = document.getElementById("answer-aids");
 const colabSolutionLink = document.getElementById("colab-solution-link");
