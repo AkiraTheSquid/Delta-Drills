@@ -19,33 +19,32 @@
   overflow: hidden;
 }
 
-/* ONE column since 2026-07-31. The right panel held the code editor, the Run
-   button and the output pane; code is written in the problem's Colab notebook
-   now, so there is no second panel and `.practice-left` takes the full width.
-   The names are kept because `#page-practice.session-idle .practice-split` and
-   several other rules key off them. */
 .practice-split {
   display: flex;
   flex: 1 1 auto;
   /* Without this, a flex item refuses to shrink below its content's height and
-     the panel's own `overflow-y: auto` never engages. */
+     the panels' own `overflow-y: auto` never engages. */
   min-height: 0;
 }
 
+/* Left Panel */
 .practice-left {
   flex: 1;
-  /* Tighter than the old 28/32 because this column is now the entire page and
-     it has to stay readable at side-panel width (~360-420px). */
-  padding: 20px 22px 28px;
+  padding: 28px 32px 32px;
   overflow-y: auto;
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 0;
-  /* A single column of prose becomes unreadable when stretched across a
-     desktop monitor; cap it and centre. */
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
+}
+
+/* Right Panel */
+.practice-right {
+  flex: 1;
+  padding: 28px 32px 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 /* ================================================================
    RESPONSIVE — Practice
@@ -57,21 +56,17 @@
   }
 
   .practice-left {
-    padding: 16px 14px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 50vh;
+  }
+
+  .practice-right {
+    max-height: 50vh;
   }
 
   .practice-container {
     height: auto;
     overflow: visible;
-  }
-}
-
-/* Side-panel width. The whole app runs inside a ~400px Chrome side panel now
-   (extension/panel/app.html), so the result buttons have to stack rather than
-   sit two-across and squeeze their labels to one word per line. */
-@media (max-width: 520px) {
-  #practice-submit-area {
-    flex-direction: column;
-    align-items: stretch;
   }
 }

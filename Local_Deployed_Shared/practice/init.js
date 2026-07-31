@@ -55,11 +55,6 @@ function invalidateLegacyBackendQuestion() {
 const initPractice = async () => {
   detectPracticeMode();
   await loadQuestionsBank();
-  // The question -> Colab-notebook map. Awaited, not fired-and-forgotten: the
-  // first question renders moments later and reads it synchronously to build
-  // the notebook link, so a late arrival would leave problem #1 the only one
-  // without one. Failure is non-fatal by design (see colab-route.js).
-  if (window.ColabRoute) await window.ColabRoute.load();
 
   // For supabase/local modes, load engine + questions + state
   if (practiceMode !== "backend") {
@@ -150,11 +145,7 @@ async function refreshPracticeQuestionForPreferences() {
     const nextQ = await PracticeAPI.getNextQuestion();
     renderQuestion(nextQ, practiceQuestionCount);
   } catch (err) {
-    // This used to write into #question-text, which no longer exists — the
-    // prompt is a Colab notebook cell. `showColabNote` owns the panel's one
-    // remaining message surface, so the failure is reported there instead of
-    // throwing a ReferenceError on top of the error it was trying to explain.
-    showColabNote(err.message || "No enabled practice sections.");
+    questionText.textContent = err.message || "No enabled practice sections.";
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.add("hidden");
   }

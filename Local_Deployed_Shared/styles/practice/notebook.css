@@ -1,0 +1,159 @@
+/* Lesson notebook — one column, runnable cells inline.
+   Markup built by practice/notebook.js; layout switch keyed on body.lesson-mode. */
+
+/* ---- single column ------------------------------------------------------
+   The lesson is prose with code in it, so the split has nothing to hold: the
+   right panel would be an empty editor beside an explanation that already
+   contains its own runnable code. Collapse to one measured column instead of
+   two half-width ones — long lines of prose in a 440px panel are the reason
+   the old layout was hard to read even when the mapping was obvious. */
+
+body.lesson-mode .practice-right {
+  display: none;
+}
+
+body.lesson-mode .practice-left {
+  border-right: none;
+  flex: 1;
+}
+
+/* The column itself is capped, not the panel: the panel keeps the full width
+   so its scrollbar stays at the window edge where it is expected. */
+body.lesson-mode #question-text {
+  margin: 0 auto;
+  max-width: 780px;
+  width: 100%;
+}
+
+/* ---- cells --------------------------------------------------------------- */
+
+.nb-cell {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.nb-cell-code {
+  overflow-x: auto;
+}
+
+.nb-cell-code pre {
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.nb-cell-code code {
+  color: var(--text);
+  display: block;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+/* Editable, but never styled like a form field — see notebook.js on why the
+   cell is contenteditable rather than a <textarea>. The focus ring is the only
+   affordance, and it appears only once the learner has actually clicked in. */
+.nb-cell-code code:focus {
+  outline: none;
+}
+
+.nb-cell-code code:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.nb-cell-bar {
+  align-items: center;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  padding: 6px 10px;
+}
+
+.nb-run {
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 3px 14px;
+}
+
+.nb-run:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.nb-run:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* The In[] prompt. Monospaced and tabular so a page of cells keeps one column
+   of numbers rather than a ragged one, and empty until the cell has run — an
+   unrun cell showing "In [ ]" is noise on a page that is mostly prose. */
+.nb-count {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.2px;
+}
+
+.nb-cell.has-run .nb-count {
+  color: var(--accent);
+}
+
+.nb-cell.has-failed .nb-count {
+  color: #f2a3a3;
+}
+
+/* A run leaves a mark on the cell itself, not only in the bar, so the learner
+   can see which parts of the page they have executed while scrolling past the
+   collapsed output. */
+.nb-cell.has-run {
+  border-color: rgba(227, 33, 44, 0.45);
+}
+
+.nb-cell.has-failed {
+  border-color: rgba(242, 163, 163, 0.55);
+}
+
+.nb-cell.is-running {
+  border-color: var(--accent);
+}
+
+.nb-status {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.nb-out {
+  background: rgba(0, 0, 0, 0.45);
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 260px;
+  overflow: auto;
+  padding: 10px 14px;
+  white-space: pre-wrap;
+}
+
+.nb-out.hidden {
+  display: none;
+}
+
+/* Failure is marked by colour AND by the text itself always being the runtime's
+   own message, so colour is never the only carrier. */
+.nb-out.is-error {
+  color: #f2a3a3;
+}

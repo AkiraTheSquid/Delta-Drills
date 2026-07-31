@@ -1,19 +1,12 @@
-/* FIRST-ENCOUNTER GATE — the card that sends the learner to the concept.
+/* Inline first-encounter lesson: teaching + worked explanation left, complete
+   runnable worked code right. No popup or faded exercise inside lesson. */
 
-   This file used to style an inline lesson screen: concept prose, a "watch
-   out" note and a worked example rendered into the left panel, with the
-   example's runnable code pushed into the editor on the right. None of that
-   exists any more (2026-07-31). The lesson lives in the `dd-kp-<kc>` section of
-   the generated Colab notebook, and practice/lessons.js renders only this card:
-   which concept is next, where it is, and a button that says it has been read.
-
-   `body.lesson-mode` still means "the gate is up, not a question", and it still
-   hides the session furniture — a report button under a card with no problem on
-   it invites a report about nothing. */
-
+body.lesson-mode #practice-aids,
 body.lesson-mode #practice-submit-area,
 body.lesson-mode #practice-feedback-area,
-body.lesson-mode #colab-card,
+body.lesson-mode #question-imports,
+body.lesson-mode #question-visual,
+body.lesson-mode #torch-colab-notice,
 body.lesson-mode #question-meta-top,
 body.lesson-mode #question-id-chip,
 body.lesson-mode .question-number-row,
@@ -24,95 +17,93 @@ body.lesson-mode #practice-mode-intro {
   display: none !important;
 }
 
-/* The concept name, graph button and progress counter live in the page-wide
-   concept topbar (styles/practice/concept-topbar.css), not in this card. */
+/* The concept name, graph button and progress counter that used to live in a
+   `.lesson-topbar` inside this panel are now in the page-wide concept topbar
+   (styles/practice/concept-topbar.css), which spans both panels. */
 
-.lesson-gate-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin: 8px 0 4px;
-  padding: 22px 24px 20px;
-}
-
-.lesson-gate-eyebrow {
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.lesson-gate-title {
+.lesson-kp-title {
   color: var(--white);
-  font-size: 21px;
-  margin: 6px 0 4px;
-  outline: none;
+  font-size: 20px;
+  margin: 0 0 12px;
 }
 
-.lesson-gate-where {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.lesson-gate-blurb {
+.lesson-body,
+.lesson-worked,
+.lesson-watch-out {
   color: var(--text);
   font-size: 15px;
-  line-height: 1.6;
-  margin: 14px 0 18px;
+  line-height: 1.65;
 }
 
-.lesson-gate-actions {
-  align-items: center;
+.lesson-body h4,
+.lesson-worked h4,
+.lesson-watch-out h4 {
+  color: var(--text);
+  font-size: 14px;
+  margin: 16px 0 6px;
+}
+
+.lesson-body p code,
+.lesson-body li code,
+.lesson-worked p code,
+.lesson-worked li code,
+.lesson-watch-out p code,
+.lesson-watch-out li code {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 1px 5px;
+}
+
+.lesson-body blockquote,
+.lesson-worked blockquote {
+  background: rgba(227, 33, 44, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  padding: 4px 14px;
+}
+
+.lesson-watch-out {
+  border-left: 3px solid #e6a75a;
+  margin-top: 18px;
+  padding-left: 14px;
+}
+
+.lesson-watch-out h3,
+.lesson-worked h3 {
+  color: var(--white);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.lesson-worked {
+  border-top: 1px solid var(--border);
+  margin-top: 22px;
+  padding-top: 18px;
+}
+
+.lesson-example-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.lesson-actions {
   border-top: 1px solid var(--border);
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
   justify-content: flex-end;
+  margin-top: 18px;
   padding-top: 16px;
 }
 
-/* Deliberately an anchor, not a button: window.open needs a user gesture and
-   can be blocked, so this is the guaranteed way into the notebook. The target
-   name matches ColabRoute.TARGET so it reuses the one Colab tab rather than
-   opening a second — do NOT add rel="noopener"/"noreferrer", both imply
-   noopener and a noopener navigation ignores the target name entirely. */
-.lesson-gate-link {
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  color: var(--accent);
-  font-size: 14px;
-  font-weight: 600;
-  margin-right: auto;
-  padding: 9px 14px;
-  text-decoration: none;
-}
-
-.lesson-gate-link:hover {
-  background: rgba(227, 33, 44, 0.08);
-}
-
-.lesson-gate-note {
-  color: var(--muted);
-  font-size: 13px;
-  margin-right: auto;
-}
-
-.lesson-gate-actions button:focus-visible,
-.lesson-gate-link:focus-visible {
+.lesson-actions button:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
 @media (max-width: 700px) {
-  .lesson-gate-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .lesson-gate-actions button,
-  .lesson-gate-link {
-    text-align: center;
+  .lesson-actions button {
     width: 100%;
   }
 }

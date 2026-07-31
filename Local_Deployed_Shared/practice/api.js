@@ -9,6 +9,10 @@ function emitPracticeStateChanged() {
 const PracticeAPI = {
   currentQuestion: practiceQuestionPool[0],
 
+  outputsMatch(actualOutput, expectedOutput) {
+    return (actualOutput || "").trim() === (expectedOutput || "").trim();
+  },
+
   async recordLocalEval(questionId, correct) {
     if (practiceMode !== "backend") return;
     const res = await apiFetch("/api/practice/submit-local-eval", {
@@ -169,54 +173,191 @@ const PracticeAPI = {
     }
   },
 
-  /* Record what the learner reported, and run it through the SAME mastery
-     chain a graded attempt used to.
+  async submitAnswer(questionId, userCode) {
+    const requiresLocalPyodide = questionNeedsEinops(this.currentQuestion);
 
-     Practice no longer executes code — the learner runs the problem in its
-     Colab notebook and says whether it ran. That changes where `correct` comes
-     from and nothing downstream of it:
-
-       * backend mode posts `/submit-local-eval`, which the backend already
-         used for torch drills and which runs the identical BKT / FIRe / decay
-         chain as server-side grading. No new endpoint, no second scoring path.
-       * guest/local mode calls `engine_api.submit_answer` in Pyodide, exactly
-         as the old in-browser grader did once it had decided `correct`.
-
-     The shape of the return value is unchanged (`{correct, failed_tests}`) so
-     the review UI, the resumable-session snapshot and the difficulty-rating
-     step did not have to learn a new one. `failed_tests` is always empty:
-     nothing ran here, so there are no cases to report.
-
-     `correct` is the learner's claim. It is deliberately trusted — the whole
-     design assumes an adult drilling for themselves, and `Undo` on the review
-     screen (`/override`) is the correction path when they misclick. */
-  async recordSelfReport(questionId, correct) {
-    const q = this.currentQuestion;
-    correct = !!correct;
-
-    if (practiceMode === "backend") {
-      await this.recordLocalEval(questionId, correct);
-      return { correct, failed_tests: [] };
+    if (practiceMode === "backend" && !requiresLocalPyodide) {
+      const res = await apiFetch("/api/practice/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question_id: questionId, user_code: userCode }),
+      });
+      if (res.status === 401) {
+        handleExpiredToken();
+        // fall through to local mode below
+      } else if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || "Failed to submit answer.");
+      } else {
+        return await res.json();
+      }
     }
 
-    // Guest/local: the adaptive engine lives in Pyodide. Missing engine or
-    // state means progress is not being tracked at all, which is already true
-    // before this call — advance rather than trapping the learner.
-    if (practiceEngineLoaded && adaptiveStateJson) {
-      const pyodide = await initPyodide();
-      if (pyodide) {
-        const engine = pyodide.globals.get("engine_api");
-        adaptiveStateJson = engine.submit_answer(
+    // supabase/local or backend+einops fallback — run code with Pyodide and AI judge
+    const pyodide = await initPyodide();
+    let actualOutput = "";
+    if (pyodide) {
+      const preamble = await buildPyodidePreamble(this.currentQuestion);
+      pyodide.runPython(preamble);
+      try {
+        pyodide.runPython(userCode);
+        actualOutput = pyodide.runPython("sys.stdout.getvalue()").trim();
+      } catch (e) {
+        actualOutput = "[ERROR]";
+      } finally {
+        pyodide.runPython("sys.stdout = sys.__stdout__\nsys.stderr = sys.__stderr__");
+      }
+    }
+    const expected = (this.currentQuestion.expected_output || "").trim();
+    const failed_tests = [];
+    const solCode = this.currentQuestion.solution_code || "";
+    const questionText = this.currentQuestion.question_text || "";
+    let correct = false;
+
+    // Function test cases take precedence over the stdout string compare —
+    // they are the audited contract. (Mirrors backend grade_submission; the
+    // old order hijacked function-mode questions into comparing against
+    // stored CSV-era expected strings, some captured from unseeded runs.)
+    const hasFunctionTests =
+      this.currentQuestion.submission_mode === "function" &&
+      this.currentQuestion.test_cases?.length;
+    if (
+      this.currentQuestion.task_type === "stdout_prediction" &&
+      expected &&
+      !this.currentQuestion.supports_visual_output &&
+      !hasFunctionTests
+    ) {
+      correct = this.outputsMatch(actualOutput, expected);
+
+      if (practiceEngineLoaded && adaptiveStateJson) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.submit_answer(
           adaptiveStateJson,
-          questionId,
-          q ? q.subtopic : "",
-          (q && q.difficulty) || 50,
+          this.currentQuestion.question_id,
+          this.currentQuestion.subtopic,
+          this.currentQuestion.difficulty || 50,
           correct
         );
         await saveAdaptiveState();
       }
+
+      if (practiceMode === "backend" && requiresLocalPyodide) {
+        await this.recordLocalEval(questionId, correct);
+      }
+
+      return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
     }
-    return { correct, failed_tests: [] };
+
+    if (this.currentQuestion.submission_mode === "function" && this.currentQuestion.test_cases?.length) {
+      const preamble = await buildPyodidePreamble(this.currentQuestion);
+      const testsJsonLiteral = JSON.stringify(JSON.stringify(this.currentQuestion.test_cases));
+      pyodide.runPython(preamble);
+      try {
+        pyodide.runPython(userCode);
+        const resultJson = pyodide.runPython(`
+import json
+import numpy as np
+
+def _delta_to_jsonable(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, tuple):
+        return [_delta_to_jsonable(v) for v in value]
+    if isinstance(value, list):
+        return [_delta_to_jsonable(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _delta_to_jsonable(v) for k, v in value.items()}
+    return value
+
+def _delta_equal(a, b):
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return bool(np.array_equal(np.asarray(a), np.asarray(b)))
+    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        if len(a) != len(b):
+            return False
+        return all(_delta_equal(x, y) for x, y in zip(a, b))
+    return bool(a == b)
+
+_delta_results = []
+for _delta_case in json.loads(${testsJsonLiteral}):
+    try:
+        if _delta_case.get("setup_code"):
+            np.random.seed(0)
+            exec(_delta_case["setup_code"], globals())
+        _delta_actual = eval(_delta_case["call"], globals())
+        _delta_expected_setup = _delta_case.get("expected_setup_code") or _delta_case.get("setup_code")
+        if _delta_expected_setup:
+            np.random.seed(0)
+            exec(_delta_expected_setup, globals())
+        _delta_expected = eval(_delta_case["expected_expr"], globals())
+        _delta_results.append({
+            "passed": bool(_delta_equal(_delta_actual, _delta_expected)),
+            "actual": repr(_delta_to_jsonable(_delta_actual)),
+            "expected": repr(_delta_to_jsonable(_delta_expected)),
+            "error": "",
+        })
+    except Exception as _delta_exc:
+        _delta_results.append({
+            "passed": False,
+            "actual": "",
+            "expected": "",
+            "error": f"{type(_delta_exc).__name__}: {_delta_exc}",
+        })
+json.dumps(_delta_results)
+`);
+        const parsed = JSON.parse(resultJson);
+        failed_tests.push(...parsed.filter((test) => !test.passed));
+        correct = failed_tests.length === 0;
+        actualOutput = pyodide.runPython("sys.stdout.getvalue()").trim();
+      } catch (e) {
+        actualOutput = pyodide.runPython("sys.stderr.getvalue()").trim() || e.message;
+        correct = false;
+      } finally {
+        pyodide.runPython("sys.stdout = sys.__stdout__\nsys.stderr = sys.__stderr__");
+      }
+      if (practiceMode === "backend" && requiresLocalPyodide) {
+        await this.recordLocalEval(questionId, correct);
+      }
+      if (practiceEngineLoaded && adaptiveStateJson) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.submit_answer(
+          adaptiveStateJson,
+          this.currentQuestion.question_id,
+          this.currentQuestion.subtopic,
+          this.currentQuestion.difficulty || 50,
+          correct
+        );
+        await saveAdaptiveState();
+      }
+      return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
+    }
+    try {
+      const verdict = await fetchAIJudge(questionText, solCode, userCode, actualOutput, expected);
+      correct = verdict === "1";
+    } catch (err) {
+      throw new Error("AI judge unavailable. Please sign in or use backend mode.");
+    }
+
+    // Record attempt in adaptive engine
+    if (practiceEngineLoaded && adaptiveStateJson) {
+      const api = pyodide.globals.get("engine_api");
+      adaptiveStateJson = api.submit_answer(
+        adaptiveStateJson,
+        this.currentQuestion.question_id,
+        this.currentQuestion.subtopic,
+        this.currentQuestion.difficulty || 50,
+        correct
+      );
+      await saveAdaptiveState();
+    }
+
+    if (practiceMode === "backend" && requiresLocalPyodide) {
+      await this.recordLocalEval(questionId, correct);
+    }
+
+    return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
   },
 
   async sendFeedback(questionId, feedback) {

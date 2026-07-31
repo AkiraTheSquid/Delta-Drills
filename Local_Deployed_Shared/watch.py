@@ -23,7 +23,7 @@ REQUIRED_FILES = [
     "styles/practice/timer.css",
     "styles/practice/question.css",
     "styles/practice/feedback.css",
-    "styles/practice/result.css",
+    "styles/practice/editor.css",
     "styles/practice/misc.css",
     "index.html",
     "app.js",
