@@ -1,0 +1,7 @@
+/* Courses tab — page wrapper. The tab renders the one ARENA course directly,
+   so there is no list view, search input, results grid, or course card here:
+   those selectors left with the list UI on 2026-07-31. */
+
+.courses-page {
+  padding-top: 32px;
+}
