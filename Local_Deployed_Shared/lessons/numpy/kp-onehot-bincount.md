@@ -2,7 +2,7 @@
 kc: numpy.onehot-bincount
 title: Labels — one-hot encoding and bincount
 supporting: [numpy.fancy-indexing, numpy.constructors, numpy.argmin-argmax]
-new_syntax: []
+new_syntax: [torch.bincount]
 faded: [93]
 guided: [134]
 independent: [150, 124, 172]

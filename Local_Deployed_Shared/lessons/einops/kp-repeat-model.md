@@ -2,7 +2,7 @@
 kc: einops.repeat-model
 title: einops.repeat — new axes and stretched axes
 supporting: [einops.split-axes, numpy.tile-repeat-meshgrid, numpy.broadcasting-rules]
-new_syntax: []
+new_syntax: [einops.repeat]
 faded: [317]
 guided: [351]
 independent: [338, 348, 385, 341, 339, 383, 352, 355]

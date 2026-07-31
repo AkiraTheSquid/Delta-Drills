@@ -2,7 +2,7 @@
 kc: numpy.pad-borders
 title: Borders and padding
 supporting: [numpy.slicing-views, numpy.constructors]
-new_syntax: []
+new_syntax: [torch.nn, torch.nn.functional, torch.nn.functional.pad, torch.nn.functional.pad#mode, torch.nn.functional.pad#value]
 faded: [17]
 guided: [27]
 independent: [90, 186]

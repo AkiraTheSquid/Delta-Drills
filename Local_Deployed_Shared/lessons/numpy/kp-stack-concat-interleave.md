@@ -2,7 +2,7 @@
 kc: numpy.stack-concat-interleave
 title: Stacking, concatenating, interleaving
 supporting: [numpy.reshape-flatten, numpy.slicing-views]
-new_syntax: []
+new_syntax: [Tensor.ravel, torch.column_stack, torch.empty, torch.empty#dtype, torch.hstack, torch.stack, torch.stack#dim, torch.vstack]
 faded: [84]
 guided: [146]
 independent: [89, 238, 159]

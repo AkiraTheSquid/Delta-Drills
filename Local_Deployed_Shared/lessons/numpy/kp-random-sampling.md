@@ -2,7 +2,7 @@
 kc: numpy.random-sampling
 title: Sampling — bootstrap, choice, inverse-CDF
 supporting: [numpy.random-generator, numpy.fancy-indexing, numpy.cumulative-diff, numpy.axis-reductions]
-new_syntax: []
+new_syntax: [Tensor.argmax#dim, Tensor.squeeze, torch.quantile]
 faded: [191]
 guided: [200]
 independent: [210, 91]

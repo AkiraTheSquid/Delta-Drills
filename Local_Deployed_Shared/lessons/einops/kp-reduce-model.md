@@ -2,7 +2,7 @@
 kc: einops.reduce-model
 title: einops.reduce — dropping axes with an aggregation
 supporting: [einops.pattern-language, numpy.axis-reductions]
-new_syntax: []
+new_syntax: [einops.reduce]
 faded: [325]
 guided: [328]
 independent: [326, 367, 399, 402, 332, 340, 370]

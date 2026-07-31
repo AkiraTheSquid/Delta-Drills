@@ -2,7 +2,7 @@
 kc: numpy.sliding-windows
 title: Sliding windows and moving averages
 supporting: [numpy.axis-reductions, numpy.slicing-views, numpy.cumulative-diff]
-new_syntax: []
+new_syntax: [Tensor.unfold]
 faded: [117]
 guided: [166]
 independent: [99, 175]

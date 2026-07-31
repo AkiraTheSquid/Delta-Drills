@@ -2,7 +2,7 @@
 kc: numpy.ranges
 title: Numeric ranges — arange and linspace
 supporting: [numpy.constructors, numpy.slicing-views]
-new_syntax: []
+new_syntax: [torch.arange, torch.linspace]
 faded: [229, 242, 214]
 guided: []
 independent: [53]

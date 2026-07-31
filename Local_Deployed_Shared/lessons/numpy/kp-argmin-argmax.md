@@ -2,7 +2,7 @@
 kc: numpy.argmin-argmax
 title: Locating extremes — argmin and argmax
 supporting: [numpy.aggregations, numpy.slicing-views]
-new_syntax: []
+new_syntax: [Tensor.argmax, torch.argmax, torch.argmin]
 faded: [38, 219, 98]
 guided: [1]
 independent: [24, 61, 168]

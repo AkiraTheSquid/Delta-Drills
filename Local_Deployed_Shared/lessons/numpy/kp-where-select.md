@@ -2,7 +2,7 @@
 kc: numpy.where-select
 title: Conditional values — t.where and where= arguments
 supporting: [numpy.boolean-masking]
-new_syntax: []
+new_syntax: [torch.where]
 faded: [94, 100]
 guided: [240]
 independent: []

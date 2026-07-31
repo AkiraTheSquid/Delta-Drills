@@ -2,7 +2,7 @@
 kc: numpy.boolean-masking
 title: Boolean masks — compare, count, filter
 supporting: [numpy.slicing-views, numpy.elementwise-ufuncs, numpy.aggregations]
-new_syntax: [boolean-mask-indexing]
+new_syntax: [torch.count_nonzero]
 faded: [236, 52, 12]
 guided: [85]
 independent: [232, 145, 202]

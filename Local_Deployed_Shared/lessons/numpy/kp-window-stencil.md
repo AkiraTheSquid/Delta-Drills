@@ -2,7 +2,7 @@
 kc: numpy.window-stencil
 title: 2-D windows and stencils — block sums, correlation, Life
 supporting: [numpy.sliding-windows, numpy.pad-borders, numpy.cumulative-diff]
-new_syntax: []
+new_syntax: [Tensor.split, Tensor.split#dim]
 faded: [195]
 guided: [156]
 independent: [167, 176, 196, 209, 126]

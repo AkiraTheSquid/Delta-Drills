@@ -2,7 +2,7 @@
 kc: numpy.nonzero-argwhere
 title: Finding positions — nonzero and argwhere
 supporting: [numpy.boolean-masking]
-new_syntax: []
+new_syntax: [torch.argwhere, torch.nonzero, torch.nonzero#as_tuple]
 faded: [40]
 guided: [86]
 independent: [110]

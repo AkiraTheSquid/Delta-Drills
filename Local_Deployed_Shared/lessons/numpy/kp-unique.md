@@ -2,7 +2,7 @@
 kc: numpy.unique
 title: Distinct values — t.unique and friends
 supporting: [numpy.boolean-masking, numpy.sorting]
-new_syntax: []
+new_syntax: [torch.isin, torch.unique, torch.unique#return_counts, torch.unique#return_inverse]
 faded: [14]
 guided: [241]
 independent: [102, 148, 79]

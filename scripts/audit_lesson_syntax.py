@@ -60,9 +60,28 @@ ASSUMED = {
     "builtin.list", "builtin.tuple", "builtin.dict", "builtin.bool",
     "builtin.import", "syntax.arith", "syntax.compare", "syntax.call",
     "syntax.attribute", "syntax.subscript", "syntax.assign", "syntax.docstring",
+    # Plain Python, and the course's stated audience already writes it. These
+    # earn their place by WHAT THEY ARE FOR here: `assert` and `AssertionError`
+    # are how every worked example proves its claim, `type`/`isinstance`/`repr`
+    # are how a print shows what a result IS, and `round`/`abs` are arithmetic.
+    # None of them is a tensor idea, so no KP could honestly claim to teach one
+    # — declaring them somewhere would be filing paperwork, not writing a
+    # lesson. (`getattr` is deliberately NOT here: kp-dtype-astype teaches it
+    # as the way to turn a dtype NAME into a dtype, which is a real move.)
+    "builtin.assert", "builtin.AssertionError", "builtin.type",
+    "builtin.isinstance", "builtin.repr", "builtin.round", "builtin.abs",
+    "syntax.comprehension", "syntax.for", "syntax.fstring",
 }
 
 TORCH_ALIASES = {"t", "torch"}
+
+# einops is a second library with its own surface, and `einops.rearrange` is a
+# different thing to learn from anything on a tensor. Without this the callee
+# rule below — "an attribute on a non-torch base is a tensor method" — files
+# every pattern call in the einops chapters under `Tensor.rearrange`, a method
+# that does not exist, and the einops KP that DOES teach it cannot declare it
+# under a name matching what the audit reports.
+LIBRARY_ALIASES = {"einops": "einops"}
 
 
 class Collector(ast.NodeVisitor):
@@ -70,18 +89,36 @@ class Collector(ast.NodeVisitor):
 
     def __init__(self) -> None:
         self.symbols: set[str] = set()
+        # Names the block defines for itself. A demo that writes a helper and
+        # then calls it is not showing the learner an unexplained builtin —
+        # the definition is right there, three lines up.
+        self.local_defs: set[str] = set()
 
     # -- helpers ---------------------------------------------------------
     def _callee(self, node: ast.AST) -> str | None:
         if isinstance(node, ast.Attribute):
+            # Dunders are the object protocol, not curriculum. `type(x).__name__`
+            # in a print is not a tensor method and there is no lesson to write
+            # for it.
+            if node.attr.startswith("__"):
+                return None
+            # Walk the whole dotted chain rather than one or two links: this is
+            # what tells `t.nn.functional.pad` (one function, with a submodule
+            # path) from a method named `pad` on a tensor. Stopping early filed
+            # it as `Tensor.pad` AND invented `torch.nn` / `torch.nn.functional`
+            # as separate things to teach.
+            parts = [node.attr]
             base = node.value
-            if isinstance(base, ast.Name) and base.id in TORCH_ALIASES:
-                return f"torch.{node.attr}"
-            if isinstance(base, ast.Attribute) and isinstance(base.value, ast.Name) \
-                    and base.value.id in TORCH_ALIASES:
-                # t.linalg.norm and friends: keep the submodule, it is a
-                # different thing to learn than a top-level function.
-                return f"torch.{base.attr}.{node.attr}"
+            while isinstance(base, ast.Attribute):
+                if base.attr.startswith("__"):
+                    return None
+                parts.append(base.attr)
+                base = base.value
+            if isinstance(base, ast.Name):
+                if base.id in TORCH_ALIASES:
+                    return "torch." + ".".join(reversed(parts))
+                if base.id in LIBRARY_ALIASES:
+                    return LIBRARY_ALIASES[base.id] + "." + ".".join(reversed(parts))
             return f"Tensor.{node.attr}"
         if isinstance(node, ast.Name):
             return f"builtin.{node.id}"
@@ -94,9 +131,16 @@ class Collector(ast.NodeVisitor):
             self.symbols.add(name)
             # Parameters are their own lesson content — `dim=`, `keepdim=`,
             # `correction=` change the ANSWER, not just the spelling.
-            for kw in node.keywords:
-                if kw.arg:
-                    self.symbols.add(f"{name}#{kw.arg}")
+            #
+            # einops is the exception: its keywords ARE the pattern's axis
+            # names, which the author invents per call (`h=2`, `two=2`, `g1=3`).
+            # Treating those as API surface would demand a lesson for every
+            # letter anyone ever picked, and teach nothing — the thing to learn
+            # is that factors arrive as keywords, which is the pattern lesson.
+            if not name.startswith("einops."):
+                for kw in node.keywords:
+                    if kw.arg:
+                        self.symbols.add(f"{name}#{kw.arg}")
         self.generic_visit(node)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
@@ -131,6 +175,10 @@ class Collector(ast.NodeVisitor):
 
     def visit_For(self, node: ast.For) -> None:
         self.symbols.add("syntax.for")
+        self.generic_visit(node)
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # noqa: N802
+        self.local_defs.add(node.name)
         self.generic_visit(node)
 
     def visit_Lambda(self, node: ast.Lambda) -> None:
@@ -186,7 +234,8 @@ def page_symbols(path: Path) -> tuple[dict, set[str], list[str]]:
         # `t._____(x)` PARSES — an underscore run is a legal identifier — so the
         # SyntaxError path above never sees it. A blank is the answer the
         # learner supplies, not syntax shown to them.
-        used |= {s for s in c.symbols if "_____" not in s}
+        local = {f"builtin.{n}" for n in c.local_defs}
+        used |= {s for s in c.symbols if "_____" not in s and s not in local}
     return fm, used, errors
 
 
@@ -268,24 +317,31 @@ def silent_example_gaps(path: Path) -> list[str]:
 
 
 def lesson_order(kc_of_page: dict[str, str]) -> dict[str, int]:
-    """Topological rank of each KC over the prerequisite lattice — the order the
-    graph itself claims, so the checker cannot disagree with the map."""
+    """Rank of each KC in the order a learner actually walks the course.
+
+    That order is `kc_registry.json`'s KC sequence — the authoring source of
+    truth, and what `compile_lessons.py` sorts pages by. It is used here in
+    place of the prerequisite lattice's DEPTH, which was the earlier rule, for
+    a concrete reason: depth is not a total order. Nine of np-1's twelve KCs
+    sit at depth 0 or 1, so "is this symbol taught before that page?" was
+    unanswerable across most of a chapter — same-depth pages compared equal and
+    every use inside the tie looked fine.
+
+    Registry order does not contradict the lattice: it is verified below to be
+    a linear extension of it (every prerequisite appears earlier), so any
+    "shown before it is taught" this reports is one the graph agrees with. If
+    that ever stops holding, the assertion fires rather than the checker
+    quietly ranking a KC before its own prerequisite.
+    """
     reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    prereqs = {k["id"]: list(k.get("prereqs") or []) for k in reg["kcs"]}
-    rank: dict[str, int] = {}
-
-    def depth(kc: str, seen: frozenset = frozenset()) -> int:
-        if kc in rank:
-            return rank[kc]
-        if kc in seen or kc not in prereqs:
-            return 0
-        parents = prereqs.get(kc) or []
-        d = 0 if not parents else 1 + max(depth(p, seen | {kc}) for p in parents)
-        rank[kc] = d
-        return d
-
-    for kc in prereqs:
-        depth(kc)
+    rank = {kc["id"]: i for i, kc in enumerate(reg["kcs"])}
+    for kc in reg["kcs"]:
+        for prereq in kc.get("prereqs") or []:
+            if prereq in rank and rank[prereq] >= rank[kc["id"]]:
+                raise SystemExit(
+                    f"kc_registry.json: {kc['id']} is listed before its "
+                    f"prerequisite {prereq}; fix the order or the prereq edge."
+                )
     return rank
 
 

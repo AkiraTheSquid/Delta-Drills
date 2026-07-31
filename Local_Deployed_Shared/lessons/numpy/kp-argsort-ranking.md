@@ -2,7 +2,7 @@
 kc: numpy.argsort-ranking
 title: Order statistics — argsort, ranks, sort-by
 supporting: [numpy.sorting, numpy.fancy-indexing]
-new_syntax: []
+new_syntax: [Tensor.argsort]
 faded: [92, 114, 119]
 guided: []
 independent: [183]

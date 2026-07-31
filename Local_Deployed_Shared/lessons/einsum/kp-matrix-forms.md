@@ -2,7 +2,7 @@
 kc: einsum.matrix-forms
 title: Matrix forms — quadratic, Gram, covariance
 supporting: [einsum.matvec-matmul, einsum.batch-dims, numpy.centering]
-new_syntax: []
+new_syntax: [torch.cov]
 faded: [252]
 guided: [258]
 independent: [259, 248, 306]

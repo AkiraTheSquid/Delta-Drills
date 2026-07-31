@@ -2,7 +2,7 @@
 kc: numpy.linalg-applied
 title: Applied linear algebra — multi-RHS, batched solve, block matrices
 supporting: [numpy.linalg-basics, numpy.constructors]
-new_syntax: []
+new_syntax: [torch.linalg.matrix_rank]
 faded: [173, 208, 190]
 guided: []
 independent: [197, 118]

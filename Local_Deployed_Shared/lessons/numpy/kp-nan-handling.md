@@ -2,7 +2,7 @@
 kc: numpy.nan-handling
 title: NaN and Inf — detecting and repairing
 supporting: [numpy.boolean-masking, numpy.where-select]
-new_syntax: []
+new_syntax: [torch.isnan, torch.nan, torch.nan_to_num, torch.nan_to_num#nan, torch.nanmean]
 faded: [32]
 guided: [18]
 independent: [115, 142, 120, 170]
