@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="styles/variables.css" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/layout.css" />
-  <link rel="stylesheet" href="styles/components.css?v=3" />
+  <link rel="stylesheet" href="styles/components.css?v=4" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=15" />
   <link rel="stylesheet" href="styles/stats.css?v=1" />
   <link rel="stylesheet" href="styles/arena.css" />
@@ -471,26 +471,24 @@
   <main class="page hidden" id="page-account">
     <div class="container">
       <h1>Account</h1>
-      <p class="subtitle">Update your API credentials and defaults used by the split tool.</p>
+      <p class="subtitle">Your Delta Drills account.</p>
       <section class="card">
+        <!-- Plain account identity first. Everything credential-shaped (API base,
+             OpenAI / Mathpix keys, DD_TOKEN) moved into the collapsed Advanced
+             block below so the default view is just "who am I". The inputs still
+             exist and still save — split-tool.js and supabase-practice.js read
+             those same localStorage keys. -->
+        <dl class="account-identity">
+          <div class="account-identity-row">
+            <dt>Email</dt>
+            <dd id="account-identity-email">Not signed in</dd>
+          </div>
+          <div class="account-identity-row">
+            <dt>Status</dt>
+            <dd id="account-identity-status">Guest</dd>
+          </div>
+        </dl>
         <form id="account-form">
-          <div class="field">
-            <label for="account-api-base">API base URL</label>
-            <input id="account-api-base" class="text-input" type="text" placeholder="https://api.example.com" />
-            <div class="hint">Use your deployed backend URL (not localhost) for Vercel.</div>
-          </div>
-          <div class="field">
-            <label for="account-openai-key">OpenAI API key</label>
-            <input id="account-openai-key" class="text-input" type="text" placeholder="sk-..." />
-          </div>
-          <div class="field">
-            <label for="account-mathpix-id">Mathpix App ID</label>
-            <input id="account-mathpix-id" class="text-input" type="text" placeholder="Your Mathpix App ID" />
-          </div>
-          <div class="field">
-            <label for="account-mathpix-key">Mathpix App Key</label>
-            <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
-          </div>
           <div class="field">
             <label for="account-github-username">GitHub username (for ARENA Colab persistence)</label>
             <input id="account-github-username" class="text-input" type="text" placeholder="your-github-handle" autocomplete="off" spellcheck="false" />
@@ -498,14 +496,36 @@
               One-time setup: fork <a href="https://github.com/callummcdougall/ARENA_3.0/fork" target="_blank" rel="noreferrer">callummcdougall/ARENA_3.0</a> to your own account, then paste your GitHub username here. The Colab pills on the Predicted course scores tab will then open <em>your</em> fork. After you save a notebook in Colab via <code>File → Save a copy in GitHub</code>, future clicks on the same exercise reopen your latest edits. Leave blank to use the upstream read-only copy.
             </div>
           </div>
-          <div class="field" id="account-token-field">
-            <label for="account-dd-token">Your API token (DD_TOKEN)</label>
-            <div class="dd-token-row">
-              <input id="account-dd-token" class="text-input" type="text" readonly placeholder="Sign in to see your token" autocomplete="off" spellcheck="false" />
-              <button type="button" class="ghost" id="account-dd-token-copy">📋 Copy</button>
+          <details class="account-advanced" id="account-advanced">
+            <summary>Advanced &amp; developer settings</summary>
+            <div class="account-advanced-body">
+              <div class="field">
+                <label for="account-api-base">API base URL</label>
+                <input id="account-api-base" class="text-input" type="text" placeholder="https://api.example.com" />
+                <div class="hint">Use your deployed backend URL (not localhost) for Vercel. Leave blank for the default.</div>
+              </div>
+              <div class="field">
+                <label for="account-openai-key">OpenAI API key</label>
+                <input id="account-openai-key" class="text-input" type="text" placeholder="sk-..." />
+              </div>
+              <div class="field">
+                <label for="account-mathpix-id">Mathpix App ID</label>
+                <input id="account-mathpix-id" class="text-input" type="text" placeholder="Your Mathpix App ID" />
+              </div>
+              <div class="field">
+                <label for="account-mathpix-key">Mathpix App Key</label>
+                <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
+              </div>
+              <div class="field" id="account-token-field">
+                <label for="account-dd-token">Your API token (DD_TOKEN)</label>
+                <div class="dd-token-row">
+                  <input id="account-dd-token" class="text-input" type="text" readonly placeholder="Sign in to see your token" autocomplete="off" spellcheck="false" />
+                  <button type="button" class="ghost" id="account-dd-token-copy">📋 Copy</button>
+                </div>
+                <div class="hint">Paste this as <code>DD_TOKEN</code> when a drill notebook asks for it — it links the notebook back to your account so completing it counts. It's your login session token, so keep it private.</div>
+              </div>
             </div>
-            <div class="hint">Paste this as <code>DD_TOKEN</code> when a drill notebook asks for it — it links the notebook back to your account so completing it counts. It's your login session token, so keep it private.</div>
-          </div>
+          </details>
           <button class="primary" type="submit">Save settings</button>
           <div id="account-message" class="hint" role="status"></div>
         </form>
@@ -825,7 +845,7 @@ np.random.seed(0)
   <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->

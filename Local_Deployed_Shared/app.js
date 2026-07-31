@@ -105,9 +105,19 @@ const topbarAuth = document.getElementById("topbar-auth");
 const topbarAuthEmail = document.getElementById("topbar-auth-email");
 const accountTokenInput = document.getElementById("account-dd-token");
 const accountTokenCopy = document.getElementById("account-dd-token-copy");
+// The Account tab now leads with plain identity (email + signed-in status);
+// credentials live in the collapsed Advanced block.
+const accountIdentityEmail = document.getElementById("account-identity-email");
+const accountIdentityStatus = document.getElementById("account-identity-status");
 const updateAuthIndicators = () => {
   if (topbarAuth) topbarAuth.hidden = !authToken;
   if (topbarAuthEmail) topbarAuthEmail.textContent = authToken ? (authEmail || "Signed in") : "";
+  if (accountIdentityEmail) {
+    accountIdentityEmail.textContent = authToken ? (authEmail || "—") : "Not signed in";
+  }
+  if (accountIdentityStatus) {
+    accountIdentityStatus.textContent = authToken ? "Signed in" : "Guest";
+  }
   if (accountTokenInput) {
     accountTokenInput.value = authToken || "";
     accountTokenInput.placeholder = authToken ? "" : "Sign in to see your token";
