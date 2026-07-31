@@ -580,3 +580,19 @@ print(solve(*example))
 
         [[1.],
          [2.]]])"
+Einops,Rearrange,"Write a function solve(imgs, rows) that takes a channels-last batch of images with shape (b, h, w, c) and a grid row count, and returns the single montage image of shape ((rows*h), (cols*w), c) holding all b images — filled COLUMN-major, so image k lands at grid row k % rows and grid column k // rows. b is divisible by rows. This is the row-major montage pattern with one edit, and the edit is on the INPUT side: which of the two batch factors counts slowly decides the filling order, so swap the split order rather than renaming anything.","import torch as t
+import einops
+
+def solve(imgs, rows):
+    """"""(b, h, w, c) -> ((rows*h), (cols*w), c), images filled COLUMN-major.""""""
+    return einops.rearrange(imgs, '(g2 g1) h w c -> (g1 h) (g2 w) c', g1=rows)
+
+
+example = (t.stack([t.full((2, 2, 1), float(k)) for k in range(6)]), 3)
+print(solve(*example)[:, :, 0])
+",58,"tensor([[0., 0., 3., 3.],
+        [0., 0., 3., 3.],
+        [1., 1., 4., 4.],
+        [1., 1., 4., 4.],
+        [2., 2., 5., 5.],
+        [2., 2., 5., 5.]])"

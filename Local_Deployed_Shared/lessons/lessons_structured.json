@@ -4463,7 +4463,8 @@
       318,
       381,
       322,
-      371
+      371,
+      531
      ],
      "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick."
     },

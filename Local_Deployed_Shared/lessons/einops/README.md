@@ -119,6 +119,17 @@
 
 ## Recent Changes
 
+- 2026-07-31: q387 retired as a duplicate of q322 — same pattern string
+  (`'b c (h hs) (w ws) -> (hs ws b) c h w'`), same `solve` body, differing only
+  in which slice of the fixture it loaded, so completing one taught nothing
+  about the other. Replaced by **q531**, wired into `kp-grids-montage`'s
+  independent list: the COLUMN-major montage
+  (`'(g2 g1) h w c -> (g1 h) (g2 w) c'`), which the page names as a
+  misconception ("to fill column-major, swap the split order, not the names")
+  and nothing in the bank asked for. Retirement goes through
+  `chatgpt/function_mode_deleted_ids.json`, and the id must also leave
+  `LEFTOVER_TARGETS` in `build_qmatrix.py` or the next build fails on a tag
+  pointing at a question the bank no longer has.
 - 2026-07-27: Converted all 11 KP pages and the 91 einops drills to the PyTorch
   dialect ARENA uses. `watch.py` filled in: enforces one dialect per page, that
   the page matches the drills it fades into, and that every einops-calling fence

@@ -5,7 +5,7 @@ supporting: [einops.split-axes, einops.merge-axes]
 new_syntax: []
 faded: [389]
 guided: [364]
-independent: [329, 382, 318, 381, 322, 371]
+independent: [329, 382, 318, 381, 322, 371, 531]
 ---
 
 ## Concept
@@ -123,7 +123,9 @@ into a 2×2 grid — combine the list-as-axis trick with the montage).
 
 Also from the bank: q322 (carve H into hs strips and W into ws strips,
 subgrid indices moved OUT into the batch axis, subgrid-major), q371 (the
-inverse — subgrids packed in the batch axis, unpacked back into space).
+inverse — subgrids packed in the batch axis, unpacked back into space),
+q531 (the same montage filled COLUMN-major — the misconception below, as a
+drill: the edit is on the input side).
 
 ## Misconceptions
 

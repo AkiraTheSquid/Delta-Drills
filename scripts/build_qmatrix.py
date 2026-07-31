@@ -73,7 +73,10 @@ LEFTOVER_TARGETS = {
     340: "einops.reduce-model", 359: "einops.channel-groups-temporal",
     365: "einops.singleton-and-lists", 370: "einops.reduce-model",
     371: "einops.grids-montage", 377: "einops.pooling",
-    380: "einops.merge-axes", 387: "einops.grids-montage",
+    380: "einops.merge-axes",
+    # 387 retired 2026-07-31: same pattern string and same solve body as q322,
+    # differing only in which slice of the fixture it loaded. Replaced by q531
+    # (column-major montage), which kp-grids-montage references directly.
     395: "einops.patches-space-depth",
 }
 
