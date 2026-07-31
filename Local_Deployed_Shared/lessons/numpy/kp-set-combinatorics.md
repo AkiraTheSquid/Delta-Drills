@@ -2,7 +2,7 @@
 kc: numpy.set-combinatorics
 title: Set operations, cartesian products, run-length encoding
 supporting: [numpy.unique, numpy.cumulative-diff, numpy.tile-repeat-meshgrid, numpy.fancy-indexing]
-new_syntax: [torch.cat]
+new_syntax: []
 faded: [185]
 guided: [171]
 independent: [199, 205, 143, 133, 158, 198, 207, 211]

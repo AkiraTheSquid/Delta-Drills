@@ -15,10 +15,10 @@
   "kcs": [
     { "id": "numpy.ndarray-model", "lesson": "np-1", "title": "What an ndarray is: data + shape + dtype", "syntax": true, "prereqs": [] },
     { "id": "numpy.constructors", "lesson": "np-1", "title": "Array constructors: zeros, ones, full, empty, eye", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
+    { "id": "numpy.slicing-views", "lesson": "np-1", "title": "Slicing, views, and slice assignment", "syntax": true, "prereqs": ["numpy.ndarray-model"] },
     { "id": "numpy.ranges", "lesson": "np-1", "title": "Numeric ranges: arange and linspace", "syntax": false, "prereqs": ["numpy.constructors"] },
     { "id": "numpy.dtype-astype", "lesson": "np-1", "title": "Dtypes, astype, and memory size", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
     { "id": "numpy.reshape-flatten", "lesson": "np-1", "title": "Reshape, ravel, and element order", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.slicing-views", "lesson": "np-1", "title": "Slicing, views, and slice assignment", "syntax": true, "prereqs": ["numpy.ndarray-model"] },
     { "id": "numpy.elementwise-ufuncs", "lesson": "np-1", "title": "Elementwise math (ufuncs)", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
     { "id": "numpy.aggregations", "lesson": "np-1", "title": "Whole-array aggregations and Python scalars", "syntax": false, "prereqs": ["numpy.elementwise-ufuncs"] },
     { "id": "numpy.sorting", "lesson": "np-1", "title": "Sorting arrays", "syntax": false, "prereqs": ["numpy.ndarray-model"] },

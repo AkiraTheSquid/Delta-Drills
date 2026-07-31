@@ -3,6 +3,7 @@ kc: numpy.elementwise-ufuncs
 title: Elementwise math
 supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.ceil, torch.floor, torch.maximum, torch.minimum, torch.round, torch.sqrt, torch.trunc]
+previews: [Tensor.max, syntax.matmul]
 faded: [192, 49, 67]
 guided: [487, 488]
 independent: [43, 489, 63]

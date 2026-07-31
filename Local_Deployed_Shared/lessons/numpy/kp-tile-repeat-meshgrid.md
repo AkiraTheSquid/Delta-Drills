@@ -3,6 +3,7 @@ kc: numpy.tile-repeat-meshgrid
 title: Tiling and repetition — repeat, repeat_interleave, meshgrid
 supporting: [numpy.reshape-flatten]
 new_syntax: [Tensor.repeat, torch.meshgrid, torch.meshgrid#indexing, torch.repeat_interleave, torch.tile]
+previews: [torch.stack, torch.stack#dim]
 concepts: [repeat-elements, tile-blocks, coordinate-grids]
 faded: [35, 34, 29]
 guided: [217]

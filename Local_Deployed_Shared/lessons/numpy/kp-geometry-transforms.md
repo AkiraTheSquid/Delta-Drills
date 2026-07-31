@@ -2,7 +2,7 @@
 kc: numpy.geometry-transforms
 title: Geometry — coordinates and transforms
 supporting: [numpy.dot-matmul-patterns, numpy.slicing-views, numpy.tile-repeat-meshgrid]
-new_syntax: [torch.arctan2, torch.cat#dim, torch.cos, torch.pi, torch.sin]
+new_syntax: [torch.arctan2, torch.cos, torch.pi, torch.sin]
 faded: [66, 182]
 guided: [529]
 independent: [105, 201]

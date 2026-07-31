@@ -26,7 +26,7 @@
    "atoms": [
     {
      "a": "avgpool-reduce",
-     "w": 0.459,
+     "w": 0.458,
      "share": 0.136,
      "spec": 0.489,
      "n": 2
@@ -78,22 +78,22 @@
   },
   "einops.grids-montage": {
    "n": 9,
-   "reliability": 0.143,
-   "shared_with": 6.0,
+   "reliability": 0.141,
+   "shared_with": 6.1,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.143,
+     "spec": 0.141,
      "n": 9
     }
    ]
   },
   "einops.merge-axes": {
    "n": 11,
-   "reliability": 0.175,
+   "reliability": 0.176,
    "shared_with": 4.7,
    "tier": "topic-proxy",
    "atoms": [
@@ -101,7 +101,7 @@
      "a": "einops-rearrange",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.175,
+     "spec": 0.176,
      "n": 11
     }
    ]
@@ -109,7 +109,7 @@
   "einops.patches-space-depth": {
    "n": 10,
    "reliability": 0.157,
-   "shared_with": 5.4,
+   "shared_with": 5.3,
    "tier": "topic-proxy",
    "atoms": [
     {

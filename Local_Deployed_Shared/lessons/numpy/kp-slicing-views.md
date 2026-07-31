@@ -28,7 +28,7 @@ Python.
 ```python
 import torch as t
 
-x = t.arange(10)
+x = t.tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 print("x        ", x)
 print("x[2:5]   ", x[2:5])
 print("x[::2]   ", x[::2])
@@ -39,7 +39,9 @@ One slice per axis, comma-separated — and note what an *int* in a slot does
 that a slice does not: it removes that axis.
 
 ```python
-z = t.arange(12).reshape(3, 4)
+z = t.tensor([[0, 1, 2, 3],
+              [4, 5, 6, 7],
+              [8, 9, 10, 11]])
 print(z)
 print("z[0, :]  ", z[0, :],  " shape", z[0, :].shape)     # int -> 1-D
 print("z[:, -1] ", z[:, -1], " shape", z[:, -1].shape)
