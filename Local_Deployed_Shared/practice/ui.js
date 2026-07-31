@@ -9,81 +9,22 @@ function isCalibrationQuestion(q) {
   return isColdStart(q.subtopic, overrideN);
 }
 
-// A question is "torch" if the bank tags it so, or its starter/solution imports
-// torch.
-function questionIsTorch(q) {
-  if (!q) return false;
-  if (q.primary_library === "torch") return true;
-  const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
-  return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
-}
-
-/* `torchNeedsColab` was here. It answered "does this question need Colab
-   because Pyodide cannot import torch?" — a question with only one answer now
-   (everything is worked in Colab, whatever it imports), so the routing it fed
-   is unconditional and lives in `renderColabCard` below. `questionIsTorch`
-   above survives: practice/pyodide-boot.js still uses it to keep a LESSON's
-   torch example off Pyodide and on the backend fork runner. */
+/* `questionIsTorch` and `torchNeedsColab` were here. Both answered questions
+   about running code in the page — is this torch, and does that mean Pyodide
+   cannot run it — and the page runs no question code at all now. */
 
 function _escapeHtml(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Render a question prompt as separated prose + code instead of one wall of
-// text, and let KaTeX render the $…$ math (it was showing raw before). Fenced
-// ```code``` blocks become a styled <pre>; inline `code` becomes <code>; math
-// is left for KaTeX. Returns nothing — writes into #question-text.
-function renderQuestionBody(q) {
-  const raw = (q && q.question_text) || "";
-  // Pull fenced code blocks out first so we don't KaTeX/escape-mangle them.
-  const parts = [];
-  const fence = /```[a-zA-Z0-9]*\n?([\s\S]*?)```/g;
-  let last = 0;
-  let m;
-  while ((m = fence.exec(raw)) !== null) {
-    if (m.index > last) parts.push({ type: "prose", text: raw.slice(last, m.index) });
-    parts.push({ type: "code", text: m[1].replace(/\n$/, "") });
-    last = fence.lastIndex;
-  }
-  if (last < raw.length) parts.push({ type: "prose", text: raw.slice(last) });
-
-  const html = parts.map((p) => {
-    if (p.type === "code") {
-      return `<pre class="question-code-block"><code>${_escapeHtml(p.text)}</code></pre>`;
-    }
-    // Escape HTML, then turn inline `backtick` spans into <code>. Math ($…$) is
-    // left untouched for KaTeX auto-render below. Blank lines split paragraphs
-    // (each its own div — .question-prose has no pre-wrap, so raw \n collapses).
-    return p.text
-      .split(/\n{2,}/)
-      .map((para) => para.trim())
-      .filter(Boolean)
-      .map((para) => {
-        const escaped = _escapeHtml(para).replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
-        return `<div class="question-prose">${escaped}</div>`;
-      })
-      .join("");
-  }).join("");
-
-  questionText.innerHTML = html || _escapeHtml(raw);
-
-  // Render the math. auto-render.min.js loads `defer`, so it's usually ready by
-  // the time a question renders; guard in case it isn't.
-  if (typeof window.renderMathInElement === "function") {
-    try {
-      window.renderMathInElement(questionText, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false },
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true },
-        ],
-        throwOnError: false,
-      });
-    } catch (_) { /* malformed LaTeX — leave the raw text */ }
-  }
-}
+/* `renderQuestionBody`, `renderQuestionImports` and `setupQuestionAids` were
+   here. They rendered the problem statement, its "Imported helpers" pills and
+   its hint into the panel. All three moved into the notebook on 2026-07-31 —
+   the prose is the `dd-q<id>` cell, the imports are real import lines in the
+   cell below it, and the hint is a `<details>` cell the generator writes right
+   after the problem. Rendering them here as well would have given the learner
+   a second, inert copy of everything they are already reading in Colab. */
 
 /* THE COLAB CARD — where this problem gets worked.
 
@@ -217,16 +158,14 @@ function renderQuestion(q, count) {
   }
   practiceQuestionCount = count;
   questionNumber.textContent = "Question " + practiceQuestionCount;
-  renderQuestionBody(q);
-  // Names the concept under test and, on the scaffolded rungs, puts the worked
-  // example back on screen beside the problem. Must run AFTER renderQuestionBody
-  // — that call replaces #question-text wholesale.
+  // Names the concept under test in the page-wide topbar. It no longer puts a
+  // worked example on screen: the example sits in the notebook immediately
+  // above this problem's cell, which is both where it belongs and the only
+  // place a multi-cell example actually runs.
   if (window.LadderUI) window.LadderUI.decorate(q);
-  renderQuestionImports(q);
-  renderQuestionVisual(q);
-  // The starter code is no longer copied into an editor — it is already the
-  // first line of the problem's cell in the notebook, which is where the
-  // learner types. Rendering it here too would be a second copy nobody edits.
+  // Neither the problem statement, its imports, its target image nor its
+  // starter code is rendered here — all four are cells in the notebook the
+  // Colab card points at. See the comment on #lesson-gate in index.html.
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   renderQuestionIdChip(q);
@@ -269,7 +208,6 @@ function renderQuestion(q, count) {
   }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   solutionCode.textContent = q.solution_code;
-  setupQuestionAids(q);
   overrideRow.classList.add("hidden");
 
   // Reset to pre-report state
@@ -318,17 +256,6 @@ function renderQuestion(q, count) {
       savePracticeProgress(practiceProgress);
     }
   }
-}
-
-// Configure the Show Hint aid for the current question and reset its reveal
-// state. Hint comes straight off the question payload. (In-browser bank
-// questions reveal their solution code after submit; the Colab solution link
-// lives on the procedural-drill cards, not the practice tab.)
-function setupQuestionAids(q) {
-  const hint = q && typeof q.hint === "string" ? q.hint.trim() : "";
-  if (hintText) hintText.textContent = hint;
-  if (showHintBtn) showHintBtn.classList.toggle("hidden", !hint);
-  if (hintSection) hintSection.classList.add("hidden");
 }
 
 function getTargetDifficultyForQuestion(q) {
@@ -382,138 +309,6 @@ function parseStarterImports(source) {
     }
   }
   return imports;
-}
-
-async function loadNotebookArrayPreview(dataUrl, tempFilePath) {
-  const pyodide = await initPyodide();
-  if (!pyodide) throw new Error("Python runtime unavailable.");
-  const response = await fetch(dataUrl, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${dataUrl} (${response.status})`);
-  }
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  pyodide.FS.writeFile(tempFilePath, bytes);
-  const payload = await pyodide.runPythonAsync(`
-import json
-import numpy as np
-json.dumps(np.load(${JSON.stringify(tempFilePath)}).tolist())
-`);
-  return JSON.parse(payload);
-}
-
-let questionHelperRenderSeq = 0;
-
-async function renderQuestionImports(q) {
-  if (!questionImports || !questionImportsList) return;
-  const renderSeq = ++questionHelperRenderSeq;
-  questionImports.classList.add("hidden");
-  questionImportsList.innerHTML = "";
-  const helperItems = await getNotebookHelperItems(q);
-  const visibleItems = helperItems.filter((item) => {
-    if (item.kind === "arena-array") return true;
-    const code = (item.code || "").trim();
-    const label = (item.label || "").trim();
-    return !!item.context && code !== label;
-  });
-  if (renderSeq !== questionHelperRenderSeq) return;
-  if (!visibleItems.length) {
-    questionImports.classList.add("hidden");
-    return;
-  }
-  for (const item of visibleItems) {
-    const itemWrap = document.createElement("div");
-    itemWrap.className = "question-import-item";
-
-    const pill = document.createElement("button");
-    pill.type = "button";
-    pill.className = "question-import";
-    pill.textContent = item.label;
-    pill.setAttribute("aria-expanded", "false");
-
-    const detail = document.createElement("div");
-    detail.className = "question-import-detail hidden";
-    const note = document.createElement("div");
-    note.className = "question-import-detail-note";
-    note.textContent = item.note;
-    detail.appendChild(note);
-    if (item.context) {
-      const context = document.createElement("div");
-      context.className = "question-import-detail-context";
-      context.textContent = item.context;
-      detail.appendChild(context);
-    }
-
-    let previewState = null;
-    if (item.kind === "arena-array" && item.dataUrl) {
-      const preview = document.createElement("div");
-      preview.className = "question-import-detail-preview";
-      const previewNote = document.createElement("div");
-      previewNote.className = "question-import-detail-preview-note";
-      previewNote.textContent = `Source data: ${item.dataUrl}`;
-      const previewCanvas = document.createElement("canvas");
-      previewCanvas.className = "question-import-detail-preview-canvas hidden";
-      const previewText = document.createElement("pre");
-      previewText.className = "question-import-detail-preview-json hidden";
-      preview.appendChild(previewNote);
-      preview.appendChild(previewCanvas);
-      preview.appendChild(previewText);
-      detail.appendChild(preview);
-      previewState = {
-        loaded: false,
-        loading: false,
-        previewNote,
-        previewCanvas,
-        previewText,
-      };
-    }
-
-    const shouldShowCode = item.kind === "arena-array" || (item.code && item.code.trim() !== item.label.trim());
-    if (shouldShowCode) {
-      const pre = document.createElement("pre");
-      pre.className = "question-import-detail-code";
-      const code = document.createElement("code");
-      code.textContent = item.code;
-      pre.appendChild(code);
-      detail.appendChild(pre);
-    }
-
-    pill.addEventListener("click", () => {
-      const expanded = !detail.classList.contains("hidden");
-      detail.classList.toggle("hidden", expanded);
-      pill.setAttribute("aria-expanded", String(!expanded));
-      itemWrap.classList.toggle("expanded", !expanded);
-
-      if (!expanded && previewState && !previewState.loaded && !previewState.loading) {
-        previewState.loading = true;
-        previewState.previewNote.textContent = "Loading actual notebook array...";
-        loadNotebookArrayPreview(
-          item.dataUrl,
-          `/tmp/delta-drills-helper-${renderSeq}-${Math.random().toString(36).slice(2)}.npy`
-        )
-          .then((arrayData) => {
-            if (renderSeq !== questionHelperRenderSeq) return;
-            previewState.loaded = true;
-            previewState.previewNote.textContent = "Loaded from notebook data file.";
-            window.renderDeltaArrayToCanvas(previewState.previewCanvas, arrayData);
-            previewState.previewCanvas.classList.remove("hidden");
-            const rawJson = JSON.stringify(arrayData, null, 2);
-            previewState.previewText.textContent =
-              rawJson.length > 16000 ? rawJson.slice(0, 16000) + "\n...\n(truncated)" : rawJson;
-            previewState.previewText.classList.remove("hidden");
-          })
-          .catch((err) => {
-            if (renderSeq !== questionHelperRenderSeq) return;
-            previewState.previewNote.textContent =
-              "Failed to load notebook array: " + (err.message || String(err));
-          });
-      }
-    });
-
-    itemWrap.appendChild(pill);
-    itemWrap.appendChild(detail);
-    questionImportsList.appendChild(itemWrap);
-  }
-  questionImports.classList.remove("hidden");
 }
 
 function shortSubtopicName(subtopic) {

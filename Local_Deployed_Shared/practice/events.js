@@ -89,11 +89,10 @@ const _selfReport = async (correct) => {
 selfReportNoBtn.addEventListener("click", () => _selfReport(false));
 selfReportYesBtn.addEventListener("click", () => _selfReport(true));
 
-if (showHintBtn) {
-  showHintBtn.addEventListener("click", () => {
-    if (hintSection) hintSection.classList.toggle("hidden");
-  });
-}
+/* The "Show hint" listener was here. Hints are a collapsible cell directly
+   under the problem in the notebook now, so the reveal happens where the
+   learner is already working rather than in a panel they would have to look
+   away to read. */
 
 overrideCorrectBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
