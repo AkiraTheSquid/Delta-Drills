@@ -2,7 +2,7 @@
 kc: numpy.ndarray-model
 title: What a tensor is — data + shape + dtype
 supporting: []
-new_syntax: [torch.tensor, torch.tensor#dtype, Tensor.shape, Tensor.dtype, Tensor.ndim, Tensor.numel, torch.int64, torch.float32]
+new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
 faded: [224, 482, 484]
 guided: []
 independent: [480, 481, 483, 485, 486]

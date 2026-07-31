@@ -2,7 +2,7 @@
 kc: numpy.inplace-out
 title: In-place operations and the trailing underscore
 supporting: [numpy.elementwise-ufuncs, numpy.slicing-views, numpy.fancy-indexing]
-new_syntax: [trailing-underscore-inplace]
+new_syntax: [Tensor.add_, Tensor.copy_, Tensor.div_, Tensor.mul_, Tensor.neg_, Tensor.sort]
 faded: [235, 138, 59]
 guided: []
 independent: []

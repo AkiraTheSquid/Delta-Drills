@@ -2,7 +2,7 @@
 kc: einsum.batch-dims
 title: Batch dimensions — carrying axes through
 supporting: [einsum.matvec-matmul, einsum.outer-products]
-new_syntax: []
+new_syntax: [torch.outer]
 faded: [268, 279, 310]
 guided: [250]
 independent: [265, 276, 297, 243, 287, 284]

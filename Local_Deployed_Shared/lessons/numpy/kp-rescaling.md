@@ -2,7 +2,7 @@
 kc: numpy.rescaling
 title: Rescaling — min-max, unit norm, probability rows
 supporting: [numpy.axis-reductions, numpy.where-select]
-new_syntax: []
+new_syntax: [Tensor.sum#keepdim]
 faded: [80, 97]
 guided: [162]
 independent: [6, 153, 10, 103, 147]

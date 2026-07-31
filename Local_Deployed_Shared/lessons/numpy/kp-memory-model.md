@@ -2,7 +2,7 @@
 kc: numpy.memory-model
 title: Memory model — views, reinterpreting bytes, bit unpacking
 supporting: [numpy.dtype-astype, numpy.slicing-views, numpy.broadcasting-rules]
-new_syntax: []
+new_syntax: [Tensor.flip, Tensor.untyped_storage, Tensor.view]
 faded: [123, 204]
 guided: []
 independent: [113]

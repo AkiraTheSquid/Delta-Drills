@@ -2,7 +2,7 @@
 kc: numpy.diag-triangles
 title: Diagonals, triangles, and trace
 supporting: [numpy.constructors, numpy.aggregations]
-new_syntax: []
+new_syntax: [torch.as_tensor, torch.diag, torch.diag#diagonal, torch.diagonal, torch.diagonal#offset, torch.trace, torch.tril, torch.tril#diagonal, torch.triu]
 faded: [77, 237, 47, 31]
 guided: [78]
 independent: [140, 16, 4, 160, 180]

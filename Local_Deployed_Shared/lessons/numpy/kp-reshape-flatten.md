@@ -2,7 +2,7 @@
 kc: numpy.reshape-flatten
 title: Reshape, flatten, and element order
 supporting: [numpy.ndarray-model, numpy.ranges]
-new_syntax: [Tensor.T, Tensor.flatten, Tensor.reshape, torch.arange]
+new_syntax: [Tensor.flatten, Tensor.reshape]
 faded: [46]
 guided: [36, 490, 491]
 independent: [23, 492, 493, 494]

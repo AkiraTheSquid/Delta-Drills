@@ -2,7 +2,7 @@
 kc: einsum.notation-model
 title: Reading an einsum spec string
 supporting: [numpy.axis-reductions, numpy.dot-matmul-patterns, numpy.reshape-flatten]
-new_syntax: [einsum-spec-string]
+new_syntax: [torch.einsum]
 concepts: [spec-anatomy, output-order-permutation]
 faded: [244, 285]
 guided: [271]

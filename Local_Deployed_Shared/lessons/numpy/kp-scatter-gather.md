@@ -2,7 +2,7 @@
 kc: numpy.scatter-gather
 title: Scatter and grouped aggregation — bincount weights and add.at
 supporting: [numpy.onehot-bincount, numpy.fancy-indexing]
-new_syntax: []
+new_syntax: [Tensor.index_add_, torch.bincount#weights]
 faded: [132]
 guided: [137]
 independent: [131, 216, 165]

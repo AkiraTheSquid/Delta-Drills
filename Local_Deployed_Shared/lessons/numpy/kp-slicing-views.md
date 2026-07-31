@@ -2,7 +2,7 @@
 kc: numpy.slicing-views
 title: Slicing, views, and slice assignment
 supporting: [numpy.ndarray-model]
-new_syntax: [slice-notation, multi-axis-indexing, syntax.slice, syntax.slice-step, torch.flip]
+new_syntax: [Tensor.clone, syntax.multi-axis-index, syntax.slice, syntax.slice-step, torch.flip, torch.rot90]
 faded: [233]
 guided: [76, 506]
 independent: [231, 75, 507, 74, 189]

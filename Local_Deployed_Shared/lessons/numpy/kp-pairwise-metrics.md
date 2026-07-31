@@ -2,7 +2,7 @@
 kc: numpy.pairwise-metrics
 title: Pairwise distances and similarities
 supporting: [numpy.broadcasting-rules, numpy.axis-reductions, numpy.rescaling]
-new_syntax: []
+new_syntax: [torch.linalg.norm#dim, torch.linalg.norm#keepdim]
 faded: [181]
 guided: [127]
 independent: [169, 128, 122, 193, 129]

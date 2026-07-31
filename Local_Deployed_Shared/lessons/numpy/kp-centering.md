@@ -2,7 +2,7 @@
 kc: numpy.centering
 title: Centering and standardizing rows/columns
 supporting: [numpy.axis-reductions, numpy.broadcasting-rules]
-new_syntax: []
+new_syntax: [Tensor.std, Tensor.std#correction, Tensor.std#dim]
 faded: [15, 7, 106]
 guided: [154]
 independent: [109, 218]

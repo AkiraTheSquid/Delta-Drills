@@ -2,7 +2,7 @@
 kc: einops.pattern-language
 title: The einops pattern language — naming and permuting axes
 supporting: [numpy.reshape-flatten, einsum.notation-model]
-new_syntax: [einops-pattern-string]
+new_syntax: [einops.rearrange]
 faded: [345]
 guided: [388]
 independent: [335, 330, 379, 319, 327, 344]

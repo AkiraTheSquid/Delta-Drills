@@ -2,7 +2,7 @@
 kc: numpy.linalg-basics
 title: Matrix multiply and t.linalg basics
 supporting: [numpy.aggregations, numpy.elementwise-ufuncs]
-new_syntax: [matmul-operator, syntax.matmul, torch.linalg, torch.linalg.solve]
+new_syntax: [syntax.matmul, torch.linalg, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107]
 guided: [508, 509]
 independent: [510, 511, 512, 513]

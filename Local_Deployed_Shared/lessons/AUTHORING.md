@@ -12,7 +12,7 @@ and grades every faded solution against the drill bank's test cases.
 kc: numpy.broadcasting-rules        # must exist in kc_registry.json
 title: Broadcasting rules
 supporting: [numpy.ndarray-model]   # KCs used but not taught here
-new_syntax: []                      # syntax tags introduced here
+new_syntax: []                      # symbols this page is the lesson for
 concepts: [repeat-elements]         # stable id per atomic segment, in order
 faded: [111, 151]                   # bank question ids used as faded practice
 guided: [90]                        # bank ids used as guided (hinted) practice
@@ -67,6 +67,15 @@ A KP is a sequence of single-concept SEGMENTS. Each `## Concept` heading starts
 a new segment; its `## Worked example` and `## Faded practice` belong to that
 segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
 
+- `new_syntax:` is a CLAIM, not a tag list: it says this page is where a
+  learner is taught that symbol. Spell entries the way
+  `audit_lesson_syntax.py` reports them — `torch.zeros`, `Tensor.item`,
+  `torch.stack#dim` (a keyword is its own thing to learn), `einops.rearrange`,
+  `syntax.slice`. Free text (`slice-notation`) matches nothing and declares
+  nothing. Run `audit_lesson_syntax.py --suggest` for a starting list, then
+  decide each one: the default owner is the first page that shows it, and a
+  later page wins only if the symbol is what that page is ABOUT. Plain Python
+  belongs in the script's ASSUMED set instead.
 - Each segment teaches exactly ONE new idea (one function, one mode, one rule).
   If the prose says "also" or introduces a second API, split the segment.
 - `concepts:` declares one stable id per reviewed atomic segment. Its count

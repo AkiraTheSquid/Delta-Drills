@@ -2,7 +2,7 @@
 kc: numpy.aggregations
 title: Whole-tensor aggregations and Python scalars
 supporting: [numpy.elementwise-ufuncs]
-new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.allclose, torch.equal, torch.full]
+new_syntax: [Tensor.any, Tensor.item, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.Tensor, torch.allclose, torch.equal]
 faded: [26, 28, 64]
 guided: [495, 496]
 independent: [62, 497, 498]
