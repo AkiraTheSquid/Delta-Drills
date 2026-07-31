@@ -119,6 +119,17 @@ if ! grep -q 'practice/colab_mode.js' /tmp/dd-colab-index.html; then
   exit 1
 fi
 
+# Sign-in is keyed on the JavaScript ORIGIN, so this deploy's hostname has to be
+# registered on the OAuth client before the Google button works — the failure is
+# "Error 400: origin_mismatch" at the moment of pressing it, long after a deploy
+# that verified green. Cheap to check here, so check it.
+if ! grep -q "$VERCEL_URL" "$REPO_SHARED_DIR/auth-config.js"; then
+  warn "auth-config.js does not mention $VERCEL_URL."
+  warn "Google sign-in will fail with 'Error 400: origin_mismatch' until that"
+  warn "origin is added to the OAuth client's Authorized JavaScript origins."
+fi
+
 info "Done."
 echo -e "${GREEN}  Colab edition: ${VERCEL_URL}${NC}"
 echo -e "${GREEN}  Normal app:    https://delta-drills.vercel.app (unchanged)${NC}"
+echo -e "${YELLOW}  Sign-in needs ${VERCEL_URL} in the OAuth client's JavaScript origins.${NC}"
