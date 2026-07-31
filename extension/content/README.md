@@ -21,6 +21,19 @@ file to fix.
 - Any network call. This script never talks to the backend.
 
 ## Key Files
+- `colab_focus.js` + `colab_dd.css`: **show one problem, and skin the page.** Two
+  independent toggles in a small floating panel (bottom-right, collapsible),
+  persisted in `chrome.storage.local` under `dd_colab_view`:
+  - *Only this problem* — hides every cell that is not part of the problem the
+    URL points at. The target comes from the fragment the app's "Open in Colab ↗"
+    already builds (`#scrollTo=dd-q123`), so nothing has to message anything.
+  - *Delta Drills theme* — the dark skin, Colab's header/toolbars/left pane/Gemini
+    spark hidden. Adapted from Seth's hand-written CSS; its `a {display:none}`
+    rule is deliberately dropped (it hid links inside the problem prose too).
+
+  Every CSS rule is scoped under `html.dd-theme` / `html.dd-focus`, which only
+  this script adds — both off is a stock Colab page. The toggle panel's own
+  styling is the one unscoped exception, because it is the way back out.
 - `colab.js`: the whole adapter. Registers a `chrome.runtime.onMessage` listener
   for `dd:ping`, `dd:identify`, `dd:goto` and `dd:read-output`, injected at
   `document_idle` on `https://colab.research.google.com/*`.
@@ -109,6 +122,25 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-07-31: **Focus mode + the Delta Drills skin** (`colab_focus.js`,
+  `colab_dd.css`). Hooking onto individual cells needed nothing new in the
+  notebooks: the generator has minted `dd-setup` / `dd-lesson-<id>` /
+  `dd-kp-<slug>` / `dd-q<n>[-hints|-code]` since the panel needed them for
+  jumping, and Colab renders each as the DOM id `cell-<id>`.
+  - 🔴 **Focus hides nothing unless the target resolved to real cells.** Blank is
+    what a failed load looks like, and on ARENA's 458 un-id'd notebooks no match
+    is the DEFAULT case. `dd-setup` is exempt in all cases — hide it and the
+    answer cell dies on `NameError`, which reads as broken starter code.
+  - Group membership matches `dd-q<n>` with a trailing boundary. A bare prefix
+    puts `dd-q12` and `dd-q123` in one group and shows two problems at once.
+  - Re-applies on `hashchange` (opening the next problem changes only the
+    fragment, which is not a navigation) and on a debounced MutationObserver
+    (Colab mounts cells long after load).
+  - Covered by `This-Directory-Only/scripts/test_colab_focus.mjs` — 13 assertions
+    against a stub DOM, because the real page is behind a Google login that the
+    browser checks cannot reach. `watch.py` gained
+    `check_focus_cannot_blank_the_notebook` and `check_css_is_opt_in`; both were
+    negative-tested by reintroducing the fault.
 - 2026-07-31: Added `dd:identify` — notebook identity and mount state, so the
   panel can switch notebooks between problems.
 - 2026-07-31: Initial build — `dd:ping` / `dd:goto` / `dd:read-output`.

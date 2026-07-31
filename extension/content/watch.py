@@ -89,8 +89,73 @@ def check_invariants():
         assert banned not in script, f"{banned} blocks the page and kills the message channel"
 
 
+def check_focus_cannot_blank_the_notebook():
+    """Focus mode hides cells. The ways that goes wrong are all silent.
+
+    * **Nothing is hidden unless a target RESOLVED to real cells.** With no
+      match every cell would be tagged out-of-focus and the notebook would go
+      blank — and blank is exactly what a failed load looks like. On upstream
+      ARENA notebooks (nbformat 4.2, no cell ids at all) no match is the normal
+      case, so this is not an edge condition.
+    * **The setup cell is never hidden.** It holds the imports and
+      `DD_LESSON_ID`; hidden, the answer cell dies on NameError and reads as
+      broken starter code rather than as a missing prerequisite.
+    * **Group membership needs a digit boundary.** A bare prefix test puts
+      `dd-q12` and `dd-q123` in one group, so one problem drags another's cells
+      on screen.
+    * **The fragment changes without a navigation.** Opening the next problem
+      only rewrites `#scrollTo=`, so without a hashchange listener the notebook
+      keeps showing the previous problem.
+    """
+    script = _read(os.path.join(HERE, "colab_focus.js"))
+
+    assert "inFocus > 0" in script, (
+        "colab_focus.js must require at least one matching cell before hiding "
+        "anything — otherwise an unmatched target blanks the notebook"
+    )
+    assert "dd-always-visible" in script and "dd-setup" in script, (
+        "the setup cell must stay visible in focus mode, or the problem cannot run"
+    )
+    assert re.search(r"dd-q\(\\d\+\)\(\?:\$\|\[\^0-9\]\)", script), (
+        "problemOf must match dd-q<n> with a trailing boundary, or dd-q12 and "
+        "dd-q123 land in the same group"
+    )
+    assert 'addEventListener("hashchange"' in script, (
+        "focus must re-apply on hashchange — opening the next problem changes "
+        "only the fragment, which is not a navigation"
+    )
+    for banned in ("alert(", "confirm(", "prompt("):
+        assert banned not in script, f"{banned} blocks the page and kills the message channel"
+
+
+def check_css_is_opt_in():
+    """Every styling rule is scoped to a class this extension adds.
+
+    An unscoped rule restyles Colab for the student even with both toggles off,
+    on every notebook they ever open — including ones that have nothing to do
+    with Delta Drills. The toggle would then be a lie, and the only way back
+    would be uninstalling.
+
+    The toggle panel itself (`#dd-colab-toggle`) is the deliberate exception: it
+    is the way OUT of the theme, so scoping it under the theme would make it
+    disappear along with what it disables.
+    """
+    css = _read(os.path.join(HERE, "colab_dd.css"))
+    stripped = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    for block in re.finditer(r"([^{}]+)\{[^{}]*\}", stripped):
+        selectors = [s.strip() for s in block.group(1).split(",") if s.strip()]
+        for selector in selectors:
+            scoped = selector.startswith(("html.dd-theme", "html.dd-focus", "#dd-colab-toggle"))
+            assert scoped, (
+                f"unscoped CSS rule {selector!r} — it would restyle every Colab "
+                f"page even with the toggles off. Scope it under html.dd-theme "
+                f"or html.dd-focus"
+            )
+
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_focus_cannot_blank_the_notebook, check_css_is_opt_in]
     for fn in checks:
         try:
             fn()

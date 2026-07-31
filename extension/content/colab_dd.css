@@ -1,0 +1,146 @@
+/* ================================================================
+   COLAB_DD.CSS — Delta Drills' two changes to a Colab page.
+
+   Declared in the manifest, so it is present on every Colab page from the first
+   paint — but EVERY rule is scoped under a class on <html> that only
+   `colab_focus.js` adds:
+
+     html.dd-theme   the dark Delta-Drills-ish skin, and Colab's chrome hidden
+     html.dd-focus   everything except the current problem hidden
+
+   Both off = a completely stock Colab page. That is what makes the toggle
+   instant and total: nothing to inject, nothing to unwind, no flash of a
+   half-styled notebook while a script decides.
+
+   Adapted from Seth's hand-written Colab CSS
+   (kolb-learning-notes/0-primary-sources/00.0-prompts/CCS-for-google-collab-page.md).
+   One rule from it is deliberately NOT here: `a { display: none }`. It hides
+   every anchor on the page, including links inside the problem prose and the
+   lesson's own references — invisible content rather than tidier chrome.
+   ================================================================ */
+
+/* ── Focus: one problem at a time ────────────────────────────────────
+   The class work is in colab_focus.js; this is the whole visual half.
+
+   `.dd-out-of-focus` is only ever applied when a target problem actually
+   RESOLVED — no target means no class means nothing hidden. A notebook that
+   hides everything looks broken in exactly the way a blank page does, and the
+   student cannot tell it from a failed load. */
+html.dd-focus .cell.dd-out-of-focus {
+  display: none !important;
+}
+
+/* The setup cell survives focus mode, always. It holds the imports and
+   `DD_LESSON_ID`, so hiding it leaves the student a problem they cannot run —
+   the one cell whose absence is silent until the answer cell raises NameError. */
+html.dd-focus .cell.dd-always-visible {
+  display: block !important;
+}
+
+/* ── The skin ────────────────────────────────────────────────────── */
+
+html.dd-theme colab-composer-floating-spark,          /* the Gemini spark */
+html.dd-theme colab-status-bar,
+html.dd-theme colab-cell-toolbar,
+html.dd-theme div#header,
+html.dd-theme div#header-content,
+html.dd-theme div#header-right,
+html.dd-theme div#header-doc-toolbar,
+html.dd-theme colab-notebook-toolbar#top-toolbar,
+html.dd-theme colab-left-pane.colab-left-pane-open {
+  display: none !important;
+}
+
+/* Monaco's vertical column ruler. */
+html.dd-theme .monaco-editor .view-rulers,
+html.dd-theme .monaco-editor .view-ruler {
+  display: none !important;
+}
+
+html.dd-theme .monaco-editor,
+html.dd-theme .monaco-editor-background,
+html.dd-theme .monaco-editor .margin,
+html.dd-theme .monaco-editor .overflow-guard,
+html.dd-theme .margin-view-overlays,
+html.dd-theme .inputarea.horizontal.layout.code {
+  background-color: #0d0d18 !important;
+}
+
+html.dd-theme .notebook-vertical.large-notebook,
+html.dd-theme .layout.vertical.grow.tab-pane-container {
+  background: #1a1a2e;
+}
+
+html.dd-theme .notebook-cell-list {
+  background: transparent;
+}
+
+/* Selection: coral at ~35%, matching the app. */
+html.dd-theme .monaco-editor .selected-text,
+html.dd-theme .monaco-editor .view-overlays .selected-text,
+html.dd-theme .monaco-editor .view-overlays .selected-text.inactive,
+html.dd-theme ::selection {
+  background-color: #ff7f5059 !important;
+}
+
+html.dd-theme .code .codecell-input-output,
+html.dd-theme .notebook-cell.focused .main-content {
+  outline: none !important;
+}
+
+/* ── The toggle ──────────────────────────────────────────────────────
+   Unscoped on purpose: it is the way back out. Scoped under `.dd-theme` it
+   would vanish with the theme it turns off, and the only remedy left would be
+   reloading the tab. */
+#dd-colab-toggle {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2147483646;      /* over Colab's own overlays, under nothing of ours */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 22, 26, 0.92);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  font: 12px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e6e6ef;
+  user-select: none;
+}
+
+#dd-colab-toggle .dd-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#dd-colab-toggle input {
+  accent-color: #ff7f50;
+  margin: 0;
+  cursor: pointer;
+}
+
+#dd-colab-toggle .dd-note {
+  color: #9aa0b4;
+  max-width: 190px;
+  white-space: normal;
+}
+
+#dd-colab-toggle.dd-collapsed .dd-row,
+#dd-colab-toggle.dd-collapsed .dd-note {
+  display: none;
+}
+
+#dd-colab-toggle .dd-handle {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: #9aa0b4;
+  cursor: pointer;
+  font: inherit;
+  padding: 0 2px;
+}
