@@ -18,22 +18,12 @@ function questionIsTorch(q) {
   return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
 }
 
-// Colab routing applies ONLY where the runner can't grade torch. Backend mode
-// grades torch in-process now (fork runner, torch preimported at boot), so
-// torch questions there use the normal editor flow. Offline/Supabase practice
-// runs on Pyodide, which cannot import torch at all → Colab.
-function torchNeedsColab(q) {
-  // Routing a torch drill to Colab hides the WHOLE right panel — editor, aids,
-  // submit. That was survivable when torch drills were a rare fork, but the
-  // bank is now 448/448 torch, so this condition fires on every question the
-  // moment the runtime is not the backend, and it strands the learner on a
-  // prompt with no controls and no way forward.
-  //
-  // Only route away when there is somewhere to route TO. With no notebook the
-  // old behaviour was a dead end, not a fallback.
-  if (!questionIsTorch(q) || practiceMode === "backend") return false;
-  return !!(q && (q.problem_notebook_path || q.solution_notebook_path));
-}
+/* `torchNeedsColab` was here. It answered "does this question need Colab
+   because Pyodide cannot import torch?" — a question with only one answer now
+   (everything is worked in Colab, whatever it imports), so the routing it fed
+   is unconditional and lives in `renderColabCard` below. `questionIsTorch`
+   above survives: practice/pyodide-boot.js still uses it to keep a LESSON's
+   torch example off Pyodide and on the backend fork runner. */
 
 function _escapeHtml(s) {
   return String(s == null ? "" : s)
@@ -95,35 +85,71 @@ function renderQuestionBody(q) {
   }
 }
 
-// BINARY interface per question: either the Colab card (offline torch) or the
-// full editor flow (everything else) — never both half-shown at once (a torch
-// card next to a live editor read as contradictory; tester feedback).
-function applyTorchRouting(q) {
-  const colabRoute = torchNeedsColab(q);
-  if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !colabRoute);
-  // The whole right editor panel + hint aids + submit/skip swap out together.
-  const rightPanel = document.querySelector(".practice-right");
-  if (rightPanel) rightPanel.classList.toggle("hidden", colabRoute);
-  const aids = document.getElementById("practice-aids");
-  if (aids) aids.classList.toggle("hidden", colabRoute);
-  practiceSubmitArea.classList.toggle("hidden", colabRoute);
-  if (!colabRoute) return;
-  const toHref = (p) => (p && typeof colabUpstreamHref === "function") ? colabUpstreamHref(p) : "";
-  // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall
-  // back to the solution notebook only if no problem notebook exists.
-  if (torchColabLink) {
-    const href = toHref(q && (q.problem_notebook_path || q.solution_notebook_path));
-    torchColabLink.classList.toggle("hidden", !href);
-    if (href) torchColabLink.href = href;
+/* THE COLAB CARD — where this problem gets worked.
+
+   Every question routes to a notebook now. `applyTorchRouting` used to sit
+   here and did the opposite job: it decided whether ONE library's questions
+   needed Colab and, when they did, hid the editor, the hints and the submit
+   controls. There is no editor left to hide and no per-library decision left
+   to make, so what remains is: name the notebook, point at the exact cell.
+
+   Silent when there is no mapping. 424 of the 499 bank questions are anchored
+   in a notebook; a question that is not (a placement probe from a parked
+   chapter, say) still renders and is still answerable — it just has nowhere to
+   send you, and claiming otherwise with a dead link would be worse. */
+function renderColabCard(q) {
+  if (!colabCard) return;
+  var url = window.ColabRoute ? window.ColabRoute.urlFor(q) : "";
+  var lesson = window.ColabRoute ? window.ColabRoute.lessonFor(q) : null;
+  colabCard.classList.toggle("hidden", !url);
+  hideColabNote();
+  if (!url) return;
+  if (colabOpenLink) colabOpenLink.href = url;
+  if (colabCardLabel) {
+    colabCardLabel.textContent = lesson && lesson.title ? lesson.title : "Notebook";
   }
-  // Separate "Show solution" → the worked-answer notebook, only when we have a
-  // distinct problem notebook (otherwise the primary link already IS the solution).
-  if (torchSolutionLink) {
-    const solHref = toHref(q && q.solution_notebook_path);
-    const showSolution = !!(solHref && q && q.problem_notebook_path);
-    torchSolutionLink.hidden = !showSolution;
-    if (showSolution) torchSolutionLink.href = solHref;
+}
+
+/* Steer the one Colab tab to this problem.
+
+   Only ever best-effort — see the header of practice/colab-route.js. A browser
+   permits window.open during a user gesture; the click that advanced to this
+   question is one, an expiring answer timer is not. When it does not open we
+   say so rather than leaving the learner waiting for a tab, because the link
+   right next to the note is a working way through. */
+function openColabForQuestion(q) {
+  if (!window.ColabRoute || !colabCard || colabCard.classList.contains("hidden")) return;
+  // ONLY when the problem is actually in front of the learner.
+  //
+  // `initPractice` renders a question during boot so the page has something to
+  // show the moment a session starts. That render is invisible — the practice
+  // page may not even be the open tab, and `session-idle` hides the question
+  // behind the setup panel — and it used to fire this, so merely loading the
+  // app hijacked a tab to a notebook for a problem nobody had been asked yet.
+  // Both conditions are needed: `session-idle` alone misses the boot render on
+  // another tab, and visibility alone misses the setup screen.
+  var page = document.getElementById("page-practice");
+  if (!page || page.classList.contains("hidden") || page.classList.contains("session-idle")) {
+    return;
   }
+  if (!window.ColabRoute.open(q)) {
+    showColabNote("Couldn't open the notebook automatically — use the link above.");
+  }
+}
+
+function showColabNote(message) {
+  if (!colabCardNote) return;
+  // The card itself may be hidden (unmapped question); the note still has to be
+  // readable, since this is now the page's only error surface.
+  if (colabCard) colabCard.classList.remove("hidden");
+  colabCardNote.textContent = message;
+  colabCardNote.classList.remove("hidden");
+}
+
+function hideColabNote() {
+  if (!colabCardNote) return;
+  colabCardNote.textContent = "";
+  colabCardNote.classList.add("hidden");
 }
 
 function stableQuestionId(q) {
@@ -181,9 +207,9 @@ function renderQuestion(q, count) {
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
-  codeEditor.value =
-    q.starter_code ||
-    "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  // The starter code is no longer copied into an editor — it is already the
+  // first line of the problem's cell in the notebook, which is where the
+  // learner types. Rendering it here too would be a second copy nobody edits.
   subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   renderQuestionIdChip(q);
@@ -229,9 +255,10 @@ function renderQuestion(q, count) {
   setupQuestionAids(q);
   overrideRow.classList.add("hidden");
 
-  // Reset to pre-submit state
+  // Reset to pre-report state
   practiceSubmitArea.classList.remove("hidden");
-  practiceSubmitBtn.disabled = false;
+  selfReportNoBtn.disabled = false;
+  selfReportYesBtn.disabled = false;
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
   ewmaAccuracy.classList.add("hidden");
@@ -239,9 +266,11 @@ function renderQuestion(q, count) {
   showFeedbackButtons();
   resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
-  // Torch drills swap the submit flow for the Colab-routing notice (must run
-  // AFTER the submit area is un-hidden above so it can re-hide it for torch).
-  applyTorchRouting(q);
+  // Point at the notebook cell this problem lives in, then steer the Colab tab
+  // there. Rendering first matters: the auto-open reads the card's visibility
+  // to decide whether there is anywhere to go.
+  renderColabCard(q);
+  openColabForQuestion(q);
 
   // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
   // Backend mode: use p_current from the question response (adaptiveStateJson is null).

@@ -14,7 +14,7 @@ SHARED = os.path.dirname(HERE)
 
 REQUIRED_JS = [
     "init.js", "dom.js", "events.js", "engine.js", "api.js",
-    "runner.js", "visuals.js", "ui.js", "ai.js", "mode.js",
+    "pyodide-boot.js", "colab-route.js", "visuals.js", "ui.js", "ai.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
     "bars.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
@@ -50,9 +50,9 @@ def check_imports():
 # Verify the runtime-contract surface stays intact: preamble builder is exported,
 # fallback rendering helpers are present, and the question JSON is parseable.
 def check_public_api():
-    runner = _read(os.path.join(HERE, "runner.js"))
-    assert "buildPyodidePreamble" in runner, "runner.js missing buildPyodidePreamble"
-    assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
+    runner = _read(os.path.join(HERE, "pyodide-boot.js"))
+    assert "buildPyodidePreamble" in runner, "pyodide-boot.js missing buildPyodidePreamble"
+    assert "ensureArenaNumbersInPyodide" in runner, "pyodide-boot.js missing ensureArenaNumbersInPyodide"
 
     ui_js = _read(os.path.join(HERE, "ui.js"))
     assert "renderQuestionImports" in ui_js, "ui.js missing imports renderer"
@@ -205,28 +205,28 @@ def check_invariants():
     assert id27 is not None, "missing question id 27"
     assert id27["exercise"].get("canonical_solution"), "id-27 canonical_solution still null"
 
-    runner = _read(os.path.join(HERE, "runner.js"))
+    runner = _read(os.path.join(HERE, "pyodide-boot.js"))
     contract = _read(os.path.join(HERE, "RUNTIME_CONTRACT.md"))
     # Names that the doc claims are always/conditionally injected.
     for name in ("import numpy as np", "display_array_as_img", "delta_numbers.npy"):
-        assert name in runner, f"runner.js no longer injects expected name: {name!r}"
+        assert name in runner, f"pyodide-boot.js no longer injects expected name: {name!r}"
         assert name.split()[-1].split("/")[-1] in contract or name in contract, (
             f"RUNTIME_CONTRACT.md does not mention {name!r}"
         )
 
     # The dispatch line that forces einops-questions to Pyodide is the documented gotcha.
     assert re.search(r"questionNeedsEinops\(", runner), (
-        "runner.js no longer uses questionNeedsEinops gating — update RUNTIME_CONTRACT.md"
+        "pyodide-boot.js no longer uses questionNeedsEinops gating — update RUNTIME_CONTRACT.md"
     )
 
     # notebook.js recognises a silent-but-successful run by matching the exact
-    # string runner.js substitutes for empty output, so it can report the cell's
+    # string pyodide-boot.js substitutes for empty output, so it can report the cell's
     # assertion count instead. Reword it in one file only and every quiet cell
     # silently goes back to saying "no printed output".
     notebook = _read(os.path.join(HERE, "notebook.js"))
     no_output = "✓ Ran successfully (no printed output)"
     assert no_output in runner, (
-        f"runner.js no longer emits {no_output!r} — notebook.js matches on it"
+        f"pyodide-boot.js no longer emits {no_output!r} — notebook.js matches on it"
     )
     assert no_output in notebook, (
         f"notebook.js lost its copy of {no_output!r} — silent cells will stop "
@@ -253,9 +253,127 @@ def check_invariants():
     )
 
 
+# ── Self-report loop ──────────────────────────
+def check_self_report_loop():
+    """Practice does not run or grade code. Keep it that way.
+
+    The editor, the Run button, the output pane and the in-browser graders were
+    removed on 2026-07-31: the learner works the problem in its Colab notebook
+    and reports whether it ran. Each assertion below is one way that has already
+    been, or could quietly be, undone.
+    """
+    root = os.path.dirname(HERE)
+    markup = _read(os.path.join(root, "index.html"))
+
+    # 1. The editor half must stay gone. A textarea reappearing means someone
+    #    started rebuilding the runner, and two ways to answer a question means
+    #    two things that can disagree about what was answered.
+    for dead in ('id="code-editor"', 'id="run-btn"', 'id="output-area"',
+                 'id="output-visual"', 'class="practice-right"'):
+        assert dead not in markup, (
+            f"index.html has {dead} again — practice is self-report only; "
+            f"see practice/README.md before adding a runner back"
+        )
+
+    # 2. Both result buttons, in the order the learner reads them. LEFT is the
+    #    negative one because the expiring answer timer clicks it.
+    no_at = markup.find('id="self-report-no"')
+    yes_at = markup.find('id="self-report-yes"')
+    assert no_at > 0 and yes_at > 0, "index.html lost a self-report button"
+    assert no_at < yes_at, (
+        "the self-report buttons swapped order — 'was not able' must render "
+        "left of 'was able'; the timer default and the visual default are "
+        "supposed to be the same control"
+    )
+
+    # 3. Timer expiry must record a miss, not silently skip. This is a mastery
+    #    write: an expiry that advances without reporting loses the attempt.
+    timer = _read(os.path.join(HERE, "timer.js"))
+    assert "selfReportNoBtn.click()" in timer, (
+        "timer.js no longer clicks #self-report-no when the answer time runs "
+        "out — an expiry must record 'was not able to run the result'"
+    )
+
+    # 4. One grading entry point, and it is not a grader.
+    api = _read(os.path.join(HERE, "api.js"))
+    assert "recordSelfReport" in api, "api.js lost recordSelfReport"
+    assert "submit-local-eval" in api, (
+        "api.js no longer posts /submit-local-eval — that endpoint is what runs "
+        "the same BKT/FIRe chain as server-side grading"
+    )
+    for gone in ("submitAnswer", "fetchAIJudge", "outputsMatch"):
+        assert gone not in api, (
+            f"api.js has {gone} again — code grading belongs to the backend, "
+            f"not to a second in-browser path"
+        )
+
+
+# ── Colab routing ─────────────────────────────
+def check_colab_route():
+    """The learner has to be able to GET to the problem.
+
+    Reporting "was able to run the result" only means something if there was
+    somewhere to run it. The map is generated next to the notebooks
+    (scripts/generate_colab_notebooks.py) so the two cannot drift; these checks
+    catch the file going missing, going stale, or losing the cell anchor.
+    """
+    root = os.path.dirname(HERE)
+    index_path = os.path.join(root, "lessons", "colab_notebooks.json")
+    assert os.path.exists(index_path), (
+        "lessons/colab_notebooks.json is missing — regenerate with "
+        "`python3 scripts/generate_colab_notebooks.py`"
+    )
+    with open(index_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+    for key in ("lessons", "questions", "subtopics", "kcs"):
+        assert index.get(key), f"colab_notebooks.json has no {key!r}"
+
+    # Every notebook the map names must be one the generator actually wrote.
+    files = {l["file"] for l in index["lessons"]}
+    assert len(files) == len(index["lessons"]), "two lessons claim one notebook file"
+
+    # The map must agree with the extension's copy — same generator, same run.
+    ext = os.path.join(os.path.dirname(root), "extension", "panel", "notebook-index.js")
+    if os.path.exists(ext):
+        ext_src = _read(ext)
+        ext_index = json.loads(ext_src[ext_src.index("{"):].rstrip().rstrip(";"))
+        assert ext_index.get("questions") == index.get("questions"), (
+            "colab_notebooks.json and extension/panel/notebook-index.js disagree "
+            "about which notebook a question is in — rerun "
+            "scripts/generate_colab_notebooks.py, which writes both"
+        )
+
+    # Auto-open must be gated on the problem actually being on screen.
+    # initPractice() renders a question during boot so a session can start
+    # instantly; that render is invisible (the page may not even be the open
+    # tab, and session-idle hides it behind the setup panel). Without this
+    # guard, merely loading the app hijacked a browser tab to a notebook for a
+    # problem the learner had not been asked yet.
+    ui = _read(os.path.join(HERE, "ui.js"))
+    assert 'page.classList.contains("session-idle")' in ui and 'page.classList.contains("hidden")' in ui, (
+        "ui.js openColabForQuestion lost its visibility guard — loading the app "
+        "will open a Colab tab before the learner starts a session"
+    )
+
+    route = _read(os.path.join(HERE, "colab-route.js"))
+    # Colab scrolls to a cell by its metadata id; the generator emits dd-q<id>
+    # precisely so this anchor works. Losing it silently drops the learner at
+    # the top of a 500-cell notebook.
+    assert "#scrollTo=dd-q" in route, (
+        "colab-route.js no longer builds a #scrollTo=dd-q<id> anchor — the link "
+        "would open the notebook but not the problem"
+    )
+    # One reused tab is what makes this work from wherever the learner is.
+    assert 'var TARGET = "delta-drills-colab"' in route, (
+        "colab-route.js lost its named window target — every jump would open a "
+        "new Colab tab"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_self_report_loop, check_colab_route]
     for fn in checks:
         try:
             fn()

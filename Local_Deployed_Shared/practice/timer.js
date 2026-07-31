@@ -136,7 +136,10 @@ const PracticeSession = (() => {
       phase: state.phase,
       remaining,
       questionId: _questionId(),
-      draft: codeEditor.value,
+      // `draft` (the editor's contents) used to be part of every snapshot. The
+      // editor is gone, and the learner's work now lives in their Colab
+      // notebook, which survives a pause on its own. Older snapshots may still
+      // carry the field; it is simply ignored.
       review,
       savedAt: new Date().toISOString(),
     };
@@ -199,13 +202,21 @@ const PracticeSession = (() => {
     sessionSetupPanel.classList.add("session-setup--has-resume");
   };
 
-  // Answer time is up. Grade whatever is in the editor; when nothing is
-  // submittable (torch Colab routing swaps the submit area out), advance
-  // without recording anything — same contract as Skip.
+  /* Answer time is up → record "was not able to run the result".
+
+     Running out of time IS the negative outcome, so the timer clicks the same
+     button the learner would have: #self-report-no. Going through the button
+     rather than calling `_selfReport(false)` directly keeps one code path — the
+     disabled check below is then the same guard that stops a double-report when
+     a click and the expiry land together.
+
+     If the report area is already gone (the learner just reported, or a
+     placement probe swapped the controls out) there is nothing to record and
+     this advances instead — same contract as Skip. */
   const _forceSubmitOrAdvance = () => {
     if (!isActive()) return;
-    if (!practiceSubmitArea.classList.contains("hidden") && !practiceSubmitBtn.disabled) {
-      practiceSubmitBtn.click();
+    if (!practiceSubmitArea.classList.contains("hidden") && !selfReportNoBtn.disabled) {
+      selfReportNoBtn.click();
       return;
     }
     _loadNextPracticeQuestion().catch(() => {});
@@ -242,7 +253,6 @@ const PracticeSession = (() => {
   const _restoreReview = () => {
     const review = state.review;
     if (!review) return;
-    codeEditor.value = state.draft || review.userCode || codeEditor.value;
     solutionCode.textContent = review.solutionCode || PracticeAPI.currentQuestion?.solution_code || "";
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
@@ -295,7 +305,7 @@ const PracticeSession = (() => {
     // the background at init is recorded (same contract as Skip).
     _loadNextPracticeQuestion()
       .catch((err) => {
-        outputArea.textContent = "Could not start the session: " + (err?.message || err);
+        showColabNote("Could not start the session: " + (err?.message || err));
         finish("error");
       })
       .finally(() => {
@@ -471,7 +481,6 @@ const PracticeSession = (() => {
     sessionProgressLabel.textContent = `${Math.min(state.served, state.total)} / ${state.total}`;
     sessionStatusRow.classList.remove("hidden");
     pagePractice.classList.remove("session-idle");
-    codeEditor.value = state.draft || codeEditor.value;
     if (state.phase === "review") {
       _restoreReview();
       _setPhase("review", "Reviewing");
@@ -527,10 +536,6 @@ const PracticeSession = (() => {
   sessionEndBtn.addEventListener("click", () => finish("ended"));
   sessionResumeBtn.addEventListener("click", resume);
   sessionDiscardBtn.addEventListener("click", discard);
-  codeEditor.addEventListener("input", () => {
-    if (isActive()) _persist();
-  });
-
   // A reload or browser close acts like a pause. Snapshots written during
   // transient grading/loading phases safely reopen in answer mode.
   window.addEventListener("pagehide", () => {

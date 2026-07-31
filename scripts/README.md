@@ -16,6 +16,22 @@
 - `validate_lessons.py`: executes every code fence in document order, grades every faded solution against bank test_cases, enforces exactly one worked + one faded example per segment. Run with `--coverage` as the full gate.
 - `compile_lessons.py`: emits `lessons_structured.json` with per-KP `segments` plus legacy aggregate fields (viewer.html back-compat).
 - `build_qmatrix.py`: derives `qmatrix_tags.json` question→KC tags from KP refs + hand-assigned leftovers.
+- `generate_colab_notebooks.py`: compiles the nine Colab notebooks from
+  `lessons_structured.json` + the question bank, and writes the
+  `question -> notebook` map TWICE from one run — `extension/panel/notebook-index.js`
+  (a `<script>` the MV3 side panel loads) and
+  `Local_Deployed_Shared/lessons/colab_notebooks.json` (fetched by the web app).
+  Both consumers navigate by that map, so it must come from the same pass that
+  wrote the `.ipynb` files; `Local_Deployed_Shared/practice/watch.py` fails if
+  the two copies disagree. Emits nbformat 4.5 with a deterministic
+  `metadata.id` per cell (`dd-q<question_id>`) — that id is what Colab's
+  `#scrollTo=` matches, and it is the only reason a link can land on a specific
+  problem.
+- `publish_colab_notebooks.sh`: pushes those notebooks to
+  `<owner>/arena-book-colab/ARENA_5.0/ch-1-foundations`. Colab can only open a
+  notebook from a URL, so **regenerating is not enough — unpublished changes are
+  invisible to learners.** The default repo is baked into
+  `practice/colab-route.js` as `DEFAULT_REPO`.
 
 ## Data & External Dependencies
 - Reads `Local_Deployed_Shared/questions_structured.json` (bank), `lessons/kc_registry.json`, `lessons/*/kp-*.md`.

@@ -40,16 +40,19 @@ const targetDifficultyMarkerNew = document.getElementById("target-difficulty-mar
 const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
 const targetDifficultyValue = document.getElementById("target-difficulty-value");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
-const practiceSubmitBtn = document.getElementById("practice-submit-btn");
+// The two self-report buttons. NO is first because it is also the timeout
+// default — practice/timer.js clicks it when the answer countdown expires.
+const selfReportNoBtn = document.getElementById("self-report-no");
+const selfReportYesBtn = document.getElementById("self-report-yes");
 const practiceSkipBtn = document.getElementById("practice-skip-btn");
 const practiceDontKnowBtn = document.getElementById("practice-dontknow-btn");
 const placementStartBtn = document.getElementById("placement-start-btn");
-// Torch-drill Colab routing (torch can't run in the in-app sandbox).
-const torchColabNotice = document.getElementById("torch-colab-notice");
-const torchColabLink = document.getElementById("torch-colab-link");
-const torchSolutionLink = document.getElementById("torch-solution-link");
-const torchRateSolved = document.getElementById("torch-rate-solved");
-const torchRateLookedUp = document.getElementById("torch-rate-lookedup");
+// Where this problem is worked. Every question routes to Colab now, so this
+// card is part of the normal flow rather than a per-library special case.
+const colabCard = document.getElementById("colab-card");
+const colabCardLabel = document.getElementById("colab-card-label");
+const colabOpenLink = document.getElementById("colab-open-link");
+const colabCardNote = document.getElementById("colab-card-note");
 // Difficulty-rating helpers (clear default + "missed one concrete thing").
 const feedbackHelp = document.getElementById("feedback-help");
 const missedFactRow = document.getElementById("missed-fact-row");
@@ -73,12 +76,10 @@ const aiExplanationText = document.getElementById("ai-explanation-text");
 const coldStartBadge = document.getElementById("cold-start-badge");
 const coldStartLabel = document.getElementById("cold-start-label");
 const coldStartNote = document.getElementById("cold-start-note");
-const codeEditor = document.getElementById("code-editor");
-const runBtn = document.getElementById("run-btn");
-const outputArea = document.getElementById("output-area");
-const outputVisual = document.getElementById("output-visual");
-const outputVisualNote = document.getElementById("output-visual-note");
-const outputVisualCanvas = document.getElementById("output-visual-canvas");
+// No codeEditor / runBtn / outputArea / outputVisual* here any more — the
+// editor panel was removed on 2026-07-31. Code is written and run in Colab.
+// If you are adding one back, you are rebuilding the runner; read
+// practice/README.md first.
 const feedbackPrompt = document.getElementById("feedback-prompt");
 const feedbackButtons = document.querySelectorAll(".feedback-btn");
 const problemFeedbackRow = document.getElementById("problem-feedback-row");

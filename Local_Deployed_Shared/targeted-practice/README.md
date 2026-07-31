@@ -46,7 +46,7 @@
 
 ## Extension Points
 - **Real grading**: replace `simulateAfter(before)` in `targeted-practice.js` with a call that fetches the per-exercise post-session readiness from the backend. Keep the same return shape (0–100 number).
-- **Wire the Practice tab to actually drill the queued exercises**: today the queue is informational — the regular Practice tab still serves its normal adaptive question stream. To make the practice tab drill the queue, the practice runner would need a "targeted queue" mode that pulls from a global the targeted-practice module exposes; add a `window.TargetedPractice.getQueue()` getter and have `practice/runner.js` consume it when `sessionActive` is true.
+- **Wire the Practice tab to actually drill the queued exercises**: today the queue is informational — the regular Practice tab still serves its normal adaptive question stream. To make the practice tab drill the queue, the practice runner would need a "targeted queue" mode that pulls from a global the targeted-practice module exposes; add a `window.TargetedPractice.getQueue()` getter and have `practice/api.js:getNextQuestion()` consume it when `sessionActive` is true. (This used to name `practice/runner.js`, which no longer exists and never chose questions anyway — the queue lives in `api.js`.)
 - **More search fields**: extend `buildCatalog()` to include section/anchor in the search needle, or add a notebook filter dropdown above the search input.
 - **Different Ready threshold**: change `READY_THRESHOLD` at the top of `targeted-practice.js`.
 

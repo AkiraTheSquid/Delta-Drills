@@ -55,6 +55,11 @@ function invalidateLegacyBackendQuestion() {
 const initPractice = async () => {
   detectPracticeMode();
   await loadQuestionsBank();
+  // The question -> Colab-notebook map. Awaited, not fired-and-forgotten: the
+  // first question renders moments later and reads it synchronously to build
+  // the notebook link, so a late arrival would leave problem #1 the only one
+  // without one. Failure is non-fatal by design (see colab-route.js).
+  if (window.ColabRoute) await window.ColabRoute.load();
 
   // For supabase/local modes, load engine + questions + state
   if (practiceMode !== "backend") {

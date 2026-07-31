@@ -1,4 +1,5 @@
-/* Practice tab — aids (hint/answer), mode intro, self-report, placement entry, torch Colab notice, topbar auth. */
+/* Practice tab — aids (hint/answer), mode intro, experience self-report,
+   placement entry, the Colab card + the two result buttons, topbar auth. */
 /* Show Hint / Show Answer aids (per-question hint + solution Colab link) */
 .practice-aids { margin: 12px 0; }
 .practice-aids-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -102,17 +103,65 @@
   cursor: default;
 }
 
-/* Torch drills run in Colab — honest routing notice instead of a dead editor. */
-.torch-colab-notice {
-  margin: 12px 0;
-  padding: 14px 16px;
-  background: rgba(255, 196, 0, 0.07);
-  border: 1px solid rgba(255, 196, 0, 0.32);
-  border-radius: 10px;
+/* Where this problem is worked. One compact line, not the old full-width
+   explanatory card: every question routes to a notebook now, so a paragraph
+   explaining why would repeat itself on all 424 of them. */
+.colab-card {
+  margin: 10px 0 4px;
+  padding: 8px 12px;
+  background: rgba(255, 196, 0, 0.06);
+  border: 1px solid rgba(255, 196, 0, 0.28);
+  border-radius: 8px;
 }
-.torch-colab-title { font-weight: 700; margin-bottom: 6px; }
-.torch-colab-body { font-size: 13px; line-height: 1.55; color: var(--muted, #9aa3b2); margin-bottom: 10px; }
-.torch-colab-body code,
+.colab-card-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.colab-card-label {
+  font-size: 12px;
+  color: var(--muted, #9aa3b2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.colab-card-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffc400;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.colab-card-link:hover { text-decoration: underline; }
+/* The page's only error surface now that the output pane is gone — see
+   showColabNote() in practice/ui.js. */
+.colab-card-note {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #ffd98a;
+}
+
+/* The two self-report buttons. NO sits left, YES right, and the answer timer
+   clicks NO on expiry — keep that order, the muscle memory is the point. */
+.report-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 11px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: normal;
+}
+.report-btn--no:hover:not(:disabled) {
+  border-color: rgba(255, 107, 107, 0.55);
+  color: #ff8f8f;
+}
+.report-btn:disabled { opacity: 0.55; cursor: default; }
+
 .question-prose code {
   font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
   font-size: 0.92em;
@@ -120,7 +169,6 @@
   padding: 1px 5px;
   border-radius: 5px;
 }
-.torch-colab-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 /* Account-tab token row + the top-bar logged-in indicator. */
 .dd-token-row { display: flex; gap: 8px; align-items: center; }
 .dd-token-row .text-input { flex: 1 1 auto; }
