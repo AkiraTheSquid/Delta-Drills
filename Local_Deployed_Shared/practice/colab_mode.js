@@ -140,9 +140,37 @@
    * notebook opens AT the problem rather than at the top of an 84-problem file.
    * A wrong or missing anchor costs nothing — Colab simply does not scroll.
    */
+  /**
+   * Why did (or didn't) this question route? One line per question, in the
+   * console.
+   *
+   * Not decoration. This decision has five inputs — the edition flag, the
+   * index having loaded, the question carrying an id, that id being in the map,
+   * and the notebook repo being known — and when it comes out "false" the page
+   * just shows an editor, which is also what a question with no notebook looks
+   * like, and what the normal app looks like. Reading it off the screen is
+   * impossible; reading it off the console is instant.
+   */
+  let lastExplained = "";
+  function explain(id, lesson) {
+    if (id === lastExplained) return;
+    lastExplained = id;
+    if (!byQuestion) {
+      console.log(`[colab-mode] q${id}: the notebook index has not loaded yet`);
+    } else if (!id) {
+      console.log("[colab-mode] a question arrived with no id — cannot route it");
+    } else if (lesson) {
+      console.log(`[colab-mode] q${id} → ${lesson.id} (${lesson.file})`);
+    } else {
+      console.log(`[colab-mode] q${id}: no notebook for this question `
+        + `(${Object.keys(byQuestion).length} in the index) — staying on the editor`);
+    }
+  }
+
   function colabNotebookHrefFor(q) {
     const lesson = colabLessonFor(q);
     const id = questionId(q);
+    if (active) explain(id, lesson);
     if (!lesson || !repo || !id) return "";
     const path = [pathPrefix, lesson.file].filter(Boolean).join("/");
     const encoded = path.split("/").map(encodeURIComponent).join("/");
@@ -168,6 +196,23 @@
     hrefFor: colabNotebookHrefFor,
     lessonFor: colabLessonFor,
     whenReady: whenColabIndexReady,
+    /** Everything the routing decision depends on, for the question on screen. */
+    debug: () => {
+      const q = (typeof practiceProgress === "object" && practiceProgress)
+        ? practiceProgress.currentQuestion
+        : null;
+      return {
+        edition: active,
+        indexLoaded: Boolean(byQuestion),
+        indexSize: byQuestion ? Object.keys(byQuestion).length : 0,
+        questionId: questionId(q),
+        lesson: (colabLessonFor(q) || {}).id || null,
+        href: colabNotebookHrefFor(q),
+        routes: typeof torchNeedsColab === "function" ? torchNeedsColab(q) : "ui.js not loaded",
+        isTorch: typeof questionIsTorch === "function" ? questionIsTorch(q) : "ui.js not loaded",
+        practiceMode: typeof practiceMode === "undefined" ? "unset" : practiceMode,
+      };
+    },
   };
 
   /**
