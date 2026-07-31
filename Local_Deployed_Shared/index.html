@@ -863,7 +863,13 @@ np.random.seed(0)
   <script src="practice/bars.js?v=6"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
-  <script src="practice/ui.js?v=23"></script>
+  <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
+       and the question → lesson-notebook resolver. MUST load before ui.js,
+       which asks window.DDColab at load time whether to re-route on index
+       arrival. Harmless on the normal app: it detects nothing and fetches
+       nothing. -->
+  <script src="practice/colab_mode.js?v=1"></script>
+  <script src="practice/ui.js?v=24"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=15"></script>
   <script src="practice/timer.js?v=13"></script>

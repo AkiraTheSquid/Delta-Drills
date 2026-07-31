@@ -13,7 +13,11 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-REQUIRED_PERMISSIONS = {"sidePanel", "tabs", "storage"}
+REQUIRED_PERMISSIONS = {"sidePanel", "tabs", "storage", "system.display"}
+
+# The deploy this extension is built around. The panel frames it and the toolbar
+# button opens it — see check_side_panel_shell and check_study_layout.
+COLAB_APP_ORIGIN = "https://delta-drills-colab.vercel.app"
 
 
 def _manifest():
@@ -134,7 +138,11 @@ def check_side_panel_shell():
     assert frame, "app.html has no <iframe> — the panel IS the website"
     frame = frame.group(0)
 
-    assert "delta-drills.vercel.app" in frame, "app.html lost the site address"
+    assert COLAB_APP_ORIGIN in frame, (
+        f"app.html must frame {COLAB_APP_ORIGIN} — the Colab edition. The normal "
+        f"deploy solves in an in-page editor, which is not what an extension "
+        f"that sits beside a notebook is for"
+    )
     assert "identity-credentials-get" in frame, (
         "the frame needs allow=\"identity-credentials-get …\" or Sign in with "
         "Google fails inside the panel"
@@ -145,9 +153,59 @@ def check_side_panel_shell():
     )
 
 
+def check_study_layout():
+    """The toolbar button tiles two windows — app left, Colab right.
+
+    Four things make that work, and three of them fail silently:
+
+    * `openPanelOnActionClick` MUST be false. With the default, Chrome consumes
+      the toolbar click to open the side panel and `action.onClicked` never
+      fires — the button simply stops doing anything new, with no error.
+    * `action.onClicked` has to be registered at the top level of the worker.
+      The service worker is torn down constantly; a listener added inside a
+      promise callback is not there when the event arrives.
+    * The app pane must be the Colab edition. Tiling the normal deploy next to
+      Colab puts an in-page editor beside a notebook — two places to solve the
+      same drill.
+    * A stray Colab tab has to be moved into the right-hand window. "Open in
+      Colab" is a plain link, so without the move the notebook opens beside the
+      app on the LEFT and the layout is gone one click in.
+    """
+    with open(os.path.join(HERE, "background.js"), encoding="utf-8") as fh:
+        src = fh.read()
+
+    assert "openPanelOnActionClick: false" in src, (
+        "background.js must set openPanelOnActionClick:false — otherwise Chrome "
+        "eats the toolbar click for the side panel and action.onClicked never "
+        "fires"
+    )
+    assert re.search(r"^chrome\.action\.onClicked\.addListener", src, re.M), (
+        "chrome.action.onClicked must be registered at the top level of the "
+        "worker, or it is missing whenever the worker has been torn down"
+    )
+    assert COLAB_APP_ORIGIN in src, (
+        f"the app pane must open {COLAB_APP_ORIGIN} — the edition that routes a "
+        f"drill to its notebook"
+    )
+    assert "chrome.tabs.move" in src, (
+        "nothing moves a stray Colab tab into the notebook window — the first "
+        "'Open in Colab' click will land the notebook on the left and undo the "
+        "layout"
+    )
+    # The Colab pane receives moved tabs, and Chrome refuses to move a tab into
+    # a popup. Only the app pane may be one.
+    popups = re.findall(r'type:\s*"popup"', src)
+    assert len(popups) == 1, (
+        f'expected exactly one type:"popup" window (the app pane); found '
+        f"{len(popups)}. The Colab pane must be a normal window or tabs cannot "
+        f"be moved into it"
+    )
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
-              check_no_shadowed_globals, check_side_panel_shell]
+              check_no_shadowed_globals, check_side_panel_shell,
+              check_study_layout]
     for fn in checks:
         try:
             fn()

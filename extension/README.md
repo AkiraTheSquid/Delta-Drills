@@ -1,11 +1,31 @@
 # extension
 
 ## Purpose
-The Chrome MV3 side panel that puts Delta Drills beside whatever the student is
-reading. **The panel is the live website.** Not a copy of it, not a client of its
-API — `https://delta-drills.vercel.app/` itself, in a frame that fills the panel:
-its tab bar, its Sign in with Google, its practice loop, its knowledge graph, its
-stats. There is no panel front end, and there is not supposed to be one.
+Puts Delta Drills beside the Colab notebook the student is working in. Two ways,
+and the toolbar button is now the first:
+
+- **The study layout (toolbar click).** Two tiled Chrome windows — the app on the
+  left half of the screen, the notebook on the right. Two real windows because
+  Colab sends `X-Frame-Options` and cannot be framed at all, and because the side
+  panel is ~400px on a side that only the USER can choose. `background.js` owns
+  it, and also moves every Colab tab that opens anywhere else into the right-hand
+  window — otherwise the first "Open in Colab ↗" click puts the notebook beside
+  the app on the left and the layout is gone.
+- **The side panel**, still there, reachable from Chrome's own side-panel menu.
+  Better on one small screen.
+
+**Both show the live website.** Not a copy of it, not a client of its API —
+`https://delta-drills-colab.vercel.app/` itself: its tab bar, its Sign in with
+Google, its practice loop, its knowledge graph. There is no panel front end, and
+there is not supposed to be one.
+
+That address is the **Colab edition** — a second Vercel project serving the same
+code as `delta-drills.vercel.app`, where a drill routes to its published lesson
+notebook instead of the in-page editor
+(`Local_Deployed_Shared/practice/colab_mode.js`). Same backend, same Supabase,
+same bank: practice here moves the same mastery record. Framing the normal deploy
+would put an in-page editor next to a notebook — two places to solve one drill —
+so `watch.py` fails if the address drifts back.
 
 `panel/app.html` is the entire thing: a `<style>` block and one `<iframe>`. No
 script.
@@ -84,9 +104,15 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
   permissions for Colab and the backend (plus localhost for dev).
   `side_panel.default_path` is `panel/app.html` — the framed site, not the
   tutor UI.
-- `background.js`: service worker. Its only real job is
-  `sidePanel.setPanelBehavior({openPanelOnActionClick: true})`, which cannot be
-  declared in the manifest.
+- `background.js`: service worker. Owns the **study layout** — `action.onClicked`
+  tiles the app window (left half, a chromeless `popup`) and the notebook window
+  (right half, a `normal` window, because tabs get moved into it and Chrome
+  refuses to move a tab into a popup), sized from `system.display`'s work area
+  with the focused window's bounds as the fallback. Window ids live in
+  `chrome.storage.session` — a window id means nothing after a restart. It also
+  sets `setPanelBehavior({openPanelOnActionClick: false})`: with the default,
+  Chrome consumes the toolbar click for the side panel and `action.onClicked`
+  never fires, so this is one behaviour or the other, not both.
 - `panel/`: the UI, the backend client, notebook routing and the generated
   notebook index. See `panel/README.md`.
 - `content/`: the Colab DOM adapter. See `content/README.md`.
@@ -201,6 +227,15 @@ python3 extension/watch.py && python3 extension/panel/watch.py && python3 extens
     `watch.py` fails without it.
 
 ## Recent Changes
+- 2026-07-31: **App left, Colab right — and the app is the Colab edition.** The
+  toolbar button now opens two tiled windows instead of the side panel
+  (`background.js`, +`system.display`); the panel frames
+  `delta-drills-colab.vercel.app`, a second Vercel project serving the same code
+  with notebook routing on. Stray Colab tabs are moved into the right-hand
+  window, which is what keeps the layout after an "Open in Colab" click.
+  `watch.py` gained `check_study_layout` for the four things that fail silently:
+  `openPanelOnActionClick:false`, a top-level `action.onClicked`, the app pane
+  pointing at the Colab edition, and exactly one `popup` window.
 - 2026-07-31: **The panel is the website.** `panel/app.html` is one `<iframe>`
   over `https://delta-drills.vercel.app/`, with no script and no panel chrome —
   an earlier pass wrapped it in a toolbar and a settings sheet, which was a

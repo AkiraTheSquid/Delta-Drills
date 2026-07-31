@@ -21,9 +21,18 @@
   </head>
   <body>
     <!-- This page is the whole side panel, and it is deliberately nothing but a
-         frame. The panel shows the real delta-drills.vercel.app — its own tab
-         bar, its own Google sign-in, its own everything. There is no panel UI to
-         maintain, and nothing here to drift out of sync with the site.
+         frame. The panel shows the real site — its own tab bar, its own Google
+         sign-in, its own everything. There is no panel UI to maintain, and
+         nothing here to drift out of sync with the site.
+
+         It frames the COLAB EDITION (delta-drills-colab.vercel.app), not the
+         normal app: this extension exists to put the tutor beside a notebook,
+         and on that deploy a drill routes to its lesson notebook instead of the
+         in-page editor. Same bank, same backend, same mastery record — see
+         Local_Deployed_Shared/practice/colab_mode.js. The toolbar button now
+         opens the tiled two-window layout instead of this panel; the panel is
+         still reachable from Chrome's side-panel menu, and is the better
+         surface on one small screen.
 
          Why a frame at all: MV3 only accepts an extension-relative path for
          `side_panel.default_path`, so a local page holding the site is the only
@@ -38,7 +47,7 @@
          Do not add a toolbar, a settings sheet or any other chrome to this file.
          The site has navigation; a second set competes with it. -->
     <iframe
-      src="https://delta-drills.vercel.app/"
+      src="https://delta-drills-colab.vercel.app/"
       title="Delta Drills"
       allow="identity-credentials-get; publickey-credentials-get; clipboard-read; clipboard-write; fullscreen"
     ></iframe>
