@@ -177,36 +177,56 @@ def check_invariants():
             "globals defined by these files)"
         )
 
-    # Courses page contract: the search input, results container, list-view
-    # and detail-view shells that courses.js queries by id must remain in
-    # index.html, and courses.js must load (script tag present) so the tab
-    # is interactive. courses.js must also embed the ARENA detail content
-    # (chapter images + back-button copy) the user expects.
+    # Courses page contract: the tab renders the single ARENA course directly,
+    # so only the detail-view shell that courses.js queries by id must remain
+    # in index.html — there is no list view, no search input, and no results
+    # container. courses.js and its fork gate must both load (script tags
+    # present) so the tab is interactive, and courses.js must still embed the
+    # ARENA detail content (chapter images + source links) the user expects.
     for marker in (
-        'id="courses-search"',
-        'id="courses-results"',
-        'id="courses-list-view"',
         'id="courses-detail-view"',
         'src="courses.js',
+        'src="courses-fork-gate.js',
     ):
         assert marker in index_html, f"index.html missing {marker}"
+
+    # The removed list view must not creep back in — these ids are what the
+    # search/card UI hung off of.
+    for gone in ('id="courses-search"', 'id="courses-results"', 'id="courses-list-view"'):
+        assert gone not in index_html, (
+            f"index.html still has {gone}: the Courses tab is ARENA-only and has no list view"
+        )
+
+    # courses.js resolves Colab hrefs through colabUpstreamHref(), which
+    # stats/predicted-links.js defines, so that file must load first.
+    courses_pos = _script_offset("courses.js")
+    for dep in ("stats/predicted-links.js", "courses-fork-gate.js"):
+        dep_pos = _script_offset(dep)
+        assert dep_pos != -1, f"index.html missing dep script: {dep}"
+        assert dep_pos < courses_pos, (
+            f"load-order broken: {dep} must come before courses.js (courses.js "
+            "resolves Colab hrefs via colabUpstreamHref and hands first clicks "
+            "to window.CoursesForkGate)"
+        )
 
     courses_js = _read(os.path.join(HERE, "courses.js"))
     for needle in (
         "ARENA_DETAIL",
-        "Back to courses",
         "learn.arena.education/static/images/arena-logo.png",
         "funda.png",
         "mechinterp.png",
         "/rl.png",
         "evals.jpeg",
         "science+of+misalignment.png",
-        # Per-course "Include for study?" toggle: storage key, the prompt
-        # copy, and both render scopes (list-card + detail-hero) must remain.
-        "delta_drills_courses_include",
-        "Include course for study?",
-        'buildIncludeControl(course.id, "list")',
-        'buildIncludeControl(course.id, "detail")',
+        # Source links in the hero — the ARENA site and Callum's upstream repo.
+        "https://www.arena.education/",
+        "https://github.com/callummcdougall/ARENA_3.0",
+        # Section rows link out to upstream Colab notebooks rather than the
+        # local book mirror; the first click routes through the fork gate.
+        "notebookPathForBookUrl",
+        "colabUpstreamHref",
+        "CoursesForkGate",
+        "courses:github-owner-changed",
         # Chapter-sections modal: open/close logic, modal classnames, and
         # one representative section title per chapter so the modal data
         # cannot silently regress on any chapter.

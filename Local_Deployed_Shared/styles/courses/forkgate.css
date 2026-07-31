@@ -1,0 +1,173 @@
+/* Courses tab — GitHub fork gate: the modal shown on the first click of a
+   Colab section link, offering to point every link at the student's own
+   ARENA_3.0 fork. Driven by courses-fork-gate.js. */
+
+.fork-gate-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.fork-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.fork-gate-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fork-gate-blurb {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.fork-gate-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.fork-gate-step-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.fork-gate-step-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fork-gate-step-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.fork-gate-fork-btn {
+  align-self: flex-start;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.fork-gate-fork-btn:hover {
+  border-color: var(--accent);
+}
+
+.fork-gate-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fork-gate-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.fork-gate-input:focus {
+  border-color: var(--accent);
+}
+
+.fork-gate-submit {
+  padding: 9px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--white);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.fork-gate-submit:hover {
+  opacity: 0.9;
+}
+
+.fork-gate-submit:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.fork-gate-status {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* No dedicated danger token in variables.css; --accent is the palette's red. */
+.fork-gate-status-error {
+  color: var(--accent);
+}
+
+.fork-gate-skip {
+  align-self: flex-start;
+  padding: 0;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--muted);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.fork-gate-skip:hover {
+  color: var(--text);
+}
+
+.fork-gate-footnote {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}

@@ -21,11 +21,11 @@ REQUIRED_CSS = [
     "stats.css",
     "arena.css",
     # courses tab is split into a sub-folder so each fragment stays small.
-    # Order here mirrors the link order in index.html: list → include →
+    # Order here mirrors the link order in index.html: page → forkgate →
     # detail → modal → responsive (responsive must be last so its
     # ≤720px overrides win).
-    "courses/list.css",
-    "courses/include.css",
+    "courses/page.css",
+    "courses/forkgate.css",
     "courses/detail.css",
     "courses/modal.css",
     "courses/responsive.css",
@@ -102,7 +102,7 @@ def check_invariants():
                 assert names.index(fname) < names.index("responsive.css"), (
                     f"{fname} must be linked before responsive.css"
                 )
-            for fname in ("courses/list.css", "courses/include.css", "courses/detail.css", "courses/modal.css"):
+            for fname in ("courses/page.css", "courses/forkgate.css", "courses/detail.css", "courses/modal.css"):
                 if fname in names and "courses/responsive.css" in names:
                     assert names.index(fname) < names.index("courses/responsive.css"), (
                         f"{fname} must be linked before courses/responsive.css so its overrides win"
@@ -116,8 +116,8 @@ def check_invariants():
     # literals only, so rgba/hsla pass through.
     hex_re = re.compile(r"#[0-9a-fA-F]{3,8}\b")
     token_first_files = (
-        "courses/list.css",
-        "courses/include.css",
+        "courses/page.css",
+        "courses/forkgate.css",
         "courses/detail.css",
         "courses/modal.css",
         "courses/responsive.css",

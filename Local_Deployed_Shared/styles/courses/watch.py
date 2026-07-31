@@ -13,7 +13,7 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-FRAGMENTS = ("list.css", "include.css", "detail.css", "modal.css", "responsive.css")
+FRAGMENTS = ("page.css", "forkgate.css", "detail.css", "modal.css", "responsive.css")
 
 
 def _read(name):
@@ -38,9 +38,9 @@ def check_imports():
 # selector from its assigned family so the JS doesn't render unstyled.
 def check_public_api():
     expected_selectors = {
-        "list.css": (".courses-search", ".course-card"),
-        "include.css": (".course-include-options", ".course-include-option"),
-        "detail.css": (".course-hero", ".course-chapter", ".course-back-btn"),
+        "page.css": (".courses-page",),
+        "forkgate.css": (".fork-gate", ".fork-gate-input", ".fork-gate-submit"),
+        "detail.css": (".course-hero", ".course-chapter", ".course-source-link"),
         "modal.css": (".chapter-modal", ".section-item", ".section-number"),
     }
     for fname, selectors in expected_selectors.items():
@@ -57,9 +57,9 @@ def check_invariants():
     block_re = re.compile(r"\.([a-z][\w-]*)\s*[\{\:,]", re.IGNORECASE)
 
     fragment_owners = {
-        "list.css": (re.compile(r"^courses-(search|results|list-view|page|empty)$|^course-card"),),
-        "include.css": (re.compile(r"^course-include"),),
-        "detail.css": (re.compile(r"^courses-detail-view$|^course-(article|back-btn|hero|intro|chapters|chapter)"),),
+        "page.css": (re.compile(r"^courses-page$"),),
+        "forkgate.css": (re.compile(r"^fork-gate"),),
+        "detail.css": (re.compile(r"^courses-detail-view$|^course-(article|hero|intro|chapters|chapter|sources|source-link)"),),
         "modal.css": (re.compile(r"^(chapter-modal|section-)"),),
     }
 

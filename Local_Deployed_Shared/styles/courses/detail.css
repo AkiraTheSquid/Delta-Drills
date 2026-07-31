@@ -1,4 +1,5 @@
-/* Courses tab — detail/article view: back button, hero, intro, chapter rows. */
+/* Courses tab — article view: hero, source links, intro, chapter rows.
+   There is no back button: the tab has only this one course. */
 
 .courses-detail-view {
   max-width: 880px;
@@ -11,26 +12,27 @@
   gap: 28px;
 }
 
-.course-back-btn {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
+.course-sources {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-family: inherit;
-  font-weight: 500;
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  margin-top: 12px;
 }
 
-.course-back-btn:hover {
-  border-color: var(--accent);
+.course-source-link {
+  padding: 5px 11px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: border-color 0.15s ease;
+}
+
+.course-source-link:hover {
+  border-color: var(--accent);
 }
 
 .course-hero {

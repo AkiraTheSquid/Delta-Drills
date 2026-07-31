@@ -1,11 +1,27 @@
 /* ================================================================
-   COURSES.JS — Courses tab: full list + live filter, with article
-   detail view per course. Click a course → detail; Back → list.
-   Per-course "Include for study?" Yes/No toggle persists in
-   localStorage and mirrors between list-card and detail-hero.
+   COURSES.JS — Courses tab: the ARENA curriculum, rendered directly.
+
+   There is exactly one course, so there is no list, no search box, no
+   "Include course for study?" toggle, and no "Back to courses" button.
+   The tab IS the ARENA article: hero + source links + intro at the top,
+   then the alternating chapter rows. Clicking a chapter opens the
+   sections modal, and each section row is a link out to Callum
+   McDougall's original Colab notebook.
+
+   Colab routing reuses the app-wide fork convention from
+   `stats/predicted-links.js`: `colabUpstreamHref(path)` points at
+   `<account_github_username>/ARENA_3.0` when the student has saved a
+   GitHub username, and falls back to `callummcdougall/ARENA_3.0`
+   otherwise. The first time a student clicks a section link,
+   `courses-fork-gate.js` intercepts and offers to set that username.
    ================================================================ */
 
 const ARENA_LOGO = "https://learn.arena.education/static/images/arena-logo.png";
+
+// Section `url` fields are book pages served from this app. The matching
+// upstream notebook is the same path with the prefix stripped and the
+// extension swapped — see notebookPathForBookUrl() below.
+const ARENA_BOOK_PREFIX = "/arena-book/";
 
 const ARENA_DETAIL = {
   hero: {
@@ -13,8 +29,17 @@ const ARENA_DETAIL = {
     subtitle: "AI safety, hands-on. From PyTorch fundamentals to original alignment research.",
     logo: ARENA_LOGO,
   },
+  sources: [
+    { label: "arena.education ↗", href: "https://www.arena.education/", title: "The ARENA programme homepage" },
+    {
+      label: "callummcdougall/ARENA_3.0 ↗",
+      href: "https://github.com/callummcdougall/ARENA_3.0",
+      title: "The original ARENA exercise repository on GitHub",
+    },
+    { label: "Curriculum book ↗", href: "https://learn.arena.education/", title: "The ARENA curriculum, published" },
+  ],
   intro:
-    "ARENA is a programme run by the London Initiative for Safe AI (LISA) that takes participants from coding fundamentals to the technical frontier of AI safety. The curriculum mixes coding exercises, paper replications, and an open-ended capstone project so you finish with both the skills and the artifacts to enter the field. All materials are open source and self-study friendly.",
+    "ARENA is a programme run by the London Initiative for Safe AI (LISA) that takes participants from coding fundamentals to the technical frontier of AI safety. The curriculum mixes coding exercises, paper replications, and an open-ended capstone project so you finish with both the skills and the artifacts to enter the field. All materials are open source and self-study friendly. Every section below opens Callum McDougall's original Colab notebook.",
   chapters: [
     {
       title: "Chapter 0 — Fundamentals",
@@ -102,204 +127,55 @@ const ARENA_DETAIL = {
   ],
 };
 
-const COURSES_CATALOG = [
-  {
-    id: "arena",
-    name: "ARENA Curriculum",
-    logo: ARENA_LOGO,
-    blurb: "Mechanistic interpretability, RL, evals, and alignment science — hands-on.",
-    detail: ARENA_DETAIL,
-  },
-];
-
-const COURSES_INCLUDE_STORAGE_KEY = "delta_drills_courses_include";
-
-const loadIncludeState = () => {
-  try {
-    const raw = localStorage.getItem(COURSES_INCLUDE_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+// `/arena-book/<rest>.html` → `<rest>.ipynb`, the path inside ARENA_3.0.
+// Book URLs are percent-encoded per segment (`%26` for `&`); decode here so
+// colabUpstreamHref() can re-encode consistently for Colab's parser.
+const notebookPathForBookUrl = (url) => {
+  if (typeof url !== "string" || !url.startsWith(ARENA_BOOK_PREFIX)) return "";
+  const rel = url.slice(ARENA_BOOK_PREFIX.length).replace(/\.html$/, ".ipynb");
+  return rel
+    .split("/")
+    .map((seg) => {
+      try {
+        return decodeURIComponent(seg);
+      } catch (_) {
+        return seg;
+      }
+    })
+    .join("/");
 };
 
-const saveIncludeState = (state) => {
-  try {
-    localStorage.setItem(COURSES_INCLUDE_STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    /* quota or disabled storage — silently no-op */
-  }
-};
-
-const getInclude = (courseId) => loadIncludeState()[courseId] || null;
-
-const setInclude = (courseId, value) => {
-  const state = loadIncludeState();
-  if (value === null) delete state[courseId];
-  else state[courseId] = value;
-  saveIncludeState(state);
-  syncIncludeControls(courseId, value);
-};
-
-const syncIncludeControls = (courseId, value) => {
-  const groups = document.querySelectorAll(`[data-include-for="${courseId}"]`);
-  groups.forEach((group) => {
-    group.querySelectorAll("[data-include-value]").forEach((btn) => {
-      const selected = btn.dataset.includeValue === value;
-      btn.classList.toggle("is-selected", selected);
-      btn.setAttribute("aria-checked", String(selected));
-    });
-  });
-};
-
-const buildIncludeControl = (courseId, scope) => {
-  const wrap = document.createElement("div");
-  wrap.className = `course-include course-include-${scope}`;
-  wrap.dataset.includeFor = courseId;
-
-  const label = document.createElement("span");
-  label.className = "course-include-label";
-  label.textContent = "Include course for study?";
-  label.id = `course-include-label-${courseId}-${scope}`;
-
-  const group = document.createElement("div");
-  group.className = "course-include-options";
-  group.setAttribute("role", "radiogroup");
-  group.setAttribute("aria-labelledby", label.id);
-
-  const current = getInclude(courseId);
-
-  ["yes", "no"].forEach((value) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "course-include-option";
-    btn.dataset.includeValue = value;
-    btn.setAttribute("role", "radio");
-    btn.setAttribute("aria-checked", String(current === value));
-    if (current === value) btn.classList.add("is-selected");
-
-    const dot = document.createElement("span");
-    dot.className = "course-include-dot";
-    dot.setAttribute("aria-hidden", "true");
-
-    const text = document.createElement("span");
-    text.className = "course-include-text";
-    text.textContent = value === "yes" ? "Yes" : "No";
-
-    btn.appendChild(dot);
-    btn.appendChild(text);
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      setInclude(courseId, value);
-    });
-    group.appendChild(btn);
-  });
-
-  wrap.appendChild(label);
-  wrap.appendChild(group);
-  return wrap;
+// Resolved fresh on every call so it reflects the current GitHub username —
+// the fork gate can change the owner after the links have already rendered.
+const arenaColabHrefFor = (notebookPath) => {
+  if (!notebookPath) return "";
+  return typeof colabUpstreamHref === "function" ? colabUpstreamHref(notebookPath) : "";
 };
 
 (function initCoursesTab() {
-  const input = document.getElementById("courses-search");
-  const results = document.getElementById("courses-results");
-  const listView = document.getElementById("courses-list-view");
   const detailView = document.getElementById("courses-detail-view");
-  if (!input || !results || !listView || !detailView) return;
+  if (!detailView) return;
 
-  const renderCard = (course) => {
-    const card = document.createElement("article");
-    card.className = "course-card";
-    card.dataset.courseId = course.id;
-    card.tabIndex = 0;
-    card.setAttribute("role", "button");
-    card.setAttribute("aria-label", `Open ${course.name}`);
-
-    const img = document.createElement("img");
-    img.className = "course-card-logo";
-    img.src = course.logo;
-    img.alt = `${course.name} logo`;
-    img.loading = "lazy";
-    img.referrerPolicy = "no-referrer";
-
-    const body = document.createElement("div");
-    body.className = "course-card-body";
-
-    const name = document.createElement("div");
-    name.className = "course-card-name";
-    name.textContent = course.name;
-
-    body.appendChild(name);
-    if (course.blurb) {
-      const blurb = document.createElement("div");
-      blurb.className = "course-card-blurb";
-      blurb.textContent = course.blurb;
-      body.appendChild(blurb);
-    }
-
-    card.appendChild(img);
-    card.appendChild(body);
-    card.appendChild(buildIncludeControl(course.id, "list"));
-
-    const open = (e) => {
-      if (e.target.closest(".course-include")) return;
-      showDetail(course);
-    };
-    card.addEventListener("click", open);
-    card.addEventListener("keydown", (e) => {
-      if (e.target.closest(".course-include")) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        showDetail(course);
-      }
+  const buildSources = (sources) => {
+    const bar = document.createElement("nav");
+    bar.className = "course-sources";
+    bar.setAttribute("aria-label", "ARENA source links");
+    (sources || []).forEach((s) => {
+      const a = document.createElement("a");
+      a.className = "course-source-link";
+      a.href = s.href;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.textContent = s.label;
+      if (s.title) a.title = s.title;
+      bar.appendChild(a);
     });
-    return card;
+    return bar;
   };
 
-  const renderList = (query) => {
-    const q = (query || "").trim().toLowerCase();
-    const matches = q
-      ? COURSES_CATALOG.filter((c) => c.name.toLowerCase().includes(q))
-      : COURSES_CATALOG.slice();
-
-    results.replaceChildren();
-    if (!matches.length) {
-      const empty = document.createElement("div");
-      empty.className = "courses-empty";
-      empty.textContent = `No courses match “${query}”.`;
-      results.appendChild(empty);
-      return;
-    }
-    matches.forEach((c) => results.appendChild(renderCard(c)));
-  };
-
-  const showList = () => {
-    detailView.classList.add("hidden");
-    detailView.replaceChildren();
-    listView.classList.remove("hidden");
-    if (typeof input.focus === "function") input.focus({ preventScroll: true });
-  };
-
-  const showDetail = (course) => {
-    if (!course || !course.detail) return;
-    detailView.replaceChildren(buildDetail(course));
-    listView.classList.add("hidden");
-    detailView.classList.remove("hidden");
-    detailView.scrollTop = 0;
-    window.scrollTo({ top: 0, behavior: "instant" });
-  };
-
-  const buildDetail = (course) => {
-    const detail = course.detail;
+  const buildArticle = (detail) => {
     const article = document.createElement("article");
     article.className = "course-article";
-
-    const back = document.createElement("button");
-    back.type = "button";
-    back.className = "course-back-btn";
-    back.innerHTML = '<span aria-hidden="true">←</span> Back to courses';
-    back.addEventListener("click", showList);
-    article.appendChild(back);
 
     const hero = document.createElement("header");
     hero.className = "course-hero";
@@ -318,9 +194,9 @@ const buildIncludeControl = (courseId, scope) => {
     heroSub.textContent = detail.hero.subtitle;
     heroText.appendChild(heroTitle);
     heroText.appendChild(heroSub);
+    heroText.appendChild(buildSources(detail.sources));
     hero.appendChild(heroLogo);
     hero.appendChild(heroText);
-    hero.appendChild(buildIncludeControl(course.id, "detail"));
     article.appendChild(hero);
 
     const intro = document.createElement("p");
@@ -330,9 +206,7 @@ const buildIncludeControl = (courseId, scope) => {
 
     const chaptersWrap = document.createElement("section");
     chaptersWrap.className = "course-chapters";
-    detail.chapters.forEach((ch, i) => {
-      chaptersWrap.appendChild(buildChapter(ch, i));
-    });
+    detail.chapters.forEach((ch, i) => chaptersWrap.appendChild(buildChapter(ch, i)));
     article.appendChild(chaptersWrap);
 
     return article;
@@ -442,15 +316,20 @@ const buildIncludeControl = (courseId, scope) => {
   };
 
   const buildSectionItem = (section) => {
-    const item = document.createElement(section.url ? "a" : "div");
-    item.className = section.url ? "section-item section-item-link" : "section-item";
+    const notebookPath = notebookPathForBookUrl(section.url);
+    const item = document.createElement(notebookPath ? "a" : "div");
+    item.className = notebookPath ? "section-item section-item-link" : "section-item";
     item.setAttribute("role", "listitem");
-    if (section.url) {
-      item.href = section.url;
+    if (notebookPath) {
+      item.dataset.notebookPath = notebookPath;
+      item.href = arenaColabHrefFor(notebookPath);
+      item.target = "_blank";
+      item.rel = "noreferrer";
       item.setAttribute(
         "aria-label",
-        `Open ${section.number ? section.number + " " : ""}${section.title} in the curriculum book`,
+        `Open ${section.number ? section.number + " " : ""}${section.title} in Google Colab`,
       );
+      item.addEventListener("click", (e) => onColabLinkClick(e, notebookPath));
     }
 
     const num = document.createElement("span");
@@ -473,6 +352,27 @@ const buildIncludeControl = (courseId, scope) => {
     return item;
   };
 
-  input.addEventListener("input", (e) => renderList(e.target.value));
-  renderList("");
+  // First plain left-click on any Colab link goes through the fork gate, which
+  // offers to point every link at the student's own ARENA_3.0 fork. Modified
+  // clicks (new tab/window, middle-click) fall through to the rendered href so
+  // browser-native open-in-background still works.
+  const onColabLinkClick = (e, notebookPath) => {
+    const gate = window.CoursesForkGate;
+    const modified = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
+    if (modified || !gate || !gate.needsPrompt()) return;
+    e.preventDefault();
+    gate.open(notebookPath);
+  };
+
+  // The gate can change the GitHub owner after links are on the page. Re-resolve
+  // every rendered href (including the ones inside an open modal) so a saved
+  // username takes effect without a re-render.
+  const refreshColabHrefs = () => {
+    document.querySelectorAll("a.section-item-link[data-notebook-path]").forEach((a) => {
+      a.href = arenaColabHrefFor(a.dataset.notebookPath);
+    });
+  };
+  document.addEventListener("courses:github-owner-changed", refreshColabHrefs);
+
+  detailView.replaceChildren(buildArticle(ARENA_DETAIL));
 })();

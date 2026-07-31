@@ -1,5 +1,5 @@
 /* Courses tab — narrow-viewport overrides (≤720px). Loaded last among the
-   courses fragments so its rules win over list/include/detail/modal. */
+   courses fragments so its rules win over page/forkgate/detail/modal. */
 
 @media (max-width: 720px) {
   .course-hero {
@@ -21,20 +21,15 @@
     aspect-ratio: 16 / 9;
   }
 
-  .course-card {
-    flex-wrap: wrap;
+  .fork-gate {
+    padding: 18px;
   }
 
-  .course-include-list {
-    margin-left: 0;
-    width: 100%;
-    align-items: flex-start;
+  .fork-gate-form {
+    flex-direction: column;
   }
 
-  .course-include-detail {
-    margin-left: 0;
-    align-self: flex-start;
-    align-items: flex-start;
+  .fork-gate-submit {
     width: 100%;
   }
 }
