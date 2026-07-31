@@ -20,7 +20,7 @@
 - `components.css`: reusable atoms (buttons, inputs, cards, hints).
 - `responsive.css`: viewport-based overrides; loaded last so its rules win.
 - `arena.css`: ARENA tab styling.
-- `stats.css`: Statistics tab styling.
+- `stats.css`: **legacy filename** — no longer a Statistics tab stylesheet (that tab was removed 2026-07-31). Now holds only the `.stats-bar*` progress-bar vocabulary shared by the Practice page bars in `index.html`, `practice/arena-unlock.js`, and `targeted-practice/targeted-practice.js`.
 - `courses/`: Courses tab — split into five fragments (`page.css`, `forkgate.css`, `detail.css`, `modal.css`, `responsive.css`) so no single file gets bloated. See `courses/README.md`.
 - `practice/`: subfolder for practice-tab CSS fragments.
 
@@ -32,7 +32,7 @@
 ## How It Works (Flow)
 1. `index.html` loads stylesheets in this order: variables → base → layout → components → stats → arena → courses/list → courses/include → courses/detail → courses/modal → courses/responsive → responsive (then practice CSS separately).
 2. The order matters — `responsive.css` and feature stylesheets must come after the tokens and base layer so their selectors override correctly.
-3. Each feature CSS file scopes its rules with a feature-prefixed class (`.arena-*`, `.stats-*`, `.courses-*`, `.course-card-*`) to avoid collisions.
+3. Each feature CSS file scopes its rules with a feature-prefixed class (`.arena-*`, `.stats-*`, `.courses-*`, `.course-card-*`) to avoid collisions. `.stats-*` is the one prefix that no longer maps to a tab — it survives as the shared progress-bar vocabulary.
 
 ## Invariants & Constraints
 - New feature stylesheets must reference colors via CSS variables from `variables.css` — never hardcode hex values. Watch enforces this on token-first files (currently every `courses/*.css` fragment); legacy `arena.css` and `stats.css` predate the rule and are exempt until refactored.
@@ -54,6 +54,7 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-07-31: `stats.css` trimmed from 542 lines to 41 when the Statistics tab was deleted. Everything that styled the tab's tables, sub-tabs, graph, weight inputs, launch pills (`.stats-open-link*`) and prereq panel went with it; only `.stats-bar`, `.stats-bar-track`, `.stats-bar-fill` and `.stats-bar-value` remain, because the Practice page, `arena-unlock` and `targeted-practice` render those. Filename and `.stats-` prefix kept deliberately — renaming them would touch every consumer for no behavioural gain, so a header comment in the file explains the mismatch instead. Link tag bumped to `?v=2`.
 - 2026-07-31: Renamed two courses fragments as the Courses tab collapsed to the single ARENA course — `courses/list.css` → `courses/page.css` and `courses/include.css` → `courses/forkgate.css`. `watch.py` here tracks both names in `REQUIRED_CSS`, the link-order assertions, and the token-first hex check; `index.html` link tags bumped to `?v=2`. Still five fragments, same link position between `arena.css` and `responsive.css`.
 - 2026-04-29: Added `courses.css` for the new Courses tab (search input + course-card grid). Linked in `index.html` after `arena.css`.
 - 2026-04-29: Extended `courses.css` with the per-course article/detail view — back button, hero block, intro paragraph, and alternating-side chapter rows with squarespace-hosted illustrations. Includes a 720px-wide responsive collapse to a single column.

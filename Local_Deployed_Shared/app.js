@@ -26,7 +26,7 @@ let authEmail = localStorage.getItem("auth_email") || "";
 // (the Supabase code paths below + getPracticeMode's supabase branch stay intact).
 window.DELTA_USE_BACKEND = true;
 
-// Guests can now use the learning surface (practice/drills/stats) without an
+// Guests can now use the learning surface (practice/drills) without an
 // account — progress is saved locally only (see getPracticeMode → "local").
 // Only account-management / admin tabs still require a real login.
 const guestBlockedTabs = ["split-tool", "account"];
@@ -81,7 +81,7 @@ document.querySelectorAll("[data-goto-tab]").forEach((b) => {
 
 // Tabs a guest is allowed to see/use (the learning surface). Account-only
 // tabs (Account, Split Tool) stay hidden until login.
-const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-practice", "statistics"];
+const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-practice"];
 
 const updateTabVisibility = () => {
   if (authToken) {

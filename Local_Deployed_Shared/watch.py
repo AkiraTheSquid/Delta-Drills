@@ -91,15 +91,14 @@ def check_invariants():
     index_html = _read(os.path.join(HERE, "index.html"))
     app_js = _read(os.path.join(HERE, "app.js"))
     # learn / arena / course / papers tabs were removed from the SPA before
-    # this session; keep this list aligned with the actual tab buttons in
-    # index.html (and authRequiredTabs in app.js).
-    expected_tabs = ("split-tool", "account", "courses", "practice", "targeted-practice", "statistics")
-    # page-targeted-practice and page-statistics live in -dom.js modules
-    # (extracted from index.html to keep it under the per-file LOC ceiling);
-    # check those source files for the mount instead of index.html.
+    # this session; statistics was removed 2026-07-31. Keep this list aligned
+    # with the actual tab buttons in index.html (and authRequiredTabs in app.js).
+    expected_tabs = ("split-tool", "account", "courses", "practice", "targeted-practice")
+    # page-targeted-practice lives in a -dom.js module (extracted from
+    # index.html to keep it under the per-file LOC ceiling); check that
+    # source file for the mount instead of index.html.
     runtime_mounts = {
         "targeted-practice": os.path.join(HERE, "targeted-practice", "targeted-practice-dom.js"),
-        "statistics": os.path.join(HERE, "stats", "stats-dom.js"),
     }
     for tab in expected_tabs:
         assert f'data-tab="{tab}"' in index_html, f'index.html missing tab button data-tab="{tab}"'
@@ -112,15 +111,21 @@ def check_invariants():
         )
         assert f'"{tab}"' in app_js, f'app.js authRequiredTabs missing "{tab}"'
 
-    # The Targeted Practice tab must sit between Practice and Statistics in
-    # the nav. Order matters because the keyboard tab-cycle and the user's
-    # mental model both follow left-to-right ordering.
+    # Targeted Practice must sit immediately after Practice and is now the
+    # last tab in the nav (Statistics, which used to follow it, was removed
+    # 2026-07-31). Order matters because the keyboard tab-cycle and the
+    # user's mental model both follow left-to-right ordering.
     practice_pos = index_html.find('data-tab="practice"')
     targeted_pos = index_html.find('data-tab="targeted-practice"')
-    stats_pos = index_html.find('data-tab="statistics"')
-    assert -1 not in (practice_pos, targeted_pos, stats_pos), "missing one of practice/targeted-practice/statistics tabs"
-    assert practice_pos < targeted_pos < stats_pos, (
-        "tab order changed — Targeted Practice must sit between Practice and Statistics"
+    assert -1 not in (practice_pos, targeted_pos), "missing one of practice/targeted-practice tabs"
+    assert practice_pos < targeted_pos, (
+        "tab order changed — Targeted Practice must come after Practice"
+    )
+    # The Statistics tab must not creep back in: its renderers, DOM module
+    # and stylesheet were deleted, so a stray button would open a blank page.
+    assert 'data-tab="statistics"' not in index_html, (
+        'index.html has a data-tab="statistics" button again — the Statistics '
+        "tab was removed 2026-07-31 and has no page to mount"
     )
 
     # The global Targeted Practice mode banner (#tp-banner) must live OUTSIDE
@@ -137,17 +142,15 @@ def check_invariants():
     )
 
     # The banner's child elements + script/stylesheet links must stay in
-    # index.html. Page-mount ids (#page-targeted-practice, #page-statistics,
-    # #arena-unlock-page, #arena-unlock-continue-btn) live in the -dom.js
-    # extraction modules — those are checked above + in the per-folder
-    # watch.py scripts.
+    # index.html. Page-mount ids (#page-targeted-practice, #arena-unlock-page,
+    # #arena-unlock-continue-btn) live in the -dom.js extraction modules —
+    # those are checked above + in the per-folder watch.py scripts.
     for needle in (
         'id="tp-banner-meta"',
         'id="tp-banner-end"',
         'href="targeted-practice/targeted-practice.css',
         'src="targeted-practice/targeted-practice-dom.js',
         'src="targeted-practice/targeted-practice.js',
-        'src="stats/stats-dom.js',
         'src="practice/arena-unlock-dom.js',
     ):
         assert needle in index_html, f"index.html missing required marker: {needle}"

@@ -84,7 +84,7 @@ const PracticeAPI = {
 
     if (pyodide && practiceEngineLoaded && bank && adaptiveStateJson) {
       if (!eligibleBank?.length) {
-        throw new Error("No enabled practice sections. Re-enable at least one area in Statistics.");
+        throw new Error("No practice questions available for the current selection. Try reloading, or pick a concept from the Knowledge Graph.");
       }
       const api = pyodide.globals.get("engine_api");
       const resultJson = api.next_question(adaptiveStateJson, JSON.stringify(eligibleBank));
