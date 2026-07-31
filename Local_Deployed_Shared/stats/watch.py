@@ -1,25 +1,34 @@
 """watch.py — health checks for stats
 
+This folder no longer backs a Statistics tab (removed 2026-07-31). What
+remains are three files the REST of the app depends on; they keep the
+`stats/` path only so their consumers' <script src=...> tags stay valid.
+
 This folder is JavaScript (loaded as plain <script> tags, not ES modules),
 so we use file-existence + text-grep checks rather than Python imports.
 Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import sys
 import os
-import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.abspath(os.path.join(HERE, '..'))
 INDEX_HTML = os.path.join(SHARED, 'index.html')
 
 JS_FILES = [
-    'dom.js', 'data.js', 'weights.js', 'render.js', 'graph.js',
-    'predicted-links.js', 'predicted-data.js',
+    'weights.js',
+    'predicted-links.js',
     'predicted-prereqs-temp.js',  # TEMP scaffold — delete with concept graph
-    'predicted.js',
-    'init.js',
 ]
-SUB_TABS = ['areas', 'graph', 'advanced', 'predicted']
+
+# Files deleted with the Statistics tab. If one reappears, either the tab is
+# being rebuilt (fine — update this list and the guards in ../watch.py) or a
+# revert half-landed (not fine — the index.html <script> tags are gone, so the
+# file would sit dead on disk).
+REMOVED_FILES = [
+    'dom.js', 'data.js', 'render.js', 'graph.js',
+    'predicted-data.js', 'predicted.js', 'init.js', 'stats-dom.js',
+]
 
 
 def _read(path):
@@ -34,28 +43,32 @@ def check_imports():
         path = os.path.join(HERE, name)
         assert os.path.isfile(path), f"missing JS file: {name}"
         assert os.path.getsize(path) > 0, f"empty JS file: {name}"
+    for name in REMOVED_FILES:
+        assert not os.path.isfile(os.path.join(HERE, name)), (
+            f"{name} is back but index.html no longer loads it — it belonged "
+            "to the Statistics tab, removed 2026-07-31"
+        )
 
 
 # ── Public API checks ─────────────────────────
 # Verify the functions/symbols other parts of the page rely on are still defined.
 def check_public_api():
     expected = {
-        'dom.js': ['statsTabs', 'statsPanels', 'statsTableBody'],
-        'data.js': ['buildAreas', 'calcDiffMult'],
-        'weights.js': ['defaultWeights', 'normalizeWeights'],
-        'render.js': ['renderStatsTable', 'renderAdvancedTable'],
-        'graph.js': ['renderGraph', 'initGraphControls'],
+        # practice/adaptive.js reads buildEffectiveWeightsFromSubtopics;
+        # practice/questions.js reads isSubtopicEnabled.
+        'weights.js': [
+            'defaultWeights', 'normalizeWeights', 'loadWeights', 'saveWeights',
+            'buildEffectiveWeightsFromSubtopics', 'isSubtopicEnabled',
+        ],
+        # colabUpstreamHref is consumed by courses.js, courses-fork-gate.js,
+        # practice/ui.js, practice/drills-catalog.js, practice/arena-unlock.js
+        # and targeted-practice/targeted-practice.js.
         'predicted-links.js': [
-            'bookHrefForNotebook', 'colabUpstreamHref', 'vsCodeHrefFor',
-            'openLinkCell', 'arenaColabOwner', 'ARENA_UPSTREAM_OWNER',
-            'ARENA_FORK_REPO', 'VSCODE_LOCAL_ABS_ROOT',
-            'encodePathSegments',
+            'colabUpstreamHref', 'arenaColabOwner', 'drillsColabOwner',
+            'ARENA_UPSTREAM_OWNER', 'ARENA_FORK_REPO', 'encodePathSegments',
         ],
-        'predicted-data.js': [
-            'computeProblemScore', 'exercisesForProblem', 'compareSectionLabels',
-            'subsectionKeyForProblem', 'sectionLabelForProblem',
-            'aggregateTopSkill', 'topSkillLabel',
-        ],
+        # Read by practice/arena-unlock.js, practice/drills-catalog.js and
+        # targeted-practice/targeted-practice.js.
         'predicted-prereqs-temp.js': [
             'ARENA_PREREQS_TEMP_ENABLED', 'ARENA_PREREQS_TEMP_BY_EXERCISE',
             'ARENA_PREREQS_TEMP_EXERCISES', 'ARENA_PREREQS_TEMP_NOTEBOOK_PATH',
@@ -63,14 +76,6 @@ def check_public_api():
             'getNextUnshownUnlockedArenaExercise', 'markArenaExerciseShown',
             'getArenaPrereqsForExercise',
         ],
-        'predicted.js': [
-            'renderPredictedTable', 'buildPredictedAreas',
-            'data-pred-problem-toggle', 'data-pred-exercise-for',
-            'data-copy-key', 'stats-col-open', 'copyKeyAttr',
-            'data-pred-prereq-toggle', 'data-pred-prereq-for',
-            'getExercisesWithTempFallback', 'ARENA_PREREQS_TEMP_ENABLED',
-        ],
-        'init.js': ['showStatsPanel', 'initStats', 'loadAndRenderStats'],
     }
     for fname, symbols in expected.items():
         src = _read(os.path.join(HERE, fname))
@@ -79,36 +84,25 @@ def check_public_api():
 
 
 # ── Invariant checks ──────────────────────────
-# Every data-stats-tab button must have a matching data-stats-panel section.
-# The Statistics page DOM was extracted out of index.html and is now injected
-# at runtime by stats/stats-dom.js, so this check reads that file directly.
+# The Statistics page is gone: nothing in this folder may mount it, and
+# index.html must still load the three survivors.
 def check_invariants():
-    dom_path = os.path.join(HERE, 'stats-dom.js')
-    assert os.path.isfile(dom_path), f"stats-dom.js missing at {dom_path}"
-    html = _read(dom_path)
-    # Sanity: the DOM module must still mount the page-statistics container.
-    assert 'id="page-statistics"' in html, "stats-dom.js no longer mounts #page-statistics"
-    tabs = set(re.findall(r'data-stats-tab="([^"]+)"', html))
-    panels = set(re.findall(r'data-stats-panel="([^"]+)"', html))
-    assert tabs == panels, (
-        f"data-stats-tab / data-stats-panel mismatch — "
-        f"tabs only: {tabs - panels}, panels only: {panels - tabs}"
-    )
-    for name in SUB_TABS:
-        assert name in tabs, f"expected sub-tab `{name}` missing from stats-dom.js"
+    for name in JS_FILES:
+        src = _read(os.path.join(HERE, name))
+        assert 'id="page-statistics"' not in src, (
+            f"{name} mounts #page-statistics — the Statistics tab was removed"
+        )
 
-    # The index.html load order MUST place stats-dom.js BEFORE any other
-    # stats/ script — otherwise the controllers' getElementById calls
-    # return null at IIFE-eval time and the panels silently never render.
     index_html = _read(INDEX_HTML)
-    dom_pos = index_html.find('src="stats/stats-dom.js')
-    other_pos = index_html.find('src="stats/dom.js')
-    assert dom_pos != -1, 'index.html missing <script src="stats/stats-dom.js">'
-    assert other_pos != -1, 'index.html missing <script src="stats/dom.js">'
-    assert dom_pos < other_pos, (
-        "stats/stats-dom.js must load BEFORE stats/dom.js (and all other "
-        "stats/ controllers) — they query DOM ids injected by stats-dom.js"
-    )
+    for name in JS_FILES:
+        assert f'src="stats/{name}' in index_html, (
+            f'index.html missing <script src="stats/{name}"> — its consumers '
+            "(courses / practice / targeted-practice) read its globals"
+        )
+    for name in REMOVED_FILES:
+        assert f'src="stats/{name}' not in index_html, (
+            f'index.html still loads stats/{name}, which no longer exists'
+        )
 
 
 # ── Run all checks ────────────────────────────

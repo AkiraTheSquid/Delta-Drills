@@ -278,14 +278,21 @@ function getPracticeEligibleQuestions() {
   const bank = servableQuestions() || questionsBank;
   // Single-KC practice (concept-graph maximize) pins the queue to one subtopic.
   // Deliberately bypasses isSubtopicEnabled: the learner clicked this concept,
-  // so a stats-page toggle shouldn't empty the queue underneath them.
+  // so a saved per-subtopic toggle shouldn't empty the queue underneath them.
   const focus = window.__kcFocusSubtopics;
   if (Array.isArray(focus) && focus.length) {
     const focused = bank.filter((q) => focus.includes(q.subtopic));
     if (focused.length) return focused;
   }
   if (typeof isSubtopicEnabled !== "function") return bank;
-  return bank.filter((q) => isSubtopicEnabled(q.subtopic, q.topic || ""));
+  const enabled = bank.filter((q) => isSubtopicEnabled(q.subtopic, q.topic || ""));
+  // The only UI that could DISABLE a subtopic was the Statistics tab's Advanced
+  // table, removed 2026-07-31. Anyone still carrying disabled flags in
+  // `delta_drills_weights` has no way to switch them back on, so a filter that
+  // empties the bank would be a permanent dead end. Ignore the flags in that
+  // case rather than serving nothing.
+  if (!enabled.length && bank.length) return bank;
+  return enabled;
 }
 
 function isPracticeQuestionAllowed(question) {

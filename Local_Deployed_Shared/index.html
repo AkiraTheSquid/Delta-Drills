@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="styles/layout.css" />
   <link rel="stylesheet" href="styles/components.css?v=4" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=15" />
-  <link rel="stylesheet" href="styles/stats.css?v=1" />
+  <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
   <link rel="stylesheet" href="styles/courses/forkgate.css?v=2" />
@@ -65,7 +65,6 @@
       <button class="tab auth-only" data-tab="courses" type="button">Courses</button>
       <button class="tab auth-only" data-tab="practice" type="button" title="Your adaptive queue: we choose the next problem for you based on what you're ready for.">Practice</button>
       <button class="tab auth-only" data-tab="targeted-practice" type="button" title="You choose a specific skill and drill it directly — instead of the adaptive queue choosing for you.">Targeted Practice</button>
-      <button class="tab auth-only" data-tab="statistics" type="button">Statistics</button>
     </nav>
     <!-- Logged-in indicator (the tester couldn't tell he was signed in). app.js
          shows the email here when authenticated; hidden for guests. -->
@@ -818,11 +817,15 @@ np.random.seed(0)
          only the practice content area swaps between the two views). -->
   </main>
 
-  <!-- #page-targeted-practice and #page-statistics are injected at runtime by
-       targeted-practice/targeted-practice-dom.js and stats/stats-dom.js
-       respectively (both insert as previous siblings of <footer>). Extracted
-       here to keep index.html under the per-file LOC ceiling; load-order
-       guards live in Local_Deployed_Shared/watch.py. -->
+  <!-- #page-targeted-practice is injected at runtime by
+       targeted-practice/targeted-practice-dom.js (inserts as a previous
+       sibling of <footer>). Extracted here to keep index.html under the
+       per-file LOC ceiling; load-order guards live in
+       Local_Deployed_Shared/watch.py.
+       The Statistics tab (and its runtime-injected #page-statistics) was
+       removed 2026-07-31 — the priority/learning-rate/predicted-score tables
+       leaned on assumptions the learner couldn't check, so they added
+       cognitive load without adding signal. -->
 
   <!-- Auth is Google-only and handled inline by the Continue-with-Google button
        in the guest banner above; there is no separate login/signup page. -->
@@ -833,7 +836,6 @@ np.random.seed(0)
        NodeList that drives switchTab. Anything injected later is invisible
        to switchTab and the page silently stays .hidden when the tab clicks. -->
   <script src="practice/arena-unlock-dom.js?v=2"></script>
-  <script src="stats/stats-dom.js?v=1"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
   <script src="app.js?v=16"></script>
@@ -881,17 +883,17 @@ np.random.seed(0)
   <script src="practice/events.js?v=23"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
-  <script src="stats/dom.js?v=8"></script>
-  <script src="stats/weights.js?v=9"></script>
-  <script src="stats/data.js?v=9"></script>
-  <script src="stats/render.js?v=9"></script>
-  <script src="stats/graph.js?v=8"></script>
-  <script src="stats/predicted-links.js?v=3"></script>
-  <script src="stats/predicted-data.js?v=1"></script>
-  <script src="stats/predicted-prereqs-temp.js?v=5"></script>
-  <script src="stats/predicted.js?v=13"></script>
-  <script src="stats/init.js?v=9"></script>
-  <script src="stats.js?v=8"></script>
+  <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
+       files survive because the rest of the app depends on them:
+         weights.js            → practice/adaptive.js, practice/questions.js
+         predicted-links.js    → courses.js, courses-fork-gate.js, practice/ui.js,
+                                 practice/drills-catalog.js, practice/arena-unlock.js,
+                                 targeted-practice/targeted-practice.js
+         predicted-prereqs-temp.js → practice/arena-unlock.js,
+                                 practice/drills-catalog.js, targeted-practice.js -->
+  <script src="stats/weights.js?v=10"></script>
+  <script src="stats/predicted-links.js?v=4"></script>
+  <script src="stats/predicted-prereqs-temp.js?v=6"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
@@ -899,8 +901,10 @@ np.random.seed(0)
   <script src="courses.js?v=2"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
-  <!-- Both consumed by stats/predicted.js. stage1.js (the dedicated ARENA tab UI) -->
-  <!-- is intentionally NOT loaded — the tab was removed 2026-05-16. -->
+  <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->
+  <!-- (stats/predicted.js also read them until the Statistics tab was removed -->
+  <!-- 2026-07-31.) stage1.js (the dedicated ARENA tab UI) is intentionally -->
+  <!-- NOT loaded — that tab was removed 2026-05-16. -->
   <script src="arena/manifest.js?v=3"></script>
   <script src="arena/exercises.js?v=2"></script>
   <!-- concept-graph/ — iter-5 v2 atom-level prereq graph (207 atoms, 375 edges, -->

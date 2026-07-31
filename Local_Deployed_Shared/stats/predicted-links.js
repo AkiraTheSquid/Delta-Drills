@@ -1,16 +1,20 @@
 /* ================================================================
-   STATS PREDICTED — link helpers
+   NOTEBOOK LINK HELPERS
 
-   Builds the four launch URLs surfaced in the predicted-scores
-   table Open column:
-     - Jupyter Book static HTML (bookHrefForNotebook)
-     - Upstream ARENA notebook on Google Colab (colabUpstreamHref)
-     - Local repo notebook in VS Code (vsCodeHrefFor)
-     - Generic single-link <td> wrapper used by chapter/section/
-       problem rows (openLinkCell)
+   Resolves `colabUpstreamHref(notebookPath)` — the Google Colab URL
+   for an ARENA or Delta-Drills notebook, pointed at the student's
+   own fork when the Account tab's "GitHub username" is set.
 
-   Shared across stats/predicted.js — loaded BEFORE predicted.js
-   in index.html so all of these are defined at render time.
+   Consumers (all load AFTER this file in index.html):
+     courses.js, courses-fork-gate.js, practice/ui.js,
+     practice/drills-catalog.js, practice/arena-unlock.js,
+     targeted-practice/targeted-practice.js
+
+   NOTE: this file lives under stats/ for historical reasons — it was
+   written for the Statistics tab's predicted-scores table, which was
+   removed 2026-07-31. The table-only helpers (bookHrefForNotebook,
+   vsCodeHrefFor, openLinkCell) went with it; only the Colab link
+   resolution below is still live.
    ================================================================ */
 
 // encodeURI leaves &, ?, # untouched — which is fine for browser nav to
@@ -19,14 +23,6 @@
 // query-bearing. Per-segment encodeURIComponent maps `&` to `%26`,
 // `#` to `%23`, etc., without touching the `/` separators.
 const encodePathSegments = (path) => String(path).split("/").map(encodeURIComponent).join("/");
-
-const bookHrefForNotebook = (notebookPath) => {
-  if (typeof notebookPath !== "string") return "";
-  const remapped = notebookPath
-    .replace(/^content\/ARENA_5\.0-main\//, "arena-book/")
-    .replace(/\.ipynb$/, ".html");
-  return encodePathSegments(remapped);
-};
 
 // Upstream ARENA notebooks are hosted at callummcdougall/ARENA_3.0 (the
 // project kept the v3 repo name as the canonical home for all later
@@ -40,7 +36,6 @@ const ARENA_FORK_REPO = "ARENA_3.0";
 const DRILLS_UPSTREAM_OWNER = "AkiraTheSquid";
 const DRILLS_REPO = "Delta-Drills";
 const DRILLS_PATH_PREFIX = "arena-procedural-drills/";
-const VSCODE_LOCAL_ABS_ROOT = "/home/stellar-thread/Applications/Delta-Drills-Local/Local_Deployed_Shared";
 
 // Account → "GitHub username" field. When set, every Colab URL points at
 // the student's fork instead of upstream, so their saved notebook state
@@ -71,15 +66,4 @@ const colabUpstreamHref = (notebookPath) => {
   const rel = upstreamRelFor(notebookPath);
   if (!rel) return "";
   return `https://colab.research.google.com/github/${arenaColabOwner()}/${ARENA_FORK_REPO}/blob/main/${encodePathSegments(rel)}`;
-};
-
-const vsCodeHrefFor = (notebookPath) => {
-  if (typeof notebookPath !== "string") return "";
-  return `vscode://file/${encodePathSegments(`${VSCODE_LOCAL_ABS_ROOT}/${notebookPath}`)}`;
-};
-
-const openLinkCell = (href, title, label = "Open ↗") => {
-  if (!href) return `<td class="stats-col-open"></td>`;
-  const safeTitle = (title || "").replace(/"/g, "&quot;");
-  return `<td class="stats-col-open"><a class="stats-open-link" href="${href}" target="_blank" rel="noreferrer" title="${safeTitle}">${label}</a></td>`;
 };
