@@ -46,6 +46,18 @@
   display: flex;
   flex-direction: column;
 }
+
+/* `.hidden` (components.css) and these are both single-class selectors, so the
+   winner is whichever file loads last — and that is this one. The result was a
+   panel that ignored `classList.add("hidden")`: torch routing set the class,
+   the editor stayed on screen, and the "binary interface" rule in ui.js was
+   quietly not in force. Found on the Colab edition, where the editor is meant
+   to be gone entirely; it was never visible on the normal deploy only because
+   no bank question carries a notebook path. */
+.practice-left.hidden,
+.practice-right.hidden {
+  display: none;
+}
 /* ================================================================
    RESPONSIVE — Practice
    ================================================================ */

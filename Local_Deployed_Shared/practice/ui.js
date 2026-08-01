@@ -116,6 +116,16 @@ function renderQuestionBody(q) {
 // card next to a live editor read as contradictory; tester feedback).
 function applyTorchRouting(q) {
   const colabRoute = torchNeedsColab(q);
+  // The Colab edition strips the page down to a tutor rail — no prompt, no
+  // editor, no worked example, because all three are in the notebook and a
+  // second copy beside it is what made the panel feel like the normal app with
+  // a badge on it. `dd-no-notebook` is the escape hatch: the ~75 questions
+  // whose lesson was never published have nowhere to go, so they get the full
+  // page back rather than an empty rail. Styling in
+  // styles/practice/colab-edition.css.
+  if (window.DDColab && window.DDColab.active()) {
+    document.documentElement.classList.toggle("dd-no-notebook", !colabRoute);
+  }
   if (torchColabNotice) torchColabNotice.classList.toggle("hidden", !colabRoute);
   // The whole right editor panel + hint aids + submit/skip swap out together.
   const rightPanel = document.querySelector(".practice-right");
@@ -135,6 +145,11 @@ function applyTorchRouting(q) {
       || colabForkHref(q);
     torchColabLink.classList.toggle("hidden", !href);
     if (href) torchColabLink.href = href;
+    // Framed by the extension: steer the tab beside us instead of waiting for a
+    // click. No-op everywhere else — see DDColab.openNotebook.
+    if (href && window.DDColab && typeof window.DDColab.openNotebook === "function") {
+      window.DDColab.openNotebook(href);
+    }
   }
   // Separate "Show solution" → the worked-answer notebook, only when we have a
   // distinct problem notebook (otherwise the primary link already IS the solution).
