@@ -258,6 +258,34 @@
     }
   }
 
+  /**
+   * The notebook reporting back: `dd_check` ran, and here is how it went.
+   *
+   * The extension's content script reads the verdict line off the Colab page
+   * and the panel forwards it here. Re-published as a DOM event rather than
+   * handled here, because what to DO with a grade belongs to events.js — this
+   * file only knows about the edition and the bridge.
+   *
+   * The sender check is the whole trust boundary in this direction: only the
+   * window that embeds us may speak, which is the panel. An unframed page never
+   * has one, so this is inert in a normal tab.
+   */
+  window.addEventListener("message", (event) => {
+    if (!active) return;
+    if (window.parent === window || event.source !== window.parent) return;
+    const msg = event.data;
+    if (!msg || msg.source !== "delta-drills-panel") return;
+    if (msg.type !== "dd:check-result") return;
+    const problem = String(msg.problem || "");
+    if (!/^\d+$/.test(problem)) return;
+    console.log("[colab-mode] the notebook graded", problem, msg.correct);
+    window.dispatchEvent(
+      new CustomEvent("dd-check-result", {
+        detail: { problem, correct: Boolean(msg.correct) },
+      }),
+    );
+  });
+
   window.DDColab = {
     active: () => active,
     hrefFor: colabNotebookHrefFor,

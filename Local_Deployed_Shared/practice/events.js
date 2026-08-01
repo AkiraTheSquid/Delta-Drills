@@ -449,6 +449,21 @@ const _rateTorchAndAdvance = async (correct) => {
 if (torchRateSolved) torchRateSolved.addEventListener("click", () => _rateTorchAndAdvance(true));
 if (torchRateLookedUp) torchRateLookedUp.addEventListener("click", () => _rateTorchAndAdvance(false));
 
+// The notebook grading itself. `dd_check` prints its verdict, the extension
+// reads it off the Colab page and colab_mode.js re-publishes it here — so
+// running the check IS the submit, and the learner does not hand-copy a result
+// they just measured. The buttons stay for the questions with no checker and
+// for disagreeing with one.
+window.addEventListener("dd-check-result", (event) => {
+  const detail = (event && event.detail) || {};
+  const q = PracticeAPI.currentQuestion;
+  if (!q || String(q.question_id) !== String(detail.problem)) return;
+  // Already recorded — the verdict path disables both buttons for the rest of
+  // the problem, so this is also the guard against a re-run logging twice.
+  if (torchRateSolved && torchRateSolved.disabled) return;
+  _rateTorchAndAdvance(!!detail.correct);
+});
+
 // --- "Missed one concrete thing" (P1.5): a separate signal so a single missed
 // fact isn't read as "too hard". Rides the non-blocking problem-feedback channel.
 if (missedFactBtn) {
