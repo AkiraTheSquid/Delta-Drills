@@ -390,6 +390,16 @@ if (practiceSkipBtn) {
 // --- Torch self-rating (P0.1): torch drills run in Colab, not in-app. Record a
 // local-eval attempt (no doomed server grading) when in backend mode, then
 // advance. In guest/local mode recordLocalEval is a no-op; we still advance.
+//
+// On the Colab edition the two verdict buttons ARE the submit, so rating stops
+// on a review step instead of jumping to the next problem: the reference answer
+// opens underneath, and Next problem is a second, deliberate click. Everywhere
+// else the notice is an aside on a page that has its own submit, and pausing
+// there would strand the learner behind a solution they did not ask for.
+const _colabReviewMode = () =>
+  !!(window.DDColab && window.DDColab.active()) &&
+  !document.documentElement.classList.contains("dd-no-notebook");
+
 const _rateTorchAndAdvance = async (correct) => {
   const q = PracticeAPI.currentQuestion;
   if (!q) return;
@@ -405,6 +415,30 @@ const _rateTorchAndAdvance = async (correct) => {
     if (torchRateSolved) torchRateSolved.disabled = false;
     if (torchRateLookedUp) torchRateLookedUp.disabled = false;
   }
+
+  if (_colabReviewMode()) {
+    // The question can change under a slow recordLocalEval (End session, a
+    // stray Skip) — repainting then would attach this review to the wrong
+    // problem's solution.
+    if (PracticeAPI.currentQuestion !== q) return;
+    solutionCode.textContent = q.solution_code || "";
+    practiceSubmitArea.classList.add("hidden");
+    practiceFeedbackArea.classList.remove("hidden");
+    applyResult(correct);
+    // No felt-difficulty step here: the attempt went in through
+    // submit-local-eval, which leaves nothing pending for a rating to attach
+    // to. showNextProblemButton hides those buttons; the prompt above them has
+    // to stop asking a question that no longer has anywhere to go.
+    feedbackPrompt.textContent = correct
+      ? "Recorded as correct. The reference answer is below — worth a look even when you got it."
+      : "Recorded as a miss. The reference answer is below; compare it with what you ran.";
+    showNextProblemButton();
+    // A second verdict would log a second attempt against the same problem.
+    if (torchRateSolved) torchRateSolved.disabled = true;
+    if (torchRateLookedUp) torchRateLookedUp.disabled = true;
+    return;
+  }
+
   await _loadNextPracticeQuestion();
 };
 if (torchRateSolved) torchRateSolved.addEventListener("click", () => _rateTorchAndAdvance(true));

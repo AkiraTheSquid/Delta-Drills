@@ -47,6 +47,15 @@
   font-size: 12px;
 }
 
+/* This file loads after components.css, so `.override-row` and the global
+   `.hidden` are the same specificity and the later one wins — the row JS hides
+   after a CORRECT answer stayed on screen offering to correct it. Same trap as
+   `#practice-submit-area.hidden` below and `.practice-right.hidden` in
+   layout.css; see the invariant in this folder's README. */
+.override-row.hidden {
+  display: none;
+}
+
 .override-btn {
   align-self: flex-start;
   padding: 8px 12px;
@@ -219,6 +228,9 @@
 
 /* "I missed one concrete thing" — separate from the difficulty rating. */
 .missed-fact-row { margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* Same load-order trap as .override-row above: "I missed one specific thing"
+   only makes sense after a WRONG answer, and ui.js hides it otherwise. */
+.missed-fact-row.hidden { display: none; }
 .missed-fact-btn { font-size: 12px; }
 .missed-fact-btn.flagged { border-color: var(--accent, #5b8cff); }
 .missed-fact-status { font-size: 12px; color: var(--accent, #5b8cff); }

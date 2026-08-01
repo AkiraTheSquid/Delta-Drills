@@ -30,9 +30,42 @@
 html.dd-colab-edition:not(.dd-no-notebook) .practice-mode-intro,
 html.dd-colab-edition:not(.dd-no-notebook) body:not(.lesson-mode) #question-text,
 html.dd-colab-edition:not(.dd-no-notebook) #question-imports,
-html.dd-colab-edition:not(.dd-no-notebook) #question-visual,
-html.dd-colab-edition:not(.dd-no-notebook) .solution-section {
+html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
   display: none;
+}
+
+/* ---- the review step ---------------------------------------------------- */
+
+/* The solution is NOT in that list. It lives inside #practice-feedback-area,
+   which stays hidden until a verdict, and a verdict is this deploy's submit —
+   so answering opens the reference solution under the buttons that recorded it
+   ("after pressing submit… it should display the solution to the problem at the
+   bottom"). The notebook carries its own collapsed copy; this one is for
+   reading without leaving the rail.
+
+   What the rest of that panel holds does not survive the trip: the difficulty
+   self-report has no pending attempt to attach to after a local eval, the two
+   bars describe a grade the tutor did not compute here, and the AI explanation
+   needs the submission it never saw. All four are noise stacked above the
+   answer the learner just asked for. */
+html.dd-colab-edition:not(.dd-no-notebook) #feedback-help,
+html.dd-colab-edition:not(.dd-no-notebook) #ewma-accuracy,
+html.dd-colab-edition:not(.dd-no-notebook) .question-meta-row,
+html.dd-colab-edition:not(.dd-no-notebook) #ai-explanation-section {
+  display: none;
+}
+
+/* "Is this a mistake? I got it right" — offered when the GRADER said wrong. Here
+   the learner said wrong, about their own run, half a second ago; there is
+   nothing to appeal to. It also posts /override against an attempt that came in
+   through submit-local-eval, which is not the shape that endpoint expects. */
+html.dd-colab-edition:not(.dd-no-notebook) #override-row {
+  display: none;
+}
+
+html.dd-colab-edition:not(.dd-no-notebook) .solution-section {
+  border-top: 0;
+  padding-top: 0;
 }
 
 /* The editor, the Run button and the Output pane, gone — not hidden per

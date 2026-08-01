@@ -14,7 +14,34 @@ const PracticeAPI = {
   },
 
   async recordLocalEval(questionId, correct) {
-    if (practiceMode !== "backend") return;
+    // Guest / supabase: the Pyodide engine IS the store, so a self-rated Colab
+    // drill has to go in the same way a graded submission does. It used to
+    // return here, which meant nothing was recorded — and `next_question`
+    // picks from the state, so rating a torch drill served the SAME question
+    // back, forever. Only reachable from the torch self-rate path in these
+    // modes (submitAnswer calls this for backend+Pyodide fallback only), so
+    // there is no double-record.
+    if (practiceMode !== "backend") {
+      const q = this.currentQuestion;
+      const pyodide = await initPyodide();
+      if (pyodide && practiceEngineLoaded && adaptiveStateJson && q) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.submit_answer(
+          adaptiveStateJson,
+          q.question_id,
+          q.subtopic,
+          q.difficulty || 50,
+          !!correct,
+        );
+        await saveAdaptiveState();
+      }
+      if (!practiceProgress.completedQuestionIds.includes(questionId)) {
+        practiceProgress.completedQuestionIds.push(questionId);
+        savePracticeProgress(practiceProgress);
+      }
+      emitPracticeStateChanged();
+      return;
+    }
     const res = await apiFetch("/api/practice/submit-local-eval", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
