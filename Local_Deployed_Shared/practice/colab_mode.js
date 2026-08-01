@@ -191,11 +191,52 @@
     readyWaiters.push(fn);
   }
 
+  /**
+   * Put the notebook on screen for the learner, rather than a link to it.
+   *
+   * "It doesn't actually bring you to the Colab page" was the whole complaint:
+   * the app rendered a card with an "Open in Colab ↗" anchor and waited to be
+   * clicked, so every question cost a click and a fresh tab. The tutor knows
+   * which notebook the next problem is in — it should just be there.
+   *
+   * It cannot do that alone. This page runs cross-origin inside the extension's
+   * side panel, so `parent.location` is denied and `window.open` on a render
+   * (no user gesture) is blocked. What it CAN do is ask its embedder, which is
+   * an extension page holding `tabs` permission: `panel/app.js` receives this
+   * and points the Colab tab at `url`. Nothing happens in a plain browser tab —
+   * there is no second pane to steer — and the anchor stays visible for exactly
+   * that case, and as the way back after wandering off.
+   *
+   * targetOrigin is "*" because the embedder is `chrome-extension://<id>` and
+   * the id is not knowable from here. The payload is a public notebook URL and
+   * carries nothing a listener could not already read off the page.
+   */
+  let lastOpened = "";
+  function openNotebook(href, opts) {
+    if (!active || !href) return false;
+    if (window.parent === window) return false;
+    if (href === lastOpened && !(opts && opts.force)) return false;
+    try {
+      window.parent.postMessage(
+        { source: "delta-drills", type: "dd:open-notebook", url: href },
+        "*",
+      );
+      lastOpened = href;
+      console.log("[colab-mode] asked the panel to open", href);
+      return true;
+    } catch (err) {
+      console.warn("[colab-mode] could not reach the panel:", err);
+      return false;
+    }
+  }
+
   window.DDColab = {
     active: () => active,
     hrefFor: colabNotebookHrefFor,
     lessonFor: colabLessonFor,
     whenReady: whenColabIndexReady,
+    openNotebook,
+    framed: () => window.parent !== window,
     /** Everything the routing decision depends on, for the question on screen. */
     debug: () => {
       const q = (typeof practiceProgress === "object" && practiceProgress)
@@ -208,6 +249,8 @@
         questionId: questionId(q),
         lesson: (colabLessonFor(q) || {}).id || null,
         href: colabNotebookHrefFor(q),
+        framed: window.parent !== window,
+        lastOpened,
         routes: typeof torchNeedsColab === "function" ? torchNeedsColab(q) : "ui.js not loaded",
         isTorch: typeof questionIsTorch === "function" ? questionIsTorch(q) : "ui.js not loaded",
         practiceMode: typeof practiceMode === "undefined" ? "unset" : practiceMode,
@@ -254,9 +297,31 @@
     const body = notice.querySelector(".torch-colab-body");
     if (title) title.textContent = "🔦 Work this one in the notebook";
     if (body) {
-      body.textContent = "This is the Colab edition — the drill lives in its lesson"
-        + " notebook, opened at this problem. Work it through there, then tell us"
-        + " how it went and the tutor picks the next one.";
+      body.textContent = "This is the Colab edition — the drill is open in its"
+        + " lesson notebook, at this problem. Run your solution there, compare"
+        + " what it printed against the expected output, and say which it was.";
+    }
+    // The same two buttons, told the truth about what they mean HERE.
+    //
+    // They record a graded attempt — `_rateTorchAndAdvance(correct)` in
+    // events.js posts a local eval and advances — but the normal app's wording
+    // rates EFFORT ("worked through it" / "just skimmed it"), because there it
+    // is a fallback for a runner that could not execute the drill at all. On
+    // this deploy the notebook DID run it, so the learner has a real result to
+    // report and the buttons are the submit: left is "my output matched",
+    // right is "it didn't". Anything vaguer feeds the mastery model a guess.
+    const yes = document.getElementById("torch-rate-solved");
+    const no = document.getElementById("torch-rate-lookedup");
+    // Both stay `.ghost`: they are two halves of one question, not an action
+    // and its opt-out, and making the "matched" side primary put a thumb on the
+    // scale of a self-report the mastery model then trusts.
+    if (yes) {
+      yes.textContent = "✓ My output matched";
+      yes.title = "The notebook printed what the problem asked for — recorded as correct.";
+    }
+    if (no) {
+      no.textContent = "✗ My output didn't match";
+      no.title = "It ran, but the result was wrong or you had to read the answer — recorded as incorrect.";
     }
   }
 

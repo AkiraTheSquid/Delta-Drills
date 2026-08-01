@@ -47,11 +47,17 @@
          covers the passkey path Google falls back to.
 
          Do not add a toolbar, a settings sheet or any other chrome to this file.
-         The site has navigation; a second set competes with it. -->
+         The site has navigation; a second set competes with it.
+
+         The one script this page loads (app.js) is not a front end and must not
+         become one: it renders nothing and exists only because a cross-origin
+         frame cannot open a tab. The site says which notebook the next problem
+         is in; app.js is what actually puts it on screen. -->
     <iframe
       src="https://delta-drills-colab.vercel.app/"
       title="Delta Drills"
       allow="identity-credentials-get; publickey-credentials-get; clipboard-read; clipboard-write; fullscreen"
     ></iframe>
+    <script src="app.js"></script>
   </body>
 </html>

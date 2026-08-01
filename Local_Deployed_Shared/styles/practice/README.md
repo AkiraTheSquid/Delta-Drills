@@ -17,6 +17,7 @@
 - `feedback.css`: submit/skip/don't-know row, result badge, felt-difficulty rating buttons, problem quality flags, missed-fact row, failed-tests block.
 - `editor.css`: code editor, Run button, output area + output visual, solution section, AI explanation.
 - `misc.css`: hint/answer aids, practice-mode intro, self-report row, placement entry button, torch Colab notice, mode-demotion notice, topbar auth indicator.
+- `colab-edition.css`: the Colab edition's tutor rail. Everything is scoped under `html.dd-colab-edition` (set by `practice/colab_mode.js` on the `delta-drills-colab` deploy) and is inert on the normal app. Strips the prompt, the editor and the worked example — they are in the notebook beside the panel — and re-stacks the concept strip for panel widths. `html.dd-no-notebook` (set by `ui.js`) turns all of it back off for the ~75 questions with no published notebook, which would otherwise get an empty rail.
 
 ## Data & External Dependencies
 - CSS custom properties from `../variables.css` (`--border`, `--surface`, `--muted`, `--accent`, …).
@@ -51,5 +52,6 @@
   - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
+- 2026-07-31: Added `colab-edition.css` (see Key Files). Also fixed a live instance of the invariant above: `layout.css`'s `.practice-right` outweighed `.hidden` by load order, so the panel ignored `classList.add("hidden")` and the editor stayed on screen through torch routing — `.practice-left.hidden, .practice-right.hidden` now re-assert it. Never visible on the normal deploy because no bank question carries a notebook path; found the moment the Colab edition started routing.
 - 2026-07-30: `timer.css` hides `.concept-topbar` in the `session-idle` state. The topbar is a sibling of `.practice-split`, so the existing idle rule never reached it and the setup screen displayed the paused session's concept strip. `watch.py` now asserts the new rule.
 - 2026-07-12: Folder created — `practice.css` split into layout/timer/question/feedback/editor/misc. `timer.css` rewritten from the old timed-mode toggle to the rigid session setup/status UI. Added `#practice-submit-area.hidden` specificity fix.

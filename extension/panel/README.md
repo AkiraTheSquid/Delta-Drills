@@ -4,10 +4,10 @@
 The side panel itself. Two of them, and the distinction matters:
 
 - **`app.html` — the default, and the whole panel.** A `<style>` block and one
-  `<iframe>` over `https://delta-drills.vercel.app/`. No script. The student sees
-  the live site, with the site's own tabs and the site's own Google sign-in. MV3
-  will not take a URL as `side_panel.default_path`, which is the only reason a
-  local page exists at all.
+  `<iframe>` over `https://delta-drills-colab.vercel.app/`, plus `app.js` — the
+  only script, and not a UI. The student sees the live site, with the site's own
+  tabs and the site's own Google sign-in. MV3 will not take a URL as
+  `side_panel.default_path`, which is the only reason a local page exists at all.
 - **`panel.html` + `api.js` + `navigate.js` + `panel.js` — the hand-built tutor
   UI.** A narrow one-problem-at-a-time surface that drives Colab notebooks
   directly. Works, but nothing points at it; open it by URL or repoint
@@ -33,8 +33,8 @@ The rest of this file is about the second one unless it says otherwise.
 
 ## Key Files
 
-**`app.html`** — no scripts, so none of the load-order hazards below apply. Two
-things in it are load-bearing and neither is obvious:
+**`app.html`** — one script, so none of the load-order hazards below apply. Three
+things in it are load-bearing and none is obvious:
 
 - `allow="identity-credentials-get; …"` on the frame. Sign in with Google
   negotiates over FedCM, and FedCM inside a cross-origin frame is denied unless
@@ -43,6 +43,15 @@ things in it are load-bearing and neither is obvious:
 - The absence of everything else. A toolbar, a settings sheet or a "which app
   address" input is a second front end growing back, and it competes with the
   site's own navigation. An earlier pass had all three; they were removed.
+- `app.js`, and nothing but `app.js`. The framed site knows which notebook the
+  next problem is in and cannot open it: it is cross-origin, so `parent.location`
+  is denied, and a question renders without a user gesture, so `window.open` is
+  blocked as a popup. `app.js` is the whole bridge — it receives
+  `{source:"delta-drills", type:"dd:open-notebook", url}` and points the Colab
+  tab there. It renders nothing and must not start to. `watch.py` enforces both
+  halves: only `app.js` may be loaded, and it must check `event.origin`,
+  `event.source` and that the URL is a Colab one before navigating. Without all
+  three, this page is an open redirect holding the extension's `tabs` permission.
 
 **The tutor UI.** Load order is a dependency chain, not a style choice — each
 file destructures the previous one's global at its top level, **under an alias**:
@@ -154,6 +163,15 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
+- 2026-07-31: `app.js` added — the notebook-opening bridge. The panel used to
+  render a card with an "Open in Colab ↗" link and wait to be clicked, once per
+  question; now the tab beside it goes to the problem on its own. Reported as
+  "it doesn't actually bring you to the Google Collaboratory page… it just shows
+  you the problem on the pane itself". Reuses the open Colab tab rather than
+  creating one (a tab per switch leaves stale kernels behind), and ignores a
+  repeated URL because re-issuing an identical one makes Chrome reload the tab
+  and drop the kernel. NOT yet run — `--load-extension` is ignored by Chrome on
+  this machine, so this needs `chrome://extensions` → Load unpacked.
 - 2026-07-31: The panel is the live site. `app.html` reduced to one framed
   `<iframe>`; the toolbar, settings sheet and fallback screen that wrapped it —
   and `app.js`/`app.css` with them — are deleted. Added

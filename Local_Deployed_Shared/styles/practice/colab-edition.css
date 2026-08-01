@@ -1,0 +1,173 @@
+/* Colab edition — the practice page as a tutor rail beside the notebook.
+
+   Only ever active under `html.dd-colab-edition`, a class practice/colab_mode.js
+   adds when the page is served from delta-drills-colab.vercel.app. On the normal
+   deploy this file is inert, which is why it can be blunt.
+
+   WHY THE PAGE LOSES MOST OF ITSELF HERE
+     On this deploy the problem is in the notebook: the prompt, the starter code,
+     the worked example and the place you type are all already on screen, in the
+     tab this panel sits beside. Rendering a second copy of them in a 400px rail
+     is not redundancy, it is two sources of truth for what the question says,
+     and it reads as "the fork didn't apply". What is left is the part the
+     notebook does NOT have — which question you are on, what concept it is
+     testing, how hard it is, how you are doing, and the session controls.
+
+   `html.dd-no-notebook` IS THE ESCAPE HATCH — 424 of 499 questions have a
+   published notebook cell; the rest have nowhere to route. ui.js sets that class
+   for them and the full page comes back, because a rail with no prompt, no
+   editor and no notebook is a dead end. Every hiding rule below is written
+   `:not(.dd-no-notebook)` for that reason — do not "simplify" it away. */
+
+/* ---- what the notebook already shows ----------------------------------- */
+
+/* `body:not(.lesson-mode)` is load-bearing, not defensive. The lesson gate —
+   the screen that teaches a concept before its first drill — renders ITSELF
+   into #question-text (practice/lessons.js `showPage`), so hiding that element
+   unconditionally leaves the rail completely blank with a Continue button
+   nobody can see. Caught in verification: the gate came up and the panel was
+   empty apart from the concept strip. */
+html.dd-colab-edition:not(.dd-no-notebook) .practice-mode-intro,
+html.dd-colab-edition:not(.dd-no-notebook) body:not(.lesson-mode) #question-text,
+html.dd-colab-edition:not(.dd-no-notebook) #question-imports,
+html.dd-colab-edition:not(.dd-no-notebook) #question-visual,
+html.dd-colab-edition:not(.dd-no-notebook) .solution-section {
+  display: none;
+}
+
+/* The editor, the Run button and the Output pane, gone — not hidden per
+   question. ui.js already drops `.hidden` on this panel when a question routes,
+   but that leaves it on screen for every moment in between (an idle practice
+   tab, the beat before the first render), and on this deploy there is no moment
+   when typing code into the panel is the right thing to do. The notebook has a
+   runtime; this rail does not. */
+html.dd-colab-edition:not(.dd-no-notebook) .practice-right {
+  display: none;
+}
+
+html.dd-colab-edition:not(.dd-no-notebook) .practice-left {
+  border-right: 0;
+}
+
+html.dd-colab-edition .practice-left {
+  gap: 14px;
+  padding: 16px 18px 24px;
+}
+
+/* Below 900px the two panels stack and each is capped at half the viewport, so
+   neither hides the other. A side panel is always below 900px and there is no
+   other panel here — the cap just left the rail scrolling inside the top half
+   of the window with dead space under it. */
+@media (max-width: 900px) {
+  html.dd-colab-edition:not(.dd-no-notebook) .practice-left {
+    border-bottom: 0;
+    max-height: none;
+  }
+}
+
+/* ---- the concept strip, unpacked --------------------------------------- */
+
+/* One row of six things fits a 1600px page and not a side panel: the bars
+   collapsed to slivers and the readouts wrapped mid-word. Stacked, each
+   measure gets the full width and lines up with the one above it. */
+html.dd-colab-edition .concept-topbar {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 9px;
+  padding: 10px 18px;
+}
+
+/* "PYTORCH TENSORS · LESSON 1 OF 3" and the concept name share a baseline on a
+   wide page and run straight off the edge of a panel. Stacked, and the concept
+   allowed to wrap, both stay readable at any width the panel can be dragged to. */
+html.dd-colab-edition .concept-topbar-main {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+}
+
+html.dd-colab-edition .concept-topbar-kc {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+html.dd-colab-edition .stage-dots {
+  flex-wrap: wrap;
+  margin: 0;
+  row-gap: 4px;
+}
+
+html.dd-colab-edition .concept-topbar-diff,
+html.dd-colab-edition .concept-topbar-est {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  /* label / count · track · readout — the track takes whatever is left, so the
+     two strips share one set of gridlines and read as a stack of measures. */
+  grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
+  margin-left: 0;
+}
+
+/* `display: grid` above outranks the UA `[hidden] { display: none }` exactly as
+   `display: flex` does in concept-topbar.css. Same trap, same fix — without
+   this, a strip with no concept keeps showing the previous one's numbers. */
+html.dd-colab-edition .concept-topbar-diff[hidden],
+html.dd-colab-edition .concept-topbar-est[hidden] {
+  display: none;
+}
+
+html.dd-colab-edition .concept-topbar-diff-bar,
+html.dd-colab-edition .concept-topbar-est-bar {
+  height: 8px;
+  width: auto;
+}
+
+/* concept-topbar.css drops this label below 700px, which every side panel is.
+   Here it is the only thing naming what the track measures, and the row it
+   labels has room for it. */
+html.dd-colab-edition .concept-topbar-diff-label {
+  display: inline;
+}
+
+/* ---- the rail's own rows ----------------------------------------------- */
+
+html.dd-colab-edition .self-report-row,
+html.dd-colab-edition .session-status-row,
+html.dd-colab-edition .question-number-row {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+/* `align-items: stretch` because the verdict labels are not the same length, so
+   one wraps to two lines at panel widths and the other does not. Equal heights
+   anyway — two different-sized buttons read as two different KINDS of answer. */
+html.dd-colab-edition .torch-colab-actions {
+  align-items: stretch;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+/* The two verdicts ARE the submit on this deploy, and they are one question
+   with two answers — so they get one row, equal halves, identical styling. An
+   emphasised "matched" would be a nudge on a self-report the mastery model
+   takes at face value. The notebook link goes above them, full width, because
+   it is how you get BACK to the problem, not a third answer to it. */
+html.dd-colab-edition #torch-colab-link {
+  flex: 1 1 100%;
+  text-align: center;
+}
+
+html.dd-colab-edition #torch-rate-solved,
+html.dd-colab-edition #torch-rate-lookedup {
+  flex: 1 1 0;
+  justify-content: center;
+  min-width: 150px;
+  text-align: center;
+}
+
+/* The notice is the rail's main body now that the prompt is gone: it says which
+   notebook you were sent to and takes the self-rating that moves the tutor on. */
+html.dd-colab-edition:not(.dd-no-notebook) .torch-colab-notice {
+  margin-top: 4px;
+}

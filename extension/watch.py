@@ -123,8 +123,12 @@ def check_side_panel_shell():
     * Without `identity-credentials-get` in the frame's `allow`, Sign in with
       Google renders and then fails — FedCM is denied inside a cross-origin
       frame unless the embedder grants it via Permissions Policy.
-    * Any script in this page is the start of a second front end. There is not
-      supposed to be one; the site already has tabs, auth and navigation.
+    * Any script beyond `app.js` is the start of a second front end. There is
+      not supposed to be one; the site already has tabs, auth and navigation.
+      `app.js` is the sole exception and earns it by not being a front end: it
+      renders nothing and only forwards the site's "open this notebook" to
+      `chrome.tabs`, which a cross-origin frame cannot do for itself. Anything
+      inline, or a second file, is the drift this check exists to catch.
     """
     m = _manifest()
     assert m["side_panel"]["default_path"] == "panel/app.html", (
@@ -147,9 +151,32 @@ def check_side_panel_shell():
         "the frame needs allow=\"identity-credentials-get …\" or Sign in with "
         "Google fails inside the panel"
     )
-    assert not re.search(r"<script\b", markup, re.I), (
-        "app.html grew a script — the panel is meant to be the site, not a "
-        "front end wrapped around it"
+    scripts = re.findall(r"<script\b([^>]*)>", markup, re.I)
+    for attrs in scripts:
+        src = re.search(r'src\s*=\s*"([^"]+)"', attrs, re.I)
+        assert src, (
+            "app.html has an inline script — MV3's CSP blocks it anyway, and the "
+            "panel is meant to be the site, not a front end wrapped around it"
+        )
+        assert src.group(1) == "app.js", (
+            f"app.html loads {src.group(1)} — the only script this page may load "
+            f"is app.js, the notebook-opening bridge"
+        )
+
+    # The bridge drives tab navigation from a `message` event, which any frame
+    # can fire. Without both halves of the sender check plus a URL allowlist,
+    # this page is an open redirect holding the extension's `tabs` permission.
+    with open(os.path.join(HERE, "panel", "app.js"), encoding="utf-8") as fh:
+        bridge = fh.read()
+    assert "event.origin !== APP_ORIGIN" in bridge, (
+        "app.js must reject messages from any origin but the framed site"
+    )
+    assert "event.source !== frame.contentWindow" in bridge, (
+        "app.js must reject messages from anything but the frame it embeds — "
+        "origin alone lets any same-origin popup drive the tab"
+    )
+    assert "colab\\.research\\.google\\.com" in bridge, (
+        "app.js must refuse to navigate anywhere but Colab"
     )
 
 
