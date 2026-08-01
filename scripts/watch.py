@@ -16,6 +16,7 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import contextlib
 import io
+import re
 import sys
 import os
 
@@ -105,14 +106,20 @@ def check_colab_grader():
     src = gen.grader_source()
     assert 'def dd_check(' in src, 'grader_source no longer carries dd_check'
 
+    printed = []
+
     def graded(solution, cases):
         ns = {'__name__': '__main__'}
         exec(src, ns)
         ns['_DD_TESTS'] = {'1': {'fn': 'solve', 'cases': cases}}
         exec(solution, ns)
-        # dd_check talks to the learner; a watch run is not the audience.
-        with contextlib.redirect_stdout(io.StringIO()):
-            return eval('dd_check(1, verbose=False)', ns)
+        # dd_check talks to the learner; a watch run is not the audience. The
+        # text is kept, though — it is also the reporting channel (below).
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            ok = eval('dd_check(1, verbose=False)', ns)
+        printed.append(buf.getvalue())
+        return ok
 
     # Mirror 1: numpy is always available, so a fixture may use it even in a
     # torch drill — np.load is the only route to the ARENA image.
@@ -135,6 +142,28 @@ def check_colab_grader():
         'def solve(xs):\n    return [x * 3 for x in xs]\n',
         [{'setup_code': 'xs = [1, 2, 3]', 'call': 'solve(xs)', 'expected_expr': '[2, 4, 6]'}],
     ), 'dd_check passes a wrong answer'
+
+    # ── The line is the wire ──────────────────────────────────────────
+    # `dd_check`'s summary is not just for the learner: it is the ONLY way a
+    # notebook can tell the app how a problem went. A cell's rich output is
+    # sandboxed away from the Colab page and a beacon would need a token pasted
+    # into the notebook, so `extension/content/colab_focus.js` reads this
+    # printed text off the DOM. Reword it without telling that file and the app
+    # silently stops recording anything a learner does in Colab.
+    pattern = r"(✅|❌) Problem (\d+) — "
+    focus = os.path.join(_DIR, "..", "extension", "content", "colab_focus.js")
+    with open(focus, encoding="utf-8") as fh:
+        reader = fh.read()
+    assert pattern in reader, (
+        f"extension/content/colab_focus.js no longer looks for {pattern!r} — "
+        f"it is the only channel from the notebook back to the app"
+    )
+    assert len(printed) >= 2, "expected dd_check output to inspect"
+    for text in printed:
+        assert re.search(pattern, text), (
+            f"dd_check printed {text.strip()[:80]!r}, which the extension's "
+            f"reader ({pattern!r}) cannot parse — the app would record nothing"
+        )
 
     # The fixture the einops drills load has to be somewhere the notebook can
     # reach, and that URL is compiled into every one of them.

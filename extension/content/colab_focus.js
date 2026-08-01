@@ -35,7 +35,7 @@
 (() => {
   const CELL = "div.cell";
   const STORE_KEY = "dd_colab_view";
-  const DEFAULTS = { theme: true, focus: true, collapsed: false, solutions: false };
+  const DEFAULTS = { theme: true, focus: true, collapsed: false };
 
   // Cells that are never hidden. The setup cell holds the imports and
   // DD_LESSON_ID and the checker cell defines `dd_check`: hide either and the
@@ -43,9 +43,21 @@
   // rather than as a missing prerequisite.
   const ALWAYS_VISIBLE = /^dd-(?:setup|checker)(?:$|[^a-z0-9])/i;
 
-  // A problem's answer cell. Hidden until the learner says how it went — see
-  // `reveal` below.
+  // A problem's answer cell. Hidden until the learner submits — see `reveal`.
+  // There is no toggle for this and there should not be: an "always show
+  // solutions" switch is a switch for turning the exercise off.
   const SOLUTION = /^dd-q(\d+)-solution$/i;
+
+  // A problem's checker cell, and the line `dd_check` prints into it.
+  //
+  // This is the whole reporting channel. The notebook has no way to call the
+  // app — a beacon would need a token pasted into the notebook, and a cell's
+  // rich output is sandboxed away from the page anyway. But stdout renders as
+  // plain text in THIS document, so the summary line the learner reads is also
+  // the line this script reads. `scripts/watch.py` grades the pair together so
+  // the wording and this pattern cannot drift apart.
+  const CHECK = /^dd-q(\d+)-check$/i;
+  const RESULT = /(✅|❌) Problem (\d+) — /g;
 
   let settings = { ...DEFAULTS };
   let lastReport = { target: null, inFocus: 0, total: 0 };
@@ -55,6 +67,11 @@
   // problem, and a remembered unlock would hand you the answer before you
   // started.
   const revealed = new Set();
+
+  // problem -> the last result line seen for it, so a re-render does not
+  // re-report a grade the app already has.
+  const lastSeen = new Map();
+  let seeded = false;
 
   // ── Reading the notebook ───────────────────────────────────────────
 
@@ -88,13 +105,78 @@
 
   // ── Applying it ────────────────────────────────────────────────────
 
+  /**
+   * The verdict `dd_check` printed in a cell, or null if it has not run.
+   *
+   * `textContent`, not `innerText`: this runs on every mutation of a notebook
+   * that mutates constantly, and innerText forces layout per cell. The cell's
+   * SOURCE is in there too (`dd_check(480)`), which is exactly why the pattern
+   * requires the printed prefix — source alone can never match.
+   *
+   * Last match wins: a cell re-run replaces its output, but Colab can have both
+   * the old and the new node in the DOM for a frame.
+   */
+  function verdictIn(cell) {
+    const text = cell.textContent || "";
+    if (!text) return null;
+    RESULT.lastIndex = 0;
+    let found = null;
+    let m;
+    while ((m = RESULT.exec(text)) !== null) found = m;
+    return found ? { problem: found[2], correct: found[1] === "✅", line: found[0] } : null;
+  }
+
+  /**
+   * Report every check that has finished since the last pass.
+   *
+   * Two things happen to a result: the answer cell for that problem opens
+   * (running the check IS the submit, in the notebook), and the panel is told,
+   * so the rail marks the problem right or wrong without the learner clicking
+   * a verdict for something they just measured.
+   */
+  function harvest(cells) {
+    cells.forEach((cell) => {
+      const anchor = cellAnchor(cell);
+      const check = CHECK.exec(anchor);
+      if (!check) return;
+      const verdict = verdictIn(cell);
+      if (!verdict || verdict.problem !== check[1]) return;
+      if (lastSeen.get(check[1]) === verdict.line) return;
+      lastSeen.set(check[1], verdict.line);
+      // The first pass only records what is already on screen. A notebook
+      // reopened with its outputs saved would otherwise replay every grade in
+      // it the moment the page loads.
+      if (!seeded) return;
+      revealed.add(check[1]);
+      report(check[1], verdict.correct);
+    });
+    seeded = true;
+  }
+
+  function report(problem, correct) {
+    try {
+      chrome.runtime.sendMessage(
+        { type: "dd:check-result", problem, correct },
+        () => void chrome.runtime.lastError, // no panel open is not an error
+      );
+    } catch (_) {
+      /* the extension can be mid-reload; the notebook still works */
+    }
+  }
+
   function apply() {
     const root = document.documentElement;
     root.classList.toggle("dd-theme", Boolean(settings.theme));
-    root.classList.toggle("dd-hide-solutions", !settings.solutions);
+    // No toggle. The answer is hidden until the learner has submitted, full
+    // stop; `reveal` and a finished check are the only two ways past it.
+    root.classList.add("dd-hide-solutions");
 
     const cells = Array.from(document.querySelectorAll(CELL));
     const target = settings.focus ? targetProblem() : null;
+
+    // Before tagging, not after: a check that just finished unlocks its answer
+    // cell, and the tagging pass below is what puts that on screen.
+    harvest(cells);
 
     // Tag first, count second, and only then decide whether to hide anything.
     let inFocus = 0;
@@ -148,7 +230,9 @@
     return { ok: true, problem: n, shown };
   }
 
-  window.__ddFocus = { reveal };
+  // `rescan` is `apply` under the name that says why anything outside this file
+  // would call it: to re-read the notebook after something changed in it.
+  window.__ddFocus = { reveal, rescan: () => apply() };
 
   // ── The toggle ─────────────────────────────────────────────────────
 
@@ -184,7 +268,6 @@
       <button class="dd-handle" type="button" title="Collapse">Delta Drills ▾</button>
       <label class="dd-row"><input type="checkbox" data-dd="focus" /> Only this problem</label>
       <label class="dd-row"><input type="checkbox" data-dd="theme" /> Delta Drills theme</label>
-      <label class="dd-row"><input type="checkbox" data-dd="solutions" /> Show every solution</label>
       <div class="dd-note"></div>
     `;
     panel.querySelectorAll("input[data-dd]").forEach((input) => {

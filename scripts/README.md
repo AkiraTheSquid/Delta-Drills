@@ -91,6 +91,13 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-08-01 (`dd_check`'s output is a contract, not just prose): the summary
+  line it prints — `✅ Problem 480 — 5/5 cases passed.` — is the ONLY channel
+  from a notebook back to the app. Colab sandboxes a cell's rich output away
+  from the page, so `extension/content/colab_focus.js` reads this text off the
+  DOM and reports the grade. `watch.py` now runs `dd_check` and matches its real
+  output against the pattern that file greps for; reword one without the other
+  and the app silently stops recording anything done in Colab.
 - 2026-07-31 (the answer is not on screen until you have answered): the solution
   cell is no longer a collapsed `display-mode: "form"` cell. Collapsing still
   printed "💡 Solution — Problem 480" under the code the learner was writing,

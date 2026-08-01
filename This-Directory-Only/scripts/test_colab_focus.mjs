@@ -36,6 +36,9 @@ function makeCell(anchor) {
     id: anchor ? `cell-${anchor}` : "",
     classList: classList(),
     querySelector: () => null,
+    // What a check cell reads as once `dd_check` has printed into it. The
+    // content script parses THIS — the notebook has no other way to report.
+    textContent: "",
   };
 }
 
@@ -44,9 +47,15 @@ function makeCell(anchor) {
  * `document.body` is null on purpose: the toggle panel bails without it, which
  * keeps this harness to the tagging and off the widget's DOM.
  */
-function run({ anchors, hash, settings }) {
+function run({ anchors, hash, settings, outputs }) {
   const cells = anchors.map(makeCell);
+  // Output already in the notebook when the script first runs — a saved .ipynb
+  // reopened, or a page the extension was reloaded onto mid-session.
+  Object.entries(outputs || {}).forEach(([anchor, text]) => {
+    cells[anchors.indexOf(anchor)].textContent = `dd_check(1)\n${text}`;
+  });
   const root = { classList: classList() };
+  const sent = [];
   const context = {
     console,
     setTimeout,
@@ -60,6 +69,13 @@ function run({ anchors, hash, settings }) {
     window: { addEventListener: () => {} },
     MutationObserver: class { observe() {} },
     chrome: {
+      runtime: {
+        lastError: undefined,
+        sendMessage: (msg, cb) => {
+          sent.push(msg);
+          if (cb) cb();
+        },
+      },
       storage: {
         local: {
           get: (_key, cb) => cb({ dd_colab_view: settings }),
@@ -79,7 +95,19 @@ function run({ anchors, hash, settings }) {
     shown: anchors.filter((_, i) => cells[i].classList.contains("dd-solution-shown")),
   });
   // `reveal` is what the panel reaches through colab.js's message switch.
-  return { ...read(), read, reveal: (n) => context.window.__ddFocus.reveal(n) };
+  // `check` writes a verdict into a cell the way a finished dd_check does, then
+  // re-runs the tagging pass the MutationObserver would have run.
+  return {
+    ...read(),
+    read,
+    sent,
+    reveal: (n) => context.window.__ddFocus.reveal(n),
+    check: (anchor, text) => {
+      cells[anchors.indexOf(anchor)].textContent = `dd_check(1)\n${text}`;
+      context.window.__ddFocus.rescan();
+      return read();
+    },
+  };
 }
 
 const NOTEBOOK = [
@@ -133,10 +161,47 @@ check("the other one stays shut", gated.read().shown.includes("dd-q12-solution")
 check("a non-numeric problem is refused", gated.reveal("../../etc").ok, false);
 check("and nothing opened", gated.read().shown, ["dd-q123-solution"]);
 
-console.log("\"Show every solution\" is the way back:");
-const openBook = run({ anchors: NOTEBOOK, hash: "", settings: { theme: true, focus: false, solutions: true } });
-check("the gate is off", openBook.hideSolutions, false);
-check("nothing was force-shown to get there", openBook.shown, []);
+console.log("there is no way to switch the gate off:");
+const noToggle = run({ anchors: NOTEBOOK, hash: "", settings: { theme: false, focus: false, solutions: true } });
+check("a stale 'solutions' setting cannot open it", noToggle.hideSolutions, true);
+check("and nothing is shown", noToggle.shown, []);
+
+console.log("running the check IS the submit:");
+const ran = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
+check("nothing reported before a check runs", ran.sent, []);
+const passed = ran.check("dd-q123-check", "✅ Problem 123 — 5/5 cases passed.");
+check("the answer opens", passed.shown, ["dd-q123-solution"]);
+check("and the app is told", ran.sent, [{ type: "dd:check-result", problem: "123", correct: true }]);
+// Re-rendering a cell must not re-report a grade the app already has.
+ran.check("dd-q123-check", "✅ Problem 123 — 5/5 cases passed.");
+check("an unchanged verdict is not re-sent", ran.sent.length, 1);
+const failed = ran.check("dd-q123-check", "❌ Problem 123 — 2 of 5 cases failed.");
+check("a re-run with a new verdict is", ran.sent.length, 2);
+check("and it carries the failure", ran.sent[1].correct, false);
+check("the answer stays open", failed.shown, ["dd-q123-solution"]);
+
+console.log("a notebook reopened with its outputs still in it:");
+// The FIRST pass only records what is already on screen. Replaying it would
+// post a grade for work the learner did in some earlier session — and unlock
+// the answer to a problem they have not looked at yet.
+const reopened = run({
+  anchors: NOTEBOOK,
+  hash: "#scrollTo=dd-q123",
+  settings: ON,
+  outputs: { "dd-q123-check": "✅ Problem 123 — 5/5 cases passed." },
+});
+check("a saved verdict is not replayed", reopened.sent, []);
+check("and it does not open the answer", reopened.shown, []);
+check("a re-render changes nothing", reopened.read().shown, []);
+// Re-running it in this session does report, though.
+reopened.check("dd-q123-check", "❌ Problem 123 — 1 of 5 cases failed.");
+check("a fresh run is reported", reopened.sent.length, 1);
+
+console.log("a cell's own source can never look like a verdict:");
+const sourceOnly = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
+sourceOnly.check("dd-q123-check", "# Did it work? Run this.");
+check("nothing reported", sourceOnly.sent, []);
+check("and the answer stays hidden", sourceOnly.read().shown, []);
 
 console.log("a problem that is NOT in this notebook:");
 const absent = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q999", settings: ON });

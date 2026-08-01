@@ -135,10 +135,27 @@ against a live notebook:
     Hiding one cell from another is only possible from a content script.
   - The problem number is re-validated here (`/^\d+$/`) even though the panel
     already checked it — the panel forwards what the framed page sent.
+  - **Running the check is the other way in.** `dd_check` prints its verdict as
+    plain stdout, which Colab renders as text in THIS document — so
+    `colab_focus.js` reads the same line the learner reads, opens that
+    problem's answer, and forwards `dd:check-result` to the panel, which hands
+    it to the app as the verdict the learner would otherwise have clicked. That
+    is the whole reporting channel: a cell's rich output is sandboxed away from
+    the page, and a beacon would need a token pasted into the notebook.
+    `scripts/watch.py` grades the printed wording against the pattern here, so
+    the two cannot drift apart.
+    - Reported per problem, deduped on the exact line, and **the first pass
+      only records what is already on screen** — a notebook reopened with its
+      saved outputs would otherwise replay every grade in it on load, and
+      unlock answers to problems the learner has not looked at.
+    - `textContent`, not `innerText`: this runs on every mutation of a notebook
+      that mutates constantly. The cell's source is in there too, which is why
+      the pattern requires the printed prefix — `dd_check(480)` cannot match.
   - Unlocks are per page-load, never persisted: reopening a notebook is how you
     get a clean run at a problem, and a remembered unlock hands you the answer
-    before you start. **"Show every solution"** in the toggle is the way back
-    for re-reading a notebook you have already worked through.
+    before you start. **There is no "show solutions" toggle**, and there was one
+    for about an hour — a switch that turns the exercise off is not a setting.
+    Run the check.
   - `dd-checker` joined `dd-setup` as always-visible. It defines `dd_check`, so
     focus mode hiding it made every check cell below it a NameError — which
     reads as broken starter code, not as a missing prerequisite.

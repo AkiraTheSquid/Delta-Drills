@@ -163,6 +163,12 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
+- 2026-08-01: `app.js` relays the other direction too. A finished `dd_check` in
+  the notebook reaches `content/colab_focus.js`, which sends
+  `dd:check-result` over `chrome.runtime`; this page posts it into the frame at
+  `APP_ORIGIN` — never `"*"`, since it says the learner got a problem right or
+  wrong — and the app records it as the verdict click. Running the check in
+  Colab is now the submit.
 - 2026-07-31: `app.js` forwards a second message, `dd:reveal-solution`. The
   notebook's answer cell is hidden by `content/colab_dd.css` until the learner
   clicks a verdict in the rail; this is the only path that can unhide it,

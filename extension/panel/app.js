@@ -78,6 +78,32 @@ async function revealSolution(problem) {
   await chrome.tabs.sendMessage(t.id, { type: "dd:reveal-solution", problem });
 }
 
+/**
+ * The other direction: a check that finished in the notebook, handed to the app.
+ *
+ * `content/colab_focus.js` reads the line `dd_check` prints — the notebook has
+ * no other way to reach us, since a cell's rich output is sandboxed and a
+ * beacon would need a token pasted into the notebook. The app treats it as the
+ * verdict click the learner would otherwise have made.
+ *
+ * Targeted at APP_ORIGIN, never "*": this says the learner got a problem right
+ * or wrong, and the frame is the only thing entitled to hear it.
+ */
+chrome.runtime.onMessage.addListener((msg) => {
+  if (!msg || msg.type !== "dd:check-result") return;
+  const frame = document.querySelector("iframe");
+  if (!frame || !frame.contentWindow) return;
+  frame.contentWindow.postMessage(
+    {
+      source: "delta-drills-panel",
+      type: "dd:check-result",
+      problem: String(msg.problem || ""),
+      correct: Boolean(msg.correct),
+    },
+    APP_ORIGIN,
+  );
+});
+
 window.addEventListener("message", (event) => {
   if (event.origin !== APP_ORIGIN) return;
   const frame = document.querySelector("iframe");
