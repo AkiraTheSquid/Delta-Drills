@@ -179,6 +179,22 @@ def check_side_panel_shell():
         "app.js must refuse to navigate anywhere but Colab"
     )
 
+    # The second message the bridge forwards. It only unhides a cell, so it is
+    # not the open-redirect risk the URL one is — but a payload that stopped
+    # being a bare problem number would be reaching into the page with whatever
+    # the content script does with it.
+    assert "dd:reveal-solution" in bridge, (
+        "app.js no longer forwards dd:reveal-solution — the notebook's answer "
+        "cell would stay hidden after the learner said how it went, with no way "
+        "to open it but the toggle"
+    )
+    with open(os.path.join(HERE, "content", "colab_focus.js"), encoding="utf-8") as fh:
+        focus = fh.read()
+    assert "/^\\d+$/.test(n)" in focus, (
+        "colab_focus.js must validate the revealed problem as a number before "
+        "using it — the panel forwards whatever the page sent"
+    )
+
 
 def check_button_opens_the_panel():
     """The toolbar button opens the SIDE PANEL, and the worker does nothing else.

@@ -208,6 +208,17 @@
         case "dd:read-output":
           sendResponse(readOutput(msg));
           return false;
+        case "dd:reveal-solution":
+          // Owned by colab_focus.js (it holds the cell tagging), routed here so
+          // the panel has ONE message surface to talk to. Both files run in the
+          // same isolated world, and this listener only fires long after they
+          // have both loaded.
+          sendResponse(
+            window.__ddFocus
+              ? window.__ddFocus.reveal(msg.problem)
+              : { ok: false, reason: "focus-not-loaded" },
+          );
+          return false;
         default:
           sendResponse({ ok: false, reason: "unknown-message" });
           return false;

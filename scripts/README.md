@@ -91,6 +91,13 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-07-31 (the answer is not on screen until you have answered): the solution
+  cell is no longer a collapsed `display-mode: "form"` cell. Collapsing still
+  printed "💡 Solution — Problem 480" under the code the learner was writing,
+  and still cost a second click after the reveal. The cell is now plain, and the
+  extension hides it outright (`content/colab_dd.css`) until the panel's verdict
+  click says otherwise. Without the extension nothing hides it — a plain reader
+  of the published repo sees the answers, the way ARENA's own notebooks do.
 - 2026-07-31 (a problem you can check yourself): every generated problem now
   renders four cells instead of two — the prompt **with its expected output**,
   the starter code, `dd_check(<id>)`, and the reference solution in a collapsed

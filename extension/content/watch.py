@@ -139,18 +139,31 @@ def check_css_is_opt_in():
     The toggle panel itself (`#dd-colab-toggle`) is the deliberate exception: it
     is the way OUT of the theme, so scoping it under the theme would make it
     disappear along with what it disables.
+
+    `html.dd-hide-solutions` is a third scope, and the only one that is ON by
+    default — solutions stay hidden until the learner has answered. That makes
+    it the one class that could restyle an unrelated notebook, so every rule
+    under it must ALSO name `.dd-solution`, which colab_focus.js only ever puts
+    on a `dd-q<n>-solution` cell. No generated notebook, no match, no change.
     """
     css = _read(os.path.join(HERE, "colab_dd.css"))
     stripped = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     for block in re.finditer(r"([^{}]+)\{[^{}]*\}", stripped):
         selectors = [s.strip() for s in block.group(1).split(",") if s.strip()]
         for selector in selectors:
-            scoped = selector.startswith(("html.dd-theme", "html.dd-focus", "#dd-colab-toggle"))
+            scoped = selector.startswith(
+                ("html.dd-theme", "html.dd-focus", "html.dd-hide-solutions", "#dd-colab-toggle"))
             assert scoped, (
                 f"unscoped CSS rule {selector!r} — it would restyle every Colab "
                 f"page even with the toggles off. Scope it under html.dd-theme "
                 f"or html.dd-focus"
             )
+            if selector.startswith("html.dd-hide-solutions"):
+                assert ".dd-solution" in selector, (
+                    f"{selector!r} is under the one default-ON scope but does not "
+                    f"name .dd-solution — it would restyle notebooks that have "
+                    f"nothing to do with Delta Drills"
+                )
 
 
 if __name__ == '__main__':

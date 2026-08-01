@@ -69,15 +69,24 @@ function run({ anchors, hash, settings }) {
     },
   };
   runInContext(SOURCE, createContext(context));
-  return {
+  const read = () => ({
     focusOn: root.classList.contains("dd-focus"),
     themeOn: root.classList.contains("dd-theme"),
+    hideSolutions: root.classList.contains("dd-hide-solutions"),
     hidden: anchors.filter((_, i) => cells[i].classList.contains("dd-out-of-focus")),
     inFocus: anchors.filter((_, i) => cells[i].classList.contains("dd-in-focus")),
-  };
+    solutions: anchors.filter((_, i) => cells[i].classList.contains("dd-solution")),
+    shown: anchors.filter((_, i) => cells[i].classList.contains("dd-solution-shown")),
+  });
+  // `reveal` is what the panel reaches through colab.js's message switch.
+  return { ...read(), read, reveal: (n) => context.window.__ddFocus.reveal(n) };
 }
 
-const NOTEBOOK = ["dd-setup", "dd-lesson-np-1", "dd-kp-numpy-slicing", "dd-q12", "dd-q12-code", "dd-q123", "dd-q123-hints", "dd-q123-code"];
+const NOTEBOOK = [
+  "dd-setup", "dd-checker", "dd-lesson-np-1", "dd-kp-numpy-slicing",
+  "dd-q12", "dd-q12-code", "dd-q12-check", "dd-q12-solution",
+  "dd-q123", "dd-q123-hints", "dd-q123-code", "dd-q123-check", "dd-q123-solution",
+];
 const ON = { theme: true, focus: true };
 
 let failures = 0;
@@ -95,16 +104,39 @@ function check(label, actual, expected) {
 console.log("focus on a problem that is in the notebook:");
 const focused = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
 check("focus is live", focused.focusOn, true);
-check("the problem's three cells are in focus", focused.inFocus, ["dd-q123", "dd-q123-hints", "dd-q123-code"]);
+check("the problem's cells are in focus", focused.inFocus,
+  ["dd-q123", "dd-q123-hints", "dd-q123-code", "dd-q123-check", "dd-q123-solution"]);
 // dd-q12 must NOT come along: a prefix test without a digit boundary would drag
 // it in, and the student would see two problems.
-check("everything else is hidden, except setup", focused.hidden,
-  ["dd-lesson-np-1", "dd-kp-numpy-slicing", "dd-q12", "dd-q12-code"]);
+check("everything else is hidden, except setup and the checker", focused.hidden,
+  ["dd-lesson-np-1", "dd-kp-numpy-slicing", "dd-q12", "dd-q12-code", "dd-q12-check", "dd-q12-solution"]);
 check("the setup cell is never hidden", focused.hidden.includes("dd-setup"), false);
+// The checker defines dd_check. Hidden by focus, every check cell below it is a
+// NameError, which reads as broken starter code.
+check("the checker cell is never hidden", focused.hidden.includes("dd-checker"), false);
 
 console.log("the neighbouring problem, to prove the boundary both ways:");
 const twelve = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q12", settings: ON });
-check("only dd-q12's own cells", twelve.inFocus, ["dd-q12", "dd-q12-code"]);
+check("only dd-q12's own cells", twelve.inFocus,
+  ["dd-q12", "dd-q12-code", "dd-q12-check", "dd-q12-solution"]);
+
+console.log("solutions stay hidden until the learner has answered:");
+const gated = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
+check("the gate is on", gated.hideSolutions, true);
+check("both answer cells are tagged", gated.solutions, ["dd-q12-solution", "dd-q123-solution"]);
+check("neither is shown yet", gated.shown, []);
+const revealed = gated.reveal("123");
+check("reveal reports the problem", revealed.ok && revealed.problem, "123");
+check("only that problem's answer opens", gated.read().shown, ["dd-q123-solution"]);
+check("the other one stays shut", gated.read().shown.includes("dd-q12-solution"), false);
+// The panel forwards whatever the page sent, so the number is checked here.
+check("a non-numeric problem is refused", gated.reveal("../../etc").ok, false);
+check("and nothing opened", gated.read().shown, ["dd-q123-solution"]);
+
+console.log("\"Show every solution\" is the way back:");
+const openBook = run({ anchors: NOTEBOOK, hash: "", settings: { theme: true, focus: false, solutions: true } });
+check("the gate is off", openBook.hideSolutions, false);
+check("nothing was force-shown to get there", openBook.shown, []);
 
 console.log("a problem that is NOT in this notebook:");
 const absent = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q999", settings: ON });

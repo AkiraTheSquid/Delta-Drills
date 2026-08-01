@@ -163,6 +163,14 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
+- 2026-07-31: `app.js` forwards a second message, `dd:reveal-solution`. The
+  notebook's answer cell is hidden by `content/colab_dd.css` until the learner
+  clicks a verdict in the rail; this is the only path that can unhide it,
+  because a Colab cell's output is sandboxed away from its siblings. Payload is
+  a bare problem number, re-validated by the content script. Best-effort: on a
+  tab with no content script (a stock ARENA notebook, a tab open from before an
+  extension reload) `sendMessage` rejects and is swallowed — nothing about the
+  recorded attempt depends on it. NOT yet run, same as the bridge below.
 - 2026-07-31: `app.js` added — the notebook-opening bridge. The panel used to
   render a card with an "Open in Colab ↗" link and wait to be clicked, once per
   question; now the tab beside it goes to the problem on its own. Reported as

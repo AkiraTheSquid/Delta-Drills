@@ -230,12 +230,41 @@
     }
   }
 
+  /**
+   * Ask the panel to unhide this problem's solution cell in the notebook.
+   *
+   * The answer cell is hidden there until the learner says how it went — "then
+   * and only then it shows you the solution … below what you typed". The
+   * notebook cannot do it alone: Colab renders every cell's output in a
+   * sandboxed iframe, so nothing a cell prints can reach a sibling cell. Only
+   * the extension's content script can, and only the panel can talk to it.
+   *
+   * Same no-op-in-a-plain-tab rule as openNotebook: unframed there is no panel,
+   * and without the extension nothing hid the cell in the first place.
+   */
+  function revealSolution(id) {
+    if (!active || id === undefined || id === null || id === "") return false;
+    if (window.parent === window) return false;
+    try {
+      window.parent.postMessage(
+        { source: "delta-drills", type: "dd:reveal-solution", problem: String(id) },
+        "*",
+      );
+      console.log("[colab-mode] asked the panel to reveal solution", id);
+      return true;
+    } catch (err) {
+      console.warn("[colab-mode] could not reach the panel:", err);
+      return false;
+    }
+  }
+
   window.DDColab = {
     active: () => active,
     hrefFor: colabNotebookHrefFor,
     lessonFor: colabLessonFor,
     whenReady: whenColabIndexReady,
     openNotebook,
+    revealSolution,
     framed: () => window.parent !== window,
     /** Everything the routing decision depends on, for the question on screen. */
     debug: () => {

@@ -60,12 +60,40 @@ async function openNotebook(url) {
   await chrome.tabs.create({ url, active: true });
 }
 
+/**
+ * Unlock one problem's answer cell in the notebook.
+ *
+ * The solution cell is hidden by `content/colab_dd.css` until this arrives, so
+ * the answer is not sitting under the code the learner is trying to write. The
+ * notebook cannot unhide it on its own — Colab renders cell output in a
+ * sandboxed iframe, so nothing a cell emits can reach a sibling cell.
+ *
+ * Best-effort by design: on a tab where the content script has not loaded (a
+ * stock ARENA notebook, a tab opened before the extension was reloaded) this
+ * throws and is swallowed. Nothing about the recorded attempt depends on it.
+ */
+async function revealSolution(problem) {
+  const t = await colabTab();
+  if (!t) return;
+  await chrome.tabs.sendMessage(t.id, { type: "dd:reveal-solution", problem });
+}
+
 window.addEventListener("message", (event) => {
   if (event.origin !== APP_ORIGIN) return;
   const frame = document.querySelector("iframe");
   if (!frame || event.source !== frame.contentWindow) return;
   const msg = event.data;
-  if (!msg || msg.source !== "delta-drills" || msg.type !== "dd:open-notebook") return;
+  if (!msg || msg.source !== "delta-drills") return;
+
+  if (msg.type === "dd:reveal-solution") {
+    // A problem NUMBER, never a selector or a URL — the content script re-checks
+    // it against /^\d+$/ before it touches the page.
+    revealSolution(String(msg.problem || ""))
+      .catch((err) => console.warn("[dd] could not reveal the solution", err));
+    return;
+  }
+
+  if (msg.type !== "dd:open-notebook") return;
   // Never navigate to anything but a notebook. The site only ever sends Colab
   // URLs; this makes a compromised or mistaken sender unable to send anything
   // else, which is the difference between a bridge and an open redirect.

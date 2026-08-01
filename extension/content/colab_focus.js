@@ -35,15 +35,26 @@
 (() => {
   const CELL = "div.cell";
   const STORE_KEY = "dd_colab_view";
-  const DEFAULTS = { theme: true, focus: true, collapsed: false };
+  const DEFAULTS = { theme: true, focus: true, collapsed: false, solutions: false };
 
   // Cells that are never hidden. The setup cell holds the imports and
-  // DD_LESSON_ID: hide it and the problem's answer cell dies on NameError,
-  // which reads as broken starter code rather than as a missing prerequisite.
-  const ALWAYS_VISIBLE = /^dd-setup(?:$|[^a-z0-9])/i;
+  // DD_LESSON_ID and the checker cell defines `dd_check`: hide either and the
+  // problem's own cells die on NameError, which reads as broken starter code
+  // rather than as a missing prerequisite.
+  const ALWAYS_VISIBLE = /^dd-(?:setup|checker)(?:$|[^a-z0-9])/i;
+
+  // A problem's answer cell. Hidden until the learner says how it went — see
+  // `reveal` below.
+  const SOLUTION = /^dd-q(\d+)-solution$/i;
 
   let settings = { ...DEFAULTS };
   let lastReport = { target: null, inFocus: 0, total: 0 };
+
+  // Problem numbers whose solution has been unlocked this page-load. Not
+  // persisted on purpose: reopening a notebook is how you get a clean run at a
+  // problem, and a remembered unlock would hand you the answer before you
+  // started.
+  const revealed = new Set();
 
   // ── Reading the notebook ───────────────────────────────────────────
 
@@ -80,6 +91,7 @@
   function apply() {
     const root = document.documentElement;
     root.classList.toggle("dd-theme", Boolean(settings.theme));
+    root.classList.toggle("dd-hide-solutions", !settings.solutions);
 
     const cells = Array.from(document.querySelectorAll(CELL));
     const target = settings.focus ? targetProblem() : null;
@@ -94,6 +106,9 @@
       cell.classList.toggle("dd-always-visible", always);
       cell.classList.toggle("dd-out-of-focus", Boolean(target) && !mine && !always);
       cell.classList.toggle("dd-in-focus", mine);
+      const solution = SOLUTION.exec(anchor);
+      cell.classList.toggle("dd-solution", Boolean(solution));
+      cell.classList.toggle("dd-solution-shown", Boolean(solution) && revealed.has(solution[1]));
     });
 
     // The guard. Focus is only ON when the target resolved to at least one real
@@ -108,6 +123,32 @@
     lastReport = { target, inFocus, total: cells.length };
     paintNote();
   }
+
+  // ── Unlocking an answer ────────────────────────────────────────────
+
+  /**
+   * Show problem `n`'s solution cell, from now until the page reloads.
+   *
+   * The signal comes from the panel, on the click that records how it went —
+   * "then and only then it shows you the solution … below what you typed".
+   * A notebook cell cannot do this itself: Colab renders every cell's output in
+   * a sandboxed iframe, so CSS or JS emitted by the notebook cannot reach a
+   * sibling cell. Only a content script can, which is why this lives here and
+   * not in `scripts/colab_grader.py`.
+   *
+   * Reached through `colab.js`'s message switch (one protocol surface), which
+   * finds this on the shared isolated-world global.
+   */
+  function reveal(problem) {
+    const n = String(problem == null ? "" : problem).replace(/^dd-q/, "");
+    if (!/^\d+$/.test(n)) return { ok: false, reason: "bad-problem" };
+    revealed.add(n);
+    apply();
+    const shown = document.querySelectorAll(".cell.dd-solution-shown").length;
+    return { ok: true, problem: n, shown };
+  }
+
+  window.__ddFocus = { reveal };
 
   // ── The toggle ─────────────────────────────────────────────────────
 
@@ -143,6 +184,7 @@
       <button class="dd-handle" type="button" title="Collapse">Delta Drills ▾</button>
       <label class="dd-row"><input type="checkbox" data-dd="focus" /> Only this problem</label>
       <label class="dd-row"><input type="checkbox" data-dd="theme" /> Delta Drills theme</label>
+      <label class="dd-row"><input type="checkbox" data-dd="solutions" /> Show every solution</label>
       <div class="dd-note"></div>
     `;
     panel.querySelectorAll("input[data-dd]").forEach((input) => {

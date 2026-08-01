@@ -293,16 +293,25 @@ def problem_cells(
             )
         )
 
-    # The answer, last and folded shut. A Colab form cell shows its title only,
-    # so the solution is one deliberate double-click away rather than sitting
-    # open above the next problem — but it IS in the notebook, runnable, because
-    # "why was I wrong" is answered by running the right code next to yours.
+    # The answer, last — and NOT on screen until the learner has said how it
+    # went. The extension hides `dd-q<n>-solution` cells outright
+    # (`content/colab_dd.css`) and the panel's verdict click unhides this one:
+    # "then and only then it shows you the solution … below what you typed".
+    #
+    # It was a collapsed `display-mode: "form"` cell for one pass, which still
+    # put "💡 Solution — Problem 480" on screen under the code you were trying
+    # to write, and still needed a second click after the reveal. The `#@title`
+    # stays because it renders as a heading; the collapse does not.
+    #
+    # Without the extension nothing hides it — a plain reader of the published
+    # repo sees the answers, the way ARENA's own notebooks do. The toggle's
+    # "Show every solution" is the same escape hatch for anyone re-reading a
+    # notebook they have already worked through.
     solution = ex.get("canonical_solution") or ""
     if solution.strip():
         cells.append(
             code_cell(
-                f'#@title 💡 Solution — Problem {qid} · double-click to reveal, ▶ to run '
-                "{ display-mode: \"form\" }\n"
+                f"#@title 💡 Solution — Problem {qid}\n"
                 "# Running this rebinds `solve` to the reference answer. Re-run your\n"
                 "# own cell before dd_check() again, or you are checking this one.\n"
                 f"{solution.strip()}\n",

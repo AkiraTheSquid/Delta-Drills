@@ -122,6 +122,30 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-07-31: **The answer stays hidden until the learner has answered.**
+  `colab_focus.js` tags every `dd-q<n>-solution` cell `.dd-solution`,
+  `colab_dd.css` hides it under the new `html.dd-hide-solutions` root class, and
+  the panel's verdict click unhides exactly one — `dd:reveal-solution` →
+  `colab.js`'s switch → `window.__ddFocus.reveal(n)`. Asked for as "then and
+  only then it shows you the solution … below what you typed". A collapsed
+  notebook cell was not enough: it still printed "💡 Solution — Problem 480"
+  under the code you were trying to write.
+  - **Why it cannot live in the notebook.** Colab renders every cell's output in
+    a sandboxed iframe, so no CSS or JS a cell emits can reach a sibling cell.
+    Hiding one cell from another is only possible from a content script.
+  - The problem number is re-validated here (`/^\d+$/`) even though the panel
+    already checked it — the panel forwards what the framed page sent.
+  - Unlocks are per page-load, never persisted: reopening a notebook is how you
+    get a clean run at a problem, and a remembered unlock hands you the answer
+    before you start. **"Show every solution"** in the toggle is the way back
+    for re-reading a notebook you have already worked through.
+  - `dd-checker` joined `dd-setup` as always-visible. It defines `dd_check`, so
+    focus mode hiding it made every check cell below it a NameError — which
+    reads as broken starter code, not as a missing prerequisite.
+  - `check_css_is_opt_in` now allows `html.dd-hide-solutions` as a third scope,
+    and requires every rule under it to also name `.dd-solution`: it is the one
+    scope that is ON by default, so that pairing is what keeps it from touching
+    a notebook that has nothing to do with Delta Drills.
 - 2026-07-31: **Focus mode + the Delta Drills skin** (`colab_focus.js`,
   `colab_dd.css`). Hooking onto individual cells needed nothing new in the
   notebooks: the generator has minted `dd-setup` / `dd-lesson-<id>` /

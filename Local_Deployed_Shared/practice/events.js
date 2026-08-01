@@ -421,6 +421,11 @@ const _rateTorchAndAdvance = async (correct) => {
     // stray Skip) — repainting then would attach this review to the wrong
     // problem's solution.
     if (PracticeAPI.currentQuestion !== q) return;
+    // ...and in the notebook beside the rail, where the learner's own code is.
+    // Hidden there until exactly this click; no-op outside the extension.
+    if (window.DDColab && typeof window.DDColab.revealSolution === "function") {
+      window.DDColab.revealSolution(q.question_id);
+    }
     solutionCode.textContent = q.solution_code || "";
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");

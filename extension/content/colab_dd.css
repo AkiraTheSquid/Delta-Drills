@@ -30,11 +30,24 @@ html.dd-focus .cell.dd-out-of-focus {
   display: none !important;
 }
 
-/* The setup cell survives focus mode, always. It holds the imports and
-   `DD_LESSON_ID`, so hiding it leaves the student a problem they cannot run —
-   the one cell whose absence is silent until the answer cell raises NameError. */
+/* The setup and checker cells survive focus mode, always. They hold the
+   imports, `DD_LESSON_ID` and `dd_check`, so hiding them leaves the student a
+   problem they cannot run or check — the cells whose absence is silent until
+   something below raises NameError. */
 html.dd-focus .cell.dd-always-visible {
   display: block !important;
+}
+
+/* ── Solutions: not until you have answered ──────────────────────────
+   The answer cell for each problem, gone until the panel says the learner has
+   said how it went (`dd:reveal-solution` → colab_focus.js `reveal`). Before
+   this the cell was merely collapsed, which still put "💡 Solution — Problem
+   480" on screen under the code you were trying to write.
+
+   Scoped to `html.dd-hide-solutions` so the toggle's "Show every solution" is a
+   real off switch — for reading a notebook you have already worked through. */
+html.dd-hide-solutions .cell.dd-solution:not(.dd-solution-shown) {
+  display: none !important;
 }
 
 /* ── The skin ────────────────────────────────────────────────────── */
