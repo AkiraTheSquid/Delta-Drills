@@ -35,6 +35,16 @@
   the anchor only, since `kcs` already says which notebook it is in. The
   anchor is computed here and shipped, never re-derived in JavaScript — a slug
   that drifted by one character is an anchor Colab silently ignores.
+- `colab_grader.py`: the `dd_check(<problem id>)` a learner runs in the
+  notebook. Not imported by anything — everything between its `embed:start` /
+  `embed:end` markers is copied verbatim into one cell per notebook, because a
+  notebook opened from GitHub cannot import a file that lives in this repo. It
+  is a **fourth** implementation of the grading rule (`backend/app/code_runner.py`,
+  the Pyodide harness in `practice/api.js`, and `validate_lessons.py` are the
+  others), so `watch.py` execs it and grades the two cases that have already
+  caught drift once each. Run it directly for a smoke test. It also carries the
+  `np.load('/delta_numbers.npy')` rewrite the backend does in its preamble —
+  without it the 24 ARENA-image einops drills cannot run in Colab at all.
 - `publish_colab_notebooks.sh`: pushes those notebooks to
   `<owner>/arena-book-colab/ARENA_5.0/ch-1-foundations`. Colab can only open a
   notebook from a URL, so **regenerating is not enough — unpublished changes are
@@ -81,6 +91,18 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-07-31 (a problem you can check yourself): every generated problem now
+  renders four cells instead of two — the prompt **with its expected output**,
+  the starter code, `dd_check(<id>)`, and the reference solution in a collapsed
+  Colab form cell. Reported as "it doesn't show you the expected output that you
+  should see… there should be a code cell that tells you whether you solved it
+  correctly, and if no, which cases you failed". The checker is
+  `colab_grader.py` plus a per-notebook payload of that notebook's test cases,
+  deflated and base64'd into the same cell: expanded JSON would be the answer
+  key to every problem below it, printed at the top. Expected outputs longer
+  than 24 lines are truncated (one ARENA image drill's is 7 KB of pixels).
+  `publish_colab_notebooks.sh` now also ships `numbers.npy`, which the checker
+  downloads on first use — moving that file breaks the einops drills.
 - 2026-07-31 (notebooks are the student-facing surface): `build_index` gained a
   `kps` map — `kc -> "dd-kp-<slug(kc)>"`, the same string written onto the KP
   header cell — so `practice/lessons.js` can send a learner

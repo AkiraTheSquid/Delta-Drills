@@ -14,6 +14,8 @@ is checked rather than remembered.
 
 Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
+import contextlib
+import io
 import sys
 import os
 
@@ -88,6 +90,65 @@ def check_invariants():
     )
 
 
+# ── The in-notebook checker ───────────────────
+def check_colab_grader():
+    """The grader compiled into every Colab notebook mirrors the runtime too.
+
+    `dd_check` is what a learner is told to trust when the tutor is not
+    watching, and it is the one grader that ships to a machine we cannot
+    inspect. Graded here, not grepped, for the same reason as the two mirrors
+    above — and against the same two cases, which are the drifts that have
+    actually happened.
+    """
+    import generate_colab_notebooks as gen
+
+    src = gen.grader_source()
+    assert 'def dd_check(' in src, 'grader_source no longer carries dd_check'
+
+    def graded(solution, cases):
+        ns = {'__name__': '__main__'}
+        exec(src, ns)
+        ns['_DD_TESTS'] = {'1': {'fn': 'solve', 'cases': cases}}
+        exec(solution, ns)
+        # dd_check talks to the learner; a watch run is not the audience.
+        with contextlib.redirect_stdout(io.StringIO()):
+            return eval('dd_check(1, verbose=False)', ns)
+
+    # Mirror 1: numpy is always available, so a fixture may use it even in a
+    # torch drill — np.load is the only route to the ARENA image.
+    assert graded(
+        'def solve(x):\n    return x * 2\n',
+        [{'setup_code': 'v = np.array([1, 2, 3])', 'call': 'list(solve(v))',
+          'expected_expr': '[2, 4, 6]'}],
+    ), 'dd_check no longer provides numpy — ARENA-fixture drills would fail in Colab'
+
+    # Mirror 2: expected_expr is evaluated against a FRESH setup run, so a
+    # solution that mutates its input cannot poison its own expectation.
+    assert graded(
+        'def solve(xs):\n    out = list(xs)\n    xs.clear()\n    return out\n',
+        [{'setup_code': 'xs = [1, 2, 3]', 'call': 'solve(xs)', 'expected_expr': 'xs'}],
+    ), 'dd_check stopped re-running setup before expected_expr — in-place drills misgrade'
+
+    # And it must still fail a wrong answer: a checker that says yes to
+    # everything is worse than no checker at all.
+    assert not graded(
+        'def solve(xs):\n    return [x * 3 for x in xs]\n',
+        [{'setup_code': 'xs = [1, 2, 3]', 'call': 'solve(xs)', 'expected_expr': '[2, 4, 6]'}],
+    ), 'dd_check passes a wrong answer'
+
+    # The fixture the einops drills load has to be somewhere the notebook can
+    # reach, and that URL is compiled into every one of them.
+    assert gen.FIXTURE_URL.startswith('https://'), f'bad FIXTURE_URL: {gen.FIXTURE_URL}'
+    assert 'numbers.npy' in gen.FIXTURE_URL, (
+        f'FIXTURE_URL no longer points at the digits fixture: {gen.FIXTURE_URL}'
+    )
+    publish = open(os.path.join(_DIR, 'publish_colab_notebooks.sh'), encoding='utf-8').read()
+    assert 'numbers.npy' in publish, (
+        'publish_colab_notebooks.sh stopped shipping numbers.npy — the URL '
+        'compiled into every notebook would 404 and the einops drills die'
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
@@ -96,7 +157,7 @@ if __name__ == '__main__':
         print('FAIL: watch.py needs assertions enabled (do not run under -O)',
               file=sys.stderr)
         sys.exit(1)
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants, check_colab_grader]
     for fn in checks:
         try:
             fn()

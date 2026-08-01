@@ -50,9 +50,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import re
 import sys
+import zlib
 from pathlib import Path
 from typing import Iterator
 
@@ -70,6 +72,15 @@ DEFAULT_WEB_INDEX = (
 
 BACKEND = "https://delta-drills-backend.fly.dev"
 
+# The ARENA digits image, as published alongside the notebooks by
+# `publish_colab_notebooks.sh`. The einops drills load it by the absolute path
+# the backend's grading preamble rewrites; in a notebook there is no preamble,
+# so the checker downloads it on first use instead.
+FIXTURE_URL = (
+    "https://raw.githubusercontent.com/AkiraTheSquid/arena-book-colab/main/"
+    "ARENA_5.0/ch-1-foundations/numbers.npy"
+)
+
 # nbformat 4.5 cell ids: 1-64 chars of [a-zA-Z0-9-_].
 _ID_SAFE = re.compile(r"[^a-zA-Z0-9\-_]")
 
@@ -83,6 +94,56 @@ _FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```[ \t]*$", re.S | re.M)
 _ANCHOR = re.compile(r"^dd-q\d+$")
 
 MAX_ID = 64
+
+# The in-notebook checker, kept as real Python in its own file so watch.py can
+# exec it and grade something. Everything between the markers is copied verbatim
+# into one cell per notebook.
+GRADER = REPO / "scripts" / "colab_grader.py"
+
+# An expected output is a paste of what the example run prints. Some of them are
+# a 7 KB tensor repr (the ARENA image drills), and a wall of pixels above the
+# starter code buries the problem it is supposed to describe.
+MAX_EXPECTED_LINES = 24
+MAX_EXPECTED_CHARS = 1200
+
+
+def grader_source() -> str:
+    text = GRADER.read_text()
+    start = text.index("# --- embed:start")
+    start = text.index("\n", start) + 1
+    return text[start : text.index("# --- embed:end")].rstrip() + "\n"
+
+
+def fence(body: str, info: str = "") -> str:
+    """A fenced block whose fence is longer than any run of backticks inside it."""
+    longest = max((len(m) for m in re.findall(r"`+", body)), default=0)
+    bar = "`" * max(3, longest + 1)
+    return f"{bar}{info}\n{body}\n{bar}"
+
+
+def expected_output_block(exercise: dict) -> str:
+    """The "here is what you should see" section of a problem's prose.
+
+    The whole point of the Colab edition is that the learner runs the code
+    themselves and decides whether it worked — which they cannot do without
+    knowing what working looks like. Reported as: "it doesn't show you the
+    expected output that you should see".
+    """
+    text = (exercise.get("expected_output") or "").rstrip()
+    if not text:
+        return ""
+    lines = text.splitlines()
+    clipped = len(lines) > MAX_EXPECTED_LINES or len(text) > MAX_EXPECTED_CHARS
+    if clipped:
+        lines = lines[:MAX_EXPECTED_LINES]
+        text = "\n".join(lines)[:MAX_EXPECTED_CHARS].rstrip() + "\n… (truncated)"
+    note = ""
+    if exercise.get("expected_artifact_type") == "image":
+        note = " This one draws an image; below is the tensor behind it."
+    return (
+        "**Expected output** — run the cell below once `solve` is right and it "
+        f"should print this.{note}\n\n" + fence(text, "text")
+    )
 
 
 def slug(text: str) -> str:
@@ -174,6 +235,7 @@ def problem_cells(
     rung: str,
     bank: dict,
     mint: IdMinter,
+    tests: dict,
     *,
     prompt: str | None = None,
     starter: str | None = None,
@@ -184,6 +246,10 @@ def problem_cells(
     `dd-q<id>` is the anchor the side panel jumps to, and it goes on the header
     cell rather than the code cell so the student lands on the question text
     with the editor just below it.
+
+    Four cells, in the order a learner meets them: the problem (with the output
+    it should produce), the starter code, a checker, and the answer. `tests` is
+    the notebook's payload dict and gets this problem's cases added to it.
     """
     q = bank.get(qid, {})
     ex = q.get("exercise", {})
@@ -195,6 +261,9 @@ def problem_cells(
         f"### Problem {qid} · {rung}\n\n"
         f"{text.strip()}\n"
     )
+    expected = expected_output_block(ex)
+    if expected:
+        header += f"\n{expected}\n"
     cells = [md_cell(header, f"dd-q{qid}")]
 
     if hints:
@@ -207,6 +276,39 @@ def problem_cells(
         )
 
     cells.append(code_cell(code or "# your code here\n", mint(f"dd-q{qid}-code")))
+
+    # The checker. Comparing your own printed output against the expected block
+    # above catches the example input and nothing else — these are the same
+    # cases the tutor grades with, including the edge cases the example does not
+    # cover, which is why a drill can look right and still be wrong.
+    cases = ex.get("test_cases") or []
+    if cases:
+        tests[str(qid)] = {"fn": ex.get("function_name") or "solve", "cases": cases}
+        cells.append(
+            code_cell(
+                f"# Did it work? Run this. (NameError → run the checker cell at\n"
+                f"# the top of the notebook first: Runtime ▸ Run before.)\n"
+                f"dd_check({qid})\n",
+                mint(f"dd-q{qid}-check"),
+            )
+        )
+
+    # The answer, last and folded shut. A Colab form cell shows its title only,
+    # so the solution is one deliberate double-click away rather than sitting
+    # open above the next problem — but it IS in the notebook, runnable, because
+    # "why was I wrong" is answered by running the right code next to yours.
+    solution = ex.get("canonical_solution") or ""
+    if solution.strip():
+        cells.append(
+            code_cell(
+                f'#@title 💡 Solution — Problem {qid} · double-click to reveal, ▶ to run '
+                "{ display-mode: \"form\" }\n"
+                "# Running this rebinds `solve` to the reference answer. Re-run your\n"
+                "# own cell before dd_check() again, or you are checking this one.\n"
+                f"{solution.strip()}\n",
+                mint(f"dd-q{qid}-solution"),
+            )
+        )
     return cells
 
 
@@ -225,8 +327,34 @@ def setup_cell(lesson: dict, mint: IdMinter) -> dict:
     )
 
 
+def checker_cell(tests: dict, mint: IdMinter) -> dict:
+    """The one cell that defines `dd_check`, carrying this notebook's cases.
+
+    Deflated and base64'd, in a form cell. Both are for the same reason and
+    neither is a secret: an 80 KB JSON literal of expected values, expanded, is
+    the answer key to every problem below it printed at the top of the notebook.
+    """
+    payload = base64.b64encode(
+        zlib.compress(json.dumps(tests, ensure_ascii=False).encode("utf-8"), 9)
+    ).decode("ascii")
+    chunks = "\n".join(f'    "{payload[i : i + 96]}"' for i in range(0, len(payload), 96))
+    return code_cell(
+        '#@title 🔧 Delta Drills checker — run me first { display-mode: "form" }\n'
+        + grader_source()
+        + f'\n_DD_FIXTURE_URL = "{FIXTURE_URL}"\n'
+        + "_dd_install_fixtures()\n"
+        + "_DD_TESTS = _dd_load(\n"
+        + chunks
+        + "\n)\n"
+        + f'print("Delta Drills checker ready — {len(tests)} problems. '
+        'Run dd_check(<problem number>) under any of them.")\n',
+        mint("dd-checker"),
+    )
+
+
 def build_notebook(lesson: dict, bank: dict) -> dict:
     mint = IdMinter()
+    tests: dict[str, dict] = {}
     cells: list[dict] = [
         md_cell(
             # The panel asks an open tab which notebook it is (`dd:identify`)
@@ -291,6 +419,7 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                     "faded",
                     bank,
                     mint,
+                    tests,
                     prompt=item.get("prompt"),
                     starter=item.get("starter_code"),
                 )
@@ -301,11 +430,12 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                 "guided",
                 bank,
                 mint,
+                tests,
                 hints=item.get("hints_markdown"),
             )
 
         for qid in kp.get("independent_items") or []:
-            cells += problem_cells(qid, "independent", bank, mint)
+            cells += problem_cells(qid, "independent", bank, mint, tests)
 
         if kp.get("misconceptions_markdown"):
             cells += list(
@@ -315,6 +445,11 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                     f"{slug(kc)}-misconceptions",
                 )
             )
+
+    # Third from the top, but built last: the payload is only complete once
+    # every problem has contributed its cases. It belongs above the problems so
+    # `Runtime ▸ Run before` on any check cell picks it up.
+    cells.insert(2, checker_cell(tests, mint))
 
     return {
         "nbformat": 4,

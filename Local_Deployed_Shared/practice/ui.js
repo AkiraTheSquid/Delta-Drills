@@ -133,6 +133,11 @@ function applyTorchRouting(q) {
   const aids = document.getElementById("practice-aids");
   if (aids) aids.classList.toggle("hidden", colabRoute);
   practiceSubmitArea.classList.toggle("hidden", colabRoute);
+  // A verdict disables both buttons for the rest of that problem (one attempt,
+  // one record). This is the only place that re-arms them, so it has to run for
+  // every rendered question, not only the routed ones.
+  if (torchRateSolved) torchRateSolved.disabled = false;
+  if (torchRateLookedUp) torchRateLookedUp.disabled = false;
   if (!colabRoute) return;
   const toHref = (p) => (p && typeof colabUpstreamHref === "function") ? colabUpstreamHref(p) : "";
   // Primary "Open in Colab" → the PROBLEM notebook (starter, no answer). Fall

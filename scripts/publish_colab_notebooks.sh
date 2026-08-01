@@ -70,6 +70,14 @@ mkdir -p "$WORK/repo/$RELDIR"
 rm -f "$WORK/repo/$RELDIR"/*.ipynb
 cp "$SRC"/*.ipynb "$WORK/repo/$RELDIR/"
 
+# The ARENA digits image. 24 einops drills load it by the absolute path the
+# backend's grading preamble rewrites; a notebook has no preamble, so the
+# checker cell downloads it from here on first use. Its raw URL is compiled
+# into every notebook as FIXTURE_URL — moving this file breaks those drills.
+FIXTURE="$HERE/This-Directory-Only/backend/app/data/numbers.npy"
+[ -f "$FIXTURE" ] || { echo "fixture missing: $FIXTURE" >&2; exit 1; }
+cp "$FIXTURE" "$WORK/repo/$RELDIR/numbers.npy"
+
 cat > "$WORK/repo/README.md" <<EOF
 # arena-book-colab
 
