@@ -784,7 +784,12 @@
     const wrap = document.querySelector(".kg2 .kg2-wrap");
     if (!wrap) return;
     const top = wrap.getBoundingClientRect().top;
-    if (window.innerWidth <= 820) { wrap.style.height = ""; return; }  // stacked layout scrolls
+    // Narrow AND actually stacked — the Colab edition hides the lesson pane, so
+    // there is nothing under the graph to scroll to and the pane should fit.
+    const info = document.querySelector(".kg2-info");
+    const stacked = window.innerWidth <= 820 &&
+      (!info || getComputedStyle(info).display !== "none");
+    if (stacked) { wrap.style.height = ""; return; }
     wrap.style.height = Math.max(480, window.innerHeight - top - 14) + "px";
     if (cy) cy.resize();
   };
