@@ -68,6 +68,12 @@
   // "" in the meantime, which reads as "no notebook" and keeps the learner on
   // the editor rather than flashing a Colab card that cannot resolve.
   let byQuestion = null;
+  // kc id → lesson entry, and kc id → the `dd-kp-<slug>` anchor of the cell that
+  // teaches it. Populated by the same `ingest` as `byQuestion`, from the same
+  // file, so "which notebook" is answered identically for a problem and for a
+  // concept.
+  let byKc = null;
+  let kpAnchors = Object.create(null);
   let repo = "";
   let pathPrefix = "";
   const readyWaiters = [];
@@ -104,6 +110,19 @@
       if (lesson) map[String(qid)] = lesson;
     });
     byQuestion = map;
+    // `kcs` is {"<kc id>": "<lesson id>"} and `kps` is
+    // {"<kc id>": "dd-kp-<slug>"} — the anchor minted on the cell that TEACHES
+    // that concept. Same generator pass as the notebooks, so a concept cannot
+    // point at a section that was never emitted. This is what lets the
+    // knowledge graph send the tab to a concept rather than to a problem.
+    const kcMap = Object.create(null);
+    const kcs = (data && data.kcs) || {};
+    Object.keys(kcs).forEach((kc) => {
+      const lesson = lessons[kcs[kc]];
+      if (lesson) kcMap[kc] = lesson;
+    });
+    byKc = kcMap;
+    kpAnchors = (data && data.kps) || Object.create(null);
   }
 
   function load() {
@@ -117,6 +136,7 @@
       .catch((err) => {
         // An unreachable index is not fatal: every question keeps its editor.
         byQuestion = Object.create(null);
+        byKc = Object.create(null);
         console.warn("[colab-mode] notebook index unavailable — staying on the editor:", err);
       })
       .then(() => {
@@ -167,15 +187,48 @@
     }
   }
 
+  /** The published URL of a lesson notebook, fragment not included. */
+  function notebookUrl(lesson) {
+    if (!lesson || !repo) return "";
+    const path = [pathPrefix, lesson.file].filter(Boolean).join("/");
+    const encoded = path.split("/").map(encodeURIComponent).join("/");
+    return `https://colab.research.google.com/github/${owner()}/${repo}/blob/main/${encoded}`;
+  }
+
   function colabNotebookHrefFor(q) {
     const lesson = colabLessonFor(q);
     const id = questionId(q);
     if (active) explain(id, lesson);
-    if (!lesson || !repo || !id) return "";
-    const path = [pathPrefix, lesson.file].filter(Boolean).join("/");
-    const encoded = path.split("/").map(encodeURIComponent).join("/");
-    return `https://colab.research.google.com/github/${owner()}/${repo}/blob/main/${encoded}`
-      + `#scrollTo=dd-q${id}`;
+    const base = notebookUrl(lesson);
+    if (!base || !id) return "";
+    return `${base}#scrollTo=dd-q${id}`;
+  }
+
+  /**
+   * The notebook section that TEACHES a concept, or "".
+   *
+   * Same join, one level up from a problem: kc → lesson notebook →
+   * `#scrollTo=dd-kp-<slug>`. The anchor is shipped by the generator rather
+   * than slugged again here — a slug that drifted by one character is an anchor
+   * Colab silently ignores, and the failure would look like "the link does
+   * nothing" rather than like a bug.
+   *
+   * Unlike a problem, landing here is never a dead end: `colab_focus.js` only
+   * focuses on `dd-q…` targets, so a concept anchor leaves the whole notebook
+   * on screen, scrolled to the section. The worked examples under a KP header
+   * carry no anchors of their own and would be hidden by focus.
+   */
+  function colabNotebookHrefForKc(kc) {
+    const lesson = colabLessonForKc(kc);
+    const anchor = kc && kpAnchors[kc];
+    const base = notebookUrl(lesson);
+    if (!base || !anchor) return "";
+    return `${base}#scrollTo=${encodeURIComponent(anchor)}`;
+  }
+
+  function colabLessonForKc(kc) {
+    if (!active || !byKc || !kc) return null;
+    return byKc[String(kc)] || null;
   }
 
   function colabLessonFor(q) {
@@ -290,6 +343,8 @@
     active: () => active,
     hrefFor: colabNotebookHrefFor,
     lessonFor: colabLessonFor,
+    hrefForKc: colabNotebookHrefForKc,
+    lessonForKc: colabLessonForKc,
     whenReady: whenColabIndexReady,
     openNotebook,
     revealSolution,

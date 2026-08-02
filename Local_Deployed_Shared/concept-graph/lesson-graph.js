@@ -780,11 +780,12 @@
     if (cy) cy.resize();
   };
 
-  /* ---------------- left content pane ---------------------------------- */
+  /* ---------------- lesson pane ---------------------------------------- */
   const setPlaceholder = () => {
     selectedKc = null;
     const btn = $("kg-maximize");
     if (btn) btn.hidden = true;
+    if (window.DDGraphColab) window.DDGraphColab.onDeselect();
     if ($("kg-info-meta")) $("kg-info-meta").innerHTML = "";
     if ($("kg-info-body"))
       $("kg-info-body").innerHTML =
@@ -842,6 +843,11 @@
 
     const btn = $("kg-maximize");
     if (btn) { btn.hidden = false; btn.dataset.kc = id; }
+
+    // On the Colab edition the lesson the learner reads is in the notebook, so
+    // choosing a concept sends the tab beside this one to the section that
+    // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
+    if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
 
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
@@ -1343,7 +1349,8 @@
     const controls = document.querySelector(".kg2-controls");
     if (controls && !$("kg-colormode")) {
       const seg = document.createElement("div");
-      seg.className = "kg2-seg";
+      // Styled by ID. It carried `.kg2-seg` and that is the lesson-segment
+      // class in the pane opposite — see how-it-works.css.
       seg.id = "kg-colormode";
       seg.innerHTML =
         '<button type="button" data-mode="mastery" class="active">Mastery</button>' +
