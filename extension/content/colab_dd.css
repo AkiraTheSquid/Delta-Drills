@@ -60,7 +60,13 @@ html.dd-theme div#header-content,
 html.dd-theme div#header-right,
 html.dd-theme div#header-doc-toolbar,
 html.dd-theme colab-notebook-toolbar#top-toolbar,
-html.dd-theme colab-left-pane.colab-left-pane-open {
+/* The whole element, not `.colab-left-pane-open`. That class is only on it
+   while the drawer is EXPANDED — closed, the element keeps rendering its 48px
+   icon rail (`.colab-left-pane-nib`: contents, find, snippets, secrets, files,
+   variables), which is the state a notebook opens in. So the rule hid the pane
+   in the one case a learner had opened it deliberately and left the strip on
+   screen the rest of the time, which is backwards. */
+html.dd-theme colab-left-pane {
   display: none !important;
 }
 

@@ -753,6 +753,15 @@
     if (!kcById[kc]) return;
     el.innerHTML = dockHtml(kc);
     el.classList.toggle("is-pinned", kc === dockedKc);
+    // One-way: until a concept has been shown here the pane reserves almost no
+    // room for this panel, because reserving 220px to say "hover a bubble" ate
+    // a fifth of a side panel. Never taken back — toggling it on hover-out
+    // would resize the canvas under the cursor every time you swept the graph.
+    const pane = el.parentElement;
+    if (pane && !pane.classList.contains("has-dock")) {
+      pane.classList.add("has-dock");
+      if (cy) cy.resize();
+    }
   };
 
   // Docked readout: sticks to the selected node, survives hovering elsewhere,
@@ -789,10 +798,10 @@
     if ($("kg-info-meta")) $("kg-info-meta").innerHTML = "";
     if ($("kg-info-body"))
       $("kg-info-body").innerHTML =
-        `<div class="kg2-placeholder"><strong>Click a bubble</strong> to open its lesson here.<br><br>
-         You'll see what the skill teaches and its worked example, and the whole
-         prerequisite chain lights up on the graph. Use <strong>Practice ⤢</strong>
-         to jump into the full practice screen for that skill.</div>`;
+        `<div class="kg2-placeholder"><strong>Click a bubble</strong> to open its lesson here.
+         <span class="kg2-placeholder-more">You'll see what the skill teaches and its worked
+         example, and the whole prerequisite chain lights up on the graph. Use
+         <strong>Practice ⤢</strong> to jump into the full practice screen.</span></div>`;
   };
 
   /* The KP's teaching content, segment by segment — the same units, in the same

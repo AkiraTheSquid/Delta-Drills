@@ -122,6 +122,15 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-02: **The theme hides Colab's left rail, not just its drawer.** The
+  rule was `colab-left-pane.colab-left-pane-open` — and that class is only on
+  the element while the drawer is EXPANDED. Closed, which is how a notebook
+  opens, the element keeps rendering its 48px icon strip
+  (`.colab-left-pane-nib`: contents, find, snippets, secrets, files), so the
+  rule hid the pane in the one case the learner had opened it deliberately and
+  left the strip on screen the rest of the time. Now `colab-left-pane` outright.
+  Verified against a live notebook: the cell list reflows to the full width and
+  all 668 cells stay rendered.
 - 2026-07-31: **The answer stays hidden until the learner has answered.**
   `colab_focus.js` tags every `dd-q<n>-solution` cell `.dd-solution`,
   `colab_dd.css` hides it under the new `html.dd-hide-solutions` root class, and
