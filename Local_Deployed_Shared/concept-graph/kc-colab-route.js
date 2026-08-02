@@ -99,5 +99,33 @@
     hide();
   }
 
+  /* ── The lesson pane does not belong on this deploy ──────────────────
+     The whole premise of the fork is that the lesson is in the notebook. A
+     pane rendering a second copy of it beside the map is the same two-sources-
+     of-truth problem the practice rail already solved by dropping the prompt
+     and the worked example — and here it also cost the map most of its width
+     for something the learner is being sent to Colab to read.
+
+     `colab-edition.css` hides the aside; these two controls lived inside its
+     header and would go with it, so they move to the graph's own control strip
+     rather than being duplicated in the markup — one set of buttons, wired
+     once, wherever they end up. */
+  function relocate() {
+    const controls = document.querySelector(".kg2-controls");
+    const link = linkEl();
+    if (!controls || !link || link.parentElement === controls) return;
+    controls.appendChild(link);
+    const max = document.getElementById("kg-maximize");
+    if (max) controls.appendChild(max);
+  }
+
+  if (colab()) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", relocate, { once: true });
+    } else {
+      relocate();
+    }
+  }
+
   window.DDGraphColab = { onSelect, onDeselect };
 })();
