@@ -252,6 +252,38 @@ def check_invariants():
         "fences validate_lessons.py executes, notebook.js only mounts inside them"
     )
 
+    # ── concept → notebook section ────────────────────────────────
+    # The Knowledge Graph routes a CONCEPT the same way ui.js routes a problem:
+    # through the generated index, never by re-slugging the kc id here. A slug
+    # that drifted by one character is an anchor Colab silently ignores, and the
+    # failure looks like "the link does nothing" rather than like a bug.
+    index = json.loads(_read(os.path.join(SHARED, "lessons", "colab_notebooks.json")))
+    kcs, kps = index.get("kcs") or {}, index.get("kps") or {}
+    assert kcs and kps, "colab_notebooks.json lost its kcs/kps maps"
+    assert set(kcs) == set(kps), (
+        "colab_notebooks.json kcs and kps disagree on which concepts exist: "
+        f"{sorted(set(kcs) ^ set(kps))} — regenerate with generate_colab_notebooks.py"
+    )
+    lesson_ids = {lesson["id"] for lesson in index.get("lessons", [])}
+    orphans = sorted(kc for kc, lid in kcs.items() if lid not in lesson_ids)
+    assert not orphans, f"concepts pointing at a notebook that is not in the index: {orphans}"
+    bad_anchors = sorted(kc for kc, a in kps.items() if not str(a).startswith("dd-kp-"))
+    assert not bad_anchors, f"concept anchors that are not dd-kp-* cells: {bad_anchors}"
+
+    colab_mode = _read(os.path.join(HERE, "colab_mode.js"))
+    assert "hrefForKc" in colab_mode, (
+        "colab_mode.js no longer exposes hrefForKc — the knowledge graph cannot "
+        "send the tab to the section that teaches a concept"
+    )
+    route = _read(os.path.join(SHARED, "concept-graph", "kc-colab-route.js"))
+    for name in ("hrefForKc", "openNotebook", "kg-colab-link"):
+        assert name in route, f"kc-colab-route.js lost {name!r}"
+    graph = _read(os.path.join(SHARED, "concept-graph", "lesson-graph.js"))
+    assert "DDGraphColab" in graph, (
+        "lesson-graph.js stopped calling window.DDGraphColab — selecting a "
+        "concept will render its lesson and route nothing"
+    )
+
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':

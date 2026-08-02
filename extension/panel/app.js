@@ -49,15 +49,37 @@ async function colabTab() {
 // work in progress. Remembering the last one turns that into a no-op.
 let lastUrl = "";
 
+/** The cell the URL is aiming at — `#scrollTo=dd-q480`, `#scrollTo=dd-kp-…`. */
+function anchorOf(url) {
+  const hash = decodeURIComponent(String(url).split("#")[1] || "");
+  const m = /(?:^|[?&])scrollTo=([^&]+)/.exec(hash);
+  return m ? m[1].replace(/^cell-/, "") : "";
+}
+
 async function openNotebook(url) {
   if (!url || url === lastUrl) return;
+  const sameNotebook = url.split("#")[0] === lastUrl.split("#")[0];
   lastUrl = url;
   const t = await colabTab();
-  if (t) {
-    await chrome.tabs.update(t.id, { url, active: true });
+  if (!t) {
+    await chrome.tabs.create({ url, active: true });
     return;
   }
-  await chrome.tabs.create({ url, active: true });
+  await chrome.tabs.update(t.id, { url, active: true });
+  // Colab honours `#scrollTo=` when it LOADS a notebook. Changing only the
+  // fragment on one already open fires a hashchange and moves nothing — which
+  // is the common case here, since consecutive problems (and every concept in
+  // one lesson) live in the same file. The content script can scroll it, and
+  // knows how to expand a collapsed section first. Best-effort: on a fresh
+  // navigation there is no listener yet and the load-time fragment has already
+  // done the job.
+  const anchor = sameNotebook ? anchorOf(url) : "";
+  if (!anchor) return;
+  try {
+    await chrome.tabs.sendMessage(t.id, { type: "dd:goto", anchor });
+  } catch (_) {
+    /* no content script in that tab — the fragment is the fallback */
+  }
 }
 
 /**

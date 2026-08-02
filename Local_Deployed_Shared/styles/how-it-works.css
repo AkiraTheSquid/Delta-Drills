@@ -321,7 +321,14 @@
 
 /* ============================================================
    Knowledge Graph tab v2 — lesson graph (concept-graph/lesson-graph.js)
-   Two-pane: left = lesson content + Practice(maximize); right = bubble graph.
+   Two-pane: left = the bubble graph with its docked readout along the bottom;
+   right = the lesson for whichever concept is selected, plus Practice ⤢ and
+   (Colab edition only) the link into the notebook section that teaches it.
+
+   The order is the DOM order — see index.html. Do not restore it with
+   `row-reverse`: that would leave the lesson pane first for a keyboard and for
+   the stacked narrow layout, where "read the lesson, then find the map under
+   it" is backwards.
    ============================================================ */
 .kg2 .kg2-wrap {
   display: flex;
@@ -333,13 +340,13 @@
   background: var(--surface);
 }
 
-/* left content pane */
+/* right-hand lesson pane */
 .kg2-info {
   flex: 0 0 38%;
   max-width: 580px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border);
+  border-left: 1px solid var(--border);
   background: var(--surface);
   min-width: 0;
 }
@@ -374,6 +381,34 @@
   transition: filter 120ms, transform 120ms;
 }
 .kg2-max:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* The way into the notebook, and the way back to it. Ghost rather than filled:
+   selecting a concept has ALREADY steered the tab beside the panel, so this is
+   the fallback route (a plain browser tab has no panel to steer) and the
+   copyable link — not the primary action on the pane. */
+.kg2-colab-link {
+  flex: 0 0 auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 120ms, color 120ms;
+}
+.kg2-colab-link:hover { border-color: var(--accent); color: var(--accent); }
+/* A concept the registry has and the notebooks do not. Not a link, and not
+   silence either — silence is what the normal deploy looks like. */
+.kg2-colab-link.is-missing {
+  color: var(--muted);
+  cursor: default;
+  font-weight: 500;
+}
+.kg2-colab-link.is-missing:hover { border-color: var(--border); color: var(--muted); }
 
 .kg2-info-body { flex: 1 1 auto; overflow-y: auto; padding: 20px 22px; }
 .kg2-placeholder { color: var(--muted); font-size: 14px; line-height: 1.6; }
@@ -422,8 +457,7 @@
 }
 .kg2-chip:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
 
-/* right graph pane */
-/* right graph pane — the canvas is inset by the docked readout's height so the
+/* left graph pane — the canvas is inset by the docked readout's height so the
    bottom panel never covers bubbles (see .kg2-dock). */
 .kg2-graph { flex: 1 1 auto; position: relative; min-width: 0; --kg2-dock-h: 144px; }
 #kg-cy { position: absolute; inset: 0 0 var(--kg2-dock-h, 0px) 0; }
@@ -448,7 +482,9 @@
 
 @media (max-width: 820px) {
   .kg2 .kg2-wrap { flex-direction: column; height: auto; }
-  .kg2-info { flex: none; max-width: none; border-right: none; border-bottom: 1px solid var(--border); max-height: 46vh; }
+  /* Stacked, the graph is on top and the lesson under it — same order as the
+     DOM, so the divider moves to the lesson's TOP edge. */
+  .kg2-info { flex: none; max-width: none; border-left: none; border-top: 1px solid var(--border); max-height: 46vh; }
   /* Narrow: the dock's three columns stack, so it needs more room. */
   .kg2-graph { height: 74vh; --kg2-dock-h: 220px; }
   .kg2-dock { flex-direction: column; gap: 10px; overflow-y: auto; }
@@ -492,11 +528,17 @@ body.kg-maxi-open { overflow: hidden; }
    Knowledge Graph — mastery colouring: view toggle, hover popup, legend
    ============================================================ */
 /* Mastery ↔ Lessons segmented toggle (in .kg2-controls) */
-.kg2-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px); }
-.kg2-seg button { background: transparent; color: var(--muted); border: 0; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
-.kg2-seg button + button { border-left: 1px solid var(--border); }
-.kg2-seg button.active { background: var(--accent); color: var(--white); font-weight: 700; }
-.kg2-seg button:not(.active):hover { color: var(--text); }
+/* The Mastery ↔ Lessons switch, by ID and not by class. It used to carry
+   `.kg2-seg` — which is ALSO the class on every lesson segment block in the
+   pane opposite (see `.kg2-seg + .kg2-seg` above), so `display: inline-flex`
+   landed on those too and laid each concept out beside its own worked example
+   in two unreadable columns. One name, two unrelated things, and the collision
+   only showed once the lesson pane was narrow enough to notice. */
+#kg-colormode { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px); }
+#kg-colormode button { background: transparent; color: var(--muted); border: 0; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+#kg-colormode button + button { border-left: 1px solid var(--border); }
+#kg-colormode button.active { background: var(--accent); color: var(--white); font-weight: 700; }
+#kg-colormode button:not(.active):hover { color: var(--text); }
 
 /* Mastery legend: gray "no estimate" chip + red→blue gradient scale */
 .kg2-legend-mastery .kg2-li-scale { display: inline-flex; align-items: center; gap: 6px; }

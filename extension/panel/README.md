@@ -163,6 +163,15 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
+- 2026-08-02: `app.js` follows a same-notebook navigation with `dd:goto`.
+  Colab honours `#scrollTo=` when it LOADS a notebook; changing only the
+  fragment on one already open fires a hashchange and moves nothing — and that
+  is the common case, since consecutive problems, and every concept in one
+  lesson, live in the same file. The content script scrolls it (and expands a
+  collapsed section first, which a fragment cannot). Best-effort: after a real
+  navigation there is no listener yet and the load-time fragment has already
+  done the job. This is what makes the Knowledge Graph's new concept routing
+  land on the section rather than wherever the notebook was left.
 - 2026-08-01: `app.js` relays the other direction too. A finished `dd_check` in
   the notebook reaches `content/colab_focus.js`, which sends
   `dd:check-result` over `chrome.runtime`; this page posts it into the frame at
