@@ -72,14 +72,10 @@
        "worked_example_code": "import torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n",
        "faded_items": [
         {
-         "question_id": 486,
-         "prompt": "You have seen dtype INFERRED from the data. Now say what you want up front, and report both answers so you can see them disagree.",
-         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (inferred dtype name, forced float32 dtype name, are they equal?).\"\"\"\n    inferred = t.tensor(rows)\n    forced = t.tensor(rows, dtype=_____)\n    return (str(inferred.dtype), str(forced.dtype), inferred.dtype _____ forced.dtype)\n",
-         "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (inferred dtype name, forced float32 dtype name, are they equal?).\"\"\"\n    inferred = t.tensor(rows)\n    forced = t.tensor(rows, dtype=t.float32)\n    return (str(inferred.dtype), str(forced.dtype), inferred.dtype == forced.dtype)\n",
-         "example": {
-          "question_id": 484,
-          "note_markdown": "What carries across: shape and dtype are separate questions, and you read each one off the tensor itself. What changes: the example COMPARED two dtypes it was handed, and you have to MAKE the second one \u2014 `t.tensor(rows, dtype=t.float32)` is how you say what you want instead of letting the input's spelling decide. Then answer the same kind of question the example did, about the pair you built."
-         }
+         "question_id": 484,
+         "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
+         "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n",
+         "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
         }
        ]
       }
@@ -98,14 +94,10 @@
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n"
       },
       {
-       "question_id": 486,
-       "prompt": "You have seen dtype INFERRED from the data. Now say what you want up front, and report both answers so you can see them disagree.",
-       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (inferred dtype name, forced float32 dtype name, are they equal?).\"\"\"\n    inferred = t.tensor(rows)\n    forced = t.tensor(rows, dtype=_____)\n    return (str(inferred.dtype), str(forced.dtype), inferred.dtype _____ forced.dtype)\n",
-       "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (inferred dtype name, forced float32 dtype name, are they equal?).\"\"\"\n    inferred = t.tensor(rows)\n    forced = t.tensor(rows, dtype=t.float32)\n    return (str(inferred.dtype), str(forced.dtype), inferred.dtype == forced.dtype)\n",
-       "example": {
-        "question_id": 484,
-        "note_markdown": "What carries across: shape and dtype are separate questions, and you read each one off the tensor itself. What changes: the example COMPARED two dtypes it was handed, and you have to MAKE the second one \u2014 `t.tensor(rows, dtype=t.float32)` is how you say what you want instead of letting the input's spelling decide. Then answer the same kind of question the example did, about the pair you built."
-       }
+       "question_id": 484,
+       "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
+       "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n",
+       "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
       }
      ],
      "guided_items": [
@@ -118,7 +110,8 @@
       480,
       481,
       483,
-      485
+      485,
+      486
      ],
      "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`."
     },
