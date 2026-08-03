@@ -22,6 +22,9 @@ REPO_THIS_DIR="$REPO_DIR/This-Directory-Only"
 REPO_SHARED_DIR="$REPO_DIR/Local_Deployed_Shared"
 DEPLOY_SHARED_DIR="$DEPLOY_DIR/Local_Deployed_Shared"
 REFRESH_SPLIT_SCRIPT="$REPO_THIS_DIR/scripts/refresh_split_layout.py"
+# The only interpreter with torch. Anything that runs learner code -- the
+# exporter's expected_output recompute, the audit gate -- must use it.
+BACKEND_PY="$REPO_THIS_DIR/backend/.venv/bin/python"
 LOG_DIR="$REPO_THIS_DIR/logs"
 TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
 LOG_FILE="$LOG_DIR/deploy_delta_drills-$TIMESTAMP.txt"
@@ -99,6 +102,18 @@ if [ ! -f "$REFRESH_SPLIT_SCRIPT" ]; then
   error "Split refresh helper not found at $REFRESH_SPLIT_SCRIPT"
   exit 1
 fi
+# Assert the property that actually matters, not just that the file exists: a
+# venv without torch fails exactly the same silent way bare python3 did.
+# This belongs in preflight, ahead of Step 1 -- Step 1 auto-commits the working
+# tree, so a guard placed any later aborts the deploy only after it has already
+# written a commit.
+if ! "$BACKEND_PY" -c "import torch" >/dev/null 2>&1; then
+  error "$BACKEND_PY cannot import torch."
+  error "The expected_output recompute would silently fall back to the CSV's"
+  error "values and ship ~40 stdout questions no correct answer can match."
+  error "Fix the backend venv before deploying."
+  exit 1
+fi
 
 # --- Step 1: Check for uncommitted changes on main ---
 
@@ -119,7 +134,17 @@ if [ -s "$BROKEN_IDS_FILE" ] && ! grep -qx '\[\]' "$BROKEN_IDS_FILE"; then
 fi
 
 info "Exporting question bank artifacts..."
-python3 "$REPO_THIS_DIR/scripts/export_questions_json.py"
+# MUST be the backend venv, not bare python3. The exporter rebuilds every
+# expected_output from the CSV and then overwrites it with what the canonical
+# answer actually prints under the grading harness. That recompute imports
+# torch; _load_harness() swallows a failed preload_torch(), so without it every
+# torch question errors, yields empty stdout, and falls into the
+# "answer-errors kept stored value" branch -- which keeps the CSV's value, not
+# the correction. The result is 40 stdout_prediction questions shipping
+# expected outputs no right answer can match, silently, on every deploy.
+# Step 2b already uses this interpreter for the audit gate; the exporter that
+# FEEDS that gate has to run on it too.
+"$BACKEND_PY" "$REPO_THIS_DIR/scripts/export_questions_json.py"
 python3 "$REPO_THIS_DIR/scripts/extract_arena_prereqs.py"
 python3 "$REPO_THIS_DIR/scripts/extract_arena_exercises.py"
 # split_arena_exercises.py + build_arena_colab_index.py are intentionally NOT
@@ -132,7 +157,7 @@ python3 "$REFRESH_SPLIT_SCRIPT" --root "$REPO_DIR"
 # Blocks the deploy on gameable grading (bare-fixture cheats passing), broken
 # starters, and degenerate expected values. See pipeline/audit_question_bank.py.
 info "Auditing question bank (gameability gate)..."
-"$REPO_THIS_DIR/backend/.venv/bin/python" \
+"$BACKEND_PY" \
   "$REPO_SHARED_DIR/pipeline/audit_question_bank.py" --gate
 
 # --- Step 2c: Grading-harness regression tests ---
@@ -140,7 +165,7 @@ info "Auditing question bank (gameability gate)..."
 # non-degeneracy on tensors. See pipeline/test_torch_grading.py (codex
 # cross-review 2026-07-11). Blocks the deploy on any regression.
 info "Running grading-harness regression tests..."
-"$REPO_THIS_DIR/backend/.venv/bin/python" \
+"$BACKEND_PY" \
   "$REPO_SHARED_DIR/pipeline/test_torch_grading.py"
 
 auto_commit_if_dirty "$REPO_DIR" "chore: update deploy artifacts"
