@@ -13,18 +13,42 @@ const PracticeAPI = {
     return (actualOutput || "").trim() === (expectedOutput || "").trim();
   },
 
-  async recordLocalEval(questionId, correct) {
+  /**
+   * Record a locally-evaluated attempt, and report back what it moved.
+   *
+   * The return value is the point: the Colab rail draws the difficulty step the
+   * learner just earned, and it can only draw a step it was TOLD about. Reading
+   * the globals again after the await would be reading them after whatever else
+   * ran during it. Same shape in both modes so the caller has one thing to
+   * handle; every number is `null` when there is no honest value for it.
+   *
+   * `finalize: false` is for the caller that is not finished with the attempt —
+   * the einops fallback in `submitAnswer`, where a real felt-difficulty step
+   * still follows and the attempt has to stay pending for the rating to land
+   * on. The default is `true` because the other caller, the Colab verdict, IS
+   * the whole submit and nothing comes back for it.
+   */
+  async recordLocalEval(questionId, correct, options = {}) {
+    const finalize = options.finalize !== false;
     // Guest / supabase: the Pyodide engine IS the store, so a self-rated Colab
     // drill has to go in the same way a graded submission does. It used to
     // return here, which meant nothing was recorded — and `next_question`
     // picks from the state, so rating a torch drill served the SAME question
     // back, forever. Only reachable from the torch self-rate path in these
-    // modes (submitAnswer calls this for backend+Pyodide fallback only), so
-    // there is no double-record.
+    // modes (submitAnswer calls this for backend+Pyodide fallback only, and
+    // always with finalize:false), so there is no double-record.
     if (practiceMode !== "backend") {
       const q = this.currentQuestion;
+      // Before the engine runs, because both of these are derived from the
+      // state `submit_answer`/`send_feedback` are about to rewrite in place.
+      const targetBefore = q ? getTargetDifficultyFromAdaptiveState(q.subtopic) : null;
+      const pBefore = q ? getEwmaFromAdaptiveState(q.subtopic) : null;
       const pyodide = await initPyodide();
-      if (pyodide && practiceEngineLoaded && adaptiveStateJson && q) {
+      // Whether the attempt actually went in. The demo-pool fallback runs with
+      // no engine at all, and reporting `finalized: true` from there would have
+      // the rail explaining a step nothing took.
+      const engineRan = !!(pyodide && practiceEngineLoaded && adaptiveStateJson && q);
+      if (engineRan) {
         const api = pyodide.globals.get("engine_api");
         adaptiveStateJson = api.submit_answer(
           adaptiveStateJson,
@@ -51,22 +75,54 @@ const PracticeAPI = {
         savePracticeProgress(practiceProgress);
       }
       emitPracticeStateChanged();
-      return;
+      return {
+        finalized: engineRan,
+        targetBefore,
+        targetAfter: engineRan ? getTargetDifficultyFromAdaptiveState(q.subtopic) : null,
+        pBefore,
+        pAfter: engineRan ? getEwmaFromAdaptiveState(q.subtopic) : null,
+      };
     }
     const res = await apiFetch("/api/practice/submit-local-eval", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question_id: questionId, correct }),
+      body: JSON.stringify({ question_id: questionId, correct, finalize }),
     });
     if (res.status === 401) {
       handleExpiredToken();
-      return;
+      return null;
     }
     if (!res.ok) {
       const detail = await res.text();
       throw new Error(detail || "Failed to record local evaluation.");
     }
-    await res.json();
+    const data = await res.json();
+    // Every field is optional on the wire. A backend that predates the reporting
+    // fields answers `{success:true}`, and even a current one returns nulls when
+    // the attempt did not finalize — a placement probe places the learner rather
+    // than stepping the staircase, so there is no before/after to send. Nulls
+    // reach the caller as nulls; inventing a number here would put a movement on
+    // screen that nothing actually did.
+    //
+    // `finalized` therefore has THREE states, not two. `false` is a backend
+    // that ran and finalized nothing — a placement probe — and the rail says so
+    // in as many words. `null` is a backend that was never asked the question,
+    // which is what a deploy predating these fields answers. Collapsing the
+    // second into the first is a real, dated failure: during a rolling deploy
+    // the old backend answers success-only for an ordinary Colab submission,
+    // and every answer would read "still placing you" until the new backend
+    // finished shipping. An unknown falls through to the conservative wording.
+    const num = (value) => (Number.isFinite(value) ? value : null);
+    const finalized = data && "finalized" in data ? data.finalized === true : null;
+    return {
+      finalized,
+      targetBefore: num(data?.target_difficulty_before),
+      targetAfter: num(data?.target_difficulty_after),
+      pBefore: num(data?.p_before),
+      pAfter: num(data?.p_after),
+      ladderStage: data?.ladder_stage ?? null,
+      ladderEstimate: data?.ladder_estimate ?? null,
+    };
   },
 
   async getNextQuestion() {
@@ -279,8 +335,14 @@ const PracticeAPI = {
         await saveAdaptiveState();
       }
 
+      // `finalize: false` on every einops-fallback call below. This is a normal
+      // graded submit that merely could not run server-side, so the felt-
+      // difficulty step still follows and the attempt has to stay pending for
+      // the rating to attach to. Finalizing here closes it out early and
+      // /feedback then has nothing to apply — which surfaces as "Feedback
+      // failed" on exactly the einops questions.
       if (practiceMode === "backend" && requiresLocalPyodide) {
-        await this.recordLocalEval(questionId, correct);
+        await this.recordLocalEval(questionId, correct, { finalize: false });
       }
 
       return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
@@ -356,7 +418,7 @@ json.dumps(_delta_results)
         pyodide.runPython("sys.stdout = sys.__stdout__\nsys.stderr = sys.__stderr__");
       }
       if (practiceMode === "backend" && requiresLocalPyodide) {
-        await this.recordLocalEval(questionId, correct);
+        await this.recordLocalEval(questionId, correct, { finalize: false });
       }
       if (practiceEngineLoaded && adaptiveStateJson) {
         const api = pyodide.globals.get("engine_api");
@@ -392,7 +454,7 @@ json.dumps(_delta_results)
     }
 
     if (practiceMode === "backend" && requiresLocalPyodide) {
-      await this.recordLocalEval(questionId, correct);
+      await this.recordLocalEval(questionId, correct, { finalize: false });
     }
 
     return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
