@@ -9,7 +9,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-arrays-from-the-ground-up.ipynb",
-      "problems": 84
+      "problems": 83
     },
     {
       "id": "np-2",
@@ -129,7 +129,6 @@ window.DD_NOTEBOOKS = {
     "481": "np-1",
     "482": "np-1",
     "483": "np-1",
-    "484": "np-1",
     "485": "np-1",
     "486": "np-1",
     "487": "np-1",
