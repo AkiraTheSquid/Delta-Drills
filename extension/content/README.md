@@ -122,6 +122,27 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-02 (later): **Scrolling no longer loses the problem, and the setup
+  cell is off screen.** Two independent things the notebook was doing to the
+  learner.
+  - *Focus followed the fragment, and Colab owns the fragment.* Colab rewrites
+    `#scrollTo=` to whatever cell is at the top of the viewport as you scroll —
+    its own deep-linking feature. `apply()` read that straight, so scrolling up
+    to re-read the checker (`dd-checker`) or down past the last cell of the
+    problem left the fragment naming a cell that belongs to no problem, focus
+    switched off, and the whole notebook unfolded under the cursor. The
+    fragment is now a way to CHANGE the target, never to clear it: `focusTarget`
+    keeps the last problem that resolved and only replaces it when a fragment
+    names a different one. The panel routes by rewriting the fragment, so the
+    one path that must keep working is exactly the one that still does.
+  - *The setup cell was three dead variables at the top of every lesson.* It
+    carried `DD_TOKEN` and a backend URL for a completion beacon that does not
+    exist on this route and cannot — the panel learns a result by reading the
+    line `dd_check` prints. `scripts/generate_colab_notebooks.py` now emits only
+    `DD_LESSON_ID`, and `html.dd-theme .cell.dd-setup-cell` hides what is left:
+    `colab.js`'s `identify` reads that id off the rendered text, and text in a
+    `display: none` cell is still text. It stays in `ALWAYS_VISIBLE` — that is
+    focus's business, and un-theming brings the cell back.
 - 2026-08-02: **The theme hides Colab's left rail, not just its drawer.** The
   rule was `colab-left-pane.colab-left-pane-open` — and that class is only on
   the element while the drawer is EXPANDED. Closed, which is how a notebook

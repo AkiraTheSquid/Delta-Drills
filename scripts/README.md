@@ -91,6 +91,7 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-08-02 (the setup cell stops advertising a backend): `generate_colab_notebooks.py`'s `setup_cell` emitted `DD_TOKEN = ""`, `DD_BACKEND_URL = "https://delta-drills-backend.fly.dev"` and `DD_LESSON_ID`, for a completion beacon that was never wired and cannot be on this route — Colab sandboxes a cell's rich output, so the panel learns a result by reading the line `dd_check` prints instead. Two dead variables would be harmless if they were invisible, but this is the first cell in the notebook, so every lesson opened on a URL and an instruction to paste a credential. Only `DD_LESSON_ID` remains, because `extension/content/colab.js`'s `identify` matches it as the id-independent "which notebook is this" route. The `BACKEND` constant went with them. Republish with `publish_colab_notebooks.sh` — a generator change is invisible until the notebooks are pushed.
 - 2026-08-01 (`dd_check`'s output is a contract, not just prose): the summary
   line it prints — `✅ Problem 480 — 5/5 cases passed.` — is the ONLY channel
   from a notebook back to the app. Colab sandboxes a cell's rich output away

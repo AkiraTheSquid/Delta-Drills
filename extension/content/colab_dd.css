@@ -38,6 +38,21 @@ html.dd-focus .cell.dd-always-visible {
   display: block !important;
 }
 
+/* ── The setup cell is for a program to read, not a person ───────────
+   It assigns `DD_LESSON_ID` and nothing else. `colab.js`'s `identify` reads
+   that off the rendered text — which a `display: none` cell still has — so the
+   panel keeps knowing which notebook is open, and nothing needs the cell RUN.
+   What the learner got out of it was a "run me first" that is not, above a
+   backend URL and a token line neither of which does anything here.
+
+   AFTER the always-visible rule on purpose: both are `!important` at the same
+   specificity, so source order is what decides, and this has to win. The two
+   rules are not in conflict — one keeps focus from hiding the cell, this one
+   hides it for a different reason, and un-theming brings it back. */
+html.dd-theme .cell.dd-setup-cell {
+  display: none !important;
+}
+
 /* ── Solutions: not until you have answered ──────────────────────────
    The answer cell for each problem, gone until the panel says the learner has
    said how it went (`dd:reveal-solution` → colab_focus.js `reveal`). Before

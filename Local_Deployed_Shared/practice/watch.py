@@ -284,6 +284,32 @@ def check_invariants():
         "concept will render its lesson and route nothing"
     )
 
+    # ── an attempt has to be COUNTED, not just graded ─────────────
+    # `submit_answer` parks the attempt in `pending_attempt`; `send_feedback` is
+    # what increments n, steps the staircase and moves recent accuracy. Offline
+    # they are two calls, and the Colab edition never makes the second one on
+    # its own — there is no felt-difficulty step to hang it off. Unpaired, every
+    # notebook check was overwritten by the next one and the concept graph read
+    # a week of practice as nothing at all. The failure is silent by
+    # construction: the UI advances, the grade shows, and only the mastery
+    # numbers stay at zero.
+    api_js = _read(os.path.join(HERE, "api.js"))
+    local_eval = api_js.split("async recordLocalEval", 1)[-1].split("async ", 1)[0]
+    assert "submit_answer" in local_eval and "send_feedback" in local_eval, (
+        "recordLocalEval must pair submit_answer with send_feedback in the "
+        "offline branch — submit alone leaves the attempt pending forever"
+    )
+
+    engine = _read(os.path.join(SHARED, "practice_engine.py"))
+    assert "if user_state.pending_attempt is not None:" in engine, (
+        "record_attempt must flush an orphaned pending attempt — without it any "
+        "path that grades and never asks for feedback silently loses the attempt"
+    )
+    assert "P_WINDOW" in engine and "sub_state.p =" in engine, (
+        "apply_feedback must recompute subtopic p — left at its 0.5 default it "
+        "renders as a confident 50% on every subtopic the learner has practised"
+    )
+
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':

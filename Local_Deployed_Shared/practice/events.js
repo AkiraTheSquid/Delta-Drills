@@ -389,7 +389,9 @@ if (practiceSkipBtn) {
 
 // --- Torch self-rating (P0.1): torch drills run in Colab, not in-app. Record a
 // local-eval attempt (no doomed server grading) when in backend mode, then
-// advance. In guest/local mode recordLocalEval is a no-op; we still advance.
+// advance. In guest/local mode it goes into the Pyodide engine instead — graded
+// AND counted in one call, because nothing asks for felt difficulty afterwards
+// on this route and an uncounted attempt is one the learner never sees again.
 //
 // On the Colab edition the two verdict buttons ARE the submit, so rating stops
 // on a review step instead of jumping to the next problem: the reference answer

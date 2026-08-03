@@ -33,6 +33,17 @@ const PracticeAPI = {
           q.difficulty || 50,
           !!correct,
         );
+        // ...and count it. `submit_answer` only parks the attempt in
+        // `pending_attempt`; `send_feedback` is what increments `n`, steps the
+        // staircase and moves recent accuracy. Every OTHER path pairs the two
+        // — grade, then "how much did you learn?" — but this one is the whole
+        // submit: the Colab edition has no felt-difficulty step, so without
+        // this the attempt sat pending until the next problem overwrote it and
+        // the learner's practice never appeared anywhere.
+        //
+        // "unrated" rather than a real level: the learner was not asked, so
+        // there is nothing to report. The engine treats it as no alpha.
+        adaptiveStateJson = api.send_feedback(adaptiveStateJson, "unrated");
         await saveAdaptiveState();
       }
       if (!practiceProgress.completedQuestionIds.includes(questionId)) {

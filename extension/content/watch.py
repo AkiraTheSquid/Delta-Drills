@@ -124,6 +124,16 @@ def check_focus_cannot_blank_the_notebook():
         "focus must re-apply on hashchange — opening the next problem changes "
         "only the fragment, which is not a navigation"
     )
+
+    # Colab rewrites #scrollTo= to whatever cell is at the top of the viewport,
+    # so the fragment is a moving target and reading it straight means scrolling
+    # off the problem turns focus off. It has to be a way to CHANGE the target,
+    # never a way to clear it. `apply` reads the sticky value, not the raw one.
+    assert "focusTarget" in script and "settings.focus ? focusTarget()" in script, (
+        "apply must read the sticky focusTarget, not targetProblem — Colab "
+        "rewrites the fragment while the learner scrolls, so reading it "
+        "directly drops focus the moment they scroll past the problem"
+    )
     for banned in ("alert(", "confirm(", "prompt("):
         assert banned not in script, f"{banned} blocks the page and kills the message channel"
 

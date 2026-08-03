@@ -37,11 +37,21 @@
   const STORE_KEY = "dd_colab_view";
   const DEFAULTS = { theme: true, focus: true, collapsed: false };
 
-  // Cells that are never hidden. The setup cell holds the imports and
-  // DD_LESSON_ID and the checker cell defines `dd_check`: hide either and the
-  // problem's own cells die on NameError, which reads as broken starter code
-  // rather than as a missing prerequisite.
+  // Cells that focus never hides. The checker cell defines `dd_check`, so
+  // hiding it leaves a problem that cannot be checked — the kind of break that
+  // is silent until something below raises NameError and reads as broken
+  // starter code rather than as a missing prerequisite. The setup cell is here
+  // for the same reason it always was, even though the theme now hides it: the
+  // two mechanisms are separate, and `dd-out-of-focus` is the one that would
+  // also take it away in an unthemed notebook.
   const ALWAYS_VISIBLE = /^dd-(?:setup|checker)(?:$|[^a-z0-9])/i;
+
+  // The setup cell, which is exempt from focus (above) and then hidden by the
+  // theme anyway (`colab_dd.css`). It assigns `DD_LESSON_ID` and nothing else;
+  // `colab.js`'s `identify` reads that off the rendered text, and text in a
+  // `display: none` cell is still text. Nothing needs it RUN, so the learner
+  // does not need to see a cell whose only job is to be read by a program.
+  const SETUP = /^dd-setup(?:$|[^a-z0-9])/i;
 
   // A problem's answer cell. Hidden until the learner submits — see `reveal`.
   // There is no toggle for this and there should not be: an "always show
@@ -101,6 +111,29 @@
     const value = /(?:^|[?&])scrollTo=([^&]+)/.exec(hash);
     const raw = value ? value[1] : hash;
     return problemOf(String(raw).replace(/^cell-/, ""));
+  }
+
+  /**
+   * The problem in focus, which is NOT the same as the problem in the URL.
+   *
+   * Colab rewrites `#scrollTo=` to whatever cell is at the top of the viewport
+   * as you scroll — that is its own deep-linking feature, not something we ask
+   * for. So scrolling up to re-read the checker, or down past the last cell of
+   * the problem, rewrites the fragment to `dd-checker` or `dd-setup`, which
+   * belong to no problem. Read straight, that says "no target", focus switches
+   * off mid-thought and the whole notebook unfolds under the cursor — the
+   * learner scrolled two lines and lost their place.
+   *
+   * So the fragment is a way to CHANGE the target, not the target itself: a
+   * fragment naming a different problem switches to it, and anything else
+   * leaves the current one alone. The panel routes by rewriting the fragment,
+   * so the one path that must keep working still does.
+   */
+  let sticky = null;
+  function focusTarget() {
+    const fromUrl = targetProblem();
+    if (fromUrl) sticky = fromUrl;
+    return sticky;
   }
 
   // ── Applying it ────────────────────────────────────────────────────
@@ -172,7 +205,7 @@
     root.classList.add("dd-hide-solutions");
 
     const cells = Array.from(document.querySelectorAll(CELL));
-    const target = settings.focus ? targetProblem() : null;
+    const target = settings.focus ? focusTarget() : null;
 
     // Before tagging, not after: a check that just finished unlocks its answer
     // cell, and the tagging pass below is what puts that on screen.
@@ -186,6 +219,7 @@
       const mine = target !== null && problemOf(anchor) === target;
       if (mine) inFocus += 1;
       cell.classList.toggle("dd-always-visible", always);
+      cell.classList.toggle("dd-setup-cell", SETUP.test(anchor));
       cell.classList.toggle("dd-out-of-focus", Boolean(target) && !mine && !always);
       cell.classList.toggle("dd-in-focus", mine);
       const solution = SOLUTION.exec(anchor);

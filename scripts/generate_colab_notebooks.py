@@ -70,8 +70,6 @@ DEFAULT_WEB_INDEX = (
     REPO / "Local_Deployed_Shared" / "lessons" / "colab_notebooks.json"
 )
 
-BACKEND = "https://delta-drills-backend.fly.dev"
-
 # The ARENA digits image, as published alongside the notebooks by
 # `publish_colab_notebooks.sh`. The einops drills load it by the absolute path
 # the backend's grading preamble rewrites; in a notebook there is no preamble,
@@ -325,12 +323,24 @@ def problem_cells(
 
 
 def setup_cell(lesson: dict, mint: IdMinter) -> dict:
+    """One line naming the lesson, for the extension to read off the page.
+
+    It used to carry `DD_TOKEN` and `DD_BACKEND_URL` for a completion beacon.
+    That beacon does not exist on this route and cannot: Colab renders a cell's
+    output in a sandboxed iframe, so the panel learns a result by reading the
+    line `dd_check` PRINTS (`content/colab_focus.js`), which needs no token and
+    no URL. Two dead variables would be harmless if they were invisible — but
+    they were the first thing in the notebook, so every lesson opened on a
+    backend URL and an instruction to paste a credential, for a feature that
+    was never wired.
+
+    `DD_LESSON_ID` stays because `content/colab.js`'s `identify` matches it as
+    the id-independent route to "which notebook is this" — it is rendered text,
+    so it survives Colab dropping cell ids. The extension hides this cell.
+    """
     return code_cell(
         "# === Delta Drills ===\n"
-        "# The side panel decides what you practise next. This cell only tells\n"
-        "# the notebook who you are, for the completion beacon.\n"
-        'DD_TOKEN = ""  # paste from the extension\'s Settings if you want beacons\n'
-        f'DD_BACKEND_URL = "{BACKEND}"\n'
+        "# Which lesson this notebook is, for the side panel. Nothing to run.\n"
         f'DD_LESSON_ID = "{lesson["id"]}"\n',
         mint("dd-setup"),
     )

@@ -35,7 +35,17 @@ FEEDBACK_ALPHA = {
     "a_lot": 0.85,
 }
 
+# The feedback level for an attempt that was graded but never rated. Not in
+# FEEDBACK_ALPHA on purpose — it carries no alpha because the learner said
+# nothing, and recording it as one of the three real answers would invent an
+# opinion. Kept on the record so history can tell the two apart.
+UNRATED = "unrated"
+
 COLD_START_TARGETS = [25, 50, 75]
+
+# How many recent attempts `p` (recent accuracy) is measured over. 20 is the
+# window the concept graph's dock already describes to the learner.
+P_WINDOW = 20
 
 # Staircase difficulty (offline mode) — a simple up/down step model seeded by
 # the learner's self-reported level. Correct answer steps the target up, a
@@ -269,6 +279,21 @@ def record_attempt(
     difficulty_score: int,
     correct: bool,
 ) -> AttemptRecord:
+    # An attempt nobody rated is still an attempt. `record_attempt` only parks
+    # the attempt in `pending_attempt`; `apply_feedback` is what counts it. So
+    # any path that grades a problem and then does not ask "how did that feel"
+    # — Skip, End session, the Colab edition, which has no felt-difficulty step
+    # at all — used to drop the attempt on the floor when the next one replaced
+    # it. Silently: `n` stayed 0, and the concept graph read a learner who had
+    # been practising all week as having answered nothing.
+    #
+    # Flushing here rather than making the callers remember keeps that from
+    # being re-broken by the next caller. It cannot double-count: this commits
+    # the PREVIOUS attempt, and a feedback click for the current one still
+    # finds its own pending record.
+    if user_state.pending_attempt is not None:
+        apply_feedback(user_state, UNRATED)
+
     grade = 100.0 if correct else 0.0
     attempt = AttemptRecord(
         question_id=question_id,
@@ -305,6 +330,27 @@ def apply_feedback(
     attempt.target_difficulty_after = sub_state.target_difficulty
 
     sub_state.history.append(attempt)
+
+    # Recent accuracy: k correct out of the last P_WINDOW attempts here.
+    #
+    # `p` had been left at its 0.5 default forever offline — the EWMA blend that
+    # used to move it went when adaptivity became backend-only, and nothing
+    # replaced it. Everything downstream reads p as a number in [0, 1] on the
+    # same scale as a mastery posterior: the concept graph falls back to it when
+    # a KC has no atom-level evidence, and the dock labels it "Recent accuracy".
+    # A constant 0.5 is not a missing value there — it renders as "Learning,
+    # 50%" on a subtopic the learner has aced, which is worse than grey.
+    #
+    # A flat window, not a decay: the staircase already owns "what should come
+    # next", so this is a readout, and a readout the learner can check by
+    # counting is one they can trust. It is deliberately NOT the backend's
+    # decayed baseline — a signed-in learner reads the server's number, and
+    # these two never mix in one state.
+    window = sub_state.history[-P_WINDOW:]
+    if window:
+        sub_state.p = sum(1 for a in window if a.correct) / len(window)
+    attempt.p_after = sub_state.p
+
     user_state.pending_attempt = None
 
     return attempt
