@@ -270,6 +270,34 @@ const LadderUI = (() => {
     _syncTopbar(question);
     if (!kc || !stage) return;
 
+    /* THE COLAB EDITION DOES NOT GET THE EXAMPLE HERE.
+
+       On that deploy the problem lives in the notebook, and so does its worked
+       example: `scripts/generate_colab_notebooks.py` emits the solved twin as
+       cells directly ABOVE the problem's header, anchored `dd-q<n>-example` so
+       `colab_focus.js` keeps the pair on screen together. Scroll up from the
+       problem and there is the example; scroll down and there is the problem
+       that is the same move on different specifics.
+
+       Rendering a second copy into this rail would put the same content on
+       screen twice, at two different widths, with the sidebar's copy being the
+       one nobody asked for. The instruction was explicit — the example goes
+       above the problem in Colab, not in the sidebar.
+
+       `dd-no-notebook` is not an exception so much as the same rule read the
+       other way: ui.js sets it for the ~75 questions with no published cell to
+       route to. For those the rail IS the whole screen, there is no notebook
+       holding the example, and dropping it here would delete the scaffold
+       rather than relocate it. */
+    if (
+      window.DDColab
+      && typeof window.DDColab.active === "function"
+      && window.DDColab.active()
+      && !document.documentElement.classList.contains("dd-no-notebook")
+    ) {
+      return;
+    }
+
     if (!SUPPORTED_STAGES.has(stage)) return;
     if (!window.LessonGate || typeof window.LessonGate.getKpEntry !== "function") return;
 

@@ -66,6 +66,16 @@
 - Grading must mirror prod: `expected_setup_code or setup_code` re-runs before `expected_expr` (fixed 2026-07-19 — validator previously evaluated expected on solution-mutated fixtures).
 - Validate BEFORE compile; compilation does not re-check code.
 - Frontmatter faded/guided id lists must equal the section ids (validator-enforced).
+- **A stage-2 `example` currently lives ONLY in `lessons_structured.json`, which
+  `compile_lessons.py` overwrites wholesale.** The pair is authored data with no
+  authoring surface yet: `lesson_lib.py::parse_kp` does not read an `example`
+  marker out of the KP markdown, so `_faded_items` cannot emit one and the next
+  compile silently drops every pair on the floor. Anyone converting more
+  segments must teach the markdown format the marker FIRST. Same story one step
+  further out — `build_qmatrix.py` derives each question's rung from the
+  markdown, so promoting a question to be an example (which spends it) has to
+  reach the markdown before the backend's `ladder_rank` agrees with the
+  notebook about which questions are still problems.
 
 ## Extension Points
 - New KP rules → add checks in `check_kp`; format changes → `lesson_lib.py` first, then both consumers.
@@ -91,6 +101,14 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-08-03 (**stage 2 is a pair: a solved example, then the same move on different specifics**): "Worked example" was a KP-level prose block that happened to sit near a drill. It is now an explicit pair — a lesson's `faded_items` entry may carry an `example: {question_id, note_markdown}`, and `example_cells` renders that question **already solved** in the cells directly above the problem's header. A worked example is not a third kind of content; it is a problem plus its known answer, so the prompt and the canonical solution are read out of `questions_structured.json` rather than authored. The only thing an author writes is `note_markdown`: the sentence saying what carries across and what does not.
+  - **The anchor is the mechanism.** Example cells are minted `dd-q<problem>-example`, naming the PROBLEM they scaffold and not the bank question they were built from, so `colab_focus.js`'s existing `problemOf` regex groups them with that problem. No extension change was needed and none should be added — `extension/content/watch.py::check_stage_two_pair_survives_focus` runs the shipped pattern against real anchors to keep it that way.
+  - No `<!-- dd:… -->` marker in an example body, unlike a problem header: that marker is `colab.js`'s text fallback when Colab drops cell ids, and a substring search for `dd-q481` would hit `dd:dd-q481-example` first, routing the panel above the learner's own problem.
+  - `check_examples` validates every pair at build time: the example question must exist in the bank, and it must not ALSO be served as a problem anywhere — an example question is *spent*, because handing out its full answer at stage 2 and asking for it again at stage 4 is the same question twice with the answer in between.
+  - **The rail does not render the pair.** The example belongs above the problem in Colab, not in the sidebar; `practice/ladder.js::decorate` returns early on the Colab edition (except under `dd-no-notebook`, where there is no notebook to hold it).
+  - Piloted on **one** pair — `np-1`, `numpy.ndarray-model`, segment *"dtype is a property of the whole block"*: **example q484, problem q486**. q484 was that segment's own faded item and its authored starter (`a._____ == b._____`) transcribed the worked example directly, so it was already spent and promoting it to the demonstration costs nothing. q486 is promoted out of `independent_items` — same concept, genuinely different move (a dtype you *force* rather than one you're handed), and harder (36 vs 24). Question count 424 → 423, which is q484 being spent. Every unconverted segment is untouched and renders exactly as before.
+  - **`audit_ladder_pairing.py` picked the pair, after it rejected two others.** The first attempt (example q224 → problem q481) turned a DISTANCE finding into a COVERAGE failure, which *fails the build*: nothing demonstrates `Tensor.ndim` before q481 asks for it. The second (q224 → q480) failed the same way on `Tensor.dtype`. Both were real — a pair whose example never shows the move the problem needs is the audit's TOO FAR case, and a prose sentence in `note_markdown` is not a demonstration. Sweeping the whole course with the audit's own coverage and distance rules finds **223 segments whose existing question pool can supply a covered, distant twin**, so this is a searchable conversion and not 118 hand-authored examples. The full audit is unchanged at exit 0, 61 distance / 0 coverage / 0 blank — the pilot introduces and fixes nothing.
+  - Republish with `publish_colab_notebooks.sh` — a generator change is invisible until the notebooks are pushed.
 - 2026-08-02 (the setup cell stops advertising a backend): `generate_colab_notebooks.py`'s `setup_cell` emitted `DD_TOKEN = ""`, `DD_BACKEND_URL = "https://delta-drills-backend.fly.dev"` and `DD_LESSON_ID`, for a completion beacon that was never wired and cannot be on this route — Colab sandboxes a cell's rich output, so the panel learns a result by reading the line `dd_check` prints instead. Two dead variables would be harmless if they were invisible, but this is the first cell in the notebook, so every lesson opened on a URL and an instruction to paste a credential. Only `DD_LESSON_ID` remains, because `extension/content/colab.js`'s `identify` matches it as the id-independent "which notebook is this" route. The `BACKEND` constant went with them. Republish with `publish_colab_notebooks.sh` — a generator change is invisible until the notebooks are pushed.
 - 2026-08-01 (`dd_check`'s output is a contract, not just prose): the summary
   line it prints — `✅ Problem 480 — 5/5 cases passed.` — is the ONLY channel

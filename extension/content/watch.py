@@ -120,6 +120,10 @@ def check_focus_cannot_blank_the_notebook():
         "problemOf must match dd-q<n> with a trailing boundary, or dd-q12 and "
         "dd-q123 land in the same group"
     )
+
+    # The worked-example pair rides on that same boundary — see
+    # `check_stage_two_pair_survives_focus`, which runs the shipped pattern
+    # against real anchors rather than asserting its text a second time here.
     assert 'addEventListener("hashchange"' in script, (
         "focus must re-apply on hashchange — opening the next problem changes "
         "only the fragment, which is not a navigation"
@@ -143,6 +147,74 @@ def check_focus_cannot_blank_the_notebook():
     )
     for banned in ("alert(", "confirm(", "prompt("):
         assert banned not in script, f"{banned} blocks the page and kills the message channel"
+
+
+def check_stage_two_pair_survives_focus():
+    """A stage-2 problem's worked example must be in focus with its problem.
+
+    Stage 2 is a PAIR — a solved example, then the same move on different
+    specifics for the learner to do — and half a pair is worse than neither
+    half: the learner is routed to a problem the course believes it has just
+    demonstrated, and the demonstration is not on screen. That was the state
+    before the pair existed, and it is a silent one, because a bare problem
+    looks exactly like a problem.
+
+    The pairing is carried by the ANCHOR: the generator mints the example as
+    `dd-q<problem>-example`, naming the problem it scaffolds rather than the
+    bank question it was built from, so `problemOf` groups it with its problem
+    for free. Two things therefore have to hold, and both are checked here
+    rather than in the generator, because this is the file that would break
+    them.
+
+    1. `problemOf` must keep accepting a NON-DIGIT suffix. It is the same regex
+       that stops `dd-q12` from dragging in `dd-q123`, so the boundary can only
+       be `[^0-9]` — tighten it to `$` and every scaffold cell silently leaves
+       the group.
+    2. Nothing may hide an example cell. The one mechanism that hides a cell
+       inside a focused group is `dd-hide-solutions`, and it keys on
+       `dd-q<n>-solution`; an example is not a solution and must never be
+       tagged as one, or the thing the learner is told to read disappears until
+       they answer.
+
+    Rule 1 is checked by LIFTING the pattern out of the file and running it,
+    rather than by matching its text. The two are not the same check. Someone
+    tidying `dd-q(\\d+)(?:$|[^0-9])` into an explicit
+    `dd-q(\\d+)(?:$|-(?:hints|code|check|solution))` writes something that reads
+    more careful, passes any text-shaped assertion that was updated alongside
+    it, and silently drops every example out of focus — leaving a bare problem
+    with no way for the learner to tell that something was meant to be above it.
+    Executing the real thing against real anchors is the only version of this
+    check that cannot be satisfied by editing it.
+    """
+    script = _read(os.path.join(HERE, "colab_focus.js"))
+
+    found = re.search(r"const m = /(\^dd-q\(\\d\+\).*?)/\.exec", script)
+    assert found, "could not find problemOf's regex in colab_focus.js to test it"
+    problem_of = re.compile(found.group(1))
+    # `-worked*` is the general case and by far the more load-bearing of the
+    # two: it is the segment's own authored worked example, re-anchored so that
+    # focus keeps it with the problem it demonstrates. 292 cells across the nine
+    # notebooks ride on this matching. `-example` is the promoted-bank-question
+    # variant, which so far exists for one pair.
+    for anchor in ("dd-q481", "dd-q481-example", "dd-q481-example-code",
+                   "dd-q481-worked", "dd-q481-worked-code", "dd-q481-worked-1"):
+        m = problem_of.match(anchor)
+        assert m and m.group(1) == "481", (
+            f"{anchor} must resolve to problem 481 — a worked example is on screen "
+            f"only because it shares its problem's number"
+        )
+    # ...and the boundary still has to hold the other way, or one problem's
+    # example would surface on a different problem entirely.
+    assert problem_of.match("dd-q4811-example").group(1) == "4811"
+    assert re.search(r"SOLUTION\s*=\s*/\^dd-q\(\\d\+\)-solution\$/", script), (
+        "the solution pattern must stay anchored to `-solution$` — a looser one "
+        "would also match dd-q<n>-example and hide the worked example until the "
+        "learner had already answered"
+    )
+    assert "dd-example" in script, (
+        "the example cells must still be tagged, or nothing on screen tells the "
+        "learner which of two adjacent code cells is the one to read"
+    )
 
 
 def check_css_is_opt_in():
@@ -185,7 +257,8 @@ def check_css_is_opt_in():
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
-              check_focus_cannot_blank_the_notebook, check_css_is_opt_in]
+              check_focus_cannot_blank_the_notebook,
+              check_stage_two_pair_survives_focus, check_css_is_opt_in]
     for fn in checks:
         try:
             fn()

@@ -8,13 +8,32 @@
        dd-setup            imports + DD_LESSON_ID
        dd-lesson-<id>      the lesson header
        dd-kp-<slug>        one teaching cell per knowledge component
-       dd-q<n>             a problem's header  ─┐
-       dd-q<n>-hints       its hint block       ├─ the group focus keeps
-       dd-q<n>-code        its answer cell     ─┘
+       dd-q<n>-example     a solved example, ABOVE the problem  ─┐
+       dd-q<n>-example-code  …and its answer                     │
+       dd-q<n>             a problem's header                    ├─ the group
+       dd-q<n>-hints       its hint block                        │  focus keeps
+       dd-q<n>-code        its answer cell                      ─┘
 
      So no notebook change was needed to hook onto — the anchors have been there
      since the panel needed them for jumping. This file only adds classes; the
      hiding itself is CSS (`colab_dd.css`).
+
+   WHY THE EXAMPLE IS NAMED AFTER THE PROBLEM, NOT AFTER ITSELF
+     A stage-2 problem is a PAIR: a solved example you read, then a problem that
+     is the same move on different specifics, which you solve. Both halves have
+     to be on screen together, and the example is built from a different bank
+     question — so left to itself it would carry that question's number and
+     focus would hide it the moment the learner was routed to its twin.
+
+     The generator therefore mints it as `dd-q<problem>-example`: the anchor
+     names the problem the scaffold BELONGS TO. Nothing here had to change for
+     that to work, because `problemOf` already groups on the number, and that is
+     the point — the pairing is a fact the notebook states, not one this file
+     infers. The tempting alternative is a DOM heuristic ("also keep the cells
+     immediately above the target"), which is correct until the day a segment's
+     prose or the previous problem's answer happens to sit there, and then it
+     puts unrelated content under a heading the learner has been told to trust.
+     Explicit beats adjacent.
 
    WHICH PROBLEM IS "THE" PROBLEM
      The URL says. The app's "Open in Colab ↗" builds
@@ -52,6 +71,13 @@
   // `display: none` cell is still text. Nothing needs it RUN, so the learner
   // does not need to see a cell whose only job is to be read by a program.
   const SETUP = /^dd-setup(?:$|[^a-z0-9])/i;
+
+  // The worked half of a stage-2 pair. Styling only: these cells are already in
+  // focus with their problem (the anchor names it), but nothing on screen would
+  // otherwise say that the code cell holding a full solution is the one the
+  // learner is meant to READ. Two prompts and two code cells in a row, all
+  // equally styled, is an invitation to start solving the example.
+  const EXAMPLE = /^dd-q(\d+)-example(?:$|[^0-9])/i;
 
   // A problem's answer cell. Hidden until the learner submits — see `reveal`.
   // There is no toggle for this and there should not be: an "always show
@@ -228,6 +254,7 @@
       cell.classList.toggle("dd-setup-cell", SETUP.test(anchor));
       cell.classList.toggle("dd-out-of-focus", Boolean(target) && !mine && !always);
       cell.classList.toggle("dd-in-focus", mine);
+      cell.classList.toggle("dd-example", EXAMPLE.test(anchor));
       const solution = SOLUTION.exec(anchor);
       cell.classList.toggle("dd-solution", Boolean(solution));
       cell.classList.toggle("dd-solution-shown", Boolean(solution) && revealed.has(solution[1]));

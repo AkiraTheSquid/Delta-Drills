@@ -27,6 +27,9 @@ file to fix.
   - *Only this problem* — hides every cell that is not part of the problem the
     URL points at. The target comes from the fragment the app's "Open in Colab ↗"
     already builds (`#scrollTo=dd-q123`), so nothing has to message anything.
+    "Part of the problem" is decided by the number in `dd-q<n>`, which is why a
+    stage-2 problem's worked example (`dd-q<n>-example`, minted by the generator
+    after the PROBLEM it scaffolds) is in focus alongside it for free.
   - *Delta Drills theme* — the dark skin, Colab's header/toolbars/left pane/Gemini
     spark hidden. Adapted from Seth's hand-written CSS; its `a {display:none}`
     rule is deliberately dropped (it hid links inside the problem prose too).
@@ -122,6 +125,9 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-03 (**the worked example is in focus with its problem, and the grouping needed no change to make it so**): stage 2 is now a pair — a solved example, then the same move on different specifics. `scripts/generate_colab_notebooks.py` emits the example as cells directly above the problem's header, anchored `dd-q<problem>-example`. `problemOf`'s trailing-boundary regex already sorts that into the problem's group, so focus keeps the pair on screen together and the learner finds the example by scrolling up. `watch.py::check_stage_two_pair_survives_focus` runs the shipped pattern against `dd-q481-example` / `dd-q481-example-code` and pins the boundary in the other direction too. **Do not "be explicit about the suffixes" in that regex** — narrowing it to the known `-hints|-code|-check|-solution` set would drop every example out of focus silently, leaving a bare problem that looks exactly like a problem.
+  - The one thing that DID have to change here is telling the two apart. In focus mode the pair is the only content on screen: a prompt, a code cell, a prompt, a code cell, previously styled identically. `colab_focus.js` now tags example cells `.dd-example` and `colab_dd.css` gives them a left rule and a dimmed surface under `html.dd-theme` — the same reference-not-work vocabulary the app uses in `styles/practice/ladder.css`. Deliberately not collapsed: the whole request is that scrolling up shows the solved problem, so it has to be legible without a click.
+  - Verified without the extension, which cannot be side-loaded on this machine: the real `colab_focus.js` and `colab_dd.css` were run against a synthetic DOM built from the generated cell ids. Focused on 481 the visible set is example → example-code → problem → code → check (solution still hidden until `reveal`); focused on its neighbour 482, which has no authored pair, it is problem → code → check exactly as before, with 481's example correctly gone.
 - 2026-08-02 (later): **Scrolling no longer loses the problem, and the setup
   cell is off screen.** Two independent things the notebook was doing to the
   learner.

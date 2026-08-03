@@ -228,6 +228,67 @@ def split_markdown(source: str, mint: IdMinter, base: str) -> Iterator[dict]:
 # ── problem rendering ────────────────────────────────────────────────────────
 
 
+def example_cells(qid: int, example: dict, bank: dict, mint: IdMinter) -> list[dict]:
+    """The worked half of a stage-2 pair: a problem shown already solved.
+
+    A worked example is not a third kind of content — it is a PROBLEM plus its
+    known answer, which is why this is derived from the bank rather than
+    authored. The lesson names a `question_id` and nothing else that could go
+    stale; the prompt and the canonical solution are read out of
+    `questions_structured.json` at build time, so the example is a real problem
+    the grader agrees about rather than a snippet that drifted away from one.
+    All the author has to write is `note_markdown`: the sentence saying what
+    carries across to the problem below and what does not. That is the whole
+    per-pair authoring cost, which is what makes converting 118 segments a
+    plausible piece of work rather than a rewrite of the course.
+
+    This is a NOTEBOOK-ONLY construct. The side panel is a tutor rail and the
+    notebook is where the learner reads and writes, so the example belongs on
+    the Colab side of the screen; `practice/ladder.js` is deliberately not
+    involved and still shows what it always showed.
+
+    THE ANCHOR IS THE WHOLE POINT. These cells are minted as
+    `dd-q<problem>-example`, naming the PROBLEM they scaffold and not the
+    question they were built from. `colab_focus.js` groups cells by the number
+    in `dd-q<n>`, so an example anchored this way is in focus exactly when its
+    problem is, and never otherwise. The alternative — a DOM heuristic like
+    "also keep whatever sits above the target" — would work today and would one
+    day put an unrelated segment's prose on screen, silently, with no way for
+    the learner to tell that it does not belong to the problem they are on.
+
+    No `<!-- dd:… -->` marker in the body, unlike a problem header. That marker
+    is the text fallback `colab.js` searches when Colab drops cell ids, and a
+    substring search for `dd-q481` would find `dd:dd-q481-example` first — the
+    panel would route to the example and the learner would land above their own
+    problem. Nothing needs to navigate TO an example; it only has to be visible
+    when its problem is.
+    """
+    ex = (bank.get(example["question_id"]) or {}).get("exercise", {})
+    prompt = (ex.get("question_text") or "").strip()
+    solution = (ex.get("canonical_solution") or "").strip()
+    note = (example.get("note_markdown") or "").strip()
+
+    body = (
+        "#### Worked example — read this one, you are not solving it\n\n"
+        f"{prompt}\n\n"
+        "The full answer is in the cell below. Run it, read it, then do the "
+        "problem underneath — it is the same move on different specifics.\n"
+    )
+    if note:
+        body += f"\n{note}\n"
+    cells = [md_cell(body, mint(f"dd-q{qid}-example"))]
+    if solution:
+        cells.append(
+            code_cell(
+                "# The worked example, solved. Running it binds `solve` to THIS answer —\n"
+                "# re-run your own cell below before checking, or you are checking mine.\n"
+                f"{solution}\n",
+                mint(f"dd-q{qid}-example-code"),
+            )
+        )
+    return cells
+
+
 def problem_cells(
     qid: int,
     rung: str,
@@ -238,6 +299,8 @@ def problem_cells(
     prompt: str | None = None,
     starter: str | None = None,
     hints: str | None = None,
+    example: dict | None = None,
+    after_example: bool = False,
 ) -> list[dict]:
     """The cells for one problem, at one rung.
 
@@ -248,6 +311,13 @@ def problem_cells(
     Four cells, in the order a learner meets them: the problem (with the output
     it should produce), the starter code, a checker, and the answer. `tests` is
     the notebook's payload dict and gets this problem's cases added to it.
+
+    An `example` puts a fifth thing FIRST — a solved problem, above the header,
+    so the panel's jump still lands on the problem and the example is what the
+    learner finds by scrolling up. That order is the request, verbatim: "you
+    should be able to scroll up and see a particular problem, and then when you
+    scroll down you should see a problem that's kind of similar but meaningfully
+    different from it."
     """
     q = bank.get(qid, {})
     ex = q.get("exercise", {})
@@ -262,7 +332,19 @@ def problem_cells(
     expected = expected_output_block(ex)
     if expected:
         header += f"\n{expected}\n"
-    cells = [md_cell(header, f"dd-q{qid}")]
+    cells = example_cells(qid, example, bank, mint) if example else []
+    # "Your turn" whenever something demonstrated the move first — either a
+    # promoted bank question (`example`) or the segment's own worked example,
+    # which is now anchored into this problem's group and therefore on screen
+    # right above it. Without the label the learner meets two problems in a row
+    # and has to work out for themselves that the first one was already solved.
+    if example or after_example:
+        header = header.replace(
+            f"### Problem {qid} · {rung}\n\n",
+            f"### Problem {qid} · {rung} — your turn\n\n",
+            1,
+        )
+    cells.append(md_cell(header, f"dd-q{qid}"))
 
     if hints:
         cells.append(
@@ -423,11 +505,50 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                         f"{base}-watch",
                     )
                 )
-            cells += list(
-                split_markdown(seg.get("worked_example_markdown"), mint, f"{base}-worked")
+            # ── the worked example, anchored to the problem it scaffolds ──
+            #
+            # THIS IS WHY THE EXAMPLE WAS NEVER ON SCREEN. The cells below have
+            # always been emitted here, directly above the segment's faded
+            # problem, in the right order. But `colab_focus.js` decides what is
+            # in focus by the NUMBER in `dd-q<n>`, and these were anchored to
+            # the segment (`<kc>-<title>-worked`), which carries no number. So
+            # the moment the panel routed a learner to the problem, focus hid
+            # the example sitting immediately above it — for all 118 segments,
+            # silently, leaving a bare problem that looks exactly like a
+            # problem. "It's on the worked example one, and yet it doesn't have
+            # a worked example."
+            #
+            # Anchoring them `dd-q<problem>-worked` puts them in that problem's
+            # group, so scrolling up from the problem lands on the example that
+            # was always meant to be there. It costs no content and no authoring
+            # — the example is already written for every segment.
+            #
+            # A segment authors exactly one faded item today (118 segments, 118
+            # items — see scripts/audit_ladder_pairing.py). If one ever authors
+            # several they share the example, so it is anchored to the FIRST and
+            # the rest fall back to being visible only with focus off. Anchoring
+            # to one is not a limitation of the design so much as a fact about
+            # the anchor: a cell has one id, and one id names one group.
+            _faded = [i["question_id"] for i in (seg.get("faded_items") or [])]
+            _worked_base = f"dd-q{_faded[0]}-worked" if _faded else f"{base}-worked"
+            _worked = list(
+                split_markdown(seg.get("worked_example_markdown"), mint, _worked_base)
             )
-            if seg.get("worked_example_code"):
-                cells.append(code_cell(seg["worked_example_code"], mint(f"{base}-worked-code")))
+            cells += _worked
+            # `worked_example_code` is the SAME fence `split_markdown` just
+            # turned into a cell — `compile_lessons.py` extracts "each segment's
+            # sole Python worked fence" into that field, so emitting both means
+            # emitting the example's code twice. It was byte-for-byte duplicated
+            # in 122 of the segments and nobody had noticed, because the pair
+            # was buried in a wall of unfocused cells. Now that the example is
+            # in focus with its problem, the learner would meet the same code
+            # block twice, back to back, and reasonably wonder which one is the
+            # one that matters. Emitted only when the prose carried no fence of
+            # its own, which is what the field is actually for.
+            if seg.get("worked_example_code") and not any(
+                c["cell_type"] == "code" for c in _worked
+            ):
+                cells.append(code_cell(seg["worked_example_code"], mint(f"{_worked_base}-code")))
 
             # Faded rung: the authored starter carries the `_____` blanks, which
             # is a hand-cut scaffold for this concept and beats the mechanical
@@ -441,6 +562,10 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                     tests,
                     prompt=item.get("prompt"),
                     starter=item.get("starter_code"),
+                    example=item.get("example"),
+                    # The segment's own worked example is directly above and
+                    # now shares this problem's anchor, so it IS on screen.
+                    after_example=bool(_worked or seg.get("worked_example_code")),
                 )
 
         for item in kp.get("guided_items") or []:
@@ -504,7 +629,74 @@ def validate(nb: dict, lesson_id: str) -> list[str]:
         seen.add(cid)
         if c["cell_type"] not in ("markdown", "code"):
             problems.append(f"{lesson_id} cell {i}: bad type {c['cell_type']!r}")
+
+    # EVERY FADED PROBLEM MUST HAVE ITS EXAMPLE IN ITS OWN GROUP.
+    #
+    # The faded rung is "here is the move, now do it" — a completion problem in
+    # Renkl's sense, which stops being one the moment the example is not on
+    # screen. `colab_focus.js` decides that by the number in `dd-q<n>`, so an
+    # example anchored anywhere else is an example the learner never sees while
+    # they are on the problem. That was the state of all 118 segments until
+    # 2026-08-03, and it is invisible from the outside: the notebook renders,
+    # every cell is present in the file, and the rung just quietly behaves like
+    # a solo problem.
+    #
+    # Checked against the emitted ANCHORS rather than against the lesson record,
+    # because the anchor is what focus reads. A segment can carry a beautifully
+    # written worked example and still fail this, which is exactly the bug.
+    ids = {c.get("id", "") for c in nb["cells"]}
+    for c in nb["cells"]:
+        cid = c.get("id", "")
+        if not _ANCHOR.match(cid):
+            continue
+        if "· faded" not in "".join(c.get("source") or []):
+            continue
+        n = cid[len("dd-q"):]
+        if not any(i.startswith(f"dd-q{n}-worked") or i.startswith(f"dd-q{n}-example")
+                   for i in ids):
+            problems.append(
+                f"{lesson_id} {cid}: a faded problem with no example in its focus "
+                f"group — focus will hide whatever scaffold it has and the rung "
+                f"becomes a solo problem wearing a faded label"
+            )
     return problems
+
+
+def check_examples(lessons: list[dict], bank: dict) -> tuple[list[str], dict[int, int]]:
+    """Validate every authored stage-2 pair. Returns (errors, example -> problem).
+
+    Two things can go wrong with a pair, and both are silent at runtime:
+
+    1. **The example names a question that is not in the bank, or one with no
+       canonical solution.** Either way there is nothing to show, and the
+       learner meets a "worked example" heading with an empty cell under it.
+
+    2. **The example question is ALSO served as a problem.** Then the course
+       hands out that problem's full answer at stage 2 and asks for it again
+       later — checked against the anchors in `main`, so it catches the leak
+       across lessons and not just within one. This is the reason an example
+       question is *spent*: promoting one to be the demonstration means taking
+       it out of the rungs, which is a content edit and not a rendering one.
+    """
+    errors: list[str] = []
+    examples: dict[int, int] = {}
+    for lesson in lessons:
+        for kp in lesson.get("kps") or []:
+            for seg in kp.get("segments") or []:
+                for item in seg.get("faded_items") or []:
+                    example = item.get("example")
+                    if not example:
+                        continue
+                    eid = example.get("question_id")
+                    where = f"{lesson['id']} {kp['kc']} q{item.get('question_id')}"
+                    ex = (bank.get(eid) or {}).get("exercise", {})
+                    if not ex:
+                        errors.append(f"{where}: example question {eid} is not in the bank")
+                        continue
+                    if not (ex.get("canonical_solution") or "").strip():
+                        errors.append(f"{where}: example question {eid} has no canonical solution")
+                    examples[int(eid)] = int(item["question_id"])
+    return errors, examples
 
 
 # ── the notebook index ───────────────────────────────────────────────────────
@@ -615,6 +807,9 @@ def main() -> int:
     errors: list[str] = []
     records: list[dict] = []
 
+    example_errors, examples = check_examples(lessons, bank)
+    errors += example_errors
+
     for lesson in lessons:
         nb = build_notebook(lesson, bank)
         errors += validate(nb, lesson["id"])
@@ -663,6 +858,18 @@ def main() -> int:
             if q in claimed:
                 errors.append(f"question {q} claimed by both {claimed[q]} and {r['id']}")
             claimed[q] = r["id"]
+
+    # A question shown fully solved as a worked example must not also be served
+    # as a problem — anywhere, not just in its own notebook. Checked against the
+    # anchors rather than against the lesson records, so it sees what the
+    # learner can actually reach.
+    for eid, problem in examples.items():
+        if eid in claimed:
+            errors.append(
+                f"question {eid} is the worked example for problem {problem} but is also "
+                f"served as a problem in {claimed[eid]} — an example question is spent, "
+                f"so remove it from that KP's rungs"
+            )
 
     # Every authored problem must be reachable, exactly once.
     expected = sum(

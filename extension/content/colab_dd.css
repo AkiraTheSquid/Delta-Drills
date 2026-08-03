@@ -65,6 +65,33 @@ html.dd-hide-solutions .cell.dd-solution:not(.dd-solution-shown) {
   display: none !important;
 }
 
+/* ── The worked half of a stage-2 pair ───────────────────────────────
+   A stage-2 problem arrives as two problems in a row: one already solved, for
+   reading, then the learner's own. In focus mode they are the only two things
+   on screen, one directly above the other, and until this rule they were
+   styled identically — a prompt, a code cell, a prompt, a code cell. The
+   heading says which is which and a learner scanning for the editor does not
+   read headings.
+
+   So the example is marked as REFERENCE rather than as work: a rule down its
+   left edge and a dimmer surface, the same vocabulary `styles/practice/
+   ladder.css` uses in the app for the same distinction. Deliberately NOT
+   collapsed or hidden — the whole request is that the learner can scroll up
+   and see the solved problem, so it has to be legible without a click.
+
+   Scoped under `html.dd-theme` because it is skin, not mechanism: with the
+   theme off the notebook is Colab's again, and the example is still perfectly
+   readable, just unmarked. */
+html.dd-theme .cell.dd-example {
+  border-left: 3px solid #3d6ea8;
+  margin-left: -3px;
+  opacity: 0.86;
+}
+
+html.dd-theme .cell.dd-example:hover {
+  opacity: 1;
+}
+
 /* ── The skin ────────────────────────────────────────────────────── */
 
 html.dd-theme colab-composer-floating-spark,          /* the Gemini spark */
