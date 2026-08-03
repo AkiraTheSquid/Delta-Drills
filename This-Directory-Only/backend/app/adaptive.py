@@ -50,7 +50,17 @@ from typing import Dict, List, Literal, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-FeedbackLevel = Literal["not_much", "somewhat", "a_lot"]
+# "unrated" is a graded attempt that was never rated, and it is deliberately NOT
+# in FEEDBACK_ALPHA: the learner said nothing about how hard it felt, so it
+# carries no alpha, and recording it as one of the three real answers would
+# invent an opinion. It exists because one route has no felt-difficulty step at
+# all — the Colab edition, where running the notebook's checker IS the submit —
+# and without a level to finalize under, those attempts stayed pending forever
+# and never entered anyone's history. Kept distinct on the record so a reader
+# can tell "not asked" from "asked and answered". Mirrors `UNRATED` in
+# Local_Deployed_Shared/practice_engine.py, the offline twin of this engine.
+FeedbackLevel = Literal["not_much", "somewhat", "a_lot", "unrated"]
+UNRATED: FeedbackLevel = "unrated"
 
 # ---------------------------------------------------------------------------
 # Tunable parameters — v0 calibration defaults, not literature-grounded.

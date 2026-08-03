@@ -16,6 +16,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app import diagnostic, lessons
 from app.adaptive import (
     COLD_START_TARGETS,
+    UNRATED,
     get_user_state,
     override_pending_attempt,
     record_attempt,
@@ -23,12 +24,14 @@ from app.adaptive import (
 )
 from app.auth import get_current_user
 from app.models import User
+from app.practice.attempt_scoring import finalize_attempt
 from app.practice.grading import (
     grade_submission,
     run_and_get_expected_output,
     select_question_for_difficulty,
 )
 from app.practice_schemas import (
+    LocalEvalResponse,
     LocalEvalSubmitRequest,
     NextQuestionResponse,
     OverrideAttemptRequest,
@@ -261,11 +264,21 @@ def submit_answer(
     )
 
 
-@router.post("/submit-local-eval", response_model=OverrideAttemptResponse)
+@router.post("/submit-local-eval", response_model=LocalEvalResponse)
 def submit_local_eval(
     payload: LocalEvalSubmitRequest,
     user: User = Depends(get_current_user),
-) -> OverrideAttemptResponse:
+) -> LocalEvalResponse:
+    """A grade the client already decided, for the routes the sandbox can't run.
+
+    Two callers, and they differ in whether anything follows. The Colab edition
+    has no felt-difficulty step at all — the notebook's checker IS the submit —
+    so an attempt parked here has nothing coming to close it out, and used to
+    sit pending until the next submit overwrote it: `n` never moved, no BKT
+    posterior moved, and the concept graph reported a learner who had done
+    nothing. The einops fallback posts here mid-flow and DOES still ask how it
+    felt, so it sends `finalize=false` and lets /feedback do the scoring.
+    """
     user_id = str(user.id)
     user_state = get_user_state(user_id)
 
@@ -277,20 +290,59 @@ def submit_local_eval(
         )
 
     if diagnostic.get_diag(user_state)["active"]:
+        # A placement probe is not a graded attempt: it updates the diagnostic
+        # posterior directly and never creates a pending attempt, so there is
+        # nothing here to finalize and no subtopic reading that would have
+        # moved. Same rule as /submit.
         diagnostic.record_probe(
             user_state, question, "correct" if payload.correct else "incorrect"
         )
-    else:
-        record_attempt(
-            user_state=user_state,
-            question_id=question.id,
-            subtopic=question.subtopic,
-            difficulty_score=question.difficulty_score,
-            correct=payload.correct,
-        )
-        record_ladder_outcome(user_state, question.id, payload.correct)
+        save_user_state(user_id)
+        return LocalEvalResponse(success=True, finalized=False)
+
+    td_before = p_before = None
+    if payload.finalize:
+        # Read the "before" numbers first: finalize_attempt overwrites both.
+        # Guarded rather than read unconditionally because get_subtopic_state
+        # CREATES the row it cannot find, and a call that finalizes nothing
+        # should leave no trace in stored state.
+        sub_state = user_state.get_subtopic_state(question.subtopic)
+        td_before = sub_state.target_difficulty
+        p_before = sub_state.p
+
+    record_attempt(
+        user_state=user_state,
+        question_id=question.id,
+        subtopic=question.subtopic,
+        difficulty_score=question.difficulty_score,
+        correct=payload.correct,
+    )
+    record_ladder_outcome(user_state, question.id, payload.correct)
+
+    attempt = None
+    if payload.finalize:
+        # UNRATED, not one of the three real levels: the learner was never
+        # asked how hard it felt, so there is no opinion to record. Runs after
+        # record_ladder_outcome only because the ladder reads the rung the
+        # learner was sitting on; the two touch disjoint state.
+        attempt = finalize_attempt(user_state, UNRATED)
     save_user_state(user_id)
-    return OverrideAttemptResponse(success=True)
+
+    # The rung this concept sits on now that the outcome is in. `ladder_fields`
+    # goes through kc_graph's READ path, so asking does not stamp an empty
+    # ladder row into the learner's state, and it returns {} for a question no
+    # KC claims — hence the .get()s rather than an is-tagged branch.
+    ladder = ladder_fields(user_state, question.id)
+    return LocalEvalResponse(
+        success=True,
+        finalized=attempt is not None,
+        target_difficulty_before=td_before,
+        target_difficulty_after=attempt.target_difficulty_after if attempt else None,
+        p_before=p_before,
+        p_after=attempt.p_after if attempt else None,
+        ladder_stage=ladder.get("ladder_stage"),
+        ladder_estimate=ladder.get("ladder_estimate"),
+    )
 
 
 @router.post("/override", response_model=OverrideAttemptResponse)

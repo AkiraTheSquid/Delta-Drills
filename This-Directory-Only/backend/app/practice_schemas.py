@@ -75,6 +75,38 @@ class SubmitRequest(BaseModel):
 class LocalEvalSubmitRequest(BaseModel):
     question_id: int
     correct: bool
+    # Whether this submit is the WHOLE submit. The Colab edition has no
+    # felt-difficulty step — running the notebook's checker is the entire
+    # interaction — so nothing comes back to close the attempt out and it must
+    # be finalized here or never. The einops fallback posts to the same
+    # endpoint mid-flow, though, and its felt-difficulty step still follows;
+    # finalizing there would consume the pending attempt and make the /feedback
+    # that follows 400. Defaults true because the Colab route is the one with
+    # no second chance; the in-flow caller opts out explicitly.
+    finalize: bool = True
+
+
+class LocalEvalResponse(BaseModel):
+    """What /submit-local-eval did, not just that it returned 200.
+
+    The bug this shape exists to make visible: the endpoint used to answer
+    `{"success": true}` while silently parking an attempt nothing ever
+    finalized. `finalized` says whether an attempt was actually closed out, and
+    the before/after pairs let a caller (or a human reading the network tab)
+    see the adaptive state move. They are null whenever nothing was finalized —
+    a half-filled pair would read as "it moved to nowhere".
+    """
+    success: bool
+    finalized: bool = False
+    target_difficulty_before: float | None = None
+    target_difficulty_after: float | None = None
+    p_before: float | None = None
+    p_after: float | None = None
+    # The rung this question's concept sits on AFTER the outcome is recorded,
+    # in backend vocabulary (worked|faded|partial|solo), plus the interval that
+    # stage was chosen from. Null for a question the KC map does not claim.
+    ladder_stage: str | None = None
+    ladder_estimate: dict | None = None
 
 
 class SubmitResponse(BaseModel):
