@@ -523,39 +523,57 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
             # was always meant to be there. It costs no content and no authoring
             # — the example is already written for every segment.
             #
-            # A segment authors exactly one faded item today (118 segments, 118
-            # items — see scripts/audit_ladder_pairing.py). If one ever authors
-            # several they share the example, so it is anchored to the FIRST and
-            # the rest fall back to being visible only with focus off. Anchoring
-            # to one is not a limitation of the design so much as a fact about
-            # the anchor: a cell has one id, and one id names one group.
-            _faded = [i["question_id"] for i in (seg.get("faded_items") or [])]
-            _worked_base = f"dd-q{_faded[0]}-worked" if _faded else f"{base}-worked"
-            _worked = list(
-                split_markdown(seg.get("worked_example_markdown"), mint, _worked_base)
-            )
-            cells += _worked
-            # `worked_example_code` is the SAME fence `split_markdown` just
-            # turned into a cell — `compile_lessons.py` extracts "each segment's
-            # sole Python worked fence" into that field, so emitting both means
-            # emitting the example's code twice. It was byte-for-byte duplicated
-            # in 122 of the segments and nobody had noticed, because the pair
-            # was buried in a wall of unfocused cells. Now that the example is
-            # in focus with its problem, the learner would meet the same code
-            # block twice, back to back, and reasonably wonder which one is the
-            # one that matters. Emitted only when the prose carried no fence of
-            # its own, which is what the field is actually for.
-            if seg.get("worked_example_code") and not any(
-                c["cell_type"] == "code" for c in _worked
-            ):
-                cells.append(code_cell(seg["worked_example_code"], mint(f"{_worked_base}-code")))
+            # ONE COPY PER PROBLEM, not one per segment. A cell has a single id
+            # and a single id names a single group, so a segment with two faded
+            # items cannot have both of them share one example — three segments
+            # do author two (np-3 `numpy.rescaling`, es-1 `einsum.matvec-matmul`,
+            # eo-1 `einops.merge-axes`), and anchoring to the first left the
+            # second as the exact bare problem this change exists to abolish.
+            # The build guard in `validate` caught it, which is the whole reason
+            # it checks anchors rather than lesson records.
+            #
+            # Duplicating the cells is right rather than merely expedient: the
+            # two problems are never in focus together, so no learner ever meets
+            # the repeat. Reading the notebook unfocused gives
+            # example → problem → example → problem, which is the correct shape
+            # for a pair of completion items anyway.
+            def _worked_cells(base_id):
+                out = list(
+                    split_markdown(seg.get("worked_example_markdown"), mint, base_id)
+                )
+                # `worked_example_code` is the SAME fence `split_markdown` just
+                # turned into a cell — `compile_lessons.py` extracts "each
+                # segment's sole Python worked fence" into that field, so
+                # emitting both means emitting the example's code twice. It was
+                # byte-for-byte duplicated in 122 segments and nobody had
+                # noticed, because the pair was buried in a wall of unfocused
+                # cells. Now that the example is in focus with its problem, the
+                # learner would meet the same code block twice, back to back,
+                # and reasonably wonder which one is the one that matters.
+                # Emitted only when the prose carried no fence of its own, which
+                # is what the field is actually for.
+                if seg.get("worked_example_code") and not any(
+                    c["cell_type"] == "code" for c in out
+                ):
+                    out.append(code_cell(seg["worked_example_code"], mint(f"{base_id}-code")))
+                return out
+
+            _faded = seg.get("faded_items") or []
+            if not _faded:
+                # No problem to anchor to. The example is still the segment's
+                # teaching content and belongs in the notebook; it simply has no
+                # focus group to join.
+                cells += _worked_cells(f"{base}-worked")
 
             # Faded rung: the authored starter carries the `_____` blanks, which
             # is a hand-cut scaffold for this concept and beats the mechanical
             # backward fade the server can generate for anything else.
-            for item in seg.get("faded_items") or []:
+            for item in _faded:
+                qid = item["question_id"]
+                worked = _worked_cells(f"dd-q{qid}-worked")
+                cells += worked
                 cells += problem_cells(
-                    item["question_id"],
+                    qid,
                     "faded",
                     bank,
                     mint,
@@ -563,9 +581,9 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                     prompt=item.get("prompt"),
                     starter=item.get("starter_code"),
                     example=item.get("example"),
-                    # The segment's own worked example is directly above and
-                    # now shares this problem's anchor, so it IS on screen.
-                    after_example=bool(_worked or seg.get("worked_example_code")),
+                    # The segment's own worked example is directly above and now
+                    # shares this problem's anchor, so it IS on screen.
+                    after_example=bool(worked),
                 )
 
         for item in kp.get("guided_items") or []:
