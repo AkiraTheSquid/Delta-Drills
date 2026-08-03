@@ -37,6 +37,12 @@ logger = logging.getLogger(__name__)
 _DIFF_FLOOR = 20.0
 _DIFF_SPAN = 80.0
 
+# Ladder stages whose whole promise is that support is on screen. Running out of
+# unserved drills at one of these is not permission to serve the next rung —
+# see `prefer_next_kc`. `partial` is absent because it already draws from every
+# rung, and `solo` because it is the rung with nothing left to fall through to.
+_SUPPORTED_STAGES = ("faded",)
+
 
 def _get_weight(user_state: UserPracticeState, st_name: str, uniform_weight: float) -> float:
     """Return the effective weight for a subtopic, using custom weights if set."""
@@ -124,6 +130,23 @@ def narrow_to_next_kc(
     wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
     if wanted:
         return [q for q in unserved if q.id in set(wanted)]
+
+    # The supported rungs are SMALL — `numpy.ndarray-model` authors three faded
+    # drills and one guided against five independent ones — so "spent" arrives
+    # after a handful of questions and long before the ladder has the twenty
+    # attempts it wants to promote on. Falling through to the next rung there is
+    # the ladder promoting on exhaustion instead of on evidence: the strip still
+    # reads `Worked` (that is what `kc_stage` says, and it is right), the learner
+    # is told an example is coming, and what arrives is an unaided problem with
+    # nothing above it. Repeating a supported drill is the honest answer — the
+    # rung has not been earned yet, and a second pass at a faded drill is
+    # ordinary spaced practice. Only a KC with NO supported drill at all may fall
+    # through, which is what the rung fallback below still handles.
+    if stage in _SUPPORTED_STAGES:
+        repeat = kc_graph.questions_at_stage([q.id for q in narrowed], stage)
+        if repeat:
+            return [q for q in narrowed if q.id in set(repeat)]
+
     rung = [q for q in unserved if q.id in set(kc_graph.lowest_rung([q.id for q in unserved]))]
     if stage == "worked" and rung:
         # The `worked` rung is the concept's first contact, and the question

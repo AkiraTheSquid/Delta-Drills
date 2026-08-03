@@ -587,13 +587,27 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                 )
 
         for item in kp.get("guided_items") or []:
+            # Guided sits on the supported rungs alongside faded (see
+            # kc_graph._STAGE_TO_RANKS), so the learner meets it while the strip
+            # still promises an example. Anchoring it `dd-q<qid>-worked` is what
+            # puts it in the problem's focus group; without that the example is
+            # generated and then immediately hidden, which is the bug this whole
+            # anchoring scheme exists to prevent.
+            gid = item["question_id"]
+            guided_worked = []
+            if item.get("worked_example_code"):
+                guided_worked = [
+                    code_cell(item["worked_example_code"], mint(f"dd-q{gid}-worked-code"))
+                ]
+                cells += guided_worked
             cells += problem_cells(
-                item["question_id"],
+                gid,
                 "guided",
                 bank,
                 mint,
                 tests,
                 hints=item.get("hints_markdown"),
+                after_example=bool(guided_worked),
             )
 
         for qid in kp.get("independent_items") or []:

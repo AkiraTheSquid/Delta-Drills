@@ -5,6 +5,7 @@ Usage: python3 scripts/compile_lessons.py
 Run scripts/validate_lessons.py first (or with --gate) — compilation does not re-check code.
 """
 import json
+import re
 import sys
 from lesson_lib import LESSONS_DIR, all_kp_paths, load_registry, parse_kp, split_items, code_fences
 
@@ -46,7 +47,22 @@ def compile_lessons():
         faded_items = [item for seg in segments for item in seg["faded_items"]]
         guided_items = []
         for qid, content in split_items(kp["sections"].get("Guided practice", "")).items():
-            guided_items.append({"question_id": qid, "hints_markdown": content})
+            # A guided drill is served at the same ladder stage as a faded one
+            # (kc_graph._STAGE_TO_RANKS puts both on the supported rungs), so it
+            # needs the same thing above it: a solved example of the move, not
+            # only hints hidden behind a <details>. An optional ```python worked
+            # fence carries it. It is split OUT of the hints so the example is
+            # visible without opening anything — the whole point is that the
+            # learner reads it first.
+            worked = code_fences(content, "python worked")
+            hints = re.sub(
+                r"```python worked\n.*?```\n?", "", content, flags=re.S
+            ).strip()
+            guided_items.append({
+                "question_id": qid,
+                "hints_markdown": hints,
+                "worked_example_code": worked[0] if worked else "",
+            })
         lessons[kc["lesson"]]["kps"].append({
             "kc": kp["kc"],
             "title": kp["title"] or kc["title"],
