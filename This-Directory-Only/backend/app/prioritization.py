@@ -37,12 +37,6 @@ logger = logging.getLogger(__name__)
 _DIFF_FLOOR = 20.0
 _DIFF_SPAN = 80.0
 
-# Ladder stages whose whole promise is that support is on screen. Running out of
-# unserved drills at one of these is not permission to serve the next rung —
-# see `prefer_next_kc`. `partial` is absent because it already draws from every
-# rung, and `solo` because it is the rung with nothing left to fall through to.
-_SUPPORTED_STAGES = ("faded",)
-
 
 def _get_weight(user_state: UserPracticeState, st_name: str, uniform_weight: float) -> float:
     """Return the effective weight for a subtopic, using custom weights if set."""
@@ -142,7 +136,7 @@ def narrow_to_next_kc(
     # rung has not been earned yet, and a second pass at a faded drill is
     # ordinary spaced practice. Only a KC with NO supported drill at all may fall
     # through, which is what the rung fallback below still handles.
-    if stage in _SUPPORTED_STAGES:
+    if kc_graph.stage_requires_support(stage):
         repeat = kc_graph.questions_at_stage([q.id for q in narrowed], stage)
         if repeat:
             return [q for q in narrowed if q.id in set(repeat)]

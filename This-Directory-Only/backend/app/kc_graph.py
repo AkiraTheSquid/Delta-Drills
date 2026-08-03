@@ -647,6 +647,29 @@ def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "indepen
 _STAGE_TO_RANKS = {"faded": (0, 1), "partial": (0, 1, 2, 3), "solo": (2, 3)}
 
 
+# The rungs that put support in front of the learner: an authored faded drill
+# carries the `_____` blanks, a guided one carries hints. Independent and
+# unranked carry neither.
+_SUPPORTED_RANKS = frozenset({0, 1})
+
+
+def stage_requires_support(stage: str) -> bool:
+    """Does this stage promise the learner something to work from?
+
+    Derived from `_STAGE_TO_RANKS` rather than listed separately, so a stage
+    added or re-pointed there cannot leave a second hard-coded list behind:
+    a stage requires support exactly when every rung it can select carries
+    some. `partial` draws from every rung and `solo` from the unsupported
+    ones, so both are False; only `faded` is True today.
+
+    `narrow_to_next_kc` uses this to decide whether running out of unserved
+    drills licenses serving the next rung up. At a supported stage it does
+    not — that would promote on exhaustion instead of on evidence.
+    """
+    ranks = _STAGE_TO_RANKS.get(stage)
+    return bool(ranks) and set(ranks) <= _SUPPORTED_RANKS
+
+
 def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
     ranks = _STAGE_TO_RANKS.get(stage)
     if not ranks:
