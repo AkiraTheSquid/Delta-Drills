@@ -263,28 +263,53 @@ is checking half the question.
 
 ## Worked example
 
+The problem below asks you to compare two tensors on shape and on dtype and
+report a `True`/`False` for each. The point of this example is to show that
+those two questions are genuinely independent — two tensors can agree on one
+and disagree on the other — and that the answer depends entirely on what you
+feed in. So rather than one block of code, here are three pairs, each printed.
+
+Start with two tensors built from the same numbers in the same layout:
+
 ```python
 import torch as t
 
-ints = t.tensor([[1, 2], [3, 4]])
-mixed = t.tensor([[1, 2.5], [3, 4]])
+a = t.tensor([[1, 2], [3, 4]])
+b = t.tensor([[5, 6], [7, 8]])
 
-# All-integer input -> one integer type for all four entries.
-assert ints.dtype == t.int64
-
-# ONE float in the input decides the type of the whole block.
-assert mixed.dtype == t.float32
-
-# Same shape, different dtype: the two questions are independent.
-assert ints.shape == mixed.shape
-assert ints.dtype != mixed.dtype
-
-# dtype= overrides the inference rather than relying on the input's spelling.
-assert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32
-print("all ints ->", ints.dtype)
-print("one float ->", mixed.dtype, "  (the whole block, not just that entry)")
-print(mixed)
+print("shapes:", a.shape, b.shape, "-> match?", a.shape == b.shape)
+print("dtypes:", a.dtype, b.dtype, "-> match?", a.dtype == b.dtype)
+assert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)
 ```
+
+That pair answers `(True, True)`. Now change ONE number to a float. Nothing
+about the layout changed, so the shapes still agree — but a tensor holds one
+type for every element, so that single `2.5` re-types the whole block:
+
+```python
+c = t.tensor([[1, 2.5], [3, 4]])
+
+print("c is", c.dtype, "because of one float, not just that one entry")
+print("shape match?", a.shape == c.shape, " dtype match?", a.dtype == c.dtype)
+assert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)
+```
+
+`(True, False)` — same answer to the shape question, opposite answer to the
+dtype question. Now the other way round: keep the type and change the layout.
+
+```python
+d = t.tensor([[1, 2, 3], [4, 5, 6]])
+
+print("a is", tuple(a.shape), "and d is", tuple(d.shape))
+print("shape match?", a.shape == d.shape, " dtype match?", a.dtype == d.dtype)
+assert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)
+```
+
+Three inputs, three different answers: `(True, True)`, `(True, False)`,
+`(False, True)`. That is why the problem gives you two arguments and asks for
+two booleans — there is no single right answer to memorise, only two checks to
+run. `.shape` is an attribute and `.dtype` is an attribute; neither takes
+parentheses.
 
 ## Faded practice
 
@@ -348,6 +373,46 @@ Your turn: the same three questions, but for the TRANSPOSE and for
 3. `view = a.T`, `packed = view.contiguous()`, then return
    `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),
    packed.tolist())`.
+
+## Applied practice
+
+### q481
+The problem below hands you a FLAT list and asks for the tensor plus its number
+of axes. This example is here so you have seen the move once; the problem is the
+same move on different data, and you write the whole function yourself.
+
+```python worked
+import torch as t
+
+# One level of nesting -> one axis, however many numbers are in it.
+flat = t.tensor([3, 1, 4, 1, 5])
+print(flat, "-> ndim", flat.ndim)
+assert flat.ndim == 1
+
+# Adding a nesting level is what adds an axis. The COUNT of numbers does not.
+nested = t.tensor([[3, 1], [4, 1]])
+print(nested, "-> ndim", nested.ndim)
+assert nested.ndim == 2
+```
+
+### q483
+The problem below asks for the dtype's NAME as a string and the element count.
+Two inputs here, because the dtype depends on what is in the list — that is the
+whole point of the question.
+
+```python worked
+import torch as t
+
+# All integers -> torch.int64. str() is what turns the dtype into its name.
+ints = t.tensor([2, 4, 6, 8])
+print(str(ints.dtype), ints.numel())
+assert (str(ints.dtype), ints.numel()) == ("torch.int64", 4)
+
+# One float re-types the whole block, and numel is unchanged by that.
+mixed = t.tensor([2, 4.5, 6, 8])
+print(str(mixed.dtype), mixed.numel())
+assert (str(mixed.dtype), mixed.numel()) == ("torch.float32", 4)
+```
 
 ## Misconceptions
 

@@ -160,8 +160,14 @@ def check_kp(path, registry, bank, errors):
             errors.append(f"{name}: {seg_label} has an empty '## Concept'")
         if not seg["worked"]:
             errors.append(f"{name}: {seg_label} has no worked example")
-        elif len(code_fences(seg["worked"], "python")) != 1:
-            errors.append(f"{name}: {seg_label} must have exactly one Python worked example")
+        elif not code_fences(seg["worked"], "python"):
+            # At least one, no longer exactly one. A worked example reads better
+            # as prose explaining what is about to be shown, then a short block,
+            # then prose about what it printed, then the next block — one wall of
+            # uncommented code is the thing learners skip. `worked_example_code`
+            # still takes the first fence, which only prefills the in-app scratch
+            # editor; the notebook and the lesson player render every block.
+            errors.append(f"{name}: {seg_label} must have a Python worked example")
         items = split_items(seg["faded"])
         if not 1 <= len(items) <= 2:
             errors.append(f"{name}: {seg_label} must have one or two faded exercises")

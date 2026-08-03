@@ -610,7 +610,29 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                 after_example=bool(guided_worked),
             )
 
+        # Applied drills are independent-rung questions that the KP gave an
+        # example to, which is what makes them the ladder's third rung rather
+        # than its fourth. Emitted before the exampleless ones so an unfocused
+        # read of the notebook still runs in ladder order.
+        _applied = {i["question_id"]: i for i in (kp.get("applied_items") or [])}
+        for qid, item in _applied.items():
+            applied_worked = []
+            if item.get("worked_example_code"):
+                applied_worked = [
+                    code_cell(item["worked_example_code"], mint(f"dd-q{qid}-worked-code"))
+                ]
+                cells += applied_worked
+            if item.get("prompt"):
+                cells += list(
+                    split_markdown(item["prompt"], mint, f"dd-q{qid}-worked-intro")
+                )
+            cells += problem_cells(
+                qid, "applied", bank, mint, tests, after_example=bool(applied_worked)
+            )
+
         for qid in kp.get("independent_items") or []:
+            if qid in _applied:
+                continue
             cells += problem_cells(qid, "independent", bank, mint, tests)
 
         if kp.get("misconceptions_markdown"):

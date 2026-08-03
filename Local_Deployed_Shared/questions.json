@@ -19220,7 +19220,7 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Write a function solve(rows) that takes a nested Python list of equal-length inner lists of numbers and returns a tuple (a, shape, is_float). `a` is the 2-D PyTorch tensor built from rows. `shape` is a's shape as a plain Python tuple of ints, not a torch.Size. `is_float` is True when a's dtype is torch.float32 and False otherwise — remember that a tensor holds ONE type for every element, so a single float among the numbers changes the dtype of the whole tensor.",
+    "question_text": "Write a function `solve(rows)` that takes a nested Python list of equal-length inner lists of numbers and returns a tuple `(a, shape, is_float)`, where `a` is the 2-D tensor built from rows.\n\nTwo of the three are easy to get subtly wrong, so check them:\n\n- `shape` must be a plain Python tuple of ints. Returning it straight off the tensor gives you a `torch.Size`, which prints similarly and is NOT what this asks for.\n- `is_float` asks whether the tensor's dtype is the 32-bit float type. Remember a tensor holds ONE type for every element.\n\nFor `[[1, 2, 3], [4, 5, 6]]` a WRONG return looks like this — note the second entry:\n\n```text\n(tensor([[1, 2, 3],\n        [4, 5, 6]]), torch.Size([2, 3]), False)\n```\n\nand the correct one has `(2, 3)` there instead.",
     "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    a = t.tensor(rows)\n    return (a, tuple(a.shape), a.dtype == t.float32)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
     "difficulty_score": 12,
     "difficulty_label": "easy",

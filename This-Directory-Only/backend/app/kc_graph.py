@@ -60,6 +60,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
+from app import lessons
+
 from app import bkt_mastery
 
 logger = logging.getLogger(__name__)
@@ -644,7 +646,15 @@ def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "indepen
 # — it is a page the frontend renders — so it has no entry and never selects a
 # question. `guided` counts as faded-side support: it still shows the learner
 # how, which is the property that matters when support is what they need.
-_STAGE_TO_RANKS = {"faded": (0, 1), "partial": (0, 1, 2, 3), "solo": (2, 3)}
+_STAGE_TO_RANKS = {"faded": (0, 1), "partial": (2, 3), "solo": (2, 3)}
+
+# `partial` and `solo` draw from the SAME rung on purpose. What separates them
+# is not how much of the answer is pre-written — by that point none of it is —
+# but whether the learner has just read the move worked through. Third rung:
+# see an example, then write the whole function. Fourth rung: write it with
+# nothing above it. `lessons.has_worked_example` is the split, and it is
+# authored (a KP's `## Applied practice` section), not inferred.
+_STAGE_NEEDS_EXAMPLE = {"partial": True, "solo": False}
 
 
 # The rungs that put support in front of the learner: an authored faded drill
@@ -656,25 +666,35 @@ _SUPPORTED_RANKS = frozenset({0, 1})
 def stage_requires_support(stage: str) -> bool:
     """Does this stage promise the learner something to work from?
 
-    Derived from `_STAGE_TO_RANKS` rather than listed separately, so a stage
-    added or re-pointed there cannot leave a second hard-coded list behind:
-    a stage requires support exactly when every rung it can select carries
-    some. `partial` draws from every rung and `solo` from the unsupported
-    ones, so both are False; only `faded` is True today.
+    Support arrives two ways, and both count. A `faded` drill carries it in the
+    question — the `_____` blanks, or hints. A `partial` drill carries it in the
+    notebook — the whole function is the learner's to write, but an example of
+    the move is directly above it. `solo` is the one rung defined by having
+    neither, so it is the only stage that is False.
 
     `narrow_to_next_kc` uses this to decide whether running out of unserved
     drills licenses serving the next rung up. At a supported stage it does
     not — that would promote on exhaustion instead of on evidence.
     """
     ranks = _STAGE_TO_RANKS.get(stage)
-    return bool(ranks) and set(ranks) <= _SUPPORTED_RANKS
+    if not ranks:
+        return False
+    return set(ranks) <= _SUPPORTED_RANKS or bool(_STAGE_NEEDS_EXAMPLE.get(stage))
 
 
 def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
     ranks = _STAGE_TO_RANKS.get(stage)
     if not ranks:
         return []
-    return [q for q in qids if ladder_rank(q) in ranks]
+    out = [q for q in qids if ladder_rank(q) in ranks]
+    wants_example = _STAGE_NEEDS_EXAMPLE.get(stage)
+    if wants_example is None:
+        return out
+    # A KC with no `## Applied practice` written for it has nothing on the third
+    # rung. Returning [] there is correct rather than a stall: the caller falls
+    # back to the least-scaffolded rung available, which for that KC is the
+    # exampleless drill it would have served anyway.
+    return [q for q in out if lessons.has_worked_example(q) is wants_example]
 
 
 def lowest_rung(qids: Iterable[int]) -> List[int]:

@@ -29,7 +29,7 @@
       "torch.tensor#dtype"
      ],
      "concept_markdown": "PyTorch's core object is the **tensor** (n-dimensional array). Everything else in\nthis course \u2014 indexing, broadcasting, einsum, einops \u2014 is a way of manipulating\nthis one object, so it pays to know exactly what it is.\n\nA Python list is a bag of pointers: each element can be a different type, live\nanywhere in memory, and even be another list of a different length. A tensor is\nthe opposite: **one block of memory holding elements that are all the same\ntype**, plus a small amount of metadata describing how to interpret that block.\n\nBy convention PyTorch is imported once per file as `import torch as t`. That\nshort alias is what the ARENA exercises use, so every `t.` below is the same\nlibrary you would import as `torch`.\n\n```python\nimport torch as t\n\n# A list can hold three different types at once.\nprint([type(item).__name__ for item in [1, \"two\", [3]]])\n\n# A tensor holds one, for every element, and says which one.\na = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(a)\nprint(\"dtype of the whole block:\", a.dtype)\n```\n\nA freshly built tensor lays those elements out contiguously. Operations that\nonly re-describe the block \u2014 transposing, slicing with a step \u2014 hand back a\ntensor that *shares the same memory* in a different reading order. That is\ncheap, and it is why `.contiguous()` exists: it is how you ask for the copy.\n\n```python\nat = a.T  # `a` is still defined \u2014 this cell continues the one above.\n\n# Same numbers, same memory, read down the columns instead of along the rows.\nprint(\"shares storage with a:\", at.data_ptr() == a.data_ptr())\nprint(\"still in reading order:\", at.is_contiguous())\n\npacked = at.contiguous()\nprint(\"the copy owns its memory:\", packed.data_ptr() != a.data_ptr())\nassert t.equal(packed, at)\n```\n\nWhy this design? Because when every element is the same type and sits at a\npredictable memory address, PyTorch can hand whole-tensor operations to fast\ncompiled kernels instead of interpreting Python code element by element. That is\nthe entire performance story \u2014 and the reason the idiomatic style you will learn\nhere avoids writing Python `for` loops over elements.\n\nThe general procedure for turning existing Python data into a tensor is\n`t.tensor(data)`: it walks the (possibly nested) sequence, finds a common\nelement type, and copies the values into one block. Nesting of any depth goes\nthrough the same procedure.\n\n```python\ncube = t.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])\nprint(\"shape:\", cube.shape)\n\n# A cell ending in a bare expression prints its value, the way a notebook does.\ncube * 10\n```\n\nTwo ways of reading a tensor back out come up constantly from here on, so name\nthem now. **`t.equal(x, y)`** answers \"same shape AND same values?\" as one\nbool \u2014 the whole-tensor comparison, which is what a check wants. **`x.item()`**\npulls a single element out as a plain Python number, and it refuses unless the\ntensor holds exactly one; that refusal is the point, because a silent \"first\nelement\" would be a guess.\n\n```python\nsame = t.tensor([[1, 2], [3, 4]])\nalso = t.tensor([[1, 2], [3, 4]])\nprint(\"t.equal ->\", t.equal(same, also), \"  one answer for the whole tensor\")\n\none = t.tensor([7])\nprint(\"one.item() ->\", one.item(), \"as a\", type(one.item()).__name__)\ntry:\n    same.item()\nexcept RuntimeError as exc:\n    print(\"four elements ->\", type(exc).__name__, \"- item() wants exactly one\")\n```\n\nThe **shape** is a tuple giving the length along each dimension (axis). A 3\u00d74\nmatrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4\n(columns). Axis 0 is always the outermost nesting level, so a flat list becomes\n1-D, a list of equal-length lists becomes 2-D, and a list of those becomes 3-D.\n\n```python\nimport torch as t\n\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(\"shape:\", grid.shape)\nprint(\"axis 0 (rows)   :\", grid.shape[0])\nprint(\"axis 1 (columns):\", grid.shape[1])\n```\n\nTwo smaller readings come off the same metadata:\n\n- **`ndim`** \u2014 how many axes there are. This is the nesting depth, and it is an\n  attribute, not a call.\n- **`numel()`** \u2014 the total element count, which is the *product* of the shape.\n  This is a method, so it needs the parentheses. For a 2\u00d73 tensor `ndim` is 2\n  and `numel()` is 6 \u2014 six numbers arranged as two rows, not two of anything.\n\nGetting those two confused is the classic first-week error, and it is worth\nfixing now: `ndim` counts axes, `numel()` counts numbers.\n\n```python\n# Four numbers, three nestings, three different answers for ndim \u2014 and the same\n# answer for numel every time.\nfor data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):\n    x = t.tensor(data)\n    print(tuple(x.shape), \"ndim\", x.ndim, \"numel\", x.numel())\n```\n\nThe **dtype** is the single element type shared by every entry \u2014 `torch.int64`,\n`torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,\nbecause there is exactly one block of memory and every slot in it is the same\nsize.\n\nThat has a consequence people meet by accident: when you build a tensor from\nmixed Python numbers, PyTorch cannot keep some entries as ints and some as\nfloats. It picks ONE type that can hold everything, so a single float anywhere\nin the input turns the whole tensor into `torch.float32`. All-integer input\ngives you `torch.int64` instead.\n\n```python\nimport torch as t\n\nprint(t.tensor([1, 2, 3]).dtype)\nprint(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block\n\n# Say what you want up front rather than relying on how the input is spelled.\nprint(t.tensor([1, 2, 3], dtype=t.float32).dtype)\n```\n\nOrdinary division still works on an integer tensor \u2014 `a / 2` quietly hands back\na *new* float tensor \u2014 but anything that has to write a float back into the\ninteger block does not. `a /= 2` raises rather than silently rounding, and the\nerror is the useful kind: it happens where the type is wrong, not three steps\nlater where the numbers are.\n\n```python\nints = t.tensor([2, 4, 6])\nprint(\"ints / 2   ->\", (ints / 2).dtype, \"(a new tensor)\")\n\ntry:\n    ints /= 2\nexcept RuntimeError as exc:\n    print(\"ints /= 2  ->\", type(exc).__name__)\n```\n\nTwo tensors can hold the same numbers in the same layout and still disagree on\ndtype. Shape and dtype are independent, and code that checks only one of them\nis checking half the question.",
-     "worked_example_markdown": "Turn a nested Python list into a 2-D tensor:\n\n```python\nimport torch as t\n\n# A nested Python list: three inner lists of two integers each.\nrows = [[7, 8], [9, 10], [11, 12]]\n\n# t.tensor walks the nesting and copies the values into one block.\na = t.tensor(rows)\n\n# The values survive the trip unchanged \u2014 .tolist() reads them back out.\nassert a.tolist() == [[7, 8], [9, 10], [11, 12]]\nprint(a)\nprint(\"back to a list:\", a.tolist())\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.\n\n```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7, 2, 9])\ngrid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])\n\n# One nesting level -> one axis. Five numbers in it.\nassert flat.shape == (5,)\nassert flat.ndim == 1\nassert flat.numel() == 5\n\n# Two nesting levels -> two axes, (rows, columns). numel is 3 * 4, not 3.\nassert grid.shape == (3, 4)\nassert grid.ndim == 2\nassert grid.numel() == 12\n\n# shape reports as torch.Size, which IS a tuple subclass \u2014 so it compares\n# equal to a plain tuple, and tuple() converts it when you need the real thing.\nassert tuple(grid.shape) == (3, 4)\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\n```\n\n```python\nimport torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n```",
+     "worked_example_markdown": "Turn a nested Python list into a 2-D tensor:\n\n```python\nimport torch as t\n\n# A nested Python list: three inner lists of two integers each.\nrows = [[7, 8], [9, 10], [11, 12]]\n\n# t.tensor walks the nesting and copies the values into one block.\na = t.tensor(rows)\n\n# The values survive the trip unchanged \u2014 .tolist() reads them back out.\nassert a.tolist() == [[7, 8], [9, 10], [11, 12]]\nprint(a)\nprint(\"back to a list:\", a.tolist())\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.\n\n```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7, 2, 9])\ngrid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])\n\n# One nesting level -> one axis. Five numbers in it.\nassert flat.shape == (5,)\nassert flat.ndim == 1\nassert flat.numel() == 5\n\n# Two nesting levels -> two axes, (rows, columns). numel is 3 * 4, not 3.\nassert grid.shape == (3, 4)\nassert grid.ndim == 2\nassert grid.numel() == 12\n\n# shape reports as torch.Size, which IS a tuple subclass \u2014 so it compares\n# equal to a plain tuple, and tuple() converts it when you need the real thing.\nassert tuple(grid.shape) == (3, 4)\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\n```\n\nThe problem below asks you to compare two tensors on shape and on dtype and\nreport a `True`/`False` for each. The point of this example is to show that\nthose two questions are genuinely independent \u2014 two tensors can agree on one\nand disagree on the other \u2014 and that the answer depends entirely on what you\nfeed in. So rather than one block of code, here are three pairs, each printed.\n\nStart with two tensors built from the same numbers in the same layout:\n\n```python\nimport torch as t\n\na = t.tensor([[1, 2], [3, 4]])\nb = t.tensor([[5, 6], [7, 8]])\n\nprint(\"shapes:\", a.shape, b.shape, \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n```\n\nThat pair answers `(True, True)`. Now change ONE number to a float. Nothing\nabout the layout changed, so the shapes still agree \u2014 but a tensor holds one\ntype for every element, so that single `2.5` re-types the whole block:\n\n```python\nc = t.tensor([[1, 2.5], [3, 4]])\n\nprint(\"c is\", c.dtype, \"because of one float, not just that one entry\")\nprint(\"shape match?\", a.shape == c.shape, \" dtype match?\", a.dtype == c.dtype)\nassert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)\n```\n\n`(True, False)` \u2014 same answer to the shape question, opposite answer to the\ndtype question. Now the other way round: keep the type and change the layout.\n\n```python\nd = t.tensor([[1, 2, 3], [4, 5, 6]])\n\nprint(\"a is\", tuple(a.shape), \"and d is\", tuple(d.shape))\nprint(\"shape match?\", a.shape == d.shape, \" dtype match?\", a.dtype == d.dtype)\nassert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)\n```\n\nThree inputs, three different answers: `(True, True)`, `(True, False)`,\n`(False, True)`. That is why the problem gives you two arguments and asks for\ntwo booleans \u2014 there is no single right answer to memorise, only two checks to\nrun. `.shape` is an attribute and `.dtype` is an attribute; neither takes\nparentheses.",
      "segments": [
       {
        "concept_id": "",
@@ -68,8 +68,8 @@
        "title": "dtype is a property of the whole block",
        "concept_markdown": "The **dtype** is the single element type shared by every entry \u2014 `torch.int64`,\n`torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,\nbecause there is exactly one block of memory and every slot in it is the same\nsize.\n\nThat has a consequence people meet by accident: when you build a tensor from\nmixed Python numbers, PyTorch cannot keep some entries as ints and some as\nfloats. It picks ONE type that can hold everything, so a single float anywhere\nin the input turns the whole tensor into `torch.float32`. All-integer input\ngives you `torch.int64` instead.\n\n```python\nimport torch as t\n\nprint(t.tensor([1, 2, 3]).dtype)\nprint(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block\n\n# Say what you want up front rather than relying on how the input is spelled.\nprint(t.tensor([1, 2, 3], dtype=t.float32).dtype)\n```\n\nOrdinary division still works on an integer tensor \u2014 `a / 2` quietly hands back\na *new* float tensor \u2014 but anything that has to write a float back into the\ninteger block does not. `a /= 2` raises rather than silently rounding, and the\nerror is the useful kind: it happens where the type is wrong, not three steps\nlater where the numbers are.\n\n```python\nints = t.tensor([2, 4, 6])\nprint(\"ints / 2   ->\", (ints / 2).dtype, \"(a new tensor)\")\n\ntry:\n    ints /= 2\nexcept RuntimeError as exc:\n    print(\"ints /= 2  ->\", type(exc).__name__)\n```\n\nTwo tensors can hold the same numbers in the same layout and still disagree on\ndtype. Shape and dtype are independent, and code that checks only one of them\nis checking half the question.",
        "watch_out_markdown": "",
-       "worked_example_markdown": "```python\nimport torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n```",
-       "worked_example_code": "import torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n",
+       "worked_example_markdown": "The problem below asks you to compare two tensors on shape and on dtype and\nreport a `True`/`False` for each. The point of this example is to show that\nthose two questions are genuinely independent \u2014 two tensors can agree on one\nand disagree on the other \u2014 and that the answer depends entirely on what you\nfeed in. So rather than one block of code, here are three pairs, each printed.\n\nStart with two tensors built from the same numbers in the same layout:\n\n```python\nimport torch as t\n\na = t.tensor([[1, 2], [3, 4]])\nb = t.tensor([[5, 6], [7, 8]])\n\nprint(\"shapes:\", a.shape, b.shape, \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n```\n\nThat pair answers `(True, True)`. Now change ONE number to a float. Nothing\nabout the layout changed, so the shapes still agree \u2014 but a tensor holds one\ntype for every element, so that single `2.5` re-types the whole block:\n\n```python\nc = t.tensor([[1, 2.5], [3, 4]])\n\nprint(\"c is\", c.dtype, \"because of one float, not just that one entry\")\nprint(\"shape match?\", a.shape == c.shape, \" dtype match?\", a.dtype == c.dtype)\nassert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)\n```\n\n`(True, False)` \u2014 same answer to the shape question, opposite answer to the\ndtype question. Now the other way round: keep the type and change the layout.\n\n```python\nd = t.tensor([[1, 2, 3], [4, 5, 6]])\n\nprint(\"a is\", tuple(a.shape), \"and d is\", tuple(d.shape))\nprint(\"shape match?\", a.shape == d.shape, \" dtype match?\", a.dtype == d.dtype)\nassert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)\n```\n\nThree inputs, three different answers: `(True, True)`, `(True, False)`,\n`(False, True)`. That is why the problem gives you two arguments and asks for\ntwo booleans \u2014 there is no single right answer to memorise, only two checks to\nrun. `.shape` is an attribute and `.dtype` is an attribute; neither takes\nparentheses.",
+       "worked_example_code": "import torch as t\n\na = t.tensor([[1, 2], [3, 4]])\nb = t.tensor([[5, 6], [7, 8]])\n\nprint(\"shapes:\", a.shape, b.shape, \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n",
        "faded_items": [
         {
          "question_id": 484,
@@ -105,6 +105,18 @@
        "question_id": 523,
        "hints_markdown": "Your turn: the same three questions, but for the TRANSPOSE and for\n`.contiguous()` rather than for `.reshape` and `.clone()`.\n\n1. Two of the three answers are memory questions, not value questions: does\n   the tensor you got back read the ORIGINAL block, or a fresh one?\n   Transposing never moves data; `.contiguous()` exists precisely to ask for\n   the move.\n2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;\n   `.data_ptr()` reports which block each one reads.\n3. `view = a.T`, `packed = view.contiguous()`, then return\n   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),\n   packed.tolist())`.",
        "worked_example_code": "import torch as t\n\na = t.tensor([[1, 2], [3, 4], [5, 6]])\n\n# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead\n# of 3 rows of 2. Nothing is copied, so both names read one buffer.\nview = a.reshape(2, 3)\nassert view.data_ptr() == a.data_ptr()\n\n# .clone() is the opposite request: give me my own block.\ncopy = a.clone()\nassert copy.data_ptr() != a.data_ptr()\n\n# Sharing is about memory, not values \u2014 the copy holds the same numbers.\nassert copy.tolist() == a.tolist()\nprint(\"view shares a's block:\", view.data_ptr() == a.data_ptr())\nprint(\"copy shares a's block:\", copy.data_ptr() == a.data_ptr())\nprint(\"view reads as:\", view.tolist())\n"
+      }
+     ],
+     "applied_items": [
+      {
+       "question_id": 481,
+       "prompt": "The problem below hands you a FLAT list and asks for the tensor plus its number\nof axes. This example is here so you have seen the move once; the problem is the\nsame move on different data, and you write the whole function yourself.",
+       "worked_example_code": "import torch as t\n\n# One level of nesting -> one axis, however many numbers are in it.\nflat = t.tensor([3, 1, 4, 1, 5])\nprint(flat, \"-> ndim\", flat.ndim)\nassert flat.ndim == 1\n\n# Adding a nesting level is what adds an axis. The COUNT of numbers does not.\nnested = t.tensor([[3, 1], [4, 1]])\nprint(nested, \"-> ndim\", nested.ndim)\nassert nested.ndim == 2\n"
+      },
+      {
+       "question_id": 483,
+       "prompt": "The problem below asks for the dtype's NAME as a string and the element count.\nTwo inputs here, because the dtype depends on what is in the list \u2014 that is the\nwhole point of the question.",
+       "worked_example_code": "import torch as t\n\n# All integers -> torch.int64. str() is what turns the dtype into its name.\nints = t.tensor([2, 4, 6, 8])\nprint(str(ints.dtype), ints.numel())\nassert (str(ints.dtype), ints.numel()) == (\"torch.int64\", 4)\n\n# One float re-types the whole block, and numel is unchanged by that.\nmixed = t.tensor([2, 4.5, 6, 8])\nprint(str(mixed.dtype), mixed.numel())\nassert (str(mixed.dtype), mixed.numel()) == (\"torch.float32\", 4)\n"
       }
      ],
      "independent_items": [
@@ -237,6 +249,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       225,
       50,
@@ -298,6 +311,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       231,
       75,
@@ -397,6 +411,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       53
      ],
@@ -495,6 +510,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       19
      ],
@@ -556,6 +572,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       23,
       492,
@@ -666,6 +683,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       43,
       489,
@@ -772,6 +790,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       62,
       497,
@@ -881,6 +900,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       518,
       519,
@@ -980,6 +1000,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       69,
       155
@@ -1039,6 +1060,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       104
      ],
@@ -1119,6 +1141,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       510,
       511,
@@ -1225,6 +1248,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       232,
       145,
@@ -1298,6 +1322,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": ""
     },
@@ -1348,6 +1373,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       110
      ],
@@ -1445,6 +1471,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       24,
       61,
@@ -1540,6 +1567,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       70,
       30,
@@ -1597,6 +1625,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       102,
       148,
@@ -1722,6 +1751,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       140,
       16,
@@ -1821,6 +1851,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       183
      ],
@@ -1875,6 +1906,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       115,
       142,
@@ -1932,6 +1964,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       90,
       186
@@ -2004,6 +2037,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       112,
       72,
@@ -2093,6 +2127,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       60,
       81,
@@ -2175,6 +2210,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       108,
       130,
@@ -2274,6 +2310,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       109,
       218
@@ -2340,6 +2377,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       6,
       153,
@@ -2446,6 +2484,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       82,
       149,
@@ -2565,6 +2604,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       141,
       515,
@@ -2626,6 +2666,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       89,
       238,
@@ -2679,6 +2720,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       150,
       124,
@@ -2732,6 +2774,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       187,
       194
@@ -2834,6 +2877,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": "- **\"`z = z[p]` modifies z in place.\"** \u2014 It rebinds the NAME; the original\n  buffer (and every other reference to it) is unchanged. In-place is\n  `z[:] = z[p]` \u2014 assignment through the full slice.\n- **\"`x.sort()` sorts x.\"** \u2014 It does in NumPy; in PyTorch it returns a\n  (values, indices) pair and leaves x untouched. There is no `sort_`, so an\n  in-place sort is `x.copy_(x.sort().values)`.\n- **\"The underscore is a naming convention.\"** \u2014 It's a hard contract: the\n  result is written into that exact buffer. Aliasing consequences included \u2014\n  `b.add_(a)` destroys the old b for all readers. Powerful, deliberate, and\n  exactly what no-allocation drills demand."
     },
@@ -2883,6 +2927,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       99,
       175
@@ -2944,6 +2989,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       169,
       128,
@@ -2999,6 +3045,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       131,
       216,
@@ -3075,6 +3122,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       113
      ],
@@ -3125,6 +3173,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       199,
       205,
@@ -3184,6 +3233,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       167,
       176,
@@ -3241,6 +3291,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       210,
       91
@@ -3318,6 +3369,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       105,
       201
@@ -3413,6 +3465,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       197,
       118
@@ -3495,6 +3548,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       300,
       303
@@ -3610,6 +3664,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       289,
       249,
@@ -3684,6 +3739,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       308
      ],
@@ -3732,6 +3788,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       275,
       292,
@@ -3816,6 +3873,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       264,
       311,
@@ -3976,6 +4034,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": "- **\"'ii' is illegal / a typo.\"** \u2014 Within one operand it's the diagonal\n  selector. Across operands it's the pairing rule. Same letter, two\n  well-defined meanings by placement.\n- **\"diag(a @ b) requires computing a @ b.\"** \u2014 `'ik,ki->i'` computes just\n  the n diagonal dots: O(n\u00b2) vs O(n\u00b3). When a drill says \"without the full\n  product\", this is what it's fishing for.\n- **\"'ij,ji->' and 'ij,ij->' are interchangeable.\"** \u2014 Transposed second\n  operand: the first is tr(a@b), the second the Frobenius product \u03a3 a\u1d62\u2c7cb\u1d62\u2c7c.\n  They agree only for symmetric b. Read letter POSITIONS, not letter SETS."
     }
@@ -4076,6 +4135,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       265,
       276,
@@ -4129,6 +4189,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       251,
       304,
@@ -4181,6 +4242,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       254,
       301,
@@ -4237,6 +4299,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       259,
       248,
@@ -4297,6 +4360,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       335,
       330,
@@ -4364,6 +4428,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       342,
       314,
@@ -4418,6 +4483,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       337,
       320,
@@ -4468,6 +4534,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       358,
       374,
@@ -4521,6 +4588,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       329,
       382,
@@ -4575,6 +4643,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       401,
       404,
@@ -4640,6 +4709,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       326,
       367,
@@ -4694,6 +4764,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       386,
       368,
@@ -4757,6 +4828,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       338,
       348,
@@ -4813,6 +4885,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       384,
       394,
@@ -4863,6 +4936,7 @@
        "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       369,
       372,

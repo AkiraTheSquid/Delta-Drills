@@ -63,6 +63,22 @@ def compile_lessons():
                 "hints_markdown": hints,
                 "worked_example_code": worked[0] if worked else "",
             })
+        # Applied practice is the THIRD rung of the ladder: the drill is an
+        # independent one — no blanks, the learner writes the whole function —
+        # but an example of the same move sits above it. That is what separates
+        # it from `solo`, where the same kind of drill arrives with nothing to
+        # read first. The question ids stay in the `independent` frontmatter
+        # list, so the rung the backend derives is unchanged; what this section
+        # adds is the example, and having one is what routes the drill to
+        # `partial` rather than `solo` (see kc_graph.questions_at_stage).
+        applied_items = []
+        for qid, content in split_items(kp["sections"].get("Applied practice", "")).items():
+            worked = code_fences(content, "python worked")
+            applied_items.append({
+                "question_id": qid,
+                "prompt": content.split("```", 1)[0].strip(),
+                "worked_example_code": worked[0] if worked else "",
+            })
         lessons[kc["lesson"]]["kps"].append({
             "kc": kp["kc"],
             "title": kp["title"] or kc["title"],
@@ -73,6 +89,7 @@ def compile_lessons():
             "segments": segments,
             "faded_items": faded_items,
             "guided_items": guided_items,
+            "applied_items": applied_items,
             "independent_items": kp["independent"],
             "misconceptions_markdown": kp["sections"].get("Misconceptions", ""),
         })

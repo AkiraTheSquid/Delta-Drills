@@ -25,6 +25,10 @@ SECTIONS = [
     "Worked example",
     "Faded practice",
     "Guided practice",
+    # The ladder's third rung: an independent-rung drill with an example above
+    # it. Listed here so `## Applied practice` parses; `compile_lessons.py`
+    # turns it into `applied_items`.
+    "Applied practice",
     "Independent practice",
     "Misconceptions",
 ]

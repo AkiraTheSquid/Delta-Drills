@@ -37,6 +37,9 @@ _kc_gate_info: Dict[str, dict] = {}
 # question_id -> the KP author's own faded starter (the `_____` blanks).
 # Hand-cut for the concept, so it beats a mechanical fade wherever it exists.
 _authored_faded: Dict[int, str] = {}
+# Independent-rung question ids the KP gave a worked example to. See
+# `has_worked_example` — this is the ladder's third rung, not a content detail.
+_applied_with_example: set[int] = set()
 
 
 def _read_json(name: str) -> Optional[dict]:
@@ -103,11 +106,36 @@ def _load() -> None:
                     if isinstance(starter, str) and starter.strip():
                         _authored_faded[qid] = starter
 
+            # Applied practice: independent-rung drills the KP wrote an example
+            # for. Having one is what puts a drill on the ladder's third rung
+            # (`partial` — read an example, then write the whole thing) instead
+            # of its fourth (`solo` — write it with nothing to read first).
+            for item in kp.get("applied_items") or []:
+                if not isinstance(item, dict):
+                    continue
+                try:
+                    qid = int(item.get("question_id"))
+                except (TypeError, ValueError):
+                    continue
+                if str(item.get("worked_example_code") or "").strip():
+                    _applied_with_example.add(qid)
+
     logger.info(
         "Lesson metadata: %d tagged questions, %d KCs with introducing KPs, "
         "%d authored faded starters",
         len(_question_target_kcs), len(_kc_gate_info), len(_authored_faded),
     )
+
+
+def has_worked_example(question_id: int) -> bool:
+    """Does an independent-rung drill come with an example above it?
+
+    True only for questions listed under a KP's `## Applied practice`, which is
+    the ladder's third rung: the learner writes the whole function, but has just
+    read the same move worked through. Everything else on that rung is `solo`.
+    """
+    _load()
+    return int(question_id) in _applied_with_example
 
 
 def authored_faded_starter(question_id: int) -> Optional[str]:
