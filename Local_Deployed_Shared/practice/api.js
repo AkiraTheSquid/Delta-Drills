@@ -33,6 +33,17 @@ const PracticeAPI = {
           q.difficulty || 50,
           !!correct,
         );
+        // ...and count it. `submit_answer` only parks the attempt in
+        // `pending_attempt`; `send_feedback` is what increments `n`, steps the
+        // staircase and moves recent accuracy. Every OTHER path pairs the two
+        // — grade, then "how much did you learn?" — but this one is the whole
+        // submit: the Colab edition has no felt-difficulty step, so without
+        // this the attempt sat pending until the next problem overwrote it and
+        // the learner's practice never appeared anywhere.
+        //
+        // "unrated" rather than a real level: the learner was not asked, so
+        // there is nothing to report. The engine treats it as no alpha.
+        adaptiveStateJson = api.send_feedback(adaptiveStateJson, "unrated");
         await saveAdaptiveState();
       }
       if (!practiceProgress.completedQuestionIds.includes(questionId)) {
@@ -385,6 +396,29 @@ json.dumps(_delta_results)
     }
 
     return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
+  },
+
+  /**
+   * Count a graded-but-unrated attempt now, instead of when the next one starts.
+   *
+   * `record_attempt` flushes the previous pending attempt, which is enough that
+   * nothing is ever lost — but the LAST attempt of a session waits for the next
+   * session to land. Ending a session tells the learner "Recorded answers are
+   * kept", so the exit paths call this and make that true.
+   *
+   * Backend mode owns its own pending attempt server-side and this does not
+   * reach it; the offline engine is the one that needed saying out loud.
+   */
+  async flushPendingAttempt() {
+    if (practiceMode === "backend") return;
+    const pyodide = await initPyodide();
+    if (!pyodide || !practiceEngineLoaded || !adaptiveStateJson) return;
+    const api = pyodide.globals.get("engine_api");
+    const next = api.flush_pending(adaptiveStateJson);
+    if (next === adaptiveStateJson) return;   // nothing was pending
+    adaptiveStateJson = next;
+    await saveAdaptiveState();
+    emitPracticeStateChanged();
   },
 
   async sendFeedback(questionId, feedback) {

@@ -499,6 +499,13 @@ const PracticeSession = (() => {
   const finish = (reason) => {
     if (!state) return;
     const { served, total } = state;
+    // "Recorded answers are kept" is printed below, so make it true: an attempt
+    // that was graded and never rated is still pending in the offline engine,
+    // and would otherwise wait for the learner's next session to be counted.
+    // Best-effort — a session ends whether or not the engine is up.
+    if (typeof PracticeAPI.flushPendingAttempt === "function") {
+      PracticeAPI.flushPendingAttempt().catch(() => {});
+    }
     _stopTick();
     _stopPoll();
     state = null;
