@@ -398,6 +398,29 @@ json.dumps(_delta_results)
     return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
   },
 
+  /**
+   * Count a graded-but-unrated attempt now, instead of when the next one starts.
+   *
+   * `record_attempt` flushes the previous pending attempt, which is enough that
+   * nothing is ever lost — but the LAST attempt of a session waits for the next
+   * session to land. Ending a session tells the learner "Recorded answers are
+   * kept", so the exit paths call this and make that true.
+   *
+   * Backend mode owns its own pending attempt server-side and this does not
+   * reach it; the offline engine is the one that needed saying out loud.
+   */
+  async flushPendingAttempt() {
+    if (practiceMode === "backend") return;
+    const pyodide = await initPyodide();
+    if (!pyodide || !practiceEngineLoaded || !adaptiveStateJson) return;
+    const api = pyodide.globals.get("engine_api");
+    const next = api.flush_pending(adaptiveStateJson);
+    if (next === adaptiveStateJson) return;   // nothing was pending
+    adaptiveStateJson = next;
+    await saveAdaptiveState();
+    emitPracticeStateChanged();
+  },
+
   async sendFeedback(questionId, feedback) {
     if (practiceMode === "backend") {
       const res = await apiFetch("/api/practice/feedback", {

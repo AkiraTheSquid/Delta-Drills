@@ -293,21 +293,69 @@ def check_invariants():
     # a week of practice as nothing at all. The failure is silent by
     # construction: the UI advances, the grade shows, and only the mastery
     # numbers stay at zero.
+    # The JS half is checked on CALL syntax, not on the words: the comment above
+    # this code names both functions, so a presence test would keep passing on
+    # the explanation of a pairing that had been deleted.
     api_js = _read(os.path.join(HERE, "api.js"))
-    local_eval = api_js.split("async recordLocalEval", 1)[-1].split("async ", 1)[0]
-    assert "submit_answer" in local_eval and "send_feedback" in local_eval, (
-        "recordLocalEval must pair submit_answer with send_feedback in the "
-        "offline branch — submit alone leaves the attempt pending forever"
-    )
+    local_eval = api_js.split("async recordLocalEval", 1)[-1].split("\n  async ", 1)[0]
+    for call in ("api.submit_answer(", "api.send_feedback("):
+        assert call in local_eval, (
+            f"recordLocalEval no longer calls {call}…) in its offline branch — "
+            "submit alone leaves the attempt pending until the next one overwrites it"
+        )
 
-    engine = _read(os.path.join(SHARED, "practice_engine.py"))
-    assert "if user_state.pending_attempt is not None:" in engine, (
-        "record_attempt must flush an orphaned pending attempt — without it any "
-        "path that grades and never asks for feedback silently loses the attempt"
+    # The Python half is checked by RUNNING it. These are the three transitions
+    # the offline mastery numbers rest on, and all three fail silently: the UI
+    # advances, the grade shows, and only the counters stay wrong.
+    sys.path.insert(0, SHARED)
+    try:
+        import practice_engine as pe
+    finally:
+        sys.path.pop(0)
+    blank = json.dumps({
+        "user_id": "watch", "custom_weights": {}, "subtopic_states": {},
+        "atom_mastery": {}, "atom_last_ts": {}, "self_reported_level": None,
+        "pending_attempt": None,
+    })
+    api, sub = pe.engine_api, "Core array literacy"
+
+    # 1. Grade-then-commit, the Colab route: four attempts, three right.
+    state = blank
+    for i, ok in enumerate((True, True, False, True)):
+        state = api.submit_answer(state, 100 + i, sub, 50, ok)
+        state = api.send_feedback(state, pe.UNRATED)
+    counted = json.loads(state)
+    row = counted["subtopic_states"][sub]
+    assert row["n"] == 4 and len(row["history"]) == 4, (
+        f"four graded attempts counted as n={row['n']} — submit_answer only "
+        "parks the attempt; send_feedback is what counts it"
     )
-    assert "P_WINDOW" in engine and "sub_state.p =" in engine, (
-        "apply_feedback must recompute subtopic p — left at its 0.5 default it "
-        "renders as a confident 50% on every subtopic the learner has practised"
+    assert abs(row["p"] - 0.75) < 1e-9, (
+        f"recent accuracy came out {row['p']} on three of four correct — p is "
+        "read as a mastery number by the concept graph, so a stale default "
+        "renders as a confident 50% on a subtopic the learner has aced"
+    )
+    assert counted["pending_attempt"] is None, "the committed attempt is still pending"
+
+    # 2. Nobody rated it: the next attempt flushes the last one, so Skip and a
+    #    closed tab cost at most the attempt still on screen.
+    state = blank
+    for i, ok in enumerate((True, False, True)):
+        state = api.submit_answer(state, 200 + i, sub, 50, ok)
+    unrated = json.loads(state)["subtopic_states"][sub]
+    assert unrated["n"] == 2, (
+        f"n={unrated['n']} after three unrated attempts — record_attempt must "
+        "flush the previous pending attempt before parking a new one"
+    )
+    flushed = json.loads(api.flush_pending(state))["subtopic_states"][sub]
+    assert flushed["n"] == 3, "flush_pending did not count the attempt on screen"
+
+    # 3. A real rating is recorded once, as itself — the flush must not turn the
+    #    learner's answer into "unrated", nor count the attempt twice.
+    state = api.send_feedback(api.submit_answer(blank, 300, sub, 50, True), "a_lot")
+    rated = json.loads(state)["subtopic_states"][sub]
+    assert rated["n"] == 1 and rated["history"][0]["feedback"] == "a_lot", (
+        "a rated attempt must be counted once, with the level the learner gave"
     )
 
 

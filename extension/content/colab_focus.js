@@ -205,7 +205,13 @@
     root.classList.add("dd-hide-solutions");
 
     const cells = Array.from(document.querySelectorAll(CELL));
-    const target = settings.focus ? focusTarget() : null;
+    // Observe the fragment on EVERY pass, including while focus is off, and only
+    // then decide whether to use it. Gating the observation instead would let
+    // the sticky value go stale: route to problem 118 with focus off, scroll (so
+    // Colab rewrites the fragment to a cell belonging to no problem), turn focus
+    // back on — and it would hide 118 to show 117, the problem before last.
+    const seen = focusTarget();
+    const target = settings.focus ? seen : null;
 
     // Before tagging, not after: a check that just finished unlocks its answer
     // cell, and the tagging pass below is what puts that on screen.

@@ -531,6 +531,22 @@ class EngineAPI:
         record_attempt(state, question_id, subtopic, difficulty_score, correct)
         return state_to_json(state)
 
+    def flush_pending(self, state_json: str) -> str:
+        """Count an attempt the learner graded but never rated.
+
+        The flush in `record_attempt` is lazy — it fires when the NEXT attempt
+        starts, so the last attempt of a session waits for the next one, which
+        may be days away. Ending a session says "Recorded answers are kept", and
+        this is what makes that sentence true for the one on screen.
+
+        Idempotent: with nothing pending, `apply_feedback` returns None and the
+        state comes back unchanged, so calling it on every exit path is safe.
+        """
+        state = state_from_json(state_json)
+        if state.pending_attempt is not None:
+            apply_feedback(state, UNRATED)
+        return state_to_json(state)
+
     def send_feedback(self, state_json: str, feedback: str) -> str:
         """
         Apply feedback to pending attempt. Returns updated state JSON.

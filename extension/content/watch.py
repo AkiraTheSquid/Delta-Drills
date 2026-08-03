@@ -129,10 +129,17 @@ def check_focus_cannot_blank_the_notebook():
     # so the fragment is a moving target and reading it straight means scrolling
     # off the problem turns focus off. It has to be a way to CHANGE the target,
     # never a way to clear it. `apply` reads the sticky value, not the raw one.
-    assert "focusTarget" in script and "settings.focus ? focusTarget()" in script, (
+    assert "const seen = focusTarget();" in script, (
         "apply must read the sticky focusTarget, not targetProblem — Colab "
         "rewrites the fragment while the learner scrolls, so reading it "
         "directly drops focus the moment they scroll past the problem"
+    )
+    # ...and unconditionally. Observing only when focus is ON lets the sticky
+    # value go stale: route with focus off, scroll, re-enable, and the LAST
+    # problem comes back instead of the current one.
+    assert script.index("const seen = focusTarget();") < script.index("settings.focus ? seen"), (
+        "focusTarget must be called before the settings.focus test, not inside "
+        "it — the fragment has to be observed even while focus is disabled"
     )
     for banned in ("alert(", "confirm(", "prompt("):
         assert banned not in script, f"{banned} blocks the page and kills the message channel"
