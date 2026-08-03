@@ -18,6 +18,26 @@ function formatDifficulty(value) {
 
 let targetRafId = null;
 
+/* What this bar is CALLED on screen.
+
+   On the full page it is the only bar of its kind and "Target difficulty of
+   <subtopic>" says everything. In the Colab rail it lands a few rows under the
+   concept strip's estimate bar, which also fills up and also has a mark you
+   cross — but that one is mastery, and crossing it promotes you to the next
+   scaffold rung. Two bars that look alike and mean different things is worse
+   than either on its own, so a caller that shows both can name which half this
+   one is. Null everywhere else, which keeps the wide page's wording untouched. */
+let targetDifficultyScope = null;
+
+function setTargetDifficultyScope(text) {
+  targetDifficultyScope = text || null;
+}
+
+function targetDifficultyTitleText() {
+  if (targetDifficultyScope) return targetDifficultyScope;
+  return "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+}
+
 function cancelTargetAnimation() {
   if (targetRafId !== null) {
     cancelAnimationFrame(targetRafId);
@@ -25,14 +45,53 @@ function cancelTargetAnimation() {
   }
 }
 
+/* No old → new to draw, and saying so rather than animating a bar from a number
+   to itself — which reads as "your answer changed nothing", a claim we are not
+   in a position to make. Two ways to get here: the very first answer in a
+   concept, where there is no previous target to have moved FROM; and a
+   placement probe, where the answer locates the learner instead of stepping the
+   staircase. `currentValue` is drawn when we have it so the learner still sees
+   where the ladder stands, just without a delta band on it. */
+function setTargetDifficultyUnavailable(note, currentValue) {
+  cancelTargetAnimation();
+  const known = Number.isFinite(currentValue);
+  const clamped = known ? clampDifficulty(currentValue) : 0;
+  targetDifficultyTitle.textContent = targetDifficultyTitleText();
+  targetDifficultyValue.textContent = note || "no reading";
+  targetDifficultyFill.style.width = `${clamped}%`;
+  targetDifficultyDelta.classList.add("hidden");
+  targetDifficultyDelta.classList.remove("up", "down");
+  targetDifficultyDelta.style.width = "0%";
+  // With no number at all the marker goes too, rather than parking at the left
+  // edge — a line at 0 is a claim that the ladder sits at zero, which is the
+  // one reading we know we do not have.
+  targetDifficultyMarkerOld.classList.toggle("hidden", !known);
+  targetDifficultyMarkerOld.style.left = `${clamped}%`;
+  targetDifficultyNumberOld.textContent = formatDifficulty(currentValue);
+  targetDifficultyMarkerNew.classList.add("hidden");
+}
+
 function setTargetDifficultyInitial(targetDifficulty) {
   cancelTargetAnimation();
+  // Rendering a question is where the scope ends. It is a module global set by
+  // whoever last drew the bar, and the Colab review path sets it and never had
+  // a reason to unset it — which is fine right up until the rail hands the full
+  // page back. That happens on this deploy: `dd-no-notebook` restores the whole
+  // practice screen for the ~75 questions with no published cell, and without
+  // this the editor's own difficulty bar would carry the rail's wording,
+  // naming a stage the learner is not looking at. Clearing on render rather
+  // than on leaving Colab means every caller gets the default unless it asks
+  // for something else, which is the direction that fails safe.
+  setTargetDifficultyScope(null);
   const clamped = clampDifficulty(targetDifficulty);
-  targetDifficultyTitle.textContent = "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+  targetDifficultyTitle.textContent = targetDifficultyTitleText();
   targetDifficultyValue.textContent = `Old ${formatDifficulty(clamped)}`;
   targetDifficultyFill.style.width = `${clamped}%`;
   targetDifficultyDelta.classList.add("hidden");
   targetDifficultyDelta.style.width = "0%";
+  // Explicitly un-hidden: a previous question may have ended on an unavailable
+  // reading, which takes this marker off the track.
+  targetDifficultyMarkerOld.classList.remove("hidden");
   targetDifficultyMarkerOld.style.left = `${clamped}%`;
   targetDifficultyNumberOld.textContent = formatDifficulty(clamped);
   targetDifficultyMarkerNew.classList.add("hidden");
@@ -42,9 +101,10 @@ function setTargetDifficultyFinal(oldTarget, newTarget) {
   const oldClamped = clampDifficulty(oldTarget);
   const newClamped = clampDifficulty(newTarget);
   const diff = Math.abs(newClamped - oldClamped);
-  targetDifficultyTitle.textContent = "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+  targetDifficultyTitle.textContent = targetDifficultyTitleText();
   targetDifficultyValue.textContent = `Old ${formatDifficulty(oldClamped)} -> New ${formatDifficulty(newClamped)}`;
   targetDifficultyFill.style.width = `${newClamped}%`;
+  targetDifficultyMarkerOld.classList.remove("hidden");
   targetDifficultyMarkerOld.style.left = `${oldClamped}%`;
   targetDifficultyNumberOld.textContent = formatDifficulty(oldClamped);
   targetDifficultyMarkerNew.classList.remove("hidden");
@@ -72,10 +132,18 @@ function animateTargetDifficulty(oldTarget, newTarget, onComplete) {
   const start = performance.now();
   const duration = 900;
 
+  // Anchor the start marker on the value being animated FROM rather than
+  // trusting whatever the pre-answer render left there. The two agree on the
+  // full page; on the Colab rail the old target comes back from the recorder,
+  // which is a different (and more authoritative) source than the target the
+  // question was rendered with.
+  targetDifficultyMarkerOld.classList.remove("hidden");
+  targetDifficultyMarkerOld.style.left = `${oldClamped}%`;
+  targetDifficultyNumberOld.textContent = formatDifficulty(oldClamped);
   targetDifficultyMarkerNew.classList.remove("hidden");
   targetDifficultyMarkerNew.style.left = `${oldClamped}%`;
   targetDifficultyNumberNew.textContent = formatDifficulty(oldClamped);
-  targetDifficultyTitle.textContent = "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+  targetDifficultyTitle.textContent = targetDifficultyTitleText();
   targetDifficultyValue.textContent = `Old ${formatDifficulty(oldClamped)} -> New ${formatDifficulty(oldClamped)}`;
   targetDifficultyDelta.classList.toggle("up", isUp);
   targetDifficultyDelta.classList.toggle("down", !isUp && newClamped !== oldClamped);
@@ -97,7 +165,7 @@ function animateTargetDifficulty(oldTarget, newTarget, onComplete) {
       return;
     }
     targetRafId = null;
-    targetDifficultyTitle.textContent = "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+    targetDifficultyTitle.textContent = targetDifficultyTitleText();
     targetDifficultyValue.textContent = `Old ${formatDifficulty(oldClamped)} -> New ${formatDifficulty(newClamped)}`;
     targetDifficultyFill.style.width = `${newClamped}%`;
     targetDifficultyMarkerNew.style.left = `${newClamped}%`;

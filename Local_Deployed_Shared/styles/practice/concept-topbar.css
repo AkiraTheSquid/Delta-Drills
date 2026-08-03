@@ -123,6 +123,12 @@
   color: var(--white);
 }
 
+/* Passed and not-yet-reached are both inactive, but one is history and the
+   other is a promise — without a difference the four labels read as a menu. */
+.stage-dot.is-todo .stage-dot-label {
+  opacity: 0.55;
+}
+
 /* ---- difficulty -------------------------------------------------------- */
 
 /* Sits between the rungs and the estimate. `margin-left: auto` on .stage-dots
@@ -226,12 +232,15 @@
 /* The bar is the INTERVAL, not the point estimate: its position shows where
    the learner is, its width shows how little that rests on. A 2-for-2 streak
    draws a very wide bar, which is the honest picture. */
+/* `overflow` is deliberately NOT hidden: the promotion mark below is taller than
+   the track on both sides so it stays findable when the interval covers it, and
+   clipping it to 6px would leave a smudge instead of a line. The fill is
+   positioned within [0,100]% by `_estHtml`, so nothing else can escape. */
 .concept-topbar-est-bar {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 3px;
   display: inline-block;
   height: 6px;
-  overflow: hidden;
   position: relative;
   width: 110px;
 }
@@ -243,6 +252,32 @@
   opacity: 0.75;
   position: absolute;
   top: 0;
+}
+
+/* The promotion threshold — where the LEFT end of the interval has to reach for
+   the next question to come with less support. Dashed and cool-toned so it does
+   not read as part of the measurement: everything else on this track is what the
+   learner has done, and this is the only mark that is a rule.
+
+   `cursor: help` because the mark is unlabelled by necessity — there is no room
+   for "promote at 34%" on a 110px track — so the tooltip is the only place the
+   rule is written down, and a plain cursor gives no reason to look for it. */
+.concept-topbar-est-gate {
+  border-left: 2px dashed rgba(147, 197, 253, 0.85);
+  bottom: -3px;
+  cursor: help;
+  margin-left: -1px;
+  position: absolute;
+  top: -3px;
+  width: 0;
+}
+
+/* It is focusable (see `_estHtml` — the promotion rule is written down nowhere
+   else), so it needs a focus ring, and a zero-width element cannot show one on
+   itself. Outline with an offset draws around the line rather than inside it. */
+.concept-topbar-est-gate:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .concept-topbar-est-range {
@@ -275,7 +310,15 @@
 }
 
 @media (max-width: 700px) {
-  .stage-dot-label {
+  /* Four labels do not fit on one row here — but four bare circles are not a
+     ladder, they are four circles, and the learner has no way to find out what
+     they mean short of hovering each one. So the row keeps the label of the
+     rung they are ON and drops the rest: the strip still answers "which rung is
+     this?", which is the question the dots exist for, and the passed/remaining
+     ones are still legible as position. The Colab rail overrides this back to
+     all four (styles/practice/colab-edition.css) because there the strip is a
+     column and the dots wrap, so there is room. */
+  .stage-dot:not(.is-active) .stage-dot-label {
     display: none;
   }
 

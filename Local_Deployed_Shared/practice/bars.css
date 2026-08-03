@@ -4,11 +4,19 @@
 
 /* ── Shared ──────────────────────────────────────────────────── */
 
+/* The title and the readout sit on one line and push apart. That fits the wide
+   page, where there is room for both; in the Colab rail the whole bar is inside
+   a ~400px column and "Old 55.0 -> New 70.0" beside a title is more than the
+   line holds, so the two crushed into each other mid-word. Wrapping costs a
+   line only when it has to, and the row-gap keeps the readout from sitting on
+   top of the track when it does. */
 .bar-header-row {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
+  row-gap: 2px;
 }
 
 /* ── Target difficulty bar ───────────────────────────────────── */

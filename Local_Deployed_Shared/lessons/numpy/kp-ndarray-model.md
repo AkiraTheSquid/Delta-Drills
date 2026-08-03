@@ -98,14 +98,14 @@ Turn a nested Python list into a 2-D tensor:
 ```python
 import torch as t
 
-# A nested Python list: two inner lists of three integers each.
-rows = [[1, 2, 3], [4, 5, 6]]
+# A nested Python list: three inner lists of two integers each.
+rows = [[7, 8], [9, 10], [11, 12]]
 
 # t.tensor walks the nesting and copies the values into one block.
 a = t.tensor(rows)
 
 # The values survive the trip unchanged — .tolist() reads them back out.
-assert a.tolist() == [[1, 2, 3], [4, 5, 6]]
+assert a.tolist() == [[7, 8], [9, 10], [11, 12]]
 print(a)
 print("back to a list:", a.tolist())
 ```
@@ -175,22 +175,22 @@ for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
 ```python
 import torch as t
 
-flat = t.tensor([4, 1, 7])
-grid = t.tensor([[1, 2, 3], [4, 5, 6]])
+flat = t.tensor([4, 1, 7, 2, 9])
+grid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
 
-# One nesting level -> one axis. Three numbers in it.
-assert flat.shape == (3,)
+# One nesting level -> one axis. Five numbers in it.
+assert flat.shape == (5,)
 assert flat.ndim == 1
-assert flat.numel() == 3
+assert flat.numel() == 5
 
-# Two nesting levels -> two axes, (rows, columns). numel is 2 * 3, not 2.
-assert grid.shape == (2, 3)
+# Two nesting levels -> two axes, (rows, columns). numel is 3 * 4, not 3.
+assert grid.shape == (3, 4)
 assert grid.ndim == 2
-assert grid.numel() == 6
+assert grid.numel() == 12
 
 # shape reports as torch.Size, which IS a tuple subclass — so it compares
 # equal to a plain tuple, and tuple() converts it when you need the real thing.
-assert tuple(grid.shape) == (2, 3)
+assert tuple(grid.shape) == (3, 4)
 print("flat: shape", flat.shape, "ndim", flat.ndim, "numel", flat.numel())
 print("grid: shape", grid.shape, "ndim", grid.ndim, "numel", grid.numel())
 ```
@@ -315,6 +315,30 @@ def solve(rows_a, rows_b):
 ## Guided practice
 
 ### q523
+```python worked
+import torch as t
+
+a = t.tensor([[1, 2], [3, 4], [5, 6]])
+
+# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead
+# of 3 rows of 2. Nothing is copied, so both names read one buffer.
+view = a.reshape(2, 3)
+assert view.data_ptr() == a.data_ptr()
+
+# .clone() is the opposite request: give me my own block.
+copy = a.clone()
+assert copy.data_ptr() != a.data_ptr()
+
+# Sharing is about memory, not values — the copy holds the same numbers.
+assert copy.tolist() == a.tolist()
+print("view shares a's block:", view.data_ptr() == a.data_ptr())
+print("copy shares a's block:", copy.data_ptr() == a.data_ptr())
+print("view reads as:", view.tolist())
+```
+
+Your turn: the same three questions, but for the TRANSPOSE and for
+`.contiguous()` rather than for `.reshape` and `.clone()`.
+
 1. Two of the three answers are memory questions, not value questions: does
    the tensor you got back read the ORIGINAL block, or a fresh one?
    Transposing never moves data; `.contiguous()` exists precisely to ask for
