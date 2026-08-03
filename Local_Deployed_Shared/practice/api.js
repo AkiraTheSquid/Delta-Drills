@@ -14,7 +14,45 @@ const PracticeAPI = {
   },
 
   async recordLocalEval(questionId, correct) {
-    if (practiceMode !== "backend") return;
+    // Guest / supabase: the Pyodide engine IS the store, so a self-rated Colab
+    // drill has to go in the same way a graded submission does. It used to
+    // return here, which meant nothing was recorded — and `next_question`
+    // picks from the state, so rating a torch drill served the SAME question
+    // back, forever. Only reachable from the torch self-rate path in these
+    // modes (submitAnswer calls this for backend+Pyodide fallback only), so
+    // there is no double-record.
+    if (practiceMode !== "backend") {
+      const q = this.currentQuestion;
+      const pyodide = await initPyodide();
+      if (pyodide && practiceEngineLoaded && adaptiveStateJson && q) {
+        const api = pyodide.globals.get("engine_api");
+        adaptiveStateJson = api.submit_answer(
+          adaptiveStateJson,
+          q.question_id,
+          q.subtopic,
+          q.difficulty || 50,
+          !!correct,
+        );
+        // ...and count it. `submit_answer` only parks the attempt in
+        // `pending_attempt`; `send_feedback` is what increments `n`, steps the
+        // staircase and moves recent accuracy. Every OTHER path pairs the two
+        // — grade, then "how much did you learn?" — but this one is the whole
+        // submit: the Colab edition has no felt-difficulty step, so without
+        // this the attempt sat pending until the next problem overwrote it and
+        // the learner's practice never appeared anywhere.
+        //
+        // "unrated" rather than a real level: the learner was not asked, so
+        // there is nothing to report. The engine treats it as no alpha.
+        adaptiveStateJson = api.send_feedback(adaptiveStateJson, "unrated");
+        await saveAdaptiveState();
+      }
+      if (!practiceProgress.completedQuestionIds.includes(questionId)) {
+        practiceProgress.completedQuestionIds.push(questionId);
+        savePracticeProgress(practiceProgress);
+      }
+      emitPracticeStateChanged();
+      return;
+    }
     const res = await apiFetch("/api/practice/submit-local-eval", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -358,6 +396,29 @@ json.dumps(_delta_results)
     }
 
     return { correct, actual_output: actualOutput, expected_output: expected, failed_tests };
+  },
+
+  /**
+   * Count a graded-but-unrated attempt now, instead of when the next one starts.
+   *
+   * `record_attempt` flushes the previous pending attempt, which is enough that
+   * nothing is ever lost — but the LAST attempt of a session waits for the next
+   * session to land. Ending a session tells the learner "Recorded answers are
+   * kept", so the exit paths call this and make that true.
+   *
+   * Backend mode owns its own pending attempt server-side and this does not
+   * reach it; the offline engine is the one that needed saying out loud.
+   */
+  async flushPendingAttempt() {
+    if (practiceMode === "backend") return;
+    const pyodide = await initPyodide();
+    if (!pyodide || !practiceEngineLoaded || !adaptiveStateJson) return;
+    const api = pyodide.globals.get("engine_api");
+    const next = api.flush_pending(adaptiveStateJson);
+    if (next === adaptiveStateJson) return;   // nothing was pending
+    adaptiveStateJson = next;
+    await saveAdaptiveState();
+    emitPracticeStateChanged();
   },
 
   async sendFeedback(questionId, feedback) {

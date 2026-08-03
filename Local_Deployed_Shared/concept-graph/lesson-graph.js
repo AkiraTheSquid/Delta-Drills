@@ -753,6 +753,15 @@
     if (!kcById[kc]) return;
     el.innerHTML = dockHtml(kc);
     el.classList.toggle("is-pinned", kc === dockedKc);
+    // One-way: until a concept has been shown here the pane reserves almost no
+    // room for this panel, because reserving 220px to say "hover a bubble" ate
+    // a fifth of a side panel. Never taken back — toggling it on hover-out
+    // would resize the canvas under the cursor every time you swept the graph.
+    const pane = el.parentElement;
+    if (pane && !pane.classList.contains("has-dock")) {
+      pane.classList.add("has-dock");
+      if (cy) cy.resize();
+    }
   };
 
   // Docked readout: sticks to the selected node, survives hovering elsewhere,
@@ -775,23 +784,29 @@
     const wrap = document.querySelector(".kg2 .kg2-wrap");
     if (!wrap) return;
     const top = wrap.getBoundingClientRect().top;
-    if (window.innerWidth <= 820) { wrap.style.height = ""; return; }  // stacked layout scrolls
+    // Narrow AND actually stacked — the Colab edition hides the lesson pane, so
+    // there is nothing under the graph to scroll to and the pane should fit.
+    const info = document.querySelector(".kg2-info");
+    const stacked = window.innerWidth <= 820 &&
+      (!info || getComputedStyle(info).display !== "none");
+    if (stacked) { wrap.style.height = ""; return; }
     wrap.style.height = Math.max(480, window.innerHeight - top - 14) + "px";
     if (cy) cy.resize();
   };
 
-  /* ---------------- left content pane ---------------------------------- */
+  /* ---------------- lesson pane ---------------------------------------- */
   const setPlaceholder = () => {
     selectedKc = null;
     const btn = $("kg-maximize");
     if (btn) btn.hidden = true;
+    if (window.DDGraphColab) window.DDGraphColab.onDeselect();
     if ($("kg-info-meta")) $("kg-info-meta").innerHTML = "";
     if ($("kg-info-body"))
       $("kg-info-body").innerHTML =
-        `<div class="kg2-placeholder"><strong>Click a bubble</strong> to open its lesson here.<br><br>
-         You'll see what the skill teaches and its worked example, and the whole
-         prerequisite chain lights up on the graph. Use <strong>Practice ⤢</strong>
-         to jump into the full practice screen for that skill.</div>`;
+        `<div class="kg2-placeholder"><strong>Click a bubble</strong> to open its lesson here.
+         <span class="kg2-placeholder-more">You'll see what the skill teaches and its worked
+         example, and the whole prerequisite chain lights up on the graph. Use
+         <strong>Practice ⤢</strong> to jump into the full practice screen.</span></div>`;
   };
 
   /* The KP's teaching content, segment by segment — the same units, in the same
@@ -842,6 +857,11 @@
 
     const btn = $("kg-maximize");
     if (btn) { btn.hidden = false; btn.dataset.kc = id; }
+
+    // On the Colab edition the lesson the learner reads is in the notebook, so
+    // choosing a concept sends the tab beside this one to the section that
+    // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
+    if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
 
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
@@ -1343,7 +1363,8 @@
     const controls = document.querySelector(".kg2-controls");
     if (controls && !$("kg-colormode")) {
       const seg = document.createElement("div");
-      seg.className = "kg2-seg";
+      // Styled by ID. It carried `.kg2-seg` and that is the lesson-segment
+      // class in the pane opposite — see how-it-works.css.
       seg.id = "kg-colormode";
       seg.innerHTML =
         '<button type="button" data-mode="mastery" class="active">Mastery</button>' +

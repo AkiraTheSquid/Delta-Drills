@@ -129,6 +129,13 @@
   background: #fff;
 }
 
+/* `.question-visual-canvas` in question.css carries the same pair for the same
+   reason — this one was missing it, so a blank canvas held its box under the
+   output of every non-visual drill. */
+.output-visual-canvas.hidden {
+  display: none;
+}
+
 /* AI Explanation Section */
 .ai-explanation-section {
   border-top: 1px solid var(--border);
