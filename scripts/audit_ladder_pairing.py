@@ -326,12 +326,70 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
     # mean the gate gets disabled, and then the two rules that ARE clean
     # (coverage, blank) stop protecting anything. So distance reports loudly
     # and passes; --strict promotes it once the backlog is worked down.
+    _quality_backlog(only_kc, summary)
+
     hard = [p for p in problems if p[2] != "distance"] if not strict else problems
     soft = len(problems) - len(hard)
     if soft:
         print(f"\nNOTE: {soft} 'distance' finding(s) reported but NOT failing the "
               f"build (pre-existing content backlog). Use --strict to enforce.")
     return 1 if hard else 0
+
+
+def _quality_backlog(only_kc: str | None, summary: bool) -> None:
+    """Report the lesson_quality rules across every page.
+
+    These do not affect the exit code here. `validate_lessons.py` fails the
+    build on them for pages that have been through the pass (those with an
+    `## Applied practice` section); this pass is the WORK LIST for the rest —
+    what each page needs before it can be upgraded, so that improving a page
+    means satisfying a written standard rather than guessing at one.
+    """
+    import lesson_quality as quality
+    from lesson_lib import all_kp_paths, load_bank, parse_kp, split_items
+
+    bank = load_bank()
+    upgraded, pending, findings = [], [], {}
+    for path in all_kp_paths():
+        try:
+            kp = parse_kp(path)
+        except Exception:
+            continue
+        if only_kc and kp["kc"] != only_kc:
+            continue
+        found = []
+        for si, seg in enumerate(kp["segments"]):
+            label = f"segment {si + 1}"
+            found += quality.check_example_shape(seg["worked"], label)
+            for qid in split_items(seg["faded"]):
+                if qid in bank:
+                    found += quality.check_pairing(seg["worked"], bank[qid], f"q{qid}")
+        for qid in kp["independent"]:
+            if qid in bank:
+                found += quality.check_prompt_leak(bank[qid], "solo", f"q{qid}")
+        (upgraded if quality.strict_for(kp) else pending).append(kp["kc"])
+        if found:
+            findings[kp["kc"]] = found
+
+    total = sum(len(v) for v in findings.values())
+    print(f"\n-- worked-example quality (lesson_quality.py) --")
+    print(f"pages on the new standard     : {len(upgraded)}")
+    print(f"pages not yet upgraded        : {len(pending)}")
+    print(f"quality findings              : {total} across {len(findings)} page(s)")
+    by_rule: dict[str, int] = {}
+    for items in findings.values():
+        for line in items:
+            rule = line.split(": ", 1)[-1].split(" ", 1)[0]
+            by_rule[rule] = by_rule.get(rule, 0) + 1
+    for rule, n in sorted(by_rule.items(), key=lambda kv: -kv[1]):
+        print(f"  {rule:12s}: {n}")
+    if not summary:
+        for kc in sorted(findings):
+            print(f"\n  {kc}")
+            for line in findings[kc]:
+                print(f"    {line}")
+    print("\nNOTE: quality findings do not fail this audit. They fail "
+          "validate_lessons.py once a page adds '## Applied practice'.")
 
 
 def main() -> int:

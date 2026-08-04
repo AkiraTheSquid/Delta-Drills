@@ -32,6 +32,7 @@ from pathlib import Path
 
 from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, load_bank,
                         load_registry, parse_kp, split_items)
+import lesson_quality as quality
 
 EASY_TOPICS = ("Numpy", "Einsum", "Einops")
 
@@ -185,6 +186,47 @@ def check_kp(path, registry, bank, errors):
                 continue
             for fail in grade_against_bank(solutions[0], bank[qid]):
                 errors.append(f"{name}: faded q{qid} solution FAILED {fail}")
+
+    # 4b. Quality rules (scripts/lesson_quality.py). Errors only for KPs that
+    # have been through the pass — see `strict_for`. `audit_ladder_pairing.py`
+    # reports them for every page, so the legacy backlog stays visible instead
+    # of being silently exempt.
+    if quality.strict_for(kp):
+        for si, seg in enumerate(kp["segments"]):
+            label = f"{name}: segment {si + 1}"
+            errors.extend(quality.check_example_shape(seg["worked"], label))
+            for qid in split_items(seg["faded"]):
+                if qid in bank:
+                    errors.extend(quality.check_pairing(seg["worked"], bank[qid], f"{name}: q{qid}"))
+        for item_qid in kp["independent"]:
+            if item_qid in bank:
+                errors.extend(
+                    quality.check_prompt_leak(bank[item_qid], "solo", f"{name}: q{item_qid}")
+                )
+
+    # 4c. Applied practice is the ladder's third rung. Its ids must be drills the
+    # backend already treats as independent, or the rung the learner is served
+    # would not match the support the notebook shows them.
+    applied_items = split_items(kp["sections"].get("Applied practice", ""))
+    for qid, content in applied_items.items():
+        if qid not in set(kp["independent"]):
+            errors.append(
+                f"{name}: applied q{qid} is not in the frontmatter `independent` list — "
+                f"applied practice re-serves an independent drill WITH an example, "
+                f"it does not create a new rung"
+            )
+        if not code_fences(content, "python worked"):
+            errors.append(
+                f"{name}: applied q{qid} has no ```python worked fence — without one "
+                f"it is indistinguishable from a solo drill and will be served as one"
+            )
+        elif quality.strict_for(kp):
+            label = f"{name}: applied q{qid}"
+            errors.extend(quality.check_example_shape(content, label, info="python worked"))
+            if qid in bank:
+                errors.extend(
+                    quality.check_pairing(content, bank[qid], label, info="python worked")
+                )
 
     # 5. refs exist and are consistent
     if set(kp["faded"]) != faded_ids:
