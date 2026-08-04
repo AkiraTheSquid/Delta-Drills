@@ -34,9 +34,29 @@ file to fix.
     spark hidden. Adapted from Seth's hand-written CSS; its `a {display:none}`
     rule is deliberately dropped (it hid links inside the problem prose too).
 
-  Every CSS rule is scoped under `html.dd-theme` / `html.dd-focus`, which only
-  this script adds — both off is a stock Colab page. The toggle panel's own
-  styling is the one unscoped exception, because it is the way back out.
+  - *Gemini autocomplete* — **off by default**, and the one row where unticked
+    is the working state. Colab ships "Show AI-powered inline completions" ON
+    (its own switch is Settings → AI Assistance), and on one of our notebooks
+    what it completes is the answer, in grey, ahead of the caret. Suppressed
+    only on a page carrying `dd-` anchors, so other people's notebooks keep it.
+
+  Every CSS rule is scoped under `html.dd-theme` / `html.dd-focus` /
+  `html.dd-no-ai`, which only this script adds — all off is a stock Colab page.
+  The toggle panel's own styling is the one unscoped exception, because it is
+  the way back out.
+- `colab_no_ai.js`: **the Gemini off switch**, and the only file here that runs
+  in the page's own world (`"world": "MAIN"` in the manifest). It has to:
+  an isolated content script cannot see `window.monaco`, and this works by
+  setting `inlineSuggest: {enabled: false}` on every editor — hooking
+  `onDidCreateEditor` for cells mounted later and `onDidChangeConfiguration` for
+  Colab re-applying its own options, with a slow sweep behind both. MAIN world
+  means no `chrome.*` at all, so it holds no policy: `colab_focus.js` dispatches
+  `dd:gemini-off` / `dd:gemini-on` (the flag is in the event *name* — a
+  `CustomEvent`'s `detail` is minted in the sending world), and it starts
+  suppressed so that a slow `chrome.storage` read cannot leave a window in which
+  the editor is live and completing. It gives back only what it took, tracked in
+  a `WeakSet`, or our toggle would switch on a feature the user had disabled in
+  Colab's own settings.
 - `colab.js`: the whole adapter. Registers a `chrome.runtime.onMessage` listener
   for `dd:ping`, `dd:identify`, `dd:goto` and `dd:read-output`, injected at
   `document_idle` on `https://colab.research.google.com/*`.
@@ -79,6 +99,12 @@ against a live notebook:
 - **Expand before scrolling.** A cell inside a collapsed section has zero height,
   so `scrollIntoView` silently succeeds and nothing moves.
 - **Re-resolve after expanding.** The captured node is likely detached.
+- **Hiding Gemini's shadow text in CSS alone is worse than not hiding it.**
+  Monaco's Tab handler accepts the suggestion in the MODEL, not the one on
+  screen, so a `display: none` leaves Tab pasting in an answer the learner never
+  saw. The `html.dd-no-ai` rules are a backstop for the frames before Monaco
+  loads; the real switch is `colab_no_ai.js`. Both are driven by the same class
+  on the same pass so there is no state where the text is hidden but still live.
 - **A clean run is not a pass.** `readOutput` reports `errored` as authoritative
   but never infers success — most cells print something either way, and guessing
   would feed the ladder a fabricated attempt.
@@ -125,6 +151,38 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-04 (**Gemini's shadow text no longer writes the answer**): Colab ships
+  "Show AI-powered inline completions" ON (Settings → AI Assistance, its own key
+  is `inlineCompletions`), so a learner routed to a problem the ladder says they
+  cannot do yet was shown the solution in grey ahead of their caret. New
+  `colab_no_ai.js` sets `inlineSuggest: {enabled: false}` on every Monaco editor
+  — verified live against a real notebook: suppressed on load, restored on
+  `dd:gemini-on`, re-clamped when Colab re-applies its own options, and applied
+  to an editor created afterwards.
+  - 🔴 **CSS alone is worse than nothing here.** Monaco's Tab handler accepts the
+    suggestion in the MODEL, so hiding `.ghost-text-decoration` leaves Tab
+    pasting in an answer the learner never saw. The `html.dd-no-ai` rules exist
+    only as a backstop for the frames before Monaco loads, and they are driven by
+    the same class, set on the same pass that dispatches the event — hidden but
+    still live is the one state that must not exist.
+  - 🔴 **It cannot be an ordinary content script.** The isolated world has no
+    `window.monaco`, so this one is declared `"world": "MAIN"` — where there is
+    no `chrome.*` at all. Hence the split: `colab_focus.js` owns the policy and
+    dispatches `dd:gemini-off` / `dd:gemini-on`, with the flag in the event NAME
+    because a `CustomEvent`'s `detail` is minted in the sending world.
+  - Starts suppressed and is corrected afterwards, because the storage read is
+    async: the other order leaves a window in which the editor is live and
+    completing. Restores only editors it actually disabled (a `WeakSet`), or the
+    toggle would switch on a feature the user had turned off in Colab itself.
+  - Gated on the page carrying `dd-` anchors — other people's notebooks keep
+    their completions. `watch.py::check_gemini_suppression_is_ours_only` pins
+    that, the `"world": "MAIN"` key and the event names; both new assertions were
+    negative-tested by removing the thing they guard.
+  - 🟡 Found while writing the test: an exception inside `apply` is swallowed by
+    the boot try/catch, which then runs `start()` a second time and leaves two
+    MutationObservers and two hashchange listeners on a page that looks fine.
+    `pushGemini` therefore never throws. Anything else added to `apply` owes the
+    same care.
 - 2026-08-03 (**the worked example is in focus with its problem, and the grouping needed no change to make it so**): stage 2 is now a pair — a solved example, then the same move on different specifics. `scripts/generate_colab_notebooks.py` emits the example as cells directly above the problem's header, anchored `dd-q<problem>-example`. `problemOf`'s trailing-boundary regex already sorts that into the problem's group, so focus keeps the pair on screen together and the learner finds the example by scrolling up. `watch.py::check_stage_two_pair_survives_focus` runs the shipped pattern against `dd-q481-example` / `dd-q481-example-code` and pins the boundary in the other direction too. **Do not "be explicit about the suffixes" in that regex** — narrowing it to the known `-hints|-code|-check|-solution` set would drop every example out of focus silently, leaving a bare problem that looks exactly like a problem.
   - The one thing that DID have to change here is telling the two apart. In focus mode the pair is the only content on screen: a prompt, a code cell, a prompt, a code cell, previously styled identically. `colab_focus.js` now tags example cells `.dd-example` and `colab_dd.css` gives them a left rule and a dimmed surface under `html.dd-theme` — the same reference-not-work vocabulary the app uses in `styles/practice/ladder.css`. Deliberately not collapsed: the whole request is that scrolling up shows the solved problem, so it has to be legible without a click.
   - Verified without the extension, which cannot be side-loaded on this machine: the real `colab_focus.js` and `colab_dd.css` were run against a synthetic DOM built from the generated cell ids. Focused on 481 the visible set is example → example-code → problem → code → check (solution still hidden until `reveal`); focused on its neighbour 482, which has no authored pair, it is problem → code → check exactly as before, with 481's example correctly gone.

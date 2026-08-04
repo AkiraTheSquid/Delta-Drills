@@ -54,7 +54,9 @@
 (() => {
   const CELL = "div.cell";
   const STORE_KEY = "dd_colab_view";
-  const DEFAULTS = { theme: true, focus: true, collapsed: false };
+  // `gemini` is "let Colab's AI complete your code", so OFF is the default and
+  // the checkbox is unticked — see `pushGemini`.
+  const DEFAULTS = { theme: true, focus: true, gemini: false, collapsed: false };
 
   // Cells that focus never hides. The checker cell defines `dd_check`, so
   // hiding it leaves a problem that cannot be checked — the kind of break that
@@ -223,6 +225,43 @@
     }
   }
 
+  /**
+   * Tell the MAIN-world script whether Gemini may complete the learner's code.
+   *
+   * Colab turns "Show AI-powered inline completions" on by default, and on a
+   * Delta Drills notebook what it completes is the answer — grey shadow text
+   * appearing ahead of the caret, on a problem the course has just decided the
+   * learner cannot do yet.
+   *
+   * The suppression itself cannot happen here. A content script is in the
+   * isolated world and cannot see `window.monaco`, so `colab_no_ai.js` runs in
+   * the MAIN world and this file only says what the policy is. It cannot be CSS
+   * either: hiding the ghost text leaves Tab accepting a suggestion the learner
+   * cannot see, which is strictly worse than showing it.
+   *
+   * Two events rather than one carrying a flag: their `detail` would be an
+   * object minted in this world, and the event NAME is a string, which always
+   * crosses. Dispatched only on a real change, because this runs on every
+   * mutation of a notebook that mutates constantly.
+   *
+   * Recorded only once the dispatch has actually happened, and never allowed to
+   * throw. `apply` runs inside the boot try/catch, so an exception here does not
+   * surface as an error — it aborts the rest of the pass and sends `start` round
+   * a second time, leaving two MutationObservers and two hashchange listeners on
+   * a notebook that looks fine. Failing quietly and retrying on the next pass is
+   * the only version of this that cannot do that.
+   */
+  let geminiPushed = null;
+  function pushGemini(suppress) {
+    if (geminiPushed === suppress) return;
+    try {
+      document.dispatchEvent(new CustomEvent(suppress ? "dd:gemini-off" : "dd:gemini-on"));
+      geminiPushed = suppress;
+    } catch (_) {
+      /* no CustomEvent here (a test host, or mid-reload); retry next pass */
+    }
+  }
+
   function apply() {
     const root = document.documentElement;
     root.classList.toggle("dd-theme", Boolean(settings.theme));
@@ -245,8 +284,10 @@
 
     // Tag first, count second, and only then decide whether to hide anything.
     let inFocus = 0;
+    let ourCells = 0;
     cells.forEach((cell) => {
       const anchor = cellAnchor(cell);
+      if (anchor.startsWith("dd-")) ourCells += 1;
       const always = ALWAYS_VISIBLE.test(anchor);
       const mine = target !== null && problemOf(anchor) === target;
       if (mine) inFocus += 1;
@@ -268,6 +309,16 @@
     if (!live) {
       cells.forEach((cell) => cell.classList.remove("dd-out-of-focus"));
     }
+
+    // Gemini is only suppressed on a notebook that is OURS — one carrying at
+    // least one `dd-` anchor. The extension is installed for Delta Drills, but
+    // the browser it is installed in opens other people's Colab notebooks, and
+    // silently disabling a Google feature on those is not a thing an extension
+    // should do for a tutor that is not even open. Same reasoning as the CSS:
+    // nothing of ours applies until a cell of ours is on the page.
+    const suppressAi = ourCells > 0 && !settings.gemini;
+    root.classList.toggle("dd-no-ai", suppressAi);
+    pushGemini(suppressAi);
 
     lastReport = { target, inFocus, total: cells.length };
     paintNote();
@@ -335,6 +386,7 @@
       <button class="dd-handle" type="button" title="Collapse">Delta Drills ▾</button>
       <label class="dd-row"><input type="checkbox" data-dd="focus" /> Only this problem</label>
       <label class="dd-row"><input type="checkbox" data-dd="theme" /> Delta Drills theme</label>
+      <label class="dd-row" title="Colab's Gemini writes the answer ahead of your caret in grey. Off while you are practising."><input type="checkbox" data-dd="gemini" /> Gemini autocomplete</label>
       <div class="dd-note"></div>
     `;
     panel.querySelectorAll("input[data-dd]").forEach((input) => {

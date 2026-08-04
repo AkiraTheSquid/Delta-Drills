@@ -234,6 +234,12 @@ def check_css_is_opt_in():
     it the one class that could restyle an unrelated notebook, so every rule
     under it must ALSO name `.dd-solution`, which colab_focus.js only ever puts
     on a `dd-q<n>-solution` cell. No generated notebook, no match, no change.
+
+    `html.dd-no-ai` is also default-on, and its rules name Monaco's classes
+    rather than any of ours — so the gate cannot live in the selector, and lives
+    in the class instead: `apply` only adds it to a notebook carrying `dd-`
+    anchors. That is asserted separately, in
+    `check_gemini_suppression_is_ours_only`.
     """
     css = _read(os.path.join(HERE, "colab_dd.css"))
     stripped = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
@@ -241,7 +247,8 @@ def check_css_is_opt_in():
         selectors = [s.strip() for s in block.group(1).split(",") if s.strip()]
         for selector in selectors:
             scoped = selector.startswith(
-                ("html.dd-theme", "html.dd-focus", "html.dd-hide-solutions", "#dd-colab-toggle"))
+                ("html.dd-theme", "html.dd-focus", "html.dd-hide-solutions",
+                 "html.dd-no-ai", "#dd-colab-toggle"))
             assert scoped, (
                 f"unscoped CSS rule {selector!r} — it would restyle every Colab "
                 f"page even with the toggles off. Scope it under html.dd-theme "
@@ -255,10 +262,94 @@ def check_css_is_opt_in():
                 )
 
 
+def check_gemini_suppression_is_ours_only():
+    """Gemini's shadow text is switched off at the editor, and only on our pages.
+
+    Colab ships "Show AI-powered inline completions" ON. On a Delta Drills
+    notebook the thing it completes is the answer, so it has to go — but every
+    way of doing that has a failure mode that is silent:
+
+    * **CSS alone is worse than nothing.** Monaco's Tab handler accepts the
+      suggestion held in the model, not the one on screen. Hide the ghost text
+      and Tab still pastes in an answer the learner never saw. So the
+      `dd-no-ai` rules in colab_dd.css are only ever a backstop, and the real
+      suppression must live in colab_no_ai.js.
+    * **It cannot run in the isolated world.** A content script does not see
+      `window.monaco`, so the suppressor needs `"world": "MAIN"` in the
+      manifest. Drop that key and the file loads, throws nothing, and does
+      nothing — inline completions come back with no symptom but the shadow
+      text itself.
+    * **The two files are wired only by event name.** Rename one side and the
+      MAIN-world half never hears the policy, so it stays on its default.
+    * **The suppression must not spread.** The browser this is installed in
+      opens other people's notebooks too, and disabling a Google feature on
+      those is not the extension's business. `dd-no-ai` is therefore gated on
+      the page carrying `dd-` anchors.
+    """
+    focus = _read(os.path.join(HERE, "colab_focus.js"))
+    main = _read(os.path.join(HERE, "colab_no_ai.js"))
+    manifest = _read(os.path.join(HERE, "..", "manifest.json"))
+
+    assert '"content/colab_no_ai.js"' in manifest, (
+        "colab_no_ai.js must be declared in the manifest"
+    )
+    entry = manifest[manifest.index('"content/colab_no_ai.js"'):]
+    entry = entry[:entry.index("]", entry.index("}"))] if "}" in entry else entry
+    assert '"world": "MAIN"' in entry, (
+        'colab_no_ai.js must be injected with "world": "MAIN" — an isolated-world '
+        "content script cannot see window.monaco, so it would silently do nothing"
+    )
+
+    # The actual off switch. `inlineSuggest.enabled: false` is the editor option
+    # behind Colab's "Show AI-powered inline completions".
+    assert "inlineSuggest" in main and "enabled: false" in main, (
+        "colab_no_ai.js must turn inlineSuggest off on the editor — hiding the "
+        "ghost text in CSS leaves Tab accepting a suggestion nobody can see"
+    )
+    # New cells mount as the learner scrolls, and Colab re-applies its own option
+    # set to editors we have already dealt with. Either hook alone leaves most of
+    # a notebook completing.
+    for hook in ("onDidCreateEditor", "onDidChangeConfiguration"):
+        assert hook in main, f"colab_no_ai.js must hook {hook} or later cells keep completing"
+    # ...and re-aligning from a configuration event is only safe because it reads
+    # before it writes. An unconditional updateOptions re-fires the event.
+    assert "if (on === null) return;" in main, (
+        "align must bail on an unreadable option, and must read before it writes "
+        "— an unconditional updateOptions loops through onDidChangeConfiguration"
+    )
+    # MAIN world has no chrome.* at all; a reference would throw on load. Read
+    # past the comments, which say so in prose and would match themselves.
+    code = re.sub(r"/\*.*?\*/", "", main, flags=re.S)
+    code = re.sub(r"^\s*//.*$", "", code, flags=re.M)
+    assert "chrome." not in code, (
+        "colab_no_ai.js runs in the MAIN world, where chrome.* does not exist"
+    )
+
+    for event in ("dd:gemini-off", "dd:gemini-on"):
+        assert event in focus and event in main, (
+            f"{event} must be spelled the same in both files — they are wired by "
+            f"string, so a rename fails as silence"
+        )
+
+    assert 'root.classList.toggle("dd-no-ai", suppressAi)' in focus, (
+        "the CSS backstop and the editor policy must move together, off one value"
+    )
+    assert "const suppressAi = ourCells > 0 && !settings.gemini;" in focus, (
+        "Gemini may only be suppressed on a notebook carrying dd- anchors — "
+        "otherwise the extension silently disables a Google feature on every "
+        "Colab page the user ever opens"
+    )
+    assert "gemini: false" in focus, (
+        "Gemini autocomplete must default to OFF; a default that leaks the answer "
+        "is not worth having a toggle for"
+    )
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_focus_cannot_blank_the_notebook,
-              check_stage_two_pair_survives_focus, check_css_is_opt_in]
+              check_stage_two_pair_survives_focus, check_css_is_opt_in,
+              check_gemini_suppression_is_ours_only]
     for fn in checks:
         try:
             fn()

@@ -92,6 +92,36 @@ html.dd-theme .cell.dd-example:hover {
   opacity: 1;
 }
 
+/* ── Gemini's shadow text ────────────────────────────────────────────
+   The BACKSTOP, not the fix. Colab ships "Show AI-powered inline completions"
+   on, and on one of our notebooks the thing it completes is the answer — grey
+   text appearing ahead of the caret on a problem the learner has just been told
+   they cannot do yet.
+
+   CSS cannot be the whole answer, and on its own it is worse than nothing:
+   Monaco's Tab handler accepts the suggestion held in the MODEL, so hiding the
+   pixels leaves Tab pasting in an answer the learner never saw. The suppression
+   proper is `content/colab_no_ai.js`, which switches `inlineSuggest` off on the
+   editor itself. These rules cover the frames before Monaco has loaded and the
+   day Google renames an option we set.
+
+   Both halves are driven by the same class, which is the point — `dd-no-ai` is
+   added and removed in one place (`colab_focus.js`'s `apply`, which dispatches
+   the MAIN-world event on the same pass), so there is no state in which the
+   text is hidden but still live.
+
+   Scoped like everything else here: `dd-no-ai` only goes on for a notebook
+   carrying `dd-` anchors, so someone else's Colab page keeps its completions. */
+html.dd-no-ai .monaco-editor .ghost-text-decoration,
+html.dd-no-ai .monaco-editor .ghost-text-decoration-preview,
+html.dd-no-ai .monaco-editor .suggest-preview-text .ghost-text,
+html.dd-no-ai .monaco-editor .inline-edit-decoration,
+html.dd-no-ai .monaco-editor .inline-edit-decoration-preview,
+html.dd-no-ai .monaco-editor .inlineSuggestionsHints,
+html.dd-no-ai .monaco-editor div.inline-edits-widget {
+  display: none !important;
+}
+
 /* ── The skin ────────────────────────────────────────────────────── */
 
 html.dd-theme colab-composer-floating-spark,          /* the Gemini spark */

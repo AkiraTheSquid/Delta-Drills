@@ -56,14 +56,21 @@ function run({ anchors, hash, settings, outputs }) {
   });
   const root = { classList: classList() };
   const sent = [];
+  // The Gemini policy the MAIN-world script (`colab_no_ai.js`) would have heard.
+  // It is a DOM event rather than a message because that half cannot use
+  // `chrome.*` at all, so this is the only place the wiring can be checked
+  // without a browser.
+  const gemini = [];
   const context = {
     console,
     setTimeout,
+    CustomEvent: class { constructor(type) { this.type = type; } },
     document: {
       documentElement: root,
       body: null,
       querySelectorAll: (sel) => (sel === "div.cell" ? cells : []),
       createElement: () => ({ classList: classList(), querySelectorAll: () => [], querySelector: () => null }),
+      dispatchEvent: (event) => gemini.push(event.type),
     },
     location: { hash },
     window: { addEventListener: () => {} },
@@ -89,6 +96,8 @@ function run({ anchors, hash, settings, outputs }) {
     focusOn: root.classList.contains("dd-focus"),
     themeOn: root.classList.contains("dd-theme"),
     hideSolutions: root.classList.contains("dd-hide-solutions"),
+    noAi: root.classList.contains("dd-no-ai"),
+    gemini: [...gemini],
     hidden: anchors.filter((_, i) => cells[i].classList.contains("dd-out-of-focus")),
     inFocus: anchors.filter((_, i) => cells[i].classList.contains("dd-in-focus")),
     solutions: anchors.filter((_, i) => cells[i].classList.contains("dd-solution")),
@@ -226,6 +235,35 @@ console.log("both switched off:");
 const off = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: { theme: false, focus: false } });
 check("no theme class", off.themeOn, false);
 check("no focus class", off.focusOn, false);
+
+// ── Gemini's shadow text ─────────────────────────────────────────────
+// Colab completes the learner's code with the answer unless something turns it
+// off. Two ways that goes wrong, both silent: leaving it on (the learner is
+// handed the solution on a problem the ladder says they cannot do yet), and
+// turning it off too widely (the extension quietly disables a Google feature on
+// every unrelated Colab notebook the browser ever opens). The class and the
+// event have to agree, because the CSS backstop hides the ghost text while the
+// MAIN-world script is what stops Tab from accepting it — hidden-but-live is
+// the one state that must not exist.
+console.log("Gemini autocomplete on one of our notebooks:");
+const noAi = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
+check("the CSS backstop is on", noAi.noAi, true);
+check("and the editor was told, once", noAi.gemini, ["dd:gemini-off"]);
+check("a re-render does not re-send it", noAi.read().gemini, ["dd:gemini-off"]);
+
+console.log("Gemini autocomplete switched back on by the learner:");
+const allowAi = run({
+  anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: { ...ON, gemini: true },
+});
+check("no CSS backstop", allowAi.noAi, false);
+check("and the editor is told to hand them back", allowAi.gemini, ["dd:gemini-on"]);
+
+console.log("somebody else's Colab notebook:");
+// No `dd-` anchor anywhere: not ours, so nothing of ours applies. An ARENA
+// notebook is the real instance of this — 458 of them, nbformat 4.2, no ids.
+const foreign = run({ anchors: ["", "", ""], hash: "", settings: ON });
+check("its completions are left alone", foreign.noAi, false);
+check("and nothing suppresses them", foreign.gemini, ["dd:gemini-on"]);
 
 if (failures) {
   console.log(`\nFAILED ${failures} check(s)`);

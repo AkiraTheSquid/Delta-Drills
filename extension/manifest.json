@@ -28,6 +28,13 @@
       "css": ["content/colab_dd.css"],
       "run_at": "document_idle",
       "all_frames": false
+    },
+    {
+      "matches": ["https://colab.research.google.com/*"],
+      "js": ["content/colab_no_ai.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
     }
   ]
 }
