@@ -408,3 +408,55 @@ html.dd-colab-edition #torch-rate-lookedup {
 html.dd-colab-edition:not(.dd-no-notebook) .torch-colab-notice {
   margin-top: 4px;
 }
+
+/* ============================================================
+   LESSON RAIL — the `worked` rung on the Colab edition.
+
+   The notebook already holds this lesson's prose, its runnable blocks, the
+   worked example, the problem, the hints and the solution, as real cells
+   against a real torch runtime. Rendering a second copy in the panel put the
+   reading on the left and the work on the right, which is the split this
+   edition exists to close. So the panel keeps only what the notebook cannot
+   know — the rung, the estimate, which page of how many — and one button.
+
+   Deliberately styled like `.torch-colab-notice` rather than like the lesson
+   body: on this edition, "here is where your work is" is one recurring kind of
+   message, and a lesson is another instance of it, not a different surface.
+   Built in practice/lessons.js::_colabPageHtml.
+   ============================================================ */
+.lesson-colab-card {
+  margin: 12px 0 18px;
+  padding: 15px 16px;
+  background: rgba(255, 196, 0, 0.07);
+  border: 1px solid rgba(255, 196, 0, 0.32);
+  border-radius: 10px;
+}
+.lesson-colab-eyebrow {
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+.lesson-colab-card p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted, #9aa3b2);
+  margin: 0 0 12px;
+}
+/* Full width and centred, matching #torch-colab-link on the question rail —
+   it is the same instruction ("your work is over there"), so it should not
+   look like a different one. */
+.lesson-colab-open {
+  display: block;
+  padding: 11px 12px;
+  border-radius: 9px;
+  background: #d5232b;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.lesson-colab-open:hover { background: #e6353d; }
+/* The continue button is the learner's own claim that they have read it, and
+   the only control on the rail. Give it the width that says so. */
+html.dd-colab-edition .lesson-actions #lesson-continue-btn {
+  width: 100%;
+}
