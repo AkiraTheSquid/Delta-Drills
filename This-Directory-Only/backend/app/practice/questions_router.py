@@ -46,6 +46,7 @@ from app.prioritization import (
     question_is_unlocked,
     record_ladder_outcome,
     select_next_subtopic,
+    question_target_difficulty,
     target_difficulty,
 )
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
@@ -150,13 +151,14 @@ def next_question(
     ]
     # A focused request is the learner explicitly opening one concept, so honour
     # that over the queue's own idea of what comes next; on the normal path,
-    # keep the served question on the same KC the graph is highlighting. The aim
-    # is read AFTER the narrowing and from its concept — a subtopic-wide aim
-    # averages in every atom the learner has never met (see `_aim_mastery`).
+    # keep the served question on the same KC the graph is highlighting. The
+    # concept is resolved either way and only the NARROWING is conditional: the
+    # aim has to be measured on a concept on both paths, or focused practice
+    # keeps the subtopic-wide average this change exists to remove.
     served = set(sub_state.served_question_ids)
-    next_kc = None
+    narrowed, next_kc = narrow_to_next_kc(user_state, candidates, served)
     if focus_subtopic is None:
-        candidates, next_kc = narrow_to_next_kc(user_state, candidates, served)
+        candidates = narrowed
     target_diff = target_difficulty(user_state, subtopic, kc=next_kc)
     question = select_question_for_difficulty(
         candidates, target_diff, served, sub_state.served_question_ids
@@ -167,6 +169,12 @@ def next_question(
             detail=f"No questions available for subtopic '{subtopic}'",
         )
 
+    # Report the aim on the concept actually SERVED. `next_kc` drove the pick,
+    # but a question can target more than one concept and a focused pool is not
+    # narrowed to one at all — and `finalize_attempt` recomputes this from the
+    # answered question. Reading it the same way here is what stops the bar
+    # jumping on submit and jumping back on the next load.
+    target_diff = question_target_difficulty(user_state, subtopic, question.id)
     sub_state.served_question_ids.append(question.id)
     save_user_state(user_id)
 

@@ -200,6 +200,17 @@ def check_attempts_are_finalized():
             f"to attempt_scoring.finalize_attempt, and two copies will drift"
         )
 
+    # The aim the learner is SHOWN and the aim the submit recomputes have to be
+    # read the same way, or the bar jumps on submit and jumps back on the next
+    # load. Both go through `question_target_difficulty`, keyed to the concept
+    # of the question on screen.
+    assert 'question_target_difficulty' in _calls_in(
+        src('questions_router.py'), 'next_question'
+    ), (
+        "next_question reports an aim it did not measure on the served "
+        "question's concept — finalize_attempt does, and the two will disagree"
+    )
+
     # ORDER inside the shared path. The mastery snapshot has to read POST-attempt
     # BKT, or every attempt records the previous attempt's mastery and the
     # learning-rate chart plots a lag-one copy of itself.
