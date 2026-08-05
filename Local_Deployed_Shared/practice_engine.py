@@ -60,6 +60,7 @@ STAIRCASE_SEED_BY_LEVEL = {
 }
 STAIRCASE_DEFAULT_SEED = 40.0
 STAIRCASE_STEP_UP = 15.0      # on a correct answer
+STAIRCASE_FEELING_BONUS = {"somewhat": 3.0, "a_lot": 6.0}  # felt-difficulty
 STAIRCASE_STEP_DOWN = 20.0    # on a wrong answer (down harder: wrong at level
                               # k is stronger evidence than right at level k)
 
@@ -264,10 +265,24 @@ def get_target_difficulty(state: SubtopicState, level: Optional[str] = None) -> 
     return _clamp_difficulty(state.target_difficulty)
 
 
-def step_staircase(state: SubtopicState, correct: bool, level: Optional[str] = None) -> float:
-    """Advance the staircase after a graded attempt and return the new target."""
+def step_staircase(
+    state: SubtopicState,
+    correct: bool,
+    level: Optional[str] = None,
+    feedback: Optional[str] = None,
+) -> float:
+    """Advance the staircase after a graded attempt and return the new target.
+
+    The felt-difficulty rating sizes the step. Offline there is no posterior to
+    correct, so the rating rides the staircase directly: "way too easy" after a
+    correct answer takes a bigger step up than "about right" does, and "way too
+    hard" after a miss falls further. The backend twin does the equivalent with
+    a persisted offset (adaptive.nudge_difficulty_offset) because its target is
+    a function of mastery rather than a running number. An unrated attempt gets
+    the plain step — nobody was asked, so there is nothing to size it by."""
     current = get_target_difficulty(state, level)  # seeds if needed
-    delta = STAIRCASE_STEP_UP if correct else -STAIRCASE_STEP_DOWN
+    bonus = STAIRCASE_FEELING_BONUS.get(feedback or "", 0.0)
+    delta = (STAIRCASE_STEP_UP + bonus) if correct else -(STAIRCASE_STEP_DOWN + bonus)
     state.target_difficulty = _clamp_difficulty(current + delta)
     return state.target_difficulty
 
@@ -326,7 +341,7 @@ def apply_feedback(
     if not attempt.timestamp:
         attempt.timestamp = _now_iso()
     sub_state.last_update_ts = attempt.timestamp
-    step_staircase(sub_state, attempt.correct, user_state.self_reported_level)
+    step_staircase(sub_state, attempt.correct, user_state.self_reported_level, feedback)
     attempt.target_difficulty_after = sub_state.target_difficulty
 
     sub_state.history.append(attempt)

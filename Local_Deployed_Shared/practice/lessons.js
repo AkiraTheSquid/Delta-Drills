@@ -346,10 +346,20 @@ const LessonGate = (() => {
     }
   };
 
+  /* What the runner needs to know about the code on a lesson page.
+
+     `primary_library` is "torch" for every lesson, including the einops ones:
+     the July dialect conversion rewrote the whole course into the torch
+     dialect, so an einops lesson imports einops AND torch. This field said
+     "numpy" from before that conversion, and `questionIsTorch` reads it — so
+     every lesson cell was routed to Pyodide, which cannot import torch, and
+     every Run button on every lesson answered with a ModuleNotFoundError
+     traceback. Signed-in learners included; the backend fork runner has torch
+     preimported and was never asked. */
   const _runtimeContext = (page) => ({
     topic: "Lesson",
     lesson_topic: page.lesson.topic,
-    primary_library: page.lesson.topic === "Einops" ? "einops" : "numpy",
+    primary_library: "torch",
     supports_visual_output: false,
     test_cases: [],
   });
