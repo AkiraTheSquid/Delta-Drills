@@ -93,6 +93,14 @@
    learners. Guests get the runner's plain explanation rather than a
    ModuleNotFoundError, and the lesson still reads correctly — the code is
    printed with its expected results either way.
+
+   That held only once the runner was TOLD the code is torch. Two signals
+   agreed it was not: `lessons.js` still advertised the lesson's library as
+   "numpy" from before the conversion, and the sniff on the source cannot see
+   an import that this file has already packed into a Python string literal.
+   So every Run button on every lesson answered with a ModuleNotFoundError,
+   for signed-in learners too. Hence `source:` on the call below — the runner
+   decides on what the learner wrote, never on the harness around it.
    ================================================================ */
 
 const LessonNotebook = (() => {
@@ -290,6 +298,10 @@ const LessonNotebook = (() => {
     try {
       const result = await window.DeltaRunner.runSnippet(_programUpTo(cells, index), {
         question: window.LessonGate?.activeQuestion || null,
+        // What the learner actually wrote, for the runner's torch sniff. The
+        // program above wraps every cell in a string literal, where an import
+        // line is invisible to a line-anchored regex.
+        source: cells.slice(0, index + 1).map(_codeOf).join("\n"),
         onStatus: (message) => {
           if (message) out.textContent = message;
         },

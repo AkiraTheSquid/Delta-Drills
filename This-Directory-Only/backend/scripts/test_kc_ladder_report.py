@@ -281,7 +281,7 @@ def servable(seq, served):
             for c in seq
         ],
     }
-    out = prioritization.narrow_to_next_kc(st, [_Q(i) for i in POOL], served=set(served))
+    out, _kc = prioritization.narrow_to_next_kc(st, [_Q(i) for i in POOL], served=set(served))
     return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out)
 
 

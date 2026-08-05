@@ -144,18 +144,20 @@ def next_question(
         )
 
     sub_state = user_state.get_subtopic_state(subtopic)
-    target_diff = target_difficulty(user_state, subtopic)
-
     candidates = [
         q for q in get_questions_by_subtopic(subtopic)
         if question_is_unlocked(user_state, q)
     ]
     # A focused request is the learner explicitly opening one concept, so honour
     # that over the queue's own idea of what comes next; on the normal path,
-    # keep the served question on the same KC the graph is highlighting.
+    # keep the served question on the same KC the graph is highlighting. The aim
+    # is read AFTER the narrowing and from its concept — a subtopic-wide aim
+    # averages in every atom the learner has never met (see `_aim_mastery`).
     served = set(sub_state.served_question_ids)
+    next_kc = None
     if focus_subtopic is None:
-        candidates = narrow_to_next_kc(user_state, candidates, served)
+        candidates, next_kc = narrow_to_next_kc(user_state, candidates, served)
+    target_diff = target_difficulty(user_state, subtopic, kc=next_kc)
     question = select_question_for_difficulty(
         candidates, target_diff, served, sub_state.served_question_ids
     )

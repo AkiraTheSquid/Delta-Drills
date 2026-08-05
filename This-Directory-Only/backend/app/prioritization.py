@@ -85,7 +85,7 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
 
 def narrow_to_next_kc(
     user_state: UserPracticeState, candidates: List, served: Optional[set] = None
-) -> List:
+) -> Tuple[List, Optional[str]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, when the subtopic carries any.
 
@@ -95,6 +95,11 @@ def narrow_to_next_kc(
     the exact "visualisation that does not represent the system" problem. If the
     next KC has nothing left unserved here, the unnarrowed list is returned so
     the learner is never stalled by the preference.
+
+    Returns `(candidates, kc)`, where `kc` is the concept the narrowing settled
+    on, or None when it could not settle on one. The caller needs it: the
+    difficulty aim has to be measured on the concept about to be served, and
+    this function is the only place that knows which concept that is.
     """
     here = {q.id for q in candidates}
     served = served or set()
@@ -121,10 +126,10 @@ def narrow_to_next_kc(
         # servable, so preferring the right concept cannot stall the queue.
         next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here)
     if not next_kc:
-        return candidates
+        return candidates, None
     narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
     if not narrowed:
-        return candidates
+        return candidates, None
 
     # Within the KC, serve the rung the learner's own attempt record says they
     # are on — faded (fill in the blank) or independent (write it unaided).
@@ -157,14 +162,14 @@ def narrow_to_next_kc(
         supported = set(kc_graph.questions_at_stage([q.id for q in narrowed], stage))
         if supported:
             fresh = [q for q in narrowed if q.id in supported and q.id not in served]
-            return fresh or [q for q in narrowed if q.id in supported]
+            return fresh or [q for q in narrowed if q.id in supported], next_kc
 
     unserved = [q for q in narrowed if q.id not in served]
     if not unserved:
-        return narrowed
+        return narrowed, next_kc
     wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
     if wanted:
-        return [q for q in unserved if q.id in set(wanted)]
+        return [q for q in unserved if q.id in set(wanted)], next_kc
 
     rung = [q for q in unserved if q.id in set(kc_graph.lowest_rung([q.id for q in unserved]))]
     if stage == "worked" and rung:
@@ -175,8 +180,8 @@ def narrow_to_next_kc(
         # random inside its band, which on a rung with several drills can open a
         # brand-new concept on its hardest one. Serve the easiest instead; the
         # difficulty ladder starts moving on the next question, from evidence.
-        return [min(rung, key=lambda q: (q.difficulty_score, q.id))]
-    return rung
+        return [min(rung, key=lambda q: (q.difficulty_score, q.id))], next_kc
+    return rung, next_kc
 
 
 def ladder_starter(question, stage: str) -> Optional[str]:
@@ -264,23 +269,85 @@ def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
     return sum(vals) / len(vals) if vals else params.p_init
 
 
-def target_difficulty(user_state: UserPracticeState, subtopic: str) -> float:
-    """BKT-derived target difficulty for the next question in a subtopic.
-    Scales with the learner's mastery of the subtopic's atoms, then adds the
-    learner's own correction from the felt-difficulty rating (see
-    `adaptive.nudge_difficulty_offset`) — mastery says how hard they can go,
-    the rating says how far off that aim has been landing in practice.
+def _aim_mastery(
+    user_state: UserPracticeState, subtopic: str, kc: Optional[str]
+) -> float:
+    """How strong the learner is at the thing they are about to be ASKED.
+
+    Scoped to the concept whenever one is in play, and to the subtopic only
+    when none is. A subtopic is not a concept: "Numpy: Core array literacy"
+    exercises thirty atoms, so `subtopic_mastery` averages a learner's command
+    of the concept in front of them with twenty-five atoms they have never met,
+    all sitting at the beginner prior. Measured on a real account, that pinned
+    the aim at 24.5/100 across a session in which the concept's own mastery
+    reached 0.92 — and the aim finished the session 0.15 points LOWER than it
+    started, because BKT decay on the untouched atoms outran the evidence on
+    the practised ones. The learner is shown a per-concept estimate and served
+    a per-subtopic aim, and the two numbers had no reason ever to agree.
+
+    Which per-concept number: the concept's own attempt record, through the
+    Wilson LOWER bound that `kc_estimate` already computes and the strip
+    already draws as the left edge of the estimate range. Aiming at the bound
+    rather than the raw rate is what makes a thin record behave — at n=0 it is
+    0 and the prior below takes over, at 3/3 it is 0.44, at 13/20 it is 0.43,
+    at 20/20 it is 0.84 — so the aim rises with demonstrated success and falls
+    for a learner who is genuinely struggling, without a lucky pair of answers
+    launching them.
+
+    With no attempts on the concept, the atom crosswalk is the better answer
+    where it is `measured` (23 of 63 KCs): a fresh concept then opens at the
+    learner's own prior rather than at the floor. `topic-proxy` rows are the
+    topic's atoms wearing the concept's name, so they fall through to the
+    subtopic, which is at least honest about what it averaged.
+    """
+    if kc:
+        est = kc_graph.kc_estimate(user_state, kc)
+        if est["n"]:
+            return float(est["ci"][0])
+        mastery, _covered, tier = kc_graph.kc_mastery(user_state, kc)
+        if tier == "measured":
+            return float(mastery)
+    return subtopic_mastery(user_state, subtopic)
+
+
+def target_difficulty(
+    user_state: UserPracticeState, subtopic: str, kc: Optional[str] = None
+) -> float:
+    """Target difficulty for the next question, on the concept being served.
+    Scales with how strong the learner is at it (see `_aim_mastery`), then adds
+    their own correction from the felt-difficulty rating (see
+    `adaptive.nudge_difficulty_offset`) — the estimate says how hard they can
+    go, the rating says how far off that aim has been landing in practice.
+
+    `kc` omitted means "no concept in play", which is the honest state for the
+    subtopic scorer: it ranks every subtopic there is, and there is no single
+    concept to measure across a whole subtopic's worth of them.
 
     `.get`, not `get_subtopic_state`: that one CREATES the row it cannot find,
     and merely ASKING where to aim must not stamp an empty subtopic into stored
-    state — this is called from the subtopic scorer, over every subtopic there
-    is, including ones the learner has never touched."""
-    m = subtopic_mastery(user_state, subtopic)
+    state — this is called from that same scorer, over subtopics the learner
+    has never touched."""
+    m = _aim_mastery(user_state, subtopic, kc)
     raw = _DIFF_FLOOR + _DIFF_SPAN * m
     sub_state = user_state.subtopic_states.get(subtopic)
     if sub_state is not None:
         raw += sub_state.difficulty_offset
     return max(10.0, min(100.0, raw))
+
+
+def question_target_difficulty(
+    user_state: UserPracticeState, subtopic: str, qid: int
+) -> float:
+    """The aim, scoped to the concept an ANSWERED question belongs to.
+
+    `question_kcs(qid)[0]` is the same primary KC `ladder_fields` reports, so
+    the target the strip redraws after an answer is measured on the concept the
+    strip is naming. Serving reads the concept it narrowed to and finalizing
+    reads the concept it just graded; both are the concept on screen, and if
+    they ever stop agreeing the bar moves on submit and moves back on load.
+    """
+    kcs = kc_graph.question_kcs(qid)
+    return target_difficulty(user_state, subtopic, kc=kcs[0] if kcs else None)
 
 
 def _difficulty_reach_factor(easiest_available: float, target: float) -> float:

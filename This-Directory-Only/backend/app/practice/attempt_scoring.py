@@ -40,7 +40,7 @@ from app.adaptive import (
     apply_feedback,
     nudge_difficulty_offset,
 )
-from app.prioritization import subtopic_mastery, target_difficulty
+from app.prioritization import question_target_difficulty, subtopic_mastery
 from app.questions import get_question_by_id
 
 
@@ -110,7 +110,9 @@ def finalize_attempt(
     # is recomputed — otherwise "way too easy" would only be honoured one
     # question late, which is the same as not being honoured.
     nudge_difficulty_offset(sub_state, feedback, attempt.correct)
-    sub_state.target_difficulty = target_difficulty(user_state, attempt.subtopic)
+    sub_state.target_difficulty = question_target_difficulty(
+        user_state, attempt.subtopic, attempt.question_id
+    )
     attempt.baseline_after = sub_state.baseline
     attempt.p_after = sub_state.p
     attempt.target_difficulty_after = sub_state.target_difficulty

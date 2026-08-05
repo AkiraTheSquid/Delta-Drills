@@ -204,7 +204,13 @@ def check_attempts_are_finalized():
     # BKT, or every attempt records the previous attempt's mastery and the
     # learning-rate chart plots a lag-one copy of itself.
     scoring = src('attempt_scoring.py')
-    for needle in ('apply_feedback', 'apply_attempt', 'subtopic_mastery', 'target_difficulty'):
+    # `question_target_difficulty`, not the bare `target_difficulty`: the aim has
+    # to be measured on the concept the answered question belongs to. The
+    # subtopic-wide one averages in every atom of a thirty-atom subtopic the
+    # learner has never met, which pinned a real account's aim at 24.5/100
+    # through a session that took the concept itself to 0.92.
+    for needle in ('apply_feedback', 'apply_attempt', 'subtopic_mastery',
+                   'question_target_difficulty'):
         assert needle in _calls_in(scoring, 'finalize_attempt'), \
             f"finalize_attempt no longer calls {needle}"
     assert scoring.index('bkt_mastery.apply_attempt') < scoring.index('subtopic_mastery('), \
