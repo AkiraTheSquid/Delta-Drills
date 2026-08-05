@@ -29,15 +29,15 @@
       "torch.tensor#dtype"
      ],
      "concept_markdown": "PyTorch's core object is the **tensor** (n-dimensional array). Everything else in\nthis course \u2014 indexing, broadcasting, einsum, einops \u2014 is a way of manipulating\nthis one object, so it pays to know exactly what it is.\n\nA Python list is a bag of pointers: each element can be a different type, live\nanywhere in memory, and even be another list of a different length. A tensor is\nthe opposite: **one block of memory holding elements that are all the same\ntype**, plus a small amount of metadata describing how to interpret that block.\n\nBy convention PyTorch is imported once per file as `import torch as t`. That\nshort alias is what the ARENA exercises use, so every `t.` below is the same\nlibrary you would import as `torch`.\n\n```python\nimport torch as t\n\n# A list can hold three different types at once.\nprint([type(item).__name__ for item in [1, \"two\", [3]]])\n\n# A tensor holds one, for every element, and says which one.\na = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(a)\nprint(\"dtype of the whole block:\", a.dtype)\n```\n\nA freshly built tensor lays those elements out contiguously. Operations that\nonly re-describe the block \u2014 transposing, slicing with a step \u2014 hand back a\ntensor that *shares the same memory* in a different reading order. That is\ncheap, and it is why `.contiguous()` exists: it is how you ask for the copy.\n\n```python\nat = a.T  # `a` is still defined \u2014 this cell continues the one above.\n\n# Same numbers, same memory, read down the columns instead of along the rows.\nprint(\"shares storage with a:\", at.data_ptr() == a.data_ptr())\nprint(\"still in reading order:\", at.is_contiguous())\n\npacked = at.contiguous()\nprint(\"the copy owns its memory:\", packed.data_ptr() != a.data_ptr())\nassert t.equal(packed, at)\n```\n\nWhy this design? Because when every element is the same type and sits at a\npredictable memory address, PyTorch can hand whole-tensor operations to fast\ncompiled kernels instead of interpreting Python code element by element. That is\nthe entire performance story \u2014 and the reason the idiomatic style you will learn\nhere avoids writing Python `for` loops over elements.\n\nThe general procedure for turning existing Python data into a tensor is\n`t.tensor(data)`: it walks the (possibly nested) sequence, finds a common\nelement type, and copies the values into one block. Nesting of any depth goes\nthrough the same procedure.\n\n```python\ncube = t.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])\nprint(\"shape:\", cube.shape)\n\n# A cell ending in a bare expression prints its value, the way a notebook does.\ncube * 10\n```\n\nTwo ways of reading a tensor back out come up constantly from here on, so name\nthem now. **`t.equal(x, y)`** answers \"same shape AND same values?\" as one\nbool \u2014 the whole-tensor comparison, which is what a check wants. **`x.item()`**\npulls a single element out as a plain Python number, and it refuses unless the\ntensor holds exactly one; that refusal is the point, because a silent \"first\nelement\" would be a guess.\n\n```python\nsame = t.tensor([[1, 2], [3, 4]])\nalso = t.tensor([[1, 2], [3, 4]])\nprint(\"t.equal ->\", t.equal(same, also), \"  one answer for the whole tensor\")\n\none = t.tensor([7])\nprint(\"one.item() ->\", one.item(), \"as a\", type(one.item()).__name__)\ntry:\n    same.item()\nexcept RuntimeError as exc:\n    print(\"four elements ->\", type(exc).__name__, \"- item() wants exactly one\")\n```\n\nThe **shape** is a tuple giving the length along each dimension (axis). A 3\u00d74\nmatrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4\n(columns). Axis 0 is always the outermost nesting level, so a flat list becomes\n1-D, a list of equal-length lists becomes 2-D, and a list of those becomes 3-D.\n\n```python\nimport torch as t\n\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(\"shape:\", grid.shape)\nprint(\"axis 0 (rows)   :\", grid.shape[0])\nprint(\"axis 1 (columns):\", grid.shape[1])\n```\n\nTwo smaller readings come off the same metadata:\n\n- **`ndim`** \u2014 how many axes there are. This is the nesting depth, and it is an\n  attribute, not a call.\n- **`numel()`** \u2014 the total element count, which is the *product* of the shape.\n  This is a method, so it needs the parentheses. For a 2\u00d73 tensor `ndim` is 2\n  and `numel()` is 6 \u2014 six numbers arranged as two rows, not two of anything.\n\nGetting those two confused is the classic first-week error, and it is worth\nfixing now: `ndim` counts axes, `numel()` counts numbers.\n\n```python\n# Four numbers, three nestings, three different answers for ndim \u2014 and the same\n# answer for numel every time.\nfor data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):\n    x = t.tensor(data)\n    print(tuple(x.shape), \"ndim\", x.ndim, \"numel\", x.numel())\n```\n\nThe **dtype** is the single element type shared by every entry \u2014 `torch.int64`,\n`torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,\nbecause there is exactly one block of memory and every slot in it is the same\nsize.\n\nThat has a consequence people meet by accident: when you build a tensor from\nmixed Python numbers, PyTorch cannot keep some entries as ints and some as\nfloats. It picks ONE type that can hold everything, so a single float anywhere\nin the input turns the whole tensor into `torch.float32`. All-integer input\ngives you `torch.int64` instead.\n\n```python\nimport torch as t\n\nprint(t.tensor([1, 2, 3]).dtype)\nprint(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block\n\n# Say what you want up front rather than relying on how the input is spelled.\nprint(t.tensor([1, 2, 3], dtype=t.float32).dtype)\n```\n\nOrdinary division still works on an integer tensor \u2014 `a / 2` quietly hands back\na *new* float tensor \u2014 but anything that has to write a float back into the\ninteger block does not. `a /= 2` raises rather than silently rounding, and the\nerror is the useful kind: it happens where the type is wrong, not three steps\nlater where the numbers are.\n\n```python\nints = t.tensor([2, 4, 6])\nprint(\"ints / 2   ->\", (ints / 2).dtype, \"(a new tensor)\")\n\ntry:\n    ints /= 2\nexcept RuntimeError as exc:\n    print(\"ints /= 2  ->\", type(exc).__name__)\n```\n\nTwo tensors can hold the same numbers in the same layout and still disagree on\ndtype. Shape and dtype are independent, and code that checks only one of them\nis checking half the question.",
-     "worked_example_markdown": "Turn a nested Python list into a 2-D tensor:\n\n```python\nimport torch as t\n\n# A nested Python list: two inner lists of three integers each.\nrows = [[1, 2, 3], [4, 5, 6]]\n\n# t.tensor walks the nesting and copies the values into one block.\na = t.tensor(rows)\n\n# The values survive the trip unchanged \u2014 .tolist() reads them back out.\nassert a.tolist() == [[1, 2, 3], [4, 5, 6]]\nprint(a)\nprint(\"back to a list:\", a.tolist())\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.\n\n```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7])\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\n\n# One nesting level -> one axis. Three numbers in it.\nassert flat.shape == (3,)\nassert flat.ndim == 1\nassert flat.numel() == 3\n\n# Two nesting levels -> two axes, (rows, columns). numel is 2 * 3, not 2.\nassert grid.shape == (2, 3)\nassert grid.ndim == 2\nassert grid.numel() == 6\n\n# shape reports as torch.Size, which IS a tuple subclass \u2014 so it compares\n# equal to a plain tuple, and tuple() converts it when you need the real thing.\nassert tuple(grid.shape) == (2, 3)\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\n```\n\n```python\nimport torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n```",
+     "worked_example_markdown": "The problem below asks you to turn a nested Python list into a 2-D tensor. This\nexample shows that move once. Start with the list \u2014 three inner lists of two\nintegers each \u2014 and hand it to `t.tensor`:\n\n```python\nimport torch as t\n\nrows = [[7, 8], [9, 10], [11, 12]]\na = t.tensor(rows)\nprint(a)\n```\n\n`t.tensor` walked the nesting and copied the values into one block. Nothing was\nrounded, reordered, or dropped, and `.tolist()` reads them straight back out \u2014\nwhich is the check worth running whenever you are not sure a conversion did what\nyou meant:\n\n```python\nprint(\"back to a list:\", a.tolist())\nassert a.tolist() == [[7, 8], [9, 10], [11, 12]]\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.\n\nThe problem below asks for a tensor's number of axes and its element count.\nThose sound like the same question and are not, so this example takes them\napart. One level of nesting gives one axis, however many numbers sit in it:\n\n```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7, 2, 9])\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nassert flat.ndim == 1\nassert flat.numel() == 5\n```\n\nFive numbers, but `ndim` is 1 \u2014 the count of numbers never changes the count of\naxes. Adding a nesting level is what does. Here two levels give two axes, and\n`numel` counts every element, not the rows:\n\n```python\ngrid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\nassert grid.ndim == 2\nassert grid.numel() == 12\n```\n\nNote what `shape` printed: `torch.Size([3, 4])`, not `(3, 4)`. `torch.Size` is a\ntuple subclass, so it compares equal to a plain tuple \u2014 but it is not one, and\nanything that asks you for a tuple wants `tuple()` around it:\n\n```python\nprint(grid.shape, \"==\", tuple(grid.shape), \"->\", grid.shape == (3, 4))\nassert grid.shape == (3, 4)\nassert tuple(grid.shape) == (3, 4)\n```\n\nThe problem below asks you to compare two tensors on shape and on dtype and\nreport a `True`/`False` for each. The point of this example is to show that\nthose two questions are genuinely independent \u2014 two tensors can agree on one\nand disagree on the other \u2014 and that the answer depends entirely on what you\nfeed in. So rather than one block of code, here are three pairs, each printed.\n\nStart with two tensors built from the same numbers in the same layout:\n\n```python\nimport torch as t\n\na = t.tensor([[20, 21, 22], [23, 24, 25]])\nb = t.tensor([[30, 31, 32], [33, 34, 35]])\n\nprint(\"shapes:\", tuple(a.shape), tuple(b.shape), \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n```\n\nBoth checks came back true. Now change ONE number to a float. Nothing about the\nlayout changed, so the shapes still agree \u2014 but a tensor holds one type for\nevery element, so that single `31.5` re-types the whole block:\n\n```python\nc = t.tensor([[30, 31.5, 32], [33, 34, 35]])\n\nprint(\"c is\", c.dtype, \"\u2014 because of one float, not just that one entry\")\nprint(\"shape match?\", a.shape == c.shape, \" dtype match?\", a.dtype == c.dtype)\nassert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)\n```\n\nSame answer to the shape question, opposite answer to the dtype question. Now\nthe other way round: keep the type and change the layout.\n\n```python\nd = t.tensor([[40, 41], [42, 43], [44, 45]])\n\nprint(\"a is\", tuple(a.shape), \"and d is\", tuple(d.shape))\nprint(\"shape match?\", a.shape == d.shape, \" dtype match?\", a.dtype == d.dtype)\nassert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)\n```\n\nThree inputs, three different answers: `(True, True)`, `(True, False)`,\n`(False, True)`. That is why the problem gives you two arguments and asks for\ntwo booleans \u2014 there is no single right answer to memorise, only two checks to\nrun. `.shape` is an attribute and `.dtype` is an attribute; neither takes\nparentheses.",
      "segments": [
       {
        "concept_id": "",
        "title": "a tensor is one block of one type",
        "concept_markdown": "PyTorch's core object is the **tensor** (n-dimensional array). Everything else in\nthis course \u2014 indexing, broadcasting, einsum, einops \u2014 is a way of manipulating\nthis one object, so it pays to know exactly what it is.\n\nA Python list is a bag of pointers: each element can be a different type, live\nanywhere in memory, and even be another list of a different length. A tensor is\nthe opposite: **one block of memory holding elements that are all the same\ntype**, plus a small amount of metadata describing how to interpret that block.\n\nBy convention PyTorch is imported once per file as `import torch as t`. That\nshort alias is what the ARENA exercises use, so every `t.` below is the same\nlibrary you would import as `torch`.\n\n```python\nimport torch as t\n\n# A list can hold three different types at once.\nprint([type(item).__name__ for item in [1, \"two\", [3]]])\n\n# A tensor holds one, for every element, and says which one.\na = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(a)\nprint(\"dtype of the whole block:\", a.dtype)\n```\n\nA freshly built tensor lays those elements out contiguously. Operations that\nonly re-describe the block \u2014 transposing, slicing with a step \u2014 hand back a\ntensor that *shares the same memory* in a different reading order. That is\ncheap, and it is why `.contiguous()` exists: it is how you ask for the copy.\n\n```python\nat = a.T  # `a` is still defined \u2014 this cell continues the one above.\n\n# Same numbers, same memory, read down the columns instead of along the rows.\nprint(\"shares storage with a:\", at.data_ptr() == a.data_ptr())\nprint(\"still in reading order:\", at.is_contiguous())\n\npacked = at.contiguous()\nprint(\"the copy owns its memory:\", packed.data_ptr() != a.data_ptr())\nassert t.equal(packed, at)\n```\n\nWhy this design? Because when every element is the same type and sits at a\npredictable memory address, PyTorch can hand whole-tensor operations to fast\ncompiled kernels instead of interpreting Python code element by element. That is\nthe entire performance story \u2014 and the reason the idiomatic style you will learn\nhere avoids writing Python `for` loops over elements.\n\nThe general procedure for turning existing Python data into a tensor is\n`t.tensor(data)`: it walks the (possibly nested) sequence, finds a common\nelement type, and copies the values into one block. Nesting of any depth goes\nthrough the same procedure.\n\n```python\ncube = t.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])\nprint(\"shape:\", cube.shape)\n\n# A cell ending in a bare expression prints its value, the way a notebook does.\ncube * 10\n```\n\nTwo ways of reading a tensor back out come up constantly from here on, so name\nthem now. **`t.equal(x, y)`** answers \"same shape AND same values?\" as one\nbool \u2014 the whole-tensor comparison, which is what a check wants. **`x.item()`**\npulls a single element out as a plain Python number, and it refuses unless the\ntensor holds exactly one; that refusal is the point, because a silent \"first\nelement\" would be a guess.\n\n```python\nsame = t.tensor([[1, 2], [3, 4]])\nalso = t.tensor([[1, 2], [3, 4]])\nprint(\"t.equal ->\", t.equal(same, also), \"  one answer for the whole tensor\")\n\none = t.tensor([7])\nprint(\"one.item() ->\", one.item(), \"as a\", type(one.item()).__name__)\ntry:\n    same.item()\nexcept RuntimeError as exc:\n    print(\"four elements ->\", type(exc).__name__, \"- item() wants exactly one\")\n```",
        "watch_out_markdown": "",
-       "worked_example_markdown": "Turn a nested Python list into a 2-D tensor:\n\n```python\nimport torch as t\n\n# A nested Python list: two inner lists of three integers each.\nrows = [[1, 2, 3], [4, 5, 6]]\n\n# t.tensor walks the nesting and copies the values into one block.\na = t.tensor(rows)\n\n# The values survive the trip unchanged \u2014 .tolist() reads them back out.\nassert a.tolist() == [[1, 2, 3], [4, 5, 6]]\nprint(a)\nprint(\"back to a list:\", a.tolist())\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.",
-       "worked_example_code": "import torch as t\n\n# A nested Python list: two inner lists of three integers each.\nrows = [[1, 2, 3], [4, 5, 6]]\n\n# t.tensor walks the nesting and copies the values into one block.\na = t.tensor(rows)\n\n# The values survive the trip unchanged \u2014 .tolist() reads them back out.\nassert a.tolist() == [[1, 2, 3], [4, 5, 6]]\nprint(a)\nprint(\"back to a list:\", a.tolist())\n",
+       "worked_example_markdown": "The problem below asks you to turn a nested Python list into a 2-D tensor. This\nexample shows that move once. Start with the list \u2014 three inner lists of two\nintegers each \u2014 and hand it to `t.tensor`:\n\n```python\nimport torch as t\n\nrows = [[7, 8], [9, 10], [11, 12]]\na = t.tensor(rows)\nprint(a)\n```\n\n`t.tensor` walked the nesting and copied the values into one block. Nothing was\nrounded, reordered, or dropped, and `.tolist()` reads them straight back out \u2014\nwhich is the check worth running whenever you are not sure a conversion did what\nyou meant:\n\n```python\nprint(\"back to a list:\", a.tolist())\nassert a.tolist() == [[7, 8], [9, 10], [11, 12]]\n```\n\nYou never told `t.tensor` how big the result should be, and you never told it\nwhat type to use. It read both off the data. The next two segments are about\nthose two answers, because they are where almost every tensor bug lives.",
+       "worked_example_code": "import torch as t\n\nrows = [[7, 8], [9, 10], [11, 12]]\na = t.tensor(rows)\nprint(a)\n",
        "faded_items": [
         {
          "question_id": 224,
@@ -52,8 +52,8 @@
        "title": "nesting becomes axes \u2014 shape, ndim, numel",
        "concept_markdown": "The **shape** is a tuple giving the length along each dimension (axis). A 3\u00d74\nmatrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4\n(columns). Axis 0 is always the outermost nesting level, so a flat list becomes\n1-D, a list of equal-length lists becomes 2-D, and a list of those becomes 3-D.\n\n```python\nimport torch as t\n\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(\"shape:\", grid.shape)\nprint(\"axis 0 (rows)   :\", grid.shape[0])\nprint(\"axis 1 (columns):\", grid.shape[1])\n```\n\nTwo smaller readings come off the same metadata:\n\n- **`ndim`** \u2014 how many axes there are. This is the nesting depth, and it is an\n  attribute, not a call.\n- **`numel()`** \u2014 the total element count, which is the *product* of the shape.\n  This is a method, so it needs the parentheses. For a 2\u00d73 tensor `ndim` is 2\n  and `numel()` is 6 \u2014 six numbers arranged as two rows, not two of anything.\n\nGetting those two confused is the classic first-week error, and it is worth\nfixing now: `ndim` counts axes, `numel()` counts numbers.\n\n```python\n# Four numbers, three nestings, three different answers for ndim \u2014 and the same\n# answer for numel every time.\nfor data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):\n    x = t.tensor(data)\n    print(tuple(x.shape), \"ndim\", x.ndim, \"numel\", x.numel())\n```",
        "watch_out_markdown": "",
-       "worked_example_markdown": "```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7])\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\n\n# One nesting level -> one axis. Three numbers in it.\nassert flat.shape == (3,)\nassert flat.ndim == 1\nassert flat.numel() == 3\n\n# Two nesting levels -> two axes, (rows, columns). numel is 2 * 3, not 2.\nassert grid.shape == (2, 3)\nassert grid.ndim == 2\nassert grid.numel() == 6\n\n# shape reports as torch.Size, which IS a tuple subclass \u2014 so it compares\n# equal to a plain tuple, and tuple() converts it when you need the real thing.\nassert tuple(grid.shape) == (2, 3)\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\n```",
-       "worked_example_code": "import torch as t\n\nflat = t.tensor([4, 1, 7])\ngrid = t.tensor([[1, 2, 3], [4, 5, 6]])\n\n# One nesting level -> one axis. Three numbers in it.\nassert flat.shape == (3,)\nassert flat.ndim == 1\nassert flat.numel() == 3\n\n# Two nesting levels -> two axes, (rows, columns). numel is 2 * 3, not 2.\nassert grid.shape == (2, 3)\nassert grid.ndim == 2\nassert grid.numel() == 6\n\n# shape reports as torch.Size, which IS a tuple subclass \u2014 so it compares\n# equal to a plain tuple, and tuple() converts it when you need the real thing.\nassert tuple(grid.shape) == (2, 3)\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\n",
+       "worked_example_markdown": "The problem below asks for a tensor's number of axes and its element count.\nThose sound like the same question and are not, so this example takes them\napart. One level of nesting gives one axis, however many numbers sit in it:\n\n```python\nimport torch as t\n\nflat = t.tensor([4, 1, 7, 2, 9])\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nassert flat.ndim == 1\nassert flat.numel() == 5\n```\n\nFive numbers, but `ndim` is 1 \u2014 the count of numbers never changes the count of\naxes. Adding a nesting level is what does. Here two levels give two axes, and\n`numel` counts every element, not the rows:\n\n```python\ngrid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])\nprint(\"grid: shape\", grid.shape, \"ndim\", grid.ndim, \"numel\", grid.numel())\nassert grid.ndim == 2\nassert grid.numel() == 12\n```\n\nNote what `shape` printed: `torch.Size([3, 4])`, not `(3, 4)`. `torch.Size` is a\ntuple subclass, so it compares equal to a plain tuple \u2014 but it is not one, and\nanything that asks you for a tuple wants `tuple()` around it:\n\n```python\nprint(grid.shape, \"==\", tuple(grid.shape), \"->\", grid.shape == (3, 4))\nassert grid.shape == (3, 4)\nassert tuple(grid.shape) == (3, 4)\n```",
+       "worked_example_code": "import torch as t\n\nflat = t.tensor([4, 1, 7, 2, 9])\nprint(\"flat: shape\", flat.shape, \"ndim\", flat.ndim, \"numel\", flat.numel())\nassert flat.ndim == 1\nassert flat.numel() == 5\n",
        "faded_items": [
         {
          "question_id": 482,
@@ -68,8 +68,8 @@
        "title": "dtype is a property of the whole block",
        "concept_markdown": "The **dtype** is the single element type shared by every entry \u2014 `torch.int64`,\n`torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,\nbecause there is exactly one block of memory and every slot in it is the same\nsize.\n\nThat has a consequence people meet by accident: when you build a tensor from\nmixed Python numbers, PyTorch cannot keep some entries as ints and some as\nfloats. It picks ONE type that can hold everything, so a single float anywhere\nin the input turns the whole tensor into `torch.float32`. All-integer input\ngives you `torch.int64` instead.\n\n```python\nimport torch as t\n\nprint(t.tensor([1, 2, 3]).dtype)\nprint(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block\n\n# Say what you want up front rather than relying on how the input is spelled.\nprint(t.tensor([1, 2, 3], dtype=t.float32).dtype)\n```\n\nOrdinary division still works on an integer tensor \u2014 `a / 2` quietly hands back\na *new* float tensor \u2014 but anything that has to write a float back into the\ninteger block does not. `a /= 2` raises rather than silently rounding, and the\nerror is the useful kind: it happens where the type is wrong, not three steps\nlater where the numbers are.\n\n```python\nints = t.tensor([2, 4, 6])\nprint(\"ints / 2   ->\", (ints / 2).dtype, \"(a new tensor)\")\n\ntry:\n    ints /= 2\nexcept RuntimeError as exc:\n    print(\"ints /= 2  ->\", type(exc).__name__)\n```\n\nTwo tensors can hold the same numbers in the same layout and still disagree on\ndtype. Shape and dtype are independent, and code that checks only one of them\nis checking half the question.",
        "watch_out_markdown": "",
-       "worked_example_markdown": "```python\nimport torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n```",
-       "worked_example_code": "import torch as t\n\nints = t.tensor([[1, 2], [3, 4]])\nmixed = t.tensor([[1, 2.5], [3, 4]])\n\n# All-integer input -> one integer type for all four entries.\nassert ints.dtype == t.int64\n\n# ONE float in the input decides the type of the whole block.\nassert mixed.dtype == t.float32\n\n# Same shape, different dtype: the two questions are independent.\nassert ints.shape == mixed.shape\nassert ints.dtype != mixed.dtype\n\n# dtype= overrides the inference rather than relying on the input's spelling.\nassert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32\nprint(\"all ints ->\", ints.dtype)\nprint(\"one float ->\", mixed.dtype, \"  (the whole block, not just that entry)\")\nprint(mixed)\n",
+       "worked_example_markdown": "The problem below asks you to compare two tensors on shape and on dtype and\nreport a `True`/`False` for each. The point of this example is to show that\nthose two questions are genuinely independent \u2014 two tensors can agree on one\nand disagree on the other \u2014 and that the answer depends entirely on what you\nfeed in. So rather than one block of code, here are three pairs, each printed.\n\nStart with two tensors built from the same numbers in the same layout:\n\n```python\nimport torch as t\n\na = t.tensor([[20, 21, 22], [23, 24, 25]])\nb = t.tensor([[30, 31, 32], [33, 34, 35]])\n\nprint(\"shapes:\", tuple(a.shape), tuple(b.shape), \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n```\n\nBoth checks came back true. Now change ONE number to a float. Nothing about the\nlayout changed, so the shapes still agree \u2014 but a tensor holds one type for\nevery element, so that single `31.5` re-types the whole block:\n\n```python\nc = t.tensor([[30, 31.5, 32], [33, 34, 35]])\n\nprint(\"c is\", c.dtype, \"\u2014 because of one float, not just that one entry\")\nprint(\"shape match?\", a.shape == c.shape, \" dtype match?\", a.dtype == c.dtype)\nassert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)\n```\n\nSame answer to the shape question, opposite answer to the dtype question. Now\nthe other way round: keep the type and change the layout.\n\n```python\nd = t.tensor([[40, 41], [42, 43], [44, 45]])\n\nprint(\"a is\", tuple(a.shape), \"and d is\", tuple(d.shape))\nprint(\"shape match?\", a.shape == d.shape, \" dtype match?\", a.dtype == d.dtype)\nassert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)\n```\n\nThree inputs, three different answers: `(True, True)`, `(True, False)`,\n`(False, True)`. That is why the problem gives you two arguments and asks for\ntwo booleans \u2014 there is no single right answer to memorise, only two checks to\nrun. `.shape` is an attribute and `.dtype` is an attribute; neither takes\nparentheses.",
+       "worked_example_code": "import torch as t\n\na = t.tensor([[20, 21, 22], [23, 24, 25]])\nb = t.tensor([[30, 31, 32], [33, 34, 35]])\n\nprint(\"shapes:\", tuple(a.shape), tuple(b.shape), \"-> match?\", a.shape == b.shape)\nprint(\"dtypes:\", a.dtype, b.dtype, \"-> match?\", a.dtype == b.dtype)\nassert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)\n",
        "faded_items": [
         {
          "question_id": 484,
@@ -103,7 +103,20 @@
      "guided_items": [
       {
        "question_id": 523,
-       "hints_markdown": "1. Two of the three answers are memory questions, not value questions: does\n   the tensor you got back read the ORIGINAL block, or a fresh one?\n   Transposing never moves data; `.contiguous()` exists precisely to ask for\n   the move.\n2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;\n   `.data_ptr()` reports which block each one reads.\n3. `view = a.T`, `packed = view.contiguous()`, then return\n   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),\n   packed.tolist())`."
+       "hints_markdown": "Your turn: the same three questions, but for the TRANSPOSE and for\n`.contiguous()` rather than for `.reshape` and `.clone()`.\n\n1. Two of the three answers are memory questions, not value questions: does\n   the tensor you got back read the ORIGINAL block, or a fresh one?\n   Transposing never moves data; `.contiguous()` exists precisely to ask for\n   the move.\n2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;\n   `.data_ptr()` reports which block each one reads.\n3. `view = a.T`, `packed = view.contiguous()`, then return\n   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),\n   packed.tolist())`.",
+       "worked_example_code": "import torch as t\n\na = t.tensor([[1, 2], [3, 4], [5, 6]])\n\n# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead\n# of 3 rows of 2. Nothing is copied, so both names read one buffer.\nview = a.reshape(2, 3)\nassert view.data_ptr() == a.data_ptr()\n\n# .clone() is the opposite request: give me my own block.\ncopy = a.clone()\nassert copy.data_ptr() != a.data_ptr()\n\n# Sharing is about memory, not values \u2014 the copy holds the same numbers.\nassert copy.tolist() == a.tolist()\nprint(\"view shares a's block:\", view.data_ptr() == a.data_ptr())\nprint(\"copy shares a's block:\", copy.data_ptr() == a.data_ptr())\nprint(\"view reads as:\", view.tolist())\n"
+      }
+     ],
+     "applied_items": [
+      {
+       "question_id": 481,
+       "prompt": "The problem below hands you a FLAT list and asks for the tensor plus its number\nof axes. This example is here so you have seen the move once; the problem is the\nsame move on different data, and you write the whole function yourself.\n\nOne level of nesting gives one axis, however many numbers are inside it:",
+       "worked_example_code": "import torch as t\n\nflat = t.tensor([3, 1, 4, 1, 5])\nprint(flat, \"-> ndim\", flat.ndim)\nassert flat.ndim == 1\n"
+      },
+      {
+       "question_id": 483,
+       "prompt": "The problem below asks for the dtype's NAME as a string and the element count.\nTwo inputs here, because the dtype depends on what is in the list \u2014 that is the\nwhole point of the question.\n\nAll-integer input infers the integer type, and `str()` is what turns a dtype\ninto the name the problem asks for:",
+       "worked_example_code": "import torch as t\n\nints = t.tensor([2, 4, 6, 8])\nprint(str(ints.dtype), ints.numel())\nassert (str(ints.dtype), ints.numel()) == (\"torch.int64\", 4)\n"
       }
      ],
      "independent_items": [
@@ -232,9 +245,11 @@
      "guided_items": [
       {
        "question_id": 48,
-       "hints_markdown": "1. Nothing is being constructed from scratch here \u2014 you need a COPY of v\n   that you are allowed to write into.\n2. Odd indices are a slice with a step, and assigning a scalar into a\n   slice broadcasts it across every selected position.\n3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates\n   the caller's tensor, which the drill checks for."
+       "hints_markdown": "1. Nothing is being constructed from scratch here \u2014 you need a COPY of v\n   that you are allowed to write into.\n2. Odd indices are a slice with a step, and assigning a scalar into a\n   slice broadcasts it across every selected position.\n3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates\n   the caller's tensor, which the drill checks for.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       225,
       50,
@@ -287,13 +302,16 @@
      "guided_items": [
       {
        "question_id": 76,
-       "hints_markdown": "1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and\n   top-bottom (reverse the order of rows). Both are single `t.flip` calls.\n2. `t.flip` takes the axes to reverse as a list. Which axis number reverses\n   each row? Which reverses the row order?\n3. `t.flip(z, [1])` and `t.flip(z, [0])` \u2014 and because flip copies, the\n   \"input must not be modified\" requirement is already satisfied."
+       "hints_markdown": "1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and\n   top-bottom (reverse the order of rows). Both are single `t.flip` calls.\n2. `t.flip` takes the axes to reverse as a list. Which axis number reverses\n   each row? Which reverses the row order?\n3. `t.flip(z, [1])` and `t.flip(z, [0])` \u2014 and because flip copies, the\n   \"input must not be modified\" requirement is already satisfied.",
+       "worked_example_code": ""
       },
       {
        "question_id": 506,
-       "hints_markdown": "1. A slice, not an index \u2014 you want a run of elements, not one element.\n2. Leaving the start empty means 'from the beginning'.\n3. `x[:k]`."
+       "hints_markdown": "1. A slice, not an index \u2014 you want a run of elements, not one element.\n2. Leaving the start empty means 'from the beginning'.\n3. `x[:k]`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       231,
       75,
@@ -389,9 +407,11 @@
      "guided_items": [
       {
        "question_id": 524,
-       "hints_markdown": "1. The exclusive stop does not care which way you are counting. Going down,\n   \"stops before the stop\" means the stop has to sit one step PAST `low`.\n2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what\n   `?` makes `low` the last value actually produced.\n3. `t.arange(high, low - 1, -1)` \u2014 the `- 1` is the inclusive-endpoint fix\n   from q229, pointed the other way."
+       "hints_markdown": "1. The exclusive stop does not care which way you are counting. Going down,\n   \"stops before the stop\" means the stop has to sit one step PAST `low`.\n2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what\n   `?` makes `low` the last value actually produced.\n3. `t.arange(high, low - 1, -1)` \u2014 the `- 1` is the inclusive-endpoint fix\n   from q229, pointed the other way.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       53
      ],
@@ -486,9 +506,11 @@
      "guided_items": [
       {
        "question_id": 87,
-       "hints_markdown": "1. Torch has a histogram counter that takes the bin count and the range\n   directly \u2014 no bucketing by hand.\n2. It returns FLOAT counts. The drill wants integers, so the last step is\n   a dtype conversion.\n3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` \u2014 this is the\n   dtype lesson in miniature: the numbers were already right, only their\n   type was wrong."
+       "hints_markdown": "1. Torch has a histogram counter that takes the bin count and the range\n   directly \u2014 no bucketing by hand.\n2. It returns FLOAT counts. The drill wants integers, so the last step is\n   a dtype conversion.\n3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` \u2014 this is the\n   dtype lesson in miniature: the numbers were already right, only their\n   type was wrong.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       19
      ],
@@ -536,17 +558,21 @@
      "guided_items": [
       {
        "question_id": 36,
-       "hints_markdown": "1. You get a 1-D tensor and a target 3-D shape whose product equals its length \u2014\n   this is a pure reorganize-the-metadata task.\n2. \"Same row-major order (the last axis varies fastest)\" in the prompt is\n   describing reshape's DEFAULT fill order \u2014 no reordering needed on your part.\n3. One method call on the input tensor does the whole job."
+       "hints_markdown": "1. You get a 1-D tensor and a target 3-D shape whose product equals its length \u2014\n   this is a pure reorganize-the-metadata task.\n2. \"Same row-major order (the last axis varies fastest)\" in the prompt is\n   describing reshape's DEFAULT fill order \u2014 no reordering needed on your part.\n3. One method call on the input tensor does the whole job.",
+       "worked_example_code": ""
       },
       {
        "question_id": 490,
-       "hints_markdown": "1. Any shape in, exactly one axis out.\n2. You are not choosing a new shape, you are removing all structure \u2014 so no\n   dimensions need naming.\n3. `x.flatten()`."
+       "hints_markdown": "1. Any shape in, exactly one axis out.\n2. You are not choosing a new shape, you are removing all structure \u2014 so no\n   dimensions need naming.\n3. `x.flatten()`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 491,
-       "hints_markdown": "1. You know one of the two numbers in the target shape. You do not know the\n   other, and you should not compute it.\n2. Reshape accepts -1 in exactly one position, meaning 'work this out'.\n3. `x.reshape(-1, cols)`."
+       "hints_markdown": "1. You know one of the two numbers in the target shape. You do not know the\n   other, and you should not compute it.\n2. Reshape accepts -1 in exactly one position, meaning 'work this out'.\n3. `x.reshape(-1, cols)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       23,
       492,
@@ -648,13 +674,16 @@
      "guided_items": [
       {
        "question_id": 487,
-       "hints_markdown": "1. The whole tensor at once \u2014 there is no index to loop over.\n2. An arithmetic operator applied to a tensor is applied to every element.\n3. `x * 2`."
+       "hints_markdown": "1. The whole tensor at once \u2014 there is no index to loop over.\n2. An arithmetic operator applied to a tensor is applied to every element.\n3. `x * 2`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 488,
-       "hints_markdown": "1. You need the magnitude of each element, sign discarded.\n2. It is a method on the tensor, and it returns a NEW tensor rather than\n   editing yours \u2014 which is what keeps the input unchanged.\n3. `x.abs()`."
+       "hints_markdown": "1. You need the magnitude of each element, sign discarded.\n2. It is a method on the tensor, and it returns a NEW tensor rather than\n   editing yours \u2014 which is what keeps the input unchanged.\n3. `x.abs()`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       43,
       489,
@@ -752,13 +781,16 @@
      "guided_items": [
       {
        "question_id": 495,
-       "hints_markdown": "1. Two steps: collapse the tensor to one number, then leave PyTorch behind.\n2. A whole-tensor reduction returns a 0-dimensional TENSOR, not a Python\n   number \u2014 the test checks which one you handed back.\n3. `x.sum().item()`."
+       "hints_markdown": "1. Two steps: collapse the tensor to one number, then leave PyTorch behind.\n2. A whole-tensor reduction returns a 0-dimensional TENSOR, not a Python\n   number \u2014 the test checks which one you handed back.\n3. `x.sum().item()`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 496,
-       "hints_markdown": "1. Both halves are whole-tensor questions, so neither needs an axis.\n2. The count is metadata you already know how to read \u2014 it is not a\n   reduction, and it does not need .item().\n3. `(x.mean().item(), x.numel())`."
+       "hints_markdown": "1. Both halves are whole-tensor questions, so neither needs an axis.\n2. The count is metadata you already know how to read \u2014 it is not a\n   reduction, and it does not need .item().\n3. `(x.mean().item(), x.numel())`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       62,
       497,
@@ -859,13 +891,16 @@
      "guided_items": [
       {
        "question_id": 516,
-       "hints_markdown": "1. A NEW tensor, so the input has to survive untouched.\n2. Sorting returns both values and the positions they came from; you want\n   the values half, and there is a keyword for the direction.\n3. `t.sort(z, descending=True).values`."
+       "hints_markdown": "1. A NEW tensor, so the input has to survive untouched.\n2. Sorting returns both values and the positions they came from; you want\n   the values half, and there is a keyword for the direction.\n3. `t.sort(z, descending=True).values`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 517,
-       "hints_markdown": "1. Not the sorted values \u2014 where each sorted value WOULD have come from.\n2. The result is an index tensor the same length as z, and result[0] is the\n   position of the smallest element.\n3. `t.argsort(z)`."
+       "hints_markdown": "1. Not the sorted values \u2014 where each sorted value WOULD have come from.\n2. The result is an index tensor the same length as z, and result[0] is the\n   position of the smallest element.\n3. `t.argsort(z)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       518,
       519,
@@ -961,9 +996,11 @@
      "guided_items": [
       {
        "question_id": 217,
-       "hints_markdown": "Tile a 2-D block `reps_r` times vertically and `reps_c` times horizontally.\nOne `block.repeat(reps_r, reps_c)` call does it \u2014 and note that this is the\n*block* operation, not the per-element one."
+       "hints_markdown": "Tile a 2-D block `reps_r` times vertically and `reps_c` times horizontally.\nOne `block.repeat(reps_r, reps_c)` call does it \u2014 and note that this is the\n*block* operation, not the per-element one.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       69,
       155
@@ -1019,9 +1056,11 @@
      "guided_items": [
       {
        "question_id": 42,
-       "hints_markdown": "1. A random tensor of a given 3-D shape, uniform in [0, 1) \u2014 this drill uses\n   the global stream, so no generator argument is needed.\n2. The sampling functions share the shape convention with constructors: pass\n   the whole tuple.\n3. `t.rand(shape)` \u2014 the grader checks shape, dtype, range, and that values\n   vary (so no constant tensors)."
+       "hints_markdown": "1. A random tensor of a given 3-D shape, uniform in [0, 1) \u2014 this drill uses\n   the global stream, so no generator argument is needed.\n2. The sampling functions share the shape convention with constructors: pass\n   the whole tuple.\n3. `t.rand(shape)` \u2014 the grader checks shape, dtype, range, and that values\n   vary (so no constant tensors).",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       104
      ],
@@ -1093,13 +1132,16 @@
      "guided_items": [
       {
        "question_id": 508,
-       "hints_markdown": "1. This is the multiplication that is NOT matrix multiplication.\n2. Entry [i][j] depends only on the two entries at [i][j] \u2014 nothing is summed,\n   so no axis is contracted.\n3. `a * b`."
+       "hints_markdown": "1. This is the multiplication that is NOT matrix multiplication.\n2. Entry [i][j] depends only on the two entries at [i][j] \u2014 nothing is summed,\n   so no axis is contracted.\n3. `a * b`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 509,
-       "hints_markdown": "1. Both answers come from the same two matrices; only the operator changes.\n2. `*` pairs entries in place; `@` contracts a's columns against b's rows.\n3. `((a * b).tolist(), (a @ b).tolist())`."
+       "hints_markdown": "1. Both answers come from the same two matrices; only the operator changes.\n2. `*` pairs entries in place; `@` contracts a's columns against b's rows.\n3. `((a * b).tolist(), (a @ b).tolist())`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       510,
       511,
@@ -1202,9 +1244,11 @@
      "guided_items": [
       {
        "question_id": 85,
-       "hints_markdown": "1. Build the per-row test first: a row is dropped when EVERY entry is\n   zero. That is a reduction over dim=1 producing one bool per row.\n2. You want to keep the rows where that is false \u2014 negate the mask with\n   `~`, then index the tensor with it.\n3. `z[~(z == 0).all(dim=1)]` \u2014 an all-zero input drops to a (0, c) tensor\n   by itself, which is exactly the required empty result."
+       "hints_markdown": "1. Build the per-row test first: a row is dropped when EVERY entry is\n   zero. That is a reduction over dim=1 producing one bool per row.\n2. You want to keep the rows where that is false \u2014 negate the mask with\n   `~`, then index the tensor with it.\n3. `z[~(z == 0).all(dim=1)]` \u2014 an all-zero input drops to a (0, c) tensor\n   by itself, which is exactly the required empty result.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       232,
       145,
@@ -1274,9 +1318,11 @@
      "guided_items": [
       {
        "question_id": 240,
-       "hints_markdown": "1. Rounding away from zero is two different roundings depending on sign \u2014\n   which is a selection problem, not an arithmetic one.\n2. One way avoids the branch entirely: round the MAGNITUDE up, then put\n   the sign back.\n3. `t.sign(x) * t.ceil(t.abs(x))` \u2014 and check zero: sign(0) is 0, so exact\n   zeros stay exactly zero."
+       "hints_markdown": "1. Rounding away from zero is two different roundings depending on sign \u2014\n   which is a selection problem, not an arithmetic one.\n2. One way avoids the branch entirely: round the MAGNITUDE up, then put\n   the sign back.\n3. `t.sign(x) * t.ceil(t.abs(x))` \u2014 and check zero: sign(0) is 0, so exact\n   zeros stay exactly zero.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": ""
     },
@@ -1323,9 +1369,11 @@
      "guided_items": [
       {
        "question_id": 86,
-       "hints_markdown": "1. You need a (k, 2) tensor of [row, col] coordinates in scan order \u2014 which\n   spelling produces coordinate rows rather than per-dim tensors?\n2. Zero rows for an all-zero mask happens automatically \u2014 an empty result is\n   shape (0, 2).\n3. One call, no post-processing."
+       "hints_markdown": "1. You need a (k, 2) tensor of [row, col] coordinates in scan order \u2014 which\n   spelling produces coordinate rows rather than per-dim tensors?\n2. Zero rows for an all-zero mask happens automatically \u2014 an empty result is\n   shape (0, 2).\n3. One call, no post-processing.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       110
      ],
@@ -1419,9 +1467,11 @@
      "guided_items": [
       {
        "question_id": 1,
-       "hints_markdown": "1. Per row means the reduction runs ALONG the columns \u2014 which axis number\n   is that for a 2-D tensor?\n2. You want the position of the max, not the max itself, and torch already\n   breaks ties leftmost.\n3. `z.argmax(dim=1)` \u2014 first-occurrence tie-breaking is the documented\n   default, so no extra work is needed."
+       "hints_markdown": "1. Per row means the reduction runs ALONG the columns \u2014 which axis number\n   is that for a 2-D tensor?\n2. You want the position of the max, not the max itself, and torch already\n   breaks ties leftmost.\n3. `z.argmax(dim=1)` \u2014 first-occurrence tie-breaking is the documented\n   default, so no extra work is needed.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       24,
       61,
@@ -1513,9 +1563,11 @@
      "guided_items": [
       {
        "question_id": 136,
-       "hints_markdown": "1. Row swap is a fancy-index assignment: read the two rows in one order,\n   write them back in the other.\n2. Work on a clone \u2014 the drill checks the input is untouched \u2014 and\n   remember i may equal j, which must still be a no-op.\n3. `out = z.clone()`, then `out[[i, j]] = out[[j, i]]`. The right-hand\n   side is materialized before the write, so no aliasing problem."
+       "hints_markdown": "1. Row swap is a fancy-index assignment: read the two rows in one order,\n   write them back in the other.\n2. Work on a clone \u2014 the drill checks the input is untouched \u2014 and\n   remember i may equal j, which must still be a no-op.\n3. `out = z.clone()`, then `out[[i, j]] = out[[j, i]]`. The right-hand\n   side is materialized before the write, so no aliasing problem.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       70,
       30,
@@ -1569,9 +1621,11 @@
      "guided_items": [
       {
        "question_id": 241,
-       "hints_markdown": "1. Values appearing in BOTH arrays, each exactly once, ascending \u2014 that\n   sentence is the contract of one set function.\n2. The `*1d` family: intersect, union, setdiff. Which one?\n3. Empty intersection falls out naturally as an empty array \u2014 no special\n   case needed."
+       "hints_markdown": "1. Values appearing in BOTH arrays, each exactly once, ascending \u2014 that\n   sentence is the contract of one set function.\n2. The `*1d` family: intersect, union, setdiff. Which one?\n3. Empty intersection falls out naturally as an empty array \u2014 no special\n   case needed.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       102,
       148,
@@ -1693,9 +1747,11 @@
      "guided_items": [
       {
        "question_id": 78,
-       "hints_markdown": "1. Upper-triangular INCLUDING the diagonal is the default offset \u2014 no\n   `diagonal=` argument needed.\n2. Build a full tensor of the right dtype first, then let the triangular\n   helper zero out the lower part.\n3. `t.triu(t.ones((n, n), dtype=t.bool))` \u2014 set the dtype at construction;\n   converting afterwards is an extra pass, and an int tensor would fail\n   the bool check."
+       "hints_markdown": "1. Upper-triangular INCLUDING the diagonal is the default offset \u2014 no\n   `diagonal=` argument needed.\n2. Build a full tensor of the right dtype first, then let the triangular\n   helper zero out the lower part.\n3. `t.triu(t.ones((n, n), dtype=t.bool))` \u2014 set the dtype at construction;\n   converting afterwards is an extra pass, and an int tensor would fail\n   the bool check.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       140,
       16,
@@ -1791,9 +1847,11 @@
      "guided_items": [
       {
        "question_id": 525,
-       "hints_markdown": "1. The sort-by recipe is unchanged \u2014 argsort the key column, fancy-index the\n   rows. Only the DIRECTION differs, and direction is a property of the\n   order, not of the indexing.\n2. `z[:, k].argsort()` is the ascending row order; reversing an order is the\n   same `.flip(0)` the top-k segment used.\n3. `z[z[:, k].argsort().flip(0)]` \u2014 one expression, rows still intact."
+       "hints_markdown": "1. The sort-by recipe is unchanged \u2014 argsort the key column, fancy-index the\n   rows. Only the DIRECTION differs, and direction is a property of the\n   order, not of the indexing.\n2. `z[:, k].argsort()` is the ascending row order; reversing an order is the\n   same `.flip(0)` the top-k segment used.\n3. `z[z[:, k].argsort().flip(0)]` \u2014 one expression, rows still intact.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       183
      ],
@@ -1844,9 +1902,11 @@
      "guided_items": [
       {
        "question_id": 18,
-       "hints_markdown": "1. Every NaN becomes 0.0, everything else unchanged, input not modified \u2014\n   detection then repair.\n2. There is a single packaged function whose keyword is literally `nan=`.\n3. `t.nan_to_num(z, nan=0.0)` \u2014 or the copy + masked-assignment form; both\n   satisfy \"do not modify the input\" (why?)."
+       "hints_markdown": "1. Every NaN becomes 0.0, everything else unchanged, input not modified \u2014\n   detection then repair.\n2. There is a single packaged function whose keyword is literally `nan=`.\n3. `t.nan_to_num(z, nan=0.0)` \u2014 or the copy + masked-assignment form; both\n   satisfy \"do not modify the input\" (why?).",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       115,
       142,
@@ -1900,9 +1960,11 @@
      "guided_items": [
       {
        "question_id": 27,
-       "hints_markdown": "1. Ones on the outer ring, zeros inside, same shape \u2014 grow or modify?\n2. Build the ones first; the interior is a single two-axis slice.\n3. `z[1:-1, 1:-1] = 0.0` \u2014 and check the task's promise about n=1, n=2\n   against what an empty slice assignment does."
+       "hints_markdown": "1. Ones on the outer ring, zeros inside, same shape \u2014 grow or modify?\n2. Build the ones first; the interior is a single two-axis slice.\n3. `z[1:-1, 1:-1] = 0.0` \u2014 and check the task's promise about n=1, n=2\n   against what an empty slice assignment does.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       90,
       186
@@ -1971,9 +2033,11 @@
      "guided_items": [
       {
        "question_id": 73,
-       "hints_markdown": "1. Torch has no `ndenumerate`, so the (row, col) pairs have to come from\n   the shape itself.\n2. Row-major order is just the outer loop over rows and the inner loop\n   over columns \u2014 a nested comprehension gives that ordering for free.\n3. `rows, cols = z.shape`, then `[((i, j), z[i, j].item()) for i in\n   range(rows) for j in range(cols)]`. `.item()` is required: the drill\n   wants plain Python numbers, not 0-d tensors."
+       "hints_markdown": "1. Torch has no `ndenumerate`, so the (row, col) pairs have to come from\n   the shape itself.\n2. Row-major order is just the outer loop over rows and the inner loop\n   over columns \u2014 a nested comprehension gives that ordering for free.\n3. `rows, cols = z.shape`, then `[((i, j), z[i, j].item()) for i in\n   range(rows) for j in range(cols)]`. `.item()` is required: the drill\n   wants plain Python numbers, not 0-d tensors.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       112,
       72,
@@ -2054,13 +2118,16 @@
      "guided_items": [
       {
        "question_id": 499,
-       "hints_markdown": "1. Do NOT tile the bias. Write the addition and let the shapes meet.\n2. Shapes align from the RIGHT: a (cols,) vector already lines up with the\n   last axis of a (rows, cols) matrix, and the missing axis is treated as 1.\n3. `x + bias`."
+       "hints_markdown": "1. Do NOT tile the bias. Write the addition and let the shapes meet.\n2. Shapes align from the RIGHT: a (cols,) vector already lines up with the\n   last axis of a (rows, cols) matrix, and the missing axis is treated as 1.\n3. `x + bias`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 500,
-       "hints_markdown": "1. You are asked for the resulting shape, not for a rule recited back.\n2. There is a function that takes the two SHAPES and returns the combined one,\n   without building anything \u2014 then convert its torch.Size to a plain tuple.\n3. `tuple(t.broadcast_shapes(a.shape, b.shape))`."
+       "hints_markdown": "1. You are asked for the resulting shape, not for a rule recited back.\n2. There is a function that takes the two SHAPES and returns the combined one,\n   without building anything \u2014 then convert its torch.Size to a plain tuple.\n3. `tuple(t.broadcast_shapes(a.shape, b.shape))`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       60,
       81,
@@ -2134,13 +2201,16 @@
      "guided_items": [
       {
        "question_id": 503,
-       "hints_markdown": "1. One number per row means the COLUMN axis has to go.\n2. The axis you name in `dim=` is the one that disappears, so name the one\n   you are collapsing, not the one you are keeping.\n3. `x.sum(dim=1)`."
+       "hints_markdown": "1. One number per row means the COLUMN axis has to go.\n2. The axis you name in `dim=` is the one that disappears, so name the one\n   you are collapsing, not the one you are keeping.\n3. `x.sum(dim=1)`.",
+       "worked_example_code": ""
       },
       {
        "question_id": 504,
-       "hints_markdown": "1. Same reduction as before, but the result must still have two axes.\n2. There is a keyword that leaves the collapsed axis behind at length 1,\n   which is exactly what a later broadcast needs.\n3. `x.sum(dim=1, keepdim=True)`."
+       "hints_markdown": "1. Same reduction as before, but the result must still have two axes.\n2. There is a keyword that leaves the collapsed axis behind at length 1,\n   which is exactly what a later broadcast needs.\n3. `x.sum(dim=1, keepdim=True)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       108,
       130,
@@ -2236,9 +2306,11 @@
      "guided_items": [
       {
        "question_id": 154,
-       "hints_markdown": "1. Two steps, in order: standardize per COLUMN, then clip. Column\n   statistics reduce over dim=0.\n2. Population std means dividing by n, not n-1 \u2014 torch's default is the\n   sample version, so one keyword has to change.\n3. `(z - z.mean(dim=0)) / z.std(dim=0, correction=0)`, then `t.clip(...,\n   -limit, limit)`."
+       "hints_markdown": "1. Two steps, in order: standardize per COLUMN, then clip. Column\n   statistics reduce over dim=0.\n2. Population std means dividing by n, not n-1 \u2014 torch's default is the\n   sample version, so one keyword has to change.\n3. `(z - z.mean(dim=0)) / z.std(dim=0, correction=0)`, then `t.clip(...,\n   -limit, limit)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       109,
       218
@@ -2301,9 +2373,11 @@
      "guided_items": [
       {
        "question_id": 162,
-       "hints_markdown": "1. Each row becomes a probability distribution \u2014 divide by what, per row,\n   kept in which shape?\n2. Zero rows must SURVIVE as zeros \u2014 that's the masked division, not an\n   if-statement.\n3. `out = t.zeros_like(z)`, `nz = (sums != 0).squeeze(1)`,\n   `out[nz] = z[nz] / sums[nz]`, with `sums = z.sum(dim=1, keepdim=True)`."
+       "hints_markdown": "1. Each row becomes a probability distribution \u2014 divide by what, per row,\n   kept in which shape?\n2. Zero rows must SURVIVE as zeros \u2014 that's the masked division, not an\n   if-statement.\n3. `out = t.zeros_like(z)`, `nz = (sums != 0).squeeze(1)`,\n   `out[nz] = z[nz] / sums[nz]`, with `sums = z.sum(dim=1, keepdim=True)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       6,
       153,
@@ -2406,9 +2480,11 @@
      "guided_items": [
       {
        "question_id": 68,
-       "hints_markdown": "1. Non-decreasing is a statement about consecutive PAIRS, and the pairwise\n   gaps are exactly what one function gives you.\n2. Once you have the gaps, the whole question is whether all of them are\n   >= 0.\n3. `bool(t.all(t.diff(z) >= 0))` \u2014 the `bool()` matters, the drill wants a\n   Python bool. A length-1 tensor gives an empty diff, and `all()` of\n   nothing is True, which is the answer you want."
+       "hints_markdown": "1. Non-decreasing is a statement about consecutive PAIRS, and the pairwise\n   gaps are exactly what one function gives you.\n2. Once you have the gaps, the whole question is whether all of them are\n   >= 0.\n3. `bool(t.all(t.diff(z) >= 0))` \u2014 the `bool()` matters, the drill wants a\n   Python bool. A length-1 tensor gives an empty diff, and `all()` of\n   nothing is True, which is the answer you want.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       82,
       149,
@@ -2524,9 +2600,11 @@
      "guided_items": [
       {
        "question_id": 514,
-       "hints_markdown": "1. Do not reach for the built-in dot product \u2014 the question wants the two\n   steps it is made of.\n2. Multiply the pairs elementwise, then collapse the result to one number.\n3. `float((a * b).sum())`."
+       "hints_markdown": "1. Do not reach for the built-in dot product \u2014 the question wants the two\n   steps it is made of.\n2. Multiply the pairs elementwise, then collapse the result to one number.\n3. `float((a * b).sum())`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       141,
       515,
@@ -2584,9 +2662,11 @@
      "guided_items": [
       {
        "question_id": 146,
-       "hints_markdown": "1. Three streams interleaved position by position \u2014 the pair-and-ravel trick\n   still works, but the strided form is clearer: what are the three residue\n   classes?\n2. Allocate the result (`t.empty(3 * n, dtype=...)` \u2014 dtype from the inputs\n   via `t.result_type`), then one slice assignment per stream.\n3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`."
+       "hints_markdown": "1. Three streams interleaved position by position \u2014 the pair-and-ravel trick\n   still works, but the strided form is clearer: what are the three residue\n   classes?\n2. Allocate the result (`t.empty(3 * n, dtype=...)` \u2014 dtype from the inputs\n   via `t.result_type`), then one slice assignment per stream.\n3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       89,
       238,
@@ -2636,9 +2716,11 @@
      "guided_items": [
       {
        "question_id": 134,
-       "hints_markdown": "1. The most frequent value of a non-negative integer array, smallest on ties\n   \u2014 which counting tool gives you position-is-value output?\n2. Once counts are dense, \"most frequent value\" is the INDEX of the largest\n   count.\n3. `int(t.bincount(x).argmax())` \u2014 convince yourself why ties come out\n   smallest for free."
+       "hints_markdown": "1. The most frequent value of a non-negative integer array, smallest on ties\n   \u2014 which counting tool gives you position-is-value output?\n2. Once counts are dense, \"most frequent value\" is the INDEX of the largest\n   count.\n3. `int(t.bincount(x).argmax())` \u2014 convince yourself why ties come out\n   smallest for free.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       150,
       124,
@@ -2688,9 +2770,11 @@
      "guided_items": [
       {
        "question_id": 526,
-       "hints_markdown": "1. Same call, other end of the range. `topk` takes a keyword that decides\n   which end it keeps \u2014 no negation, no sort.\n2. `largest=False`. And with `sorted` left at its default the k smallest come\n   back ascending already, so there is nothing to flip here.\n3. `small = t.topk(z, k, largest=False)`, then return\n   `(small.values, small.indices)` \u2014 both halves off the one result."
+       "hints_markdown": "1. Same call, other end of the range. `topk` takes a keyword that decides\n   which end it keeps \u2014 no negation, no sort.\n2. `largest=False`. And with `sorted` left at its default the k smallest come\n   back ascending already, so there is nothing to flip here.\n3. `small = t.topk(z, k, largest=False)`, then return\n   `(small.values, small.indices)` \u2014 both halves off the one result.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       187,
       194
@@ -2789,9 +2873,11 @@
      "guided_items": [
       {
        "question_id": 527,
-       "hints_markdown": "1. Read the contract first: the caller's own object has to change. That rules\n   out every spelling that builds a clamped tensor and hands it back.\n2. Clamping has a trailing-underscore form, `clamp_(lo, hi)`, and like every\n   underscore method it writes into the receiver's buffer.\n3. `x.clamp_(lo, hi)` and then `return x` \u2014 the call already returns that\n   same tensor, so returning `x` is just saying so plainly."
+       "hints_markdown": "1. Read the contract first: the caller's own object has to change. That rules\n   out every spelling that builds a clamped tensor and hands it back.\n2. Clamping has a trailing-underscore form, `clamp_(lo, hi)`, and like every\n   underscore method it writes into the receiver's buffer.\n3. `x.clamp_(lo, hi)` and then `return x` \u2014 the call already returns that\n   same tensor, so returning `x` is just saying so plainly.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": "- **\"`z = z[p]` modifies z in place.\"** \u2014 It rebinds the NAME; the original\n  buffer (and every other reference to it) is unchanged. In-place is\n  `z[:] = z[p]` \u2014 assignment through the full slice.\n- **\"`x.sort()` sorts x.\"** \u2014 It does in NumPy; in PyTorch it returns a\n  (values, indices) pair and leaves x untouched. There is no `sort_`, so an\n  in-place sort is `x.copy_(x.sort().values)`.\n- **\"The underscore is a naming convention.\"** \u2014 It's a hard contract: the\n  result is written into that exact buffer. Aliasing consequences included \u2014\n  `b.add_(a)` destroys the old b for all readers. Powerful, deliberate, and\n  exactly what no-allocation drills demand."
     },
@@ -2837,9 +2923,11 @@
      "guided_items": [
       {
        "question_id": 166,
-       "hints_markdown": "1. Moving average over every window of n entries \u2014 the window view + mean\n   works; the cumsum route avoids materializing windows.\n2. cumsum: a window's sum is `c[i+n] \u2212 c[i]`. Handle the offset by prepending\n   a zero, or slice-shift the cumsum directly.\n3. Either implementation passes \u2014 write the one you can verify, check\n   endpoints against a tiny example by hand."
+       "hints_markdown": "1. Moving average over every window of n entries \u2014 the window view + mean\n   works; the cumsum route avoids materializing windows.\n2. cumsum: a window's sum is `c[i+n] \u2212 c[i]`. Handle the offset by prepending\n   a zero, or slice-shift the cumsum directly.\n3. Either implementation passes \u2014 write the one you can verify, check\n   endpoints against a tiny example by hand.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       99,
       175
@@ -2897,9 +2985,11 @@
      "guided_items": [
       {
        "question_id": 127,
-       "hints_markdown": "1. Same recipe, one point set against ITSELF \u2014 what plays the roles of x\n   and y?\n2. The diagonal should come out 0 (each point vs itself) \u2014 a free\n   correctness check.\n3. `diff = z[:, None, :] - z[None, :, :]`, then square-sum-sqrt over the\n   last axis."
+       "hints_markdown": "1. Same recipe, one point set against ITSELF \u2014 what plays the roles of x\n   and y?\n2. The diagonal should come out 0 (each point vs itself) \u2014 a free\n   correctness check.\n3. `diff = z[:, None, :] - z[None, :, :]`, then square-sum-sqrt over the\n   last axis.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       169,
       128,
@@ -2951,9 +3041,11 @@
      "guided_items": [
       {
        "question_id": 137,
-       "hints_markdown": "1. Mean per group label: a mean is a sum over a count \u2014 you can produce BOTH\n   per label with one function called twice.\n2. `t.bincount(s, weights=d)` gives grouped sums; the plain call gives\n   group sizes.\n3. Divide. Every label 0..max occurs at least once here, so no zero-division\n   guard is needed."
+       "hints_markdown": "1. Mean per group label: a mean is a sum over a count \u2014 you can produce BOTH\n   per label with one function called twice.\n2. `t.bincount(s, weights=d)` gives grouped sums; the plain call gives\n   group sizes.\n3. Divide. Every label 0..max occurs at least once here, so no zero-division\n   guard is needed.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       131,
       216,
@@ -3026,9 +3118,11 @@
      "guided_items": [
       {
        "question_id": 528,
-       "hints_markdown": "1. `z[1:]` is a view, so it shares bytes with z. Two different pointer\n   questions can be asked about that sharing, and they do not agree \u2014 which\n   is the whole reason this KP names both.\n2. `.untyped_storage().data_ptr()` names the BUFFER; `.data_ptr()` names\n   where this particular tensor starts reading, offset included.\n3. Storage pointers match; data pointers do not, because the slice starts one\n   element in. `tail.tolist()` is the third entry."
+       "hints_markdown": "1. `z[1:]` is a view, so it shares bytes with z. Two different pointer\n   questions can be asked about that sharing, and they do not agree \u2014 which\n   is the whole reason this KP names both.\n2. `.untyped_storage().data_ptr()` names the BUFFER; `.data_ptr()` names\n   where this particular tensor starts reading, offset included.\n3. Storage pointers match; data pointers do not, because the slice starts one\n   element in. `tail.tolist()` is the third entry.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       113
      ],
@@ -3075,9 +3169,11 @@
      "guided_items": [
       {
        "question_id": 171,
-       "hints_markdown": "1. Every combination of one element per input array, as rows \u2014 meshgrid\n   generalizes to any number of inputs via unpacking.\n2. `indexing='ij'` keeps the first input's values varying slowest \u2014 check\n   the required row order in the prompt.\n3. Ravel each grid, stack as columns: shape (\u220f lengths, len(arrays))."
+       "hints_markdown": "1. Every combination of one element per input array, as rows \u2014 meshgrid\n   generalizes to any number of inputs via unpacking.\n2. `indexing='ij'` keeps the first input's values varying slowest \u2014 check\n   the required row order in the prompt.\n3. Ravel each grid, stack as columns: shape (\u220f lengths, len(arrays)).",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       199,
       205,
@@ -3133,9 +3229,11 @@
      "guided_items": [
       {
        "question_id": 156,
-       "hints_markdown": "1. Entry [i, j] = sum of everything above-and-left inclusive \u2014 a cumulative\n   quantity, in TWO directions.\n2. One cumsum handles one direction; the directions compose.\n3. `t.cumsum(t.cumsum(z, dim=0), dim=1)` \u2014 check the bottom-right entry\n   equals z.sum()."
+       "hints_markdown": "1. Entry [i, j] = sum of everything above-and-left inclusive \u2014 a cumulative\n   quantity, in TWO directions.\n2. One cumsum handles one direction; the directions compose.\n3. `t.cumsum(t.cumsum(z, dim=0), dim=1)` \u2014 check the bottom-right entry\n   equals z.sum().",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       167,
       176,
@@ -3189,9 +3287,11 @@
      "guided_items": [
       {
        "question_id": 200,
-       "hints_markdown": "1. One category per probability row via inverse-CDF \u2014 the three ingredients\n   are a per-row uniform, a per-row cumulative sum, and a first-crossing\n   search.\n2. Draw u with shape (rows, 1) so it broadcasts against the (rows, k)\n   cumsum.\n3. `(u < cs).to(t.int64).argmax(dim=1)` \u2014 why does argmax find the FIRST\n   crossing, and why does torch make you cast the mask first?"
+       "hints_markdown": "1. One category per probability row via inverse-CDF \u2014 the three ingredients\n   are a per-row uniform, a per-row cumulative sum, and a first-crossing\n   search.\n2. Draw u with shape (rows, 1) so it broadcasts against the (rows, k)\n   cumsum.\n3. `(u < cs).to(t.int64).argmax(dim=1)` \u2014 why does argmax find the FIRST\n   crossing, and why does torch make you cast the mask first?",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       210,
       91
@@ -3265,9 +3365,11 @@
      "guided_items": [
       {
        "question_id": 529,
-       "hints_markdown": "1. This is the first segment run backwards. Derive x and y for ONE point from\n   its r and theta, then let the vectors carry all n at once \u2014 same column\n   bookkeeping, opposite direction.\n2. `x = r * t.cos(theta)` and `y = r * t.sin(theta)` give two 1-D vectors.\n   The task wants points in ROWS, so those two now have to become COLUMNS.\n3. `t.stack([x, y], dim=1)` \u2014 `dim=1` makes them columns; `dim=0` would give\n   (2, n), the transpose of what was asked."
+       "hints_markdown": "1. This is the first segment run backwards. Derive x and y for ONE point from\n   its r and theta, then let the vectors carry all n at once \u2014 same column\n   bookkeeping, opposite direction.\n2. `x = r * t.cos(theta)` and `y = r * t.sin(theta)` give two 1-D vectors.\n   The task wants points in ROWS, so those two now have to become COLUMNS.\n3. `t.stack([x, y], dim=1)` \u2014 `dim=1` makes them columns; `dim=0` would give\n   (2, n), the transpose of what was asked.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       105,
       201
@@ -3359,9 +3461,11 @@
      "guided_items": [
       {
        "question_id": 530,
-       "hints_markdown": "1. Nothing new is needed. Leading axes broadcast, so the batched call is\n   spelled exactly like the single-system one \u2014 the shapes carry the batch.\n2. `t.linalg.solve(ms, vs)` with (p, n, n) against (p, n, 1): the shared\n   leading p is what makes it p independent systems rather than one big one.\n3. `return t.linalg.solve(ms, vs)` \u2014 one call, no loop over p, and the\n   (p, n, 1) result keeps each solution a column."
+       "hints_markdown": "1. Nothing new is needed. Leading axes broadcast, so the batched call is\n   spelled exactly like the single-system one \u2014 the shapes carry the batch.\n2. `t.linalg.solve(ms, vs)` with (p, n, n) against (p, n, 1): the shared\n   leading p is what makes it p independent systems rather than one big one.\n3. `return t.linalg.solve(ms, vs)` \u2014 one call, no loop over p, and the\n   (p, n, 1) result keeps each solution a column.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       197,
       118
@@ -3440,9 +3544,11 @@
      "guided_items": [
       {
        "question_id": 271,
-       "hints_markdown": "1. `(b, c, h, w) -> (b, h, w, c)`: four axes in, four out \u2014 permutation or\n   reduction?\n2. Name the input axes meaningfully (`bchw`) and write the output in the\n   required order.\n3. Every letter kept on both sides \u2014 nothing summed, values untouched:\n   `'bchw->bhwc'`."
+       "hints_markdown": "1. `(b, c, h, w) -> (b, h, w, c)`: four axes in, four out \u2014 permutation or\n   reduction?\n2. Name the input axes meaningfully (`bchw`) and write the output in the\n   required order.\n3. Every letter kept on both sides \u2014 nothing summed, values untouched:\n   `'bchw->bhwc'`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       300,
       303
@@ -3554,9 +3660,11 @@
      "guided_items": [
       {
        "question_id": 247,
-       "hints_markdown": "1. Column sums keep column index `j`.\n2. Delete row index `i` from `'ij->?'`.\n3. Check against `a.sum(axis=0)` mentally."
+       "hints_markdown": "1. Column sums keep column index `j`.\n2. Delete row index `i` from `'ij->?'`.\n3. Check against `a.sum(axis=0)` mentally.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       289,
       249,
@@ -3627,9 +3735,11 @@
      "guided_items": [
       {
        "question_id": 270,
-       "hints_markdown": "1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 tensors \u2014\n   how many axes need pairing now?\n2. Three axes \u2192 three shared letters; the scalar answer means the output side is\n   empty.\n3. `'abc,abc->'` \u2014 the dot pattern generalizes by adding one letter per axis,\n   nothing else changes."
+       "hints_markdown": "1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 tensors \u2014\n   how many axes need pairing now?\n2. Three axes \u2192 three shared letters; the scalar answer means the output side is\n   empty.\n3. `'abc,abc->'` \u2014 the dot pattern generalizes by adding one letter per axis,\n   nothing else changes.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       308
      ],
@@ -3674,9 +3784,11 @@
      "guided_items": [
       {
        "question_id": 278,
-       "hints_markdown": "1. All pairwise products of ONE vector's entries \u2014 an outer product of the\n   vector with which second operand?\n2. The same tensor can fill both slots; the spec doesn't change.\n3. `t.einsum('i,j->ij', v, v)` \u2014 and the result should equal its own\n   transpose (why?)."
+       "hints_markdown": "1. All pairwise products of ONE vector's entries \u2014 an outer product of the\n   vector with which second operand?\n2. The same tensor can fill both slots; the spec doesn't change.\n3. `t.einsum('i,j->ij', v, v)` \u2014 and the result should equal its own\n   transpose (why?).",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       275,
       292,
@@ -3757,9 +3869,11 @@
      "guided_items": [
       {
        "question_id": 262,
-       "hints_markdown": "1. Two inputs: a matrix with axes `(i, j)` and a vector with axis `(j,)`. Which\n   letter do they share?\n2. The shared letter j is summed away (each row dots the vector); i is private\n   to the matrix and survives, one result per row.\n3. `'ij,j->i'`."
+       "hints_markdown": "1. Two inputs: a matrix with axes `(i, j)` and a vector with axis `(j,)`. Which\n   letter do they share?\n2. The shared letter j is summed away (each row dots the vector); i is private\n   to the matrix and survives, one result per row.\n3. `'ij,j->i'`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       264,
       311,
@@ -3916,9 +4030,11 @@
      "guided_items": [
       {
        "question_id": 293,
-       "hints_markdown": "1. Read the target carefully: a[k, 0, 0] fixes two indices at a CONSTANT.\n   Einsum's subscripts can repeat an index or drop it, but they cannot pin\n   one to zero.\n2. So this one is not a contraction at all. Which plain indexing\n   expression keeps the batch axis and takes position 0 of the other two?\n3. `a[:, 0, 0]` \u2014 the drill is here to mark the boundary: repeated-letter\n   tricks like `'bii->bi'` read the diagonal, not an arbitrary fixed\n   position."
+       "hints_markdown": "1. Read the target carefully: a[k, 0, 0] fixes two indices at a CONSTANT.\n   Einsum's subscripts can repeat an index or drop it, but they cannot pin\n   one to zero.\n2. So this one is not a contraction at all. Which plain indexing\n   expression keeps the batch axis and takes position 0 of the other two?\n3. `a[:, 0, 0]` \u2014 the drill is here to mark the boundary: repeated-letter\n   tricks like `'bii->bi'` read the diagonal, not an arbitrary fixed\n   position.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [],
      "misconceptions_markdown": "- **\"'ii' is illegal / a typo.\"** \u2014 Within one operand it's the diagonal\n  selector. Across operands it's the pairing rule. Same letter, two\n  well-defined meanings by placement.\n- **\"diag(a @ b) requires computing a @ b.\"** \u2014 `'ik,ki->i'` computes just\n  the n diagonal dots: O(n\u00b2) vs O(n\u00b3). When a drill says \"without the full\n  product\", this is what it's fishing for.\n- **\"'ij,ji->' and 'ij,ij->' are interchangeable.\"** \u2014 Transposed second\n  operand: the first is tr(a@b), the second the Frobenius product \u03a3 a\u1d62\u2c7cb\u1d62\u2c7c.\n  They agree only for symmetric b. Read letter POSITIONS, not letter SETS."
     }
@@ -4015,9 +4131,11 @@
      "guided_items": [
       {
        "question_id": 250,
-       "hints_markdown": "1. Every batch item needs its OWN similarity matrix, so the batch index\n   survives to the output \u2014 it is not one of the summed indices.\n2. You need two views of the same tensor: one indexed `b i d`, one `b j\n   d`. Which single letter is missing from the output side?\n3. `t.einsum('bid,bjd->bij', a, a)` \u2014 `d` is contracted, `b` is carried,\n   `i` and `j` are the two vector slots."
+       "hints_markdown": "1. Every batch item needs its OWN similarity matrix, so the batch index\n   survives to the output \u2014 it is not one of the summed indices.\n2. You need two views of the same tensor: one indexed `b i d`, one `b j\n   d`. Which single letter is missing from the output side?\n3. `t.einsum('bid,bjd->bij', a, a)` \u2014 `d` is contracted, `b` is carried,\n   `i` and `j` are the two vector slots.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       265,
       276,
@@ -4067,9 +4185,11 @@
      "guided_items": [
       {
        "question_id": 291,
-       "hints_markdown": "1. Scale each channel by s[k], image shape unchanged \u2014 is the channel letter\n   kept or dropped?\n2. Same left-hand side as the weighted sum; the output keeps everything.\n3. `'chw,c->chw'` \u2014 check one entry of a scaled channel."
+       "hints_markdown": "1. Scale each channel by s[k], image shape unchanged \u2014 is the channel letter\n   kept or dropped?\n2. Same left-hand side as the weighted sum; the output keeps everything.\n3. `'chw,c->chw'` \u2014 check one entry of a scaled channel.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       251,
       304,
@@ -4118,9 +4238,11 @@
      "guided_items": [
       {
        "question_id": 263,
-       "hints_markdown": "1. Same scores with a HEADS axis: (b,h,q,d) and (b,h,k,d) \u2014 which letters\n   are along for the ride?\n2. b and h batch; d contracts; q, k combine.\n3. `'bhqd,bhkd->bhqk'` \u2014 the multi-head score tensor."
+       "hints_markdown": "1. Same scores with a HEADS axis: (b,h,q,d) and (b,h,k,d) \u2014 which letters\n   are along for the ride?\n2. b and h batch; d contracts; q, k combine.\n3. `'bhqd,bhkd->bhqk'` \u2014 the multi-head score tensor.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       254,
       301,
@@ -4173,9 +4295,11 @@
      "guided_items": [
       {
        "question_id": 258,
-       "hints_markdown": "1. X\u1d40X, entry [p, q] = column p dotted with column q \u2014 which axis is shared\n   between the two copies of x, and which axes survive?\n2. The two surviving axes need DIFFERENT letters even though both come from\n   x's column axis.\n3. `'nd,ne->de'` \u2014 check one off-diagonal entry against a hand dot."
+       "hints_markdown": "1. X\u1d40X, entry [p, q] = column p dotted with column q \u2014 which axis is shared\n   between the two copies of x, and which axes survive?\n2. The two surviving axes need DIFFERENT letters even though both come from\n   x's column axis.\n3. `'nd,ne->de'` \u2014 check one off-diagonal entry against a hand dot.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       259,
       248,
@@ -4232,9 +4356,11 @@
      "guided_items": [
       {
        "question_id": 388,
-       "hints_markdown": "1. (b, t, d) to time-first (t, b, d) \u2014 name the three axes, reorder two of\n   them.\n2. All names appear on both sides \u2014 a pure permutation.\n3. `'b t d -> t b d'`."
+       "hints_markdown": "1. (b, t, d) to time-first (t, b, d) \u2014 name the three axes, reorder two of\n   them.\n2. All names appear on both sides \u2014 a pure permutation.\n3. `'b t d -> t b d'`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       335,
       330,
@@ -4298,9 +4424,11 @@
      "guided_items": [
       {
        "question_id": 357,
-       "hints_markdown": "1. (C, H, W) \u2192 ((C\u00b7H), W): channels and height merge into one tall strip,\n   channel 0's rows first.\n2. \"Channel 0's rows first, then channel 1's\" tells you which name is slow\n   inside the parens.\n3. `'c h w -> (c h) w'`."
+       "hints_markdown": "1. (C, H, W) \u2192 ((C\u00b7H), W): channels and height merge into one tall strip,\n   channel 0's rows first.\n2. \"Channel 0's rows first, then channel 1's\" tells you which name is slow\n   inside the parens.\n3. `'c h w -> (c h) w'`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       342,
       314,
@@ -4351,9 +4479,11 @@
      "guided_items": [
       {
        "question_id": 315,
-       "hints_markdown": "1. (b, t, d) with t divisible by p \u2192 (b, t/p, p, d): the time axis splits\n   into (segments \u00d7 length-p).\n2. Which factor does the task hand you? Pass it as the keyword.\n3. `'b (n p) d -> b n p d', p=p` \u2014 n is inferred."
+       "hints_markdown": "1. (b, t, d) with t divisible by p \u2192 (b, t/p, p, d): the time axis splits\n   into (segments \u00d7 length-p).\n2. Which factor does the task hand you? Pass it as the keyword.\n3. `'b (n p) d -> b n p d', p=p` \u2014 n is inferred.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       337,
       320,
@@ -4400,9 +4530,11 @@
      "guided_items": [
       {
        "question_id": 360,
-       "hints_markdown": "1. (h, w) \u2192 (1, h, w): nothing moves; one axis appears.\n2. The literal `1` on the output side inserts it.\n3. `'h w -> 1 h w'`."
+       "hints_markdown": "1. (h, w) \u2192 (1, h, w): nothing moves; one axis appears.\n2. The literal `1` on the output side inserts it.\n3. `'h w -> 1 h w'`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       358,
       374,
@@ -4452,9 +4584,11 @@
      "guided_items": [
       {
        "question_id": 364,
-       "hints_markdown": "1. A channels-LAST batch (b, h, w, c), b divisible by b1, tiled into a\n   b1-row montage \u2014 the template with different names.\n2. Which factor is given (b1 rows), which inferred?\n3. `'(b1 b2) h w c -> (b1 h) (b2 w) c', b1=b1`."
+       "hints_markdown": "1. A channels-LAST batch (b, h, w, c), b divisible by b1, tiled into a\n   b1-row montage \u2014 the template with different names.\n2. Which factor is given (b1 rows), which inferred?\n3. `'(b1 b2) h w c -> (b1 h) (b2 w) c', b1=b1`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       329,
       382,
@@ -4505,9 +4639,11 @@
      "guided_items": [
       {
        "question_id": 313,
-       "hints_markdown": "1. Space-to-depth on (b, c, h, w) with block size p: spatial dims shrink by\n   p, channels multiply by p\u00b2.\n2. Split each spatial axis into (blocks \u00d7 p); fold the two p-factors into\n   the channel group \u2014 the task states the required channel packing order.\n3. `'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=p, p2=p` \u2014 or the order the\n   prompt demands; verify one block."
+       "hints_markdown": "1. Space-to-depth on (b, c, h, w) with block size p: spatial dims shrink by\n   p, channels multiply by p\u00b2.\n2. Split each spatial axis into (blocks \u00d7 p); fold the two p-factors into\n   the channel group \u2014 the task states the required channel packing order.\n3. `'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=p, p2=p` \u2014 or the order the\n   prompt demands; verify one block.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       401,
       404,
@@ -4569,9 +4705,11 @@
      "guided_items": [
       {
        "question_id": 328,
-       "hints_markdown": "1. (h, w, c) image, average over the HEIGHT axis only \u2192 (w, c).\n2. One name disappears from the pattern; the aggregation string says how.\n3. `einops.reduce(img, 'h w c -> w c', 'mean')`."
+       "hints_markdown": "1. (h, w, c) image, average over the HEIGHT axis only \u2192 (w, c).\n2. One name disappears from the pattern; the aggregation string says how.\n3. `einops.reduce(img, 'h w c -> w c', 'mean')`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       326,
       367,
@@ -4622,9 +4760,11 @@
      "guided_items": [
       {
        "question_id": 363,
-       "hints_markdown": "1. 3\u00d73 average pooling on a channels-first single image (c, h, w) \u2014 same\n   split-and-reduce, no batch axis.\n2. Window factors are 3 this time; both spatial axes factor.\n3. `'c (h h3) (w w3) -> c h w', h3=3, w3=3` with 'mean'."
+       "hints_markdown": "1. 3\u00d73 average pooling on a channels-first single image (c, h, w) \u2014 same\n   split-and-reduce, no batch axis.\n2. Window factors are 3 this time; both spatial axes factor.\n3. `'c (h h3) (w w3) -> c h w', h3=3, w3=3` with 'mean'.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       386,
       368,
@@ -4684,9 +4824,11 @@
      "guided_items": [
       {
        "question_id": 351,
-       "hints_markdown": "1. Double both spatial dims with each pixel becoming a 2\u00d72 block \u2014\n   stretch, and which order makes copies stay WITH their pixel?\n2. Factor fast: `(h 2) (w 2)`.\n3. `'h w c -> (h 2) (w 2) c'` \u2014 check one corner block."
+       "hints_markdown": "1. Double both spatial dims with each pixel becoming a 2\u00d72 block \u2014\n   stretch, and which order makes copies stay WITH their pixel?\n2. Factor fast: `(h 2) (w 2)`.\n3. `'h w c -> (h 2) (w 2) c'` \u2014 check one corner block.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       338,
       348,
@@ -4739,9 +4881,11 @@
      "guided_items": [
       {
        "question_id": 396,
-       "hints_markdown": "1. The packed sequence (b, t, nh\u00b7d), head index slowest, must SPLIT back\n   into heads \u2014 inverse of the merge you just did.\n2. The parens move to the input side; one keyword names the head count.\n3. `'b t (nh d) -> b nh t d', nh=nh` \u2014 round-trip it against a merge to be\n   sure."
+       "hints_markdown": "1. The packed sequence (b, t, nh\u00b7d), head index slowest, must SPLIT back\n   into heads \u2014 inverse of the merge you just did.\n2. The parens move to the input side; one keyword names the head count.\n3. `'b t (nh d) -> b nh t d', nh=nh` \u2014 round-trip it against a merge to be\n   sure.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       384,
       394,
@@ -4788,9 +4932,11 @@
      "guided_items": [
       {
        "question_id": 375,
-       "hints_markdown": "1. (b, c, 2t) downsampled by averaging non-overlapping PAIRS \u2014 temporal\n   pooling with window 2.\n2. The time axis factors as (t \u00d7 2); the window name reduces away.\n3. `einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)`."
+       "hints_markdown": "1. (b, c, 2t) downsampled by averaging non-overlapping PAIRS \u2014 temporal\n   pooling with window 2.\n2. The time axis factors as (t \u00d7 2); the window name reduces away.\n3. `einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)`.",
+       "worked_example_code": ""
       }
      ],
+     "applied_items": [],
      "independent_items": [
       369,
       372,

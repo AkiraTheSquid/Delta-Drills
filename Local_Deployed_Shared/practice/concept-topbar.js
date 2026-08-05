@@ -67,6 +67,30 @@ const ConceptTopbar = (() => {
 
   const _index = (stage) => STAGES.findIndex((s) => s.id === stage);
 
+  /* WHERE THE NEXT RUNG STARTS.
+
+     The ladder promotes on the Wilson LOWER bound of the concept's own attempt
+     record — `app/kc_graph.py` `_stage_from`, against `PROMOTE_LO`. The bar
+     beside these numbers already draws that interval, so the threshold is a
+     mark on the same track: when the LEFT END of the bar crosses it, the next
+     question comes with less support. That is the whole promotion rule, drawn
+     rather than described, and it is the answer to "there should be a clear
+     threshold beyond which it moves you from one stage to a different stage."
+
+     Keyed by DISPLAYED rung, which is why the numbers look shifted against
+     `PROMOTE_LO`: the backend's `faded` is this file's `worked` and its
+     `partial` is this file's `faded` (see STAGE_ALIASES). Two rungs have no
+     entry, for two different reasons — `lesson` is left by reading the page,
+     not by scoring, and `solo` is the top of the ladder.
+
+     ⚠️ These are a copy of a backend constant. `practice/watch.py` reads both
+     and fails if they drift, because a threshold drawn in the wrong place is
+     worse than none: the learner clears the mark and nothing happens. */
+  const PROMOTE_AT = {
+    worked: 0.34, // → faded   (backend PROMOTE_LO.faded)
+    faded: 0.51,  // → solo    (backend PROMOTE_LO.partial)
+  };
+
   const esc = (value) =>
     String(value == null ? "" : value)
       .replace(/&/g, "&amp;")
@@ -79,7 +103,12 @@ const ConceptTopbar = (() => {
 
   /* The concept currently on screen, so `update()` can refresh the estimate
      after a submit without the caller having to re-supply everything. */
-  let current = { kc: null, stage: null };
+  /* `estimate` is kept because the threshold mark depends on the RUNG as well
+     as on the numbers, and the two arrive from different places at different
+     times: `setStage` promotes mid-screen with no estimate in hand, `setEstimate`
+     lands a new interval with no rung in hand. Without the cache, whichever
+     arrived second would draw the other one's half from stale state. */
+  let current = { kc: null, stage: null, estimate: null };
 
   const normalizeStage = (stage) => STAGE_ALIASES[stage] || null;
 
@@ -100,9 +129,40 @@ const ConceptTopbar = (() => {
      interval too — a wide bar IS the message that the number is not yet worth
      much, and it is the same quantity the ladder promotes on, so what the
      learner sees is what the system is actually deciding with. */
-  const _estHtml = (est) => {
+  const _estHtml = (est, stage) => {
+    const gate = PROMOTE_AT[stage];
+    const next = STAGES[_index(stage) + 1];
+    /* The threshold is drawn even with no attempts behind it. A learner on an
+       untouched concept is exactly the one who benefits from seeing where the
+       bar has to get to, and hiding it until the first answer would make the
+       mark look like something the first answer caused. */
+    const gateHtml =
+      gate === undefined || !next
+        ? ""
+        /* Focusable, and labelled, not just titled. The rule this mark carries
+           exists nowhere else on the page — there is no room for "promote at
+           34%" on a 110px track — so a `title` on an empty non-focusable span
+           would put the whole promotion rule behind a mouse hover. `tabindex`
+           and `role="img"` with the same sentence as the accessible name make
+           it reachable by keyboard and readable by a screen reader. */
+        : '<span class="concept-topbar-est-gate" role="img" tabindex="0" ' +
+          `style="left:${(gate * 100).toFixed(1)}%" ` +
+          `aria-label="${esc(
+            `Promotion threshold: ${Math.round(gate * 100)} percent. ` +
+            `Reaching it moves you to ${next.label}.`,
+          )}" ` +
+          `title="${esc(
+            `Push the left end of this bar past ${Math.round(gate * 100)}% and the next ` +
+            `question moves you to ${next.label}. It is the left end and not the middle ` +
+            "because a short streak is not evidence yet — more answers narrow the bar, " +
+            "which is what carries it across.",
+          )}"></span>`;
     if (!est || !est.n) {
       return (
+        '<span class="concept-topbar-est-count">0/0</span>' +
+        '<span class="concept-topbar-est-bar">' +
+        gateHtml +
+        "</span>" +
         '<span class="concept-topbar-est-new" ' +
         'title="No graded attempts at this concept yet — nothing to estimate from.">' +
         "no attempts yet</span>"
@@ -113,11 +173,16 @@ const ConceptTopbar = (() => {
     const loPct = Math.round(lo * 100);
     const hiPct = Math.round(hi * 100);
     const left = (lo * 100).toFixed(1);
-    const width = Math.max(1, (hi - lo) * 100).toFixed(1);
+    // A hairline interval still has to be visible, hence the 1% floor — but the
+    // track no longer clips (the promotion mark has to overhang it), so the
+    // floor is also capped at what is left of the track. Otherwise a learner at
+    // 99-100% draws a sliver past the end of the bar it is supposed to be in.
+    const width = Math.min(100 - lo * 100, Math.max(1, (hi - lo) * 100)).toFixed(1);
     return (
       `<span class="concept-topbar-est-count">${est.correct}/${est.n}</span>` +
-      '<span class="concept-topbar-est-bar" aria-hidden="true">' +
+      '<span class="concept-topbar-est-bar">' +
       `<span class="concept-topbar-est-fill" style="left:${left}%;width:${width}%"></span>` +
+      gateHtml +
       "</span>" +
       `<span class="concept-topbar-est-range">${loPct}–${hiPct}%</span>`
     );
@@ -139,6 +204,20 @@ const ConceptTopbar = (() => {
 
      A question with no rating hides the whole segment rather than drawing an
      empty track — an unrated problem is not a zero-difficulty problem. */
+  /* The target the bar was last drawn at, so the next draw can show the MOVE
+     and not just the new position. Module-level because `setDifficulty` rebuilds
+     the segment's markup wholesale — anything remembered in the DOM is thrown
+     away with it. Declared above `_diffHtml`, which reads it.
+
+     Keyed by the concept it was measured on. Difficulty targets are per-subtopic,
+     so a bare "last number" compares this concept's aim against the previous
+     concept's and paints a green or red band for a move nobody made — the
+     learner would be told their answer earned something on the way INTO a new
+     concept. A baseline from a different KC is no baseline; the first answer
+     there draws position only, as it should. */
+  let _lastTarget = null;
+  let _lastTargetKc = null;
+
   const _diffHtml = (problem, target) => {
     const p = Number.isFinite(problem) ? Math.max(0, Math.min(100, problem)) : null;
     if (p === null) return "";
@@ -149,12 +228,32 @@ const ConceptTopbar = (() => {
         ? ""
         : ` The bar is the difficulty being served to you right now (${Math.round(t)}), ` +
           "which moves as you answer.");
+    // Where the bar stood before this answer moved it. `null` on the first
+    // question of a session, and on the first question of a concept — in both
+    // cases there is no move to show, so nothing is drawn.
+    const from =
+      Number.isFinite(_lastTarget) && _lastTargetKc === current.kc ? _lastTarget : null;
+    const moved = t !== null && from !== null && Math.abs(t - from) >= 0.05;
+    const lo = moved ? Math.min(from, t) : t;
+    const delta = moved ? Math.abs(t - from) : 0;
     return (
       `<span class="concept-topbar-diff-label" title="${esc(title)}">Difficulty</span>` +
       `<span class="concept-topbar-diff-bar" title="${esc(title)}" aria-hidden="true">` +
       (t === null
         ? ""
-        : `<span class="concept-topbar-diff-fill" style="width:${t.toFixed(1)}%"></span>`) +
+        // The fill stops at the LOWER of the two, so the moving part is drawn
+        // once — as the delta span — instead of being half-hidden under a fill
+        // that already covers it.
+        : `<span class="concept-topbar-diff-fill" style="width:${lo.toFixed(1)}%"></span>`) +
+      (moved
+        ? `<span class="concept-topbar-diff-delta ${t > from ? "is-gain" : "is-loss"}" ` +
+          `style="left:${lo.toFixed(1)}%;width:${t > from ? 0 : delta.toFixed(1)}%"` +
+          `data-delta="${delta.toFixed(1)}"></span>` +
+          // Where this answer started from, so the move is legible as a move
+          // rather than as a bar that is simply a different length than last
+          // time. Drawn at `from`, which is the edge both animations run from.
+          `<span class="concept-topbar-diff-from" style="left:${from.toFixed(1)}%"></span>`
+        : "") +
       `<span class="concept-topbar-diff-tick" style="left:${p.toFixed(1)}%"></span>` +
       "</span>" +
       `<span class="concept-topbar-diff-value">${Math.round(p)}<span ` +
@@ -172,14 +271,54 @@ const ConceptTopbar = (() => {
     const html = _diffHtml(problem, target);
     host.innerHTML = html;
     host.hidden = !html;
+
+    /* Run the move.
+
+       Both directions animate the same span from one width to another, which is
+       what makes them read as one measure rather than two effects: a GAIN grows
+       green from where you were out to where you now are, and a LOSS starts at
+       the length you had and collapses red back to what is left. The loss is
+       anchored on its right edge (see the CSS) so it recedes towards the new
+       value instead of sliding away from it.
+
+       Two frames, not one. The element has to be laid out at its starting width
+       before the end width is set, or the browser coalesces both into a single
+       style computation and there is no transition to watch — the bar simply
+       appears at its final length. */
+    const span = host.querySelector(".concept-topbar-diff-delta");
+    if (span) {
+      const delta = Number(span.dataset.delta);
+      const gain = span.classList.contains("is-gain");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!span.isConnected) return;
+          span.style.width = gain ? `${delta}%` : "0%";
+        });
+      });
+    }
+
+    // Recorded after the draw, so this render still had the previous value to
+    // compare against. Only a real number counts: a lesson screen passes no
+    // target, and treating that as "moved to nothing" would animate a collapse
+    // to zero on the way into every lesson.
+    if (Number.isFinite(target)) {
+      _lastTarget = Math.max(0, Math.min(100, target));
+      _lastTargetKc = current.kc;
+    }
   };
 
+  /* The title carries the rung's POSITION as well as its name.
+     A tooltip reading "Faded — most of the solution is written" tells a learner
+     what this rung asks of them but not where it sits, and the dots only convey
+     position to someone who already knows the sequence runs left to right. Four
+     of four is also the fact that makes the last one feel earned. */
   const _stagesHtml = (stage) => {
     const active = _index(stage);
     return STAGES.map((s, i) => {
       const state = i < active ? "is-done" : i === active ? "is-active" : "is-todo";
+      const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${s.blurb}`;
       return (
-        `<li class="stage-dot ${state}" title="${esc(s.label)} — ${esc(s.blurb)}"` +
+        `<li class="stage-dot ${state}" data-stage="${esc(s.id)}" title="${esc(title)}"` +
         (i === active ? ' aria-current="step"' : "") +
         ">" +
         '<span class="stage-dot-mark" aria-hidden="true"></span>' +
@@ -198,7 +337,7 @@ const ConceptTopbar = (() => {
     const host = _el("concept-topbar");
     if (!host) return;
     const normalized = normalizeStage(stage);
-    current = { kc: kc || null, stage: normalized };
+    current = { kc: kc || null, stage: normalized, estimate: null };
 
     const eyebrowEl = _el("concept-topbar-eyebrow");
     if (eyebrowEl) {
@@ -238,8 +377,13 @@ const ConceptTopbar = (() => {
      grade does not have to re-render the concept name and dots, which would
      flash the one part of the page that is supposed to be stable. */
   const setEstimate = (estimate) => {
+    current.estimate = estimate || null;
     const estEl = _el("concept-topbar-est");
-    if (estEl) estEl.innerHTML = _estHtml(estimate);
+    // The threshold belongs to the rung, and the rung is `current.stage` rather
+    // than an argument: a submit refreshes the estimate without re-rendering the
+    // strip, and a caller that had to remember to re-supply the rung would
+    // eventually forget and leave last rung's mark under this rung's bar.
+    if (estEl) estEl.innerHTML = _estHtml(current.estimate, current.stage);
   };
 
   /* Move the dots without touching anything else — used when a rung is earned
@@ -253,12 +397,22 @@ const ConceptTopbar = (() => {
       stagesEl.innerHTML = _stagesHtml(normalized);
       stagesEl.hidden = false;
     }
+    // The promotion mark moves with the rung — 34% to leave Worked, 51% to leave
+    // Faded. Redrawn from the cached interval so a mid-screen promotion does not
+    // leave the previous rung's threshold sitting under the new rung's dots.
+    setEstimate(current.estimate);
   };
 
   const hide = () => {
     const host = _el("concept-topbar");
     if (host) host.classList.add("hidden");
-    current = { kc: null, stage: null };
+    current = { kc: null, stage: null, estimate: null };
+    // Drop the baseline too. The strip going away means the learner left
+    // practice; whatever they do before coming back is a gap this bar cannot
+    // account for, and drawing a band across it would claim the next answer
+    // caused a move that a whole session in between actually did.
+    _lastTarget = null;
+    _lastTargetKc = null;
   };
 
   const activeKc = () => current.kc;

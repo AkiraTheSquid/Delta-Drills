@@ -304,6 +304,137 @@ def check_invariants():
             "submit alone leaves the attempt pending until the next one overwrites it"
         )
 
+    # ── the difficulty step has to reach the rail ─────────────────
+    # The Colab edition's whole feedback on a verdict is the ladder moving:
+    # green when the answer earned a harder next question, red when it cost one.
+    # It is drawn from what `recordLocalEval` REPORTS, so the reporting is the
+    # contract. Checked on call syntax and on the returned field names, because
+    # the prose around this code names all of it and a word-presence test would
+    # keep passing on the explanation of a wire that had been cut.
+    assert re.search(r"getTargetDifficultyFromAdaptiveState\(", local_eval), (
+        "recordLocalEval no longer reads the target difficulty in its offline "
+        "branch — the Colab rail has nothing to draw a step from"
+    )
+    # BOTH of its object returns — the offline branch and the backend one. The
+    # caller handles one shape, so a branch that quietly drops a field is a mode
+    # in which the bar silently stops moving while the other mode still works.
+    eval_returns = re.findall(r"return \{[^}]*\}", local_eval, re.S)
+    assert len(eval_returns) == 2, (
+        f"recordLocalEval has {len(eval_returns)} object returns, expected one "
+        "per mode (offline engine + backend POST)"
+    )
+    for branch in eval_returns:
+        for field in ("targetBefore", "targetAfter", "pBefore", "pAfter"):
+            assert field in branch, (
+                f"a recordLocalEval branch stopped returning {field} — the caller "
+                "would have to re-read global state AFTER the await, which is "
+                "exactly the state that moved during it"
+            )
+    assert "target_difficulty_before" in local_eval and "target_difficulty_after" in local_eval, (
+        "recordLocalEval no longer maps the backend's before/after difficulty "
+        "fields — backend-mode learners get no step drawn"
+    )
+
+    # `finalize: false` on every einops-fallback call. That path is a normal
+    # graded submit that merely could not run server-side, so the felt-difficulty
+    # step still follows and the attempt has to stay PENDING for the rating to
+    # land on. Finalizing early closes it out and /feedback then has nothing to
+    # apply — which surfaces to the learner as "Feedback failed" on exactly the
+    # einops questions. The Colab verdict now has the same step and the same
+    # requirement (see the `_rateTorchAndAdvance` block below).
+    submit_answer_js = api_js.split("async submitAnswer", 1)[-1].split("\n  /**", 1)[0]
+    fallback_calls = re.findall(r"this\.recordLocalEval\([^)]*\)", submit_answer_js)
+    assert fallback_calls, "submitAnswer no longer records the einops-fallback attempt at all"
+    for call in fallback_calls:
+        assert "finalize: false" in call, (
+            f"submitAnswer einops fallback calls {call} without finalize:false — "
+            "the attempt finalizes early and the felt-difficulty step that "
+            "follows fails with 'Feedback failed'"
+        )
+
+    events_js = _read(os.path.join(HERE, "events.js"))
+    events_colab = events_js.split("_rateTorchAndAdvance = async", 1)[-1]
+    assert re.search(r"record = await PracticeAPI\.recordLocalEval\(", events_colab), (
+        "_rateTorchAndAdvance discards recordLocalEval's return value — the "
+        "difficulty step it just caused is the one thing the rail can show"
+    )
+    # The Colab verdict asks how hard it felt, so it must leave the attempt
+    # PENDING — `finalize: !wantsRating`, where wantsRating is the review mode.
+    # Hard-coding `finalize: true` here (or dropping the option, which defaults
+    # to true) closes the attempt out as unrated and the rating that follows
+    # 400s with nothing to apply it to.
+    rate_call = events_colab.split("recordLocalEval(", 1)[-1].split(");", 1)[0]
+    assert "finalize: !wantsRating" in rate_call, (
+        "_rateTorchAndAdvance must post finalize:!wantsRating — the Colab "
+        "review asks for a felt-difficulty rating and the attempt has to stay "
+        "pending for that rating to land on"
+    )
+    # ...and the rating step is only offered when an attempt really is parked.
+    # A placement diagnostic creates none, and an older backend does not answer
+    # the field at all; showing the buttons in either case posts a /feedback
+    # that fails.
+    assert "record.pending === true" in events_colab, (
+        "the Colab review shows the felt-difficulty buttons without checking "
+        "that an attempt is pending — during a placement diagnostic there is "
+        "none, and the rating fails"
+    )
+    assert "showFeedbackButtons()" in events_colab, (
+        "the Colab review branch no longer offers the felt-difficulty rating"
+    )
+    assert "_drawColabDifficultyStep(q, record)" in events_colab, (
+        "the Colab review branch no longer draws the difficulty step on the "
+        "unrated path"
+    )
+    draw = events_js.split("_drawColabDifficultyStep = (", 1)[-1].split("\nconst _rateTorch", 1)[0]
+    for call in ("animateTargetDifficulty(", "setTargetDifficultyFinal(", "setTargetDifficultyUnavailable("):
+        assert call in draw, (
+            f"_drawColabDifficultyStep lost its {call}…) call — reuse bars.js, "
+            "never a second animation of the same quantity"
+        )
+    assert "PracticeAPI.currentQuestion !== q" in draw, (
+        "_drawColabDifficultyStep lost the stale-question guard — the tween "
+        "runs for most of a second and Next problem is already on screen, so "
+        "its last frame can land on the following problem's card"
+    )
+    # Two bars in a 400px column that both fill up have to admit they are not
+    # the same quantity: the concept strip's estimate bar is mastery and its
+    # mark is the promotion to the next stage, this one is the difficulty INSIDE
+    # the stage. The title is the only thing saying so.
+    assert re.search(r"setTargetDifficultyScope\(\s*[\"'][^\"']+[\"']\s*\)", draw), (
+        "the Colab step bar no longer names what it measures — unlabelled it "
+        "reads as a second copy of the concept strip's mastery bar"
+    )
+    bars_js = _read(os.path.join(HERE, "bars.js"))
+    assert bars_js.count('"Target difficulty of "') == 1, (
+        "bars.js writes the bar title from more than one place again — the "
+        "scope override only reaches the copies that go through "
+        "targetDifficultyTitleText()"
+    )
+
+    # The rail must SHOW the bar. `colab-edition.css` hid `.question-meta-row`
+    # back when a verdict recorded an attempt and learned nothing from it.
+    # Comments are stripped first: the block above that rule still explains why
+    # the accuracy bar is hidden and names both selectors, so a substring test
+    # over the raw file would pass on the explanation alone.
+    colab_css = re.sub(r"/\*.*?\*/", "", _read(
+        os.path.join(SHARED, "styles", "practice", "colab-edition.css")), flags=re.S)
+    hidden_selectors = set()
+    for selectors, body in re.findall(r"([^{}]+)\{([^{}]*)\}", colab_css):
+        if "display:none" in body.replace(" ", ""):
+            hidden_selectors.update(s.strip() for s in selectors.split(","))
+    assert not any(s.endswith(".question-meta-row") for s in hidden_selectors), (
+        "colab-edition.css hides .question-meta-row again — that row IS the "
+        "difficulty ladder on this deploy"
+    )
+    # Deliberately still hidden, and the reason is not that the number is
+    # missing: the concept strip already carries an accuracy readout for this
+    # concept, and two of them moving by different formulas read as the panel
+    # disagreeing with itself.
+    assert any(s.endswith("#ewma-accuracy") for s in hidden_selectors), (
+        "colab-edition.css stopped hiding #ewma-accuracy — the rail now shows "
+        "two accuracy readouts computed different ways"
+    )
+
     # The Python half is checked by RUNNING it. These are the three transitions
     # the offline mastery numbers rest on, and all three fail silently: the UI
     # advances, the grade shows, and only the counters stay wrong.
@@ -337,6 +468,25 @@ def check_invariants():
     )
     assert counted["pending_attempt"] is None, "the committed attempt is still pending"
 
+    # 1b. …and the staircase MOVES, in the direction the band is painted. The
+    #     Colab rail draws green when this number goes up and red when it goes
+    #     down, so a staircase that stopped stepping would not error anywhere —
+    #     it would draw a bar that never moves off the same value, which reads
+    #     as "the tutor ignored my answer".
+    state, ladder = blank, []
+    for i, ok in enumerate((True, True, False)):
+        before = json.loads(state).get("subtopic_states", {}).get(sub, {}).get("target_difficulty")
+        state = api.send_feedback(api.submit_answer(state, 400 + i, sub, 50, ok), pe.UNRATED)
+        ladder.append((ok, before, json.loads(state)["subtopic_states"][sub]["target_difficulty"]))
+    assert ladder[1][2] > ladder[1][1], (
+        f"a correct answer left the target difficulty at {ladder[1]} — the rail "
+        "paints that band green, so it would be claiming a step that never happened"
+    )
+    assert ladder[2][2] < ladder[2][1], (
+        f"a miss left the target difficulty at {ladder[2]} — the rail paints that "
+        "band red and it would be pointing the wrong way"
+    )
+
     # 2. Nobody rated it: the next attempt flushes the last one, so Skip and a
     #    closed tab cost at most the attempt still on screen.
     state = blank
@@ -359,9 +509,71 @@ def check_invariants():
     )
 
 
+def check_promotion_threshold_matches_the_backend():
+    """The mark on the estimate bar must be where promotion ACTUALLY happens.
+
+    `concept-topbar.js` draws a threshold on the concept's interval — cross it
+    with the left end of the bar and the next question comes with less support.
+    That number is a copy of `app/kc_graph.py`'s `PROMOTE_LO`, held in a second
+    language because the rung is decided server-side and drawn client-side.
+
+    A copy nobody checks is a copy that drifts, and this one drifts SILENTLY in
+    the worst direction: the learner clears a mark the app drew for them and
+    nothing happens, or the rung changes while the mark is still ahead of them.
+    Either way the app has told them a rule it does not follow, which is worse
+    than drawing no mark at all.
+
+    ⚠️ The two speak different vocabularies. The backend's `faded` is the
+    display's `worked` and its `partial` is the display's `faded` — see
+    STAGE_ALIASES. This check translates rather than comparing keys, because
+    comparing keys is how the numbers would end up swapped and still "matching".
+
+    The right long-term fix is for the ladder response to carry its own
+    threshold so there is one runtime authority; codex flagged the same thing on
+    2026-08-03. Until then, this.
+    """
+    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    graph = os.path.join(
+        HERE, "..", "..", "This-Directory-Only", "backend", "app", "kc_graph.py")
+    if not os.path.exists(graph):
+        return  # backend not checked out beside the frontend — nothing to compare
+    backend = _read(graph)
+
+    def _floats(src, name):
+        block = re.search(rf"{name}\s*=\s*\{{(.*?)\}}", src, re.S)
+        assert block, f"could not find {name}"
+        return {k: float(v) for k, v in re.findall(
+            r'"(\w+)"\s*:\s*([0-9.]+)', block.group(1))}
+
+    promote_lo = _floats(backend, "PROMOTE_LO")
+    promote_at = {k: float(v) for k, v in re.findall(
+        r"(\w+):\s*([0-9.]+),", re.search(
+            r"PROMOTE_AT\s*=\s*\{(.*?)\}", topbar, re.S).group(1))}
+
+    # backend rung -> the rung the display calls it
+    for backend_stage, displayed in (("faded", "worked"), ("partial", "faded")):
+        assert backend_stage in promote_lo, f"backend lost PROMOTE_LO[{backend_stage}]"
+        assert displayed in promote_at, (
+            f"concept-topbar.js lost the {displayed!r} threshold — the rung would "
+            f"draw no promotion mark while the backend still promotes on one"
+        )
+        assert abs(promote_at[displayed] - promote_lo[backend_stage]) < 1e-9, (
+            f"the {displayed!r} rung draws its promotion mark at "
+            f"{promote_at[displayed]} but kc_graph promotes at "
+            f"{promote_lo[backend_stage]} — the app is showing a rule it does "
+            f"not follow"
+        )
+    assert len(promote_at) == 2, (
+        "PROMOTE_AT gained a rung. `lesson` is left by reading and `solo` is the "
+        "top of the ladder, so a third entry means the display believes in a "
+        "promotion the backend does not make"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_promotion_threshold_matches_the_backend]
     for fn in checks:
         try:
             fn()

@@ -402,14 +402,81 @@ const _colabReviewMode = () =>
   !!(window.DDColab && window.DDColab.active()) &&
   !document.documentElement.classList.contains("dd-no-notebook");
 
+/**
+ * The difficulty ladder, drawn on the rail after a verdict.
+ *
+ * This is the WITHIN-STAGE half of what the learner is climbing: the concept
+ * strip's estimate bar is mastery and its mark is the promotion to the next
+ * scaffold rung, while this bar is how hard the questions get inside the rung
+ * they are on. Answer well and the band runs green to the right; miss and it
+ * runs red back to the left. Titling it says which is which — two bars in a
+ * 400px column that both fill up need to admit they are not the same quantity.
+ *
+ * `record` is what `recordLocalEval` reported, not a re-read of global state:
+ * the state moved during the await, and re-reading it would only tell us where
+ * it ended up, never where it started.
+ */
+const _drawColabDifficultyStep = (q, record) => {
+  setTargetDifficultyScope("Difficulty inside this stage");
+  const oldTarget = record ? record.targetBefore : null;
+  const newTarget = record ? record.targetAfter : null;
+
+  // Nothing to animate. Do not fall back to the question's own rating and call
+  // it the old target — that number is a property of the problem, so a correct
+  // answer on an easy one would draw a red band for a step that went UP.
+  //
+  // Three ways to land here and they are not the same news, so they do not get
+  // the same sentence: a placement probe is locating the learner instead of
+  // stepping the staircase (nothing finalized AND no earlier target on file),
+  // this is the first answer in the concept and there is no earlier target it
+  // could have moved from, or the recording never came back at all. The last is
+  // the default because it is the only one that admits the attempt might not be
+  // in — better to under-claim than to explain a step nobody took.
+  if (!Number.isFinite(oldTarget) || !Number.isFinite(newTarget)) {
+    let note = "Couldn't read the ladder for this one.";
+    if (record && record.finalized === false && !Number.isFinite(oldTarget)) {
+      note = "Placement in progress — these answers find your level rather than stepping the ladder.";
+    } else if (record && record.finalized && Number.isFinite(newTarget)) {
+      note = "First answer here — the ladder starts stepping from the next one.";
+    }
+    setTargetDifficultyUnavailable(note, newTarget);
+    return;
+  }
+
+  animateTargetDifficulty(oldTarget, newTarget, () => {
+    // The tween runs for most of a second, and Next problem is already on
+    // screen. Landing the final frame on a question that has moved on would
+    // pin this problem's step to the next problem's card.
+    if (PracticeAPI.currentQuestion !== q) return;
+    setTargetDifficultyFinal(oldTarget, newTarget);
+  });
+
+  // Keep the strip's own difficulty fill on the same number. It stays on screen
+  // through the whole review, so leaving it on the pre-answer target would have
+  // it contradicting the bar a few rows below. Same call the full page makes
+  // after a felt-difficulty rating; the tick does not move, because this
+  // problem's rating is a property of the problem.
+  if (window.ConceptTopbar) {
+    window.ConceptTopbar.setDifficulty(q.difficulty, newTarget);
+  }
+};
+
 const _rateTorchAndAdvance = async (correct) => {
   const q = PracticeAPI.currentQuestion;
   if (!q) return;
   if (torchRateSolved) torchRateSolved.disabled = true;
   if (torchRateLookedUp) torchRateLookedUp.disabled = true;
+  let record = null;
+  // On the Colab edition the verdict is followed by the felt-difficulty step,
+  // so the attempt has to stay PENDING for that rating to land on — finalizing
+  // it here would consume it and the rating would 400 with nothing to apply it
+  // to. Everywhere else this verdict is the whole submit and closes out unrated.
+  const wantsRating = _colabReviewMode();
   try {
     if (typeof PracticeAPI.recordLocalEval === "function") {
-      await PracticeAPI.recordLocalEval(q.question_id, correct);
+      record = await PracticeAPI.recordLocalEval(q.question_id, correct, {
+        finalize: !wantsRating,
+      });
     }
   } catch (_) {
     /* best-effort — still advance so the learner isn't stuck */
@@ -432,14 +499,33 @@ const _rateTorchAndAdvance = async (correct) => {
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(correct);
-    // No felt-difficulty step here: the attempt went in through
-    // submit-local-eval, which leaves nothing pending for a rating to attach
-    // to. showNextProblemButton hides those buttons; the prompt above them has
-    // to stop asking a question that no longer has anywhere to go.
-    feedbackPrompt.textContent = correct
-      ? "Recorded as correct. The reference answer is below — worth a look even when you got it."
-      : "Recorded as a miss. The reference answer is below; compare it with what you ran.";
-    showNextProblemButton();
+    // The felt-difficulty step, back on this route. The verdict says WHETHER it
+    // worked; this says whether it was pitched anywhere near right, which is the
+    // one thing no grade can tell us and the thing that decides where the next
+    // problem lands (adaptive.nudge_difficulty_offset). applyResult has already
+    // set the three labels for this outcome — "Way too easy" after a correct
+    // answer, "Way too hard" after a miss.
+    //
+    // Only when there is an attempt parked for the rating to apply to. During a
+    // placement diagnostic nothing is pending, and a null `pending` is an older
+    // backend that was never asked — both fall through to the plain review.
+    if (record && record.pending === true) {
+      setTargetDifficultyScope("Difficulty inside this stage");
+      feedbackPrompt.textContent = correct
+        ? "Recorded as correct. How did that feel?"
+        : "Recorded as a miss. How did that feel?";
+      showFeedbackButtons();
+    } else {
+      feedbackPrompt.textContent = correct
+        ? "Recorded as correct. The reference answer is below — worth a look even when you got it."
+        : "Recorded as a miss. The reference answer is below; compare it with what you ran.";
+      showNextProblemButton();
+      // The one thing the verdict changed that the rail could not otherwise
+      // show: where the next question will be pitched, and which way this
+      // answer moved it. When a rating follows, the rating draws this instead —
+      // the step has not happened yet.
+      _drawColabDifficultyStep(q, record);
+    }
     // A second verdict would log a second attempt against the same problem.
     if (torchRateSolved) torchRateSolved.disabled = true;
     if (torchRateLookedUp) torchRateLookedUp.disabled = true;

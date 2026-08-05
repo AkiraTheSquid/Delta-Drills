@@ -93,21 +93,26 @@ except RuntimeError as exc:
 
 ## Worked example
 
-Turn a nested Python list into a 2-D tensor:
+The problem below asks you to turn a nested Python list into a 2-D tensor. This
+example shows that move once. Start with the list — three inner lists of two
+integers each — and hand it to `t.tensor`:
 
 ```python
 import torch as t
 
-# A nested Python list: two inner lists of three integers each.
-rows = [[1, 2, 3], [4, 5, 6]]
-
-# t.tensor walks the nesting and copies the values into one block.
+rows = [[7, 8], [9, 10], [11, 12]]
 a = t.tensor(rows)
-
-# The values survive the trip unchanged — .tolist() reads them back out.
-assert a.tolist() == [[1, 2, 3], [4, 5, 6]]
 print(a)
+```
+
+`t.tensor` walked the nesting and copied the values into one block. Nothing was
+rounded, reordered, or dropped, and `.tolist()` reads them straight back out —
+which is the check worth running whenever you are not sure a conversion did what
+you meant:
+
+```python
 print("back to a list:", a.tolist())
+assert a.tolist() == [[7, 8], [9, 10], [11, 12]]
 ```
 
 You never told `t.tensor` how big the result should be, and you never told it
@@ -172,27 +177,38 @@ for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
 
 ## Worked example
 
+The problem below asks for a tensor's number of axes and its element count.
+Those sound like the same question and are not, so this example takes them
+apart. One level of nesting gives one axis, however many numbers sit in it:
+
 ```python
 import torch as t
 
-flat = t.tensor([4, 1, 7])
-grid = t.tensor([[1, 2, 3], [4, 5, 6]])
-
-# One nesting level -> one axis. Three numbers in it.
-assert flat.shape == (3,)
-assert flat.ndim == 1
-assert flat.numel() == 3
-
-# Two nesting levels -> two axes, (rows, columns). numel is 2 * 3, not 2.
-assert grid.shape == (2, 3)
-assert grid.ndim == 2
-assert grid.numel() == 6
-
-# shape reports as torch.Size, which IS a tuple subclass — so it compares
-# equal to a plain tuple, and tuple() converts it when you need the real thing.
-assert tuple(grid.shape) == (2, 3)
+flat = t.tensor([4, 1, 7, 2, 9])
 print("flat: shape", flat.shape, "ndim", flat.ndim, "numel", flat.numel())
+assert flat.ndim == 1
+assert flat.numel() == 5
+```
+
+Five numbers, but `ndim` is 1 — the count of numbers never changes the count of
+axes. Adding a nesting level is what does. Here two levels give two axes, and
+`numel` counts every element, not the rows:
+
+```python
+grid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
 print("grid: shape", grid.shape, "ndim", grid.ndim, "numel", grid.numel())
+assert grid.ndim == 2
+assert grid.numel() == 12
+```
+
+Note what `shape` printed: `torch.Size([3, 4])`, not `(3, 4)`. `torch.Size` is a
+tuple subclass, so it compares equal to a plain tuple — but it is not one, and
+anything that asks you for a tuple wants `tuple()` around it:
+
+```python
+print(grid.shape, "==", tuple(grid.shape), "->", grid.shape == (3, 4))
+assert grid.shape == (3, 4)
+assert tuple(grid.shape) == (3, 4)
 ```
 
 ## Faded practice
@@ -263,28 +279,53 @@ is checking half the question.
 
 ## Worked example
 
+The problem below asks you to compare two tensors on shape and on dtype and
+report a `True`/`False` for each. The point of this example is to show that
+those two questions are genuinely independent — two tensors can agree on one
+and disagree on the other — and that the answer depends entirely on what you
+feed in. So rather than one block of code, here are three pairs, each printed.
+
+Start with two tensors built from the same numbers in the same layout:
+
 ```python
 import torch as t
 
-ints = t.tensor([[1, 2], [3, 4]])
-mixed = t.tensor([[1, 2.5], [3, 4]])
+a = t.tensor([[20, 21, 22], [23, 24, 25]])
+b = t.tensor([[30, 31, 32], [33, 34, 35]])
 
-# All-integer input -> one integer type for all four entries.
-assert ints.dtype == t.int64
-
-# ONE float in the input decides the type of the whole block.
-assert mixed.dtype == t.float32
-
-# Same shape, different dtype: the two questions are independent.
-assert ints.shape == mixed.shape
-assert ints.dtype != mixed.dtype
-
-# dtype= overrides the inference rather than relying on the input's spelling.
-assert t.tensor([[1, 2], [3, 4]], dtype=t.float32).dtype == t.float32
-print("all ints ->", ints.dtype)
-print("one float ->", mixed.dtype, "  (the whole block, not just that entry)")
-print(mixed)
+print("shapes:", tuple(a.shape), tuple(b.shape), "-> match?", a.shape == b.shape)
+print("dtypes:", a.dtype, b.dtype, "-> match?", a.dtype == b.dtype)
+assert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)
 ```
+
+Both checks came back true. Now change ONE number to a float. Nothing about the
+layout changed, so the shapes still agree — but a tensor holds one type for
+every element, so that single `31.5` re-types the whole block:
+
+```python
+c = t.tensor([[30, 31.5, 32], [33, 34, 35]])
+
+print("c is", c.dtype, "— because of one float, not just that one entry")
+print("shape match?", a.shape == c.shape, " dtype match?", a.dtype == c.dtype)
+assert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)
+```
+
+Same answer to the shape question, opposite answer to the dtype question. Now
+the other way round: keep the type and change the layout.
+
+```python
+d = t.tensor([[40, 41], [42, 43], [44, 45]])
+
+print("a is", tuple(a.shape), "and d is", tuple(d.shape))
+print("shape match?", a.shape == d.shape, " dtype match?", a.dtype == d.dtype)
+assert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)
+```
+
+Three inputs, three different answers: `(True, True)`, `(True, False)`,
+`(False, True)`. That is why the problem gives you two arguments and asks for
+two booleans — there is no single right answer to memorise, only two checks to
+run. `.shape` is an attribute and `.dtype` is an attribute; neither takes
+parentheses.
 
 ## Faded practice
 
@@ -315,6 +356,30 @@ def solve(rows_a, rows_b):
 ## Guided practice
 
 ### q523
+```python worked
+import torch as t
+
+a = t.tensor([[1, 2], [3, 4], [5, 6]])
+
+# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead
+# of 3 rows of 2. Nothing is copied, so both names read one buffer.
+view = a.reshape(2, 3)
+assert view.data_ptr() == a.data_ptr()
+
+# .clone() is the opposite request: give me my own block.
+copy = a.clone()
+assert copy.data_ptr() != a.data_ptr()
+
+# Sharing is about memory, not values — the copy holds the same numbers.
+assert copy.tolist() == a.tolist()
+print("view shares a's block:", view.data_ptr() == a.data_ptr())
+print("copy shares a's block:", copy.data_ptr() == a.data_ptr())
+print("view reads as:", view.tolist())
+```
+
+Your turn: the same three questions, but for the TRANSPOSE and for
+`.contiguous()` rather than for `.reshape` and `.clone()`.
+
 1. Two of the three answers are memory questions, not value questions: does
    the tensor you got back read the ORIGINAL block, or a fresh one?
    Transposing never moves data; `.contiguous()` exists precisely to ask for
@@ -324,6 +389,57 @@ def solve(rows_a, rows_b):
 3. `view = a.T`, `packed = view.contiguous()`, then return
    `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),
    packed.tolist())`.
+
+## Applied practice
+
+### q481
+The problem below hands you a FLAT list and asks for the tensor plus its number
+of axes. This example is here so you have seen the move once; the problem is the
+same move on different data, and you write the whole function yourself.
+
+One level of nesting gives one axis, however many numbers are inside it:
+
+```python worked
+import torch as t
+
+flat = t.tensor([3, 1, 4, 1, 5])
+print(flat, "-> ndim", flat.ndim)
+assert flat.ndim == 1
+```
+
+Five numbers, still one axis. Adding a nesting level is what adds an axis — the
+count of numbers never does:
+
+```python worked
+nested = t.tensor([[3, 1], [4, 1]])
+print(nested, "-> ndim", nested.ndim)
+assert nested.ndim == 2
+```
+
+### q483
+The problem below asks for the dtype's NAME as a string and the element count.
+Two inputs here, because the dtype depends on what is in the list — that is the
+whole point of the question.
+
+All-integer input infers the integer type, and `str()` is what turns a dtype
+into the name the problem asks for:
+
+```python worked
+import torch as t
+
+ints = t.tensor([2, 4, 6, 8])
+print(str(ints.dtype), ints.numel())
+assert (str(ints.dtype), ints.numel()) == ("torch.int64", 4)
+```
+
+Now one float, same four numbers. The dtype changes for the whole block, and
+`numel` does not move — that is why they are two separate questions:
+
+```python worked
+mixed = t.tensor([2, 4.5, 6, 8])
+print(str(mixed.dtype), mixed.numel())
+assert (str(mixed.dtype), mixed.numel()) == ("torch.float32", 4)
+```
 
 ## Misconceptions
 
