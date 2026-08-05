@@ -570,10 +570,47 @@ def check_promotion_threshold_matches_the_backend():
     )
 
 
+def check_lesson_code_can_actually_run():
+    """A lesson's Run button must reach a runtime that HAS torch.
+
+    The whole course is torch since the July dialect conversion, and Pyodide
+    cannot import it. `runner.runSnippet` routes on two signals, and both of
+    them silently went stale: `lessons.js` advertised the lesson's library as
+    "numpy" (written before the conversion), and the source sniff was handed
+    `notebook.js`'s generated harness, which packs every cell into a Python
+    string literal where a line-anchored regex cannot see the import. With both
+    lying, every Run button on every lesson answered with a
+    ModuleNotFoundError traceback — for signed-in learners too, whose backend
+    runner has torch preimported and was simply never asked.
+
+    Neither signal announces itself when it breaks, so both are pinned here.
+    """
+    read = lambda name: open(os.path.join(HERE, name), encoding='utf-8').read()
+    lessons = read('lessons.js')
+    ctx = lessons.split('_runtimeContext = (page) => ({', 1)[-1].split('})', 1)[0]
+    assert 'primary_library: "torch"' in ctx, (
+        "_runtimeContext no longer declares the lesson as torch — questionIsTorch "
+        "reads this field, and anything else routes torch lesson code to Pyodide, "
+        "which cannot import torch"
+    )
+    notebook = read('notebook.js')
+    call = notebook.split('DeltaRunner.runSnippet(', 1)[-1].split('});', 1)[0]
+    assert 'source:' in call, (
+        "the lesson notebook runs a generated harness without telling the runner "
+        "what the learner actually wrote — the torch sniff then reads scaffolding"
+    )
+    runner = read('runner.js')
+    assert 'TORCH_IMPORT.test(source || code' in runner, (
+        "runSnippet sniffs torch on the program it was handed rather than on the "
+        "source, so a wrapped cell can talk itself onto Pyodide"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
-              check_promotion_threshold_matches_the_backend]
+              check_promotion_threshold_matches_the_backend,
+              check_lesson_code_can_actually_run]
     for fn in checks:
         try:
             fn()

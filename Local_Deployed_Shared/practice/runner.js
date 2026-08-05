@@ -300,11 +300,18 @@ const TORCH_UNAVAILABLE =
    showing. `pyodide` is the instance when the run happened locally, so a
    caller that wants to read variables back out of it (the visual renderer) can.
 */
-async function runSnippet(code, { question = null, onStatus = null } = {}) {
+async function runSnippet(code, { question = null, onStatus = null, source = null } = {}) {
   const say = (message) => {
     if (typeof onStatus === "function") onStatus(message);
   };
-  const isTorch = questionIsTorch(question) || TORCH_IMPORT.test(code || "");
+  /* `source` is the learner's code when `code` is a program that WRAPS it.
+     The lesson notebook compiles its cells into one harness that passes each
+     cell as a Python string literal, so the sniff below reads `_delta_cell("
+     import torch as t\n...")` — the import is inside a quoted one-liner and
+     the regex, which anchors to a real line start, cannot see it. Detecting
+     torch on generated scaffolding rather than on what the learner wrote is
+     how a torch cell talks itself onto Pyodide. */
+  const isTorch = questionIsTorch(question) || TORCH_IMPORT.test(source || code || "");
   let useLocalPyodide =
     practiceMode !== "backend" ||
     ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(question)) && !isTorch);
