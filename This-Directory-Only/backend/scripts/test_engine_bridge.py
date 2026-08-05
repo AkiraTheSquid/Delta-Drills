@@ -102,10 +102,56 @@ check("an unrecognised rung is refused rather than guessed",
       engine_bridge.record(state, "engine-bridge-test", kc=KC, question_id=1,
                            subtopic="x", difficulty_score=50, stage="not-a-rung",
                            correct=True) is None)
-check("a concept the q-matrix does not name is refused",
+check("an empty concept is refused",
       engine_bridge.record(state, "engine-bridge-test", kc="", question_id=1,
                            subtopic="x", difficulty_score=50, stage="solo",
                            correct=True) is None)
+check("an unknown but non-empty concept is refused too",
+      engine_bridge.record(state, "engine-bridge-test", kc="numpy.not-a-real-kc",
+                           question_id=1, subtopic="x", difficulty_score=50,
+                           stage="solo", correct=True) is None)
+check("a refused concept left no posterior behind",
+      "numpy.not-a-real-kc" not in (state.kc_posteriors or {}))
+# A placement probe never appends to the ladder, so the newest row belongs to an
+# earlier question. Reading it would score today's answer at yesterday's rung.
+check("a rung from a DIFFERENT question is not borrowed",
+      engine_bridge.served_stage(state, KC, question_id=-999) is None)
+
+print("\nC2. THE PREDICTION DOES NOT KNOW THE ANSWER")
+# The central temporal invariant, and the one the first cut of this wiring got
+# wrong in two places at once. `predicted_p` is logged as the belief that
+# PRECEDED the outcome, so two learners in identical states must be predicted
+# identically regardless of how they then answer. It failed before because the
+# engine scored after the BKT block (whose atom updates feed `encompassing`)
+# and because the ladder seed read a bound that already contained the answer.
+# Nothing surfaced it: a leaked prediction is not an error, it is a flattering
+# Brier score.
+def _twin(uid, correct):
+    st = UserPracticeState(user_id=uid)
+    for qid in QIDS[:2]:
+        answer(st, qid, True)
+    answer(st, QIDS[2], correct)
+    row = [r for r in attempt_log.iter_rows(uid) if r.is_graded][-1]
+    return row.predicted_p, row.features
+
+
+p_right, f_right = _twin("leak-probe-correct", True)
+p_wrong, f_wrong = _twin("leak-probe-wrong", False)
+# Not exact equality. The twins are built microseconds apart in wall-clock, and
+# two features are time-dependent by design — `recency` reads elapsed days, and
+# `encompassing` reads BKT posteriors that decay continuously — so they differ
+# in the twelfth decimal for reasons that have nothing to do with the label.
+# LEAKAGE is not a rounding-scale effect: when this was broken, one atom update
+# moved `encompassing` by ~0.02 and `predicted_p` by ~0.005, thousands of times
+# the tolerance below. The gap between the two scales is what makes this a test
+# rather than a coin flip.
+TOL = 1e-6
+check("the same state predicts the same p whichever way it is answered",
+      abs(p_right - p_wrong) < TOL, f"{p_right:.9f} vs {p_wrong:.9f}")
+drifted = [k for k in f_right if abs(f_right[k] - f_wrong.get(k, 0.0)) > TOL]
+check("no feature carries the outcome into the prediction",
+      not drifted,
+      "; ".join(f"{k}: {f_right[k]:.6f} vs {f_wrong[k]:.6f}" for k in drifted) or "identical")
 
 print("\nD. THE ATTEMPT LOG IS WRITTEN")
 rows = [r for r in attempt_log.iter_rows("engine-bridge-test") if r.is_graded]
@@ -149,16 +195,40 @@ check("a weak record seeds lower than a strong one",
       engine_bridge.posteriors_for(weak, KC)["ability"].mean < seeded.mean)
 
 print("\nG. POSTERIORS SURVIVE A SAVE")
-from app.adaptive import _load_user_state, save_user_state  # noqa: E402
-import app.adaptive as A  # noqa: E402
-A._user_states[state.user_id] = state if hasattr(A, "_user_states") else None
-save_user_state(state.user_id)
-reloaded = _load_user_state(state.user_id)
-check("kc_posteriors round-trips through the save file",
-      reloaded is not None and KC in (reloaded.kc_posteriors or {}))
-check("the reloaded posterior gives the same mastery",
-      reloaded is not None
-      and abs((engine_bridge.mastery(reloaded, KC) or -1) - engine_bridge.mastery(state, KC)) < 1e-9)
+# `_save_user_state` builds its dict BY HAND, so a new dataclass field does not
+# round-trip by itself — the difficulty offset was lost exactly this way. Driven
+# through the public API only (get_user_state / save_user_state) and read back
+# off disk, because the file is what a restart actually sees.
+import json  # noqa: E402
+
+from app.adaptive import get_user_state, save_user_state  # noqa: E402
+
+live = get_user_state("engine-bridge-persist")
+for qid in QIDS[:3]:
+    answer(live, qid, True)
+expected = engine_bridge.mastery(live, KC)
+save_user_state("engine-bridge-persist")
+
+with open(os.path.join(_TMP, "engine-bridge-persist.json"), encoding="utf-8") as fh:
+    on_disk = json.load(fh)
+check("kc_posteriors reached the save file at all",
+      KC in (on_disk.get("kc_posteriors") or {}),
+      "the writer builds its dict by hand — a new field is dropped silently")
+restored = UserPracticeState(user_id="engine-bridge-restored")
+# Everything `mastery` reads, not just the posteriors: the prediction also uses
+# `encompassing`, a mean over BKT atom posteriors, so restoring the posterior
+# alone would compare two different learners and call the difference a
+# persistence bug.
+for field_name in ("kc_posteriors", "atom_mastery", "atom_last_ts", "kc_ladder"):
+    setattr(restored, field_name, on_disk.get(field_name) or {})
+restored.self_reported_level = on_disk.get("self_reported_level")
+check("a restart reads back the same mastery",
+      expected is not None
+      and abs((engine_bridge.mastery(restored, KC) or -1) - expected) < 1e-9,
+      f"{expected:.6f}" if expected is not None else "no mastery")
+check("the ladder rows carry the question they were about",
+      all("question_id" in a for a in kc_graph.ladder_view(live, KC)["attempts"]),
+      "served_stage cannot match a rung to a question without it")
 
 shutil.rmtree(_TMP, ignore_errors=True)
 print(f"\n{len(PASS)} passed, {len(FAIL)} failed")

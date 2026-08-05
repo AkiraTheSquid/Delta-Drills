@@ -88,7 +88,7 @@ def _store(user_state) -> Dict[str, Dict[str, dict]]:
     return store
 
 
-def _seeded_ability(user_state, kc: str) -> E.Posterior:
+def _seeded_ability(user_state, kc: str, *, exclude_latest: bool = False) -> E.Posterior:
     """The `ability` prior for a concept the engine has never scored.
 
     `attempt_log.backfill_from_state` is explicit that old records cannot
@@ -111,19 +111,33 @@ def _seeded_ability(user_state, kc: str) -> E.Posterior:
 
     A concept with no ladder record gets the untouched prior, which is right:
     nothing has been observed, and the engine is built to run on zero data.
+
+    🔴 `exclude_latest` is not a tuning knob. `record_ladder_outcome` runs
+    BEFORE the scoring tail, so by the time an attempt reaches this module the
+    ladder already contains it — and seeding from a bound that includes the
+    answer being scored would both leak the outcome into the `predicted_p`
+    logged as preceding it, and fold the same answer in twice (once through the
+    seed, once through `E.step`). The scoring path therefore excludes the last
+    row; every read-only caller uses the whole record, which is correct for
+    them because they are not about to add it again.
     """
     prior = E.initial_posterior(E.ABILITY)
-    est = kc_graph.kc_estimate(user_state, kc)
-    if not est.get("n"):
+    attempts = kc_graph.ladder_view(user_state, kc).get("attempts") or []
+    if exclude_latest:
+        attempts = attempts[:-1]
+    recent = attempts[-kc_graph._LADDER_WINDOW:]
+    if not recent:
         return prior
-    lo = float(est["ci"][0])
+    lo, _hi = kc_graph._wilson(sum(1 for a in recent if a.get("correct")), len(recent))
     # Clamped off the ends: logit(0) is -inf, and a learner who has missed
     # everything so far is not infinitely unable.
-    p = min(max(lo, 0.02), 0.98)
+    p = min(max(float(lo), 0.02), 0.98)
     return E.Posterior(mean=math.log(p / (1.0 - p)), var=prior.var, n=0, last_seen=None)
 
 
-def posteriors_for(user_state, kc: str) -> Dict[str, E.Posterior]:
+def posteriors_for(
+    user_state, kc: str, *, exclude_latest_attempt: bool = False
+) -> Dict[str, E.Posterior]:
     """This learner's LEARNED-feature posteriors for one concept.
 
     Missing features fall back to their priors rather than being absent, so a
@@ -132,6 +146,10 @@ def posteriors_for(user_state, kc: str) -> Dict[str, E.Posterior]:
     a wrong one. `ability` gets the seeded prior (see `_seeded_ability`); any
     other learned feature a future config adds gets the plain one, because
     there is no existing record that speaks to it.
+
+    `exclude_latest_attempt` is passed by the scoring path only — see
+    `_seeded_ability` for why the answer being scored must not seed the prior
+    it is about to be folded into.
     """
     raw = _store(user_state).get(kc) or {}
     out: Dict[str, E.Posterior] = {}
@@ -139,7 +157,7 @@ def posteriors_for(user_state, kc: str) -> Dict[str, E.Posterior]:
         post = E.Posterior.from_dict(raw.get(feature.name)) if isinstance(raw, dict) else None
         if post is None:
             post = (
-                _seeded_ability(user_state, kc)
+                _seeded_ability(user_state, kc, exclude_latest=exclude_latest_attempt)
                 if feature.name == E.ABILITY.name
                 else E.initial_posterior(feature)
             )
@@ -202,6 +220,7 @@ def feature_values(
     *,
     difficulty_score: Optional[float],
     stage: Optional[str],
+    posteriors: Optional[Mapping[str, E.Posterior]] = None,
 ) -> Dict[str, float]:
     """One row of the design matrix, for this learner on this item.
 
@@ -209,8 +228,13 @@ def feature_values(
     applies to this item"; the posterior supplies the coefficient. Every other
     feature is FIXED, so its value here is the quantity and the engine's config
     supplies the weight.
+
+    `posteriors` may be passed by a caller that already holds them — which the
+    scoring path must do, because it holds the ones seeded WITHOUT the attempt
+    being scored and re-deriving here would quietly reintroduce it.
     """
-    posteriors = posteriors_for(user_state, kc)
+    if posteriors is None:
+        posteriors = posteriors_for(user_state, kc)
     ability = posteriors.get(E.ABILITY.name)
     return {
         E.ABILITY.name: 1.0,
@@ -286,12 +310,13 @@ def record(
     one observation.
     """
     normalized = E.normalize_stage(stage)
-    if not kc or normalized not in E.GRADED_STAGES:
+    if not kc or kc_graph.registry_node(kc) is None or normalized not in E.GRADED_STAGES:
         return None
 
-    posteriors = posteriors_for(user_state, kc)
+    posteriors = posteriors_for(user_state, kc, exclude_latest_attempt=True)
     values = feature_values(
-        user_state, kc, difficulty_score=difficulty_score, stage=normalized
+        user_state, kc, difficulty_score=difficulty_score, stage=normalized,
+        posteriors=posteriors,
     )
     ability = posteriors.get(E.ABILITY.name)
     now = _now_iso()
@@ -336,15 +361,20 @@ def served_stage(user_state, kc: str, question_id: int) -> Optional[str]:
     earned, which is the one error the engine's stage offsets cannot survive:
     the model would learn that assistance does not help.
 
-    None when the concept has no attempt recorded — a placement probe never
-    reaches the ladder (it measures prior knowledge on material nobody taught),
-    so there is no rung it was served at, and `record` declines rather than
-    guessing one.
+    Matched on `question_id`, not merely taken as "the newest row". A placement
+    probe deliberately never reaches the ladder — it measures prior knowledge on
+    material nobody taught — so on that route the newest row belongs to some
+    earlier question, and reading it would score today's answer at a rung it was
+    never served at. None when the newest row is not this question's, and
+    `record` then declines rather than guessing.
     """
     attempts = kc_graph.ladder_view(user_state, kc).get("attempts") or []
     if not attempts:
         return None
-    return attempts[-1].get("stage")
+    latest = attempts[-1]
+    if latest.get("question_id") != question_id:
+        return None
+    return latest.get("stage")
 
 
 def record_attempt_across_kcs(

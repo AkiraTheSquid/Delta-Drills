@@ -225,10 +225,19 @@ def check_attempts_are_finalized():
         "freeze and attempt_log stops recording, which is the model going quiet "
         "rather than the model going away"
     )
-    assert scoring.index('bkt_mastery.apply_attempt') < scoring.index('record_attempt_across_kcs'), (
-        "the engine update must run AFTER the BKT update: its `encompassing` "
-        "feature is a mean over this concept's atoms, so reading it first feeds "
-        "the model the atom posteriors from before the answer it is being told about"
+    # 🔴 The engine scores BEFORE the BKT block, and this assertion is the only
+    # thing standing between the attempt log and a flattering lie. `encompassing`
+    # is a mean over the concept's atoms — the atoms BKT is about to move with
+    # this same answer — so scoring afterwards computes `predicted_p` from a
+    # feature that already knows the outcome it claims to precede. Nothing would
+    # fail; the Brier score would simply come out good and mean nothing. This
+    # file previously asserted the OPPOSITE ordering, for a reason that sounded
+    # right (feed the model current state) and was exactly backwards: a
+    # prediction has to precede the outcome in INFORMATION, not in line number.
+    assert scoring.index('record_attempt_across_kcs') < scoring.index('bkt_mastery.apply_attempt'), (
+        "the engine now scores AFTER the BKT update, so its `encompassing` "
+        "feature already encodes the answer being predicted — every logged "
+        "predicted_p is contaminated by its own label and calibration is void"
     )
 
     # `question_target_difficulty`, not the bare `target_difficulty`: the aim has

@@ -707,6 +707,16 @@ def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "indepen
             "correct": bool(correct),
             "stage": stage if stage in LADDER_STAGES else "independent",
             "ts": datetime.now(timezone.utc).isoformat(),
+            # Which question this row is about. The ladder itself never needs
+            # it — it counts outcomes at rungs — but this row is the ONLY
+            # durable record of the rung a question was actually served at, and
+            # `engine_bridge.served_stage` reads it. Without the id, "the newest
+            # row" is the best a reader can do, and on a route that does not
+            # append here (a placement probe) that silently means "some earlier
+            # question's rung". Rows written before this field simply do not
+            # match, which is the safe direction: the engine declines the
+            # attempt rather than scoring it at a rung it is guessing.
+            "question_id": int(qid),
         })
         del row["attempts"][:-_LADDER_WINDOW]
     return touched
