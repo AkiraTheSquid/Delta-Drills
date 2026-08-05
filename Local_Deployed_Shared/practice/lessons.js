@@ -275,12 +275,60 @@ const LessonGate = (() => {
   const TOPIC_LABELS = { Numpy: "PyTorch tensors" };
   const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
 
+  /* The published notebook's anchor for the concept a lesson page teaches, or
+     "" when there is nowhere to send the learner.
+
+     Empty is the ordinary answer on the normal app (no Colab edition) and the
+     honest answer for a concept whose lesson was never published — both fall
+     through to the full in-panel lesson below. Same escape hatch as
+     `dd-no-notebook` on the question side: a rail pointing at a notebook that
+     does not exist is worse than the page it replaced. */
+  const _colabLessonHref = (kc) => {
+    const dd = window.DDColab;
+    if (!dd || typeof dd.active !== "function" || !dd.active()) return "";
+    if (typeof dd.hrefForKc !== "function") return "";
+    return dd.hrefForKc(kc) || "";
+  };
+
+  /* The lesson as a RAIL rather than as the lesson.
+
+     The notebook already contains this exact prose, its runnable blocks, the
+     worked example, the problem, the hints and the solution — in that order, as
+     real Colab cells against a real torch runtime. Rendering a second copy in
+     the panel put the lesson on the left and the work on the right, which is
+     the split the Colab edition exists to remove. So on this edition the panel
+     keeps what only it can know — the rung, the estimate, which page of how
+     many — and hands the reading itself to the notebook.
+
+     The continue button is unchanged in behaviour and only re-labelled: it
+     still credits the `worked` rung through `finishAll`, which is what takes
+     the concept off the lesson step. "I've read it" is a claim about the
+     learner, and it is the same claim the full page's button was already
+     making. */
+  const _colabPageHtml = (page, href, isLast) =>
+    `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">` +
+    `${esc(page.seg.title || page.kp.title)}</h2>` +
+    '<div class="lesson-colab-card">' +
+    '<p class="lesson-colab-eyebrow">📗 Read this one in the notebook</p>' +
+    "<p>This is the Colab edition — the lesson is open beside you in its " +
+    "notebook, where every block runs against real PyTorch. Read it through, " +
+    "run whatever you want to see, then come back here.</p>" +
+    `<a class="lesson-colab-open" href="${esc(href)}" target="_blank" ` +
+    'rel="noopener">Open the lesson in Colab ↗</a>' +
+    "</div>" +
+    '<div class="lesson-actions"><button type="button" class="primary" ' +
+    'id="lesson-continue-btn">' +
+    (isLast ? "I've read it — give me the problem →" : "I've read it — next concept →") +
+    "</button></div>";
+
   const _pageHtml = (page) => {
     const { kp, seg } = page;
     const pageTitle = seg.title || kp.title;
     const watchOut = seg.watch_out_markdown ||
       (page.segCount === 1 ? kp.misconceptions_markdown : "");
     const isLast = page.pageIndex === page.pageTotal - 1;
+    const colabHref = _colabLessonHref(kp.kc);
+    if (colabHref) return _colabPageHtml(page, colabHref, isLast);
     // The concept name, the graph button and the progress counter used to be
     // built here, inside the panel. They now live in #concept-topbar, which
     // spans the page and survives this innerHTML being replaced — see
@@ -415,6 +463,23 @@ const LessonGate = (() => {
         onDone();
       };
 
+      // The notebook index arrives over the network and a lesson can render
+      // before it lands, which reads as "no notebook" and draws the full
+      // in-panel lesson the Colab edition is trying not to draw. Re-render once
+      // when it settles. Guarded so the re-render cannot re-arm itself, and
+      // only ever fires while the same page is still on screen.
+      let awaitingIndex = false;
+      const _redrawWhenColabIndexLands = (page) => {
+        const dd = window.DDColab;
+        if (awaitingIndex || !dd || typeof dd.active !== "function" || !dd.active()) return;
+        if (typeof dd.whenReady !== "function") return;
+        awaitingIndex = true;
+        dd.whenReady(() => {
+          if (finished || pages[index] !== page) return;
+          if (_colabLessonHref(page.kp.kc)) showPage();
+        });
+      };
+
       const showPage = () => {
         const page = pages[index];
         activeQuestion = _runtimeContext(page);
@@ -427,13 +492,26 @@ const LessonGate = (() => {
         // raises them; `no-run` fences stay static. Done after the innerHTML
         // rather than inside _pageHtml because it rewrites rendered DOM, which
         // keeps the markdown renderer shared and notebook-unaware.
-        if (window.LessonNotebook) {
+        // On the Colab edition the panel holds a rail, not cells — there is
+        // nothing to mount and no worked example to load into an editor the
+        // learner is not looking at. Steer the notebook to this concept the
+        // same way the question side steers it (ui.js), so the reading is
+        // already on screen beside them rather than one click away.
+        const colabHref = _colabLessonHref(page.kp.kc);
+        if (colabHref) {
+          if (window.DDColab && typeof window.DDColab.openNotebook === "function") {
+            window.DDColab.openNotebook(colabHref);
+          }
+        } else if (window.LessonNotebook) {
           window.LessonNotebook.mount(questionText);
+          _redrawWhenColabIndexLands(page);
         }
         questionText.scrollTop = 0;
         window.scrollTo({ top: 0 });
-        editor.value = page.seg.worked_example_code ||
-          _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR;
+        editor.value = colabHref
+          ? DEFAULT_EDITOR
+          : (page.seg.worked_example_code ||
+            _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR);
         if (output) output.textContent = "";
 
         // Not awaited: the page is already rendered and the estimate fills in

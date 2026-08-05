@@ -606,11 +606,54 @@ def check_lesson_code_can_actually_run():
     )
 
 
+def check_colab_lesson_goes_to_the_notebook():
+    """On the Colab edition the `worked` rung is READ in the notebook.
+
+    The published notebook already carries the lesson's prose, its runnable
+    blocks, the worked example, the problem, the hints and the solution, in
+    that order and against a real torch runtime. A second copy in the panel put
+    the reading on the left and the work on the right — the split this edition
+    exists to close.
+
+    Three things have to hold together or the rail is worse than the page it
+    replaced: the href has to come from `DDColab.hrefForKc` (a concept anchor
+    the generator minted, never a slug guessed here), an absent notebook has to
+    fall through to the full in-panel lesson, and the panel must steer the tab
+    rather than wait to be clicked.
+    """
+    read = lambda name: open(os.path.join(HERE, name), encoding='utf-8').read()
+    lessons = read('lessons.js')
+    assert 'dd.hrefForKc(kc)' in lessons, (
+        "the lesson rail no longer resolves its notebook through "
+        "DDColab.hrefForKc — a slug guessed locally is an anchor that drifts"
+    )
+    page_html = lessons.split('const _pageHtml = (page) => {', 1)[-1].split('\n  };', 1)[0]
+    assert 'if (colabHref) return _colabPageHtml' in page_html, (
+        "_pageHtml no longer routes the Colab edition to the rail, so the "
+        "panel draws the lesson the notebook already contains"
+    )
+    assert '_colabLessonHref(kp.kc)' in page_html, (
+        "the rail is chosen without asking whether THIS concept has a notebook "
+        "— the ~unpublished ones must fall through to the full lesson"
+    )
+    assert 'DDColab.openNotebook(colabHref)' in lessons, (
+        "the lesson rail never steers the notebook, so the learner is told to "
+        "read something that is not on screen"
+    )
+    css = open(os.path.join(SHARED, 'styles', 'practice', 'colab-edition.css'),
+               encoding='utf-8').read()
+    assert '.lesson-colab-card' in css, (
+        "colab-edition.css lost the lesson rail's styling — the card renders "
+        "as unstyled prose in a panel that has no other lesson layout left"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_promotion_threshold_matches_the_backend,
-              check_lesson_code_can_actually_run]
+              check_lesson_code_can_actually_run,
+              check_colab_lesson_goes_to_the_notebook]
     for fn in checks:
         try:
             fn()
