@@ -193,6 +193,15 @@ class UserPracticeState:
     # decision: a subtopic holds many KCs, and a learner fluent in one of them
     # must not have the scaffolding pulled out from under a different one.
     kc_ladder: Dict[str, dict] = field(default_factory=dict)
+    # Logistic-engine posteriors, per KC:
+    #   {kc: {"ability": {"mean": float, "var": float, "n": int,
+    #                     "last_seen": str}, ...}}
+    # Owned and interpreted by engine_bridge.py / logistic_engine.py. One entry
+    # per LEARNED feature per concept; the FIXED features are model parameters
+    # and are not learner state. Stored as plain dicts rather than Posterior
+    # objects so this file stays unaware of the engine's types and an older
+    # build can read a newer one's save.
+    kc_posteriors: Dict[str, dict] = field(default_factory=dict)
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -234,6 +243,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "diagnostic": state.diagnostic,
         "kc_exposure": state.kc_exposure,
         "kc_ladder": state.kc_ladder,
+        "kc_posteriors": state.kc_posteriors,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -273,6 +283,11 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         # empty, which reads as "no worked example seen" — the correct cold
         # state, so an existing learner re-enters each concept at its example.
         state.kc_ladder = data.get("kc_ladder") or {}
+        # Same additive story: a save predating the logistic engine starts every
+        # concept at the feature priors, which is the correct cold state — the
+        # engine is built to run on zero data and `mastery()` withholds a number
+        # until a concept has real attempts behind it.
+        state.kc_posteriors = data.get("kc_posteriors") or {}
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(

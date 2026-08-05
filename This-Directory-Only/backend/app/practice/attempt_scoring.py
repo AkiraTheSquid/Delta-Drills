@@ -40,6 +40,7 @@ from app.adaptive import (
     apply_feedback,
     nudge_difficulty_offset,
 )
+from app import engine_bridge
 from app.prioritization import question_target_difficulty, subtopic_mastery
 from app.questions import get_question_by_id
 
@@ -99,6 +100,27 @@ def finalize_attempt(
                 params=user_params,
                 confidence=float(tag.get("confidence", 1.0)),
             )
+
+        # Logistic-engine update, against EVERY concept the question targets.
+        # Runs beside BKT rather than instead of it — see engine_bridge's
+        # docstring for why both. This is also the only writer of `attempt_log`,
+        # which pairs the prediction the model made BEFORE the outcome with the
+        # outcome itself; without that pairing the engine's v0 weights can never
+        # be scored, only asserted.
+        #
+        # After the BKT block on purpose: `encompassing` is a mean over this
+        # concept's atoms, so reading it first would feed the engine the atom
+        # posteriors from BEFORE the answer it is being told about.
+        engine_bridge.record_attempt_across_kcs(
+            user_state,
+            user_state.user_id,
+            question_id=attempt.question_id,
+            subtopic=attempt.subtopic,
+            difficulty_score=attempt.difficulty_score,
+            correct=attempt.correct,
+            grade=attempt.grade,
+            atoms=[t["atom_id"] for t in (getattr(question, "atom_tags", []) or [])],
+        )
 
     # Snapshot the subtopic's BKT mastery into the legacy baseline/p fields the
     # Statistics panel reads (frontend unchanged): 0-1 mastery → 0-100 baseline.

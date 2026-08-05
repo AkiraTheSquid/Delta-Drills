@@ -19,6 +19,7 @@ import logging
 from typing import Dict, List, Optional, Tuple
 
 from app import bkt_mastery
+from app import engine_bridge
 from app import kc_graph
 from app import ladder_fade
 from app import lessons
@@ -301,6 +302,17 @@ def _aim_mastery(
     subtopic, which is at least honest about what it averaged.
     """
     if kc:
+        # The logistic engine first, once the concept has real evidence behind
+        # it. It answers the aim's question directly — P(correct) on a
+        # median-difficulty item at the solo rung — and it answers it from a
+        # model that knows what the ladder's raw success rate cannot: how hard
+        # the items actually were, how much scaffold was on screen, how strong
+        # the prerequisites are, and how long ago. A learner going 13/20 on
+        # scaffolded easy items and one going 13/20 unaided on hard ones have
+        # the same Wilson bound and are not the same learner.
+        engine = engine_bridge.mastery(user_state, kc)
+        if engine is not None:
+            return engine
         est = kc_graph.kc_estimate(user_state, kc)
         if est["n"]:
             return float(est["ci"][0])

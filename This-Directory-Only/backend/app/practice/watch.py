@@ -215,6 +215,22 @@ def check_attempts_are_finalized():
     # BKT, or every attempt records the previous attempt's mastery and the
     # learning-rate chart plots a lag-one copy of itself.
     scoring = src('attempt_scoring.py')
+
+    # The logistic engine has to SEE every graded answer. It was written, tested
+    # and left unwired for months — imported by nothing but its own test, with
+    # `attempt_log` never written — and nothing failed, because an unwired model
+    # is silent rather than wrong.
+    assert 'record_attempt_across_kcs' in _calls_in(scoring, 'finalize_attempt'), (
+        "finalize_attempt no longer feeds the logistic engine — the posteriors "
+        "freeze and attempt_log stops recording, which is the model going quiet "
+        "rather than the model going away"
+    )
+    assert scoring.index('bkt_mastery.apply_attempt') < scoring.index('record_attempt_across_kcs'), (
+        "the engine update must run AFTER the BKT update: its `encompassing` "
+        "feature is a mean over this concept's atoms, so reading it first feeds "
+        "the model the atom posteriors from before the answer it is being told about"
+    )
+
     # `question_target_difficulty`, not the bare `target_difficulty`: the aim has
     # to be measured on the concept the answered question belongs to. The
     # subtopic-wide one averages in every atom of a thirty-atom subtopic the

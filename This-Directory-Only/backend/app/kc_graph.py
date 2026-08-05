@@ -787,6 +787,17 @@ def registry_node(kc: str) -> Optional[dict]:
     return _registry().get(kc)
 
 
+def crosswalk_row(kc: str) -> Optional[dict]:
+    """The KC's crosswalk entry — its weighted atoms and its tier — or None.
+
+    A public reader for the same table `kc_mastery` consumes, so a caller that
+    wants the atoms rather than the aggregate does not have to reach into
+    `_crosswalk`. `engine_bridge` wants exactly that: the logistic engine's
+    `encompassing` feature is a mean over the atoms, not the KC's own number.
+    """
+    return _crosswalk().get(kc)
+
+
 def subtopics_for_kc(kc: str) -> List[str]:
     """Subtopic keys that carry this KC's questions, registry key first.
 
