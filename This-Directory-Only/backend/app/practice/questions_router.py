@@ -24,7 +24,7 @@ from app.adaptive import (
 )
 from app.auth import get_current_user
 from app.models import User
-from app.practice.attempt_scoring import finalize_attempt
+from app.practice.attempt_scoring import finalize_attempt, flush_stale_attempt
 from app.practice.grading import (
     grade_submission,
     run_and_get_expected_output,
@@ -241,6 +241,8 @@ def submit_answer(
             user_state, question, "correct" if correct else "incorrect"
         )
     else:
+        # Anything still parked is about to be overwritten by this one.
+        flush_stale_attempt(user_state)
         record_attempt(
             user_state=user_state,
             question_id=question.id,
@@ -313,6 +315,10 @@ def submit_local_eval(
         td_before = sub_state.target_difficulty
         p_before = sub_state.p
 
+    # Same rule as /submit: an attempt left parked by an earlier request is
+    # about to be overwritten, and losing it is the 2026-08-03 bug. Runs after
+    # the diagnostic branch above, which returns before creating anything.
+    flush_stale_attempt(user_state)
     record_attempt(
         user_state=user_state,
         question_id=question.id,

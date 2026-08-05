@@ -34,6 +34,7 @@ from typing import Optional
 
 from app import bkt_mastery
 from app.adaptive import (
+    UNRATED,
     AttemptRecord,
     FeedbackLevel,
     apply_feedback,
@@ -41,6 +42,29 @@ from app.adaptive import (
 )
 from app.prioritization import subtopic_mastery, target_difficulty
 from app.questions import get_question_by_id
+
+
+def flush_stale_attempt(user_state) -> Optional[AttemptRecord]:
+    """Close out an attempt nothing is coming back for, as UNRATED.
+
+    Call this at the top of any route that is about to record a NEW attempt.
+    `record_attempt` overwrites `user_state.pending_attempt` outright, so an
+    attempt left parked by an earlier request is not merely un-rated, it is
+    gone: `n` never moves, no posterior moves, and the concept graph reports a
+    learner who has been practising all week as having answered nothing. That
+    is the 2026-08-03 bug, and it is reachable from anything that grades and
+    then never reaches /feedback — a Skip, a closed tab, a client running half a
+    deploy behind the backend it is talking to.
+
+    Cannot double-count: this commits the PREVIOUS attempt, and the rating for
+    the current one still finds its own pending record. Mirrors the flush the
+    offline twin does inside its own `record_attempt`
+    (Local_Deployed_Shared/practice_engine.py) — it can do it there because it
+    has no BKT layer to reach up into.
+    """
+    if user_state.pending_attempt is None:
+        return None
+    return finalize_attempt(user_state, UNRATED)
 
 
 def finalize_attempt(

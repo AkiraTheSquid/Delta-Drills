@@ -377,6 +377,12 @@ def record_attempt(
     """
     Record that the user answered a question (before feedback).
     The attempt is stored as pending until feedback is provided.
+
+    An attempt already pending when this runs is about to be OVERWRITTEN and
+    lost — see `practice.attempt_scoring.flush_stale_attempt`, which the graded
+    routes call first so that cannot happen. The flush is not done here because
+    closing an attempt out properly needs the BKT update, and that lives a layer
+    up; counting it here without one would be a worse lie than losing it.
     """
     grade = 100.0 if correct else 0.0
     timestamp = datetime.now(timezone.utc).isoformat()

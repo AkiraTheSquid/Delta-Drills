@@ -207,8 +207,16 @@ const ConceptTopbar = (() => {
   /* The target the bar was last drawn at, so the next draw can show the MOVE
      and not just the new position. Module-level because `setDifficulty` rebuilds
      the segment's markup wholesale — anything remembered in the DOM is thrown
-     away with it. Declared above `_diffHtml`, which reads it. */
+     away with it. Declared above `_diffHtml`, which reads it.
+
+     Keyed by the concept it was measured on. Difficulty targets are per-subtopic,
+     so a bare "last number" compares this concept's aim against the previous
+     concept's and paints a green or red band for a move nobody made — the
+     learner would be told their answer earned something on the way INTO a new
+     concept. A baseline from a different KC is no baseline; the first answer
+     there draws position only, as it should. */
   let _lastTarget = null;
+  let _lastTargetKc = null;
 
   const _diffHtml = (problem, target) => {
     const p = Number.isFinite(problem) ? Math.max(0, Math.min(100, problem)) : null;
@@ -221,8 +229,10 @@ const ConceptTopbar = (() => {
         : ` The bar is the difficulty being served to you right now (${Math.round(t)}), ` +
           "which moves as you answer.");
     // Where the bar stood before this answer moved it. `null` on the first
-    // question of a session — there is no move to show, so nothing is drawn.
-    const from = Number.isFinite(_lastTarget) ? _lastTarget : null;
+    // question of a session, and on the first question of a concept — in both
+    // cases there is no move to show, so nothing is drawn.
+    const from =
+      Number.isFinite(_lastTarget) && _lastTargetKc === current.kc ? _lastTarget : null;
     const moved = t !== null && from !== null && Math.abs(t - from) >= 0.05;
     const lo = moved ? Math.min(from, t) : t;
     const delta = moved ? Math.abs(t - from) : 0;
@@ -291,7 +301,10 @@ const ConceptTopbar = (() => {
     // compare against. Only a real number counts: a lesson screen passes no
     // target, and treating that as "moved to nothing" would animate a collapse
     // to zero on the way into every lesson.
-    if (Number.isFinite(target)) _lastTarget = Math.max(0, Math.min(100, target));
+    if (Number.isFinite(target)) {
+      _lastTarget = Math.max(0, Math.min(100, target));
+      _lastTargetKc = current.kc;
+    }
   };
 
   /* The title carries the rung's POSITION as well as its name.
@@ -394,6 +407,12 @@ const ConceptTopbar = (() => {
     const host = _el("concept-topbar");
     if (host) host.classList.add("hidden");
     current = { kc: null, stage: null, estimate: null };
+    // Drop the baseline too. The strip going away means the learner left
+    // practice; whatever they do before coming back is a gap this bar cannot
+    // account for, and drawing a band across it would claim the next answer
+    // caused a move that a whole session in between actually did.
+    _lastTarget = null;
+    _lastTargetKc = null;
   };
 
   const activeKc = () => current.kc;

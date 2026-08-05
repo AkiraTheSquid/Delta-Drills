@@ -171,6 +171,17 @@ def check_attempts_are_finalized():
         with open(os.path.join(THIS, name)) as f:
             return f.read()
 
+    # Every route that records a NEW attempt must first close out one already
+    # parked. `record_attempt` overwrites the pending slot outright, so without
+    # this a graded answer that never reached /feedback — a Skip, a closed tab,
+    # a client running half a deploy behind — is not un-rated, it is gone.
+    for route in ('submit_answer', 'submit_local_eval'):
+        calls = _calls_in(src('questions_router.py'), route)
+        assert 'record_attempt' in calls, f"{route} no longer records an attempt"
+        assert 'flush_stale_attempt' in calls, (
+            f"{route} records an attempt without flushing the one it is about "
+            "to overwrite — that silently loses a real answer"
+        )
     local_eval = _calls_in(src('questions_router.py'), 'submit_local_eval')
     assert 'record_attempt' in local_eval, "submit_local_eval must record the attempt"
     assert 'finalize_attempt' in local_eval, (
