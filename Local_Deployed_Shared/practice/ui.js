@@ -549,9 +549,13 @@ function applyResult(correct) {
   overrideRow.classList.toggle("hidden", correct);
   practiceFeedbackArea.classList.remove("checking");
   questionMetaTop.classList.remove("hidden");
-  // Buttons map to the engine's not_much / somewhat / a_lot, but difficulty is
-  // driven by your mastery — so these are a felt-difficulty self-report with
-  // "About right" as the clear default (see the helper line + .feedback-btn--default).
+  // Buttons map to the engine's not_much / somewhat / a_lot. The LEVEL is the
+  // size of the correction; the OUTCOME is its direction, which is why the same
+  // three buttons read "easy" after a correct answer and "hard" after a miss.
+  // Both ends land in adaptive.nudge_difficulty_offset, which moves where the
+  // next problem is pitched — so "About right" is a real answer ("stop
+  // correcting"), not an opt-out, and it is the default for that reason (see
+  // the helper line + .feedback-btn--default).
   if (correct) {
     feedbackPrompt.textContent = "Nice work. How did that feel?";
     feedbackButtons.forEach((btn, i) => {

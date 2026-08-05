@@ -107,6 +107,20 @@ def narrow_to_next_kc(
         user_state, eligible=lambda qid: qid in here and qid not in served
     )
     if not next_kc:
+        # Nothing here is unserved. That is not "no frontier concept" — it is a
+        # learner who has been round this subtopic before, which on a KC with
+        # nine drills and twenty attempts is the ordinary state rather than the
+        # end of the road. Dropping the narrowing here returns the whole
+        # subtopic unfiltered, so the rung filter below never runs and the
+        # difficulty picker is free to hand a `solo` problem to somebody sitting
+        # on `Worked` — the exact complaint, and the reason the rung guard added
+        # further down was never reached.
+        #
+        # Re-asking on membership alone is safe because `select_question_for_
+        # difficulty` recycles by staleness: an all-served list is still
+        # servable, so preferring the right concept cannot stall the queue.
+        next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here)
+    if not next_kc:
         return candidates
     narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
     if not narrowed:
@@ -117,13 +131,7 @@ def narrow_to_next_kc(
     # `kc_stage` owns that decision; here we only honour it, and fall back to
     # the least-scaffolded rung still available when the wanted rung is spent,
     # so an exhausted rung can never stall the queue.
-    unserved = [q for q in narrowed if q.id not in served]
-    if not unserved:
-        return narrowed
     stage = kc_graph.kc_stage(user_state, next_kc)
-    wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
-    if wanted:
-        return [q for q in unserved if q.id in set(wanted)]
 
     # The supported rungs are SMALL — `numpy.ndarray-model` authors three faded
     # drills and one guided against five independent ones — so "spent" arrives
@@ -136,10 +144,27 @@ def narrow_to_next_kc(
     # rung has not been earned yet, and a second pass at a faded drill is
     # ordinary spaced practice. Only a KC with NO supported drill at all may fall
     # through, which is what the rung fallback below still handles.
+    #
+    # 🔴 THIS RUNS BEFORE THE UNSERVED CHECK, and that ordering is the whole
+    # rule. A learner who has been round a concept several times has served
+    # EVERY question in it — 20 attempts against this KC's nine drills — and the
+    # `if not unserved` shortcut below returns the unfiltered pool, so gating
+    # this on unserved work skipped it in precisely the case it exists for. That
+    # is how a `solo` problem reached a learner sitting on the `Worked` rung
+    # after every drill had been seen once. Prefer an unserved supported drill,
+    # but never leave the rung just because the good ones have all been met.
     if kc_graph.stage_requires_support(stage):
-        repeat = kc_graph.questions_at_stage([q.id for q in narrowed], stage)
-        if repeat:
-            return [q for q in narrowed if q.id in set(repeat)]
+        supported = set(kc_graph.questions_at_stage([q.id for q in narrowed], stage))
+        if supported:
+            fresh = [q for q in narrowed if q.id in supported and q.id not in served]
+            return fresh or [q for q in narrowed if q.id in supported]
+
+    unserved = [q for q in narrowed if q.id not in served]
+    if not unserved:
+        return narrowed
+    wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
+    if wanted:
+        return [q for q in unserved if q.id in set(wanted)]
 
     rung = [q for q in unserved if q.id in set(kc_graph.lowest_rung([q.id for q in unserved]))]
     if stage == "worked" and rung:
@@ -241,9 +266,20 @@ def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
 
 def target_difficulty(user_state: UserPracticeState, subtopic: str) -> float:
     """BKT-derived target difficulty for the next question in a subtopic.
-    Scales with the learner's mastery of the subtopic's atoms."""
+    Scales with the learner's mastery of the subtopic's atoms, then adds the
+    learner's own correction from the felt-difficulty rating (see
+    `adaptive.nudge_difficulty_offset`) — mastery says how hard they can go,
+    the rating says how far off that aim has been landing in practice.
+
+    `.get`, not `get_subtopic_state`: that one CREATES the row it cannot find,
+    and merely ASKING where to aim must not stamp an empty subtopic into stored
+    state — this is called from the subtopic scorer, over every subtopic there
+    is, including ones the learner has never touched."""
     m = subtopic_mastery(user_state, subtopic)
     raw = _DIFF_FLOOR + _DIFF_SPAN * m
+    sub_state = user_state.subtopic_states.get(subtopic)
+    if sub_state is not None:
+        raw += sub_state.difficulty_offset
     return max(10.0, min(100.0, raw))
 
 

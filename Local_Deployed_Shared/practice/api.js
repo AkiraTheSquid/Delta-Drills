@@ -23,10 +23,15 @@ const PracticeAPI = {
    * handle; every number is `null` when there is no honest value for it.
    *
    * `finalize: false` is for the caller that is not finished with the attempt —
-   * the einops fallback in `submitAnswer`, where a real felt-difficulty step
-   * still follows and the attempt has to stay pending for the rating to land
-   * on. The default is `true` because the other caller, the Colab verdict, IS
-   * the whole submit and nothing comes back for it.
+   * the einops fallback in `submitAnswer` and the Colab verdict, both of which
+   * ask how hard it felt afterwards, so the attempt has to stay pending for
+   * that rating to land on. `pending` in the reply says it did: during a
+   * placement diagnostic no attempt is created at all, and asking for a rating
+   * there would post a /feedback with nothing to apply it to.
+   *
+   * The default is `true` for a caller that grades and then asks nothing — it
+   * closes the attempt out as unrated rather than leaving it to be silently
+   * overwritten by the next submit.
    */
   async recordLocalEval(questionId, correct, options = {}) {
     const finalize = options.finalize !== false;
@@ -57,17 +62,20 @@ const PracticeAPI = {
           q.difficulty || 50,
           !!correct,
         );
-        // ...and count it. `submit_answer` only parks the attempt in
-        // `pending_attempt`; `send_feedback` is what increments `n`, steps the
-        // staircase and moves recent accuracy. Every OTHER path pairs the two
-        // — grade, then "how much did you learn?" — but this one is the whole
-        // submit: the Colab edition has no felt-difficulty step, so without
-        // this the attempt sat pending until the next problem overwrote it and
-        // the learner's practice never appeared anywhere.
+        // ...and count it, but only when nothing is coming back for it.
+        // `submit_answer` only parks the attempt in `pending_attempt`;
+        // `send_feedback` is what increments `n`, steps the staircase and moves
+        // recent accuracy. A caller that still asks how hard it felt has to
+        // leave the attempt pending for that rating to land on — finalizing it
+        // here would consume it and the real level would have nowhere to go.
         //
-        // "unrated" rather than a real level: the learner was not asked, so
-        // there is nothing to report. The engine treats it as no alpha.
-        adaptiveStateJson = api.send_feedback(adaptiveStateJson, "unrated");
+        // When we DO close it out here it goes in as "unrated" rather than one
+        // of the three real levels: the learner was not asked, so there is
+        // nothing to report. The engine treats it as no alpha and gives the
+        // staircase its plain step.
+        if (finalize) {
+          adaptiveStateJson = api.send_feedback(adaptiveStateJson, "unrated");
+        }
         await saveAdaptiveState();
       }
       if (!practiceProgress.completedQuestionIds.includes(questionId)) {
@@ -75,12 +83,14 @@ const PracticeAPI = {
         savePracticeProgress(practiceProgress);
       }
       emitPracticeStateChanged();
+      const scored = engineRan && finalize;
       return {
-        finalized: engineRan,
+        finalized: scored,
+        pending: engineRan && !finalize,
         targetBefore,
-        targetAfter: engineRan ? getTargetDifficultyFromAdaptiveState(q.subtopic) : null,
+        targetAfter: scored ? getTargetDifficultyFromAdaptiveState(q.subtopic) : null,
         pBefore,
-        pAfter: engineRan ? getEwmaFromAdaptiveState(q.subtopic) : null,
+        pAfter: scored ? getEwmaFromAdaptiveState(q.subtopic) : null,
       };
     }
     const res = await apiFetch("/api/practice/submit-local-eval", {
@@ -114,8 +124,15 @@ const PracticeAPI = {
     // finished shipping. An unknown falls through to the conservative wording.
     const num = (value) => (Number.isFinite(value) ? value : null);
     const finalized = data && "finalized" in data ? data.finalized === true : null;
+    // Same three states, same reason: a backend predating the field answers
+    // without it, and reading that absence as "nothing is pending" would drop
+    // the felt-difficulty step during a rolling deploy. Unknown falls through
+    // to `null`, and the caller decides — asking for a rating that 400s is a
+    // worse failure than not asking, so the Colab path treats null as no.
+    const pending = data && "pending" in data ? data.pending === true : null;
     return {
       finalized,
+      pending,
       targetBefore: num(data?.target_difficulty_before),
       targetAfter: num(data?.target_difficulty_after),
       pBefore: num(data?.p_before),

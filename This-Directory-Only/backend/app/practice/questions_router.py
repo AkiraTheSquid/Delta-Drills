@@ -271,13 +271,16 @@ def submit_local_eval(
 ) -> LocalEvalResponse:
     """A grade the client already decided, for the routes the sandbox can't run.
 
-    Two callers, and they differ in whether anything follows. The Colab edition
-    has no felt-difficulty step at all — the notebook's checker IS the submit —
-    so an attempt parked here has nothing coming to close it out, and used to
-    sit pending until the next submit overwrote it: `n` never moved, no BKT
-    posterior moved, and the concept graph reported a learner who had done
-    nothing. The einops fallback posts here mid-flow and DOES still ask how it
-    felt, so it sends `finalize=false` and lets /feedback do the scoring.
+    Callers differ in whether anything follows, and that is what `finalize`
+    says. The Colab edition and the einops fallback both post `finalize=false`:
+    a felt-difficulty rating still follows, so the attempt stays pending for it
+    to land on and /feedback does the scoring. Finalizing here is for a caller
+    that is DONE, and closes the attempt out as UNRATED — it exists because the
+    Colab edition once had no rating step, and an attempt parked with nothing
+    coming for it sat pending until the next submit overwrote it: `n` never
+    moved, no posterior moved, and the concept graph reported a learner who had
+    done nothing. Keep it: it is the right answer for any route that grades
+    without asking.
     """
     user_id = str(user.id)
     user_state = get_user_state(user_id)
@@ -336,6 +339,7 @@ def submit_local_eval(
     return LocalEvalResponse(
         success=True,
         finalized=attempt is not None,
+        pending=user_state.pending_attempt is not None,
         target_difficulty_before=td_before,
         target_difficulty_after=attempt.target_difficulty_after if attempt else None,
         p_before=p_before,

@@ -33,7 +33,12 @@ from __future__ import annotations
 from typing import Optional
 
 from app import bkt_mastery
-from app.adaptive import AttemptRecord, FeedbackLevel, apply_feedback
+from app.adaptive import (
+    AttemptRecord,
+    FeedbackLevel,
+    apply_feedback,
+    nudge_difficulty_offset,
+)
 from app.prioritization import subtopic_mastery, target_difficulty
 from app.questions import get_question_by_id
 
@@ -77,6 +82,10 @@ def finalize_attempt(
     sub_state = user_state.get_subtopic_state(attempt.subtopic)
     sub_state.baseline = mastery * 100.0
     sub_state.p = mastery
+    # What the learner said about how hard that felt, applied BEFORE the target
+    # is recomputed — otherwise "way too easy" would only be honoured one
+    # question late, which is the same as not being honoured.
+    nudge_difficulty_offset(sub_state, feedback, attempt.correct)
     sub_state.target_difficulty = target_difficulty(user_state, attempt.subtopic)
     attempt.baseline_after = sub_state.baseline
     attempt.p_after = sub_state.p

@@ -237,12 +237,74 @@ def check_finalize_actually_moves_state():
     # Finalizing twice must be a no-op, not a second count.
     assert scoring.finalize_attempt(state, UNRATED) is None
     assert state.get_subtopic_state(sub).n == 1, "an attempt was counted twice"
+    assert after.difficulty_offset == 0.0, (
+        "an UNRATED attempt moved the difficulty offset — nobody was asked, so "
+        "nothing was said, and eroding a real correction on every Skip makes "
+        "the rating quietly worthless"
+    )
+
+
+def check_felt_difficulty_reaches_the_next_question():
+    """The rating has to MOVE something, or the three buttons are decoration.
+
+    They were, for a while: `alpha` is still written onto the attempt record and
+    read by nothing, because BKT replaced the EWMA that used to consume it. The
+    live path is the per-subtopic offset — the learner's own correction to where
+    the queue aims — so this drives it end to end rather than trusting that
+    `nudge_difficulty_offset` is called somewhere.
+    """
+    scoring = _scoring_module()
+    if scoring is None:
+        return  # minimal env, third-party deps absent — see _scoring_module
+    from app.adaptive import DIFFICULTY_OFFSET_LIMIT, UserPracticeState, record_attempt
+    from app.prioritization import target_difficulty
+
+    state = UserPracticeState(user_id="watch-check-felt")
+    sub = "Numpy: Core array literacy"
+
+    # Returns copies, not the live row: `get_subtopic_state` hands back the same
+    # object every time, so holding onto it compares a value with itself.
+    def answer(correct, feedback):
+        record_attempt(
+            user_state=state, question_id=-1, subtopic=sub,
+            difficulty_score=50, correct=correct,
+        )
+        scoring.finalize_attempt(state, feedback)
+        row = state.get_subtopic_state(sub)
+        return row.difficulty_offset, row.target_difficulty
+
+    base = target_difficulty(state, sub)
+    assert not state.subtopic_states, (
+        "target_difficulty created a subtopic row just by being asked — it runs "
+        "over every subtopic there is, including ones never practised"
+    )
+    up_off, up_target = answer(True, "a_lot")
+    assert up_off > 0 and up_target > base, (
+        f"'way too easy' did not raise the aim ({base} -> {up_target})"
+    )
+    down_off, _ = answer(False, "a_lot")
+    assert down_off < up_off, "'way too hard' after a miss did not lower the aim"
+
+    answer(True, "a_lot")
+    for _ in range(6):
+        settled_off, _ = answer(True, "not_much")
+    assert abs(settled_off) < abs(up_off), (
+        "'about right' does not decay the correction — one stale click would "
+        "outlive every problem that answered it"
+    )
+    for _ in range(12):
+        capped_off, _ = answer(True, "a_lot")
+    assert capped_off <= DIFFICULTY_OFFSET_LIMIT, (
+        "the offset is not capped — a learner could talk the queue into serving "
+        "problems their mastery says they cannot read"
+    )
 
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
-              check_attempts_are_finalized, check_finalize_actually_moves_state]
+              check_attempts_are_finalized, check_finalize_actually_moves_state,
+              check_felt_difficulty_reaches_the_next_question]
     for fn in checks:
         try:
             fn()

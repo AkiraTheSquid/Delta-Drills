@@ -75,6 +75,37 @@ FEEDBACK_ALPHA: Dict[FeedbackLevel, float] = {
     "a_lot": 0.80,
 }
 
+# ---------------------------------------------------------------------------
+# Felt difficulty -> where the next question is pitched
+# ---------------------------------------------------------------------------
+# The three-option rating tells us something the grade cannot. A correct answer
+# that felt trivial and a correct answer that felt right are the same 100 to
+# BKT, and BKT is the only thing `prioritization.target_difficulty` reads — so a
+# learner who is clearing everything comfortably still climbs at exactly the
+# rate their posterior climbs, which is slow by construction. That is the
+# complaint this term exists to answer: "it keeps increasing in difficulty, but
+# it's still too easy for me."
+#
+# So the rating carries its own term: a per-subtopic offset, in the same 0-100
+# units as a difficulty score, ADDED to the BKT-derived target. It is
+# deliberately not fed into mastery. Mastery is a claim about what the learner
+# can do and only evidence may move it; this is a claim about where to aim,
+# which is the one thing the learner is better placed to judge than we are.
+#
+# Signed by the OUTCOME, sized by the rating: "way too easy" after a correct
+# answer pushes the aim up, "way too hard" after a miss pulls it down. "About
+# right" decays whatever offset has accumulated back toward the model's own
+# number, so a one-off click fades instead of sticking forever. An UNRATED
+# attempt moves nothing at all — nobody was asked, so nothing was said.
+#
+# v0 numbers, same caveat as everything else in this block: two "way off"s in a
+# row move the aim by a band (12 points of 80), and the cap is a quarter of the
+# span in either direction, which is enough to matter and not enough to serve a
+# learner problems their mastery says they cannot read.
+DIFFICULTY_NUDGE: Dict[str, float] = {"somewhat": 3.0, "a_lot": 6.0}
+DIFFICULTY_OFFSET_DECAY: float = 0.75
+DIFFICULTY_OFFSET_LIMIT: float = 20.0
+
 # Separate EWMA smoothing for correctness rate (independent of feedback).
 P_ALPHA = 0.3
 
@@ -114,6 +145,10 @@ class SubtopicState:
     baseline: float = 0.0               # running weighted average of score
     p: float = 0.5                      # running correctness rate
     target_difficulty: float = 25.0     # what difficulty to serve next
+    # Learner-reported correction to the aim, in difficulty points, added to the
+    # BKT-derived target by prioritization.target_difficulty. Moved only by
+    # nudge_difficulty_offset (see DIFFICULTY_NUDGE above); never by evidence.
+    difficulty_offset: float = 0.0
     history: List[AttemptRecord] = field(default_factory=list)
     # Track which question IDs have been served to avoid repeats
     served_question_ids: List[int] = field(default_factory=list)
@@ -211,6 +246,7 @@ def _save_user_state(state: UserPracticeState) -> None:
             "served_question_ids": sub_state.served_question_ids,
             "history": [asdict(a) for a in sub_state.history],
             "last_update_ts": sub_state.last_update_ts,
+            "difficulty_offset": sub_state.difficulty_offset,
         }
     try:
         _state_file(state.user_id).write_text(json.dumps(data, indent=2), encoding="utf-8")
@@ -285,6 +321,10 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
                 served_question_ids=sub_data.get("served_question_ids", []),
                 history=history,
                 last_update_ts=last_ts,
+                # Additive, back-compat: saves predating the felt-difficulty
+                # offset start at 0, which is "the model's own aim, uncorrected"
+                # — the right cold state for a learner who was never asked.
+                difficulty_offset=float(sub_data.get("difficulty_offset") or 0.0),
             )
         return state
     except Exception as e:
@@ -381,6 +421,42 @@ def apply_feedback(
     # the attempt + appends history; all scoring is BKT. See
     # bkt_mastery.subtopic-mastery snapshot in feedback_router.
     return attempt
+
+
+def nudge_difficulty_offset(
+    sub_state: SubtopicState,
+    feedback: FeedbackLevel,
+    correct: bool,
+) -> float:
+    """Move this subtopic's learner-reported difficulty offset. Returns it.
+
+    Called once per finalized attempt, from `finalize_attempt`, BEFORE the
+    target is recomputed — the whole point is that the next question is the one
+    that reflects what the learner just said.
+    """
+    if feedback == UNRATED:
+        # Nobody was asked — a Skip, an ended session, a route with no rating
+        # step. That is not the learner withdrawing an earlier correction, so
+        # the offset is left exactly as it was. Decaying here would quietly
+        # erode a real signal every time an attempt went unrated.
+        return sub_state.difficulty_offset
+    step = DIFFICULTY_NUDGE.get(feedback)
+    if step is None:
+        # "About right" — an answer, and the answer is "stop correcting". If the
+        # offset froze here instead, one "way too easy" from weeks ago would
+        # outlive the whole run of problems that answered it.
+        sub_state.difficulty_offset *= DIFFICULTY_OFFSET_DECAY
+    else:
+        sub_state.difficulty_offset += step if correct else -step
+    sub_state.difficulty_offset = max(
+        -DIFFICULTY_OFFSET_LIMIT,
+        min(DIFFICULTY_OFFSET_LIMIT, sub_state.difficulty_offset),
+    )
+    # Snap the tail of the decay to zero so a long-dead correction stops showing
+    # up as a fractional point of difficulty forever.
+    if abs(sub_state.difficulty_offset) < 0.05:
+        sub_state.difficulty_offset = 0.0
+    return sub_state.difficulty_offset
 
 
 def override_pending_attempt(

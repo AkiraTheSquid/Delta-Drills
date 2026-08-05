@@ -340,8 +340,8 @@ def check_invariants():
     # step still follows and the attempt has to stay PENDING for the rating to
     # land on. Finalizing early closes it out and /feedback then has nothing to
     # apply — which surfaces to the learner as "Feedback failed" on exactly the
-    # einops questions. The Colab verdict is the opposite case and must NOT pass
-    # it: there, the verdict is the whole submit.
+    # einops questions. The Colab verdict now has the same step and the same
+    # requirement (see the `_rateTorchAndAdvance` block below).
     submit_answer_js = api_js.split("async submitAnswer", 1)[-1].split("\n  /**", 1)[0]
     fallback_calls = re.findall(r"this\.recordLocalEval\([^)]*\)", submit_answer_js)
     assert fallback_calls, "submitAnswer no longer records the einops-fallback attempt at all"
@@ -358,12 +358,32 @@ def check_invariants():
         "_rateTorchAndAdvance discards recordLocalEval's return value — the "
         "difficulty step it just caused is the one thing the rail can show"
     )
-    assert "finalize" not in events_colab.split("if (_colabReviewMode())", 1)[0], (
-        "the Colab verdict must NOT send finalize:false — it IS the whole "
-        "submit, and nothing comes back to close the attempt out"
+    # The Colab verdict asks how hard it felt, so it must leave the attempt
+    # PENDING — `finalize: !wantsRating`, where wantsRating is the review mode.
+    # Hard-coding `finalize: true` here (or dropping the option, which defaults
+    # to true) closes the attempt out as unrated and the rating that follows
+    # 400s with nothing to apply it to.
+    rate_call = events_colab.split("recordLocalEval(", 1)[-1].split(");", 1)[0]
+    assert "finalize: !wantsRating" in rate_call, (
+        "_rateTorchAndAdvance must post finalize:!wantsRating — the Colab "
+        "review asks for a felt-difficulty rating and the attempt has to stay "
+        "pending for that rating to land on"
+    )
+    # ...and the rating step is only offered when an attempt really is parked.
+    # A placement diagnostic creates none, and an older backend does not answer
+    # the field at all; showing the buttons in either case posts a /feedback
+    # that fails.
+    assert "record.pending === true" in events_colab, (
+        "the Colab review shows the felt-difficulty buttons without checking "
+        "that an attempt is pending — during a placement diagnostic there is "
+        "none, and the rating fails"
+    )
+    assert "showFeedbackButtons()" in events_colab, (
+        "the Colab review branch no longer offers the felt-difficulty rating"
     )
     assert "_drawColabDifficultyStep(q, record)" in events_colab, (
-        "the Colab review branch no longer draws the difficulty step"
+        "the Colab review branch no longer draws the difficulty step on the "
+        "unrated path"
     )
     draw = events_js.split("_drawColabDifficultyStep = (", 1)[-1].split("\nconst _rateTorch", 1)[0]
     for call in ("animateTargetDifficulty(", "setTargetDifficultyFinal(", "setTargetDifficultyUnavailable("):

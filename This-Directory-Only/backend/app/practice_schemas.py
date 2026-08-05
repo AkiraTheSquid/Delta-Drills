@@ -98,6 +98,12 @@ class LocalEvalResponse(BaseModel):
     """
     success: bool
     finalized: bool = False
+    # Whether an attempt is now parked waiting for a felt-difficulty rating.
+    # The Colab edition asks for one (`finalize=false`) and needs to know that
+    # there is something for the rating to land on: during a placement
+    # diagnostic no attempt is created at all, and showing the three buttons
+    # there would post a /feedback that 400s on an empty pending slot.
+    pending: bool = False
     target_difficulty_before: float | None = None
     target_difficulty_after: float | None = None
     p_before: float | None = None

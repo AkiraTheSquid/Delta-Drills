@@ -204,6 +204,12 @@ const ConceptTopbar = (() => {
 
      A question with no rating hides the whole segment rather than drawing an
      empty track — an unrated problem is not a zero-difficulty problem. */
+  /* The target the bar was last drawn at, so the next draw can show the MOVE
+     and not just the new position. Module-level because `setDifficulty` rebuilds
+     the segment's markup wholesale — anything remembered in the DOM is thrown
+     away with it. Declared above `_diffHtml`, which reads it. */
+  let _lastTarget = null;
+
   const _diffHtml = (problem, target) => {
     const p = Number.isFinite(problem) ? Math.max(0, Math.min(100, problem)) : null;
     if (p === null) return "";
@@ -214,12 +220,30 @@ const ConceptTopbar = (() => {
         ? ""
         : ` The bar is the difficulty being served to you right now (${Math.round(t)}), ` +
           "which moves as you answer.");
+    // Where the bar stood before this answer moved it. `null` on the first
+    // question of a session — there is no move to show, so nothing is drawn.
+    const from = Number.isFinite(_lastTarget) ? _lastTarget : null;
+    const moved = t !== null && from !== null && Math.abs(t - from) >= 0.05;
+    const lo = moved ? Math.min(from, t) : t;
+    const delta = moved ? Math.abs(t - from) : 0;
     return (
       `<span class="concept-topbar-diff-label" title="${esc(title)}">Difficulty</span>` +
       `<span class="concept-topbar-diff-bar" title="${esc(title)}" aria-hidden="true">` +
       (t === null
         ? ""
-        : `<span class="concept-topbar-diff-fill" style="width:${t.toFixed(1)}%"></span>`) +
+        // The fill stops at the LOWER of the two, so the moving part is drawn
+        // once — as the delta span — instead of being half-hidden under a fill
+        // that already covers it.
+        : `<span class="concept-topbar-diff-fill" style="width:${lo.toFixed(1)}%"></span>`) +
+      (moved
+        ? `<span class="concept-topbar-diff-delta ${t > from ? "is-gain" : "is-loss"}" ` +
+          `style="left:${lo.toFixed(1)}%;width:${t > from ? 0 : delta.toFixed(1)}%"` +
+          `data-delta="${delta.toFixed(1)}"></span>` +
+          // Where this answer started from, so the move is legible as a move
+          // rather than as a bar that is simply a different length than last
+          // time. Drawn at `from`, which is the edge both animations run from.
+          `<span class="concept-topbar-diff-from" style="left:${from.toFixed(1)}%"></span>`
+        : "") +
       `<span class="concept-topbar-diff-tick" style="left:${p.toFixed(1)}%"></span>` +
       "</span>" +
       `<span class="concept-topbar-diff-value">${Math.round(p)}<span ` +
@@ -237,6 +261,37 @@ const ConceptTopbar = (() => {
     const html = _diffHtml(problem, target);
     host.innerHTML = html;
     host.hidden = !html;
+
+    /* Run the move.
+
+       Both directions animate the same span from one width to another, which is
+       what makes them read as one measure rather than two effects: a GAIN grows
+       green from where you were out to where you now are, and a LOSS starts at
+       the length you had and collapses red back to what is left. The loss is
+       anchored on its right edge (see the CSS) so it recedes towards the new
+       value instead of sliding away from it.
+
+       Two frames, not one. The element has to be laid out at its starting width
+       before the end width is set, or the browser coalesces both into a single
+       style computation and there is no transition to watch — the bar simply
+       appears at its final length. */
+    const span = host.querySelector(".concept-topbar-diff-delta");
+    if (span) {
+      const delta = Number(span.dataset.delta);
+      const gain = span.classList.contains("is-gain");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!span.isConnected) return;
+          span.style.width = gain ? `${delta}%` : "0%";
+        });
+      });
+    }
+
+    // Recorded after the draw, so this render still had the previous value to
+    // compare against. Only a real number counts: a lesson screen passes no
+    // target, and treating that as "moved to nothing" would animate a collapse
+    // to zero on the way into every lesson.
+    if (Number.isFinite(target)) _lastTarget = Math.max(0, Math.min(100, target));
   };
 
   /* The title carries the rung's POSITION as well as its name.

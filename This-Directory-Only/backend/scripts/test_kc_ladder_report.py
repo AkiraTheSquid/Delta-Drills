@@ -206,6 +206,100 @@ check("evidence in one KC does not leak into another",
       all(r["ladder_estimate"]["n"] == 0 for kc, r in kc_graph.kc_report(st)["kcs"].items()
           if kc != SOME_KC))
 
+print("\n--- a run of correct answers earns a rung, whatever the window says ---")
+# Seth's real record on numpy.ndarray-model, 2026-08-04: eleven misses from the
+# days when the drills themselves were wrong, then seven right out of nine and
+# five in a row. Over a 20-attempt window that is 7/20, a Wilson lower bound of
+# 0.18, and a `faded` bar of 0.34 — so the rung had not moved in twenty
+# questions and would not have moved for another dozen. Meanwhile a SINGLE miss
+# demotes immediately. The ladder was listening to one recent answer going down
+# and to a twenty-question average going up.
+POISONED = "FFFFFFFFFFFTTFFTTTTT"
+
+
+def ladder(seq, stage="faded"):
+    st = fresh_state()
+    st.kc_ladder[SOME_KC] = {
+        "worked_seen": 1,
+        "attempts": [
+            {"correct": c == "T", "stage": stage, "ts": "2026-08-04T00:00:00+00:00"}
+            for c in seq
+        ],
+    }
+    return kc_graph.kc_stage(st, SOME_KC)
+
+
+check("a poisoned window no longer pins a learner who is plainly getting it",
+      ladder(POISONED) == "partial", ladder(POISONED))
+check("three in a row is the bar, two is not",
+      (ladder(POISONED[:-2] + "TTT"), ladder("FFFFFFFFFFFTTFFTT")) == ("partial", "faded"))
+# One rung, not two. The evidence is that THIS rung is done, not the one above.
+# Measured on a window the Wilson path cannot promote from (11 misses then 8
+# correct is 8/19, lower bound 0.24, under the 0.34 bar) so that what is being
+# read here is the streak and not the average: eight in a row is still worth
+# one rung, not a jump to unaided.
+LONG_RUN = "F" * 11 + "T" * 8
+check("a streak buys exactly one rung, however long it runs",
+      ladder(LONG_RUN) == "partial", ladder(LONG_RUN))
+check("...and the same run made at partial reaches solo",
+      ladder(LONG_RUN, stage="partial") == "solo", ladder(LONG_RUN, stage="partial"))
+# The window still promotes on its own where it legitimately can — the streak
+# rule is additive and must not have replaced it.
+check("a clean record still reaches solo on the window alone",
+      ladder("T" * 12) == "solo", ladder("T" * 12))
+# The immediate demotion is untouched: a streak is worth one rung and one miss
+# gives it straight back, which is what keeps the promotion honest.
+check("one miss still gives the rung straight back",
+      ladder(POISONED + "F") == "faded", ladder(POISONED + "F"))
+check("a cold record is unaffected — three correct promoted before this too",
+      (ladder("TTT"), ladder("FFFF")) == ("partial", "faded"))
+
+print("\n--- an exhausted supported rung repeats; it never falls through to solo ---")
+# The other half of the same complaint: on a concept every one of whose drills
+# has been served, `select_next_kc` found nothing unserved, dropped the KC
+# narrowing entirely, and the difficulty picker handed a `solo` problem to a
+# learner sitting on `Worked`. Twenty attempts against nine drills is the
+# ordinary state of a concept revisited, not an edge case.
+from app import prioritization  # noqa: E402
+
+LADDER_KC = "numpy.ndarray-model"
+POOL = list(kc_graph.questions_for_kc(LADDER_KC))
+
+
+class _Q:
+    def __init__(self, qid):
+        self.id = qid
+        self.difficulty_score = 50
+
+
+def servable(seq, served):
+    st = fresh_state()
+    st.kc_ladder[LADDER_KC] = {
+        "worked_seen": 1,
+        "attempts": [
+            {"correct": c == "T", "stage": "faded", "ts": "2026-08-04T00:00:00+00:00"}
+            for c in seq
+        ],
+    }
+    out = prioritization.narrow_to_next_kc(st, [_Q(i) for i in POOL], served=set(served))
+    return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out)
+
+
+SOLO = set(kc_graph.questions_at_stage(POOL, "solo"))
+check("this concept has a solo rung to leak from", bool(SOLO) and len(POOL) > len(SOLO),
+      f"{len(POOL)} drills, solo={sorted(SOLO)}")
+for label, served in (("nothing served", []), ("every drill served", POOL)):
+    stage, ids = servable("FFFFFFFFFFFTTFFTT", served)
+    check(f"stuck on the scaffold, {label}: no unaided drill",
+          stage == "faded" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
+    stage, ids = servable(POISONED, served)
+    check(f"on the run, {label}: the rung it earned, not the top",
+          stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
+# ...and the queue must never be left with nothing to serve, which is the
+# failure the old unserved-only shortcut was there to prevent.
+check("a fully-served concept still has something to serve",
+      all(servable(s, POOL)[1] for s in ("", "FFFF", "TTT", POISONED)))
+
 print()
 if fails:
     print(f"FAILED ({len(fails)}): " + ", ".join(fails))

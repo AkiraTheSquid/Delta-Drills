@@ -467,9 +467,16 @@ const _rateTorchAndAdvance = async (correct) => {
   if (torchRateSolved) torchRateSolved.disabled = true;
   if (torchRateLookedUp) torchRateLookedUp.disabled = true;
   let record = null;
+  // On the Colab edition the verdict is followed by the felt-difficulty step,
+  // so the attempt has to stay PENDING for that rating to land on — finalizing
+  // it here would consume it and the rating would 400 with nothing to apply it
+  // to. Everywhere else this verdict is the whole submit and closes out unrated.
+  const wantsRating = _colabReviewMode();
   try {
     if (typeof PracticeAPI.recordLocalEval === "function") {
-      record = await PracticeAPI.recordLocalEval(q.question_id, correct);
+      record = await PracticeAPI.recordLocalEval(q.question_id, correct, {
+        finalize: !wantsRating,
+      });
     }
   } catch (_) {
     /* best-effort — still advance so the learner isn't stuck */
@@ -492,17 +499,33 @@ const _rateTorchAndAdvance = async (correct) => {
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(correct);
-    // No felt-difficulty step here: the attempt went in through
-    // submit-local-eval, which leaves nothing pending for a rating to attach
-    // to. showNextProblemButton hides those buttons; the prompt above them has
-    // to stop asking a question that no longer has anywhere to go.
-    feedbackPrompt.textContent = correct
-      ? "Recorded as correct. The reference answer is below — worth a look even when you got it."
-      : "Recorded as a miss. The reference answer is below; compare it with what you ran.";
-    showNextProblemButton();
-    // The one thing the verdict changed that the rail could not otherwise show:
-    // where the next question will be pitched, and which way this answer moved it.
-    _drawColabDifficultyStep(q, record);
+    // The felt-difficulty step, back on this route. The verdict says WHETHER it
+    // worked; this says whether it was pitched anywhere near right, which is the
+    // one thing no grade can tell us and the thing that decides where the next
+    // problem lands (adaptive.nudge_difficulty_offset). applyResult has already
+    // set the three labels for this outcome — "Way too easy" after a correct
+    // answer, "Way too hard" after a miss.
+    //
+    // Only when there is an attempt parked for the rating to apply to. During a
+    // placement diagnostic nothing is pending, and a null `pending` is an older
+    // backend that was never asked — both fall through to the plain review.
+    if (record && record.pending === true) {
+      setTargetDifficultyScope("Difficulty inside this stage");
+      feedbackPrompt.textContent = correct
+        ? "Recorded as correct. How did that feel?"
+        : "Recorded as a miss. How did that feel?";
+      showFeedbackButtons();
+    } else {
+      feedbackPrompt.textContent = correct
+        ? "Recorded as correct. The reference answer is below — worth a look even when you got it."
+        : "Recorded as a miss. The reference answer is below; compare it with what you ran.";
+      showNextProblemButton();
+      // The one thing the verdict changed that the rail could not otherwise
+      // show: where the next question will be pitched, and which way this
+      // answer moved it. When a rating follows, the rating draws this instead —
+      // the step has not happened yet.
+      _drawColabDifficultyStep(q, record);
+    }
     // A second verdict would log a second attempt against the same problem.
     if (torchRateSolved) torchRateSolved.disabled = true;
     if (torchRateLookedUp) torchRateLookedUp.disabled = true;

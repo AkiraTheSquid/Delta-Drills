@@ -43,10 +43,11 @@ html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
    bottom"). The notebook carries its own collapsed copy; this one is for
    reading without leaving the rail.
 
-   Some of what the rest of that panel holds does not survive the trip: the
-   difficulty self-report has no pending attempt to attach to after a local
-   eval, and the AI explanation needs the submission it never saw. Both are
-   noise stacked above the answer the learner just asked for.
+   Some of what the rest of that panel holds does not survive the trip: the AI
+   explanation needs the submission it never saw, and it is noise stacked above
+   the answer the learner just asked for. The felt-difficulty self-report DOES
+   survive — the verdict now leaves its attempt pending for the rating to land
+   on — and is styled for this column further down.
 
    THE ACCURACY BAR STAYS HIDDEN, AND NOT BECAUSE THE NUMBER IS MISSING —
    `submit-local-eval` reports it. It is hidden because the concept strip three
@@ -55,10 +56,41 @@ html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
    same reason by a different formula (subtopic EWMA vs the concept's interval)
    reads as the panel disagreeing with itself, and in a 400px column the two
    land close enough together to invite the comparison. One accuracy readout. */
-html.dd-colab-edition:not(.dd-no-notebook) #feedback-help,
 html.dd-colab-edition:not(.dd-no-notebook) #ewma-accuracy,
 html.dd-colab-edition:not(.dd-no-notebook) #ai-explanation-section {
   display: none;
+}
+
+/* ---- the felt-difficulty rating ----------------------------------------- */
+
+/* Three buttons on one row is a 1600px page's layout. In a 290px side panel it
+   gives each of them ~85px, and "Way too easy" wraps to three lines inside a
+   box sized for one — so they stack here, in the order the rating runs from
+   least to most extreme. Full width also makes them the obvious next action,
+   which they are: nothing advances until one is pressed.
+
+   Next problem is in the same flex container and must NOT stack alongside them
+   — it replaces them (showNextProblemButton hides the three), so it keeps its
+   own line either way. */
+html.dd-colab-edition:not(.dd-no-notebook) .feedback-buttons {
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+html.dd-colab-edition:not(.dd-no-notebook) .feedback-btn {
+  flex: 0 0 auto;
+  padding: 9px 10px;
+}
+
+/* The help line is the only place the rating's consequence is written down, and
+   in this column it is the difference between three buttons that look like a
+   survey and three that the learner can tell actually steer the next problem.
+   It stays. */
+html.dd-colab-edition:not(.dd-no-notebook) #feedback-help {
+  font-size: 11px;
+  line-height: 1.45;
+  margin-bottom: 10px;
 }
 
 /* ---- the difficulty step -------------------------------------------------- */
@@ -172,33 +204,122 @@ html.dd-colab-edition .concept-topbar-kc {
   white-space: normal;
 }
 
+/* ── The ladder, as a zig-zag ────────────────────────────────────────────
+   Four rungs have to stay named in a strip the width of a browser side panel.
+   Two earlier attempts and why they failed:
+
+     dot label dot label …   one row, four labels. The row is ~340px of text in
+                             a panel that can be dragged to 300, so the labels
+                             truncate and the learner is told they are on
+                             "Wor…". Truncation is the worst outcome here — the
+                             four words are the entire content.
+     wrapping flex           labels kept, row wraps to three lines, and the
+                             connector between rungs lands at the start of a
+                             line pointing at nothing. The sequence stops
+                             reading as a sequence, which is the one thing the
+                             dots are for.
+
+   So the labels alternate ABOVE and BELOW the marks: rungs 1 and 3 above,
+   rungs 2 and 4 below. Two labels per line instead of four, so each has roughly
+   twice the room, and nothing truncates down to a 300px panel.
+
+   🔑 THE LABELS ARE TAKEN OUT OF FLOW, and that is the point rather than an
+   implementation detail. As grid items they would size their own column, so
+   four labels would still add up to the full width of the strip and the dots
+   would be pushed as far apart as the longest words demand. Absolutely
+   positioned, they cost the layout nothing: the marks sit as close together as
+   the rail likes, and two labels on the same line may overlap in width without
+   ever colliding, because the ones between them are on the other line. That is
+   the whole trick — the stagger is what buys the horizontal space back.
+
+   The cost is that a label cannot make the rail taller, so the row reserves the
+   space instead (`padding` on the list, sized for one line each way). A rung
+   name long enough to wrap would overflow it; the four are one short word each
+   and adding a fifth rung means revisiting this number. */
 html.dd-colab-edition .stage-dots {
-  flex-wrap: wrap;
+  align-items: center;
+  display: flex;
+  gap: 0;
+  justify-content: space-between;
   margin: 0;
-  row-gap: 4px;
+  /* Room for one line of label above and one below the marks. */
+  padding: 15px 0;
+  width: 100%;
 }
 
-/* Every rung named, not just the active one.
-   concept-topbar.css keeps only the active label below 700px so the strip stays
-   one row — but every side panel is below 700px, so on this deploy that rule was
-   the whole ladder reduced to four unlabelled circles ("it isn't displaying the
-   circles as labeled"). Here the strip is already a column and `.stage-dots`
-   wraps, so four short words cost one extra line and buy the thing the dots are
-   for: how much support has been given up, and how much is left.
+html.dd-colab-edition .stage-dot {
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-width: 0;
+  padding: 0;
+  position: relative;
+}
 
-   Specificity has to beat `.stage-dot:not(.is-active) .stage-dot-label` (0,3,0),
-   which is why this names the dot as well as the label rather than being the
-   one-selector rule it looks like it should be. */
+/* Above the connector, which passes behind it. */
+html.dd-colab-edition .stage-dot-mark {
+  position: relative;
+  z-index: 1;
+}
+
+/* Rungs 1 and 3 above the line, rungs 2 and 4 below it.
+   Specificity has to beat `.stage-dot:not(.is-active) .stage-dot-label` (0,3,0)
+   in concept-topbar.css, which hides every inactive label below 700px — and a
+   side panel is always below 700px. That is why these name the dot as well as
+   the label rather than being the one-selector rules they look like. */
 html.dd-colab-edition .stage-dot .stage-dot-label,
 html.dd-colab-edition .stage-dot:not(.is-active) .stage-dot-label {
-  display: inline;
+  bottom: 100%;
+  display: block;
+  font-size: 10px;
+  left: 50%;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
-/* The connector between rungs is a 12px hairline sized for four dots on one
-   row. With labels in play the row wraps, and a connector that lands at the
-   start of the second line points at nothing. */
+html.dd-colab-edition .stage-dot:nth-child(even) .stage-dot-label {
+  bottom: auto;
+  margin-bottom: 0;
+  margin-top: 5px;
+  top: 100%;
+}
+
+/* The end labels are centred on marks that sit at the very edge of the strip,
+   so half of each would hang outside it. Anchor them to the edge instead —
+   only the outer two need it, and only they can afford to give up centring. */
+html.dd-colab-edition .stage-dot:first-child .stage-dot-label {
+  left: 0;
+  transform: none;
+}
+
+html.dd-colab-edition .stage-dot:last-child .stage-dot-label {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+/* The connector spans centre-to-centre between two marks, so it is drawn from
+   the previous dot's midpoint rather than being a fixed-width hairline. A fixed
+   width was sized for dots packed left; these are equal fractions of the panel
+   and move with it. */
 html.dd-colab-edition .stage-dot + .stage-dot::before {
-  width: 8px;
+  background: var(--border);
+  content: "";
+  height: 1px;
+  left: -50%;
+  margin: 0;
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  z-index: 0;
 }
 
 html.dd-colab-edition .concept-topbar-diff,
@@ -222,8 +343,21 @@ html.dd-colab-edition .concept-topbar-est[hidden] {
 
 html.dd-colab-edition .concept-topbar-diff-bar,
 html.dd-colab-edition .concept-topbar-est-bar {
-  height: 8px;
+  height: 10px;
   width: auto;
+}
+
+/* Blue, and not the muted white it is on the wide page. Here the track is the
+   full width of the rail and carries a green/red segment showing the move the
+   last answer made — against a grey fill those two read as the only coloured
+   things on a neutral bar, i.e. as warnings. Against a blue one they read as
+   what they are: this much of your position was just won, or given back. */
+html.dd-colab-edition .concept-topbar-diff-fill {
+  background: #3d7ddd;
+}
+
+html.dd-colab-edition .concept-topbar-diff-bar {
+  background: rgba(255, 255, 255, 0.09);
 }
 
 /* concept-topbar.css drops this label below 700px, which every side panel is.

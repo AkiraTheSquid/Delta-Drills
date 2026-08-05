@@ -473,6 +473,11 @@ LADDER_STAGES = ("worked", "faded", "partial", "solo")
 PROMOTE_LO = {"faded": 0.34, "partial": 0.51}
 DEMOTE_HI = 0.50  # Wilson UPPER; 0/4 = 0.49, so four straight wrong restore support
 _LADDER_WINDOW = 20  # recent attempts the estimate rests on
+# Consecutive correct answers that promote a rung on their own, regardless of
+# what the window average says — see `_streak_stage`. Three, to match the
+# pacing the Wilson bounds were calibrated for (lower at 3/3 = 0.438) on a
+# record that has no history to outvote it.
+_PROMOTE_STREAK = 3
 
 
 def _wilson(k: int, n: int, z: float = 1.96) -> Tuple[float, float]:
@@ -559,6 +564,58 @@ def _step_down(stage: str, floor: str) -> str:
     return LADDER_STAGES[max(LADDER_STAGES.index(floor), i - 1)]
 
 
+def _step_up(stage: str, ceiling: str = "solo") -> str:
+    """One rung up from `stage`, but never above `ceiling`."""
+    i = LADDER_STAGES.index(stage) if stage in LADDER_STAGES else 1
+    return LADDER_STAGES[min(LADDER_STAGES.index(ceiling), i + 1)]
+
+
+def _streak_stage(attempts: List[dict]) -> Optional[str]:
+    """The rung earned by an unbroken run of correct answers, or None.
+
+    WHY THE WILSON BOUND IS NOT ENOUGH ON ITS OWN.
+    The interval is computed over the last `_LADDER_WINDOW` attempts, and the
+    calibration note above the thresholds says three consecutive correct answers
+    should promote — which is true of an EMPTY record (Wilson lower at 3/3 =
+    0.438) and false of every record with history in it. A learner who met a
+    concept when its drills were badly written can bank a dozen misses, fix
+    nothing about their own understanding except everything, and then answer
+    five in a row without moving: 7/20 has a lower bound of 0.18 against a
+    `faded` bar of 0.34, so the rung does not move for another dozen questions.
+    That is a real record from this app, not a hypothetical.
+
+    The asymmetry is the giveaway. Demotion already has an immediate rule — miss
+    one, drop a rung, see the support again — so the ladder listens to a single
+    recent answer on the way down and to a twenty-question average on the way
+    up. A learner who has clearly got it is then told, question after question,
+    that they have not.
+
+    So a run of correct answers promotes one rung on its own. It reads the rung
+    the run was actually MADE at (the lowest in the run, so a streak spanning a
+    promotion cannot skip the rung it just reached) and steps up once from
+    there. One rung, never two: the evidence is that this rung is done, not that
+    the one above it is.
+
+    Bounded on the other side by the demotion rule, which is unchanged and still
+    immediate — a streak buys one rung and one miss gives it straight back.
+    """
+    run = []
+    for attempt in reversed(attempts):
+        if not attempt.get("correct"):
+            break
+        run.append(attempt)
+    if len(run) < _PROMOTE_STREAK:
+        return None
+    ranks = [
+        LADDER_STAGES.index(a.get("stage"))
+        for a in run
+        if a.get("stage") in LADDER_STAGES
+    ]
+    if not ranks:
+        return None
+    return _step_up(LADDER_STAGES[min(ranks)])
+
+
 def _stage_from(est: dict, row: dict) -> str:
     """The rung, given a KC's estimate and its ladder row.
 
@@ -600,17 +657,30 @@ def _stage_from(est: dict, row: dict) -> str:
         return _step_down(attempts[-1].get("stage") or "faded", floor="faded")
 
     lo, hi = est["ci"]
-    if est["n"] and hi < DEMOTE_HI:
+    # A run of correct answers earns a rung on its own — the window average is
+    # slow to forget, and on a concept with a long tail of old misses it never
+    # catches up with a learner who has plainly got it. Read before the
+    # struggling branch: `hi < DEMOTE_HI` is a statement about the same stale
+    # window, and it must not hold a learner down who is currently on a run.
+    streak = _streak_stage(attempts)
+    if est["n"] and hi < DEMOTE_HI and not streak:
         # Confidently struggling: all the support there is, which is the fully
         # visible worked example at `faded`.
         return "faded"
     # Climb one rung at a time: clearing the solo bar also clears the partial
     # bar, so test from the top down and take the highest rung earned.
     if lo >= PROMOTE_LO["partial"]:
-        return "solo"
-    if lo >= PROMOTE_LO["faded"]:
-        return "partial"
-    return "faded"
+        earned = "solo"
+    elif lo >= PROMOTE_LO["faded"]:
+        earned = "partial"
+    else:
+        earned = "faded"
+    # Whichever route got further. They measure different things — one that the
+    # concept is reliably right over a window, one that it is right NOW — and
+    # taking the lower would let a poisoned window cancel a run it cannot see.
+    if streak and LADDER_STAGES.index(streak) > LADDER_STAGES.index(earned):
+        return streak
+    return earned
 
 
 def kc_stage(user_state, kc: str) -> str:
