@@ -361,9 +361,10 @@ def _quality_backlog(only_kc: str | None, summary: bool) -> None:
         for si, seg in enumerate(kp["segments"]):
             label = f"segment {si + 1}"
             found += quality.check_example_shape(seg["worked"], label)
-            for qid in split_items(seg["faded"]):
+            for qid, content in split_items(seg["faded"]).items():
                 if qid in bank:
                     found += quality.check_pairing(seg["worked"], bank[qid], f"q{qid}")
+                    found += quality.fade_findings(kp, qid, content, bank, f"q{qid}")
         for qid in kp["independent"]:
             if qid in bank:
                 found += quality.check_prompt_leak(bank[qid], "solo", f"q{qid}")

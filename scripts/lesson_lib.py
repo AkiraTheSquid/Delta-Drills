@@ -249,6 +249,95 @@ def attach_example_run(faded_starter, question_starter, fn_name="solve"):
     return faded_starter.rstrip("\n") + "\n\n\n" + lead + block + "\n"
 
 
+BLANK = "_____"
+
+
+def body_span(src, fn_name):
+    """(start, end) line indices of `fn_name`'s def block, 0-based half-open.
+
+    Line-based rather than AST-based because a faded starter is not required to
+    parse — the blanks are a text convention, and 7 of the authored ones are
+    already syntactically invalid. Also the reason this cannot just regex the
+    whole file: the example-run block below the function uses the same calls
+    (`t.tensor(...)`) and blanking THOSE would break the demo it was grafted on
+    to provide.
+    """
+    lines = src.splitlines()
+    start = None
+    for i, line in enumerate(lines):
+        if re.match(rf"^\s*def\s+{re.escape(fn_name)}\s*\(", line):
+            start = i
+            break
+    if start is None:
+        return None
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        if lines[j].strip() and not lines[j][0].isspace():
+            end = j
+            break
+    return start, end
+
+
+def new_syntax_patterns(symbol):
+    """Regexes matching what a KP's `new_syntax` entry looks like in code.
+
+    The vocabulary is the registry's, and each form names a different thing:
+
+        torch.floor      a module-level call     →  t.floor(…)   / torch.floor(…)
+        Tensor.clamp     a method on a tensor    →  z.clamp(…)
+        Tensor.clamp#min a keyword ARGUMENT of one  →  clamp(min=…)
+        syntax.matmul    an operator (`@`)       →  no identifier to blank
+
+    `syntax.*` yields nothing on purpose: an operator has no name to hide, and
+    replacing `@` with a blank produces code that cannot even be read as a
+    sentence. Those are reported by the FADE_LEAK rule instead of rewritten.
+    """
+    base, _, kwarg = symbol.partition("#")
+    owner, _, name = base.rpartition(".")
+    if kwarg:
+        # A keyword argument: blank the NAME, keep the value. `min=0.0` is the
+        # concept ("clamp takes a floor"); `0.0` is this problem's specifics.
+        return [(re.compile(rf"\b{re.escape(kwarg)}(?=\s*=[^=])"), BLANK)]
+    if owner == "syntax":
+        return []
+    if owner == "Tensor":
+        return [(re.compile(rf"(?<=\.){re.escape(name)}\b"), BLANK)]
+    # torch.* — keep the module, blank the call.
+    return [(re.compile(rf"(?<=\b)(t|torch)\.{re.escape(name)}\b"), rf"\1.{BLANK}")]
+
+
+def blank_new_syntax(starter, new_syntax, fn_name="solve"):
+    """Hide the concept a faded starter is supposed to be teaching.
+
+    THE RULE, in Seth's words: "the fading should not give away any part of the
+    solution that's being learned that's new, but it's okay if it specifies the
+    parts that the learner has seen before."
+
+    Faded practice on q67 was `return z.clamp(_____=0.0)`. The KP teaches
+    `Tensor.clamp` and `Tensor.clamp#min`; the starter handed over `clamp` and
+    blanked only the argument, so the one recall the drill existed to test was
+    printed on the page. Blanking both gives `return z._____(_____=0.0)`, which
+    still carries everything the learner HAS seen — a method call on the tensor,
+    one keyword argument, the value 0.0 — and nothing they have not.
+
+    Applied to the function body only, and only to symbols the KP itself
+    declares as new. A symbol taught by an earlier KP is exactly the supporting
+    structure that is supposed to stay visible.
+    """
+    if not starter or not new_syntax:
+        return starter
+    span = body_span(starter, fn_name)
+    if not span:
+        return starter
+    start, end = span
+    lines = starter.splitlines()
+    for symbol in new_syntax:
+        for pattern, replacement in new_syntax_patterns(symbol):
+            for i in range(start, end):
+                lines[i] = pattern.sub(replacement, lines[i])
+    return "\n".join(lines) + ("\n" if starter.endswith("\n") else "")
+
+
 def parse_kp(path):
     meta, body = parse_frontmatter(path.read_text(), path)
     ordered = split_sections(body, path)

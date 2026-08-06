@@ -35,6 +35,14 @@ GIVEAWAY    The example must not hand over the problem's answer. Two ways it
             same input literals so the solution transcribes. Passing a drill you
             copied is evidence of nothing, and the ladder promotes on it.
 
+FADE_LEAK   A faded starter must not show the concept it is testing. The
+            scaffold's job is to hand over the structure the learner has
+            already seen — `z.__(__)` is a method call with one argument, which
+            says a great deal without saying which call. Blanking the argument
+            and leaving the method (`z.clamp(_____=0.0)`, on the KP that
+            teaches `clamp`) is a drill anyone can pass by reading, and the
+            ladder promotes on it.
+
 PROMPT_LEAK A problem must not name the answer in its own prompt. A prompt that
             says which dtype to compare against, or spells the call the learner
             is supposed to choose, is a reading exercise wearing a drill's
@@ -277,6 +285,100 @@ def check_prompt_leak(question: dict, rung: str, label: str) -> list[str]:
             f"is what the learner is supposed to choose. Describe the goal instead."
         ]
     return []
+
+
+_DOCSTRING = re.compile(r'("""|\'\'\')[\s\S]*?\1')
+
+
+def _code_only(src: str) -> str:
+    """`src` with docstrings and comments removed.
+
+    Used for the operator rules, where prose describing the task legitimately
+    contains the symbol the learner has to type.
+    """
+    stripped = _DOCSTRING.sub("", src or "")
+    return "\n".join(line.split("#", 1)[0] for line in stripped.splitlines())
+
+
+def check_fade_leak(starter: str, new_syntax: list, fn_name: str, label: str) -> list[str]:
+    """FADE_LEAK — a faded starter must not print the concept it is testing.
+
+    The rule, from the learner: "the fading should not give away any part of
+    the solution that's being learned that's new, but it's okay if it specifies
+    the parts that the learner has seen before."
+
+    A faded drill is a completion problem, and what makes it one is that the
+    surrounding structure is given: `z.__(__)` says a method call on the tensor
+    with one argument, which is the shape the learner already knows, and asks
+    for the two things they are here to recall. The failure mode is the
+    opposite — blanking the ARGUMENT and leaving the call, which was q67's
+    `z.clamp(_____=0.0)` on a KP whose entire subject is `clamp`. That drill
+    could be passed by anyone who can read, and the ladder promotes on it.
+
+    So: every symbol the KP declares NEW must be blanked; every symbol it does
+    not is supporting structure and may stay. `syntax.*` entries are operators
+    with no identifier to hide (`@`, `[]`), and they are reported rather than
+    rewritten — an operator replaced by a blank leaves a line that cannot be
+    read as code at all, so the fix there is an authoring decision.
+
+    Checked on the COMPILED starter, which is where `blank_new_syntax` has
+    already run. Anything reported here is something the rewriter could not
+    reach, not an authoring oversight the pipeline was supposed to absorb.
+    """
+    from lesson_lib import body_span, new_syntax_patterns
+
+    if not starter or not new_syntax:
+        return []
+    span = body_span(starter, fn_name)
+    if not span:
+        return []
+    body = "\n".join(starter.splitlines()[span[0]:span[1]])
+    leaked = []
+    for symbol in new_syntax:
+        patterns = new_syntax_patterns(symbol)
+        if not patterns:
+            # An operator, and only a leak when it is in CODE. q107's docstring
+            # is "Return x such that a @ x = b" — the equation being solved,
+            # which is the problem statement and cannot be written without it.
+            # Its solution is `t.linalg.solve(a, b)` and contains no `@` at all.
+            # Reading the docstring as code would report the one page that
+            # states its problem properly.
+            _, _, name = symbol.rpartition(".")
+            if name == "matmul" and "@" in _code_only(body):
+                leaked.append(f"{symbol} (the `@` is written out)")
+            continue
+        if any(pattern.search(body) for pattern, _ in patterns):
+            leaked.append(symbol)
+    if leaked:
+        return [
+            f"{label}: FADE_LEAK — the faded starter still shows "
+            f"{', '.join(leaked)}, which this KP is teaching. Blank it: the "
+            f"scaffold may give away everything the learner has already seen, "
+            f"and nothing they have not."
+        ]
+    return []
+
+
+def fade_findings(kp: dict, qid: int, item_md: str, bank: dict, label: str) -> list[str]:
+    """FADE_LEAK for one `### q<id>` faded item, as the learner will see it.
+
+    Checks the COMPILED starter, not the authored one: `compile_lessons.py`
+    runs `blank_new_syntax` over every faded starter, so the authored text is
+    an input to the pipeline rather than the thing served. Re-running the same
+    rewrite here is what makes this a check on the OUTPUT — anything it reports
+    is a leak the rewriter could not reach.
+    """
+    from lesson_lib import blank_new_syntax, code_fences
+
+    starters = code_fences(item_md, "python starter")
+    if not starters:
+        return []
+    exercise = (bank.get(qid) or {}).get("exercise") or {}
+    fn = exercise.get("function_name") or "solve"
+    new_syntax = kp.get("new_syntax") or []
+    return check_fade_leak(
+        blank_new_syntax(starters[0], new_syntax, fn), new_syntax, fn, label
+    )
 
 
 def strict_for(kp: dict) -> bool:

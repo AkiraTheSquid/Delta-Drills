@@ -58,7 +58,7 @@
         {
          "question_id": 482,
          "prompt": "Count the axes and the elements. Remember which one takes parentheses.",
-         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n"
         }
        ]
@@ -74,7 +74,7 @@
         {
          "question_id": 484,
          "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
-         "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
         }
        ]
@@ -90,13 +90,13 @@
       {
        "question_id": 482,
        "prompt": "Count the axes and the elements. Remember which one takes parentheses.",
-       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n"
       },
       {
        "question_id": 484,
        "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
-       "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
        "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
       }
      ],
@@ -178,7 +178,7 @@
         {
          "question_id": 212,
          "prompt": "A rows\u00d7cols tensor where every entry is the boolean `True`.",
-         "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t._____((rows, cols), _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
          "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=t.bool)\n"
         }
        ]
@@ -226,7 +226,7 @@
       {
        "question_id": 212,
        "prompt": "A rows\u00d7cols tensor where every entry is the boolean `True`.",
-       "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t._____((rows, cols), _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
        "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=t.bool)\n"
       },
       {
@@ -346,7 +346,7 @@
         {
          "question_id": 229,
          "prompt": "Every integer from `start` to `end`, **including both endpoints**. (Watch the\nexclusive stop \u2014 how do you make `end` appear?)",
-         "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
+         "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t._____(start, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
          "solution": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, end + 1)\n"
         }
        ]
@@ -362,7 +362,7 @@
         {
          "question_id": 242,
          "prompt": "The `n` evenly spaced breakpoints **strictly inside** (0, 1) \u2014 exclude 0.0 and\n1.0. (linspace includes the endpoints; how do you get `n` points *between*\nthem?)",
-         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t._____(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + 2)[1:-1]\n"
         }
        ]
@@ -378,7 +378,7 @@
         {
          "question_id": 214,
          "prompt": "`solve(stop, step)`: the inclusive float range 0, step, 2\u00b7step, \u2026, up to **and\nincluding** `stop` (an exact multiple of `step`). (Why does the point count\nneed a `+ 1`?)",
-         "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t.arange(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
+         "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t._____(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
          "solution": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + 1\n    return t.arange(n) * step\n"
         }
        ]
@@ -388,19 +388,19 @@
       {
        "question_id": 229,
        "prompt": "Every integer from `start` to `end`, **including both endpoints**. (Watch the\nexclusive stop \u2014 how do you make `end` appear?)",
-       "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
+       "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t._____(start, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
        "solution": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, end + 1)\n"
       },
       {
        "question_id": 242,
        "prompt": "The `n` evenly spaced breakpoints **strictly inside** (0, 1) \u2014 exclude 0.0 and\n1.0. (linspace includes the endpoints; how do you get `n` points *between*\nthem?)",
-       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t._____(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + 2)[1:-1]\n"
       },
       {
        "question_id": 214,
        "prompt": "`solve(stop, step)`: the inclusive float range 0, step, 2\u00b7step, \u2026, up to **and\nincluding** `stop` (an exact multiple of `step`). (Why does the point count\nneed a `+ 1`?)",
-       "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t.arange(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
+       "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t._____(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
        "solution": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + 1\n    return t.arange(n) * step\n"
       }
      ],
@@ -461,7 +461,7 @@
         {
          "question_id": 215,
          "prompt": "The integers 0..n-1 stored with a dtype named by a string.",
-         "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
+         "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, _____=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
          "solution": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=getattr(t, dtype_str))\n"
         }
        ]
@@ -493,7 +493,7 @@
       {
        "question_id": 215,
        "prompt": "The integers 0..n-1 stored with a dtype named by a string.",
-       "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
+       "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, _____=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
        "solution": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=getattr(t, dtype_str))\n"
       },
       {
@@ -541,7 +541,7 @@
         {
          "question_id": 46,
          "prompt": "n\u00d7n matrix containing 0..n\u00b2-1 in reading order.",
-         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____).reshape(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____)._____(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(n * n).reshape(n, n)\n"
         }
        ]
@@ -551,7 +551,7 @@
       {
        "question_id": 46,
        "prompt": "n\u00d7n matrix containing 0..n\u00b2-1 in reading order.",
-       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____).reshape(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____)._____(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(n * n).reshape(n, n)\n"
       }
      ],
@@ -645,7 +645,7 @@
         {
          "question_id": 67,
          "prompt": "Negatives become 0.0, non-negatives pass through (ReLU).",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z._____(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(min=0.0)\n"
         }
        ]
@@ -667,7 +667,7 @@
       {
        "question_id": 67,
        "prompt": "Negatives become 0.0, non-negatives pass through (ReLU).",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z._____(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(min=0.0)\n"
       }
      ],
@@ -736,7 +736,7 @@
         {
          "question_id": 28,
          "prompt": "The arithmetic mean of a vector, as a plain Python float.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x.mean())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return float(x.mean())\n"
         }
        ]
@@ -768,7 +768,7 @@
       {
        "question_id": 28,
        "prompt": "The arithmetic mean of a vector, as a plain Python float.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x.mean())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return float(x.mean())\n"
       },
       {
@@ -830,7 +830,7 @@
         {
          "question_id": 58,
          "prompt": "Sorted copy, smallest to largest, input left unmodified.",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z)._____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t._____(z)._____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
         }
        ]
@@ -846,7 +846,7 @@
         {
          "question_id": 520,
          "prompt": "Rank by score, then move both tensors with the same order.",
-         "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
+         "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t._____(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
         }
        ]
@@ -862,7 +862,7 @@
         {
          "question_id": 521,
          "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t._____(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
         }
        ]
@@ -872,19 +872,19 @@
       {
        "question_id": 58,
        "prompt": "Sorted copy, smallest to largest, input left unmodified.",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z)._____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t._____(z)._____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
       },
       {
        "question_id": 520,
        "prompt": "Rank by score, then move both tensors with the same order.",
-       "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
+       "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t._____(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
        "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
       },
       {
        "question_id": 521,
        "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t._____(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
       }
      ],
@@ -967,7 +967,7 @@
         {
          "question_id": 29,
          "prompt": "Return coordinate matrices built from 1-D tensors `x` and `y`.",
-         "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t.meshgrid(x, y, indexing=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_x = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([10.0, 20.0])\nprint(solve(example_x, example_y))\n",
+         "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t._____(x, y, _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_x = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([10.0, 20.0])\nprint(solve(example_x, example_y))\n",
          "solution": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t.meshgrid(x, y, indexing='xy')\n"
         }
        ]
@@ -989,7 +989,7 @@
       {
        "question_id": 29,
        "prompt": "Return coordinate matrices built from 1-D tensors `x` and `y`.",
-       "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t.meshgrid(x, y, indexing=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_x = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([10.0, 20.0])\nprint(solve(example_x, example_y))\n",
+       "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t._____(x, y, _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_x = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([10.0, 20.0])\nprint(solve(example_x, example_y))\n",
        "solution": "import torch as t\n\ndef solve(x, y):\n    \"\"\"Return the tuple (X, Y) of 2-D coordinate grids.\"\"\"\n    return t.meshgrid(x, y, indexing='xy')\n"
       }
      ],
@@ -1039,7 +1039,7 @@
         {
          "question_id": 8,
          "prompt": "The next n uniform floats from a generator you are handed.",
-         "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
+         "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t._____(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
          "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, generator=rng)\n"
         }
        ]
@@ -1049,7 +1049,7 @@
       {
        "question_id": 8,
        "prompt": "The next n uniform floats from a generator you are handed.",
-       "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
+       "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t._____(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
        "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, generator=rng)\n"
       }
      ],
@@ -1109,7 +1109,7 @@
         {
          "question_id": 107,
          "prompt": "Solve the linear system a @ x = b (a is invertible).",
-         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t.linalg._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_a = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nexample_b = t.tensor([6.0, 8.0])\nprint(solve(example_a, example_b))\n",
+         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t._____._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_a = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nexample_b = t.tensor([6.0, 8.0])\nprint(solve(example_a, example_b))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t.linalg.solve(a, b)\n"
         }
        ]
@@ -1125,7 +1125,7 @@
       {
        "question_id": 107,
        "prompt": "Solve the linear system a @ x = b (a is invertible).",
-       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t.linalg._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_a = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nexample_b = t.tensor([6.0, 8.0])\nprint(solve(example_a, example_b))\n",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t._____._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_a = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nexample_b = t.tensor([6.0, 8.0])\nprint(solve(example_a, example_b))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return x such that a @ x = b (use a solver, not an inverse).\"\"\"\n    return t.linalg.solve(a, b)\n"
       }
      ],
@@ -1279,7 +1279,7 @@
         {
          "question_id": 94,
          "prompt": "Return `z` with `-1.0` wherever a different array, `y`, exceeds a threshold.",
-         "starter_code": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t.where(_____, _____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample_z = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([0.9, 0.1, 0.6])\nprint(solve(example_z, example_y, 0.5))\n",
+         "starter_code": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t._____(_____, _____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample_z = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([0.9, 0.1, 0.6])\nprint(solve(example_z, example_y, 0.5))\n",
          "solution": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t.where(y > threshold, -1.0, z)\n"
         }
        ]
@@ -1305,7 +1305,7 @@
       {
        "question_id": 94,
        "prompt": "Return `z` with `-1.0` wherever a different array, `y`, exceeds a threshold.",
-       "starter_code": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t.where(_____, _____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample_z = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([0.9, 0.1, 0.6])\nprint(solve(example_z, example_y, 0.5))\n",
+       "starter_code": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t._____(_____, _____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample_z = t.tensor([1.0, 2.0, 3.0])\nexample_y = t.tensor([0.9, 0.1, 0.6])\nprint(solve(example_z, example_y, 0.5))\n",
        "solution": "import torch as t\n\ndef solve(z, y, threshold):\n    \"\"\"Return z with -1.0 wherever y exceeds the threshold.\"\"\"\n    return t.where(y > threshold, -1.0, z)\n"
       },
       {
@@ -1352,7 +1352,7 @@
         {
          "question_id": 40,
          "prompt": "Positions of all nonzero entries of a plain Python list, in the\ntuple-of-index-tensors structure.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t.nonzero(t.as_tensor(x), _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different lists,\n# including edge cases. Your function must work for all of them.\nexample = [0, 3, 0, 0, 7, 0, -2]\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t._____(t._____(x), _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different lists,\n# including edge cases. Your function must work for all of them.\nexample = [0, 3, 0, 0, 7, 0, -2]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t.nonzero(t.as_tensor(x), as_tuple=True)\n"
         }
        ]
@@ -1362,7 +1362,7 @@
       {
        "question_id": 40,
        "prompt": "Positions of all nonzero entries of a plain Python list, in the\ntuple-of-index-tensors structure.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t.nonzero(t.as_tensor(x), _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different lists,\n# including edge cases. Your function must work for all of them.\nexample = [0, 3, 0, 0, 7, 0, -2]\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t._____(t._____(x), _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different lists,\n# including edge cases. Your function must work for all of them.\nexample = [0, 3, 0, 0, 7, 0, -2]\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the tuple-of-index-tensors for nonzero positions of list x.\"\"\"\n    return t.nonzero(t.as_tensor(x), as_tuple=True)\n"
       }
      ],
@@ -1422,7 +1422,7 @@
         {
          "question_id": 219,
          "prompt": "Largest entry replaced with 0 (first occurrence only), input untouched.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x._____()\n    result[t.argmax(x)] = 0.0\n    return result\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([3.0, -1.0, 7.5, 2.0])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x._____()\n    result[t._____(x)] = 0.0\n    return result\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([3.0, -1.0, 7.5, 2.0])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x.clone()\n    result[t.argmax(x)] = 0.0\n    return result\n"
         }
        ]
@@ -1438,7 +1438,7 @@
         {
          "question_id": 98,
          "prompt": "The INDEX of the entry closest to target, as a plain int.",
-         "starter_code": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t.argmin(t._____(z - target)))\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([0.1, 0.4, 0.8]), 0.5))\n",
+         "starter_code": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t._____(t._____(z - target)))\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([0.1, 0.4, 0.8]), 0.5))\n",
          "solution": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t.argmin(t.abs(z - target)))\n"
         }
        ]
@@ -1454,13 +1454,13 @@
       {
        "question_id": 219,
        "prompt": "Largest entry replaced with 0 (first occurrence only), input untouched.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x._____()\n    result[t.argmax(x)] = 0.0\n    return result\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([3.0, -1.0, 7.5, 2.0])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x._____()\n    result[t._____(x)] = 0.0\n    return result\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([3.0, -1.0, 7.5, 2.0])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"x with its largest entry replaced by 0.0, without mutating x.\"\"\"\n    result = x.clone()\n    result[t.argmax(x)] = 0.0\n    return result\n"
       },
       {
        "question_id": 98,
        "prompt": "The INDEX of the entry closest to target, as a plain int.",
-       "starter_code": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t.argmin(t._____(z - target)))\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([0.1, 0.4, 0.8]), 0.5))\n",
+       "starter_code": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t._____(t._____(z - target)))\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([0.1, 0.4, 0.8]), 0.5))\n",
        "solution": "import torch as t\n\ndef solve(z, target):\n    \"\"\"Index of the entry of z closest to target.\"\"\"\n    return int(t.argmin(t.abs(z - target)))\n"
       }
      ],
@@ -1604,7 +1604,7 @@
         {
          "question_id": 14,
          "prompt": "Distinct values ascending, with aligned occurrence counts.",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t.unique(z, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.tensor([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t._____(z, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.tensor([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t.unique(z, return_counts=True)\n"
         }
        ]
@@ -1614,7 +1614,7 @@
       {
        "question_id": 14,
        "prompt": "Distinct values ascending, with aligned occurrence counts.",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t.unique(z, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.tensor([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t._____(z, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.tensor([1, 2, 2, 3, 3, 3])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"(distinct values ascending, counts aligned with them).\"\"\"\n    return t.unique(z, return_counts=True)\n"
       }
      ],
@@ -1664,7 +1664,7 @@
         {
          "question_id": 77,
          "prompt": "The k-th diagonal of a square matrix, using the standard sign convention.",
-         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t.diag(z, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample = t.arange(25).reshape(5, 5)\nprint(solve(example, 1))\n",
+         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t._____(z, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample = t.arange(25).reshape(5, 5)\nprint(solve(example, 1))\n",
          "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t.diag(z, diagonal=k)\n"
         }
        ]
@@ -1712,7 +1712,7 @@
         {
          "question_id": 31,
          "prompt": "The n\u00d7n upper-triangular matrix of ones (diagonal included).",
-         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t.triu(t._____((n, n)))\n\n\n# Example run \u2014 the grader calls solve() with several different values of n,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t._____(t._____((n, n)))\n\n\n# Example run \u2014 the grader calls solve() with several different values of n,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t.triu(t.ones((n, n)))\n"
         }
        ]
@@ -1722,7 +1722,7 @@
       {
        "question_id": 77,
        "prompt": "The k-th diagonal of a square matrix, using the standard sign convention.",
-       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t.diag(z, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample = t.arange(25).reshape(5, 5)\nprint(solve(example, 1))\n",
+       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t._____(z, _____)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nexample = t.arange(25).reshape(5, 5)\nprint(solve(example, 1))\n",
        "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"The k-th diagonal of z (k=0 main, positive above, negative below).\"\"\"\n    return t.diag(z, diagonal=k)\n"
       },
       {
@@ -1740,7 +1740,7 @@
       {
        "question_id": 31,
        "prompt": "The n\u00d7n upper-triangular matrix of ones (diagonal included).",
-       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t.triu(t._____((n, n)))\n\n\n# Example run \u2014 the grader calls solve() with several different values of n,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t._____(t._____((n, n)))\n\n\n# Example run \u2014 the grader calls solve() with several different values of n,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Upper triangle of ones, including the main diagonal.\"\"\"\n    return t.triu(t.ones((n, n)))\n"
       }
      ],
@@ -1802,7 +1802,7 @@
         {
          "question_id": 114,
          "prompt": "Each element's 0-based rank (values distinct), reported at its own position.",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z.argsort()._____()\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([10, 40, 20, 30])))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z._____()._____()\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([10, 40, 20, 30])))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z.argsort().argsort()\n"
         }
        ]
@@ -1818,7 +1818,7 @@
         {
          "question_id": 119,
          "prompt": "Indices of the k largest elements, largest first (values distinct).",
-         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t.argsort(z)[-k:]_____\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([5.0, 9.0, 1.0, 7.0]), 2))\n",
+         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t._____(z)[-k:]_____\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([5.0, 9.0, 1.0, 7.0]), 2))\n",
          "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t.argsort(z)[-k:].flip(0)\n"
         }
        ]
@@ -1834,13 +1834,13 @@
       {
        "question_id": 114,
        "prompt": "Each element's 0-based rank (values distinct), reported at its own position.",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z.argsort()._____()\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([10, 40, 20, 30])))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z._____()._____()\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([10, 40, 20, 30])))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"0-based rank of each element: smallest -> 0, at each element's slot.\"\"\"\n    return z.argsort().argsort()\n"
       },
       {
        "question_id": 119,
        "prompt": "Indices of the k largest elements, largest first (values distinct).",
-       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t.argsort(z)[-k:]_____\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([5.0, 9.0, 1.0, 7.0]), 2))\n",
+       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t._____(z)[-k:]_____\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.tensor([5.0, 9.0, 1.0, 7.0]), 2))\n",
        "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Indices of the k largest entries of z, largest first.\"\"\"\n    return t.argsort(z)[-k:].flip(0)\n"
       }
      ],
@@ -1943,7 +1943,7 @@
         {
          "question_id": 17,
          "prompt": "Zero border AROUND the data: (r, c) \u2192 (r+2, c+2).",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t.nn.functional.pad(z, _____, mode=\"constant\", value=_____)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.ones((2, 2))\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t._____.functional.pad(z, _____, _____=\"constant\", _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.ones((2, 2))\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t.nn.functional.pad(z, (1, 1, 1, 1), mode=\"constant\", value=0)\n"
         }
        ]
@@ -1953,7 +1953,7 @@
       {
        "question_id": 17,
        "prompt": "Zero border AROUND the data: (r, c) \u2192 (r+2, c+2).",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t.nn.functional.pad(z, _____, mode=\"constant\", value=_____)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.ones((2, 2))\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t._____.functional.pad(z, _____, _____=\"constant\", _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nexample = t.ones((2, 2))\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Surround z with a one-cell-thick border of zeros.\"\"\"\n    return t.nn.functional.pad(z, (1, 1, 1, 1), mode=\"constant\", value=0)\n"
       }
      ],
@@ -2162,7 +2162,7 @@
         {
          "question_id": 220,
          "prompt": "One sum per column.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(_____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(dim=0)\n"
         }
        ]
@@ -2178,7 +2178,7 @@
         {
          "question_id": 135,
          "prompt": "Per-slice totals of a 4-D batch: collapse the LAST two axes in one call.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(24).reshape(2, 3, 2, 2)\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(_____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(24).reshape(2, 3, 2, 2)\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(dim=(-2, -1))\n"
         }
        ]
@@ -2188,13 +2188,13 @@
       {
        "question_id": 220,
        "prompt": "One sum per column.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(_____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Column sums of a 2-D matrix: which axis disappears?\"\"\"\n    return x.sum(dim=0)\n"
       },
       {
        "question_id": 135,
        "prompt": "Per-slice totals of a 4-D batch: collapse the LAST two axes in one call.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(24).reshape(2, 3, 2, 2)\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(_____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(24).reshape(2, 3, 2, 2)\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"(a, b, c, d) -> (a, b): total of each c*d slice.\"\"\"\n    return x.sum(dim=(-2, -1))\n"
       }
      ],
@@ -2261,7 +2261,7 @@
         {
          "question_id": 7,
          "prompt": "Subtract each row's own mean.",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(dim=_____, keepdim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(_____=_____, keepdim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(dim=1, keepdim=True)\n"
         }
        ]
@@ -2277,7 +2277,7 @@
         {
          "question_id": 106,
          "prompt": "Standardize each column (no constant columns).",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(dim=_____)) / x.std(dim=_____, correction=0)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 10.0], [3.0, 30.0]])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(_____=_____)) / x._____(_____=_____, _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 10.0], [3.0, 30.0]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(dim=0)) / x.std(dim=0, correction=0)\n"
         }
        ]
@@ -2293,13 +2293,13 @@
       {
        "question_id": 7,
        "prompt": "Subtract each row's own mean.",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(dim=_____, keepdim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(_____=_____, keepdim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Every entry minus its row's mean; each result row averages 0.\"\"\"\n    return z - z.mean(dim=1, keepdim=True)\n"
       },
       {
        "question_id": 106,
        "prompt": "Standardize each column (no constant columns).",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(dim=_____)) / x.std(dim=_____, correction=0)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 10.0], [3.0, 30.0]])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(_____=_____)) / x._____(_____=_____, _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.tensor([[1.0, 10.0], [3.0, 30.0]])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column standardized: mean 0, std 1.\"\"\"\n    return (x - x.mean(dim=0)) / x.std(dim=0, correction=0)\n"
       }
      ],
@@ -2419,7 +2419,7 @@
         {
          "question_id": 234,
          "prompt": "Running total of a 1-D tensor.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t._____(x, dim=0)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([2, 3, 5])\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t._____(x, _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([2, 3, 5])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t.cumsum(x, dim=0)\n"
         }
        ]
@@ -2435,7 +2435,7 @@
         {
          "question_id": 152,
          "prompt": "Running maximum of each row, scanning left to right.",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t._____(z, dim=1).values\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[3, 1, 4, 1, 5]])))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t._____(z, _____=1).values\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[3, 1, 4, 1, 5]])))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t.cummax(z, dim=1).values\n"
         }
        ]
@@ -2451,7 +2451,7 @@
         {
          "question_id": 22,
          "prompt": "Differences between adjacent columns within each row: result (r, c-1).",
-         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t.diff(z, dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.arange(9).reshape(3, 3)\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t._____(z, _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.arange(9).reshape(3, 3)\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t.diff(z, dim=1)\n"
         }
        ]
@@ -2461,19 +2461,19 @@
       {
        "question_id": 234,
        "prompt": "Running total of a 1-D tensor.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t._____(x, dim=0)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([2, 3, 5])\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t._____(x, _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([2, 3, 5])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Entry i = total of x[0..i] inclusive.\"\"\"\n    return t.cumsum(x, dim=0)\n"
       },
       {
        "question_id": 152,
        "prompt": "Running maximum of each row, scanning left to right.",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t._____(z, dim=1).values\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[3, 1, 4, 1, 5]])))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t._____(z, _____=1).values\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[3, 1, 4, 1, 5]])))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = max of row i's columns 0..j.\"\"\"\n    return t.cummax(z, dim=1).values\n"
       },
       {
        "question_id": 22,
        "prompt": "Differences between adjacent columns within each row: result (r, c-1).",
-       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t.diff(z, dim=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.arange(9).reshape(3, 3)\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t._____(z, _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several matrices.\nexample = t.arange(9).reshape(3, 3)\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Entry [i, j] = z[i, j+1] - z[i, j].\"\"\"\n    return t.diff(z, dim=1)\n"
       }
      ],
@@ -2645,7 +2645,7 @@
         {
          "question_id": 84,
          "prompt": "Elementwise average of two same-shape arrays, via a new axis.",
-         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0)._____(dim=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
+         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t._____([a, b], _____=0)._____(_____=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0).mean(dim=0)\n"
         }
        ]
@@ -2655,7 +2655,7 @@
       {
        "question_id": 84,
        "prompt": "Elementwise average of two same-shape arrays, via a new axis.",
-       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0)._____(dim=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t._____([a, b], _____=0)._____(_____=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0).mean(dim=0)\n"
       }
      ],
@@ -2812,7 +2812,7 @@
         {
          "question_id": 235,
          "prompt": "Ascending order, in place \u2014 the passed-in object itself must change.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x._____(x.sort().values)\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases, and checks the contents of the array itself\n# after the call. Your function must work for all of them.\nexample = t.tensor([3.0, 1.0, 2.0])\nsolve(example)\nprint(example)\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x._____(x._____().values)\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases, and checks the contents of the array itself\n# after the call. Your function must work for all of them.\nexample = t.tensor([3.0, 1.0, 2.0])\nsolve(example)\nprint(example)\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x.copy_(x.sort().values)\n    return x\n"
         }
        ]
@@ -2844,7 +2844,7 @@
         {
          "question_id": 59,
          "prompt": "((a + b) * (-a / 2)) with ZERO new allocations \u2014 every step lands in a's or\nb's buffer.",
-         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b.add_(_____)\n    a.div_(2)\n    a.neg_()\n    a.mul_(b)\n    return a\n\n\n# Example run \u2014 the grader calls solve() with several array pairs.\nexample_a = t.ones(3)\nexample_b = t.ones(3) * 2\nprint(solve(example_a, example_b))\n",
+         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b._____(_____)\n    a._____(2)\n    a._____()\n    a._____(b)\n    return a\n\n\n# Example run \u2014 the grader calls solve() with several array pairs.\nexample_a = t.ones(3)\nexample_b = t.ones(3) * 2\nprint(solve(example_a, example_b))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b.add_(a)\n    a.div_(2)\n    a.neg_()\n    a.mul_(b)\n    return a\n"
         }
        ]
@@ -2854,7 +2854,7 @@
       {
        "question_id": 235,
        "prompt": "Ascending order, in place \u2014 the passed-in object itself must change.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x._____(x.sort().values)\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases, and checks the contents of the array itself\n# after the call. Your function must work for all of them.\nexample = t.tensor([3.0, 1.0, 2.0])\nsolve(example)\nprint(example)\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x._____(x._____().values)\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different arrays,\n# including edge cases, and checks the contents of the array itself\n# after the call. Your function must work for all of them.\nexample = t.tensor([3.0, 1.0, 2.0])\nsolve(example)\nprint(example)\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Sort x itself (no new tensor), then return it.\"\"\"\n    x.copy_(x.sort().values)\n    return x\n"
       },
       {
@@ -2866,7 +2866,7 @@
       {
        "question_id": 59,
        "prompt": "((a + b) * (-a / 2)) with ZERO new allocations \u2014 every step lands in a's or\nb's buffer.",
-       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b.add_(_____)\n    a.div_(2)\n    a.neg_()\n    a.mul_(b)\n    return a\n\n\n# Example run \u2014 the grader calls solve() with several array pairs.\nexample_a = t.ones(3)\nexample_b = t.ones(3) * 2\nprint(solve(example_a, example_b))\n",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b._____(_____)\n    a._____(2)\n    a._____()\n    a._____(b)\n    return a\n\n\n# Example run \u2014 the grader calls solve() with several array pairs.\nexample_a = t.ones(3)\nexample_b = t.ones(3) * 2\nprint(solve(example_a, example_b))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Compute ((a + b) * (-a / 2)) using only the two given buffers.\"\"\"\n    b.add_(a)\n    a.div_(2)\n    a.neg_()\n    a.mul_(b)\n    return a\n"
       }
      ],
@@ -2906,7 +2906,7 @@
         {
          "question_id": 117,
          "prompt": "The (n\u2212w+1, w) matrix of all length-w windows.",
-         "starter_code": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x.unfold(0, _____, 1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(7), 3))\n",
+         "starter_code": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x._____(0, _____, 1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(7), 3))\n",
          "solution": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x.unfold(0, w, 1)\n"
         }
        ]
@@ -2916,7 +2916,7 @@
       {
        "question_id": 117,
        "prompt": "The (n\u2212w+1, w) matrix of all length-w windows.",
-       "starter_code": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x.unfold(0, _____, 1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(7), 3))\n",
+       "starter_code": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x._____(0, _____, 1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(7), 3))\n",
        "solution": "import torch as t\n\ndef solve(x, w):\n    \"\"\"Row i = x[i : i + w], every contiguous window.\"\"\"\n    return x.unfold(0, w, 1)\n"
       }
      ],
@@ -2968,7 +2968,7 @@
         {
          "question_id": 181,
          "prompt": "Pairwise Euclidean distances between rows of x (n, d) and rows of y (m, d).",
-         "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, _____, :] - y[_____, :, :]\n    return t.sqrt((diff ** 2).sum(dim=_____))\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nprint(solve(t.tensor([[0.0, 0.0]]), t.tensor([[3.0, 4.0], [6.0, 8.0]])))\n",
+         "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, _____, :] - y[_____, :, :]\n    return t.sqrt((diff ** 2).sum(_____=_____))\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nprint(solve(t.tensor([[0.0, 0.0]]), t.tensor([[3.0, 4.0], [6.0, 8.0]])))\n",
          "solution": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, None, :] - y[None, :, :]\n    return t.sqrt((diff ** 2).sum(dim=-1))\n"
         }
        ]
@@ -2978,7 +2978,7 @@
       {
        "question_id": 181,
        "prompt": "Pairwise Euclidean distances between rows of x (n, d) and rows of y (m, d).",
-       "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, _____, :] - y[_____, :, :]\n    return t.sqrt((diff ** 2).sum(dim=_____))\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nprint(solve(t.tensor([[0.0, 0.0]]), t.tensor([[3.0, 4.0], [6.0, 8.0]])))\n",
+       "starter_code": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, _____, :] - y[_____, :, :]\n    return t.sqrt((diff ** 2).sum(_____=_____))\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nprint(solve(t.tensor([[0.0, 0.0]]), t.tensor([[3.0, 4.0], [6.0, 8.0]])))\n",
        "solution": "import torch as t\n\ndef solve(x, y):\n    \"\"\"(n, m) distances: [i, j] = ||x[i] - y[j]||.\"\"\"\n    diff = x[:, None, :] - y[None, :, :]\n    return t.sqrt((diff ** 2).sum(dim=-1))\n"
       }
      ],
@@ -3212,7 +3212,7 @@
         {
          "question_id": 195,
          "prompt": "Sums of non-overlapping k\u00d7k blocks, ragged edges included.",
-         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(dim=0) for chunk in z.split(k, dim=_____)])\n    return t.stack([chunk.sum(dim=1) for chunk in rows.split(k, dim=_____)], dim=1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((5, 5), dtype=t.int64), 2))\n",
+         "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(_____=0) for chunk in z._____(k, _____=_____)])\n    return t.stack([chunk.sum(_____=1) for chunk in rows._____(k, _____=_____)], _____=1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((5, 5), dtype=t.int64), 2))\n",
          "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(dim=0) for chunk in z.split(k, dim=0)])\n    return t.stack([chunk.sum(dim=1) for chunk in rows.split(k, dim=1)], dim=1)\n"
         }
        ]
@@ -3222,7 +3222,7 @@
       {
        "question_id": 195,
        "prompt": "Sums of non-overlapping k\u00d7k blocks, ragged edges included.",
-       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(dim=0) for chunk in z.split(k, dim=_____)])\n    return t.stack([chunk.sum(dim=1) for chunk in rows.split(k, dim=_____)], dim=1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((5, 5), dtype=t.int64), 2))\n",
+       "starter_code": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(_____=0) for chunk in z._____(k, _____=_____)])\n    return t.stack([chunk.sum(_____=1) for chunk in rows._____(k, _____=_____)], _____=1)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((5, 5), dtype=t.int64), 2))\n",
        "solution": "import torch as t\n\ndef solve(z, k):\n    \"\"\"Block sums tiling from the top-left; partial edge blocks count.\"\"\"\n    rows = t.stack([chunk.sum(dim=0) for chunk in z.split(k, dim=0)])\n    return t.stack([chunk.sum(dim=1) for chunk in rows.split(k, dim=1)], dim=1)\n"
       }
      ],
@@ -3270,7 +3270,7 @@
         {
          "question_id": 191,
          "prompt": "Bootstrap 95% CI for the mean, consuming rng exactly as specified.",
-         "starter_code": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(dim=_____)\n    qs = t.tensor(_____, dtype=means.dtype)\n    lo, hi = t.quantile(means, qs)\n    return lo, hi\n\n\n# Example run \u2014 the grader calls solve() with seeded generators.\nprint(solve(t.arange(10, dtype=t.float32), 100, t.Generator().manual_seed(0)))\n",
+         "starter_code": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(_____=_____)\n    qs = t.tensor(_____, dtype=means.dtype)\n    lo, hi = t._____(means, qs)\n    return lo, hi\n\n\n# Example run \u2014 the grader calls solve() with seeded generators.\nprint(solve(t.arange(10, dtype=t.float32), 100, t.Generator().manual_seed(0)))\n",
          "solution": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(dim=1)\n    qs = t.tensor([0.025, 0.975], dtype=means.dtype)\n    lo, hi = t.quantile(means, qs)\n    return lo, hi\n"
         }
        ]
@@ -3280,7 +3280,7 @@
       {
        "question_id": 191,
        "prompt": "Bootstrap 95% CI for the mean, consuming rng exactly as specified.",
-       "starter_code": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(dim=_____)\n    qs = t.tensor(_____, dtype=means.dtype)\n    lo, hi = t.quantile(means, qs)\n    return lo, hi\n\n\n# Example run \u2014 the grader calls solve() with seeded generators.\nprint(solve(t.arange(10, dtype=t.float32), 100, t.Generator().manual_seed(0)))\n",
+       "starter_code": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(_____=_____)\n    qs = t.tensor(_____, dtype=means.dtype)\n    lo, hi = t._____(means, qs)\n    return lo, hi\n\n\n# Example run \u2014 the grader calls solve() with seeded generators.\nprint(solve(t.arange(10, dtype=t.float32), 100, t.Generator().manual_seed(0)))\n",
        "solution": "import torch as t\n\ndef solve(x, n_samples, rng):\n    \"\"\"(lo, hi) = 2.5% and 97.5% quantiles of bootstrap means.\"\"\"\n    idx = t.randint(0, x.numel(), (n_samples, x.numel()), generator=rng)\n    means = x[idx].mean(dim=1)\n    qs = t.tensor([0.025, 0.975], dtype=means.dtype)\n    lo, hi = t.quantile(means, qs)\n    return lo, hi\n"
       }
      ],
@@ -3505,7 +3505,7 @@
         {
          "question_id": 244,
          "prompt": "Same tensor, but now emit the two axes in the OPPOSITE order \u2014 rows become\ncolumns. You saw `'ij->ij'` return the tensor unchanged; change only the output\nside so the layout flips (this is the transpose).",
-         "starter_code": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t.einsum('_____', a)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n",
+         "starter_code": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t._____('_____', a)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n",
          "solution": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t.einsum('ij->ji', a)\n"
         }
        ]
@@ -3521,7 +3521,7 @@
         {
          "question_id": 285,
          "prompt": "A 4-D tensor `(b, h, s, d)`. This time don't move an axis to the end \u2014 SWAP the\ntwo MIDDLE axes (`h` and `s`), leaving `b` first and `d` last. Same \"reorder the\nkept letters\" idea as the channels-last move, a different target order.",
-         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t.einsum('_____', x)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((1, 2, 3, 1))))\n",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t._____('_____', x)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((1, 2, 3, 1))))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t.einsum('bhsd->bshd', x)\n"
         }
        ]
@@ -3531,13 +3531,13 @@
       {
        "question_id": 244,
        "prompt": "Same tensor, but now emit the two axes in the OPPOSITE order \u2014 rows become\ncolumns. You saw `'ij->ij'` return the tensor unchanged; change only the output\nside so the layout flips (this is the transpose).",
-       "starter_code": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t.einsum('_____', a)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n",
+       "starter_code": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t._____('_____', a)\n\n\n# Example run \u2014 the grader calls solve() with several arrays.\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n",
        "solution": "import torch as t\n\ndef solve(a):\n    \"\"\"Transpose via einsum: name the axes, then emit them in swapped order.\"\"\"\n    return t.einsum('ij->ji', a)\n"
       },
       {
        "question_id": 285,
        "prompt": "A 4-D tensor `(b, h, s, d)`. This time don't move an axis to the end \u2014 SWAP the\ntwo MIDDLE axes (`h` and `s`), leaving `b` first and `d` last. Same \"reorder the\nkept letters\" idea as the channels-last move, a different target order.",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t.einsum('_____', x)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((1, 2, 3, 1))))\n",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t._____('_____', x)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((1, 2, 3, 1))))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"(b, h, s, d) -> (b, s, h, d): swap the two middle axes, ends fixed.\"\"\"\n    return t.einsum('bhsd->bshd', x)\n"
       }
      ],

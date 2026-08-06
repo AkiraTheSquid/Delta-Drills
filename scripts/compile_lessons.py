@@ -11,6 +11,7 @@ from lesson_lib import (
     LESSONS_DIR,
     all_kp_paths,
     attach_example_run,
+    blank_new_syntax,
     code_fences,
     load_bank,
     load_registry,
@@ -41,13 +42,19 @@ def compile_lessons():
                 # so graft it on here, once, for every route that serves this
                 # record (see lesson_lib.attach_example_run).
                 exercise = (bank.get(qid) or {}).get("exercise") or {}
+                fn = exercise.get("function_name") or "solve"
+                # Hide the concept, keep the scaffold. An authored starter that
+                # blanks only the ARGUMENT prints the call the drill exists to
+                # test — q67's `z.clamp(_____=0.0)` on a KP whose whole subject
+                # is `clamp`. See lesson_lib.blank_new_syntax.
+                starter = blank_new_syntax(
+                    starters[0] if starters else "", kp["new_syntax"], fn
+                )
                 items.append({
                     "question_id": qid,
                     "prompt": prose,
                     "starter_code": attach_example_run(
-                        starters[0] if starters else "",
-                        exercise.get("starter_code") or "",
-                        exercise.get("function_name") or "solve",
+                        starter, exercise.get("starter_code") or "", fn
                     ),
                     "solution": solutions[0] if solutions else "",
                 })

@@ -195,9 +195,10 @@ def check_kp(path, registry, bank, errors):
         for si, seg in enumerate(kp["segments"]):
             label = f"{name}: segment {si + 1}"
             errors.extend(quality.check_example_shape(seg["worked"], label))
-            for qid in split_items(seg["faded"]):
+            for qid, content in split_items(seg["faded"]).items():
                 if qid in bank:
                     errors.extend(quality.check_pairing(seg["worked"], bank[qid], f"{name}: q{qid}"))
+                    errors.extend(quality.fade_findings(kp, qid, content, bank, f"{name}: q{qid}"))
         for item_qid in kp["independent"]:
             if item_qid in bank:
                 errors.extend(
