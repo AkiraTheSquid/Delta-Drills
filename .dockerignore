@@ -49,3 +49,9 @@ This-Directory-Only/mathpix processor/pdf_path_convert.txt
 
 # Lesson metadata for the first-encounter exposure guard (app/lessons.py)
 !Local_Deployed_Shared/lessons/
+
+# The concept->atom join (app/kc_graph.py). Without it kc_mastery returns the
+# bare prior for all 63 concepts, tier "unmapped", covered weight 0 — the
+# lattice reports a learner who has answered hundreds of questions as having
+# shown nothing, and says so only in a log line nobody reads.
+!Local_Deployed_Shared/concept-graph/kc_atom_crosswalk.json

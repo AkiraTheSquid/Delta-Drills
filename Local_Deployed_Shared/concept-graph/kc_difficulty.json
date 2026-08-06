@@ -1,0 +1,267 @@
+{
+ "version": 1,
+ "scale": "question difficulty_score, 0-100",
+ "generated_from": [
+  "lessons/qmatrix_tags.json target_kcs",
+  "questions.json difficulty_score"
+ ],
+ "mean": 38.2,
+ "kcs": {
+  "einops.channel-groups-temporal": {
+   "d": 45.9,
+   "n": 8
+  },
+  "einops.dl-flatten-heads": {
+   "d": 36.8,
+   "n": 5
+  },
+  "einops.grids-montage": {
+   "d": 59.9,
+   "n": 9
+  },
+  "einops.merge-axes": {
+   "d": 35.0,
+   "n": 11
+  },
+  "einops.patches-space-depth": {
+   "d": 59.5,
+   "n": 10
+  },
+  "einops.pattern-language": {
+   "d": 21.0,
+   "n": 8
+  },
+  "einops.pooling": {
+   "d": 52.6,
+   "n": 7
+  },
+  "einops.reduce-model": {
+   "d": 32.8,
+   "n": 9
+  },
+  "einops.repeat-model": {
+   "d": 32.6,
+   "n": 10
+  },
+  "einops.singleton-and-lists": {
+   "d": 28.0,
+   "n": 8
+  },
+  "einops.split-axes": {
+   "d": 42.8,
+   "n": 6
+  },
+  "einsum.attention-patterns": {
+   "d": 47.9,
+   "n": 8
+  },
+  "einsum.batch-dims": {
+   "d": 38.6,
+   "n": 9
+  },
+  "einsum.broadcast-scaling": {
+   "d": 37.3,
+   "n": 7
+  },
+  "einsum.diag-trace": {
+   "d": 31.7,
+   "n": 7
+  },
+  "einsum.dot-frobenius": {
+   "d": 30.5,
+   "n": 4
+  },
+  "einsum.matrix-forms": {
+   "d": 44.0,
+   "n": 6
+  },
+  "einsum.matvec-matmul": {
+   "d": 34.4,
+   "n": 7
+  },
+  "einsum.notation-model": {
+   "d": 25.2,
+   "n": 5
+  },
+  "einsum.outer-products": {
+   "d": 32.0,
+   "n": 5
+  },
+  "einsum.reductions": {
+   "d": 27.0,
+   "n": 10
+  },
+  "numpy.aggregations": {
+   "d": 19.0,
+   "n": 4
+  },
+  "numpy.argmin-argmax": {
+   "d": 28.9,
+   "n": 7
+  },
+  "numpy.argsort-ranking": {
+   "d": 54.8,
+   "n": 4
+  },
+  "numpy.axis-reductions": {
+   "d": 36.6,
+   "n": 5
+  },
+  "numpy.boolean-masking": {
+   "d": 29.9,
+   "n": 7
+  },
+  "numpy.broadcasting-rules": {
+   "d": 41.0,
+   "n": 4
+  },
+  "numpy.centering": {
+   "d": 36.3,
+   "n": 6
+  },
+  "numpy.constructors": {
+   "d": 12.0,
+   "n": 8
+  },
+  "numpy.cumulative-diff": {
+   "d": 28.3,
+   "n": 7
+  },
+  "numpy.diag-triangles": {
+   "d": 26.2,
+   "n": 10
+  },
+  "numpy.dot-matmul-patterns": {
+   "d": 33.3,
+   "n": 6
+  },
+  "numpy.dtype-astype": {
+   "d": 18.4,
+   "n": 5
+  },
+  "numpy.elementwise-ufuncs": {
+   "d": 20.8,
+   "n": 5
+  },
+  "numpy.fancy-indexing": {
+   "d": 30.9,
+   "n": 9
+  },
+  "numpy.geometry-transforms": {
+   "d": 58.2,
+   "n": 4
+  },
+  "numpy.index-grids": {
+   "d": 43.2,
+   "n": 6
+  },
+  "numpy.inplace-out": {
+   "d": 38.0,
+   "n": 4
+  },
+  "numpy.linalg-applied": {
+   "d": 57.0,
+   "n": 5
+  },
+  "numpy.linalg-basics": {
+   "d": 19.0,
+   "n": 2
+  },
+  "numpy.memory-model": {
+   "d": 75.3,
+   "n": 3
+  },
+  "numpy.nan-handling": {
+   "d": 40.5,
+   "n": 6
+  },
+  "numpy.ndarray-model": {
+   "d": 20.0,
+   "n": 2
+  },
+  "numpy.nonzero-argwhere": {
+   "d": 32.7,
+   "n": 3
+  },
+  "numpy.onehot-bincount": {
+   "d": 48.8,
+   "n": 5
+  },
+  "numpy.pad-borders": {
+   "d": 39.5,
+   "n": 4
+  },
+  "numpy.pairwise-metrics": {
+   "d": 54.6,
+   "n": 7
+  },
+  "numpy.random-generator": {
+   "d": 22.0,
+   "n": 3
+  },
+  "numpy.random-sampling": {
+   "d": 58.0,
+   "n": 4
+  },
+  "numpy.ranges": {
+   "d": 17.5,
+   "n": 4
+  },
+  "numpy.rescaling": {
+   "d": 36.2,
+   "n": 8
+  },
+  "numpy.reshape-flatten": {
+   "d": 16.7,
+   "n": 3
+  },
+  "numpy.scatter-gather": {
+   "d": 48.8,
+   "n": 5
+  },
+  "numpy.set-combinatorics": {
+   "d": 65.7,
+   "n": 10
+  },
+  "numpy.slicing-views": {
+   "d": 22.3,
+   "n": 6
+  },
+  "numpy.sliding-windows": {
+   "d": 57.5,
+   "n": 4
+  },
+  "numpy.sorting": {
+   "d": 16.0,
+   "n": 1
+  },
+  "numpy.stack-concat-interleave": {
+   "d": 37.2,
+   "n": 5
+  },
+  "numpy.structured-dtypes": {
+   "d": 52.0,
+   "n": 6
+  },
+  "numpy.tile-repeat-meshgrid": {
+   "d": 22.0,
+   "n": 6
+  },
+  "numpy.topk-selection": {
+   "d": 63.0,
+   "n": 3
+  },
+  "numpy.unique": {
+   "d": 31.2,
+   "n": 5
+  },
+  "numpy.where-select": {
+   "d": 42.0,
+   "n": 3
+  },
+  "numpy.window-stencil": {
+   "d": 65.1,
+   "n": 7
+  }
+ }
+}

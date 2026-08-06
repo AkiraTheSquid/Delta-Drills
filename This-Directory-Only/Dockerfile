@@ -25,6 +25,13 @@ COPY Local_Deployed_Shared/tools ./Local_Deployed_Shared/tools
 # qmatrix_tags.json + kc_registry.json + lessons_structured.json. Lesson
 # CONTENT is rendered by the static frontend; the backend only reads maps.
 COPY Local_Deployed_Shared/lessons ./Local_Deployed_Shared/lessons
+# The KC->atom crosswalk (app/kc_graph.py): the join between the ids the graph
+# names concepts with and the ids BKT actually holds belief under. It is the
+# only file the backend reads out of concept-graph/, and it is REQUIRED, not
+# optional — missing, every concept reports the prior and the knowledge graph
+# draws one flat colour that no amount of practice moves. /health publishes the
+# row count so an image that lost it says so on the first request.
+COPY Local_Deployed_Shared/concept-graph/kc_atom_crosswalk.json ./Local_Deployed_Shared/concept-graph/kc_atom_crosswalk.json
 # numbers.npy (the visual-fixture image data) is vendored in backend/app/data
 # — the ARENA content tree is gitignored and absent from this build context,
 # so code_runner resolves the vendored copy first.

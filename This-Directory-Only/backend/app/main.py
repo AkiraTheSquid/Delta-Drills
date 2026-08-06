@@ -53,5 +53,7 @@ app.add_middleware(
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health() -> dict:
+    # A zero count = every concept served the bare prior (app/kc_data_health).
+    from app.kc_data_health import lattice_data_health
+    return {"status": "ok", "lattice": lattice_data_health()}
