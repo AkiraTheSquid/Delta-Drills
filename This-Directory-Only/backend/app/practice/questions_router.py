@@ -193,12 +193,13 @@ def next_question(
     ladder = ladder_fields(user_state, question.id)
     scaffold = ladder_starter(question, ladder.get("ladder_stage") or "")
     starter = scaffold or question.starter_code
-    # Whether the rung's promise is actually on the page — see
-    # `ladder_support` in practice_schemas. Support arrives two ways: blanks in
-    # the starter, or a worked example above the problem. A rung that offers
-    # neither is a solo problem, and saying so is better than labelling it.
-    if ladder.get("ladder_stage") in ("faded", "partial"):
-        ladder["ladder_support"] = bool(scaffold) or lessons.has_worked_example(question.id)
+    # Whether the promise THIS rung makes is actually on the page — blanks at
+    # `faded`, an example above the problem at `partial`. See
+    # lessons.rung_support and `ladder_support` in practice_schemas.
+    if ladder:
+        ladder["ladder_support"] = lessons.rung_support(
+            question.id, ladder.get("ladder_stage") or "", scaffold
+        )
 
     return NextQuestionResponse(
         question_id=question.id,

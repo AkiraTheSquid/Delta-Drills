@@ -154,6 +154,53 @@ def check_a_kp_is_taught_one_concept_at_a_time():
     assert not lessons.exposure_key_exists(f"{kc}#not-a-concept"), \
         "/exposure would store a concept id nothing teaches"
 
+    # Every concept read. Now the KP's whole-KP problems — and ONLY those —
+    # may report the fifth rung. Exposure says what the learner has read; it
+    # says nothing about what is on the screen, and `narrow_to_next_kc` falls
+    # back to the unfiltered pool when a rung is spent, so without the second
+    # half of the test a fill-in-the-blank drill for one of the three ideas
+    # gets labelled as the problem that needs all of them.
+    whole_kp = [
+        qid for qid, src in lessons._question_source.items()
+        if src == "kp-independent" and kc in lessons._question_target_kcs.get(qid, [])
+    ]
+    assert whole_kp, f"{kc}: no independent problems — nothing can be integrated"
+    for qid in whole_kp:
+        assert lessons.is_integrated(qid, exposure), \
+            f"{kc}: q{qid} needs the whole KP but is not reported integrated"
+    for seg in segs:
+        for qid in seg["drills"]:
+            assert not lessons.is_integrated(qid, exposure), \
+                f"{kc}: q{qid} is one concept's drill and must never read as integrated"
+
+
+def check_a_rung_reports_the_support_it_promises():
+    """`faded` promises blanks; `partial` promises an example. Not each other.
+
+    One boolean covering both rungs let each cover for the other: a faded drill
+    with only an example still read as "most of the solution is written", and a
+    partial one with only blanks still read as "read the example above". Both
+    are reachable — the queue falls back to the unfiltered pool when a rung's
+    own drills are spent — and both describe a page the learner is not looking
+    at.
+    """
+    from app import lessons
+    lessons._load()
+    with_example = next(iter(lessons._applied_with_example), None)
+    assert with_example, "no drill has a worked example — the third rung is empty"
+
+    assert not lessons.rung_support(with_example, "faded", None), \
+        "a worked example is being counted as blanks on the faded rung"
+    assert lessons.rung_support(with_example, "faded", "def solve():\n    return _____"), \
+        "blanks in the starter are not being counted on the faded rung"
+    assert lessons.rung_support(with_example, "partial", None), \
+        "a worked example is not being counted on the rung that promises one"
+    assert not lessons.rung_support(0, "partial", "def solve():\n    return _____"), \
+        "blanks are standing in for the example the partial rung promises"
+    for stage in ("worked", "solo", ""):
+        assert lessons.rung_support(0, stage, None), \
+            f"stage {stage!r} promises no scaffold and must not report one missing"
+
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
@@ -162,6 +209,7 @@ if __name__ == '__main__':
         check_public_api,
         check_invariants,
         check_a_kp_is_taught_one_concept_at_a_time,
+        check_a_rung_reports_the_support_it_promises,
     ]
     for fn in checks:
         try:

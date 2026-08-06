@@ -337,15 +337,25 @@ const ConceptTopbar = (() => {
      own description is a promise the page does not keep — that is the
      "it says worked when it's actually a solo problem" report. The dot stays
      where the mastery record puts it (the rung is what the next promotion is
-     measured against) and says what is actually there instead. */
-  const NO_SUPPORT_BLURB =
-    "Nothing was written for this one — no example, no blanks. Write it unaided.";
+     measured against) and says what is actually there instead.
+
+     Named per rung, because the two supported rungs promise different things
+     and a message covering both would be wrong on one of them: a faded drill
+     with no blanks still has no example either, but a worked-example rung with
+     no example may well have blanks, and telling that learner "no blanks" is
+     the same kind of lie in the other direction. */
+  const NO_SUPPORT_BLURB = {
+    faded: "No blanks were written for this one — write it unaided.",
+    worked: "No example was written for this one — write it unaided.",
+  };
+  const _missingBlurb = (id) =>
+    NO_SUPPORT_BLURB[id] || "The scaffold for this rung is not on the page — write it unaided.";
 
   const _stagesHtml = (stage, support) => {
     const active = _index(stage);
     return STAGES.map((s, i) => {
       const state = i < active ? "is-done" : i === active ? "is-active" : "is-todo";
-      const blurb = i === active && support === false ? NO_SUPPORT_BLURB : s.blurb;
+      const blurb = i === active && support === false ? _missingBlurb(s.id) : s.blurb;
       const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${blurb}`;
       return (
         `<li class="stage-dot ${state}" data-stage="${esc(s.id)}" title="${esc(title)}"` +

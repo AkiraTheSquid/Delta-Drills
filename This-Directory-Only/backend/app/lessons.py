@@ -32,6 +32,9 @@ _LESSONS_DIR = _REPO_ROOT / "Local_Deployed_Shared" / "lessons"
 
 _loaded = False
 _question_target_kcs: Dict[int, List[str]] = {}
+# question_id -> the KP section it was authored into (`kp-faded`, `kp-guided`,
+# `kp-independent`). The fifth rung reads it: see `is_integrated`.
+_question_source: Dict[int, str] = {}
 # kc -> {"kc", "kc_title", "lesson_id", "lesson_title", "topic", "kp_title"}
 _kc_gate_info: Dict[str, dict] = {}
 # question_id -> the KP author's own faded starter (the `_____` blanks).
@@ -81,6 +84,8 @@ def _load() -> None:
         targets = tags.get("target_kcs") or []
         if isinstance(targets, list) and targets:
             _question_target_kcs[qid] = [str(kc) for kc in targets]
+        if tags.get("source"):
+            _question_source[qid] = str(tags["source"])
 
     registry = _read_json("kc_registry.json") or {}
     kc_titles = {kc["id"]: kc.get("title", kc["id"]) for kc in registry.get("kcs", [])}
@@ -181,6 +186,32 @@ def has_worked_example(question_id: int) -> bool:
     return int(question_id) in _applied_with_example
 
 
+def rung_support(question_id: int, stage: str, scaffold: Optional[str]) -> bool:
+    """Is the support THIS rung promises actually on the page?
+
+    The two supported rungs promise different things and one boolean covering
+    both let each cover for the other. `faded` promises blanks — most of the
+    solution written, supply the rest — and a worked example does not supply
+    them. `partial` promises an example directly above the problem, and blanks
+    are not one. Reporting "supported" whenever either exists means a rung can
+    be labelled with a scaffold of the wrong kind, which reads to the learner
+    as the app describing a page they are not looking at.
+
+    Both mismatches are reachable: `narrow_to_next_kc` falls back to the
+    unfiltered pool when a rung's own drills are spent, so a KC with no faded
+    drill can serve an applied problem at `faded`, and one with no applied
+    section can serve a faded drill at `partial`.
+
+    Anything else is True — `worked` is a page, `solo` is the rung defined by
+    having no support, and neither is making a promise this could break.
+    """
+    if stage == "faded":
+        return bool(scaffold)
+    if stage == "partial":
+        return has_worked_example(question_id)
+    return True
+
+
 def authored_faded_starter(question_id: int) -> Optional[str]:
     """The KP author's faded version of this question, if one was written.
 
@@ -217,6 +248,13 @@ def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
     what the rung is. What changes is what the learner is told they are doing.
     """
     _load()
+    # The QUESTION has to be one of the whole-KP problems. Exposure alone says
+    # the learner has read every concept; it says nothing about what is on the
+    # screen, and the queue can fall back to the unfiltered pool when a rung is
+    # spent — which would put the fifth rung's label on a fill-in-the-blank
+    # drill for one of the three ideas.
+    if _question_source.get(int(question_id)) != "kp-independent":
+        return False
     for kc in _question_target_kcs.get(int(question_id), []):
         segments = _kc_segments.get(kc) or []
         if len(segments) < 2:
@@ -301,9 +339,14 @@ def segment_drill(question, kc_exposure: Dict[str, str], served_ids) -> Optional
         if kc in kc_exposure or kc not in _kc_gate_info:
             continue
         # Only the FIRST unexposed concept matters — it is the one being taught.
+        # A concept may declare two faded drills (a fading series: the second
+        # asks for the same idea one step out), so an unusable first one is a
+        # reason to look at the second, not to give up on the concept.
         for qid in _segment_step(kc, kc_exposure)["drills"]:
-            if qid == int(question.id) or qid in served_ids:
-                return None
+            if qid == int(question.id):
+                return None  # the queue already picked it — nothing to swap
+            if qid in served_ids:
+                continue
             drill = get_question_by_id(qid)
             if drill is not None and drill.subtopic == question.subtopic:
                 return drill

@@ -240,17 +240,45 @@ def attach_example_run(faded_starter, question_starter, fn_name="solve"):
     # Imports the block needs and the faded starter does not already make. The
     # fixture line is usually `t.tensor(...)`, so a missing `import torch as t`
     # turns a helpful demo into a NameError.
-    # Compared by MODULE, not by line: `import torch` and `import torch as t`
-    # are the same import wearing different names, and matching on the text
-    # emitted both, one above the other.
-    def _module(line):
-        parts = line.split()
-        return parts[1].split(".")[0] if len(parts) > 1 else line.strip()
+    # Compared by the NAMES an import binds, not by its text and not by its
+    # module. Matching on text emitted `import torch` and `import torch as t`
+    # one above the other; matching on the module root swallows the second one,
+    # and the block below it then calls `t.tensor` against a name nothing
+    # bound. An import is redundant only when every name it would introduce is
+    # already there.
+    def _bindings(line):
+        try:
+            node = ast.parse(line.strip()).body[0]
+        except (SyntaxError, IndexError):
+            return frozenset({line.strip()})
+        names = set()
+        for alias in getattr(node, "names", []):
+            names.add(alias.asname or alias.name.split(".")[0])
+        return frozenset(names)
 
-    have = {_module(l) for l in faded_starter.splitlines() if _IMPORT_LINE.match(l)}
+    have = set()
+    for line in faded_starter.splitlines():
+        if _IMPORT_LINE.match(line):
+            have |= _bindings(line)
+    # ...and only when the grafted block actually says the name. The question's
+    # starter imports whatever its own fixture needed; copying an import the
+    # block never uses puts a line of someone else's setup in the middle of the
+    # learner's file, below the function they are editing.
+    # Import lines are excluded from the scan or they answer for each other:
+    # `import torch as t` contains the identifier `torch`, which would make the
+    # question's own `import torch` look needed by a file that only ever says
+    # `t.`.
+    body = [
+        l for l in (faded_starter + "\n" + block).splitlines()
+        if not _IMPORT_LINE.match(l)
+    ]
+    # `(?<![.\w])` so an ATTRIBUTE never counts as a use of the bare name:
+    # `einops.rearrange(...)` needs `import einops`, not
+    # `from einops import rearrange`, and matching the attribute copied both.
+    used = set(re.findall(r"(?<![.\w])[A-Za-z_]\w*", "\n".join(body)))
     missing = [
         l for l in question_starter.splitlines()
-        if _IMPORT_LINE.match(l) and _module(l) not in have
+        if _IMPORT_LINE.match(l) and (_bindings(l) - have) & used
     ]
     lead = "\n".join(missing) + "\n" if missing else ""
     return faded_starter.rstrip("\n") + "\n\n\n" + lead + block + "\n"
