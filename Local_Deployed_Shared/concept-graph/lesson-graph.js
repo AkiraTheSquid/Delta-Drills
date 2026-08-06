@@ -91,18 +91,18 @@
       const r = window.computeAtomReadiness(kc, -1);
       if (r >= 0) return { r, source: "atom", coveredW: 1 };
     }
-    const s = _persistedState();
+    const s = _learnerState();
     const raw = s && s.atom_mastery ? s.atom_mastery[kc] : undefined;
     if (Number.isFinite(raw)) {
       return { r: _decay(raw, s.atom_last_ts ? s.atom_last_ts[kc] : null), source: "atom", coveredW: 1 };
     }
-    // Crosswalk read: this KC's own evidence, held under atom ids the graph
-    // does not share. Only the `measured` tier qualifies — for a topic proxy
-    // the atoms are coarser than the concept, so this returns null and the
-    // subtopic fallback below handles it, which at least says what it is.
-    if (s && s.atom_mastery && typeof window.kcCrosswalkReadiness === "function") {
-      const x = window.kcCrosswalkReadiness(kc, s.atom_mastery, s.atom_last_ts, _decay);
-      if (x) return { r: x.r, source: "atom", via: x.atoms, ts: x.ts, coveredW: x.coveredW };
+    // This KC's own evidence, under atom ids the graph does not share: the
+    // server's reading first (the same code that gates practice), the browser's
+    // crosswalk underneath for guests. Only the `measured` tier qualifies — a
+    // topic proxy falls through to the labelled subtopic estimate below.
+    if (typeof window.kcLatticeReadiness === "function") {
+      const x = window.kcLatticeReadiness(kc, lattice, s, _decay);
+      if (x) return x;
     }
     // Subtopic fallback. `p` (correctness rate) is the only field on the same
     // [0,1] scale as a posterior — `baseline` is a difficulty-weighted score in
@@ -123,7 +123,7 @@
   };
   const kcReadiness = (kc) => kcReadinessInfo(kc).r;
   const kcLastTs = (kc) => {
-    const s = _persistedState();
+    const s = _learnerState();
     if (!s || !s.atom_last_ts) return null;
     if (s.atom_last_ts[kc]) return s.atom_last_ts[kc];
     // Same disjoint-id problem as the mastery read: for a measured KC the
@@ -1199,7 +1199,7 @@
       const res = await fn("/api/practice/kc-lattice");
       if (!res || !res.ok) { lattice = null; return; }
       const data = await res.json();
-      lattice = data && data.kcs ? data : null;
+      lattice = window.kcLatticeNote ? window.kcLatticeNote(data) : (data && data.kcs ? data : null);
     } catch (_) {
       lattice = null;   // guest / offline — fall back to the local mirror
     }
