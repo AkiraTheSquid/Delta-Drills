@@ -32,7 +32,7 @@ const LadderUI = (() => {
 
   const STAGE_BLURB = {
     faded: "Most of the solution is written for you — supply the last step.",
-    partial: "Half of the solution is written for you — finish it.",
+    partial: "Read the example above, then write this one yourself.",
     solo: "No scaffold on this one. You have earned it.",
   };
 
@@ -214,6 +214,11 @@ const LadderUI = (() => {
       // by side ("Fill in the rest" beside a dot reading "Faded").
       eyebrow: "Concept",
       stage,
+      // False when the backend could build neither blanks nor an example for
+      // this particular drill — see `ladder_support` in practice_schemas. The
+      // rung still stands; the dot's description stops claiming a scaffold
+      // that is not on the page.
+      support: question.ladder_support !== false,
       estimate: question.ladder_estimate || null,
     });
   };

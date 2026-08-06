@@ -42,7 +42,7 @@
         {
          "question_id": 224,
          "prompt": "Turn a nested Python list of equal-length integer rows into a 2-D tensor.",
-         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t._____(rows)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t._____(rows)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t.tensor(rows)\n"
         }
        ]
@@ -58,7 +58,7 @@
         {
          "question_id": 482,
          "prompt": "Count the axes and the elements. Remember which one takes parentheses.",
-         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n"
         }
        ]
@@ -74,7 +74,7 @@
         {
          "question_id": 484,
          "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
-         "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
+         "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
         }
        ]
@@ -84,19 +84,19 @@
       {
        "question_id": 224,
        "prompt": "Turn a nested Python list of equal-length integer rows into a 2-D tensor.",
-       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t._____(rows)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t._____(rows)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a 2-D tensor whose i-th row holds rows[i].\"\"\"\n    return t.tensor(rows)\n"
       },
       {
        "question_id": 482,
        "prompt": "Count the axes and the elements. Remember which one takes parentheses.",
-       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t._____(rows)\n    return (a._____, a._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n"
       },
       {
        "question_id": 484,
        "prompt": "Two tensors, two independent questions. Compare each piece of metadata on its\nown.",
-       "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\nimport torch\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
+       "starter_code": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t._____(rows_a)\n    b = t._____(rows_b)\n    return (a._____ == b._____, a._____ == b._____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(solve(*example))\n",
        "solution": "import torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (do the shapes match?, do the dtypes match?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype)\n"
       }
      ],
@@ -104,7 +104,8 @@
       {
        "question_id": 523,
        "hints_markdown": "Your turn: the same three questions, but for the TRANSPOSE and for\n`.contiguous()` rather than for `.reshape` and `.clone()`.\n\n1. Two of the three answers are memory questions, not value questions: does\n   the tensor you got back read the ORIGINAL block, or a fresh one?\n   Transposing never moves data; `.contiguous()` exists precisely to ask for\n   the move.\n2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;\n   `.data_ptr()` reports which block each one reads.\n3. `view = a.T`, `packed = view.contiguous()`, then return\n   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),\n   packed.tolist())`.",
-       "worked_example_code": "import torch as t\n\na = t.tensor([[1, 2], [3, 4], [5, 6]])\n\n# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead\n# of 3 rows of 2. Nothing is copied, so both names read one buffer.\nview = a.reshape(2, 3)\nassert view.data_ptr() == a.data_ptr()\n\n# .clone() is the opposite request: give me my own block.\ncopy = a.clone()\nassert copy.data_ptr() != a.data_ptr()\n\n# Sharing is about memory, not values \u2014 the copy holds the same numbers.\nassert copy.tolist() == a.tolist()\nprint(\"view shares a's block:\", view.data_ptr() == a.data_ptr())\nprint(\"copy shares a's block:\", copy.data_ptr() == a.data_ptr())\nprint(\"view reads as:\", view.tolist())\n"
+       "worked_example_code": "import torch as t\n\na = t.tensor([[1, 2], [3, 4], [5, 6]])\n\n# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead\n# of 3 rows of 2. Nothing is copied, so both names read one buffer.\nview = a.reshape(2, 3)\nassert view.data_ptr() == a.data_ptr()\n\n# .clone() is the opposite request: give me my own block.\ncopy = a.clone()\nassert copy.data_ptr() != a.data_ptr()\n\n# Sharing is about memory, not values \u2014 the copy holds the same numbers.\nassert copy.tolist() == a.tolist()\nprint(\"view shares a's block:\", view.data_ptr() == a.data_ptr())\nprint(\"copy shares a's block:\", copy.data_ptr() == a.data_ptr())\nprint(\"view reads as:\", view.tolist())\n",
+       "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (does a.T share a's buffer?, does its copy?, the transposed values).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (view.data_ptr() == a.data_ptr(),\n            packed.data_ptr() == a.data_ptr(),\n            packed._____())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n"
       }
      ],
      "applied_items": [
@@ -246,7 +247,8 @@
       {
        "question_id": 48,
        "hints_markdown": "1. Nothing is being constructed from scratch here \u2014 you need a COPY of v\n   that you are allowed to write into.\n2. Odd indices are a slice with a step, and assigning a scalar into a\n   slice broadcasts it across every selected position.\n3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates\n   the caller's tensor, which the drill checks for.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -303,12 +305,14 @@
       {
        "question_id": 76,
        "hints_markdown": "1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and\n   top-bottom (reverse the order of rows). Both are single `t.flip` calls.\n2. `t.flip` takes the axes to reverse as a list. Which axis number reverses\n   each row? Which reverses the row order?\n3. `t.flip(z, [1])` and `t.flip(z, [0])` \u2014 and because flip copies, the\n   \"input must not be modified\" requirement is already satisfied.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return t._____(z, [1]), t._____(z, [0])\n\n\nexample = t.arange(6).reshape(2, 3)\nprint(solve(example))\n"
       },
       {
        "question_id": 506,
        "hints_markdown": "1. A slice, not an index \u2014 you want a run of elements, not one element.\n2. Leaving the start empty means 'from the beginning'.\n3. `x[:k]`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -408,7 +412,8 @@
       {
        "question_id": 524,
        "hints_markdown": "1. The exclusive stop does not care which way you are counting. Going down,\n   \"stops before the stop\" means the stop has to sit one step PAST `low`.\n2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what\n   `?` makes `low` the last value actually produced.\n3. `t.arange(high, low - 1, -1)` \u2014 the `- 1` is the inclusive-endpoint fix\n   from q229, pointed the other way.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch\nimport torch as t\n\ndef solve(high, low):\n    \"\"\"Integers from high down to low, both endpoints included.\"\"\"\n    return t._____(high, low - 1, -1)\n\n\nexample = (5, 1)\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -507,7 +512,8 @@
       {
        "question_id": 87,
        "hints_markdown": "1. Torch has a histogram counter that takes the bin count and the range\n   directly \u2014 no bucketing by hand.\n2. It returns FLOAT counts. The drill wants integers, so the last step is\n   a dtype conversion.\n3. `t.histc(z, bins=bins, min=0.0, max=1.0).to(t.int64)` \u2014 this is the\n   dtype lesson in miniature: the numbers were already right, only their\n   type was wrong.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z, bins):\n    counts = t.histc(z, bins=bins, min=0.0, max=1.0)\n    return counts._____(t.int64)\n\n\nexample = t.tensor([0.1, 0.5, 0.55, 0.9])\nprint(solve(example, 5))\n"
       }
      ],
      "applied_items": [],
@@ -559,17 +565,20 @@
       {
        "question_id": 36,
        "hints_markdown": "1. You get a 1-D tensor and a target 3-D shape whose product equals its length \u2014\n   this is a pure reorganize-the-metadata task.\n2. \"Same row-major order (the last axis varies fastest)\" in the prompt is\n   describing reshape's DEFAULT fill order \u2014 no reordering needed on your part.\n3. One method call on the input tensor does the whole job.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, shape):\n    return a._____(shape)\n\n\nexample = t.arange(12.0)\nprint(solve(example, (2, 2, 3)))\n"
       },
       {
        "question_id": 490,
        "hints_markdown": "1. Any shape in, exactly one axis out.\n2. You are not choosing a new shape, you are removing all structure \u2014 so no\n   dimensions need naming.\n3. `x.flatten()`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x._____()\n\n\nexample = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(solve(example))\n"
       },
       {
        "question_id": 491,
        "hints_markdown": "1. You know one of the two numbers in the target shape. You do not know the\n   other, and you should not compute it.\n2. Reshape accepts -1 in exactly one position, meaning 'work this out'.\n3. `x.reshape(-1, cols)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x._____(-1, cols)\n\n\nexample = (t.arange(6), 3)\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -675,12 +684,14 @@
       {
        "question_id": 487,
        "hints_markdown": "1. The whole tensor at once \u2014 there is no index to loop over.\n2. An arithmetic operator applied to a tensor is applied to every element.\n3. `x * 2`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       },
       {
        "question_id": 488,
        "hints_markdown": "1. You need the magnitude of each element, sign discarded.\n2. It is a method on the tensor, and it returns a NEW tensor rather than\n   editing yours \u2014 which is what keeps the input unchanged.\n3. `x.abs()`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the absolute value of every element.\"\"\"\n    return x._____()\n\n\nexample = t.tensor([-1.5, 2.0, -3.25])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -782,12 +793,14 @@
       {
        "question_id": 495,
        "hints_markdown": "1. Two steps: collapse the tensor to one number, then leave PyTorch behind.\n2. A whole-tensor reduction returns a 0-dimensional TENSOR, not a Python\n   number \u2014 the test checks which one you handed back.\n3. `x.sum().item()`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the sum of every element as a Python number.\"\"\"\n    return x._____()._____()\n\n\nexample = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nprint(solve(example))\n"
       },
       {
        "question_id": 496,
        "hints_markdown": "1. Both halves are whole-tensor questions, so neither needs an axis.\n2. The count is metadata you already know how to read \u2014 it is not a\n   reduction, and it does not need .item().\n3. `(x.mean().item(), x.numel())`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (mean, count) over the whole tensor.\"\"\"\n    return (x._____()._____(), x._____())\n\n\nexample = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -892,12 +905,14 @@
       {
        "question_id": 516,
        "hints_markdown": "1. A NEW tensor, so the input has to survive untouched.\n2. Sorting returns both values and the positions they came from; you want\n   the values half, and there is a keyword for the direction.\n3. `t.sort(z, descending=True).values`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return the values of z, largest first.\"\"\"\n    return t._____(z, _____=True)._____\n\n\nexample = t.tensor([0.5, 2.0, 1.0])\nprint(solve(example))\n"
       },
       {
        "question_id": 517,
        "hints_markdown": "1. Not the sorted values \u2014 where each sorted value WOULD have come from.\n2. The result is an index tensor the same length as z, and result[0] is the\n   position of the smallest element.\n3. `t.argsort(z)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return the POSITIONS that would sort z ascending.\"\"\"\n    return t._____(z)\n\n\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -997,7 +1012,8 @@
       {
        "question_id": 217,
        "hints_markdown": "Tile a 2-D block `reps_r` times vertically and `reps_c` times horizontally.\nOne `block.repeat(reps_r, reps_c)` call does it \u2014 and note that this is the\n*block* operation, not the per-element one.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(block, reps_r, reps_c):\n    return block._____((reps_r, reps_c))\n\n\nprint(solve(t.tensor([[0, 1], [1, 0]]), 2, 2))\n"
       }
      ],
      "applied_items": [],
@@ -1057,7 +1073,8 @@
       {
        "question_id": 42,
        "hints_markdown": "1. A random tensor of a given 3-D shape, uniform in [0, 1) \u2014 this drill uses\n   the global stream, so no generator argument is needed.\n2. The sampling functions share the shape convention with constructors: pass\n   the whole tuple.\n3. `t.rand(shape)` \u2014 the grader checks shape, dtype, range, and that values\n   vary (so no constant tensors).",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(shape):\n    return t._____(shape)\n\n\nt.manual_seed(0)\nexample = (3, 3, 3)\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1133,12 +1150,14 @@
       {
        "question_id": 508,
        "hints_markdown": "1. This is the multiplication that is NOT matrix multiplication.\n2. Entry [i][j] depends only on the two entries at [i][j] \u2014 nothing is summed,\n   so no axis is contracted.\n3. `a * b`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       },
       {
        "question_id": 509,
        "hints_markdown": "1. Both answers come from the same two matrices; only the operator changes.\n2. `*` pairs entries in place; `@` contracts a's columns against b's rows.\n3. `((a * b).tolist(), (a @ b).tolist())`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return (elementwise product, matrix product) for two square matrices.\"\"\"\n    return ((a * b)._____(), (a @ b)._____())\n\n\nexample = (t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[5.0, 6.0], [7.0, 8.0]]))\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -1245,7 +1264,8 @@
       {
        "question_id": 85,
        "hints_markdown": "1. Build the per-row test first: a row is dropped when EVERY entry is\n   zero. That is a reduction over dim=1 producing one bool per row.\n2. You want to keep the rows where that is false \u2014 negate the mask with\n   `~`, then index the tensor with it.\n3. `z[~(z == 0).all(dim=1)]` \u2014 an all-zero input drops to a (0, c) tensor\n   by itself, which is exactly the required empty result.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return z[~(z == 0)._____(dim=1)]\n\n\nexample = t.tensor([[0, 0], [3, 0], [0, 0]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1319,7 +1339,8 @@
       {
        "question_id": 240,
        "hints_markdown": "1. Rounding away from zero is two different roundings depending on sign \u2014\n   which is a selection problem, not an arithmetic one.\n2. One way avoids the branch entirely: round the MAGNITUDE up, then put\n   the sign back.\n3. `t.sign(x) * t.ceil(t.abs(x))` \u2014 and check zero: sign(0) is 0, so exact\n   zeros stay exactly zero.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return t._____(x) * t._____(t._____(x))\n\n\nexample = t.tensor([1.2, -3.7, 0.5, -2.0])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1370,7 +1391,8 @@
       {
        "question_id": 86,
        "hints_markdown": "1. You need a (k, 2) tensor of [row, col] coordinates in scan order \u2014 which\n   spelling produces coordinate rows rather than per-dim tensors?\n2. Zero rows for an all-zero mask happens automatically \u2014 an empty result is\n   shape (0, 2).\n3. One call, no post-processing.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return t._____(z)\n\n\nexample = t.tensor([[0, 1], [1, 0]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1468,7 +1490,8 @@
       {
        "question_id": 1,
        "hints_markdown": "1. Per row means the reduction runs ALONG the columns \u2014 which axis number\n   is that for a 2-D tensor?\n2. You want the position of the max, not the max itself, and torch already\n   breaks ties leftmost.\n3. `z.argmax(dim=1)` \u2014 first-occurrence tie-breaking is the documented\n   default, so no extra work is needed.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return z._____(dim=1)\n\n\nexample = t.tensor([[1, 9, 3], [7, 2, 5]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1564,7 +1587,8 @@
       {
        "question_id": 136,
        "hints_markdown": "1. Row swap is a fancy-index assignment: read the two rows in one order,\n   write them back in the other.\n2. Work on a clone \u2014 the drill checks the input is untouched \u2014 and\n   remember i may equal j, which must still be a no-op.\n3. `out = z.clone()`, then `out[[i, j]] = out[[j, i]]`. The right-hand\n   side is materialized before the write, so no aliasing problem.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -1622,7 +1646,8 @@
       {
        "question_id": 241,
        "hints_markdown": "1. Values appearing in BOTH arrays, each exactly once, ascending \u2014 that\n   sentence is the contract of one set function.\n2. The `*1d` family: intersect, union, setdiff. Which one?\n3. Empty intersection falls out naturally as an empty array \u2014 no special\n   case needed.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\ndef solve(a, b):\n    ua = t.unique(a)\n    return ua[t._____(ua, b)]\n\n\na = t.tensor([4, 1, 3, 2, 3])\nb = t.tensor([3, 4, 4, 8, 0])\nprint(solve(a, b))\n"
       }
      ],
      "applied_items": [],
@@ -1748,7 +1773,8 @@
       {
        "question_id": 78,
        "hints_markdown": "1. Upper-triangular INCLUDING the diagonal is the default offset \u2014 no\n   `diagonal=` argument needed.\n2. Build a full tensor of the right dtype first, then let the triangular\n   helper zero out the lower part.\n3. `t.triu(t.ones((n, n), dtype=t.bool))` \u2014 set the dtype at construction;\n   converting afterwards is an extra pass, and an int tensor would fail\n   the bool check.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    return t._____(t._____((n, n), dtype=t.bool))\n\n\nprint(solve(3))\n"
       }
      ],
      "applied_items": [],
@@ -1848,7 +1874,8 @@
       {
        "question_id": 525,
        "hints_markdown": "1. The sort-by recipe is unchanged \u2014 argsort the key column, fancy-index the\n   rows. Only the DIRECTION differs, and direction is a property of the\n   order, not of the indexing.\n2. `z[:, k].argsort()` is the ascending row order; reversing an order is the\n   same `.flip(0)` the top-k segment used.\n3. `z[z[:, k].argsort().flip(0)]` \u2014 one expression, rows still intact.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -1903,7 +1930,8 @@
       {
        "question_id": 18,
        "hints_markdown": "1. Every NaN becomes 0.0, everything else unchanged, input not modified \u2014\n   detection then repair.\n2. There is a single packaged function whose keyword is literally `nan=`.\n3. `t.nan_to_num(z, nan=0.0)` \u2014 or the copy + masked-assignment form; both\n   satisfy \"do not modify the input\" (why?).",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return t._____(z, _____=0.0)\n\n\nexample = t.tensor([0.5, t.nan, 1.0])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -1961,7 +1989,8 @@
       {
        "question_id": 27,
        "hints_markdown": "1. Ones on the outer ring, zeros inside, same shape \u2014 grow or modify?\n2. Build the ones first; the interior is a single two-axis slice.\n3. `z[1:-1, 1:-1] = 0.0` \u2014 and check the task's promise about n=1, n=2\n   against what an empty slice assignment does.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2034,7 +2063,8 @@
       {
        "question_id": 73,
        "hints_markdown": "1. Torch has no `ndenumerate`, so the (row, col) pairs have to come from\n   the shape itself.\n2. Row-major order is just the outer loop over rows and the inner loop\n   over columns \u2014 a nested comprehension gives that ordering for free.\n3. `rows, cols = z.shape`, then `[((i, j), z[i, j].item()) for i in\n   range(rows) for j in range(cols)]`. `.item()` is required: the drill\n   wants plain Python numbers, not 0-d tensors.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    rows, cols = z.shape\n    return [((i, j), z[i, j]._____()) for i in range(rows) for j in range(cols)]\n\n\nexample = t.arange(4).reshape(2, 2)\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -2119,12 +2149,14 @@
       {
        "question_id": 499,
        "hints_markdown": "1. Do NOT tile the bias. Write the addition and let the shapes meet.\n2. Shapes align from the RIGHT: a (cols,) vector already lines up with the\n   last axis of a (rows, cols) matrix, and the missing axis is treated as 1.\n3. `x + bias`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       },
       {
        "question_id": 500,
        "hints_markdown": "1. You are asked for the resulting shape, not for a rule recited back.\n2. There is a function that takes the two SHAPES and returns the combined one,\n   without building anything \u2014 then convert its torch.Size to a plain tuple.\n3. `tuple(t.broadcast_shapes(a.shape, b.shape))`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the shape broadcasting a and b together produces.\"\"\"\n    return tuple(t._____(a.shape, b.shape))\n\n\n\nexample = (t.zeros(3, 1), t.zeros(1, 4))\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -2202,12 +2234,14 @@
       {
        "question_id": 503,
        "hints_markdown": "1. One number per row means the COLUMN axis has to go.\n2. The axis you name in `dim=` is the one that disappears, so name the one\n   you are collapsing, not the one you are keeping.\n3. `x.sum(dim=1)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the sum of each ROW.\"\"\"\n    return x._____(_____=1)\n\n\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n"
       },
       {
        "question_id": 504,
        "hints_markdown": "1. Same reduction as before, but the result must still have two axes.\n2. There is a keyword that leaves the collapsed axis behind at length 1,\n   which is exactly what a later broadcast needs.\n3. `x.sum(dim=1, keepdim=True)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the row sums with the reduced axis KEPT.\"\"\"\n    return x._____(_____=1, _____=True)\n\n\nexample = t.tensor([[1, 2, 3], [10, 20, 30]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -2307,7 +2341,8 @@
       {
        "question_id": 154,
        "hints_markdown": "1. Two steps, in order: standardize per COLUMN, then clip. Column\n   statistics reduce over dim=0.\n2. Population std means dividing by n, not n-1 \u2014 torch's default is the\n   sample version, so one keyword has to change.\n3. `(z - z.mean(dim=0)) / z.std(dim=0, correction=0)`, then `t.clip(...,\n   -limit, limit)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z, limit):\n    standardized = (z - z.mean(dim=0)) / z.std(dim=0, correction=0)\n    return t._____(standardized, -limit, limit)\n\n\nexample = t.tensor([[1.0, 10.0], [2.0, 20.0], [30.0, 30.0]])\nprint(solve(example, 1.0))\n"
       }
      ],
      "applied_items": [],
@@ -2374,7 +2409,8 @@
       {
        "question_id": 162,
        "hints_markdown": "1. Each row becomes a probability distribution \u2014 divide by what, per row,\n   kept in which shape?\n2. Zero rows must SURVIVE as zeros \u2014 that's the masked division, not an\n   if-statement.\n3. `out = t.zeros_like(z)`, `nz = (sums != 0).squeeze(1)`,\n   `out[nz] = z[nz] / sums[nz]`, with `sums = z.sum(dim=1, keepdim=True)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2481,7 +2517,8 @@
       {
        "question_id": 68,
        "hints_markdown": "1. Non-decreasing is a statement about consecutive PAIRS, and the pairwise\n   gaps are exactly what one function gives you.\n2. Once you have the gaps, the whole question is whether all of them are\n   >= 0.\n3. `bool(t.all(t.diff(z) >= 0))` \u2014 the `bool()` matters, the drill wants a\n   Python bool. A length-1 tensor gives an empty diff, and `all()` of\n   nothing is True, which is the answer you want.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return bool(t._____(t._____(z) >= 0))\n\n\nexample = t.tensor([1, 2, 2, 4, 5])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -2601,7 +2638,8 @@
       {
        "question_id": 514,
        "hints_markdown": "1. Do not reach for the built-in dot product \u2014 the question wants the two\n   steps it is made of.\n2. Multiply the pairs elementwise, then collapse the result to one number.\n3. `float((a * b).sum())`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the dot product built by hand: multiply, then sum.\"\"\"\n    return float((a * b)._____())\n\n\nexample = (t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, -5.0, 6.0]))\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -2663,7 +2701,8 @@
       {
        "question_id": 146,
        "hints_markdown": "1. Three streams interleaved position by position \u2014 the pair-and-ravel trick\n   still works, but the strided form is clearer: what are the three residue\n   classes?\n2. Allocate the result (`t.empty(3 * n, dtype=...)` \u2014 dtype from the inputs\n   via `t.result_type`), then one slice assignment per stream.\n3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2717,7 +2756,8 @@
       {
        "question_id": 134,
        "hints_markdown": "1. The most frequent value of a non-negative integer array, smallest on ties\n   \u2014 which counting tool gives you position-is-value output?\n2. Once counts are dense, \"most frequent value\" is the INDEX of the largest\n   count.\n3. `int(t.bincount(x).argmax())` \u2014 convince yourself why ties come out\n   smallest for free.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return int(t._____(x)._____())\n\n\nexample = t.tensor([3, 1, 3, 2, 3, 1])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -2771,7 +2811,8 @@
       {
        "question_id": 526,
        "hints_markdown": "1. Same call, other end of the range. `topk` takes a keyword that decides\n   which end it keeps \u2014 no negation, no sort.\n2. `largest=False`. And with `sorted` left at its default the k smallest come\n   back ascending already, so there is nothing to flip here.\n3. `small = t.topk(z, k, largest=False)`, then return\n   `(small.values, small.indices)` \u2014 both halves off the one result.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2874,7 +2915,8 @@
       {
        "question_id": 527,
        "hints_markdown": "1. Read the contract first: the caller's own object has to change. That rules\n   out every spelling that builds a clamped tensor and hands it back.\n2. Clamping has a trailing-underscore form, `clamp_(lo, hi)`, and like every\n   underscore method it writes into the receiver's buffer.\n3. `x.clamp_(lo, hi)` and then `return x` \u2014 the call already returns that\n   same tensor, so returning `x` is just saying so plainly.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2924,7 +2966,8 @@
       {
        "question_id": 166,
        "hints_markdown": "1. Moving average over every window of n entries \u2014 the window view + mean\n   works; the cumsum route avoids materializing windows.\n2. cumsum: a window's sum is `c[i+n] \u2212 c[i]`. Handle the offset by prepending\n   a zero, or slice-shift the cumsum directly.\n3. Either implementation passes \u2014 write the one you can verify, check\n   endpoints against a tiny example by hand.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -2986,7 +3029,8 @@
       {
        "question_id": 127,
        "hints_markdown": "1. Same recipe, one point set against ITSELF \u2014 what plays the roles of x\n   and y?\n2. The diagonal should come out 0 (each point vs itself) \u2014 a free\n   correctness check.\n3. `diff = z[:, None, :] - z[None, :, :]`, then square-sum-sqrt over the\n   last axis.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    diff = z[:, None, :] - z[None, :, :]\n    return t._____((diff ** 2)._____(_____=2))\n\n\nexample = t.tensor([[0.0, 0.0], [3.0, 4.0]])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -3042,7 +3086,8 @@
       {
        "question_id": 137,
        "hints_markdown": "1. Mean per group label: a mean is a sum over a count \u2014 you can produce BOTH\n   per label with one function called twice.\n2. `t.bincount(s, weights=d)` gives grouped sums; the plain call gives\n   group sizes.\n3. Divide. Every label 0..max occurs at least once here, so no zero-division\n   guard is needed.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -3119,7 +3164,8 @@
       {
        "question_id": 528,
        "hints_markdown": "1. `z[1:]` is a view, so it shares bytes with z. Two different pointer\n   questions can be asked about that sharing, and they do not agree \u2014 which\n   is the whole reason this KP names both.\n2. `.untyped_storage().data_ptr()` names the BUFFER; `.data_ptr()` names\n   where this particular tensor starts reading, offset included.\n3. Storage pointers match; data pointers do not, because the slice starts one\n   element in. `tail.tolist()` is the third entry.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch\nimport torch as t\n\ndef solve(z):\n    \"\"\"(do z and z[1:] share a buffer?, do their data pointers match?, the slice).\"\"\"\n    tail = z[1:]\n    return (tail.untyped_storage().data_ptr() == z.untyped_storage().data_ptr(),\n            tail.data_ptr() == z.data_ptr(),\n            tail._____())\n\n\nexample = t.tensor([1.0, 2.0, 3.0])\nprint(solve(example))\n"
       }
      ],
      "applied_items": [],
@@ -3170,7 +3216,8 @@
       {
        "question_id": 171,
        "hints_markdown": "1. Every combination of one element per input array, as rows \u2014 meshgrid\n   generalizes to any number of inputs via unpacking.\n2. `indexing='ij'` keeps the first input's values varying slowest \u2014 check\n   the required row order in the prompt.\n3. Ravel each grid, stack as columns: shape (\u220f lengths, len(arrays)).",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\ndef solve(arrays):\n    grids = t.meshgrid(*arrays, indexing=\"ij\")\n    return t._____([g._____() for g in grids], dim=1)\n\n\nprint(solve([t.tensor([1, 2]), t.tensor([10, 20, 30])]))\n"
       }
      ],
      "applied_items": [],
@@ -3230,7 +3277,8 @@
       {
        "question_id": 156,
        "hints_markdown": "1. Entry [i, j] = sum of everything above-and-left inclusive \u2014 a cumulative\n   quantity, in TWO directions.\n2. One cumsum handles one direction; the directions compose.\n3. `t.cumsum(t.cumsum(z, dim=0), dim=1)` \u2014 check the bottom-right entry\n   equals z.sum().",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    return t._____(t._____(z, _____=0), _____=1)\n\n\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n"
       }
      ],
      "applied_items": [],
@@ -3288,7 +3336,8 @@
       {
        "question_id": 200,
        "hints_markdown": "1. One category per probability row via inverse-CDF \u2014 the three ingredients\n   are a per-row uniform, a per-row cumulative sum, and a first-crossing\n   search.\n2. Draw u with shape (rows, 1) so it broadcasts against the (rows, k)\n   cumsum.\n3. `(u < cs).to(t.int64).argmax(dim=1)` \u2014 why does argmax find the FIRST\n   crossing, and why does torch make you cast the mask first?",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\ndef solve(p, rng):\n    u = t.rand((p.shape[0], 1), generator=rng)\n    cs = t.cumsum(p, dim=1)\n    return (u < cs)._____(t.int64)._____(_____=1)\n\n\nprobs = t.tensor([[0.2, 0.8], [1.0, 0.0]])\nprint(solve(probs, t.Generator().manual_seed(0)))\n"
       }
      ],
      "applied_items": [],
@@ -3366,7 +3415,8 @@
       {
        "question_id": 529,
        "hints_markdown": "1. This is the first segment run backwards. Derive x and y for ONE point from\n   its r and theta, then let the vectors carry all n at once \u2014 same column\n   bookkeeping, opposite direction.\n2. `x = r * t.cos(theta)` and `y = r * t.sin(theta)` give two 1-D vectors.\n   The task wants points in ROWS, so those two now have to become COLUMNS.\n3. `t.stack([x, y], dim=1)` \u2014 `dim=1` makes them columns; `dim=0` would give\n   (2, n), the transpose of what was asked.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch\nimport torch as t\n\ndef solve(r, theta):\n    \"\"\"(n, 2) cartesian points, one per row, from polar radii and angles.\"\"\"\n    x = r * t.cos(theta)\n    y = r * t.sin(theta)\n    return t._____([x, y], dim=1)\n\n\nexample = (t.tensor([1.0, 2.0]), t.tensor([0.0, t.pi / 2]))\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -3462,7 +3512,8 @@
       {
        "question_id": 530,
        "hints_markdown": "1. Nothing new is needed. Leading axes broadcast, so the batched call is\n   spelled exactly like the single-system one \u2014 the shapes carry the batch.\n2. `t.linalg.solve(ms, vs)` with (p, n, n) against (p, n, 1): the shared\n   leading p is what makes it p independent systems rather than one big one.\n3. `return t.linalg.solve(ms, vs)` \u2014 one call, no loop over p, and the\n   (p, n, 1) result keeps each solution a column.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch\nimport torch as t\n\ndef solve(ms, vs):\n    \"\"\"(p, n, 1) stack of solutions, one per batched system.\"\"\"\n    return t.linalg._____(ms, vs)\n\n\nexample = (t.stack([t.eye(2) * 2.0, t.eye(2) * 4.0]),\n           t.tensor([[[2.0], [4.0]], [[4.0], [8.0]]]))\nprint(solve(*example))\n"
       }
      ],
      "applied_items": [],
@@ -3545,7 +3596,8 @@
       {
        "question_id": 271,
        "hints_markdown": "1. `(b, c, h, w) -> (b, h, w, c)`: four axes in, four out \u2014 permutation or\n   reduction?\n2. Name the input axes meaningfully (`bchw`) and write the output in the\n   required order.\n3. Every letter kept on both sides \u2014 nothing summed, values untouched:\n   `'bchw->bhwc'`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return t._____('bchw->bhwc', x)\n\n\nprint(solve(t.arange(8.0).reshape(1, 2, 2, 2)))\n"
       }
      ],
      "applied_items": [],
@@ -3661,7 +3713,8 @@
       {
        "question_id": 247,
        "hints_markdown": "1. Column sums keep column index `j`.\n2. Delete row index `i` from `'ij->?'`.\n3. Check against `a.sum(axis=0)` mentally.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a):\n    return t._____('ij->j', a)\n\n\nprint(solve(t.tensor([[1, 2], [3, 4]])))\n"
       }
      ],
      "applied_items": [],
@@ -3736,7 +3789,8 @@
       {
        "question_id": 270,
        "hints_markdown": "1. Sum of products of corresponding elements of two SAME-SHAPE rank-3 tensors \u2014\n   how many axes need pairing now?\n2. Three axes \u2192 three shared letters; the scalar answer means the output side is\n   empty.\n3. `'abc,abc->'` \u2014 the dot pattern generalizes by adding one letter per axis,\n   nothing else changes.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    return t._____('abc,abc->', a, b)\n\n\nprint(solve(t.ones((2, 2, 2)), t.ones((2, 2, 2))))\n"
       }
      ],
      "applied_items": [],
@@ -3785,7 +3839,8 @@
       {
        "question_id": 278,
        "hints_markdown": "1. All pairwise products of ONE vector's entries \u2014 an outer product of the\n   vector with which second operand?\n2. The same tensor can fill both slots; the spec doesn't change.\n3. `t.einsum('i,j->ij', v, v)` \u2014 and the result should equal its own\n   transpose (why?).",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(v):\n    return t._____('i,j->ij', v, v)\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0])))\n"
       }
      ],
      "applied_items": [],
@@ -3870,7 +3925,8 @@
       {
        "question_id": 262,
        "hints_markdown": "1. Two inputs: a matrix with axes `(i, j)` and a vector with axis `(j,)`. Which\n   letter do they share?\n2. The shared letter j is summed away (each row dots the vector); i is private\n   to the matrix and survives, one result per row.\n3. `'ij,j->i'`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    return t._____('ij,j->i', a, b)\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([10.0, 1.0])))\n"
       }
      ],
      "applied_items": [],
@@ -4031,7 +4087,8 @@
       {
        "question_id": 293,
        "hints_markdown": "1. Read the target carefully: a[k, 0, 0] fixes two indices at a CONSTANT.\n   Einsum's subscripts can repeat an index or drop it, but they cannot pin\n   one to zero.\n2. So this one is not a contraction at all. Which plain indexing\n   expression keeps the batch axis and takes position 0 of the other two?\n3. `a[:, 0, 0]` \u2014 the drill is here to mark the boundary: repeated-letter\n   tricks like `'bii->bi'` read the diagonal, not an arbitrary fixed\n   position.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
@@ -4132,7 +4189,8 @@
       {
        "question_id": 250,
        "hints_markdown": "1. Every batch item needs its OWN similarity matrix, so the batch index\n   survives to the output \u2014 it is not one of the summed indices.\n2. You need two views of the same tensor: one indexed `b i d`, one `b j\n   d`. Which single letter is missing from the output side?\n3. `t.einsum('bid,bjd->bij', a, a)` \u2014 `d` is contracted, `b` is carried,\n   `i` and `j` are the two vector slots.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(a):\n    return t._____('bid,bjd->bij', a, a)\n\n\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
       }
      ],
      "applied_items": [],
@@ -4186,7 +4244,8 @@
       {
        "question_id": 291,
        "hints_markdown": "1. Scale each channel by s[k], image shape unchanged \u2014 is the channel letter\n   kept or dropped?\n2. Same left-hand side as the weighted sum; the output keeps everything.\n3. `'chw,c->chw'` \u2014 check one entry of a scaled channel.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(img, s):\n    return t._____('chw,c->chw', img, s)\n\n\nprint(solve(t.ones((2, 1, 2)), t.tensor([2.0, 0.5])))\n"
       }
      ],
      "applied_items": [],
@@ -4239,7 +4298,8 @@
       {
        "question_id": 263,
        "hints_markdown": "1. Same scores with a HEADS axis: (b,h,q,d) and (b,h,k,d) \u2014 which letters\n   are along for the ride?\n2. b and h batch; d contracts; q, k combine.\n3. `'bhqd,bhkd->bhqk'` \u2014 the multi-head score tensor.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(q, k):\n    return t._____('bhqd,bhkd->bhqk', q, k)\n\n\nprint(solve(t.ones((1, 1, 1, 2)), t.ones((1, 1, 2, 2))))\n"
       }
      ],
      "applied_items": [],
@@ -4296,7 +4356,8 @@
       {
        "question_id": 258,
        "hints_markdown": "1. X\u1d40X, entry [p, q] = column p dotted with column q \u2014 which axis is shared\n   between the two copies of x, and which axes survive?\n2. The two surviving axes need DIFFERENT letters even though both come from\n   x's column axis.\n3. `'nd,ne->de'` \u2014 check one off-diagonal entry against a hand dot.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return t._____('nd,ne->de', x, x)\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n"
       }
      ],
      "applied_items": [],
@@ -4339,7 +4400,7 @@
         {
          "question_id": 345,
          "prompt": "Channels-last batch to channels-first.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, 'b h w c -> b c h w')\n"
         }
        ]
@@ -4349,7 +4410,7 @@
       {
        "question_id": 345,
        "prompt": "Channels-last batch to channels-first.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, 'b h w c -> b c h w')\n"
       }
      ],
@@ -4357,7 +4418,8 @@
       {
        "question_id": 388,
        "hints_markdown": "1. (b, t, d) to time-first (t, b, d) \u2014 name the three axes, reorder two of\n   them.\n2. All names appear on both sides \u2014 a pure permutation.\n3. `'b t d -> t b d'`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq):\n    return einops._____(seq, 'b t d -> t b d')\n\n\nprint(solve(t.arange(6.0).reshape(2, 3, 1)))\n"
       }
      ],
      "applied_items": [],
@@ -4395,13 +4457,13 @@
         {
          "question_id": 391,
          "prompt": "Flatten spatial axes per channel, reading order.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, 'c h w -> c (h w)')\n"
         },
         {
          "question_id": 347,
          "prompt": "Same input, a different merge: lay the channels out HORIZONTALLY, so channel\n0's whole image sits left of channel 1's. Shape (c, h, w) -> (h, c\u00b7w). Two\ndecisions the flatten above did not ask for \u2014 WHICH pair of axes merges (they\nare not adjacent in the input), and which of them is the slow one.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, 'c h w -> h (c w)')\n"
         }
        ]
@@ -4411,13 +4473,13 @@
       {
        "question_id": 391,
        "prompt": "Flatten spatial axes per channel, reading order.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (c, h*w), rows before columns.\"\"\"\n    return einops.rearrange(img, 'c h w -> c (h w)')\n"
       },
       {
        "question_id": 347,
        "prompt": "Same input, a different merge: lay the channels out HORIZONTALLY, so channel\n0's whole image sits left of channel 1's. Shape (c, h, w) -> (h, c\u00b7w). Two\ndecisions the flatten above did not ask for \u2014 WHICH pair of axes merges (they\nare not adjacent in the input), and which of them is the slow one.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(img):\n    \"\"\"(c, h, w) -> (h, c*w): channel 0's image, then channel 1's, side by side.\"\"\"\n    return einops.rearrange(img, 'c h w -> h (c w)')\n"
       }
      ],
@@ -4425,7 +4487,8 @@
       {
        "question_id": 357,
        "hints_markdown": "1. (C, H, W) \u2192 ((C\u00b7H), W): channels and height merge into one tall strip,\n   channel 0's rows first.\n2. \"Channel 0's rows first, then channel 1's\" tells you which name is slow\n   inside the parens.\n3. `'c h w -> (c h) w'`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\n\narr = t.tensor(np.load('/delta_numbers.npy'))\nimg = arr[0]\n\ndef solve(img):\n    return einops._____(img, 'c h w -> (c h) w')\n\nprint(solve(img))\n"
       }
      ],
      "applied_items": [],
@@ -4462,7 +4525,7 @@
         {
          "question_id": 390,
          "prompt": "Restore (c, h\u00b7w) to (c, h, w), given h.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, '_____', h=h)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 4), 2))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, '_____', h=h)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 4), 2))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, 'c (h w) -> c h w', h=h)\n"
         }
        ]
@@ -4472,7 +4535,7 @@
       {
        "question_id": 390,
        "prompt": "Restore (c, h\u00b7w) to (c, h, w), given h.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, '_____', h=h)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 4), 2))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, '_____', h=h)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 4), 2))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(flat, h):\n    \"\"\"Undo the per-channel flatten: declare how the axis was packed.\"\"\"\n    return einops.rearrange(flat, 'c (h w) -> c h w', h=h)\n"
       }
      ],
@@ -4480,7 +4543,8 @@
       {
        "question_id": 315,
        "hints_markdown": "1. (b, t, d) with t divisible by p \u2192 (b, t/p, p, d): the time axis splits\n   into (segments \u00d7 length-p).\n2. Which factor does the task hand you? Pass it as the keyword.\n3. `'b (n p) d -> b n p d', p=p` \u2014 n is inferred.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq, p):\n    return einops._____(seq, 'b (n p) d -> b n p d', p=p)\n\n\nprint(solve(t.arange(8.0).reshape(1, 4, 2), 2))\n"
       }
      ],
      "applied_items": [],
@@ -4513,7 +4577,7 @@
         {
          "question_id": 361,
          "prompt": "A Python list of (h, w, c) images \u2192 one (b, h, w, c) batch.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve([t.ones((2, 2, 1)), t.zeros((2, 2, 1))]))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve([t.ones((2, 2, 1)), t.zeros((2, 2, 1))]))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, 'b h w c -> b h w c')\n"
         }
        ]
@@ -4523,7 +4587,7 @@
       {
        "question_id": 361,
        "prompt": "A Python list of (h, w, c) images \u2192 one (b, h, w, c) batch.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve([t.ones((2, 2, 1)), t.zeros((2, 2, 1))]))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve([t.ones((2, 2, 1)), t.zeros((2, 2, 1))]))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(imgs):\n    \"\"\"Stack the list: the list index becomes axis b.\"\"\"\n    return einops.rearrange(imgs, 'b h w c -> b h w c')\n"
       }
      ],
@@ -4531,7 +4595,8 @@
       {
        "question_id": 360,
        "hints_markdown": "1. (h, w) \u2192 (1, h, w): nothing moves; one axis appears.\n2. The literal `1` on the output side inserts it.\n3. `'h w -> 1 h w'`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x2d):\n    return einops._____(x2d, 'h w -> () h w')\n\n\nprint(solve(t.ones((2, 3))))\n"
       }
      ],
      "applied_items": [],
@@ -4585,7 +4650,8 @@
       {
        "question_id": 364,
        "hints_markdown": "1. A channels-LAST batch (b, h, w, c), b divisible by b1, tiled into a\n   b1-row montage \u2014 the template with different names.\n2. Which factor is given (b1 rows), which inferred?\n3. `'(b1 b2) h w c -> (b1 h) (b2 w) c', b1=b1`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(arr, b1):\n    return einops._____(arr, '(b1 b2) h w c -> (b1 h) (b2 w) c', b1=b1)\n\n\nprint(solve(t.arange(8.0).reshape(4, 1, 2, 1), 2))\n"
       }
      ],
      "applied_items": [],
@@ -4622,7 +4688,7 @@
         {
          "question_id": 323,
          "prompt": "Reassemble a row-major tile stack into the image.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '_____', h=h, w=w)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(16.0).reshape(4, 2, 2, 1), 2, 2))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '_____', h=h, w=w)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(16.0).reshape(4, 2, 2, 1), 2, 2))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=h, w=w)\n"
         }
        ]
@@ -4632,7 +4698,7 @@
       {
        "question_id": 323,
        "prompt": "Reassemble a row-major tile stack into the image.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '_____', h=h, w=w)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(16.0).reshape(4, 2, 2, 1), 2, 2))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '_____', h=h, w=w)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(16.0).reshape(4, 2, 2, 1), 2, 2))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(patches, h, w):\n    \"\"\"(h*w, p1, p2, c) tiles, row-major -> ((h p1), (w p2), c) image.\"\"\"\n    return einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=h, w=w)\n"
       }
      ],
@@ -4640,7 +4706,8 @@
       {
        "question_id": 313,
        "hints_markdown": "1. Space-to-depth on (b, c, h, w) with block size p: spatial dims shrink by\n   p, channels multiply by p\u00b2.\n2. Split each spatial axis into (blocks \u00d7 p); fold the two p-factors into\n   the channel group \u2014 the task states the required channel packing order.\n3. `'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=p, p2=p` \u2014 or the order the\n   prompt demands; verify one block.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, p):\n    return einops._____(x, 'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=p, p2=p)\n\n\nprint(solve(t.arange(16.0).reshape(1, 1, 4, 4), 2))\n"
       }
      ],
      "applied_items": [],
@@ -4688,7 +4755,7 @@
         {
          "question_id": 325,
          "prompt": "Each image of a channels-first batch \u2192 one scalar mean.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, '_____', 'mean')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 3, 2, 2))))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, '_____', 'mean')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 3, 2, 2))))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, 'b c h w -> b', 'mean')\n"
         }
        ]
@@ -4698,7 +4765,7 @@
       {
        "question_id": 325,
        "prompt": "Each image of a channels-first batch \u2192 one scalar mean.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, '_____', 'mean')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 3, 2, 2))))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, '_____', 'mean')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 3, 2, 2))))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, c, h, w) -> (b,): mean over channels and pixels.\"\"\"\n    return einops.reduce(arr, 'b c h w -> b', 'mean')\n"
       }
      ],
@@ -4706,7 +4773,8 @@
       {
        "question_id": 328,
        "hints_markdown": "1. (h, w, c) image, average over the HEIGHT axis only \u2192 (w, c).\n2. One name disappears from the pattern; the aggregation string says how.\n3. `einops.reduce(img, 'h w c -> w c', 'mean')`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    return einops._____(img, 'h w c -> w c', 'mean')\n\n\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
       }
      ],
      "applied_items": [],
@@ -4761,7 +4829,8 @@
       {
        "question_id": 363,
        "hints_markdown": "1. 3\u00d73 average pooling on a channels-first single image (c, h, w) \u2014 same\n   split-and-reduce, no batch axis.\n2. Window factors are 3 this time; both spatial axes factor.\n3. `'c (h h3) (w w3) -> c h w', h3=3, w3=3` with 'mean'.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\n\narr = t.tensor(np.load('/delta_numbers.npy')).to(t.float32)\nimg = arr[0]\n\ndef solve(img):\n    return einops._____(img, 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3)\n\nprint(solve(img))\n"
       }
      ],
      "applied_items": [],
@@ -4825,7 +4894,8 @@
       {
        "question_id": 351,
        "hints_markdown": "1. Double both spatial dims with each pixel becoming a 2\u00d72 block \u2014\n   stretch, and which order makes copies stay WITH their pixel?\n2. Factor fast: `(h 2) (w 2)`.\n3. `'h w c -> (h 2) (w 2) c'` \u2014 check one corner block.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\n\narr = t.movedim(t.tensor(np.load('/delta_numbers.npy')), 1, -1)\nimg = arr[0]\n\ndef solve(img):\n    return einops._____(img, 'h w c -> (h 2) (w 2) c')\n\nprint(solve(img))\n"
       }
      ],
      "applied_items": [],
@@ -4864,7 +4934,7 @@
         {
          "question_id": 356,
          "prompt": "Flatten each image of a batch for a linear layer.",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 1, 2, 2)))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 1, 2, 2)))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, 'b c h w -> b (c h w)')\n"
         }
        ]
@@ -4874,7 +4944,7 @@
       {
        "question_id": 356,
        "prompt": "Flatten each image of a batch for a linear layer.",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, '_____')\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 1, 2, 2)))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 1, 2, 2)))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"(b, c, h, w) -> (b, c*h*w), standard framework order.\"\"\"\n    return einops.rearrange(x, 'b c h w -> b (c h w)')\n"
       }
      ],
@@ -4882,7 +4952,8 @@
       {
        "question_id": 396,
        "hints_markdown": "1. The packed sequence (b, t, nh\u00b7d), head index slowest, must SPLIT back\n   into heads \u2014 inverse of the merge you just did.\n2. The parens move to the input side; one keyword names the head count.\n3. `'b t (nh d) -> b nh t d', nh=nh` \u2014 round-trip it against a merge to be\n   sure.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(seq, nh):\n    return einops._____(seq, 'b t (nh d) -> b nh t d', nh=nh)\n\n\nprint(solve(t.arange(8.0).reshape(1, 2, 4), 2))\n"
       }
      ],
      "applied_items": [],
@@ -4915,7 +4986,7 @@
         {
          "question_id": 362,
          "prompt": "Split out interleaved channel groups (group index FASTEST).",
-         "starter_code": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (_____) h w -> split b c h w', split=split)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (_____) h w -> split b c h w', split=split)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (c split) h w -> split b c h w', split=split)\n"
         }
        ]
@@ -4925,7 +4996,7 @@
       {
        "question_id": 362,
        "prompt": "Split out interleaved channel groups (group index FASTEST).",
-       "starter_code": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (_____) h w -> split b c h w', split=split)\n\n\nfrom einops import rearrange, reduce, repeat\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (_____) h w -> split b c h w', split=split)\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(1, 4, 1, 2), 2))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(x, split):\n    \"\"\"(b, c*split, h, w), groups interleaved -> (split, b, c, h, w).\"\"\"\n    return einops.rearrange(x, 'b (c split) h w -> split b c h w', split=split)\n"
       }
      ],
@@ -4933,7 +5004,8 @@
       {
        "question_id": 375,
        "hints_markdown": "1. (b, c, 2t) downsampled by averaging non-overlapping PAIRS \u2014 temporal\n   pooling with window 2.\n2. The time axis factors as (t \u00d7 2); the window name reduces away.\n3. `einops.reduce(x_seq, 'b c (t two) -> b c t', 'mean', two=2)`.",
-       "worked_example_code": ""
+       "worked_example_code": "",
+       "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x_seq):\n    return einops._____(x_seq, 'b c (t two) -> b c t', 'mean', two=2)\n\n\nprint(solve(t.arange(8.0).reshape(1, 1, 8)))\n"
       }
      ],
      "applied_items": [],

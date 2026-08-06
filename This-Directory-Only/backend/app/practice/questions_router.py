@@ -188,10 +188,14 @@ def next_question(
     # it. On the faded/partial rungs the learner is handed the canonical
     # solution with its TAIL removed (backward fading), not a blank page.
     ladder = ladder_fields(user_state, question.id)
-    starter = (
-        ladder_starter(question, ladder.get("ladder_stage") or "")
-        or question.starter_code
-    )
+    scaffold = ladder_starter(question, ladder.get("ladder_stage") or "")
+    starter = scaffold or question.starter_code
+    # Whether the rung's promise is actually on the page — see
+    # `ladder_support` in practice_schemas. Support arrives two ways: blanks in
+    # the starter, or a worked example above the problem. A rung that offers
+    # neither is a solo problem, and saying so is better than labelling it.
+    if ladder.get("ladder_stage") in ("faded", "partial"):
+        ladder["ladder_support"] = bool(scaffold) or lessons.has_worked_example(question.id)
 
     return NextQuestionResponse(
         question_id=question.id,

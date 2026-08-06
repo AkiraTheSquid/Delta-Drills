@@ -13,11 +13,36 @@ from lesson_lib import (
     attach_example_run,
     blank_new_syntax,
     code_fences,
+    derive_faded_starter,
     load_bank,
     load_registry,
     parse_kp,
     split_items,
 )
+
+
+def _derived_faded(qid, new_syntax, bank):
+    """A faded starter built from a question's own canonical answer, or "".
+
+    The answer with every NEW symbol blanked is a completion problem by
+    construction: the structure is the real solution's, and the only thing
+    missing is the move being taught. The question's demo block goes back on
+    the end so the learner can run it and read the output.
+
+    Returns "" when nothing was blanked — that case is not a scaffold, it is
+    the ANSWER, and handing it over would be the worst possible version of this
+    rung.
+    """
+    exercise = (bank.get(qid) or {}).get("exercise") or {}
+    # The structured bank calls it `canonical_solution`; the flat export
+    # calls it `answer_code`. Read both — a silent "" here disables the
+    # whole derivation and looks exactly like "no drill needed one".
+    answer = exercise.get("answer_code") or exercise.get("canonical_solution") or ""
+    fn = exercise.get("function_name") or "solve"
+    blanked = derive_faded_starter(answer, fn, new_syntax)
+    if not blanked:
+        return ""
+    return attach_example_run(blanked, exercise.get("starter_code") or "", fn)
 
 
 def compile_lessons():
@@ -89,6 +114,16 @@ def compile_lessons():
                 "question_id": qid,
                 "hints_markdown": hints,
                 "worked_example_code": worked[0] if worked else "",
+                # A guided drill is served on the SAME rung as a faded one
+                # (kc_graph._STAGE_TO_RANKS gives `faded` ranks 0 and 1), and
+                # the rung's whole promise is that most of the solution is
+                # written and you supply the rest. Nothing wrote one: guided
+                # items carry hints, the backend's mechanical backward fade
+                # gives up on a one-statement body, and the learner got q487 —
+                # a bare `def solve(x)` under a strip reading "Faded". Derive
+                # one by blanking the canonical answer's new syntax, which is
+                # the same rule the authored starters are now held to.
+                "starter_code": _derived_faded(qid, kp["new_syntax"], bank),
             })
         # Applied practice is the THIRD rung of the ladder: the drill is an
         # independent one — no blanks, the learner writes the whole function —

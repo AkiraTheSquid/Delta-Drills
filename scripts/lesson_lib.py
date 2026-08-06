@@ -240,10 +240,17 @@ def attach_example_run(faded_starter, question_starter, fn_name="solve"):
     # Imports the block needs and the faded starter does not already make. The
     # fixture line is usually `t.tensor(...)`, so a missing `import torch as t`
     # turns a helpful demo into a NameError.
-    have = {l.strip() for l in faded_starter.splitlines() if _IMPORT_LINE.match(l)}
+    # Compared by MODULE, not by line: `import torch` and `import torch as t`
+    # are the same import wearing different names, and matching on the text
+    # emitted both, one above the other.
+    def _module(line):
+        parts = line.split()
+        return parts[1].split(".")[0] if len(parts) > 1 else line.strip()
+
+    have = {_module(l) for l in faded_starter.splitlines() if _IMPORT_LINE.match(l)}
     missing = [
         l for l in question_starter.splitlines()
-        if _IMPORT_LINE.match(l) and l.strip() not in have
+        if _IMPORT_LINE.match(l) and _module(l) not in have
     ]
     lead = "\n".join(missing) + "\n" if missing else ""
     return faded_starter.rstrip("\n") + "\n\n\n" + lead + block + "\n"
@@ -336,6 +343,59 @@ def blank_new_syntax(starter, new_syntax, fn_name="solve"):
             for i in range(start, end):
                 lines[i] = pattern.sub(replacement, lines[i])
     return "\n".join(lines) + ("\n" if starter.endswith("\n") else "")
+
+
+_CALL = re.compile(r"(?<=\.)([A-Za-z_]\w*)(?=\s*\()")
+
+
+def derive_faded_starter(answer_code, fn_name="solve", new_syntax=()):
+    """A faded starter built from a canonical answer, or "".
+
+    For the drills nobody hand-cut one for. A guided drill is served on the
+    same rung as a faded one and the rung promises that most of the solution is
+    written and you supply the rest — but guided items carry hints, and the
+    backend's backward fade gives up on a one-statement body, so q487 arrived
+    as a bare `def solve(x)` under a strip reading "Faded".
+
+    BACKWARD FADING WITH BLANKS, not deletion. `ladder_fade.fade` removes the
+    last step and leaves a comment, which on a one-line body is the solo
+    problem with extra ceremony — and on any body is a blank page for that
+    step. Blanking the calls in the FINAL statement keeps Renkl's ordering (the
+    last step is the one a learner can most plausibly attempt) while leaving a
+    completion problem on screen: `return x._____()` says a method on x taking
+    no arguments, which is the structure, and withholds only the move.
+
+    Returns "" when nothing was blanked — a body with no call in its last step
+    would come back as the ANSWER, and handing that over is the worst possible
+    version of this rung.
+    """
+    span = body_span(answer_code or "", fn_name)
+    if not span:
+        return ""
+    start, end = span
+    lines = (answer_code or "").splitlines()
+    last = None
+    for i in range(end - 1, start, -1):
+        if lines[i].strip() and not lines[i].strip().startswith("#"):
+            last = i
+            break
+    if last is None:
+        return ""
+    # THE LAST STEP, AND ONLY THE LAST STEP. Sweeping the KP's whole
+    # `new_syntax` list through the body instead is what the authored starters
+    # get, and it is right for them because an author chose which single idea
+    # that item is about. Applied to a derived starter it blanks everything: on
+    # q523, whose KP declares ten symbols, it produced a docstring reading
+    # "does a._____ share a's buffer?" over a body with nine blanks in it —
+    # the opposite of "give away every supporting part and hide the one move".
+    faded = _CALL.sub(BLANK, lines[last])
+    for symbol in new_syntax or ():
+        for pattern, replacement in new_syntax_patterns(symbol):
+            faded = pattern.sub(replacement, faded)
+    if faded == lines[last]:
+        return ""
+    lines[last] = faded
+    return "\n".join(lines) + ("\n" if (answer_code or "").endswith("\n") else "")
 
 
 def parse_kp(path):

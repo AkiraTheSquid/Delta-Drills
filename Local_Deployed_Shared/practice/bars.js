@@ -35,7 +35,7 @@ function setTargetDifficultyScope(text) {
 
 function targetDifficultyTitleText() {
   if (targetDifficultyScope) return targetDifficultyScope;
-  return "Target difficulty of " + (PracticeAPI.currentQuestion?.subtopic || "");
+  return "Target difficulty of " + displaySubtopic(PracticeAPI.currentQuestion?.subtopic);
 }
 
 function cancelTargetAnimation() {
@@ -198,7 +198,7 @@ function cancelEwmaAnimation() {
 
 function showEwmaAccuracyCalibration(subtopic) {
   cancelEwmaAnimation();
-  ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
+  ewmaAccuracyLabel.textContent = "Accuracy of " + displaySubtopic(subtopic);
   ewmaAccuracyDelta.classList.add("hidden");
   ewmaAccuracyDelta.classList.remove("up", "down");
   ewmaAccuracyDelta.style.width = "0%";
@@ -216,7 +216,7 @@ function showEwmaAccuracyInitial(p, subtopic) {
   cancelEwmaAnimation();
   // Always write the current subtopic so stale text from a previous question
   // never leaks through, regardless of whether we show the bar.
-  ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
+  ewmaAccuracyLabel.textContent = "Accuracy of " + displaySubtopic(subtopic);
   ewmaAccuracyDelta.classList.add("hidden");
   ewmaAccuracyDelta.classList.remove("up", "down");
   ewmaAccuracyDelta.style.width = "0%";
@@ -245,7 +245,7 @@ function showEwmaAccuracy(pBefore, pAfter, subtopic) {
   cancelEwmaAnimation();
   const newPct = Math.round(pAfter * 1000) / 10;
 
-  ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
+  ewmaAccuracyLabel.textContent = "Accuracy of " + displaySubtopic(subtopic);
   ewmaAccuracy.classList.remove("hidden");
 
   // No prior history: grow fill bar in blue, no delta or markers.
@@ -326,7 +326,7 @@ function setEwmaAccuracyFinal(pBefore, pAfter, subtopic) {
   const newPct = Math.round(pAfter * 1000) / 10;
   const oldPct = Number.isFinite(pBefore) ? Math.round(pBefore * 1000) / 10 : 0;
   const diff = Math.abs(newPct - oldPct);
-  ewmaAccuracyLabel.textContent = "Accuracy of " + (subtopic || "");
+  ewmaAccuracyLabel.textContent = "Accuracy of " + displaySubtopic(subtopic);
   ewmaAccuracyValue.textContent = `Old ${oldPct.toFixed(1)}% → New ${newPct.toFixed(1)}%`;
   ewmaAccuracyFill.style.width = newPct + "%";
   ewmaAccuracyMarkerOld.style.left = oldPct + "%";

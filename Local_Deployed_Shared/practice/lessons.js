@@ -266,14 +266,13 @@ const LessonGate = (() => {
     return pages;
   };
 
-  /* The lessons under the "Numpy" topic teach PyTorch — every drill was
-     converted to `import torch as t` in the July dialect passes — but the topic
-     string is NOT free to rename. `questions.py` builds backend subtopic keys as
-     `f"{topic}: {subtopic}"`, so that word is the key every learner's stored BKT
-     mastery is filed under; changing it in place orphans their history. Rename
-     the LABEL only, and leave the key alone until there is a state migration. */
-  const TOPIC_LABELS = { Numpy: "PyTorch tensors" };
-  const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
+  /* The lessons under the "Numpy" topic teach PyTorch, but the topic string is
+     the key every learner's stored mastery is filed under — see
+     `displayTopic` in practice/config.js, which is now the single copy of that
+     map. This file used to hold its own, which is how the lesson header could
+     say "PyTorch tensors" while the question header below it said "Numpy". */
+  const _topicLabel = (topic) =>
+    (typeof displayTopic === "function" ? displayTopic(topic) : topic);
 
   /* The published notebook's anchor for the concept a lesson page teaches, or
      "" when there is nowhere to send the learner.

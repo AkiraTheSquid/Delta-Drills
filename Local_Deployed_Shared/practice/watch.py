@@ -524,10 +524,13 @@ def check_promotion_threshold_matches_the_backend():
     Either way the app has told them a rule it does not follow, which is worse
     than drawing no mark at all.
 
-    ⚠️ The two speak different vocabularies. The backend's `faded` is the
-    display's `worked` and its `partial` is the display's `faded` — see
-    STAGE_ALIASES. This check translates rather than comparing keys, because
-    comparing keys is how the numbers would end up swapped and still "matching".
+    ⚠️ The two speak different vocabularies. The backend's `partial` is the
+    display's `worked` — see STAGE_ALIASES. This check translates rather than
+    comparing keys, because comparing keys is how the numbers would end up
+    swapped and still "matching". They WERE swapped, until 2026-08-06: the
+    display's rung names had `faded` and `worked` the wrong way round, so each
+    dot described the other one's rung and this check compared the two wrong
+    numbers to each other and passed.
 
     The right long-term fix is for the ladder response to carry its own
     threshold so there is one runtime authority; codex flagged the same thing on
@@ -552,7 +555,7 @@ def check_promotion_threshold_matches_the_backend():
             r"PROMOTE_AT\s*=\s*\{(.*?)\}", topbar, re.S).group(1))}
 
     # backend rung -> the rung the display calls it
-    for backend_stage, displayed in (("faded", "worked"), ("partial", "faded")):
+    for backend_stage, displayed in (("faded", "faded"), ("partial", "worked")):
         assert backend_stage in promote_lo, f"backend lost PROMOTE_LO[{backend_stage}]"
         assert displayed in promote_at, (
             f"concept-topbar.js lost the {displayed!r} threshold — the rung would "
@@ -565,9 +568,10 @@ def check_promotion_threshold_matches_the_backend():
             f"not follow"
         )
     assert len(promote_at) == 2, (
-        "PROMOTE_AT gained a rung. `lesson` is left by reading and `solo` is the "
-        "top of the ladder, so a third entry means the display believes in a "
-        "promotion the backend does not make"
+        "PROMOTE_AT gained a rung. `lesson` is left by reading, `solo` is the top "
+        "of the per-concept ladder, and `integrated` is not reached by clearing a "
+        "threshold on one concept — so a third entry means the display believes "
+        "in a promotion the backend does not make"
     )
 
 

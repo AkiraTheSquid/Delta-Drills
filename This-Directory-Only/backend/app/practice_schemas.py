@@ -65,6 +65,22 @@ class NextQuestionResponse(BaseModel):
     ladder_kc: str | None = None
     ladder_kc_title: str | None = None
     ladder_estimate: dict | None = None
+    # Did this question ACTUALLY arrive with the support its rung promises?
+    #
+    # The rung is a property of the concept; the scaffold is a property of the
+    # question, and they can disagree. A drill whose canonical answer is one
+    # statement with no call in it (`return x * 2`) cannot be faded — there is
+    # nothing to blank that is not the answer — and no KP wrote an example for
+    # it either. Served on the `faded` rung, the strip said "most of the
+    # solution is written — supply the rest" over a bare `def solve(x)`, and
+    # the learner correctly read it as a solo problem wearing a scaffolded
+    # label.
+    #
+    # Reported rather than fixed by moving the rung: the rung is what the
+    # mastery record says and what the next promotion is measured against.
+    # Changing it to match the content would mean the ladder skipped a rung
+    # because of an authoring gap. The display tells the truth instead.
+    ladder_support: bool = True
 
 
 class SubmitRequest(BaseModel):

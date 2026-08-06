@@ -19,19 +19,20 @@
                                          track whose fill is the difficulty the
                                          queue is currently aiming at
 
-   THE FOUR RUNGS
+   THE RUNGS
 
-   The scaffold sequence is `lesson -> worked -> faded -> solo`: read the
-   teaching page, then solve beside a visible example, then finish a partly
-   written solution, then work unaided. The backend still speaks the older
-   vocabulary (`worked, faded, partial, solo`) where its `worked` means the
-   lesson page; `STAGE_ALIASES` maps one onto the other so the display can be
-   correct before the state migration lands. That mapping is the only place the
-   two vocabularies meet — do not scatter it.
+   `lesson -> faded -> worked example -> solo -> integrated`: read the teaching
+   page, fill in the missing step, read a solved one and do the same move, do
+   it with nothing, then meet it mixed in with the other concepts. The backend
+   still speaks the older vocabulary (`worked, faded, partial, solo`) where its
+   `worked` means the lesson page and its `partial` means the read-an-example
+   rung; `STAGE_ALIASES` maps one onto the other so the display can be correct
+   before the state migration lands. That mapping is the only place the two
+   vocabularies meet — do not scatter it.
 
-   All four dots are always drawn, including the ones already passed and the
-   ones not yet reached. A single label ("Faded") tells a learner what they are
-   doing; four dots tell them how much support they have already given up and
+   Every dot is always drawn, including the ones already passed and the ones
+   not yet reached. A single label ("Faded") tells a learner what they are
+   doing; the row tells them how much support they have already given up and
    how much is left, which is the thing that makes the ladder legible as a
    ladder rather than as an arbitrary change of question format.
    ================================================================ */
@@ -39,30 +40,49 @@
 const ConceptTopbar = (() => {
   "use strict";
 
-  // Display order. Left to right is decreasing support.
+  /* Display order. Left to right is decreasing support.
+
+     🔴 THESE TWO USED TO BE THE WRONG WAY ROUND, and the error was not
+     cosmetic. The backend's `faded` rung serves a fill-in-the-blank drill and
+     was displayed as "Worked — solve beside a worked example you can still
+     see"; its `partial` rung serves a drill with a solved example above it and
+     was displayed as "Faded — most of the solution is written". Each dot named
+     the other one's rung, so the strip promised support that was not on the
+     page and withheld credit for support that was. The report was "it says
+     worked when in reality it is actually a solo problem, because it doesn't
+     have any example or anything or fading" — which is exactly what a
+     fill-in-the-blank rung looks like when the blanks are missing AND the
+     label is asking you to look for an example.
+
+     The order is the one the course actually teaches: read it, fill in the
+     step, read a solved one and do the same move, do it with nothing, then do
+     it mixed in with everything else. */
   const STAGES = [
     { id: "lesson", label: "Lesson", blurb: "Read the explanation and run the examples." },
-    { id: "worked", label: "Worked", blurb: "Solve beside a worked example you can still see." },
     { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
+    { id: "worked", label: "Worked example", blurb: "Read the solved example above it, then write this one yourself." },
     { id: "solo", label: "Solo", blurb: "No scaffold. You have earned it." },
+    { id: "integrated", label: "Integrated", blurb: "Several concepts at once, unaided — the point of learning them." },
   ];
 
   /* Backend stage -> displayed rung.
 
      The server's `worked` is the lesson screen (it is the rung at which
-     `LessonGate` takes over and no drill is served), and its `faded` and
-     `partial` are the two supported drill rungs. Renaming those in the backend
-     rewrites every learner's stored `kc_ladder[kc].attempts[].stage`, so the
-     display is corrected first and the state migration follows separately. */
+     `LessonGate` takes over and no drill is served); its `faded` is the
+     blank-filling rung and its `partial` is the read-an-example rung. Renaming
+     those in the backend rewrites every learner's stored
+     `kc_ladder[kc].attempts[].stage`, so the display is corrected first and the
+     state migration follows separately. */
   const STAGE_ALIASES = {
     worked: "lesson",
-    faded: "worked",
-    partial: "faded",
+    faded: "faded",
+    partial: "worked",
     solo: "solo",
     independent: "solo",
     // Already-new vocabulary passes through untouched, so this file needs no
     // edit on the day the backend switches over.
     lesson: "lesson",
+    integrated: "integrated",
   };
 
   const _index = (stage) => STAGES.findIndex((s) => s.id === stage);
@@ -77,18 +97,19 @@ const ConceptTopbar = (() => {
      rather than described, and it is the answer to "there should be a clear
      threshold beyond which it moves you from one stage to a different stage."
 
-     Keyed by DISPLAYED rung, which is why the numbers look shifted against
-     `PROMOTE_LO`: the backend's `faded` is this file's `worked` and its
-     `partial` is this file's `faded` (see STAGE_ALIASES). Two rungs have no
-     entry, for two different reasons — `lesson` is left by reading the page,
-     not by scoring, and `solo` is the top of the ladder.
+     Keyed by DISPLAYED rung, which is why the names look shifted against
+     `PROMOTE_LO`: the backend's `partial` is this file's `worked` (see
+     STAGE_ALIASES). Three rungs have no entry, for three reasons — `lesson` is
+     left by reading the page rather than by scoring, `solo` is the top of the
+     per-concept ladder, and `integrated` is not reached by clearing a
+     threshold on ONE concept at all.
 
      ⚠️ These are a copy of a backend constant. `practice/watch.py` reads both
      and fails if they drift, because a threshold drawn in the wrong place is
      worse than none: the learner clears the mark and nothing happens. */
   const PROMOTE_AT = {
-    worked: 0.34, // → faded   (backend PROMOTE_LO.faded)
-    faded: 0.51,  // → solo    (backend PROMOTE_LO.partial)
+    faded: 0.34,  // → worked example  (backend PROMOTE_LO.faded)
+    worked: 0.51, // → solo            (backend PROMOTE_LO.partial)
   };
 
   const esc = (value) =>
@@ -312,11 +333,20 @@ const ConceptTopbar = (() => {
      what this rung asks of them but not where it sits, and the dots only convey
      position to someone who already knows the sequence runs left to right. Four
      of four is also the fact that makes the last one feel earned. */
-  const _stagesHtml = (stage) => {
+  /* When the drill on screen carries neither blanks nor an example, the rung's
+     own description is a promise the page does not keep — that is the
+     "it says worked when it's actually a solo problem" report. The dot stays
+     where the mastery record puts it (the rung is what the next promotion is
+     measured against) and says what is actually there instead. */
+  const NO_SUPPORT_BLURB =
+    "Nothing was written for this one — no example, no blanks. Write it unaided.";
+
+  const _stagesHtml = (stage, support) => {
     const active = _index(stage);
     return STAGES.map((s, i) => {
       const state = i < active ? "is-done" : i === active ? "is-active" : "is-todo";
-      const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${s.blurb}`;
+      const blurb = i === active && support === false ? NO_SUPPORT_BLURB : s.blurb;
+      const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${blurb}`;
       return (
         `<li class="stage-dot ${state}" data-stage="${esc(s.id)}" title="${esc(title)}"` +
         (i === active ? ' aria-current="step"' : "") +
@@ -333,11 +363,11 @@ const ConceptTopbar = (() => {
      `stage` accepts either vocabulary. An unrecognised stage hides the dots
      rather than guessing a position — showing the learner the wrong rung is
      worse than showing them none. */
-  const show = ({ kc, title, eyebrow, stage, estimate, difficulty, target } = {}) => {
+  const show = ({ kc, title, eyebrow, stage, estimate, difficulty, target, support } = {}) => {
     const host = _el("concept-topbar");
     if (!host) return;
     const normalized = normalizeStage(stage);
-    current = { kc: kc || null, stage: normalized, estimate: null };
+    current = { kc: kc || null, stage: normalized, estimate: null, support };
 
     const eyebrowEl = _el("concept-topbar-eyebrow");
     if (eyebrowEl) {
@@ -357,7 +387,7 @@ const ConceptTopbar = (() => {
 
     const stagesEl = _el("concept-topbar-stages");
     if (stagesEl) {
-      stagesEl.innerHTML = normalized ? _stagesHtml(normalized) : "";
+      stagesEl.innerHTML = normalized ? _stagesHtml(normalized, support) : "";
       stagesEl.hidden = !normalized;
     }
 
@@ -394,7 +424,7 @@ const ConceptTopbar = (() => {
     current.stage = normalized;
     const stagesEl = _el("concept-topbar-stages");
     if (stagesEl) {
-      stagesEl.innerHTML = _stagesHtml(normalized);
+      stagesEl.innerHTML = _stagesHtml(normalized, current.support);
       stagesEl.hidden = false;
     }
     // The promotion mark moves with the rung — 34% to leave Worked, 51% to leave
@@ -406,7 +436,7 @@ const ConceptTopbar = (() => {
   const hide = () => {
     const host = _el("concept-topbar");
     if (host) host.classList.add("hidden");
-    current = { kc: null, stage: null, estimate: null };
+    current = { kc: null, stage: null, estimate: null, support: undefined };
     // Drop the baseline too. The strip going away means the learner left
     // practice; whatever they do before coming back is a gap this bar cannot
     // account for, and drawing a band across it would claim the next answer

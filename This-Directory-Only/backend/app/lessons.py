@@ -94,6 +94,16 @@ def _load() -> None:
             # construction, and taking either alone misses single-segment KPs.
             item_lists = [kp.get("faded_items") or []]
             item_lists += [seg.get("faded_items") or [] for seg in kp.get("segments") or []]
+            # Guided drills sit on the SAME rung as faded ones
+            # (kc_graph._STAGE_TO_RANKS gives `faded` ranks 0 and 1) and had no
+            # scaffold at all: hints only, and the mechanical backward fade
+            # gives up on a one-statement body. So the rung promised "most of
+            # the solution is written — supply the rest" and served a bare
+            # `def solve(x)`. `compile_lessons._derived_faded` now writes one,
+            # by blanking the calls in the canonical answer's LAST step, and it
+            # is only present when something was actually blanked — an
+            # unblanked "starter" would be the answer.
+            item_lists += [kp.get("guided_items") or []]
             for items in item_lists:
                 for item in items:
                     if not isinstance(item, dict):
