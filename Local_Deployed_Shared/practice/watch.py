@@ -524,10 +524,13 @@ def check_promotion_threshold_matches_the_backend():
     Either way the app has told them a rule it does not follow, which is worse
     than drawing no mark at all.
 
-    ⚠️ The two speak different vocabularies. The backend's `faded` is the
-    display's `worked` and its `partial` is the display's `faded` — see
-    STAGE_ALIASES. This check translates rather than comparing keys, because
-    comparing keys is how the numbers would end up swapped and still "matching".
+    ⚠️ The two speak different vocabularies. The backend's `partial` is the
+    display's `worked` — see STAGE_ALIASES. This check translates rather than
+    comparing keys, because comparing keys is how the numbers would end up
+    swapped and still "matching". They WERE swapped, until 2026-08-06: the
+    display's rung names had `faded` and `worked` the wrong way round, so each
+    dot described the other one's rung and this check compared the two wrong
+    numbers to each other and passed.
 
     The right long-term fix is for the ladder response to carry its own
     threshold so there is one runtime authority; codex flagged the same thing on
@@ -552,7 +555,7 @@ def check_promotion_threshold_matches_the_backend():
             r"PROMOTE_AT\s*=\s*\{(.*?)\}", topbar, re.S).group(1))}
 
     # backend rung -> the rung the display calls it
-    for backend_stage, displayed in (("faded", "worked"), ("partial", "faded")):
+    for backend_stage, displayed in (("faded", "faded"), ("partial", "worked")):
         assert backend_stage in promote_lo, f"backend lost PROMOTE_LO[{backend_stage}]"
         assert displayed in promote_at, (
             f"concept-topbar.js lost the {displayed!r} threshold — the rung would "
@@ -565,9 +568,10 @@ def check_promotion_threshold_matches_the_backend():
             f"not follow"
         )
     assert len(promote_at) == 2, (
-        "PROMOTE_AT gained a rung. `lesson` is left by reading and `solo` is the "
-        "top of the ladder, so a third entry means the display believes in a "
-        "promotion the backend does not make"
+        "PROMOTE_AT gained a rung. `lesson` is left by reading, `solo` is the top "
+        "of the per-concept ladder, and `integrated` is not reached by clearing a "
+        "threshold on one concept — so a third entry means the display believes "
+        "in a promotion the backend does not make"
     )
 
 
@@ -714,13 +718,83 @@ eq(_effectiveRemaining(snap(-99999)), {{secs: 60, restarted: false}},
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
 
 
+def check_the_gate_teaches_one_concept_then_drills_it():
+    """One concept per visit, and the KP's own key only at the end.
+
+    A KP teaches up to six separate ideas and the gate used to render all of
+    them back to back before handing over a single question — a learner who has
+    read three things and practised one. The loop only works if three things
+    hold: a visit builds ONE page, the key posted is that concept's, and the
+    KC's own key (which every later gate reads as "the whole KP is done") is
+    written only alongside the last one. Post it early and concepts 2 and 3 are
+    credited unread and never offered again.
+    """
+    lessons = _read(os.path.join(HERE, "lessons.js"))
+    build = lessons.split("const _buildPages = (steps) => {", 1)
+    assert len(build) == 2, (
+        "_buildPages no longer takes steps — it is back to expanding a whole "
+        "KP into pages, which is the wall of text the loop replaced"
+    )
+    body = build[1].split("\n  };", 1)[0]
+    assert "pages.push(" in body and body.count("pages.push(") == 1, (
+        "_buildPages pushes more than one page per step — a visit must owe "
+        "exactly one concept"
+    )
+    assert "step.segmentIndex" in body, (
+        "_buildPages ignores the step's concept index, so every visit would "
+        "re-teach the first concept"
+    )
+
+    click = lessons.split("button.onclick = () => {", 1)[-1].split("\n        };", 1)[0]
+    assert "page.step.exposureKey" in click, (
+        "the continue button no longer records the concept that was read"
+    )
+    assert "page.lastOfKp && page.step.exposureKey !== page.kp.kc" in click, (
+        "the KP's own exposure key is written without checking this is the "
+        "LAST concept — that credits every remaining concept unread"
+    )
+    kc_write = click.index("keys.push(page.kp.kc)")
+    guard = click.index("page.lastOfKp && page.step.exposureKey !== page.kp.kc")
+    assert guard < kc_write, "the KP key is pushed before its guard is tested"
+    assert "taught.push(page.kp.kc);" in click, (
+        "no worked-example credit on this page — the drill behind it would be "
+        "served on the `worked` rung with no blanks in it"
+    )
+
+
+def check_the_fifth_rung_is_shown_not_stored():
+    """`integrated` is a display rung. It must never reach the ladder record.
+
+    Every stored attempt is filed under one of the backend's four stage names
+    and the promotion arithmetic reads them back. A fifth stored name would
+    either rewrite that history or create a rung nothing can be promoted out
+    of, so the strip gets the extra dot and `record_ladder_outcome` never sees
+    it.
+    """
+    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    assert '"integrated"' in topbar or "integrated:" in topbar, (
+        "the topbar has no integrated rung — the fifth dot is gone"
+    )
+    ladder = _read(os.path.join(HERE, "ladder.js"))
+    assert 'question.ladder_integrated ? "integrated" : stage' in ladder, (
+        "ladder.js no longer reports the fifth rung to the strip"
+    )
+    submit = [l for l in ladder.splitlines() if "ladder_stage" in l and "=" in l]
+    for line in submit:
+        assert '"integrated"' not in line, (
+            f"integrated is being written into ladder_stage — {line.strip()!r}"
+        )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_promotion_threshold_matches_the_backend,
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
-              check_a_resumed_clock_matches_the_break]
+              check_a_resumed_clock_matches_the_break,
+              check_the_gate_teaches_one_concept_then_drills_it,
+              check_the_fifth_rung_is_shown_not_stored]
     for fn in checks:
         try:
             fn()

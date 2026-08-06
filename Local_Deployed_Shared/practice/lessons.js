@@ -93,17 +93,58 @@ const LessonGate = (() => {
     return null;
   };
 
-  const _pendingKcs = async (question) => {
+  /* ONE CONCEPT PER VISIT.
+
+     A KP is not one idea — `kp-ndarray-model` teaches three, and the markdown
+     has always been written that way, each concept with its own worked example
+     and its own faded drill. The gate used to render all of them back to back
+     and then hand over one question, which produces a learner who has read
+     three things and practised one. A step is therefore a CONCEPT, not a KP:
+     teach it, drill it, come back for the next one.
+
+     `exposureKey` is what gets posted when the page is read: the KC itself for
+     a single-concept KP (unchanged, and that is 32 of the 63), `<kc>#<id>` for
+     one concept of a longer one. The KC's own key stays reserved for "the whole
+     KP is done" — post it early and the remaining concepts are never taught. */
+  const _stepFor = (kc, exposed) => {
+    const segments = (_findKp(kc)?.kp?.segments || []).filter((seg) => seg.concept_id);
+    const whole = { kc, segmentIndex: 0, segmentTotal: 1, exposureKey: kc };
+    if (segments.length < 2) return whole;
+    for (let i = 0; i < segments.length; i += 1) {
+      const key = `${kc}#${segments[i].concept_id}`;
+      if (!exposed[key]) {
+        return { kc, segmentIndex: i, segmentTotal: segments.length, exposureKey: key };
+      }
+    }
+    return { ...whole, segmentIndex: segments.length - 1, segmentTotal: segments.length };
+  };
+
+  /* Backend mode takes the step from the gate entry rather than recomputing it:
+     the server holds the authoritative exposure map (it is per account, not per
+     browser), and a second opinion derived from localStorage would re-teach a
+     concept the learner finished on another device. */
+  const _stepFromGate = (entry) => ({
+    kc: entry.kc,
+    segmentIndex: Number(entry.segment_index) || 0,
+    segmentTotal: Number(entry.segment_total) || 1,
+    exposureKey: entry.exposure_key || entry.kc,
+  });
+
+  const _pendingSteps = async (question) => {
     if (question?.diagnostic_active) return [];
     if (practiceMode === "backend") {
-      return [...new Set((question?.lesson_gate || []).map((entry) => entry?.kc).filter(Boolean))];
+      const seen = new Set();
+      return (question?.lesson_gate || [])
+        .filter((entry) => entry?.kc && !seen.has(entry.kc) && seen.add(entry.kc))
+        .map(_stepFromGate);
     }
     await _ensureQmatrix();
     if (!qmatrix) return [];
     const tags = qmatrix[String(question?.question_id)];
     if (!tags?.target_kcs?.length) return [];
     const exposed = _localExposure();
-    return [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))];
+    return [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))]
+      .map((kc) => _stepFor(kc, exposed));
   };
 
   /* ---------- Markdown subset (mirrors lessons/viewer.html) ------------ */
@@ -234,10 +275,10 @@ const LessonGate = (() => {
 
   /* ---------- One inline screen per concept segment -------------------- */
 
-  const _buildPages = (kcs) => {
+  const _buildPages = (steps) => {
     const pages = [];
-    for (const kc of kcs) {
-      const found = _findKp(kc);
+    for (const step of steps) {
+      const found = _findKp(step.kc);
       if (!found) continue;
       const { lesson, kp } = found;
       const segments = kp.segments?.length
@@ -249,14 +290,19 @@ const LessonGate = (() => {
             worked_example_markdown: kp.worked_example_markdown,
             worked_example_code: _firstPythonFence(kp.worked_example_markdown),
           }];
-      segments.forEach((seg, index) => {
-        pages.push({
-          lesson,
-          kp,
-          seg,
-          segCount: segments.length,
-          lastOfKp: index === segments.length - 1,
-        });
+      // One page — the concept this visit owes. The rest of the KP is not
+      // skipped, it is DEFERRED: the gate fires again for concept 2 as soon as
+      // the drill for concept 1 has been answered, because the KC's own
+      // exposure key is only written once the last one is read.
+      const index = Math.min(Math.max(step.segmentIndex, 0), segments.length - 1);
+      pages.push({
+        lesson,
+        kp,
+        step,
+        seg: segments[index],
+        segIndex: index,
+        segCount: segments.length,
+        lastOfKp: index === segments.length - 1,
       });
     }
     pages.forEach((page, index) => {
@@ -266,14 +312,13 @@ const LessonGate = (() => {
     return pages;
   };
 
-  /* The lessons under the "Numpy" topic teach PyTorch — every drill was
-     converted to `import torch as t` in the July dialect passes — but the topic
-     string is NOT free to rename. `questions.py` builds backend subtopic keys as
-     `f"{topic}: {subtopic}"`, so that word is the key every learner's stored BKT
-     mastery is filed under; changing it in place orphans their history. Rename
-     the LABEL only, and leave the key alone until there is a state migration. */
-  const TOPIC_LABELS = { Numpy: "PyTorch tensors" };
-  const _topicLabel = (topic) => TOPIC_LABELS[topic] || topic;
+  /* The lessons under the "Numpy" topic teach PyTorch, but the topic string is
+     the key every learner's stored mastery is filed under — see
+     `displayTopic` in practice/config.js, which is now the single copy of that
+     map. This file used to hold its own, which is how the lesson header could
+     say "PyTorch tensors" while the question header below it said "Numpy". */
+  const _topicLabel = (topic) =>
+    (typeof displayTopic === "function" ? displayTopic(topic) : topic);
 
   /* The published notebook's anchor for the concept a lesson page teaches, or
      "" when there is nowhere to send the learner.
@@ -375,7 +420,14 @@ const LessonGate = (() => {
     bar.show({
       kc: kp.kc,
       title: seg.title || kp.title,
-      eyebrow: `${_topicLabel(lesson.topic)} · Lesson ${page.pageIndex + 1} of ${page.pageTotal}`,
+      // Counted over the KP's concepts, not over the pages in this visit —
+      // there is normally one page per visit now, so "1 of 1" would be true
+      // and useless. "Concept 2 of 3" is what tells the learner the KP is a
+      // sequence they are partway through rather than a thing that keeps
+      // reappearing.
+      eyebrow: page.segCount > 1
+        ? `${_topicLabel(lesson.topic)} · Concept ${page.segIndex + 1} of ${page.segCount}`
+        : `${_topicLabel(lesson.topic)} · Lesson`,
       stage: "lesson",
       estimate: null,
     });
@@ -425,11 +477,15 @@ const LessonGate = (() => {
 
   const maybeShow = async (question, onDone, forceKcs = null) => {
     try {
-      const kcs = forceKcs || (await _pendingKcs(question));
-      if (!kcs.length) return false;
+      // Content first: a local-mode step is read out of the KP's own segment
+      // list, so `_pendingSteps` cannot answer before the lessons have loaded.
       await _ensureLessons();
       if (!lessonsData) return false;
-      const pages = _buildPages(kcs);
+      const steps = forceKcs
+        ? forceKcs.map((kc) => _stepFor(kc, _localExposure()))
+        : await _pendingSteps(question);
+      if (!steps.length) return false;
+      const pages = _buildPages(steps);
       if (!pages.length) return false;
 
       const questionText = _el("question-text");
@@ -525,17 +581,26 @@ const LessonGate = (() => {
           if (advancing || finished) return;
           advancing = true;
           button.disabled = true;
-          if (page.lastOfKp) {
-            _markLocalExposure([page.kp.kc]);
-            _markBackendExposure([page.kp.kc]);
-            // Also credits the ladder's `worked` rung — but in finishAll, not
-            // here, because the response re-stages the pending question and
-            // that has to land before it renders. Without any crediting at
-            // all, the gate would teach a KP and the ladder would immediately
-            // re-teach the identical page: the two counters are written by
-            // different endpoints and neither one implies the other.
-            taught.push(page.kp.kc);
-          }
+          // The concept just read, and — only on the last one — the KP itself.
+          // Writing the KC's key early is the one unrecoverable mistake here:
+          // it says "taught" about concepts the learner has not seen, and the
+          // gate never fires for them again.
+          const keys = [page.step.exposureKey];
+          if (page.lastOfKp && page.step.exposureKey !== page.kp.kc) keys.push(page.kp.kc);
+          _markLocalExposure(keys);
+          _markBackendExposure(keys);
+          // Also credits the ladder's `worked` rung — but in finishAll, not
+          // here, because the response re-stages the pending question and
+          // that has to land before it renders. Without any crediting at
+          // all, the gate would teach a KP and the ladder would immediately
+          // re-teach the identical page: the two counters are written by
+          // different endpoints and neither one implies the other.
+          //
+          // Credited on EVERY concept page, not just the last. Each one is a
+          // worked example, and the drill waiting behind this page is the one
+          // for THIS concept — it has to be re-staged onto the faded rung now
+          // or the loop hands over a blank editor and calls it fading.
+          taught.push(page.kp.kc);
           index++;
           if (index < pages.length) showPage();
           else finishAll();
