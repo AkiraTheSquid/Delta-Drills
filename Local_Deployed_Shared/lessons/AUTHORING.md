@@ -117,6 +117,38 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
   uses `## Watch out` inside each relevant segment.
 - A faded qid may appear in only one segment.
 
+### The blanks must cover the concept, never the scaffold (required, enforced)
+
+A faded starter is a completion problem, and what makes it one is that the
+STRUCTURE is given and the CONCEPT is not. `z.__(__)` says a method call on the
+tensor taking one keyword argument — which is a great deal of help, all of it
+about a shape the learner has already met — while saying nothing about which
+call. That is the target shape.
+
+The failure is the other way round: blanking the argument and leaving the
+method. `return z.clamp(_____=0.0)`, on the KP whose whole subject is `clamp`,
+is a drill that can be passed by anyone who can read, and the ladder promotes
+on it. That was q67, and it is what this rule exists to stop.
+
+So: **every symbol in the KP's `new_syntax` frontmatter must be blanked, and
+everything else may stay.** A symbol an earlier lesson taught is exactly the
+supporting structure that belongs on the page — the rule is about what is NEW
+here, not about hiding as much as possible.
+
+You do not have to do this by hand. `compile_lessons.py` runs
+`lesson_lib.blank_new_syntax` over every authored starter, so a `new_syntax`
+symbol left visible is blanked on the way into `lessons_structured.json`, in
+the function body only (the example-run block below it keeps its `t.tensor(…)`
+fixture). What the rewriter cannot do is operators — `syntax.matmul` has no
+identifier to hide, and a `@` replaced by a blank leaves a line that cannot be
+read as code. Those are reported as FADE_LEAK by `lesson_quality.py` and are
+an authoring decision.
+
+The same rule scales up. On a larger problem the scaffold gives away every
+supporting step and blanks only the one move being learned plus the arguments
+it needs — the point is not how much is hidden but that what is hidden is
+exactly what is being taught.
+
 ### The faded exercise must require TRANSFER (required)
 
 The faded exercise must NOT be a re-run of the worked example. It teaches the
