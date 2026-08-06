@@ -10,6 +10,7 @@ KP markdown format (see Local_Deployed_Shared/lessons/AUTHORING.md):
     ```python starter``` and ```python solution``` fences.
 Used by scripts/compile_lessons.py and scripts/validate_lessons.py.
 """
+import ast
 import json
 import re
 from pathlib import Path
@@ -147,6 +148,105 @@ def code_fences(text, info=None):
         if info is None or fence_info == info:
             out.append(code)
     return out
+
+
+_IMPORT_LINE = re.compile(r"^\s*(import|from)\s")
+
+
+def _calls_at_top_level(src, fn_name):
+    """Does `src` call `fn_name` outside any function body?
+
+    Line-based rather than AST-based on purpose: this is asked of an AUTHORED
+    faded starter, whose blanks (`t._____(z)`) happen to parse today but are a
+    text convention, not a promise. An unindented line mentioning `fn_name(` is
+    a top-level call in every starter in the bank.
+    """
+    call = re.compile(r"\b" + re.escape(fn_name) + r"\s*\(")
+    return any(
+        line and not line[0].isspace() and call.search(line)
+        and not line.lstrip().startswith(("def ", "#"))
+        for line in (src or "").splitlines()
+    )
+
+
+def _function_span(src, fn_name):
+    """(first_line, last_line) of `fn_name`'s def, 1-based inclusive, or None."""
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return None
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == fn_name:
+            end = max(getattr(n, "end_lineno", n.lineno) for n in node.body)
+            return node.lineno, end
+    return None
+
+
+def example_run_block(starter_code, fn_name="solve"):
+    """The demo lines a question's own starter carries, without the function.
+
+    Every generated starter ends with a fixture and a `print(solve(fixture))`,
+    and that block is the only thing on the page that shows the learner what
+    their function PRINTS. Comments are kept — the block explains itself ("the
+    grader calls solve() with several different inputs").
+
+    Returns "" when the starter has no such block, or will not parse.
+    """
+    span = _function_span(starter_code or "", fn_name)
+    if not span:
+        return ""
+    first, last = span
+    kept = []
+    for i, line in enumerate(starter_code.splitlines(), start=1):
+        if first <= i <= last:
+            continue
+        if _IMPORT_LINE.match(line):
+            continue
+        kept.append(line)
+    return "\n".join(kept).strip("\n")
+
+
+def attach_example_run(faded_starter, question_starter, fn_name="solve"):
+    """Give an authored faded starter the demo block its question already has.
+
+    THE BUG THIS FIXES. All 250 hand-cut faded starters are the function and
+    nothing else — `def solve(z): return t._____(z)`. The question's own
+    starter ends with a fixture and a print, so the learner runs it, reads the
+    output and compares it against the expected output above. Served the
+    authored starter instead, they get a cell that defines a function and
+    prints nothing: filling the blank correctly and filling it wrongly look
+    exactly the same, and the expected-output block has nothing to be compared
+    against. "It didn't do the thing where it has something right after the
+    function like a tensor that makes it such that you can see the printed
+    output."
+
+    Grafted at COMPILE time rather than served at runtime because the same
+    starter reaches the learner by three routes that do not share code — the
+    backend's `faded` rung (prioritization.ladder_starter), the published Colab
+    notebook (generate_colab_notebooks.problem_cells), and the client-side
+    single-KC ladder (practice/kc-practice.js). One of them fixed is two of
+    them still broken.
+
+    Left alone when the authored starter already calls the function at the top
+    level: the author wrote their own demo and it is the better one.
+    """
+    if not faded_starter or not question_starter:
+        return faded_starter
+    if _calls_at_top_level(faded_starter, fn_name):
+        return faded_starter
+    block = example_run_block(question_starter, fn_name)
+    if not block:
+        return faded_starter
+    # Imports the block needs and the faded starter does not already make. The
+    # fixture line is usually `t.tensor(...)`, so a missing `import torch as t`
+    # turns a helpful demo into a NameError.
+    have = {l.strip() for l in faded_starter.splitlines() if _IMPORT_LINE.match(l)}
+    missing = [
+        l for l in question_starter.splitlines()
+        if _IMPORT_LINE.match(l) and l.strip() not in have
+    ]
+    lead = "\n".join(missing) + "\n" if missing else ""
+    return faded_starter.rstrip("\n") + "\n\n\n" + lead + block + "\n"
 
 
 def parse_kp(path):

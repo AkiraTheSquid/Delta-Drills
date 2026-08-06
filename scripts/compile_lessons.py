@@ -7,11 +7,21 @@ Run scripts/validate_lessons.py first (or with --gate) — compilation does not 
 import json
 import re
 import sys
-from lesson_lib import LESSONS_DIR, all_kp_paths, load_registry, parse_kp, split_items, code_fences
+from lesson_lib import (
+    LESSONS_DIR,
+    all_kp_paths,
+    attach_example_run,
+    code_fences,
+    load_bank,
+    load_registry,
+    parse_kp,
+    split_items,
+)
 
 
 def compile_lessons():
     registry = load_registry()
+    bank = load_bank()
     kc_by_id = {kc["id"]: kc for kc in registry["kcs"]}
     lessons = {l["id"]: {**l, "kps": []} for l in registry["lessons"]}
 
@@ -25,10 +35,20 @@ def compile_lessons():
                 starters = code_fences(content, "python starter")
                 solutions = code_fences(content, "python solution")
                 prose = content.split("```", 1)[0].strip()
+                # The authored starter is the function alone. Its question's own
+                # starter ends with a fixture and a print, and without that the
+                # learner has nothing to compare the expected output against —
+                # so graft it on here, once, for every route that serves this
+                # record (see lesson_lib.attach_example_run).
+                exercise = (bank.get(qid) or {}).get("exercise") or {}
                 items.append({
                     "question_id": qid,
                     "prompt": prose,
-                    "starter_code": starters[0] if starters else "",
+                    "starter_code": attach_example_run(
+                        starters[0] if starters else "",
+                        exercise.get("starter_code") or "",
+                        exercise.get("function_name") or "solve",
+                    ),
                     "solution": solutions[0] if solutions else "",
                 })
             return items

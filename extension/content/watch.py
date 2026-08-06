@@ -217,6 +217,57 @@ def check_stage_two_pair_survives_focus():
     )
 
 
+def check_a_lesson_is_a_focus_target():
+    """A concept anchor must focus the concept, not fall through to a problem.
+
+    The ladder teaches before it drills, and on the Colab edition the teaching
+    step routes to `#scrollTo=dd-kp-<slug>` (practice/colab_mode.js's
+    `hrefForKc`). When only `dd-q<n>` counted as a target, that fragment
+    resolved to nothing, `sticky` kept the PREVIOUS problem, and the lesson the
+    learner had just been sent to stayed `display:none` — scrolled to and
+    invisible. The symptom is the worst kind: the notebook does not move, which
+    reads as the link being dead rather than as focus being wrong.
+
+    Both halves are checked by lifting the shipped patterns and running them,
+    for the reason spelled out in `check_stage_two_pair_survives_focus`: a
+    text-shaped assertion is satisfied by editing it.
+
+    The ORDER inside `groupOf` is the other half. A segment's problems sit
+    inside its KP section, so a `dd-q…` cell would match the concept run too if
+    the concept were tested first — and then routing to a problem would unfold
+    the entire lesson around it.
+    """
+    script = _read(os.path.join(HERE, "colab_focus.js"))
+
+    found = re.search(r"const KP = /(\^dd-kp-.*?)/i;", script)
+    assert found, "could not find the KP anchor pattern in colab_focus.js"
+    kp = re.compile(found.group(1), re.I)
+    assert kp.match("dd-kp-numpy-ndarray-model"), "a concept header must be a target"
+    assert not kp.match("dd-q49"), "a problem must not be read as a concept"
+    assert not kp.match("dd-kp"), "a slugless concept anchor names no section"
+
+    assert "function targetGroup()" in script, (
+        "the fragment reader must resolve BOTH kinds of target — a "
+        "problem-only reader leaves a lesson pinned to the last problem"
+    )
+    assert "targetProblem" not in script, (
+        "targetProblem is gone; leaving a second reader around invites one "
+        "caller to keep using the problem-only one"
+    )
+    assert "groupOf(anchor, currentKp)" in script, (
+        "membership in a concept section is positional — the tagging walk has "
+        "to carry the current KP, since the prose cells' ids name nothing"
+    )
+    # The body only — the signature names `currentKp` before anything runs.
+    group_of = script[script.index("function groupOf("):]
+    group_of = group_of[group_of.index("{"):group_of.index("\n  }")]
+    assert group_of.index("problemOf(anchor)") < group_of.index("currentKp"), (
+        "groupOf must test the problem anchor FIRST — every problem sits inside "
+        "a KP section, so testing the section first would put a problem's cells "
+        "in the lesson's group and unfold the whole concept around the drill"
+    )
+
+
 def check_css_is_opt_in():
     """Every styling rule is scoped to a class this extension adds.
 
@@ -348,7 +399,8 @@ def check_gemini_suppression_is_ours_only():
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_focus_cannot_blank_the_notebook,
-              check_stage_two_pair_survives_focus, check_css_is_opt_in,
+              check_stage_two_pair_survives_focus,
+              check_a_lesson_is_a_focus_target, check_css_is_opt_in,
               check_gemini_suppression_is_ours_only]
     for fn in checks:
         try:

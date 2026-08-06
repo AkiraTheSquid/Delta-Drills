@@ -8,6 +8,7 @@ import sys
 import os
 import json
 import re
+import subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(HERE)
@@ -648,12 +649,78 @@ def check_colab_lesson_goes_to_the_notebook():
     )
 
 
+def check_a_resumed_clock_matches_the_break():
+    """Resuming keeps the time left; coming back much later restarts the step.
+
+    Two failure modes, opposite and both silent. Always restoring `remaining`
+    makes the strict timer optional: pause at 00:05, come back tomorrow, get
+    five seconds — so the learner learns to pause and never resume. Always
+    restarting it makes pause the way to buy a fresh five minutes on any
+    question that is going badly.
+
+    The rule is therefore about the LENGTH OF THE BREAK, and it has to be
+    evaluated when Resume is clicked, not when the page loaded — the resume
+    panel can sit on screen for an hour, and a snapshot judged fresh at load
+    would still be handing back a clock that expired while it was being read.
+
+    Run rather than pattern-matched. The helpers are pure functions of a
+    snapshot, so the actual shipped arithmetic is lifted out and exercised on
+    the cases that matter, including the two that are easy to get backwards: a
+    missing timestamp (an older bundle's snapshot — unknowable break, so treat
+    it as long) and a clock that has gone backwards.
+    """
+    src = open(os.path.join(HERE, 'timer.js'), encoding='utf-8').read()
+    grace = re.search(r"const RESUME_GRACE_SECS = (\d+);", src)
+    assert grace, "RESUME_GRACE_SECS is gone — the resume rule has no window"
+    start = src.index("  const _awaySecs = (saved) =>")
+    end = src.index("  const _resumeSummary =")
+    helpers = src[start:end]
+    assert "_effectiveRemaining" in helpers, (
+        "the resume clock is no longer computed from the snapshot's age"
+    )
+    assert "_effectiveRemaining(pausedState)" in src.split("const _resumeCore", 1)[-1], (
+        "_resumeCore restores a raw `remaining` again — the break's length has "
+        "to be read at the moment of resuming, not at page load"
+    )
+
+    probe = f"""
+const RESUME_GRACE_SECS = {grace.group(1)};
+{helpers}
+const snap = (over) => ({{
+  phase: "answer", answerSecs: 300, reviewSecs: 120, remaining: 60,
+  savedAt: new Date(Date.now() - over * 1000).toISOString(), ...(over === null ? {{}} : {{}}),
+}});
+const eq = (got, want, why) => {{
+  if (JSON.stringify(got) !== JSON.stringify(want)) {{
+    console.error(`FAIL ${{why}}: got ${{JSON.stringify(got)}} want ${{JSON.stringify(want)}}`);
+    process.exit(1);
+  }}
+}};
+eq(_effectiveRemaining(snap(1)), {{secs: 60, restarted: false}},
+   "straight back must keep the time left");
+eq(_effectiveRemaining(snap(RESUME_GRACE_SECS)), {{secs: 60, restarted: false}},
+   "the grace boundary itself must still resume");
+eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: 300, restarted: true}},
+   "past the window the ANSWER step restarts at its own limit");
+const review = {{...snap(RESUME_GRACE_SECS + 1), phase: "review"}};
+eq(_effectiveRemaining(review), {{secs: 120, restarted: true}},
+   "a review-phase break must restart the REVIEW limit, not the answer one");
+eq(_effectiveRemaining({{...snap(0), savedAt: null}}), {{secs: 300, restarted: true}},
+   "an unknowable break must be treated as a long one, never as a fresh resume");
+eq(_effectiveRemaining(snap(-99999)), {{secs: 60, restarted: false}},
+   "a clock that jumped backwards must not restart the step");
+"""
+    proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_promotion_threshold_matches_the_backend,
               check_lesson_code_can_actually_run,
-              check_colab_lesson_goes_to_the_notebook]
+              check_colab_lesson_goes_to_the_notebook,
+              check_a_resumed_clock_matches_the_break]
     for fn in checks:
         try:
             fn()

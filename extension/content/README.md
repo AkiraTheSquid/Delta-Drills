@@ -151,6 +151,18 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-06 (**a lesson is a focus target, not just a problem**): `colab_focus.js`.
+  The app routes its teaching step to `#scrollTo=dd-kp-<slug>`, and focus only
+  understood `dd-q<n>`. So the fragment resolved to nothing, `sticky` kept the
+  PREVIOUS problem, and the concept the learner had just been sent to stayed
+  `dd-out-of-focus` — scrolled to and `display: none`. Nothing moved on screen,
+  which reads as a dead link rather than as focus being wrong. Targets are now
+  groups of two kinds: `q:<n>` from the anchor itself, and `kp:<slug>` for a RUN
+  of cells, since the prose under a concept header carries minted ids that name
+  nothing — membership comes from DOM order, which is how the generator emits
+  them. A `dd-q…` cell always wins its own group, or routing to a drill would
+  unfold the whole lesson around it. `watch.py::check_a_lesson_is_a_focus_target`
+  runs both shipped patterns and asserts that ordering.
 - 2026-08-04 (**Gemini's shadow text no longer writes the answer**): Colab ships
   "Show AI-powered inline completions" ON (Settings → AI Assistance, its own key
   is `inlineCompletions`), so a learner routed to a problem the ladder says they

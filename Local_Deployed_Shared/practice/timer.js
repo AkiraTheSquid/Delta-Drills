@@ -7,6 +7,10 @@
    question so it can be resumed later. Closing/reloading the page also
    leaves a resumable snapshot.
 
+   A resumed clock depends on the length of the break — see RESUME_GRACE_SECS.
+   Straight back and it picks up mid-second; after a real gap the current step
+   starts over, and only that step.
+
    Lifecycle hooks (called from ui.js / events.js):
      PracticeSession.onQuestionRendered()   — every renderQuestion()
      PracticeSession.pauseForGrading()      — submit clicked, grading in flight
@@ -19,6 +23,22 @@
 
 const SESSION_SETUP_KEY = "delta_drills_session_setup";
 const SESSION_STATE_VERSION = 1;
+
+/* How long a paused clock stays paused before the step starts over.
+
+   Leaving and coming straight back is not a break — a reload, a tab closed by
+   accident, a laptop lid — and handing back a fresh five minutes for it would
+   make "pause" the way to opt out of the timer entirely. So inside the grace
+   window the clock resumes exactly where it stopped: one minute left is one
+   minute left.
+
+   Coming back an hour later is a different thing, and resuming at 00:01 there
+   punishes the break rather than timing the work. What the strict timer
+   actually measures is a continuous attempt, and after a real gap the learner
+   is starting the step again — re-reading the prompt, rebuilding what they had
+   in their head — so the step gets its full time back. Only the CURRENT step:
+   the question, the quota and the draft code are all still theirs. */
+const RESUME_GRACE_SECS = 120;
 
 const parseTimerInput = (value, fallback) => {
   const raw = String(value || "").trim();
@@ -61,6 +81,7 @@ const PracticeSession = (() => {
   let interval = null;
   let remaining = 0;
   let advancePoll = null;
+  let resumeRefresh = null;
   let resumeReady = false;
   let resumePending = false;
 
@@ -182,13 +203,55 @@ const PracticeSession = (() => {
     }, 1000);
   };
 
+  /* Seconds since the snapshot was written. `_persist` stamps `savedAt` every
+     tick, so this is the length of the break to within a second — except when
+     the field is missing or unreadable (a snapshot from an older bundle, a
+     mangled localStorage entry), where the honest answer is "no idea how long"
+     and the safe one is to treat it as a long break. Erring that way costs a
+     restarted step; erring the other way hands out free time on every reload.
+     A clock that has gone BACKWARDS reads as 0, which resumes the timer. */
+  const _awaySecs = (saved) => {
+    const at = Date.parse(saved?.savedAt || "");
+    if (!Number.isFinite(at)) return Infinity;
+    return Math.max(0, (Date.now() - at) / 1000);
+  };
+
+  const _phaseLimit = (saved) =>
+    saved.phase === "review" ? saved.reviewSecs : saved.answerSecs;
+
+  /* What the clock should read on resume: {secs, restarted}.
+
+     Recomputed at the moment of resuming rather than when the snapshot was
+     read, because the resume panel can sit on screen for as long as the
+     learner likes and the break is still running while it does. */
+  const _effectiveRemaining = (saved) => {
+    if (_awaySecs(saved) <= RESUME_GRACE_SECS) {
+      return { secs: saved.remaining, restarted: false };
+    }
+    return { secs: _phaseLimit(saved), restarted: true };
+  };
+
   const _resumeSummary = (saved) => {
     const phase = saved.phase === "review" ? "reviewing" : "answering";
-    return `Question ${saved.served} of ${saved.total} · ${phase} · ${formatTimer(saved.remaining)} left`;
+    const { secs, restarted } = _effectiveRemaining(saved);
+    return `Question ${saved.served} of ${saved.total} · ${phase} · ` +
+      formatTimer(secs) + (restarted ? " (this step starts over)" : " left");
+  };
+
+  /* The summary is a live number, so it has to be redrawn while the panel sits
+     there: a learner reading "00:47 left" who then makes a cup of tea must not
+     click Resume on a promise that expired while they were gone. Cheap, and it
+     stops the moment there is nothing paused. */
+  const _stopResumeRefresh = () => {
+    if (resumeRefresh) {
+      clearInterval(resumeRefresh);
+      resumeRefresh = null;
+    }
   };
 
   const _showResumeOption = () => {
     if (!pausedState) {
+      _stopResumeRefresh();
       sessionResumePanel.classList.add("hidden");
       sessionSetupPanel.classList.remove("session-setup--has-resume");
       return;
@@ -197,6 +260,15 @@ const PracticeSession = (() => {
     sessionResumeBtn.disabled = !resumeReady;
     sessionResumePanel.classList.remove("hidden");
     sessionSetupPanel.classList.add("session-setup--has-resume");
+    if (!resumeRefresh) {
+      resumeRefresh = setInterval(() => {
+        if (!pausedState) {
+          _stopResumeRefresh();
+          return;
+        }
+        sessionResumeSummary.textContent = _resumeSummary(pausedState);
+      }, 5000);
+    }
   };
 
   // Answer time is up. Grade whatever is in the editor; when nothing is
@@ -453,6 +525,10 @@ const PracticeSession = (() => {
   const _resumeCore = () => {
     if (!pausedState) return;
     resumePending = false;
+    // Read the clock before `pausedState` is cleared below, and read it HERE
+    // rather than at load: the break is still running while the resume panel
+    // is on screen.
+    const clock = _effectiveRemaining(pausedState);
     state = {
       total: pausedState.total,
       answerSecs: pausedState.answerSecs,
@@ -462,9 +538,10 @@ const PracticeSession = (() => {
       review: pausedState.review,
       draft: pausedState.draft,
     };
-    remaining = pausedState.remaining;
+    remaining = clock.secs;
     pausedState = null;
     resumeReady = false;
+    _stopResumeRefresh();
     sessionResumePanel.classList.add("hidden");
     sessionSetupPanel.classList.remove("session-setup--has-resume");
     sessionSummary.classList.add("hidden");

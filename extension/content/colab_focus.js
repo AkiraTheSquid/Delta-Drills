@@ -43,6 +43,13 @@
      which is fine: every cell in a focused group shares the group's number, so
      clicking within the problem re-resolves to the same problem.
 
+     A LESSON is a target too — `#scrollTo=dd-kp-<slug>`, which is what the app
+     sends when the ladder is on its teaching step rather than on a drill. It
+     focuses the whole concept SECTION: the header and everything under it up to
+     the next `dd-kp-` header, minus the problems, which have groups of their
+     own. Membership there comes from DOM order rather than from the anchor,
+     because the prose cells carry minted ids that name nothing.
+
    THE RULE THAT KEEPS THIS SAFE
      Hide nothing unless a target actually resolved to cells that exist. Focus
      with no match would blank the notebook, and a blank notebook is
@@ -80,6 +87,17 @@
   // learner is meant to READ. Two prompts and two code cells in a row, all
   // equally styled, is an invitation to start solving the example.
   const EXAMPLE = /^dd-q(\d+)-example(?:$|[^0-9])/i;
+
+  // The cell that TEACHES one concept — `dd-kp-<slug>` — which is where the
+  // app sends a learner who has reached a lesson rather than a problem
+  // (`colab_mode.hrefForKc`). It opens a section, not a group: the prose,
+  // watch-outs and runnable blocks under it carry minted ids of their own that
+  // say nothing about which concept they belong to, so membership is read off
+  // DOM ORDER — every cell after this header belongs to it until the next KP
+  // header. That is exactly how the notebook is generated
+  // (scripts/generate_colab_notebooks.py emits kp header → its prose → its
+  // problems), so the order is a fact about the file rather than a guess.
+  const KP = /^dd-kp-(.+)$/i;
 
   // A problem's answer cell. Hidden until the learner submits — see `reveal`.
   // There is no toggle for this and there should not be: an "always show
@@ -133,16 +151,43 @@
     return m ? m[1] : null;
   }
 
-  /** The problem the URL is pointing at, or null. */
-  function targetProblem() {
+  /**
+   * The GROUP an anchor belongs to, given what came before it in the notebook.
+   *
+   * Two kinds, and they are not interchangeable. A problem group is named by
+   * the anchor itself, so it can be read off one cell. A concept group is a
+   * RUN of cells, so it needs `currentKp` threaded through the walk.
+   *
+   * A `dd-q…` cell always wins: the segment's problems sit inside its KP
+   * section, and a lesson in focus is the reading, not the drills below it —
+   * "it shows you an example and then it gives you a faded problem" is the
+   * NEXT step, which the app routes to separately.
+   */
+  function groupOf(anchor, currentKp) {
+    const problem = problemOf(anchor);
+    if (problem) return `q:${problem}`;
+    return currentKp ? `kp:${currentKp}` : null;
+  }
+
+  /** The group the URL is pointing at, or null. */
+  function targetGroup() {
     const hash = decodeURIComponent(location.hash || "").replace(/^#/, "");
     const value = /(?:^|[?&])scrollTo=([^&]+)/.exec(hash);
-    const raw = value ? value[1] : hash;
-    return problemOf(String(raw).replace(/^cell-/, ""));
+    const raw = String(value ? value[1] : hash).replace(/^cell-/, "");
+    const problem = problemOf(raw);
+    if (problem) return `q:${problem}`;
+    const kp = KP.exec(raw);
+    return kp ? `kp:${kp[1].toLowerCase()}` : null;
+  }
+
+  /** "Problem 49" / "this concept" — for the toggle's status line. */
+  function describe(group) {
+    if (!group) return "";
+    return group.startsWith("q:") ? `Problem ${group.slice(2)}` : "This concept";
   }
 
   /**
-   * The problem in focus, which is NOT the same as the problem in the URL.
+   * The group in focus, which is NOT the same as the one in the URL.
    *
    * Colab rewrites `#scrollTo=` to whatever cell is at the top of the viewport
    * as you scroll — that is its own deep-linking feature, not something we ask
@@ -156,10 +201,17 @@
    * fragment naming a different problem switches to it, and anything else
    * leaves the current one alone. The panel routes by rewriting the fragment,
    * so the one path that must keep working still does.
+   *
+   * A concept anchor is a real target for the same reason a problem is. It was
+   * not, and that is what made the lesson step unusable on this edition: the
+   * app routed to `#scrollTo=dd-kp-…`, this read no problem in it, kept the
+   * PREVIOUS problem sticky, and the lesson the learner had just been sent to
+   * stayed hidden behind `dd-out-of-focus` — scrolled to, but `display:none`,
+   * so nothing on screen moved at all.
    */
   let sticky = null;
   function focusTarget() {
-    const fromUrl = targetProblem();
+    const fromUrl = targetGroup();
     if (fromUrl) sticky = fromUrl;
     return sticky;
   }
@@ -285,11 +337,14 @@
     // Tag first, count second, and only then decide whether to hide anything.
     let inFocus = 0;
     let ourCells = 0;
+    let currentKp = null;
     cells.forEach((cell) => {
       const anchor = cellAnchor(cell);
       if (anchor.startsWith("dd-")) ourCells += 1;
+      const kp = KP.exec(anchor);
+      if (kp) currentKp = kp[1].toLowerCase();
       const always = ALWAYS_VISIBLE.test(anchor);
-      const mine = target !== null && problemOf(anchor) === target;
+      const mine = target !== null && groupOf(anchor, currentKp) === target;
       if (mine) inFocus += 1;
       cell.classList.toggle("dd-always-visible", always);
       cell.classList.toggle("dd-setup-cell", SETUP.test(anchor));
@@ -365,16 +420,17 @@
       return;
     }
     if (!lastReport.target) {
-      note.textContent = "No problem in the URL — open one from the app "
-        + "(the link carries #scrollTo=dd-q…). Showing everything.";
-      return;
-    }
-    if (!lastReport.inFocus) {
-      note.textContent = `Problem ${lastReport.target} is not in this notebook. `
+      note.textContent = "Nothing named in the URL — open a problem or a lesson "
+        + "from the app (the link carries #scrollTo=dd-q… or #scrollTo=dd-kp-…). "
         + "Showing everything.";
       return;
     }
-    note.textContent = `Problem ${lastReport.target}: `
+    if (!lastReport.inFocus) {
+      note.textContent = `${describe(lastReport.target)} is not in this notebook. `
+        + "Showing everything.";
+      return;
+    }
+    note.textContent = `${describe(lastReport.target)}: `
       + `${lastReport.inFocus} of ${lastReport.total} cells.`;
   }
 
