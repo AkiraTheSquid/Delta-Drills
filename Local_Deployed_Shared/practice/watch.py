@@ -690,9 +690,16 @@ def check_a_resumed_clock_matches_the_break():
     probe = f"""
 const RESUME_GRACE_SECS = {grace.group(1)};
 {helpers}
+// The clock is FROZEN for the probe. `savedAt` is an ISO string truncated to
+// milliseconds and `_awaySecs` re-reads the wall clock a moment later, so a
+// live `Date.now()` puts the exact boundary case a few milliseconds past the
+// window and the assertion flips depending on how busy the machine is. The
+// boundary is the case worth testing; it has to be testable exactly.
+const NOW = Date.now();
+Date.now = () => NOW;
 const snap = (over) => ({{
   phase: "answer", answerSecs: 300, reviewSecs: 120, remaining: 60,
-  savedAt: new Date(Date.now() - over * 1000).toISOString(), ...(over === null ? {{}} : {{}}),
+  savedAt: new Date(NOW - over * 1000).toISOString(),
 }});
 const eq = (got, want, why) => {{
   if (JSON.stringify(got) !== JSON.stringify(want)) {{
