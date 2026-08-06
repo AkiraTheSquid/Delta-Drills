@@ -2,6 +2,40 @@
    PRACTICE CONFIG — fallback pool + exclusions
    ================================================================ */
 
+/* WHAT THE COURSE IS CALLED, versus what its records are FILED under.
+
+   Every drill in the "Numpy" topic was rewritten into the torch dialect in the
+   July conversion — `import torch as t`, tensors, no numpy — so the word on
+   screen is simply wrong, and has been reported as such more than once.
+
+   The word is not free to change. `questions.py` builds a backend subtopic key
+   as `f"{topic}: {subtopic}"`, which is the key every learner's stored BKT
+   mastery, EWMA accuracy and difficulty offset are filed under. Renaming the
+   topic orphans all of it. So the rename is a LABEL, applied at the moment of
+   display and nowhere else, and it stays that way until there is a state
+   migration to do it properly.
+
+   `lessons.js` had its own private copy of this map for the lesson screen,
+   which is why the lesson header said "PyTorch tensors" while the question
+   header three inches below it still said "Numpy". One map, loaded first, used
+   by every surface that prints the name.  */
+const TOPIC_DISPLAY_LABELS = { Numpy: "PyTorch tensors" };
+
+/** A topic name as the learner should read it. */
+function displayTopic(topic) {
+  return TOPIC_DISPLAY_LABELS[topic] || topic || "";
+}
+
+/** A subtopic or composite `Topic: Subtopic` key, relabelled for display. */
+function displaySubtopic(subtopic) {
+  const text = String(subtopic || "");
+  const colon = text.indexOf(": ");
+  if (colon < 0) return text;
+  const topic = text.slice(0, colon);
+  const label = TOPIC_DISPLAY_LABELS[topic];
+  return label ? `${label}${text.slice(colon)}` : text;
+}
+
 // Fallback pool used when the Pyodide engine + question bank are unavailable.
 // Every entry must match the schema the UI consumes: question_text, starter_code
 // (function stub WITHOUT the answer leaked above it), test_cases, submission_mode,

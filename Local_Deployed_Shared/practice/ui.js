@@ -237,7 +237,16 @@ function renderQuestion(q, count) {
   codeEditor.value =
     q.starter_code ||
     "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
-  subtopicLabel.textContent = q.topic ? `${q.topic}: ${q.subtopic}` : q.subtopic;
+  // "Numpy: Numpy: Vectorization and broadcasting". The two modes disagree on
+  // what `subtopic` is: local mode sends the bare name and the topic has to be
+  // prefixed, while the backend already sends the COMPOSITE key
+  // (`questions.py` builds `f"{topic}: {subtopic}"` so Numpy and Einops
+  // subtopics stay distinct under one BKT record). Prefixing that a second
+  // time is what doubled it. Prefix only when it is not already there.
+  const subtopic = String(q.subtopic || "");
+  subtopicLabel.textContent = displaySubtopic(
+    q.topic && !subtopic.startsWith(`${q.topic}:`) ? `${q.topic}: ${subtopic}` : subtopic,
+  );
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
   renderQuestionIdChip(q);
   if (typeof updateGraphJump === "function") updateGraphJump(q);
@@ -259,13 +268,13 @@ function renderQuestion(q, count) {
   } else if (coldStart && csIndex) {
     // Calibration is PER SKILL, not global — say so, or "1 of 3" on overall
     // Question 8 reads as a stuck counter (tester hit exactly this).
-    coldStartLabel.textContent = `Calibrating “${q.subtopic}” — ${csIndex} of 3`;
+    coldStartLabel.textContent = `Calibrating “${displaySubtopic(q.subtopic)}” — ${csIndex} of 3`;
     if (coldStartNote) {
       // Copy must match reality: selection is adaptive from question 1
       // (wrong → easier, right → harder), NOT "3 questions at fixed
       // difficulties" (that described the old fixed-ramp system, removed).
       coldStartNote.textContent =
-        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${q.subtopic}”) first comes up, and the accuracy bar stays hidden until it finishes.`;
+        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up, and the accuracy bar stays hidden until it finishes.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {
