@@ -328,11 +328,15 @@ const LessonGate = (() => {
      through to the full in-panel lesson below. Same escape hatch as
      `dd-no-notebook` on the question side: a rail pointing at a notebook that
      does not exist is worse than the page it replaced. */
-  const _colabLessonHref = (kc) => {
+  const _colabLessonHref = (page) => {
     const dd = window.DDColab;
     if (!dd || typeof dd.active !== "function" || !dd.active()) return "";
     if (typeof dd.hrefForKc !== "function") return "";
-    return dd.hrefForKc(kc) || "";
+    // The page's own exposure key, not just its KC. A segmented KP has one
+    // notebook section per concept, and this page is exactly one of them —
+    // handing over the KC would open all of them and the "Concept 2 of 3" the
+    // topbar is showing would name nothing on screen.
+    return dd.hrefForKc(page.kp.kc, page.step && page.step.exposureKey) || "";
   };
 
   /* The lesson as a RAIL rather than as the lesson.
@@ -372,7 +376,7 @@ const LessonGate = (() => {
     const watchOut = seg.watch_out_markdown ||
       (page.segCount === 1 ? kp.misconceptions_markdown : "");
     const isLast = page.pageIndex === page.pageTotal - 1;
-    const colabHref = _colabLessonHref(kp.kc);
+    const colabHref = _colabLessonHref(page);
     if (colabHref) return _colabPageHtml(page, colabHref, isLast);
     // The concept name, the graph button and the progress counter used to be
     // built here, inside the panel. They now live in #concept-topbar, which
@@ -532,7 +536,7 @@ const LessonGate = (() => {
         awaitingIndex = true;
         dd.whenReady(() => {
           if (finished || pages[index] !== page) return;
-          if (_colabLessonHref(page.kp.kc)) showPage();
+          if (_colabLessonHref(page)) showPage();
         });
       };
 
@@ -553,7 +557,7 @@ const LessonGate = (() => {
         // learner is not looking at. Steer the notebook to this concept the
         // same way the question side steers it (ui.js), so the reading is
         // already on screen beside them rather than one click away.
-        const colabHref = _colabLessonHref(page.kp.kc);
+        const colabHref = _colabLessonHref(page);
         if (colabHref) {
           if (window.DDColab && typeof window.DDColab.openNotebook === "function") {
             window.DDColab.openNotebook(colabHref);

@@ -628,16 +628,18 @@ def check_colab_lesson_goes_to_the_notebook():
     """
     read = lambda name: open(os.path.join(HERE, name), encoding='utf-8').read()
     lessons = read('lessons.js')
-    assert 'dd.hrefForKc(kc)' in lessons, (
+    assert 'dd.hrefForKc(page.kp.kc, page.step && page.step.exposureKey)' in lessons, (
         "the lesson rail no longer resolves its notebook through "
-        "DDColab.hrefForKc — a slug guessed locally is an anchor that drifts"
+        "DDColab.hrefForKc — a slug guessed locally is an anchor that drifts, "
+        "and without the page's exposure key a segmented KP opens all of its "
+        "concepts under a topbar that says the learner is on one of them"
     )
     page_html = lessons.split('const _pageHtml = (page) => {', 1)[-1].split('\n  };', 1)[0]
     assert 'if (colabHref) return _colabPageHtml' in page_html, (
         "_pageHtml no longer routes the Colab edition to the rail, so the "
         "panel draws the lesson the notebook already contains"
     )
-    assert '_colabLessonHref(kp.kc)' in page_html, (
+    assert '_colabLessonHref(page)' in page_html, (
         "the rail is chosen without asking whether THIS concept has a notebook "
         "— the ~unpublished ones must fall through to the full lesson"
     )

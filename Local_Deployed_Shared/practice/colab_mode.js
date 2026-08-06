@@ -74,6 +74,10 @@
   // concept.
   let byKc = null;
   let kpAnchors = Object.create(null);
+  // "<kc>#<concept_id>" → the anchor of the cell that opens THAT concept, for
+  // the KPs that teach more than one. Same file, same pass; a KP with a single
+  // concept has no entry and routes through `kpAnchors` as it always did.
+  let segAnchors = Object.create(null);
   let repo = "";
   let pathPrefix = "";
   const readyWaiters = [];
@@ -123,6 +127,7 @@
     });
     byKc = kcMap;
     kpAnchors = (data && data.kps) || Object.create(null);
+    segAnchors = (data && data.segments) || Object.create(null);
   }
 
   function load() {
@@ -213,14 +218,17 @@
    * Colab silently ignores, and the failure would look like "the link does
    * nothing" rather than like a bug.
    *
-   * Unlike a problem, landing here is never a dead end: `colab_focus.js` only
-   * focuses on `dd-q…` targets, so a concept anchor leaves the whole notebook
-   * on screen, scrolled to the section. The worked examples under a KP header
-   * carry no anchors of their own and would be hidden by focus.
+   * `exposureKey` narrows it to ONE CONCEPT of a KP that teaches several —
+   * `"<kc>#<concept_id>"`, exactly the key the lesson gate hands back. A KP is
+   * not one idea and the gate teaches them one at a time, so without this the
+   * panel could say "Concept 2 of 3" and open all three; the learner is told
+   * they are on the second of three things and shown the lot, which looks like
+   * the feature simply not being there. Omitted, or naming a KP with a single
+   * concept, it falls back to the whole-KP anchor and nothing changes.
    */
-  function colabNotebookHrefForKc(kc) {
+  function colabNotebookHrefForKc(kc, exposureKey) {
     const lesson = colabLessonForKc(kc);
-    const anchor = kc && kpAnchors[kc];
+    const anchor = (exposureKey && segAnchors[exposureKey]) || (kc && kpAnchors[kc]);
     const base = notebookUrl(lesson);
     if (!base || !anchor) return "";
     return `${base}#scrollTo=${encodeURIComponent(anchor)}`;
