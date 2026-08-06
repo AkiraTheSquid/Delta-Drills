@@ -101,9 +101,9 @@ def check_colab_grader():
     above — and against the same two cases, which are the drifts that have
     actually happened.
     """
-    import generate_colab_notebooks as gen
+    import colab_cells
 
-    src = gen.grader_source()
+    src = colab_cells.grader_source()
     assert 'def dd_check(' in src, 'grader_source no longer carries dd_check'
 
     printed = []
@@ -167,9 +167,9 @@ def check_colab_grader():
 
     # The fixture the einops drills load has to be somewhere the notebook can
     # reach, and that URL is compiled into every one of them.
-    assert gen.FIXTURE_URL.startswith('https://'), f'bad FIXTURE_URL: {gen.FIXTURE_URL}'
-    assert 'numbers.npy' in gen.FIXTURE_URL, (
-        f'FIXTURE_URL no longer points at the digits fixture: {gen.FIXTURE_URL}'
+    assert colab_cells.FIXTURE_URL.startswith('https://'), f'bad FIXTURE_URL: {colab_cells.FIXTURE_URL}'
+    assert 'numbers.npy' in colab_cells.FIXTURE_URL, (
+        f'FIXTURE_URL no longer points at the digits fixture: {colab_cells.FIXTURE_URL}'
     )
     publish = open(os.path.join(_DIR, 'publish_colab_notebooks.sh'), encoding='utf-8').read()
     assert 'numbers.npy' in publish, (

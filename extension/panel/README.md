@@ -56,9 +56,15 @@ things in it are load-bearing and none is obvious:
 **The tutor UI.** Load order is a dependency chain, not a style choice — each
 file destructures the previous one's global at its top level, **under an alias**:
 
-1. `notebook-index.js`: **generated**, `window.DD_NOTEBOOKS`. The
-   `question → lesson → file` map. Never hand-edit; rerun
-   `scripts/generate_colab_notebooks.py`.
+1. `notebook-index.js`, then `notebook-index-questions.js`, then
+   `notebook-index-concepts.js`: **generated**, three parts of one
+   `window.DD_NOTEBOOKS`. The first ASSIGNS the global (the notebook list and
+   the subtopic map), the other two `Object.assign` onto it — the
+   `question → lesson` map, and the concept maps (`kcs`, `kps`, and
+   `segments`, which names the anchor for ONE concept of a KP that teaches
+   several). Loading a part before the first is a TypeError on an undefined
+   global, so the order is a hard requirement, not a preference. Never
+   hand-edit; rerun `scripts/generate_colab_notebooks.py`.
 2. `api.js`: `window.DD = {api, tab, notebooks, store, ApiError}`. `api` wraps
    the backend, `tab` wraps talking to (and navigating) the Colab tab,
    `notebooks` resolves which notebook a question lives in and what URL opens
@@ -82,7 +88,7 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
 - `chrome.storage.local` keys: `dd_base`, `dd_token`, `dd_nb_repo` (the
   `owner/repo[@branch]/[path]` used to compute Colab URLs) and `dd_nb_urls`
   (the `lesson_id → URL` map learned from tabs that actually opened).
-- `window.DD_NOTEBOOKS` from `notebook-index.js`.
+- `window.DD_NOTEBOOKS` from the three `notebook-index*.js` parts.
 - No libraries. Plain scripts, no modules, no bundler.
 
 ## How It Works (Flow)
@@ -163,6 +169,22 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
     scripts and check that, which is what `../watch.py` approximates.
 
 ## Recent Changes
+- 2026-08-06 (**the panel teaches one concept, and posts one concept**):
+  `panel.js`, `api.js`, `panel.html`, `watch.py`, plus the generated index now
+  arriving in three parts. A KP is not one idea — `numpy.ndarray-model` teaches
+  three — and the backend gate hands them out one at a time with its own
+  `exposure_key` (`"<kc>#<concept_id>"`). This panel ignored that twice over.
+  It opened `dd-kp-<slug>`, so the notebook showed all three concepts and every
+  drill under them; `anchorForGate` now looks the concept's own anchor up in
+  the shipped `segments` map and falls back to the KP anchor, which is what a
+  single-concept KP has and what an older index carries. And **"I've read it"
+  posted `x.kc`** — the key that means *the whole KP is done*, after one
+  concept of three. Every later gate reads it that way and stops firing, so
+  concepts 2 and 3 were credited unread and nothing ever asked again. It posts
+  `x.exposure_key` now. The gate heading names the concept and the subtitle
+  counts it (`… — concept 2 of 3`), because without the counter the same KP
+  arriving three times reads as the tutor repeating itself.
+
 - 2026-08-02: `app.js` follows a same-notebook navigation with `dd:goto`.
   Colab honours `#scrollTo=` when it LOADS a notebook; changing only the
   fragment on one already open fires a hashchange and moves nothing — and that

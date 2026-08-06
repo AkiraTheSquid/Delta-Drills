@@ -151,6 +151,21 @@ against a live notebook:
   and it is a different notebook" lead to opposite decisions in the panel.
 
 ## Recent Changes
+- 2026-08-06 (**one CONCEPT of a lesson is a focus target too**): `colab_focus.js`,
+  `watch.py`. The previous entry made `dd-kp-<slug>` focus a lesson; a lesson is
+  often three lessons. `numpy.ndarray-model` teaches three ideas and the tutor
+  hands them out one at a time, so the panel would say "Concept 2 of 3" and the
+  notebook would open all three, every drill included — not a crash, not even
+  visibly wrong, just the behaviour from before segments existed. The generator
+  now anchors each concept's header `dd-seg-<kc>-<n>` and `targetGroup` resolves
+  it. Membership is positional like a KP's, and a cell belongs to BOTH runs:
+  `groupOf` became `groupsOf` and returns its concept's group and its KP's, so
+  routing to `dd-kp-…` still opens the whole lesson the way the knowledge graph
+  has always expected. The walk closes the open concept at the next KP header
+  **and at the first problem**, because a KP's guided/applied/independent drills
+  and its "Common mistakes" come after the last concept and would otherwise read
+  as part of it.
+
 - 2026-08-06 (**a lesson is a focus target, not just a problem**): `colab_focus.js`.
   The app routes its teaching step to `#scrollTo=dd-kp-<slug>`, and focus only
   understood `dd-q<n>`. So the fragment resolved to nothing, `sticky` kept the

@@ -254,17 +254,64 @@ def check_a_lesson_is_a_focus_target():
         "targetProblem is gone; leaving a second reader around invites one "
         "caller to keep using the problem-only one"
     )
-    assert "groupOf(anchor, currentKp)" in script, (
+    assert "groupsOf(anchor, currentKp, currentSeg)" in script, (
         "membership in a concept section is positional — the tagging walk has "
-        "to carry the current KP, since the prose cells' ids name nothing"
+        "to carry the current KP and the current segment, since the prose "
+        "cells' ids name nothing"
     )
     # The body only — the signature names `currentKp` before anything runs.
-    group_of = script[script.index("function groupOf("):]
+    group_of = script[script.index("function groupsOf("):]
     group_of = group_of[group_of.index("{"):group_of.index("\n  }")]
     assert group_of.index("problemOf(anchor)") < group_of.index("currentKp"), (
-        "groupOf must test the problem anchor FIRST — every problem sits inside "
+        "groupsOf must test the problem anchor FIRST — every problem sits inside "
         "a KP section, so testing the section first would put a problem's cells "
         "in the lesson's group and unfold the whole concept around the drill"
+    )
+
+
+def check_one_concept_of_a_lesson_is_a_focus_target():
+    """A segmented KP must focus ONE concept, not all of them.
+
+    A KP is not one idea — `numpy.ndarray-model` teaches three — and the tutor
+    hands them out one at a time. The panel says "Concept 2 of 3"; the notebook
+    has to agree, or the learner is told they are on the second of three things
+    and shown all three at once. That is not a crash and not even visibly
+    wrong: it is the pre-segment behaviour, still rendering, still scrolled to
+    roughly the right place.
+
+    The two halves are separate failures and both are checked. The ANCHOR has
+    to be recognised as a target (otherwise `sticky` keeps the previous
+    problem and the concept stays `display:none`), and a concept's cells have
+    to stay in their KP's run as well as their own (otherwise segmenting a KP
+    silently breaks the `dd-kp-…` link the knowledge graph routes through).
+    """
+    script = _read(os.path.join(HERE, "colab_focus.js"))
+
+    found = re.search(r"const SEG = /(\^dd-seg-.*?)/i;", script)
+    assert found, "could not find the segment anchor pattern in colab_focus.js"
+    seg = re.compile(found.group(1), re.I)
+    assert seg.match("dd-seg-numpy-ndarray-model-1"), "a concept header must be a target"
+    assert not seg.match("dd-q49"), "a problem must not be read as a concept"
+    assert not seg.match("dd-kp-numpy-ndarray-model"), (
+        "a whole-KP anchor must not be read as one concept of it"
+    )
+
+    body = script[script.index("function groupsOf("):]
+    body = body[body.index("{"):body.index("\n  }")]
+    assert "kp:" in body and "seg:" in body, (
+        "a concept's prose must belong to BOTH its concept and its KP — one or "
+        "the other means segmenting a KP breaks the whole-lesson link"
+    )
+    assert "return groups" in body, (
+        "groupsOf must return every group a cell is in, not the first one it "
+        "matches"
+    )
+
+    walk = script[script.index("cells.forEach((cell) => {"):]
+    assert "currentSeg = null" in walk[:walk.index("cell.classList.toggle")], (
+        "the walk must close the open concept — at the next KP header, and at "
+        "the first problem, or the KP's guided/applied/independent drills and "
+        "its Common mistakes trail into whichever concept came last"
     )
 
 
@@ -400,7 +447,9 @@ if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_focus_cannot_blank_the_notebook,
               check_stage_two_pair_survives_focus,
-              check_a_lesson_is_a_focus_target, check_css_is_opt_in,
+              check_a_lesson_is_a_focus_target,
+              check_one_concept_of_a_lesson_is_a_focus_target,
+              check_css_is_opt_in,
               check_gemini_suppression_is_ours_only]
     for fn in checks:
         try:

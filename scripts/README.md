@@ -102,6 +102,30 @@
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
 
 ## Recent Changes
+- 2026-08-06 (**the notebook can open one concept, and the compiler is two files**):
+  `colab_cells.py` (new), `generate_colab_notebooks.py`, `watch.py`. The gate
+  teaches a segmented KP one concept at a time and there was nowhere to send the
+  learner: the segment headers carried minted ids that name nothing, so the only
+  anchor was the KP's, and "Concept 2 of 3" opened all three. Each concept's
+  header is now anchored `dd-seg-<kc>-<n>` and the index ships
+  `"<kc>#<concept_id>" → anchor`, keyed by the exposure key the gate already
+  hands the client — nothing re-derives it. **By position, not by concept id**:
+  the id is authored and free to be long or edited, an anchor has 64 safe
+  characters and has to survive regeneration. Multi-concept KPs only; the 32
+  one-concept KPs are byte-identical and still route through `kps`. `validate`
+  fails the build if the index would point at a cell the notebook does not have,
+  because Colab ignores an unknown fragment in silence.
+  - **The split.** `colab_cells.py` takes what a CELL is — id minting, the
+    four-cell shape of a problem, the checker — and `generate_colab_notebooks.py`
+    keeps the compiler: which cells a lesson turns into, in what order, and
+    writing them out. 667 → 407 LOC, out of ORANGE.
+  - **The extension's copy is three files**, `notebook-index.js` +
+    `-questions.js` + `-concepts.js`, in load order: the first assigns
+    `window.DD_NOTEBOOKS` and the others `Object.assign` onto it. It is
+    generated data that only grows, and 646 lines of it were the largest thing
+    in the extension. The web app's `colab_notebooks.json` is unchanged, one
+    file, and gained the same `segments` map.
+
 - 2026-08-06 (**every segment gets a stable id**): `compile_lessons.py`. `concept_id` used to come only from a KP's optional `concepts:` frontmatter, which four KPs have — so the other 27 segmented ones compiled to `""` and the per-concept lesson loop skipped them entirely. `_concept_id` falls back to position plus title slug (`s1-nesting-becomes-axes-…`). The position makes collisions impossible (two segments may legitimately share a title) and the slug keeps a stored exposure map readable. Re-titling or reordering a segment mints a new id and re-teaches that one concept once, which is the right failure: a bare index would silently credit a rewritten concept as already read.
 
 - 2026-08-06 (**the fading hides the concept, not the argument**): `lesson_lib.py`, `lesson_quality.py`, `compile_lessons.py`, `validate_lessons.py`, `audit_ladder_pairing.py`, `../Local_Deployed_Shared/lessons/AUTHORING.md`. q67's faded starter was `return z.clamp(_____=0.0)` on the KP that teaches `clamp` — the one recall the drill existed to test was printed on the page, and the ladder promotes on it. The rule now: every symbol in the KP's `new_syntax` is blanked, everything an earlier lesson taught may stay, so the learner gets `z._____(_____=0.0)` — a method call on the tensor with one keyword argument and the value 0.0, which is all structure and no concept. `blank_new_syntax` applies it at compile time over the function body only (the grafted example-run block keeps its `t.tensor(…)` fixture); `check_fade_leak` (FADE_LEAK) verifies the OUTPUT, so anything it reports is something the rewriter could not reach. `syntax.*` entries are operators with no identifier to hide and are reported rather than rewritten — and the operator check reads code only, because q107's docstring states its problem as `a @ x = b` while its solution is `t.linalg.solve(a, b)`. 250 starters rewritten, 0 leaks left, `validate_lessons.py` PASS on all 63 pages.

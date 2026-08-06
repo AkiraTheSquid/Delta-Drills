@@ -157,6 +157,64 @@ const twelve = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q12", settings: ON }
 check("only dd-q12's own cells", twelve.inFocus,
   ["dd-q12", "dd-q12-code", "dd-q12-check", "dd-q12-solution"]);
 
+// ── one concept of a KP that teaches three ───────────────────────────────
+// `numpy.ndarray-model` is three ideas, and the tutor hands them out one at a
+// time. Laid out the way the generator emits it: the KP header, then per
+// concept a `dd-seg-` header, its prose, the worked example anchored into its
+// drill and the drill itself — and then the KP's own guided problem and its
+// Common mistakes, which belong to the KP and to no single concept.
+const SEGMENTED = [
+  "dd-setup", "dd-checker", "dd-lesson-np-1",
+  "dd-kp-numpy-ndarray-model",
+  "dd-seg-numpy-ndarray-model-0", "numpy-ndarray-model-one-block-concept",
+  "dd-q224-worked", "dd-q224", "dd-q224-code",
+  "dd-seg-numpy-ndarray-model-1", "numpy-ndarray-model-axes-concept",
+  "dd-q482-worked", "dd-q482", "dd-q482-code",
+  "dd-seg-numpy-ndarray-model-2", "numpy-ndarray-model-dtype-concept",
+  "dd-q484-worked", "dd-q484", "dd-q484-code",
+  "dd-q523", "dd-q523-code",
+  "numpy-ndarray-model-misconceptions",
+];
+
+console.log("the gate teaches concept 2 of 3:");
+const concept = run({
+  anchors: SEGMENTED, hash: "#scrollTo=dd-seg-numpy-ndarray-model-1", settings: ON,
+});
+check("focus is live", concept.focusOn, true);
+// Its header and its prose. NOT the other two concepts — that was the whole
+// bug: the panel said "Concept 2 of 3" and the notebook showed all three.
+check("only that concept's reading", concept.inFocus,
+  ["dd-seg-numpy-ndarray-model-1", "numpy-ndarray-model-axes-concept"]);
+check("the first concept is hidden",
+  concept.hidden.includes("numpy-ndarray-model-one-block-concept"), true);
+check("so is the third",
+  concept.hidden.includes("numpy-ndarray-model-dtype-concept"), true);
+// A lesson in focus is the reading, not the drill under it — the app routes to
+// the problem separately, once the learner says they have read this.
+check("and so is its own drill", concept.hidden.includes("dd-q482"), true);
+
+console.log("the whole KP is still a target, now that its concepts are too:");
+const wholeKp = run({
+  anchors: SEGMENTED, hash: "#scrollTo=dd-kp-numpy-ndarray-model", settings: ON,
+});
+// Segmenting a KP must not break the `dd-kp-…` link the knowledge graph has
+// always used: a concept's cells belong to their concept AND to their KP.
+check("every concept's reading, and the KP's own tail", wholeKp.inFocus, [
+  "dd-kp-numpy-ndarray-model",
+  "dd-seg-numpy-ndarray-model-0", "numpy-ndarray-model-one-block-concept",
+  "dd-seg-numpy-ndarray-model-1", "numpy-ndarray-model-axes-concept",
+  "dd-seg-numpy-ndarray-model-2", "numpy-ndarray-model-dtype-concept",
+  "numpy-ndarray-model-misconceptions",
+]);
+check("but not the drills", wholeKp.hidden.includes("dd-q224"), true);
+
+console.log("a drill inside a segmented KP:");
+const inSegment = run({ anchors: SEGMENTED, hash: "#scrollTo=dd-q482", settings: ON });
+// The problem wins over the concept run it sits in. Otherwise routing to a
+// drill would unfold the concept around it, which is the reverse of the point.
+check("its own group only", inSegment.inFocus,
+  ["dd-q482-worked", "dd-q482", "dd-q482-code"]);
+
 console.log("solutions stay hidden until the learner has answered:");
 const gated = run({ anchors: NOTEBOOK, hash: "#scrollTo=dd-q123", settings: ON });
 check("the gate is on", gated.hideSolutions, true);

@@ -102,6 +102,17 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-06 (**the Colab rail opens the concept, not the KP**): `colab_mode.js`,
+  `lessons.js`. The lesson loop above teaches one concept per visit and the
+  topbar says which — but `hrefForKc(kc)` only knew the whole-KP anchor, so on
+  the Colab edition the notebook opened all three concepts under a heading
+  claiming to be one of them. It takes the page's `exposureKey` now
+  (`"<kc>#<concept_id>"`, the same key the continue button posts) and looks it
+  up in the index's new `segments` map, falling back to the KP anchor for the 32
+  KPs that teach a single idea. `_colabLessonHref` takes the PAGE rather than a
+  KC for the same reason — the KC alone cannot say which of its concepts this
+  page is.
+
 - 2026-08-06 (**the lesson loop, and a fifth rung**): `lessons.js`, `ladder.js`, `concept-topbar.js`, `watch.py`. A KP teaches up to six separate ideas and the gate rendered all of them back to back before handing over one question — a learner who has read three things and practised one, which is why the third never stuck. `_buildPages` now takes a STEP (one concept) instead of a KC and builds one page; `_pendingSteps` reads the concept from the server's gate entry in backend mode and from the KP's own segment list in guest mode. The continue button posts that concept's key (`<kc>#<concept_id>`) and only adds the KP's own key alongside the last one — writing it early credits every remaining concept unread, and nothing ever offers them again. The worked-example credit fires on EVERY page now rather than only the last, because the drill waiting behind the page is that concept's own and has to be re-staged onto the faded rung before it renders.
   - The fifth dot, `integrated`, lights when a problem needs the whole KP and every concept of it has been read. Reported by the backend per question (`ladder_integrated`) and never stored: the four backend stage names are what every attempt is filed under and what the promotion arithmetic reads back.
 

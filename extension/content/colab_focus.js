@@ -8,6 +8,7 @@
        dd-setup            imports + DD_LESSON_ID
        dd-lesson-<id>      the lesson header
        dd-kp-<slug>        one teaching cell per knowledge component
+       dd-seg-<slug>-<n>   one CONCEPT of a KP that teaches several
        dd-q<n>-example     a solved example, ABOVE the problem  ─┐
        dd-q<n>-example-code  …and its answer                     │
        dd-q<n>             a problem's header                    ├─ the group
@@ -49,6 +50,12 @@
      the next `dd-kp-` header, minus the problems, which have groups of their
      own. Membership there comes from DOM order rather than from the anchor,
      because the prose cells carry minted ids that name nothing.
+
+     And ONE CONCEPT of that lesson is a target — `#scrollTo=dd-seg-<slug>-<n>`,
+     which is what the app sends for a KP that teaches more than one thing. The
+     gate hands out those concepts one at a time; before this anchor existed the
+     panel could say "Concept 2 of 3" and open all three, which is the same
+     failure as an unfocused notebook, just harder to notice.
 
    THE RULE THAT KEEPS THIS SAFE
      Hide nothing unless a target actually resolved to cells that exist. Focus
@@ -98,6 +105,21 @@
   // (scripts/generate_colab_notebooks.py emits kp header → its prose → its
   // problems), so the order is a fact about the file rather than a guess.
   const KP = /^dd-kp-(.+)$/i;
+
+  // The cell that opens ONE CONCEPT of a KP — `dd-seg-<kc>-<n>`.
+  //
+  // A KP is not one idea: `numpy.ndarray-model` teaches three, and the tutor
+  // teaches them one at a time (`app/lessons.py::_segment_step`). Before this
+  // anchor existed the panel could say "Concept 2 of 3" and then send the
+  // learner to the whole KP — all three concepts and every drill on screen at
+  // once, with nothing marking which third they had been sent to read.
+  //
+  // Positional, exactly like KP: the prose under it carries minted ids that
+  // name nothing, so membership is "every cell after this one, until the next
+  // segment or the next KP". A cell is in BOTH runs — its concept's and its
+  // KP's — which is what keeps `dd-kp-…` meaning "the whole lesson" while
+  // `dd-seg-…` means one concept of it.
+  const SEG = /^dd-seg-(.+)$/i;
 
   // A problem's answer cell. Hidden until the learner submits — see `reveal`.
   // There is no toggle for this and there should not be: an "always show
@@ -152,21 +174,31 @@
   }
 
   /**
-   * The GROUP an anchor belongs to, given what came before it in the notebook.
+   * The GROUPS an anchor belongs to, given what came before it in the notebook.
    *
    * Two kinds, and they are not interchangeable. A problem group is named by
-   * the anchor itself, so it can be read off one cell. A concept group is a
-   * RUN of cells, so it needs `currentKp` threaded through the walk.
+   * the anchor itself, so it can be read off one cell. A reading group — a KP
+   * or one concept of it — is a RUN of cells, so it needs the walk's current
+   * KP and segment threaded in.
    *
-   * A `dd-q…` cell always wins: the segment's problems sit inside its KP
-   * section, and a lesson in focus is the reading, not the drills below it —
-   * "it shows you an example and then it gives you a faded problem" is the
-   * NEXT step, which the app routes to separately.
+   * A `dd-q…` cell always wins, and returns ONE group: the segment's problems
+   * sit inside its KP section, and a lesson in focus is the reading, not the
+   * drills below it — "it shows you an example and then it gives you a faded
+   * problem" is the NEXT step, which the app routes to separately.
+   *
+   * Prose returns up to TWO. The KP is the whole lesson and the segment is one
+   * concept of it, so the cells of concept 2 belong to both: routing to the KP
+   * still opens everything it always did, and routing to the concept opens
+   * only that concept. Returning one or the other would mean segmenting a KP
+   * silently broke the `dd-kp-…` link the knowledge graph has always used.
    */
-  function groupOf(anchor, currentKp) {
+  function groupsOf(anchor, currentKp, currentSeg) {
     const problem = problemOf(anchor);
-    if (problem) return `q:${problem}`;
-    return currentKp ? `kp:${currentKp}` : null;
+    if (problem) return [`q:${problem}`];
+    const groups = [];
+    if (currentKp) groups.push(`kp:${currentKp}`);
+    if (currentSeg) groups.push(`seg:${currentSeg}`);
+    return groups;
   }
 
   /** The group the URL is pointing at, or null. */
@@ -176,6 +208,8 @@
     const raw = String(value ? value[1] : hash).replace(/^cell-/, "");
     const problem = problemOf(raw);
     if (problem) return `q:${problem}`;
+    const seg = SEG.exec(raw);
+    if (seg) return `seg:${seg[1].toLowerCase()}`;
     const kp = KP.exec(raw);
     return kp ? `kp:${kp[1].toLowerCase()}` : null;
   }
@@ -338,13 +372,31 @@
     let inFocus = 0;
     let ourCells = 0;
     let currentKp = null;
+    let currentSeg = null;
     cells.forEach((cell) => {
       const anchor = cellAnchor(cell);
       if (anchor.startsWith("dd-")) ourCells += 1;
       const kp = KP.exec(anchor);
-      if (kp) currentKp = kp[1].toLowerCase();
+      // A new KP ends whatever concept was open. Otherwise the last concept of
+      // a segmented KP would swallow the prose of the next KP, which is only
+      // segmented if it happens to be — so the bug would appear on some
+      // lessons and not others.
+      if (kp) {
+        currentKp = kp[1].toLowerCase();
+        currentSeg = null;
+      }
+      const seg = SEG.exec(anchor);
+      if (seg) currentSeg = seg[1].toLowerCase();
       const always = ALWAYS_VISIBLE.test(anchor);
-      const mine = target !== null && groupOf(anchor, currentKp) === target;
+      const mine = target !== null
+        && groupsOf(anchor, currentKp, currentSeg).indexOf(target) !== -1;
+      // A concept's reading ENDS where its drill begins. The generator emits
+      // each concept as header → prose → watch-out → worked example → problem,
+      // so nothing of a concept follows its own problem — but the KP's guided,
+      // applied and independent problems do, and so does "Common mistakes".
+      // Left in the run, that tail would show up under whichever concept
+      // happened to be last, as if it belonged to it.
+      if (problemOf(anchor)) currentSeg = null;
       if (mine) inFocus += 1;
       cell.classList.toggle("dd-always-visible", always);
       cell.classList.toggle("dd-setup-cell", SETUP.test(anchor));

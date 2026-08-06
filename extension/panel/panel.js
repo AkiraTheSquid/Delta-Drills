@@ -24,8 +24,9 @@
    The symptom is an empty panel with a ⚙ that does nothing — it reads like a CSS
    or a manifest problem and it is neither.
    Verify after touching any of these files:
-       cat panel/notebook-index.js panel/api.js panel/navigate.js panel/panel.js \
-         | node --check /dev/stdin
+       cat panel/notebook-index.js panel/notebook-index-questions.js \
+           panel/notebook-index-concepts.js panel/api.js panel/navigate.js \
+           panel/panel.js | node --check /dev/stdin
    `node --check` on the files one at a time cannot see this. */
 const { api: ddApi, tab: ddTab, notebooks: ddNotebooks } = window.DD;
 const {
@@ -188,8 +189,17 @@ function renderProblem(q) {
 function renderGate(q) {
   state.q = q;
   const g = q.lesson_gate[0];
-  $("gate-title").textContent = g.kp_title || g.kc_title || g.kc;
-  $("gate-sub").textContent = `${g.lesson_title || g.lesson_id || ""} — you haven't met this concept yet, so the tutor is teaching it before it asks anything.`;
+  // A segmented KP arrives one concept at a time, so the heading names the
+  // concept and the subtitle says which of how many. Without the counter the
+  // learner meets the same KP three times over and has no way to tell that it
+  // is progress rather than the tutor repeating itself.
+  const total = Number(g.segment_total) || 1;
+  $("gate-title").textContent =
+    (total > 1 && g.segment_title) || g.kp_title || g.kc_title || g.kc;
+  const where = total > 1
+    ? `${g.kp_title || g.kc_title || g.kc} — concept ${(Number(g.segment_index) || 0) + 1} of ${total}`
+    : g.lesson_title || g.lesson_id || "";
+  $("gate-sub").textContent = `${where} — you haven't met this concept yet, so the tutor is teaching it before it asks anything.`;
   $("gate-status").textContent = "";
   $("gate-status").className = "status small";
 
@@ -392,7 +402,11 @@ $("btn-gate-goto").onclick = async () => {
   const target = ddNotebooks.forGate(g);
   const out = await navJumpTo({
     target,
-    anchor: `dd-kp-${navSlugKc(g.kc)}`,
+    // One CONCEPT when the KP teaches several, the whole KP when it does not.
+    // The gate already says which concept it is owed (`exposure_key`); opening
+    // the KP instead puts all three on screen under a heading that claims to
+    // be one of them.
+    anchor: ddNotebooks.anchorForGate(g) || `dd-kp-${navSlugKc(g.kc)}`,
     text: g.kp_title || g.kc_title,
     status: $("gate-status"),
     arrived: "Read this, then come back.",
@@ -406,7 +420,11 @@ $("btn-gate-done").onclick = async () => {
   if (!g) return;
   show("loading", "Recording that you've read it…");
   try {
-    await ddApi.markExposed(q.lesson_gate.map((x) => x.kc));
+    // The CONCEPT that was read, not the KP it belongs to. `<kc>` in the
+    // exposure map means the whole KP is done and every later gate reads it
+    // that way, so posting it after one concept of three retires the other two
+    // unread — silently, permanently, and with nothing ever asking again.
+    await ddApi.markExposed(q.lesson_gate.map((x) => x.exposure_key || x.kc));
     // worked_seen is a separate counter from exposure: exposure fires once and
     // gates the KC's first question, worked_seen tells the ladder the concept
     // has been taught and lets it leave the `worked` rung.

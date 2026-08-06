@@ -27,21 +27,12 @@ map `question_id -> lesson -> notebook`. That map is a property of how these
 notebooks were compiled, which means it belongs here, next to the compiler, and
 not hand-maintained in the extension.
 
-TWO THINGS THAT ARE EASY TO GET WRONG
--------------------------------------
-1. **Stable cell ids.** All 458 ARENA_5.0 notebooks are nbformat 4.2 with no
-   `metadata.id`, so Colab mints fresh DOM ids on every load and `#scrollTo=`
-   anchors are worthless there. We emit 4.5 with a deterministic id per cell
-   (`dd-q<question_id>`, `dd-kp-<kc>`), which is what lets the panel jump
-   straight to a problem. The id is ALSO written into the markdown body as an
-   HTML comment, so navigation still works if Colab ever drops the attribute.
-
-2. **Which fences become runnable cells.** The authoring contract
-   (`lessons/README.md`) is "a fence gets a Run button iff CI runs it": a plain
-   ```python fence is executed by the validator and must therefore render as a
-   real code cell, while ```python no-run is illustrative and must stay inside
-   the prose. Collapsing that distinction would put un-runnable snippets in
-   front of a student as if they were exercises.
+WHAT IS NOT HERE
+----------------
+What a CELL is — id minting, the four-cell shape of a problem, the checker —
+lives in `colab_cells.py`, together with the two invariants that bite (stable
+ids, and which fences become runnable cells). This file is the compiler: it
+decides which cells a lesson turns into, in what order, and writes them out.
 
 Usage:
     python3 scripts/generate_colab_notebooks.py [--out DIR] [--dry-run]
@@ -50,13 +41,23 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import base64
 import json
 import re
 import sys
-import zlib
 from pathlib import Path
-from typing import Iterator
+
+from colab_cells import (
+    IdMinter,
+    checker_cell,
+    code_cell,
+    id_is_valid,
+    md_cell,
+    problem_cells,
+    segment_anchor,
+    setup_cell,
+    slug,
+    split_markdown,
+)
 
 REPO = Path(__file__).resolve().parents[1]
 LESSONS = REPO / "Local_Deployed_Shared" / "lessons" / "lessons_structured.json"
@@ -70,392 +71,21 @@ DEFAULT_WEB_INDEX = (
     REPO / "Local_Deployed_Shared" / "lessons" / "colab_notebooks.json"
 )
 
-# The ARENA digits image, as published alongside the notebooks by
-# `publish_colab_notebooks.sh`. The einops drills load it by the absolute path
-# the backend's grading preamble rewrites; in a notebook there is no preamble,
-# so the checker downloads it on first use instead.
-FIXTURE_URL = (
-    "https://raw.githubusercontent.com/AkiraTheSquid/arena-book-colab/main/"
-    "ARENA_5.0/ch-1-foundations/numbers.npy"
-)
-
-# nbformat 4.5 cell ids: 1-64 chars of [a-zA-Z0-9-_].
-_ID_SAFE = re.compile(r"[^a-zA-Z0-9\-_]")
-
-# A fenced block. Group 1 is the info string, group 2 the body. Only a bare
-# `python` info string becomes a code cell; `python no-run`, `text`, etc. stay
-# in the markdown.
-_FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```[ \t]*$", re.S | re.M)
-
-
 # Anchors the side panel navigates to, as opposed to the cells beneath them.
 _ANCHOR = re.compile(r"^dd-q\d+$")
-
-MAX_ID = 64
-
-# The in-notebook checker, kept as real Python in its own file so watch.py can
-# exec it and grade something. Everything between the markers is copied verbatim
-# into one cell per notebook.
-GRADER = REPO / "scripts" / "colab_grader.py"
-
-# An expected output is a paste of what the example run prints. Some of them are
-# a 7 KB tensor repr (the ARENA image drills), and a wall of pixels above the
-# starter code buries the problem it is supposed to describe.
-MAX_EXPECTED_LINES = 24
-MAX_EXPECTED_CHARS = 1200
-
-
-def grader_source() -> str:
-    text = GRADER.read_text()
-    start = text.index("# --- embed:start")
-    start = text.index("\n", start) + 1
-    return text[start : text.index("# --- embed:end")].rstrip() + "\n"
-
-
-def fence(body: str, info: str = "") -> str:
-    """A fenced block whose fence is longer than any run of backticks inside it."""
-    longest = max((len(m) for m in re.findall(r"`+", body)), default=0)
-    bar = "`" * max(3, longest + 1)
-    return f"{bar}{info}\n{body}\n{bar}"
-
-
-def expected_output_block(exercise: dict) -> str:
-    """The "here is what you should see" section of a problem's prose.
-
-    The whole point of the Colab edition is that the learner runs the code
-    themselves and decides whether it worked — which they cannot do without
-    knowing what working looks like. Reported as: "it doesn't show you the
-    expected output that you should see".
-    """
-    text = (exercise.get("expected_output") or "").rstrip()
-    if not text:
-        return ""
-    lines = text.splitlines()
-    clipped = len(lines) > MAX_EXPECTED_LINES or len(text) > MAX_EXPECTED_CHARS
-    if clipped:
-        lines = lines[:MAX_EXPECTED_LINES]
-        text = "\n".join(lines)[:MAX_EXPECTED_CHARS].rstrip() + "\n… (truncated)"
-    note = ""
-    if exercise.get("expected_artifact_type") == "image":
-        note = " This one draws an image; below is the tensor behind it."
-    return (
-        "**Expected output** — run the cell below once `solve` is right and it "
-        f"should print this.{note}\n\n" + fence(text, "text")
-    )
-
-
-def slug(text: str) -> str:
-    return _ID_SAFE.sub("-", text)[:MAX_ID].strip("-")
-
-
-# ── cell constructors ────────────────────────────────────────────────────────
-
-
-def md_cell(source: str, cell_id: str) -> dict:
-    return {
-        "cell_type": "markdown",
-        "id": cell_id,
-        "metadata": {"id": cell_id},
-        "source": source.rstrip("\n") + "\n",
-    }
-
-
-def code_cell(source: str, cell_id: str) -> dict:
-    return {
-        "cell_type": "code",
-        "id": cell_id,
-        "metadata": {"id": cell_id},
-        "execution_count": None,
-        "outputs": [],
-        "source": source.rstrip("\n") + "\n",
-    }
-
-
-class IdMinter:
-    """Deterministic, collision-free cell ids.
-
-    Deterministic because a regenerated notebook must keep the anchors the
-    panel navigates to; collision-free because nbformat rejects duplicates and
-    two segments can legitimately share a title.
-    """
-
-    def __init__(self) -> None:
-        self._issued: set[str] = set()
-
-    def __call__(self, base: str) -> str:
-        base = slug(base) or "cell"
-        if base not in self._issued:
-            self._issued.add(base)
-            return base
-        # Counting per base is not enough. Ids are capped at 64 chars, so two
-        # DIFFERENT long bases ("…-concept" and "…-concept-code") can truncate
-        # onto the same string — the collision has to be checked against what
-        # was actually issued, not against a per-base tally.
-        n = 1
-        while True:
-            suffix = f"-{n}"
-            cand = f"{base[: MAX_ID - len(suffix)].rstrip('-')}{suffix}"
-            if cand not in self._issued:
-                self._issued.add(cand)
-                return cand
-            n += 1
-
-
-def split_markdown(source: str, mint: IdMinter, base: str) -> Iterator[dict]:
-    """Yield cells for a markdown blob, promoting runnable fences to code cells.
-
-    Everything that is not a bare ```python fence stays markdown, including
-    ```python no-run — see the module docstring.
-    """
-    if not source or not source.strip():
-        return
-    pos = 0
-    for m in _FENCE.finditer(source):
-        info = m.group(1).strip()
-        runnable = info == "python"
-        if not runnable:
-            continue  # leave the fence embedded in the surrounding prose
-        before = source[pos : m.start()]
-        if before.strip():
-            yield md_cell(before, mint(base))
-        yield code_cell(m.group(2), mint(f"{base}-code"))
-        pos = m.end()
-    tail = source[pos:]
-    if tail.strip():
-        yield md_cell(tail, mint(base))
-
-
-# ── problem rendering ────────────────────────────────────────────────────────
-
-
-def example_cells(qid: int, example: dict, bank: dict, mint: IdMinter) -> list[dict]:
-    """The worked half of a stage-2 pair: a problem shown already solved.
-
-    A worked example is not a third kind of content — it is a PROBLEM plus its
-    known answer, which is why this is derived from the bank rather than
-    authored. The lesson names a `question_id` and nothing else that could go
-    stale; the prompt and the canonical solution are read out of
-    `questions_structured.json` at build time, so the example is a real problem
-    the grader agrees about rather than a snippet that drifted away from one.
-    All the author has to write is `note_markdown`: the sentence saying what
-    carries across to the problem below and what does not. That is the whole
-    per-pair authoring cost, which is what makes converting 118 segments a
-    plausible piece of work rather than a rewrite of the course.
-
-    This is a NOTEBOOK-ONLY construct. The side panel is a tutor rail and the
-    notebook is where the learner reads and writes, so the example belongs on
-    the Colab side of the screen; `practice/ladder.js` is deliberately not
-    involved and still shows what it always showed.
-
-    THE ANCHOR IS THE WHOLE POINT. These cells are minted as
-    `dd-q<problem>-example`, naming the PROBLEM they scaffold and not the
-    question they were built from. `colab_focus.js` groups cells by the number
-    in `dd-q<n>`, so an example anchored this way is in focus exactly when its
-    problem is, and never otherwise. The alternative — a DOM heuristic like
-    "also keep whatever sits above the target" — would work today and would one
-    day put an unrelated segment's prose on screen, silently, with no way for
-    the learner to tell that it does not belong to the problem they are on.
-
-    No `<!-- dd:… -->` marker in the body, unlike a problem header. That marker
-    is the text fallback `colab.js` searches when Colab drops cell ids, and a
-    substring search for `dd-q481` would find `dd:dd-q481-example` first — the
-    panel would route to the example and the learner would land above their own
-    problem. Nothing needs to navigate TO an example; it only has to be visible
-    when its problem is.
-    """
-    ex = (bank.get(example["question_id"]) or {}).get("exercise", {})
-    prompt = (ex.get("question_text") or "").strip()
-    solution = (ex.get("canonical_solution") or "").strip()
-    note = (example.get("note_markdown") or "").strip()
-
-    body = (
-        "#### Worked example — read this one, you are not solving it\n\n"
-        f"{prompt}\n\n"
-        "The full answer is in the cell below. Run it, read it, then do the "
-        "problem underneath — it is the same move on different specifics.\n"
-    )
-    if note:
-        body += f"\n{note}\n"
-    cells = [md_cell(body, mint(f"dd-q{qid}-example"))]
-    if solution:
-        cells.append(
-            code_cell(
-                "# The worked example, solved. Running it binds `solve` to THIS answer —\n"
-                "# re-run your own cell below before checking, or you are checking mine.\n"
-                f"{solution}\n",
-                mint(f"dd-q{qid}-example-code"),
-            )
-        )
-    return cells
-
-
-def problem_cells(
-    qid: int,
-    rung: str,
-    bank: dict,
-    mint: IdMinter,
-    tests: dict,
-    *,
-    prompt: str | None = None,
-    starter: str | None = None,
-    hints: str | None = None,
-    example: dict | None = None,
-    after_example: bool = False,
-) -> list[dict]:
-    """The cells for one problem, at one rung.
-
-    `dd-q<id>` is the anchor the side panel jumps to, and it goes on the header
-    cell rather than the code cell so the student lands on the question text
-    with the editor just below it.
-
-    Four cells, in the order a learner meets them: the problem (with the output
-    it should produce), the starter code, a checker, and the answer. `tests` is
-    the notebook's payload dict and gets this problem's cases added to it.
-
-    An `example` puts a fifth thing FIRST — a solved problem, above the header,
-    so the panel's jump still lands on the problem and the example is what the
-    learner finds by scrolling up. That order is the request, verbatim: "you
-    should be able to scroll up and see a particular problem, and then when you
-    scroll down you should see a problem that's kind of similar but meaningfully
-    different from it."
-    """
-    q = bank.get(qid, {})
-    ex = q.get("exercise", {})
-    text = prompt or ex.get("question_text") or f"Question {qid}"
-    code = starter if starter is not None else (ex.get("starter_code") or "")
-
-    header = (
-        f"<!-- dd:dd-q{qid} -->\n\n"
-        f"### Problem {qid} · {rung}\n\n"
-        f"{text.strip()}\n"
-    )
-    expected = expected_output_block(ex)
-    if expected:
-        header += f"\n{expected}\n"
-    cells = example_cells(qid, example, bank, mint) if example else []
-    # "Your turn" whenever something demonstrated the move first — either a
-    # promoted bank question (`example`) or the segment's own worked example,
-    # which is now anchored into this problem's group and therefore on screen
-    # right above it. Without the label the learner meets two problems in a row
-    # and has to work out for themselves that the first one was already solved.
-    if example or after_example:
-        header = header.replace(
-            f"### Problem {qid} · {rung}\n\n",
-            f"### Problem {qid} · {rung} — your turn\n\n",
-            1,
-        )
-    cells.append(md_cell(header, f"dd-q{qid}"))
-
-    if hints:
-        cells.append(
-            md_cell(
-                "<details>\n<summary>Hints</summary>\n\n"
-                f"{hints.strip()}\n\n</details>\n",
-                mint(f"dd-q{qid}-hints"),
-            )
-        )
-
-    cells.append(code_cell(code or "# your code here\n", mint(f"dd-q{qid}-code")))
-
-    # The checker. Comparing your own printed output against the expected block
-    # above catches the example input and nothing else — these are the same
-    # cases the tutor grades with, including the edge cases the example does not
-    # cover, which is why a drill can look right and still be wrong.
-    cases = ex.get("test_cases") or []
-    if cases:
-        tests[str(qid)] = {"fn": ex.get("function_name") or "solve", "cases": cases}
-        cells.append(
-            code_cell(
-                f"# Did it work? Run this. (NameError → run the checker cell at\n"
-                f"# the top of the notebook first: Runtime ▸ Run before.)\n"
-                f"dd_check({qid})\n",
-                mint(f"dd-q{qid}-check"),
-            )
-        )
-
-    # The answer, last — and NOT on screen until the learner has said how it
-    # went. The extension hides `dd-q<n>-solution` cells outright
-    # (`content/colab_dd.css`) and the panel's verdict click unhides this one:
-    # "then and only then it shows you the solution … below what you typed".
-    #
-    # It was a collapsed `display-mode: "form"` cell for one pass, which still
-    # put "💡 Solution — Problem 480" on screen under the code you were trying
-    # to write, and still needed a second click after the reveal. The `#@title`
-    # stays because it renders as a heading; the collapse does not.
-    #
-    # Without the extension nothing hides it — a plain reader of the published
-    # repo sees the answers, the way ARENA's own notebooks do. The toggle's
-    # "Show every solution" is the same escape hatch for anyone re-reading a
-    # notebook they have already worked through.
-    solution = ex.get("canonical_solution") or ""
-    if solution.strip():
-        cells.append(
-            code_cell(
-                f"#@title 💡 Solution — Problem {qid}\n"
-                "# Running this rebinds `solve` to the reference answer. Re-run your\n"
-                "# own cell before dd_check() again, or you are checking this one.\n"
-                f"{solution.strip()}\n",
-                mint(f"dd-q{qid}-solution"),
-            )
-        )
-    return cells
 
 
 # ── notebook assembly ────────────────────────────────────────────────────────
 
 
-def setup_cell(lesson: dict, mint: IdMinter) -> dict:
-    """One line naming the lesson, for the extension to read off the page.
-
-    It used to carry `DD_TOKEN` and `DD_BACKEND_URL` for a completion beacon.
-    That beacon does not exist on this route and cannot: Colab renders a cell's
-    output in a sandboxed iframe, so the panel learns a result by reading the
-    line `dd_check` PRINTS (`content/colab_focus.js`), which needs no token and
-    no URL. Two dead variables would be harmless if they were invisible — but
-    they were the first thing in the notebook, so every lesson opened on a
-    backend URL and an instruction to paste a credential, for a feature that
-    was never wired.
-
-    `DD_LESSON_ID` stays because `content/colab.js`'s `identify` matches it as
-    the id-independent route to "which notebook is this" — it is rendered text,
-    so it survives Colab dropping cell ids. The extension hides this cell.
-    """
-    return code_cell(
-        "# === Delta Drills ===\n"
-        "# Which lesson this notebook is, for the side panel. Nothing to run.\n"
-        f'DD_LESSON_ID = "{lesson["id"]}"\n',
-        mint("dd-setup"),
-    )
-
-
-def checker_cell(tests: dict, mint: IdMinter) -> dict:
-    """The one cell that defines `dd_check`, carrying this notebook's cases.
-
-    Deflated and base64'd, in a form cell. Both are for the same reason and
-    neither is a secret: an 80 KB JSON literal of expected values, expanded, is
-    the answer key to every problem below it printed at the top of the notebook.
-    """
-    payload = base64.b64encode(
-        zlib.compress(json.dumps(tests, ensure_ascii=False).encode("utf-8"), 9)
-    ).decode("ascii")
-    chunks = "\n".join(f'    "{payload[i : i + 96]}"' for i in range(0, len(payload), 96))
-    return code_cell(
-        '#@title 🔧 Delta Drills checker — run me first { display-mode: "form" }\n'
-        + grader_source()
-        + f'\n_DD_FIXTURE_URL = "{FIXTURE_URL}"\n'
-        + "_dd_install_fixtures()\n"
-        + "_DD_TESTS = _dd_load(\n"
-        + chunks
-        + "\n)\n"
-        + f'print("Delta Drills checker ready — {len(tests)} problems. '
-        'Run dd_check(<problem number>) under any of them.")\n',
-        mint("dd-checker"),
-    )
-
-
 def build_notebook(lesson: dict, bank: dict) -> dict:
     mint = IdMinter()
     tests: dict[str, dict] = {}
+    # "<kc>#<concept_id>" -> the anchor of the cell that opens that concept.
+    # Recorded here and read back off the finished notebook by `main`, for the
+    # same reason the question list is read off the anchors: the index must
+    # describe what was actually emitted, not what the lesson record said.
+    seg_anchors: dict[str, str] = {}
     cells: list[dict] = [
         md_cell(
             # The panel asks an open tab which notebook it is (`dd:identify`)
@@ -492,9 +122,33 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
                 split_markdown(kp.get("worked_example_markdown"), mint, f"{slug(kc)}-worked")
             )
 
-        for seg in segments:
+        for seg_index, seg in enumerate(segments):
             base = slug(f"{kc}-{seg.get('title') or 'segment'}")
-            if seg.get("title"):
+            # ONE CONCEPT IS A PLACE, not just a heading.
+            #
+            # The gate teaches a segmented KP one concept at a time
+            # (`app/lessons.py::_segment_step`), and until this cell had an
+            # anchor there was nowhere to send the learner: the panel said
+            # "Concept 2 of 3" and the notebook opened the whole KP, all three
+            # concepts and every drill, with nothing marking which third was
+            # the one being taught.
+            #
+            # Emitted only for a KP that really has more than one concept —
+            # which is the same test the backend and `practice/lessons.js` use
+            # to decide a KP is segmented at all. A one-concept KP is taught
+            # whole and routes through `dd-kp-<slug>` exactly as before.
+            concept_id = str(seg.get("concept_id") or "").strip()
+            if concept_id and len(segments) > 1:
+                anchor = segment_anchor(kc, seg_index)
+                seg_anchors[f"{kc}#{concept_id}"] = anchor
+                cells.append(
+                    md_cell(
+                        f"<!-- dd:{anchor} -->\n\n"
+                        f"### {seg.get('title') or kp['title']}\n",
+                        anchor,
+                    )
+                )
+            elif seg.get("title"):
                 cells.append(md_cell(f"### {seg['title']}\n", mint(base)))
             cells += list(split_markdown(seg.get("concept_markdown"), mint, f"{base}-concept"))
             if seg.get("watch_out_markdown"):
@@ -656,7 +310,11 @@ def build_notebook(lesson: dict, bank: dict) -> dict:
             "colab": {"provenance": [], "toc_visible": True},
             "kernelspec": {"name": "python3", "display_name": "Python 3"},
             "language_info": {"name": "python"},
-            "delta_drills": {"lesson_id": lesson["id"], "subtopic_key": lesson.get("subtopic_key")},
+            "delta_drills": {
+                "lesson_id": lesson["id"],
+                "subtopic_key": lesson.get("subtopic_key"),
+                "segments": seg_anchors,
+            },
         },
         "cells": cells,
     }
@@ -676,7 +334,7 @@ def validate(nb: dict, lesson_id: str) -> list[str]:
     seen: set[str] = set()
     for i, c in enumerate(nb["cells"]):
         cid = c.get("id", "")
-        if not cid or _ID_SAFE.search(cid) or len(cid) > 64:
+        if not id_is_valid(cid):
             problems.append(f"{lesson_id} cell {i}: bad id {cid!r}")
         if cid in seen:
             problems.append(f"{lesson_id} cell {i}: duplicate id {cid!r}")
@@ -712,6 +370,20 @@ def validate(nb: dict, lesson_id: str) -> list[str]:
                 f"{lesson_id} {cid}: a faded problem with no example in its focus "
                 f"group — focus will hide whatever scaffold it has and the rung "
                 f"becomes a solo problem wearing a faded label"
+            )
+
+    # EVERY CONCEPT THE INDEX WILL POINT AT MUST BE A CELL HERE.
+    #
+    # The panel routes a teaching step to `#scrollTo=<anchor>` and Colab
+    # ignores a fragment that names nothing — no error, no scroll, no way for
+    # the learner to tell the link from a dead one. The map and the cells come
+    # out of the same pass, so the only way they disagree is a bug in this
+    # file, which is exactly the kind that ships quietly.
+    for key, anchor in (nb["metadata"]["delta_drills"].get("segments") or {}).items():
+        if anchor not in ids:
+            problems.append(
+                f"{lesson_id} {key}: the index would point at {anchor!r}, which is "
+                f"not a cell in this notebook"
             )
     return problems
 
@@ -778,6 +450,9 @@ def build_index(records: list[dict], out_dir: Path) -> dict:
     the lesson gate resolves through, since a gate names a KC and not a
     question.
     """
+    segments: dict[str, str] = {}
+    for r in records:
+        segments.update(r["segments"])
     try:
         rel = out_dir.resolve().relative_to(REPO).as_posix()
     except ValueError:
@@ -815,19 +490,61 @@ def build_index(records: list[dict], out_dir: Path) -> dict:
         # fact written twice, and the copy that went stale would be the one
         # nothing checks.
         "kps": {kc: f"dd-kp-{slug(kc)}" for r in records for kc in r["kcs"]},
+        # One CONCEPT of a KP, by the anchor that reaches it —
+        # `"<kc>#<concept_id>": "dd-seg-<kc>-<n>"`. Same argument as `kps` one
+        # line up, one level finer: a segmented KP is taught a concept at a
+        # time, so "take me to the lesson" has to name the concept and not the
+        # KP, or the learner is dropped on all three at once with no marker
+        # saying which is theirs.
+        #
+        # Keyed by the EXPOSURE KEY the gate hands back (`app/lessons.py::
+        # _segment_step`), so the panel looks up what it was already given
+        # rather than reconstructing it. Multi-concept KPs only — a KP with one
+        # concept is taught whole and keeps routing through `kps`.
+        "segments": segments,
     }
     return index
 
 
-def index_as_script(index: dict) -> str:
-    """The extension's copy — a classic script that assigns a global."""
-    return (
-        "/* GENERATED by scripts/generate_colab_notebooks.py — do not edit.\n"
-        "   Regenerate after changing lessons; the panel navigates by this map. */\n"
-        "window.DD_NOTEBOOKS = "
-        + json.dumps(index, indent=2, ensure_ascii=False)
-        + ";\n"
-    )
+# How the extension's copy is split across files, in load order. One `<script>`
+# per entry; the first assigns the global and the rest extend it.
+#
+# Split because it is generated data that only grows — 424 questions, 63
+# concepts and now their segments — and one file of it was the largest thing in
+# the extension by a wide margin. The seam is by QUESTION, so the reader lands
+# in the map they are looking for instead of scrolling past four hundred lines
+# of `"217": "np-1"` to reach the concept anchors.
+INDEX_PARTS = (
+    ("", ("dir", "lessons", "subtopics")),
+    ("-questions", ("questions",)),
+    ("-concepts", ("kcs", "kps", "segments")),
+)
+
+
+def index_scripts(index: dict, path: Path) -> list[tuple[Path, str]]:
+    """The extension's copy — classic scripts that build up one global.
+
+    `path` names the first file; the rest are its siblings, so `--index` still
+    takes a single argument and the panel's load order is `notebook-index.js`,
+    then the parts that extend it.
+    """
+    out: list[tuple[Path, str]] = []
+    for i, (suffix, keys) in enumerate(INDEX_PARTS):
+        part = {k: index[k] for k in keys}
+        body = json.dumps(part, indent=2, ensure_ascii=False)
+        out.append(
+            (
+                path.with_name(f"{path.stem}{suffix}{path.suffix}"),
+                "/* GENERATED by scripts/generate_colab_notebooks.py — do not edit.\n"
+                "   Regenerate after changing lessons; the panel navigates by this map. */\n"
+                + (
+                    f"window.DD_NOTEBOOKS = {body};\n"
+                    if i == 0
+                    else f"Object.assign(window.DD_NOTEBOOKS, {body});\n"
+                ),
+            )
+        )
+    return out
 
 
 def index_as_json(index: dict) -> str:
@@ -888,20 +605,27 @@ def main() -> int:
                 # the only claim the panel relies on.
                 "questions": sorted(int(a[len("dd-q"):]) for a in anchors),
                 "kcs": [kp["kc"] for kp in lesson.get("kps") or []],
+                # Read off the notebook for the same reason as `questions`:
+                # these are the anchors that were emitted, not the ones the
+                # lesson record implies.
+                "segments": dict(nb["metadata"]["delta_drills"]["segments"]),
             }
         )
 
     print(f"\n{len(lessons)} notebooks · {total_cells} cells · {total_problems} problems")
 
     index = build_index(records, args.out)
+    parts = index_scripts(index, args.index)
     if not args.dry_run:
         args.index.parent.mkdir(parents=True, exist_ok=True)
-        args.index.write_text(index_as_script(index))
+        for path, text in parts:
+            path.write_text(text)
         args.web_index.parent.mkdir(parents=True, exist_ok=True)
         args.web_index.write_text(index_as_json(index))
     print(
         f"index · {len(records)} lessons · {total_problems} questions mapped · "
-        f"{args.index.name} + {args.web_index.name}"
+        f"{len(index['segments'])} concept sections · "
+        f"{', '.join(p.name for p, _ in parts)} + {args.web_index.name}"
     )
 
     # Two notebooks claiming the same question would send the panel to whichever

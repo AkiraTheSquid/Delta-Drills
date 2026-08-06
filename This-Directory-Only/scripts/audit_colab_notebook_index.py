@@ -54,6 +54,17 @@ def main() -> int:
     for question_id, lesson_id in index.get("questions", {}).items():
         by_lesson[lesson_id].append(str(question_id))
 
+    # The concept anchors, routed the same way. A KP that teaches several ideas
+    # is taught one at a time and the teaching step opens `dd-seg-<kc>-<n>`;
+    # published without that cell, Colab ignores the fragment in silence and
+    # the learner lands at the top of a 650-cell notebook with no error to
+    # explain it. Grouped by lesson through `kcs`, which is where the concept's
+    # notebook is recorded.
+    kc_lesson = index.get("kcs", {})
+    segments_by_lesson: dict[str, list[tuple[str, str]]] = collections.defaultdict(list)
+    for key, anchor in index.get("segments", {}).items():
+        segments_by_lesson[kc_lesson.get(key.split("#", 1)[0], "")].append((key, anchor))
+
     problems: list[str] = []
     total = 0
 
@@ -73,10 +84,14 @@ def main() -> int:
             continue
         cell_ids = {cell.get("id") for cell in notebook.get("cells", [])}
         missing = [q for q in question_ids if f"dd-q{q}" not in cell_ids]
+        concepts = segments_by_lesson.get(lesson_id, [])
+        lost = [key for key, anchor in concepts if anchor not in cell_ids]
         status = "ok" if not missing else f"MISSING {len(missing)}"
-        print(f"{lesson_id}: {len(question_ids)} mapped, {status}")
+        print(f"{lesson_id}: {len(question_ids)} mapped, {len(concepts)} concepts, {status}")
         if missing:
             problems.append(f"{lesson_id}: no cell for question(s) {missing[:8]}")
+        if lost:
+            problems.append(f"{lesson_id}: no cell for concept(s) {lost[:8]}")
 
     print(f"--- {total} questions routed to {len(by_lesson)} notebooks")
     if problems:

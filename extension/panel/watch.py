@@ -22,7 +22,16 @@ def _read(name):
 # Load order is a hard dependency chain, not a style choice: each file
 # destructures the previous one's global at its top level, so a wrong order is
 # an immediate TypeError rather than a subtle bug.
-ORDER = ["notebook-index.js", "api.js", "navigate.js", "panel.js"]
+#
+# The generated map is three files for the same reason: the first ASSIGNS
+# `window.DD_NOTEBOOKS` and the other two `Object.assign` onto it, so loading a
+# part before the whole is a TypeError on an undefined global.
+INDEX_PARTS = [
+    "notebook-index.js",
+    "notebook-index-questions.js",
+    "notebook-index-concepts.js",
+]
+ORDER = [*INDEX_PARTS, "api.js", "navigate.js", "panel.js"]
 
 
 def check_imports():
@@ -32,7 +41,7 @@ def check_imports():
             f"missing {name}"
             + (
                 " — run scripts/generate_colab_notebooks.py"
-                if name == "notebook-index.js"
+                if name in INDEX_PARTS
                 else ""
             )
         )
@@ -48,6 +57,27 @@ def check_imports():
 
     index = _read("notebook-index.js")
     assert "window.DD_NOTEBOOKS" in index, "notebook-index.js must define window.DD_NOTEBOOKS"
+    # The parts must EXTEND the global, never re-assign it: a second
+    # `window.DD_NOTEBOOKS = …` silently drops whatever the earlier files put
+    # there, and the panel would lose exactly the map that loaded first.
+    for name in INDEX_PARTS[1:]:
+        part = _read(name)
+        assert "Object.assign(window.DD_NOTEBOOKS" in part, (
+            f"{name} must Object.assign onto window.DD_NOTEBOOKS"
+        )
+        assert "window.DD_NOTEBOOKS =" not in part, (
+            f"{name} re-assigns window.DD_NOTEBOOKS and would discard the parts "
+            f"loaded before it"
+        )
+
+    # The concept anchors the panel routes a teaching step to. A missing map is
+    # not a crash — `forGate` falls back to the KP — so it would show up as the
+    # notebook opening the whole KP again, which is the bug this exists to fix.
+    concepts = _read(INDEX_PARTS[2])
+    assert '"segments"' in concepts and "dd-seg-" in concepts, (
+        "the concept map lost its per-segment anchors — regenerate with "
+        "scripts/generate_colab_notebooks.py"
+    )
 
 
 def check_public_api():
