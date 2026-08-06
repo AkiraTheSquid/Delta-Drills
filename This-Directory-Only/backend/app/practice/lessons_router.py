@@ -63,7 +63,7 @@ def mark_exposure(
     for kc in payload.kcs:
         # Unknown KC ids are dropped silently — a stale/renamed KC in an old
         # client must not pollute the exposure map forever.
-        if kc not in user_state.kc_exposure and lessons.kc_exists(kc):
+        if kc not in user_state.kc_exposure and lessons.exposure_key_exists(kc):
             user_state.kc_exposure[kc] = now
             changed = True
     if changed:

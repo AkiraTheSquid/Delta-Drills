@@ -82,6 +82,15 @@ class NextQuestionResponse(BaseModel):
     # because of an authoring gap. The display tells the truth instead.
     ladder_support: bool = True
 
+    # The fifth rung: this problem uses the concept alongside others already
+    # taught, rather than exercising it alone. Derived at serve time from the
+    # question's supporting concepts and the learner's exposure map — see
+    # lessons.is_integrated — and deliberately NOT a fifth `ladder_stage`. The
+    # four stage names are what every stored attempt is filed under and what
+    # the promotion arithmetic reads back; a fifth would either rewrite that
+    # history or invent a rung nothing can be promoted out of.
+    ladder_integrated: bool = False
+
 
 class SubmitRequest(BaseModel):
     question_id: int

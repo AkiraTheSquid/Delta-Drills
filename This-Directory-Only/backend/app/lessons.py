@@ -40,6 +40,18 @@ _authored_faded: Dict[int, str] = {}
 # Independent-rung question ids the KP gave a worked example to. See
 # `has_worked_example` — this is the ladder's third rung, not a content detail.
 _applied_with_example: set[int] = set()
+# kc -> the KP's concept segments in teaching order:
+# [{"concept_id", "title", "drills": [question_id, ...]}, ...]
+#
+# A KP is not one idea. `kp-ndarray-model` teaches three — a tensor is one
+# block of one type, nesting becomes axes, dtype belongs to the whole block —
+# and the markdown has always been authored that way (`## Concept: <title>`,
+# each followed by its own worked example and its own faded drill). The gate
+# read them as one wall of text: all three concepts, then one question. That is
+# the order that produces a learner who has read three things and practised
+# one, and it is why the third concept never sticks. Teaching one and drilling
+# THAT one before the next is the whole point of segmenting the markdown.
+_kc_segments: Dict[str, List[dict]] = {}
 
 
 def _read_json(name: str) -> Optional[dict]:
@@ -89,6 +101,27 @@ def _load() -> None:
                 "lesson_title": lesson.get("title", meta.get("title", "")),
                 "topic": lesson.get("topic", meta.get("topic", "")),
             }
+            segments = []
+            for seg in kp.get("segments") or []:
+                concept_id = str(seg.get("concept_id") or "").strip()
+                if not concept_id:
+                    continue
+                drills = []
+                for item in seg.get("faded_items") or []:
+                    if not isinstance(item, dict):
+                        continue
+                    try:
+                        drills.append(int(item.get("question_id")))
+                    except (TypeError, ValueError):
+                        continue
+                segments.append({
+                    "concept_id": concept_id,
+                    "title": seg.get("title") or "",
+                    "drills": drills,
+                })
+            if len(segments) > 1:
+                _kc_segments[kc] = segments
+
             # Segment-level lists shadow the KP-level one (same items, grouped),
             # so read both and let the later write win — they agree by
             # construction, and taking either alone misses single-segment KPs.
@@ -161,6 +194,123 @@ def authored_faded_starter(question_id: int) -> Optional[str]:
     return _authored_faded.get(question_id)
 
 
+def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
+    """Is this problem one that needs the WHOLE KP, every concept of it taught?
+
+    The fifth rung, and the only reason the other four exist. `kp-ndarray-model`
+    teaches three separate ideas — a tensor is one block of one type, nesting
+    becomes axes, dtype belongs to the whole block — and the loop above teaches
+    and drills them one at a time, which is the only way the third one survives
+    the first two. But a learner who can do three drills in isolation has not
+    learned the KP; the KP's own independent problems are written against all
+    three at once, and being able to do THOSE is the thing the lesson was for.
+
+    So: a multi-concept KP, every concept of it read. A KP that teaches one idea
+    has nothing to integrate and never reports this, which is right — its solo
+    problems are solo problems.
+
+    Not a stage in `kc_graph.LADDER_STAGES`, deliberately. Every attempt the
+    learner has ever made is filed under one of those four names and the
+    promotion arithmetic reads them back; a fifth would either rewrite that
+    history or invent a rung nothing can be promoted out of. This is read at
+    serve time and stored nowhere, so the record keeps saying `solo` — which is
+    what the rung is. What changes is what the learner is told they are doing.
+    """
+    _load()
+    for kc in _question_target_kcs.get(int(question_id), []):
+        segments = _kc_segments.get(kc) or []
+        if len(segments) < 2:
+            return False
+        return all(f"{kc}#{seg['concept_id']}" in kc_exposure for seg in segments)
+    return False
+
+
+def _segment_step(kc: str, kc_exposure: Dict[str, str]) -> dict:
+    """Which concept of this KP the learner is owed next, as gate fields.
+
+    `exposure_key` is what the client posts back when the page is read. For a
+    KP with one concept it is the KC itself, exactly as before segmentation —
+    32 of the 63 KPs are in that shape and none of them change. For a KP with
+    several it is `<kc>#<concept_id>`, so the KC's own key stays reserved for
+    "the whole KP is done" and the gate can fire again for concept 2 without
+    ever having claimed concept 1 taught the lot.
+    """
+    segments = _kc_segments.get(kc) or []
+    for index, seg in enumerate(segments):
+        if f"{kc}#{seg['concept_id']}" in kc_exposure:
+            continue
+        return {
+            "concept_id": seg["concept_id"],
+            "segment_title": seg["title"],
+            "segment_index": index,
+            "segment_total": len(segments),
+            "exposure_key": f"{kc}#{seg['concept_id']}",
+            "drills": list(seg["drills"]),
+        }
+    # No segments, or every segment read while the KC's own key never landed
+    # (an interrupted post, or a KP that gained segments after this learner
+    # walked it). Either way the honest remaining step is the whole KP.
+    return {
+        "concept_id": "",
+        "segment_title": "",
+        "segment_index": max(len(segments) - 1, 0),
+        "segment_total": max(len(segments), 1),
+        "exposure_key": kc,
+        "drills": [],
+    }
+
+
+def exposure_key_exists(key: str) -> bool:
+    """Is this a key `/exposure` may store — a KC, or one of its concepts?
+
+    The route drops keys it does not recognise so a stale client cannot write
+    junk into a map that is never cleaned. Segment keys have to pass the same
+    test, and they have to be checked against the CURRENT segment list: a
+    concept that was renamed out of the markdown must stop being storable, or
+    a KP could be permanently un-gateable by a key nothing teaches any more.
+    """
+    _load()
+    if key in _kc_gate_info:
+        return True
+    kc, _, concept_id = str(key).partition("#")
+    if not concept_id:
+        return False
+    return any(seg["concept_id"] == concept_id for seg in _kc_segments.get(kc) or [])
+
+
+def segment_drill(question, kc_exposure: Dict[str, str], served_ids) -> Optional[object]:
+    """The drill belonging to the concept the gate is about to teach, if the
+    adaptive pick is not already it.
+
+    The queue chooses a question, and the gate that fires in front of it is
+    whatever that question's target KC needs taught. Before segmentation those
+    two agreed by accident often enough to look intentional. They cannot agree
+    now: the gate teaches concept 2 of 3, and the queue is aiming at the KP's
+    difficulty as a whole. Serving the concept's OWN faded item is what closes
+    the loop — read one idea, practise that idea, then the next.
+
+    Returns None (keep the adaptive pick) whenever the drill is already served,
+    missing, or from another subtopic. A cross-subtopic swap would file the
+    attempt under the wrong subtopic's evidence, and no amount of pedagogical
+    tidiness is worth corrupting the mastery record to get it.
+    """
+    _load()
+    from app.questions import get_question_by_id  # app.questions imports us
+
+    for kc in _question_target_kcs.get(int(question.id), []):
+        if kc in kc_exposure or kc not in _kc_gate_info:
+            continue
+        # Only the FIRST unexposed concept matters — it is the one being taught.
+        for qid in _segment_step(kc, kc_exposure)["drills"]:
+            if qid == int(question.id) or qid in served_ids:
+                return None
+            drill = get_question_by_id(qid)
+            if drill is not None and drill.subtopic == question.subtopic:
+                return drill
+        return None
+    return None
+
+
 def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[dict]:
     """Gate entries for this question's target KCs the learner has not been
     exposed to. Empty list = no gate (untagged question, all KCs exposed, or
@@ -174,7 +324,7 @@ def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[
         seen.add(kc)
         info = _kc_gate_info.get(kc)
         if info:  # a KC with no introducing KP can't be taught — never gate on it
-            gates.append(info)
+            gates.append({**info, **_segment_step(kc, kc_exposure)})
     return gates
 
 

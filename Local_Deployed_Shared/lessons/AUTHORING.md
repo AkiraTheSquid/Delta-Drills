@@ -93,6 +93,14 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
   MUST equal the number of segments, ids MUST be unique, and every declared
   segment MUST have a `## Concept: ...` title. This makes accidental re-merges
   fail validation and supplies concept-level ids for adaptive sequencing.
+- **A segment id is stored state, not a label.** The learner is taught and
+  drilled ONE segment per visit, and what remembers which ones are done is
+  `<kc>#<concept_id>` in their exposure map. An id that changes re-teaches that
+  concept once; an id that gets REUSED for different prose credits the new
+  concept as already read and it is never offered again. `compile_lessons.py`
+  fills in `s<index>-<title-slug>` for segments `concepts:` does not name, so
+  re-titling or reordering an unnamed segment costs one re-read — declare the
+  id here when a segment's title is likely to be edited.
 - Each segment's `## Worked example` shows exactly ONE worked example — a
   single small demo of the one idea, not a tour of variations. The rhythm is:
   teach one concept → inspect or optionally run one worked example → continue.

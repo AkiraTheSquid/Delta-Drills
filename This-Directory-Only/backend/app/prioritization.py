@@ -229,11 +229,16 @@ def ladder_fields(user_state: UserPracticeState, qid: int) -> dict:
         return {}
     kc = kcs[0]
     node = kc_graph.registry_node(kc) or {}
+    stage = kc_graph.kc_stage(user_state, kc)
     return {
-        "ladder_stage": kc_graph.kc_stage(user_state, kc),
+        "ladder_stage": stage,
         "ladder_kc": kc,
         "ladder_kc_title": node.get("title"),
         "ladder_estimate": kc_graph.kc_estimate(user_state, kc),
+        # Reported, never stored — see lessons.is_integrated for why the record
+        # keeps saying `solo` while the strip says something further along.
+        "ladder_integrated": stage == "solo"
+        and lessons.is_integrated(qid, user_state.kc_exposure),
     }
 
 

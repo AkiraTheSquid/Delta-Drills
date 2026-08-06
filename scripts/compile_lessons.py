@@ -21,6 +21,32 @@ from lesson_lib import (
 )
 
 
+_ID_UNSAFE = re.compile(r"[^a-z0-9]+")
+
+
+def _concept_id(authored, index, title):
+    """A stable id for one concept of a KP.
+
+    This is what the learner's exposure map is keyed on — `<kc>#<concept_id>`
+    is how the gate remembers that concept 2 of 3 has been taught and concept 3
+    has not — so it has to survive a recompile unchanged. Four KPs name their
+    concepts in frontmatter (`concepts: [...]`); the other 27 segmented ones do
+    not, and waiting for them to be annotated would leave the loop switched off
+    for almost every KP it exists for.
+
+    So: the authored id when there is one, otherwise position plus title slug.
+    The position makes collisions impossible (two segments may legitimately
+    share a title) and the slug makes the id readable in a stored map that
+    someone will one day have to debug. Re-titling or reordering a segment
+    mints a new id and re-teaches that one concept once, which is the right
+    failure: the alternative is a bare index that silently credits a rewritten
+    concept as already read.
+    """
+    if index < len(authored) and str(authored[index]).strip():
+        return str(authored[index]).strip()
+    return f"s{index}-{_ID_UNSAFE.sub('-', title.lower()).strip('-')[:48]}"
+
+
 def _derived_faded(qid, new_syntax, bank):
     """A faded starter built from a question's own canonical answer, or "".
 
@@ -88,7 +114,7 @@ def compile_lessons():
         # One page per single-concept segment (the in-app player steps
         # through these); legacy aggregate fields kept for viewer.html.
         segments = [{
-            "concept_id": kp["concepts"][i] if i < len(kp["concepts"]) else "",
+            "concept_id": _concept_id(kp["concepts"], i, seg["title"]),
             "title": seg["title"],
             "concept_markdown": seg["concept"],
             "watch_out_markdown": seg["watch_out"],

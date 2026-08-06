@@ -213,7 +213,13 @@ const LadderUI = (() => {
       // backend's vocabulary would put two different names for one rung side
       // by side ("Fill in the rest" beside a dot reading "Faded").
       eyebrow: "Concept",
-      stage,
+      // The fifth dot. The record still says `solo` and the promotion
+      // arithmetic still reads `solo` — this problem simply happens to use the
+      // concept alongside others already taught, which is a property of the
+      // question and not a rung anybody was promoted onto. Shown because the
+      // learner should be able to SEE that the concepts have started arriving
+      // together; stored nowhere, because it is not evidence about them.
+      stage: question.ladder_integrated ? "integrated" : stage,
       // False when the backend could build neither blanks nor an example for
       // this particular drill — see `ladder_support` in practice_schemas. The
       // rung still stands; the dot's description stops claiming a scaffold

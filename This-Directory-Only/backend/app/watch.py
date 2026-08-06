@@ -115,9 +115,54 @@ def check_invariants():
         "ENABLE_STALENESS_REVIEW flag was deleted; remove the leftover reference"
 
 
+def check_a_kp_is_taught_one_concept_at_a_time():
+    """The gate must owe the learner ONE concept, and must not claim the KP.
+
+    `<kc>` in the exposure map means the whole KP is done — every later gate
+    reads it that way and stops firing. So while a segmented KP still has
+    unread concepts, the key the gate hands back has to be the concept's, and
+    the drill it points at has to be that concept's own. Getting this wrong is
+    silent and permanent: the learner is credited with concepts 2 and 3, never
+    sees them, and nothing ever asks again.
+    """
+    from app import lessons
+    lessons._load()
+    segmented = {kc: segs for kc, segs in lessons._kc_segments.items() if len(segs) > 1}
+    assert segmented, "no KP has multiple concepts — the segment loop is dead code"
+
+    kc, segs = sorted(segmented.items())[0]
+    exposure = {}
+    for expected, seg in enumerate(segs):
+        step = lessons._segment_step(kc, exposure)
+        assert step["segment_index"] == expected, \
+            f"{kc}: gate is on concept {step['segment_index']}, expected {expected}"
+        assert step["exposure_key"] == f"{kc}#{seg['concept_id']}", \
+            f"{kc}: gate would write {step['exposure_key']!r}, not the concept's own key"
+        assert step["exposure_key"] != kc, \
+            f"{kc}: the KP's own key retires every remaining concept unread"
+        assert step["drills"] == seg["drills"], \
+            f"{kc}: concept {expected} would drill {step['drills']}, not its own {seg['drills']}"
+        assert lessons.exposure_key_exists(step["exposure_key"]), \
+            f"{kc}: /exposure would drop {step['exposure_key']!r} as unknown and re-teach forever"
+        # Nothing may be integrated until every concept has been read.
+        for qid in seg["drills"]:
+            assert not lessons.is_integrated(qid, exposure), \
+                f"{kc}: q{qid} reported integrated with concepts still untaught"
+        exposure[step["exposure_key"]] = "now"
+
+    assert lessons.exposure_key_exists(kc), "the KP's own key must stay storable"
+    assert not lessons.exposure_key_exists(f"{kc}#not-a-concept"), \
+        "/exposure would store a concept id nothing teaches"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [
+        check_imports,
+        check_public_api,
+        check_invariants,
+        check_a_kp_is_taught_one_concept_at_a_time,
+    ]
     for fn in checks:
         try:
             fn()

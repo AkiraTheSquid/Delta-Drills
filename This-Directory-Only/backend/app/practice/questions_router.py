@@ -169,6 +169,9 @@ def next_question(
             detail=f"No questions available for subtopic '{subtopic}'",
         )
 
+    # Teach one concept, then drill THAT concept — see lessons.segment_drill.
+    question = lessons.segment_drill(question, user_state.kc_exposure, served) or question
+
     # Report the aim on the concept actually SERVED. `next_kc` drove the pick,
     # but a question can target more than one concept and a focused pool is not
     # narrowed to one at all — and `finalize_attempt` recomputes this from the
