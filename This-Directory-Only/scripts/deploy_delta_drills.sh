@@ -14,6 +14,7 @@ set -euo pipefail
 # 4. Syncs Local_Deployed_Shared/ into the deploy worktree
 # 5. Pushes deploy to origin (triggers Vercel)
 # 6. Deploys the backend to Fly.io
+# 7. Republishes the Colab edition from the same tree (non-fatal)
 # ============================================================
 
 REPO_DIR="/home/stellar-thread/Applications/Delta-Drills-Local"
@@ -272,9 +273,47 @@ else
   warn "Install: curl -L https://fly.io/install.sh | sh"
 fi
 
+# --- Step 7: Keep the Colab edition on the same frontend ---
+#
+# delta-drills-colab.vercel.app is a SECOND Vercel project serving this exact
+# frontend — one codebase, two deploys, the host decides whether a drill opens
+# the editor or its notebook. That invariant only holds if both projects are
+# published from the same tree, and nothing enforced it: this script deployed
+# the main project and stopped, so every deploy left the fork one build behind
+# and it stayed behind until someone happened to look.
+#
+# It is not a cosmetic lag. The fork ran for a week on a build whose knowledge
+# graph read a learner model the backend no longer writes, so it drew 63 flat
+# bubbles for an account with real practice history — the same symptom as a
+# broken backend, on a frontend nobody had redeployed. Syncing here makes the
+# fork's staleness impossible rather than merely visible.
+#
+# Non-fatal on purpose. The main deploy is already live by this point, and the
+# colab script runs its own preflights (extension checks, notebook index audit)
+# that can legitimately fail without saying anything about the deploy that just
+# succeeded. A failure here means "the fork is stale", not "the release is bad".
+COLAB_DEPLOY_SCRIPT="$REPO_THIS_DIR/scripts/deploy_delta_drills_colab.sh"
+COLAB_DIR="/home/stellar-thread/Applications/Delta-Drills-Colab"
+if [ -x "$COLAB_DEPLOY_SCRIPT" ] && [ -d "$COLAB_DIR" ]; then
+  info "Syncing the Colab edition to this same frontend..."
+  set +e
+  bash "$COLAB_DEPLOY_SCRIPT"
+  colab_status=$?
+  set -e
+  if [ "$colab_status" -ne 0 ]; then
+    warn "Colab edition deploy FAILED (exit $colab_status) — the main deploy is live,"
+    warn "but https://delta-drills-colab.vercel.app is still on the previous build."
+    warn "Re-run: $COLAB_DEPLOY_SCRIPT"
+  fi
+else
+  warn "Colab worktree or deploy script missing — skipping the Colab edition."
+  warn "https://delta-drills-colab.vercel.app will keep serving its previous build."
+fi
+
 echo ""
 echo -e "${GREEN}======================================${NC}"
 echo -e "${GREEN}  Deploy complete!${NC}"
 echo -e "${GREEN}  Vercel:  ${VERCEL_URL}${NC}"
+echo -e "${GREEN}  Colab:   https://delta-drills-colab.vercel.app${NC}"
 echo -e "${GREEN}  Backend: https://delta-drills-backend.fly.dev${NC}"
 echo -e "${GREEN}======================================${NC}"

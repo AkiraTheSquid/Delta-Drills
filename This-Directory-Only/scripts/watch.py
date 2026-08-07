@@ -29,6 +29,7 @@ LONG_RUNNING_PY_SCRIPTS = (
 
 SHELL_SCRIPTS = (
     'deploy_delta_drills.sh',
+    'deploy_delta_drills_colab.sh',
     'deploy_delta_drills_local.sh',
     'sync-deploy.sh',
     'sync-local.sh',
@@ -99,6 +100,15 @@ def check_invariants():
     assert 'build_arena_book.sh' in deploy_text, (
         'deploy_delta_drills.sh no longer references build_arena_book.sh — '
         'arena-book deploys will silently skip the rebuild.'
+    )
+
+    # 2b. The main deploy still republishes the Colab edition.
+    # delta-drills-colab.vercel.app is the same frontend under a second
+    # project; when only the main deploy runs, the fork keeps serving the
+    # previous build and looks like a broken app rather than a stale one.
+    assert 'deploy_delta_drills_colab.sh' in deploy_text, (
+        'deploy_delta_drills.sh no longer runs deploy_delta_drills_colab.sh — '
+        'the Colab edition will silently drift behind the main deploy.'
     )
 
     # 3. Build script writes to the expected staging dir under Local_Deployed_Shared.
