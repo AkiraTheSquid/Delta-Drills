@@ -308,9 +308,76 @@ def check_invariants():
         )
 
 
+def check_infotips():
+    """The ⓘ system: every anchor has copy, and every tab has a dot.
+
+    Two lists have to stay in step — `data-dd-info="<key>"` in the markup
+    and the keys in infotips-registry.js. Neither half fails loudly on its
+    own: a key with no anchor is dead copy nobody sees, and an anchor with
+    no key renders a dot that opens an empty panel. Both are silent, so
+    they are asserted here instead.
+    """
+    import re as _re
+
+    index_html = _read(os.path.join(HERE, "index.html"))
+    registry = _read(os.path.join(HERE, "infotips-registry.js"))
+    # Anchors also live in the two runtime DOM modules, which is the whole
+    # reason infotips.js re-derives dots from a MutationObserver.
+    anchor_sources = [
+        index_html,
+        _read(os.path.join(HERE, "targeted-practice", "targeted-practice-dom.js")),
+        _read(os.path.join(HERE, "practice", "arena-unlock-dom.js")),
+    ]
+
+    anchors = set()
+    for src in anchor_sources:
+        anchors.update(_re.findall(r'data-dd-info="([^"]+)"', src))
+    # Registry keys are bare identifiers or quoted strings before a `: {`.
+    keys = set(_re.findall(r'^\s*"?([A-Za-z][\w.-]*)"?:\s*\{', registry, _re.M))
+
+    assert keys, "infotips-registry.js parsed to zero keys — did its shape change?"
+    orphan_anchors = sorted(anchors - keys)
+    assert not orphan_anchors, (
+        f"data-dd-info anchors with no copy in infotips-registry.js: {orphan_anchors}"
+    )
+    orphan_keys = sorted(keys - anchors)
+    assert not orphan_keys, (
+        f"infotips-registry.js keys no element carries: {orphan_keys}"
+    )
+
+    # Every visible tab gets a dot, and the dot is a SIBLING of the tab
+    # button, never a child — a button cannot nest a button, and app.js
+    # captures .tab into a static NodeList that must not pick the dot up.
+    for tab in ("why-this-app", "how-it-works", "knowledge-graph", "account",
+                "courses", "practice", "targeted-practice"):
+        assert f'data-dd-info="tab.{tab}"' in index_html, (
+            f'tab "{tab}" has no ⓘ — expected data-dd-info="tab.{tab}"'
+        )
+    for tag in _re.findall(r'<button[^>]*>', index_html):
+        classes = (_re.search(r'class="([^"]*)"', tag) or _re.match(r'()', '')).group(1).split()
+        if "tab-info" in classes:
+            assert "tab" not in classes, (
+                f"a tab ⓘ also carries the .tab class, so app.js will treat it "
+                f"as a tab button: {tag}"
+            )
+
+    # Load order: behaviour reads window.DD_INFOTIPS at IIFE-eval time.
+    reg_pos = index_html.find('src="infotips-registry.js')
+    beh_pos = index_html.find('src="infotips.js')
+    assert reg_pos != -1, 'index.html missing <script src="infotips-registry.js">'
+    assert beh_pos != -1, 'index.html missing <script src="infotips.js">'
+    assert reg_pos < beh_pos, (
+        "infotips-registry.js must load BEFORE infotips.js — the registry is "
+        "read once, at eval time, and an empty one renders no dots at all"
+    )
+    assert 'href="styles/infotips.css' in index_html, (
+        "index.html missing styles/infotips.css — dots render as bare text"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants, check_infotips]
     for fn in checks:
         try:
             fn()
