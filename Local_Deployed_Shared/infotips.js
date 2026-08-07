@@ -175,6 +175,9 @@
   const scan = () => {
     scanQueued = false;
     mutating = true;
+    // Every generated dot an anchor still claims this pass. Anything else
+    // that we generated is stale and gets swept at the end.
+    const owned = new Set();
     try {
       document.querySelectorAll(ANCHOR_SELECTOR).forEach((anchor) => {
         // The dots themselves carry data-dd-info (that's what the click
@@ -202,9 +205,22 @@
             unservable.add(anchor);
             dot.remove();
             console.warn(`[infotips] cannot place a dot for "${key}" — skipping`);
+            return;
           }
         }
         if (place !== "in") syncHidden(anchor, dot);
+        owned.add(dot);
+      });
+
+      // Sweep dots that no longer belong to anyone. An anchor can MOVE:
+      // concept-graph/kc-colab-route.js relocates #kg-colab-link and
+      // #kg-maximize out of the info aside into .kg2-controls on the Colab
+      // edition, which left their old dots stranded in the aside while a
+      // fresh pair appeared in the new parent. Same sweep covers an anchor
+      // that is removed outright. Only dots WE generated — the tab dots are
+      // hand-written in index.html and are nobody's to collect.
+      document.querySelectorAll('.dd-info[data-dd-info-generated="1"]').forEach((dot) => {
+        if (!owned.has(dot)) dot.remove();
       });
     } finally {
       mutating = false;
