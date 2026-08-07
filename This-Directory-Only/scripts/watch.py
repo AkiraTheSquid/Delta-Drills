@@ -106,9 +106,26 @@ def check_invariants():
     # delta-drills-colab.vercel.app is the same frontend under a second
     # project; when only the main deploy runs, the fork keeps serving the
     # previous build and looks like a broken app rather than a stale one.
-    assert 'deploy_delta_drills_colab.sh' in deploy_text, (
-        'deploy_delta_drills.sh no longer runs deploy_delta_drills_colab.sh — '
-        'the Colab edition will silently drift behind the main deploy.'
+    #
+    # Assert the CALL, over non-comment lines only. A substring test for the
+    # script's name passes on the comment that explains it and on the variable
+    # that holds its path, so deleting the one line that runs it would leave
+    # this check green — the failure mode the check exists to catch.
+    deploy_code = [
+        line for line in deploy_text.splitlines()
+        if line.strip() and not line.lstrip().startswith('#')
+    ]
+    assigns_colab = any(
+        'COLAB_DEPLOY_SCRIPT=' in line and 'deploy_delta_drills_colab.sh' in line
+        for line in deploy_code
+    )
+    runs_colab = any(
+        'bash "$COLAB_DEPLOY_SCRIPT"' in line for line in deploy_code
+    )
+    assert assigns_colab and runs_colab, (
+        'deploy_delta_drills.sh no longer runs deploy_delta_drills_colab.sh '
+        '(assigns={}, runs={}) — the Colab edition will silently drift behind '
+        'the main deploy.'.format(assigns_colab, runs_colab)
     )
 
     # 3. Build script writes to the expected staging dir under Local_Deployed_Shared.
