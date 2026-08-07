@@ -1,0 +1,158 @@
+/* ================================================================
+   INFOTIPS — the small ⓘ that sits beside every tab and every feature.
+
+   Two shapes of the same control:
+     .dd-info            the generic dot, injected by infotips.js beside
+                         whatever carries data-dd-info
+     .dd-info.tab-info   the topbar variant, hand-written in index.html as a
+                         SIBLING of its .tab button (a button cannot nest a
+                         button, and app.js's auth-only/guest-only NodeLists
+                         are captured at script-eval time, so these have to
+                         exist in the markup before app.js runs)
+
+   The panel (.dd-infopop) is a single reused element parked on <body> and
+   positioned fixed, so it escapes every overflow:hidden ancestor — the
+   topbar, the practice split, the knowledge-graph pane.
+   ================================================================ */
+
+.dd-info {
+  /* Reset: these are injected next to wildly different neighbours. */
+  appearance: none;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  margin: 0 0 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: help;
+  vertical-align: middle;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.dd-info:hover,
+.dd-info:focus-visible {
+  color: var(--white);
+  border-color: var(--accent);
+  background: rgba(227, 33, 44, 0.15);
+  outline: none;
+}
+
+.dd-info[aria-expanded="true"] {
+  color: var(--white);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.dd-info.hidden,
+.dd-info[hidden] {
+  display: none !important;
+}
+
+/* ---- Topbar variant -------------------------------------------------- */
+
+/* The dot rides in the tab strip as its own flex item. The tab loses its
+   right padding to it so "Practice ⓘ" still reads as one target-sized
+   group rather than two widely spaced things. */
+.tab.has-info {
+  padding-right: 6px;
+}
+
+.dd-info.tab-info {
+  align-self: center;
+  margin: 0 14px 0 0;
+  height: 15px;
+}
+
+.tab.active + .dd-info.tab-info {
+  color: var(--white);
+  border-color: var(--muted);
+}
+
+/* ---- The panel ------------------------------------------------------- */
+
+.dd-infopop {
+  position: fixed;
+  z-index: 200;
+  width: min(320px, calc(100vw - 24px));
+  padding: 12px 14px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dd-infopop[hidden] {
+  display: none;
+}
+
+.dd-infopop-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.dd-infopop-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.dd-infopop-close {
+  flex: none;
+  padding: 0 2px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dd-infopop-close:hover {
+  color: var(--white);
+}
+
+.dd-infopop-body {
+  color: var(--text);
+}
+
+.dd-infopop-body strong {
+  color: var(--white);
+}
+
+.dd-infopop-body code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+}
+
+/* The embedded practice view drops the whole app chrome; its info dots go
+   with it, since none of the tabs they explain are reachable from there. */
+.kg-embed .dd-info.tab-info {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .dd-info.tab-info {
+    margin-right: 8px;
+  }
+}

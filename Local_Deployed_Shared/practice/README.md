@@ -102,6 +102,14 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-07 (**ⓘ anchors on the ARENA-unlock card**): `arena-unlock-dom.js`
+  tags the unlock banner, the exercise timer and the self-rating prompt with
+  `data-dd-info`, and `../infotips.js` hangs a dot on each. Nothing in this
+  folder loads or calls infotips — the attribute is the whole interface, and
+  the copy lives in `../infotips-registry.js` under the matching key. Because
+  this card is injected at runtime and rebuilt between exercises, the dots are
+  re-derived from a MutationObserver rather than placed once; an anchor that
+  comes back gets its dot back.
 - 2026-08-06 (**the Colab rail opens the concept, not the KP**): `colab_mode.js`,
   `lessons.js`. The lesson loop above teaches one concept per visit and the
   topbar says which — but `hrefForKc(kc)` only knew the whole-KP anchor, so on

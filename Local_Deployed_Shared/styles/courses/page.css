@@ -5,3 +5,73 @@
 .courses-page {
   padding-top: 32px;
 }
+
+/* ---- "What this app is for" ------------------------------------------
+   Sits above the course article, in static markup in index.html so it
+   survives courses.js re-rendering #courses-detail-view. Reads as a
+   framing note rather than a card: no fill, one accent rule down the
+   left, so it doesn't compete with the ARENA hero right below it. */
+
+.courses-about {
+  margin: 0 0 28px;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--accent);
+}
+
+.courses-about-eyebrow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.courses-about-title {
+  margin: 0 0 8px;
+  color: var(--white);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.courses-about-title strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.courses-about-body {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.courses-about-edition {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.courses-about-edition strong {
+  color: var(--text);
+}
+
+/* Exactly one of the two edition lines shows. practice/colab_mode.js puts
+   .dd-colab-edition on <html> when the host is the Colab deploy (or
+   ?mode=colab); the default is the main app. Same markup ships to both
+   projects — see the note in colab_mode.js on why this is a host check
+   and not a branch. */
+.cae-colab {
+  display: none;
+}
+
+html.dd-colab-edition .cae-app {
+  display: none;
+}
+
+html.dd-colab-edition .cae-colab {
+  display: inline;
+}

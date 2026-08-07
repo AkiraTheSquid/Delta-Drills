@@ -28,7 +28,7 @@
         </div>
 
         <div class="tp-card tp-search-card">
-          <label class="tp-search-label" for="tp-search-input">Search exercises</label>
+          <label class="tp-search-label" for="tp-search-input" data-dd-info="tp-search">Search exercises</label>
           <div class="tp-search-row">
             <input
               type="search"
@@ -48,7 +48,7 @@
 
         <div class="tp-card tp-selected-card">
           <div class="tp-selected-header">
-            <span class="tp-selected-title" id="tp-selected-title">Selected to practice</span>
+            <span class="tp-selected-title" id="tp-selected-title" data-dd-info="tp-selected">Selected to practice</span>
             <span class="tp-selected-count" id="tp-selected-count">0</span>
           </div>
           <ul class="tp-selected-list" id="tp-selected-list"></ul>
