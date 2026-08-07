@@ -28,11 +28,22 @@
   display: flex;
   gap: 0;
   height: 100%;
+  /* Hold the strip against the logo. .topbar is space-between over three
+     children, so when #topbar-auth is hidden (guest) the nav used to slide
+     across to the right edge and the tabs sat in a different place signed
+     out than signed in. Only visible once .topbar-auth[hidden] started
+     working — see styles/practice/misc.css, 2026-08-07. */
+  margin-right: auto;
 }
 
 .tab {
   background: none;
   border: none;
+  /* Never wrap or shrink. .tabs scrolls horizontally on narrow screens, so a
+     tab that breaks mid-label just makes the topbar four lines tall instead
+     — which is what "Why This App Exists" did at 390px. */
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 0 20px;
   font-size: 14px;
   font-weight: 500;

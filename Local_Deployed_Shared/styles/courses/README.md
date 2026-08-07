@@ -13,7 +13,7 @@
 - Global responsive overrides — those live in `../responsive.css` and are applied across the whole app.
 
 ## Key Files
-- `page.css`: the `.courses-page` container. Small on purpose — the tab renders one course directly, so there is no list view to style.
+- `page.css`: the `.courses-page` container, plus the `.courses-about` block above the course — the "what this app is for" framing note, including the `.cae-app` / `.cae-colab` pair that shows exactly one edition line.
 - `forkgate.css`: the first-click GitHub fork gate — backdrop, dialog shell, numbered steps, username input, and the status/error line.
 - `detail.css`: article view — hero block, the `.course-sources` link pills (ARENA site + Callum's repo), intro paragraph, alternating chapter rows, and the `.course-chapter-clickable` hover/focus state.
 - `modal.css`: chapter-sections modal — backdrop, dialog shell, header/×/content layout, and `.section-item/.section-number/.section-info` rows. Section number color is themed via `--section-number-color` set inline by JS on `.chapter-modal`.
@@ -52,5 +52,6 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-08-07: `page.css` gained `.courses-about*` — the block that states what the app is for before the course itself. Styled as a framing note (left accent rule, no fill) so it does not compete with the ARENA hero directly below it. Its markup is static in `index.html` rather than part of `courses.js`'s render, so it survives a re-render of `#courses-detail-view` and does not wait on course data. `.cae-colab` is hidden by default and swaps with `.cae-app` under `html.dd-colab-edition`, the class `practice/colab_mode.js` sets — same bytes ship to both Vercel projects, so the edition line has to be a CSS switch, not two builds.
 - 2026-07-31: Courses tab reduced to the single ARENA course. `list.css` → `page.css` (only `.courses-page` survives; the search input, results grid, and course-card styling went with the deleted list view). `include.css` → `forkgate.css`, repurposed from the removed "Include course for study?" toggle to the new first-click GitHub fork gate. `detail.css` dropped `.course-back-btn` and gained `.course-sources`/`.course-source-link` pills. `responsive.css` swapped its dead `.course-card`/`.course-include-*` overrides for `.fork-gate*` ones. Fragment count is still five; `watch.py` here and `../watch.py` updated to the new names and selector families.
 - 2026-04-29: Folder created. Split the monolithic `../courses.css` (~452 LOC, YELLOW) into five fragments here. Linked all five in `index.html` between `../arena.css` and `../responsive.css`. Parent `../watch.py` updated to validate the new layout, link order, and per-fragment hex-color enforcement.

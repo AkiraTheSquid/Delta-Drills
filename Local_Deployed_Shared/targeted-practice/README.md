@@ -60,5 +60,6 @@
   - Status: `RESOLVED` — initial review-mode swap broke this way before being patched.
 
 ## Recent Changes
+- 2026-08-07: `targeted-practice-dom.js` tags the search label and the selected-list title with `data-dd-info`, so `../infotips.js` hangs a ⓘ on each — this page is injected at runtime, which is why infotips re-derives its dots from a MutationObserver instead of a one-shot pass at load. `watch.py`'s auth-only invariant now matches on class *tokens* rather than the literal `class="tab auth-only"` string: the tab picked up a `has-info` class and a purely additive change failed the assertion. It also now covers the tab's sibling ⓘ, which carries the same `data-tab` and must stay `.auth-only` or it is left hanging beside a hidden tab.
 - 2026-05-20: Initial module — Targeted Practice tab with search, selected list with per-item readiness bars, Submit → review-mode in place with synthetic before→after animation, Back-to-search reset.
 - 2026-05-20: Reworked submit flow — Submit now starts a session (banner + tab swap to Practice). The before→after animation moved behind a new End-targeted-practice button on the banner. Banner lives outside `<main>` as a global indicator.
