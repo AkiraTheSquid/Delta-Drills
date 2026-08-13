@@ -234,9 +234,7 @@ function renderQuestion(q, count) {
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
-  codeEditor.value =
-    q.starter_code ||
-    "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
   // "Numpy: Numpy: Vectorization and broadcasting". The two modes disagree on
   // what `subtopic` is: local mode sends the bare name and the topic has to be
   // prefixed, while the backend already sends the COMPOSITE key

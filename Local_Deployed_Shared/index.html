@@ -79,8 +79,8 @@
       <button class="dd-info tab-info auth-only" data-dd-info="tab.split-tool" data-tab="split-tool" type="button" aria-expanded="false" aria-label="What is the Split Tool?" hidden>i</button>
       <button class="tab auth-only has-info" data-tab="account" type="button">Account</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.account" data-tab="account" type="button" aria-expanded="false" aria-label="What is Account?">i</button>
-      <button class="tab auth-only has-info" data-tab="courses" type="button">Courses</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Courses?">i</button>
+      <button class="tab auth-only has-info" data-tab="courses" type="button">Course content</button>
+      <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Course content?">i</button>
       <button class="tab auth-only has-info" data-tab="practice" type="button">Practice</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.practice" data-tab="practice" type="button" aria-expanded="false" aria-label="What is Practice?">i</button>
       <button class="tab auth-only has-info" data-tab="targeted-practice" type="button">Targeted Practice</button>
@@ -355,7 +355,7 @@
           <div class="hiw-pair">
             <h3>Graded on what your code does</h3>
             <p>
-              You write Python (<code>numpy</code>, <code>einops</code>, PyTorch)
+              You write Python (<code>torch</code>, <code>einops</code>)
               and submit. The engine runs it and checks the result, so the
               feedback is about how your solution behaves, never about how
               closely it matched a template.
@@ -868,8 +868,12 @@
         <!-- Right Panel: Code Editor + Runner -->
         <div class="practice-right">
           <div class="editor-header" data-dd-info="editor">Code Editor</div>
-          <textarea class="code-editor" id="code-editor" spellcheck="false">import numpy as np
-np.random.seed(0)
+          <!-- Painted before any script runs, so it cannot read
+               DEFAULT_EDITOR_CODE from practice/config.js — it is the one
+               hand-kept copy of that text. Keep the two in step. -->
+          <textarea class="code-editor" id="code-editor" spellcheck="false">import torch as t
+
+t.manual_seed(0)
 
 # Write your solution here
 </textarea>
@@ -932,11 +936,14 @@ np.random.seed(0)
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
   <script src="concept-graph/kc_crosswalk_mastery.js?v=1" defer></script>
   <script src="concept-graph/kc_interval.js?v=1" defer></script>
+  <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
+       are `defer`, so document order is execution order. -->
+  <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=1" defer></script>
   <script src="concept-graph/lesson-graph.js?v=23" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
-  <script src="practice/config.js?v=7"></script>
+  <script src="practice/config.js?v=8"></script>
   <script src="practice/mode.js?v=7"></script>
   <script src="practice/questions.js?v=24"></script>
   <script src="practice/engine.js?v=10"></script>
@@ -957,7 +964,7 @@ np.random.seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=28"></script>
+  <script src="practice/ui.js?v=29"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=19"></script>
   <script src="practice/timer.js?v=15"></script>
@@ -970,11 +977,11 @@ np.random.seed(0)
   <script src="practice/competency-bar.js?v=4"></script>
   <script src="practice/concept-topbar.js?v=6"></script>
   <script src="practice/notebook.js?v=4"></script>
-  <script src="practice/lessons.js?v=24"></script>
+  <script src="practice/lessons.js?v=25"></script>
   <script src="practice/ladder.js?v=5"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=29"></script>
+  <script src="practice/events.js?v=30"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

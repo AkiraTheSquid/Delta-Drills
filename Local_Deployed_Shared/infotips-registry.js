@@ -33,7 +33,7 @@ window.DD_INFOTIPS = {
     body: "A map of every skill and what depends on what. Use it to see why something is locked and what unlocking it opens up. <strong>Practice</strong> picks from this map for you.",
   },
   "tab.courses": {
-    title: "Courses",
+    title: "Course content",
     body: "The ARENA curriculum this app drills you for — every chapter and section, each one linking out to the original notebook.",
   },
   "tab.practice": {

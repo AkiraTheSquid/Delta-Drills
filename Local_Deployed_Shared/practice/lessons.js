@@ -17,7 +17,8 @@ const LessonGate = (() => {
   let qmatrix = null;
   let loadFailed = false;
   let activeQuestion = null; // Truthy during lesson → Run uses local Pyodide.
-  const DEFAULT_EDITOR = "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  // config.js owns the text; see DEFAULT_EDITOR_CODE there for why it is torch.
+  const DEFAULT_EDITOR = DEFAULT_EDITOR_CODE;
 
   const _exposureKey = () => `${getPracticeStorageKey()}_kc_exposure`;
 

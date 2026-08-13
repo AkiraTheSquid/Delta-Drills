@@ -102,6 +102,16 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-13 (**the flag row now says what it started**): `api.js`, `events.js`.
+  `reportProblem` used to throw the response body away and the confirmation was
+  a hardcoded "logged ✓". The backend can now answer `improvement_queued`,
+  meaning it also handed the question to Opus 5 for a rewrite (allowlisted
+  accounts only), so the reply is read and the status line says "logged ✓ —
+  rewriting this problem" when it is set. Worth keeping: "logged ✓" alone reads
+  as *nothing further will happen*, said at the moment something is. The flag
+  row is unchanged otherwise — same buttons, same non-blocking behaviour, same
+  localStorage fallback in guest/offline mode, where no rewrite is possible
+  because there is no account to check against the allowlist.
 - 2026-08-07 (**ⓘ anchors on the ARENA-unlock card**): `arena-unlock-dom.js`
   tags the unlock banner, the exercise timer and the self-rating prompt with
   `data-dd-info`, and `../infotips.js` hangs a dot on each. Nothing in this

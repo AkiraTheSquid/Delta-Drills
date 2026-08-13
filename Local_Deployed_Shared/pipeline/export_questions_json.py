@@ -404,6 +404,14 @@ def normalize_subtopic(topic: str, subtopic: str) -> str:
     return subtopic
 
 
+def _feedback_ai_layer_path() -> Path:
+    """Where the runtime AI repair layer lives. Mirrors
+    backend/app/feedback_ai_layer.py::feedback_ai_dir."""
+    configured = os.environ.get("DELTA_FEEDBACK_AI_DIR", "").strip()
+    base = Path(configured).expanduser().resolve() if configured else CHATGPT_RUNTIME_DIR
+    return base / "ai_feedback_overrides.jsonl"
+
+
 def _read_jsonl_overrides(path: Path) -> dict[int, dict]:
     if not path.exists():
         return {}
@@ -493,6 +501,18 @@ def load_function_overrides() -> dict[int, dict]:
             merged = dict(base.get(qid, {}))
             merged.update(record)
             base[qid] = merged
+
+    # Live AI repairs written at runtime by the per-problem feedback loop
+    # (backend/app/practice/feedback_ai_improver.py). Layered absolutely last,
+    # matching backend/app/questions.py::_load_function_overrides. It lives
+    # outside CHATGPT_RUNTIME_DIR because production writes it to the Fly /data
+    # volume; on a dev box with DELTA_FEEDBACK_AI_DIR unset it simply falls back
+    # to the chatgpt dir and is usually absent. To fold production's repairs
+    # into the shipped bank, copy that file down before exporting.
+    for qid, record in _read_jsonl_overrides(_feedback_ai_layer_path()).items():
+        merged = dict(base.get(qid, {}))
+        merged.update(record)
+        base[qid] = merged
     return base
 
 
