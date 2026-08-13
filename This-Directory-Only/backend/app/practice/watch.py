@@ -32,6 +32,8 @@ EXPECTED_PATHS = {
     '/api/practice/override',
     '/api/practice/feedback',
     '/api/practice/problem-feedback',
+    '/api/practice/problem-feedback/revisions',
+    '/api/practice/problem-feedback/rollback',
     '/api/practice/visual-debug',
     '/api/practice/subtopics',
     '/api/practice/weights',
@@ -353,11 +355,76 @@ def check_felt_difficulty_reaches_the_next_question():
     )
 
 
+def check_ai_repairs_are_gated():
+    """The AI question repair writes to the LIVE bank, so its gates are the
+    only thing between one bad model response and every learner seeing it.
+
+    None of these gates fails loudly when removed — a question just quietly
+    becomes something other than what it was, which is exactly the class of
+    change this file exists to pin.
+    """
+    # Importing this module goes through app/practice/__init__.py, which pulls
+    # in the routers — same bail-out the other checks take outside the venv.
+    if not _fastapi_available():
+        return
+
+    from app.practice.feedback_ai_improver import (
+        QuestionRepair, _validated_changes, is_actionable_tag,
+    )
+    from app.questions import Question
+
+    q = Question(
+        id=-1, topic="T", subtopic="T: S", question_text="original prompt",
+        answer_code="print(1)", difficulty_score=20, difficulty_label="easy",
+        expected_output="1", starter_code="def solve():\n    pass",
+    )
+
+    def repair(**kw):
+        base = dict(verdict="rewrite", rationale="r", question_text="",
+                    starter_code="", answer_code="")
+        base.update(kw)
+        return QuestionRepair(**base)
+
+    assert not is_actionable_tag("good"), (
+        "'good' is praise, not a defect report — rewriting on it churns "
+        "questions that are already working"
+    )
+
+    assert "answer_code" not in _validated_changes(
+        repair(answer_code="print(2)"), q, "unclear"), (
+        "answer_code is reachable without a 'broken' flag — the reference "
+        "answer decides whether every future attempt is graded right or wrong"
+    )
+    assert "answer_code" in _validated_changes(
+        repair(answer_code="print(2)"), q, "broken"), (
+        "a 'broken' flag can no longer repair the reference answer"
+    )
+
+    for field in ("starter_code", "answer_code"):
+        assert field not in _validated_changes(
+            repair(**{field: "def solve(:\n  bad"}), q, "broken"), (
+            f"{field} is written without compiling — a SyntaxError here breaks "
+            f"the grader for that question on every future attempt"
+        )
+
+    assert not _validated_changes(repair(question_text="original prompt"), q, "unclear"), (
+        "an identical rewrite is still applied — that writes a revision-log "
+        "entry claiming a change that never happened"
+    )
+    assert not _validated_changes(repair(), q, "broken"), (
+        "empty fields count as a rewrite — the model uses '' to mean 'leave "
+        "this alone', so this would blank the question"
+    )
+    assert _validated_changes(repair(question_text="clearer prompt"), q, "unclear") == {
+        "question_text": "clearer prompt"}, "a genuine prompt fix no longer applies"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_attempts_are_finalized, check_finalize_actually_moves_state,
-              check_felt_difficulty_reaches_the_next_question]
+              check_felt_difficulty_reaches_the_next_question,
+              check_ai_repairs_are_gated]
     for fn in checks:
         try:
             fn()

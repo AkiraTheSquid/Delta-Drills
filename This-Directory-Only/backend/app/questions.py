@@ -40,7 +40,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from app import lessons
+from app import feedback_ai_layer, lessons
 
 logger = logging.getLogger(__name__)
 
@@ -167,6 +167,18 @@ def _load_function_overrides() -> Dict[int, dict]:
             merged = dict(base.get(qid, {}))
             merged.update(record)
             base[qid] = merged
+
+    # Live AI repairs written by the per-problem feedback loop (Opus 5, see
+    # practice/feedback_ai_improver.py). Layered after everything above,
+    # including the hand-authored curated layer: a learner flagging one
+    # specific question is the newest and most specific signal the bank gets,
+    # and every record here is reversible from ai_feedback_revisions.jsonl.
+    # Lives outside the chatgpt dir so a deploy can't revert it — see
+    # feedback_ai_layer for why. Keep in sync with the exporter.
+    for qid, record in feedback_ai_layer.load_layer().items():
+        merged = dict(base.get(qid, {}))
+        merged.update(record)
+        base[qid] = merged
     return base
 
 
@@ -733,6 +745,22 @@ def ensure_questions_loaded() -> None:
     with _load_lock:
         if _questions_loaded:
             return
+        load_questions()
+
+
+def reload_questions() -> None:
+    """Re-read the bank from disk, picking up newly written override layers.
+
+    Called after the feedback loop repairs a question so the fix is live for
+    the very next draw instead of waiting for a restart. Rebuilding costs a
+    CSV parse of the whole bank, so this is for one-off writes, not per-request
+    use. Holds the same lock as the initial load, so a concurrent reader either
+    sees the old bank or the new one, never a half-built one.
+    """
+    global _questions_loaded
+
+    with _load_lock:
+        _questions_loaded = False
         load_questions()
 
 
