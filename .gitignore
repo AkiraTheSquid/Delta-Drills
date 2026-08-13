@@ -84,7 +84,16 @@ Local_Deployed_Shared/archive/
 
 Local_Deployed_Shared/content/
 
-Local_Deployed_Shared/concept-graph/
+# concept-graph/ holds SHIPPING code (index.html loads kc_interval.js,
+# kc_crosswalk_mastery.js, kc_lattice_read.js, lesson-graph.js, mastery-bar.js).
+# Ignoring the whole folder was a dead letter — 13 of its 16 files were already
+# force-added — and it cost twice over: every new file landed untracked and
+# silently absent from the deploy (the 2026-08-06 crosswalk incident), and
+# graphify honours .gitignore, so the entire folder was invisible to the code
+# graph. Ignore the generated blobs by name instead; never the folder.
+Local_Deployed_Shared/concept-graph/graph-viz.json
+Local_Deployed_Shared/concept-graph/graph-audit.html
+Local_Deployed_Shared/concept-graph/iter5_v2.js
 
 Local_Deployed_Shared/prompts/
 

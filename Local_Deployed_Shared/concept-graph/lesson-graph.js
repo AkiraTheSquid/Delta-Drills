@@ -532,21 +532,15 @@
   // `measured` false ⇒ the band is an inference, not a measurement; it is drawn
   // in a distinct hatch so a nearly-full-width stripe cannot be mistaken for a
   // very confident wide measurement.
-  const _masteryBar = (r, ci, measured) => {
-    const w = Number.isFinite(r) ? Math.max(0, Math.min(1, r)) * 100 : 0;
-    const band = ci
-      ? `<span class="kg2-dock-ci${measured ? "" : " is-inferred"}" style="left:${ci[0] * 100}%;width:${Math.max(0.5, (ci[1] - ci[0]) * 100)}%"></span>`
-      : "";
-    return (
-      `<div class="kg2-dock-track">` +
-        `<div class="kg2-dock-fill" style="width:${w}%;background:${masteryColor(r)}"></div>` +
-        band +
-        `<span class="kg2-dock-gate" style="left:${UNLOCK_T * 100}%"></span>` +
-        `<span class="kg2-dock-gate is-mastery" style="left:${MASTERY_T * 100}%"></span>` +
-      `</div>` +
-      `<div class="kg2-dock-scale"><span>0%</span><span>85% unlocks</span><span>95% mastered</span></div>`
-    );
-  };
+  // The markup lives in `mastery-bar.js` so the Course content tab can draw the
+  // same bar without a second copy. `gates` on, because this dock shows ONE
+  // concept and 85%/95% are that concept's real thresholds; `unknownColor` is
+  // passed so a no-estimate bar keeps this file's grey rather than the
+  // module's default.
+  const _masteryBar = (r, ci, measured) =>
+    window.DeltaMasteryBar.render({
+      value: r, ci, measured, gates: true, unknownColor: UNKNOWN_COLOR,
+    });
 
   /* ---- the concept's own graded record ------------------------------------
      Everything above this point measures a concept through the atom crosswalk,

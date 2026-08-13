@@ -79,8 +79,8 @@
       <button class="dd-info tab-info auth-only" data-dd-info="tab.split-tool" data-tab="split-tool" type="button" aria-expanded="false" aria-label="What is the Split Tool?" hidden>i</button>
       <button class="tab auth-only has-info" data-tab="account" type="button">Account</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.account" data-tab="account" type="button" aria-expanded="false" aria-label="What is Account?">i</button>
-      <button class="tab auth-only has-info" data-tab="courses" type="button">Courses</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Courses?">i</button>
+      <button class="tab auth-only has-info" data-tab="courses" type="button">Course content</button>
+      <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Course content?">i</button>
       <button class="tab auth-only has-info" data-tab="practice" type="button">Practice</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.practice" data-tab="practice" type="button" aria-expanded="false" aria-label="What is Practice?">i</button>
       <button class="tab auth-only has-info" data-tab="targeted-practice" type="button">Targeted Practice</button>
@@ -932,6 +932,9 @@ np.random.seed(0)
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
   <script src="concept-graph/kc_crosswalk_mastery.js?v=1" defer></script>
   <script src="concept-graph/kc_interval.js?v=1" defer></script>
+  <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
+       are `defer`, so document order is execution order. -->
+  <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=1" defer></script>
   <script src="concept-graph/lesson-graph.js?v=23" defer></script>
   <script src="split-tool.js"></script>
