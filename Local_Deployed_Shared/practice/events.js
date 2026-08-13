@@ -192,13 +192,19 @@ problemFlagButtons.forEach((btn) => {
     problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
     btn.classList.add("flagged");
     try {
-      await PracticeAPI.reportProblem(
+      const result = await PracticeAPI.reportProblem(
         q.question_id,
         tag,
         note,
         practiceProgress.lastResultCorrect,
       );
       if (problemFeedbackStatus) {
+        // Say which of the two things happened. A queued repair takes a model
+        // call to come back, so "logged ✓" alone would read as "nothing else
+        // is going to happen" right when something is.
+        problemFeedbackStatus.textContent = result && result.improvementQueued
+          ? "logged ✓ — rewriting this problem"
+          : "logged ✓";
         problemFeedbackStatus.classList.remove("hidden");
       }
     } catch (_) {
@@ -210,7 +216,10 @@ problemFlagButtons.forEach((btn) => {
 const _resetProblemFeedbackRow = () => {
   problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
   if (problemFeedbackNote) problemFeedbackNote.value = "";
-  if (problemFeedbackStatus) problemFeedbackStatus.classList.add("hidden");
+  if (problemFeedbackStatus) {
+    problemFeedbackStatus.textContent = "logged ✓";
+    problemFeedbackStatus.classList.add("hidden");
+  }
 };
 
 const _loadNextPracticeQuestion = async () => {
@@ -241,7 +250,7 @@ const _loadNextPracticeQuestion = async () => {
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor
-  codeEditor.value = "import numpy as np\nnp.random.seed(0)\n\n# Write your solution here\n";
+  codeEditor.value = DEFAULT_EDITOR_CODE;
   outputArea.textContent = "";
 
   // Load next question
