@@ -14,6 +14,16 @@ const SOURCE = fs.readFileSync(
   "utf8",
 );
 
+/* index.html loads practice/config.js before lessons.js, and lessons.js reads
+   from it at evaluation time (DEFAULT_EDITOR_CODE) as well as at call time
+   (displayTopic). Evaluate it into the same sandbox for the same reason the
+   page does, rather than stubbing its values here — a stub would let the two
+   copies drift, which is the exact bug config.js's own comments record. */
+const CONFIG_SOURCE = fs.readFileSync(
+  path.resolve(__dirname, "../../../Local_Deployed_Shared/practice/config.js"),
+  "utf8",
+);
+
 class FakeClassList {
   constructor() { this.values = new Set(); }
   add(...names) { names.forEach((name) => this.values.add(name)); }
@@ -74,9 +84,22 @@ function makeHarness({ mode = "local", qmatrix = {}, lessons = [], fetchFailure 
   const timers = [];
   const apiCalls = [];
   const storage = new Map();
+  /* lessons.js reaches for page furniture it does not own — #code-editor and
+     #output-area, which live in index.html — to reset them when the gate
+     closes. Mint one element per id on demand and keep it, so a test can read
+     back what the gate wrote there. */
+  const byId = new Map();
   const document = {
     activeElement: null,
     createElement(tag) { return new FakeElement(tag, document); },
+    getElementById(id) {
+      if (!byId.has(id)) {
+        const el = new FakeElement("div", document);
+        el.id = id;
+        byId.set(id, el);
+      }
+      return byId.get(id);
+    },
   };
   document.body = new FakeElement("body", document);
   const trigger = new FakeElement("button", document);
@@ -95,6 +118,12 @@ function makeHarness({ mode = "local", qmatrix = {}, lessons = [], fetchFailure 
   };
   const context = {
     window: {}, document, localStorage, fetch,
+    /* lessons.js ends with a second IIFE that reads `?lesson=<kc>` at load.
+       Without these the whole file throws before a single assertion runs —
+       the suite had been dead on arrival rather than failing loudly. Empty
+       search = the ordinary practice flow, which is what these tests cover. */
+    location: { search: "" },
+    URLSearchParams,
     practiceMode: mode,
     getPracticeStorageKey: () => "test_user",
     apiFetch: async (...args) => { apiCalls.push(args); return { status: 500, ok: false }; },
@@ -102,7 +131,9 @@ function makeHarness({ mode = "local", qmatrix = {}, lessons = [], fetchFailure 
     setTimeout: (fn) => { timers.push(fn); return timers.length; },
     console: { warn: () => {} },
   };
-  vm.runInNewContext(SOURCE, context, { filename: "lessons.js" });
+  vm.createContext(context);
+  vm.runInContext(CONFIG_SOURCE, context, { filename: "config.js" });
+  vm.runInContext(SOURCE, context, { filename: "lessons.js" });
   return {
     gate: context.window.LessonGate,
     document,
