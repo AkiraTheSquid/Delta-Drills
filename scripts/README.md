@@ -100,8 +100,36 @@
   - Symptom: "not in the subpath" parse error.
   - Root cause: `path.relative_to(REPO)` needs absolute paths.
   - Prevention/fix: pass `"$PWD/..."` absolute paths.
+- **A half-built `torch` imports "successfully"** — `RESOLVED` (notebook side)
+  - When it happens: a Colab session where an earlier `import torch` died partway — a `pip install` that swapped torch under the running kernel, a `torch.py` shadowing it in `/content`.
+  - Symptom: `AttributeError: partially initialized module 'torch' has no attribute 'fx'`, raised from `torch/_export/utils.py` by a learner's plain `import torch as t`.
+  - Root cause: two halves. Python drops only the module that RAISED, so a `torch._export` imported seconds before survives, and the next `import torch` re-runs `torch/__init__.py` right back into that stale submodule. And once a corpse sits in `sys.modules`, `import torch` does not re-execute anything — it succeeds, so `try/except` around the import sees nothing wrong and the error resurfaces from the learner's cell instead.
+  - Prevention/fix: `colab_grader._dd_preflight_torch()`, called from the run-me-first checker cell. Judge the MODULE (`hasattr(torch, "fx")`), never the import statement; purge `torch` **and every `torch.*`** before retrying, or the retry reproduces the bug.
+  - Status: `RESOLVED` (2026-08-13) in the generator. Republishing the notebooks is what puts it in front of a learner.
 
 ## Recent Changes
+- 2026-08-13 (**a broken runtime now says so, instead of showing torch's
+  internals**): `colab_grader.py`, `colab_cells.py`. A learner hit
+  `AttributeError: partially initialized module 'torch' has no attribute 'fx'`
+  on the bare `import torch as t` that opens every drill cell — five frames deep
+  in `torch/_export/utils.py`, naming neither the cause nor the cure, and not
+  even the real error: it is the echo of an import that already died. The
+  checker cell is the one cell the notebook tells you to run first, so it is the
+  only place this can be caught early enough to matter. `_dd_preflight_torch()`
+  runs there, ahead of `_dd_install_fixtures()`.
+  - **The trap is that catching the import is not enough.** `import torch` does
+    not re-execute a module already in `sys.modules`, so a partially-initialised
+    torch imports without raising and the failure just moves to the learner's
+    cell. The preflight tests the object (`fx` and `__version__` both bound) and
+    treats a corpse as a failure.
+  - **Purge the submodules too.** Clearing `torch` alone leaves the stale
+    `torch.*` entries that caused the re-entrancy, so the retry hits the same
+    wall. One retry, then an instruction naming the two things that actually do
+    it: delete the runtime, and look for a `torch.py` in `/content`.
+  - Never raises — a checker that refused to load over this would take the whole
+    lesson down with the runtime. Regenerating touches exactly one cell per
+    notebook (`dd-checker`, hidden, `display-mode: "form"`); all 2589 other cells
+    are byte-identical.
 - 2026-08-06 (**the notebook can open one concept, and the compiler is two files**):
   `colab_cells.py` (new), `generate_colab_notebooks.py`, `watch.py`. The gate
   teaches a segmented KP one concept at a time and there was nowhere to send the

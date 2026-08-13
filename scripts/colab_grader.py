@@ -92,6 +92,79 @@ def _dd_load(blob):
     return json.loads(zlib.decompress(base64.b64decode(blob)).decode("utf-8"))
 
 
+def _dd_preflight_torch():
+    """Import torch once, here, where a failure can still be explained.
+
+    Every drill cell opens with `import torch as t`, so the learner meets a
+    broken torch install as a traceback through torch's own internals — the one
+    reported was `AttributeError: partially initialized module 'torch' has no
+    attribute 'fx'` from `torch/_export/utils.py`, raised while evaluating a
+    function's annotations. That message names neither the cause nor the cure,
+    and it is not even the real error: it is what a LATER import sees after an
+    earlier one died partway and left the half-built module in `sys.modules`.
+    Python does unwind a failed import normally, but a torch that was swapped
+    on disk under a running kernel (a `pip install` mid-session) or shadowed by
+    a stray `torch.py` gets far enough in to be cached before it falls over.
+
+    So: purge the wreckage and retry ONCE, which is the whole fix whenever the
+    first failure was transient, and report what actually broke when it is not.
+    Importing torch in this cell rather than lazily is safe now in a way the
+    `_dd_tensor` comment below still guards against for the per-comparison
+    path — the bank is 448/448 torch and every notebook imports it a few cells
+    down, so there is no numpy-only notebook left to charge for it.
+
+    Never raises: a checker that refuses to load over this would take the
+    lesson down with the runtime.
+    """
+
+    def _purge():
+        # Submodules too, and that is the whole point. Python drops only the
+        # module that raised, so `torch` goes and a `torch._export` imported
+        # seconds earlier STAYS — and the next `import torch` re-runs
+        # `torch/__init__.py` straight back into that stale submodule, which
+        # reaches for a `torch.fx` the half-built parent has not bound yet.
+        # Leaving one behind reproduces the bug instead of clearing it.
+        for name in [n for n in sys.modules if n == "torch" or n.startswith("torch.")]:
+            del sys.modules[name]
+
+    def _usable(mod):
+        # `import torch` does NOT re-execute a module already in sys.modules,
+        # so a corpse left by a failed import is imported "successfully" and
+        # the error surfaces later, from the learner's own cell. Judge the
+        # object, not the statement: a torch that finished has both of these.
+        return hasattr(mod, "fx") and hasattr(mod, "__version__")
+
+    cached = sys.modules.get("torch")
+    if cached is not None and not _usable(cached):
+        _purge()
+
+    for attempt in (1, 2):
+        try:
+            import torch
+            if not _usable(torch):
+                raise ImportError(
+                    "torch imported but is only partially initialised "
+                    "(no .fx) — an earlier import in this session died partway"
+                )
+            return True
+        except Exception as exc:
+            if attempt == 1:
+                _purge()
+                continue
+            print(
+                "⚠️  This runtime cannot import PyTorch, so no drill in this "
+                "notebook will run.\n"
+                "    %s: %s\n"
+                "    Fix: Runtime ▸ Disconnect and delete runtime, then reopen "
+                "this notebook and run\n"
+                "    this cell first. If it comes back, check for a file named "
+                "torch.py in /content,\n"
+                "    and re-run any pip install BEFORE anything imports torch."
+                % (type(exc).__name__, exc)
+            )
+    return False
+
+
 def _dd_tensor(value):
     # torch only if something already imported it. numpy-only notebooks must
     # not pay a torch import to compare two lists of ints.

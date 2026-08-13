@@ -435,6 +435,11 @@ def checker_cell(tests: dict, mint: IdMinter) -> dict:
         '#@title 🔧 Delta Drills checker — run me first { display-mode: "form" }\n'
         + grader_source()
         + f'\n_DD_FIXTURE_URL = "{FIXTURE_URL}"\n'
+        # Before anything else: this cell is the one the learner is told to run
+        # first, so it is the only place a broken torch can be reported as an
+        # instruction rather than as a traceback through torch's internals four
+        # cells later. See colab_grader._dd_preflight_torch.
+        + "_dd_preflight_torch()\n"
         + "_dd_install_fixtures()\n"
         + "_DD_TESTS = _dd_load(\n"
         + chunks
