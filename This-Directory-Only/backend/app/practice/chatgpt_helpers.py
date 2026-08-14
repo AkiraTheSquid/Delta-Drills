@@ -10,7 +10,7 @@ OPENAI_API_KEY env var, then the global settings.
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from openai import OpenAI
 from sqlalchemy import text
@@ -42,6 +42,20 @@ def load_chatgpt_api_key(user: Optional[User], db: Optional[Session] = None) -> 
     raise ValueError("No OpenAI API key available.")
 
 
+def _responses_text(resp: Any) -> str:
+    """Pull the assistant text out of a Responses API result."""
+    answer = getattr(resp, "output_text", None) or ""
+    if not answer:
+        first_output = getattr(resp, "output", None)
+        if isinstance(first_output, list) and first_output:
+            first_content = getattr(first_output[0], "content", None)
+            if isinstance(first_content, list) and first_content:
+                maybe_text = getattr(first_content[0], "text", None)
+                if isinstance(maybe_text, str):
+                    answer = maybe_text
+    return answer
+
+
 def call_chatgpt(
     prompt: str,
     model: str,
@@ -53,20 +67,38 @@ def call_chatgpt(
     client = OpenAI(api_key=api_key)
     try:
         resp = client.responses.create(model=model, input=prompt, temperature=1)
-        answer = getattr(resp, "output_text", None) or ""
-        if not answer:
-            first_output = getattr(resp, "output", None)
-            if isinstance(first_output, list) and first_output:
-                first_content = getattr(first_output[0], "content", None)
-                if isinstance(first_content, list) and first_content:
-                    maybe_text = getattr(first_content[0], "text", None)
-                    if isinstance(maybe_text, str):
-                        answer = maybe_text
-        return answer
+        return _responses_text(resp)
     except Exception:
         completion = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
+            temperature=1,
+        )
+        return completion.choices[0].message.content or "" if completion.choices else ""
+
+
+def call_chatgpt_messages(
+    messages: list[dict],
+    model: str,
+    user: Optional[User] = None,
+    db: Optional[Session] = None,
+) -> str:
+    """Multi-turn variant of `call_chatgpt`.
+
+    `messages` is an OpenAI-shaped list of {"role", "content"} dicts, system
+    message included. Same two-step strategy as the single-prompt call:
+    Responses API first, Chat Completions as the fallback — both accept the
+    same message list, so no reshaping is needed between them.
+    """
+    api_key = load_chatgpt_api_key(user, db)
+    client = OpenAI(api_key=api_key)
+    try:
+        resp = client.responses.create(model=model, input=messages, temperature=1)
+        return _responses_text(resp)
+    except Exception:
+        completion = client.chat.completions.create(
+            model=model,
+            messages=messages,
             temperature=1,
         )
         return completion.choices[0].message.content or "" if completion.choices else ""

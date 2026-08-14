@@ -1,0 +1,191 @@
+/* ================================================================
+   TUTOR CHAT — post-answer ChatGPT thread in the left practice panel
+   ================================================================
+   Bubble alignment carries the speaker: tutor left, learner right.
+   Only the thread scrolls; the composer stays pinned under it. */
+
+.tutor-section {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-top: 18px;
+}
+
+.tutor-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.tutor-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tutor-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tutor-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+/* Empty state doubles as the affordance — the learner sees what they can
+   ask before there is any thread to read. */
+.tutor-empty {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 6px 2px 2px;
+}
+
+.tutor-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tutor-suggestion {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.tutor-suggestion:hover {
+  border-color: var(--accent);
+  color: var(--white);
+}
+
+.tutor-row {
+  display: flex;
+}
+
+.tutor-row--assistant {
+  justify-content: flex-start;
+}
+
+.tutor-row--user {
+  justify-content: flex-end;
+}
+
+.tutor-bubble {
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 86%;
+  padding: 10px 14px;
+  word-break: break-word;
+}
+
+.tutor-bubble--assistant {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  color: var(--text);
+}
+
+.tutor-bubble--user {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-bottom-right-radius: 4px;
+  color: var(--white);
+  white-space: pre-wrap;
+}
+
+.tutor-row--thinking .tutor-bubble,
+.tutor-row--error .tutor-bubble {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.tutor-bubble code {
+  background: var(--surface);
+  border-radius: 4px;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  padding: 1px 5px;
+}
+
+.tutor-code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 8px 0;
+  overflow-x: auto;
+  padding: 10px 12px;
+  white-space: pre;
+}
+
+.tutor-composer {
+  align-items: flex-end;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 8px 8px 12px;
+}
+
+.tutor-input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  flex: 1;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  max-height: 160px;
+  min-height: 24px;
+  outline: none;
+  overflow-y: auto;
+  padding: 4px 0;
+  resize: none;
+}
+
+.tutor-input::placeholder {
+  color: var(--muted);
+}
+
+.tutor-input:disabled {
+  opacity: 0.6;
+}
+
+.tutor-send-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: var(--white);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.tutor-send-btn:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.tutor-send-btn:disabled {
+  cursor: default;
+  opacity: 0.5;
+}

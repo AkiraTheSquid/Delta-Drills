@@ -176,6 +176,10 @@ window.DD_INFOTIPS = {
     title: "AI explanation",
     body: "An on-demand walkthrough of this specific problem and your attempt at it.",
   },
+  tutor: {
+    title: "Tutor",
+    body: "Follow-up chat about the problem you just finished. It already has the question, your code, the canonical solution, and the explanation above — so ask the next question, not the whole story again. The thread resets with each new problem.",
+  },
 
   /* ---- Knowledge graph --------------------------------------------- */
   "kg-map": {

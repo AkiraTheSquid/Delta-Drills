@@ -40,6 +40,7 @@ EXPECTED_PATHS = {
     '/api/practice/run-code',
     '/api/practice/ai-explanation',
     '/api/practice/ai-judge',
+    '/api/practice/ai-tutor',
     '/api/practice/diagnostic/status',
     '/api/practice/diagnostic/start',
     '/api/practice/diagnostic/answer',

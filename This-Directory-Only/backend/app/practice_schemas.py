@@ -4,7 +4,7 @@ Pydantic schemas for the practice / adaptive-learning endpoints.
 
 from __future__ import annotations
 
-from typing import Dict, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -273,6 +273,35 @@ class AIExplanationResponse(BaseModel):
 
 class AIJudgeResponse(BaseModel):
     verdict: str  # "0" = incorrect, "1" = correct
+
+
+class AITutorMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class AITutorRequest(BaseModel):
+    """One turn of the post-answer tutor chat.
+
+    The client is stateless: it replays the whole visible thread in
+    `messages` on every turn, and the problem context rides along so the
+    tutor never has to guess which drill is being discussed. `explanation`
+    is the auto-generated AI Explanation already on screen — passed so the
+    tutor does not repeat it back at the learner.
+    """
+
+    question_text: str
+    solution_code: str
+    user_code: str
+    actual_output: str
+    expected_output: str
+    explanation: str = ""
+    was_correct: Optional[bool] = None
+    messages: List[AITutorMessage] = Field(default_factory=list)
+
+
+class AITutorResponse(BaseModel):
+    reply: str
 
 
 class VisualDebugRequest(BaseModel):
