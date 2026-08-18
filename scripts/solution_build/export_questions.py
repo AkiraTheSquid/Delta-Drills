@@ -27,7 +27,11 @@ OUT = Path(__file__).resolve().parent / "dd_questions.json"
 def main() -> None:
     Q.load_questions()
     rows = []
-    for q in Q.get_all_questions():
+    # get_every_question(), NOT get_all_questions(): the latter is the SERVABLE
+    # pool, which kc_only_serving() narrows to 424 by parking the 75 curated
+    # additions (ids 405-479) that no lesson tags yet. Exporting the servable
+    # pool silently skipped those 75 and left their solution notebooks stale.
+    for q in Q.get_every_question():
         rows.append(
             {
                 "id": q.id,

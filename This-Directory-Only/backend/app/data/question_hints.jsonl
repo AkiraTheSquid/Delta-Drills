@@ -1,223 +1,143 @@
 {"id": 1, "hint": "Reductions that report a position (not a value) also take an axis argument \u2014 pick the axis that runs across each row."}
-{"id": 2, "hint": "A cell's color depends only on whether its row index plus its column index is even or odd."}
-{"id": 3, "hint": "np.dtype accepts a list of (name, type) pairs; numpy's one-byte unsigned integer type goes in the second slot."}
 {"id": 4, "hint": "The function that builds a matrix from a diagonal vector takes an offset argument that shifts which diagonal the vector lands on."}
-{"id": 5, "hint": "numpy's linear-algebra module has a one-call norm, or build it yourself from squaring, summing, and a square root."}
-{"id": 6, "hint": "Divide the vector by its own Euclidean length \u2014 and return a new array rather than scaling in place."}
-{"id": 7, "hint": "Compute the mean along the row axis and keep its dimensions so broadcasting lines each mean up with its own row."}
-{"id": 8, "hint": "Generator objects have a method that returns uniform [0,1) floats and accepts a size argument."}
-{"id": 10, "hint": "Center first by subtracting the overall mean, then divide by the overall standard deviation."}
-{"id": 11, "hint": "Broadcast a column of row numbers across the width \u2014 or use the numpy helper that returns the index grids of a shape."}
+{"id": 5, "hint": "PyTorch's linear-algebra module has a one-call norm, or build it yourself from squaring, summing, and a square root."}
+{"id": 6, "hint": "Divide the vector by its own Euclidean length \u2014 and return a new tensor rather than scaling in place."}
 {"id": 12, "hint": "Combine two comparisons with the elementwise AND operator to build a boolean mask, then assign through it on a copy."}
 {"id": 14, "hint": "The deduplication function has an optional flag that makes it also report how often each distinct value appeared."}
-{"id": 15, "hint": "A no-axis mean collapses the whole array to one number, and subtracting a scalar broadcasts to every entry."}
-{"id": 16, "hint": "numpy's lower-triangle helper takes an offset that can exclude the main diagonal itself."}
-{"id": 17, "hint": "numpy has a padding function whose width argument adds the same margin on every side \u2014 or allocate a bigger zero array and drop z into its interior slice."}
-{"id": 18, "hint": "Either use numpy's NaN-replacement helper, or build a boolean NaN mask and select between 0.0 and the original values."}
-{"id": 19, "hint": "Complex arrays expose their two components either as array attributes or through a matching pair of numpy functions."}
-{"id": 22, "hint": "numpy has a discrete-difference function that takes an axis argument \u2014 or subtract two shifted column slices."}
+{"id": 15, "hint": "A no-axis mean collapses the whole tensor to one number, and subtracting a scalar broadcasts to every entry."}
+{"id": 16, "hint": "PyTorch's lower-triangle helper takes an offset that can exclude the main diagonal itself."}
+{"id": 18, "hint": "Either use PyTorch's NaN-replacement helper, or build a boolean NaN mask and select between 0.0 and the original values."}
+{"id": 19, "hint": "Complex tensors expose their two components either as tensor attributes or through a matching pair of PyTorch functions."}
+{"id": 22, "hint": "PyTorch has a discrete-difference function that takes an axis argument \u2014 or subtract two shifted column slices."}
 {"id": 23, "hint": "Flattening accepts an order argument \u2014 the Fortran convention walks down columns first. Transposing before a default flatten works too."}
 {"id": 24, "hint": "Find the POSITION of the maximum rather than its value, then assign into a copy at that single index."}
-{"id": 25, "hint": "Indexing a numpy array with a list of row positions selects (or assigns) several whole rows at once, and negative positions count from the end."}
-{"id": 26, "hint": "numpy arrays have reduction methods that, when called with no axis argument, collapse the entire array down to one scalar."}
+{"id": 25, "hint": "Indexing a PyTorch tensor with a list of row positions selects (or assigns) several whole rows at once, and negative positions count from the end."}
+{"id": 26, "hint": "PyTorch tensors have reduction methods that, when called with no axis argument, collapse the entire tensor down to one scalar."}
 {"id": 27, "hint": "Start from a uniform matrix and overwrite its interior block with one 2-D slice assignment \u2014 remember that negative slice bounds count from the end of an axis."}
-{"id": 28, "hint": "numpy arrays have a built-in reduction that collapses the whole vector to one number \u2014 the average of its entries."}
-{"id": 29, "hint": "numpy has one function that turns a pair of coordinate vectors into exactly this pair of grids \u2014 the same one plotting code calls right before evaluating f(X, Y) over a surface."}
-{"id": 30, "hint": "Indexing with a list of column positions lets you read or write several columns at once \u2014 just do it on a copy so the caller's array survives."}
-{"id": 31, "hint": "Start from a matrix of all ones, then use numpy's upper-triangle helper to zero out everything strictly below the main diagonal."}
-{"id": 32, "hint": "NaN never compares equal to anything \u2014 even itself \u2014 so use numpy's elementwise NaN test and then collapse the resulting boolean array to a single yes/no answer."}
-{"id": 34, "hint": "numpy has a built-in that lays whole copies of an array end-to-end a given number of times \u2014 a different function from the one that repeats each element in place."}
-{"id": 35, "hint": "numpy has a built-in that duplicates each individual element a given number of times consecutively \u2014 it is not the one that stacks whole copies of the array end to end."}
-{"id": 36, "hint": "numpy can reinterpret an array's existing data under a new set of dimensions in a single call, as long as the total element count stays the same."}
-{"id": 37, "hint": "Think of the dot product as an elementwise product followed by a sum \u2014 numpy offers a single built-in reduction that does both at once for a pair of vectors."}
-{"id": 38, "hint": "numpy has a reduction that reports the position of an extreme value rather than the value itself."}
-{"id": 40, "hint": "numpy has a single function that reports where entries are nonzero, packaging the result as one index array per dimension."}
-{"id": 41, "hint": "numpy has a one-call constructor that builds a zero-filled array by borrowing another array's shape and dtype \u2014 you never have to read .shape or .dtype yourself."}
-{"id": 42, "hint": "numpy's random module has functions that take a shape (or its unpacked dimensions) and return that many independent draws from the unit interval."}
-{"id": 43, "hint": "numpy has a vectorized function that pairs two arrays and keeps the larger entry position by position \u2014 Python's built-in max and the reducing np.max both do something different."}
-{"id": 46, "hint": "First build the full run of consecutive integers as a flat array, then change its shape into the square grid you need."}
-{"id": 47, "hint": "numpy has a single function that, given a 1-D vector, builds the square matrix with that vector on the main diagonal."}
+{"id": 28, "hint": "PyTorch tensors have a built-in reduction that collapses the whole vector to one number \u2014 the average of its entries."}
+{"id": 29, "hint": "PyTorch has one function that turns a pair of coordinate vectors into exactly this pair of grids \u2014 the same one plotting code calls right before evaluating f(X, Y) over a surface."}
+{"id": 30, "hint": "Indexing with a list of column positions lets you read or write several columns at once \u2014 just do it on a copy so the caller's tensor survives."}
+{"id": 31, "hint": "Start from a matrix of all ones, then use PyTorch's upper-triangle helper to zero out everything strictly below the main diagonal."}
+{"id": 32, "hint": "NaN never compares equal to anything \u2014 even itself \u2014 so use PyTorch's elementwise NaN test and then collapse the resulting boolean tensor to a single yes/no answer."}
+{"id": 34, "hint": "PyTorch has a built-in that lays whole copies of a tensor end-to-end a given number of times \u2014 a different function from the one that repeats each element in place."}
+{"id": 35, "hint": "PyTorch has a built-in that duplicates each individual element a given number of times consecutively \u2014 it is not the one that stacks whole copies of the tensor end to end."}
+{"id": 36, "hint": "PyTorch can reinterpret a tensor's existing data under a new set of dimensions in a single call, as long as the total element count stays the same."}
+{"id": 37, "hint": "Think of the dot product as an elementwise product followed by a sum \u2014 PyTorch offers a single built-in reduction that does both at once for a pair of vectors."}
+{"id": 38, "hint": "PyTorch has a reduction that reports the position of an extreme value rather than the value itself."}
+{"id": 41, "hint": "PyTorch has a one-call constructor that builds a zero-filled tensor by borrowing another tensor's shape and dtype \u2014 you never have to read .shape or .dtype yourself."}
+{"id": 46, "hint": "First build the full run of consecutive integers as a flat tensor, then change its shape into the square grid you need."}
+{"id": 47, "hint": "PyTorch has a single function that, given a 1-D vector, builds the square matrix with that vector on the main diagonal."}
 {"id": 48, "hint": "A strided slice can appear on the left-hand side of an assignment, and a scalar broadcasts into every position that slice selects."}
-{"id": 49, "hint": "numpy has an elementwise rounding family \u2014 pick the member that always rounds toward negative infinity, not toward zero."}
+{"id": 49, "hint": "PyTorch has an elementwise rounding family \u2014 pick the member that always rounds toward negative infinity, not toward zero."}
 {"id": 50, "hint": "Scale the identity matrix, or hand a constant diagonal vector to the diagonal-matrix builder."}
-{"id": 51, "hint": "Arrays carry their buffer size as an attribute \u2014 or multiply the element count by the per-element item size."}
-{"id": 52, "hint": "True counts as nonzero (and as 1 in a sum) \u2014 just remember to convert the numpy result to a plain int."}
-{"id": 53, "hint": "numpy has a constructor that takes both endpoints and a COUNT of points \u2014 unlike the one that takes a step size."}
-{"id": 55, "hint": "A month-precision datetime64 plus 1 is the NEXT month \u2014 and np.arange can walk between two months in steps of days."}
-{"id": 58, "hint": "numpy has two sorts: the top-level FUNCTION returns a sorted copy, while the array METHOD sorts in place."}
-{"id": 59, "hint": "Every numpy ufunc accepts out= to write its result into an existing array \u2014 sequence the four operations so nothing you still need gets overwritten."}
+{"id": 52, "hint": "True counts as nonzero (and as 1 in a sum) \u2014 just remember to convert the PyTorch result to a plain int."}
+{"id": 53, "hint": "PyTorch has a constructor that takes both endpoints and a COUNT of points \u2014 unlike the one that takes a step size."}
+{"id": 58, "hint": "PyTorch has two sorts: the top-level FUNCTION returns a sorted copy, while the tensor METHOD sorts in place."}
 {"id": 60, "hint": "One row is just the 0..cols-1 range \u2014 then either tile it down the rows or let broadcasting add it to a zero matrix."}
-{"id": 61, "hint": "Turn 'closest' into 'smallest absolute difference', then ask numpy for the POSITION of that smallest value."}
-{"id": 62, "hint": "Any of numpy's summing routes works \u2014 the catch is converting the numpy scalar into Python's own integer type."}
+{"id": 61, "hint": "Turn 'closest' into 'smallest absolute difference', then ask PyTorch for the POSITION of that smallest value."}
+{"id": 62, "hint": "Any of PyTorch's summing routes works \u2014 the catch is converting the PyTorch scalar into Python's own integer type."}
 {"id": 63, "hint": "For positive numbers, flooring, truncating, integer-dividing by 1, and subtracting the remainder mod 1 all agree."}
-{"id": 64, "hint": "numpy has one comparison that forgives tiny float error and another that demands bit-for-bit agreement \u2014 this drill wants both."}
-{"id": 65, "hint": "Arrays expose a writeable flag in .flags that can be turned off."}
+{"id": 64, "hint": "PyTorch has one comparison that forgives tiny float error and another that demands bit-for-bit agreement \u2014 this drill wants both."}
 {"id": 66, "hint": "Slice the two coordinate columns apart, then use the two-argument arctangent \u2014 it gets the quadrant right where a plain arctan of y/x cannot."}
-{"id": 67, "hint": "numpy has a clamping method that takes a lower bound \u2014 or take the elementwise maximum against zero."}
 {"id": 68, "hint": "Consecutive differences tell the whole story: the sequence is non-decreasing exactly when none of them is negative."}
-{"id": 69, "hint": "The element-repeating function accepts not just one count but a whole array of per-element counts."}
-{"id": 70, "hint": "Indexing a 2-D array with an integer array along the first axis selects whole rows in exactly the order you list them."}
-{"id": 71, "hint": "Index the TABLE with the label array \u2014 fancy indexing gathers one table entry per label in a single operation."}
-{"id": 72, "hint": "A checkerboard cell's value is decided by the parity of row+column \u2014 the corner value just flips which parity gets the 1s."}
-{"id": 73, "hint": "numpy ships an N-dimensional enumerate that yields a position tuple alongside each value."}
-{"id": 74, "hint": "A strided slice can be the TARGET of an assignment \u2014 do it on a copy so the caller's array survives."}
-{"id": 75, "hint": "numpy has a quarter-turn rotation helper \u2014 or compose a transpose with a flip and check the direction on a non-square array."}
-{"id": 76, "hint": "Reversing a slice along one axis mirrors the array across the other \u2014 pick the axis carefully for each of the two mirrors."}
-{"id": 77, "hint": "The same numpy function that BUILDS a matrix from a diagonal also EXTRACTS diagonals when handed a matrix \u2014 and it takes an offset."}
-{"id": 78, "hint": "Take the upper triangle of an all-True array \u2014 or compare the row and column index grids directly."}
+{"id": 69, "hint": "The element-repeating function accepts not just one count but a whole tensor of per-element counts."}
+{"id": 70, "hint": "Indexing a 2-D tensor with an integer tensor along the first axis selects whole rows in exactly the order you list them."}
+{"id": 71, "hint": "Index the TABLE with the label tensor \u2014 fancy indexing gathers one table entry per label in a single operation."}
+{"id": 74, "hint": "A strided slice can be the TARGET of an assignment \u2014 do it on a copy so the caller's tensor survives."}
+{"id": 75, "hint": "PyTorch has a quarter-turn rotation helper \u2014 or compose a transpose with a flip and check the direction on a non-square tensor."}
+{"id": 77, "hint": "The same PyTorch function that BUILDS a matrix from a diagonal also EXTRACTS diagonals when handed a matrix \u2014 and it takes an offset."}
+{"id": 78, "hint": "Take the upper triangle of an all-True tensor \u2014 or compare the row and column index grids directly."}
 {"id": 79, "hint": "The deduplication function takes an axis argument \u2014 along axis 0 it treats whole rows as the things to compare."}
 {"id": 80, "hint": "Shift so the minimum sits at zero, then divide by the full spread between the extremes."}
 {"id": 81, "hint": "Tile the vector with a (reps, 1) repetition pattern, then average down the rows (axis 0)."}
 {"id": 82, "hint": "The cumulative-sum function takes an axis \u2014 choose the one that walks across each row."}
-{"id": 83, "hint": "Allocate a zeroed structured array with two float fields, then fill both fields at once from a coordinate-grid pair."}
-{"id": 84, "hint": "Stacking along a NEW leading axis turns the pair into one array whose first axis you can average away."}
+{"id": 84, "hint": "Stacking along a NEW leading axis turns the pair into one tensor whose first axis you can average away."}
 {"id": 85, "hint": "Build a boolean per-row test \u2014 'is this whole row zero?' \u2014 then invert it and use it as a row mask."}
-{"id": 86, "hint": "One numpy function returns nonzero positions already grouped as one (row, col) pair per hit \u2014 a cousin of np.nonzero with a different packaging."}
-{"id": 87, "hint": "numpy's histogram function does the binning and counting in one call \u2014 give it the bin count and the (0, 1) range explicitly."}
-{"id": 89, "hint": "Pair the arrays up as columns of one matrix, then read that matrix in row-major order."}
-{"id": 90, "hint": "The padding function's constant mode takes the border value as an argument \u2014 it isn't limited to zeros."}
-{"id": 91, "hint": "Choose p distinct FLAT indices out of n*n without replacement, then scatter 1s into them \u2014 np.put writes into an array as if it were flat."}
-{"id": 92, "hint": "Get the ORDER that would sort just the key column, then apply that order to the whole array's rows with fancy indexing."}
-{"id": 93, "hint": "The rows of the k x k identity matrix ARE the k one-hot vectors \u2014 gather the right ones by fancy indexing with the label array."}
-{"id": 94, "hint": "A boolean mask built from ONE array can index a DIFFERENT array of the same shape."}
+{"id": 89, "hint": "Pair the tensors up as columns of one matrix, then read that matrix in row-major order."}
+{"id": 92, "hint": "Get the ORDER that would sort just the key column, then apply that order to the whole tensor's rows with fancy indexing."}
+{"id": 93, "hint": "The rows of the k x k identity matrix ARE the k one-hot vectors \u2014 gather the right ones by fancy indexing with the label tensor."}
+{"id": 94, "hint": "A boolean mask built from ONE tensor can index a DIFFERENT tensor of the same shape."}
 {"id": 95, "hint": "A dot product between the trailing channel axis and a length-3 weight vector collapses (h, w, 3) to (h, w) in one operation."}
-{"id": 96, "hint": "Structured dtypes nest: a field's type can itself be a list of (name, type) pairs."}
 {"id": 97, "hint": "Dividing by the current norm gives a unit vector \u2014 then scale that up to whatever length you were asked for."}
-{"id": 98, "hint": "Distance-to-target is an array too \u2014 you want the position of its minimum, converted to a plain int."}
-{"id": 99, "hint": "A moving average is a convolution with a uniform kernel \u2014 and the 'valid' mode keeps only fully overlapping windows."}
-{"id": 100, "hint": "ufuncs accept a where= mask plus an out= array of defaults \u2014 division simply never happens at the masked-off positions."}
-{"id": 101, "hint": "Sample row INDICES without replacement, then gather those rows with fancy indexing."}
-{"id": 102, "hint": "Get values with their counts first, then compute the ordering that sorts the COUNTS and apply it to both arrays \u2014 reversed."}
+{"id": 98, "hint": "Distance-to-target is a tensor too \u2014 you want the position of its minimum, converted to a plain int."}
 {"id": 103, "hint": "Softmax is unchanged by subtracting any constant from all logits \u2014 subtract the maximum so the largest exponent is exp(0)."}
-{"id": 104, "hint": "Shuffling the ROWS of the identity matrix keeps exactly one 1 in every row and column."}
 {"id": 105, "hint": "meshgrid over two linspaces gives every grid point's coordinates at once; the rest is elementwise arithmetic on those grids."}
-{"id": 106, "hint": "Reduce along axis 0 for both statistics \u2014 the resulting per-column vectors broadcast back across the rows on their own."}
-{"id": 107, "hint": "numpy's linear-algebra module has a direct system solver \u2014 faster and more accurate than inverting and multiplying."}
-{"id": 108, "hint": "The quantile function accepts a LIST of fractions and an axis at the same time \u2014 one call produces the whole table."}
+{"id": 107, "hint": "PyTorch's linear-algebra module has a direct system solver \u2014 faster and more accurate than inverting and multiplying."}
 {"id": 109, "hint": "Averaging along axis 0 collapses the rows, leaving one mean per column \u2014 and that vector broadcasts back over the rows without any reshaping."}
-{"id": 110, "hint": "Collapse each axis with any() to learn which rows and which columns contain something, then take the first and last True positions."}
-{"id": 111, "hint": "np.nditer with a None operand allocates the broadcast output for you and iterates all three in lockstep \u2014 assigning through z[...] fills it."}
 {"id": 112, "hint": "An entry [i, j] is near the diagonal exactly when |i - j| is small \u2014 build that condition as a broadcast boolean mask."}
-{"id": 113, "hint": "Subclassing ndarray means creating instances with view() inside __new__ \u2014 and __array_finalize__ is where attributes get copied onto slices and other derived arrays."}
 {"id": 114, "hint": "argsort answers 'which element goes in each sorted slot' \u2014 apply it twice and it flips into 'which slot does each element go to', which is the rank."}
-{"id": 115, "hint": "Turn the array into a NaN mask first, then ask along the column axis whether EVERY entry is flagged."}
-{"id": 116, "hint": "np.ogrid hands you a column of row indices and a row of column indices \u2014 broadcasting their absolute offsets adds up into the full grid."}
-{"id": 117, "hint": "numpy's stride-tricks module has a purpose-built sliding-window view \u2014 no copying, no loops."}
-{"id": 118, "hint": "Every ufunc has an .outer form that applies it to all pairs \u2014 subtraction's outer gives the x[i] - y[j] table in one call."}
-{"id": 119, "hint": "argpartition finds the top-k cheaply but unordered \u2014 a small argsort of just those k finishes the ranking."}
-{"id": 120, "hint": "nanmean ignores the NaNs while averaging; np.where hands you the (row, col) positions of the holes, and the col half of that picks which mean to drop in."}
+{"id": 115, "hint": "Turn the tensor into a NaN mask first, then ask along the column axis whether EVERY entry is flagged."}
 {"id": 121, "hint": "Multiply elementwise and sum across each row \u2014 or say exactly that with an einsum whose output keeps only the row index."}
-{"id": 122, "hint": "numpy's correlation function assumes VARIABLES ARE ROWS by default \u2014 one flag flips it to columns."}
+{"id": 122, "hint": "PyTorch's correlation function assumes VARIABLES ARE ROWS by default \u2014 one flag flips it to columns."}
 {"id": 123, "hint": "view() re-types the SAME 4 bytes per element; assigning the float values through the int view is what performs the conversion without allocating."}
-{"id": 124, "hint": "Pair a row-index range with the per-row argmax as a coordinate pair \u2014 indexing with two arrays writes one cell per row."}
-{"id": 125, "hint": "np.genfromtxt (unlike loadtxt) tolerates missing fields \u2014 and takes an argument saying what to substitute for them."}
+{"id": 124, "hint": "Pair a row-index range with the per-row argmax as a coordinate pair \u2014 indexing with two tensors writes one cell per row."}
 {"id": 126, "hint": "Reshape each axis into (blocks, within-block) pairs \u2014 then one sum over both within-block axes collapses every block at once."}
-{"id": 127, "hint": "Insert one new axis on each operand so the points broadcast against each other \u2014 the difference array then has shape (n, n, 2)."}
-{"id": 128, "hint": "x @ x.T computes every pairwise dot product in one shot; an outer product of the row norms gives the matching denominators."}
+{"id": 127, "hint": "Insert one new axis on each operand so the points broadcast against each other \u2014 the difference tensor then has shape (n, n, 2)."}
 {"id": 129, "hint": "Build the squared-distance matrix by broadcasting, then argsort each row \u2014 position 0 is always the point itself, so the neighbors sit at positions 1 and 2."}
 {"id": 130, "hint": "On a boolean row, argmax stops at the first True \u2014 but an all-False row ALSO returns 0, so you need a second reduction to tell those apart."}
 {"id": 131, "hint": "Naive fancy-index += collapses repeats (each position updates once) \u2014 count the occurrences first, or use the ufunc method built for unbuffered updates."}
 {"id": 132, "hint": "bincount doesn't just count \u2014 hand it weights and each occurrence contributes its value instead of 1."}
-{"id": 133, "hint": "Flatten the spatial dimensions so each pixel becomes one row of 3 \u2014 then deduplicate ROWS, not individual numbers."}
-{"id": 134, "hint": "Build an array of occurrence counts indexed by value, then find the position of the largest count \u2014 first-match behavior on ties is exactly what you need."}
-{"id": 135, "hint": "numpy reductions accept a tuple of axes, so you can collapse several dimensions in one call."}
+{"id": 134, "hint": "Build a tensor of occurrence counts indexed by value, then find the position of the largest count \u2014 first-match behavior on ties is exactly what you need."}
+{"id": 135, "hint": "PyTorch reductions accept a tuple of axes, so you can collapse several dimensions in one call."}
 {"id": 136, "hint": "Fancy indexing with a LIST of row numbers works on both sides of an assignment \u2014 and the right side is gathered before the left side is written."}
-{"id": 137, "hint": "There is a numpy function that tallies how many times each integer label occurs \u2014 and it can also take per-element weights, letting you get per-label sums the same way."}
+{"id": 137, "hint": "There is a PyTorch function that tallies how many times each integer label occurs \u2014 and it can also take per-element weights, letting you get per-label sums the same way."}
 {"id": 138, "hint": "z[p] builds the reordered copy; assigning it through z[:] pours those values back into the ORIGINAL buffer instead of rebinding the name."}
-{"id": 139, "hint": "An integer array used as an index picks out whole rows at once, in exactly the order the integers are listed."}
+{"id": 139, "hint": "An integer tensor used as an index picks out whole rows at once, in exactly the order the integers are listed."}
 {"id": 140, "hint": "Extract the offset diagonal and sum it \u2014 or use the trace function, which takes the very same offset directly."}
 {"id": 141, "hint": "Diagonal entry i multiplies row i of the first matrix with COLUMN i of the second \u2014 an einsum can say that with a transposed index, summing over j only."}
-{"id": 142, "hint": "An elementwise finiteness test gives a boolean array the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
-{"id": 143, "hint": "Compare the array to itself shifted by one \u2014 an entry starts a new run exactly when it differs from its left neighbor (and the first entry always counts)."}
+{"id": 142, "hint": "An elementwise finiteness test gives a boolean tensor the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
+{"id": 143, "hint": "Compare the tensor to itself shifted by one \u2014 an entry starts a new run exactly when it differs from its left neighbor (and the first entry always counts)."}
 {"id": 144, "hint": "Matrix-vector multiplication IS the per-row dot product \u2014 one operator does the whole job."}
 {"id": 145, "hint": "Three shifted slices line every interior element up with its two neighbors \u2014 compare, AND the masks, and remember the slice offset."}
-{"id": 146, "hint": "Allocate the full-length result and fill it with three strided assignments \u2014 every third slot per source."}
-{"id": 147, "hint": "Two percentiles give the fences; one clip call pushes the outliers onto them."}
-{"id": 148, "hint": "np.unique can report WHERE each distinct value first occurs \u2014 but it returns them in value order, not scan order."}
-{"id": 149, "hint": "The difference function has an order argument \u2014 n applications in one call, shrinking the array by one each time."}
-{"id": 150, "hint": "Infer the width from the largest label, build an integer identity of that size, and gather its rows by label."}
+{"id": 149, "hint": "The difference function has an order argument \u2014 n applications in one call, shrinking the tensor by one each time."}
 {"id": 151, "hint": "Broadcasting aligns TRAILING axes \u2014 (h, w) against (h, w, c) fails, but (h, w, 1) stretches over the channels."}
-{"id": 152, "hint": "cumsum is just add.accumulate \u2014 the maximum ufunc has the same accumulate method, along whichever axis you choose."}
-{"id": 153, "hint": "Per-row norms with keepdims broadcast back over the row \u2014 and the where=/out= division pattern skips the zero norms instead of dividing by them."}
-{"id": 154, "hint": "Two independent steps: axis-0 statistics broadcast down the columns, then a symmetric clip caps the z-scores."}
-{"id": 155, "hint": "Element-wise repetition with a per-element count array IS run-length decoding."}
+{"id": 155, "hint": "Element-wise repetition with a per-element count tensor IS run-length decoding."}
 {"id": 156, "hint": "Accumulate down the rows, then accumulate that result across the columns \u2014 two cumulative sums compose into the 2-D prefix sum."}
-{"id": 157, "hint": "Records are built column-by-column: transpose the row-oriented array so each COLUMN becomes one field array, then hand the list to the record constructor."}
-{"id": 158, "hint": "When a reduction has no vectorized form, apply_along_axis runs your one-row function over every row \u2014 here, the size of each row's unique set."}
 {"id": 159, "hint": "Allocate the zero-filled result at its final size, then drop z's values in with ONE strided assignment \u2014 the stride is nz + 1."}
 {"id": 160, "hint": "Stack n copies of v as rows, then let the lower-triangle helper zero out everything past each row's prefix."}
-{"id": 162, "hint": "Row sums with keepdims broadcast the divisor across each row; the where=/out= division pattern sidesteps the zero-sum rows."}
 {"id": 163, "hint": "Row-wise differences must ALL be positive for a strictly increasing row \u2014 reduce the comparison along the row axis into a row mask."}
 {"id": 164, "hint": "Build the |i - j| index grid by broadcasting a column of indices against a row \u2014 then use that whole grid to index c at once."}
-{"id": 165, "hint": "The two edge-list columns form coordinate arrays \u2014 one paired-array assignment sets all (u, v) cells, and swapping the columns sets the mirrors."}
-{"id": 166, "hint": "A window's sum is the difference of two prefix sums n apart \u2014 cumsum once, subtract a shifted copy, divide by n."}
-{"id": 167, "hint": "The sliding-window view accepts a 2-D window shape \u2014 it slides over both axes at once and never copies."}
 {"id": 168, "hint": "argmax always reports the FIRST maximum \u2014 run it on the reversed rows and convert the index back."}
-{"id": 169, "hint": "Normalize each side's rows to unit length first \u2014 then the whole similarity table is a single matrix product."}
-{"id": 170, "hint": "nanmean with keepdims gives a (1, cols) row of fill values \u2014 one np.where selects between it and the original everywhere at once."}
 {"id": 171, "hint": "meshgrid with indexing='ij' expands every combination into aligned grids \u2014 ravel each grid and stack them as columns."}
-{"id": 172, "hint": "Per row: count occurrences by value with bincount, then take argmax \u2014 its first-index tie rule lands on the smallest value automatically."}
 {"id": 173, "hint": "The linear solver accepts a MATRIX right-hand side directly \u2014 one factorization covers every column."}
-{"id": 174, "hint": "With an odd row length the median is one specific order statistic \u2014 a partial sort (partition) places exactly that element without sorting the whole row."}
-{"id": 175, "hint": "Take ALL stride-1 windows first, then keep every step-th row \u2014 slicing a view is still a view."}
-{"id": 176, "hint": "A sliding-window view exposes every window as trailing axes \u2014 one sum over those two axes collapses each window."}
 {"id": 177, "hint": "Turn the dict into a dense lookup TABLE indexed by old value \u2014 then one fancy-index gathers every replacement at once."}
-{"id": 180, "hint": "fill_diagonal writes the MAIN diagonal of whatever view you hand it \u2014 offset views like m[:-1, 1:] turn that into the off-diagonals."}
 {"id": 181, "hint": "Give x a new middle axis and y a new leading axis \u2014 the difference then broadcasts to (n, m, d) and one reduction finishes it."}
-{"id": 182, "hint": "Row-vector points need t TRANSPOSED in the product \u2014 and keep the divisor 2-D (a column) so it broadcasts over both coordinates."}
 {"id": 183, "hint": "The double-argsort rank trick works along an axis too \u2014 apply both passes with axis=1."}
 {"id": 184, "hint": "Symmetry is an invariant YOU maintain \u2014 write the mirrored cell in the same operation."}
-{"id": 185, "hint": "Find where runs START (positions differing from their predecessor, plus position 0) \u2014 the values sit there, and the gaps between consecutive starts are the lengths."}
 {"id": 186, "hint": "Fill the output with the pad value first, then compute the CLIPPED source rectangle and the matching destination rectangle \u2014 one slice assignment does the copy."}
-{"id": 187, "hint": "argpartition along rows finds the top-k columns cheaply; pair them with a broadcast column of row numbers to scatter the 1s."}
 {"id": 189, "hint": "The quarter-turn function takes a COUNT argument and handles the modulo-4 cycle itself."}
-{"id": 190, "hint": "Rank equals the number of singular values above a tolerance \u2014 numpy wraps the whole SVD recipe in one linalg call."}
-{"id": 191, "hint": "One (n_samples, n) integer index matrix fancy-indexes ALL the resamples at once \u2014 then a row-mean and two percentiles finish the interval."}
-{"id": 192, "hint": "Elementwise exponentiation is a single ufunc \u2014 or just multiply the array by itself twice."}
+{"id": 190, "hint": "Rank equals the number of singular values above a tolerance \u2014 PyTorch wraps the whole SVD recipe in one linalg call."}
+{"id": 192, "hint": "Elementwise exponentiation is a single ufunc \u2014 or just multiply the tensor by itself twice."}
 {"id": 193, "hint": "Row-sorted squared distances put each point's own index first (distance zero) \u2014 the k neighbors follow immediately after."}
-{"id": 194, "hint": "argpartition isolates each row's top-k cheaply but unordered \u2014 gather those k values and argsort just them, descending, to finish."}
-{"id": 195, "hint": "reduceat sums between the START positions you give it \u2014 starts every k rows, then every k columns, and the ragged tail takes care of itself."}
-{"id": 196, "hint": "Expose every valid window as trailing axes with a sliding view \u2014 the kernel broadcasts against all of them at once, and one double-axis sum finishes each response."}
 {"id": 197, "hint": "Total the heights and widths for the canvas, then walk the blocks, dropping each into its slice and advancing both offsets by its shape."}
 {"id": 198, "hint": "Broadcast the row sets against each other \u2014 bitwise AND counts the intersection, bitwise OR the union, and the distance is one minus their ratio."}
 {"id": 199, "hint": "Broadcast a's rows against b's rows into an (ra, rb, c) product cube, then collapse the two row axes into one."}
-{"id": 200, "hint": "A row's cumulative sums split [0, 1) into segments sized by the probabilities \u2014 the first cumulative value exceeding the uniform draw names the sampled category."}
 {"id": 201, "hint": "The 2-D cross product of the line direction with the point-to-line-start vector measures twice the triangle area \u2014 divide by the direction's length to recover the height."}
 {"id": 202, "hint": "A row is constant exactly when every entry equals its FIRST entry \u2014 compare against the first column and reduce."}
-{"id": 204, "hint": "Bitwise-AND each value against the eight powers of two at once by broadcasting \u2014 then flip the column order for MSB-first."}
-{"id": 205, "hint": "Row-wise unique can report each distinct row's first index \u2014 sort THOSE indices to restore scan order, then gather."}
-{"id": 206, "hint": "Partition against the n-th-from-last position \u2014 the top n land in the tail unordered, and a tiny sort of just those n finishes."}
 {"id": 207, "hint": "Each triangle contributes the vertex pairs (0,1), (1,2), (2,0) \u2014 list them all, canonicalize each pair by sorting its two ids, then deduplicate rows."}
 {"id": 208, "hint": "Write the contraction as index notation: the batch index p and the inner index j both disappear, leaving ik."}
-{"id": 209, "hint": "Pad the board with a dead border, sum the eight shifted slices to count neighbors everywhere at once, then apply both birth/survival rules as one boolean expression."}
 {"id": 210, "hint": "Three independent row conditions \u2014 integer-valued (check the remainder mod 1), non-negative, and the right total \u2014 AND them into one mask."}
 {"id": 211, "hint": "Broadcast a 4-D equality cube (a-row, a-col, b-row, b-col), then reduce: ANY match within a b-row, but ALL b-rows must be hit."}
-{"id": 212, "hint": "The ones constructor takes a dtype \u2014 and for booleans, one IS True. np.full works too."}
 {"id": 213, "hint": "Start from zeros and set one position \u2014 two lines."}
 {"id": 214, "hint": "Count how many points there are (stop/step plus one) and scale an integer range \u2014 safer than nudging a float endpoint."}
-{"id": 215, "hint": "np.dtype turns the string name into a dtype object, and arange accepts it directly."}
 {"id": 216, "hint": "The values are just 0..len(c)-1 \u2014 repeat each one by its own count."}
-{"id": 217, "hint": "np.tile's repetition argument is a tuple \u2014 one count per axis."}
-{"id": 218, "hint": "Swap the zero stds for a harmless 1 BEFORE dividing \u2014 a centered constant column is already all zeros, so dividing by 1 leaves it correct."}
-{"id": 219, "hint": "numpy has a reduction that gives you the position (index) of the largest value rather than the value itself \u2014 use that index to assign into a copy."}
-{"id": 220, "hint": "Numpy reductions take an axis argument \u2014 pick the axis that runs down the rows so it collapses, leaving one value per column."}
-{"id": 224, "hint": "NumPy has one constructor that accepts nested Python sequences directly and infers a row for each inner list."}
-{"id": 225, "hint": "numpy ships ready-made constructors that build a fresh array of a given shape prefilled with a fixed value \u2014 pick the one whose fill value is one."}
-{"id": 227, "hint": "numpy has a one-call constructor that allocates an all-zero array of a given size, and its default dtype is already floating point."}
-{"id": 228, "hint": "numpy's array-creation functions include a one-call constructor for a square matrix with ones on the main diagonal and zeros everywhere else."}
-{"id": 229, "hint": "numpy's range-building function treats its stop argument as exclusive, so pick a stop that pushes one past the last value you want."}
-{"id": 230, "hint": "numpy arrays have a method that returns a copy of the array converted to whatever dtype you ask for."}
-{"id": 231, "hint": "numpy lets you assign a single scalar to a whole contiguous run of an array in one statement \u2014 no loop needed."}
-{"id": 232, "hint": "Elementwise arithmetic on a numpy array gives each element's remainder at once, and comparing that whole result to a scalar yields a boolean array."}
-{"id": 233, "hint": "Slicing accepts a negative step, which walks the array from the end back to the start."}
-{"id": 234, "hint": "numpy has a built-in that computes a running (cumulative) total along an array in one call."}
-{"id": 235, "hint": "An ndarray has a method that reorders its own contents, unlike the top-level numpy function that hands back a sorted copy."}
-{"id": 236, "hint": "Comparing a numpy array to a scalar with a comparison operator broadcasts elementwise and yields a boolean mask of the same shape."}
-{"id": 237, "hint": "The entries z[i, i] form the main diagonal \u2014 numpy can extract that diagonal (or sum it directly) in one vectorized step."}
-{"id": 238, "hint": "numpy has a pair of stacking helpers that join a sequence of arrays along the row axis or along the column axis."}
-{"id": 239, "hint": "Elementwise multiplication is not what you want here \u2014 look for the operation that combines each row of the first array with each column of the second."}
+{"id": 217, "hint": "t.tile's repetition argument is a tuple \u2014 one count per axis."}
+{"id": 219, "hint": "PyTorch has a reduction that gives you the position (index) of the largest value rather than the value itself \u2014 use that index to assign into a copy."}
+{"id": 220, "hint": "PyTorch reductions take an axis argument \u2014 pick the axis that runs down the rows so it collapses, leaving one value per column."}
+{"id": 224, "hint": "PyTorch has one constructor that accepts nested Python sequences directly and infers a row for each inner list."}
+{"id": 225, "hint": "PyTorch ships ready-made constructors that build a fresh tensor of a given shape prefilled with a fixed value \u2014 pick the one whose fill value is one."}
+{"id": 227, "hint": "PyTorch has a one-call constructor that allocates an all-zero tensor of a given size, and its default dtype is already floating point."}
+{"id": 228, "hint": "PyTorch's tensor-creation functions include a one-call constructor for a square matrix with ones on the main diagonal and zeros everywhere else."}
+{"id": 229, "hint": "PyTorch's range-building function treats its stop argument as exclusive, so pick a stop that pushes one past the last value you want."}
+{"id": 230, "hint": "PyTorch tensors have a method that returns a copy of the tensor converted to whatever dtype you ask for."}
+{"id": 231, "hint": "PyTorch lets you assign a single scalar to a whole contiguous run of a tensor in one statement \u2014 no loop needed."}
+{"id": 232, "hint": "Elementwise arithmetic on a PyTorch tensor gives each element's remainder at once, and comparing that whole result to a scalar yields a boolean tensor."}
+{"id": 235, "hint": "A tensor has a method that reorders its own contents, unlike the top-level PyTorch function that hands back a sorted copy."}
+{"id": 236, "hint": "Comparing a PyTorch tensor to a scalar with a comparison operator broadcasts elementwise and yields a boolean mask of the same shape."}
+{"id": 237, "hint": "The entries z[i, i] form the main diagonal \u2014 PyTorch can extract that diagonal (or sum it directly) in one vectorized step."}
+{"id": 238, "hint": "PyTorch has a pair of stacking helpers that join a sequence of tensors along the row axis or along the column axis."}
+{"id": 239, "hint": "Elementwise multiplication is not what you want here \u2014 look for the operation that combines each row of the first tensor with each column of the second."}
 {"id": 240, "hint": "Think of each value as a magnitude and a sign: the magnitude always rounds in the same direction, and the sign can be reattached elementwise afterwards."}
-{"id": 241, "hint": "numpy has set-style operations that work directly on arrays \u2014 look for the one that keeps only the values common to both inputs."}
 {"id": 242, "hint": "If you generate the evenly spaced points including both endpoints, you need two extra points \u2014 then drop the first and last."}
 {"id": 243, "hint": "Keep the batch index on both sides of the arrow, keep i and j separate in the output, and contract over nothing."}
 {"id": 244, "hint": "In einsum, writing the output indices in a different order IS the permutation \u2014 nothing is summed."}
@@ -307,7 +227,7 @@
 {"id": 330, "hint": "Move the first letter to the end of the output list \u2014 one axis relocation."}
 {"id": 331, "hint": "Slice first (every second image), THEN grid \u2014 rearrange only reorganizes whatever you hand it."}
 {"id": 332, "hint": "Row max: einops.reduce(img, 'h w c -> h () c', 'max'), then subtract (broadcast)."}
-{"id": 333, "hint": "einops accepts a LIST of arrays: the list index becomes the pattern's first axis, so stacking and permuting happen in one call."}
+{"id": 333, "hint": "einops accepts a LIST of tensors: the list index becomes the pattern's first axis, so stacking and permuting happen in one call."}
 {"id": 334, "hint": "'b h w c -> (h b) w c' with the images as a list \u2014 (h b) interleaves rows."}
 {"id": 335, "hint": "Move the trailing letter to the front \u2014 the inverse of the channels-last conversion."}
 {"id": 336, "hint": "One reduce pattern can pool AND lay out a grid: the pooling factors vanish (reduced), the grid factors migrate into height and width."}
@@ -335,7 +255,7 @@
 {"id": 358, "hint": "An empty '()' group on the output side mints a length-1 axis at that position."}
 {"id": 359, "hint": "Factor the channels with the split index OUTERMOST and name it first in the output \u2014 tuple unpacking does the rest."}
 {"id": 360, "hint": "A leading '()' output group adds the channel axis a grayscale image needs to enter image pipelines."}
-{"id": 361, "hint": "Handing einops a list makes the list index the first pattern axis \u2014 an identity pattern is np.stack."}
+{"id": 361, "hint": "Handing einops a list makes the list index the first pattern axis \u2014 an identity pattern is t.stack."}
 {"id": 362, "hint": "'(c split)' puts the group index INNERMOST \u2014 every other channel belongs to the other group."}
 {"id": 363, "hint": "einops.reduce 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3."}
 {"id": 364, "hint": "Factor the batch into grid rows and columns, then merge each with its matching spatial axis \u2014 channels ride along at the end."}
@@ -359,8 +279,6 @@
 {"id": 383, "hint": "'(r c)' with the new index OUTER copies the whole channel block, keeping original channel order within each copy."}
 {"id": 384, "hint": "Bring heads next to depth first, then merge them \u2014 head index outer so each head's features stay contiguous."}
 {"id": 385, "hint": "einops.repeat 'c h w -> c h (w 4)' \u2014 each column appears four times in a row."}
-{"id": 386, "hint": "einops.reduce 'b h (w w2) c -> b h w c', 'mean', w2=2 \u2014 adjacent column pairs."}
-{"id": 387, "hint": "'b c (h hs) (w ws) -> (hs ws b) c h w' \u2014 subgrid positions become batch entries."}
 {"id": 388, "hint": "Swap the first two letters \u2014 the classic batch-first/time-first conversion."}
 {"id": 389, "hint": "'(g1 g2) h w c -> (g1 h) (g2 w) c' with g1=3 \u2014 three rows, two columns."}
 {"id": 390, "hint": "Merging loses the factorization \u2014 the inverse pattern must be told one factor and infers the other."}
@@ -388,7 +306,6 @@
 {"id": 412, "hint": "`conv.bias is None` \u2014 with bias=False the attribute is literally None."}
 {"id": 413, "hint": "Sum `p.numel()` over `.parameters()`; BN(16) adds 32 learnables (weight+bias)."}
 {"id": 414, "hint": "`F.conv2d(x, k)` \u2014 the functional API takes input and kernel directly."}
-{"id": 415, "hint": "Unfold the length axis into overlapping windows first \u2014 then the conv is one einsum contracting input channels and window offsets."}
 {"id": 416, "hint": "Weights are one c_in x k x k block per output channel; bias adds one scalar per output channel."}
 {"id": 417, "hint": "`tuple(pool(x).shape)` \u2014 batch and channels pass through, spatial dims halve."}
 {"id": 418, "hint": "`x.mean(dim=(2, 3))` \u2014 average away exactly the two spatial dims."}
@@ -413,7 +330,6 @@
 {"id": 437, "hint": "ReLU's gradient gates grad_out by which pre-activations were positive; then the linear layer's two gradients are an outer product (for W) and a transposed matvec (for x)."}
 {"id": 438, "hint": "`F.cross_entropy(logits, targets)` \u2014 it applies log-softmax internally."}
 {"id": 439, "hint": "`-F.log_softmax(logits, dim=0)[target]` vs `F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))`."}
-{"id": 440, "hint": "Pull the max out of the logsumexp \u2014 the shifted exponentials stay tame and the max adds back linearly."}
 {"id": 441, "hint": "theta_new = `theta - lr * grad` \u2014 move AGAINST the gradient."}
 {"id": 442, "hint": "Each step: fresh loss, `backward()`, `x -= lr * x.grad` under no_grad, then `x.grad.zero_()`."}
 {"id": 443, "hint": "Residual first (X theta - y), then push it back through X.T with the 2/n factor from differentiating the squared mean."}
@@ -430,14 +346,12 @@
 {"id": 454, "hint": "Reduce over dims (0, 2, 3) \u2014 everything except the channel dim; var with `unbiased=False`."}
 {"id": 455, "hint": "BN with `affine=False`, `.train()`; manual: mean/var over (0,2,3) keepdim, biased, then (x\u2212\u03bc)/\u221a(\u03c3\u00b2+\u03b5)."}
 {"id": 456, "hint": "Each step keeps a (1-mu) share of the old value and adds a mu share of the new one \u2014 a loop with one line of state."}
-{"id": 457, "hint": "Two EWMAs side by side \u2014 one over batch means, one over batch (population) variances \u2014 starting from the (0, 1) prior."}
 {"id": 458, "hint": "Fold in order: `m = beta * m + (1 - beta) * g` per gradient."}
 {"id": 459, "hint": "Reshape all four vectors to (1, C, 1, 1); then (x\u2212m)/\u221av \u00b7 w + b broadcasts cleanly."}
 {"id": 460, "hint": "`weight.reshape(1, weight.shape[0], 1, 1)` \u2014 C on dim 1, singletons elsewhere."}
 {"id": 461, "hint": "Try the raw add; on RuntimeError, `bias.reshape(1, C, 1, 1)` fixes alignment."}
 {"id": 462, "hint": "`F.pad(x, (1, 1), value=...)` then `.unfold(1, 3, 1).max(dim=2).values`."}
 {"id": 463, "hint": "`nn.MaxPool1d(2, 2, padding=1)`; edge outputs are real values, never 0."}
-{"id": 464, "hint": "Pad both ways, pool both ways, and compare \u2014 the zero pad wins the max at negative borders and corrupts the result."}
 {"id": 465, "hint": "Sum dim 0 while too many dims; then `sum(i, keepdim=True)` per size-1 axis."}
 {"id": 466, "hint": "Same reduction; with non-uniform grads each output position contributes its own value."}
 {"id": 467, "hint": "`(x + y).sum().backward()`; each grad = number of broadcast copies."}

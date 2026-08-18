@@ -773,6 +773,23 @@ def get_all_questions() -> List[Question]:
     return _questions
 
 
+def get_every_question() -> List[Question]:
+    """Every loaded question, INCLUDING the ones parked out of serving.
+
+    `get_all_questions()` returns `_questions`, which is the SERVABLE pool —
+    `kc_only_serving()` drops anything no lesson tags yet (the 405-479
+    torch/autograd/optimizer/CNN batch, 75 rows) and `torch_only_serving()`
+    drops any un-converted dialect. That is correct for selection and wrong
+    for anything that must cover the bank: an offline exporter, an audit, or
+    the solution-Colab build, which otherwise silently skips those 75 and
+    leaves their notebooks stale forever.
+
+    Ordered by id so the output is stable across runs.
+    """
+    ensure_questions_loaded()
+    return [_questions_by_id[qid] for qid in sorted(_questions_by_id)]
+
+
 def get_question_by_id(qid: int) -> Optional[Question]:
     ensure_questions_loaded()
     return _questions_by_id.get(qid)
