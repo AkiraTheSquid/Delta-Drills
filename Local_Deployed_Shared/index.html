@@ -36,12 +36,13 @@
   <link rel="stylesheet" href="styles/practice/misc.css?v=4" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/concept-topbar.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/concept-topbar.css?v=5" />
+  <link rel="stylesheet" href="styles/practice/difficulty-bar.css?v=1" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
-  <link rel="stylesheet" href="practice/bars.css?v=7" />
+  <link rel="stylesheet" href="practice/bars.css?v=8" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
@@ -669,12 +670,60 @@
         <!-- The four rungs, always all four, so the learner can see where the
              current one sits in the whole sequence rather than only its name. -->
         <ol class="stage-dots" id="concept-topbar-stages" aria-label="Scaffold stage" data-dd-info="stage-dots" data-dd-info-place="after"></ol>
-        <!-- This problem's rating out of 100, on a track filled to the
-             difficulty the queue is currently aiming at. Hidden on lesson
-             pages, which have no rating. -->
-        <div class="concept-topbar-diff" id="concept-topbar-diff" hidden data-dd-info="difficulty" data-dd-info-place="after"></div>
-        <div class="concept-topbar-est" id="concept-topbar-est"></div>
       </div>
+
+      <!-- THE difficulty bar. One per screen, full width, directly under the
+           concept strip — it used to be drawn twice, as a 96px segment in the
+           strip above and again as a card down beside the solution, in two
+           different visual languages for the same quantity.
+
+           Position, band and markers are drawn by practice/bars.js, which is
+           also the only thing that animates them. The readout, the two
+           thresholds and this problem's tick come from
+           practice/difficulty-bar.js. Neither writes what the other owns. -->
+      <section class="difficulty-bar hidden" id="target-difficulty">
+        <div class="difficulty-bar-head">
+          <div class="difficulty-bar-title" id="target-difficulty-title"
+               data-dd-info="target-difficulty">Target difficulty</div>
+          <div class="difficulty-bar-read">
+            <span class="difficulty-bar-old" id="difficulty-bar-old" hidden>0.0</span>
+            <span class="difficulty-bar-arrow" id="difficulty-bar-arrow" hidden>→</span>
+            <span class="difficulty-bar-new" id="difficulty-bar-new">0.0<span class="difficulty-bar-max">/100</span></span>
+            <span class="difficulty-bar-chip" id="difficulty-bar-chip" hidden></span>
+          </div>
+          <!-- bars.js still writes "Old 24.5 -> New 31.2" here. It is the only
+               place both numbers appear in one string, which is exactly what a
+               screen reader needs announcing, so it is hidden visually rather
+               than removed. -->
+          <div class="difficulty-bar-sr" id="target-difficulty-value" aria-live="polite">Old 0.0</div>
+        </div>
+        <div class="stats-bar-track target-difficulty-track" id="difficulty-bar-track">
+          <!-- Below the floor the aim is not a rating any more, it is the queue
+               handing scaffolding back; above the green edge the rung is
+               cleared. Both edges are backend constants, not decoration —
+               see practice/difficulty-bar.js. -->
+          <div class="difficulty-zone difficulty-zone-floor" id="difficulty-zone-floor">
+            <span class="difficulty-zone-label">↓ support returns</span>
+          </div>
+          <div class="difficulty-zone difficulty-zone-next" id="difficulty-zone-next" hidden>
+            <span class="difficulty-zone-label" id="difficulty-zone-next-label"></span>
+          </div>
+          <div class="stats-bar-fill" id="target-difficulty-fill"></div>
+          <div class="target-difficulty-delta hidden" id="target-difficulty-delta"></div>
+          <div class="target-difficulty-marker" id="target-difficulty-marker-old">
+            <div class="target-difficulty-line"></div>
+            <div class="target-difficulty-number target-difficulty-number-old" id="target-difficulty-number-old">0.0</div>
+          </div>
+          <div class="target-difficulty-marker target-difficulty-marker-new hidden" id="target-difficulty-marker-new">
+            <div class="target-difficulty-line"></div>
+            <div class="target-difficulty-number target-difficulty-number-new" id="target-difficulty-number-new">0.0</div>
+          </div>
+          <div class="difficulty-problem-tick" id="difficulty-problem-tick" hidden>
+            <span class="difficulty-problem-label" id="difficulty-problem-label"></span>
+          </div>
+        </div>
+        <div class="difficulty-bar-foot" id="difficulty-bar-foot"></div>
+      </section>
 
       <div class="practice-split">
         <!-- Left Panel: Questions -->
@@ -834,26 +883,9 @@
                 </div>
               </div>
             </div>
-            <div class="question-meta-row">
-              <div class="target-difficulty" id="target-difficulty">
-                <div class="bar-header-row">
-                  <div class="target-difficulty-title" id="target-difficulty-title" data-dd-info="target-difficulty">Target difficulty</div>
-                  <div class="target-difficulty-value" id="target-difficulty-value">Old 0.0</div>
-                </div>
-                <div class="stats-bar-track target-difficulty-track">
-                  <div class="stats-bar-fill" id="target-difficulty-fill"></div>
-                  <div class="target-difficulty-delta hidden" id="target-difficulty-delta"></div>
-                  <div class="target-difficulty-marker" id="target-difficulty-marker-old">
-                    <div class="target-difficulty-line"></div>
-                    <div class="target-difficulty-number target-difficulty-number-old" id="target-difficulty-number-old">0.0</div>
-                  </div>
-                  <div class="target-difficulty-marker target-difficulty-marker-new hidden" id="target-difficulty-marker-new">
-                    <div class="target-difficulty-line"></div>
-                    <div class="target-difficulty-number target-difficulty-number-new" id="target-difficulty-number-new">0.0</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!-- The difficulty bar used to be repeated here, inside the review
+                 area. It now lives once, above the split — see #target-difficulty
+                 under the concept strip. -->
             <div class="solution-section">
               <div class="solution-label" data-dd-info="solution">Solution</div>
               <pre class="solution-code" id="solution-code"></pre>
@@ -950,7 +982,9 @@ t.manual_seed(0)
   <script src="practice/adaptive.js?v=10"></script>
   <script src="practice/storage.js?v=6"></script>
   <script src="practice/dom.js?v=16"></script>
-  <script src="practice/bars.js?v=8"></script>
+  <!-- Before bars.js: bars.js calls into DifficultyBar on every draw. -->
+  <script src="practice/difficulty-bar.js?v=1"></script>
+  <script src="practice/bars.js?v=9"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
@@ -964,7 +998,7 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=29"></script>
+  <script src="practice/ui.js?v=30"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/api.js?v=19"></script>
   <script src="practice/timer.js?v=15"></script>
@@ -975,13 +1009,13 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=4"></script>
-  <script src="practice/concept-topbar.js?v=6"></script>
+  <script src="practice/concept-topbar.js?v=7"></script>
   <script src="practice/notebook.js?v=4"></script>
-  <script src="practice/lessons.js?v=25"></script>
+  <script src="practice/lessons.js?v=26"></script>
   <script src="practice/ladder.js?v=5"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=30"></script>
+  <script src="practice/events.js?v=31"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

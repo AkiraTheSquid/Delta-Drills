@@ -69,6 +69,12 @@ function setTargetDifficultyUnavailable(note, currentValue) {
   targetDifficultyMarkerOld.style.left = `${clamped}%`;
   targetDifficultyNumberOld.textContent = formatDifficulty(currentValue);
   targetDifficultyMarkerNew.classList.add("hidden");
+  // The readout beside the track is the other half of this bar — see
+  // difficulty-bar.js. Every exit from these four functions has to tell it what
+  // just happened, or the numbers stay on the previous question's move while
+  // the track shows this one's.
+  if (known) DifficultyBar.aim(clamped);
+  else DifficultyBar.unavailable(note);
 }
 
 function setTargetDifficultyInitial(targetDifficulty) {
@@ -95,6 +101,7 @@ function setTargetDifficultyInitial(targetDifficulty) {
   targetDifficultyMarkerOld.style.left = `${clamped}%`;
   targetDifficultyNumberOld.textContent = formatDifficulty(clamped);
   targetDifficultyMarkerNew.classList.add("hidden");
+  DifficultyBar.aim(clamped);
 }
 
 function setTargetDifficultyFinal(oldTarget, newTarget) {
@@ -110,6 +117,7 @@ function setTargetDifficultyFinal(oldTarget, newTarget) {
   targetDifficultyMarkerNew.classList.remove("hidden");
   targetDifficultyMarkerNew.style.left = `${newClamped}%`;
   targetDifficultyNumberNew.textContent = formatDifficulty(newClamped);
+  DifficultyBar.move(oldClamped, newClamped);
 
   if (diff < 0.01) {
     targetDifficultyDelta.classList.add("hidden");
@@ -148,6 +156,10 @@ function animateTargetDifficulty(oldTarget, newTarget, onComplete) {
   targetDifficultyDelta.classList.toggle("up", isUp);
   targetDifficultyDelta.classList.toggle("down", !isUp && newClamped !== oldClamped);
   targetDifficultyDelta.classList.remove("hidden");
+  // Both endpoints up front, so the old number and the ± chip are on screen for
+  // the whole tween rather than appearing at the end of it. `live` below then
+  // only carries the running value.
+  DifficultyBar.move(oldClamped, newClamped);
 
   const tick = (now) => {
     const progress = Math.min((now - start) / duration, 1);
@@ -155,6 +167,7 @@ function animateTargetDifficulty(oldTarget, newTarget, onComplete) {
     targetDifficultyFill.style.width = `${value}%`;
     targetDifficultyMarkerNew.style.left = `${value}%`;
     targetDifficultyNumberNew.textContent = formatDifficulty(value);
+    DifficultyBar.live(value);
     const left = Math.min(oldClamped, value);
     const width = Math.abs(value - oldClamped);
     targetDifficultyDelta.style.left = `${left}%`;

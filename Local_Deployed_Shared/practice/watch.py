@@ -17,7 +17,7 @@ REQUIRED_JS = [
     "init.js", "dom.js", "events.js", "engine.js", "api.js",
     "runner.js", "visuals.js", "ui.js", "ai.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
-    "bars.js", "config.js",
+    "bars.js", "difficulty-bar.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
 ]
@@ -412,10 +412,12 @@ def check_invariants():
         "targetDifficultyTitleText()"
     )
 
-    # The rail must SHOW the bar. `colab-edition.css` hid `.question-meta-row`
-    # back when a verdict recorded an attempt and learned nothing from it.
+    # The rail must SHOW the bar. It used to live in `.question-meta-row`, which
+    # colab-edition.css had hidden; it now sits under the concept strip as
+    # `.difficulty-bar`, and hiding THAT would take the difficulty readout off
+    # this deploy entirely.
     # Comments are stripped first: the block above that rule still explains why
-    # the accuracy bar is hidden and names both selectors, so a substring test
+    # the accuracy bar is hidden and names the selector, so a substring test
     # over the raw file would pass on the explanation alone.
     colab_css = re.sub(r"/\*.*?\*/", "", _read(
         os.path.join(SHARED, "styles", "practice", "colab-edition.css")), flags=re.S)
@@ -423,9 +425,9 @@ def check_invariants():
     for selectors, body in re.findall(r"([^{}]+)\{([^{}]*)\}", colab_css):
         if "display:none" in body.replace(" ", ""):
             hidden_selectors.update(s.strip() for s in selectors.split(","))
-    assert not any(s.endswith(".question-meta-row") for s in hidden_selectors), (
-        "colab-edition.css hides .question-meta-row again — that row IS the "
-        "difficulty ladder on this deploy"
+    assert not any(s.endswith(".difficulty-bar") for s in hidden_selectors), (
+        "colab-edition.css hides .difficulty-bar — that bar IS the difficulty "
+        "ladder on this deploy"
     )
     # Deliberately still hidden, and the reason is not that the number is
     # missing: the concept strip already carries an accuracy readout for this
@@ -573,6 +575,80 @@ def check_promotion_threshold_matches_the_backend():
         "threshold on one concept — so a third entry means the display believes "
         "in a promotion the backend does not make"
     )
+
+
+def check_difficulty_bar_is_one_bar():
+    """ONE difficulty readout on the practice page, and its thresholds are real.
+
+    The page drew this quantity twice: a 96px `.concept-topbar-diff-bar` in the
+    concept strip whose fill was the aim and whose tick was the problem, and a
+    `.target-difficulty` card further down whose readout was "Old 24.5". Two
+    pictures of one number, in two visual languages, disagreeing about which
+    number was which — the report was literally "there are two of them".
+
+    So: exactly one mount, and nothing rebuilding the old segments.
+    """
+    index_html = _read(os.path.join(SHARED, "index.html"))
+    assert index_html.count('id="target-difficulty"') == 1, (
+        "index.html has more (or fewer) than one #target-difficulty mount — the "
+        "difficulty bar is drawn once, under the concept strip"
+    )
+    assert "concept-topbar-diff" not in index_html and "concept-topbar-est" not in index_html, (
+        "the concept strip grew its own difficulty/estimate segment back — that "
+        "is the second bar this check exists to prevent"
+    )
+    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    for gone in ("concept-topbar-diff", "concept-topbar-est"):
+        assert gone not in topbar, (
+            f"concept-topbar.js renders {gone!r} again — the strip names the "
+            "concept and the rung; the bar below it owns difficulty"
+        )
+    # The bar is drawn by bars.js and annotated by difficulty-bar.js. Neither is
+    # allowed to be the only one wired up: bars.js without the readout leaves the
+    # numbers frozen on the previous question, and the readout without bars.js is
+    # a set of labels with no track under them.
+    bars_js = _read(os.path.join(HERE, "bars.js"))
+    for call in ("DifficultyBar.aim(", "DifficultyBar.move(", "DifficultyBar.live(",
+                 "DifficultyBar.unavailable("):
+        assert call in bars_js, (
+            f"bars.js no longer calls {call}…) — the track would move while the "
+            "numbers beside it stayed on the last question's answer"
+        )
+
+
+def check_difficulty_range_matches_backend():
+    """The bar's floor and span are a copy of the backend's difficulty range.
+
+    `difficulty-bar.js` places the support floor at `AIM_FLOOR` and converts a
+    promotion threshold in mastery to a point on the 0-100 track with
+    `AIM_FLOOR + AIM_SPAN * bound`. Both mirror `_DIFF_FLOOR` / `_DIFF_SPAN` in
+    `app/prioritization.py`, which is where `target_difficulty` is actually
+    computed.
+
+    Same reasoning as the PROMOTE_AT check below: a threshold drawn in the wrong
+    place is worse than no threshold. Change the span in the backend and every
+    green line on this bar quietly points at a number the queue never serves.
+    """
+    bar_js = _read(os.path.join(HERE, "difficulty-bar.js"))
+    prio = os.path.join(
+        HERE, "..", "..", "This-Directory-Only", "backend", "app", "prioritization.py")
+    if not os.path.exists(prio):
+        return  # backend not checked out beside the frontend — nothing to compare
+    backend = _read(prio)
+
+    def _const(src, name, pattern):
+        m = re.search(pattern, src)
+        assert m, f"could not find {name}"
+        return float(m.group(1))
+
+    for js_name, py_name in (("AIM_FLOOR", "_DIFF_FLOOR"), ("AIM_SPAN", "_DIFF_SPAN")):
+        js_value = _const(bar_js, js_name, rf"const {js_name}\s*=\s*([0-9.]+)")
+        py_value = _const(backend, py_name, rf"{py_name}\s*=\s*([0-9.]+)")
+        assert abs(js_value - py_value) < 1e-9, (
+            f"difficulty-bar.js draws {js_name}={js_value} but prioritization.py "
+            f"computes with {py_name}={py_value} — the floor and the promotion "
+            f"line on the bar are both off by that difference"
+        )
 
 
 def check_lesson_code_can_actually_run():
@@ -799,6 +875,8 @@ def check_the_fifth_rung_is_shown_not_stored():
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_promotion_threshold_matches_the_backend,
+              check_difficulty_bar_is_one_bar,
+              check_difficulty_range_matches_backend,
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,

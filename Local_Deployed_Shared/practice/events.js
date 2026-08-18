@@ -146,14 +146,8 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
-    // Move the topbar's difficulty fill to match. That strip stays on screen
-    // through the whole feedback flow, so leaving it on the pre-answer target
-    // would have it contradicting the bar directly below it. The tick does not
-    // move — this problem's rating is a property of the problem, not of how it
-    // just went.
-    if (window.ConceptTopbar) {
-      window.ConceptTopbar.setDifficulty(q.difficulty, newTarget);
-    }
+    // The strip no longer draws a difficulty of its own — there is one bar, and
+    // `animateTargetDifficulty` above is already moving it to `newTarget`.
     if (!calibrationQuestion && Number.isFinite(pAfter)) {
       showEwmaAccuracy(pBefore, pAfter, q.subtopic);
     } else {
@@ -460,14 +454,9 @@ const _drawColabDifficultyStep = (q, record) => {
     setTargetDifficultyFinal(oldTarget, newTarget);
   });
 
-  // Keep the strip's own difficulty fill on the same number. It stays on screen
-  // through the whole review, so leaving it on the pre-answer target would have
-  // it contradicting the bar a few rows below. Same call the full page makes
-  // after a felt-difficulty rating; the tick does not move, because this
-  // problem's rating is a property of the problem.
-  if (window.ConceptTopbar) {
-    window.ConceptTopbar.setDifficulty(q.difficulty, newTarget);
-  }
+  // Nothing else to move: the strip carries no difficulty of its own now, and
+  // the tick stays where it is because this problem's rating is a property of
+  // the problem rather than of how the answer went.
 };
 
 const _rateTorchAndAdvance = async (correct) => {
