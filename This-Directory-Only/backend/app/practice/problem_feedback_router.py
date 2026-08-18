@@ -11,17 +11,26 @@ Deliberately isolated: entries are appended to a SIBLING log file
 reads or writes UserPracticeState, so a malformed note can't corrupt mastery /
 attempt history. Append-only; safe to grep.
 
-A submission from an allowlisted learner ALSO hands the flagged question to
-Opus 5, which repairs it and writes the fix into the live bank — see
-feedback_ai_improver. That runs as a background task: the model never sits in
-the request path, and if it is unavailable, misconfigured or unhelpful the
-feedback still lands in the log exactly as it always did.
+A submission from an allowlisted learner ALSO queues a repair job (see
+feedback_repair_queue). The repair itself is performed by Seth's local `claude`
+CLI via ops/question_repair/run_repairs.py, which pulls the queue through the
+endpoints below and posts the rewrite back. The server never calls a model and
+holds no model credential; if no runner is listening the job simply waits and
+the feedback log is unaffected.
 
 Endpoints (mounted under /api/practice by the parent router):
-  POST /problem-feedback            -> append one entry (+ maybe fire a repair)
-  GET  /problem-feedback            -> list this user's entries (newest first)
-  GET  /problem-feedback/revisions  -> AI repairs applied to the bank
-  POST /problem-feedback/rollback   -> revert one question's AI repair
+  POST /problem-feedback                    -> append one entry (+ maybe queue a repair)
+  GET  /problem-feedback                    -> list this user's entries (newest first)
+  GET  /problem-feedback/revisions          -> AI repairs applied to the bank
+  POST /problem-feedback/rollback           -> revert one question's AI repair
+  GET  /problem-feedback/repair-queue       -> jobs waiting for the local runner
+  POST /problem-feedback/repair-queue/claim -> mark one job as being worked on
+  POST /problem-feedback/repair-queue/complete -> apply a rewrite / close a job
+
+The four repair endpoints are restricted to the same allowlist that can trigger
+a repair, on the plain user JWT the practice UI already issues. That is the
+whole auth story on purpose — no service secret to rotate, and the runner
+authenticates as the person whose feedback it is acting on.
 """
 
 from __future__ import annotations
@@ -29,13 +38,13 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from pydantic import BaseModel, Field
 
-from app import feedback_ai_layer, questions
+from app import feedback_ai_layer, feedback_repair_queue, questions
 from app.adaptive import DATA_DIR
 from app.auth import get_current_user
 from app.models import User
@@ -43,10 +52,14 @@ from app.models import User
 # itself pulled in by app/practice/__init__.py, and going back through the
 # package would make that a cycle.
 from app.practice.feedback_ai_improver import (
+    DEFAULT_MODEL,
     allowlist,
-    improve_question_from_feedback,
+    apply_repair,
+    enqueue_repair,
     is_actionable_tag,
+    is_allowlisted,
     is_enabled_for,
+    question_snapshot,
 )
 
 logger = logging.getLogger(__name__)
@@ -75,8 +88,8 @@ class ProblemFeedbackEntry(BaseModel):
 class ProblemFeedbackResponse(BaseModel):
     success: bool
     count: int
-    # True when this submission also queued an Opus 5 repair of the question.
-    # It says the work was queued, not that the bank changed — the repair can
+    # True when this submission also queued a repair for the local runner. It
+    # says the work was queued, not that the bank changed — the runner can
     # still come back "no_change". Poll /problem-feedback/revisions for that.
     improvement_queued: bool = False
 
@@ -93,6 +106,40 @@ class RevisionListResponse(BaseModel):
 class ProblemFeedbackListResponse(BaseModel):
     success: bool
     entries: List[ProblemFeedbackEntry]
+
+
+class RepairQueueResponse(BaseModel):
+    success: bool
+    jobs: List[dict]
+    counts: Dict[str, int] = {}
+
+
+class ClaimRequest(BaseModel):
+    job_id: str
+    runner: str = "local"
+
+
+class CompleteRequest(BaseModel):
+    job_id: str
+    # "rewrite" applies, anything else closes the job untouched. Mirrors the
+    # verdict field of REPAIR_JSON_SCHEMA.
+    verdict: str = "no_change"
+    rationale: str = ""
+    question_text: str = ""
+    starter_code: str = ""
+    answer_code: str = ""
+    model: str = DEFAULT_MODEL
+    session_id: str = ""
+    # Set by the runner when the CLI itself failed, so the job lands in `failed`
+    # rather than looking like a considered "leave it alone".
+    error: str = ""
+
+
+class CompleteResponse(BaseModel):
+    success: bool
+    status: str
+    applied_fields: List[str] = []
+    revision: Optional[dict] = None
 
 
 def _log_file(user_id: str):
@@ -118,17 +165,24 @@ def _write_entries(user_id: str, entries: List[dict]) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def _require_allowlisted(user: User) -> str:
+    """Repair endpoints are for the people who can trigger a repair, nobody else."""
+    email = (getattr(user, "email", "") or "").strip()
+    if not is_allowlisted(email):
+        raise HTTPException(status_code=403, detail="Not permitted")
+    return email
+
+
 @router.post("/problem-feedback", response_model=ProblemFeedbackResponse)
 def submit_problem_feedback(
     payload: ProblemFeedbackRequest,
-    background_tasks: BackgroundTasks,
     user: User = Depends(get_current_user),
 ) -> ProblemFeedbackResponse:
-    """Append one per-problem quality flag/note, and queue an AI repair for it.
+    """Append one per-problem quality flag/note, and queue a repair for it.
 
-    The log write is the contract; the repair is best-effort on top of it. The
-    two are kept in that order deliberately — feedback is never lost because
-    the improver was misconfigured.
+    The log write is the contract; the repair job is best-effort on top of it.
+    The two are kept in that order deliberately — feedback is never lost because
+    the queue could not be written.
     """
     user_id = str(user.id)
     entries = _read_entries(user_id)
@@ -147,19 +201,14 @@ def submit_problem_feedback(
     )
 
     email = (getattr(user, "email", "") or "").strip()
-    queued = (
-        is_actionable_tag(payload.tag)
-        and is_enabled_for(email)
-    )
-    if queued:
-        background_tasks.add_task(
-            improve_question_from_feedback,
-            payload.question_id,
-            payload.tag,
-            entry["note"],
-            payload.correct,
-            email,
-        )
+    queued = False
+    if is_actionable_tag(payload.tag) and is_enabled_for(email):
+        try:
+            queued = enqueue_repair(
+                payload.question_id, payload.tag, entry["note"], payload.correct, email,
+            ) is not None
+        except Exception as exc:  # queueing must never fail a feedback submission
+            logger.exception("problem_feedback: could not queue repair: %s", exc)
     return ProblemFeedbackResponse(
         success=True, count=len(entries), improvement_queued=queued,
     )
@@ -190,9 +239,7 @@ def list_ai_revisions(
     edit that shipped look like an edit that never happened. Restricted to the
     same allowlist that can trigger one.
     """
-    email = (getattr(user, "email", "") or "").strip()
-    if email.strip().lower() not in allowlist():
-        raise HTTPException(status_code=403, detail="Not permitted")
+    _require_allowlisted(user)
     entries = list(reversed(feedback_ai_layer.load_revisions(question_id)))
     return RevisionListResponse(success=True, entries=entries)
 
@@ -209,9 +256,7 @@ def rollback_ai_revision(
     are the reviewed, batch-generated bank, which is the state worth returning
     to when a rewrite went wrong.
     """
-    email = (getattr(user, "email", "") or "").strip()
-    if email.strip().lower() not in allowlist():
-        raise HTTPException(status_code=403, detail="Not permitted")
+    email = _require_allowlisted(user)
 
     entry = feedback_ai_layer.rollback(payload.question_id, actor=email)
     if entry is None:
@@ -221,3 +266,123 @@ def rollback_ai_revision(
         )
     questions.reload_questions()
     return RevisionListResponse(success=True, entries=[entry])
+
+
+@router.get("/problem-feedback/repair-queue", response_model=RepairQueueResponse)
+def list_repair_queue(
+    status: str = "pending",
+    user: User = Depends(get_current_user),
+) -> RepairQueueResponse:
+    """Jobs for the local runner.
+
+    `status=pending` (the default) is what a runner polls: never-claimed jobs
+    plus jobs whose claim went stale, each carrying a full snapshot of the
+    question AS THIS SERVER CURRENTLY SERVES IT. The snapshot is the point — a
+    runner on a dev checkout would otherwise repair whatever its own bank says,
+    which is not necessarily what the learner saw.
+
+    Any other value returns the raw queue for inspection, unenriched.
+    """
+    _require_allowlisted(user)
+    if status != "pending":
+        jobs = [j for j in feedback_repair_queue.load_jobs() if status in ("all", j.get("status"))]
+        return RepairQueueResponse(success=True, jobs=jobs, counts=feedback_repair_queue.summary())
+
+    enriched: List[dict] = []
+    for job in feedback_repair_queue.pending_jobs():
+        question = questions.get_question_by_id(int(job.get("question_id", -1)))
+        if question is None:
+            # The question left the bank between the flag and the repair. Close
+            # the job here rather than handing the runner something it cannot act
+            # on; a retired question has nothing to fix.
+            feedback_repair_queue.finish(
+                job["job_id"], status=feedback_repair_queue.SKIPPED,
+                error="question is no longer in the bank",
+            )
+            continue
+        enriched.append({**job, "question": question_snapshot(question)})
+    return RepairQueueResponse(
+        success=True, jobs=enriched, counts=feedback_repair_queue.summary(),
+    )
+
+
+@router.post("/problem-feedback/repair-queue/claim", response_model=RepairQueueResponse)
+def claim_repair_job(
+    payload: ClaimRequest,
+    user: User = Depends(get_current_user),
+) -> RepairQueueResponse:
+    """Mark a job as being worked on so a second runner skips it.
+
+    Advisory, not a lock: the claim expires (feedback_repair_queue
+    .STALE_CLAIM_SECONDS) so a runner that dies mid-job does not strand the
+    flag forever.
+    """
+    _require_allowlisted(user)
+    job = feedback_repair_queue.claim(payload.job_id, runner=payload.runner)
+    if job is None:
+        raise HTTPException(status_code=409, detail="Job is unknown or already finished")
+    return RepairQueueResponse(success=True, jobs=[job])
+
+
+@router.post("/problem-feedback/repair-queue/complete", response_model=CompleteResponse)
+def complete_repair_job(
+    payload: CompleteRequest,
+    user: User = Depends(get_current_user),
+) -> CompleteResponse:
+    """Close a job, applying the rewrite if there is one that survives the gates.
+
+    The gates run HERE, again, on the live question — not only in the runner.
+    This endpoint is reachable with nothing but an allowlisted token, so it has
+    to assume the payload came from somewhere other than the runner.
+    """
+    email = _require_allowlisted(user)
+    job = feedback_repair_queue.get_job(payload.job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Unknown job")
+
+    if payload.error:
+        feedback_repair_queue.finish(
+            payload.job_id, status=feedback_repair_queue.FAILED,
+            error=payload.error, model=payload.model, session_id=payload.session_id,
+        )
+        return CompleteResponse(success=True, status=feedback_repair_queue.FAILED)
+
+    repair: Dict[str, Any] = {
+        "verdict": payload.verdict,
+        "rationale": payload.rationale,
+        "question_text": payload.question_text,
+        "starter_code": payload.starter_code,
+        "answer_code": payload.answer_code,
+    }
+    revision = apply_repair(
+        int(job["question_id"]),
+        repair,
+        tag=str(job.get("tag", "")),
+        trigger={
+            "job_id": payload.job_id,
+            "user_email": job.get("user_email", email),
+            "tag": job.get("tag"),
+            "note": job.get("note"),
+            "correct": job.get("correct"),
+            "flagged_at": job.get("created_at"),
+            "completed_by": email,
+        },
+        model=payload.model,
+        session_id=payload.session_id,
+    )
+
+    status = feedback_repair_queue.DONE if revision else feedback_repair_queue.SKIPPED
+    feedback_repair_queue.finish(
+        payload.job_id,
+        status=status,
+        rationale=payload.rationale,
+        model=payload.model,
+        session_id=payload.session_id,
+        applied_fields=(revision or {}).get("fields", []),
+    )
+    return CompleteResponse(
+        success=True,
+        status=status,
+        applied_fields=(revision or {}).get("fields", []),
+        revision=revision,
+    )

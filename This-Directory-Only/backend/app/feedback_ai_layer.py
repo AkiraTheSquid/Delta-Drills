@@ -32,9 +32,11 @@ import it during startup without a cycle.
 
 from __future__ import annotations
 
+import fcntl
 import json
 import logging
 import os
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
@@ -52,6 +54,30 @@ REVISIONS_FILENAME = "ai_feedback_revisions.jsonl"
 EDITABLE_FIELDS = ("question_text", "starter_code", "answer_code")
 
 _write_lock = Lock()
+
+
+@contextmanager
+def locked(path: Path):
+    """Hold an exclusive lock on `path` across PROCESSES, not just threads.
+
+    Every file in this directory is read-modify-rewrite, and the readers and
+    writers are not all in one process: the API writes a repair while the local
+    runner (ops/question_repair/) claims a job from the same directory. A
+    `threading.Lock` is invisible across that boundary, so two processes each
+    read the old file and the second write erases the first — silently, because
+    both succeed.
+
+    The lock is a sidecar `.lock` file rather than the data file itself, so
+    holding it never conflicts with the atomic tmp-file replace underneath.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lock_file = path.with_suffix(path.suffix + ".lock")
+    with lock_file.open("w", encoding="utf-8") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def feedback_ai_dir() -> Path:
@@ -153,7 +179,7 @@ def apply_override(
     keys as they read at the moment of the rewrite, so the audit log alone is
     enough to reconstruct the prior text without consulting the bank.
     """
-    with _write_lock:
+    with _write_lock, locked(layer_path()):
         records = load_layer()
         record = dict(records.get(question_id) or {})
         record["id"] = question_id
@@ -186,7 +212,7 @@ def rollback(question_id: int, *, actor: str) -> Optional[dict]:
     Returns the audit entry, or None if the question has no live override —
     rolling back what was never applied is a no-op, not an error.
     """
-    with _write_lock:
+    with _write_lock, locked(layer_path()):
         records = load_layer()
         removed = records.pop(question_id, None)
         if removed is None:

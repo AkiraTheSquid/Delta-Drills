@@ -13,7 +13,6 @@ google-auth==2.38.0      # Sign in with Google: verify Google ID tokens (/auth/g
 requests==2.32.3         # transport used by google-auth to fetch Google's signing certs
 pypdf==5.1.0
 openai>=1.40.0
-anthropic>=0.75.0        # Opus 5 question repair fired by per-problem feedback (practice/feedback_ai_improver.py)
 tiktoken>=0.5.0
 mpxpy==0.0.20
 numpy>=1.24.0

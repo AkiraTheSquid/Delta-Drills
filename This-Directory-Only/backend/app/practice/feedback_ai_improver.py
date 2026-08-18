@@ -1,16 +1,24 @@
 """
-Feedback -> Opus 5 -> repaired question.
+Feedback -> local Claude Code -> repaired question.
 
-When an allowlisted learner flags a question from the practice UI, this module
-sends the question and the learner's note to Claude Opus 5 and writes the
-repair straight into the live bank as an override layer (see
-app/feedback_ai_layer.py). It runs behind FastAPI's BackgroundTasks, so the
-learner's POST returns immediately and never waits on the model.
+When an allowlisted learner flags a question from the practice UI, the flag
+becomes a job in app/feedback_repair_queue.py and the request ends there. The
+model call happens on Seth's own machine: `ops/question_repair/run_repairs.py`
+drives the local `claude` CLI under his login, in a read-only sandbox, and
+posts the result back. The server holds no model credential at all.
 
-It hangs off the one endpoint every exercise's quality feedback already posts
-to (problem_feedback_router.py), which is why it covers the whole bank —
-numpy, einsum, einops, torch, CNN, curated additions — without a per-course
-hook anywhere.
+This module is the part BOTH sides share — the server, which queues jobs and
+applies whatever comes back, and the runner, which imports it for the prompt and
+the gates so the two can never drift apart:
+
+  SYSTEM_PROMPT / build_prompt()  what the local session is asked to do
+  REPAIR_JSON_SCHEMA             the shape it must answer in
+  validated_changes()            which of its answers may touch the bank
+  apply_repair()                 the write itself
+
+It hangs off the one endpoint every exercise's quality feedback already posts to
+(problem_feedback_router.py), which is why it covers the whole bank — numpy,
+einsum, einops, torch, CNN, curated additions — without a per-course hook.
 
 Three things keep an auto-applied rewrite from being a one-way door:
 
@@ -20,18 +28,17 @@ Three things keep an auto-applied rewrite from being a one-way door:
                    never touches them and a bad rewrite can't move a question
                    in the mastery graph.
   Gates.           Code fields must compile, answer_code only opens for a
-                   `broken` flag, and a rewrite that comes back identical or
-                   empty is dropped rather than written.
+                   `broken` flag, a rewrite that comes back identical or empty
+                   is dropped, and the runner additionally re-runs a rewritten
+                   answer through the real grading harness before it is sent.
   Reversibility.   Every apply logs its own before/after to an append-only
-                   revision log, and any single question can be reverted to
-                   the shipped text with one rollback call.
+                   revision log, and any single question can be reverted to the
+                   shipped text with one rollback call.
 
 Configuration (all via env; nothing is hardcoded):
-  ANTHROPIC_API_KEY        required — without it the loop stays dormant and
-                           feedback keeps logging as before.
   DELTA_FEEDBACK_AI_EMAILS comma-separated allowlist. Defaults to Seth.
-  DELTA_FEEDBACK_AI_DIR    where the override layer + revision log are written
-                           (the Fly /data volume in production).
+  DELTA_FEEDBACK_AI_DIR    where the queue, override layer and revision log are
+                           written (the Fly /data volume in production).
 """
 
 from __future__ import annotations
@@ -41,17 +48,17 @@ import os
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-from pydantic import BaseModel
-
-from app import feedback_ai_layer, questions
+from app import feedback_ai_layer, feedback_repair_queue, questions
 
 logger = logging.getLogger(__name__)
 
-MODEL = "claude-opus-5"
-MAX_TOKENS = 16000
+# What the runner is expected to use. It may be overridden per run, and the
+# model that actually answered is recorded on the revision, so this is a default
+# rather than a promise.
+DEFAULT_MODEL = "claude-opus-5"
 
 # Who may trigger a rewrite. A flag from anyone else is still logged by the
-# router — it just doesn't spend a model call or move the bank.
+# router — it just doesn't queue work or move the bank.
 _DEFAULT_ALLOWLIST = "sethbgibson@gmail.com"
 
 # `good` is praise, not a defect report; rewriting on it would churn the bank
@@ -85,13 +92,21 @@ its difficulty, and do not touch anything the complaint did not raise — a ques
 bank is tied to a knowledge-graph node by what it asks, so a drifting rewrite quietly \
 breaks the learner's mastery estimate.
 
+You are read-only. You can read and search the repository you are started in, which is the \
+Delta Drills source, and that is often worth doing: the grading harness \
+(This-Directory-Only/backend/app/code_runner.py) decides what a correct answer has to look \
+like, and neighbouring questions in the same subtopic show the house style. You cannot edit \
+any file, run any command, or reach the network. Your answer is the JSON object, and the \
+tooling applies it.
+
 Rules for the fields you may return:
 - question_text: plain prose plus LaTeX ($...$) as the bank already uses. State the task, \
 the shapes involved, and what to return. Never include the answer or an outline of it.
 - starter_code: must be valid Python and must keep the same entry point the grader calls \
 (usually `def solve(...)`). It sets up fixtures; it must not contain the solution.
 - answer_code: the reference solution. Only return this if the complaint is that the \
-answer itself is wrong.
+answer itself is wrong. It will be re-run against the question's real test cases before \
+it is accepted, so it must actually pass them.
 
 Return a field only when you are changing it; return an empty string for every field you \
 are leaving alone. If the complaint does not describe a real defect, or you cannot tell \
@@ -100,15 +115,31 @@ what the defect is, set verdict to "no_change" and say why in rationale.
 Keep rationale to one or two sentences.\
 """
 
+# Passed to `claude --json-schema`. The CLI validates the model's answer against
+# this and hands it back on `.structured_output`, so the runner never parses
+# prose. Kept as a plain dict rather than a pydantic model because the runner
+# ships it straight to the CLI as JSON.
+REPAIR_JSON_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "verdict": {
+            "type": "string",
+            "enum": ["rewrite", "no_change"],
+            "description": "rewrite if you are changing the question, no_change otherwise",
+        },
+        "rationale": {
+            "type": "string",
+            "description": "One or two sentences on what was wrong and what you changed.",
+        },
+        "question_text": {"type": "string"},
+        "starter_code": {"type": "string"},
+        "answer_code": {"type": "string"},
+    },
+    "required": ["verdict", "rationale", "question_text", "starter_code", "answer_code"],
+    "additionalProperties": False,
+}
 
-class QuestionRepair(BaseModel):
-    """Structured rewrite. Empty string = leave that field untouched."""
-
-    verdict: str  # "rewrite" | "no_change"
-    rationale: str
-    question_text: str
-    starter_code: str
-    answer_code: str
+EDITABLE_FIELDS = feedback_ai_layer.EDITABLE_FIELDS
 
 
 def allowlist() -> set[str]:
@@ -116,33 +147,53 @@ def allowlist() -> set[str]:
     return {e.strip().lower() for e in raw.split(",") if e.strip()}
 
 
-def is_enabled_for(email: Optional[str]) -> bool:
-    """True when this learner's feedback should fire a repair.
+def is_allowlisted(email: Optional[str]) -> bool:
+    return bool(email) and email.strip().lower() in allowlist()
 
-    Requires the allowlist AND a usable client. Missing credentials are a
-    dormant feature, not an error — practice keeps working either way.
+
+def is_enabled_for(email: Optional[str]) -> bool:
+    """True when this learner's feedback should queue a repair.
+
+    Allowlist only. There is nothing else to check server-side any more: the
+    model runs on Seth's machine, so whether the loop can actually complete
+    depends on whether his runner is up, not on server configuration. A job
+    queued with no runner listening simply waits.
     """
-    if not email or email.strip().lower() not in allowlist():
-        return False
-    # Either credential the SDK accepts; never a literal in the repo.
-    if not any(os.environ.get(name, "").strip() for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")):
-        logger.info("feedback_ai: allowlisted user but no Anthropic credential set — skipping")
-        return False
-    try:
-        import anthropic  # noqa: F401
-    except ImportError:
-        logger.warning("feedback_ai: anthropic package not installed — skipping")
-        return False
-    return True
+    return is_allowlisted(email)
 
 
 def is_actionable_tag(tag: str) -> bool:
-    """Whether this flag describes a defect worth spending a model call on."""
+    """Whether this flag describes a defect worth queueing a repair for."""
     return tag in _ACTIONABLE_TAGS
 
 
-def _build_prompt(question: questions.Question, tag: str, note: str, correct: Optional[bool]) -> str:
-    learner_note = note.strip() or "(no note — only the flag)"
+def question_snapshot(question: questions.Question) -> Dict[str, object]:
+    """Everything the runner needs about a question, without a bank import.
+
+    The runner usually has the bank (it runs in the repo), but a remote runner
+    talking to production over HTTP does not, and the job it is handed must
+    describe the question as PRODUCTION currently serves it — not as the local
+    checkout would build it.
+    """
+    return {
+        "id": question.id,
+        "topic": question.topic,
+        "subtopic": question.subtopic,
+        "difficulty_label": question.difficulty_label,
+        "difficulty_score": question.difficulty_score,
+        "submission_mode": question.submission_mode,
+        "function_name": question.function_name,
+        "question_text": question.question_text or "",
+        "starter_code": question.starter_code or "",
+        "answer_code": question.answer_code or "",
+        "expected_output": question.expected_output or "",
+        "test_cases": question.test_cases or [],
+    }
+
+
+def build_prompt(snapshot: Dict[str, object], tag: str, note: str, correct: Optional[bool]) -> str:
+    """The user turn for the local session. Takes a snapshot, not a Question."""
+    learner_note = (note or "").strip() or "(no note — only the flag)"
     outcome = (
         "The learner was graded CORRECT on this attempt."
         if correct
@@ -156,69 +207,46 @@ def _build_prompt(question: questions.Question, tag: str, note: str, correct: Op
 Learner's note: {learner_note}
 {outcome}
 
---- QUESTION {question.id} ---
-Topic: {question.topic}
-Subtopic: {question.subtopic}
-Difficulty: {question.difficulty_label} ({question.difficulty_score})
-Submission mode: {question.submission_mode}
+--- QUESTION {snapshot.get('id')} ---
+Topic: {snapshot.get('topic')}
+Subtopic: {snapshot.get('subtopic')}
+Difficulty: {snapshot.get('difficulty_label')} ({snapshot.get('difficulty_score')})
+Submission mode: {snapshot.get('submission_mode')}
+Graded entry point: {snapshot.get('function_name') or '(stdout, no function)'}
 
 question_text:
-{question.question_text}
+{snapshot.get('question_text')}
 
 starter_code:
-{question.starter_code or "(none)"}
+{snapshot.get('starter_code') or "(none)"}
 
 answer_code:
-{question.answer_code}
+{snapshot.get('answer_code')}
 
 expected_output:
-{question.expected_output}
+{snapshot.get('expected_output')}
 --- END QUESTION ---
 """
 
 
-def _call_model(prompt: str) -> Optional[QuestionRepair]:
-    """One structured Opus 5 call. Returns None on refusal or transport error."""
-    import anthropic
-
-    client = anthropic.Anthropic()
-    try:
-        response = client.messages.parse(
-            model=MODEL,
-            max_tokens=MAX_TOKENS,
-            thinking={"type": "adaptive"},
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": prompt}],
-            output_format=QuestionRepair,
-        )
-    except anthropic.APIError as exc:
-        logger.error("feedback_ai: Anthropic call failed: %s", exc)
-        return None
-
-    # Check the refusal stop reason before touching content — on a refusal the
-    # content blocks are not the rewrite.
-    if response.stop_reason == "refusal":
-        logger.warning("feedback_ai: model declined to rewrite the question")
-        return None
-    return response.parsed_output
-
-
-def _validated_changes(
-    repair: QuestionRepair,
-    question: questions.Question,
+def validated_changes(
+    repair: Dict[str, object],
+    snapshot: Dict[str, object],
     tag: str,
 ) -> Dict[str, str]:
-    """Keep only the fields that are a real, safe, actually-different change."""
-    current = {
-        "question_text": question.question_text or "",
-        "starter_code": question.starter_code or "",
-        "answer_code": question.answer_code or "",
-    }
-    proposed = {
-        "question_text": repair.question_text.strip(),
-        "starter_code": repair.starter_code.strip(),
-        "answer_code": repair.answer_code.strip(),
-    }
+    """Keep only the fields that are a real, safe, actually-different change.
+
+    Runs in the runner before anything is sent AND on the server before anything
+    is written. Duplicated work on purpose — the runner's copy gives a fast, in
+    terminal answer, the server's copy is the one that actually guards the bank,
+    because the endpoint is reachable without going through the runner at all.
+    """
+    if str(repair.get("verdict", "")).strip() != "rewrite":
+        return {}
+
+    question_id = snapshot.get("id")
+    current = {field: str(snapshot.get(field) or "") for field in EDITABLE_FIELDS}
+    proposed = {field: str(repair.get(field) or "").strip() for field in EDITABLE_FIELDS}
 
     changes: Dict[str, str] = {}
     for field, value in proposed.items():
@@ -227,76 +255,138 @@ def _validated_changes(
         # The reference answer decides whether every future attempt is marked
         # right or wrong, so only a "this is wrong" flag may reach it.
         if field == "answer_code" and tag != "broken":
-            logger.info("feedback_ai: dropped answer_code rewrite for q=%s (tag=%s)", question.id, tag)
+            logger.info("feedback_ai: dropped answer_code rewrite for q=%s (tag=%s)", question_id, tag)
             continue
         if field in ("starter_code", "answer_code"):
             try:
-                compile(value, f"<feedback_ai q{question.id} {field}>", "exec")
+                compile(value, f"<feedback_ai q{question_id} {field}>", "exec")
             except SyntaxError as exc:
-                logger.warning("feedback_ai: %s for q=%s did not compile: %s", field, question.id, exc)
+                logger.warning("feedback_ai: %s for q=%s did not compile: %s", field, question_id, exc)
                 continue
         changes[field] = value
     return changes
 
 
-def improve_question_from_feedback(
+def verify_answer_code(answer_code: str, test_cases) -> tuple:
+    """Run a rewritten reference answer against the question's own test cases.
+
+    Returns (ok, detail). This is the gate a compile check cannot stand in for:
+    a syntactically perfect wrong answer marks every future learner wrong on
+    that question, and nothing downstream would notice.
+
+    Called in TWO places on purpose. The runner calls it so a failure can be fed
+    back into a second attempt while the session is still cheap to redo, and
+    apply_repair calls it again because the completion endpoint accepts a
+    rewrite from anything holding an allowlisted token — including a runner that
+    skipped verification, or a hand-rolled curl.
+
+    A question with no test cases is unverifiable here (stdout-graded drills), so
+    it passes and the compile check in validated_changes is what stands.
+    """
+    if not test_cases:
+        return True, "no test cases to verify against"
+
+    from app.code_runner import code_uses_torch, preload_torch, run_function_tests
+
+    # The API preloads torch at startup so the fork runner can grade in-process;
+    # a script does not, and without it the harness declines every torch drill
+    # with a "open this in Colab" message that reads exactly like a failing
+    # test. The bank is 100% torch, so skipping this rejects everything.
+    if code_uses_torch(answer_code) and not preload_torch():
+        return False, "torch is unavailable here — cannot verify a torch answer"
+
+    try:
+        results, execution = run_function_tests(answer_code, list(test_cases))
+    except Exception as exc:  # a harness crash is a failed verification, not a pass
+        return False, f"grading harness raised: {exc}"
+
+    if getattr(execution, "error", ""):
+        return False, f"answer failed to run: {str(execution.error)[:300]}"
+    failures = [r for r in results if not r.passed]
+    if failures:
+        first = failures[0]
+        return False, (
+            f"{len(failures)}/{len(results)} test cases failed; "
+            f"first expected {first.expected!r} got {first.actual!r} {first.error[:200]}"
+        )
+    return True, f"{len(results)}/{len(results)} test cases passed"
+
+
+def enqueue_repair(
     question_id: int,
     tag: str,
     note: str,
     correct: Optional[bool],
     user_email: str,
 ) -> Optional[dict]:
-    """Repair one flagged question and write the result into the live bank.
-
-    Runs as a background task. Every failure path is a log line and a return —
-    a feedback submission must never surface an error to the learner because
-    the model was unavailable or unhelpful.
-    """
-    if tag not in _ACTIONABLE_TAGS:
+    """Queue one flagged question for the local runner. None if not actionable."""
+    if not is_actionable_tag(tag):
         return None
+    return feedback_repair_queue.enqueue(
+        question_id=question_id,
+        tag=tag,
+        note=note,
+        correct=correct,
+        user_email=user_email,
+    )
 
+
+def apply_repair(
+    question_id: int,
+    repair: Dict[str, object],
+    *,
+    tag: str,
+    trigger: Dict[str, object],
+    model: str,
+    session_id: str = "",
+) -> Optional[dict]:
+    """Validate a repair against the LIVE question and write it into the bank.
+
+    Returns the revision entry, or None when nothing survived the gates — which
+    is a normal outcome, not an error: a `no_change` verdict and a rewrite that
+    turned out identical both land here.
+    """
     question = questions.get_question_by_id(question_id)
     if question is None:
         logger.warning("feedback_ai: question %s not in the bank — skipping", question_id)
         return None
 
-    before = {
-        "question_text": question.question_text or "",
-        "starter_code": question.starter_code or "",
-        "answer_code": question.answer_code or "",
-    }
+    snapshot = question_snapshot(question)
+    changes = validated_changes(repair, snapshot, tag)
 
-    try:
-        repair = _call_model(_build_prompt(question, tag, note, correct))
-    except Exception as exc:  # background task: never let this escape
-        logger.exception("feedback_ai: unexpected failure for q=%s: %s", question_id, exc)
-        return None
+    verification = ""
+    if "answer_code" in changes:
+        ok, verification = verify_answer_code(changes["answer_code"], snapshot.get("test_cases"))
+        if not ok:
+            # Drop the answer, keep any prose fix. A rewritten prompt is still
+            # worth having; a reference answer that fails the question's own
+            # tests is the one change that can never be worth having.
+            logger.warning(
+                "feedback_ai: rejected answer_code for q=%s — %s", question_id, verification,
+            )
+            changes.pop("answer_code")
 
-    if repair is None:
-        return None
-    if repair.verdict != "rewrite":
-        logger.info("feedback_ai: no_change for q=%s — %s", question_id, repair.rationale)
-        return None
-
-    changes = _validated_changes(repair, question, tag)
     if not changes:
-        logger.info("feedback_ai: nothing applicable for q=%s — %s", question_id, repair.rationale)
         return None
 
     entry = feedback_ai_layer.apply_override(
         question_id,
         changes,
-        before={field: before[field] for field in changes},
+        before={field: str(snapshot[field]) for field in changes},
         trigger={
-            "user_email": user_email,
-            "tag": tag,
-            "note": note,
-            "correct": correct,
-            "flagged_at": datetime.now(timezone.utc).isoformat(),
+            **trigger,
+            "applied_at": datetime.now(timezone.utc).isoformat(),
+            # Persisted with the revision, not bolted onto the return value —
+            # the audit log is what someone reads months later to find the
+            # conversation that produced a question they are staring at.
+            "session_id": session_id,
+            "verification": verification,
         },
-        model=MODEL,
-        rationale=repair.rationale,
+        model=model,
+        rationale=str(repair.get("rationale", "")),
     )
+    if session_id:
+        entry["session_id"] = session_id
 
     # Rebuild the in-memory bank so the repair is live for the next draw
     # instead of waiting for a restart.

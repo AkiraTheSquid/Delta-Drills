@@ -211,11 +211,12 @@ problemFlagButtons.forEach((btn) => {
         practiceProgress.lastResultCorrect,
       );
       if (problemFeedbackStatus) {
-        // Say which of the two things happened. A queued repair takes a model
-        // call to come back, so "logged ✓" alone would read as "nothing else
-        // is going to happen" right when something is.
+        // Say which of the two things happened. A queued repair is picked up by
+        // the local runner, which may not be running this minute, so "logged ✓"
+        // alone would read as "nothing else is going to happen" right when
+        // something is — and promising a rewrite NOW would overstate it.
         problemFeedbackStatus.textContent = result && result.improvementQueued
-          ? "logged ✓ — rewriting this problem"
+          ? "logged ✓ — queued for rewrite"
           : "logged ✓";
         problemFeedbackStatus.classList.remove("hidden");
       }

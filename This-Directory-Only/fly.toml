@@ -7,9 +7,10 @@ primary_region = "sjc"
 [env]
   STORAGE_DIR = "/data/storage"
   USER_DATA_DIR = "/data/user_data"
-  # AI question repairs written at runtime by the feedback loop. On the volume,
-  # not in the image — the image's chatgpt/ tree is rebuilt on every deploy, so
-  # keeping them there would silently revert every fix since the last deploy.
+  # The repair queue, the AI override layer and the revision log, all written at
+  # runtime by the feedback loop. On the volume, not in the image — the image's
+  # chatgpt/ tree is rebuilt on every deploy, so keeping them there would drop
+  # every queued flag and silently revert every fix since the last deploy.
   DELTA_FEEDBACK_AI_DIR = "/data/ai_feedback"
 
 [http_service]

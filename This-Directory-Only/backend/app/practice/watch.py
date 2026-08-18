@@ -34,6 +34,9 @@ EXPECTED_PATHS = {
     '/api/practice/problem-feedback',
     '/api/practice/problem-feedback/revisions',
     '/api/practice/problem-feedback/rollback',
+    '/api/practice/problem-feedback/repair-queue',
+    '/api/practice/problem-feedback/repair-queue/claim',
+    '/api/practice/problem-feedback/repair-queue/complete',
     '/api/practice/visual-debug',
     '/api/practice/subtopics',
     '/api/practice/weights',
@@ -370,54 +373,186 @@ def check_ai_repairs_are_gated():
         return
 
     from app.practice.feedback_ai_improver import (
-        QuestionRepair, _validated_changes, is_actionable_tag,
+        is_actionable_tag, validated_changes,
     )
-    from app.questions import Question
 
-    q = Question(
-        id=-1, topic="T", subtopic="T: S", question_text="original prompt",
-        answer_code="print(1)", difficulty_score=20, difficulty_label="easy",
-        expected_output="1", starter_code="def solve():\n    pass",
-    )
+    snapshot = {
+        "id": -1, "question_text": "original prompt",
+        "starter_code": "def solve():\n    pass", "answer_code": "print(1)",
+    }
 
     def repair(**kw):
         base = dict(verdict="rewrite", rationale="r", question_text="",
                     starter_code="", answer_code="")
         base.update(kw)
-        return QuestionRepair(**base)
+        return base
 
     assert not is_actionable_tag("good"), (
         "'good' is praise, not a defect report — rewriting on it churns "
         "questions that are already working"
     )
 
-    assert "answer_code" not in _validated_changes(
-        repair(answer_code="print(2)"), q, "unclear"), (
+    assert "answer_code" not in validated_changes(
+        repair(answer_code="print(2)"), snapshot, "unclear"), (
         "answer_code is reachable without a 'broken' flag — the reference "
         "answer decides whether every future attempt is graded right or wrong"
     )
-    assert "answer_code" in _validated_changes(
-        repair(answer_code="print(2)"), q, "broken"), (
+    assert "answer_code" in validated_changes(
+        repair(answer_code="print(2)"), snapshot, "broken"), (
         "a 'broken' flag can no longer repair the reference answer"
     )
 
     for field in ("starter_code", "answer_code"):
-        assert field not in _validated_changes(
-            repair(**{field: "def solve(:\n  bad"}), q, "broken"), (
+        assert field not in validated_changes(
+            repair(**{field: "def solve(:\n  bad"}), snapshot, "broken"), (
             f"{field} is written without compiling — a SyntaxError here breaks "
             f"the grader for that question on every future attempt"
         )
 
-    assert not _validated_changes(repair(question_text="original prompt"), q, "unclear"), (
+    assert not validated_changes(repair(question_text="original prompt"), snapshot, "unclear"), (
         "an identical rewrite is still applied — that writes a revision-log "
         "entry claiming a change that never happened"
     )
-    assert not _validated_changes(repair(), q, "broken"), (
+    assert not validated_changes(repair(), snapshot, "broken"), (
         "empty fields count as a rewrite — the model uses '' to mean 'leave "
         "this alone', so this would blank the question"
     )
-    assert _validated_changes(repair(question_text="clearer prompt"), q, "unclear") == {
+    assert not validated_changes(
+        repair(verdict="no_change", question_text="clearer prompt"), snapshot, "unclear"), (
+        "a no_change verdict still writes its fields — the runner and the "
+        "endpoint both pass the whole payload through, so the verdict is the "
+        "only thing saying 'I decided not to'"
+    )
+    assert validated_changes(repair(question_text="clearer prompt"), snapshot, "unclear") == {
         "question_text": "clearer prompt"}, "a genuine prompt fix no longer applies"
+
+    # A compiling answer can still be WRONG, and a wrong reference answer marks
+    # every future learner wrong. The runner checks this, but the completion
+    # endpoint takes a rewrite from anything with an allowlisted token, so the
+    # server has to check it too.
+    from app.practice.feedback_ai_improver import verify_answer_code
+
+    cases = [{
+        "setup_code": "z = [[1, 9, 3], [7, 2, 5]]",
+        "call": "solve(z)",
+        "expected_expr": "[1, 0]",
+    }]
+    ok, _ = verify_answer_code(
+        "def solve(z):\n    return [max(range(len(r)), key=lambda i: r[i]) for r in z]\n", cases)
+    assert ok, "verify_answer_code rejects a correct answer — every repair would be dropped"
+    ok, detail = verify_answer_code("def solve(z):\n    return [0 for _ in z]\n", cases)
+    assert not ok, (
+        "verify_answer_code accepts an answer that fails the question's own "
+        "test cases — that is the one gate a compile check cannot stand in for"
+    )
+    ok, _ = verify_answer_code("def solve(z):\n    return z\n", [])
+    assert ok, "a question with no test cases must stay repairable"
+
+
+def check_repair_runs_off_the_local_cli():
+    """The repair loop must not grow a server-side model credential again.
+
+    The whole point of the redesign is that the model runs on Seth's machine,
+    under his login, in a read-only sandbox — a server that can call a model
+    directly is a server that can rewrite the bank with nobody watching. Two
+    things pin that: no API-key path in the backend, and a sandbox that denies
+    by default rather than by list.
+    """
+    improver = os.path.join(THIS, 'feedback_ai_improver.py')
+    with open(improver, encoding='utf-8') as fh:
+        source = fh.read()
+    for needle in ('import anthropic', 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN'):
+        assert needle not in source, (
+            f"{needle} is back in feedback_ai_improver.py — repairs are supposed "
+            "to run through the local claude CLI, not a server-side credential"
+        )
+
+    guard = os.path.abspath(os.path.join(
+        THIS, '..', '..', '..', '..', 'ops', 'question_repair', 'sandbox_guard.py'))
+    assert os.path.exists(guard), (
+        f"the repair sandbox hook is missing ({guard}) — without it the local "
+        "session runs with --dangerously-skip-permissions and nothing else"
+    )
+    with open(guard, encoding='utf-8') as fh:
+        guard_source = fh.read()
+    tree = ast.parse(guard_source)
+    allowed = None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign) and any(
+            isinstance(t, ast.Name) and t.id == 'ALLOWED_TOOLS' for t in node.targets
+        ):
+            allowed = {c.value for c in ast.walk(node.value) if isinstance(c, ast.Constant)}
+    assert allowed is not None, "sandbox_guard.py no longer defines ALLOWED_TOOLS"
+    for writer in ('Write', 'Edit', 'NotebookEdit', 'Bash', 'Task', 'WebFetch'):
+        assert writer not in allowed, (
+            f"the repair sandbox now allows {writer} — that session runs with "
+            "permissions bypassed, so this is the only thing stopping it"
+        )
+
+
+def check_repair_queue_never_loses_an_open_job():
+    """Pruning the queue must not drop work that is still waiting.
+
+    The queue file is rewritten whole on every status change, which makes an
+    over-eager prune a silent way to lose a learner's report — there is no
+    second copy of a pending job anywhere.
+    """
+    if not _fastapi_available():
+        return
+    import tempfile
+
+    from app import feedback_repair_queue as q
+
+    with tempfile.TemporaryDirectory() as tmp:
+        previous = os.environ.get('DELTA_FEEDBACK_AI_DIR')
+        os.environ['DELTA_FEEDBACK_AI_DIR'] = tmp
+        try:
+            for i in range(5):
+                job = q.enqueue(question_id=100 + i, tag='unclear', note='n',
+                                correct=None, user_email='t@example.com')
+                if i < 3:
+                    q.finish(job['job_id'], status=q.DONE)
+            q.prune(keep=1)
+            statuses = [j['status'] for j in q.load_jobs()]
+            assert statuses.count(q.PENDING) == 2, (
+                "prune() dropped a pending repair job — an open job is the only "
+                f"record that a learner flagged that question (left: {statuses})"
+            )
+
+            first = q.enqueue(question_id=777, tag='broken', note='first',
+                              correct=None, user_email='t@example.com')
+            second = q.enqueue(question_id=777, tag='broken', note='second',
+                               correct=None, user_email='t@example.com')
+            open_777 = [j for j in q.load_jobs()
+                        if j['question_id'] == 777 and j['status'] in q.OPEN_STATUSES]
+            assert len(open_777) == 1 and open_777[0]['job_id'] == second['job_id'], (
+                "re-flagging a question leaves two open jobs — two runners would "
+                "each repair it and each overwrite the other's override"
+            )
+            assert first['job_id'] != second['job_id']
+
+            # A claim is exclusive, or two runners repair the same question and
+            # each silently overwrites the other's override. Read-then-write
+            # would let both of these succeed.
+            assert q.claim(second['job_id'], runner='a') is not None
+            assert q.claim(second['job_id'], runner='b') is None, (
+                "a second runner can claim a job that is already RUNNING — both "
+                "would repair the same question and the later write wins silently"
+            )
+
+            # A flag arriving mid-repair must not delete the job under the
+            # runner holding it; the runner closes by id and would 404.
+            q.enqueue(question_id=777, tag='broken', note='third',
+                      correct=None, user_email='t@example.com')
+            assert q.get_job(second['job_id'])['status'] == q.RUNNING, (
+                "re-flagging deleted the job a runner is mid-session on — that "
+                "throws away a repair that was already paid for"
+            )
+        finally:
+            if previous is None:
+                os.environ.pop('DELTA_FEEDBACK_AI_DIR', None)
+            else:
+                os.environ['DELTA_FEEDBACK_AI_DIR'] = previous
 
 
 # ── Run all checks ────────────────────────────
@@ -425,7 +560,9 @@ if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_attempts_are_finalized, check_finalize_actually_moves_state,
               check_felt_difficulty_reaches_the_next_question,
-              check_ai_repairs_are_gated]
+              check_ai_repairs_are_gated,
+              check_repair_runs_off_the_local_cli,
+              check_repair_queue_never_loses_an_open_job]
     for fn in checks:
         try:
             fn()

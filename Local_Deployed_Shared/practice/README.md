@@ -103,6 +103,12 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-18 (**the flag row stops over-promising**): `api.js`, `events.js`. The
+  repair behind `improvement_queued` moved off the server and onto Seth's local
+  `claude` CLI, which may not be running when the flag is sent, so "rewriting
+  this problem" claimed something that was not happening yet. Now "logged ✓ —
+  queued for rewrite". Same signal, honest tense: the flag reliably reaches a
+  queue, and the rewrite happens whenever the runner next drains it.
 - 2026-08-14 (**you can now ask a follow-up**): new `tutor.js` + `../styles/practice/tutor.css`; `dom.js`, `ui.js`, `events.js`, `ai.js`, `watch.py`, `../index.html`, `../infotips-registry.js`, `../styles/practice/colab-edition.css`. The AI Explanation was a monologue: one generated walkthrough, no way to say "wait, why dim=0". The tutor is the reply channel — a chat thread under it, opened on the same graded-attempt signal, backed by `POST /api/practice/ai-tutor` (gpt-4o). Two decisions worth keeping: the problem context (question, the learner's code, its output, the canonical solution, the explanation already on screen) rides in the SYSTEM message rather than as fabricated opening turns, so the visible thread is exactly what was said and the model is never tempted to answer as though the learner asked for the walkthrough again; and the thread is wiped by `ui.js` on every render, because a follow-up about the previous drill asked against the current one's context is worse than no answer. A failed turn is shown but NOT pushed into `thread` — an error bubble that becomes conversation history teaches the model to apologize on the next turn. Hidden on the Colab edition alongside the explanation, for the reason already written there: no submission it saw, and no room in a 400px rail.
 - 2026-08-13 (**the flag row now says what it started**): `api.js`, `events.js`.
   `reportProblem` used to throw the response body away and the confirmation was
