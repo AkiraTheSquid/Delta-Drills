@@ -20,6 +20,7 @@ REQUIRED_JS = [
     "bars.js", "difficulty-bar.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
+    "kernel.js",  # persistent per-learner backend session behind notebook.js
 ]
 REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [
@@ -871,6 +872,66 @@ def check_the_fifth_rung_is_shown_not_stored():
         )
 
 
+# ── Notebook kernel ───────────────────────────
+# The stateful path is the point of the default edition (cells share a
+# namespace the way Colab's do), and its fallback is what keeps guests and an
+# unreachable backend working. Both halves have to stay wired.
+def check_the_notebook_kernel_has_a_fallback():
+    notebook = _read(os.path.join(HERE, "notebook.js"))
+    kernel = _read(os.path.join(HERE, "kernel.js"))
+    index = _read(os.path.join(SHARED, "index.html"))
+
+    assert "window.DeltaKernel" in kernel, "kernel.js no longer exports window.DeltaKernel"
+    for path in ("/api/practice/kernel/exec", "/api/practice/kernel/reset"):
+        assert path in kernel, f"kernel.js lost the {path} endpoint"
+
+    # Load order: notebook.js reads window.DeltaKernel, so the client has to be
+    # on the page first. Both are classic scripts, so this is source order.
+    k_at, n_at = index.find("practice/kernel.js"), index.find("practice/notebook.js")
+    assert k_at != -1, "index.html does not load practice/kernel.js"
+    assert n_at != -1, "index.html does not load practice/notebook.js"
+    assert k_at < n_at, "practice/kernel.js must load before practice/notebook.js"
+
+    # A kernel that cannot be had must degrade to the prefix-replay runner, not
+    # to a dead Run button. Losing either half breaks a whole class of learner:
+    # the first breaks guests, the second breaks everyone else's state.
+    assert "_runOnKernel" in notebook, "notebook.js lost its kernel path"
+    assert "DeltaRunner.runSnippet" in notebook, (
+        "notebook.js lost the stateless fallback — guests and an unreachable "
+        "backend would have no way to run a cell"
+    )
+    assert "_programUpTo" in notebook, (
+        "notebook.js lost the prefix replay — a kernel that was evicted between "
+        "two clicks would answer the next cell with a NameError"
+    )
+    # The server installs the cell harness only on a kernel it had to create,
+    # so the client has to keep sending it with every cell.
+    assert "bootstrap: HARNESS" in notebook, (
+        "notebook.js no longer sends the cell harness as `bootstrap` — a "
+        "re-created kernel would have no _delta_cell to call"
+    )
+
+    # The replay ENDS with the clicked cell, so the clicked cell must not have
+    # already run on the way to learning the kernel was fresh. A cell that
+    # appends to a list is not the same cell run twice.
+    assert "skipOnFresh: index > 0" in notebook, (
+        "notebook.js no longer asks the server to skip a cell it is about to "
+        "replay — every non-first cell runs twice on a fresh kernel"
+    )
+    assert "skip_on_fresh" in kernel, (
+        "kernel.js drops skipOnFresh instead of sending it — the server cannot "
+        "know not to run a cell the client is about to replay"
+    )
+
+    # Failure is the backend's `success` flag. stderr is not it in either
+    # direction: a DeprecationWarning is not a failure, and `sys.exit(1)`
+    # prints nothing at all.
+    assert "reply.ok === false" in notebook, (
+        "notebook.js is inferring failure from stderr again — a warning would "
+        "paint a passing cell red, and a silent exit would read as success"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -881,7 +942,8 @@ if __name__ == '__main__':
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,
               check_the_gate_teaches_one_concept_then_drills_it,
-              check_the_fifth_rung_is_shown_not_stored]
+              check_the_fifth_rung_is_shown_not_stored,
+              check_the_notebook_kernel_has_a_fallback]
     for fn in checks:
         try:
             fn()

@@ -35,10 +35,28 @@
 
    HOW STATE WORKS ACROSS CELLS
 
-   Neither runtime keeps a session between calls: the backend runs each request
-   in a fresh fork, and the Pyodide preamble resets stdout each time. So a cell
-   that says `flat = t.arange(9)` and a later one that says `flat.reshape(3, 3)`
-   would fail on its own.
+   There are two answers, and which one a learner gets depends on whether the
+   backend will give them a kernel.
+
+   WITH A KERNEL (signed in). `DeltaKernel` holds one live Python process per
+   learner on the backend, so cells share a namespace exactly as they do in
+   Colab: run cell 6, run cell 8, and what cell 6 bound is still bound. Only
+   the clicked cell is sent. That is what makes a long notebook usable at all —
+   the fallback below costs O(cells) per click, which a six-cell lesson can
+   afford and a 656-cell chapter cannot.
+
+   The kernel can vanish between two clicks: it idles out, it is evicted for
+   another learner, the box is redeployed. The server says so with `fresh` on
+   the reply, and the answer to a fresh kernel is not to tell the learner their
+   variables are gone — it is to replay the cells above this one into it, once,
+   and hand back the clicked cell's own output. Rebuilding costs a round trip
+   the learner did not ask for; being told to click nine buttons again costs
+   more.
+
+   WITHOUT ONE (guest, older backend, backend unreachable). Neither remaining
+   runtime keeps a session: `/run-code` forks per request and the Pyodide
+   preamble resets stdout each time. So a cell that says `flat = t.arange(9)`
+   and a later one that says `flat.reshape(3, 3)` would fail on its own.
 
    Running a cell therefore executes every cell above it as well, and shows
    only the clicked cell's own output — the prefix is a way of rebuilding
@@ -46,9 +64,10 @@
    ordinary notebook semantics on a stateless runner. The cost is honest and
    worth naming: editing an early cell changes what the later ones see, exactly
    as it would in Jupyter, and a slow early cell is paid for again by every
-   cell below it. The alternative — a persistent per-learner interpreter — is a
-   server-side session to build, expire and secure, which is not worth it for
-   optional experimentation.
+   cell below it.
+
+   Both paths run the SAME cells through the SAME harness, so the two differ in
+   how state got there and in nothing else.
 
    WHY THE CELLS ARE EXECUTED THROUGH A HARNESS
 
@@ -120,6 +139,10 @@ const LessonNotebook = (() => {
      so the coupling fails loudly instead of silently reporting every quiet
      cell as an ordinary empty run. */
   const NO_OUTPUT = "✓ Ran successfully (no printed output)";
+  // A cell that stopped the session without raising — `sys.exit(1)` is the one
+  // that reaches here. It printed nothing, so there is nothing to show but the
+  // fact that it did not finish.
+  const SILENT_FAILURE = "✗ The cell stopped early (no error message)";
 
   /* Longest repr shown per name in the fallback summary. A tensor's repr runs
      to many lines, and the summary is a reminder of what the cell bound, not a
@@ -264,6 +287,77 @@ const LessonNotebook = (() => {
       )
       .join("\n");
 
+  /* The clicked cell alone, for the kernel path. Same harness call as the
+     prefix builds, so a cell behaves identically whichever path ran it. */
+  const _cellProgram = (cells, index) =>
+    HARNESS +
+    `_delta_cell(${_pyLiteral(_codeOf(cells[index]))}, ` +
+    `${_pyLiteral(`<cell ${index + 1}>`)}, True)`;
+
+  /* Which notebook the kernel is currently holding. Passed to the server so a
+     learner who moves to a different concept gets a clean namespace instead of
+     the last page's names — the cells on this page start from cell 1 either
+     way, and a leftover `a` from another lesson is a silent wrong answer. */
+  let mountContext = "";
+
+  /* Kernel output, collapsed the way `DeltaRunner.runSnippet` collapses its
+     own: one string worth showing, plus whether it failed. stderr is appended
+     rather than replacing stdout — an interrupted cell has both, and what it
+     printed before it was stopped is the context for why.
+
+     FAILURE IS `ok`, NOT "there is something on stderr". The two are not the
+     same in either direction: a cell that raises a DeprecationWarning writes to
+     stderr and succeeded, and a cell that calls `sys.exit(1)` writes nothing
+     and did not. Reading stderr alone paints the first one red and hands the
+     second one "✓ Ran successfully (no printed output)". */
+  const _kernelText = (reply) => {
+    const stdout = (reply.stdout || "").replace(/\r\n/g, "\n").trim();
+    const stderr = (reply.stderr || "").replace(/\r\n/g, "\n").trim();
+    const failed = reply.ok === false;
+    const text = [stdout, stderr].filter(Boolean).join("\n");
+    if (text) return { text, failed };
+    return { text: failed ? SILENT_FAILURE : NO_OUTPUT, failed };
+  };
+
+  /* Run one cell against the learner's live session.
+
+     Returns null when there is no kernel to be had — guest, older backend,
+     network — which is the caller's signal to take the stateless path. Null is
+     deliberately not an error: a fallback the learner never notices is the
+     whole point of keeping the prefix path alive.  */
+  const _runOnKernel = async (cells, index, onStatus) => {
+    const kernel = window.DeltaKernel;
+    if (!kernel || !kernel.available()) return null;
+    const request = { bootstrap: HARNESS, filename: "<harness>", context: mountContext };
+    // The answer to a fresh kernel is to replay cells 1..N, and that replay
+    // ENDS with the cell that was clicked. So on any cell but the first, tell
+    // the server not to run it if it had to build the kernel — otherwise the
+    // clicked cell runs twice, and a cell that appends to a list, writes a
+    // file or bumps a counter is not the same run twice.
+    let reply = await kernel.runCell({
+      ...request,
+      code: _cellProgram(cells, index),
+      skipOnFresh: index > 0,
+    });
+    if (!reply || reply.unavailable) return null;
+    if (reply.busy) {
+      return { text: "The kernel is still running a cell — wait for it to finish.", failed: true };
+    }
+    // A kernel that did not exist a moment ago has never seen the cells above
+    // this one. Replay them in one call and use THAT result, so the learner
+    // sees the output of the cell they clicked rather than a NameError.
+    if (reply.fresh && index > 0) {
+      onStatus(`restoring cells 1–${index + 1}`);
+      const rebuilt = await kernel.runCell({ ...request, code: _programUpTo(cells, index) });
+      if (!rebuilt || rebuilt.unavailable) return null;
+      if (rebuilt.busy) {
+        return { text: "The kernel is still running a cell — wait for it to finish.", failed: true };
+      }
+      reply = rebuilt;
+    }
+    return _kernelText(reply);
+  };
+
   /* Assertions that a silent run just passed.
 
      Counted from the source rather than reported by the runtime, which is a
@@ -288,7 +382,11 @@ const LessonNotebook = (() => {
 
     button.disabled = true;
     button.textContent = "Running…";
-    status.textContent = index > 0 ? `running cells 1–${index + 1}` : "";
+    // Only the stateless path pays for the cells above; with a kernel this
+    // cell is the only one that runs, and saying otherwise would be a lie the
+    // learner can time.
+    const usingKernel = !!(window.DeltaKernel && window.DeltaKernel.available());
+    status.textContent = !usingKernel && index > 0 ? `running cells 1–${index + 1}` : "";
     if (count) count.textContent = "In [*]";
     cell.classList.add("is-running");
     out.classList.remove("hidden", "is-error");
@@ -296,16 +394,23 @@ const LessonNotebook = (() => {
 
     let failed = false;
     try {
-      const result = await window.DeltaRunner.runSnippet(_programUpTo(cells, index), {
-        question: window.LessonGate?.activeQuestion || null,
-        // What the learner actually wrote, for the runner's torch sniff. The
-        // program above wraps every cell in a string literal, where an import
-        // line is invisible to a line-anchored regex.
-        source: cells.slice(0, index + 1).map(_codeOf).join("\n"),
-        onStatus: (message) => {
-          if (message) out.textContent = message;
-        },
+      let result = await _runOnKernel(cells, index, (message) => {
+        status.textContent = message;
       });
+      if (!result) {
+        // No kernel — rebuild state by re-running the prefix, as before.
+        status.textContent = index > 0 ? `running cells 1–${index + 1}` : "";
+        result = await window.DeltaRunner.runSnippet(_programUpTo(cells, index), {
+          question: window.LessonGate?.activeQuestion || null,
+          // What the learner actually wrote, for the runner's torch sniff. The
+          // program above wraps every cell in a string literal, where an import
+          // line is invisible to a line-anchored regex.
+          source: cells.slice(0, index + 1).map(_codeOf).join("\n"),
+          onStatus: (message) => {
+            if (message) out.textContent = message;
+          },
+        });
+      }
       failed = !!result.failed;
       const checks = _checkCount(_codeOf(cell));
       out.textContent =
@@ -354,9 +459,14 @@ const LessonNotebook = (() => {
      markdown renderer in the app: the lesson body, the ladder's inline example
      and the standalone viewer all keep producing the same `<pre><code>`, and
      this decides which of those become interactive. */
-  const mount = (host) => {
+  const mount = (host, context = "") => {
     if (!host || !window.DeltaRunner) return 0;
     runSeq = 0;
+    // Identifies this page's namespace to the kernel. Mounting a different
+    // page means a different context, which the server answers by restarting
+    // the session — the cells below start from cell 1 regardless, so a name
+    // surviving from the previous concept could only mislead.
+    mountContext = String(context || "");
     const blocks = Array.from(host.querySelectorAll(".nb-scope pre > code")).filter(
       (node) => !node.closest(".nb-cell") && _isRunnable(node.parentElement),
     );

@@ -23,6 +23,9 @@ Endpoints:
   GET  /api/practice/subtopics
   PUT  /api/practice/weights
   POST /api/practice/run-code
+  POST /api/practice/kernel/exec
+  POST /api/practice/kernel/reset
+  GET  /api/practice/kernel/status
   POST /api/practice/ai-explanation
   POST /api/practice/ai-judge
 """
@@ -33,6 +36,7 @@ from app.practice.ai_router import router as ai_router
 from app.practice.arena_rating_router import router as arena_rating_router
 from app.practice.diagnostic_router import router as diagnostic_router
 from app.practice.feedback_router import router as feedback_router
+from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
 from app.practice.questions_router import router as questions_router
@@ -47,5 +51,6 @@ router.include_router(ai_router)
 router.include_router(arena_rating_router)
 router.include_router(problem_feedback_router)
 router.include_router(lessons_router)
+router.include_router(kernel_router)
 
 __all__ = ["router"]

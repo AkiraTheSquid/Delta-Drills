@@ -47,6 +47,18 @@ let useLocalPyodide =
 
 Today, einops-flagged questions are forced to Pyodide even when they also need torch — so these will throw `NameError: name 't' is not defined`. Routing logic is the canonical place to fix this; see `runner.js:147`.
 
+## Lesson notebook cells: a third runtime
+
+This document describes the PRACTICE editor. Lesson-page cells (`practice/notebook.js`) have
+their own dispatch and, for signed-in learners, their own runtime: `practice/kernel.js` sends
+each cell to `/api/practice/kernel/exec`, a forked Python process the backend keeps ALIVE
+between cells. Nothing in the tables above applies to it — it has real torch, no Pyodide
+preamble, and no injected fixtures; a name exists there because a cell on that page bound it.
+
+The kernel is best-effort. Guests, an older backend (404) and a full box all fall back to
+`runner.runSnippet` re-running cells 1..N to rebuild state, which is what the notebook did
+everywhere before 2026-08-19. Both paths must print the same thing for the same page.
+
 ## Image rendering fallback
 
 When Pyodide rendering of the canonical-solution image fails, `practice/visuals.js` falls back to displaying `numbers_stacked.png` (a static reference of the source `arr` data). Candidate paths are checked in order; first hit wins. See `getArenaNumbersPngCandidates()`.

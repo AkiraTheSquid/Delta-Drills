@@ -59,6 +59,7 @@ def check_public_api():
         '/jobs/{job_id}/chapters',
         '/jobs/{job_id}/chapters/{chapter_id}/download',
         '/api/practice/next-question',
+        '/api/practice/kernel/exec',
     }
     missing = expected - paths
     assert not missing, f"FastAPI app is missing endpoints: {sorted(missing)}"
@@ -202,6 +203,86 @@ def check_a_rung_reports_the_support_it_promises():
             f"stage {stage!r} promises no scaffold and must not report one missing"
 
 
+def check_a_notebook_kernel_cannot_read_the_server():
+    """A kernel outlives the cell that started it — so its fence must hold.
+
+    `code_runner`'s grading child re-hardens itself on every run and then
+    exits. A kernel hardens ONCE and then serves cells for twenty minutes, so
+    every measure below is load-bearing for that whole window: a learner who
+    can `import app.config` from a lesson cell reads the box's secrets.
+    """
+    path = os.path.join(THIS, 'kernel_runner.py')
+    assert os.path.exists(path), "app/kernel_runner.py is missing"
+    with open(path) as f:
+        src = f.read()
+
+    for measure, why in (
+        ('os.setsid()', "the kernel has no process group of its own — a runaway "
+                        "cell's children would survive the kill"),
+        ('os.environ.clear()', "the kernel inherits the API process's environment, "
+                               "including DATABASE_URL and the OpenAI key"),
+        ('sys.modules["app"] = None', "a cell can `import app.config` and read the "
+                                      "box's secrets"),
+    ):
+        assert measure in src, f"kernel_runner.py dropped {measure} — {why}"
+
+    # The kernel is authenticated and its session key is derived from the
+    # signed-in user. A client-supplied id would let one learner attach to
+    # another learner's live namespace.
+    router_path = os.path.join(THIS, 'practice', 'kernel_router.py')
+    with open(router_path) as f:
+        router_src = f.read()
+    assert 'Depends(get_current_user)' in router_src, \
+        "kernel_router.py no longer authenticates — anonymous callers could reserve kernels"
+    assert 'f"u{user.id}"' in router_src, \
+        "kernel_router.py session id is no longer derived from the signed-in user"
+
+    # Caps exist because the box is 2gb and torch already lives in it.
+    for cap in ('MAX_KERNELS', 'IDLE_SECONDS', 'MAX_RSS_MB'):
+        assert cap in src, f"kernel_runner.py lost its {cap} cap"
+
+    # The registry's RSS check runs between requests and skips a kernel that is
+    # mid-cell, so the only thing standing between one `t.ones(10**10)` and the
+    # box's OOM killer is the kernel watching its OWN memory.
+    assert '_memory_watchdog' in src, \
+        "kernel_runner.py dropped the in-kernel memory watchdog — a running cell " \
+        "can now allocate past MAX_RSS_MB and take the API down with it"
+    assert 'interrupt_main()' in src, \
+        "the memory watchdog kills without asking first — a Python allocation loop " \
+        "should unwind and leave the learner's session alive"
+
+    # Status is the caller's own kernel. Signed in is not privileged: the
+    # unscoped listing hands any learner every other learner's session id and
+    # the lesson they are on.
+    assert 'kernel_status(_session_id(user))' in router_src, \
+        "kernel_router.py serves the whole registry to any signed-in learner"
+
+
+def check_a_fresh_kernel_does_not_run_the_clicked_cell_twice():
+    """`fresh` means the client is about to replay cells 1..N — which ENDS with
+    the cell that was clicked. If the server ran that cell on the way to
+    reporting `fresh`, it runs twice, and a cell that appends to a list, writes
+    a file or bumps a counter is not the same run twice. `skip_on_fresh` is the
+    client saying "if you had to build it, run nothing and just tell me"."""
+    with open(os.path.join(THIS, 'kernel_runner.py')) as f:
+        src = f.read()
+    with open(os.path.join(THIS, 'practice', 'kernel_router.py')) as f:
+        router_src = f.read()
+    assert 'skip_on_fresh' in src, \
+        "kernel_runner.run_cell lost skip_on_fresh — a replayed prefix now double-runs its last cell"
+    assert 'if fresh and skip_on_fresh:' in src, \
+        "skip_on_fresh is accepted but never honoured"
+    assert 'skip_on_fresh=payload.skip_on_fresh' in router_src, \
+        "kernel_router.py accepts skip_on_fresh but does not pass it through"
+
+    # The bootstrap must still be installed on that skipped call, or the kernel
+    # the client replays into has no `_delta_cell` and every cell NameErrors.
+    boot = src.index('if fresh and bootstrap.strip():')
+    skip = src.index('if fresh and skip_on_fresh:')
+    assert boot < skip, \
+        "the fresh-kernel shortcut returns before the harness is installed"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [
@@ -210,6 +291,8 @@ if __name__ == '__main__':
         check_invariants,
         check_a_kp_is_taught_one_concept_at_a_time,
         check_a_rung_reports_the_support_it_promises,
+        check_a_notebook_kernel_cannot_read_the_server,
+        check_a_fresh_kernel_does_not_run_the_clicked_cell_twice,
     ]
     for fn in checks:
         try:

@@ -555,7 +555,10 @@ const LessonGate = (() => {
             window.DDColab.openNotebook(colabHref);
           }
         } else if (window.LessonNotebook) {
-          window.LessonNotebook.mount(questionText);
+          // The KP + concept index is the kernel's session key: cells share a
+          // namespace within a page, and moving to the next concept starts a
+          // clean one.
+          window.LessonNotebook.mount(questionText, `${page.kp.kc}#${page.segIndex}`);
           _redrawWhenColabIndexLands(page);
         }
         questionText.scrollTop = 0;

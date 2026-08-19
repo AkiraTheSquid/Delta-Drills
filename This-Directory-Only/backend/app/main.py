@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.auth_router import router as auth_router
 from app.chapters_router import router as chapters_router
 from app.jobs_router import router as jobs_router
+from app.lifecycle import register_lifecycle
 from app.practice import router as practice_router
 
 logging.basicConfig(level=logging.INFO)
@@ -16,28 +17,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="PDF Split Tool Backend", version="0.1.0")
 
 
-@app.on_event("startup")
-def _ensure_schema() -> None:
-    """Create tables if they don't exist (idempotent). Needed when pointing at a
-    fresh Postgres (e.g. Neon) that wasn't provisioned out-of-band like the old
-    Supabase DB. Safe no-op when the schema already exists."""
-    try:
-        from app.db import engine, Base
-        import app.models  # noqa: F401 — register table metadata
-        Base.metadata.create_all(bind=engine)
-        logger.info("Schema ensured (create_all) on %s", engine.url.render_as_string(hide_password=True))
-    except Exception as exc:  # never block startup on this
-        logger.warning("Schema bootstrap skipped: %s", exc)
-
-
-@app.on_event("startup")
-def _preload_torch_runner() -> None:
-    """Preimport torch so the fork runner grades torch drills in-process
-    (milliseconds per run instead of a doomed cold import). Non-fatal when
-    torch is absent — those drills fall back to Colab routing."""
-    from app.code_runner import preload_torch
-    preload_torch()
-
+register_lifecycle(app)
 
 app.include_router(practice_router)
 app.include_router(auth_router)
