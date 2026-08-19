@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=4" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
   <link rel="stylesheet" href="styles/practice/concept-topbar.css?v=5" />
   <link rel="stylesheet" href="styles/practice/difficulty-bar.css?v=1" />
@@ -99,6 +100,8 @@
       <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Course content?">i</button>
       <button class="tab auth-only has-info" data-tab="practice" type="button">Practice</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.practice" data-tab="practice" type="button" aria-expanded="false" aria-label="What is Practice?">i</button>
+      <button class="tab auth-only has-info" data-tab="notebooks" type="button">Notebooks</button>
+      <button class="dd-info tab-info auth-only" data-dd-info="tab.notebooks" data-tab="notebooks" type="button" aria-expanded="false" aria-label="What is Notebooks?">i</button>
       <button class="tab auth-only has-info" data-tab="targeted-practice" type="button">Targeted Practice</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.targeted-practice" data-tab="targeted-practice" type="button" aria-expanded="false" aria-label="What is Targeted Practice?">i</button>
     </nav>
@@ -648,6 +651,14 @@
     </div>
   </main>
 
+  <!-- One lesson as a notebook. The whole surface is built by
+       practice/notebook-view.js; this is only the mount point, because the
+       page is 656 cells on the largest lesson and none of them are authored
+       here. -->
+  <main class="page hidden" id="page-notebooks">
+    <div class="notebooks-container" id="notebooks-host"></div>
+  </main>
+
   <main class="page hidden session-idle" id="page-practice">
     <div class="practice-container">
       <!-- Resumable session setup — active timers stay strict, while Pause &
@@ -1072,6 +1083,9 @@ t.manual_seed(0)
   <script src="practice/kernel.js?v=2"></script>
   <script src="practice/notebook.js?v=6"></script>
   <script src="practice/lessons.js?v=26"></script>
+  <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
+       and after notebook.js, whose runSource is the one cell harness. -->
+  <script src="practice/notebook-view.js?v=1"></script>
   <script src="practice/ladder.js?v=5"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>

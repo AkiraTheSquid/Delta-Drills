@@ -159,7 +159,16 @@ const LessonGate = (() => {
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
       .replace(/\*([^*]+)\*/g, "<em>$1</em>");
 
-  const md = (text, { renderCode = true } = {}) => {
+  /* `headingLevels` keeps a heading's authored depth instead of flattening it.
+
+     Every caller but one wants the flattening. A lesson page is ONE concept
+     inside a panel that already has an <h2> title, so an authored `#` there is
+     a sub-heading of that title and rendering it as an <h1> would put a second
+     page title under the first. The notebook view is the exception: it renders
+     a whole lesson at once — lesson title, KP titles, segment titles, problem
+     headers — and the depths are the only thing that says which of those
+     contains which. Flattened, a 656-cell notebook is 400 identical bumps. */
+  const md = (text, { renderCode = true, headingLevels = false } = {}) => {
     if (!text) return "";
     const lines = text.split("\n");
     const out = [];
@@ -222,7 +231,8 @@ const LessonGate = (() => {
         flushPara();
         flushList();
         flushQuote();
-        out.push("<h4>" + inline(heading[2]) + "</h4>");
+        const tag = headingLevels ? `h${heading[1].length}` : "h4";
+        out.push(`<${tag}>` + inline(heading[2]) + `</${tag}>`);
         i++;
         continue;
       }

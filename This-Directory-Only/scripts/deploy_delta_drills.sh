@@ -154,6 +154,16 @@ python3 "$REPO_THIS_DIR/scripts/extract_arena_exercises.py"
 # arena-book-colab/ tree are kept on disk for archival reference.
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$REPO_DIR"
 
+# The in-app Notebooks tab reads compiled JSON, not the .ipynb files the Colab
+# edition publishes. Both are emitted by the same compiler
+# (generate_colab_notebooks.build_notebook), and both embed the question bank
+# exported above -- so a deploy that skips this ships a notebook teaching the
+# PREVIOUS bank. There is no visible symptom: the tab renders perfectly and is
+# simply out of date. Cheap (~2s, no torch), and it runs before the rsync at
+# step 4 that mirrors Local_Deployed_Shared/ into the Deployed worktree.
+info "Compiling web notebooks for the in-app Notebooks tab..."
+python3 "$REPO_DIR/scripts/compile_web_notebooks.py"
+
 # --- Step 2b: Hardened bank audit gate ---
 # Blocks the deploy on gameable grading (bare-fixture cheats passing), broken
 # starters, and degenerate expected values. See pipeline/audit_question_bank.py.

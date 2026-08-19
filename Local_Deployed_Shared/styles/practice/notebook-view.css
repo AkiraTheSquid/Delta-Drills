@@ -1,0 +1,279 @@
+/* Lesson notebook VIEW — a whole lesson as a Colab-shaped page.
+   Markup built by practice/notebook-view.js. Distinct from notebook.css, which
+   styles the cells the lesson GATE mounts inside one concept's prose. */
+
+.nbv-loading,
+.nbv-error {
+  color: var(--muted, #9aa);
+  padding: 24px 4px;
+}
+
+/* ---- the index ----------------------------------------------------------- */
+
+.nbv-intro {
+  margin: 0 auto 20px;
+  max-width: 860px;
+}
+
+.nbv-intro p {
+  color: var(--muted, #9aa);
+}
+
+.nbv-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin: 0 auto;
+  max-width: 860px;
+}
+
+.nbv-card {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.nbv-card:hover {
+  border-color: var(--accent);
+}
+
+.nbv-card-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.nbv-card-meta,
+.nbv-card-id {
+  color: var(--muted, #9aa);
+  font-size: 12px;
+}
+
+/* ---- the notebook -------------------------------------------------------- */
+
+/* Sticky, because the way out of a 656-cell page and the jump list are the two
+   controls a learner needs at the point they are lost, which is never the top. */
+.nbv-toolbar {
+  align-items: center;
+  background: var(--bg, #11141a);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 4px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.nbv-title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.nbv-toolbar button,
+.nbv-toc {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 5px 10px;
+}
+
+.nbv-toolbar button:hover {
+  border-color: var(--accent);
+}
+
+.nbv-toc {
+  max-width: 260px;
+}
+
+.nbv-banner {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 10px 0;
+  padding: 10px 12px;
+}
+
+.nbv-banner-warn {
+  background: rgba(200, 140, 0, 0.12);
+  border-color: rgba(200, 140, 0, 0.5);
+}
+
+.nbv-cells {
+  margin: 0 auto;
+  max-width: 880px;
+  padding-bottom: 120px;
+}
+
+/* ---- cells --------------------------------------------------------------- */
+
+.nbv-cell {
+  margin: 10px 0;
+}
+
+.nbv-md {
+  line-height: 1.6;
+}
+
+.nbv-md h1,
+.nbv-md h2,
+.nbv-md h3,
+.nbv-md h4 {
+  margin: 1.1em 0 0.4em;
+}
+
+.nbv-md h1 {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+/* A problem header is the thing the learner is looking for when they scroll,
+   so it is the one markdown cell that gets a box. */
+.nbv-md[data-role="problem"] {
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 2px 16px 10px;
+}
+
+.nbv-code {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  overflow: hidden;
+}
+
+.nbv-gutter {
+  align-items: center;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 6px;
+  min-width: 52px;
+}
+
+.nbv-run {
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px 8px;
+}
+
+.nbv-run:disabled {
+  cursor: progress;
+  opacity: 0.5;
+}
+
+.nbv-count {
+  color: var(--muted, #9aa);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+}
+
+.nbv-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.nbv-src {
+  margin: 0;
+  overflow-x: auto;
+  padding: 10px 12px;
+}
+
+.nbv-src code {
+  color: var(--text);
+  display: block;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.nbv-src code:focus {
+  outline: none;
+}
+
+.nbv-src code:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.nbv-out {
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0;
+  overflow-x: auto;
+  padding: 10px 12px;
+  white-space: pre-wrap;
+}
+
+.nbv-out.is-error {
+  color: #ff8a80;
+}
+
+.nbv-cell.is-running {
+  border-color: var(--accent);
+}
+
+/* The session restarted, so what this cell printed describes a namespace that
+   no longer exists. Dimmed rather than cleared: the output is still the last
+   true thing that happened, it is just no longer live. */
+.nbv-cell.is-stale .nbv-out {
+  opacity: 0.45;
+}
+
+.nbv-checker-note {
+  border-bottom: 1px solid var(--border);
+  color: var(--muted, #9aa);
+  font-size: 12.5px;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+/* ---- disclosures --------------------------------------------------------- */
+
+.nbv-hints,
+.nbv-solution {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+}
+
+.nbv-hints > summary,
+.nbv-solution > summary {
+  cursor: pointer;
+  font-size: 13px;
+  padding: 9px 12px;
+}
+
+.nbv-hints > .nbv-md {
+  padding: 0 14px 8px;
+}
+
+.nbv-solution > .nbv-code {
+  border: none;
+  border-radius: 0;
+  border-top: 1px solid var(--border);
+}
+
+.nbv-solution:not([open]) {
+  border-style: dashed;
+}

@@ -10,17 +10,17 @@ import os
 import re
 import sys
 
-from watch_common import HERE, SHARED, _read
+from watch_common import HERE, SHARED, read
 
 
 def check_invariants():
     for fname in ("README.md", "watch.py"):
-        first = _read(os.path.join(HERE, fname)).splitlines()[:1]
+        first = read(os.path.join(HERE, fname)).splitlines()[:1]
         assert first and "modulario:template" not in first[0], (
             f"{fname} still has modulario template marker on line 1"
         )
 
-    data = json.loads(_read(os.path.join(SHARED, "arena_prereqs_structured.json")))
+    data = json.loads(read(os.path.join(SHARED, "arena_prereqs_structured.json")))
     bad = [
         q["id"] for q in data
         if q.get("exercise", {}).get("task_type") == "function_implementation"
@@ -32,8 +32,8 @@ def check_invariants():
     assert id27 is not None, "missing question id 27"
     assert id27["exercise"].get("canonical_solution"), "id-27 canonical_solution still null"
 
-    runner = _read(os.path.join(HERE, "runner.js"))
-    contract = _read(os.path.join(HERE, "RUNTIME_CONTRACT.md"))
+    runner = read(os.path.join(HERE, "runner.js"))
+    contract = read(os.path.join(HERE, "RUNTIME_CONTRACT.md"))
     # Names that the doc claims are always/conditionally injected.
     for name in ("import numpy as np", "display_array_as_img", "delta_numbers.npy"):
         assert name in runner, f"runner.js no longer injects expected name: {name!r}"
@@ -50,7 +50,7 @@ def check_invariants():
     # string runner.js substitutes for empty output, so it can report the cell's
     # assertion count instead. Reword it in one file only and every quiet cell
     # silently goes back to saying "no printed output".
-    notebook = _read(os.path.join(HERE, "notebook.js"))
+    notebook = read(os.path.join(HERE, "notebook.js"))
     no_output = "✓ Ran successfully (no printed output)"
     assert no_output in runner, (
         f"runner.js no longer emits {no_output!r} — notebook.js matches on it"
@@ -69,7 +69,7 @@ def check_invariants():
     # The runnable/static split is the authoring format's own marker, produced
     # by md() in lessons.js and consumed here. If either half goes, every fence
     # becomes a cell or none of them do.
-    lessons = _read(os.path.join(HERE, "lessons.js"))
+    lessons = read(os.path.join(HERE, "lessons.js"))
     assert 'data-fence=' in lessons, (
         "lessons.js md() no longer emits data-fence — notebook.js cannot tell a "
         "runnable ```python fence from a ```python no-run one"
@@ -84,7 +84,7 @@ def check_invariants():
     # through the generated index, never by re-slugging the kc id here. A slug
     # that drifted by one character is an anchor Colab silently ignores, and the
     # failure looks like "the link does nothing" rather than like a bug.
-    index = json.loads(_read(os.path.join(SHARED, "lessons", "colab_notebooks.json")))
+    index = json.loads(read(os.path.join(SHARED, "lessons", "colab_notebooks.json")))
     kcs, kps = index.get("kcs") or {}, index.get("kps") or {}
     assert kcs and kps, "colab_notebooks.json lost its kcs/kps maps"
     assert set(kcs) == set(kps), (
@@ -97,15 +97,15 @@ def check_invariants():
     bad_anchors = sorted(kc for kc, a in kps.items() if not str(a).startswith("dd-kp-"))
     assert not bad_anchors, f"concept anchors that are not dd-kp-* cells: {bad_anchors}"
 
-    colab_mode = _read(os.path.join(HERE, "colab_mode.js"))
+    colab_mode = read(os.path.join(HERE, "colab_mode.js"))
     assert "hrefForKc" in colab_mode, (
         "colab_mode.js no longer exposes hrefForKc — the knowledge graph cannot "
         "send the tab to the section that teaches a concept"
     )
-    route = _read(os.path.join(SHARED, "concept-graph", "kc-colab-route.js"))
+    route = read(os.path.join(SHARED, "concept-graph", "kc-colab-route.js"))
     for name in ("hrefForKc", "openNotebook", "kg-colab-link"):
         assert name in route, f"kc-colab-route.js lost {name!r}"
-    graph = _read(os.path.join(SHARED, "concept-graph", "lesson-graph.js"))
+    graph = read(os.path.join(SHARED, "concept-graph", "lesson-graph.js"))
     assert "DDGraphColab" in graph, (
         "lesson-graph.js stopped calling window.DDGraphColab — selecting a "
         "concept will render its lesson and route nothing"
@@ -123,7 +123,7 @@ def check_invariants():
     # The JS half is checked on CALL syntax, not on the words: the comment above
     # this code names both functions, so a presence test would keep passing on
     # the explanation of a pairing that had been deleted.
-    api_js = _read(os.path.join(HERE, "api.js"))
+    api_js = read(os.path.join(HERE, "api.js"))
     local_eval = api_js.split("async recordLocalEval", 1)[-1].split("\n  async ", 1)[0]
     for call in ("api.submit_answer(", "api.send_feedback("):
         assert call in local_eval, (
@@ -179,7 +179,7 @@ def check_invariants():
             "follows fails with 'Feedback failed'"
         )
 
-    events_js = _read(os.path.join(HERE, "events.js"))
+    events_js = read(os.path.join(HERE, "events.js"))
     events_colab = events_js.split("_rateTorchAndAdvance = async", 1)[-1]
     assert re.search(r"record = await PracticeAPI\.recordLocalEval\(", events_colab), (
         "_rateTorchAndAdvance discards recordLocalEval's return value — the "
@@ -231,7 +231,7 @@ def check_invariants():
         "the Colab step bar no longer names what it measures — unlabelled it "
         "reads as a second copy of the concept strip's mastery bar"
     )
-    bars_js = _read(os.path.join(HERE, "bars.js"))
+    bars_js = read(os.path.join(HERE, "bars.js"))
     assert bars_js.count('"Target difficulty of "') == 1, (
         "bars.js writes the bar title from more than one place again — the "
         "scope override only reaches the copies that go through "
@@ -245,7 +245,7 @@ def check_invariants():
     # Comments are stripped first: the block above that rule still explains why
     # the accuracy bar is hidden and names the selector, so a substring test
     # over the raw file would pass on the explanation alone.
-    colab_css = re.sub(r"/\*.*?\*/", "", _read(
+    colab_css = re.sub(r"/\*.*?\*/", "", read(
         os.path.join(SHARED, "styles", "practice", "colab-edition.css")), flags=re.S)
     hidden_selectors = set()
     for selectors, body in re.findall(r"([^{}]+)\{([^{}]*)\}", colab_css):

@@ -485,7 +485,45 @@ const LessonNotebook = (() => {
     return cells.length;
   };
 
-  return { mount };
+  /* Run ONE source string as a cell in a named session.
+
+     This is the primitive `practice/notebook-view.js` is built on, and it
+     exists so the app has exactly one `_delta_cell` harness. `mount` above
+     serves a lesson PAGE: its cells are fences in rendered DOM, and a missing
+     kernel is answered by replaying the prefix. The notebook view serves a
+     whole LESSON: its cells come from a compiled JSON file, and replaying a
+     prefix of up to 656 of them is the precise thing the kernel was built to
+     abolish. The two surfaces differ in everything except what a cell IS —
+     so that, and only that, is shared.
+
+     Returns null when there is no kernel, and says nothing about it. The two
+     callers give the learner different answers to that (one falls back
+     silently, one explains why Run is off), and picking one here would put the
+     wrong sentence on one of the two screens. */
+  const runSource = async (source, { context = "", name = "<cell>", echo = true } = {}) => {
+    const kernel = window.DeltaKernel;
+    if (!kernel || !kernel.available()) return null;
+    const reply = await kernel.runCell({
+      bootstrap: HARNESS,
+      filename: "<harness>",
+      context: String(context || ""),
+      code:
+        HARNESS +
+        `_delta_cell(${_pyLiteral(source)}, ${_pyLiteral(name)}, ${echo ? "True" : "False"})`,
+    });
+    if (!reply || reply.unavailable) return null;
+    if (reply.busy) {
+      return {
+        text: "The kernel is still running a cell — wait for it to finish.",
+        failed: true,
+        busy: true,
+        fresh: false,
+      };
+    }
+    return { ..._kernelText(reply), fresh: !!reply.fresh, busy: false };
+  };
+
+  return { mount, runSource, checkCount: _checkCount };
 })();
 
 window.LessonNotebook = LessonNotebook;

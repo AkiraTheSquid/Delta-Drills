@@ -19,10 +19,20 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import watch_invariants
 import watch_lessons
+import watch_notebook
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
-    HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, _read,
+    HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
 from watch_invariants import check_invariants
+from watch_notebook import (
+    check_a_slow_run_cannot_touch_another_notebook,
+    check_a_collapsed_cell_still_knows_its_own_source,
+    check_a_problem_is_recorded_once_per_visit,
+    check_a_solution_stays_closed_until_asked,
+    check_the_notebook_never_falls_back_to_the_prefix_runner,
+    check_the_notebook_view_is_loaded_after_what_it_calls,
+    check_the_verdict_line_is_read_the_same_way_everywhere,
+)
 from watch_lessons import (
     check_a_resumed_clock_matches_the_break,
     check_colab_lesson_goes_to_the_notebook,
@@ -51,19 +61,19 @@ def check_imports():
 
 # fallback rendering helpers are present, and the question JSON is parseable.
 def check_public_api():
-    runner = _read(os.path.join(HERE, "runner.js"))
+    runner = read(os.path.join(HERE, "runner.js"))
     assert "buildPyodidePreamble" in runner, "runner.js missing buildPyodidePreamble"
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
 
-    ui_js = _read(os.path.join(HERE, "ui.js"))
+    ui_js = read(os.path.join(HERE, "ui.js"))
     assert "renderQuestionImports" in ui_js, "ui.js missing imports renderer"
 
-    visuals = _read(os.path.join(HERE, "visuals.js"))
+    visuals = read(os.path.join(HERE, "visuals.js"))
     assert "renderQuestionVisual" in visuals, "visuals.js missing renderQuestionVisual"
     assert "renderFallbackImage" in visuals, "visuals.js missing PNG fallback (renderFallbackImage)"
     assert "getArenaNumbersPngCandidates" in visuals, "visuals.js missing PNG candidate resolver"
 
-    unlock = _read(os.path.join(HERE, "arena-unlock.js"))
+    unlock = read(os.path.join(HERE, "arena-unlock.js"))
     for needle in (
         "window.ArenaUnlock", "tryShow",
         # showFor is the manual-launch API consumed by the Targeted Practice
@@ -90,7 +100,7 @@ def check_public_api():
     # The unlock-page CSS lives in practice/arena-unlock.css (modular — kept
     # separate from practice.css so the unlock view can be ripped out when
     # the real concept-graph backend ships without touching the question UI).
-    unlock_css = _read(os.path.join(HERE, "arena-unlock.css"))
+    unlock_css = read(os.path.join(HERE, "arena-unlock.css"))
     for needle in (".arena-unlock-page", ".arena-unlock-card", ".arena-unlock-continue-btn"):
         assert needle in unlock_css, f"arena-unlock.css missing required selector: {needle!r}"
     # The unlock view used to be authored inline in index.html. It was
@@ -99,7 +109,7 @@ def check_public_api():
     # Verify the DOM module still ships the mount + the load order puts
     # it BEFORE arena-unlock-timer.js and arena-unlock.js (both query the
     # injected ids at IIFE-eval time).
-    dom_mount = _read(os.path.join(HERE, "arena-unlock-dom.js"))
+    dom_mount = read(os.path.join(HERE, "arena-unlock-dom.js"))
     assert 'id="arena-unlock-page"' in dom_mount, (
         "arena-unlock-dom.js no longer injects #arena-unlock-page — the "
         "interstitial mount is the controller's hard dependency"
@@ -108,7 +118,7 @@ def check_public_api():
         "arena-unlock-dom.js must mount into #page-practice "
         "(so the in-tab view swap with .practice-container works)"
     )
-    index_html = _read(os.path.join(os.path.dirname(HERE), "index.html"))
+    index_html = read(os.path.join(os.path.dirname(HERE), "index.html"))
     dom_pos = index_html.find('src="practice/arena-unlock-dom.js')
     timer_pos = index_html.find('src="practice/arena-unlock-timer.js')
     ctrl_pos = index_html.find('src="practice/arena-unlock.js')
@@ -120,14 +130,14 @@ def check_public_api():
         "arena-unlock.js — those controllers query the injected ids at "
         "IIFE-eval time and would silently no-op otherwise"
     )
-    events_js = _read(os.path.join(HERE, "events.js"))
+    events_js = read(os.path.join(HERE, "events.js"))
     assert "ArenaUnlock" in events_js, "events.js no longer routes through ArenaUnlock.tryShow"
     assert "_loadNextPracticeQuestion" in events_js, "events.js missing _loadNextPracticeQuestion helper"
 
     # Resumable-session lifecycle (timer.js PracticeSession) — every hook must
     # stay wired or a timer keeps running across a boundary, a stale grade
     # hijacks a new session, or pause loses the learner's current review.
-    timer_js = _read(os.path.join(HERE, "timer.js"))
+    timer_js = read(os.path.join(HERE, "timer.js"))
     for method in (
         "onQuestionRendered", "pauseForGrading", "pauseForAdvance",
         "recordReviewResult", "resumeAnswerPhase", "beginReviewPhase",
@@ -147,7 +157,7 @@ def check_public_api():
     assert "PracticeSession.onQuestionRendered" in ui_js, (
         "ui.js renderQuestion no longer starts the session answer countdown"
     )
-    init_js = _read(os.path.join(HERE, "init.js"))
+    init_js = read(os.path.join(HERE, "init.js"))
     assert "PracticeSession.hasSavedQuestion" in init_js, (
         "init.js no longer preserves a saved visual coding question for resume"
     )
@@ -171,7 +181,7 @@ def check_public_api():
         assert marker in index_html, f"index.html missing resumable-session control: {marker}"
 
     questions_path = os.path.join(SHARED, "questions_structured.json")
-    data = json.loads(_read(questions_path))
+    data = json.loads(read(questions_path))
     assert isinstance(data, list) and data, "questions_structured.json is empty or not a list"
     sample = next((q for q in data if q.get("exercise", {}).get("function_name")), None)
     assert sample is not None, "questions_structured.json has no function-backed practice questions"
@@ -215,12 +225,12 @@ def check_promotion_threshold_matches_the_backend():
     threshold so there is one runtime authority; codex flagged the same thing on
     2026-08-03. Until then, this.
     """
-    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    topbar = read(os.path.join(HERE, "concept-topbar.js"))
     graph = os.path.join(
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "kc_graph.py")
     if not os.path.exists(graph):
         return  # backend not checked out beside the frontend — nothing to compare
-    backend = _read(graph)
+    backend = read(graph)
 
     def _floats(src, name):
         block = re.search(rf"{name}\s*=\s*\{{(.*?)\}}", src, re.S)
@@ -265,7 +275,7 @@ def check_difficulty_bar_is_one_bar():
 
     So: exactly one mount, and nothing rebuilding the old segments.
     """
-    index_html = _read(os.path.join(SHARED, "index.html"))
+    index_html = read(os.path.join(SHARED, "index.html"))
     assert index_html.count('id="target-difficulty"') == 1, (
         "index.html has more (or fewer) than one #target-difficulty mount — the "
         "difficulty bar is drawn once, under the concept strip"
@@ -274,7 +284,7 @@ def check_difficulty_bar_is_one_bar():
         "the concept strip grew its own difficulty/estimate segment back — that "
         "is the second bar this check exists to prevent"
     )
-    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    topbar = read(os.path.join(HERE, "concept-topbar.js"))
     for gone in ("concept-topbar-diff", "concept-topbar-est"):
         assert gone not in topbar, (
             f"concept-topbar.js renders {gone!r} again — the strip names the "
@@ -284,7 +294,7 @@ def check_difficulty_bar_is_one_bar():
     # allowed to be the only one wired up: bars.js without the readout leaves the
     # numbers frozen on the previous question, and the readout without bars.js is
     # a set of labels with no track under them.
-    bars_js = _read(os.path.join(HERE, "bars.js"))
+    bars_js = read(os.path.join(HERE, "bars.js"))
     for call in ("DifficultyBar.aim(", "DifficultyBar.move(", "DifficultyBar.live(",
                  "DifficultyBar.unavailable("):
         assert call in bars_js, (
@@ -306,12 +316,12 @@ def check_difficulty_range_matches_backend():
     place is worse than no threshold. Change the span in the backend and every
     green line on this bar quietly points at a number the queue never serves.
     """
-    bar_js = _read(os.path.join(HERE, "difficulty-bar.js"))
+    bar_js = read(os.path.join(HERE, "difficulty-bar.js"))
     prio = os.path.join(
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "prioritization.py")
     if not os.path.exists(prio):
         return  # backend not checked out beside the frontend — nothing to compare
-    backend = _read(prio)
+    backend = read(prio)
 
     def _const(src, name, pattern):
         m = re.search(pattern, src)
@@ -339,7 +349,8 @@ def _every_check_is_registered(checks):
     of the list — and the comparison is by function IDENTITY, so a same-named
     function in another module cannot stand in for the one that was dropped."""
     registered = {id(fn) for fn in checks}
-    for module in (sys.modules[__name__], watch_invariants, watch_lessons):
+    for module in (sys.modules[__name__], watch_invariants, watch_lessons,
+                   watch_notebook):
         for name in dir(module):
             fn = getattr(module, name)
             if name.startswith("check_") and callable(fn) and id(fn) not in registered:
@@ -360,7 +371,14 @@ if __name__ == '__main__':
               check_a_resumed_clock_matches_the_break,
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
-              check_the_notebook_kernel_has_a_fallback]
+              check_the_notebook_kernel_has_a_fallback,
+              check_the_notebook_view_is_loaded_after_what_it_calls,
+              check_the_verdict_line_is_read_the_same_way_everywhere,
+              check_a_problem_is_recorded_once_per_visit,
+              check_a_slow_run_cannot_touch_another_notebook,
+    check_a_collapsed_cell_still_knows_its_own_source,
+              check_the_notebook_never_falls_back_to_the_prefix_runner,
+              check_a_solution_stays_closed_until_asked]
     _every_check_is_registered(checks)
     for fn in checks:
         try:

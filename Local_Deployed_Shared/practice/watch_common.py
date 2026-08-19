@@ -19,6 +19,7 @@ REQUIRED_JS = [
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
     "kernel.js",  # persistent per-learner backend session behind notebook.js
+    "notebook-view.js",  # the Notebooks tab: a whole compiled lesson on one kernel
 ]
 REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [
@@ -29,6 +30,6 @@ REQUIRED_ASSETS = [
 ]
 
 
-def _read(path):
+def read(path):
     with open(path, "r", encoding="utf-8") as f:
         return f.read()

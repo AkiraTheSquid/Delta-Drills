@@ -59,6 +59,34 @@ The kernel is best-effort. Guests, an older backend (404) and a full box all fal
 `runner.runSnippet` re-running cells 1..N to rebuild state, which is what the notebook did
 everywhere before 2026-08-19. Both paths must print the same thing for the same page.
 
+## The Notebooks tab: a fourth surface, kernel-only
+
+`practice/notebook-view.js` renders a WHOLE compiled lesson — up to 656 cells — against one
+kernel session keyed `nb:<lesson-id>`. It uses the same runtime as the lesson-page cells
+above (real torch, no preamble, no fixtures), but it does NOT share their fallback, and the
+difference is deliberate: the prefix replay is O(cells) per click, so pressing Run on cell
+600 would execute 599 cells first. On this surface there is no fallback at all. Without a
+kernel the notebook still READS, and every Run button explains that running needs an account
+instead of quietly costing the box a 600-cell replay.
+
+Three rules hold here and nowhere else:
+
+- **What runs is what the cell says.** A cell's source is carried on its DOM node, not read
+  back out of the rendered markup. `innerText` is defined in terms of layout and returns the
+  empty string inside a collapsed `<details>` — which is every solution and every hints
+  block — so reading the DOM ran the empty program and reported success.
+- **A run belongs to the notebook it started in.** Cells are asynchronous and the learner is
+  not; a run captures its notebook before the first await, so a checker finishing after the
+  learner opens another lesson cannot mark that lesson's checker as loaded, and a later
+  kernel restart cannot replay the wrong lesson's checker into the wrong session.
+- **A verdict reaches the engine once per problem per visit.** Only a `dd-q<n>-check` cell
+  that ran without failing may record, the line it must print is `✅ Problem <n> — k/k cases
+  passed.`, and pressing the checker again posts nothing. A learner debugging a failing drill
+  is the loop working; charging them an attempt per press would measure persistence rather
+  than knowledge.
+
+All three are asserted in `practice/watch_notebook.py`, because all three fail silently.
+
 ## Image rendering fallback
 
 When Pyodide rendering of the canonical-solution image fails, `practice/visuals.js` falls back to displaying `numbers_stacked.png` (a static reference of the source `arr` data). Candidate paths are checked in order; first hit wins. See `getArenaNumbersPngCandidates()`.

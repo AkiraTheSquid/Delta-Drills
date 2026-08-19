@@ -17,6 +17,7 @@
 - `lesson_quality.py`: the written standard for a worked example — INTRO, INTERLEAVE, PRINTS, CASES, GIVEAWAY, PROMPT_LEAK. Every rule is a defect that shipped, passed the structural validator, and was caught by a learner working the page. `strict_for(kp)` gates enforcement on the page having an `## Applied practice` section, so upgrading a page means opting into the standard rather than the standard failing 63 pages at once. Imported by both `validate_lessons.py` (errors) and `audit_ladder_pairing.py` (backlog report).
 - `compile_lessons.py`: emits `lessons_structured.json` with per-KP `segments` plus legacy aggregate fields (viewer.html back-compat).
 - `build_qmatrix.py`: derives `qmatrix_tags.json` question→KC tags from KP refs + hand-assigned leftovers.
+- `compile_web_notebooks.py`: the same nine notebooks, compiled for the BROWSER. Imports `generate_colab_notebooks.build_notebook` — deliberately the same function, not a parallel implementation — and reshapes its cells into `Local_Deployed_Shared/lessons/notebooks/<id>.json` plus a `manifest.json` the in-app Notebooks tab fetches. Each cell keeps its id and gains a `role` derived from that id (`setup`, `checker`, `problem`, `code`, `check`, `hints`, `solution`, `prose`), which is what `notebook-view.js` dispatches on. Deterministic and cwd-independent: running it twice writes byte-identical files. The deploy runs it after the question-bank export, because the compiled notebooks EMBED the bank.
 - `generate_colab_notebooks.py`: compiles the nine Colab notebooks from
   `lessons_structured.json` + the question bank, and writes the
   `question -> notebook` map TWICE from one run — `extension/panel/notebook-index.js`
@@ -108,6 +109,7 @@
   - Status: `RESOLVED` (2026-08-13) in the generator. Republishing the notebooks is what puts it in front of a learner.
 
 ## Recent Changes
+- 2026-08-19 (the web edition of the notebooks): Added `compile_web_notebooks.py`. The in-app Notebooks tab needed the lessons as something a browser can fetch without a Python toolchain, and the tempting shape — a second compiler that walks the same lessons — is exactly how the two editions would come to teach different things. So it calls `build_notebook` and only reshapes the result. Parity is then asserted rather than assumed: `Local_Deployed_Shared/lessons/notebooks/watch.py` compares all 2589 cells against the published `.ipynb` files and fails on the first difference in count, id, type or source. Wired into `deploy_delta_drills.sh` immediately after `export_questions_json.py` — the notebooks carry the compiled `dd_check` grader, so a deploy that skipped this would ship a tab teaching the previous question bank with no visible symptom.
 - 2026-08-13 (**a broken runtime now says so, instead of showing torch's
   internals**): `colab_grader.py`, `colab_cells.py`. A learner hit
   `AttributeError: partially initialized module 'torch' has no attribute 'fx'`

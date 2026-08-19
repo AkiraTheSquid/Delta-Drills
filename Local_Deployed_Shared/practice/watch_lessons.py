@@ -9,7 +9,7 @@ import os
 import re
 import subprocess
 
-from watch_common import HERE, SHARED, _read
+from watch_common import HERE, SHARED, read
 
 
 def check_lesson_code_can_actually_run():
@@ -177,7 +177,7 @@ def check_the_gate_teaches_one_concept_then_drills_it():
     written only alongside the last one. Post it early and concepts 2 and 3 are
     credited unread and never offered again.
     """
-    lessons = _read(os.path.join(HERE, "lessons.js"))
+    lessons = read(os.path.join(HERE, "lessons.js"))
     build = lessons.split("const _buildPages = (steps) => {", 1)
     assert len(build) == 2, (
         "_buildPages no longer takes steps — it is back to expanding a whole "
@@ -219,11 +219,11 @@ def check_the_fifth_rung_is_shown_not_stored():
     of, so the strip gets the extra dot and `record_ladder_outcome` never sees
     it.
     """
-    topbar = _read(os.path.join(HERE, "concept-topbar.js"))
+    topbar = read(os.path.join(HERE, "concept-topbar.js"))
     assert '"integrated"' in topbar or "integrated:" in topbar, (
         "the topbar has no integrated rung — the fifth dot is gone"
     )
-    ladder = _read(os.path.join(HERE, "ladder.js"))
+    ladder = read(os.path.join(HERE, "ladder.js"))
     assert 'question.ladder_integrated ? "integrated" : stage' in ladder, (
         "ladder.js no longer reports the fifth rung to the strip"
     )
@@ -239,9 +239,9 @@ def check_the_fifth_rung_is_shown_not_stored():
 # namespace the way Colab's do), and its fallback is what keeps guests and an
 # unreachable backend working. Both halves have to stay wired.
 def check_the_notebook_kernel_has_a_fallback():
-    notebook = _read(os.path.join(HERE, "notebook.js"))
-    kernel = _read(os.path.join(HERE, "kernel.js"))
-    index = _read(os.path.join(SHARED, "index.html"))
+    notebook = read(os.path.join(HERE, "notebook.js"))
+    kernel = read(os.path.join(HERE, "kernel.js"))
+    index = read(os.path.join(SHARED, "index.html"))
 
     assert "window.DeltaKernel" in kernel, "kernel.js no longer exports window.DeltaKernel"
     for path in ("/api/practice/kernel/exec", "/api/practice/kernel/reset"):

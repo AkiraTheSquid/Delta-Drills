@@ -40,6 +40,10 @@ window.DD_INFOTIPS = {
     title: "Practice",
     body: "Your adaptive queue. The app chooses each next problem from what you're ready for, so you just answer.",
   },
+  "tab.notebooks": {
+    title: "Notebooks",
+    body: "A whole lesson as one runnable notebook — the same cells the Colab edition publishes, on one live Python session on the server.",
+  },
   "tab.targeted-practice": {
     title: "Targeted Practice",
     body: "You pick the skill instead. Search ARENA exercises, choose the ones you want, and drill only those.",
