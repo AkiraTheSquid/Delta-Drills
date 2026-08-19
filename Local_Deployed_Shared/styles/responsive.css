@@ -2,24 +2,14 @@
    Responsive — General
    ================================================================ */
 
+/* The topbar used to break into a column here, with the tab strip on its own
+   full-width scrolling row underneath. That is gone: below 900px the strip is
+   no longer in the topbar at all — nav-drawer.js moves it into the hamburger
+   drawer — so stacking left an empty second row, and the taller header quietly
+   broke `.practice-container`'s `height: calc(100vh - 56px - 40px)`, which
+   assumes a 56px bar. One clean horizontal row at every width now; the drawer's
+   own topbar tightening lives in `nav-drawer.css`. */
 @media (max-width: 600px) {
-  .topbar {
-    flex-direction: column;
-    height: auto;
-    padding: 12px 16px;
-    gap: 8px;
-  }
-
-  .tabs {
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  .tab {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-
   .page h1 {
     font-size: 26px;
   }

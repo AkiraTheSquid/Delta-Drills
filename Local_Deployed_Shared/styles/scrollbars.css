@@ -1,0 +1,89 @@
+/* ================================================================
+   SCROLLBARS — the app is dark; the browser's furniture is not.
+
+   Every scroller in this app (the page itself, the practice rail, the lesson
+   pane, the courses modal, the editor) is painted on --bg/--surface, but the
+   scrollbar Chrome draws over it is the platform's default: a white track with
+   a grey thumb. That is a bright vertical stripe down the right edge and a
+   second one across the bottom of anything that scrolls sideways, and it is
+   the loudest thing on screen.
+
+   It is worst in the Chrome extension. The side panel frames this site at
+   whatever width the panel is dragged to (`extension/panel/app.html`), so a
+   17px white bar is a visible fraction of the surface, right where the eye
+   goes to read the next problem.
+
+   TWO MECHANISMS, BOTH NEEDED, AND THEY ARE NOT REDUNDANT:
+
+   - `color-scheme: dark` is what tells the ENGINE the page is dark. It darkens
+     the scrollbars this file cannot reach — inside a same-origin iframe's own
+     document, on elements whose scrollbar is drawn by a widget we do not own —
+     and it keeps native form controls (date pickers, select popups, the
+     checkbox tick) consistent with the inputs `components.css` already styles
+     dark by hand. Safe here because there is no light theme to switch to.
+   - The `::-webkit-scrollbar` rules are the actual skin. Chrome IGNORES
+     `color-scheme` for a scroller once any `::-webkit-scrollbar` rule matches
+     it, so these have to be complete on their own — track, thumb, hover and
+     the corner where a vertical and a horizontal bar meet. Miss the corner and
+     a white square is left in it.
+
+   `scrollbar-width`/`scrollbar-color` are the standard properties and cover
+   Firefox; Chrome honours them too, but loses the rounded thumb, so both
+   spellings are here on purpose. Do not "de-duplicate" them.
+
+   Deliberately unscoped. A scrollbar is chrome, not content — there is no
+   surface in this app that wants the white one, and a scroller added later
+   should inherit this without anyone remembering to opt in.
+   ================================================================ */
+
+:root {
+  color-scheme: dark;
+}
+
+/* Standard properties (Firefox, and Chrome's fallback). `thin` rather than
+   `auto`: this is the width used inside a 300px side panel. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Transparent, not --surface. A scroller sits on --bg in some places and on
+   --card in others; a track that paints its own colour draws a stripe wherever
+   it guesses wrong, which is the problem this file exists to remove. Letting
+   the surface underneath show through means the bar is only ever the thumb. */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* The 2px transparent border + `background-clip: padding-box` is what insets
+   the thumb from the edge of the track, so it reads as a floating pill rather
+   than a bar welded to the side of the panel. */
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+  background-clip: padding-box;
+}
+
+/* Where the vertical and horizontal bars meet. Unstyled, this is the one
+   square of default white left on screen — and it is exactly the
+   bottom-right corner of the practice rail, which scrolls both ways. */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* The resize grabber on a <textarea> is drawn INTO the corner and keeps the
+   platform's light triangle even when the corner behind it is transparent. */
+::-webkit-resizer {
+  background: transparent;
+}
