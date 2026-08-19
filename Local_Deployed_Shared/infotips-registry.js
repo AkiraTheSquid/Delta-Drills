@@ -98,10 +98,13 @@ window.DD_INFOTIPS = {
     title: "Scaffold stages",
     body: "Four rungs from heavily supported to fully unaided. All four are shown so you can see where this problem sits in the sequence, not just its name.",
   },
-  difficulty: {
-    title: "Problem difficulty",
-    body: "This problem's rating out of 100, on a track filled to the difficulty the queue is currently aiming at for you.",
-  },
+  /* No `difficulty` key. It annotated `#concept-topbar-diff`, the 96px copy of
+     the difficulty bar in the concept strip, which the one-full-width-bar change
+     removed — this problem's rating is now the accent tick on `.difficulty-bar`,
+     and `target-difficulty` below explains the axis it sits on. The key was left
+     behind by that commit and `watch.py::check_infotips` caught it: a key with
+     no anchor and an anchor with no key both fail silently at runtime, which is
+     why the check asserts both directions. */
   "competency-bar": {
     title: "Competency",
     body: "Your current estimated mastery of the single skill you're drilling, and how far it is from the bar that counts as competent.",
