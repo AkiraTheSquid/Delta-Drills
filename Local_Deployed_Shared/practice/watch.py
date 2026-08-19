@@ -15,7 +15,7 @@ SHARED = os.path.dirname(HERE)
 
 REQUIRED_JS = [
     "init.js", "dom.js", "events.js", "engine.js", "api.js",
-    "runner.js", "visuals.js", "ui.js", "ai.js", "mode.js",
+    "runner.js", "visuals.js", "ui.js", "ai.js", "tutor.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
     "bars.js", "difficulty-bar.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time

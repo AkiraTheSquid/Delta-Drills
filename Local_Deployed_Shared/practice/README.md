@@ -27,6 +27,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - `ui.js`: question rendering into the editor and prompt area. Also owns `torchNeedsColab` / `applyTorchRouting` — the binary "notebook card OR editor panel" swap, never both.
 - `colab_mode.js`: **which edition this deploy is, and where a question's notebook lives.** `delta-drills-colab.vercel.app` (or `?mode=colab`) is the Colab edition: a drill routes to its published lesson notebook instead of the in-page editor. Both deploys ship IDENTICAL code and ask `location.hostname` who they are, so there is no branch to keep in sync. Exposes `window.DDColab = {active, hrefFor, lessonFor, hrefForKc, lessonForKc, whenReady, openNotebook, revealSolution, framed, debug}`; must load before `ui.js`, which asks it at load time. Inert on the normal app — no fetch, no DOM change. `hrefForKc` is the same join one level up: a CONCEPT resolves through the index's `kcs` / `kps` maps to `#scrollTo=dd-kp-<slug>`, which is what lets the Knowledge Graph route a bubble. Both anchors are shipped by the generator, never re-slugged here — a slug that drifted by one character is an anchor Colab silently ignores.
 - `ai.js`: AI-judge submission path.
+- `tutor.js`: **the post-answer tutor chat** (`window.PracticeTutor`). A ChatGPT-shaped thread under the AI Explanation in the left panel — tutor turns left, learner turns right, Enter sends and Shift+Enter newlines. `open(ctx)` is called by `events.js` on the same signal that fetches the explanation (a graded attempt in backend/supabase mode), `setExplanation(text)` folds the finished explanation into the context so the tutor does not recite it back, and `reset()` is called by `ui.js` on every question render — one thread per drill, never persisted. The client is stateless: each turn POSTs the whole visible thread plus the problem context to `/api/practice/ai-tutor`, which owns the system prompt. Renders a deliberate three-construct subset of Markdown (fenced blocks, inline backticks, bold) over escaped text rather than pulling in a parser. Styles in `../styles/practice/tutor.css`.
 - `mode.js`: practice mode (backend vs local-pyodide) selection.
 - `adaptive.js`: adaptive question difficulty/selection.
 - `questions.js`: client-side question caching/normalization.
@@ -73,6 +74,37 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
+- **A lesson page may keep the previous question's difficulty reading** — `UNVERIFIED`
+  - When it happens: navigating from a graded question onto a lesson page.
+  - Symptom: the bar under the concept strip still shows the number the last
+    question moved it to, on a page that has no difficulty reading of its own.
+  - Root cause (claimed, not reproduced): `LessonGate` now calls only
+    `ConceptTopbar.show()`, which clears the tick and the promotion mark but
+    does not touch `DifficultyBar`'s held value. The code comment where the
+    `/api/practice/kc-estimate` fetch was removed says bars.js draws the "no
+    reading yet" state on a lesson — but the only paths that reach
+    `DifficultyBar.unavailable()` are `setTargetDifficultyUnavailable` (an
+    events.js submit path) and `setTargetDifficultyInitial` via
+    `ui.js::renderQuestion`. Whether a lesson render passes through
+    `renderQuestion` decides whether the claim is real.
+  - Prevention/fix: an explicit `DifficultyBar.reset()` called from the lesson
+    and hide paths would make this unconditional instead of incidental.
+  - Status: `UNVERIFIED` — raised by cross-model review while porting the
+    feature from the Colab branch into main, and NOT reproduced: it needs the
+    backend running and a graded attempt, which the port was not able to
+    exercise. Confirm before fixing; the fix is cheap, the wrong fix is a bar
+    that blanks itself mid-question.
+- **The "support returns" region may not mean support returns** — `ACTIVE`
+  - When it happens: target difficulty sits below the 20-point floor.
+  - Symptom: the bar's lower zone promises the ladder is about to hand
+    scaffolding back, when nothing about the rung has changed.
+  - Root cause: `difficulty_offset` (felt difficulty) is added after the
+    `20 + 80 * m` formula and is clamped to ±20, so the drawn value can cross
+    the floor on offset alone, while an actual demotion is decided by the
+    Wilson bound. The label states a consequence the axis cannot guarantee.
+  - Prevention/fix: word the zone as where the axis is, the way the upper edge
+    already says "pace" rather than "unlocked".
+  - Status: `ACTIVE` — cosmetic wording, tracked so it is not rediscovered.
 - **Run routed torch code to a runtime that has no torch** — `RESOLVED`
   - When it happens: pressing Run on any converted Einops/Einsum drill, or on a torch lesson's worked example, in backend mode.
   - Symptom: `ModuleNotFoundError: No module named 'torch'` from Run, while Submit grades the same code correctly.
@@ -101,6 +133,13 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-18 (**the flag row stops over-promising**): `api.js`, `events.js`. The
+  repair behind `improvement_queued` moved off the server and onto Seth's local
+  `claude` CLI, which may not be running when the flag is sent, so "rewriting
+  this problem" claimed something that was not happening yet. Now "logged ✓ —
+  queued for rewrite". Same signal, honest tense: the flag reliably reaches a
+  queue, and the rewrite happens whenever the runner next drains it.
+- 2026-08-14 (**you can now ask a follow-up**): new `tutor.js` + `../styles/practice/tutor.css`; `dom.js`, `ui.js`, `events.js`, `ai.js`, `watch.py`, `../index.html`, `../infotips-registry.js`, `../styles/practice/colab-edition.css`. The AI Explanation was a monologue: one generated walkthrough, no way to say "wait, why dim=0". The tutor is the reply channel — a chat thread under it, opened on the same graded-attempt signal, backed by `POST /api/practice/ai-tutor` (gpt-4o). Two decisions worth keeping: the problem context (question, the learner's code, its output, the canonical solution, the explanation already on screen) rides in the SYSTEM message rather than as fabricated opening turns, so the visible thread is exactly what was said and the model is never tempted to answer as though the learner asked for the walkthrough again; and the thread is wiped by `ui.js` on every render, because a follow-up about the previous drill asked against the current one's context is worse than no answer. A failed turn is shown but NOT pushed into `thread` — an error bubble that becomes conversation history teaches the model to apologize on the next turn. Hidden on the Colab edition alongside the explanation, for the reason already written there: no submission it saw, and no room in a 400px rail.
 - 2026-08-18 (**one difficulty bar, full width, with the thresholds drawn on it**):
   `difficulty-bar.js` + `../styles/practice/difficulty-bar.css` (new), `bars.js`,
   `concept-topbar.js`, `events.js`, `lessons.js`, `../index.html`,

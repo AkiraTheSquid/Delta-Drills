@@ -15,11 +15,16 @@ INDEX_HTML = os.path.normpath(os.path.join(HERE, "..", "index.html"))
 REQUIRED_CSS = [
     "variables.css",
     "base.css",
+    # Part of the base layer: sets color-scheme on :root and skins every
+    # scrollbar in the app, so it must load with base.css, not with the
+    # feature stylesheets.
+    "scrollbars.css",
     "layout.css",
     "components.css",
     "responsive.css",
     "stats.css",
     "arena.css",
+    "nav-drawer.css",
     # courses tab is split into a sub-folder so each fragment stays small.
     # Order here mirrors the link order in index.html: page → forkgate →
     # detail → modal → responsive (responsive must be last so its
@@ -33,6 +38,10 @@ REQUIRED_CSS = [
 REQUIRED_TOKENS = (
     "--bg", "--surface", "--card", "--text",
     "--muted", "--accent", "--accent-dark", "--border", "--white",
+    # scrollbars.css and nav-drawer.css are token-first, so dropping one of
+    # these does not fail loudly — the scrollbar thumb just goes transparent
+    # and the drawer collapses to zero width.
+    "--scroll-thumb", "--scroll-thumb-hover", "--drawer-width", "--scrim",
 )
 
 
@@ -108,6 +117,38 @@ def check_invariants():
                         f"{fname} must be linked before courses/responsive.css so its overrides win"
                     )
 
+        # scrollbars.css is base-layer, not feature-layer: it sets
+        # `color-scheme` on :root, which the engine reads for the whole
+        # document, and skins every scroller in the app. Linked late it would
+        # sit after stylesheets that assume the dark chrome is already there.
+        if "scrollbars.css" in names and "layout.css" in names:
+            assert names.index("scrollbars.css") < names.index("layout.css"), (
+                "scrollbars.css belongs with the base layer — link it before layout.css"
+            )
+        if "nav-drawer.css" in names and "responsive.css" in names:
+            assert names.index("nav-drawer.css") < names.index("responsive.css"), (
+                "nav-drawer.css is a feature stylesheet — link it before responsive.css"
+            )
+
+        # The three hooks nav-drawer.css styles and nav-drawer.js drives. Every
+        # rule in that stylesheet is scoped to one of them, so losing a hook
+        # does not throw — the menu simply stops existing below 900px, and the
+        # tab strip goes back to being a sideways-scrolling sliver in the
+        # extension's side panel, which is the bug the drawer was built for.
+        for hook in ('id="nav-toggle"', 'id="nav-drawer"', 'id="nav-scrim"'):
+            assert hook in html, f"index.html is missing the nav drawer hook {hook}"
+        # #nav-drawer must stay EMPTY in the markup. The strip it holds below
+        # 900px is the live <nav class="tabs">, moved there by nav-drawer.js —
+        # a second copy written into the aside would be outside the NodeLists
+        # app.js captured, so its tabs would not switch pages and would show
+        # auth-only tabs to a guest. See ../nav-drawer.js.
+        drawer_markup = re.search(r'<aside[^>]*id="nav-drawer".*?</aside>', html, re.DOTALL)
+        assert drawer_markup, 'index.html: #nav-drawer must be an <aside>…</aside>'
+        assert 'class="tabs"' not in drawer_markup.group(0), (
+            "#nav-drawer must not contain its own .tabs — nav-drawer.js moves the "
+            "real strip in, and a copy is invisible to app.js's static NodeLists"
+        )
+
     # Newly-added feature stylesheets must reach for design tokens, not raw hex
     # colors. Legacy files (arena.css, stats.css) predate this rule and are not
     # enforced here — only files added under the token-first convention.
@@ -116,6 +157,8 @@ def check_invariants():
     # literals only, so rgba/hsla pass through.
     hex_re = re.compile(r"#[0-9a-fA-F]{3,8}\b")
     token_first_files = (
+        "scrollbars.css",
+        "nav-drawer.css",
         "courses/page.css",
         "courses/forkgate.css",
         "courses/detail.css",

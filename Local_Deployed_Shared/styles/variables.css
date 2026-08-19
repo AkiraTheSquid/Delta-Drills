@@ -8,4 +8,19 @@
   --accent-dark: #c61922;
   --border: #2a2a4a;
   --white: #ffffff;
+
+  /* Chrome paints its own scrollbars, and on this palette they arrive white —
+     a bright vertical stripe down the right edge and another across the bottom
+     of every scroller. Loud on a full page; in the extension's side panel,
+     where the rail is ~300px wide, the bar is a visible fraction of the UI.
+     These are the only two colours `scrollbars.css` needs; they sit between
+     --border and --muted so a thumb reads as part of the chrome, not as
+     content. */
+  --scroll-thumb: #34345a;
+  --scroll-thumb-hover: #4a4a7d;
+
+  /* Nav drawer (the hamburger menu). The width is a token because the drawer,
+     its off-canvas transform and the toggle's hit area all have to agree. */
+  --drawer-width: 272px;
+  --scrim: rgba(9, 10, 22, 0.62);
 }

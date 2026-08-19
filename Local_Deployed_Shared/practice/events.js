@@ -67,6 +67,18 @@ practiceSubmitBtn.addEventListener("click", async () => {
     aiExplanationSection.classList.remove("hidden");
     aiExplanationText.textContent = "Loading explanation...";
     fetchAIExplanation(q.question_text, solCode, userCode, actualOutput, expectedOutput);
+    // Tutor opens on the same signal as the explanation — both need a graded
+    // attempt, and both are backed by the same ChatGPT key.
+    if (window.PracticeTutor) {
+      PracticeTutor.open({
+        questionText: q.question_text,
+        solutionCode: solCode,
+        userCode,
+        actualOutput,
+        expectedOutput,
+        wasCorrect: !!result.correct,
+      });
+    }
   }
 
   // NOTE: ARENA unlock interstitial does NOT fire on Submit — student
@@ -193,11 +205,12 @@ problemFlagButtons.forEach((btn) => {
         practiceProgress.lastResultCorrect,
       );
       if (problemFeedbackStatus) {
-        // Say which of the two things happened. A queued repair takes a model
-        // call to come back, so "logged ✓" alone would read as "nothing else
-        // is going to happen" right when something is.
+        // Say which of the two things happened. A queued repair is picked up by
+        // the local runner, which may not be running this minute, so "logged ✓"
+        // alone would read as "nothing else is going to happen" right when
+        // something is — and promising a rewrite NOW would overstate it.
         problemFeedbackStatus.textContent = result && result.improvementQueued
-          ? "logged ✓ — rewriting this problem"
+          ? "logged ✓ — queued for rewrite"
           : "logged ✓";
         problemFeedbackStatus.classList.remove("hidden");
       }
