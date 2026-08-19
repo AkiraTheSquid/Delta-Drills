@@ -27,6 +27,7 @@ REQUIRED_FILES = [
     "styles/practice/misc.css",
     "index.html",
     "app.js",
+    "nav-drawer.js",
     "courses.js",
 ]
 REQUIRED_DIRS = [
@@ -375,9 +376,119 @@ def check_infotips():
     )
 
 
+# ── Nav drawer checks ─────────────────────────
+# Below 900px the tab strip leaves the topbar and becomes a hamburger menu.
+# The one rule that makes it safe is that the strip is MOVED, not copied:
+# app.js captures `.tab`, `.auth-only` and `.guest-only` into static NodeLists
+# at eval time, and a cloned strip is in none of them — its tabs would not
+# switch pages, would never highlight, and would show Account and Split Tool
+# to a signed-out visitor. None of that throws; it just quietly does the wrong
+# thing, which is exactly what a watch check is for.
+def check_nav_drawer():
+    import re as _re
+
+    nav_js = _read(os.path.join(HERE, "nav-drawer.js"))
+    index_html = _read(os.path.join(HERE, "index.html"))
+
+    stripped = _re.sub(r"/\*.*?\*/", "", nav_js, flags=_re.DOTALL)
+    stripped = _re.sub(r"^\s*//.*$", "", stripped, flags=_re.MULTILINE)
+    assert "cloneNode" not in stripped, (
+        "nav-drawer.js clones the tab strip. It must MOVE the live <nav class="
+        '"tabs"> (appendChild) — a copy is outside the NodeLists app.js captured '
+        "at eval time, so its tabs neither switch pages nor respect auth visibility"
+    )
+    assert "appendChild" in stripped, (
+        "nav-drawer.js no longer moves the tab strip into the drawer"
+    )
+
+    # The script has to run after app.js, which is what captures the tabs where
+    # the markup put them. Moving a node keeps its listeners, so this ordering
+    # is about the capture, not the move.
+    app_pos = index_html.find('src="app.js')
+    nav_pos = index_html.find('src="nav-drawer.js')
+    assert nav_pos != -1, 'index.html missing <script src="nav-drawer.js">'
+    assert app_pos != -1 and app_pos < nav_pos, (
+        "nav-drawer.js must load AFTER app.js — app.js's tab NodeLists are "
+        "captured at eval time and must see the strip in the topbar"
+    )
+
+    # One definition of "narrow". The breakpoint is duplicated by necessity —
+    # CSS cannot move a node between parents, so the switch is a matchMedia in
+    # JS while the practice split stacks from a media query — and drift between
+    # the two is a real failure mode: a tab strip left in a topbar that has
+    # already tightened for the drawer, or a hamburger that opens onto nothing.
+    #
+    # Read the ASSIGNMENT out of comment-stripped source, not the raw file. The
+    # first version of this check searched `nav_js` for the literal string, and
+    # nav-drawer.js explains its own breakpoint in a comment — so the assertion
+    # was satisfied by the prose and would have kept passing after the query it
+    # is guarding changed. A check that cannot fail is worse than no check.
+    query = _re.search(
+        r'NAV_DRAWER_QUERY\s*=\s*["\']\(max-width:\s*(\d+)px\)["\']', stripped
+    )
+    assert query, (
+        "nav-drawer.js must define NAV_DRAWER_QUERY as a (max-width: <n>px) literal"
+    )
+    split_css = _read(os.path.join(HERE, "styles", "practice", "layout.css"))
+    split_bp = _re.search(r"@media\s*\(max-width:\s*(\d+)px\)", split_css)
+    assert split_bp, (
+        "styles/practice/layout.css no longer has a max-width breakpoint to match"
+    )
+    assert query.group(1) == split_bp.group(1), (
+        f"nav-drawer.js switches to the drawer at {query.group(1)}px but the "
+        f"practice split stacks at {split_bp.group(1)}px — one definition of "
+        f'"narrow", or the two layouts disagree about which one is on screen'
+    )
+
+    # The focus trap has to place EVERY Tab, not just the two edges of the ring.
+    # The toggle is in the ring but sits outside the drawer and before it in the
+    # DOM, so an edge-only trap let a forward Tab off the toggle fall through to
+    # whatever the markup puts between them — for a signed-in visitor that is
+    # `.topbar-auth`, behind the scrim. Reproduced live at 380px before the fix,
+    # which is why this is pinned rather than left to review.
+    assert "% ring.length" in stripped, (
+        "nav-drawer.js's Tab handler no longer cycles the focus ring by index. "
+        "An edge-only trap (`activeElement === edge`) leaks: the toggle is part "
+        "of the ring but outside the drawer, so a forward Tab off it is handled "
+        "by the browser and lands on the controls behind the scrim"
+    )
+    # The closed drawer must be unfocusable from CSS, not only from JS. The
+    # script sets `.inert`, which does nothing before Safari 15.5 — and it still
+    # carries a `MediaQueryList.addListener` fallback for Safari <14, so it
+    # already assumes browsers where `inert` is a no-op. There, an off-canvas
+    # panel is invisible to the eye and to nothing else: seven live tab stops.
+    drawer_css = _read(os.path.join(HERE, "styles", "nav-drawer.css"))
+    assert _re.search(r"visibility:\s*hidden", drawer_css), (
+        "styles/nav-drawer.css no longer hides the closed drawer with "
+        "`visibility`. `inert` alone is not enough — it is a no-op on the older "
+        "Safari this component still writes fallbacks for, and the tabs stay in "
+        "the tab order while the panel is off-canvas"
+    )
+
+    # Drawer mode is driven by a class the script adds, never by a media query
+    # in this stylesheet — that is what keeps ONE definition of "narrow" (the
+    # matchMedia above, checked against practice/layout.css). A `@media` block
+    # appearing here would be a second breakpoint free to drift from it.
+    assert "@media" not in _re.sub(r"/\*.*?\*/", "", drawer_css, flags=_re.DOTALL), (
+        "styles/nav-drawer.css has grown a @media block. Every rule in it must "
+        "stay scoped to `body.nav-drawer-mode`, the class nav-drawer.js adds — "
+        "a breakpoint here is a second definition of narrow, and the width where "
+        "it disagrees is a topbar tightened for a strip that is still in it"
+    )
+
+    tab_handler = stripped[stripped.find('event.key !== "Tab"'):]
+    assert tab_handler, "nav-drawer.js no longer guards Tab at all"
+    assert "toggle" in tab_handler.split("const ring")[1][:200], (
+        "the focus ring must still start at the toggle — while the drawer is "
+        "open the toggle is drawn as the × that closes it, and a close control "
+        "you cannot Tab to is a trap rather than a cycle"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants, check_infotips]
+    checks = [check_imports, check_public_api, check_invariants, check_infotips,
+              check_nav_drawer]
     for fn in checks:
         try:
             fn()

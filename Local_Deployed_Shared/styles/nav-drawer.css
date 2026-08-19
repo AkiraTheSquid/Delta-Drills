@@ -1,0 +1,331 @@
+/* ================================================================
+   NAV DRAWER — the tab strip as a hamburger menu on a narrow viewport.
+
+   THE PROBLEM. `.tabs` is seven tabs, each with an ⓘ beside it, and the widest
+   ("Why This App Exists") never wraps on purpose — `layout.css` pins
+   `white-space: nowrap; flex: 0 0 auto` on `.tab` so the strip scrolls instead
+   of stacking four rows deep. That works down to about 900px. Below it the
+   strip is a sideways-scrolling sliver, and inside the Chrome extension's side
+   panel — which frames this site at ~300-400px — the topbar is a scrollbar
+   with two tabs visible and the other five off the edge, i.e. the app looks
+   like it has no navigation at all.
+
+   THE SHAPE. Below 900px the tab strip LEAVES the topbar and becomes a
+   vertical list in an off-canvas drawer opened by a hamburger at the top left.
+   The topbar keeps its one clean 56px row: hamburger, title, signed-in dot.
+
+   🔴 THE STRIP IS MOVED, NEVER COPIED. `nav-drawer.js` calls
+   `appendChild(nav)` — the same `<nav class="tabs">` element, with the same
+   button nodes inside it. That is not a style preference, it is the only
+   version that works: `app.js` captures `.tab`, `.auth-only` and `.guest-only`
+   into STATIC NodeLists at eval time and drives `switchTab`, the active class
+   and auth visibility off them. A cloned strip is invisible to all three — its
+   tabs would not switch pages, would not highlight, and would show Account and
+   Split Tool to a guest. Moving a node keeps every listener and every NodeList
+   entry intact.
+
+   Which is also why the rules below are scoped `body.nav-drawer-mode
+   .nav-drawer …` rather than written as bare `.tabs`/`.tab` overrides: there
+   is ONE strip, and when it is back in the topbar it must lay out exactly as
+   `layout.css` says. `styles/README.md` calls the tabs nav layout fragile and
+   asks for no global selector over it — this file keeps that promise.
+   ================================================================ */
+
+/* ---- the hamburger ----------------------------------------------------- */
+
+/* Present in the markup at every width, shown only in drawer mode. Hidden with
+   `display: none` rather than visibility so it is not a tab stop on a wide
+   page, where the tabs themselves are the navigation. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 12px;
+  padding: 0;
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+body.nav-drawer-mode .nav-toggle {
+  display: inline-flex;
+}
+
+.nav-toggle:hover {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--white);
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Three bars from one element: the span is the middle one, its pseudos are the
+   outer two. `currentColor` so the hover rule above moves all three together. */
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.2s ease, opacity 0.15s ease;
+}
+
+.nav-toggle-bars {
+  position: relative;
+}
+
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav-toggle-bars::before {
+  top: -6px;
+}
+
+.nav-toggle-bars::after {
+  top: 6px;
+}
+
+/* Open: the bars fold into an X, so the one control both opens and closes and
+   the state is readable without looking at the drawer. */
+body.nav-open .nav-toggle-bars {
+  background: transparent;
+}
+
+body.nav-open .nav-toggle-bars::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+body.nav-open .nav-toggle-bars::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ---- the topbar, in drawer mode ---------------------------------------- */
+
+/* `.topbar` is `justify-content: space-between` over its children, and with the
+   strip gone that would push the title to the middle. The title takes the slack
+   instead, so the row reads hamburger → title → account, left to right. */
+body.nav-drawer-mode .topbar {
+  padding: 0 14px;
+  gap: 8px;
+}
+
+body.nav-drawer-mode .logo {
+  margin-right: auto;
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+}
+
+/* A build number is not worth a line of a 300px topbar. */
+body.nav-drawer-mode .version-tag {
+  display: none;
+}
+
+/* ---- the drawer -------------------------------------------------------- */
+
+/* Both the drawer and its scrim are `display: none` outside drawer mode, so on
+   a wide page nothing here is focusable, clickable or in the way. */
+.nav-drawer,
+.nav-scrim {
+  display: none;
+}
+
+body.nav-drawer-mode .nav-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 120;
+  display: flex;
+  width: min(var(--drawer-width), 84vw);
+  flex-direction: column;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  box-shadow: 6px 0 26px rgba(0, 0, 0, 0.42);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Off-canvas, and moved by transform rather than by `left` so the slide is
+     composited and does not relayout the page under it. */
+  transform: translateX(-101%);
+  /* 🔴 `visibility` is what actually keeps the closed drawer out of the tab
+     order, and it is here rather than only in JS on purpose. `nav-drawer.js`
+     sets `.inert`, but that property does nothing before Safari 15.5 — and this
+     file's own script still carries a `MediaQueryList.addListener` fallback for
+     Safari <14, so "old Safari reaches this code" is an assumption the drawer
+     already makes. There the closed panel is merely translated off-canvas,
+     which hides it from the eye and from nobody else: seven invisible tab
+     stops. `display: none` would remove them too but kills the slide, which is
+     the whole reason the drawer reads as a drawer. Hence the zero-length
+     `visibility` transition — DELAYED on the way out so the panel is still
+     paintable while it slides away, immediate on the way in. */
+  visibility: hidden;
+  transition: transform 0.22s ease, visibility 0s linear 0.22s;
+}
+
+body.nav-drawer-mode.nav-open .nav-drawer {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.22s ease, visibility 0s;
+}
+
+body.nav-drawer-mode .nav-scrim {
+  position: fixed;
+  z-index: 110;
+  display: block;
+  inset: 0;
+  background: var(--scrim);
+  opacity: 0;
+  /* Not clickable while closed — a transparent full-screen layer that still
+     took clicks would swallow every tap on the page behind it. */
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+body.nav-drawer-mode.nav-open .nav-scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The page behind the scrim must not scroll under it. Scoped to drawer mode so
+   the app's normal scrolling is untouched at every other width, and matching
+   what `courses/modal.css` already does with `body.modal-open`. */
+body.nav-drawer-mode.nav-open {
+  overflow: hidden;
+}
+
+/* Same height as `.topbar` so the drawer's header lines up with the row the
+   hamburger sits in rather than floating a few pixels off it. */
+.nav-drawer-head {
+  display: flex;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 18px;
+  border-bottom: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+
+.nav-drawer-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.nav-drawer-close {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav-drawer-close:hover {
+  background: var(--card);
+  color: var(--white);
+}
+
+.nav-drawer-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- the moved tab strip ----------------------------------------------- */
+
+/* A grid, not a column, and the reason is the ⓘ dots. The markup alternates
+   `<button class="tab">` and its `<button class="dd-info tab-info">`, so a
+   two-column grid with automatic row placement puts each tab in column 1 and
+   its own dot in column 2, on the same row — without touching the markup or
+   wrapping each pair in a div (which would break `.tabs > *` assumptions and
+   the NodeLists app.js already holds).
+
+   This survives the hidden states because a tab and its dot are always hidden
+   TOGETHER: they carry the same `.auth-only`/`.guest-only` class, and
+   `updateTabVisibility` toggles `.hidden` on both. A `display: none` grid item
+   is skipped by auto-placement, so the surviving pairs stay aligned. Hiding
+   one half alone would shift every row below it — do not give a dot a
+   different visibility rule from its tab. */
+body.nav-drawer-mode .nav-drawer .tabs {
+  display: grid;
+  height: auto;
+  margin: 0;
+  padding: 8px 0 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+}
+
+/* `.tab` is a 56px-tall flex row with a bottom border in the topbar; here it is
+   a full-width list item with the accent on its leading edge. `flex: 0 0 auto`
+   and `white-space: nowrap` come from layout.css and both have to go — in a
+   272px drawer there is room to wrap, and "Why This App Exists" on one line
+   would push the ⓘ column off the edge. */
+body.nav-drawer-mode .nav-drawer .tab {
+  height: auto;
+  padding: 12px 6px 12px 17px;
+  border-bottom: none;
+  border-left: 3px solid transparent;
+  font-size: 14px;
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+body.nav-drawer-mode .nav-drawer .tab:hover {
+  background: var(--card);
+}
+
+body.nav-drawer-mode .nav-drawer .tab.active {
+  background: var(--card);
+  border-left-color: var(--accent);
+}
+
+body.nav-drawer-mode .nav-drawer .tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* The dot rides its row rather than the top of it, and keeps a comfortable
+   right margin so it is not flush against the drawer edge. */
+body.nav-drawer-mode .nav-drawer .tab-info {
+  align-self: center;
+  margin-right: 14px;
+}
+
+/* ---- the switch -------------------------------------------------------- */
+
+/* 900px is where `.tabs` stops fitting, and it is also the width at which
+   `practice/layout.css` stacks the practice split — one breakpoint, one story
+   about what "narrow" means. The class is put on <body> by nav-drawer.js from
+   the SAME query (see NAV_DRAWER_QUERY there) rather than by a media block
+   here, because the strip has to be physically moved in the DOM and CSS cannot
+   do that. Changing the number means changing it in both places.
+
+   There is deliberately no `@media (min-width: 901px)` reset below. Every rule
+   in this file already requires `body.nav-drawer-mode`, so a page whose script
+   never ran, or which has grown back past the breakpoint, shows the topbar
+   strip and nothing else — and a media block trying to re-hide the drawer
+   would lose to `body.nav-drawer-mode .nav-drawer` on specificity anyway,
+   which makes it worse than useless: it would read as a guard that is not
+   one. */

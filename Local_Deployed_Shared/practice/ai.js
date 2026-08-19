@@ -23,6 +23,9 @@ async function fetchAIExplanation(questionText, solCode, userCode, actualOutput,
     }
     const data = await res.json();
     aiExplanationText.textContent = data.explanation || "No explanation available.";
+    // Hand it to the tutor so a follow-up question is not answered with the
+    // same walkthrough the learner is already looking at.
+    if (window.PracticeTutor) PracticeTutor.setExplanation(data.explanation || "");
   } catch (e) {
     aiExplanationText.textContent = "Could not load explanation.";
   }

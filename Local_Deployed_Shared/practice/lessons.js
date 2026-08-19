@@ -434,21 +434,12 @@ const LessonGate = (() => {
         ? `${_topicLabel(lesson.topic)} · Concept ${page.segIndex + 1} of ${page.segCount}`
         : `${_topicLabel(lesson.topic)} · Lesson`,
       stage: "lesson",
-      estimate: null,
     });
-    if (typeof apiFetch !== "function" || practiceMode !== "backend") return;
-    try {
-      const res = await apiFetch(
-        `/api/practice/kc-estimate?kc=${encodeURIComponent(kp.kc)}`,
-      );
-      if (!res.ok) return;
-      const data = await res.json();
-      // The learner may have paged on while this was in flight. Only apply the
-      // estimate if the topbar is still showing the concept it belongs to.
-      if (bar.activeKc() === kp.kc) bar.setEstimate(data.ladder_estimate);
-    } catch (err) {
-      console.warn("[lessons] concept estimate unavailable:", err);
-    }
+    // The /api/practice/kc-estimate fetch that used to follow is gone with the
+    // strip's mastery interval: it was fetched for that bar and nothing else
+    // read it. A lesson page has no difficulty reading either — bars.js draws
+    // the "no reading yet" state — so this function now only names the concept
+    // and places the rung.
   };
 
   /* What the runner needs to know about the code on a lesson page.

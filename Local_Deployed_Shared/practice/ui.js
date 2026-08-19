@@ -319,6 +319,9 @@ function renderQuestion(q, count) {
   aiExplanationSection.classList.add("hidden");
   aiExplanationText.textContent = "";
 
+  // A new question is a new conversation — the tutor thread never carries over.
+  if (window.PracticeTutor) PracticeTutor.reset();
+
   // Rigid session: every rendered question starts a fresh strict answer
   // countdown (no-op while no session is running).
   PracticeSession.onQuestionRendered();

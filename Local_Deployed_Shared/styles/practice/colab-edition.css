@@ -57,7 +57,8 @@ html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
    reads as the panel disagreeing with itself, and in a 400px column the two
    land close enough together to invite the comparison. One accuracy readout. */
 html.dd-colab-edition:not(.dd-no-notebook) #ewma-accuracy,
-html.dd-colab-edition:not(.dd-no-notebook) #ai-explanation-section {
+html.dd-colab-edition:not(.dd-no-notebook) #ai-explanation-section,
+html.dd-colab-edition:not(.dd-no-notebook) #tutor-section {
   display: none;
 }
 
@@ -95,43 +96,16 @@ html.dd-colab-edition:not(.dd-no-notebook) #feedback-help {
 
 /* ---- the difficulty step -------------------------------------------------- */
 
-/* `.question-meta-row` is BACK. It was dropped with the accuracy bar when a
-   verdict recorded an attempt and learned nothing from it — there was no
-   old → new to draw, so the bar sat at whatever the last question left on it.
-   `recordLocalEval` now reports the step it caused, and this is the only place
-   the rail shows the thing the learner asked to see: difficulty climbing inside
-   the stage they are on, green when an answer earned it and red when one cost
-   it. The concept strip's estimate bar is the OTHER half — mastery, and the
-   mark on it is the promotion to the next stage.
+/* The bar moved OUT of `.question-meta-row` and up under the concept strip,
+   where it is the full width of the rail (index.html `#target-difficulty`,
+   styles/practice/difficulty-bar.css). It was drawn twice before this — a
+   96px segment inside the strip and this card below it — which is what the
+   "there are two of them" report was about.
 
-   The row was written as a horizontal strip for a 1600px page and the bar is
-   its only remaining child, so there is nothing to space apart here; it just
-   takes the column. */
-html.dd-colab-edition:not(.dd-no-notebook) .question-meta-row {
-  display: block;
-  margin-bottom: 12px;
-}
-
-/* Same padding and rhythm as the concept strip's rows above it, so the step
-   reads as one more measure in that stack rather than a floating card. */
-html.dd-colab-edition:not(.dd-no-notebook) .target-difficulty {
-  gap: 7px;
-  padding: 9px 12px;
-}
-
-/* Both shrink a step: at panel width the title has to fit "Difficulty inside
-   this stage" and the readout "Old 55.0 -> New 70.0", and 13px put each of
-   them on two lines of their own. */
-html.dd-colab-edition:not(.dd-no-notebook) .target-difficulty-title,
-html.dd-colab-edition:not(.dd-no-notebook) .target-difficulty-value {
-  font-size: 12px;
-}
-
-/* A 15-point step is ~55px of a 400px track — readable, but a 10px-tall band is
-   a sliver at that length. Taller makes the green/red the thing you see first,
-   which is the whole point of the row. */
-html.dd-colab-edition:not(.dd-no-notebook) .target-difficulty-track {
-  height: 14px;
+   Only the padding needs saying here: the rail's rows are tighter than the
+   wide page's, and the bar has to sit in that rhythm rather than float in it. */
+html.dd-colab-edition:not(.dd-no-notebook) .difficulty-bar {
+  padding: 10px 12px 12px;
 }
 
 /* "Is this a mistake? I got it right" — offered when the GRADER said wrong. Here
@@ -320,51 +294,6 @@ html.dd-colab-edition .stage-dot + .stage-dot::before {
   transform: translateY(-50%);
   width: auto;
   z-index: 0;
-}
-
-html.dd-colab-edition .concept-topbar-diff,
-html.dd-colab-edition .concept-topbar-est {
-  align-items: center;
-  display: grid;
-  gap: 10px;
-  /* label / count · track · readout — the track takes whatever is left, so the
-     two strips share one set of gridlines and read as a stack of measures. */
-  grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
-  margin-left: 0;
-}
-
-/* `display: grid` above outranks the UA `[hidden] { display: none }` exactly as
-   `display: flex` does in concept-topbar.css. Same trap, same fix — without
-   this, a strip with no concept keeps showing the previous one's numbers. */
-html.dd-colab-edition .concept-topbar-diff[hidden],
-html.dd-colab-edition .concept-topbar-est[hidden] {
-  display: none;
-}
-
-html.dd-colab-edition .concept-topbar-diff-bar,
-html.dd-colab-edition .concept-topbar-est-bar {
-  height: 10px;
-  width: auto;
-}
-
-/* Blue, and not the muted white it is on the wide page. Here the track is the
-   full width of the rail and carries a green/red segment showing the move the
-   last answer made — against a grey fill those two read as the only coloured
-   things on a neutral bar, i.e. as warnings. Against a blue one they read as
-   what they are: this much of your position was just won, or given back. */
-html.dd-colab-edition .concept-topbar-diff-fill {
-  background: #3d7ddd;
-}
-
-html.dd-colab-edition .concept-topbar-diff-bar {
-  background: rgba(255, 255, 255, 0.09);
-}
-
-/* concept-topbar.css drops this label below 700px, which every side panel is.
-   Here it is the only thing naming what the track measures, and the row it
-   labels has room for it. */
-html.dd-colab-edition .concept-topbar-diff-label {
-  display: inline;
 }
 
 /* ---- the rail's own rows ----------------------------------------------- */

@@ -27,12 +27,14 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - `ui.js`: question rendering into the editor and prompt area. Also owns `torchNeedsColab` / `applyTorchRouting` — the binary "notebook card OR editor panel" swap, never both.
 - `colab_mode.js`: **which edition this deploy is, and where a question's notebook lives.** `delta-drills-colab.vercel.app` (or `?mode=colab`) is the Colab edition: a drill routes to its published lesson notebook instead of the in-page editor. Both deploys ship IDENTICAL code and ask `location.hostname` who they are, so there is no branch to keep in sync. Exposes `window.DDColab = {active, hrefFor, lessonFor, hrefForKc, lessonForKc, whenReady, openNotebook, revealSolution, framed, debug}`; must load before `ui.js`, which asks it at load time. Inert on the normal app — no fetch, no DOM change. `hrefForKc` is the same join one level up: a CONCEPT resolves through the index's `kcs` / `kps` maps to `#scrollTo=dd-kp-<slug>`, which is what lets the Knowledge Graph route a bubble. Both anchors are shipped by the generator, never re-slugged here — a slug that drifted by one character is an anchor Colab silently ignores.
 - `ai.js`: AI-judge submission path.
+- `tutor.js`: **the post-answer tutor chat** (`window.PracticeTutor`). A ChatGPT-shaped thread under the AI Explanation in the left panel — tutor turns left, learner turns right, Enter sends and Shift+Enter newlines. `open(ctx)` is called by `events.js` on the same signal that fetches the explanation (a graded attempt in backend/supabase mode), `setExplanation(text)` folds the finished explanation into the context so the tutor does not recite it back, and `reset()` is called by `ui.js` on every question render — one thread per drill, never persisted. The client is stateless: each turn POSTs the whole visible thread plus the problem context to `/api/practice/ai-tutor`, which owns the system prompt. Renders a deliberate three-construct subset of Markdown (fenced blocks, inline backticks, bold) over escaped text rather than pulling in a parser. Styles in `../styles/practice/tutor.css`.
 - `mode.js`: practice mode (backend vs local-pyodide) selection.
 - `adaptive.js`: adaptive question difficulty/selection.
 - `questions.js`: client-side question caching/normalization.
 - `storage.js`: progress / streak persistence.
 - `timer.js`: resumable practice session — learner sets question count + strict answer/review time per question up front (`#practice-session-setup`), then `PracticeSession` enforces them while active. `Pause & exit`, reload, or browser close writes a per-user localStorage snapshot containing the current question, block position, phase, remaining time, editor draft, and grade review; setup offers Resume/Discard on return. Answer expiry force-submits (or advances when nothing is submittable); review expiry auto-rates the default felt difficulty and advances. Hooks: `onQuestionRendered` (ui.js), `pauseForGrading`/`recordReviewResult`/`resumeAnswerPhase`/`beginReviewPhase` (events.js submit), `shouldFinishInsteadOfAdvance` (events.js `_loadNextPracticeQuestion` quota gate). Setup defaults persist in `localStorage.delta_drills_session_setup`; active session key derives from the per-user practice progress key. Styles in `../styles/practice/timer.css`.
-- `bars.js`, `bars.css`: **the two review bars — target difficulty and recent accuracy.** Each is a track with a blue fill, a white marker line at the old value, a second at the new one, and a band between them painted green (`.up`) or red (`.down`); `animateTargetDifficulty(old, new, onComplete)` tweens the pair over 900ms and `setTargetDifficultyFinal(old, new)` lands the same picture instantly (used when restoring a pending review after a reload). There is ONE animation per bar — reuse these rather than writing a second, or two callers end up drawing the same quantity differently. `setTargetDifficultyScope(text)` renames the difficulty bar for a surface that shows more than one bar of its kind (the Colab rail; see the invariant below), and `setTargetDifficultyUnavailable(note, current)` is the honest no-reading state for when there is no old → new to draw at all. Every title goes through `targetDifficultyTitleText()` so the scope override reaches all of them.
+- `bars.js`, `bars.css`: **the two bars — target difficulty and recent accuracy.** Each is a track with a blue fill, a white marker line at the old value, a second at the new one, and a band between them painted green (`.up`) or red (`.down`); `animateTargetDifficulty(old, new, onComplete)` tweens the pair over 900ms and `setTargetDifficultyFinal(old, new)` lands the same picture instantly (used when restoring a pending review after a reload). There is ONE animation per bar — reuse these rather than writing a second, or two callers end up drawing the same quantity differently. `setTargetDifficultyScope(text)` renames the difficulty bar for a surface that shows more than one bar of its kind (the Colab rail; see the invariant below), and `setTargetDifficultyUnavailable(note, current)` is the honest no-reading state for when there is no old → new to draw at all. Every title goes through `targetDifficultyTitleText()` so the scope override reaches all of them.
+- `difficulty-bar.js`, `../styles/practice/difficulty-bar.css`: **the other half of the difficulty bar — the numbers, the two thresholds, and this problem's tick.** `bars.js` owns the track (fill, band, markers) and is the only thing that animates it; this module owns everything printed beside and under it, and the two never write each other's elements. API: `aim(v)` (one number, nothing moved), `move(old, new)` (the before/after readout plus the ± chip), `live(v)` (the running value, called per frame from `animateTargetDifficulty`), `unavailable(note)`, `setProblem(rating)` (the accent tick — hidden when a question carries no rating), `refreshThresholds()` (redraws the green region from the rung, so a mid-screen promotion cannot leave the previous rung's mark up). 🔴 **The two threshold numbers are derived, not chosen.** The aim is `_DIFF_FLOOR + _DIFF_SPAN * m` = `20 + 80 * m` (`app/prioritization.py`), and for a concept `m` is that concept's Wilson LOWER bound — the same quantity `PROMOTE_LO` promotes on — so the promotion rule lands on this axis exactly: 47.2 leaving Faded, 60.8 leaving Worked example, and 20 is the aim with nothing demonstrated. `AIM_FLOOR`/`AIM_SPAN` mirror the backend constants and `watch.py` fails on drift. The red region is labelled "support returns" and NOT "you get downgraded here", because demotion runs off the Wilson UPPER bound (`DEMOTE_HI`), which this bar does not draw.
 - `arena-unlock.js`, `arena-unlock.css`: ARENA UNLOCK INTERSTITIAL — full-viewport overlay that takes over the screen between practice questions when an ARENA exercise crosses its per-subtopic prereq thresholds. Mount point `<div id="arena-unlock-overlay">` lives at body level in `index.html` (not inside `page-practice`) so the takeover escapes any layout/overflow trap. Controller exposes `window.ArenaUnlock.tryShow(onContinue)`; `events.js#nextProblemBtn` calls it before loading the next question and passes `_loadNextPracticeQuestion` as the Continue callback. Reads its data via `window.ARENA_PREREQS_TEMP_*` (defined in `stats/predicted-prereqs-temp.js`); the underlying concept-graph data source is scaffold-only and will be replaced, but this unlock UI is permanent.
 - `kc-practice.js`: SINGLE-KC PRACTICE LADDER for the concept graph's "Practice ⤢" overlay (`index.html?lesson=<kc>&embed=1`). Serves the `faded_items` → `guided_items` → `independent_items` lists that `lessons_structured.json` has always carried but nothing consumed. Three rungs of decreasing support: faded hands over a blanked solution, guided hands over the KP's authored hints (through the practice card's existing Show-hint button), independent hands over nothing. Faded items are real bank questions re-served with the KP's blanked starter, so grading/BKT/FIRe run through the normal submit path — this is NOT a parallel scoring system. Scaffold order comes from the learner's posterior using the same ERE band as `arena-unlock.js` (< 0.75 ⇒ faded first). `PracticeAPI.getNextQuestion()` calls `KcPractice.nextQuestion()` while `isActive()`; once the ladder is spent the normal adaptive queue resumes, still pinned by `window.__kcFocusSubtopics`.
 - `competency-bar.js`: the mastery bar at the top of that overlay — phase heading (Lesson → Faded drills → Independent problems, driven by the tier actually served, not by the mastery band), a track with both real engine thresholds marked (0.85 unlock, 0.95 mastered), and an rAF tween on each graded attempt. Listens for `competency:feedback-update` (emitted by `events.js`), emits `competency:gate-crossed` + a same-origin `postMessage({type:"delta:kc-mastered"})` that `concept-graph/lesson-graph.js` uses to close the overlay and animate the node. Styles in `../styles/practice/misc.css`.
@@ -65,15 +67,44 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - `buildPracticeQuestionFromBank()` in `questions.js` is the single bank-record → `currentQuestion` mapping. `api.js` and `kc-practice.js` both use it; do not re-inline it, or a faded item would grade against different fields than the same question served by the queue.
 - **`recordLocalEval` has two callers with opposite needs, and `finalize` is what separates them.** The Colab verdict IS the whole submit — nothing comes back for it, so it finalizes (the default). The einops fallback in `submitAnswer` is a normal graded submit that merely could not run server-side, so the felt-difficulty step still follows and the attempt must stay PENDING for the rating to attach to: that call site passes **`finalize: false`**. Finalizing there closes the attempt out early and `/feedback` then has nothing to apply, which surfaces to the learner as "Feedback failed" on exactly the einops questions. `watch.py` asserts the flag on every fallback call and its absence on the verdict call.
 - **`recordLocalEval` RETURNS what it moved; callers must not re-read globals for it.** Same shape in both modes — `{finalized, targetBefore, targetAfter, pBefore, pAfter}` plus the backend's `ladderStage`/`ladderEstimate` — with `null` for anything there is no honest value for. The offline branch samples the adaptive state before the engine rewrites it; backend mode maps `target_difficulty_before` / `target_difficulty_after` / `p_before` / `p_after` off `/api/practice/submit-local-eval`. Reading `getTargetDifficultyFromAdaptiveState` again after the `await` would report where the state ENDED UP, never where it started.
-- **The rail shows two bars and they are not the same quantity.** The concept strip's estimate bar is mastery, and the mark on it is the threshold that promotes the learner to the next scaffold stage (`concept-topbar.js`). The difficulty bar under the verdict is the WITHIN-stage half: how hard the questions get inside the stage they are already on. Anything that draws either one must keep them labelled apart — two bars in a 400px column that both fill up and both have a mark read as one measure contradicting itself. `colab-edition.css` keeps `#ewma-accuracy` hidden on that deploy for the same reason: the concept strip already carries an accuracy readout for the concept, and a second one computed a different way (subtopic EWMA vs the concept's interval) reads as the panel disagreeing with itself.
-
-## Extension Points
+- **ONE difficulty readout on the page, and it is `#target-difficulty`.** This quantity used to be drawn twice: a 96px `.concept-topbar-diff-bar` inside the concept strip (fill = the aim, tick = the problem) and a `.target-difficulty` card further down the review column reading "Old 24.5" — two pictures of one number in two visual languages, which is exactly how it was reported ("there are two of them", and "old 24.5 when the other part says 12/100"). The strip now names the concept and the rung and nothing else; the bar under it is full width and carries both numbers. `watch.py#check_difficulty_bar_is_one_bar` fails if either segment comes back. `colab-edition.css` keeps `#ewma-accuracy` hidden on that deploy for a related reason: a second accuracy readout computed a different way reads as the panel disagreeing with itself.
 - **Add a new injected global**: edit `runner.js:buildPyodidePreamble()`, update `RUNTIME_CONTRACT.md`, re-run the dependency-probe script that populates `runtime_dependencies` in the JSON.
 - **Add a new question topic**: extend `questionNeedsEinops` / `questionNeedsArenaArray` in `visuals.js`, ensure the topic's data assets exist in `Local_Deployed_Shared/`, and add probes to the annotator script.
 - **Add a per-question fallback image**: set `fallback_image_url` on the question; `visuals.js:getArenaNumbersPngCandidates()` will prefer it.
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
+- **A lesson page may keep the previous question's difficulty reading** — `UNVERIFIED`
+  - When it happens: navigating from a graded question onto a lesson page.
+  - Symptom: the bar under the concept strip still shows the number the last
+    question moved it to, on a page that has no difficulty reading of its own.
+  - Root cause (claimed, not reproduced): `LessonGate` now calls only
+    `ConceptTopbar.show()`, which clears the tick and the promotion mark but
+    does not touch `DifficultyBar`'s held value. The code comment where the
+    `/api/practice/kc-estimate` fetch was removed says bars.js draws the "no
+    reading yet" state on a lesson — but the only paths that reach
+    `DifficultyBar.unavailable()` are `setTargetDifficultyUnavailable` (an
+    events.js submit path) and `setTargetDifficultyInitial` via
+    `ui.js::renderQuestion`. Whether a lesson render passes through
+    `renderQuestion` decides whether the claim is real.
+  - Prevention/fix: an explicit `DifficultyBar.reset()` called from the lesson
+    and hide paths would make this unconditional instead of incidental.
+  - Status: `UNVERIFIED` — raised by cross-model review while porting the
+    feature from the Colab branch into main, and NOT reproduced: it needs the
+    backend running and a graded attempt, which the port was not able to
+    exercise. Confirm before fixing; the fix is cheap, the wrong fix is a bar
+    that blanks itself mid-question.
+- **The "support returns" region may not mean support returns** — `ACTIVE`
+  - When it happens: target difficulty sits below the 20-point floor.
+  - Symptom: the bar's lower zone promises the ladder is about to hand
+    scaffolding back, when nothing about the rung has changed.
+  - Root cause: `difficulty_offset` (felt difficulty) is added after the
+    `20 + 80 * m` formula and is clamped to ±20, so the drawn value can cross
+    the floor on offset alone, while an actual demotion is decided by the
+    Wilson bound. The label states a consequence the axis cannot guarantee.
+  - Prevention/fix: word the zone as where the axis is, the way the upper edge
+    already says "pace" rather than "unlocked".
+  - Status: `ACTIVE` — cosmetic wording, tracked so it is not rediscovered.
 - **Run routed torch code to a runtime that has no torch** — `RESOLVED`
   - When it happens: pressing Run on any converted Einops/Einsum drill, or on a torch lesson's worked example, in backend mode.
   - Symptom: `ModuleNotFoundError: No module named 'torch'` from Run, while Submit grades the same code correctly.
@@ -102,6 +133,40 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-08-18 (**the flag row stops over-promising**): `api.js`, `events.js`. The
+  repair behind `improvement_queued` moved off the server and onto Seth's local
+  `claude` CLI, which may not be running when the flag is sent, so "rewriting
+  this problem" claimed something that was not happening yet. Now "logged ✓ —
+  queued for rewrite". Same signal, honest tense: the flag reliably reaches a
+  queue, and the rewrite happens whenever the runner next drains it.
+- 2026-08-14 (**you can now ask a follow-up**): new `tutor.js` + `../styles/practice/tutor.css`; `dom.js`, `ui.js`, `events.js`, `ai.js`, `watch.py`, `../index.html`, `../infotips-registry.js`, `../styles/practice/colab-edition.css`. The AI Explanation was a monologue: one generated walkthrough, no way to say "wait, why dim=0". The tutor is the reply channel — a chat thread under it, opened on the same graded-attempt signal, backed by `POST /api/practice/ai-tutor` (gpt-4o). Two decisions worth keeping: the problem context (question, the learner's code, its output, the canonical solution, the explanation already on screen) rides in the SYSTEM message rather than as fabricated opening turns, so the visible thread is exactly what was said and the model is never tempted to answer as though the learner asked for the walkthrough again; and the thread is wiped by `ui.js` on every render, because a follow-up about the previous drill asked against the current one's context is worse than no answer. A failed turn is shown but NOT pushed into `thread` — an error bubble that becomes conversation history teaches the model to apologize on the next turn. Hidden on the Colab edition alongside the explanation, for the reason already written there: no submission it saw, and no room in a 400px rail.
+- 2026-08-18 (**one difficulty bar, full width, with the thresholds drawn on it**):
+  `difficulty-bar.js` + `../styles/practice/difficulty-bar.css` (new), `bars.js`,
+  `concept-topbar.js`, `events.js`, `lessons.js`, `../index.html`,
+  `../styles/practice/{concept-topbar,colab-edition}.css`, `watch.py`.
+  - The page drew difficulty twice and the two copies did not agree on which
+    number was which. Both old renderers are gone — `.concept-topbar-diff-bar`
+    with its fill/tick/delta/from spans, and the `.target-difficulty` card that
+    sat in `.question-meta-row` beside the solution. The bar now mounts once,
+    directly under the concept strip, at the full width of the page, with the
+    old and new numbers at 26px/38px instead of a 96px track and a 12px caption.
+  - `bars.js` is still the only thing that animates the track; the new module is
+    called from all four of its exits. Splitting it that way is what keeps the
+    "one animation per quantity" rule from the entry above intact.
+  - 🔴 **The strip's estimate bar is gone with it.** It drew `6/9` plus a Wilson
+    interval and a promotion mark, and the report was that nobody could tell what
+    `6/9` counted (it is correct ÷ graded attempts on that concept, over the last
+    20) — a count that reads as a countdown to a promotion the engine does not
+    make on a count. What survives is `ConceptTopbar.promotionMark()`: the rung
+    is what that module knows, and the bar below converts its Wilson bound into a
+    point on the difficulty axis. `lessons.js` no longer fetches
+    `/api/practice/kc-estimate`; it existed only to feed that bar.
+  - Two new checks: `check_difficulty_bar_is_one_bar` (one mount, no rebuilt
+    segments, and `bars.js` still wired to the readout) and
+    `check_difficulty_range_matches_backend` (`AIM_FLOOR`/`AIM_SPAN` against
+    `_DIFF_FLOOR`/`_DIFF_SPAN`). The old rail check asserted `.question-meta-row`
+    was not hidden; that row no longer holds the bar, so it now asserts
+    `.difficulty-bar` is not hidden.
 - 2026-08-13 (**the flag row now says what it started**): `api.js`, `events.js`.
   `reportProblem` used to throw the response body away and the confirmation was
   a hardcoded "logged ✓". The backend can now answer `improvement_queued`,

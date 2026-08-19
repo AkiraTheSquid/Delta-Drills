@@ -584,9 +584,10 @@ json.dumps(_delta_results)
         if (res.status === 401) {
           handleExpiredToken();
         } else if (res.ok) {
-          // improvement_queued means the backend also handed this question to
-          // Opus 5 for repair (allowlisted accounts only). Surfaced so the
-          // confirmation can say what actually happened.
+          // improvement_queued means the backend also queued this question for
+          // repair (allowlisted accounts only). The repair itself runs later,
+          // on Seth's machine, through the local Claude Code runner — so this
+          // is "someone will look", not "it is being fixed right now".
           const body = await res.json().catch(() => ({}));
           return { success: true, improvementQueued: !!body.improvement_queued };
         }
