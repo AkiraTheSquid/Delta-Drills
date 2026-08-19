@@ -33,6 +33,12 @@ ALLOWED_ROOT_NAMES = {
                              # never served by Vercel. Added 2026-07-31.
     "instructions",          # written specs awaiting sign-off (dev-only, prose
                              # only, nothing importable). Added 2026-07-31.
+    "ops",                   # operator tooling run from THIS machine, never by
+                             # the app: the question-repair runner that drives
+                             # the local `claude` CLI. Deliberately outside
+                             # This-Directory-Only — the backend must not be
+                             # able to import it, and ops/watch.py asserts that.
+                             # Added 2026-08-18.
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
