@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/((?!arena-book/).*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }

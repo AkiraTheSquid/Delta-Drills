@@ -4,6 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ARENA Delta Drills v1.0.11</title>
+  <!-- Stamp deep links before first paint. solo-route.js confirms known paths
+       after app.js has selected the requested page; unknown paths remove it. -->
+  <script>
+    try {
+      const path = location.pathname.replace(/\.html?$/i, "").replace(/^\/+|\/+$/g, "");
+      if (path) document.documentElement.classList.add("dd-solo");
+    } catch (e) {}
+  </script>
   <!-- Embedded/maximized practice view: when this page is loaded inside the
        Knowledge Graph "Practice" overlay iframe (?embed=1), hide the app chrome
        (tabs + banners) so it reads as its own focused practice page. Set on
@@ -53,6 +61,8 @@
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
+  <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
+  <link rel="stylesheet" href="styles/solo-route.css?v=1" />
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
        No SRI integrity attrs on purpose: a stale/wrong hash would silently block
        the script. jsdelivr is already trusted for pyodide/cytoscape below. -->
@@ -1001,7 +1011,8 @@ t.manual_seed(0)
   <script src="practice/arena-unlock-dom.js?v=2"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="app.js?v=16"></script>
+  <script src="solo-route.js?v=1"></script>
+  <script src="app.js?v=17"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in

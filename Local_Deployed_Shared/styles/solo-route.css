@@ -1,0 +1,53 @@
+/* Pathname deep links: ordinary app + selected page, minus global chrome. */
+
+/* index.html stamps dd-solo synchronously. Hide initial page until app.js has
+   selected requested route, preventing How It Works from flashing first. */
+html.dd-solo:not(.dd-solo-ready) body {
+  visibility: hidden;
+}
+
+html.dd-solo .topbar,
+html.dd-solo .nav-scrim,
+html.dd-solo .nav-drawer,
+html.dd-solo .guest-banner,
+html.dd-solo .tp-banner,
+html.dd-solo .footer {
+  display: none !important;
+}
+
+.dd-solo-exit {
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  z-index: 100;
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0.28;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.dd-solo-exit:hover,
+.dd-solo-exit:focus-visible {
+  color: var(--text);
+  opacity: 1;
+}
+
+/* Knowledge Graph already owns full-bleed layout. Reclaim 56px previously
+   reserved for topbar so graph fills solo window or portfolio frame. */
+html.dd-solo[data-solo-page="knowledge-graph"] #page-knowledge-graph.page {
+  padding: 8px;
+}
+
+html.dd-solo[data-solo-page="knowledge-graph"] .kg2 .kg2-wrap {
+  height: calc(100vh - 16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-solo-exit { transition: none; }
+}
