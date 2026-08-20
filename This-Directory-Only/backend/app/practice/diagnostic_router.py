@@ -40,6 +40,8 @@ def _status(user_state) -> DiagnosticStatusResponse:
         min_probes=diagnostic.effective_min_probes(user_state),
         areas=diagnostic.area_estimates(user_state),
         atoms_seeded=d.get("atoms_seeded"),
+        can_set_prior=diagnostic.can_set_prior(user_state),
+        self_reported_level=user_state.self_reported_level,
     )
 
 

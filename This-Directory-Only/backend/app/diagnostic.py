@@ -99,20 +99,31 @@ def get_diag(user_state: UserPracticeState) -> dict:
 
 
 def should_run(user_state: UserPracticeState) -> bool:
-    """True when the placement diagnostic should drive question serving.
+    """True only after an explicit start from the Diagnostic tab.
 
-    Auto-starts for brand-new learners (no attempts anywhere, no prior
-    diagnostic, not declined); existing users keep their history-driven flow
-    unless they explicitly POST /diagnostic/start."""
+    Placement used to auto-start for fresh accounts inside Practice. That made
+    it an invisible practice mode instead of its own user-controlled flow.
+    """
+    return bool(get_diag(user_state)["active"])
+
+
+def can_set_prior(user_state: UserPracticeState) -> bool:
+    """Whether self-report can still be an honest cold-start prior.
+
+    Once any answer or placement probe exists, changing the prior would rewrite
+    the interpretation of evidence already collected. UI hides the control;
+    write endpoint enforces same rule.
+    """
     d = get_diag(user_state)
-    if d["active"]:
-        return True
-    if d["completed_at"] or d["declined"] or d["probes"]:
+    if d["completed_at"] or d["probes"]:
         return False
-    total_attempts = sum(s.n for s in user_state.subtopic_states.values())
-    if total_attempts > 0:
+    if getattr(user_state, "atom_mastery", None):
         return False
-    d["active"] = True
+    if any(s.n > 0 or s.history for s in user_state.subtopic_states.values()):
+        return False
+    for features in getattr(user_state, "kc_posteriors", {}).values():
+        if any(int(p.get("n") or 0) > 0 for p in features.values() if isinstance(p, dict)):
+            return False
     return True
 
 

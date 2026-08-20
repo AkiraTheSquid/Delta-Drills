@@ -63,6 +63,44 @@ def check_imports():
 def check_public_api():
     runner = read(os.path.join(HERE, "runner.js"))
     assert "buildPyodidePreamble" in runner, "runner.js missing buildPyodidePreamble"
+    assert 'context: "practice-editor"' in runner and "kernel.runCell" in runner, (
+        "Practice editor no longer uses persistent kernel cells"
+    )
+    assert "runtimeResetBtn" in runner and "DeltaKernel?.reset" in runner, (
+        "Practice editor lost restart-runtime control"
+    )
+    notebook_editor = read(os.path.join(HERE, "notebook-editor.js"))
+    for token in ("addCell", "runCell", "serialize", "restore", "submissionCode"):
+        assert token in notebook_editor, f"practice notebook lost {token}"
+    assert "DeltaRunner.runSnippet" in notebook_editor, (
+        "per-cell Run no longer reaches shared runtime"
+    )
+    index = read(os.path.join(SHARED, "index.html"))
+    assert 'id="notebook-cells"' in index and 'id="notebook-add-cell"' in index
+    assert index.find("practice/runner.js") < index.find("practice/notebook-editor.js"), (
+        "notebook-editor.js must load after runner API"
+    )
+    events = read(os.path.join(HERE, "events.js"))
+    assert "DeltaNotebook?.submissionCode()" in events, (
+        "grading ignores code outside first notebook cell"
+    )
+    timer = read(os.path.join(HERE, "timer.js"))
+    assert "DeltaNotebook?.serialize()" in timer and "DeltaNotebook.restore" in timer, (
+        "session pause/resume no longer preserves notebook cells"
+    )
+    assert "Array.isArray(saved.draft.cells)" in timer, (
+        "saved-session parser drops multi-cell notebook draft on reload"
+    )
+    assert "holdClock" in timer and "releaseClock" in timer
+    assert 'holdClock("problem-feedback-note")' in events
+    assert 'releaseClock("problem-feedback-note")' in events
+    index_html = read(os.path.join(SHARED, "index.html"))
+    assert 'id="page-diagnostic"' in index_html and 'data-tab="diagnostic"' in index_html
+    assert 'class="tab has-info" data-tab="diagnostic"' in index_html
+    assert 'id="diagnostic-workspace-host"' in index_html
+    assert "Continue diagnostic in Practice" not in index_html
+    assert index_html.count('id="self-report-row"') == 1
+    assert 'maxlength="5000"' in index_html and '<textarea class="problem-feedback-note"' in index_html
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
 
     ui_js = read(os.path.join(HERE, "ui.js"))
@@ -325,25 +363,25 @@ def check_one_progress_readout():
       the accuracy bar       EWMA over the subtopic, usually "after calibration"
       the competency bar     BKT posterior with 0.85/0.95 gate marks (KG flow)
 
-    Three of them were on screen at once when a learner entered through the
-    knowledge graph — "there are THREE different bars in this view" — showing
-    three quantities in one visual language, none of them the thing the learner
-    would read them as. Difficulty is now a line of text under the ladder, and
-    the other two are deleted.
-
-    So: exactly one mount, and no rebuilt tracks beside it.
+    Top progress is ladder only. Scoped KC understanding remains below review:
+    different BKT quantity, explicit concept title, tier, evidence coverage.
     """
     index_html = read(os.path.join(SHARED, "index.html"))
     assert index_html.count('id="stage-ladder"') == 1, (
         "index.html has more (or fewer) than one #stage-ladder mount — the "
         "practice page gets one progress readout"
     )
-    for gone in ('id="target-difficulty"', 'id="ewma-accuracy"',
-                 'id="competency-bar-container"', 'id="concept-topbar"'):
+    for gone in ('id="target-difficulty"', 'id="competency-bar-container"',
+                 'id="concept-topbar"'):
         assert gone not in index_html, (
             f"index.html mounts {gone} again — that is one of the four readouts "
             "the single stage ladder replaced"
         )
+    assert index_html.count('id="ewma-accuracy"') == 1
+    bars_js = read(os.path.join(HERE, "bars.js"))
+    assert "setConceptUnderstanding" in bars_js
+    assert "evidence coverage" in bars_js
+    assert "Accuracy of " not in bars_js
 
     # Difficulty is a CAPTION. The moment it grows a track again it is the
     # second bar this check exists to prevent, whatever it is called.
@@ -407,10 +445,12 @@ def check_one_progress_readout():
     # Dropping it leaves the section showing where the learner stood BEFORE the
     # answer, for as long as the review is on screen.
     events_js = read(os.path.join(HERE, "events.js"))
-    assert "setProgress(record.ladderEstimate)" in events_js, (
-        "events.js no longer forwards the post-verdict ladder estimate — the "
-        "ladder's fill would stay on the pre-answer reading through review"
-    )
+    for update in ("setProgress(result.ladder_estimate)",
+                   "setProgress(record.ladderEstimate)"):
+        assert update in events_js, (
+            f"events.js lost {update} — ladder fill would stay on pre-answer "
+            "reading through review"
+        )
 
 
 # `check_difficulty_range_matches_backend` used to live here. It mirrored

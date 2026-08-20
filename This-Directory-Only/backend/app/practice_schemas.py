@@ -25,6 +25,13 @@ class NextQuestionResponse(BaseModel):
     is_cold_start: bool = False
     subtopic_n: int = 0  # number of completed questions in this subtopic before this one
     p_current: float | None = None  # EWMA accuracy for this subtopic at question time (0–1)
+    # Learner-facing concept understanding. This is the BKT/crosswalk KC
+    # posterior, NOT the legacy subtopic EWMA and NOT LKT P(correct).
+    # Spec honesty rule: any displayed KC posterior must carry both its
+    # crosswalk tier and observed-weight coverage.
+    kc_mastery: float | None = None
+    kc_coverage: float | None = None
+    kc_tier: str | None = None
     primary_library: str = "python"
     task_type: str = "stdout_prediction"
     expected_artifact_type: str = "stdout"
@@ -146,6 +153,7 @@ class SubmitResponse(BaseModel):
     expected_output: str
     solution_code: str
     failed_tests: list[dict] = Field(default_factory=list)
+    ladder_estimate: dict | None = None
 
 
 class FeedbackRequest(BaseModel):
@@ -157,6 +165,12 @@ class FeedbackResponse(BaseModel):
     success: bool
     target_difficulty_after: float
     p_after: float = 0.0   # EWMA correctness rate (0–1) after this attempt
+    kc_mastery_after: float | None = None
+    kc_coverage_after: float | None = None
+    kc_tier: str | None = None
+    # Fresh per-KC ladder evidence after this graded attempt. Frontend fills
+    # current rung immediately while leaving rung label on served problem.
+    ladder_estimate: dict | None = None
 
 
 class OverrideAttemptRequest(BaseModel):
@@ -240,6 +254,8 @@ class DiagnosticStatusResponse(BaseModel):
     min_probes: int
     areas: list[DiagnosticAreaEstimate] = Field(default_factory=list)
     atoms_seeded: int | None = None   # set once finished
+    can_set_prior: bool = False
+    self_reported_level: str | None = None
 
 
 class DiagnosticAnswerRequest(BaseModel):

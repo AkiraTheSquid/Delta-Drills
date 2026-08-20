@@ -74,18 +74,7 @@ const CompetencyBar = (() => {
      focus loop (`_emitGateCrossed` fires off this same posterior), so the
      learner is watching the thing that closes the overlay. Only its name was
      wrong. */
-  const _pushNote = () => {
-    if (!window.StageLadder) return;
-    if (!Number.isFinite(currentMastery)) {
-      window.StageLadder.setNote("");
-      return;
-    }
-    const pct = Math.round(_clamp01(currentMastery) * 100);
-    window.StageLadder.setNote(currentMastery >= MASTERY_THRESHOLD
-      ? "this topic is mastered"
-      : `this topic is ${pct}% mastered ` +
-        `(${Math.round(MASTERY_THRESHOLD * 100)}% ends the loop)`);
-  };
+  const _pushNote = () => {};
 
   // Fires once per page. The parent graph listens for the postMessage to close
   // the overlay and recolour the node; the same-window event is what the

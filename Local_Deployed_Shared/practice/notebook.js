@@ -520,7 +520,12 @@ const LessonNotebook = (() => {
         fresh: false,
       };
     }
-    return { ..._kernelText(reply), fresh: !!reply.fresh, busy: false };
+    return {
+      ..._kernelText(reply),
+      fresh: !!reply.fresh,
+      busy: false,
+      execCount: reply.execCount || 0,
+    };
   };
 
   return { mount, runSource, checkCount: _checkCount };

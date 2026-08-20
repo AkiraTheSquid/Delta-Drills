@@ -158,26 +158,17 @@ html.dd-colab-edition .stage-ladder-kc {
   white-space: normal;
 }
 
-/* The rung and its instruction share a baseline on a wide page and run off the
-   edge of a panel. Stacked, both stay readable at any width the panel can be
-   dragged to. */
 html.dd-colab-edition .stage-ladder-now {
   flex-direction: column;
   gap: 1px;
 }
 
-/* Three rows of sections, two per row. Three columns was the first try and it
-   truncated "Worked example" to "Worked ex…" at 300px — the width the panel
-   actually opens at. Two columns is ~140px per rung, which the longest name
-   clears at this font size. */
 html.dd-colab-edition .stage-ladder-track {
   grid-auto-flow: row;
   grid-template-columns: repeat(2, 1fr);
 }
 
-html.dd-colab-edition .stage-seg-label {
-  font-size: 10px;
-}
+html.dd-colab-edition .stage-seg-label { font-size: 10px; }
 
 /* ---- the rail's own rows ----------------------------------------------- */
 

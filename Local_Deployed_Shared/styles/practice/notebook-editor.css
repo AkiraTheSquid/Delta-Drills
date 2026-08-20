@@ -1,0 +1,89 @@
+/* Stateful practice notebook: compact Colab-style code cells + local outputs. */
+.practice-notebook { min-height: 0; overflow-y: auto; padding: 2px 4px 24px; }
+.notebook-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin: 2px 0 12px 52px;
+}
+.notebook-add-cell { color: var(--accent); font-size: 12px; padding: 6px 12px; }
+.notebook-shortcuts { color: var(--muted); font-size: 10px; }
+.notebook-cells { display: flex; flex-direction: column; gap: 14px; }
+.notebook-cell { display: grid; gap: 8px; grid-template-columns: 44px minmax(0, 1fr); position: relative; }
+.notebook-cell-gutter { align-items: center; display: flex; flex-direction: column; gap: 6px; padding-top: 12px; }
+.notebook-cell-run {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  font-size: 12px;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+.notebook-cell-run:hover, .notebook-cell:focus-within .notebook-cell-run {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.notebook-cell-run:disabled { cursor: wait; opacity: .65; }
+.notebook-cell-exec { color: #7dd3fc; font-family: monospace; font-size: 11px; }
+.notebook-cell-exec--error { color: #fca5a5; }
+.notebook-cell-main { min-width: 0; }
+.notebook-cell-actions {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+  min-height: 18px;
+  padding: 0 4px;
+  text-transform: uppercase;
+}
+.notebook-cell:first-child .notebook-cell-actions { display: none; }
+.notebook-cell-delete {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+.notebook-cell-delete:hover { color: #fca5a5; }
+.notebook-cell .code-editor {
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  flex: none;
+  min-height: 96px;
+  overflow-y: auto;
+  padding: 13px 15px;
+  resize: vertical;
+}
+.notebook-cell:focus-within .code-editor { border-left-color: var(--accent); }
+.notebook-cell-output { border-left: 3px solid rgba(125, 211, 252, .35); margin-top: 2px; padding-left: 12px; }
+.notebook-cell-output.hidden { display: none; }
+.notebook-cell .output-header { font-size: 10px; margin: 8px 0 5px; }
+.notebook-cell .output-area {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  max-height: 260px;
+  min-height: 34px;
+  padding: 6px 0 10px;
+}
+.notebook-cell--stale { opacity: .72; }
+.notebook-cell--stale::after {
+  color: #fbbf24;
+  content: "runtime restarted — rerun this cell";
+  font-size: 10px;
+  position: absolute;
+  right: 10px;
+  top: 4px;
+}
+@media (max-width: 700px) {
+  .notebook-shortcuts { display: none; }
+  .notebook-toolbar { margin-left: 40px; }
+  .notebook-cell { grid-template-columns: 34px minmax(0, 1fr); }
+}

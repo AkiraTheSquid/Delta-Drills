@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ARENA Delta Drills v1.0.11</title>
+  <title>ARENA Delta Drills v1.0.14</title>
   <!-- Stamp deep links before first paint. solo-route.js confirms known paths
        after app.js has selected the requested page; unknown paths remove it. -->
   <script>
@@ -43,21 +43,23 @@
   <link rel="stylesheet" href="styles/nav-drawer.css?v=2" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/timer.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/timer.css?v=6" />
   <link rel="stylesheet" href="styles/practice/question.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/feedback.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/editor.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=4" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=5" />
+  <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=3" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=9" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=11" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
-  <link rel="stylesheet" href="practice/bars.css?v=8" />
+  <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
@@ -86,7 +88,7 @@
             aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
       <span class="nav-toggle-bars" aria-hidden="true"></span>
     </button>
-    <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.12</span></div>
+    <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.14</span></div>
     <!-- Every tab carries a sibling ⓘ (infotips.js + infotips-registry.js).
          They are written out here rather than injected because app.js
          captures .auth-only / .guest-only into static NodeLists at eval time
@@ -101,6 +103,8 @@
       <button class="dd-info tab-info guest-only" data-dd-info="tab.how-it-works" data-tab="how-it-works" type="button" aria-expanded="false" aria-label="What is How It Works?">i</button>
       <button class="tab auth-only has-info" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.knowledge-graph" data-tab="knowledge-graph" type="button" aria-expanded="false" aria-label="What is the Knowledge Graph?">i</button>
+      <button class="tab has-info" data-tab="diagnostic" type="button">Diagnostic</button>
+      <button class="dd-info tab-info" data-dd-info="tab.diagnostic" data-tab="diagnostic" type="button" aria-expanded="false" aria-label="What is Diagnostic?">i</button>
       <button class="tab auth-only has-info" data-tab="split-tool" type="button" hidden>Split Tool</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.split-tool" data-tab="split-tool" type="button" aria-expanded="false" aria-label="What is the Split Tool?" hidden>i</button>
       <button class="tab auth-only has-info" data-tab="account" type="button">Account</button>
@@ -668,7 +672,37 @@
     <div class="notebooks-container" id="notebooks-host"></div>
   </main>
 
+  <main class="page hidden" id="page-diagnostic">
+    <div class="container diagnostic-page" id="diagnostic-overview">
+      <div class="diagnostic-eyebrow">ARENA placement</div>
+      <h1>Diagnostic</h1>
+      <p class="subtitle">Cold-start placement across ARENA. Estimates seed where practice begins; they never award mastery.</p>
+      <section class="card diagnostic-card">
+        <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
+        <div class="self-report-row hidden" id="self-report-row">
+          <span class="self-report-label" data-dd-info="self-report">Starting-point prior:</span>
+          <div class="self-report-options" role="group" aria-label="Self-reported starting point">
+            <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
+            <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
+            <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
+          </div>
+          <span class="self-report-note hidden" id="self-report-note"></span>
+        </div>
+        <div class="diagnostic-actions">
+          <button type="button" class="primary placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take placement diagnostic</button>
+          <button type="button" class="primary hidden" id="diagnostic-practice-btn">Load next placement question</button>
+        </div>
+      </section>
+      <section class="card diagnostic-results hidden" id="diagnostic-results">
+        <h2>Your diagnostic</h2>
+        <p>Diagnostic results and ARENA curriculum progress will appear here.</p>
+      </section>
+    </div>
+    <div class="diagnostic-workspace-host hidden" id="diagnostic-workspace-host"></div>
+  </main>
+
   <main class="page hidden session-idle" id="page-practice">
+    <div id="practice-workspace-home" hidden></div>
     <div class="practice-container">
       <!-- Resumable session setup — active timers stay strict, while Pause &
            exit preserves the current coding question for later. -->
@@ -705,25 +739,9 @@
         <button class="primary session-start-btn" id="session-start-btn" type="button">Start new session</button>
         <div class="session-summary hidden" id="session-summary"></div>
       </div>
-      <!-- THE progress readout. One bar, full width, above the split.
-
-           It replaces four things that used to share this screen: the concept
-           strip's stage dots, the target-difficulty track, the EWMA accuracy
-           track, and the knowledge-graph flow's competency bar. Those measured
-           three different quantities and two of them printed the word "Faded"
-           off unrelated numbers — see practice/stage-ladder.js for why that was
-           deleted rather than tidied.
-
-           The rung is named ABOVE the track, in words, and lit on it. The five
-           sections are always all five. Difficulty is the caption underneath,
-           as text: it selects the question, it does not measure the learner. -->
+      <!-- One top progress readout: current concept's support ladder. Difficulty
+           remains caption text because it selects questions; it is not mastery. -->
       <section class="stage-ladder hidden" id="stage-ladder">
-        <!-- Each annotated element is wrapped in a `.stage-ladder-row`. The
-             infotip dot is inserted as the anchor's NEXT SIBLING, so without
-             the wrapper it lands as another item in this column and every one
-             of the three costs a line of its own — three empty rows and a
-             readout twice the height it needs. The row is the flex context
-             that puts the dot beside its anchor instead of under it. -->
         <div class="stage-ladder-row">
           <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
                   data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
@@ -732,10 +750,6 @@
         <div class="stage-ladder-row">
           <div class="stage-ladder-now" data-dd-info="stage-ladder" data-dd-info-place="after">
             <span class="stage-ladder-now-name" id="stage-ladder-now-name"></span>
-            <!-- Not a rung: a property of the problem on screen. It rides on a
-                 `solo` record and flips question to question, so it cannot be
-                 a section of a track that fills left to right. See
-                 practice/stage-ladder.js. -->
             <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
             <span class="stage-ladder-now-blurb" id="stage-ladder-now-blurb"></span>
           </div>
@@ -756,18 +770,6 @@
             <strong>Practice</strong> is your adaptive queue — we pick the next problem for you based on what you're ready for.
             Want to drill one specific skill instead? Use <strong>Targeted Practice</strong>.
           </p>
-          <!-- Self-reported experience level: seeds where the adaptive queue
-               STARTS (a prior, not a placement — answers still decide). -->
-          <div class="self-report-row" id="self-report-row">
-            <span class="self-report-label" data-dd-info="self-report">Starting point:</span>
-            <div class="self-report-options" role="group" aria-label="Self-reported experience level">
-              <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
-              <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
-              <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
-            </div>
-            <span class="self-report-note hidden" id="self-report-note"></span>
-            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take placement diagnostic</button>
-          </div>
           <!-- In-session status: progress, phase, countdown, pause/end. -->
           <div class="session-status-row hidden" id="session-status-row">
             <span class="session-progress" id="session-progress" data-dd-info="session-status" data-dd-info-place="before">0 / 0</span>
@@ -795,7 +797,7 @@
           <!-- Cold Start Badge (hidden when not calibrating) -->
           <div class="cold-start-badge hidden" id="cold-start-badge">
             <span class="cold-start-label" id="cold-start-label" data-dd-info="cold-start" data-dd-info-place="after">Calibrating — 1 of 3</span>
-            <span class="cold-start-note" id="cold-start-note">First 3 questions use fixed difficulties to calibrate your level. The next difficulty is preset during calibration, so the usual accuracy bar is hidden until calibration finishes.</span>
+            <span class="cold-start-note" id="cold-start-note">First questions calibrate this skill. Concept understanding reports BKT evidence separately, with coverage.</span>
           </div>
 
           <!-- Question Text -->
@@ -876,20 +878,38 @@
             </div>
             <!-- Per-problem quality feedback — content flags, NOT the difficulty rating above -->
             <div class="problem-feedback-row" id="problem-feedback-row">
-              <span class="problem-feedback-label" data-dd-info="problem-flags">Issue with this problem?</span>
-              <button class="ghost problem-flag-btn" data-flag="broken" type="button">🚩 Broken</button>
-              <button class="ghost problem-flag-btn" data-flag="unclear" type="button">😕 Unclear</button>
-              <button class="ghost problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong image</button>
-              <button class="ghost problem-flag-btn" data-flag="good" type="button">👍 Good</button>
-              <input type="text" class="problem-feedback-note" id="problem-feedback-note"
-                     placeholder="optional note…" maxlength="2000" autocomplete="off" />
-              <span class="problem-feedback-status hidden" id="problem-feedback-status">logged ✓</span>
+              <div class="problem-feedback-actions">
+                <span class="problem-feedback-label" data-dd-info="problem-flags">Issue with this problem?</span>
+                <button class="ghost problem-flag-btn" data-flag="broken" type="button">🚩 Broken</button>
+                <button class="ghost problem-flag-btn" data-flag="unclear" type="button">😕 Unclear</button>
+                <button class="ghost problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong image</button>
+                <button class="ghost problem-flag-btn" data-flag="good" type="button">👍 Good</button>
+                <span class="problem-feedback-status hidden" id="problem-feedback-status">logged ✓</span>
+              </div>
+              <label class="problem-feedback-note-wrap" for="problem-feedback-note">
+                <span>Optional detailed note</span>
+                <textarea class="problem-feedback-note" id="problem-feedback-note" rows="1"
+                          placeholder="What happened? Include expected behavior, exact error, confusing wording, or image details…"
+                          maxlength="5000" autocomplete="off"></textarea>
+              </label>
             </div>
-            <!-- The accuracy bar and the repeated difficulty bar both used to
-                 live here. Both are gone: accuracy duplicated mastery in a
-                 weaker form and stayed blank until calibration finished, and
-                 difficulty is now one line of the stage ladder's caption above
-                 the split. See practice/stage-ladder.js. -->
+            <!-- Legacy class retained for compatibility. Value is per-concept
+                 BKT understanding, with required crosswalk tier + coverage. -->
+            <div class="ewma-accuracy hidden" id="ewma-accuracy">
+              <div class="bar-header-row">
+                <div>
+                  <div class="ewma-accuracy-label" id="ewma-accuracy-label" data-dd-info="concept-understanding">Concept understanding</div>
+                  <div class="ewma-accuracy-meta" id="ewma-accuracy-meta"></div>
+                </div>
+                <div class="ewma-accuracy-value" id="ewma-accuracy-value">0%</div>
+              </div>
+              <div class="stats-bar-track ewma-accuracy-track">
+                <div class="stats-bar-fill ewma-accuracy-fill" id="ewma-accuracy-fill" style="width:0%"></div>
+                <div class="target-difficulty-delta hidden" id="ewma-accuracy-delta"></div>
+                <div class="target-difficulty-marker" id="ewma-accuracy-marker-old"><div class="target-difficulty-line"></div></div>
+                <div class="target-difficulty-marker hidden" id="ewma-accuracy-marker-new"><div class="target-difficulty-line"></div></div>
+              </div>
+            </div>
             <div class="solution-section">
               <div class="solution-label" data-dd-info="solution">Solution</div>
               <pre class="solution-code" id="solution-code"></pre>
@@ -924,25 +944,46 @@
           </div>
         </div>
 
-        <!-- Right Panel: Code Editor + Runner -->
+        <!-- Right panel: Colab-like cells sharing one persistent runtime. -->
         <div class="practice-right">
-          <div class="editor-header" data-dd-info="editor">Code Editor</div>
-          <!-- Painted before any script runs, so it cannot read
-               DEFAULT_EDITOR_CODE from practice/config.js — it is the one
-               hand-kept copy of that text. Keep the two in step. -->
-          <textarea class="code-editor" id="code-editor" spellcheck="false">import torch as t
+          <div class="editor-header-row">
+            <div class="editor-header" data-dd-info="editor">Code Editor</div>
+            <div class="runtime-controls">
+              <span class="runtime-status" id="runtime-status">Runtime</span>
+              <button class="ghost runtime-reset-btn" id="runtime-reset-btn" type="button">Restart runtime</button>
+            </div>
+          </div>
+          <div class="practice-notebook" id="practice-notebook">
+            <div class="notebook-toolbar">
+              <button class="ghost notebook-add-cell" id="notebook-add-cell" type="button">+ Code</button>
+              <span class="notebook-shortcuts">Shift+Enter runs cell · Alt+Enter runs + adds</span>
+            </div>
+            <div class="notebook-cells" id="notebook-cells">
+              <section class="notebook-cell" data-cell-id="1">
+                <div class="notebook-cell-gutter">
+                  <button class="notebook-cell-run" id="run-btn" type="button" aria-label="Run cell 1" data-dd-info="runner">▶</button>
+                  <span class="notebook-cell-exec" aria-label="Not run">[ ]</span>
+                </div>
+                <div class="notebook-cell-main">
+                  <!-- Hand-kept initial copy of DEFAULT_EDITOR_CODE. -->
+                  <textarea class="code-editor notebook-cell-editor" id="code-editor" spellcheck="false" aria-label="Code cell 1">import torch as t
 
 t.manual_seed(0)
 
 # Write your solution here
 </textarea>
-          <button class="primary run-btn" id="run-btn" type="button" data-dd-info="runner" data-dd-info-place="after">Run</button>
-          <div class="output-header">Output</div>
-          <pre class="output-area" id="output-area"></pre>
-          <div class="output-visual hidden" id="output-visual">
-            <div class="output-visual-label">Output Image</div>
-            <div class="output-visual-note" id="output-visual-note">Rendered from `solve()`.</div>
-            <canvas class="output-visual-canvas hidden" id="output-visual-canvas"></canvas>
+                  <div class="notebook-cell-output hidden" data-cell-output>
+                    <div class="output-header">Output</div>
+                    <pre class="output-area" id="output-area"></pre>
+                    <div class="output-visual hidden" id="output-visual">
+                      <div class="output-visual-label">Output Image</div>
+                      <div class="output-visual-note" id="output-visual-note">Rendered from `solve()`.</div>
+                      <canvas class="output-visual-canvas hidden" id="output-visual-canvas"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
         </div>
       </div>
@@ -976,14 +1017,14 @@ t.manual_seed(0)
   <script src="practice/arena-unlock-dom.js?v=2"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="solo-route.js?v=1"></script>
-  <script src="app.js?v=17"></script>
+  <script src="solo-route.js?v=2"></script>
+  <script src="app.js?v=18"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=2"></script>
+  <script src="infotips-registry.js?v=4"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -1013,11 +1054,10 @@ t.manual_seed(0)
   <script src="practice/mode.js?v=7"></script>
   <script src="practice/questions.js?v=24"></script>
   <script src="practice/engine.js?v=10"></script>
-  <script src="practice/adaptive.js?v=10"></script>
+  <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=16"></script>
-  <!-- Before bars.js: bars.js calls into DifficultyBar on every draw. -->
-  <script src="practice/bars.js?v=9"></script>
+  <script src="practice/dom.js?v=18"></script>
+  <script src="practice/bars.js?v=11"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
@@ -1031,29 +1071,31 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=30"></script>
+  <script src="practice/ui.js?v=32"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <script src="practice/api.js?v=19"></script>
-  <script src="practice/timer.js?v=15"></script>
-  <script src="practice/runner.js?v=18"></script>
+  <script src="practice/timer.js?v=17"></script>
+  <script src="practice/kernel.js?v=4"></script>
+  <script src="practice/runner.js?v=20"></script>
+  <script src="practice/notebook.js?v=7"></script>
+  <script src="practice/notebook-editor.js?v=1"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
-  <script src="practice/competency-bar.js?v=4"></script>
-  <script src="practice/stage-ladder.js?v=5"></script>
-  <script src="practice/kernel.js?v=2"></script>
-  <script src="practice/notebook.js?v=6"></script>
-  <script src="practice/lessons.js?v=26"></script>
+  <script src="practice/competency-bar.js?v=5"></script>
+  <script src="practice/stage-ladder.js?v=6"></script>
+  <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=1"></script>
-  <script src="practice/ladder.js?v=5"></script>
+  <script src="practice/ladder.js?v=7"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=31"></script>
+  <script src="practice/events.js?v=33"></script>
+  <script src="practice/diagnostic-page.js?v=3"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

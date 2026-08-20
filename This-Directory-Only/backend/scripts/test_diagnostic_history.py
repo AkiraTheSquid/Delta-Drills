@@ -188,6 +188,18 @@ theta_after = {e["topic"]: e["theta"] for e in D.area_estimates(ov)}["Numpy"]
 check("override of finishing probe moves the frozen estimate",
       theta_after > theta_before, f"{theta_before} -> {theta_after}")
 
+print("J. EXPLICIT ENTRY + PRIOR LOCK")
+entry = UserPracticeState(user_id="t-entry")
+check("fresh account does not auto-start placement", D.should_run(entry) is False)
+check("fresh account may set cold-start prior", D.can_set_prior(entry) is True)
+D.start(entry)
+check("explicit start activates placement", D.should_run(entry) is True)
+D.get_diag(entry)["probes"].append({
+    "question_id": 93000, "subtopic": "x", "topic": "Numpy",
+    "difficulty": 40.0, "result": "incorrect", "ts": NOW.isoformat(),
+})
+check("first probe locks cold-start prior", D.can_set_prior(entry) is False)
+
 print()
 if fails:
     print(f"{len(fails)} FAILED: {fails}")

@@ -418,16 +418,6 @@ const LessonGate = (() => {
     return html;
   };
 
-  /* Point the page-wide topbar at the concept this page teaches.
-
-     The estimate is fetched rather than read off the pending question, for two
-     reasons: the lesson may teach several KPs and at most one of them is the
-     concept that question is staged on, and the ?lesson=<kc> entry point has no
-     question at all. A failed fetch leaves the estimate blank rather than
-     falling back to the staged question's number — labelling one concept's
-     record with another concept's attempts would be worse than showing none.
-
-     Guest mode has no backend to ask, so the fetch is skipped entirely there. */
   const _showTopbar = async (page) => {
     const bar = window.StageLadder;
     if (!bar) return;
@@ -435,21 +425,11 @@ const LessonGate = (() => {
     bar.show({
       kc: kp.kc,
       title: seg.title || kp.title,
-      // Counted over the KP's concepts, not over the pages in this visit —
-      // there is normally one page per visit now, so "1 of 1" would be true
-      // and useless. "Concept 2 of 3" is what tells the learner the KP is a
-      // sequence they are partway through rather than a thing that keeps
-      // reappearing.
       eyebrow: page.segCount > 1
         ? `${_topicLabel(lesson.topic)} · Concept ${page.segIndex + 1} of ${page.segCount}`
         : `${_topicLabel(lesson.topic)} · Lesson`,
       stage: "lesson",
     });
-    // The /api/practice/kc-estimate fetch that used to follow is gone with the
-    // strip's mastery interval: it was fetched for that bar and nothing else
-    // read it. A lesson page has no difficulty reading either — bars.js draws
-    // the "no reading yet" state — so this function now only names the concept
-    // and places the rung.
   };
 
   /* What the runner needs to know about the code on a lesson page.
@@ -476,7 +456,8 @@ const LessonGate = (() => {
     document.body.classList.remove("lesson-mode");
     activeQuestion = null;
     const editor = _el("code-editor");
-    if (editor) editor.value = DEFAULT_EDITOR;
+    if (window.DeltaNotebook) window.DeltaNotebook.reset(DEFAULT_EDITOR, { addScratch: false });
+    else if (editor) editor.value = DEFAULT_EDITOR;
     const out = _el("output-area");
     if (out) out.textContent = "";
   };
@@ -573,10 +554,12 @@ const LessonGate = (() => {
         }
         questionText.scrollTop = 0;
         window.scrollTo({ top: 0 });
-        editor.value = colabHref
+        const lessonCode = colabHref
           ? DEFAULT_EDITOR
           : (page.seg.worked_example_code ||
             _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR);
+        if (window.DeltaNotebook) window.DeltaNotebook.reset(lessonCode, { addScratch: false });
+        else editor.value = lessonCode;
         if (output) output.textContent = "";
 
         // Not awaited: the page is already rendered and the estimate fills in

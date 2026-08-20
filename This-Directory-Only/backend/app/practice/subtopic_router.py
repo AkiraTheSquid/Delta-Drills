@@ -9,9 +9,9 @@ Endpoints (mounted under /api/practice by the parent router):
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import bkt_mastery
+from app import bkt_mastery, diagnostic
 from app import kc_graph
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
@@ -138,6 +138,11 @@ def update_self_report(
     """
     user_id = str(user.id)
     user_state = get_user_state(user_id)
+    if not diagnostic.can_set_prior(user_state):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Starting-point prior is locked after learner evidence exists.",
+        )
     level = payload.level.strip().lower()
     user_state.self_reported_level = level if level in bkt_mastery.PRIOR_BY_LEVEL else None
     save_user_state(user_id)

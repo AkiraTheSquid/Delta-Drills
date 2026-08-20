@@ -241,7 +241,11 @@ function renderQuestion(q, count) {
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
-  codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
+  if (window.DeltaNotebook) {
+    window.DeltaNotebook.reset(q.starter_code || DEFAULT_EDITOR_CODE);
+  } else {
+    codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
+  }
   // "Numpy: Numpy: Vectorization and broadcasting". The two modes disagree on
   // what `subtopic` is: local mode sends the bare name and the topic has to be
   // prefixed, while the backend already sends the COMPOSITE key
@@ -279,7 +283,7 @@ function renderQuestion(q, count) {
       // (wrong → easier, right → harder), NOT "3 questions at fixed
       // difficulties" (that described the old fixed-ramp system, removed).
       coldStartNote.textContent =
-        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up, and the accuracy bar stays hidden until it finishes.`;
+        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up; concept understanding reports its own BKT evidence and coverage.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {
@@ -292,6 +296,14 @@ function renderQuestion(q, count) {
     practiceDontKnowBtn.disabled = false;
   }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
+  window.DifficultyBar?.setStage(q.ladder_stage);
+  window.DifficultyBar?.setProblem(q.difficulty);
+  setConceptUnderstanding({
+    mastery: q.kc_mastery,
+    coverage: q.kc_coverage,
+    tier: q.kc_tier,
+    title: q.ladder_kc_title,
+  });
   solutionCode.textContent = q.solution_code;
   setupQuestionAids(q);
   overrideRow.classList.add("hidden");
@@ -308,8 +320,8 @@ function renderQuestion(q, count) {
   // AFTER the submit area is un-hidden above so it can re-hide it for torch).
   applyTorchRouting(q);
 
-  /* The subtopic posterior before this answer. The accuracy bar that used to
-     draw it is gone (see practice/stage-ladder.js), but the number is not
+  /* Subtopic EWMA before this answer. It is no longer shown as understanding —
+     KC BKT + coverage owns that readout — but this number is not
      decoration: `events.js` posts it as `pBefore` on `competency:feedback-update`,
      which is what the knowledge-graph focus flow watches to know a concept has
      been mastered and the overlay can close. Read here, on render, because
@@ -550,6 +562,15 @@ function applyPendingFeedbackState(pending) {
   overrideRow.classList.add("hidden");
   showNextProblemButton();
   setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
+  setConceptUnderstanding({
+    mastery: pending.kcMastery,
+    coverage: pending.kcCoverage,
+    tier: pending.kcTier,
+    title: pending.kcTitle,
+  });
+  if (pending.ladderEstimate && window.StageLadder) {
+    window.StageLadder.setProgress(pending.ladderEstimate);
+  }
 }
 
 // Apply correct/incorrect result to the feedback area UI.

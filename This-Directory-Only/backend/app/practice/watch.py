@@ -188,6 +188,10 @@ def check_attempts_are_finalized():
             f"{route} records an attempt without flushing the one it is about "
             "to overwrite — that silently loses a real answer"
         )
+    assert 'ladder_fields' in _calls_in(src('questions_router.py'), 'submit_answer'), (
+        "submit response lost fresh ladder estimate — progress would wait for "
+        "felt-difficulty feedback instead of moving on answer"
+    )
     local_eval = _calls_in(src('questions_router.py'), 'submit_local_eval')
     assert 'record_attempt' in local_eval, "submit_local_eval must record the attempt"
     assert 'finalize_attempt' in local_eval, (
@@ -197,6 +201,10 @@ def check_attempts_are_finalized():
 
     feedback = _calls_in(src('feedback_router.py'), 'submit_feedback')
     assert 'finalize_attempt' in feedback, "submit_feedback must finalize through the shared path"
+    assert 'kc_estimate' in feedback, (
+        "feedback response lost fresh KC ladder estimate — current rung would "
+        "stay frozen until next question"
+    )
     # A second copy of the tail is how the two exits drift apart, one commit at
     # a time, until an answer is worth different amounts depending on which
     # button recorded it.

@@ -2,10 +2,9 @@
    NOTEBOOK KERNEL CLIENT — one live Python session per learner
    ================================================================
 
-   `DeltaRunner.runSnippet` runs a block of code and forgets it: Pyodide is
-   reset per call and the backend's `/run-code` forks a fresh process per
-   submission. That is right for grading and wrong for a notebook, where cell 8
-   is entitled to the `a` that cell 6 bound.
+   Grading uses fresh processes. Notebook Run uses this client instead: cell 8
+   is entitled to names cell 6 bound, until learner restarts runtime or server
+   evicts idle kernel.
 
    This talks to `/api/practice/kernel/exec`, which keeps a forked Python
    process alive between calls on the backend. The rules:

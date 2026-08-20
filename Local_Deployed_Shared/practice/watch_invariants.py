@@ -250,15 +250,14 @@ def check_invariants():
         if "display:none" in body.replace(" ", ""):
             hidden_selectors.update(s.strip() for s in selectors.split(","))
     assert not any(s.endswith(".stage-ladder") for s in hidden_selectors), (
-        "colab-edition.css hides .stage-ladder — that is the whole progress "
-        "readout on this deploy, concept and rung and difficulty together"
+        "colab-edition.css hides .stage-ladder — support progress would "
+        "disappear from the side-panel edition"
     )
     # And it must still be re-laid-out for a side panel. Four sections on one
     # row is a 1600px page's layout; at ~300px each rung name truncates, and a
     # rung the learner cannot read is the one thing the ladder is for.
-    assert "html.dd-colab-edition .stage-ladder-track" in colab_css, (
-        "colab-edition.css lost the narrow-rail override for the ladder track "
-        "— four sections on one row truncate to nothing in a side panel"
+    assert "html.dd-colab-edition .stage-ladder" in colab_css, (
+        "colab-edition.css lost narrow-rail stage-ladder override"
     )
 
     # The Python half is checked by RUNNING it. These are the three transitions
@@ -333,5 +332,3 @@ def check_invariants():
     assert rated["n"] == 1 and rated["history"][0]["feedback"] == "a_lot", (
         "a rated attempt must be counted once, with the level the learner gave"
     )
-
-

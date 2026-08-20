@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app import diagnostic, lessons
+from app import diagnostic, kc_graph, lessons
 from app.adaptive import (
     COLD_START_TARGETS,
     UNRATED,
@@ -191,6 +191,16 @@ def next_question(
     # it. On the faded/partial rungs the learner is handed the canonical
     # solution with its TAIL removed (backward fading), not a blank page.
     ladder = ladder_fields(user_state, question.id)
+    mastery_fields = {}
+    if ladder.get("ladder_kc"):
+        mastery, coverage, tier = kc_graph.kc_mastery(
+            user_state, ladder["ladder_kc"]
+        )
+        mastery_fields = {
+            "kc_mastery": mastery,
+            "kc_coverage": coverage,
+            "kc_tier": tier,
+        }
     scaffold = ladder_starter(question, ladder.get("ladder_stage") or "")
     starter = scaffold or question.starter_code
     # Whether the promise THIS rung makes is actually on the page — blanks at
@@ -228,6 +238,7 @@ def next_question(
         # measures prior knowledge — teaching first would corrupt it), so
         # this only runs on the normal adaptive-queue path.
         lesson_gate=lessons.unexposed_target_kcs(question.id, user_state.kc_exposure),
+        **mastery_fields,
         **ladder,
     )
 
@@ -251,7 +262,8 @@ def submit_answer(
         question, payload.user_code, user
     )
 
-    if diagnostic.get_diag(user_state)["active"]:
+    is_diagnostic = diagnostic.get_diag(user_state)["active"]
+    if is_diagnostic:
         # Placement probe: update the diagnostic posterior directly (BKT is
         # seeded once at finish). No pending attempt / felt-difficulty step —
         # /override can still flip the latest probe's result.
@@ -274,6 +286,7 @@ def submit_answer(
         # concepts the probe never intended to teach.
         record_ladder_outcome(user_state, question.id, correct)
     save_user_state(user_id)
+    ladder = {} if is_diagnostic else ladder_fields(user_state, question.id)
 
     return SubmitResponse(
         correct=correct,
@@ -281,6 +294,7 @@ def submit_answer(
         expected_output=expected_output,
         solution_code=compose_full_solution(question.starter_code, question.answer_code),
         failed_tests=failed_tests,
+        ladder_estimate=ladder.get("ladder_estimate"),
     )
 
 

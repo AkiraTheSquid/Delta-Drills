@@ -166,59 +166,27 @@ const LadderUI = (() => {
 
   /* ---------- per-card decoration -------------------------------------- */
 
-  /* The in-card header this file used to build — concept name, rung, interval —
-     now lives in the page-wide stage ladder (practice/stage-ladder.js), which
-     does not scroll away and is shared with the lesson screen. Rendering both would
-     put the concept and its estimate on screen twice, three inches apart, with
-     the card's copy going stale the moment a submit updated the other. */
+  /* Put served KC, rung, support, estimate, question rating, queue aim into
+     single page-wide ladder. */
   const _syncTopbar = (question) => {
     const bar = window.StageLadder;
     if (!bar) return;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
-    // `getTargetDifficultyForQuestion` already resolves the backend field, the
-    // local adaptive state and the item's own rating in that order, so the
-    // guest path gets a sensible answer without a second code path here.
-    const target =
-      typeof getTargetDifficultyForQuestion === "function"
-        ? getTargetDifficultyForQuestion(question)
-        : question.target_difficulty;
+    const target = typeof getTargetDifficultyForQuestion === "function"
+      ? getTargetDifficultyForQuestion(question)
+      : question?.target_difficulty;
     if (!kc || !stage) {
-      // No ladder context on this question — a diagnostic probe, a KC-less
-      // item, or the guest queue, which serves straight from the local bank and
-      // has no ladder at all. The whole readout goes: leaving the previous
-      // concept's name and rung up would label this problem with a concept it
-      // has nothing to do with, and the difficulty caption alone is a footnote
-      // to a bar that is not there. It used to survive on its own here, back
-      // when it WAS the bar.
       bar.hide();
       return;
     }
     bar.show({
       kc,
       title: question.ladder_kc_title || kc,
-      // This item's own rating, and where the adaptive queue is aiming — the
-      // number that moves between questions.
       difficulty: question.difficulty,
       target,
       stage,
-      // A property of the QUESTION, passed as one. The record still says
-      // `solo` and the promotion arithmetic still reads `solo` — this problem
-      // simply happens to use the concept alongside others already taught.
-      // Shown because the learner should be able to SEE that the concepts have
-      // started arriving together; stored nowhere, because it is not evidence
-      // about them.
-      //
-      // 🔴 It used to be passed AS THE STAGE, which made it the ladder's fifth
-      // section. A section of a track that fills left to right is a claim that
-      // the learner moved; this moves with the question in front of them, so
-      // Solo read as finished and Integrated as current, and both flipped back
-      // on the next problem. It is a chip beside the rung name now.
       integrated: !!question.ladder_integrated,
-      // False when the backend could build neither blanks nor an example for
-      // this particular drill — see `ladder_support` in practice_schemas. The
-      // rung still stands; the dot's description stops claiming a scaffold
-      // that is not on the page.
       support: question.ladder_support !== false,
       estimate: question.ladder_estimate || null,
     });

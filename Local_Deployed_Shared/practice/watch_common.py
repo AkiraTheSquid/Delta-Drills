@@ -15,7 +15,7 @@ REQUIRED_JS = [
     "init.js", "dom.js", "events.js", "engine.js", "api.js",
     "runner.js", "visuals.js", "ui.js", "ai.js", "tutor.js", "mode.js",
     "adaptive.js", "questions.js", "storage.js", "timer.js",
-    "bars.js", "stage-ladder.js", "config.js",
+    "bars.js", "stage-ladder.js", "diagnostic-page.js", "notebook-editor.js", "config.js",
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
     "kernel.js",  # persistent per-learner backend session behind notebook.js

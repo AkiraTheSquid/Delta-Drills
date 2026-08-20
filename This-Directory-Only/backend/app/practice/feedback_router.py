@@ -14,7 +14,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.adaptive import get_user_state, save_user_state
-from app import diagnostic
+from app import diagnostic, kc_graph
 from app.auth import get_current_user
 from app.models import User
 from app.practice.attempt_scoring import finalize_attempt
@@ -78,10 +78,24 @@ def submit_feedback(
 
     save_user_state(user_id)
 
+    kc_mastery_after = kc_coverage_after = None
+    kc_tier = None
+    ladder_estimate = None
+    kcs = kc_graph.question_kcs(payload.question_id)
+    if kcs:
+        kc_mastery_after, kc_coverage_after, kc_tier = kc_graph.kc_mastery(
+            user_state, kcs[0]
+        )
+        ladder_estimate = kc_graph.kc_estimate(user_state, kcs[0])
+
     return FeedbackResponse(
         success=True,
         target_difficulty_after=attempt.target_difficulty_after or 0.0,
         p_after=attempt.p_after or 0.0,
+        kc_mastery_after=kc_mastery_after,
+        kc_coverage_after=kc_coverage_after,
+        kc_tier=kc_tier,
+        ladder_estimate=ladder_estimate,
     )
 
 

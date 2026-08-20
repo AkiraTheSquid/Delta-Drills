@@ -66,6 +66,10 @@ window.DD_INFOTIPS = {
     title: "Signed in",
     body: "The account your progress is being saved to. Mastery follows the account, not the browser.",
   },
+  "tab.diagnostic": {
+    title: "Diagnostic",
+    body: "Cold-start placement plus its starting-point prior. Separate from normal practice; cannot award mastery.",
+  },
   "tp-banner": {
     title: "Targeted Practice mode",
     body: "Shown whenever a targeted session is running: questions come from the exercises you chose, not the adaptive queue. End it here to go back to normal Practice.",
@@ -88,24 +92,28 @@ window.DD_INFOTIPS = {
     title: "Placement diagnostic",
     body: "A short adaptive run that locates your level across every topic at once. It's shorter where you've already practised, and it can never lower mastery you've earned.",
   },
+  "stage-ladder-kc": {
+    title: "Current concept",
+    body: "Skill this problem targets. Click to open it on knowledge graph.",
+  },
+  "stage-ladder": {
+    title: "Support ladder",
+    body: "Four stages: Lesson, Faded, Worked example, Solo. Filled portion shows progress toward less support.",
+  },
+  "stage-ladder-difficulty": {
+    title: "Difficulty",
+    body: "Aim is where queue points now; problem rating is item difficulty. Both select practice. Neither is mastery.",
+  },
+  "concept-understanding": {
+    title: "Concept understanding",
+    body: "BKT estimate for this concept. Tier says whether mapping is measured or borrowed from its topic; coverage says how much rests on atoms you have attempted.",
+  },
   "session-status": {
     title: "Session status",
     body: "Where you are in the block, which phase you're in, and the countdown. Answer time auto-submits; review time loads the next problem.",
   },
 
   /* ---- Practice: the problem --------------------------------------- */
-  "stage-ladder-kc": {
-    title: "Current concept",
-    body: "The skill this problem is tagged to. Click it to open that concept on the knowledge graph and check the choice for yourself.",
-  },
-  "stage-ladder": {
-    title: "Where you are",
-    body: "Five rungs from reading an explanation to solving several concepts at once unaided. The section you're on is filled as far as your record has taken you toward the next one; the rungs after it are what's still ahead.",
-  },
-  "stage-ladder-difficulty": {
-    title: "Difficulty",
-    body: "Two different numbers, on purpose. The <em>aim</em> is where the queue is pointing for you right now. The <em>rating</em> is this problem's own — the queue picks by concept and rung first, then takes the closest difficulty it can reach, so the two rarely match exactly.",
-  },
   /* No `concept-topbar`, `stage-dots`, `difficulty` or `competency-bar` keys.
      All four annotated widgets the 2026-08-19 one-ladder change deleted: the
      concept strip and its four rung dots, the 96px difficulty copy inside it,
@@ -166,9 +174,8 @@ window.DD_INFOTIPS = {
     title: "Report a problem",
     body: "Flags the <em>content</em>, not your answer — broken, unclear, wrong image. It doesn't affect your score.",
   },
-  /* No `ewma-accuracy` or `target-difficulty` keys either. The accuracy bar is
-     deleted and difficulty is a caption on the ladder — see
-     `stage-ladder-difficulty` above. */
+  /* Legacy `ewma-accuracy` class now hosts scoped KC understanding. Difficulty
+     stays text under ladder; it is not another progress track. */
   solution: {
     title: "Solution",
     body: "The worked answer, revealed after you submit. Read it even when you were right — the shorter route is often the point.",

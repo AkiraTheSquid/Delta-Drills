@@ -4,7 +4,7 @@
 
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
-  const userCode = codeEditor.value;
+  const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
   PracticeSession.pauseForGrading();
   practiceSubmitBtn.disabled = true;
   let result;
@@ -36,6 +36,9 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
+  if (result.ladder_estimate && window.StageLadder) {
+    window.StageLadder.setProgress(result.ladder_estimate);
+  }
   // Preserve enough of the grade UI to reconstruct this review after a pause
   // or reload, including the learner's submitted code and failed cases.
   PracticeSession.recordReviewResult({
@@ -157,8 +160,15 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
-    // The accuracy bar that used to be drawn here is gone; `pAfter` still
-    // matters and is posted below, where the graph reads it.
+    setConceptUnderstanding({
+      mastery: response?.kc_mastery_after,
+      coverage: response?.kc_coverage_after,
+      tier: response?.kc_tier,
+      title: q.ladder_kc_title,
+    });
+    if (response?.ladder_estimate && window.StageLadder) {
+      window.StageLadder.setProgress(response.ladder_estimate);
+    }
 
     // Emit competency bar update (single-KC maximize mode) — includes old/new mastery
     window.dispatchEvent(
@@ -175,6 +185,11 @@ feedbackButtons.forEach((btn) => {
       correct: !!practiceProgress.lastResultCorrect,
       pBefore,
       pAfter,
+      kcMastery: response?.kc_mastery_after,
+      kcCoverage: response?.kc_coverage_after,
+      kcTier: response?.kc_tier,
+      kcTitle: q.ladder_kc_title,
+      ladderEstimate: response?.ladder_estimate,
     };
     savePracticeProgress(practiceProgress);
   });
@@ -187,6 +202,7 @@ problemFlagButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const q = PracticeAPI.currentQuestion;
     if (!q) return;
+    PracticeSession.holdClock("problem-feedback-submit");
     const tag = btn.dataset.flag;
     const note = problemFeedbackNote ? problemFeedbackNote.value.trim() : "";
     problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
@@ -210,9 +226,20 @@ problemFlagButtons.forEach((btn) => {
       }
     } catch (_) {
       /* feedback is best-effort; ignore */
+    } finally {
+      PracticeSession.releaseClock("problem-feedback-submit");
     }
   });
 });
+
+if (problemFeedbackNote) {
+  problemFeedbackNote.addEventListener("focus", () => {
+    PracticeSession.holdClock("problem-feedback-note");
+  });
+  problemFeedbackNote.addEventListener("blur", () => {
+    PracticeSession.releaseClock("problem-feedback-note");
+  });
+}
 
 const _resetProblemFeedbackRow = () => {
   problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
@@ -249,7 +276,8 @@ const _loadNextPracticeQuestion = async () => {
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor
-  codeEditor.value = DEFAULT_EDITOR_CODE;
+  if (window.DeltaNotebook) window.DeltaNotebook.reset(DEFAULT_EDITOR_CODE);
+  else codeEditor.value = DEFAULT_EDITOR_CODE;
   outputArea.textContent = "";
 
   // Load next question
@@ -281,7 +309,11 @@ nextProblemBtn.addEventListener("click", async () => {
   // interstitial's Continue button calls _loadNextPracticeQuestion.
   // Returns false (and we fall through to the normal flow) when there
   // is no newly-unlocked exercise waiting. tryShow is async — must await.
-  if (window.ArenaUnlock && typeof window.ArenaUnlock.tryShow === "function") {
+  if (
+    !PracticeAPI.currentQuestion?.diagnostic_active &&
+    window.ArenaUnlock &&
+    typeof window.ArenaUnlock.tryShow === "function"
+  ) {
     if (await window.ArenaUnlock.tryShow(_loadNextPracticeQuestion)) return;
   }
   await _loadNextPracticeQuestion();
@@ -299,6 +331,7 @@ async function _notifyIfPlacementDone() {
       await loadBackendAdaptiveState();
     }
     refreshPlacementStartBtn().catch(() => {});
+    window.DiagnosticPage?.refresh();
     emitPracticeStateChanged();
     if (typeof showPracticeModeNotice === "function") {
       const strongest = (status.areas || []).slice().sort((a, b) => b.theta - a.theta)[0];
@@ -312,11 +345,8 @@ async function _notifyIfPlacementDone() {
   }
 }
 
-// "Take placement diagnostic" — the way IN for accounts with existing history
-// (the diagnostic only auto-starts for zero-attempt users). Shown whenever the
-// backend says no diagnostic is running; label flips to "Retake" once one has
-// completed. Starting re-places the learner: BKT seeding at finish only raises
-// practiced atoms, so earned mastery is safe.
+// "Take placement diagnostic" — explicit entry from its own tab. Placement
+// never auto-starts inside Practice. Label flips to "Retake" once completed.
 async function refreshPlacementStartBtn() {
   if (typeof placementStartBtn === "undefined" || !placementStartBtn) return;
   const status = await PracticeAPI.diagnosticStatus();
@@ -350,15 +380,25 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
       // and let the learner start a fresh one; its questions ARE the probes.
       if (PracticeSession.isActive()) {
         PracticeSession.finish("placement");
-      } else {
-        await _loadNextPracticeQuestion();
       }
+      await window.DiagnosticPage?.refresh();
+      await _loadNextPracticeQuestion();
+      await window.DiagnosticPage?.refresh();
     } catch (err) {
       outputArea.textContent = "Could not start the placement diagnostic: " + err.message;
       placementStartBtn.disabled = false;
     }
   });
 }
+
+window.addEventListener("delta:diagnostic-next", async () => {
+  try {
+    await _loadNextPracticeQuestion();
+    await window.DiagnosticPage?.refresh();
+  } catch (err) {
+    outputArea.textContent = "Could not load placement question: " + err.message;
+  }
+});
 
 // "I don't know yet" — placement-only: records a diagnostic miss WITHOUT a
 // code attempt (strong evidence the item sits above the learner's level),
@@ -484,16 +524,10 @@ const _rateTorchAndAdvance = async (correct) => {
     /* best-effort — still advance so the learner isn't stuck */
   } finally {
     if (torchRateSolved) torchRateSolved.disabled = false;
-    if (torchRateLookedUp) torchRateLookedUp.disabled = false;
+  if (torchRateLookedUp) torchRateLookedUp.disabled = false;
   }
 
-  /* The verdict moved this concept's record, and the ladder's active section
-     is filled from exactly that number — so without this the section still
-     shows where the learner stood BEFORE the answer they just gave, for as
-     long as the review is on screen. `submit-local-eval` returns the fresh
-     estimate and `api.js` already carries it back; it was being dropped.
-     The rung deliberately does not move here — see StageLadder.setProgress. */
-  if (record && PracticeAPI.currentQuestion === q && window.StageLadder) {
+  if (record?.ladderEstimate && PracticeAPI.currentQuestion === q && window.StageLadder) {
     window.StageLadder.setProgress(record.ladderEstimate);
   }
 

@@ -52,9 +52,8 @@ const resultBadge = document.getElementById("result-badge");
 const overrideRow = document.getElementById("override-row");
 const overrideCorrectBtn = document.getElementById("override-correct-btn");
 const nextProblemBtn = document.getElementById("next-problem-btn");
-// The target-difficulty and EWMA-accuracy handles used to live here. Both
-// bars are gone — one stage ladder now carries the rung, and difficulty is
-// its caption. See practice/stage-ladder.js.
+// Top progress lives in StageLadder. Legacy ewma-accuracy DOM below review now
+// carries scoped KC understanding with tier + coverage, never broad EWMA.
 const solutionCode = document.getElementById("solution-code");
 const aiExplanationSection = document.getElementById("ai-explanation-section");
 const aiExplanationText = document.getElementById("ai-explanation-text");
@@ -69,6 +68,8 @@ const coldStartLabel = document.getElementById("cold-start-label");
 const coldStartNote = document.getElementById("cold-start-note");
 const codeEditor = document.getElementById("code-editor");
 const runBtn = document.getElementById("run-btn");
+const runtimeStatus = document.getElementById("runtime-status");
+const runtimeResetBtn = document.getElementById("runtime-reset-btn");
 const outputArea = document.getElementById("output-area");
 const outputVisual = document.getElementById("output-visual");
 const outputVisualNote = document.getElementById("output-visual-note");

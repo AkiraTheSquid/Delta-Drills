@@ -72,7 +72,7 @@ ProblemFeedbackTag = Literal["broken", "unclear", "wrong_image", "good"]
 class ProblemFeedbackRequest(BaseModel):
     question_id: int
     tag: ProblemFeedbackTag
-    note: str = Field(default="", max_length=2000)
+    note: str = Field(default="", max_length=5000)
     # For triage context: was the learner marked correct on this attempt?
     correct: Optional[bool] = None
 
