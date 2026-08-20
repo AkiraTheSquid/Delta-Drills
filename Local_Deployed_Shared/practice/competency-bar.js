@@ -56,7 +56,24 @@ const CompetencyBar = (() => {
 
   /* The caption clause. Named for what the number gates rather than shown as a
      bare percentage: "62%" beside a difficulty reading was most of why the old
-     screen read as several competing scores. */
+     screen read as several competing scores.
+
+     🔴 IT SAYS "TOPIC", AND IT USED TO SAY "THIS CONCEPT". The number is the
+     BKT posterior for the concept's SUBTOPIC — `_readMastery` reads
+     `__subtopicMastery` or the subtopic's EWMA, and there is no per-concept
+     mastery on this page at all. Labelling it per-concept made it a topic
+     average wearing a per-node label, which the technical spec bans by name:
+     any surface showing a concept's mastery owes the crosswalk TIER and the
+     COVERAGE beside it, because `m_k` alone cannot tell "measured at 0.6" from
+     "borrowed 0.6 from the neighbourhood". This is the borrowed kind. Naming
+     the scope honestly is the cheap half of that rule; sending tier and
+     coverage down to the practice payload is the other half and is a backend
+     change, deliberately not made in a display pass.
+
+     The number is still the right one to show: it is what actually ends the
+     focus loop (`_emitGateCrossed` fires off this same posterior), so the
+     learner is watching the thing that closes the overlay. Only its name was
+     wrong. */
   const _pushNote = () => {
     if (!window.StageLadder) return;
     if (!Number.isFinite(currentMastery)) {
@@ -65,8 +82,8 @@ const CompetencyBar = (() => {
     }
     const pct = Math.round(_clamp01(currentMastery) * 100);
     window.StageLadder.setNote(currentMastery >= MASTERY_THRESHOLD
-      ? "this concept is mastered"
-      : `this concept is ${pct}% mastered ` +
+      ? "this topic is mastered"
+      : `this topic is ${pct}% mastered ` +
         `(${Math.round(MASTERY_THRESHOLD * 100)}% ends the loop)`);
   };
 

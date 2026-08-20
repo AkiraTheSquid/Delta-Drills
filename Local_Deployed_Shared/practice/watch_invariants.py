@@ -253,12 +253,12 @@ def check_invariants():
         "colab-edition.css hides .stage-ladder — that is the whole progress "
         "readout on this deploy, concept and rung and difficulty together"
     )
-    # And it must still be re-laid-out for a side panel. Five sections on one
+    # And it must still be re-laid-out for a side panel. Four sections on one
     # row is a 1600px page's layout; at ~300px each rung name truncates, and a
     # rung the learner cannot read is the one thing the ladder is for.
     assert "html.dd-colab-edition .stage-ladder-track" in colab_css, (
         "colab-edition.css lost the narrow-rail override for the ladder track "
-        "— five sections on one row truncate to nothing in a side panel"
+        "— four sections on one row truncate to nothing in a side panel"
     )
 
     # The Python half is checked by RUNNING it. These are the three transitions

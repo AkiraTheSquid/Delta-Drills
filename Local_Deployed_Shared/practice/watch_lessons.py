@@ -211,21 +211,53 @@ def check_the_gate_teaches_one_concept_then_drills_it():
 
 
 def check_the_fifth_rung_is_shown_not_stored():
-    """`integrated` is a display rung. It must never reach the ladder record.
+    """`integrated` is a property of the PROBLEM. Not a rung, not a section.
 
     Every stored attempt is filed under one of the backend's four stage names
-    and the promotion arithmetic reads them back. A fifth stored name would
+    and the promotion arithmetic reads them back; a fifth stored name would
     either rewrite that history or create a rung nothing can be promoted out
-    of, so the ladder gets the extra section and `record_ladder_outcome` never
-    sees it.
+    of. `lessons.is_integrated` and `practice_schemas.ladder_integrated` both
+    say so in as many words, and `kc_is_learned` finishes a concept AT solo.
+
+    It was drawn as the ladder's fifth SECTION for two days, and the reason
+    that had to stop is what this check exists to hold. A section of a track
+    that fills left to right is a claim that the learner moved. This moves with
+    the question in front of them: Solo went `is-done` and Integrated
+    `is-active` on an integrated problem and both snapped back on the next one
+    — a monotone progress bar flickering at its far end while the rung stood
+    still, showing ground left to cover at the moment the concept was already
+    learned. So: a chip beside the rung name, and four sections on the track.
     """
     ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
-    assert '"integrated"' in ladder_js or "integrated:" in ladder_js, (
-        "the stage ladder has no integrated section — the fifth rung is gone"
+    assert 'id: "integrated"' not in ladder_js, (
+        "`integrated` is back as a section of the stage ladder — it is a "
+        "property of the question, and a section that lights per question "
+        "says the learner was promoted when they were not"
     )
+    # Total alias table: the word still has to resolve, to the rung the record
+    # actually says, or a caller that passes it draws no track at all.
+    assert 'integrated: "solo"' in ladder_js, (
+        "stage-ladder.js no longer maps the `integrated` alias onto `solo` — "
+        "a caller still passing the old vocabulary would normalize to null"
+    )
+    # And it still has to be SHOWN. Dropping the section is only right because
+    # the chip took the statement over.
+    assert "stage-ladder-flag" in ladder_js, (
+        "stage-ladder.js no longer renders the integrated chip — the learner "
+        "cannot see that the concepts have started arriving together"
+    )
+    index = read(os.path.join(SHARED, "index.html"))
+    assert 'id="stage-ladder-flag"' in index, (
+        "index.html has no #stage-ladder-flag — the chip renders nowhere"
+    )
+
     ladder = read(os.path.join(HERE, "ladder.js"))
-    assert 'question.ladder_integrated ? "integrated" : stage' in ladder, (
-        "ladder.js no longer reports the fifth rung to the ladder"
+    assert "integrated: !!question.ladder_integrated" in ladder, (
+        "ladder.js no longer reports the integrated flag to the ladder"
+    )
+    assert '? "integrated" : stage' not in ladder, (
+        "ladder.js is passing `integrated` AS THE STAGE again — that is what "
+        "made it a section of the track"
     )
     submit = [l for l in ladder.splitlines() if "ladder_stage" in l and "=" in l]
     for line in submit:

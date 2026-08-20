@@ -98,11 +98,33 @@
   font-size: 12px;
 }
 
-/* ── The track: five sections, visibly separate ────────────────────────── */
+/* The integrated chip. NOT a rung — see practice/stage-ladder.js: it is a
+   property of the problem on screen, riding on a `solo` record, and it flips
+   from question to question. A chip beside the rung name can say that; a
+   section of a track that fills left to right cannot, because a section going
+   from empty to full is a claim that the learner moved. */
+.stage-ladder-flag {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 1px 8px 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stage-ladder-flag[hidden] {
+  display: none;
+}
+
+/* ── The track: four sections, visibly separate ────────────────────────── */
 
 .stage-ladder-track {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   grid-auto-columns: 1fr;
   grid-auto-flow: column;
   list-style: none;
@@ -114,29 +136,20 @@
   display: none;
 }
 
+/* A section is a NAME with a length of track under it — not a box with a word
+   inside. Boxed labels were the first try and they read as four buttons; the
+   thing being cut into five is the bar, so the bar is what carries the
+   divisions and the names sit above it, clear of the line. */
 .stage-seg {
-  background: var(--surface-1, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
-  overflow: hidden;
-  padding: 5px 8px;
-  position: relative;
 }
 
-/* The fill sits BEHIND the label rather than beside it, so a half-cleared
-   section reads as "halfway through Faded" and not as a separate bar. */
-.stage-seg-fill {
-  background: var(--accent);
-  bottom: 0;
-  display: block;
-  left: 0;
-  opacity: 0.28;
-  position: absolute;
-  top: 0;
-  transition: width 400ms ease;
-}
-
+/* Centred over its own section, not flush left. Left-aligned names read as a
+   list beside a bar; centred, each one is a caption FOR the length of track
+   under it, which is what the section is. */
 .stage-seg-label {
   color: var(--muted);
   display: block;
@@ -144,32 +157,57 @@
   font-weight: 600;
   letter-spacing: 0.3px;
   overflow: hidden;
-  position: relative;
+  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.stage-seg.is-done {
-  border-color: rgba(255, 255, 255, 0.18);
+/* One section's length of the bar. The gap between sections is the divider —
+   nothing is drawn for it, so the five read as one track cut up rather than as
+   five separate meters. */
+/* Each section is its own progress bar, not a decorative rule: a visible
+   EMPTY track with a fill inside it. A section only says something if you can
+   see the part that is not filled, and the five together are then a ladder of
+   bars rather than a bar with tick marks on it. */
+.stage-seg-bar {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  display: block;
+  height: 10px;
+  overflow: hidden;
+}
+
+.stage-seg-fill {
+  background: var(--accent);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transition: width 400ms ease;
+}
+
+/* Cleared ground is stated quietly: it is behind the learner, and a run of
+   five bright sections would compete with the one they are on. */
+.stage-seg.is-done .stage-seg-bar {
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .stage-seg.is-done .stage-seg-fill {
-  background: var(--white);
-  opacity: 0.14;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .stage-seg.is-done .stage-seg-label {
   color: rgba(255, 255, 255, 0.55);
 }
 
-/* The rung you are on. Named above the bar as well — this is the second half
-   of that statement, not the only place it is made. */
-.stage-seg.is-active {
-  border-color: var(--accent);
-}
-
+/* The rung you are on. Named above the ladder as well — this is the second
+   half of that statement, not the only place it is made. */
 .stage-seg.is-active .stage-seg-label {
   color: var(--white);
+}
+
+.stage-seg.is-active .stage-seg-bar {
+  border-color: var(--accent);
 }
 
 .stage-seg.is-todo .stage-seg-label {
@@ -194,7 +232,7 @@
     padding: 8px 16px 10px;
   }
 
-  /* Five columns of readable text do not fit a phone. Wrapping to two rows
+  /* Four columns of readable text do not fit a phone. Wrapping to two rows
      keeps every rung on screen — dropping any of them would take the point of
      the ladder with it. */
   .stage-ladder-track {

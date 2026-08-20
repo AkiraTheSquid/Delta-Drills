@@ -175,10 +175,6 @@ html.dd-colab-edition .stage-ladder-track {
   grid-template-columns: repeat(2, 1fr);
 }
 
-html.dd-colab-edition .stage-seg {
-  padding: 4px 6px;
-}
-
 html.dd-colab-edition .stage-seg-label {
   font-size: 10px;
 }

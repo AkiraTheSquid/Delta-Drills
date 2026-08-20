@@ -203,6 +203,52 @@ def check_a_rung_reports_the_support_it_promises():
             f"stage {stage!r} promises no scaffold and must not report one missing"
 
 
+def check_a_new_rung_starts_empty():
+    """The run of correct answers a rung is judged on is that RUNG's run.
+
+    `kc_estimate` reports the trailing run so the strip can fill the active
+    section along the route the learner is actually on. The raw run survives
+    the promotion it buys: three correct answers at `faded` promote to
+    `partial`, and the same three are still trailing, so the rung the learner
+    reached one question ago would draw itself already full — a promise of a
+    promotion `_streak_stage` will not make, because it aims one rung above the
+    LOWEST answer in the run and that is the rung they now stand on.
+
+    A rung the learner has answered nothing on reads empty. That is the whole
+    claim, and it is behavioural: the string checks over in the frontend's
+    watch cannot see a number that leaks across a rung boundary.
+    """
+    from types import SimpleNamespace
+    from app import kc_graph
+
+    def est(attempts, worked_seen=1):
+        state = SimpleNamespace(kc_ladder={
+            "kc": {"worked_seen": worked_seen, "attempts": list(attempts)}})
+        return (kc_graph.kc_estimate(state, "kc"),
+                kc_graph.kc_stage(state, "kc"))
+
+    ok = lambda stage: {"correct": True, "stage": stage}
+    miss = lambda stage: {"correct": False, "stage": stage}
+
+    promoted, stage = est([ok("faded")] * 3)
+    assert stage == "partial", \
+        f"three correct at faded no longer promotes (stage={stage!r})"
+    assert promoted["streak"] == 0, (
+        "the rung the learner just reached is drawn "
+        f"{promoted['streak']}/{promoted['streak_needed']} of the way through "
+        "it, on answers made at the rung below"
+    )
+
+    # The control: a run made AT the rung being served still counts, or the
+    # scoping has simply deleted the route instead of scoping it.
+    on_rung, stage = est([miss("faded")] * 8 + [ok("faded")] * 2)
+    assert stage == "faded", f"expected a stalled learner on faded, got {stage!r}"
+    assert on_rung["streak"] == 2, (
+        f"a run made at the rung being served reports {on_rung['streak']} — the "
+        "streak route is no longer visible to the learner on it"
+    )
+
+
 def check_a_notebook_kernel_cannot_read_the_server():
     """A kernel outlives the cell that started it — so its fence must hold.
 
@@ -291,6 +337,7 @@ if __name__ == '__main__':
         check_invariants,
         check_a_kp_is_taught_one_concept_at_a_time,
         check_a_rung_reports_the_support_it_promises,
+        check_a_new_rung_starts_empty,
         check_a_notebook_kernel_cannot_read_the_server,
         check_a_fresh_kernel_does_not_run_the_clicked_cell_twice,
     ]

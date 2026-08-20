@@ -201,13 +201,20 @@ const LadderUI = (() => {
       // number that moves between questions.
       difficulty: question.difficulty,
       target,
-      // The fifth dot. The record still says `solo` and the promotion
-      // arithmetic still reads `solo` — this problem simply happens to use the
-      // concept alongside others already taught, which is a property of the
-      // question and not a rung anybody was promoted onto. Shown because the
-      // learner should be able to SEE that the concepts have started arriving
-      // together; stored nowhere, because it is not evidence about them.
-      stage: question.ladder_integrated ? "integrated" : stage,
+      stage,
+      // A property of the QUESTION, passed as one. The record still says
+      // `solo` and the promotion arithmetic still reads `solo` — this problem
+      // simply happens to use the concept alongside others already taught.
+      // Shown because the learner should be able to SEE that the concepts have
+      // started arriving together; stored nowhere, because it is not evidence
+      // about them.
+      //
+      // 🔴 It used to be passed AS THE STAGE, which made it the ladder's fifth
+      // section. A section of a track that fills left to right is a claim that
+      // the learner moved; this moves with the question in front of them, so
+      // Solo read as finished and Integrated as current, and both flipped back
+      // on the next problem. It is a chip beside the rung name now.
+      integrated: !!question.ladder_integrated,
       // False when the backend could build neither blanks nor an example for
       // this particular drill — see `ladder_support` in practice_schemas. The
       // rung still stands; the dot's description stops claiming a scaffold

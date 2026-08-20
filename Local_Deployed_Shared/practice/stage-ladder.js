@@ -33,10 +33,28 @@
    WHAT THIS BAR SAYS INSTEAD — one question, one answer.
 
    The ladder is the thing the learner actually moves along, so the ladder is
-   the bar. Five sections, always all five, drawn left to right in decreasing
-   support: Lesson, Faded, Worked example, Solo, Integrated. The section you
-   are on is named ABOVE the track, in words, and lit on it. Sections behind
-   you are filled. Sections ahead are empty.
+   the bar. FOUR sections, always all four, drawn left to right in decreasing
+   support: Lesson, Faded, Worked example, Solo. The section you are on is
+   named ABOVE the track, in words, and lit on it. Sections behind you are
+   filled. Sections ahead are empty.
+
+   🔴 THERE IS NO FIFTH SECTION, and "Integrated" was one for two days.
+
+   `solo` is the top rung — `kc_graph.LADDER_STAGES` has four names, the
+   promotion arithmetic reads them back, and `kc_is_learned` declares a concept
+   finished AT solo. `ladder_integrated` is not a rung and the backend says so
+   twice in as many files (`practice_schemas.py`, `lessons.is_integrated`): it
+   is a property of the PROBLEM — this one happens to use the concept beside
+   others already taught — computed at serve time and stored nowhere, while the
+   record keeps saying `solo`.
+
+   Drawn as a dot that lights per question, that was fine. Drawn as the fifth
+   section of a track that fills left to right, it is not: Solo went `is-done`
+   and Integrated `is-active` on an integrated problem and both snapped back on
+   the next one, so the far end of a monotone progress bar flickered while the
+   learner's rung never moved — and the bar showed a section still to clear at
+   the exact moment the system had already marked the concept learned. It is a
+   chip beside the rung name now, which is what it always was.
 
    Difficulty survives as one line of text underneath, which is all it ever
    deserved: it is an input to question SELECTION, not a measure of the
@@ -50,13 +68,14 @@
    out of that and both are load-bearing:
 
      - A section with no threshold gets NO partial fill. `lesson` is left by
-       reading the page, `solo` is the top of the per-concept ladder, and
-       `integrated` is not cleared on one concept at all. A progress fill on
-       any of them would be a promise about a promotion that no number drives.
-     - The fill is a FLOOR on progress, never a countdown. `kc_graph` also
-       promotes on three consecutive correct answers (`_PROMOTE_STREAK`), which
-       the client is not sent, so a learner can be promoted from a bar that
-       looked half full. Hence "on track for X" rather than "N to go".
+       reading the page and `solo` is the top of the per-concept ladder, so a
+       progress fill on either would be a promise about a promotion that no
+       number drives.
+     - There are TWO routes out of a rung and the fill takes whichever is
+       further along: the Wilson bound against `PROMOTE_AT`, or a run of
+       `_PROMOTE_STREAK` correct answers, which `kc_estimate` now sends as
+       `streak` / `streak_needed`. Taking the lower of the two would leave the
+       bar at a third while the very next correct answer promoted.
    ================================================================ */
 
 const StageLadder = (() => {
@@ -76,7 +95,6 @@ const StageLadder = (() => {
     { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
     { id: "example", label: "Worked example", blurb: "Read the solved example above it, then write this one yourself." },
     { id: "solo", label: "Solo", blurb: "No scaffold. You have earned it." },
-    { id: "integrated", label: "Integrated", blurb: "Several concepts at once, unaided — the point of learning them." },
   ];
 
   /* Backend stage -> displayed rung. The server's `worked` is the lesson screen
@@ -106,7 +124,11 @@ const StageLadder = (() => {
     // edit on the day the backend switches over.
     lesson: "lesson",
     example: "example",
-    integrated: "integrated",
+    // NOT a rung of its own — see the header. Mapped to `solo` rather than
+    // dropped so the table stays total: `ladder_integrated` rides on a solo
+    // record, so a caller that still passes the word lands on the rung the
+    // record actually says instead of on `null`, which draws no track at all.
+    integrated: "solo",
   };
 
   /* Where the next rung starts, as a Wilson LOWER bound.
@@ -138,7 +160,9 @@ const StageLadder = (() => {
   /* The concept currently on screen. `stage` is cached rather than passed
      around because a promotion can land mid-screen with nothing else in hand,
      and the caption is redrawn from it long after `show` returned. */
-  let current = { kc: null, stage: null, support: undefined, bound: null };
+  let current = { kc: null, stage: null, support: undefined, bound: null,
+                  streak: null, streakNeeded: null, estStage: null,
+                  integrated: false };
   /* The difficulty caption's two numbers, held so a mid-screen promotion can
      redraw the line without them being re-fetched — and so an aim that arrives
      before a rating (or the other way round) does not blank the other half. */
@@ -159,6 +183,28 @@ const StageLadder = (() => {
   const _boundOf = (estimate) => {
     const ci = estimate && estimate.ci;
     return Array.isArray(ci) && Number.isFinite(ci[0]) ? ci[0] : null;
+  };
+
+  /* The run of correct answers standing right now, and how long a run has to
+     be to promote on its own (`kc_graph._PROMOTE_STREAK`). Read from the
+     payload rather than hardcoded: this is the only one of the two routes the
+     learner can watch move, so a client that guessed the length wrong would
+     draw a bar that fills at the wrong rate. */
+  const _streakOf = (estimate) => {
+    const n = estimate && estimate.streak;
+    const need = estimate && estimate.streak_needed;
+    return {
+      streak: Number.isFinite(n) ? n : null,
+      streakNeeded: Number.isFinite(need) && need > 0 ? need : null,
+      /* WHICH rung this run was counted against (`kc_estimate` sends its own
+         `stage`). The backend scopes the run to the rung the learner is on, so
+         a run of three at `faded` reads as zero the moment it promotes — and
+         this readout deliberately keeps showing the old rung until the next
+         question. Without the rung the number came from, that zero would be
+         drawn as "no progress on the rung you are looking at", which is the
+         opposite of what happened. */
+      estStage: normalizeStage(estimate && estimate.stage),
+    };
   };
 
   /* Jump to this concept on the map.
@@ -183,11 +229,43 @@ const StageLadder = (() => {
 
   /* How far through the CURRENT section, 0..1. Null where the section has no
      threshold — see the header: those rungs are not left by clearing a number,
-     and a fill on them would be a claim no arithmetic backs. */
+     and a fill on them would be a claim no arithmetic backs.
+
+     TWO routes out of a rung, and the backend takes whichever arrives first
+     (`kc_graph._stage_from`): the Wilson lower bound over the last twenty
+     attempts clearing `PROMOTE_LO`, or a run of `_PROMOTE_STREAK` correct
+     answers on its own. So the section fills to whichever is FURTHER along —
+     the bar has to be the shorter of the two distances left, or it would sit
+     at a third while the very next correct answer promotes.
+
+     The run is the half a learner can watch move. The window average barely
+     shifts on one answer out of twenty and, on a concept carrying old misses,
+     can hold still for a dozen questions; a run advances by a third of the
+     section every time they get one right, and goes back to nothing when they
+     do not — which is also exactly what the rung does. */
   const _progress = () => {
     const threshold = PROMOTE_AT[current.stage];
-    if (!threshold || !Number.isFinite(current.bound)) return null;
-    return Math.max(0, Math.min(1, current.bound / threshold));
+    if (!threshold) return null;
+    const shown = _index(current.stage);
+    /* Which rung the estimate in hand describes. Equal to the rung on screen
+       on every normal render; ahead of it for exactly as long as one graded
+       answer, because `setProgress` moves the fill and not the rung. */
+    const at = current.estStage ? _index(current.estStage) : shown;
+    // The answer just given cleared this rung. Draw it FULL: its own fill is
+    // now computed against a rung the learner has left, and letting it fall
+    // back to the window average would run the bar BACKWARDS on a correct
+    // answer — the one thing a progress bar may never do.
+    if (at > shown) return 1;
+    const parts = [];
+    if (Number.isFinite(current.bound)) parts.push(current.bound / threshold);
+    // The run promotes out of the rung it was counted against, so it is this
+    // section's progress only while the two agree. Behind (a miss demoted the
+    // concept mid-question) the window average carries the fill on its own.
+    if (at === shown && Number.isFinite(current.streak) && current.streakNeeded) {
+      parts.push(current.streak / current.streakNeeded);
+    }
+    if (!parts.length) return null;
+    return Math.max(0, Math.min(1, Math.max(...parts)));
   };
 
   const _sectionsHtml = () => {
@@ -203,8 +281,14 @@ const StageLadder = (() => {
         `<li class="stage-seg ${state}" data-stage="${esc(s.id)}" title="${esc(title)}"` +
         (i === active ? ' aria-current="step"' : "") +
         ">" +
-        `<span class="stage-seg-fill" style="width:${(fill * 100).toFixed(1)}%"></span>` +
+        /* Label FIRST, and the bar under it. The section name is a caption
+           for its length of track, not a thing sitting on the line: with the
+           two overlaid, the five names read as five boxes and the ladder
+           stopped looking like one bar cut into sections. */
         `<span class="stage-seg-label">${esc(s.label)}</span>` +
+        '<span class="stage-seg-bar">' +
+        `<span class="stage-seg-fill" style="width:${(fill * 100).toFixed(1)}%"></span>` +
+        "</span>" +
         "</li>"
       );
     }).join("");
@@ -226,6 +310,20 @@ const StageLadder = (() => {
     const blurbEl = _el("stage-ladder-now-blurb");
     const stage = STAGES[_index(current.stage)];
     if (nameEl) nameEl.textContent = stage ? stage.label : "";
+    /* "Integrated" — a chip beside the rung name, not a section of the track.
+       Gated on `solo` as well as on the flag: the backend only sets
+       `ladder_integrated` on a solo record, and a chip claiming several
+       concepts at once over a drill that still carries blanks would be the
+       readout promising something the page is not doing. */
+    const flagEl = _el("stage-ladder-flag");
+    if (flagEl) {
+      const integrated = !!current.integrated && current.stage === "solo";
+      flagEl.textContent = integrated ? "Integrated" : "";
+      flagEl.hidden = !integrated;
+      flagEl.title = integrated
+        ? "This problem uses the concept alongside others you have already been taught."
+        : "";
+    }
     if (!blurbEl) return;
     if (!stage) {
       blurbEl.textContent = "";
@@ -268,13 +366,14 @@ const StageLadder = (() => {
      rather than guessing a position — showing the learner the wrong rung is
      worse than showing them none. */
   const show = ({ kc, title, stage, difficulty, target, support, estimate,
-                 eyebrow } = {}) => {
+                 eyebrow, integrated } = {}) => {
     const host = _el("stage-ladder");
     if (!host) return;
     /* A new concept invalidates the caption's mastery clause. `competency-bar.js`
-       writes that clause for ONE concept — its BKT posterior — and nothing in
-       the readout distinguished it from the rest of the caption, so moving to
-       another concept carried the previous one's "72% mastered" across. Cleared
+       writes that clause from the BKT posterior for the concept's TOPIC — not
+       a per-concept number, which is why it says so — and nothing in the
+       readout distinguished it from the rest of the caption, so moving to
+       another concept carried the previous one's reading across. Cleared
        on a KC CHANGE only: the same concept re-renders on every question, and
        blanking it there would drop the reading until the next graded answer.
        The competency bar republishes on its own events, so the clause comes
@@ -285,6 +384,11 @@ const StageLadder = (() => {
       stage: normalizeStage(stage),
       support,
       bound: _boundOf(estimate),
+      ..._streakOf(estimate),
+      /* Per-QUESTION, and re-read on every one: the previous problem's
+         integration says nothing about this one, and the record underneath
+         both of them says `solo` either way. */
+      integrated: !!integrated,
     };
     /* The pair is REPLACED, not merged. A `show()` means a different concept
        is on screen, and both numbers describe the item served — not the
@@ -336,6 +440,10 @@ const StageLadder = (() => {
     const bound = _boundOf(estimate);
     if (bound === null) return;
     current.bound = bound;
+    /* The run, not just the average. This is the call that lands the moment an
+       answer is graded, and the run is the part of the section that visibly
+       moves on it. */
+    Object.assign(current, _streakOf(estimate));
     _render();
   };
 
@@ -349,9 +457,11 @@ const StageLadder = (() => {
   };
 
   /* An extra clause on the caption. The knowledge-graph focus flow uses it for
-     the concept's BKT mastery, which used to be a whole second bar with its
-     own thresholds — see the header. Text, deliberately: this screen gets one
-     track and the ladder has it. */
+     the TOPIC-level BKT posterior that ends its loop, which used to be a whole
+     second bar with its own thresholds — see the header. Text, deliberately:
+     this screen gets one track and the ladder has it. The wording is the
+     caller's job and the caller owes it a scope: a bare percentage labelled
+     "this concept" is the one thing this clause must never be. */
   const setNote = (text) => {
     extraNote = text || "";
     _renderFoot();
@@ -364,7 +474,9 @@ const StageLadder = (() => {
   const hide = () => {
     const host = _el("stage-ladder");
     if (host) host.classList.add("hidden");
-    current = { kc: null, stage: null, support: undefined, bound: null };
+    current = { kc: null, stage: null, support: undefined, bound: null,
+                streak: null, streakNeeded: null, estStage: null,
+                integrated: false };
     aimValue = null;
     problemValue = null;
     extraNote = "";

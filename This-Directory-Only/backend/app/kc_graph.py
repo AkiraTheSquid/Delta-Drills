@@ -534,15 +534,29 @@ def ladder_view(user_state, kc: str) -> dict:
 def kc_estimate(user_state, kc: str) -> dict:
     """The learner's level on ONE concept, as an interval over its own attempts."""
     row = ladder_view(user_state, kc)
-    recent = (row.get("attempts") or [])[-_LADDER_WINDOW:]
+    attempts = row.get("attempts") or []
+    recent = attempts[-_LADDER_WINDOW:]
     n = len(recent)
     k = sum(1 for a in recent if a.get("correct"))
     lo, hi = _wilson(k, n)
-    return {
+    # Trailing correct answers. This is the OTHER route out of a rung — see
+    # `_streak_stage`: a run of `_PROMOTE_STREAK` promotes on its own, whatever
+    # the window says, because a window with a long tail of old misses in it
+    # never catches up with a learner who has plainly got it. Reported so the
+    # UI can draw the route the learner is actually on; a run is the half of
+    # promotion that moves with the answer in front of them.
+    run = []
+    for a in reversed(attempts):
+        if not a.get("correct"):
+            break
+        run.append(a)
+    est = {
         "n": n,
         "correct": k,
         "p": (k / n) if n else None,
         "ci": [round(lo, 4), round(hi, 4)],
+        "streak": len(run),
+        "streak_needed": _PROMOTE_STREAK,
         "worked_seen": int(row.get("worked_seen") or 0),
         # When this concept was last answered, from its own record. The graph's
         # "last practiced" line reads BKT atom timestamps, which exist for the
@@ -551,6 +565,44 @@ def kc_estimate(user_state, kc: str) -> dict:
         # exists when the record does.
         "last_ts": (recent[-1].get("ts") if n else None),
     }
+    # Scoped to the rung the learner is standing on, which is computed from
+    # everything above it. `_stage_from` does not read `streak`, so this is a
+    # display correction and not a second promotion rule.
+    stage = _stage_from(est, row)
+    # The rung this estimate DESCRIBES, sent with it. A client can hold an
+    # estimate that is newer than the rung on its screen — the practice strip
+    # deliberately leaves the rung alone until the next question, because the
+    # problem underneath it still came from the old one — and without this it
+    # cannot tell "you have not left this rung yet" from "you left it with the
+    # answer you just gave", which are opposite things to draw.
+    est["stage"] = stage
+    est["streak"] = _streak_toward(run, stage)
+    return est
+
+
+def _streak_toward(run: List[dict], stage: str) -> int:
+    """Trailing correct answers that count toward LEAVING `stage`.
+
+    `_streak_stage` promotes to one rung above the LOWEST rung in the run, so a
+    run that already spans the promotion it bought is aiming at the rung the
+    learner is already on: the streak route is spent until a miss resets the
+    run. Reporting the raw run length there draws the newly reached rung
+    arriving already full — three answers made at `faded` are not progress out
+    of `partial`, and the strip would promise a promotion that cannot come.
+    """
+    ranks = [
+        LADDER_STAGES.index(a["stage"])
+        for a in run
+        if a.get("stage") in LADDER_STAGES
+    ]
+    cur = LADDER_STAGES.index(stage) if stage in LADDER_STAGES else 0
+    # The LENGTH counts every answer in the run and the RUNG is read only from
+    # the ones filed at a ladder stage — the same split `_streak_stage` makes,
+    # deliberately. `record_kc_outcome` files an off-ladder attempt (a placement
+    # probe) as `independent`, and a run carrying one promotes on three exactly
+    # as it does here. Counting the two differently is how a bar comes to fill
+    # against a promotion that never arrives.
+    return len(run) if ranks and min(ranks) >= cur else 0
 
 
 def _step_down(stage: str, floor: str) -> str:

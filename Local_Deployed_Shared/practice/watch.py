@@ -252,6 +252,55 @@ def check_promotion_threshold_matches_the_backend():
             f"stage-ladder.js lost the {displayed!r} threshold — that section "
             f"would draw no progress while the backend still promotes on one"
         )
+    # The OTHER route out of a rung, and the only one the learner can watch
+    # move: a run of `_PROMOTE_STREAK` correct answers promotes on its own,
+    # whatever the twenty-question window says. The section fills to whichever
+    # route is further along, so dropping the run leaves a bar that sits still
+    # through three correct answers and then jumps a whole rung with no warning
+    # — the exact reading a progress bar exists to prevent. The length is READ
+    # from the payload rather than hardcoded here, so this checks that the
+    # backend still sends it and that the client still consults it.
+    assert re.search(r"_PROMOTE_STREAK\s*=\s*\d+", backend), (
+        "kc_graph lost _PROMOTE_STREAK — a run of correct answers no longer "
+        "promotes and the section fill is drawing a route that is gone"
+    )
+    assert '"streak_needed": _PROMOTE_STREAK' in backend, (
+        "kc_estimate no longer reports streak_needed — the ladder cannot know "
+        "how fast a run fills a section and would guess the rate"
+    )
+    assert '"streak": len(run)' in backend, (
+        "kc_estimate no longer reports the run of correct answers — the "
+        "section fill would move only with the twenty-question average, which "
+        "barely shifts on one answer"
+    )
+    # And the run has to be scoped to the rung the learner is standing on. A
+    # raw run count survives the promotion it just bought, so the rung the
+    # learner has only this second arrived at draws itself FULL — a promise of
+    # a promotion that `_streak_stage` will not make, because it aims one rung
+    # above the LOWEST answer in the run and that is the rung they are on.
+    assert "_streak_toward(run, stage)" in backend, (
+        "kc_estimate reports the raw run length again — a newly reached rung "
+        "would draw full before a single answer is given on it"
+    )
+    # And the estimate has to say WHICH rung it describes. `setProgress` takes
+    # a fresh estimate while deliberately leaving the rung on screen alone, so
+    # an estimate that arrived from one rung further up, with its run scoped to
+    # that rung and therefore back at zero, would drag the section on screen
+    # BACKWARDS on the very answer that finished it.
+    assert 'est["stage"] = stage' in backend, (
+        "kc_estimate no longer says which rung it describes — a promotion "
+        "arriving mid-question would empty the section it just completed"
+    )
+    assert "current.estStage" in ladder_js, (
+        "stage-ladder.js no longer reads the rung the estimate came from — a "
+        "run scoped to the next rung would be drawn as progress through this one"
+    )
+    assert "streak_needed" in ladder_js and "current.streakNeeded" in ladder_js, (
+        "stage-ladder.js no longer fills against the run of correct answers — "
+        "the bar would ignore the route the learner is actually on"
+    )
+
+    for backend_stage, displayed in (("faded", "faded"), ("partial", "example")):
         assert abs(promote_at[displayed] - promote_lo[backend_stage]) < 1e-9, (
             f"the {displayed!r} rung draws its promotion mark at "
             f"{promote_at[displayed]} but kc_graph promotes at "
@@ -259,10 +308,10 @@ def check_promotion_threshold_matches_the_backend():
             f"not follow"
         )
     assert len(promote_at) == 2, (
-        "PROMOTE_AT gained a rung. `lesson` is left by reading, `solo` is the top "
-        "of the per-concept ladder, and `integrated` is not reached by clearing a "
-        "threshold on one concept — so a third entry means the display believes "
-        "in a promotion the backend does not make"
+        "PROMOTE_AT gained a rung. `lesson` is left by reading and `solo` is the "
+        "top of the per-concept ladder — there is no threshold above either, so "
+        "a third entry means the display believes in a promotion the backend "
+        "does not make"
     )
 
 
