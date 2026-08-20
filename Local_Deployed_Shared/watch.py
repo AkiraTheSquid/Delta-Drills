@@ -499,7 +499,7 @@ def check_solo_routes():
     # remain exact data-tab names so switchTab stays sole page owner.
     for tab in (
         "why-this-app", "how-it-works", "knowledge-graph", "split-tool",
-        "account", "courses", "practice", "targeted-practice",
+        "account", "courses", "practice", "notebooks", "targeted-practice",
     ):
         assert f'data-tab="{tab}"' in index_html, f"missing tab {tab}"
         assert f'"{tab}"' in solo_js, f"solo-route.js missing route {tab}"

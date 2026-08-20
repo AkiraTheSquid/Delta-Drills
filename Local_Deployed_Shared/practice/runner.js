@@ -65,13 +65,11 @@ async function initPyodide() {
     return pyodideInstance;
   }
   pyodideLoading = true;
-  outputArea.textContent = "Loading Python...";
   try {
     pyodideInstance = await loadPyodide();
     await pyodideInstance.loadPackage("numpy");
-    outputArea.textContent = "";
   } catch (e) {
-    outputArea.textContent = "Failed to load Python: " + e.message;
+    console.warn("[runner] Pyodide failed to load:", e);
   }
   pyodideLoading = false;
   return pyodideInstance;
@@ -169,15 +167,17 @@ ${testSetup}
 // had done nothing wrong; the editor manufactured the error. Matching the bank
 // is the fix, and it has to stay matched: if starters are ever re-indented,
 // change this with them.
-let _editorTabEscapes = false;
 const EDITOR_SPACE_INDENT_WIDTH = 4;
 const EDITOR_INDENT = " ".repeat(EDITOR_SPACE_INDENT_WIDTH);
 // Lines that end a block. After one of these, the next line dedents a level —
 // nothing can follow `return` at the same depth inside the same suite.
 const EDITOR_DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
 
-if (codeEditor) {
-  codeEditor.addEventListener("keydown", (e) => {
+function installCodeEditorKeys(editor) {
+  if (!editor || editor.dataset.deltaEditorKeys === "1") return;
+  editor.dataset.deltaEditorKeys = "1";
+  let editorTabEscapes = false;
+  editor.addEventListener("keydown", (e) => {
     // Enter keeps the indent you are already at, so the learner does not have
     // to re-tab into a function body on every single line. `:` opens a suite so
     // the next line goes one level deeper; a block-ending statement closes one.
@@ -186,9 +186,9 @@ if (codeEditor) {
     if (
       e.key === "Enter" &&
       !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey &&
-      codeEditor.selectionStart === codeEditor.selectionEnd
+      editor.selectionStart === editor.selectionEnd
     ) {
-      const el = codeEditor;
+      const el = editor;
       const at = el.selectionStart;
       const lineStart = el.value.lastIndexOf("\n", at - 1) + 1;
       const line = el.value.slice(lineStart, at);
@@ -208,25 +208,25 @@ if (codeEditor) {
         el.selectionStart = el.selectionEnd = at + insert.length;
         el.dispatchEvent(new Event("input", { bubbles: true }));
       }
-      _editorTabEscapes = false;
+      editorTabEscapes = false;
       return;
     }
     if (e.key === "Escape") {
       // Arm a one-shot "let Tab leave the field" so keyboard users can escape.
-      _editorTabEscapes = true;
+      editorTabEscapes = true;
       return;
     }
     if (e.key !== "Tab") {
-      _editorTabEscapes = false;
+      editorTabEscapes = false;
       return;
     }
-    if (_editorTabEscapes) {
+    if (editorTabEscapes) {
       // Let this Tab move focus normally, then re-arm capture.
-      _editorTabEscapes = false;
+      editorTabEscapes = false;
       return;
     }
     e.preventDefault();
-    const el = codeEditor;
+    const el = editor;
     const value = el.value;
     const start = el.selectionStart;
     const end = el.selectionEnd;
@@ -271,6 +271,8 @@ if (codeEditor) {
     }
   });
 }
+
+installCodeEditorKeys(codeEditor);
 
 const TORCH_IMPORT = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
 
@@ -317,6 +319,34 @@ async function runSnippet(code, { question = null, onStatus = null, source = nul
     ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(question)) && !isTorch);
 
   if (practiceMode === "backend" && !useLocalPyodide) {
+    const kernel = window.DeltaKernel;
+    if (kernel?.available()) {
+      say("Running in persistent runtime...");
+      const cell = await kernel.runCell({
+        code,
+        filename: "<practice cell>",
+        context: "practice-editor",
+        timeout: 30,
+      });
+      if (cell.busy) {
+        return { text: "Runtime busy — wait for current cell or restart it.", failed: true, blocked: false, pyodide: null };
+      }
+      if (!cell.unavailable) {
+        if (runtimeStatus) runtimeStatus.textContent = cell.fresh
+          ? "Persistent runtime started"
+          : `Persistent runtime · ${cell.execCount} cells`;
+        const stdout = normalizeOutput(cell.stdout);
+        const stderr = normalizeOutput(cell.stderr);
+        return {
+          text: stdout || stderr || "✓ Ran successfully (state kept)",
+          failed: !cell.ok || !!stderr,
+          blocked: false,
+          pyodide: null,
+          execCount: cell.execCount,
+          fresh: cell.fresh,
+        };
+      }
+    }
     try {
       const res = await apiFetch("/api/practice/run-code", {
         method: "POST",
@@ -378,11 +408,36 @@ async function runSnippet(code, { question = null, onStatus = null, source = nul
   }
 }
 
-window.DeltaRunner = { runSnippet };
+window.DeltaRunner = { runSnippet, installCodeEditorKeys, renderRunOutputVisual };
+
+if (runtimeStatus) {
+  runtimeStatus.textContent = window.DeltaKernel?.available()
+    ? "Persistent runtime · state kept"
+    : "Browser runtime";
+}
+
+if (runtimeResetBtn) {
+  runtimeResetBtn.classList.toggle("hidden", !window.DeltaKernel?.available());
+  runtimeResetBtn.addEventListener("click", async () => {
+    runtimeResetBtn.disabled = true;
+    if (runtimeStatus) runtimeStatus.textContent = "Restarting runtime…";
+    const restarted = await window.DeltaKernel?.reset();
+    if (runtimeStatus) runtimeStatus.textContent = restarted
+      ? "Runtime restarted · state cleared"
+      : "Could not restart runtime";
+    runtimeResetBtn.disabled = false;
+  });
+}
 
 runBtn.addEventListener("click", async () => {
+  if (window.DeltaNotebook) {
+    await window.DeltaNotebook.runCell(runBtn.closest(".notebook-cell"));
+    return;
+  }
+  const idleLabel = runBtn.textContent;
   runBtn.disabled = true;
-  runBtn.textContent = "Running...";
+  runBtn.textContent = "…";
+  outputArea.closest("[data-cell-output]")?.classList.remove("hidden");
   outputArea.textContent = "";
   hideOutputVisual();
 
@@ -396,6 +451,7 @@ runBtn.addEventListener("click", async () => {
       },
     });
     outputArea.textContent = result.text;
+    window.DeltaNotebook?.markRun(document.querySelector('.notebook-cell[data-cell-id="1"]'), result);
     if (!result.failed && result.pyodide) {
       await renderRunOutputVisual(result.pyodide, runQuestion);
     } else {
@@ -406,5 +462,5 @@ runBtn.addEventListener("click", async () => {
   }
 
   runBtn.disabled = false;
-  runBtn.textContent = "Run";
+  runBtn.textContent = idleLabel;
 });

@@ -40,6 +40,10 @@ window.DD_INFOTIPS = {
     title: "Practice",
     body: "Your adaptive queue. The app chooses each next problem from what you're ready for, so you just answer.",
   },
+  "tab.notebooks": {
+    title: "Notebooks",
+    body: "A whole lesson as one runnable notebook — the same cells the Colab edition publishes, on one live Python session on the server.",
+  },
   "tab.targeted-practice": {
     title: "Targeted Practice",
     body: "You pick the skill instead. Search ARENA exercises, choose the ones you want, and drill only those.",
@@ -61,6 +65,10 @@ window.DD_INFOTIPS = {
   "topbar-auth": {
     title: "Signed in",
     body: "The account your progress is being saved to. Mastery follows the account, not the browser.",
+  },
+  "tab.diagnostic": {
+    title: "Diagnostic",
+    body: "Cold-start placement plus its starting-point prior. Separate from normal practice; cannot award mastery.",
   },
   "tp-banner": {
     title: "Targeted Practice mode",
@@ -84,34 +92,37 @@ window.DD_INFOTIPS = {
     title: "Placement diagnostic",
     body: "A short adaptive run that locates your level across every topic at once. It's shorter where you've already practised, and it can never lower mastery you've earned.",
   },
+  "stage-ladder-kc": {
+    title: "Current concept",
+    body: "Skill this problem targets. Click to open it on knowledge graph.",
+  },
+  "stage-ladder": {
+    title: "Support ladder",
+    body: "Four stages: Lesson, Faded, Worked example, Solo. Filled portion shows progress toward less support.",
+  },
+  "stage-ladder-difficulty": {
+    title: "Difficulty",
+    body: "Aim is where queue points now; problem rating is item difficulty. Both select practice. Neither is mastery.",
+  },
+  "concept-understanding": {
+    title: "Concept understanding",
+    body: "BKT estimate for this concept. Tier says whether mapping is measured or borrowed from its topic; coverage says how much rests on atoms you have attempted.",
+  },
   "session-status": {
     title: "Session status",
     body: "Where you are in the block, which phase you're in, and the countdown. Answer time auto-submits; review time loads the next problem.",
   },
 
   /* ---- Practice: the problem --------------------------------------- */
-  "concept-topbar": {
-    title: "Current concept",
-    body: "The skill this problem is tagged to. Click it to open that concept on the knowledge graph and check the choice for yourself.",
-  },
-  "stage-dots": {
-    title: "Scaffold stages",
-    body: "Four rungs from heavily supported to fully unaided. All four are shown so you can see where this problem sits in the sequence, not just its name.",
-  },
-  /* No `difficulty` key. It annotated `#concept-topbar-diff`, the 96px copy of
-     the difficulty bar in the concept strip, which the one-full-width-bar change
-     removed — this problem's rating is now the accent tick on `.difficulty-bar`,
-     and `target-difficulty` below explains the axis it sits on. The key was left
-     behind by that commit and `watch.py::check_infotips` caught it: a key with
-     no anchor and an anchor with no key both fail silently at runtime, which is
-     why the check asserts both directions. */
-  "competency-bar": {
-    title: "Competency",
-    body: "Your current estimated mastery of the single skill you're drilling, and how far it is from the bar that counts as competent.",
-  },
+  /* No `concept-topbar`, `stage-dots`, `difficulty` or `competency-bar` keys.
+     All four annotated widgets the 2026-08-19 one-ladder change deleted: the
+     concept strip and its four rung dots, the 96px difficulty copy inside it,
+     and the single-KC mastery track. A key with no anchor and an anchor with no
+     key both fail silently at runtime, which is why `watch.py::check_infotips`
+     asserts both directions — it is what caught the leftovers each time. */
   "cold-start": {
     title: "Calibrating",
-    body: "The first three questions use fixed difficulties to find your level. Difficulty is preset while this shows, so the usual accuracy bar is hidden.",
+    body: "The first three questions use fixed difficulties to find your level. Nothing you answer here moves the difficulty the queue aims at — it is locating you first.",
   },
   "question-id": {
     title: "Problem ID",
@@ -163,14 +174,8 @@ window.DD_INFOTIPS = {
     title: "Report a problem",
     body: "Flags the <em>content</em>, not your answer — broken, unclear, wrong image. It doesn't affect your score.",
   },
-  "ewma-accuracy": {
-    title: "Recent accuracy",
-    body: "A rolling average of how you've been doing. The marker shows the accuracy the queue is targeting; drifting off it moves your difficulty.",
-  },
-  "target-difficulty": {
-    title: "Target difficulty",
-    body: "The difficulty the queue is aiming at for you right now, and how this answer just moved it.",
-  },
+  /* Legacy `ewma-accuracy` class now hosts scoped KC understanding. Difficulty
+     stays text under ladder; it is not another progress track. */
   solution: {
     title: "Solution",
     body: "The worked answer, revealed after you submit. Read it even when you were right — the shorter route is often the point.",

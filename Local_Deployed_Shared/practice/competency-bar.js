@@ -1,35 +1,37 @@
 /* ================================================================
-   COMPETENCY BAR — single-KC practice progress (concept-graph maximize)
+   CONCEPT MASTERY — knowledge-graph focus flow, headless
 
-   Lives in the ?lesson=<kc>&embed=1 iframe. Shows the learner's BKT
-   posterior for THIS concept's subtopic, animates it on every graded
-   attempt, and reports the mastery crossing back to the parent graph.
+   Lives in the ?lesson=<kc>&embed=1 iframe. Tracks the learner's BKT
+   posterior for THIS concept's subtopic and reports the mastery crossing back
+   to the parent graph.
 
-   Two marks on the track, both real engine thresholds:
-     left  (0.85) UNLOCK_THRESHOLD  — prereq cleared, dependents unlock
-     right (0.95) MASTERY_THRESHOLD — concept mastered, leave the loop
+   It used to DRAW that posterior: a full-width track with two gate marks
+   (0.85 unlock, 0.95 mastery), a phase title, and a tween. On the focus screen
+   that made three progress readouts at once — the concept strip, the target
+   difficulty bar, and this — for three quantities a learner has no reason to
+   know are different. The stage ladder is the one bar now, so the DOM here is
+   gone and the number is a clause of its caption.
 
-   NOTE: the left mark is drawn as "unlocks next", NOT as a diagnostic
-   probe trigger. Mid-loop prerequisite probing needs per-concept
-   uncertainty, which atom_mastery does not expose (SD lives only inside
-   the placement diagnostic's per-area posterior). That is engine work.
+   What is NOT gone, and must not be:
+     `_emitGateCrossed` dispatches `competency:gate-crossed` and posts
+     `delta:kc-mastered` to the parent. `concept-graph/lesson-graph.js` listens
+     for that message to close the overlay and recolour the node. Without it a
+     mastered concept stays open and grey and the learner is stuck in the loop.
 
-   Phase bands mirror the ERE tiers used by arena-unlock.js so the whole
-   app agrees on what "faded" means: <0.40 worked, <0.75 faded, else full.
+   The two thresholds are real engine constants, still exported:
+     UNLOCK_THRESHOLD  0.85 — prereq cleared, dependents unlock
+     MASTERY_THRESHOLD 0.95 — concept mastered, leave the loop
    ================================================================ */
 
 const CompetencyBar = (() => {
   const UNLOCK_THRESHOLD = 0.85;
   const MASTERY_THRESHOLD = 0.95;
-  const FADED_CEIL = 0.75; // ERE: ≥ this ⇒ independent problems
 
-  let container = null;
   // Backend and local mode name the same subtopic differently ("Numpy: Core
   // array literacy" vs "Core array literacy"), and BKT is keyed by whatever
   // question.subtopic says — so hold both and match on either.
   let targetSubtopics = [];
   let currentMastery = null;
-  let phase = "lesson"; // "lesson" | "faded" | "independent"
   let gateAlreadyCrossed = false;
   let bound = false;
 
@@ -52,101 +54,31 @@ const CompetencyBar = (() => {
     return null;
   };
 
-  const _phaseFor = (p) => {
-    if (!Number.isFinite(p)) return "faded";
-    if (p < FADED_CEIL) return "faded";
-    return "independent";
-  };
+  /* The caption clause. Named for what the number gates rather than shown as a
+     bare percentage: "62%" beside a difficulty reading was most of why the old
+     screen read as several competing scores.
 
-  const PHASE_TEXT = {
-    lesson: ["Lesson", "Read the worked explanation — nothing graded yet."],
-    faded: ["Faded drills", "Scaffolded problems — some of the work is done for you."],
-    guided: ["Guided problems", "You write all of it — a hint is there if you want it."],
-    independent: ["Independent problems", "No scaffolding — solve it end to end."],
-  };
+     🔴 IT SAYS "TOPIC", AND IT USED TO SAY "THIS CONCEPT". The number is the
+     BKT posterior for the concept's SUBTOPIC — `_readMastery` reads
+     `__subtopicMastery` or the subtopic's EWMA, and there is no per-concept
+     mastery on this page at all. Labelling it per-concept made it a topic
+     average wearing a per-node label, which the technical spec bans by name:
+     any surface showing a concept's mastery owes the crosswalk TIER and the
+     COVERAGE beside it, because `m_k` alone cannot tell "measured at 0.6" from
+     "borrowed 0.6 from the neighbourhood". This is the borrowed kind. Naming
+     the scope honestly is the cheap half of that rule; sending tier and
+     coverage down to the practice payload is the other half and is a backend
+     change, deliberately not made in a display pass.
 
-  const _renderPhase = () => {
-    if (!container) return;
-    const [title, sub] = PHASE_TEXT[phase] || PHASE_TEXT.faded;
-    const titleEl = container.querySelector(".competency-phase-title");
-    const subEl = container.querySelector(".competency-phase-sub");
-    if (titleEl) titleEl.textContent = title;
-    if (subEl) subEl.textContent = sub;
-    const wrap = container.querySelector(".competency-bar-wrap");
-    if (wrap) wrap.dataset.phase = phase;
-  };
+     The number is still the right one to show: it is what actually ends the
+     focus loop (`_emitGateCrossed` fires off this same posterior), so the
+     learner is watching the thing that closes the overlay. Only its name was
+     wrong. */
+  const _pushNote = () => {};
 
-  const _renderLabel = () => {
-    const el = container && container.querySelector(".competency-bar-value");
-    if (!el) return;
-    el.textContent = Number.isFinite(currentMastery)
-      ? `${Math.round(currentMastery * 100)}%`
-      : "—";
-  };
-
-  const _build = () => {
-    if (!container) return;
-    const fill = Number.isFinite(currentMastery) ? _clamp01(currentMastery) : 0;
-    container.innerHTML = `
-      <div class="competency-bar-wrap" data-phase="${phase}">
-        <div class="competency-phase">
-          <span class="competency-phase-title"></span>
-          <span class="competency-phase-sub"></span>
-        </div>
-        <div class="competency-bar-row">
-          <div class="competency-bar-track" role="progressbar"
-               aria-label="Mastery of this concept" aria-valuemin="0" aria-valuemax="100">
-            <div class="competency-bar-fill" style="width:${fill * 100}%"></div>
-            <div class="competency-bar-gate is-unlock" style="left:${UNLOCK_THRESHOLD * 100}%">
-              <span class="competency-gate-tip">Unlocks what comes next (85%)</span>
-            </div>
-            <div class="competency-bar-gate is-mastery" style="left:${MASTERY_THRESHOLD * 100}%">
-              <span class="competency-gate-tip">Mastered — back to the map (95%)</span>
-            </div>
-          </div>
-          <div class="competency-bar-value"></div>
-        </div>
-      </div>
-    `;
-    _renderPhase();
-    _renderLabel();
-  };
-
-  // rAF lerp old→new. performance.now() (not Date.now) so the tween tracks
-  // frame time; the final frame is written explicitly so a dropped rAF can
-  // never leave the fill short of the true value.
-  const _animateFill = (oldP, newP, duration = 600) => {
-    const fillEl = container && container.querySelector(".competency-bar-fill");
-    if (!fillEl || !Number.isFinite(newP)) return;
-    // First graded attempt on a fresh concept has no prior posterior — sweep
-    // from empty rather than snapping, so the learner sees the bar move.
-    const from = Number.isFinite(oldP)
-      ? oldP
-      : Number.isFinite(currentMastery) ? currentMastery : 0;
-    const started = performance.now();
-
-    const step = (now) => {
-      const t = Math.min(1, (now - started) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      const at = from + (newP - from) * eased;
-      fillEl.style.width = `${_clamp01(at) * 100}%`;
-      const track = container.querySelector(".competency-bar-track");
-      if (track) track.setAttribute("aria-valuenow", String(Math.round(_clamp01(at) * 100)));
-      if (t < 1) {
-        requestAnimationFrame(step);
-        return;
-      }
-      fillEl.style.width = `${_clamp01(newP) * 100}%`;
-      currentMastery = newP;
-      _renderLabel();
-      if (from < MASTERY_THRESHOLD && newP >= MASTERY_THRESHOLD) _emitGateCrossed(newP);
-    };
-    requestAnimationFrame(step);
-  };
-
-  // Fires once per bar instance. The parent graph listens for the postMessage
-  // to close the overlay and recolour the node; the same-window event is what
-  // the in-frame "next concept" prompt hangs off.
+  // Fires once per page. The parent graph listens for the postMessage to close
+  // the overlay and recolour the node; the same-window event is what the
+  // in-frame "next concept" prompt hangs off.
   const _emitGateCrossed = (mastery) => {
     if (gateAlreadyCrossed) return;
     gateAlreadyCrossed = true;
@@ -167,48 +99,37 @@ const CompetencyBar = (() => {
     // Cache for backend mode, where the adaptive blob isn't the source of truth.
     window.__subtopicMastery = window.__subtopicMastery || {};
     window.__subtopicMastery[subtopic] = pAfter;
-    _animateFill(Number.isFinite(pBefore) ? pBefore : currentMastery, pAfter);
+    // `pBefore` is the posterior as it stood before THIS answer; falling back
+    // to the last value we held keeps the crossing test honest when the
+    // feedback payload omits it.
+    const from = Number.isFinite(pBefore) ? pBefore : currentMastery;
+    currentMastery = pAfter;
+    _pushNote();
+    if (!(from >= MASTERY_THRESHOLD) && pAfter >= MASTERY_THRESHOLD) _emitGateCrossed(pAfter);
   };
 
   /** @param {string|string[]} subtopics BKT key(s) for the focused KC. */
   const init = (subtopics) => {
     targetSubtopics = (Array.isArray(subtopics) ? subtopics : [subtopics]).filter(Boolean);
-    container = document.getElementById("competency-bar-container");
-    if (!container) return false;
     currentMastery = _readMastery();
-    phase = "lesson";
-    _build();
-    container.classList.remove("hidden");
     if (!bound) {
       window.addEventListener("competency:feedback-update", _onFeedbackUpdate);
       bound = true;
     }
-    return true;
+    return targetSubtopics.length > 0;
   };
 
-  /** The ladder tells the bar which tier it just served — the phase label
-   *  reports what the learner is ACTUALLY looking at, not what their mastery
-   *  band predicts they should be looking at (those disagree once the faded
-   *  items run out and independent problems start). */
-  const setPhaseKind = (kind) => {
-    const next = Object.prototype.hasOwnProperty.call(PHASE_TEXT, kind) && kind !== "lesson"
-      ? kind
-      : phase;
-    if (next === phase) return;
-    phase = next;
-    _renderPhase();
+  /** The ladder tells us which tier it just served. The rung is the stage
+   *  ladder's to draw — this only takes the chance to re-state the mastery
+   *  clause, which `StageLadder.hide()` drops on a KC-less question. */
+  const setPhaseKind = (_kind) => {
+    _pushNote();
   };
 
   /** Called when the lesson pages finish and graded practice starts. */
   const beginPractice = () => {
     currentMastery = _readMastery() ?? currentMastery;
-    phase = _phaseFor(currentMastery);
-    _renderPhase();
-    _renderLabel();
-    const fillEl = container && container.querySelector(".competency-bar-fill");
-    if (fillEl && Number.isFinite(currentMastery)) {
-      fillEl.style.width = `${_clamp01(currentMastery) * 100}%`;
-    }
+    _pushNote();
   };
 
   return {
@@ -219,9 +140,6 @@ const CompetencyBar = (() => {
     MASTERY_THRESHOLD,
     get currentMastery() {
       return currentMastery;
-    },
-    get phase() {
-      return phase;
     },
   };
 })();

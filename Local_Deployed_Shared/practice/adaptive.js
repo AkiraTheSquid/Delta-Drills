@@ -291,24 +291,9 @@ function initSelfReportControls() {
         note.textContent = NOTE_BY_LEVEL[level] || "";
         note.classList.remove("hidden");
       }
-      // Re-deal the on-screen question at the new starting level — clicking
-      // "Complete beginner" while stuck on a too-hard problem should take
-      // effect NOW, not on the next question. Skipped once an answer has
-      // been submitted (feedback showing) so we never eat a graded attempt.
-      const hasQuestion =
-        (typeof PracticeAPI !== "undefined" && PracticeAPI.currentQuestion) ||
-        (typeof practiceProgress !== "undefined" && practiceProgress.currentQuestion);
-      const midFeedback =
-        typeof practiceFeedbackArea !== "undefined" &&
-        !practiceFeedbackArea.classList.contains("hidden");
-      if (hasQuestion && !midFeedback &&
-          typeof _loadNextPracticeQuestion === "function") {
-        try {
-          await _loadNextPracticeQuestion();
-        } catch (err) {
-          console.warn("[practice] self-report re-deal failed:", err);
-        }
-      }
+      // Cold-start prior only. Do not replace a Practice question from this
+      // control; next diagnostic probe consumes the new prior.
+      window.DiagnosticPage?.refresh();
     });
   });
 }

@@ -11,7 +11,7 @@ The Vercel production branch is `deploy` and the public URL is:
 
 Direct page links use the ordinary app with global navigation hidden. Paths are
 case-insensitive; `/Knowledge-Graph` is the portfolio-facing default. Other
-routes: `/Why-This-App`, `/How-It-Works`, `/Courses`, `/Practice`,
+routes: `/Why-This-App`, `/How-It-Works`, `/Courses`, `/Practice`, `/Notebooks`,
 `/Targeted-Practice`, `/Account`, and `/Split-Tool`. Each solo page keeps a faint
 "Open full app" exit in its top-left corner.
 

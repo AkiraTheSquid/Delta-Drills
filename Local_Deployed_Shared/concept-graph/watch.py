@@ -10,6 +10,7 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 import json
 import sys
 import os
+import re
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -102,6 +103,11 @@ def check_the_server_reading_is_preferred():
         'that can measure nothing will be drawn as if it could'
     )
     index = _read(os.path.join(REPO, 'Local_Deployed_Shared', 'index.html'))
+    # Comments first: the block above these tags SAYS "Before lesson-graph.js",
+    # so a raw substring search finds the prose and reports the two script tags
+    # as being in the wrong order while they are in the right one. This check
+    # had been failing on its own explanation.
+    index = re.sub(r'<!--.*?-->', '', index, flags=re.S)
     assert index.index('kc_lattice_read.js') < index.index('lesson-graph.js'), (
         'kc_lattice_read.js must load before lesson-graph.js'
     )

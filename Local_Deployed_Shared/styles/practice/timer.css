@@ -8,12 +8,17 @@
   display: none;
 }
 
-/* The concept topbar is a sibling of the split, not a child, so hiding the
-   split leaves it behind. On the setup screen that stranded the paused
-   session's concept, rung and difficulty under the setup card — describing a
-   question that is not on screen, on a page where nothing has started yet.
-   It belongs to the split, so it goes when the split goes. */
-#page-practice.session-idle .concept-topbar {
+/* The stage ladder is a sibling of the split, not a child, so hiding the split
+   leaves it behind. On the setup screen that stranded the paused session's
+   concept, rung and difficulty under the setup card — describing a question
+   that is not on screen, on a page where nothing has started yet. It belongs to
+   the split, so it goes when the split goes.
+
+   This used to name only `.concept-topbar`, while the difficulty bar beside it
+   was a second element with no such rule — so the setup screen still carried a
+   0-100 track under the start button before a session existed. One readout now,
+   one rule, and the whole thing goes. */
+#page-practice.session-idle .stage-ladder {
   display: none;
 }
 

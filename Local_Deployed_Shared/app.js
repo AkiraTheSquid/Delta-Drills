@@ -74,6 +74,10 @@ const switchTab = (tabName) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
+  if (window.DiagnosticPage) {
+    if (tabName === "diagnostic") window.DiagnosticPage.refresh();
+    else window.DiagnosticPage.leave(tabName);
+  }
 };
 
 tabs.forEach((t) => {

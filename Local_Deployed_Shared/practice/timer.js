@@ -84,6 +84,7 @@ const PracticeSession = (() => {
   let resumeRefresh = null;
   let resumeReady = false;
   let resumePending = false;
+  const clockHolds = new Set();
 
   const isActive = () => !!state;
 
@@ -127,7 +128,9 @@ const PracticeSession = (() => {
         phase,
         remaining: Math.max(1, Math.min(3600, Math.round(savedRemaining || 30))),
         questionId: String(saved.questionId),
-        draft: typeof saved.draft === "string" ? saved.draft : "",
+        draft: typeof saved.draft === "string" || (
+          saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
+        ) ? saved.draft : "",
         review: phase === "review" ? saved.review : null,
         savedAt: saved.savedAt || null,
       };
@@ -140,6 +143,13 @@ const PracticeSession = (() => {
     try {
       localStorage.removeItem(_storageKey());
     } catch (_) {}
+  };
+
+  const _draft = () => window.DeltaNotebook?.serialize() || codeEditor.value;
+  const _restoreDraft = (draft) => {
+    if (!draft) return;
+    if (window.DeltaNotebook) window.DeltaNotebook.restore(draft);
+    else if (typeof draft === "string") codeEditor.value = draft;
   };
 
   const _snapshot = () => {
@@ -157,7 +167,7 @@ const PracticeSession = (() => {
       phase: state.phase,
       remaining,
       questionId: _questionId(),
-      draft: codeEditor.value,
+      draft: _draft(),
       review,
       savedAt: new Date().toISOString(),
     };
@@ -192,6 +202,7 @@ const PracticeSession = (() => {
     _stopTick();
     _updateCountdown();
     _persist();
+    if (clockHolds.size) return;
     interval = setInterval(() => {
       remaining--;
       _updateCountdown();
@@ -311,10 +322,27 @@ const PracticeSession = (() => {
     }, 250);
   };
 
+  // Detailed content feedback is outside timed problem solving. Holding this
+  // clock preserves remaining review time; releasing resumes same interval.
+  const holdClock = (reason = "feedback") => {
+    if (!isActive() || state.phase !== "review") return;
+    clockHolds.add(reason);
+    _stopTick();
+    sessionPhaseLabel.textContent = "Reviewing · feedback paused";
+    _persist();
+  };
+
+  const releaseClock = (reason = "feedback") => {
+    clockHolds.delete(reason);
+    if (clockHolds.size || !isActive() || state.phase !== "review") return;
+    sessionPhaseLabel.textContent = "Reviewing";
+    _tick(_forceAdvance);
+  };
+
   const _restoreReview = () => {
     const review = state.review;
     if (!review) return;
-    codeEditor.value = state.draft || review.userCode || codeEditor.value;
+    _restoreDraft(state.draft || review.userCode);
     solutionCode.textContent = review.solutionCode || PracticeAPI.currentQuestion?.solution_code || "";
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
@@ -411,6 +439,7 @@ const PracticeSession = (() => {
   // answer timer running and its expiry force-submits the skipped question.
   const pauseForAdvance = () => {
     if (!isActive()) return;
+    clockHolds.clear();
     _stopTick();
     _stopPoll();
     _setPhase("loading", "Loading…");
@@ -446,6 +475,7 @@ const PracticeSession = (() => {
     if (!isActive() || !["answer", "review"].includes(state.phase)) return;
     _stopTick();
     _stopPoll();
+    clockHolds.clear();
     pausedState = _snapshot();
     _writeSaved(pausedState);
     state = null;
@@ -548,7 +578,7 @@ const PracticeSession = (() => {
     sessionProgressLabel.textContent = `${Math.min(state.served, state.total)} / ${state.total}`;
     sessionStatusRow.classList.remove("hidden");
     pagePractice.classList.remove("session-idle");
-    codeEditor.value = state.draft || codeEditor.value;
+    _restoreDraft(state.draft);
     if (state.phase === "review") {
       _restoreReview();
       _setPhase("review", "Reviewing");
@@ -585,6 +615,7 @@ const PracticeSession = (() => {
     }
     _stopTick();
     _stopPoll();
+    clockHolds.clear();
     state = null;
     pausedState = null;
     resumeReady = false;
@@ -611,7 +642,7 @@ const PracticeSession = (() => {
   sessionEndBtn.addEventListener("click", () => finish("ended"));
   sessionResumeBtn.addEventListener("click", resume);
   sessionDiscardBtn.addEventListener("click", discard);
-  codeEditor.addEventListener("input", () => {
+  (document.getElementById("practice-notebook") || codeEditor).addEventListener("input", () => {
     if (isActive()) _persist();
   });
 
@@ -664,6 +695,8 @@ const PracticeSession = (() => {
     recordReviewResult,
     resumeAnswerPhase,
     beginReviewPhase,
+    holdClock,
+    releaseClock,
     shouldFinishInsteadOfAdvance,
     finish,
   };

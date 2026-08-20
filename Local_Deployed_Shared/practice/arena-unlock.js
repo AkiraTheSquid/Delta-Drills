@@ -468,8 +468,12 @@
     return { shell, refs };
   };
 
-  // Parameterized version of practice/bars.js#showEwmaAccuracy. Takes a refs
-  // bag instead of singleton DOM globals so we can have one per subtopic.
+  // Started as a parameterized copy of practice/bars.js#showEwmaAccuracy: a
+  // refs bag instead of singleton DOM globals, so there can be one per
+  // subtopic. That original is gone — the practice screen's accuracy bar was
+  // deleted when it went to one stage ladder — and this is now the only
+  // animated accuracy row in the app. It stays because it says which subtopic
+  // each row is for, which is what the single-bar version never could.
   const _animateBarRow = (refs, pBefore, pAfter) => {
     if (!Number.isFinite(pAfter)) {
       // Backend didn't return an update for this subtopic — show whatever we

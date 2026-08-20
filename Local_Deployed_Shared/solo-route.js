@@ -12,10 +12,12 @@
     "why-this-app": "why-this-app",
     "how-it-works": "how-it-works",
     "knowledge-graph": "knowledge-graph",
+    diagnostic: "diagnostic",
     "split-tool": "split-tool",
     account: "account",
     courses: "courses",
     practice: "practice",
+    notebooks: "notebooks",
     "targeted-practice": "targeted-practice",
   });
 
