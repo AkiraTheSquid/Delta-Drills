@@ -7,7 +7,7 @@
   padding: 0;
 }
 
-/* A column, so the concept topbar (#concept-topbar, above .practice-split) can
+/* A column, so the stage ladder (#stage-ladder, above .practice-split) can
    take its natural height and hand what is left to the panels. With the old
    `height: 100%` on the split, the topbar's height was ADDED to a split that
    already claimed the full container, and the surplus disappeared into

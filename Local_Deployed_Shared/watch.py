@@ -28,6 +28,8 @@ REQUIRED_FILES = [
     "index.html",
     "app.js",
     "nav-drawer.js",
+    "solo-route.js",
+    "styles/solo-route.css",
     "courses.js",
 ]
 REQUIRED_DIRS = [
@@ -485,10 +487,58 @@ def check_nav_drawer():
     )
 
 
+# ── Solo-route checks ─────────────────────────
+def check_solo_routes():
+    index_html = _read(os.path.join(HERE, "index.html"))
+    app_js = _read(os.path.join(HERE, "app.js"))
+    solo_js = _read(os.path.join(HERE, "solo-route.js"))
+    solo_css = _read(os.path.join(HERE, "styles", "solo-route.css"))
+    vercel = json.loads(_read(os.path.join(HERE, "vercel.json")))
+
+    # Every visible app tab gets a stable pathname spelling. Internal values
+    # remain exact data-tab names so switchTab stays sole page owner.
+    for tab in (
+        "why-this-app", "how-it-works", "knowledge-graph", "split-tool",
+        "account", "courses", "practice", "notebooks", "targeted-practice",
+    ):
+        assert f'data-tab="{tab}"' in index_html, f"missing tab {tab}"
+        assert f'"{tab}"' in solo_js, f"solo-route.js missing route {tab}"
+
+    assert 'classList.add("dd-solo")' in index_html, (
+        "index.html must stamp solo mode before paint"
+    )
+    css_pos = index_html.find('href="styles/solo-route.css')
+    responsive_pos = index_html.find('href="styles/responsive.css')
+    assert css_pos > responsive_pos >= 0, (
+        "solo-route.css must load after responsive.css so chrome stays hidden"
+    )
+    route_pos = index_html.find('src="solo-route.js')
+    app_pos = index_html.find('src="app.js')
+    assert 0 <= route_pos < app_pos, "solo-route.js must load before app.js"
+    assert "DDSoloRoute?.read" in app_js and "DDSoloRoute?.apply" in app_js, (
+        "app.js no longer boots + confirms pathname routes"
+    )
+    assert 'window.addEventListener("load", initConceptGraph' in app_js, (
+        "direct Knowledge Graph boot must retry after deferred graph scripts load"
+    )
+    for selector in (".topbar", ".nav-drawer", ".guest-banner", ".tp-banner"):
+        assert selector in solo_css, f"solo-route.css no longer hides {selector}"
+
+    rewrites = vercel.get("rewrites") or []
+    assert rewrites and rewrites[0].get("destination") == "/", (
+        "deep-link rewrite must target /. cleanUrls redirects /index.html, "
+        "which makes solo paths return Vercel NOT_FOUND"
+    )
+    assert rewrites[0].get("source") == "/((?!arena-book(?:/|$)).+)", (
+        "deep-link rewrite must require a non-empty path and exclude arena-book. "
+        "Matching / rewrites root to itself and makes the whole deployment 404"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants, check_infotips,
-              check_nav_drawer]
+              check_nav_drawer, check_solo_routes]
     for fn in checks:
         try:
             fn()

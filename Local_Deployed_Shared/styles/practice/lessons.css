@@ -19,7 +19,7 @@ body.lesson-mode #practice-mode-intro {
 
 /* The concept name, graph button and progress counter that used to live in a
    `.lesson-topbar` inside this panel are now in the page-wide concept topbar
-   (styles/practice/concept-topbar.css), which spans both panels. */
+   (styles/practice/stage-ladder.css), which spans both panels. */
 
 .lesson-kp-title {
   color: var(--white);

@@ -166,3 +166,15 @@
   margin: 0;
   overflow-x: auto;
 }
+/* Persistent in-app runtime controls. */
+.editor-header-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.editor-header-row .editor-header { margin-bottom: 0; }
+.runtime-controls { align-items: center; display: flex; gap: 8px; }
+.runtime-status { color: var(--muted); font-size: 11px; }
+.runtime-reset-btn { font-size: 11px; padding: 5px 9px; }

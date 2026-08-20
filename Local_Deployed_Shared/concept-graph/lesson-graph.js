@@ -587,13 +587,13 @@
     }
     out += `</span></div>`;
 
-    // The rung, in the vocabulary the practice screen uses. ConceptTopbar owns
+    // The rung, in the vocabulary the practice screen uses. StageLadder owns
     // that mapping — the backend's stored names are one rung out of step with
     // the learner-facing ones, and having two places translate them is how the
     // graph and the practice page start disagreeing about what rung someone is
-    // on. If the topbar has not loaded, no rung is shown rather than a raw
+    // on. If the ladder has not loaded, no rung is shown rather than a raw
     // internal name.
-    const bar = window.ConceptTopbar;
+    const bar = window.StageLadder;
     const stages = (bar && bar.STAGES) || [];
     const id = bar && typeof bar.normalizeStage === "function"
       ? bar.normalizeStage(row.ladder_stage)

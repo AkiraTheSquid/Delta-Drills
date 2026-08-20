@@ -68,8 +68,7 @@ const initPractice = async () => {
     // from /api/practice/state so concept-graph/atom_readiness.js can
     // bridge atoms onto real per-subtopic baselines.
     await loadBackendAdaptiveState();
-    // Offer the placement diagnostic to accounts it never auto-ran for
-    // (auto-start is zero-attempt-only). Non-blocking.
+    // Refresh explicit Diagnostic-tab entry/status. Non-blocking.
     if (typeof refreshPlacementStartBtn === "function") {
       refreshPlacementStartBtn().catch(() => {});
     }

@@ -5,11 +5,13 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import sys
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
-CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css", "misc.css"]
+CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
+             "misc.css", "stage-ladder.css", "notebook-editor.css", "diagnostic.css"]
 
 
 def _read(path):
@@ -47,6 +49,7 @@ def check_public_api():
         "question.css": [".question-text", ".question-imports", ".question-visual", ".cold-start-badge"],
         "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row", ".practice-mode-notice"],
         "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
+        "notebook-editor.css": [".practice-notebook", ".notebook-cell", ".notebook-cell-output"],
         "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
     }
     for fname, selectors in expected.items():
@@ -78,13 +81,18 @@ def check_invariants():
     assert ":not(.session-idle) .session-setup" in timer, (
         "timer.css lost the rule hiding the setup panel during a session"
     )
-    # The topbar is a SIBLING of the split, so the rule above does not cover it.
-    # Without its own rule the setup screen shows the paused session's concept,
-    # rung and difficulty for a question that is not on screen.
-    assert "#page-practice.session-idle .concept-topbar" in timer, (
-        "timer.css lost the session-idle rule that hides the concept topbar — "
-        "the setup screen will show the previous question's concept strip"
+    # The stage ladder is a SIBLING of the split, so the rule above does not
+    # cover it. Without its own rule the setup screen shows the paused session's
+    # concept, rung and difficulty for a question that is not on screen — which
+    # is exactly what happened when this named only the old `.concept-topbar`
+    # and the difficulty bar beside it went uncovered.
+    assert "#page-practice.session-idle .stage-ladder" in timer, (
+        "timer.css lost session-idle rule hiding ladder"
     )
+    ladder = _read(os.path.join(HERE, "stage-ladder.css"))
+    assert ".stage-ladder" in ladder and ".stage-seg-fill" in ladder
+    feedback = _read(os.path.join(HERE, "feedback.css"))
+    assert ".problem-feedback-note:focus" in feedback
 
 
 # ── Run all checks ────────────────────────────

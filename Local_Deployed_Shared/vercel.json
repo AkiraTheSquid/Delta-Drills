@@ -2,8 +2,8 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!arena-book/).*)",
-      "destination": "/index.html"
+      "source": "/((?!arena-book(?:/|$)).+)",
+      "destination": "/"
     }
   ]
 }

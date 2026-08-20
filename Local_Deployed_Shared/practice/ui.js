@@ -60,6 +60,13 @@ function _escapeHtml(s) {
 // text, and let KaTeX render the $…$ math (it was showing raw before). Fenced
 // ```code``` blocks become a styled <pre>; inline `code` becomes <code>; math
 // is left for KaTeX. Returns nothing — writes into #question-text.
+/* The subtopic posterior as it stood BEFORE the answer on screen. Declared
+   here now: it used to be a bars.js global, beside the accuracy bar that drew
+   it, and that bar is gone. The value is not — `events.js` posts it as
+   `pBefore` on `competency:feedback-update`, which is how the knowledge-graph
+   focus flow learns a concept crossed its mastery gate. */
+let ewmaAccuracyPBefore = null;
+
 function renderQuestionBody(q) {
   const raw = (q && q.question_text) || "";
   // Pull fenced code blocks out first so we don't KaTeX/escape-mangle them.
@@ -234,7 +241,11 @@ function renderQuestion(q, count) {
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
   renderQuestionVisual(q);
-  codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
+  if (window.DeltaNotebook) {
+    window.DeltaNotebook.reset(q.starter_code || DEFAULT_EDITOR_CODE);
+  } else {
+    codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
+  }
   // "Numpy: Numpy: Vectorization and broadcasting". The two modes disagree on
   // what `subtopic` is: local mode sends the bare name and the topic has to be
   // prefixed, while the backend already sends the COMPOSITE key
@@ -272,7 +283,7 @@ function renderQuestion(q, count) {
       // (wrong → easier, right → harder), NOT "3 questions at fixed
       // difficulties" (that described the old fixed-ramp system, removed).
       coldStartNote.textContent =
-        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up, and the accuracy bar stays hidden until it finishes.`;
+        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up; concept understanding reports its own BKT evidence and coverage.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else {
@@ -285,6 +296,14 @@ function renderQuestion(q, count) {
     practiceDontKnowBtn.disabled = false;
   }
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
+  window.DifficultyBar?.setStage(q.ladder_stage);
+  window.DifficultyBar?.setProblem(q.difficulty);
+  setConceptUnderstanding({
+    mastery: q.kc_mastery,
+    coverage: q.kc_coverage,
+    tier: q.kc_tier,
+    title: q.ladder_kc_title,
+  });
   solutionCode.textContent = q.solution_code;
   setupQuestionAids(q);
   overrideRow.classList.add("hidden");
@@ -294,8 +313,6 @@ function renderQuestion(q, count) {
   practiceSubmitBtn.disabled = false;
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
-  ewmaAccuracy.classList.add("hidden");
-  ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
   resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
@@ -303,17 +320,15 @@ function renderQuestion(q, count) {
   // AFTER the submit area is un-hidden above so it can re-hide it for torch).
   applyTorchRouting(q);
 
-  // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
-  // Backend mode: use p_current from the question response (adaptiveStateJson is null).
-  // Pyodide mode: read from the adaptive state JSON.
+  /* Subtopic EWMA before this answer. It is no longer shown as understanding —
+     KC BKT + coverage owns that readout — but this number is not
+     decoration: `events.js` posts it as `pBefore` on `competency:feedback-update`,
+     which is what the knowledge-graph focus flow watches to know a concept has
+     been mastered and the overlay can close. Read here, on render, because
+     after the submit it is no longer the value it had before. */
   ewmaAccuracyPBefore = Number.isFinite(q.p_current)
     ? q.p_current
     : getEwmaFromAdaptiveState(q.subtopic);
-  if (coldStart || q.diagnostic_active) {
-    showEwmaAccuracyCalibration(q.subtopic);
-  } else {
-    showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
-  }
 
   // Reset AI explanation
   aiExplanationSection.classList.add("hidden");
@@ -547,8 +562,14 @@ function applyPendingFeedbackState(pending) {
   overrideRow.classList.add("hidden");
   showNextProblemButton();
   setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
-  if (Number.isFinite(pending.pAfter)) {
-    setEwmaAccuracyFinal(pending.pBefore, pending.pAfter, pending.subtopic);
+  setConceptUnderstanding({
+    mastery: pending.kcMastery,
+    coverage: pending.kcCoverage,
+    tier: pending.kcTier,
+    title: pending.kcTitle,
+  });
+  if (pending.ladderEstimate && window.StageLadder) {
+    window.StageLadder.setProgress(pending.ladderEstimate);
   }
 }
 

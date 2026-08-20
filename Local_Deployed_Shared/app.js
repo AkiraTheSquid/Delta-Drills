@@ -65,8 +65,18 @@ const switchTab = (tabName) => {
   }
   // The concept-graph viz can only size itself once its page is visible, so
   // (re)initialise it when the Knowledge Graph tab opens.
-  if (tabName === "knowledge-graph" && typeof window.deltaInitConceptGraph === "function") {
-    requestAnimationFrame(() => window.deltaInitConceptGraph());
+  if (tabName === "knowledge-graph") {
+    const initConceptGraph = () => {
+      if (typeof window.deltaInitConceptGraph === "function") {
+        requestAnimationFrame(() => window.deltaInitConceptGraph());
+      }
+    };
+    if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
+    else window.addEventListener("load", initConceptGraph, { once: true });
+  }
+  if (window.DiagnosticPage) {
+    if (tabName === "diagnostic") window.DiagnosticPage.refresh();
+    else window.DiagnosticPage.leave(tabName);
   }
 };
 
@@ -362,9 +372,12 @@ document.getElementById("account-github-username").value = savedGithubUsername;
 if (authToken) {
   authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
 }
-// Authed users land on Practice; guests land on the How It Works explainer
-// (the marketing/landing page) with the guest banner as the CTA to log in.
-switchTab(authToken ? "practice" : "how-it-works");
+// A pathname deep link wins over the normal auth-aware landing page. Read it
+// before switching, then confirm the optimistic pre-paint class only after the
+// requested page is visible so no other page flashes first.
+const soloTab = window.DDSoloRoute?.read?.() || "";
+switchTab(soloTab || (authToken ? "practice" : "how-it-works"));
 updateTabVisibility();
+window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by
 // initGoogleSignIn() above — no login/signup pages or CTA buttons to wire.

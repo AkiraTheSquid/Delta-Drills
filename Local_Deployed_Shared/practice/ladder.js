@@ -166,64 +166,27 @@ const LadderUI = (() => {
 
   /* ---------- per-card decoration -------------------------------------- */
 
-  /* The in-card header this file used to build — concept name, rung, interval —
-     now lives in the page-wide topbar (practice/concept-topbar.js), which does
-     not scroll away and is shared with the lesson screen. Rendering both would
-     put the concept and its estimate on screen twice, three inches apart, with
-     the card's copy going stale the moment a submit updated the other. */
+  /* Put served KC, rung, support, estimate, question rating, queue aim into
+     single page-wide ladder. */
   const _syncTopbar = (question) => {
-    const bar = window.ConceptTopbar;
+    const bar = window.StageLadder;
     if (!bar) return;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
-    // `getTargetDifficultyForQuestion` already resolves the backend field, the
-    // local adaptive state and the item's own rating in that order, so the
-    // guest path gets a sensible answer without a second code path here.
-    const target =
-      typeof getTargetDifficultyForQuestion === "function"
-        ? getTargetDifficultyForQuestion(question)
-        : question.target_difficulty;
+    const target = typeof getTargetDifficultyForQuestion === "function"
+      ? getTargetDifficultyForQuestion(question)
+      : question?.target_difficulty;
     if (!kc || !stage) {
-      // No ladder context on this question — a diagnostic probe, a KC-less
-      // item, or the guest queue, which serves straight from the local bank and
-      // has no ladder at all. The concept half of the strip must not survive
-      // that: leaving the previous concept's name and rung up would label this
-      // problem with a concept it has nothing to do with.
-      //
-      // The difficulty half is not a claim about a concept, so it stays. Drop
-      // it here and a guest would have no difficulty readout anywhere on the
-      // page, which is the one number that is meaningful for every problem the
-      // app can serve.
-      if (Number.isFinite(question.difficulty)) {
-        bar.show({ difficulty: question.difficulty, target });
-      } else {
-        bar.hide();
-      }
+      bar.hide();
       return;
     }
     bar.show({
       kc,
       title: question.ladder_kc_title || kc,
-      // This item's own rating, and where the adaptive queue is aiming — the
-      // number that moves between questions.
       difficulty: question.difficulty,
       target,
-      // Just "Concept". The rung itself is named by the dots, which speak the
-      // learner-facing vocabulary; labelling it a second time here in the
-      // backend's vocabulary would put two different names for one rung side
-      // by side ("Fill in the rest" beside a dot reading "Faded").
-      eyebrow: "Concept",
-      // The fifth dot. The record still says `solo` and the promotion
-      // arithmetic still reads `solo` — this problem simply happens to use the
-      // concept alongside others already taught, which is a property of the
-      // question and not a rung anybody was promoted onto. Shown because the
-      // learner should be able to SEE that the concepts have started arriving
-      // together; stored nowhere, because it is not evidence about them.
-      stage: question.ladder_integrated ? "integrated" : stage,
-      // False when the backend could build neither blanks nor an example for
-      // this particular drill — see `ladder_support` in practice_schemas. The
-      // rung still stands; the dot's description stops claiming a scaffold
-      // that is not on the page.
+      stage,
+      integrated: !!question.ladder_integrated,
       support: question.ladder_support !== false,
       estimate: question.ladder_estimate || null,
     });

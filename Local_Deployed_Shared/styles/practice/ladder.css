@@ -5,7 +5,7 @@
    One piece, inside #question-text: `.ladder-example`, the worked example kept
    below the prompt on the supported rungs. The concept/rung/interval strip that
    used to sit above the prompt moved to the page-wide concept topbar
-   (styles/practice/concept-topbar.css) so it spans both panels and survives a
+   (styles/practice/stage-ladder.css) so it spans both panels and survives a
    re-render.
 
    The example is styled to read as REFERENCE, not as more prompt: dimmer
