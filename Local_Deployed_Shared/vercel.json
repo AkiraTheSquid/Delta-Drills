@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!arena-book/).*)",
+      "source": "/((?!arena-book(?:/|$)).+)",
       "destination": "/"
     }
   ]

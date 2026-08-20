@@ -529,6 +529,10 @@ def check_solo_routes():
         "deep-link rewrite must target /. cleanUrls redirects /index.html, "
         "which makes solo paths return Vercel NOT_FOUND"
     )
+    assert rewrites[0].get("source") == "/((?!arena-book(?:/|$)).+)", (
+        "deep-link rewrite must require a non-empty path and exclude arena-book. "
+        "Matching / rewrites root to itself and makes the whole deployment 404"
+    )
 
 
 # ── Run all checks ────────────────────────────
