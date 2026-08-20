@@ -31,14 +31,6 @@ const questionVisualCanvas = document.getElementById("question-visual-canvas");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
 const questionIdChip = document.getElementById("question-id-chip");
-const targetDifficultyTitle = document.getElementById("target-difficulty-title");
-const targetDifficultyFill = document.getElementById("target-difficulty-fill");
-const targetDifficultyDelta = document.getElementById("target-difficulty-delta");
-const targetDifficultyMarkerOld = document.getElementById("target-difficulty-marker-old");
-const targetDifficultyNumberOld = document.getElementById("target-difficulty-number-old");
-const targetDifficultyMarkerNew = document.getElementById("target-difficulty-marker-new");
-const targetDifficultyNumberNew = document.getElementById("target-difficulty-number-new");
-const targetDifficultyValue = document.getElementById("target-difficulty-value");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
 const practiceSubmitBtn = document.getElementById("practice-submit-btn");
 const practiceSkipBtn = document.getElementById("practice-skip-btn");
@@ -55,18 +47,14 @@ const feedbackHelp = document.getElementById("feedback-help");
 const missedFactRow = document.getElementById("missed-fact-row");
 const missedFactBtn = document.getElementById("missed-fact-btn");
 const missedFactStatus = document.getElementById("missed-fact-status");
-const ewmaAccuracy = document.getElementById("ewma-accuracy");
-const ewmaAccuracyLabel = document.getElementById("ewma-accuracy-label");
-const ewmaAccuracyFill = document.getElementById("ewma-accuracy-fill");
-const ewmaAccuracyValue = document.getElementById("ewma-accuracy-value");
-const ewmaAccuracyDelta = document.getElementById("ewma-accuracy-delta");
-const ewmaAccuracyMarkerOld = document.getElementById("ewma-accuracy-marker-old");
-const ewmaAccuracyMarkerNew = document.getElementById("ewma-accuracy-marker-new");
 const practiceFeedbackArea = document.getElementById("practice-feedback-area");
 const resultBadge = document.getElementById("result-badge");
 const overrideRow = document.getElementById("override-row");
 const overrideCorrectBtn = document.getElementById("override-correct-btn");
 const nextProblemBtn = document.getElementById("next-problem-btn");
+// The target-difficulty and EWMA-accuracy handles used to live here. Both
+// bars are gone — one stage ladder now carries the rung, and difficulty is
+// its caption. See practice/stage-ladder.js.
 const solutionCode = document.getElementById("solution-code");
 const aiExplanationSection = document.getElementById("ai-explanation-section");
 const aiExplanationText = document.getElementById("ai-explanation-text");

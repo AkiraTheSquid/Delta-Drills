@@ -216,16 +216,16 @@ def check_the_fifth_rung_is_shown_not_stored():
     Every stored attempt is filed under one of the backend's four stage names
     and the promotion arithmetic reads them back. A fifth stored name would
     either rewrite that history or create a rung nothing can be promoted out
-    of, so the strip gets the extra dot and `record_ladder_outcome` never sees
-    it.
+    of, so the ladder gets the extra section and `record_ladder_outcome` never
+    sees it.
     """
-    topbar = read(os.path.join(HERE, "concept-topbar.js"))
-    assert '"integrated"' in topbar or "integrated:" in topbar, (
-        "the topbar has no integrated rung — the fifth dot is gone"
+    ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
+    assert '"integrated"' in ladder_js or "integrated:" in ladder_js, (
+        "the stage ladder has no integrated section — the fifth rung is gone"
     )
     ladder = read(os.path.join(HERE, "ladder.js"))
     assert 'question.ladder_integrated ? "integrated" : stage' in ladder, (
-        "ladder.js no longer reports the fifth rung to the strip"
+        "ladder.js no longer reports the fifth rung to the ladder"
     )
     submit = [l for l in ladder.splitlines() if "ladder_stage" in l and "=" in l]
     for line in submit:

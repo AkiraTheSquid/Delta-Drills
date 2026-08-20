@@ -49,14 +49,11 @@ html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
    survive — the verdict now leaves its attempt pending for the rating to land
    on — and is styled for this column further down.
 
-   THE ACCURACY BAR STAYS HIDDEN, AND NOT BECAUSE THE NUMBER IS MISSING —
-   `submit-local-eval` reports it. It is hidden because the concept strip three
-   rows up already carries a correct/total count and an interval for this
-   concept, computed from the same answers. A second percentage moving for the
-   same reason by a different formula (subtopic EWMA vs the concept's interval)
-   reads as the panel disagreeing with itself, and in a 400px column the two
-   land close enough together to invite the comparison. One accuracy readout. */
-html.dd-colab-edition:not(.dd-no-notebook) #ewma-accuracy,
+   The accuracy bar used to be hidden here, on the argument that the concept
+   strip above it already carried a correct/total count for the same answers by
+   a different formula. That argument held on every edition, not just this one,
+   so the bar is gone from the app entirely and there is nothing left to hide.
+   See practice/stage-ladder.js. */
 html.dd-colab-edition:not(.dd-no-notebook) #ai-explanation-section,
 html.dd-colab-edition:not(.dd-no-notebook) #tutor-section {
   display: none;
@@ -92,20 +89,6 @@ html.dd-colab-edition:not(.dd-no-notebook) #feedback-help {
   font-size: 11px;
   line-height: 1.45;
   margin-bottom: 10px;
-}
-
-/* ---- the difficulty step -------------------------------------------------- */
-
-/* The bar moved OUT of `.question-meta-row` and up under the concept strip,
-   where it is the full width of the rail (index.html `#target-difficulty`,
-   styles/practice/difficulty-bar.css). It was drawn twice before this — a
-   96px segment inside the strip and this card below it — which is what the
-   "there are two of them" report was about.
-
-   Only the padding needs saying here: the rail's rows are tighter than the
-   wide page's, and the bar has to sit in that rhythm rather than float in it. */
-html.dd-colab-edition:not(.dd-no-notebook) .difficulty-bar {
-  padding: 10px 12px 12px;
 }
 
 /* "Is this a mistake? I got it right" — offered when the GRADER said wrong. Here
@@ -151,149 +134,53 @@ html.dd-colab-edition .practice-left {
   }
 }
 
-/* ---- the concept strip, unpacked --------------------------------------- */
+/* ---- the stage ladder, in a side panel --------------------------------- */
 
-/* One row of six things fits a 1600px page and not a side panel: the bars
-   collapsed to slivers and the readouts wrapped mid-word. Stacked, each
-   measure gets the full width and lines up with the one above it. */
-html.dd-colab-edition .concept-topbar {
-  align-items: stretch;
-  flex-direction: column;
-  gap: 9px;
-  padding: 10px 18px;
+/* The wide page gives the ladder five sections on one row. A browser side
+   panel is ~300px, which is ~60px per section — enough for "Worked" and not
+   for "Worked example", and truncating a rung name to "Wor…" destroys the one
+   thing the ladder is for. So the sections wrap to a grid here.
+
+   The predecessor of this was a zig-zag: four dots on a line with their labels
+   alternating above and below it, taken out of flow so they could overlap in
+   width without colliding. It bought the horizontal space back at the cost of
+   a row height nothing could exceed, and it only ever fit FOUR rungs — the
+   fifth is what finally broke it. Two rows of boxes need none of that. */
+html.dd-colab-edition .stage-ladder {
+  padding: 10px 18px 12px;
 }
 
-/* "PYTORCH TENSORS · LESSON 1 OF 3" and the concept name share a baseline on a
-   wide page and run straight off the edge of a panel. Stacked, and the concept
-   allowed to wrap, both stay readable at any width the panel can be dragged to. */
-html.dd-colab-edition .concept-topbar-main {
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 2px;
-}
-
-html.dd-colab-edition .concept-topbar-kc {
+/* The concept name is allowed to wrap here. On a wide page it is one line with
+   an ellipsis; in a panel that ellipsis eats most of the name. */
+html.dd-colab-edition .stage-ladder-kc {
   overflow: visible;
   text-overflow: clip;
   white-space: normal;
 }
 
-/* ── The ladder, as a zig-zag ────────────────────────────────────────────
-   Four rungs have to stay named in a strip the width of a browser side panel.
-   Two earlier attempts and why they failed:
-
-     dot label dot label …   one row, four labels. The row is ~340px of text in
-                             a panel that can be dragged to 300, so the labels
-                             truncate and the learner is told they are on
-                             "Wor…". Truncation is the worst outcome here — the
-                             four words are the entire content.
-     wrapping flex           labels kept, row wraps to three lines, and the
-                             connector between rungs lands at the start of a
-                             line pointing at nothing. The sequence stops
-                             reading as a sequence, which is the one thing the
-                             dots are for.
-
-   So the labels alternate ABOVE and BELOW the marks: rungs 1 and 3 above,
-   rungs 2 and 4 below. Two labels per line instead of four, so each has roughly
-   twice the room, and nothing truncates down to a 300px panel.
-
-   🔑 THE LABELS ARE TAKEN OUT OF FLOW, and that is the point rather than an
-   implementation detail. As grid items they would size their own column, so
-   four labels would still add up to the full width of the strip and the dots
-   would be pushed as far apart as the longest words demand. Absolutely
-   positioned, they cost the layout nothing: the marks sit as close together as
-   the rail likes, and two labels on the same line may overlap in width without
-   ever colliding, because the ones between them are on the other line. That is
-   the whole trick — the stagger is what buys the horizontal space back.
-
-   The cost is that a label cannot make the rail taller, so the row reserves the
-   space instead (`padding` on the list, sized for one line each way). A rung
-   name long enough to wrap would overflow it; the four are one short word each
-   and adding a fifth rung means revisiting this number. */
-html.dd-colab-edition .stage-dots {
-  align-items: center;
-  display: flex;
-  gap: 0;
-  justify-content: space-between;
-  margin: 0;
-  /* Room for one line of label above and one below the marks. */
-  padding: 15px 0;
-  width: 100%;
+/* The rung and its instruction share a baseline on a wide page and run off the
+   edge of a panel. Stacked, both stay readable at any width the panel can be
+   dragged to. */
+html.dd-colab-edition .stage-ladder-now {
+  flex-direction: column;
+  gap: 1px;
 }
 
-html.dd-colab-edition .stage-dot {
-  align-items: center;
-  display: flex;
-  flex: 1 1 0;
-  justify-content: center;
-  min-width: 0;
-  padding: 0;
-  position: relative;
+/* Three rows of sections, two per row. Three columns was the first try and it
+   truncated "Worked example" to "Worked ex…" at 300px — the width the panel
+   actually opens at. Two columns is ~140px per rung, which the longest name
+   clears at this font size. */
+html.dd-colab-edition .stage-ladder-track {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(2, 1fr);
 }
 
-/* Above the connector, which passes behind it. */
-html.dd-colab-edition .stage-dot-mark {
-  position: relative;
-  z-index: 1;
+html.dd-colab-edition .stage-seg {
+  padding: 4px 6px;
 }
 
-/* Rungs 1 and 3 above the line, rungs 2 and 4 below it.
-   Specificity has to beat `.stage-dot:not(.is-active) .stage-dot-label` (0,3,0)
-   in concept-topbar.css, which hides every inactive label below 700px — and a
-   side panel is always below 700px. That is why these name the dot as well as
-   the label rather than being the one-selector rules they look like. */
-html.dd-colab-edition .stage-dot .stage-dot-label,
-html.dd-colab-edition .stage-dot:not(.is-active) .stage-dot-label {
-  bottom: 100%;
-  display: block;
+html.dd-colab-edition .stage-seg-label {
   font-size: 10px;
-  left: 50%;
-  letter-spacing: 0.2px;
-  line-height: 1.2;
-  margin-bottom: 5px;
-  position: absolute;
-  text-align: center;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-html.dd-colab-edition .stage-dot:nth-child(even) .stage-dot-label {
-  bottom: auto;
-  margin-bottom: 0;
-  margin-top: 5px;
-  top: 100%;
-}
-
-/* The end labels are centred on marks that sit at the very edge of the strip,
-   so half of each would hang outside it. Anchor them to the edge instead —
-   only the outer two need it, and only they can afford to give up centring. */
-html.dd-colab-edition .stage-dot:first-child .stage-dot-label {
-  left: 0;
-  transform: none;
-}
-
-html.dd-colab-edition .stage-dot:last-child .stage-dot-label {
-  left: auto;
-  right: 0;
-  transform: none;
-}
-
-/* The connector spans centre-to-centre between two marks, so it is drawn from
-   the previous dot's midpoint rather than being a fixed-width hairline. A fixed
-   width was sized for dots packed left; these are equal fractions of the panel
-   and move with it. */
-html.dd-colab-edition .stage-dot + .stage-dot::before {
-  background: var(--border);
-  content: "";
-  height: 1px;
-  left: -50%;
-  margin: 0;
-  position: absolute;
-  right: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: auto;
-  z-index: 0;
 }
 
 /* ---- the rail's own rows ----------------------------------------------- */

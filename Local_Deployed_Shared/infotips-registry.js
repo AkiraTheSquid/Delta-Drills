@@ -94,28 +94,27 @@ window.DD_INFOTIPS = {
   },
 
   /* ---- Practice: the problem --------------------------------------- */
-  "concept-topbar": {
+  "stage-ladder-kc": {
     title: "Current concept",
     body: "The skill this problem is tagged to. Click it to open that concept on the knowledge graph and check the choice for yourself.",
   },
-  "stage-dots": {
-    title: "Scaffold stages",
-    body: "Four rungs from heavily supported to fully unaided. All four are shown so you can see where this problem sits in the sequence, not just its name.",
+  "stage-ladder": {
+    title: "Where you are",
+    body: "Five rungs from reading an explanation to solving several concepts at once unaided. The section you're on is filled as far as your record has taken you toward the next one; the rungs after it are what's still ahead.",
   },
-  /* No `difficulty` key. It annotated `#concept-topbar-diff`, the 96px copy of
-     the difficulty bar in the concept strip, which the one-full-width-bar change
-     removed — this problem's rating is now the accent tick on `.difficulty-bar`,
-     and `target-difficulty` below explains the axis it sits on. The key was left
-     behind by that commit and `watch.py::check_infotips` caught it: a key with
-     no anchor and an anchor with no key both fail silently at runtime, which is
-     why the check asserts both directions. */
-  "competency-bar": {
-    title: "Competency",
-    body: "Your current estimated mastery of the single skill you're drilling, and how far it is from the bar that counts as competent.",
+  "stage-ladder-difficulty": {
+    title: "Difficulty",
+    body: "Two different numbers, on purpose. The <em>aim</em> is where the queue is pointing for you right now. The <em>rating</em> is this problem's own — the queue picks by concept and rung first, then takes the closest difficulty it can reach, so the two rarely match exactly.",
   },
+  /* No `concept-topbar`, `stage-dots`, `difficulty` or `competency-bar` keys.
+     All four annotated widgets the 2026-08-19 one-ladder change deleted: the
+     concept strip and its four rung dots, the 96px difficulty copy inside it,
+     and the single-KC mastery track. A key with no anchor and an anchor with no
+     key both fail silently at runtime, which is why `watch.py::check_infotips`
+     asserts both directions — it is what caught the leftovers each time. */
   "cold-start": {
     title: "Calibrating",
-    body: "The first three questions use fixed difficulties to find your level. Difficulty is preset while this shows, so the usual accuracy bar is hidden.",
+    body: "The first three questions use fixed difficulties to find your level. Nothing you answer here moves the difficulty the queue aims at — it is locating you first.",
   },
   "question-id": {
     title: "Problem ID",
@@ -167,14 +166,9 @@ window.DD_INFOTIPS = {
     title: "Report a problem",
     body: "Flags the <em>content</em>, not your answer — broken, unclear, wrong image. It doesn't affect your score.",
   },
-  "ewma-accuracy": {
-    title: "Recent accuracy",
-    body: "A rolling average of how you've been doing. The marker shows the accuracy the queue is targeting; drifting off it moves your difficulty.",
-  },
-  "target-difficulty": {
-    title: "Target difficulty",
-    body: "The difficulty the queue is aiming at for you right now, and how this answer just moved it.",
-  },
+  /* No `ewma-accuracy` or `target-difficulty` keys either. The accuracy bar is
+     deleted and difficulty is a caption on the ladder — see
+     `stage-ladder-difficulty` above. */
   solution: {
     title: "Solution",
     body: "The worked answer, revealed after you submit. Read it even when you were right — the shorter route is often the point.",

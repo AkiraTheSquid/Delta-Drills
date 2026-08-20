@@ -1,0 +1,204 @@
+/* Stage ladder — the one progress readout above the practice split.
+   Markup in index.html (#stage-ladder), behaviour in practice/stage-ladder.js.
+
+   Replaces concept-topbar.css and difficulty-bar.css, which drew two separate
+   full-width strips for two quantities that were being read as one. The column
+   layout that lets this sit above the split without pushing the page into an
+   overflow lives in styles/practice/layout.css. */
+
+.stage-ladder {
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 32px 12px;
+}
+
+.stage-ladder.hidden {
+  display: none;
+}
+
+/* ── The concept, and the rung you are on — both ABOVE the track ───────── */
+
+/* One annotated element plus the infotip dot the script drops in beside it.
+   See the comment on the markup: without this the dot becomes a row of the
+   ladder's own column and the strip grows a blank line per annotation. */
+.stage-ladder-row {
+  align-items: baseline;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.stage-ladder-row > :first-child {
+  min-width: 0;
+}
+
+.stage-ladder-kc {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed var(--border);
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0 0 1px;
+  text-align: left;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stage-ladder-kc:hover:not(:disabled),
+.stage-ladder-kc:focus-visible:not(:disabled) {
+  border-bottom-color: var(--accent);
+  color: var(--white);
+}
+
+/* A KC-less problem still names itself; it just has nowhere to jump to. */
+.stage-ladder-kc:disabled {
+  border-bottom-color: transparent;
+  cursor: default;
+}
+
+/* Where this concept sits in its lesson — set on the lesson screen only, and
+   deliberately quieter than the concept name it follows. */
+.stage-ladder-eyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.stage-ladder-eyebrow[hidden] {
+  display: none;
+}
+
+.stage-ladder-now {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.stage-ladder-now-name {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.stage-ladder-now-blurb {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── The track: five sections, visibly separate ────────────────────────── */
+
+.stage-ladder-track {
+  display: grid;
+  gap: 4px;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+}
+
+.stage-ladder-track[hidden] {
+  display: none;
+}
+
+.stage-seg {
+  background: var(--surface-1, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 5px 8px;
+  position: relative;
+}
+
+/* The fill sits BEHIND the label rather than beside it, so a half-cleared
+   section reads as "halfway through Faded" and not as a separate bar. */
+.stage-seg-fill {
+  background: var(--accent);
+  bottom: 0;
+  display: block;
+  left: 0;
+  opacity: 0.28;
+  position: absolute;
+  top: 0;
+  transition: width 400ms ease;
+}
+
+.stage-seg-label {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage-seg.is-done {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.stage-seg.is-done .stage-seg-fill {
+  background: var(--white);
+  opacity: 0.14;
+}
+
+.stage-seg.is-done .stage-seg-label {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* The rung you are on. Named above the bar as well — this is the second half
+   of that statement, not the only place it is made. */
+.stage-seg.is-active {
+  border-color: var(--accent);
+}
+
+.stage-seg.is-active .stage-seg-label {
+  color: var(--white);
+}
+
+.stage-seg.is-todo .stage-seg-label {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* ── The caption: difficulty, as text ──────────────────────────────────── */
+
+.stage-ladder-foot {
+  color: var(--muted);
+  font-size: 11.5px;
+  min-height: 14px;
+}
+
+.stage-ladder-foot b {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .stage-ladder {
+    padding: 8px 16px 10px;
+  }
+
+  /* Five columns of readable text do not fit a phone. Wrapping to two rows
+     keeps every rung on screen — dropping any of them would take the point of
+     the ladder with it. */
+  .stage-ladder-track {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

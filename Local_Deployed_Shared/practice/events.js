@@ -119,7 +119,6 @@ feedbackButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const feedback = btn.dataset.feedback;
     const q = PracticeAPI.currentQuestion;
-    const calibrationQuestion = typeof isCalibrationQuestion === "function" && isCalibrationQuestion(q);
     const oldTarget = Number.isFinite(practiceProgress.currentTargetDifficulty)
       ? practiceProgress.currentTargetDifficulty
       : getTargetDifficultyForQuestion(q);
@@ -158,13 +157,8 @@ feedbackButtons.forEach((btn) => {
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
-    // The strip no longer draws a difficulty of its own — there is one bar, and
-    // `animateTargetDifficulty` above is already moving it to `newTarget`.
-    if (!calibrationQuestion && Number.isFinite(pAfter)) {
-      showEwmaAccuracy(pBefore, pAfter, q.subtopic);
-    } else {
-      showEwmaAccuracyCalibration(q.subtopic);
-    }
+    // The accuracy bar that used to be drawn here is gone; `pAfter` still
+    // matters and is posted below, where the graph reads it.
 
     // Emit competency bar update (single-KC maximize mode) — includes old/new mastery
     window.dispatchEvent(
@@ -249,8 +243,6 @@ const _loadNextPracticeQuestion = async () => {
   // Reset to pre-submit state (ready for next question)
   practiceSubmitArea.classList.remove("hidden");
   practiceFeedbackArea.classList.add("hidden");
-  ewmaAccuracy.classList.add("hidden");
-  ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
   _resetProblemFeedbackRow();
   if (typeof hideFailedTests === "function") hideFailedTests();
@@ -433,7 +425,6 @@ const _colabReviewMode = () =>
  * it ended up, never where it started.
  */
 const _drawColabDifficultyStep = (q, record) => {
-  setTargetDifficultyScope("Difficulty inside this stage");
   const oldTarget = record ? record.targetBefore : null;
   const newTarget = record ? record.targetAfter : null;
 
@@ -496,6 +487,16 @@ const _rateTorchAndAdvance = async (correct) => {
     if (torchRateLookedUp) torchRateLookedUp.disabled = false;
   }
 
+  /* The verdict moved this concept's record, and the ladder's active section
+     is filled from exactly that number — so without this the section still
+     shows where the learner stood BEFORE the answer they just gave, for as
+     long as the review is on screen. `submit-local-eval` returns the fresh
+     estimate and `api.js` already carries it back; it was being dropped.
+     The rung deliberately does not move here — see StageLadder.setProgress. */
+  if (record && PracticeAPI.currentQuestion === q && window.StageLadder) {
+    window.StageLadder.setProgress(record.ladderEstimate);
+  }
+
   if (_colabReviewMode()) {
     // The question can change under a slow recordLocalEval (End session, a
     // stray Skip) — repainting then would attach this review to the wrong
@@ -521,7 +522,6 @@ const _rateTorchAndAdvance = async (correct) => {
     // placement diagnostic nothing is pending, and a null `pending` is an older
     // backend that was never asked — both fall through to the plain review.
     if (record && record.pending === true) {
-      setTargetDifficultyScope("Difficulty inside this stage");
       feedbackPrompt.textContent = correct
         ? "Recorded as correct. How did that feel?"
         : "Recorded as a miss. How did that feel?";

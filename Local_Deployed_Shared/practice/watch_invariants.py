@@ -218,50 +218,47 @@ def check_invariants():
             f"_drawColabDifficultyStep lost its {call}…) call — reuse bars.js, "
             "never a second animation of the same quantity"
         )
+    # ...and the shim it calls applies nothing on its own. It used to set the
+    # final reading itself AND run the callback that sets the same reading,
+    # which drew the caption twice per rating and stepped straight past the
+    # stale-question guard above.
+    bars_js = read(os.path.join(HERE, "bars.js"))
+    shim = bars_js.split("function animateTargetDifficulty(", 1)[-1].split("\n}", 1)[0]
+    assert "setTargetDifficultyFinal(" not in shim, (
+        "animateTargetDifficulty applies the final difficulty itself again — "
+        "both call sites already do, one of them behind a guard this bypasses"
+    )
     assert "PracticeAPI.currentQuestion !== q" in draw, (
         "_drawColabDifficultyStep lost the stale-question guard — the tween "
         "runs for most of a second and Next problem is already on screen, so "
         "its last frame can land on the following problem's card"
     )
-    # Two bars in a 400px column that both fill up have to admit they are not
-    # the same quantity: the concept strip's estimate bar is mastery and its
-    # mark is the promotion to the next stage, this one is the difficulty INSIDE
-    # the stage. The title is the only thing saying so.
-    assert re.search(r"setTargetDifficultyScope\(\s*[\"'][^\"']+[\"']\s*\)", draw), (
-        "the Colab step bar no longer names what it measures — unlabelled it "
-        "reads as a second copy of the concept strip's mastery bar"
-    )
-    bars_js = read(os.path.join(HERE, "bars.js"))
-    assert bars_js.count('"Target difficulty of "') == 1, (
-        "bars.js writes the bar title from more than one place again — the "
-        "scope override only reaches the copies that go through "
-        "targetDifficultyTitleText()"
-    )
-
-    # The rail must SHOW the bar. It used to live in `.question-meta-row`, which
-    # colab-edition.css had hidden; it now sits under the concept strip as
-    # `.difficulty-bar`, and hiding THAT would take the difficulty readout off
-    # this deploy entirely.
-    # Comments are stripped first: the block above that rule still explains why
-    # the accuracy bar is hidden and names the selector, so a substring test
-    # over the raw file would pass on the explanation alone.
+    # There is one readout on this screen now, so nothing has to be labelled
+    # against a neighbour any more — the scope override that did that
+    # (`setTargetDifficultyScope`) is gone with the bar it disambiguated.
+    # What still has to hold is that the rail SHOWS the ladder. It used to be
+    # `.question-meta-row`, then `.difficulty-bar`, and hiding either took the
+    # difficulty readout off this deploy entirely; the same hole is one
+    # `display:none` away today.
+    # Comments are stripped first: the blocks in that file still name the
+    # deleted widgets in prose, so a substring test over the raw file would pass
+    # on the explanation alone.
     colab_css = re.sub(r"/\*.*?\*/", "", read(
         os.path.join(SHARED, "styles", "practice", "colab-edition.css")), flags=re.S)
     hidden_selectors = set()
     for selectors, body in re.findall(r"([^{}]+)\{([^{}]*)\}", colab_css):
         if "display:none" in body.replace(" ", ""):
             hidden_selectors.update(s.strip() for s in selectors.split(","))
-    assert not any(s.endswith(".difficulty-bar") for s in hidden_selectors), (
-        "colab-edition.css hides .difficulty-bar — that bar IS the difficulty "
-        "ladder on this deploy"
+    assert not any(s.endswith(".stage-ladder") for s in hidden_selectors), (
+        "colab-edition.css hides .stage-ladder — that is the whole progress "
+        "readout on this deploy, concept and rung and difficulty together"
     )
-    # Deliberately still hidden, and the reason is not that the number is
-    # missing: the concept strip already carries an accuracy readout for this
-    # concept, and two of them moving by different formulas read as the panel
-    # disagreeing with itself.
-    assert any(s.endswith("#ewma-accuracy") for s in hidden_selectors), (
-        "colab-edition.css stopped hiding #ewma-accuracy — the rail now shows "
-        "two accuracy readouts computed different ways"
+    # And it must still be re-laid-out for a side panel. Five sections on one
+    # row is a 1600px page's layout; at ~300px each rung name truncates, and a
+    # rung the learner cannot read is the one thing the ladder is for.
+    assert "html.dd-colab-edition .stage-ladder-track" in colab_css, (
+        "colab-edition.css lost the narrow-rail override for the ladder track "
+        "— five sections on one row truncate to nothing in a side panel"
     )
 
     # The Python half is checked by RUNNING it. These are the three transitions

@@ -167,12 +167,12 @@ const LadderUI = (() => {
   /* ---------- per-card decoration -------------------------------------- */
 
   /* The in-card header this file used to build — concept name, rung, interval —
-     now lives in the page-wide topbar (practice/concept-topbar.js), which does
-     not scroll away and is shared with the lesson screen. Rendering both would
+     now lives in the page-wide stage ladder (practice/stage-ladder.js), which
+     does not scroll away and is shared with the lesson screen. Rendering both would
      put the concept and its estimate on screen twice, three inches apart, with
      the card's copy going stale the moment a submit updated the other. */
   const _syncTopbar = (question) => {
-    const bar = window.ConceptTopbar;
+    const bar = window.StageLadder;
     if (!bar) return;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
@@ -186,19 +186,12 @@ const LadderUI = (() => {
     if (!kc || !stage) {
       // No ladder context on this question — a diagnostic probe, a KC-less
       // item, or the guest queue, which serves straight from the local bank and
-      // has no ladder at all. The concept half of the strip must not survive
-      // that: leaving the previous concept's name and rung up would label this
-      // problem with a concept it has nothing to do with.
-      //
-      // The difficulty half is not a claim about a concept, so it stays. Drop
-      // it here and a guest would have no difficulty readout anywhere on the
-      // page, which is the one number that is meaningful for every problem the
-      // app can serve.
-      if (Number.isFinite(question.difficulty)) {
-        bar.show({ difficulty: question.difficulty, target });
-      } else {
-        bar.hide();
-      }
+      // has no ladder at all. The whole readout goes: leaving the previous
+      // concept's name and rung up would label this problem with a concept it
+      // has nothing to do with, and the difficulty caption alone is a footnote
+      // to a bar that is not there. It used to survive on its own here, back
+      // when it WAS the bar.
+      bar.hide();
       return;
     }
     bar.show({
@@ -208,11 +201,6 @@ const LadderUI = (() => {
       // number that moves between questions.
       difficulty: question.difficulty,
       target,
-      // Just "Concept". The rung itself is named by the dots, which speak the
-      // learner-facing vocabulary; labelling it a second time here in the
-      // backend's vocabulary would put two different names for one rung side
-      // by side ("Fill in the rest" beside a dot reading "Faded").
-      eyebrow: "Concept",
       // The fifth dot. The record still says `solo` and the promotion
       // arithmetic still reads `solo` — this problem simply happens to use the
       // concept alongside others already taught, which is a property of the

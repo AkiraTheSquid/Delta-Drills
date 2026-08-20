@@ -202,8 +202,9 @@ def check_public_api():
 def check_promotion_threshold_matches_the_backend():
     """The mark on the estimate bar must be where promotion ACTUALLY happens.
 
-    `concept-topbar.js` draws a threshold on the concept's interval — cross it
-    with the left end of the bar and the next question comes with less support.
+    `stage-ladder.js` fills the active section as far as the concept's interval
+    has carried it toward the next rung — reach the end and the next question
+    comes with less support.
     That number is a copy of `app/kc_graph.py`'s `PROMOTE_LO`, held in a second
     language because the rung is decided server-side and drawn client-side.
 
@@ -214,18 +215,19 @@ def check_promotion_threshold_matches_the_backend():
     than drawing no mark at all.
 
     ⚠️ The two speak different vocabularies. The backend's `partial` is the
-    display's `worked` — see STAGE_ALIASES. This check translates rather than
+    display's `example` — see STAGE_ALIASES. This check translates rather than
     comparing keys, because comparing keys is how the numbers would end up
     swapped and still "matching". They WERE swapped, until 2026-08-06: the
     display's rung names had `faded` and `worked` the wrong way round, so each
     dot described the other one's rung and this check compared the two wrong
-    numbers to each other and passed.
+    numbers to each other and passed. The display rung is called `example` and
+    not `worked` precisely so that no key can be read in both vocabularies.
 
     The right long-term fix is for the ladder response to carry its own
     threshold so there is one runtime authority; codex flagged the same thing on
     2026-08-03. Until then, this.
     """
-    topbar = read(os.path.join(HERE, "concept-topbar.js"))
+    ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
     graph = os.path.join(
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "kc_graph.py")
     if not os.path.exists(graph):
@@ -241,14 +243,14 @@ def check_promotion_threshold_matches_the_backend():
     promote_lo = _floats(backend, "PROMOTE_LO")
     promote_at = {k: float(v) for k, v in re.findall(
         r"(\w+):\s*([0-9.]+),", re.search(
-            r"PROMOTE_AT\s*=\s*\{(.*?)\}", topbar, re.S).group(1))}
+            r"PROMOTE_AT\s*=\s*\{(.*?)\}", ladder_js, re.S).group(1))}
 
     # backend rung -> the rung the display calls it
-    for backend_stage, displayed in (("faded", "faded"), ("partial", "worked")):
+    for backend_stage, displayed in (("faded", "faded"), ("partial", "example")):
         assert backend_stage in promote_lo, f"backend lost PROMOTE_LO[{backend_stage}]"
         assert displayed in promote_at, (
-            f"concept-topbar.js lost the {displayed!r} threshold — the rung would "
-            f"draw no promotion mark while the backend still promotes on one"
+            f"stage-ladder.js lost the {displayed!r} threshold — that section "
+            f"would draw no progress while the backend still promotes on one"
         )
         assert abs(promote_at[displayed] - promote_lo[backend_stage]) < 1e-9, (
             f"the {displayed!r} rung draws its promotion mark at "
@@ -264,79 +266,112 @@ def check_promotion_threshold_matches_the_backend():
     )
 
 
-def check_difficulty_bar_is_one_bar():
-    """ONE difficulty readout on the practice page, and its thresholds are real.
+def check_one_progress_readout():
+    """ONE progress readout above the practice split, and it is the ladder.
 
-    The page drew this quantity twice: a 96px `.concept-topbar-diff-bar` in the
-    concept strip whose fill was the aim and whose tick was the problem, and a
-    `.target-difficulty` card further down whose readout was "Old 24.5". Two
-    pictures of one number, in two visual languages, disagreeing about which
-    number was which — the report was literally "there are two of them".
+    This screen accumulated four, each a reasonable idea on its own:
 
-    So: exactly one mount, and nothing rebuilding the old segments.
+      the concept strip      concept name + four rung dots
+      the difficulty bar     a 0-100 track, aim as fill, problem as a tick
+      the accuracy bar       EWMA over the subtopic, usually "after calibration"
+      the competency bar     BKT posterior with 0.85/0.95 gate marks (KG flow)
+
+    Three of them were on screen at once when a learner entered through the
+    knowledge graph — "there are THREE different bars in this view" — showing
+    three quantities in one visual language, none of them the thing the learner
+    would read them as. Difficulty is now a line of text under the ladder, and
+    the other two are deleted.
+
+    So: exactly one mount, and no rebuilt tracks beside it.
     """
     index_html = read(os.path.join(SHARED, "index.html"))
-    assert index_html.count('id="target-difficulty"') == 1, (
-        "index.html has more (or fewer) than one #target-difficulty mount — the "
-        "difficulty bar is drawn once, under the concept strip"
+    assert index_html.count('id="stage-ladder"') == 1, (
+        "index.html has more (or fewer) than one #stage-ladder mount — the "
+        "practice page gets one progress readout"
     )
-    assert "concept-topbar-diff" not in index_html and "concept-topbar-est" not in index_html, (
-        "the concept strip grew its own difficulty/estimate segment back — that "
-        "is the second bar this check exists to prevent"
-    )
-    topbar = read(os.path.join(HERE, "concept-topbar.js"))
-    for gone in ("concept-topbar-diff", "concept-topbar-est"):
-        assert gone not in topbar, (
-            f"concept-topbar.js renders {gone!r} again — the strip names the "
-            "concept and the rung; the bar below it owns difficulty"
+    for gone in ('id="target-difficulty"', 'id="ewma-accuracy"',
+                 'id="competency-bar-container"', 'id="concept-topbar"'):
+        assert gone not in index_html, (
+            f"index.html mounts {gone} again — that is one of the four readouts "
+            "the single stage ladder replaced"
         )
-    # The bar is drawn by bars.js and annotated by difficulty-bar.js. Neither is
-    # allowed to be the only one wired up: bars.js without the readout leaves the
-    # numbers frozen on the previous question, and the readout without bars.js is
-    # a set of labels with no track under them.
+
+    # Difficulty is a CAPTION. The moment it grows a track again it is the
+    # second bar this check exists to prevent, whatever it is called.
+    ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
+    assert "stage-ladder-foot" in ladder_js, (
+        "stage-ladder.js no longer writes the caption — difficulty would have "
+        "nowhere to be stated"
+    )
+    for gone in ("difficulty-bar-track", "target-difficulty-track",
+                 "target-difficulty-marker"):
+        assert gone not in ladder_js, (
+            f"stage-ladder.js renders {gone!r} — difficulty is one clause of a "
+            "text caption, not a track"
+        )
+
+    # bars.js still owns the numbers (it is called from the places that KNOW
+    # them), and it must hand every one of them to the ladder. bars.js writing
+    # to nothing is how the caption would freeze on the previous question.
     bars_js = read(os.path.join(HERE, "bars.js"))
-    for call in ("DifficultyBar.aim(", "DifficultyBar.move(", "DifficultyBar.live(",
-                 "DifficultyBar.unavailable("):
-        assert call in bars_js, (
-            f"bars.js no longer calls {call}…) — the track would move while the "
-            "numbers beside it stayed on the last question's answer"
+    assert "StageLadder" in bars_js, (
+        "bars.js no longer forwards to StageLadder — the difficulty caption "
+        "would stay on whatever the last question left there"
+    )
+    for gone in ("DifficultyBar", "ConceptTopbar", "ewmaAccuracy"):
+        assert gone not in bars_js, (
+            f"bars.js calls {gone} again — that widget is deleted"
         )
 
-
-def check_difficulty_range_matches_backend():
-    """The bar's floor and span are a copy of the backend's difficulty range.
-
-    `difficulty-bar.js` places the support floor at `AIM_FLOOR` and converts a
-    promotion threshold in mastery to a point on the 0-100 track with
-    `AIM_FLOOR + AIM_SPAN * bound`. Both mirror `_DIFF_FLOOR` / `_DIFF_SPAN` in
-    `app/prioritization.py`, which is where `target_difficulty` is actually
-    computed.
-
-    Same reasoning as the PROMOTE_AT check below: a threshold drawn in the wrong
-    place is worse than no threshold. Change the span in the backend and every
-    green line on this bar quietly points at a number the queue never serves.
-    """
-    bar_js = read(os.path.join(HERE, "difficulty-bar.js"))
-    prio = os.path.join(
-        HERE, "..", "..", "This-Directory-Only", "backend", "app", "prioritization.py")
-    if not os.path.exists(prio):
-        return  # backend not checked out beside the frontend — nothing to compare
-    backend = read(prio)
-
-    def _const(src, name, pattern):
-        m = re.search(pattern, src)
-        assert m, f"could not find {name}"
-        return float(m.group(1))
-
-    for js_name, py_name in (("AIM_FLOOR", "_DIFF_FLOOR"), ("AIM_SPAN", "_DIFF_SPAN")):
-        js_value = _const(bar_js, js_name, rf"const {js_name}\s*=\s*([0-9.]+)")
-        py_value = _const(backend, py_name, rf"{py_name}\s*=\s*([0-9.]+)")
-        assert abs(js_value - py_value) < 1e-9, (
-            f"difficulty-bar.js draws {js_name}={js_value} but prioritization.py "
-            f"computes with {py_name}={py_value} — the floor and the promotion "
-            f"line on the bar are both off by that difference"
+    # And the caption must be REPLACED on every show(), never merged. The
+    # lesson screen passes no difficulty at all — it has no problem on it — so
+    # a merge left the previous question's aim standing over a page with
+    # nothing to aim at. Both assignments are unconditional; the practice path
+    # re-supplies them in the same synchronous render.
+    for field, arg in (("problemValue", "difficulty"), ("aimValue", "target")):
+        assert f"if (Number.isFinite({arg})) {field}" not in ladder_js, (
+            f"stage-ladder.js only sets {field} when show() is given one — a "
+            "screen that passes none inherits the last question's number"
+        )
+        assert f"{field} = Number.isFinite({arg})" in ladder_js, (
+            f"stage-ladder.js no longer assigns {field} in show() — the "
+            "difficulty caption would not follow the item on screen"
         )
 
+    # The caption's mastery clause belongs to ONE concept (competency-bar.js
+    # writes it) and the caption itself is shared, so a KC change has to drop
+    # it or the next concept inherits the last one's "72% mastered".
+    assert re.search(r"!==\s*current\.kc\)\s*extraNote\s*=", ladder_js), (
+        "stage-ladder.js does not clear extraNote when show() changes concept "
+        "— the mastery clause leaks onto the next concept's caption"
+    )
+
+    # The concept button jumps to the map. The graph exposes a FUNCTION for
+    # that and it is what waits for the tab's data and layout; an event would
+    # need a listener, and there is none anywhere in the app.
+    assert "deltaFocusConceptGraphKc" in ladder_js, (
+        "stage-ladder.js no longer calls deltaFocusConceptGraphKc — the "
+        "concept button would open the knowledge graph on the wrong node"
+    )
+
+    # A graded verdict returns a fresh estimate and the fill is drawn from it.
+    # Dropping it leaves the section showing where the learner stood BEFORE the
+    # answer, for as long as the review is on screen.
+    events_js = read(os.path.join(HERE, "events.js"))
+    assert "setProgress(record.ladderEstimate)" in events_js, (
+        "events.js no longer forwards the post-verdict ladder estimate — the "
+        "ladder's fill would stay on the pre-answer reading through review"
+    )
+
+
+# `check_difficulty_range_matches_backend` used to live here. It mirrored
+# `_DIFF_FLOOR` / `_DIFF_SPAN` from `app/prioritization.py` into
+# `difficulty-bar.js`'s `AIM_FLOOR` / `AIM_SPAN`, which the bar used to convert
+# a mastery threshold into a position on its 0-100 track. There is no track any
+# more — difficulty is stated as the two numbers themselves, in text — so the
+# client holds no copy of the range and there is nothing left to drift. The
+# check was deleted rather than left passing on absent constants, which is the
+# failure mode `_every_check_is_registered` exists to catch.
 
 
 def _every_check_is_registered(checks):
@@ -364,8 +399,7 @@ def _every_check_is_registered(checks):
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_promotion_threshold_matches_the_backend,
-              check_difficulty_bar_is_one_bar,
-              check_difficulty_range_matches_backend,
+              check_one_progress_readout,
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,

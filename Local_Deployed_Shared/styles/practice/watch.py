@@ -5,11 +5,13 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import sys
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
-CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css", "misc.css"]
+CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
+             "misc.css", "stage-ladder.css"]
 
 
 def _read(path):
@@ -78,13 +80,36 @@ def check_invariants():
     assert ":not(.session-idle) .session-setup" in timer, (
         "timer.css lost the rule hiding the setup panel during a session"
     )
-    # The topbar is a SIBLING of the split, so the rule above does not cover it.
-    # Without its own rule the setup screen shows the paused session's concept,
-    # rung and difficulty for a question that is not on screen.
-    assert "#page-practice.session-idle .concept-topbar" in timer, (
-        "timer.css lost the session-idle rule that hides the concept topbar — "
-        "the setup screen will show the previous question's concept strip"
+    # The stage ladder is a SIBLING of the split, so the rule above does not
+    # cover it. Without its own rule the setup screen shows the paused session's
+    # concept, rung and difficulty for a question that is not on screen — which
+    # is exactly what happened when this named only the old `.concept-topbar`
+    # and the difficulty bar beside it went uncovered.
+    assert "#page-practice.session-idle .stage-ladder" in timer, (
+        "timer.css lost the session-idle rule that hides the stage ladder — "
+        "the setup screen will show the previous question's concept and rung"
     )
+    # One readout above the split, and it is the ladder's. These are the four
+    # widgets it replaced; a stylesheet still sizing one of them means a piece
+    # of the old design survived the delete.
+    ladder = _read(os.path.join(HERE, "stage-ladder.css"))
+    assert ".stage-ladder-track" in ladder and ".stage-seg" in ladder, (
+        "stage-ladder.css lost the sectioned track — the ladder is the one "
+        "progress readout on the practice page and the sections ARE the ladder"
+    )
+    for gone in (".concept-topbar", ".difficulty-bar", "#ewma-accuracy",
+                 ".competency-bar-track"):
+        for name in os.listdir(HERE):
+            if not name.endswith(".css"):
+                continue
+            text = _read(os.path.join(HERE, name))
+            # Comments naming the old widgets are history and stay; a SELECTOR
+            # is a rule that still ships.
+            stripped = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+            assert gone not in stripped, (
+                f"{name} still has rules for {gone!r} — that widget was deleted "
+                "when the practice page went to one stage ladder"
+            )
 
 
 # ── Run all checks ────────────────────────────

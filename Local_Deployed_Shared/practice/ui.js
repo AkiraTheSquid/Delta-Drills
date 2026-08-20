@@ -60,6 +60,13 @@ function _escapeHtml(s) {
 // text, and let KaTeX render the $…$ math (it was showing raw before). Fenced
 // ```code``` blocks become a styled <pre>; inline `code` becomes <code>; math
 // is left for KaTeX. Returns nothing — writes into #question-text.
+/* The subtopic posterior as it stood BEFORE the answer on screen. Declared
+   here now: it used to be a bars.js global, beside the accuracy bar that drew
+   it, and that bar is gone. The value is not — `events.js` posts it as
+   `pBefore` on `competency:feedback-update`, which is how the knowledge-graph
+   focus flow learns a concept crossed its mastery gate. */
+let ewmaAccuracyPBefore = null;
+
 function renderQuestionBody(q) {
   const raw = (q && q.question_text) || "";
   // Pull fenced code blocks out first so we don't KaTeX/escape-mangle them.
@@ -294,8 +301,6 @@ function renderQuestion(q, count) {
   practiceSubmitBtn.disabled = false;
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
-  ewmaAccuracy.classList.add("hidden");
-  ewmaAccuracyFill.style.width = "0%";
   showFeedbackButtons();
   resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
@@ -303,17 +308,15 @@ function renderQuestion(q, count) {
   // AFTER the submit area is un-hidden above so it can re-hide it for torch).
   applyTorchRouting(q);
 
-  // Set up accuracy bar initial state (mirrors setTargetDifficultyInitial).
-  // Backend mode: use p_current from the question response (adaptiveStateJson is null).
-  // Pyodide mode: read from the adaptive state JSON.
+  /* The subtopic posterior before this answer. The accuracy bar that used to
+     draw it is gone (see practice/stage-ladder.js), but the number is not
+     decoration: `events.js` posts it as `pBefore` on `competency:feedback-update`,
+     which is what the knowledge-graph focus flow watches to know a concept has
+     been mastered and the overlay can close. Read here, on render, because
+     after the submit it is no longer the value it had before. */
   ewmaAccuracyPBefore = Number.isFinite(q.p_current)
     ? q.p_current
     : getEwmaFromAdaptiveState(q.subtopic);
-  if (coldStart || q.diagnostic_active) {
-    showEwmaAccuracyCalibration(q.subtopic);
-  } else {
-    showEwmaAccuracyInitial(ewmaAccuracyPBefore, q.subtopic);
-  }
 
   // Reset AI explanation
   aiExplanationSection.classList.add("hidden");
@@ -547,9 +550,6 @@ function applyPendingFeedbackState(pending) {
   overrideRow.classList.add("hidden");
   showNextProblemButton();
   setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
-  if (Number.isFinite(pending.pAfter)) {
-    setEwmaAccuracyFinal(pending.pBefore, pending.pAfter, pending.subtopic);
-  }
 }
 
 // Apply correct/incorrect result to the feedback area UI.

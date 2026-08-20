@@ -429,7 +429,7 @@ const LessonGate = (() => {
 
      Guest mode has no backend to ask, so the fetch is skipped entirely there. */
   const _showTopbar = async (page) => {
-    const bar = window.ConceptTopbar;
+    const bar = window.StageLadder;
     if (!bar) return;
     const { lesson, kp, seg } = page;
     bar.show({
