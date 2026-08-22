@@ -48,6 +48,67 @@
   border-bottom-color: var(--white);
 }
 
+/* --- "Why this app exists": the six-step loop, and the sample map ------
+   The steps are a fixed 3 x 2, not the auto-fit grid components.css gives
+   every other .steps-grid. They are ONE numbered sequence, and auto-fit
+   reflows it by available width — at the default container that landed 4
+   on the first row and 2 on the second, which reads as two groups of
+   different sizes rather than steps 1-3 then 4-6. Below 900px it drops to
+   two columns and then one; at every width the row break falls between
+   whole steps.
+   -------------------------------------------------------------------- */
+#page-why-this-app .steps-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 900px) {
+  #page-why-this-app .steps-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  #page-why-this-app .steps-grid { grid-template-columns: 1fr; }
+}
+
+/* The illustrative map. Positioned so the .kg2-legend it borrows from the
+   Knowledge Graph — which is `position: absolute` — anchors to THIS box and
+   not to the page. Deliberately shorter than the real graph pane: it holds
+   nine nodes, and there is no side panel or dock to make room for. */
+.wta-graph {
+  position: relative;
+  height: 400px;
+  margin: 20px 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.wta-graph-cy { position: absolute; inset: 0; }
+.wta-graph-status {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: var(--muted); font-size: 14px;
+}
+/* Undoes .kg2-legend's absolute positioning: on this page the legend is a
+   row under the map, not an overlay on it. Qualified by #page-why-this-app
+   because .kg2-legend is declared LATER in this file and a bare
+   .wta-graph-legend ties it on specificity and loses on source order — which
+   left the legend absolutely positioned and floating off the top of the
+   section, invisible. */
+#page-why-this-app .wta-graph-legend {
+  position: static;
+  max-width: none;
+  margin: 0 0 8px;
+}
+/* Same source-order trap as the legend above: .kg2-li-dot is declared later
+   and its own `border` shorthand was overwriting this one, leaving the
+   "next up" swatch as an empty circle with no ring. */
+#page-why-this-app .wta-li-nextup { background: transparent; border: 2px solid #ffd23f; }
+.wta-graph-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+@media (max-width: 560px) {
+  .wta-graph { height: 320px; }
+}
+
 /* --- Section scaffolding --- */
 .hiw-section {
   margin: 56px 0;
