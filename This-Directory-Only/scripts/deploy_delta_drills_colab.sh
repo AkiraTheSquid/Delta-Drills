@@ -53,6 +53,18 @@ if [ ! -d "$COLAB_DIR" ]; then
   exit 1
 fi
 
+# Step 2 rsyncs $REPO_SHARED_DIR — the WORKING TREE, not a commit — into the
+# colab worktree and publishes it. Anything another session has in flight there
+# would ship to the fork's public URL regardless of whether it was committed.
+# Same gate the main deploy grew on 2026-08-22, for the same reason.
+repo_dirty="$(git -C "$REPO_DIR" -c core.quotePath=false status --porcelain)"
+if [ -n "$repo_dirty" ]; then
+  error "Working tree at $REPO_DIR is not clean. Refusing to publish the Colab edition."
+  error "The sync below copies the working tree, so these paths would ship:"
+  echo "$repo_dirty" >&2
+  exit 1
+fi
+
 # --- 1. Preflight: the extension must still point at this deploy ---
 # The extension frames this URL and its toolbar button opens it. Shipping a
 # frontend the extension cannot use is the failure this fork exists to avoid.
