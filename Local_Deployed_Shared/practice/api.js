@@ -304,6 +304,20 @@ const PracticeAPI = {
       }
     }
 
+    /* Everything below grades on Pyodide, which cannot import torch. Refuse
+       before touching it, the same way runSnippet does for the Run button.
+
+       This THROWS rather than returning `{correct: false}` on purpose: the
+       learner's answer was never executed, so there is no verdict to record.
+       Returning a result here would mark a correct answer wrong and drag the
+       mastery estimate down for a runtime failure. `blocked` tells events.js
+       to state the reason instead of prefixing it with "Submit failed:". */
+    if (needsTorchRuntime(this.currentQuestion, userCode)) {
+      const blocked = new Error(TORCH_UNAVAILABLE);
+      blocked.blocked = true;
+      throw blocked;
+    }
+
     // supabase/local or backend+einops fallback — run code with Pyodide and AI judge
     const pyodide = await initPyodide();
     let actualOutput = "";

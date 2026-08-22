@@ -12,7 +12,14 @@ practiceSubmitBtn.addEventListener("click", async () => {
     result = await PracticeAPI.submitAnswer(q.question_id, userCode);
   } catch (err) {
     if (PracticeAPI.currentQuestion !== q) return;
-    outputArea.textContent = "Submit failed: " + err.message;
+    /* `blocked` = we declined to run it and already said why (torch on
+       Pyodide); the reason IS the message, so don't bury it behind a prefix.
+       The `|| err` fallback matters for the unblocked case: a Pyodide
+       PythonError carries an EMPTY `.message`, which used to render as a bare
+       "Submit failed:" with nothing after it. */
+    outputArea.textContent = err.blocked
+      ? err.message
+      : "Submit failed: " + (err.message || err);
     practiceSubmitBtn.disabled = false;
     PracticeSession.resumeAnswerPhase();
     return;
