@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from fnmatch import fnmatch
 from pathlib import Path
 
 
@@ -28,6 +29,10 @@ ALLOWED_ROOT_NAMES = {
     ".claude",               # Claude Code per-project session state
     ".directory",            # KDE Dolphin folder-icon metadata (dev-only). Added 2026-07-18.
     "CLAUDE.md",             # Claude Code project instructions (graphify). Added 2026-07-11.
+    "README.md",             # repo README — prose only, same dev-only category as
+                             # CLAUDE.md above and never served by Vercel (the
+                             # deploy publishes Local_Deployed_Shared/, not root).
+                             # Added 2026-08-22.
     "graphify-out",          # graphify knowledge graph output (dev-only)
     "extension",             # Chrome MV3 side panel — loaded unpacked from disk,
                              # never served by Vercel. Added 2026-07-31.
@@ -41,6 +46,20 @@ ALLOWED_ROOT_NAMES = {
                              # Added 2026-08-18.
 }
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
+# The Vercel CLI writes `.env.local` beside the `.vercel/` directory already
+# allowed above — same tool, same directory, and `Local_Deployed_Shared/
+# .gitignore` line 2 (`.env*.local`) already excludes the whole family, so it
+# can never be committed or rsynced into a build. Without this the guard aborts
+# the deploy on an artifact the deploy itself produces: step 5b runs `vercel`
+# inside the Deployed shared dir, and step 4 of the NEXT deploy then re-checks
+# that same dir and fails. Added 2026-08-22 after exactly that.
+ALLOWED_SPLIT_METADATA_GLOBS = (".env*.local",)
+
+
+def _is_allowed_split_metadata(name: str) -> bool:
+    if name in ALLOWED_SPLIT_METADATA_NAMES:
+        return True
+    return any(fnmatch(name, pattern) for pattern in ALLOWED_SPLIT_METADATA_GLOBS)
 
 
 def main() -> None:
@@ -64,7 +83,7 @@ def main() -> None:
         for child in sorted(directory.iterdir(), key=lambda item: item.name):
             if child.name == ".git":
                 raise RuntimeError(f"Hidden repo metadata must stay at root, not under split dirs: {child}")
-            if child.name.startswith(".") and child.name not in ALLOWED_SPLIT_METADATA_NAMES:
+            if child.name.startswith(".") and not _is_allowed_split_metadata(child.name):
                 raise RuntimeError(f"Unexpected hidden metadata inside split dir: {child}")
 
     for child in root.iterdir():
