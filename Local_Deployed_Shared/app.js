@@ -31,11 +31,33 @@ window.DELTA_USE_BACKEND = true;
 // Only account-management / admin tabs still require a real login.
 const guestBlockedTabs = ["split-tool", "account"];
 
+// --- Basic / Advanced app mode ---------------------------------------
+// Basic is the DEFAULT and the app most people should see: Practice, the
+// Diagnostic and the two explainer tabs. Advanced adds back the tabs that
+// show the machinery. Flipped from the toggle on the Account tab; stored
+// per-browser, like api_base and the other local prefs.
+// Nothing is unloaded — the pages stay in the DOM and their scripts still
+// run; only the nav entries (and the one in-page CTA that points at a
+// hidden tab) are taken out, and switchTab refuses to route to them.
+const advancedOnlyTabs = ["knowledge-graph", "courses", "notebooks", "targeted-practice"];
+const ADVANCED_MODE_KEY = "dd_advanced_mode";
+const isAdvancedMode = () => localStorage.getItem(ADVANCED_MODE_KEY) === "1";
+const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
+
 const switchTab = (tabName) => {
   if (guestBlockedTabs.includes(tabName) && !authToken) {
     // No forced login page anymore — send guests to practice; the guest
     // banner is the standing CTA to log in.
     tabName = "practice";
+  }
+  if (isAdvancedOnlyTab(tabName) && !isAdvancedMode()) {
+    // A tab that isn't in the nav must not be reachable by other means
+    // either — e.g. a [data-goto-tab] button that outlived a mode flip.
+    // EXCEPT a solo pathname deep link (/notebooks, /knowledge-graph): that
+    // URL is an explicit request for that one page, it renders without app
+    // chrome anyway, and it's what embeds point at. Redirecting it would
+    // serve a chromeless Practice page to someone who asked for a notebook.
+    if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
@@ -93,6 +115,32 @@ document.querySelectorAll("[data-goto-tab]").forEach((b) => {
 // tabs (Account, Split Tool) stay hidden until login.
 const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-practice"];
 
+// Second visibility pass, run AFTER the auth pass below and never before it.
+// It only ever ADDS .hidden, so it can't reveal a tab auth just hid — which
+// is what keeps the two passes composable in either mode.
+// Both the .tab button and its sibling .tab-info dot carry the same data-tab,
+// so one selector takes out the pair.
+const applyModeVisibility = () => {
+  const advanced = isAdvancedMode();
+  document.body.classList.toggle("dd-basic-mode", !advanced);
+  // Tabs: ADD-only. Turning advanced back on must NOT un-hide these here —
+  // the auth pass above already restored the ones this viewer is allowed,
+  // and a symmetric toggle would hand a guest the tabs auth just took away.
+  if (!advanced) {
+    document.querySelectorAll(".tab, .tab-info").forEach((el) => {
+      if (isAdvancedOnlyTab(el.dataset.tab)) el.classList.add("hidden");
+    });
+  }
+  // In-page jumps to a tab that isn't there (How It Works → Knowledge Graph).
+  // No auth pass touches these, so this one has to be symmetric or the CTA
+  // stays hidden forever after one trip through basic mode. Hide the wrapper
+  // where there is one so no empty block is left behind.
+  document.querySelectorAll("[data-goto-tab]").forEach((b) => {
+    if (!isAdvancedOnlyTab(b.dataset.gotoTab)) return;
+    (b.closest(".hiw-graph-cta") || b).classList.toggle("hidden", !advanced);
+  });
+};
+
 const updateTabVisibility = () => {
   if (authToken) {
     authOnlyTabs.forEach((t) => t.classList.remove("hidden"));
@@ -105,6 +153,7 @@ const updateTabVisibility = () => {
   }
   const guestBanner = document.getElementById("guest-banner");
   if (guestBanner) guestBanner.classList.toggle("hidden", !!authToken);
+  applyModeVisibility();
   updateAuthIndicators();
 };
 
@@ -320,6 +369,21 @@ const initGoogleSignIn = () => {
 })();
 
 // --- Account settings ---
+
+// Advanced-mode toggle. Applies on change with no Save step — it rewrites the
+// nav the user is looking at, and a nav that only updates after a form submit
+// reads as broken. If the tab they're on is one of the ones that just went
+// away, carry them to Practice rather than leaving a page with no tab.
+const advancedModeToggle = document.getElementById("account-advanced-mode");
+if (advancedModeToggle) {
+  advancedModeToggle.checked = isAdvancedMode();
+  advancedModeToggle.addEventListener("change", () => {
+    localStorage.setItem(ADVANCED_MODE_KEY, advancedModeToggle.checked ? "1" : "0");
+    const activeTab = document.querySelector(".tab.active")?.dataset.tab || "";
+    updateTabVisibility();
+    if (!advancedModeToggle.checked && isAdvancedOnlyTab(activeTab)) switchTab("practice");
+  });
+}
 
 accountForm.addEventListener("submit", async (event) => {
   event.preventDefault();

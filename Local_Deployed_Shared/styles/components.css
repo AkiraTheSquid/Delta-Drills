@@ -283,6 +283,47 @@
   word-break: break-all;
 }
 
+/* App-mode toggle (basic ⇄ advanced). Sits above the settings form, not in
+   it, because it applies on change — the form below still needs its Save. */
+.account-mode {
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.account-mode-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.account-mode-row input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.account-mode-text {
+  display: grid;
+  gap: 4px;
+}
+
+.account-mode-title {
+  font-weight: 600;
+}
+
+.account-mode-hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 /* Credentials (API base, OpenAI / Mathpix keys, DD_TOKEN) — collapsed by
    default so they don't crowd the account view. */
 .account-advanced {
