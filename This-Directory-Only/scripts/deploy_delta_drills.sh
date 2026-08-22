@@ -8,7 +8,7 @@ set -euo pipefail
 # - localhost / local worktree: backend auth + backend practice state only
 # - deployed host / Vercel: Supabase auth + Supabase practice state
 #
-# 1. Checks for uncommitted changes on main (auto-commits all)
+# 1. Requires main to be checked out and CLEAN (never auto-commits your work)
 # 2. Exports question bank artifacts
 # 3. Pushes main to origin
 # 4. Syncs Local_Deployed_Shared/ into the deploy worktree
@@ -79,12 +79,71 @@ auto_commit_if_dirty() {
   # non-ASCII filenames (the previous per-line loop choked on emoji-bearing
   # ARENA notebook filenames and explicit-pathspec attempts hit
   # 'ignored-files' warnings that exited non-zero under set -e).
+  #
+  # ONLY safe for the deploy worktree, which is a machine-owned mirror that no
+  # human edits. It must never run against the main repo — see
+  # commit_generated_artifacts / require_clean_worktree below.
   git -C "$repo_dir" -c core.quotePath=false add -A
 
   if ! git -C "$repo_dir" diff --cached --quiet; then
     warn "Auto-committing dirty changes in $repo_dir"
     git -C "$repo_dir" -c core.quotePath=false status --short
     git -C "$repo_dir" commit -m "$message"
+  fi
+}
+
+# Files this pipeline REGENERATES on every run. These are the only paths in the
+# main repo the deploy is allowed to commit on its own, because a script here
+# wrote them. Everything else in that working tree belongs to a person or
+# another agent session.
+#
+# Added 2026-08-22: the main-repo commits used `git add -A`, so a deploy run
+# while anyone else had edits in Delta-Drills-Local swept those edits into a
+# "chore:" commit and shipped them to production unreviewed. With several
+# agents sharing the repo that is a live data-loss / bad-deploy path, not a
+# theoretical one.
+GENERATED_ARTIFACT_PATHS=(
+  "Local_Deployed_Shared/questions.json"
+  "Local_Deployed_Shared/questions_structured.json"
+  "Local_Deployed_Shared/arena_prereqs_structured.json"
+  "Local_Deployed_Shared/arena/exercises.js"
+  "Local_Deployed_Shared/lessons/notebooks"
+  "Local_Deployed_Shared/arena-book"
+  "This-Directory-Only/questions_full.json"
+)
+
+commit_generated_artifacts() {
+  local repo_dir="$1"
+  local message="$2"
+  local path
+
+  # Stage per-path so one absent artifact (arena-book/ only exists after a Book
+  # build) cannot abort the whole stage under `set -e`.
+  for path in "${GENERATED_ARTIFACT_PATHS[@]}"; do
+    git -C "$repo_dir" -c core.quotePath=false add -- "$path" 2>/dev/null || true
+  done
+
+  if ! git -C "$repo_dir" diff --cached --quiet; then
+    warn "Committing regenerated deploy artifacts in $repo_dir"
+    git -C "$repo_dir" -c core.quotePath=false status --short -- "${GENERATED_ARTIFACT_PATHS[@]}"
+    git -C "$repo_dir" commit -m "$message"
+  fi
+}
+
+require_clean_worktree() {
+  local repo_dir="$1"
+  local stage="$2"
+  local dirty
+
+  dirty="$(git -C "$repo_dir" -c core.quotePath=false status --porcelain)"
+  if [ -n "$dirty" ]; then
+    error "Working tree at $repo_dir is not clean ($stage). Refusing to deploy."
+    error "This pipeline no longer auto-commits changes it did not write:"
+    error "another agent may be mid-edit here, and a blanket commit would ship"
+    error "their in-flight work to production. Commit the paths you own (or"
+    error "move them to their own worktree), then re-run the deploy."
+    echo "$dirty" >&2
+    exit 1
   fi
 }
 
@@ -105,9 +164,8 @@ if [ ! -f "$REFRESH_SPLIT_SCRIPT" ]; then
 fi
 # Assert the property that actually matters, not just that the file exists: a
 # venv without torch fails exactly the same silent way bare python3 did.
-# This belongs in preflight, ahead of Step 1 -- Step 1 auto-commits the working
-# tree, so a guard placed any later aborts the deploy only after it has already
-# written a commit.
+# This belongs in preflight, ahead of Step 1, so the deploy refuses on a broken
+# venv before it touches anything.
 if ! "$BACKEND_PY" -c "import torch" >/dev/null 2>&1; then
   error "$BACKEND_PY cannot import torch."
   error "The expected_output recompute would silently fall back to the CSV's"
@@ -116,11 +174,22 @@ if ! "$BACKEND_PY" -c "import torch" >/dev/null 2>&1; then
   exit 1
 fi
 
-# --- Step 1: Check for uncommitted changes on main ---
+# --- Step 1: Require a clean main worktree ---
+#
+# Was: `git checkout main` + auto-commit everything. Both halves were unsafe
+# with more than one agent in the repo — the checkout yanked the branch out
+# from under whoever else was working, and the auto-commit shipped their
+# uncommitted edits. Assert instead of mutate. Added 2026-08-22.
 
-info "Checking for uncommitted changes on main..."
-git -C "$REPO_DIR" checkout main
-auto_commit_if_dirty "$REPO_DIR" "chore: auto-commit before deploy"
+info "Checking main worktree is clean and on the right branch..."
+current_branch="$(git -C "$REPO_DIR" rev-parse --abbrev-ref HEAD)"
+if [ "$current_branch" != "main" ]; then
+  error "$REPO_DIR is on '$current_branch', not main."
+  error "Refusing to switch branches: another session may be working here."
+  error "Check out main yourself once you know it is safe, then re-run."
+  exit 1
+fi
+require_clean_worktree "$REPO_DIR" "before export"
 
 # --- Step 2: Export question bank ---
 
@@ -179,7 +248,7 @@ info "Running grading-harness regression tests..."
 "$BACKEND_PY" \
   "$REPO_SHARED_DIR/pipeline/test_torch_grading.py"
 
-auto_commit_if_dirty "$REPO_DIR" "chore: update deploy artifacts"
+commit_generated_artifacts "$REPO_DIR" "chore: update deploy artifacts"
 
 # --- Step 3: Push main to origin ---
 
@@ -205,12 +274,18 @@ fi
 if [ -d "$REPO_DIR/arena-book" ]; then
   info "Building ARENA Jupyter Book..."
   bash "$REPO_THIS_DIR/scripts/build_arena_book.sh"
-  auto_commit_if_dirty "$REPO_DIR" "chore: refresh arena-book build output"
+  commit_generated_artifacts "$REPO_DIR" "chore: refresh arena-book build output"
 else
   warn "arena-book/ not found — skipping Book build."
 fi
 
 # --- Step 4: Sync the shared subtree into the deploy worktree ---
+
+# Everything this pipeline generates has now been committed. Anything still
+# dirty in the main repo was written by someone else while the export ran —
+# and the rsync below copies the WORKING TREE, so it would ship regardless of
+# what is committed. Catch it here rather than in production.
+require_clean_worktree "$REPO_DIR" "after export, before sync"
 
 info "Syncing Local_Deployed_Shared into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy

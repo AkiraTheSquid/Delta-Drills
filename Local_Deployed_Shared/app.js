@@ -29,7 +29,13 @@ window.DELTA_USE_BACKEND = true;
 // Guests can now use the learning surface (practice/drills) without an
 // account — progress is saved locally only (see getPracticeMode → "local").
 // Only account-management / admin tabs still require a real login.
-const guestBlockedTabs = ["split-tool", "account"];
+//
+// Account is NOT in this list: it now hosts the basic/advanced mode toggle,
+// which is a display preference kept in localStorage and is the only way to
+// reach the advanced tabs. Blocking it would leave a signed-out visitor with
+// no route into advanced mode at all. The credential controls on that page
+// are already keyed off `authToken` and render as "Not signed in" for guests.
+const guestBlockedTabs = ["split-tool"];
 
 // --- Basic / Advanced app mode ---------------------------------------
 // Basic is the DEFAULT and the app most people should see: Practice, the

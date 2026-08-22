@@ -97,6 +97,12 @@ def check_invariants():
     # this session; statistics was removed 2026-07-31. Keep this list aligned
     # with the actual tab buttons in index.html (and authRequiredTabs in app.js).
     expected_tabs = ("split-tool", "account", "courses", "practice", "targeted-practice")
+    # Tabs app.js must still name explicitly, i.e. the ones on an auth/mode
+    # list. Routing itself is generic (`tabs.forEach(... switchTab)`), so a tab
+    # absent from every list is correctly reachable without a literal.
+    # "account" left this set on 2026-08-22: it stopped being guest-blocked so
+    # signed-out visitors can reach the basic/advanced mode toggle it hosts.
+    auth_listed_tabs = ("split-tool", "courses", "targeted-practice")
     # page-targeted-practice lives in a -dom.js module (extracted from
     # index.html to keep it under the per-file LOC ceiling); check that
     # source file for the mount instead of index.html.
@@ -112,7 +118,8 @@ def check_invariants():
             f'<main id="page-{tab}"> missing — checked '
             f'{"runtime DOM module" if tab in runtime_mounts else "index.html"}'
         )
-        assert f'"{tab}"' in app_js, f'app.js authRequiredTabs missing "{tab}"'
+        if tab in auth_listed_tabs:
+            assert f'"{tab}"' in app_js, f'app.js auth/mode list missing "{tab}"'
 
     # Targeted Practice must sit immediately after Practice and is now the
     # last tab in the nav (Statistics, which used to follow it, was removed
