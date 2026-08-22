@@ -99,6 +99,29 @@ def check_public_api():
     assert 'class="tab has-info" data-tab="diagnostic"' in index_html
     assert 'id="diagnostic-workspace-host"' in index_html
     assert "Continue diagnostic in Practice" not in index_html
+    # An unfinished placement must not cost the learner the Practice tab.
+    diagnostic_page = read(os.path.join(HERE, "diagnostic-page.js"))
+    # These are substring checks over source, so they are spelled to match the
+    # mechanism rather than a word that could survive in a comment: the guard
+    # names the definition AND the call site that has to consume it.
+    assert "setPracticeTabDisabled" not in diagnostic_page and (
+        ".disabled = true" not in diagnostic_page
+    ), (
+        "an active placement must never disable the Practice tab: no :disabled "
+        "style exists, so the tab looks live and silently eats the click"
+    )
+    assert "const diagnosticOnScreen =" in diagnostic_page and (
+        "running && diagnosticOnScreen()" in diagnostic_page
+    ), (
+        "the practice workspace may live in #page-diagnostic only while that page "
+        "is on screen — delta:practice-state-changed fires from any tab, and keying "
+        "on the placement alone yanks the workspace out of a visible Practice tab"
+    )
+    assert 'practicePage.classList.add("hidden")' not in diagnostic_page and (
+        "practicePage.hidden = true" not in diagnostic_page
+    ), (
+        "app.js owns page visibility; hiding #page-practice from here blanks the tab"
+    )
     assert index_html.count('id="self-report-row"') == 1
     assert 'maxlength="5000"' in index_html and '<textarea class="problem-feedback-note"' in index_html
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
