@@ -22,11 +22,7 @@ window.DD_INFOTIPS = {
   /* ---- Tabs -------------------------------------------------------- */
   "tab.why-this-app": {
     title: "Why this app exists",
-    body: "The reasoning behind Delta Drills — the gap it was built to close, and why it works the way it does.",
-  },
-  "tab.how-it-works": {
-    title: "How It Works",
-    body: "A walkthrough of the machinery: how the app picks your next problem, how mastery is estimated, and what the scaffolding does.",
+    body: "The landing page: what Delta Drills is for, and the loop it runs — place you, pick the concept, teach it, then hand you the real <strong>ARENA</strong> problem.",
   },
   "tab.knowledge-graph": {
     title: "Knowledge Graph",

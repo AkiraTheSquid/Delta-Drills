@@ -1,9 +1,18 @@
 /* ================================================================
-   HOW IT WORKS — public-facing explainer page.
+   EXPLAINER PAGE + KNOWLEDGE GRAPH.
    Self-contained styles (hiw- prefix) so components.css stays lean.
+
+   The filename is historical. The How It Works page this was written for
+   was DELETED on 2026-08-22 and its .hiw-* type scale was inherited by
+   "Why this app exists" (#page-why-this-app), which is now the landing
+   page. The file was not renamed because it also owns every .kg2-* rule
+   for the Knowledge Graph tab, which several READMEs and concept-graph/
+   modules name by this path; a rename would be a large diff for no
+   behaviour change. Rules further down still carry .hiw-* names for the
+   same reason — they are what the markup keys on.
    ================================================================ */
 
-#page-how-it-works .container {
+#page-why-this-app .container {
   max-width: 920px;
 }
 
@@ -29,12 +38,12 @@
 }
 
 /* Inline links (e.g. the Math Academy reference) */
-#page-how-it-works a {
+#page-why-this-app a {
   color: var(--accent);
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
 }
-#page-how-it-works a:hover {
+#page-why-this-app a:hover {
   color: var(--white);
   border-bottom-color: var(--white);
 }

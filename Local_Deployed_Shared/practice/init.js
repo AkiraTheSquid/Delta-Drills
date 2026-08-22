@@ -53,6 +53,14 @@ function invalidateLegacyBackendQuestion() {
 }
 
 const initPractice = async () => {
+  // Before the mode is decided, not after: getPracticeMode() answers "local"
+  // for anyone without a token, and local mode has no diagnostic, no lessons
+  // and no student model. guest-session.js gives a signed-out visitor a
+  // backend session so they get the real app. It resolves false (leaving the
+  // mode "local", exactly as before) when the backend can't be reached.
+  if (typeof window.DDGuest?.ensure === "function") {
+    await window.DDGuest.ensure();
+  }
   detectPracticeMode();
   await loadQuestionsBank();
 
