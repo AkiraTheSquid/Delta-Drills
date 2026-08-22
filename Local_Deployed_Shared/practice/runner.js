@@ -274,12 +274,11 @@ function installCodeEditorKeys(editor) {
 
 installCodeEditorKeys(codeEditor);
 
-const TORCH_IMPORT = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
-
-const TORCH_UNAVAILABLE =
-  "This code uses PyTorch, which can't run in the browser sandbox. " +
-  "Open it in Colab (Show Answer / the solution notebook) to run it, " +
-  "or sign in to use the full runner.";
+/* `TORCH_IMPORT_RE`, `needsTorchRuntime` and `TORCH_UNAVAILABLE` live in ui.js
+   so api.js can share them — the submit path needs exactly this rule, and a
+   second copy of the regex here is how the two drifted apart in the first
+   place (Run refused torch politely; Submit crashed on it). */
+const TORCH_IMPORT = TORCH_IMPORT_RE;
 
 /* Execute one block of Python and report what happened.
 

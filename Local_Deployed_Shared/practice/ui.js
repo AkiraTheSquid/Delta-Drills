@@ -9,14 +9,42 @@ function isCalibrationQuestion(q) {
   return isColdStart(q.subtopic, overrideN);
 }
 
+const TORCH_IMPORT_RE = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
+
 // A question is "torch" if the bank tags it so, or its starter/solution imports
 // torch.
 function questionIsTorch(q) {
   if (!q) return false;
   if (q.primary_library === "torch") return true;
   const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
-  return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
+  return TORCH_IMPORT_RE.test(blob);
 }
+
+/* Would running this on Pyodide hit `import torch`? Pyodide cannot import torch
+   AT ALL, so the answer decides whether local execution is even attempted.
+
+   Wider than `questionIsTorch` on purpose, because it guards the GRADING path
+   and each extra source below is one that path actually executes:
+
+     * `userCode` — a learner who types `import torch` themselves.
+     * `test_cases[*].setup_code` — spliced verbatim into the Pyodide preamble
+       by `buildPyodidePreamble`. This is the one that bit: the bank stores
+       `import torch as t` in setup_code, the preamble runs OUTSIDE the
+       submit try/catch, and Pyodide throws a PythonError whose `.message` is
+       empty — so the learner saw a bare "Submit failed:" with no reason, on
+       every notebook-less torch question, forever. Skip was the only exit. */
+function needsTorchRuntime(q, userCode = "") {
+  if (questionIsTorch(q)) return true;
+  if (TORCH_IMPORT_RE.test(userCode || "")) return true;
+  return (Array.isArray(q?.test_cases) ? q.test_cases : []).some((c) =>
+    TORCH_IMPORT_RE.test(`${c?.setup_code || ""}\n${c?.expected_setup_code || ""}`)
+  );
+}
+
+const TORCH_UNAVAILABLE =
+  "This code uses PyTorch, which can't run in the browser sandbox. " +
+  "Open it in Colab (Show Answer / the solution notebook) to run it, " +
+  "or sign in to use the full runner.";
 
 // Colab routing applies ONLY where the runner can't grade torch. Backend mode
 // grades torch in-process now (fork runner, torch preimported at boot), so

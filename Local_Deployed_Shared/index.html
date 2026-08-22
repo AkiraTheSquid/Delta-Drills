@@ -28,7 +28,7 @@
        it sets `color-scheme` on :root and skins every scroller in the app. -->
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
-  <link rel="stylesheet" href="styles/components.css?v=4" />
+  <link rel="stylesheet" href="styles/components.css?v=5" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=18" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
@@ -581,6 +581,27 @@
             <dd id="account-identity-status">Guest</dd>
           </div>
         </dl>
+        <!-- APP MODE — basic is the default: the nav is just the learning
+             surface (Practice + Diagnostic + the two explainers). Advanced
+             restores the instrument-panel tabs (Knowledge Graph, Course
+             content, Notebooks, Targeted Practice).
+             Deliberately OUTSIDE #account-form and with no Save step: the
+             thing it changes is the nav bar the user is looking at, so it
+             applies on change. app.js owns the persistence + the tab pass. -->
+        <div class="account-mode" data-dd-info="account-mode" data-dd-info-place="before">
+          <label class="account-mode-row" for="account-advanced-mode">
+            <input id="account-advanced-mode" type="checkbox" />
+            <span class="account-mode-text">
+              <span class="account-mode-title">Advanced mode</span>
+              <span class="account-mode-hint">
+                Adds <strong>Knowledge Graph</strong>, <strong>Course content</strong>,
+                <strong>Notebooks</strong> and <strong>Targeted Practice</strong> back to the
+                nav. Off by default, so the app is just Practice and the Diagnostic.
+                Applies immediately — no need to save.
+              </span>
+            </span>
+          </label>
+        </div>
         <form id="account-form">
           <div class="field">
             <label for="account-github-username" data-dd-info="github-username">GitHub username (for ARENA Colab persistence)</label>
@@ -1018,13 +1039,13 @@ t.manual_seed(0)
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
   <script src="solo-route.js?v=2"></script>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=4"></script>
+  <script src="infotips-registry.js?v=5"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -1071,13 +1092,13 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=32"></script>
+  <script src="practice/ui.js?v=33"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
-  <script src="practice/api.js?v=19"></script>
+  <script src="practice/api.js?v=20"></script>
   <script src="practice/timer.js?v=17"></script>
   <script src="practice/kernel.js?v=4"></script>
-  <script src="practice/runner.js?v=20"></script>
+  <script src="practice/runner.js?v=21"></script>
   <script src="practice/notebook.js?v=7"></script>
   <script src="practice/notebook-editor.js?v=1"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
@@ -1094,7 +1115,7 @@ t.manual_seed(0)
   <script src="practice/ladder.js?v=7"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=33"></script>
+  <script src="practice/events.js?v=34"></script>
   <script src="practice/diagnostic-page.js?v=3"></script>
   <script src="practice/init.js?v=14"></script>
   <script src="practice.js?v=4"></script>

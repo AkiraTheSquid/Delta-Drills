@@ -226,6 +226,10 @@ window.DD_INFOTIPS = {
     title: "Identity",
     body: "The email this progress is saved under. <strong>Guest</strong> means it's in this browser only.",
   },
+  "account-mode": {
+    title: "Advanced mode",
+    body: "Off, the app is just the drills: <strong>Practice</strong> and the <strong>Diagnostic</strong>. On, it also shows the machinery behind them — the knowledge graph, the ARENA course content, the notebooks and targeted practice. Nothing is deleted either way; the toggle only changes which tabs are in the nav.",
+  },
   "account-advanced": {
     title: "Advanced settings",
     body: "Developer knobs: which backend to talk to, third-party API keys, and your API token. Nothing here is needed to practise.",
