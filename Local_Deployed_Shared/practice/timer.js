@@ -191,7 +191,9 @@ const PracticeSession = (() => {
     state.phase = phase;
     sessionPhaseLabel.textContent = label;
     sessionStatusRow.classList.toggle("session-status--review", phase === "review");
-    const stable = phase === "answer" || phase === "review";
+    // "blocked" counts as stable: the question cannot be graded here, so
+    // Pause & exit is the sane way out and must not be greyed with it.
+    const stable = phase === "answer" || phase === "review" || phase === "blocked";
     sessionPauseBtn.disabled = !stable;
     sessionPauseBtn.title = stable
       ? "Pause this session and return to setup. Resume later from this question."
@@ -403,6 +405,22 @@ const PracticeSession = (() => {
       });
   };
 
+  /* A placement probe is timed by the PLACEMENT's rule, not the learner's
+     session settings. Starting the placement ends the running session, but a
+     learner can start a fresh session while a placement is still open, and
+     then the probes were inheriting whatever answer time that session was set
+     to — 5:00 for one probe and 2:00 for the next is exactly the comparison
+     the fixed allowance exists to prevent. */
+  const _probeOnScreen = () => {
+    const api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    return !!api?.currentQuestion?.diagnostic_active;
+  };
+
+  const _answerSecsFor = () =>
+    _probeOnScreen() && window.PlacementTimer
+      ? window.PlacementTimer.secondsPerQuestion()
+      : state.answerSecs;
+
   const onQuestionRendered = () => {
     if (!isActive()) {
       if (pausedState) {
@@ -423,7 +441,7 @@ const PracticeSession = (() => {
     state.review = null;
     sessionProgressLabel.textContent = `${Math.min(state.served, state.total)} / ${state.total}`;
     _setPhase("answer", "Answering");
-    remaining = state.answerSecs;
+    remaining = _answerSecsFor();
     _tick(_forceSubmitOrAdvance);
   };
 
@@ -459,6 +477,21 @@ const PracticeSession = (() => {
     // grace window instead of skipping the learner's work.
     remaining = Math.max(remaining, 30);
     _tick(_forceSubmitOrAdvance);
+  };
+
+  /* The submit could never have run here (torch on Pyodide, and anything else
+     that reports `blocked`). Re-arming the answer clock for that is a loop the
+     learner cannot break: expiry force-submits, the submit is refused for the
+     same reason it was refused a moment ago, and the countdown pops back to
+     00:30 forever — which is exactly what Seth saw. Stop the clock and say so;
+     Skip / "I don't know yet" / the Colab link are the ways out, and none of
+     them are on a timer. */
+  const blockOnUnrunnableQuestion = () => {
+    if (!isActive()) return;
+    _stopTick();
+    _stopPoll();
+    _setPhase("blocked", "Can't be run here");
+    _persist();
   };
 
   const beginReviewPhase = () => {
@@ -690,6 +723,7 @@ const PracticeSession = (() => {
     discard,
     hasSavedQuestion,
     onQuestionRendered,
+    blockOnUnrunnableQuestion,
     pauseForGrading,
     pauseForAdvance,
     recordReviewResult,

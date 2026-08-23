@@ -3,7 +3,26 @@
    PRACTICE TAB
    ================================================================ */
 
+/* The page is the column now, not `.practice-container`. `#stage-ladder` was
+   moved out of the container so it sits between the topbar and EVERYTHING on
+   this tab — the setup panel included — and something has to give it its
+   natural height and hand the rest to the container. Leaving the viewport
+   arithmetic on the container alone would push the split down by exactly the
+   strip's height and cut the bottom of both panels off. */
+/* 🔴 And the id has to re-assert `.hidden`. `#page-practice` is (1,0,0) and
+   `.hidden` in components.css is (0,1,0), so the moment this rule set a
+   `display` the tab could no longer be switched off and practice showed
+   underneath every other page. This is the same trap the note further down
+   records for `#practice-submit-area`. */
+#page-practice.hidden {
+  display: none;
+}
+
 #page-practice {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px - 40px);
+  overflow: hidden;
   padding: 0;
 }
 
@@ -14,8 +33,12 @@
    `overflow: hidden` — the bottom of both panels was simply cut off. */
 .practice-container {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  height: calc(100vh - 56px - 40px);
+  /* Was the viewport arithmetic itself; the page owns that now and this takes
+     what the strip above it leaves. `min-height: 0` is what lets it shrink
+     that far — without it a flex item refuses to go below its content. */
+  min-height: 0;
   overflow: hidden;
 }
 

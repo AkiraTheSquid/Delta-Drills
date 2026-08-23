@@ -90,7 +90,16 @@ def check_invariants():
         "timer.css lost session-idle rule hiding ladder"
     )
     ladder = _read(os.path.join(HERE, "stage-ladder.css"))
-    assert ".stage-ladder" in ladder and ".stage-seg-fill" in ladder
+    # ONE fill for the whole ladder (was `.stage-seg-fill`, four of them, one
+    # per rung). The four bars became one continuous track cut by chevron
+    # seams, so the fill class is singular now — and the seam has to be here
+    # too, or the bar draws as an undivided strip with the rung names under it
+    # pointing at nothing.
+    assert ".stage-ladder" in ladder and ".stage-ladder-fill" in ladder
+    assert ".stage-ladder-seam" in ladder, (
+        "stage-ladder.css lost the chevron seam — the rung divisions would "
+        "vanish from a bar whose labels still claim them"
+    )
     feedback = _read(os.path.join(HERE, "feedback.css"))
     assert ".problem-feedback-note:focus" in feedback
 

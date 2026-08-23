@@ -1,16 +1,18 @@
 /* ================================================================
-   XP.JS — levels, and the progress bar that IS the topbar seam.
+   XP.JS — levels, and the progress bar that IS the level pill.
 
    The bar is not a widget parked somewhere in the chrome: it is the
-   1px line between the topbar and the page (`.topbar`'s border-bottom),
-   coloured in from the left as the learner works. That placement is the
-   whole point — it is always on screen, on every tab, and it costs no
-   layout. `styles/xp.css` owns the drawing; this file owns the number.
+   `Level N` chip itself, colouring in from the left as the learner works.
+   One object carries both facts — which level, and how far into it — and
+   it is on screen on every tab. It was a 2px line on the topbar's bottom
+   border until 2026-08-22; a hairline is only legible if you already know
+   to look for it. `styles/xp.css` owns the drawing; this file owns the
+   number, and hands the drawing ONE value: `--dd-xp-pct` on `.dd-level`.
 
-   NO NUMBER IS RENDERED ON THE BAR. Not a count, not a percent, not a
-   "340 / 500". The only text is `Level N` in the topbar chip. A bar that
-   states its own fraction turns practice into a spreadsheet; a bar that
-   just moves is felt.
+   NO NUMBER IS RENDERED FOR THE PROGRESS. Not a count, not a percent, not
+   a "340 / 500". The only numeral is the level itself. A bar that states
+   its own fraction turns practice into a spreadsheet; a bar that just
+   moves is felt.
 
    ── WHAT EARNS XP ────────────────────────────────────────────────
    Anything the learner ENTERS. Every path that records learner data in
@@ -65,7 +67,7 @@
 
   const ENTRY_THROTTLE_MS = 15000;
   /* Long enough for the width transition in xp.css to finish before the
-     bar is snapped back to the remainder. Kept here (not read off the
+     fill is snapped back to the remainder. Kept here (not read off the
      stylesheet) because a computed-style read of a transition mid-flight
      is the kind of thing that works until someone adds a second one. */
   const LEVELUP_HOLD_MS = 560;
@@ -116,22 +118,29 @@
   // the bottom of index.html, but the Colab edition and the ?embed=1
   // knowledge-graph frame both strip app chrome, so the elements are
   // allowed to be absent and every write below has to survive that.
-  let elFill = null;
   let elChip = null;
   let elNum = null;
+  // The second copy of the numeral, the one drawn on the fill. See the
+  // two-layer note in styles/xp.css: both layers hold the same text and
+  // the top one is clipped to the filled width, so this has to be written
+  // in lockstep with elNum or the number changes as the fill passes it.
+  let elNumOn = null;
   let flashTimer = null;
   // Non-null only while a level-up's fill-to-full is being held; render()
   // defers to it so one award cannot paint the bar twice.
   let snapTimer = null;
 
   const grabDom = () => {
-    elFill = document.getElementById("dd-xp-fill");
     elChip = document.getElementById("dd-level");
     elNum = document.getElementById("dd-level-num");
+    elNumOn = document.getElementById("dd-level-num-on");
   };
 
+  /* ONE write drives the whole pill: the fill's width and the clip on the
+     on-accent text layer both read `--dd-xp-pct`, so they can never drift
+     out of step the way two separate JS writes eventually would. */
   const paint = (pct) => {
-    if (elFill) elFill.style.width = pct + "%";
+    if (elChip) elChip.style.setProperty("--dd-xp-pct", pct + "%");
   };
 
   /* Always read off `state` at the moment of painting, never off a value
@@ -144,7 +153,9 @@
   const render = (levelsGained) => {
     const pct = currentPct();
 
-    if (elNum) elNum.textContent = String(state.level);
+    const levelText = String(state.level);
+    if (elNum) elNum.textContent = levelText;
+    if (elNumOn) elNumOn.textContent = levelText;
     if (elChip) {
       elChip.setAttribute(
         "aria-label",
@@ -155,20 +166,20 @@
       elChip.title = `Level ${state.level} · ${Math.round(state.into)}/${needFor(state.level)} XP`;
     }
 
-    if (!elFill) return;
+    if (!elChip) return;
 
     if (!levelsGained) {
       // A level-up's snap is still queued — it re-reads `state`, so it will
       // land on this award's value too. Painting now as well would make the
-      // bar grow, empty, and grow again for one award.
+      // pill grow, empty, and grow again for one award.
       if (snapTimer === null) paint(pct);
       return;
     }
 
-    /* Level-up: run the bar to the end, then snap it back to the
-       remainder WITHOUT a transition (otherwise the bar animates
-       backwards across the whole topbar, which reads as losing
-       progress) and let it grow again from zero. */
+    /* Level-up: run the fill to the end, then snap it back to the
+       remainder WITHOUT a transition (otherwise it animates backwards
+       across the whole pill, which reads as losing progress) and let it
+       grow again from zero. */
     paint(100);
     if (elChip) {
       elChip.classList.add("dd-level--up");
@@ -177,14 +188,17 @@
     }
     clearTimeout(snapTimer);
     snapTimer = setTimeout(() => {
-      if (!elFill) return;
-      elFill.classList.add("dd-xp-seam-fill--snap");
+      if (!elChip) {
+        snapTimer = null;
+        return;
+      }
+      elChip.classList.add("dd-level--snap");
       paint(0);
       // Force the zero width to land before the transition comes back;
       // without the reflow the browser coalesces both writes and the
-      // bar simply slides from 100% to the remainder.
-      void elFill.offsetWidth;
-      elFill.classList.remove("dd-xp-seam-fill--snap");
+      // fill simply slides from 100% to the remainder.
+      void elChip.offsetWidth;
+      elChip.classList.remove("dd-level--snap");
       paint(currentPct());
       snapTimer = null;
     }, LEVELUP_HOLD_MS);

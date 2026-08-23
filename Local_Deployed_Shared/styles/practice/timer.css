@@ -168,6 +168,23 @@
   display: none;
 }
 
+/* ⚠️ TEMPORARY — the session chrome is off the practice screen.
+   2026-08-22, at Seth's request: the strip between the topbar and the question
+   is the stage ladder and nothing else, so the question counter, the phase
+   word, the countdown, Pause & exit and End session are all hidden here. The
+   MARKUP stays (`practice/watch.py` requires `#session-pause-btn` and friends,
+   and `timer.js` still writes to every one of them) — the next pass moves the
+   two buttons into a three-dot menu on the notch between the panels, and this
+   rule goes with it.
+
+   🔴 THE TIMER STILL RUNS. `timer.js` is untouched: answer time still
+   auto-submits and review time still advances, with nothing on screen counting
+   down. That is the cost of hiding this row and it is the reason the rule is
+   marked temporary rather than tidied away. */
+.session-status-row {
+  display: none;
+}
+
 .session-progress,
 .session-phase {
   font-size: 12px;
