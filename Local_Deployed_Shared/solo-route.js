@@ -10,7 +10,6 @@
   // or an optional .html suffix; values stay identical to data-tab/page-*.
   const ROUTES = Object.freeze({
     "why-this-app": "why-this-app",
-    "how-it-works": "how-it-works",
     "knowledge-graph": "knowledge-graph",
     diagnostic: "diagnostic",
     "split-tool": "split-tool",

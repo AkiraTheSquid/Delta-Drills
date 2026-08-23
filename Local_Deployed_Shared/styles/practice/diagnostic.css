@@ -1,7 +1,12 @@
-.diagnostic-page { max-width: 980px; padding-bottom: 56px; padding-top: 38px; }
-.diagnostic-eyebrow { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.placement-page { max-width: 980px; padding-bottom: 56px; padding-top: 38px; }
+.diagnostic-eyebrow { color: var(--accent-text); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .diagnostic-card { margin-top: 24px; }
 .diagnostic-status { font-size: 16px; font-weight: 600; margin-bottom: 18px; }
+/* The one rule of the test, stated before it starts — the same limit on
+   every question, which is what makes the probes comparable. While the
+   test is running the countdown itself says it, so this line goes away. */
+.diagnostic-timing { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+.diagnostic-timing strong { color: var(--text, inherit); font-variant-numeric: tabular-nums; }
 .diagnostic-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .diagnostic-results { margin-top: 20px; }
 .diagnostic-results h2 { font-size: 17px; margin: 0 0 8px; }
@@ -10,9 +15,10 @@
 #page-diagnostic.diagnostic-running .self-report-row,
 #page-diagnostic.diagnostic-running .placement-start-btn { display: none; }
 #page-diagnostic.diagnostic-running { padding: 12px 20px 0; }
-#page-diagnostic.diagnostic-running .diagnostic-page { padding: 0 0 10px; }
+#page-diagnostic.diagnostic-running .placement-page { padding: 0 0 10px; }
 #page-diagnostic.diagnostic-running .diagnostic-eyebrow,
 #page-diagnostic.diagnostic-running h1,
+#page-diagnostic.diagnostic-running .diagnostic-timing,
 #page-diagnostic.diagnostic-running .subtitle { display: none; }
 #page-diagnostic.diagnostic-running .diagnostic-card { margin-top: 0; padding-bottom: 12px; padding-top: 12px; }
 #page-diagnostic.diagnostic-running .diagnostic-status { margin-bottom: 0; }
@@ -20,3 +26,30 @@
 .diagnostic-workspace-host .practice-mode-intro { display: none; }
 .diagnostic-workspace-host .practice-container { height: calc(100vh - 56px - 92px); }
 .diagnostic-workspace-host .practice-split { display: flex; }
+
+/* Per-probe countdown, injected into the placement badge by
+   practice/placement-timer.js. Every probe gets the same allowance, so this
+   reads as a fact about the test rather than a setting: no controls, no
+   pause. The badge is a COLUMN flexbox, so the chip has to size itself or it
+   stretches into a full-width bar; tabular figures keep the digits from
+   shifting on every tick. */
+.placement-timer {
+  align-self: flex-start;
+  border: 1px solid rgb(var(--info-rgb) / 0.45);
+  border-radius: 999px;
+  color: var(--info);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+.placement-timer.hidden { display: none; }
+/* Last 30 seconds. Colour alone would be the only cue, so the border thickens
+   too — the chip has no text to change. */
+.placement-timer--low {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px rgb(var(--danger-rgb) / 0.35);
+  color: var(--danger);
+}

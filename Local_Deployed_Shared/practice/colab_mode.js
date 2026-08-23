@@ -404,9 +404,14 @@
     badge.textContent = "Colab edition";
     // Inline, because this file must stay droppable into either deploy without
     // a stylesheet following it around.
+    // Token-first with the old coral literals as fallbacks, so the badge is
+    // readable in the light theme (a coral-on-white pill was ~2:1) and still
+    // renders standalone if this file is dropped somewhere variables.css is
+    // not loaded.
     badge.style.cssText = "margin-left:8px;padding:1px 7px;border-radius:999px;"
-      + "background:rgba(255,127,80,0.18);border:1px solid rgba(255,127,80,0.5);"
-      + "color:#ff9c78;font-size:11px;font-weight:600;vertical-align:middle;";
+      + "background:rgb(var(--warn-rgb,255 127 80) / 0.18);"
+      + "border:1px solid rgb(var(--warn-rgb,255 127 80) / 0.5);"
+      + "color:var(--warn,#ff9c78);font-size:11px;font-weight:600;vertical-align:middle;";
     version.insertAdjacentElement("afterend", badge);
   }
 

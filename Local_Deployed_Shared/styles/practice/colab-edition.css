@@ -230,8 +230,8 @@ html.dd-colab-edition:not(.dd-no-notebook) .torch-colab-notice {
 .lesson-colab-card {
   margin: 12px 0 18px;
   padding: 15px 16px;
-  background: rgba(255, 196, 0, 0.07);
-  border: 1px solid rgba(255, 196, 0, 0.32);
+  background: rgb(var(--warn-rgb) / 0.07);
+  border: 1px solid rgb(var(--warn-rgb) / 0.32);
   border-radius: 10px;
 }
 .lesson-colab-eyebrow {
@@ -241,7 +241,7 @@ html.dd-colab-edition:not(.dd-no-notebook) .torch-colab-notice {
 .lesson-colab-card p {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--muted, #9aa3b2);
+  color: var(--muted);
   margin: 0 0 12px;
 }
 /* Full width and centred, matching #torch-colab-link on the question rail —
@@ -251,13 +251,13 @@ html.dd-colab-edition:not(.dd-no-notebook) .torch-colab-notice {
   display: block;
   padding: 11px 12px;
   border-radius: 9px;
-  background: #d5232b;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-weight: 700;
   text-align: center;
   text-decoration: none;
 }
-.lesson-colab-open:hover { background: #e6353d; }
+.lesson-colab-open:hover { background: var(--accent-dark); }
 /* The continue button is the learner's own claim that they have read it, and
    the only control on the rail. Give it the width that says so. */
 html.dd-colab-edition .lesson-actions #lesson-continue-btn {

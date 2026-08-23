@@ -296,10 +296,13 @@ function renderQuestion(q, count) {
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
   if (q.diagnostic_active) {
     coldStartLabel.textContent =
-      `Placement diagnostic — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
+      `Placement test — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
     if (coldStartNote) {
+      // Every probe gets the SAME allowance, so say the number rather than
+      // "timed" — the learner budgets the question against a figure they can
+      // check on the countdown beside this line.
       coldStartNote.textContent =
-        "A short adaptive placement: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.";
+        `A short adaptive test: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Every question gets the same ${Math.round((window.PlacementTimer?.secondsPerQuestion?.() ?? 120) / 60)} minutes — when the time is up we record what you have and move on. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else if (coldStart && csIndex) {
@@ -368,6 +371,10 @@ function renderQuestion(q, count) {
   // Rigid session: every rendered question starts a fresh strict answer
   // countdown (no-op while no session is running).
   PracticeSession.onQuestionRendered();
+  // Placement probes run OUTSIDE a session, so they carry their own fixed
+  // clock. Also a no-op — and a stop() — on any non-probe question, so the
+  // placement countdown can never outlive the placement.
+  window.PlacementTimer?.onQuestionRendered();
 
   const pending = practiceProgress.pendingFeedback;
   if (pending) {

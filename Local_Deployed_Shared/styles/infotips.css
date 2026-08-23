@@ -45,14 +45,14 @@
 .dd-info:hover,
 .dd-info:focus-visible {
   color: var(--white);
-  border-color: var(--accent);
-  background: rgba(227, 33, 44, 0.15);
+  border-color: var(--accent-text);
+  background: rgb(var(--accent-rgb) / 0.15);
   outline: none;
 }
 
 .dd-info[aria-expanded="true"] {
-  color: var(--white);
-  border-color: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent-text);
   background: var(--accent);
 }
 
@@ -91,7 +91,7 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 32px var(--shadow-strong);
   color: var(--text);
   font-size: 13px;
   line-height: 1.5;
@@ -141,7 +141,7 @@
 .dd-infopop-body code {
   padding: 1px 4px;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgb(var(--well-rgb) / calc(0.3 * var(--well-k)));
   font-size: 12px;
 }
 

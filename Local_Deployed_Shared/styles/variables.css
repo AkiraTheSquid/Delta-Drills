@@ -1,26 +1,277 @@
-:root {
+/* ================================================================
+   VARIABLES.CSS — the design tokens, defined once per THEME.
+
+   The app ships three themes, chosen on the Account tab and stamped onto
+   <html data-theme="..."> by ../theme.js before first paint:
+
+     blue   the original palette (#1a1a2e / #16213e navy + the brand red).
+            Still the DEFAULT — an existing user who never opens the picker
+            sees exactly what they saw before.
+     dark   neutral Google-Colab greys. Same structure, no hue: the surfaces
+            are #202124/#282a2e and the status colours are Google's Material
+            dark set, which is what makes it read as Colab rather than as
+            "the blue theme with the saturation turned down".
+     light  white surfaces on a #f5f6f8 page.
+
+   ── THE RULE THAT KEEPS LIGHT MODE READABLE ──────────────────────────────
+   EVERY token below is defined in ALL THREE blocks. A token defined in only
+   one theme is the white-text-on-white bug: the property still resolves —
+   to whatever the previous theme left, or to nothing — and the failure is
+   silent, because CSS does not report an unresolved custom property, it just
+   drops the declaration. `watch.py` asserts the three blocks declare the
+   same set, so adding a token to one and forgetting the others FAILS rather
+   than shipping an invisible label.
+
+   Corollary, for feature CSS: never write a raw colour. In particular never
+   write a light-on-dark literal (`#fff`, `rgba(255,255,255,.7)`) — in light
+   mode that is white on white. The two ladders below exist so you don't have
+   to.
+
+   ── THE TWO LADDERS ──────────────────────────────────────────────────────
+   Most of this app's colour is not a named colour, it is a translucent film
+   over whatever surface is underneath: a faint fill on a chip, a hairline
+   border, a recessed well behind a code block. Those were written as
+   `rgba(255,255,255,α)` and `rgba(0,0,0,α)`, which invert wrongly in light
+   mode. They are now:
+
+     rgb(var(--tint-rgb) / calc(α * var(--tint-k)))   raised — chips, borders
+     rgb(var(--well-rgb) / calc(α * var(--well-k)))   recessed — wells, insets
+
+   Keep the α that was there; the theme supplies the ink (--*-rgb) and a
+   scale factor (--*-k). The factor is the part that matters: black ink at
+   0.08 over white is roughly four times as loud as white ink at 0.08 over
+   navy, so light mode scales the whole ladder down instead of restating
+   every alpha.
+
+   Triples are space-separated on purpose — `rgb(var(--x) / 0.4)` only parses
+   in that form.
+   ================================================================ */
+
+/* ── BLUE — the original palette, and the default ───────────────────────── */
+:root,
+:root[data-theme="blue"] {
   --bg: #1a1a2e;
   --surface: #16213e;
+  --surface-2: #1b1f27;
   --card: #0f3460;
+  --panel: #15203c;
+  --panel-deep: #121a32;
+  --border: #2a2a4a;
+  --border-strong: #3a3a63;
+
   --text: #e0e0e0;
   --muted: #8a8a99;
+  --muted-dim: #6a6a7d;
+  /* The brightest text in the theme. Named --white for history: it is used
+     ~80 times as `color:`, and in light mode it is nearly BLACK. Anything
+     that wants a literal white surface wants --img-mat instead. */
+  --white: #ffffff;
+  --color-muted: #8a8a99;
+  --on-accent: #ffffff;
+
   --accent: #e3212c;
   --accent-dark: #c61922;
-  --border: #2a2a4a;
-  --white: #ffffff;
+  --accent-rgb: 227 33 44;
+  /* The accent used as TEXT on a page/card surface, as opposed to as a fill.
+     Identical to --accent here, so this theme is pixel-for-pixel what it was
+     before the themes existed; the dark theme lightens it because #e3212c on
+     #202124 is 3.5:1, and the whole point of the Colab greys is a surface you
+     can read small red labels on. */
+  --accent-text: #e3212c;
 
-  /* Chrome paints its own scrollbars, and on this palette they arrive white —
-     a bright vertical stripe down the right edge and another across the bottom
-     of every scroller. Loud on a full page; in the extension's side panel,
-     where the rail is ~300px wide, the bar is a visible fraction of the UI.
-     These are the only two colours `scrollbars.css` needs; they sit between
-     --border and --muted so a thumb reads as part of the chrome, not as
-     content. */
+  --tint-rgb: 255 255 255;
+  --tint-k: 1;
+  --well-rgb: 0 0 0;
+  --well-k: 1;
+  /* Strength of a COLOURED wash (the guest/targeted banners). Same problem as
+     --tint-k, different ink: an 18%-blue film reads as a whisper over navy and
+     as loud pastel over white, so light scales it back rather than restating
+     the alphas. */
+  --wash-k: 1;
+
   --scroll-thumb: #34345a;
   --scroll-thumb-hover: #4a4a7d;
+  --scrim: rgba(9, 10, 22, 0.62);
+  --scrim-modal: rgba(0, 0, 0, 0.55);
+  --shadow-soft: rgba(0, 0, 0, 0.35);
+  --shadow-strong: rgba(0, 0, 0, 0.45);
+  --input-bg: rgb(255 255 255 / 0.04);
 
+  /* Matting behind transparent PNGs (course logos, matplotlib output). Stays
+     white in every theme — the images are drawn for a white ground. */
+  --img-mat: #ffffff;
+  /* Canvases the app draws into itself, which DO follow the theme. */
+  --canvas-bg: #111827;
+  --gold: #ffd23f;
+
+  --ok: #4ade80;
+  --ok-rgb: 74 222 128;
+  --danger: #f87171;
+  --danger-rgb: 248 113 113;
+  --warn: #fbbf24;
+  --warn-rgb: 255 196 0;
+  --info: #63b3ed;
+  --info-rgb: 99 179 237;
+  --accent-2: #a78bfa;
+  --accent-2-rgb: 167 139 250;
+
+  /* XP seam — the topbar's bottom border, coloured in as the learner
+     works (styles/xp.css). Two ends of one gradient plus the rgb triple
+     for its glow; the leading edge is always --xp-to. */
+  --xp-from: #6366f1;
+  --xp-to: #22d3ee;
+  --xp-glow-rgb: 34 211 238;
+
+  --code-key: #7dd3fc;
+  --code-str: #a5f3a6;
+  --code-err: #fca5a5;
+}
+
+/* ── DARK — Google Colab greys ──────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg: #202124;
+  --surface: #282a2e;
+  --surface-2: #303134;
+  --card: #2a2c30;
+  --panel: #26282b;
+  --panel-deep: #1e1f22;
+  --border: #3c4043;
+  --border-strong: #5f6368;
+
+  --text: #dfe1e5;
+  --muted: #9aa0a6;
+  --muted-dim: #7c8288;
+  --white: #f1f3f4;
+  --color-muted: #9aa0a6;
+  --on-accent: #ffffff;
+
+  --accent: #e3212c;
+  --accent-dark: #c61922;
+  --accent-rgb: 227 33 44;
+  /* Material dark's red. The brand #e3212c is 3.5:1 on #202124 — under AA for
+     the 12-13px eyebrows and ghost buttons that use accent as text. Fills
+     (.primary, .step-number) keep the brand red: those pair with --on-accent. */
+  --accent-text: #f28b82;
+
+  --tint-rgb: 255 255 255;
+  --tint-k: 1;
+  --well-rgb: 0 0 0;
+  /* The greys are already light-ish, so a full-strength black well swallows
+     the panel it sits in. */
+  --well-k: 0.8;
+  --wash-k: 1;
+
+  --scroll-thumb: #4a4d52;
+  --scroll-thumb-hover: #5f6368;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --scrim-modal: rgba(0, 0, 0, 0.6);
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.55);
+  --input-bg: rgb(255 255 255 / 0.05);
+
+  --img-mat: #ffffff;
+  --canvas-bg: #1b1c1e;
+  --gold: #fdd663;
+
+  /* Material dark status set — the reason this reads as Colab. */
+  --ok: #81c995;
+  --ok-rgb: 129 201 149;
+  --danger: #f28b82;
+  --danger-rgb: 242 139 130;
+  --warn: #fdd663;
+  --warn-rgb: 253 214 99;
+  --info: #8ab4f8;
+  --info-rgb: 138 180 248;
+  --accent-2: #c58af9;
+  --accent-2-rgb: 197 138 249;
+
+  /* XP seam — Google-blue → cyan, so it belongs to the Colab palette
+     rather than importing the blue theme's indigo. */
+  --xp-from: #8ab4f8;
+  --xp-to: #78d9ec;
+  --xp-glow-rgb: 120 217 236;
+
+  --code-key: #78d9ec;
+  --code-str: #a5d6a7;
+  --code-err: #f28b82;
+}
+
+/* ── LIGHT ──────────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  /* --bg is the PAGE and also every recessed field (.text-input, .result-item
+     and friends all say `background: var(--bg)`), so it is the off-white and
+     --surface is the pure white the cards sit on. Inverting those two makes
+     every input disappear into its card. */
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --card: #ffffff;
+  --panel: #ffffff;
+  --panel-deep: #eef0f4;
+  --border: #d7dbe2;
+  --border-strong: #b7bec9;
+
+  --text: #33373d;
+  --muted: #4f5661;
+  --muted-dim: #7b8391;
+  /* Strongest text — the near-black that --white means in this theme. */
+  --white: #14161a;
+  --color-muted: #4f5661;
+  /* Still white: this is the text ON the brand red, not the theme's text. */
+  --on-accent: #ffffff;
+
+  /* Darkened brand red. #e3212c on white is a 3.9:1 contrast — under AA for
+     the 13px labels that use it (.ghost:hover, .missed-fact-status). */
+  --accent: #c8151f;
+  --accent-dark: #a30f18;
+  --accent-rgb: 200 21 31;
+  --accent-text: #c8151f;
+
+  --tint-rgb: 15 23 42;
+  --tint-k: 0.7;
+  --well-rgb: 15 23 42;
+  --well-k: 0.18;
+  --wash-k: 0.45;
+
+  --scroll-thumb: #c2c8d2;
+  --scroll-thumb-hover: #a3abb8;
+  --scrim: rgba(15, 23, 42, 0.4);
+  --scrim-modal: rgba(15, 23, 42, 0.45);
+  --shadow-soft: rgba(15, 23, 42, 0.1);
+  --shadow-strong: rgba(15, 23, 42, 0.18);
+  --input-bg: #ffffff;
+
+  --img-mat: #ffffff;
+  --canvas-bg: #ffffff;
+  --gold: #b8860b;
+
+  /* Darkened so each one is readable AS TEXT on white — the dark themes'
+     pastels (#4ade80, #fbbf24) are ~1.5:1 here and vanish. */
+  --ok: #12703a;
+  --ok-rgb: 18 112 58;
+  --danger: #b3261e;
+  --danger-rgb: 179 38 30;
+  --warn: #8a4e05;
+  --warn-rgb: 138 78 5;
+  --info: #1a56db;
+  --info-rgb: 26 86 219;
+  --accent-2: #6d28d9;
+  --accent-2-rgb: 109 40 217;
+
+  /* XP seam — darkened like the rest of the light status set; the dark
+     themes' #22d3ee is ~1.4:1 on white and the bar disappears. */
+  --xp-from: #4f46e5;
+  --xp-to: #0891b2;
+  --xp-glow-rgb: 8 145 178;
+
+  --code-key: #0b6f8a;
+  --code-str: #12703a;
+  --code-err: #b3261e;
+}
+
+/* ── Theme-independent ──────────────────────────────────────────────────── */
+:root {
   /* Nav drawer (the hamburger menu). The width is a token because the drawer,
      its off-canvas transform and the toggle's hit area all have to agree. */
   --drawer-width: 272px;
-  --scrim: rgba(9, 10, 22, 0.62);
 }

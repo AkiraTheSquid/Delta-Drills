@@ -32,7 +32,7 @@
 }
 
 .course-source-link:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .course-hero {
@@ -50,7 +50,7 @@
   height: 80px;
   flex-shrink: 0;
   object-fit: contain;
-  background: var(--white);
+  background: var(--img-mat);
   border-radius: 10px;
   padding: 6px;
   box-sizing: border-box;
@@ -114,7 +114,7 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 10px;
-  background: var(--white);
+  background: var(--img-mat);
 }
 
 .course-chapter-body {

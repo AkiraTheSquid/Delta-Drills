@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ARENA Delta Drills v1.0.14</title>
+  <title>ARENA Delta Drills v1.0.15</title>
   <!-- Stamp deep links before first paint. solo-route.js confirms known paths
        after app.js has selected the requested page; unknown paths remove it. -->
   <script>
@@ -19,6 +19,10 @@
   <script>
     try { if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("kg-embed"); } catch (e) {}
   </script>
+  <!-- Theme (blue | dark | light). SYNCHRONOUS and above the stylesheets on
+       purpose: it stamps <html data-theme> before first paint, so a light-theme
+       user never sees a frame of the dark palette. See theme.js. -->
+  <script src="theme.js?v=1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=18" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=22" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
@@ -41,6 +45,9 @@
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
   <link rel="stylesheet" href="styles/nav-drawer.css?v=2" />
+  <!-- Levels + the topbar-seam XP bar. Feature layer, before
+       responsive.css like every other one. -->
+  <link rel="stylesheet" href="styles/xp.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=2" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=6" />
@@ -88,7 +95,16 @@
             aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
       <span class="nav-toggle-bars" aria-hidden="true"></span>
     </button>
-    <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.14</span></div>
+    <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.15</span></div>
+    <!-- LEVEL CHIP. The only place gamification puts a NUMERAL: the bar
+         itself (below) never states a count or a percent — see xp.js. Sits
+         after the logo so drawer mode, where `.logo` takes the slack, carries
+         it over to the right beside the account dot instead of stranding it
+         in the middle of a 300px row. -->
+    <div class="dd-level" id="dd-level" aria-live="polite">
+      <span class="dd-level-label">Level</span>
+      <span class="dd-level-num" id="dd-level-num">1</span>
+    </div>
     <!-- Every tab carries a sibling ⓘ (infotips.js + infotips-registry.js).
          They are written out here rather than injected because app.js
          captures .auth-only / .guest-only into static NodeLists at eval time
@@ -97,14 +113,12 @@
          click target stays .tab; the dot is .tab-info, a different token, so
          document.querySelectorAll(".tab") never picks it up. -->
     <nav class="tabs">
-      <button class="tab has-info" data-tab="why-this-app" type="button">Why This App Exists</button>
+      <button class="tab active has-info" data-tab="why-this-app" type="button">Why This App Exists</button>
       <button class="dd-info tab-info" data-dd-info="tab.why-this-app" data-tab="why-this-app" type="button" aria-expanded="false" aria-label="What is Why This App Exists?">i</button>
-      <button class="tab active guest-only has-info" data-tab="how-it-works" type="button">How It Works</button>
-      <button class="dd-info tab-info guest-only" data-dd-info="tab.how-it-works" data-tab="how-it-works" type="button" aria-expanded="false" aria-label="What is How It Works?">i</button>
       <button class="tab auth-only has-info" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.knowledge-graph" data-tab="knowledge-graph" type="button" aria-expanded="false" aria-label="What is the Knowledge Graph?">i</button>
-      <button class="tab has-info" data-tab="diagnostic" type="button">Diagnostic</button>
-      <button class="dd-info tab-info" data-dd-info="tab.diagnostic" data-tab="diagnostic" type="button" aria-expanded="false" aria-label="What is Diagnostic?">i</button>
+      <button class="tab has-info" data-tab="diagnostic" type="button">Placement test</button>
+      <button class="dd-info tab-info" data-dd-info="tab.diagnostic" data-tab="diagnostic" type="button" aria-expanded="false" aria-label="What is the placement test?">i</button>
       <button class="tab auth-only has-info" data-tab="split-tool" type="button" hidden>Split Tool</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.split-tool" data-tab="split-tool" type="button" aria-expanded="false" aria-label="What is the Split Tool?" hidden>i</button>
       <button class="tab has-info" data-tab="account" type="button">Account</button>
@@ -125,6 +139,13 @@
       <span class="topbar-auth-email" id="topbar-auth-email"></span>
       <span data-dd-info="topbar-auth"></span>
     </div>
+    <!-- THE XP BAR. Not a widget — it is the topbar's own bottom border,
+         filled in from the left as the learner enters data. Absolutely
+         positioned over that 1px line (styles/xp.css), so it adds nothing to
+         the 56px row and rides along on every tab. Driven by xp.js. -->
+    <div class="dd-xp-seam" aria-hidden="true">
+      <div class="dd-xp-seam-fill" id="dd-xp-fill"></div>
+    </div>
   </header>
 
   <!-- NAV DRAWER — empty on purpose. Below 900px nav-drawer.js moves the real
@@ -141,15 +162,21 @@
     </div>
   </aside>
 
-  <!-- GUEST BANNER — shown to anyone not logged in. The app is fully usable
-       as a guest (progress saved locally in this browser only); logging in
-       persists progress to the account. Replaces the old forced login /
-       create-account landing page. Toggled by app.js updateTabVisibility(). -->
+  <!-- GUEST BANNER — shown to anyone not signed in. A guest gets the whole
+       app, not a cut-down one: guest-session.js provisions an account for
+       this browser so the diagnostic, the lessons and the student model all
+       run. The progress that builds belongs to this browser and clearing
+       site data ends it, which is what the banner has to say. It must NOT
+       say signing in carries that progress with you: Google sign-in mints a
+       different backend account and there is no merge endpoint, so what the
+       guest did stays with the guest account. Toggled by
+       app.js updateTabVisibility(), keyed on isSignedIn() — a guest holds a
+       token, so `authToken` would hide this from the people it is for. -->
   <div class="guest-banner" id="guest-banner">
     <div class="guest-banner-inner">
       <span class="guest-banner-dot" aria-hidden="true"></span>
       <span class="guest-banner-label" data-dd-info="guest-banner">Guest</span>
-      <span class="guest-banner-meta">Your progress is saved in this browser only. <strong>Continue with Google to save it</strong> across devices.</span>
+      <span class="guest-banner-meta">No account needed — everything works, and your progress is saved in this browser. <strong>Continue with Google</strong> to start an account that works on any device; guest progress stays here.</span>
       <!-- Google Identity Services renders the Continue-with-Google button here
            (app.js). One click signs in or signs up — no separate login page. -->
       <div id="google-signin-banner" class="guest-banner-google"></div>
@@ -172,301 +199,130 @@
     </div>
   </div>
 
-  <!-- WHY THIS APP EXISTS — the argument for the thing, as opposed to
-       How It Works, which is the mechanism. Content deliberately not
-       written yet (Seth, 2026-08-07): the placeholder ships so the tab
-       and its route exist, and the copy lands in a later pass. Replace
-       everything inside .wta-placeholder when it does. -->
-  <main class="page hidden" id="page-why-this-app">
-    <div class="container">
-      <h1>Why this app exists</h1>
-      <div class="wta-placeholder">
-        <p class="subtitle">Coming soon.</p>
-      </div>
-    </div>
-  </main>
-
-  <main class="page" id="page-how-it-works">
+  <!-- WHY THIS APP EXISTS — the landing page, and the first tab in the nav.
+       A first-time visitor has no auth token yet, which is exactly what
+       app.js lands on this page (see the switchTab call at the bottom of
+       app.js); a returning one goes straight back to Practice.
+       Styling reuses the .hiw-* type scale in styles/how-it-works.css. That
+       file kept its name after the How It Works page was deleted on
+       2026-08-22 because it also owns every .kg2-* Knowledge Graph rule. -->
+  <main class="page" id="page-why-this-app">
     <div class="container">
 
-      <!-- Hero -->
       <section class="hiw-hero">
-        <h1>How Delta Drills works</h1>
+        <h1>Why this app exists</h1>
         <p class="hiw-lead">
-          Intro tutorials are everywhere. The hard part is the jump from
-          <em>following along</em> to <strong>writing the code yourself</strong>:
-          the tensor manipulations, the convolutions, the parts of modern ML
-          research you have to be able to type out. Delta Drills is a practice
-          engine for that gap.
+          Delta Drills is a <strong>Khan Academy / LeetCode for the AI-safety
+          ARENA curriculum</strong>. ARENA assumes you can already write the
+          PyTorch; this drills the prerequisites until you can.
         </p>
         <p class="hiw-lead">
-          Underneath it is an expert system answering the question a good tutor
-          answers all day. Right now, what is the single best thing for you to
-          work on? The pieces described below are how it answers, with heavy
-          support when a topic is new and none once you have it.
-        </p>
-        <p class="hiw-lead">
-          The design is borrowed.
-          <a href="https://www.mathacademy.com/how-our-ai-works" target="_blank" rel="noopener">Math
-          Academy</a> has used it for years to move students through mathematics
-          at speeds they document publicly. <strong>Delta Drills rebuilds that
-          engine for machine learning</strong>, and uses AI to write the
-          curriculum map and the thousands of problems that fill it.
+          It uses <strong>machine learning to teach machine learning</strong>.
+          A statistical model estimates your strengths and
+          weaknesses as you work, and serves you the right concept at the right
+          level of difficulty and scaffolding.
         </p>
       </section>
 
-      <!-- Mastery-learning framing + the four parts -->
       <section class="hiw-section">
-        <p class="hiw-eyebrow">The idea</p>
-        <h2>You move on when you've got it, not when the clock says so</h2>
-        <p>
-          Most courses march everyone through the same sequence at the same
-          pace. Delta Drills is built around <span class="hiw-em">mastery
-          learning</span> instead. You keep working a skill until the evidence
-          says you have learned it, foundations first, so you never hit an
-          advanced problem missing a piece nobody ever taught you.
-        </p>
-      </section>
-
-      <!-- 1 · The knowledge graph -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">1 · The knowledge graph</p>
-        <h2>A map of what depends on what</h2>
-        <p>
-          The graph holds what a tutor knows about how machine learning fits
-          together. What skills are there? Which ones do you need before you can
-          learn a given topic? When you get stuck, which earlier skill is the
-          likely culprit? It is a few hundred individual skills ("atoms") and
-          the links between them, built by an AI pipeline that reads real ML
-          teaching material and cross-checks the structure against several
-          independent sources, so the shape comes from how the field is taught
-          rather than from one author's guess.
-        </p>
-        <p>
-          Two kinds of link do most of the work.
-          <span class="hiw-em">Prerequisite</span> links say one skill comes
-          before another: reshaping with <code>einops</code> before building an
-          attention head, convolutions before a ResNet.
-          <span class="hiw-em">Encompassing</span> links say a harder skill
-          quietly contains a simpler one. The first decides what unlocks. The
-          second lets credit flow back down the graph.
-        </p>
-        <div class="hiw-stats">
-          <div class="hiw-stat">
-            <span class="hiw-stat-num">~210</span>
-            <span class="hiw-stat-label">skill atoms across the curriculum</span>
-          </div>
-          <div class="hiw-stat">
-            <span class="hiw-stat-num">448</span>
-            <span class="hiw-stat-label">coding problems, auto-graded</span>
-          </div>
-          <div class="hiw-stat">
-            <span class="hiw-stat-num">~1,300</span>
-            <span class="hiw-stat-label">hands-on drills pulled from research workflows</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA to the dedicated Knowledge Graph tab -->
-      <p class="hiw-graph-cta">
-        <button type="button" class="hiw-graph-cta-btn" data-goto-tab="knowledge-graph">
-          Explore the interactive graph →
-        </button>
-      </p>
-
-      <!-- 2 · The student model -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">2 · The student model</p>
-        <h2>A running estimate of what you actually know</h2>
-        <p>
-          The student model lays your answers over the graph and works out which
-          skills you have and how well, your
-          <span class="hiw-em">skill profile</span>. Each problem you submit
-          moves the estimate for the skills it touches, up when you are right and
-          gently down when you slip, by a long-established method called
-          <span class="hiw-em">Bayesian Knowledge Tracing</span>. It expects
-          noise, so one lucky guess or one unlucky typo is never the whole story.
-        </p>
-        <p>
-          Review is scheduled by <span class="hiw-em">spaced repetition</span>.
-          Confidence in a skill decays along a forgetting curve, and once it has
-          decayed far enough the skill comes back around. The shakier the skill,
-          the sooner it returns. What drives it is how much you are likely to
-          have forgotten rather than a fixed calendar.
-        </p>
-        <p>
-          Those repetitions trickle down the graph. Because the model knows which
-          skills sit inside which, getting a hard composite problem right passes
-          credit to the simpler skills folded into it. Advanced work refreshes
-          its own foundations, and you never re-grind something you have already
-          shown you can do.
-        </p>
-      </section>
-
-      <!-- 3 · Readiness / the diagnostic -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">3 · Knowing what you're ready for</p>
-        <h2>What you've already got, and what's missing underneath</h2>
-        <p>
-          A tutor tracks what you know and also finds the boundary: what you have
-          learned, and which missing foundation is holding you back. Delta Drills
-          reads that boundary off the graph. A skill counts as ready only once
-          the skills beneath it are solid. Until then it stays locked and the
-          missing foundation is what you get served first. A short calibration at
-          the start, your first few problems at fixed difficulty, gives the
-          engine something to work from before it starts adapting to you.
-        </p>
-        <p>
-          That is the job a diagnostic exam does, handled continuously through
-          prerequisite gating instead of as one test up front. (Math Academy
-          front-loads it with an adaptive diagnostic that finds your frontier in
-          a handful of questions. A dedicated diagnostic is a natural next step
-          here.)
-        </p>
-      </section>
-
-      <!-- 4 · The task-selection algorithm -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">4 · The task-selection algorithm</p>
-        <h2>Picking the one problem worth your next ten minutes</h2>
-        <p>
-          Task selection reads your skill profile and picks what to serve, new
-          material or review, aiming for the most learning per minute you spend.
-          In practice it finds your
-          <span class="hiw-em">weakest skill that you're actually ready for</span>
-          and serves a problem there, at a difficulty set by your current mastery
-          so it stretches you without stalling you.
-        </p>
-        <p>
-          A topic unlocks the moment the skills beneath it are solid, so nothing
-          holds you at a level you have already cleared. Review runs through the
-          same selection, which is why one well-chosen problem can refresh
-          several rusty skills at once.
-        </p>
-      </section>
-
-      <!-- 5 · The support layer — the ERE ladder -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">5 · The support layer</p>
-        <h2>The training wheels come off as you improve</h2>
-        <p>
-          Showing a beginner a fully worked example is one of the most effective
-          things you can do. Showing that <em>same</em> example to someone who is
-          already fluent slows them down, an effect the learning-science
-          literature documents as the <span class="hiw-em">expertise reversal
-          effect</span>. So the same drill exists at three levels of support, and
-          which one you get depends on how you have been doing:
-        </p>
-        <div class="hiw-ladder">
-          <div class="hiw-rung">
-            <span class="hiw-rung-tag">New to it</span>
-            <h3>Worked</h3>
-            <p>The full solution, laid out and explained. You read the reasoning and run it.</p>
-            <code class="hiw-rung-code">x = rearrange(
-  img, "h w c -> c h w"
-)  # ✓ shown</code>
-          </div>
-          <div class="hiw-rung">
-            <span class="hiw-rung-tag">Getting there</span>
-            <h3>Faded</h3>
-            <p>Most of the scaffold is there; you fill the blanks that carry the real idea.</p>
-            <code class="hiw-rung-code">x = rearrange(
-  img, "____"
-)  # you fill this</code>
-          </div>
-          <div class="hiw-rung">
-            <span class="hiw-rung-tag">Fluent</span>
-            <h3>Full</h3>
-            <p>A blank problem and a hint if you want it. You write the whole thing.</p>
-            <code class="hiw-rung-code"># goal: HWC -> CHW
-# write it yourself</code>
-          </div>
-        </div>
-        <p class="hiw-rung-arrow">support fades as mastery rises →</p>
-      </section>
-
-      <!-- 5. Real code, real research -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">The substance</p>
-        <h2>You write real code, on real research patterns</h2>
-        <div class="hiw-pairs">
-          <div class="hiw-pair">
-            <h3>Reconstructed from actual workflows</h3>
-            <p>
-              The drills come out of the exercises researchers use to learn the
-              field, the tensor work and the model internals, so the skill you
-              build is the one the work demands.
-            </p>
-          </div>
-          <div class="hiw-pair">
-            <h3>Graded on what your code does</h3>
-            <p>
-              You write Python (<code>torch</code>, <code>einops</code>)
-              and submit. The engine runs it and checks the result, so the
-              feedback is about how your solution behaves, never about how
-              closely it matched a template.
-            </p>
-          </div>
-          <div class="hiw-pair">
-            <h3>Help when you're stuck</h3>
-            <p>
-              Every problem can show a hint or a full worked solution on demand,
-              and stays quiet until you ask.
-            </p>
-          </div>
-          <div class="hiw-pair">
-            <h3>Built for different starting points</h3>
-            <p>
-              Support is tiered and practice is weakest-first, so the same
-              library serves someone meeting a concept for the first time and
-              someone sharpening skills they mostly have.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6. A session, start to finish -->
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">In practice</p>
-        <h2>A session, start to finish</h2>
+        <p class="hiw-eyebrow">What it does today</p>
+        <h2>One loop, run against your own frontier</h2>
         <div class="steps-grid">
           <div class="step-card">
             <div class="step-number">1</div>
-            <div class="step-card-title">It picks the spot</div>
-            <div class="step-card-text">The engine finds your weakest ready skill and pulls a problem at the difficulty and support level to match.</div>
+            <div class="step-card-title">A placement test places you</div>
+            <div class="step-card-text">A short placement shows you where you actually stand against what ARENA will ask of you.</div>
           </div>
           <div class="step-card">
             <div class="step-number">2</div>
-            <div class="step-card-title">You write the code</div>
-            <div class="step-card-text">Solve it in real Python, with a hint or a worked example one click away if you want it.</div>
+            <div class="step-card-title">It picks the concept</div>
+            <div class="step-card-text">The app chooses the next concept to teach you, matched to your current level of mastery.</div>
           </div>
           <div class="step-card">
             <div class="step-number">3</div>
-            <div class="step-card-title">It updates its picture</div>
-            <div class="step-card-text">Your result moves the mastery estimate for that skill, and credits the simpler skills inside it.</div>
+            <div class="step-card-title">And picks how to teach it</div>
+            <div class="step-card-text">For that concept it serves one of three things: a lesson, a worked example, or practice problems.</div>
           </div>
           <div class="step-card">
             <div class="step-number">4</div>
-            <div class="step-card-title">The next problem adapts</div>
-            <div class="step-card-text">As you get stronger, support fades and new topics unlock once their prerequisites are solid.</div>
+            <div class="step-card-title">Your answer moves the model</div>
+            <div class="step-card-text">How you do updates the student model, so the next choice is made on newer evidence than the last one.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">5</div>
+            <div class="step-card-title">The scaffolding fades</div>
+            <div class="step-card-text">As you solve problems the model tracks your learning frontier and pulls the support back to match it.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">6</div>
+            <div class="step-card-title">Then the real thing</div>
+            <div class="step-card-text">Once you're ready for an ARENA problem, it gives you the ARENA problem.</div>
           </div>
         </div>
       </section>
 
-      <!-- Closing note -->
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">The map underneath</p>
+        <h2>Every concept, and what it needs first</h2>
+        <p>
+          The app knows the curriculum as a graph: each box is one concept, and
+          an arrow means you need the concept it comes from before the one it
+          points to. That is what lets it tell "you have not learned this yet"
+          apart from "you were never taught the thing underneath it".
+        </p>
+        <p class="wta-graph-hint">
+          This is the whole map — every concept the app teaches, wired by what
+          it needs first. Hover one to light up everything underneath it, drag
+          them around, or <strong>maximize</strong> it to read the labels. The
+          colours are made up, so you can see what a learner's frontier looks
+          like; yours would be drawn from your own work.
+        </p>
+        <div class="wta-graph">
+          <!-- Maximize is not a nicety: 63 concepts do not fit a 460px band
+               at a readable size, and the band is deliberately the honest
+               version of that. The button lives inside the frame because the
+               frame is what goes full-screen. -->
+          <button type="button" class="wta-graph-btn" id="wta-graph-max"
+                  aria-pressed="false" aria-label="Maximize the map"
+                  title="Maximize">&#10530; Maximize</button>
+          <div class="wta-graph-cy" id="wta-graph-cy" role="img"
+               aria-label="A map of every concept the app teaches, drawn bottom
+               to top: 63 concepts across NumPy, einsum and einops, joined by 81
+               arrows that each mean you need the concept an arrow comes from
+               before the one it points to. Understanding what an ndarray is
+               sits at the bottom and everything else builds on it. Nodes are
+               coloured from red for weak to blue for strong, with the concepts
+               furthest from the bottom left grey because there is no estimate
+               for them yet. The colours are illustrative, not a real learner's
+               record."></div>
+          <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
+        </div>
+        <!-- The legend sits BELOW the canvas, not floating over it the way the
+             Knowledge Graph's does. That pane is tall enough to give a
+             bottom-left overlay dead space; this one is 400px with the root
+             concept sitting at the bottom of a BT layout, and the overlay
+             landed straight on top of it. Same .kg2-* vocabulary either way. -->
+        <div class="kg2-legend kg2-legend-mastery wta-graph-legend" id="wta-graph-legend">
+          <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate yet</span>
+          <span class="kg2-li"><span class="kg2-li-dot wta-li-nextup"></span>What it would serve next</span>
+          <span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>
+        </div>
+      </section>
+
       <div class="hiw-note">
         <p>
-          <strong>Where it's at.</strong> This is an early build covering the
-          foundational ML skills behind modern research. Every part of the engine
-          above is live: the knowledge graph, the Bayesian student model with
-          spaced-repetition review and trickle-down credit, prerequisite gating,
-          weakest-first task selection, and the fading scaffold. The pedagogy is
-          borrowed and well tested. What's new here is using AI to write the
-          curriculum and the problems, which is why the banks keep growing.
-          <strong>Try it as a guest below.</strong> Sign in when you want your
-          progress to follow you across devices.
+          <strong>Try it — no account needed.</strong> Everything works signed
+          out, and your progress is saved to this browser. Signing in with
+          Google starts an account you can use on any device; what you do as a
+          guest stays in this browser.
         </p>
       </div>
+
+      <p class="hiw-graph-cta">
+        <button type="button" class="hiw-graph-cta-btn" data-goto-tab="diagnostic">
+          Start with the placement test →
+        </button>
+      </p>
 
     </div>
   </main>
@@ -582,7 +438,7 @@
           </div>
         </dl>
         <!-- APP MODE — basic is the default: the nav is just the learning
-             surface (Practice + Diagnostic + the two explainers). Advanced
+             surface (Practice + Placement test + Why this app exists). Advanced
              restores the instrument-panel tabs (Knowledge Graph, Course
              content, Notebooks, Targeted Practice).
              Deliberately OUTSIDE #account-form and with no Save step: the
@@ -596,11 +452,27 @@
               <span class="account-mode-hint">
                 Adds <strong>Knowledge Graph</strong>, <strong>Course content</strong>,
                 <strong>Notebooks</strong> and <strong>Targeted Practice</strong> back to the
-                nav. Off by default, so the app is just Practice and the Diagnostic.
+                nav. Off by default, so the app is just Practice and the Placement test.
                 Applies immediately — no need to save.
               </span>
             </span>
           </label>
+        </div>
+        <!-- THEME. Same shape as the advanced-mode toggle above: a display
+             preference, outside #account-form, applied on change with no Save.
+             The three options are RENDERED BY theme.js into #account-theme-options
+             so styles/variables.css + theme.js's THEMES list stay the only places
+             a theme is named. -->
+        <div class="account-theme" data-dd-info="account-theme" data-dd-info-place="before">
+          <div class="account-theme-head">
+            <span class="account-theme-title">Theme</span>
+            <span class="account-theme-hint">
+              <strong>Light</strong> and <strong>Dark</strong> are new; <strong>Blue</strong> is
+              the palette the app has always had and stays the default. Applies
+              immediately and is remembered in this browser.
+            </span>
+          </div>
+          <div class="account-theme-options" id="account-theme-options" role="radiogroup" aria-label="Theme"></div>
         </div>
         <form id="account-form">
           <div class="field">
@@ -694,12 +566,17 @@
   </main>
 
   <main class="page hidden" id="page-diagnostic">
-    <div class="container diagnostic-page" id="diagnostic-overview">
+    <!-- "Placement test", not "Diagnostic": the tab has to say what it does to
+         someone who has never used the app. The route, the ids and the backend
+         endpoints are still `diagnostic` — only the words the learner reads
+         changed, so nothing in app.js/solo-route.js had to move. -->
+    <div class="container placement-page" id="diagnostic-overview">
       <div class="diagnostic-eyebrow">ARENA placement</div>
-      <h1>Diagnostic</h1>
-      <p class="subtitle">Cold-start placement across ARENA. Estimates seed where practice begins; they never award mastery.</p>
+      <h1>Placement test</h1>
+      <p class="subtitle">A test that jumps between topics to find which concepts you still need for PyTorch. It seeds where practice begins; it never awards mastery.</p>
       <section class="card diagnostic-card">
         <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
+        <p class="diagnostic-timing">Every question is timed the same: <strong>2:00</strong> each. When the time runs out we record what you have and move on.</p>
         <div class="self-report-row hidden" id="self-report-row">
           <span class="self-report-label" data-dd-info="self-report">Starting-point prior:</span>
           <div class="self-report-options" role="group" aria-label="Self-reported starting point">
@@ -710,13 +587,13 @@
           <span class="self-report-note hidden" id="self-report-note"></span>
         </div>
         <div class="diagnostic-actions">
-          <button type="button" class="primary placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take placement diagnostic</button>
+          <button type="button" class="primary placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take the placement test</button>
           <button type="button" class="primary hidden" id="diagnostic-practice-btn">Load next placement question</button>
         </div>
       </section>
       <section class="card diagnostic-results hidden" id="diagnostic-results">
-        <h2>Your diagnostic</h2>
-        <p>Diagnostic results and ARENA curriculum progress will appear here.</p>
+        <h2>Your placement test</h2>
+        <p>Placement results and ARENA curriculum progress will appear here.</p>
       </section>
     </div>
     <div class="diagnostic-workspace-host hidden" id="diagnostic-workspace-host"></div>
@@ -818,6 +695,10 @@
           <!-- Cold Start Badge (hidden when not calibrating) -->
           <div class="cold-start-badge hidden" id="cold-start-badge">
             <span class="cold-start-label" id="cold-start-label" data-dd-info="cold-start" data-dd-info-place="after">Calibrating — 1 of 3</span>
+            <!-- Placement-only countdown. Static (not built in JS) so the ⓘ dot
+                 has a permanent anchor; practice/placement-timer.js fills it and
+                 keeps it hidden on every non-placement question. -->
+            <span class="placement-timer hidden" id="placement-timer" data-dd-info="placement-timer" data-dd-info-place="after">02:00</span>
             <span class="cold-start-note" id="cold-start-note">First questions calibrate this skill. Concept understanding reports BKT evidence separately, with coverage.</span>
           </div>
 
@@ -864,7 +745,7 @@
           <!-- Submit Area (pre-submission) -->
           <div id="practice-submit-area">
             <button class="primary practice-submit-btn" id="practice-submit-btn" type="button" data-dd-info="submit-area" data-dd-info-place="after">Submit</button>
-            <button class="ghost practice-dontknow-btn hidden" id="practice-dontknow-btn" type="button" title="Placement only: counts as strong evidence this is above your current level and moves the diagnostic along — faster and more honest than guessing.">I don't know yet</button>
+            <button class="ghost practice-dontknow-btn hidden" id="practice-dontknow-btn" type="button" title="Placement only: counts as strong evidence this is above your current level and moves the test along — faster and more honest than guessing.">I don't know yet</button>
             <button class="ghost practice-skip-btn" id="practice-skip-btn" type="button" title="Move on without answering — nothing is recorded, and it isn't counted as looking up the solution.">Skip</button>
           </div>
 
@@ -1038,14 +919,25 @@ t.manual_seed(0)
   <script src="practice/arena-unlock-dom.js?v=2"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <script src="solo-route.js?v=2"></script>
-  <script src="app.js?v=19"></script>
+  <!-- Levels + the XP seam. Before app.js and guest-session.js: both of
+       those dispatch delta:auth-state-changed during boot, and the store
+       key is derived from the signed-in email, so the listener has to be
+       on the bus first. It reads localStorage directly rather than app.js
+       globals, which is what lets it load this early. -->
+  <script src="xp.js?v=1"></script>
+  <script src="solo-route.js?v=3"></script>
+  <script src="app.js?v=20"></script>
+  <!-- Gives a signed-out visitor a backend session so the diagnostic,
+       the lessons and the student model work with no sign-in. MUST stay
+       after app.js: it writes app.js's top-level authToken/authEmail
+       bindings, which do not exist until that script has evaluated. -->
+  <script src="guest-session.js?v=1"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=5"></script>
+  <script src="infotips-registry.js?v=6"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -1069,10 +961,15 @@ t.manual_seed(0)
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=1" defer></script>
   <script src="concept-graph/lesson-graph.js?v=23" defer></script>
+  <!-- The map on "Why this app exists" — the whole lesson graph, coloured
+       illustratively. Needs cytoscape + cytoscape-dagre above; `defer` keeps
+       document order, so both have run by the time this does. Reads no
+       learner state; its only fetch is lessons/kc_registry.json. -->
+  <script src="concept-graph/why-graph.js?v=9" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
-  <script src="practice/mode.js?v=7"></script>
+  <script src="practice/mode.js?v=8"></script>
   <script src="practice/questions.js?v=24"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
@@ -1117,7 +1014,11 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <script src="practice/events.js?v=34"></script>
   <script src="practice/diagnostic-page.js?v=3"></script>
-  <script src="practice/init.js?v=14"></script>
+  <!-- Placement probes run outside a practice session, so they carry their own
+       fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
+       into it. -->
+  <script src="practice/placement-timer.js?v=1"></script>
+  <script src="practice/init.js?v=15"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
        files survive because the rest of the app depends on them:

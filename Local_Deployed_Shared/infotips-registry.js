@@ -22,11 +22,7 @@ window.DD_INFOTIPS = {
   /* ---- Tabs -------------------------------------------------------- */
   "tab.why-this-app": {
     title: "Why this app exists",
-    body: "The reasoning behind Delta Drills — the gap it was built to close, and why it works the way it does.",
-  },
-  "tab.how-it-works": {
-    title: "How It Works",
-    body: "A walkthrough of the machinery: how the app picks your next problem, how mastery is estimated, and what the scaffolding does.",
+    body: "The landing page: what Delta Drills is for, and the loop it runs — place you, pick the concept, teach it, then hand you the real <strong>ARENA</strong> problem.",
   },
   "tab.knowledge-graph": {
     title: "Knowledge Graph",
@@ -66,9 +62,11 @@ window.DD_INFOTIPS = {
     title: "Signed in",
     body: "The account your progress is being saved to. Mastery follows the account, not the browser.",
   },
+  // Key stays `tab.diagnostic` — `data-dd-info` matches on the KEY, and the
+  // route/ids are still `diagnostic`. Only the words changed.
   "tab.diagnostic": {
-    title: "Diagnostic",
-    body: "Cold-start placement plus its starting-point prior. Separate from normal practice; cannot award mastery.",
+    title: "Placement test",
+    body: "A test that jumps between different topics in order to determine what concepts you need to learn for PyTorch. Separate from normal practice; it seeds where practice starts and cannot award mastery.",
   },
   "tp-banner": {
     title: "Targeted Practice mode",
@@ -89,8 +87,12 @@ window.DD_INFOTIPS = {
     body: "A prior, not a placement: it only sets where the queue <em>begins</em>. Your answers move it either way within a few questions.",
   },
   placement: {
-    title: "Placement diagnostic",
-    body: "A short adaptive run that locates your level across every topic at once. It's shorter where you've already practised, and it can never lower mastery you've earned.",
+    title: "Placement test",
+    body: "A test that jumps between different topics in order to determine what concepts you need to learn for PyTorch.<br><br>Choosing your level influences what difficulty you start at for the test, so it's okay if you're not sure where your level is at.",
+  },
+  "placement-timer": {
+    title: "Time per question",
+    body: "Every question in the placement test gets the same <strong>2:00</strong> — you don't set it, and it doesn't change with difficulty. When it runs out we submit whatever you've written, or record it as one you don't know yet, and move on.",
   },
   "stage-ladder-kc": {
     title: "Current concept",
@@ -229,6 +231,10 @@ window.DD_INFOTIPS = {
   "account-mode": {
     title: "Advanced mode",
     body: "Off, the app is just the drills: <strong>Practice</strong> and the <strong>Diagnostic</strong>. On, it also shows the machinery behind them — the knowledge graph, the ARENA course content, the notebooks and targeted practice. Nothing is deleted either way; the toggle only changes which tabs are in the nav.",
+  },
+  "account-theme": {
+    title: "Theme",
+    body: "Changes the colours only — every page, tab and drill is identical in all three. <strong>Blue</strong> is the palette the app has always had and is what you get if you never touch this. <strong>Dark</strong> is a neutral grey, close to a Colab notebook. <strong>Light</strong> is the same app on white. The choice is stored in this browser, so it follows the browser rather than the account.",
   },
   "account-advanced": {
     title: "Advanced settings",

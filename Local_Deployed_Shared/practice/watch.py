@@ -99,6 +99,29 @@ def check_public_api():
     assert 'class="tab has-info" data-tab="diagnostic"' in index_html
     assert 'id="diagnostic-workspace-host"' in index_html
     assert "Continue diagnostic in Practice" not in index_html
+    # An unfinished placement must not cost the learner the Practice tab.
+    diagnostic_page = read(os.path.join(HERE, "diagnostic-page.js"))
+    # These are substring checks over source, so they are spelled to match the
+    # mechanism rather than a word that could survive in a comment: the guard
+    # names the definition AND the call site that has to consume it.
+    assert "setPracticeTabDisabled" not in diagnostic_page and (
+        ".disabled = true" not in diagnostic_page
+    ), (
+        "an active placement must never disable the Practice tab: no :disabled "
+        "style exists, so the tab looks live and silently eats the click"
+    )
+    assert "const diagnosticOnScreen =" in diagnostic_page and (
+        "running && diagnosticOnScreen()" in diagnostic_page
+    ), (
+        "the practice workspace may live in #page-diagnostic only while that page "
+        "is on screen — delta:practice-state-changed fires from any tab, and keying "
+        "on the placement alone yanks the workspace out of a visible Practice tab"
+    )
+    assert 'practicePage.classList.add("hidden")' not in diagnostic_page and (
+        "practicePage.hidden = true" not in diagnostic_page
+    ), (
+        "app.js owns page visibility; hiding #page-practice from here blanks the tab"
+    )
     assert index_html.count('id="self-report-row"') == 1
     assert 'maxlength="5000"' in index_html and '<textarea class="problem-feedback-note"' in index_html
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
@@ -484,6 +507,78 @@ def _every_check_is_registered(checks):
                 )
 
 
+def check_every_placement_question_gets_the_same_clock():
+    """One fixed allowance per probe, and every advance path kills it.
+
+    The placement test runs OUTSIDE a practice session — starting it calls
+    PracticeSession.finish("placement") — so none of the session timers apply
+    and a probe had no limit at all until placement-timer.js. Three ways that
+    silently regresses, so three assertions:
+
+      * the allowance stops being ONE constant (per-question or
+        difficulty-scaled time would make the probes incomparable, which is
+        the whole point of a placement);
+      * the module stops being loaded, or loads before the hooks that call it;
+      * an advance path forgets to stop the clock, which is how a countdown
+        expires onto the NEXT question and answers it for the learner.
+    """
+    timer = read(os.path.join(HERE, "placement-timer.js"))
+    assert "const PLACEMENT_ANSWER_SECS = 120;" in timer, (
+        "the placement allowance must stay one named constant — every probe "
+        "gets the same time or the estimates are not comparable"
+    )
+    # No second source of truth: the only other number the clock may hold is
+    # the resume floor/grace, never a per-question or per-difficulty value.
+    assert "q().answer_secs" not in timer and "difficulty" not in timer, (
+        "placement timing must not vary by question or difficulty"
+    )
+    # `PracticeAPI` is a top-level const in api.js — NOT a window property.
+    # Reading it off window is undefined at runtime and silent at review time:
+    # the clock simply never sees a probe. Same trap notebook-view.js documents.
+    assert "window.PracticeAPI?.currentQuestion" not in timer, (
+        "read PracticeAPI from script scope, not window — a top-level const is "
+        "not a window property and the clock would never start"
+    )
+    for token in ("onQuestionRendered", "pauseForGrading", "resumeAfterFailedSubmit", "stop"):
+        assert f"{token}," in timer or f"{token}:" in timer, (
+            f"placement-timer.js no longer exports {token}"
+        )
+
+    index = read(os.path.join(SHARED, "index.html"))
+    assert "practice/placement-timer.js" in index, "placement-timer.js is not loaded"
+    # Match the SCRIPT TAG, not the bare name: both files are named in prose
+    # comments elsewhere in the page, and a comment that happens to sit higher
+    # would satisfy a plain substring search while the load order was wrong.
+    assert index.find('src="practice/ui.js') < index.find('src="practice/placement-timer.js'), (
+        "placement-timer.js must load after the modules whose hooks call it"
+    )
+    assert 'id="placement-timer"' in index, (
+        "the countdown needs a static element: it is the anchor the info dot "
+        "attaches to, and check_infotips fails without it"
+    )
+
+    ui = read(os.path.join(HERE, "ui.js"))
+    assert "PlacementTimer?.onQuestionRendered()" in ui, (
+        "no probe starts a clock — renderQuestion must arm the placement timer"
+    )
+    events = read(os.path.join(HERE, "events.js"))
+    assert "PlacementTimer?.stop()" in events, (
+        "_loadNextPracticeQuestion must kill the placement clock, or an expiry "
+        "at 00:01 lands on the question that just loaded"
+    )
+    assert "PlacementTimer?.pauseForGrading()" in events, (
+        "submitting must stop the placement clock while the grade is in flight"
+    )
+    # One writer for the start button: two copies of the label is how it
+    # flickers between two names when the page refreshes its status.
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+    assert "renderStartButton" in page and "renderStartButton" in events, (
+        "events.js must delegate the placement start button to diagnostic-page.js"
+    )
+    assert "Take the placement test" not in events, (
+        "the start-button label lives in diagnostic-page.js only"
+    )
+
 # ── Run all checks ───────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -501,7 +596,8 @@ if __name__ == '__main__':
               check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
               check_the_notebook_never_falls_back_to_the_prefix_runner,
-              check_a_solution_stays_closed_until_asked]
+              check_a_solution_stays_closed_until_asked,
+              check_every_placement_question_gets_the_same_clock]
     _every_check_is_registered(checks)
     for fn in checks:
         try:

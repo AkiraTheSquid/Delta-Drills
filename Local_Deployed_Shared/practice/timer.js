@@ -629,7 +629,7 @@ const PracticeSession = (() => {
         : reason === "error"
           ? "Could not load a question — check the connection and start again."
           : reason === "placement"
-            ? "Placement diagnostic started — begin a session to answer the probes."
+            ? "Placement test started — its questions are timed on their own clock, one at a time."
             : `Session complete — ${total} question${total === 1 ? "" : "s"} done. Set up the next block when you're ready.`;
     sessionSummary.classList.remove("hidden");
   };

@@ -21,7 +21,7 @@
   padding: 14px 16px;
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
   font-size: 13px;
-  color: #7dd3fc;
+  color: var(--code-key);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -58,7 +58,7 @@
 }
 
 .code-editor:focus {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .code-editor::placeholder {
@@ -91,7 +91,7 @@
   padding: 16px;
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
   font-size: 13px;
-  color: #a5f3a6;
+  color: var(--code-str);
   line-height: 1.6;
   min-height: 80px;
   max-height: 240px;
@@ -126,7 +126,7 @@
   height: auto;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--img-mat);
 }
 
 /* `.question-visual-canvas` in question.css carries the same pair for the same
@@ -159,7 +159,7 @@
   padding: 14px 16px;
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
   font-size: 13px;
-  color: #fca5a5;
+  color: var(--code-err);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;

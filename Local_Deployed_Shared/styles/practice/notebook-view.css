@@ -4,7 +4,7 @@
 
 .nbv-loading,
 .nbv-error {
-  color: var(--muted, #9aa);
+  color: var(--muted);
   padding: 24px 4px;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .nbv-intro p {
-  color: var(--muted, #9aa);
+  color: var(--muted);
 }
 
 .nbv-cards {
@@ -28,7 +28,7 @@
 }
 
 .nbv-card {
-  background: rgba(0, 0, 0, 0.28);
+  background: rgb(var(--well-rgb) / calc(0.28 * var(--well-k)));
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -41,7 +41,7 @@
 }
 
 .nbv-card:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .nbv-card-title {
@@ -51,7 +51,7 @@
 
 .nbv-card-meta,
 .nbv-card-id {
-  color: var(--muted, #9aa);
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -61,7 +61,7 @@
    controls a learner needs at the point they are lost, which is never the top. */
 .nbv-toolbar {
   align-items: center;
-  background: var(--bg, #11141a);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-wrap: wrap;
@@ -89,7 +89,7 @@
 }
 
 .nbv-toolbar button:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .nbv-toc {
@@ -105,8 +105,8 @@
 }
 
 .nbv-banner-warn {
-  background: rgba(200, 140, 0, 0.12);
-  border-color: rgba(200, 140, 0, 0.5);
+  background: rgb(var(--warn-rgb) / 0.12);
+  border-color: rgb(var(--warn-rgb) / 0.5);
 }
 
 .nbv-cells {
@@ -140,7 +140,7 @@
 /* A problem header is the thing the learner is looking for when they scroll,
    so it is the one markdown cell that gets a box. */
 .nbv-md[data-role="problem"] {
-  background: rgba(0, 0, 0, 0.24);
+  background: rgb(var(--well-rgb) / calc(0.24 * var(--well-k)));
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
   border-radius: 8px;
@@ -148,7 +148,7 @@
 }
 
 .nbv-code {
-  background: rgba(0, 0, 0, 0.28);
+  background: rgb(var(--well-rgb) / calc(0.28 * var(--well-k)));
   border: 1px solid var(--border);
   border-radius: 8px;
   display: flex;
@@ -169,7 +169,7 @@
   background: transparent;
   border: 1px solid var(--accent);
   border-radius: 5px;
-  color: var(--accent);
+  color: var(--accent-text);
   cursor: pointer;
   font-size: 12px;
   line-height: 1;
@@ -182,7 +182,7 @@
 }
 
 .nbv-count {
-  color: var(--muted, #9aa);
+  color: var(--muted);
   font-family: ui-monospace, monospace;
   font-size: 11px;
 }
@@ -226,11 +226,11 @@
 }
 
 .nbv-out.is-error {
-  color: #ff8a80;
+  color: var(--danger);
 }
 
 .nbv-cell.is-running {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 /* The session restarted, so what this cell printed describes a namespace that
@@ -242,7 +242,7 @@
 
 .nbv-checker-note {
   border-bottom: 1px solid var(--border);
-  color: var(--muted, #9aa);
+  color: var(--muted);
   font-size: 12.5px;
   margin: 0;
   padding: 10px 12px;

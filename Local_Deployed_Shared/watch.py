@@ -358,7 +358,7 @@ def check_infotips():
     # Every visible tab gets a dot, and the dot is a SIBLING of the tab
     # button, never a child — a button cannot nest a button, and app.js
     # captures .tab into a static NodeList that must not pick the dot up.
-    for tab in ("why-this-app", "how-it-works", "knowledge-graph", "account",
+    for tab in ("why-this-app", "knowledge-graph", "account",
                 "courses", "practice", "targeted-practice"):
         assert f'data-dd-info="tab.{tab}"' in index_html, (
             f'tab "{tab}" has no ⓘ — expected data-dd-info="tab.{tab}"'
@@ -505,7 +505,7 @@ def check_solo_routes():
     # Every visible app tab gets a stable pathname spelling. Internal values
     # remain exact data-tab names so switchTab stays sole page owner.
     for tab in (
-        "why-this-app", "how-it-works", "knowledge-graph", "split-tool",
+        "why-this-app", "knowledge-graph", "split-tool",
         "account", "courses", "practice", "notebooks", "targeted-practice",
     ):
         assert f'data-tab="{tab}"' in index_html, f"missing tab {tab}"
