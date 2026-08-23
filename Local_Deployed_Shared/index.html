@@ -59,8 +59,8 @@
   <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=9" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=10" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=2" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=3" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
@@ -739,7 +739,8 @@
        The strip is the BAR and nothing else. The rung names live INSIDE the
        track (two stacked layers, so a name reads correctly whether the fill
        has reached it or not — see practice/stage-ladder.js), each with its own
-       ⓘ; the reading hangs UNDER the bar as a notch pointing up at the seam it
+       ⓘ; the reading rides ON TOP of the bar as a tab at the fill's edge, and
+       the bar itself sits at the BOTTOM of the strip, against the panels it
        describes. There is no context row above it any more and no difficulty
        caption beside it. -->
   <section class="stage-ladder hidden" id="stage-ladder">
@@ -747,12 +748,16 @@
       <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
            aria-label="Understanding of this concept"
            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-      <!-- The notch. Positioned at the fill's leading edge by the script; the
-           concept name inside it is the jump to the knowledge graph. -->
+      <!-- The notch. A tab sitting ON the bar's top edge, at the fill's
+           leading position (placed by the script) — no arrow, because a tab
+           that touches the track is already pointing at it. The concept name
+           inside it is the jump to the knowledge graph.
+
+           No ⓘ on the reading itself: the thing it explained was the ladder,
+           and each rung's own name already carries that copy inside the
+           track. A dot here only asked "what is this bar?" twice. -->
       <div class="stage-ladder-callout" id="stage-ladder-callout" aria-live="polite">
-        <span class="stage-ladder-callout-arrow" aria-hidden="true"></span>
-        <span class="stage-ladder-callout-text" id="stage-ladder-callout-text"
-              data-dd-info="stage-ladder" data-dd-info-place="after"></span>
+        <span class="stage-ladder-callout-text" id="stage-ladder-callout-text"></span>
         <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
                 data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
         <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
@@ -809,10 +814,30 @@
              live. Duplicating the handlers is how the two would drift.
              Behaviour in practice/notch-menu.js. -->
         <div class="practice-notch" id="practice-notch">
-          <button class="practice-notch-btn" id="practice-notch-btn" type="button"
-                  aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
-            <span aria-hidden="true">&#8943;</span>
-          </button>
+          <!-- One tab, two parts: the countdown and the dots that open the
+               menu. The clock is a MIRROR of #session-countdown, written by
+               notch-menu.js — timer.js owns the only clock there is, and a
+               second one counting on its own would drift from the one that
+               auto-submits. It is empty and hidden until a session starts. -->
+          <div class="practice-notch-tab" id="practice-notch-tab">
+            <!-- The phase word, for screen readers only. The countdown alone
+                 does not say whether running out costs an answer or just
+                 loads the next problem, and sighted readers get that from the
+                 clock's colour and the tab's tooltip. Before the clock in the
+                 DOM so it is read as "Answering, 4:12". -->
+            <span class="practice-notch-sr" id="practice-notch-phase"></span>
+            <!-- 🔴 NOT aria-hidden. `.session-status-row` is display:none, so
+                 this is the only countdown in the accessibility tree as well
+                 as the only one on screen. `role="timer"` carries an implicit
+                 aria-live="off": discoverable on demand, never announced once
+                 a second. -->
+            <span class="practice-notch-clock hidden" id="practice-notch-clock"
+                  role="timer"></span>
+            <button class="practice-notch-btn" id="practice-notch-btn" type="button"
+                    aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
+              <span aria-hidden="true">&#8943;</span>
+            </button>
+          </div>
           <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
                aria-labelledby="practice-notch-btn">
             <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
@@ -1164,8 +1189,8 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=11"></script>
-  <script src="practice/notch-menu.js?v=1"></script>
+  <script src="practice/stage-ladder.js?v=12"></script>
+  <script src="practice/notch-menu.js?v=2"></script>
   <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->

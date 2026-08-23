@@ -424,13 +424,14 @@ const StageLadder = (() => {
     _renderCallout(pct);
   };
 
-  /* The reading, as a notch UNDER the bar pointing up at the seam it
-     describes: "38% understanding of concept array reshape".
+  /* The reading, as a tab standing ON the bar at the fill's leading edge:
+     "38% understanding of concept array reshape".
 
-     It hung ABOVE the bar first. Under it is better for one reason that is
-     not taste: above, the label sits between the topbar and the track and
-     reads as a heading for the whole strip; under, with an arrow on it, it
-     is unmistakably a pointer at one position on one bar.
+     It has been under the bar and it has been a caption; it is a tab now,
+     rounded on top and open at the bottom, so it is attached to the track
+     rather than floating over it. That is also why there is no arrow to
+     place any more — a tab whose foot is on the bar is already pointing at
+     the position it stands on.
 
      Centred on the fill edge, except within a hair of either end, and then
      nudged back inside the strip by measurement — the thresholds are a guess
@@ -489,65 +490,17 @@ const StageLadder = (() => {
           : 0;
       if (dx) callout.style.transform = `translateX(calc(-${shift}% + ${dx.toFixed(2)}px))`;
     }
-
-    /* The arrow has to point at the FILL'S EDGE, which is not the middle of
-       the notch: near either end of the bar the notch stops sliding (`shift`
-       goes to 0 or 100) and the measured nudge above can move it further
-       still, while the thing it is pointing at has not moved at all. So the
-       arrow is placed last, from the bar's own geometry, and clamped inside
-       the notch's corners so it never hangs off a rounded edge. */
-    const arrow = callout.querySelector(".stage-ladder-callout-arrow");
-    const bar = _el("stage-ladder-bar");
-    if (arrow && bar) {
-      const track = bar.getBoundingClientRect();
-      const here = callout.getBoundingClientRect();
-      if (track.width && here.width) {
-        const edge = track.left + (pct / 100) * track.width;
-        const INSET = 12;  // clear of the 8px corner radius
-        const at = Math.max(INSET, Math.min(here.width - INSET, edge - here.left));
-        arrow.style.left = `${at.toFixed(2)}px`;
-      }
-    }
-
-    _pushNotchAside(callout);
   };
 
-  /* The notch between the panels carries the session controls and sits on the
-     same line as this callout, centred on the seam between them. When the
-     reading lands there, the reading wins and the notch steps aside.
-
-     🔴 The one place this module touches anything outside the strip, and it is
-     deliberate: the callout's position is not knowable from CSS — it follows a
-     percentage that follows a learner — so the collision can only be resolved
-     by whoever just placed it. `practice/notch-menu.js` owns everything else
-     about that control. */
-  const _pushNotchAside = (callout) => {
-    const notch = document.getElementById("practice-notch");
-    if (!notch) return;
-    // Clear last frame's offset before measuring, or the notch is measured
-    // where the PREVIOUS reading pushed it and every render compounds.
-    notch.style.removeProperty("--dd-notch-dx");
-    const at = notch.getBoundingClientRect();
-    // Hidden with the split on the setup screen: nothing to move.
-    if (!at.width) return;
-    const box = callout.getBoundingClientRect();
-    const GAP = 10;
-    const clashes =
-      box.bottom > at.top && box.top < at.bottom &&
-      box.right + GAP > at.left && box.left - GAP < at.right;
-    if (!clashes) return;
-    const split = notch.parentElement
-      ? notch.parentElement.getBoundingClientRect()
-      : null;
-    const right = box.right + GAP - at.left;   // move the notch right of the label
-    const left = box.left - GAP - at.right;    // or left of it
-    // Whichever side keeps the notch on screen; right unless it would run off.
-    const dx = split && at.right + right > split.right ? left : right;
-    /* A variable, not a transform. The notch's own placement on the seam is
-       CSS's business (styles/practice/notch-menu.css) and writing a whole
-       transform here would silently overwrite it. */
-    notch.style.setProperty("--dd-notch-dx", `${dx.toFixed(2)}px`);
-  };
+  /* 🔴 THIS MODULE NO LONGER TOUCHES THE SESSION NOTCH, and the absence is
+     load-bearing. While the reading hung UNDER the bar it overhung the top of
+     the split and could land on `#practice-notch`, so it measured both and
+     wrote `--dd-notch-dx` to push the notch aside. The reading is a tab on
+     TOP of the bar now: it lives inside the strip, above the split entirely,
+     and cannot collide with anything down there. If the reading is ever moved
+     back below the bar, that collision comes back with it — the notch is
+     wider than it was, because it carries the countdown now.
+     (styles/practice/notch-menu.css, practice/notch-menu.js.) */
 
   /* The rung's own promise, withdrawn when the page does not keep it.
 

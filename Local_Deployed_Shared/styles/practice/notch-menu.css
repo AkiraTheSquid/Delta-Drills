@@ -3,43 +3,108 @@
 
    It replaces .session-status-row's visible half: the countdown, the phase,
    Pause & exit and End session used to take a full band above the question.
-   The two buttons anyone actually presses now live behind three dots on the
-   seam, and the rest is gone. The row itself still exists and still runs —
-   see the note in timer.css — this is only where the controls are reached. */
+   The countdown is HERE now, on the tab itself, and the two buttons anyone
+   actually presses are behind the dots beside it. The row itself still exists
+   and still runs — see the note in timer.css — this is only where it is read
+   and reached. */
 
 /* The notch hangs from the top edge of the split, centred on the divider
    between the question and the editor. Absolute, so it costs the panels no
-   height; `--dd-notch-dx` is written by practice/stage-ladder.js when the
-   ladder's percentage reading lands underneath and the notch has to step
-   aside. Default 0 — untouched, it sits on the seam. */
+   height. */
 .practice-notch {
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(calc(-50% + var(--dd-notch-dx, 0px)));
+  transform: translateX(-50%);
   /* Above the panels' own content, below any modal. */
   z-index: 30;
 }
 
-/* A tab, not a button: square across the top where it meets the panels' top
-   edge, rounded below. The border skips the top edge for the same reason. */
-.practice-notch-btn {
+/* The tab. Square across the top where it meets the panels' top edge, rounded
+   below; the border skips the top edge for the same reason. It carries the
+   background for BOTH halves — the clock and the dots read as one control,
+   not as a readout with a button stuck to it. */
+.practice-notch-tab {
+  align-items: center;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 0 0 10px 10px;
   border-top: 0;
+  display: flex;
+  gap: 6px;
+  /* Symmetric. Between sessions the clock is `display: none` and the tab is
+     nothing but the dots — a left inset sized for a clock that is not there
+     would sit them off-centre on the seam. The clock buys its own room. */
+  padding: 2px 6px 4px;
+  transition: background 120ms ease;
+}
+
+.practice-notch.is-open .practice-notch-tab {
+  background: var(--surface);
+}
+
+/* The countdown, mirrored from #session-countdown by practice/notch-menu.js.
+   Tabular figures: a clock whose glyphs are different widths jiggles the tab
+   — and the tab is centred on the seam, so the jiggle moves the whole thing.
+   Hidden outright between sessions rather than showing a dash, so the tab
+   collapses back to just the dots. */
+.practice-notch-clock {
+  color: var(--white);
+  padding-left: 4px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.practice-notch-clock.hidden {
+  display: none;
+}
+
+/* The phase word, in the accessibility tree and nowhere else. Clipped rather
+   than `display: none` or `visibility: hidden`, both of which take it out of
+   the tree along with the pixels — which is the whole thing being fixed. */
+.practice-notch-sr {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Review time reads differently from answer time — it advances on its own and
+   nothing is lost when it runs out — and with the phase WORD gone from the
+   screen the colour is the only thing left saying which clock this is.
+   Matches .session-status-row.session-status--review in timer.css. */
+.practice-notch-clock--review {
+  color: var(--ok);
+}
+
+/* The last 30 seconds of ANSWER time, when it auto-submits. Beats the review
+   tint: `--low` is written after `--review` in notch-menu.js and only ever on
+   the answering phase. */
+.practice-notch-clock--low {
+  color: var(--danger);
+}
+
+/* Just the dots now — the tab around it owns the frame. */
+.practice-notch-btn {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
   color: var(--muted);
   cursor: pointer;
   font-size: 13px;
   line-height: 1;
-  padding: 3px 12px 5px;
-  transition: color 120ms ease, background 120ms ease;
+  padding: 1px 6px 3px;
+  transition: color 120ms ease;
 }
 
 .practice-notch-btn:hover,
 .practice-notch-btn:focus-visible,
 .practice-notch-btn[aria-expanded="true"] {
-  background: var(--surface);
   color: var(--white);
 }
 
