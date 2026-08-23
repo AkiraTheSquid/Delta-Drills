@@ -49,8 +49,8 @@
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=2" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/layout.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/timer.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/timer.css?v=7" />
   <link rel="stylesheet" href="styles/practice/question.css?v=2" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=4" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
@@ -59,12 +59,13 @@
   <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=5" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=1" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=3" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
@@ -609,6 +610,40 @@
 
   <main class="page hidden session-idle" id="page-practice">
     <div id="practice-workspace-home" hidden></div>
+  <!-- THE top strip: between the topbar and everything else on this page,
+       outside `.practice-container` so it sits above the setup panel too and
+       spans the full width rather than a panel's. `#page-practice` is the flex
+       column that gives it its natural height (styles/practice/layout.css).
+       One progress readout, and it is this one.
+
+       The strip is the BAR and nothing else. The rung names live INSIDE the
+       track (two stacked layers, so a name reads correctly whether the fill
+       has reached it or not — see practice/stage-ladder.js), each with its own
+       ⓘ; the reading hangs UNDER the bar as a notch pointing up at the seam it
+       describes. There is no context row above it any more and no difficulty
+       caption beside it. -->
+  <section class="stage-ladder hidden" id="stage-ladder">
+    <div class="stage-ladder-meter" id="stage-ladder-meter" hidden>
+      <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
+           aria-label="Understanding of this concept"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      <!-- The notch. Positioned at the fill's leading edge by the script; the
+           concept name inside it is the jump to the knowledge graph. -->
+      <div class="stage-ladder-callout" id="stage-ladder-callout" aria-live="polite">
+        <span class="stage-ladder-callout-arrow" aria-hidden="true"></span>
+        <span class="stage-ladder-callout-text" id="stage-ladder-callout-text"
+              data-dd-info="stage-ladder" data-dd-info-place="after"></span>
+        <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
+                data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
+        <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
+        <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
+        <!-- Withdrawn promises and the topic-level reading — see
+             `_renderCallout`. Empty on a normal question. -->
+        <span class="stage-ladder-note" id="stage-ladder-note" hidden></span>
+      </div>
+    </div>
+  </section>
+
     <div class="practice-container">
       <!-- Resumable session setup — active timers stay strict, while Pause &
            exit preserves the current coding question for later. -->
@@ -645,29 +680,26 @@
         <button class="primary session-start-btn" id="session-start-btn" type="button">Start new session</button>
         <div class="session-summary hidden" id="session-summary"></div>
       </div>
-      <!-- One top progress readout: current concept's support ladder. Difficulty
-           remains caption text because it selects questions; it is not mastery. -->
-      <section class="stage-ladder hidden" id="stage-ladder">
-        <div class="stage-ladder-row">
-          <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
-                  data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
-          <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
-        </div>
-        <div class="stage-ladder-row">
-          <div class="stage-ladder-now" data-dd-info="stage-ladder" data-dd-info-place="after">
-            <span class="stage-ladder-now-name" id="stage-ladder-now-name"></span>
-            <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
-            <span class="stage-ladder-now-blurb" id="stage-ladder-now-blurb"></span>
+      <div class="practice-split">
+        <!-- THE NOTCH. Straddles the seam between the question panel and the
+             editor, at the top: the session's own controls, off the strip and
+             out of the reading flow, one click away. The buttons here are
+             PROXIES — they forward to `#session-pause-btn` / `#session-end-btn`
+             in the (now hidden) status row, which is where timer.js's handlers
+             live. Duplicating the handlers is how the two would drift.
+             Behaviour in practice/notch-menu.js. -->
+        <div class="practice-notch" id="practice-notch">
+          <button class="practice-notch-btn" id="practice-notch-btn" type="button"
+                  aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
+            <span aria-hidden="true">&#8943;</span>
+          </button>
+          <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
+               aria-labelledby="practice-notch-btn">
+            <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
+            <button class="practice-notch-item" id="practice-notch-end" type="button" role="menuitem">End session</button>
+            <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
           </div>
         </div>
-        <ol class="stage-ladder-track" id="stage-ladder-track" aria-label="Scaffold stage" hidden></ol>
-        <div class="stage-ladder-row">
-          <div class="stage-ladder-foot" id="stage-ladder-foot" data-dd-info="stage-ladder-difficulty"
-               data-dd-info-place="after" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <div class="practice-split">
         <!-- Left Panel: Questions -->
         <div class="practice-left">
           <!-- One-line orientation: what THIS tab is, vs Targeted Practice
@@ -1012,7 +1044,8 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=6"></script>
+  <script src="practice/stage-ladder.js?v=10"></script>
+  <script src="practice/notch-menu.js?v=1"></script>
   <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->

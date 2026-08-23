@@ -409,9 +409,15 @@ def check_one_progress_readout():
     # Difficulty is a CAPTION. The moment it grows a track again it is the
     # second bar this check exists to prevent, whatever it is called.
     ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
-    assert "stage-ladder-foot" in ladder_js, (
-        "stage-ladder.js no longer writes the caption — difficulty would have "
-        "nowhere to be stated"
+    # 2026-08-22: the difficulty caption is GONE from the strip, by request —
+    # first the "this problem is rated N" half, then the aim with it. What the
+    # check protects is unchanged and is the line below: difficulty may not
+    # come back as a TRACK. The clause that outlived it is `setNote`'s
+    # topic-level reading, which has to keep reaching the DOM or the knowledge-
+    # graph flow silently loses the number it ends its loop on.
+    assert "stage-ladder-note" in ladder_js, (
+        "stage-ladder.js no longer writes the callout note — setNote's "
+        "topic-level mastery reading would have nowhere to be stated"
     )
     for gone in ("difficulty-bar-track", "target-difficulty-track",
                  "target-difficulty-marker"):
