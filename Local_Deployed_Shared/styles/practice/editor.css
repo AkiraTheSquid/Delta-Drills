@@ -70,11 +70,6 @@
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: normal;
-  /* Reserve the 10px scrollbar column on BOTH layers, always. Without this
-     the gutter appears on the textarea the moment the code overflows, the
-     text column narrows by 10px on that layer only, and every wrapped line
-     stops sitting on its coloured copy. */
-  scrollbar-gutter: stable;
   transition: border-color 0.15s;
 }
 

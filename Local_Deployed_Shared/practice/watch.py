@@ -27,6 +27,8 @@ from watch_invariants import (check_invariants, check_a_torch_question_never_gra
                               check_a_deleted_practice_notice_stays_deleted,
                               check_the_session_clock_is_not_the_learners_to_set)
 from watch_notebook import (
+    check_a_code_cell_grows_to_fit_its_own_code,
+    check_only_one_module_patches_a_code_editors_value,
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
     check_a_problem_is_recorded_once_per_visit,
@@ -760,6 +762,8 @@ if __name__ == '__main__':
     check_a_collapsed_cell_still_knows_its_own_source,
               check_the_notebook_never_falls_back_to_the_prefix_runner,
               check_a_solution_stays_closed_until_asked,
+              check_only_one_module_patches_a_code_editors_value,
+              check_a_code_cell_grows_to_fit_its_own_code,
               check_every_placement_question_gets_the_same_clock,
               check_the_placement_result_is_the_number_the_backend_seeded,
               check_a_deleted_practice_notice_stays_deleted]
