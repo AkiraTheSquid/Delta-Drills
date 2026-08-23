@@ -52,7 +52,11 @@
   line-height: 1;
 }
 .notebook-cell-delete:hover { color: var(--code-err); }
-.notebook-cell .code-editor {
+/* Shared with the highlight overlay for the same reason editor.css shares
+   its rule: the padding and the 3px left border are part of where a glyph
+   lands, so both layers have to carry them. */
+.notebook-cell .code-editor,
+.notebook-cell .code-highlight {
   border-left: 3px solid transparent;
   border-radius: 6px;
   flex: none;

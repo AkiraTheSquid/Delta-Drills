@@ -125,6 +125,24 @@
   --code-key: #7dd3fc;
   --code-str: #a5f3a6;
   --code-err: #fca5a5;
+
+  /* The rest of the Python palette the editor overlay paints with
+     (styles/practice/code-highlight.css). --code-key/--code-str/--code-err
+     above predate it and are reused as keyword / string / error; these are
+     the tokens a textarea could never colour on its own. --code-ghost is
+     the inline completion from practice/code-complete.js: it has to read as
+     "suggested, not typed", which means legible but clearly quieter than
+     --muted, in every theme.
+     They are named for what the token IS, not for the colour. */
+  --code-com: #6b7391;
+  --code-num: #f0a868;
+  --code-fn: #ffd884;
+  --code-cls: #6fe0c0;
+  --code-builtin: #b9a8ff;
+  --code-dec: #ffb86c;
+  --code-self: #ff9db3;
+  --code-op: #c3c8d6;
+  --code-ghost: #737c99;
 }
 
 /* ── DARK — Google Colab greys ──────────────────────────────────────────── */
@@ -194,6 +212,24 @@
   --code-key: #78d9ec;
   --code-str: #a5d6a7;
   --code-err: #f28b82;
+
+  /* The rest of the Python palette the editor overlay paints with
+     (styles/practice/code-highlight.css). --code-key/--code-str/--code-err
+     above predate it and are reused as keyword / string / error; these are
+     the tokens a textarea could never colour on its own. --code-ghost is
+     the inline completion from practice/code-complete.js: it has to read as
+     "suggested, not typed", which means legible but clearly quieter than
+     --muted, in every theme.
+     They are named for what the token IS, not for the colour. */
+  --code-com: #8d9499;
+  --code-num: #f5b26b;
+  --code-fn: #fdd663;
+  --code-cls: #80cbc4;
+  --code-builtin: #c58af9;
+  --code-dec: #f5b26b;
+  --code-self: #f28b82;
+  --code-op: #dfe1e5;
+  --code-ghost: #868d94;
 }
 
 /* ── LIGHT ──────────────────────────────────────────────────────────────── */
@@ -267,6 +303,24 @@
   --code-key: #0b6f8a;
   --code-str: #12703a;
   --code-err: #b3261e;
+
+  /* The rest of the Python palette the editor overlay paints with
+     (styles/practice/code-highlight.css). --code-key/--code-str/--code-err
+     above predate it and are reused as keyword / string / error; these are
+     the tokens a textarea could never colour on its own. --code-ghost is
+     the inline completion from practice/code-complete.js: it has to read as
+     "suggested, not typed", which means legible but clearly quieter than
+     --muted, in every theme.
+     They are named for what the token IS, not for the colour. */
+  --code-com: #6b7280;
+  --code-num: #9a5300;
+  --code-fn: #8a5a00;
+  --code-cls: #0f6a5f;
+  --code-builtin: #6d28d9;
+  --code-dec: #8a4e05;
+  --code-self: #a32a55;
+  --code-op: #4b5563;
+  --code-ghost: #868f9d;
 }
 
 /* ── Theme-independent ──────────────────────────────────────────────────── */
