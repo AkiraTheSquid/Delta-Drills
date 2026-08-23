@@ -38,7 +38,12 @@
   display: inline-grid;
   flex: 0 0 auto;
   isolation: isolate;
-  margin: 0 14px;
+  /* No margin. The pill sat between a brand line and a tab strip and needed
+     air on both sides; it is the FAR-LEFT item in the topbar's left column
+     now (Seth, 2026-08-23), and a left margin there just holds it 14px off
+     the edge the cog on the other side sits flush against. `.topbar-side`
+     owns the spacing between it and the hamburger, via `gap`. */
+  margin: 0;
   padding: 0;
   border: 1px solid var(--border-strong);
   border-radius: 999px;

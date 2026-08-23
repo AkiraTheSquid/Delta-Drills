@@ -23,6 +23,14 @@ REQUIRED_JS = [
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
     "kernel.js",  # persistent per-learner backend session behind notebook.js
     "notebook-view.js",  # the Notebooks tab: a whole compiled lesson on one kernel
+    # Colab-style code cells (@M, 2026-08-23). Both are optional-chained from
+    # runner.js, so a missing one degrades to a plain textarea rather than
+    # throwing — which is exactly why they have to be asserted here instead.
+    "code-highlight.js",  # tokenised <pre> overlay behind the transparent textarea
+    "code-complete.js",  # name-only ghost autocomplete, accepted with Tab
+    # The Practice tab's idle screen (2026-08-23).
+    "readiness.js",  # % of the 63 KCs mastered, atom-sourced readings only
+    "session-idle.js",  # paints the dial and proxies Continue to the real buttons
 ]
 REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [

@@ -31,9 +31,9 @@
   <!-- Dark scrollbars. Loaded with the base layer, not as a feature, because
        it sets `color-scheme` on :root and skins every scroller in the app. -->
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
-  <link rel="stylesheet" href="styles/layout.css?v=2" />
+  <link rel="stylesheet" href="styles/layout.css?v=4" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=27" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=28" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -45,31 +45,35 @@
   <link rel="stylesheet" href="styles/courses/detail.css?v=2" />
   <link rel="stylesheet" href="styles/courses/modal.css?v=2" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/infotips.css?v=1" />
+  <link rel="stylesheet" href="styles/infotips.css?v=2" />
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
-  <link rel="stylesheet" href="styles/nav-drawer.css?v=2" />
+  <link rel="stylesheet" href="styles/nav-drawer.css?v=4" />
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
-  <link rel="stylesheet" href="styles/xp.css?v=2" />
+  <link rel="stylesheet" href="styles/xp.css?v=3" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/layout.css?v=4" />
-  <link rel="stylesheet" href="styles/practice/timer.css?v=7" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/timer.css?v=8" />
+  <!-- The idle screen: the readiness dial that replaced "Set up your session".
+       After timer.css, which still owns the card the dial sits in. -->
+  <link rel="stylesheet" href="styles/practice/readiness.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=4" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=5" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=7" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=10" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=4" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=5" />
+  <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=6" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=12" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=13" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
@@ -77,6 +81,7 @@
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
   <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
   <link rel="stylesheet" href="styles/solo-route.css?v=1" />
+  <link rel="stylesheet" href="styles/test-users.css?v=1" />
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
        No SRI integrity attrs on purpose: a stale/wrong hash would silently block
        the script. jsdelivr is already trusted for pyodide/cytoscape below. -->
@@ -92,74 +97,99 @@
 </head>
 <body>
   <header class="topbar">
-    <!-- Hamburger. Hidden above 900px (styles/nav-drawer.css) — up there the
-         tab strip is right beside it and a second way in just competes. Below
-         it, nav-drawer.js MOVES that same strip into #nav-drawer; it is never
-         copied, because app.js holds the tab elements in static NodeLists. -->
-    <button class="nav-toggle" id="nav-toggle" type="button"
-            aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
-      <span class="nav-toggle-bars" aria-hidden="true"></span>
-    </button>
-    <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.15</span></div>
-    <!-- LEVEL PILL — and the progress bar. The chip colours in from the left
-         as the learner works; there is no separate bar anywhere. Sits after
-         the logo so drawer mode, where `.logo` takes the slack, carries it
-         over to the right beside the account dot instead of stranding it in
-         the middle of a 300px row.
+    <!-- THREE CELLS, and the middle one is the point. `.tabs` used to be held
+         against one edge with `margin-*: auto`, which centres nothing: the
+         strip's position moved with whatever sat beside it. The topbar is a
+         `1fr auto 1fr` grid now (styles/layout.css) — two EQUAL side columns
+         with the strip in an auto column between them, so the strip is
+         centred on the viewport no matter how wide the level pill grows.
+         Seth's call, 2026-08-23. Each side is a real element rather than a
+         bare child because a grid places children by cell, and the left side
+         holds two controls. -->
+    <div class="topbar-side topbar-side--left">
+      <!-- Hamburger. Hidden above 900px (styles/nav-drawer.css) — up there the
+           tab strip is right beside it and a second way in just competes. Below
+           it, nav-drawer.js MOVES that same strip into #nav-drawer; it is never
+           copied, because app.js holds the tab elements in static NodeLists. -->
+      <button class="nav-toggle" id="nav-toggle" type="button"
+              aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+      <!-- LEVEL PILL — and the progress bar. The chip colours in from the left
+           as the learner works; there is no separate bar anywhere. FAR LEFT
+           (Seth, 2026-08-23): it is the one piece of state the learner owns, and
+           the corner is where a reader's eye starts. The brand line that used to
+           sit here is gone — it said the app's name to someone already inside
+           the app — and `.logo`, the empty spacer that survived it, went with
+           the flex layout the spacer existed to prop up.
 
-         The label is written TWICE on purpose. `.dd-level-text--on` is the
-         copy that sits ON the fill, in `--on-accent`, clipped to the filled
-         width; the base layer keeps the normal colours for the part of the
-         pill the fill has not reached. One text colour cannot be legible on
-         both a near-transparent chip and a saturated gradient across three
-         themes — see styles/xp.css. The duplicate is aria-hidden so the
-         aria-live region announces the level once, not twice. -->
-    <div class="dd-level" id="dd-level" aria-live="polite">
-      <span class="dd-level-fill" aria-hidden="true"></span>
-      <span class="dd-level-text">
-        <span class="dd-level-label">Level</span>
-        <span class="dd-level-num" id="dd-level-num">1</span>
-      </span>
-      <span class="dd-level-text dd-level-text--on" aria-hidden="true">
-        <span class="dd-level-label">Level</span>
-        <span class="dd-level-num" id="dd-level-num-on">1</span>
-      </span>
+           The label is written TWICE on purpose. `.dd-level-text--on` is the
+           copy that sits ON the fill, in `--on-accent`, clipped to the filled
+           width; the base layer keeps the normal colours for the part of the
+           pill the fill has not reached. One text colour cannot be legible on
+           both a near-transparent chip and a saturated gradient across three
+           themes — see styles/xp.css. The duplicate is aria-hidden so the
+           aria-live region announces the level once, not twice. -->
+      <div class="dd-level" id="dd-level" aria-live="polite">
+        <span class="dd-level-fill" aria-hidden="true"></span>
+        <span class="dd-level-text">
+          <span class="dd-level-label">Level</span>
+          <span class="dd-level-num" id="dd-level-num">1</span>
+        </span>
+        <span class="dd-level-text dd-level-text--on" aria-hidden="true">
+          <span class="dd-level-label">Level</span>
+          <span class="dd-level-num" id="dd-level-num-on">1</span>
+        </span>
+      </div>
     </div>
-    <!-- Every tab carries a sibling ⓘ (infotips.js + infotips-registry.js).
-         They are written out here rather than injected because app.js
-         captures .auth-only / .guest-only into static NodeLists at eval time
-         and drives tab visibility off them — carrying the same auth class and
-         the same data-tab is what keeps a dot hidden alongside its tab. The
-         click target stays .tab; the dot is .tab-info, a different token, so
-         document.querySelectorAll(".tab") never picks it up. -->
+    <!-- 🔴 NO ⓘ DOTS IN HERE ANY MORE (Seth, 2026-08-23: "there's information
+         icons literally everywhere"). Each tab used to carry a sibling
+         info-dot button, which cost twice: the strip read as ten labels
+         each trailed by a stray "i", and `.tab`'s own `border-bottom` — the
+         active underline — spanned the label only, so it sat visibly LEFT of
+         the thing a reader saw as the tab. The tab names are the shortest
+         explanation of a tab there is; the two pages that need more are
+         themselves tabs. Local_Deployed_Shared/watch.py asserts the dots stay
+         gone, because nothing else here fails when one comes back. -->
     <nav class="tabs">
-      <button class="tab active has-info" data-tab="why-this-app" type="button">Why This App Exists</button>
-      <button class="dd-info tab-info" data-dd-info="tab.why-this-app" data-tab="why-this-app" type="button" aria-expanded="false" aria-label="What is Why This App Exists?">i</button>
-      <button class="tab has-info" data-tab="how-to-use" type="button">How to use it</button>
-      <button class="dd-info tab-info" data-dd-info="tab.how-to-use" data-tab="how-to-use" type="button" aria-expanded="false" aria-label="What is How to use it?">i</button>
-      <button class="tab auth-only has-info" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.knowledge-graph" data-tab="knowledge-graph" type="button" aria-expanded="false" aria-label="What is the Knowledge Graph?">i</button>
-      <button class="tab has-info" data-tab="diagnostic" type="button">Placement test</button>
-      <button class="dd-info tab-info" data-dd-info="tab.diagnostic" data-tab="diagnostic" type="button" aria-expanded="false" aria-label="What is the placement test?">i</button>
-      <button class="tab auth-only has-info" data-tab="split-tool" type="button" hidden>Split Tool</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.split-tool" data-tab="split-tool" type="button" aria-expanded="false" aria-label="What is the Split Tool?" hidden>i</button>
-      <button class="tab has-info" data-tab="account" type="button">Account</button>
-      <button class="dd-info tab-info" data-dd-info="tab.account" data-tab="account" type="button" aria-expanded="false" aria-label="What is Account?">i</button>
-      <button class="tab auth-only has-info" data-tab="courses" type="button">Course content</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.courses" data-tab="courses" type="button" aria-expanded="false" aria-label="What is Course content?">i</button>
-      <button class="tab auth-only has-info" data-tab="practice" type="button">Practice</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.practice" data-tab="practice" type="button" aria-expanded="false" aria-label="What is Practice?">i</button>
-      <button class="tab auth-only has-info" data-tab="notebooks" type="button">Notebooks</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.notebooks" data-tab="notebooks" type="button" aria-expanded="false" aria-label="What is Notebooks?">i</button>
-      <button class="tab auth-only has-info" data-tab="targeted-practice" type="button">Targeted Practice</button>
-      <button class="dd-info tab-info auth-only" data-dd-info="tab.targeted-practice" data-tab="targeted-practice" type="button" aria-expanded="false" aria-label="What is Targeted Practice?">i</button>
+      <button class="tab active" data-tab="why-this-app" type="button">Why This App Exists</button>
+      <button class="tab" data-tab="how-to-use" type="button">How to use it</button>
+      <button class="tab auth-only" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
+      <button class="tab" data-tab="diagnostic" type="button">Placement test</button>
+      <button class="tab auth-only" data-tab="split-tool" type="button" hidden>Split Tool</button>
+      <button class="tab" data-tab="account" type="button">Account</button>
+      <button class="tab auth-only" data-tab="courses" type="button">Course content</button>
+      <button class="tab auth-only" data-tab="practice" type="button">Practice</button>
+      <button class="tab auth-only" data-tab="notebooks" type="button">Notebooks</button>
+      <!-- HIDDEN 2026-08-23 (Seth, via @O): Targeted Practice is not being
+           maintained. The HTML `hidden` ATTRIBUTE, the same idiom as split-tool
+           above — app.js only ever touches classList("hidden") in its auth and
+           advanced-mode passes and never reads or writes the attribute, so this
+           survives both. No [data-goto-tab="targeted-practice"] exists, so
+           switchTab is unreachable; targeted-practice/*.js and #tp-banner are
+           left alone (the banner only renders during a session that can no
+           longer be started). -->
+      <button class="tab auth-only" data-tab="targeted-practice" type="button" hidden>Targeted Practice</button>
     </nav>
-    <!-- Logged-in indicator (the tester couldn't tell he was signed in). app.js
-         shows the email here when authenticated; hidden for guests. -->
-    <div class="topbar-auth" id="topbar-auth" hidden>
-      <span class="topbar-auth-dot" aria-hidden="true"></span>
-      <span class="topbar-auth-email" id="topbar-auth-email"></span>
-      <span data-dd-info="topbar-auth"></span>
+    <!-- The signed-in EMAIL used to sit here. It is on the Account tab
+         (#account-identity-email) and that is where it belongs — a whole
+         address across the top right of every screen to answer a question
+         asked once a session. Seth's call, 2026-08-23.
+
+         What is here instead is a cog, and it is deliberately the only thing:
+         one wordless control on the right edge, balancing the level pill on
+         the left so the tab strip in the middle reads as centred rather than
+         as merely offset. `data-goto-tab` is app.js's existing jump-to-a-tab
+         hook, so this needs no handler of its own. -->
+    <div class="topbar-side topbar-side--right">
+      <button class="topbar-cog" id="topbar-cog" type="button" data-goto-tab="account"
+              aria-label="Account and settings" title="Account and settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="3.1"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -190,7 +220,7 @@
   <div class="guest-banner" id="guest-banner">
     <div class="guest-banner-inner">
       <span class="guest-banner-dot" aria-hidden="true"></span>
-      <span class="guest-banner-label" data-dd-info="guest-banner">Guest</span>
+      <span class="guest-banner-label">Guest</span>
       <span class="guest-banner-meta">No account needed — everything works, and your progress is saved in this browser. <strong>Continue with Google</strong> to start an account that works on any device; guest progress stays here.</span>
       <!-- Google Identity Services renders the Continue-with-Google button here
            (app.js). One click signs in or signs up — no separate login page. -->
@@ -579,7 +609,7 @@
              block below so the default view is just "who am I". The inputs still
              exist and still save — split-tool.js and supabase-practice.js read
              those same localStorage keys. -->
-        <dl class="account-identity" data-dd-info="account-identity" data-dd-info-place="before">
+        <dl class="account-identity">
           <div class="account-identity-row">
             <dt>Email</dt>
             <dd id="account-identity-email">Not signed in</dd>
@@ -603,8 +633,10 @@
               <span class="account-mode-title">Advanced mode</span>
               <span class="account-mode-hint">
                 Adds <strong>Knowledge Graph</strong>, <strong>Course content</strong>,
-                <strong>Notebooks</strong> and <strong>Targeted Practice</strong> back to the
-                nav. Off by default, so the app is just Practice and the Placement test.
+                and <strong>Notebooks</strong> back to the
+                nav, and puts the <strong>progress ladder</strong> back above the question —
+                the strip that shows how far into the current concept you are. Off by
+                default, so the app is just Practice and the Placement test.
                 Applies immediately — no need to save.
               </span>
             </span>
@@ -615,7 +647,7 @@
              The three options are RENDERED BY theme.js into #account-theme-options
              so styles/variables.css + theme.js's THEMES list stay the only places
              a theme is named. -->
-        <div class="account-theme" data-dd-info="account-theme" data-dd-info-place="before">
+        <div class="account-theme">
           <div class="account-theme-head">
             <span class="account-theme-title">Theme</span>
             <span class="account-theme-hint">
@@ -686,7 +718,7 @@
            styles/courses/page.css shows exactly one, keyed off the
            html.dd-colab-edition class that practice/colab_mode.js sets. -->
       <section class="courses-about">
-        <div class="courses-about-eyebrow" data-dd-info="courses-about">What this app is for</div>
+        <div class="courses-about-eyebrow">What this app is for</div>
         <h2 class="courses-about-title">ARENA Delta Drills is built for one curriculum: <strong>ARENA</strong>.</h2>
         <p class="courses-about-body">
           ARENA takes you from PyTorch fundamentals to original AI-safety
@@ -825,32 +857,47 @@
   </section>
 
     <div class="practice-container">
-      <!-- Resumable session setup — active timers stay strict, while Pause &
-           exit preserves the current coding question for later. -->
+      <!-- THE IDLE SURFACE — what the Practice tab is when no question is
+           timed. It replaced "Set up your session", a panel of three inputs
+           (QUESTIONS / ANSWER TIME / REVIEW TIME) and a total-time estimate.
+
+           🔴 The learner does not set the clock any more. Seth, 2026-08-23:
+           "it's a predetermined timer that they don't control". Both
+           allowances are constants in practice/timer.js, per QUESTION and
+           not per session — 02:00 to answer, 02:00 to review — and there is
+           no session length either: a block runs until it is PAUSED. That
+           is also why there is no End session anywhere; pause and resume are
+           the only two states, and pausing is what puts this screen back.
+
+           So what is left to show here is progress, and one way back in. -->
       <div class="session-setup" id="practice-session-setup">
-        <div class="session-setup-title" data-dd-info="session-setup">Set up your session</div>
-        <p class="session-setup-note">
-          Decide the block before you start. While running, timers are strict:
-          answer time auto-submits and review time loads the next question.
-          Need to stop? Pause and resume from the same question later.
-        </p>
-        <div class="session-setup-fields">
-          <label class="session-field">
-            <span class="session-field-label">Questions</span>
-            <input class="timer-input" id="session-question-count" type="number" min="1" max="50" step="1" value="10" aria-label="Number of questions" />
-          </label>
-          <label class="session-field">
-            <span class="session-field-label">Answer time / question</span>
-            <input class="timer-input" id="session-answer-time" type="text" inputmode="numeric" value="05:00" aria-label="Answer time per question (mm:ss)" />
-          </label>
-          <label class="session-field">
-            <span class="session-field-label">Review time / question</span>
-            <input class="timer-input" id="session-review-time" type="text" inputmode="numeric" value="02:00" aria-label="Review time per question (mm:ss)" />
-          </label>
+        <!-- The dial is a conic gradient driven by `--dd-ready-pct`
+             (practice/session-idle.js). A ring rather than a bar because it
+             is the only thing on the screen and it has to read at a glance
+             from across a desk. -->
+        <div class="session-readiness">
+          <div class="readiness-dial" id="readiness-dial" role="img"
+               aria-label="Readiness for the ARENA curriculum">
+            <span class="readiness-pct" id="readiness-pct">—</span>
+          </div>
+          <p class="readiness-caption" id="readiness-caption">ready for the ARENA curriculum</p>
+          <p class="readiness-detail" id="readiness-detail"></p>
+          <!-- ONE button, two meanings: resume the paused question if there is
+               one, otherwise start a fresh block. It PROXIES to the buttons
+               below rather than reimplementing either — see the note there. -->
+          <button class="primary session-continue-btn" id="session-continue-btn" type="button">Continue practicing</button>
+          <p class="session-summary hidden" id="session-summary"></p>
         </div>
-        <div class="session-time-estimate" id="session-time-estimate" aria-live="polite"></div>
+
+        <!-- 🔴 LIVE, and deliberately off the screen. timer.js binds resume,
+             discard and their state (`#session-resume-btn.disabled` is how a
+             saved question that is no longer in the bank refuses to resume,
+             with the reason written into #session-resume-summary). The
+             Continue button above forwards a click to whichever of these
+             applies — the same proxy pattern the notch menu uses for pause,
+             and for the same reason: two copies of "what does resuming mean"
+             is how they drift. Do not delete these to tidy up. -->
         <div class="session-resume-panel hidden" id="session-resume-panel">
-          <div class="session-resume-title" data-dd-info="session-resume">Continue where you left off</div>
           <div class="session-resume-summary" id="session-resume-summary"></div>
           <div class="session-resume-actions">
             <button class="primary" id="session-resume-btn" type="button">Resume session</button>
@@ -858,60 +905,101 @@
           </div>
         </div>
         <button class="primary session-start-btn" id="session-start-btn" type="button">Start new session</button>
-        <div class="session-summary hidden" id="session-summary"></div>
+      </div>
+      <!-- THE NOTCH. Hangs from the top edge of .practice-container, centred:
+           the session's own controls, off the strip and out of the reading
+           flow, one click away.
+
+           🔴 A child of the CONTAINER, not of .practice-split. It used to hang
+           off the split, and the split is `display: none` whenever no session
+           is running — so the notch went with it. It has to OUTLIVE the
+           session (Seth, 2026-08-23: "even after you exit the session, the
+           notch should still be there"), so it anchors to the box that is on
+           screen in both states. Same pixels while a session is open: the
+           split is the container's only child then, so the two top edges
+           coincide. The buttons here are
+           PROXIES — the square and the menu's Pause both forward to
+           `#session-pause-btn` in the (now hidden) status row, which is
+           where timer.js's handler lives. Duplicating the handlers is how the two would drift.
+           Behaviour in practice/notch-menu.js. -->
+      <div class="practice-notch" id="practice-notch">
+        <!-- One tab, two parts: the countdown and the dots that open the
+             menu. The clock is a MIRROR of #session-countdown, written by
+             notch-menu.js — timer.js owns the only clock there is, and a
+             second one counting on its own would drift from the one that
+             auto-submits.
+
+             🔴 It does NOT go away between sessions (Seth, 2026-08-23:
+             "even after you exit the session, the notch should still be
+             there ... with the amount of time that you would want to set").
+             Idle, it shows the answer allowance the next question WILL get
+             — 02:00 — greyed, so the tab is a standing statement of the
+             rule rather than a control that appears and disappears. -->
+        <div class="practice-notch-tab" id="practice-notch-tab">
+          <!-- The phase word, for screen readers only. The countdown alone
+               does not say whether running out costs an answer or just
+               loads the next problem, and sighted readers get that from the
+               clock's colour and the tab's tooltip. Before the clock in the
+               DOM so it is read as "Answering, 4:12". -->
+          <span class="practice-notch-sr" id="practice-notch-phase"></span>
+          <!-- THE SQUARE, left of the clock (Seth, 2026-08-23). It pauses:
+               the question, the draft code, the review state and the clock
+               are all written to the resume snapshot, the block closes, and
+               the readiness screen comes up. There is no separate "end" —
+               pause and resume are the only two states this session model
+               has. A PROXY for #session-pause-btn, like everything else in
+               this notch; timer.js owns what pausing means, including when
+               it is refused (mid-grade). -->
+          <button class="practice-notch-stop" id="practice-notch-stop" type="button"
+                  aria-label="Pause and save this session">
+            <span class="practice-notch-stop-glyph" aria-hidden="true"></span>
+          </button>
+          <!-- 🔴 NOT aria-hidden. `.session-status-row` is display:none, so
+               this is the only countdown in the accessibility tree as well
+               as the only one on screen. `role="timer"` carries an implicit
+               aria-live="off": discoverable on demand, never announced once
+               a second. -->
+          <span class="practice-notch-clock hidden" id="practice-notch-clock"
+                role="timer"></span>
+          <button class="practice-notch-btn" id="practice-notch-btn" type="button"
+                  aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
+            <span aria-hidden="true">&#8943;</span>
+          </button>
+        </div>
+        <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
+             aria-labelledby="practice-notch-btn">
+          <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
+          <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
+          <!-- 🔴 THE REAL ELEMENTS, not proxies. Everything above this line
+               forwards a click to a hidden button in #session-status-row;
+               these two ARE the buttons. They were moved here out of
+               .question-number-row with their ids and their ⓘ keys, so
+               practice/ui.js `renderQuestionIdChip` (which writes the label,
+               the title and the click handler) and practice/graph-jump.js
+               (which unhides this one only when the question carries a KC
+               tag) both still find them by id. Nothing about their
+               behaviour moved — only where they are drawn. -->
+          <div class="practice-notch-sep" role="separator"></div>
+          <button class="practice-notch-item question-id-chip" id="question-id-chip" type="button" role="menuitem" title="The stable identifier for this problem — worth quoting when reporting something broken.">Copy question ID</button>
+          <button class="practice-notch-item question-id-chip" id="practice-graph-jump" type="button" role="menuitem" hidden title="Opens the concept this problem is tagged to, so you can check the tutor's choice against the map it claims to be following.">See in knowledge graph</button>
+        </div>
       </div>
       <div class="practice-split">
-        <!-- THE NOTCH. Straddles the seam between the question panel and the
-             editor, at the top: the session's own controls, off the strip and
-             out of the reading flow, one click away. The buttons here are
-             PROXIES — they forward to `#session-pause-btn` / `#session-end-btn`
-             in the (now hidden) status row, which is where timer.js's handlers
-             live. Duplicating the handlers is how the two would drift.
-             Behaviour in practice/notch-menu.js. -->
-        <div class="practice-notch" id="practice-notch">
-          <!-- One tab, two parts: the countdown and the dots that open the
-               menu. The clock is a MIRROR of #session-countdown, written by
-               notch-menu.js — timer.js owns the only clock there is, and a
-               second one counting on its own would drift from the one that
-               auto-submits. It is empty and hidden until a session starts. -->
-          <div class="practice-notch-tab" id="practice-notch-tab">
-            <!-- The phase word, for screen readers only. The countdown alone
-                 does not say whether running out costs an answer or just
-                 loads the next problem, and sighted readers get that from the
-                 clock's colour and the tab's tooltip. Before the clock in the
-                 DOM so it is read as "Answering, 4:12". -->
-            <span class="practice-notch-sr" id="practice-notch-phase"></span>
-            <!-- 🔴 NOT aria-hidden. `.session-status-row` is display:none, so
-                 this is the only countdown in the accessibility tree as well
-                 as the only one on screen. `role="timer"` carries an implicit
-                 aria-live="off": discoverable on demand, never announced once
-                 a second. -->
-            <span class="practice-notch-clock hidden" id="practice-notch-clock"
-                  role="timer"></span>
-            <button class="practice-notch-btn" id="practice-notch-btn" type="button"
-                    aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
-              <span aria-hidden="true">&#8943;</span>
-            </button>
-          </div>
-          <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
-               aria-labelledby="practice-notch-btn">
-            <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
-            <button class="practice-notch-item" id="practice-notch-end" type="button" role="menuitem">End session</button>
-            <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
-          </div>
-        </div>
         <!-- Left Panel: Questions -->
         <div class="practice-left">
           <!-- #practice-mode-intro (the "Practice is your adaptive queue…"
                paragraph) was DELETED on 2026-08-23. #practice-mode-notice went
                with it — see practice/mode.js for what replaced the notice. -->
-          <!-- In-session status: progress, phase, countdown, pause/end. -->
+          <!-- In-session status: progress, phase, countdown, pause. Hidden by
+               CSS and still LIVE — the notch above proxies to the button in
+               here. #session-end-btn was deleted on 2026-08-23 with the
+               session model that needed it: a block has no length any more, so
+               there is nothing to end early. Pause is the only way out. -->
           <div class="session-status-row hidden" id="session-status-row">
-            <span class="session-progress" id="session-progress" data-dd-info="session-status" data-dd-info-place="before">0 / 0</span>
+            <span class="session-progress" id="session-progress">0</span>
             <span class="session-phase" id="session-phase">Answering</span>
-            <span class="session-countdown" id="session-countdown">05:00</span>
+            <span class="session-countdown" id="session-countdown">02:00</span>
             <button class="ghost session-pause-btn" id="session-pause-btn" type="button">Pause &amp; exit</button>
-            <button class="ghost session-end-btn" id="session-end-btn" type="button" title="End the session early — recorded answers are kept.">End session</button>
             <div class="question-meta-top hidden" id="question-meta-top">
               <span class="subtopic-label" id="subtopic-label"></span>
               <span class="difficulty-label" id="difficulty-label"></span>
@@ -919,14 +1007,21 @@
           </div>
 
 
-          <!-- Question Number (ID chip stays visible while answering; meta-top does not) -->
+          <!-- The question's HEADING, and it names the CONCEPT — "Reshape,
+               ravel, and element order" — not "Question 21".
+
+               Seth, 2026-08-23. The row used to open with a counter and two
+               chips: the running question number, the stable problem ID, and
+               a jump to the concept on the map. None of the three is what the
+               learner is about to do. The counter is a number that only goes
+               up, and the two chips are AUDIT tools — they exist so a problem
+               can be quoted in a bug report and its KC tag checked against the
+               map. Both moved into the notch's three-dot menu, ELEMENT AND ID
+               INTACT, so practice/ui.js `renderQuestionIdChip` and
+               practice/graph-jump.js still write to exactly the nodes they
+               always wrote to. Look for them in .practice-notch-menu. -->
           <div class="question-number-row">
-            <div class="question-number" id="question-number">Question 1</div>
-            <button class="question-id-chip" id="question-id-chip" type="button" title="Copy stable problem ID" data-dd-info="question-id" data-dd-info-place="after">ID --</button>
-            <!-- Audit hook: open the concept this question is tagged to, so the
-                 tutor's choice can be checked against the map it claims to
-                 follow. Hidden when the question carries no KC tag. -->
-            <button class="question-id-chip" id="practice-graph-jump" type="button" hidden data-dd-info="graph-jump" data-dd-info-place="after">See in knowledge graph</button>
+            <h2 class="question-number" id="question-number"></h2>
             <!-- Placement-only countdown. Static (not built in JS) so the ⓘ dot
                  has a permanent anchor; practice/placement-timer.js fills it and
                  keeps it hidden on every non-placement question.
@@ -942,11 +1037,11 @@
           <!-- Question Text -->
           <div class="question-text" id="question-text"></div>
           <div class="question-imports hidden" id="question-imports">
-            <div class="question-imports-label" data-dd-info="question-imports">Imported helpers</div>
+            <div class="question-imports-label">Imported helpers</div>
             <div class="question-imports-list" id="question-imports-list"></div>
           </div>
           <div class="question-visual hidden" id="question-visual">
-            <div class="question-visual-label" data-dd-info="question-visual">Target Image</div>
+            <div class="question-visual-label">Target Image</div>
             <div class="question-visual-note" id="question-visual-note">Loading image preview...</div>
             <canvas class="question-visual-canvas hidden" id="question-visual-canvas"></canvas>
           </div>
@@ -971,7 +1066,7 @@
                procedural-drill cards (Colab-run exercises), not here. -->
           <div class="practice-aids" id="practice-aids">
             <div class="practice-aids-buttons">
-              <button class="ghost" id="show-hint-btn" type="button" data-dd-info="hints" data-dd-info-place="after">Show hint</button>
+              <button class="ghost" id="show-hint-btn" type="button">Show hint</button>
             </div>
             <div class="hint-section hidden" id="hint-section">
               <div class="hint-label">Hint</div>
@@ -981,7 +1076,7 @@
 
           <!-- Submit Area (pre-submission) -->
           <div id="practice-submit-area">
-            <button class="primary practice-submit-btn" id="practice-submit-btn" type="button" data-dd-info="submit-area" data-dd-info-place="after">Submit</button>
+            <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
             <button class="ghost practice-dontknow-btn hidden" id="practice-dontknow-btn" type="button" title="Placement only: counts as strong evidence this is above your current level and moves the test along — faster and more honest than guessing.">I don't know yet</button>
             <button class="ghost practice-skip-btn" id="practice-skip-btn" type="button" title="Move on without answering — nothing is recorded, and it isn't counted as looking up the solution.">Skip</button>
           </div>
@@ -1012,13 +1107,13 @@
                  Logged via the problem-feedback channel; shown only after an
                  incorrect answer (ui.js). -->
             <div class="missed-fact-row hidden" id="missed-fact-row">
-              <button class="ghost missed-fact-btn" id="missed-fact-btn" type="button" data-dd-info="missed-fact" data-dd-info-place="after">I missed one specific thing — it wasn't “too hard”</button>
+              <button class="ghost missed-fact-btn" id="missed-fact-btn" type="button">I missed one specific thing — it wasn't “too hard”</button>
               <span class="missed-fact-status hidden" id="missed-fact-status">noted ✓</span>
             </div>
             <!-- Per-problem quality feedback — content flags, NOT the difficulty rating above -->
             <div class="problem-feedback-row" id="problem-feedback-row">
               <div class="problem-feedback-actions">
-                <span class="problem-feedback-label" data-dd-info="problem-flags">Issue with this problem?</span>
+                <span class="problem-feedback-label">Issue with this problem?</span>
                 <button class="ghost problem-flag-btn" data-flag="broken" type="button">🚩 Broken</button>
                 <button class="ghost problem-flag-btn" data-flag="unclear" type="button">😕 Unclear</button>
                 <button class="ghost problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong image</button>
@@ -1050,18 +1145,18 @@
               </div>
             </div>
             <div class="solution-section">
-              <div class="solution-label" data-dd-info="solution">Solution</div>
+              <div class="solution-label">Solution</div>
               <pre class="solution-code" id="solution-code"></pre>
             </div>
             <div class="ai-explanation-section hidden" id="ai-explanation-section">
-              <div class="ai-explanation-label" data-dd-info="ai-explanation">AI Explanation</div>
+              <div class="ai-explanation-label">AI Explanation</div>
               <pre class="ai-explanation-text" id="ai-explanation-text"></pre>
             </div>
             <!-- Tutor chat. Opens with the explanation (events.js) and is wiped
                  on every question render (ui.js) — one thread per drill. -->
             <div class="tutor-section hidden" id="tutor-section">
               <div class="tutor-header-row">
-                <div class="tutor-label" data-dd-info="tutor">Tutor</div>
+                <div class="tutor-label">Tutor</div>
                 <div class="tutor-hint">Enter to send · Shift+Enter for a new line</div>
               </div>
               <div class="tutor-thread" id="tutor-thread"></div>
@@ -1086,7 +1181,7 @@
         <!-- Right panel: Colab-like cells sharing one persistent runtime. -->
         <div class="practice-right">
           <div class="editor-header-row">
-            <div class="editor-header" data-dd-info="editor">Code Editor</div>
+            <div class="editor-header">Code Editor</div>
             <div class="runtime-controls">
               <span class="runtime-status" id="runtime-status">Runtime</span>
               <button class="ghost runtime-reset-btn" id="runtime-reset-btn" type="button">Restart runtime</button>
@@ -1100,7 +1195,7 @@
             <div class="notebook-cells" id="notebook-cells">
               <section class="notebook-cell" data-cell-id="1">
                 <div class="notebook-cell-gutter">
-                  <button class="notebook-cell-run" id="run-btn" type="button" aria-label="Run cell 1" data-dd-info="runner">▶</button>
+                  <button class="notebook-cell-run" id="run-btn" type="button" aria-label="Run cell 1">▶</button>
                   <span class="notebook-cell-exec" aria-label="Not run">[ ]</span>
                 </div>
                 <div class="notebook-cell-main">
@@ -1163,18 +1258,26 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=3"></script>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=23"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
        bindings, which do not exist until that script has evaluated. -->
   <script src="guest-session.js?v=2"></script>
+  <!-- Test users (@P, 2026-08-23). Seth demos the app and hands someone a clean,
+       named learner state without losing his own; each test user is a REAL
+       backend account minted the way guest-session.js mints a guest. AFTER
+       guest-session.js because switching identity rewrites the same
+       auth_token/auth_email that file owns, and test-users.js MUST precede
+       test-users-ui.js — the UI reads the store at IIFE-eval time. -->
+  <script src="test-users.js?v=1"></script>
+  <script src="test-users-ui.js?v=1"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=7"></script>
+  <script src="infotips-registry.js?v=9"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -1213,7 +1316,7 @@ t.manual_seed(0)
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=19"></script>
+  <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=11"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
@@ -1228,12 +1331,22 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=34"></script>
+  <script src="practice/ui.js?v=35"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <script src="practice/api.js?v=21"></script>
-  <script src="practice/timer.js?v=17"></script>
+  <script src="practice/timer.js?v=18"></script>
   <script src="practice/kernel.js?v=4"></script>
+  <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
+       behind a transparent-text textarea, plus name-only ghost autocomplete.
+       BEFORE runner.js, whose installCodeEditorKeys hangs both attaches off
+       the editor it just wired — and both are optional-chained there, so a
+       missing script here leaves a plain working textarea rather than an
+       error. 🔴 The overlay's metrics are SHARED with .code-editor in
+       styles/practice/editor.css: never restate a font, padding or border in
+       one without the other or the overlay drifts off its textarea. -->
+  <script src="practice/code-highlight.js?v=1"></script>
+  <script src="practice/code-complete.js?v=1"></script>
   <script src="practice/runner.js?v=21"></script>
   <script src="practice/notebook.js?v=7"></script>
   <script src="practice/notebook-editor.js?v=1"></script>
@@ -1243,8 +1356,15 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=12"></script>
-  <script src="practice/notch-menu.js?v=2"></script>
+  <script src="practice/stage-ladder.js?v=13"></script>
+  <script src="practice/notch-menu.js?v=4"></script>
+  <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
+       + window.deltaKcReadinessInfo); session-idle.js paints the dial and
+       proxies Continue practicing to the hidden resume/start buttons. AFTER
+       timer.js, whose `hasPausedSession()` decides which of those two the one
+       button means, and after notch-menu.js for no reason but reading order. -->
+  <script src="practice/readiness.js?v=3"></script>
+  <script src="practice/session-idle.js?v=5"></script>
   <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->

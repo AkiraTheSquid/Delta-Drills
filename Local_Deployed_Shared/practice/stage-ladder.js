@@ -424,19 +424,28 @@ const StageLadder = (() => {
     _renderCallout(pct);
   };
 
-  /* The reading, as a tab standing ON the bar at the fill's leading edge:
-     "38% understanding of concept array reshape".
+  /* The reading, as a pop-up standing OFF the bar and pointing down at the
+     fill's leading edge: "38% understanding of concept array reshape".
 
-     It has been under the bar and it has been a caption; it is a tab now,
-     rounded on top and open at the bottom, so it is attached to the track
-     rather than floating over it. That is also why there is no arrow to
-     place any more — a tab whose foot is on the bar is already pointing at
-     the position it stands on.
+     It has been a caption under the strip, a box under the bar, and a tab
+     welded to the bar's top edge. The tab was wrong: a shape sharing an edge
+     with the track reads as part of the track — a lumpy taller bar rather
+     than a label about one position on it. So it is detached again, with its
+     arrow back, on the top side where it cannot reach `#practice-notch`.
 
-     Centred on the fill edge, except within a hair of either end, and then
-     nudged back inside the strip by measurement — the thresholds are a guess
-     at where a label runs out of room and cannot be more than a guess,
-     because the label carries a concept NAME. */
+     Two placements happen here, and they are NOT the same number:
+
+       the BOX  — centred on the fill edge, except within a hair of either
+                  end, then nudged back inside the strip by measurement. The
+                  thresholds are a guess at where a label runs out of room and
+                  cannot be more than a guess, because the label carries a
+                  concept NAME.
+       the ARROW — the fill edge itself, in the box's own coordinates, written
+                  as `--dd-callout-arrow-x`. 🔴 The instant the clamp bites
+                  (and near 0% or 100% it always does) the box's centre is no
+                  longer the position being described, so an arrow parked at
+                  50% points somewhere the learner is not. It has to be aimed
+                  AFTER the box has finished moving. */
   const _renderCallout = (pct) => {
     const meter = _el("stage-ladder-meter");
     const callout = _el("stage-ladder-callout");
@@ -490,16 +499,44 @@ const StageLadder = (() => {
           : 0;
       if (dx) callout.style.transform = `translateX(calc(-${shift}% + ${dx.toFixed(2)}px))`;
     }
+
+    /* Aim the arrow. Re-measured rather than derived from `shift`/`dx`,
+       because those describe where the box was ASKED to go and this has to
+       describe where it ENDED UP — `max-width: 100%` can also change the
+       box's width between the two reads.
+
+       The tip is pulled in from the corners by the pop-up's border radius,
+       which is the point past which an arrow stops looking attached to
+       anything. When the fill edge is further out than that — 0% and 100%,
+       mostly — the arrow stops at the corner and the box, already flush with
+       the end of the strip, is what carries the last few pixels of meaning. */
+    const track = _el("stage-ladder-bar");
+    const aimed = callout.getBoundingClientRect();
+    if (track && aimed.width) {
+      /* 🔴 The fill's own box is NOT the thing to measure: `transition: width`
+         means that immediately after the write it is still at the PREVIOUS
+         reading, and the arrow would spend 400ms pointing at where the
+         learner used to be. Derive the edge from the track instead.
+         `clientLeft`/`clientWidth` are the bar's border width and its
+         padding-box width — the box the fill is actually laid out in — so
+         this stays exact if the track's border ever changes. */
+      const rect = track.getBoundingClientRect();
+      const edge = rect.left + track.clientLeft + (track.clientWidth * pct) / 100;
+      const inset = Math.min(11, aimed.width / 2);
+      const ax = Math.max(inset, Math.min(aimed.width - inset, edge - aimed.left));
+      callout.style.setProperty("--dd-callout-arrow-x", `${ax.toFixed(2)}px`);
+    }
   };
 
   /* 🔴 THIS MODULE NO LONGER TOUCHES THE SESSION NOTCH, and the absence is
      load-bearing. While the reading hung UNDER the bar it overhung the top of
      the split and could land on `#practice-notch`, so it measured both and
-     wrote `--dd-notch-dx` to push the notch aside. The reading is a tab on
-     TOP of the bar now: it lives inside the strip, above the split entirely,
-     and cannot collide with anything down there. If the reading is ever moved
-     back below the bar, that collision comes back with it — the notch is
-     wider than it was, because it carries the countdown now.
+     wrote `--dd-notch-dx` to push the notch aside. The reading is a detached
+     pop-up ABOVE the bar now: arrow and all, it lives inside the strip, above
+     the split entirely, and cannot collide with anything down there. Round 5
+     gave it its arrow back but NOT its old side — if the reading is ever
+     moved back below the bar, that collision comes back with it, and the
+     notch is wider than it was because it carries the countdown now.
      (styles/practice/notch-menu.css, practice/notch-menu.js.) */
 
   /* The rung's own promise, withdrawn when the page does not keep it.

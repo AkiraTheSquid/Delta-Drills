@@ -140,7 +140,9 @@
 /* .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
    needs hiding when the workspace is hosted here. */
 .diagnostic-workspace-host .session-setup { display: none; }
-.diagnostic-workspace-host .practice-container { height: calc(100vh - 56px - 92px); }
+/* The 56px was the topbar's height written out by hand; it is 44px now and
+   the token is the only place that number lives (styles/layout.css). */
+.diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h) - 92px); }
 .diagnostic-workspace-host .practice-split { display: flex; }
 
 /* Per-probe countdown, injected into the placement badge by

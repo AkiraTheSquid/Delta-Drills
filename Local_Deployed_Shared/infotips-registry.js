@@ -19,73 +19,21 @@
    ================================================================ */
 
 window.DD_INFOTIPS = {
-  /* ---- Tabs -------------------------------------------------------- */
-  "tab.why-this-app": {
-    title: "Why this app exists",
-    body: "The landing page: what Delta Drills is, and what sets it apart from LeetCode, Khan Academy, or a chatbot tutor.",
-  },
-  "tab.how-to-use": {
-    title: "How to use it",
-    body: "The three steps: take the placement test, live on the <strong>Practice</strong> tab, and let the app hand you the real ARENA exercise when you're ready.",
-  },
-  "tab.knowledge-graph": {
-    title: "Knowledge Graph",
-    body: "A map of every skill and what depends on what. Use it to see why something is locked and what unlocking it opens up. <strong>Practice</strong> picks from this map for you.",
-  },
-  "tab.courses": {
-    title: "Course content",
-    body: "The ARENA curriculum this app drills you for — every chapter and section, each one linking out to the original notebook.",
-  },
-  "tab.practice": {
-    title: "Practice",
-    body: "Your adaptive queue. The app chooses each next problem from what you're ready for, so you just answer.",
-  },
-  "tab.notebooks": {
-    title: "Notebooks",
-    body: "A whole lesson as one runnable notebook — the same cells the Colab edition publishes, on one live Python session on the server.",
-  },
-  "tab.targeted-practice": {
-    title: "Targeted Practice",
-    body: "You pick the skill instead. Search ARENA exercises, choose the ones you want, and drill only those.",
-  },
-  "tab.account": {
-    title: "Account",
-    body: "Who you're signed in as, your GitHub fork for Colab persistence, and the developer settings behind <strong>Advanced</strong>.",
-  },
-  "tab.split-tool": {
-    title: "Split Tool",
-    body: "An internal utility that cuts a PDF into chapters. Not part of the learning surface.",
-  },
-
   /* ---- App chrome -------------------------------------------------- */
-  "guest-banner": {
-    title: "Guest mode",
-    body: "Everything works signed out, but progress lives in <strong>this browser only</strong>. Continue with Google to keep it across devices.",
-  },
-  "topbar-auth": {
-    title: "Signed in",
-    body: "The account your progress is being saved to. Mastery follows the account, not the browser.",
-  },
-  // Key stays `tab.diagnostic` — `data-dd-info` matches on the KEY, and the
-  // route/ids are still `diagnostic`. Only the words changed.
-  "tab.diagnostic": {
-    title: "Placement test",
-    body: "A test that jumps between different topics in order to determine what concepts you need to learn for PyTorch. Separate from normal practice; it seeds where practice starts and cannot award mastery.",
-  },
+  /* 🔴 NO `tab.*` KEYS. Every tab used to carry one, and the ten dots they
+     rendered were the loudest half of "there's information icons literally
+     everywhere" (Seth, 2026-08-23). A tab's name is already the shortest
+     description of that tab, and the two tabs that needed more than a name —
+     Why This App Exists, How to use it — are entire pages of exactly that.
+     Deleting the dots also straightened the active underline, which had been
+     spanning the label while the eye read label+dot as the tab.
+     `watch.py::check_infotips` asserts no `.tab-info` comes back. */
   "tp-banner": {
     title: "Targeted Practice mode",
     body: "Shown whenever a targeted session is running: questions come from the exercises you chose, not the adaptive queue. End it here to go back to normal Practice.",
   },
 
   /* ---- Practice: setting up ---------------------------------------- */
-  "session-setup": {
-    title: "Session setup",
-    body: "Decide the block before you start — how many questions, and how long you get to answer and to review each one. Once it's running the timers are strict.",
-  },
-  "session-resume": {
-    title: "Resume a session",
-    body: "<strong>Pause &amp; exit</strong> keeps the exact question you were on. This brings it back rather than starting over.",
-  },
   "self-report": {
     title: "Starting point",
     body: "A prior, not a placement: it only sets where the queue <em>begins</em>. Your answers move it either way within a few questions.",
@@ -123,10 +71,6 @@ window.DD_INFOTIPS = {
     title: "Concept understanding",
     body: "BKT estimate for this concept. Tier says whether mapping is measured or borrowed from its topic; coverage says how much rests on atoms you have attempted.",
   },
-  "session-status": {
-    title: "Session status",
-    body: "Where you are in the block, which phase you're in, and the countdown. Answer time auto-submits; review time loads the next problem.",
-  },
 
   /* ---- Practice: the problem --------------------------------------- */
   /* No `concept-topbar`, `stage-dots`, `difficulty` or `competency-bar` keys.
@@ -138,41 +82,9 @@ window.DD_INFOTIPS = {
   // "cold-start" removed 2026-08-23 with #cold-start-badge. (Its copy was also
   // stale: it described the fixed-ramp calibration that was replaced by
   // adaptive-from-question-1 selection.)
-  "question-id": {
-    title: "Problem ID",
-    body: "The stable identifier for this problem. Click to copy it — worth quoting when reporting something broken.",
-  },
-  "graph-jump": {
-    title: "See in knowledge graph",
-    body: "Opens the concept this problem is tagged to, so you can check the tutor's choice against the map it claims to be following.",
-  },
-  "question-imports": {
-    title: "Imported helpers",
-    body: "Names already defined for you in the sandbox. Use them directly — you don't need to write or import them.",
-  },
-  "question-visual": {
-    title: "Target image",
-    body: "What your code is supposed to produce. Run yours and compare against it.",
-  },
   "torch-colab": {
     title: "PyTorch drills run in Colab",
     body: "The in-browser sandbox can't <code>import torch</code> inside the time limit, so this one opens as a notebook. Work it there, then tell us how it went.",
-  },
-  hints: {
-    title: "Hints",
-    body: "A nudge toward the idea, not the answer. Taking one is recorded and counts as partial help when your mastery is updated.",
-  },
-  "submit-area": {
-    title: "Submit, skip, or say so",
-    body: "<strong>Submit</strong> grades your code. <strong>Skip</strong> records nothing at all. During placement, <strong>I don't know yet</strong> is faster and more honest than guessing.",
-  },
-  editor: {
-    title: "Code editor",
-    body: "Write your solution here. It runs in a Python sandbox in your browser — nothing is sent anywhere to be executed.",
-  },
-  runner: {
-    title: "Run",
-    body: "Executes your code and prints the result below, as many times as you like. Running is not submitting and is never graded.",
   },
 
   /* ---- Practice: after you answer ---------------------------------- */
@@ -180,28 +92,8 @@ window.DD_INFOTIPS = {
     title: "How far off was the difficulty?",
     body: "Difficulty is aimed by your mastery; this says how well that aim landed and steers the next problem. <strong>About right</strong> is the safe default.",
   },
-  "missed-fact": {
-    title: "Missed one specific thing",
-    body: "Separates “I forgot a single detail” from “this was too hard”, so one missed fact doesn't drag the whole difficulty estimate down.",
-  },
-  "problem-flags": {
-    title: "Report a problem",
-    body: "Flags the <em>content</em>, not your answer — broken, unclear, wrong image. It doesn't affect your score.",
-  },
   /* Legacy `ewma-accuracy` class now hosts scoped KC understanding. Difficulty
      stays text under ladder; it is not another progress track. */
-  solution: {
-    title: "Solution",
-    body: "The worked answer, revealed after you submit. Read it even when you were right — the shorter route is often the point.",
-  },
-  "ai-explanation": {
-    title: "AI explanation",
-    body: "An on-demand walkthrough of this specific problem and your attempt at it.",
-  },
-  tutor: {
-    title: "Tutor",
-    body: "Follow-up chat about the problem you just finished. It already has the question, your code, the canonical solution, and the explanation above — so ask the next question, not the whole story again. The thread resets with each new problem.",
-  },
 
   /* ---- Knowledge graph --------------------------------------------- */
   "kg-map": {
@@ -226,27 +118,15 @@ window.DD_INFOTIPS = {
   },
 
   /* ---- Courses ------------------------------------------------------ */
-  "courses-about": {
-    title: "What this app is for",
-    body: "Delta Drills exists to get you through <strong>one</strong> curriculum — ARENA. Below is that curriculum in order: open a chapter for its sections, and each section links out to Callum McDougall's original Colab notebook.",
-  },
   "github-username": {
     title: "GitHub username",
     body: "Fork <code>ARENA_3.0</code> and paste your handle here, and Colab links open <strong>your</strong> fork — so notebooks you save come back next time. Leave blank for the read-only upstream copy.",
   },
 
   /* ---- Account ------------------------------------------------------ */
-  "account-identity": {
-    title: "Identity",
-    body: "The email this progress is saved under. <strong>Guest</strong> means it's in this browser only.",
-  },
   "account-mode": {
     title: "Advanced mode",
     body: "Off, the app is just the drills: <strong>Practice</strong> and the <strong>Diagnostic</strong>. On, it also shows the machinery behind them — the knowledge graph, the ARENA course content, the notebooks and targeted practice. Nothing is deleted either way; the toggle only changes which tabs are in the nav.",
-  },
-  "account-theme": {
-    title: "Theme",
-    body: "Changes the colours only — every page, tab and drill is identical in all three. <strong>Blue</strong> is the palette the app has always had and is what you get if you never touch this. <strong>Dark</strong> is a neutral grey, close to a Colab notebook. <strong>Light</strong> is the same app on white. The choice is stored in this browser, so it follows the browser rather than the account.",
   },
   "account-advanced": {
     title: "Advanced settings",

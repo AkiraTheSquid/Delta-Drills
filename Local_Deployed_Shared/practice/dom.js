@@ -2,12 +2,14 @@
    PRACTICE DOM — element references
    ================================================================ */
 
-// Resumable-session controls (setup/resume panel + in-session status; timer.js)
+/* Resumable-session controls (the idle panel + in-session status; timer.js).
+
+   🔴 The three setup INPUTS are gone (2026-08-23) — #session-question-count,
+   #session-answer-time and #session-review-time. The learner does not set the
+   clock: both allowances are constants in timer.js, per question, and a block
+   has no length. #session-time-estimate went with them; there is nothing left
+   to estimate. #session-end-btn went too — pause is the only way out. */
 const sessionSetupPanel = document.getElementById("practice-session-setup");
-const sessionQuestionCountInput = document.getElementById("session-question-count");
-const sessionAnswerTimeInput = document.getElementById("session-answer-time");
-const sessionReviewTimeInput = document.getElementById("session-review-time");
-const sessionTimeEstimate = document.getElementById("session-time-estimate");
 const sessionStartBtn = document.getElementById("session-start-btn");
 const sessionSummary = document.getElementById("session-summary");
 const sessionResumePanel = document.getElementById("session-resume-panel");
@@ -19,7 +21,12 @@ const sessionProgressLabel = document.getElementById("session-progress");
 const sessionPhaseLabel = document.getElementById("session-phase");
 const sessionCountdown = document.getElementById("session-countdown");
 const sessionPauseBtn = document.getElementById("session-pause-btn");
-const sessionEndBtn = document.getElementById("session-end-btn");
+// The idle screen: the readiness dial, its caption, and the one button back in.
+const sessionContinueBtn = document.getElementById("session-continue-btn");
+const readinessDial = document.getElementById("readiness-dial");
+const readinessPct = document.getElementById("readiness-pct");
+const readinessCaption = document.getElementById("readiness-caption");
+const readinessDetail = document.getElementById("readiness-detail");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");

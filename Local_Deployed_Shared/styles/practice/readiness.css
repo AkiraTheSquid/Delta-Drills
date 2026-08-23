@@ -1,0 +1,109 @@
+/* ================================================================
+   THE READINESS DIAL — the whole of the Practice tab's idle screen.
+
+   One ring, one percentage, one sentence, one button. It replaced a panel
+   of three inputs and a total-time estimate on 2026-08-23; the learner does
+   not set the clock any more, so the only thing worth showing between blocks
+   is how far through the map they are.
+
+   The ring is a CONIC GRADIENT with a hard stop at `--dd-ready-pct`,
+   masked to an annulus by a smaller disc drawn on top (`::after`). No SVG
+   and no canvas: the fill is one custom property, so
+   practice/session-idle.js writes a number and nothing re-lays-out.
+   ================================================================ */
+
+.session-readiness {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.readiness-dial {
+  --dd-ready-pct: 0;
+  /* The ring's own thickness, so the mask below can be derived from it
+     rather than from a second magic number that drifts out of step. */
+  --dd-ready-ring: 12px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--accent-text) 0turn,
+    var(--accent-text) calc(var(--dd-ready-pct) * 1% ),
+    rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k))) calc(var(--dd-ready-pct) * 1%),
+    rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k))) 1turn
+  );
+  transition: none;
+}
+
+/* The hole. A real element rather than a radial-gradient mask so it can carry
+   the card's own background — a translucent hole over a conic gradient shows
+   the gradient through it, which reads as a second, dimmer ring. */
+.readiness-dial::after {
+  content: "";
+  position: absolute;
+  inset: var(--dd-ready-ring);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+/* 🔴 An UNREADABLE number is not a zero. When the registry could not be
+   fetched, session-idle.js paints "—" and adds this class; the ring goes flat
+   so a full-looking or empty-looking ring cannot be read as a measurement. */
+.readiness-dial--unknown {
+  background: rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k)));
+}
+
+.readiness-pct {
+  position: relative;
+  z-index: 1;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.readiness-caption {
+  margin: 16px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+}
+
+.readiness-detail {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  /* Reserve the line. It is written asynchronously (63 concepts, after a
+     fetch), and an empty element that grows a line later shifts the button
+     under the reader's cursor. */
+  min-height: 20px;
+}
+
+.session-continue-btn {
+  margin-top: 22px;
+  min-width: 220px;
+}
+
+@media (max-width: 720px) {
+  .readiness-dial {
+    --dd-ready-ring: 10px;
+    width: 140px;
+    height: 140px;
+  }
+
+  .readiness-pct {
+    font-size: 34px;
+  }
+}
+
+/* The dial is a progress READOUT, not an animation. Nothing here moves on its
+   own, so there is nothing for prefers-reduced-motion to turn off — noted so
+   the next person to add a fill transition remembers to guard it. */

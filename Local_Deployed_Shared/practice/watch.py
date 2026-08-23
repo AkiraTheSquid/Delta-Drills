@@ -24,7 +24,8 @@ from watch_common import (  # noqa: F401 — re-exported for anything importing 
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
 from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
-                              check_a_deleted_practice_notice_stays_deleted)
+                              check_a_deleted_practice_notice_stays_deleted,
+                              check_the_session_clock_is_not_the_learners_to_set)
 from watch_notebook import (
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
@@ -97,7 +98,12 @@ def check_public_api():
     assert 'releaseClock("problem-feedback-note")' in events
     index_html = read(os.path.join(SHARED, "index.html"))
     assert 'id="page-diagnostic"' in index_html and 'data-tab="diagnostic"' in index_html
-    assert 'class="tab has-info" data-tab="diagnostic"' in index_html
+    # Class TOKENS, not the literal attribute: the tab carried a `has-info`
+    # class while it had a sibling ⓘ (2026-08-07 → 2026-08-23), and an exact
+    # match broke on both the addition and the removal.
+    assert re.search(r'<button class="tab[^"]*" data-tab="diagnostic"', index_html), (
+        "the Placement test tab is no longer a plain .tab button"
+    )
     assert 'id="diagnostic-workspace-host"' in index_html
     assert "Continue diagnostic in Practice" not in index_html
     # An unfinished placement must not cost the learner the Practice tab.
@@ -743,6 +749,7 @@ if __name__ == '__main__':
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,
+              check_the_session_clock_is_not_the_learners_to_set,
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,

@@ -147,18 +147,17 @@
   border-radius: 5px;
 }
 .torch-colab-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-/* Account-tab token row + the top-bar logged-in indicator. */
+/* Account-tab token row. The `.topbar-auth*` block that used to sit here went
+   with its markup on 2026-08-23 — the signed-in email is off the topbar and on
+   the Account tab. Worth keeping the lesson it left behind, because it is
+   about this file and not about that element: app.js hid the indicator with
+   the `hidden` ATTRIBUTE, and a class rule in here setting `display` beats the
+   UA's `[hidden] { display: none }`, so the "signed in" dot showed to
+   signed-out guests for weeks. Any rule in this folder that sets `display` on
+   something JS hides by attribute or by `.hidden` owes itself the matching
+   override. */
 .dd-token-row { display: flex; gap: 8px; align-items: center; }
 .dd-token-row .text-input { flex: 1 1 auto; }
-.topbar-auth { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted); }
-/* app.js hides this with the `hidden` ATTRIBUTE (updateAuthIndicators), and a
-   class rule setting `display` beats the UA's `[hidden] { display: none }`.
-   Without this line the green "signed in" dot showed to signed-out guests —
-   the exact confusion the indicator was added to remove. Found 2026-08-07
-   when the ⓘ next to it turned up in a guest session. */
-.topbar-auth[hidden] { display: none; }
-.topbar-auth-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 6px var(--ok); }
-.topbar-auth-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* The COMPETENCY BAR's styles used to sit here: a phase heading, a mastery
    track and two gate marks (0.85 unlock, 0.95 mastered), shown in the

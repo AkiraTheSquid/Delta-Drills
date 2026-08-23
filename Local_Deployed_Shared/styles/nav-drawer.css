@@ -116,24 +116,16 @@ body.nav-open .nav-toggle-bars::after {
 
 /* ---- the topbar, in drawer mode ---------------------------------------- */
 
-/* `.topbar` is `justify-content: space-between` over its children, and with the
-   strip gone that would push the title to the middle. The title takes the slack
-   instead, so the row reads hamburger → title → account, left to right. */
+/* 🔴 BACK TO FLEX. Wide, `.topbar` is a `1fr auto 1fr` grid whose middle cell
+   is the centred tab strip (styles/layout.css) — but in drawer mode
+   nav-drawer.js MOVES that strip into #nav-drawer, and a grid with one child
+   gone drops the right-hand side into the middle column. Two children, one at
+   each end, is what this row actually is: level pill left, cog right. */
 body.nav-drawer-mode .topbar {
+  display: flex;
+  justify-content: space-between;
   padding: 0 14px;
   gap: 8px;
-}
-
-body.nav-drawer-mode .logo {
-  margin-right: auto;
-  overflow: hidden;
-  font-size: 16px;
-  text-overflow: ellipsis;
-}
-
-/* A build number is not worth a line of a 300px topbar. */
-body.nav-drawer-mode .version-tag {
-  display: none;
 }
 
 /* ---- the drawer -------------------------------------------------------- */
@@ -212,7 +204,7 @@ body.nav-drawer-mode.nav-open {
    hamburger sits in rather than floating a few pixels off it. */
 .nav-drawer-head {
   display: flex;
-  height: 56px;
+  height: var(--dd-topbar-h);
   align-items: center;
   justify-content: space-between;
   padding: 0 10px 0 18px;
@@ -253,33 +245,26 @@ body.nav-drawer-mode.nav-open {
 
 /* ---- the moved tab strip ----------------------------------------------- */
 
-/* A grid, not a column, and the reason is the ⓘ dots. The markup alternates
-   `<button class="tab">` and its `<button class="dd-info tab-info">`, so a
-   two-column grid with automatic row placement puts each tab in column 1 and
-   its own dot in column 2, on the same row — without touching the markup or
-   wrapping each pair in a div (which would break `.tabs > *` assumptions and
-   the NodeLists app.js already holds).
-
-   This survives the hidden states because a tab and its dot are always hidden
-   TOGETHER: they carry the same `.auth-only`/`.guest-only` class, and
-   `updateTabVisibility` toggles `.hidden` on both. A `display: none` grid item
-   is skipped by auto-placement, so the surviving pairs stay aligned. Hiding
-   one half alone would shift every row below it — do not give a dot a
-   different visibility rule from its tab. */
+/* A plain column now. This was a two-column grid so each tab's sibling ⓘ
+   landed on the tab's own row; the ⓘ dots were deleted on 2026-08-23 and the
+   second column went with them. `overflow-x` and `align-self` come from the
+   topbar rule in layout.css and are both wrong here — in the drawer the strip
+   is a full-width list that scrolls VERTICALLY with the drawer body. */
 body.nav-drawer-mode .nav-drawer .tabs {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-self: auto;
   height: auto;
   margin: 0;
   padding: 8px 0 14px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: stretch;
+  overflow-x: visible;
 }
 
-/* `.tab` is a 56px-tall flex row with a bottom border in the topbar; here it is
+/* `.tab` fills the bar's height with a bottom border in the topbar; here it is
    a full-width list item with the accent on its leading edge. `flex: 0 0 auto`
    and `white-space: nowrap` come from layout.css and both have to go — in a
-   272px drawer there is room to wrap, and "Why This App Exists" on one line
-   would push the ⓘ column off the edge. */
+   272px drawer there is room to wrap, and "Why This App Exists" would
+   otherwise run off the edge on one line. */
 body.nav-drawer-mode .nav-drawer .tab {
   height: auto;
   padding: 12px 6px 12px 17px;
@@ -304,13 +289,6 @@ body.nav-drawer-mode .nav-drawer .tab.active {
 body.nav-drawer-mode .nav-drawer .tab:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
-}
-
-/* The dot rides its row rather than the top of it, and keeps a comfortable
-   right margin so it is not flush against the drawer edge. */
-body.nav-drawer-mode .nav-drawer .tab-info {
-  align-self: center;
-  margin-right: 14px;
 }
 
 /* ---- the switch -------------------------------------------------------- */

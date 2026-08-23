@@ -141,12 +141,10 @@
   if (closeBtn) closeBtn.addEventListener("click", () => setOpen(false));
 
   /* Picking a destination closes the menu — leaving it open would hide the page
-     it just navigated to behind the scrim. The ⓘ dots are excluded and that is
-     deliberate: `.tab-info` is a different class on a sibling button, it opens
-     an explanation of the tab you are standing on, and closing the drawer under
-     it would dismiss the thing the reader just asked for. `closest(".tab")`
-     already makes that distinction — the dots carry `.dd-info.tab-info`, never
-     `.tab`. */
+     it just navigated to behind the scrim. `closest(".tab")` rather than a
+     bare listener because the strip used to carry a sibling ⓘ per tab (deleted
+     2026-08-23), and it is still the right test: only a real tab navigates, so
+     only a real tab should dismiss the drawer. */
   nav.addEventListener("click", (event) => {
     if (!body.classList.contains("nav-drawer-mode")) return;
     if (event.target.closest(".tab")) setOpen(false);

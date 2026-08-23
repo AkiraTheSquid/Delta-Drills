@@ -112,6 +112,9 @@ Consequences worth knowing:
 
 ## UI layout note
 
+- **The topbar is chrome and nothing else** (2026-08-23). No brand line, no version tag, no signed-in email: the tab strip owns the right edge, the level pill sits on the left beside the hamburger, and `.logo` survives only as an empty flexible spacer that `nav-drawer.js` needs below 900px. The bar's height is `--dd-topbar-h` in `styles/layout.css` — 🔴 set it there, not as a literal, because `#page-practice` and `.nav-drawer-head` size themselves against it.
+- ⚠️ **`.footer` is styled and never rendered.** `styles/layout.css` has a fixed 40px `.footer` rule and no `<footer>` element exists anywhere in `index.html`. `#page-practice` used to subtract 40px for it, which drew a strip of bare page background under the practice tab; that reserve is gone. The rule is left in place — deleting it is a separate call — but nothing should size itself against it.
+
 - The root UI is now the primary interface (served at `/home/stellar-thread/Applications/Delta-Drills-Local/index.html`).
 - The previous `frontend/` UI has been moved into `/home/stellar-thread/Applications/Delta-Drills-Local-Backups/ui-legacy-20260215-110811/frontend/` as a snapshot.
 
@@ -157,6 +160,30 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+
+- **2026-08-23 — the topbar is a three-column grid, and 28 ⓘ dots are gone.**
+  `index.html`, `app.js`, `nav-drawer.js`, `infotips-registry.js`,
+  `styles/{layout,nav-drawer,infotips,xp}.css`, `watch.py`.
+  🔴 `.topbar` is `grid-template-columns: 1fr auto 1fr`: two EQUAL side columns
+  with the tab strip in the `auto` column between them, which is the only way
+  it is actually centred on the viewport — `justify-content: space-between`
+  centres the middle child only when the outer two happen to match, and they
+  never do. Measured at 0.00px error signed out and with all ten tabs showing.
+  Source order IS the layout (level pill → strip → cog), and `.logo`, the empty
+  spacer that outlived the brand line, is deleted: an extra child in a
+  three-column grid displaces the centred strip into a side column.
+  The right edge is one cog (`#topbar-cog`), wired through app.js's existing
+  `[data-goto-tab]` hook. Drawer mode (<900px) puts the row back to flex,
+  because `nav-drawer.js` MOVES the strip out and a grid with one child gone
+  drops the right-hand side into the middle.
+  **The ⓘ cull**: 51 dots → 23. All ten tab dots plus 18 controls whose own
+  label already said what they did (Show hint, Submit, Code Editor, Run,
+  Solution, Tutor, the guest banner, …). What stayed is the jargon — mastery
+  tiers, the ladder rungs, the ARENA unlock, the graph legend, the placement
+  clock, the developer fields. 🔴 Deleting the tab dots is also what
+  straightened the active underline: `.tab`'s `border-bottom` spans the label,
+  and the eye had been reading label+dot as the tab.
+  `watch.py::check_infotips` was inverted to assert the dots stay gone.
 
 - **2026-08-23 — the landing story is now two tabs.** `index.html`,
   `infotips-registry.js`, `styles/how-it-works.css`. "Why This App Exists"

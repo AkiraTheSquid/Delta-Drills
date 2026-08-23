@@ -14,6 +14,89 @@ import sys
 from watch_common import HERE, SHARED, read
 
 
+def check_the_session_clock_is_not_the_learners_to_set():
+    """Fixed per-QUESTION allowances, pause/resume only, and a notch that stays.
+
+    Four halves of one 2026-08-23 decision, and each one comes undone on its
+    own without anything else here failing:
+
+      1. The two allowances are constants in timer.js. Putting them back on the
+         snapshot, or back behind an input, is how "predetermined" quietly
+         stops being true — and a v2 snapshot that carries `answerSecs` again
+         would resume a question under a clock this build never set.
+      2. A block has no LENGTH. `shouldFinishInsteadOfAdvance` returning a
+         quota comparison again reinstates a session that ends on its own,
+         which is the thing pause replaced.
+      3. There is no End session — not the button, not the handler, not the
+         menu item. Pause is the only way out.
+      4. The notch outlives the session, so it hangs off `.practice-container`
+         and not off `.practice-split` (which is display:none between blocks).
+         This one is pure DOM order: nothing throws when it regresses, the
+         notch simply is not on the idle screen.
+    """
+    timer = read(os.path.join(HERE, "timer.js"))
+    for name in ("ANSWER_SECS", "REVIEW_SECS"):
+        assert re.search(rf"const {name} = \d+;", timer), (
+            f"timer.js lost {name} — the per-question allowance is settable again"
+        )
+    snapshot = timer.split("const _snapshot = () => {", 1)
+    assert len(snapshot) == 2, "timer.js::_snapshot is gone"
+    body = snapshot[1].split("\n  };", 1)[0]
+    for dead in ("answerSecs:", "reviewSecs:", "total:"):
+        assert dead not in body, (
+            f"_snapshot writes `{dead}` again. The clock is a constant and a "
+            f"block has no length; a snapshot carrying either resumes under "
+            f"rules this build does not enforce"
+        )
+    assert "const shouldFinishInsteadOfAdvance = () => false;" in timer, (
+        "a session quota is back — `shouldFinishInsteadOfAdvance` compares "
+        "again, so a block can end on its own instead of being paused"
+    )
+
+    index_html = read(os.path.join(SHARED, "index.html"))
+    for dead in ('id="session-end-btn"', 'id="practice-notch-end"',
+                 'id="session-question-count"', 'id="session-answer-time"',
+                 'id="session-review-time"'):
+        assert dead not in index_html, (
+            f"{dead} is back in index.html — the learner is setting the "
+            f"session again, or ending it early"
+        )
+    assert 'id="practice-notch-stop"' in index_html, (
+        "the notch lost its square. It is the pause control that is always on "
+        "screen; the menu item alone is two clicks for the only way out"
+    )
+    # The square is LEFT of the clock: it is the first thing in the tab after
+    # the screen-reader phase span, and the clock follows it.
+    tab = index_html.split('id="practice-notch-tab"', 1)[1].split("</div>", 1)[0]
+    stop_at = tab.find('id="practice-notch-stop"')
+    clock_at = tab.find('id="practice-notch-clock"')
+    assert -1 not in (stop_at, clock_at) and stop_at < clock_at, (
+        "the square is no longer to the LEFT of the clock in the notch tab"
+    )
+    # And the notch hangs off the container, so it survives the split going away.
+    container_at = index_html.find('<div class="practice-container">')
+    notch_at = index_html.find('id="practice-notch"', container_at)
+    split_at = index_html.find('<div class="practice-split">', container_at)
+    assert -1 not in (container_at, notch_at, split_at), "practice page lost a landmark"
+    assert notch_at < split_at, (
+        "#practice-notch is inside .practice-split again. The split is "
+        "display:none between sessions, so the notch would vanish with it — "
+        "and it has to stay, showing the allowance the next question gets"
+    )
+
+    # The idle screen reads a real number, and says so honestly when it cannot.
+    idle = read(os.path.join(HERE, "session-idle.js"))
+    assert "PracticeReadiness" in idle and "hasPausedSession" in idle, (
+        "session-idle.js no longer reads readiness, or decides resume-vs-start "
+        "from timer.js's own answer"
+    )
+    assert 'pctEl.textContent = "—"' in idle, (
+        "the idle screen renders an unreadable readiness as a number. A "
+        "registry that would not load is a claim about the network, not a 0% "
+        "claim about the learner"
+    )
+
+
 def check_invariants():
     for fname in ("README.md", "watch.py"):
         first = read(os.path.join(HERE, fname)).splitlines()[:1]

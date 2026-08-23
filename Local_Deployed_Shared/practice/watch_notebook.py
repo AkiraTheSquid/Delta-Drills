@@ -70,10 +70,15 @@ def check_the_notebook_view_is_loaded_after_what_it_calls():
         "python3 scripts/compile_web_notebooks.py"
     )
 
-    # The tab has an ⓘ like every other tab; watch.py's bidirectional infotip
-    # check enforces the pairing, this just names the key so a rename is loud.
-    registry = read(os.path.join(SHARED, "infotips-registry.js"))
-    assert '"tab.notebooks"' in registry, "infotips-registry.js lost the tab.notebooks entry"
+    # 🔴 The tab has NO ⓘ, and neither does any other tab — all ten dots were
+    # deleted on 2026-08-23 (Seth: "there's information icons literally
+    # everywhere"). This used to assert the `tab.notebooks` registry key
+    # existed; it asserts the tab itself instead, which is what this check was
+    # ever really about. watch.py::check_infotips guards the dots staying gone.
+    index_html = read(os.path.join(SHARED, "index.html"))
+    assert 'data-tab="notebooks"' in index_html, (
+        "index.html has no Notebooks tab — the view has no way in"
+    )
 
 
 def check_the_verdict_line_is_read_the_same_way_everywhere():

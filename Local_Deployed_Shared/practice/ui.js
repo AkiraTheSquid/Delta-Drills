@@ -222,14 +222,18 @@ function renderQuestionIdChip(q) {
   if (!questionIdChip) return;
   const id = stableQuestionId(q);
   if (!id) {
-    questionIdChip.textContent = "ID --";
+    questionIdChip.textContent = "No question ID";
     questionIdChip.disabled = true;
     questionIdChip.removeAttribute("data-question-id");
     return;
   }
   questionIdChip.disabled = false;
   questionIdChip.dataset.questionId = id;
-  questionIdChip.textContent = `ID ${id}`;
+  /* Reads as a menu item now, not a chip — it lives in the notch's three-dot
+     menu (index.html, .practice-notch-menu). The id is still in the label
+     because quoting it in a bug report is the whole point of the thing, and
+     out of the question row nothing is competing for the width. */
+  questionIdChip.textContent = `Copy question ID · ${id}`;
   questionIdChip.title = `Copy stable problem ID: ${id}`;
   questionIdChip.onclick = async () => {
     const value = `question_id=${id}`;
@@ -239,7 +243,9 @@ function renderQuestionIdChip(q) {
       }
       questionIdChip.textContent = "Copied";
       window.setTimeout(() => {
-        if (questionIdChip.dataset.questionId === id) questionIdChip.textContent = `ID ${id}`;
+        if (questionIdChip.dataset.questionId === id) {
+          questionIdChip.textContent = `Copy question ID · ${id}`;
+        }
       }, 900);
     } catch (_) {
       questionIdChip.textContent = `ID ${id}`;
@@ -260,7 +266,20 @@ function renderQuestion(q, count) {
     return;
   }
   practiceQuestionCount = count;
-  questionNumber.textContent = "Question " + practiceQuestionCount;
+  /* The heading names the CONCEPT under test, not the running question count
+     (Seth, 2026-08-23). "Question 21" is a number that only goes up; "Reshape,
+     ravel, and element order" is what the next ten minutes are about.
+
+     `ladder_kc_title` is the same string the stage ladder says out loud and it
+     comes from the same field practice/ladder.js reads, so the two can never
+     disagree. Two fallbacks, in order, because a KC-less item is a real case:
+     the subtopic, which is coarser but still the topic, and finally the count
+     — better a stale-feeling counter than a blank heading. */
+  const conceptHeading =
+    (q.ladder_kc_title || "").trim() ||
+    displaySubtopic(String(q.subtopic || "")).trim() ||
+    "Question " + practiceQuestionCount;
+  questionNumber.textContent = conceptHeading;
   renderQuestionBody(q);
   // Names the concept under test and, on the scaffolded rungs, puts the worked
   // example back on screen beside the problem. Must run AFTER renderQuestionBody
