@@ -94,6 +94,23 @@ window.DD_INFOTIPS = {
     title: "Time per question",
     body: "Every question in the placement test gets the same <strong>2:00</strong> — you don't set it, and it doesn't change with difficulty. When it runs out we submit whatever you've written, or record it as one you don't know yet, and move on.",
   },
+  /* ---- The four rungs, named inside the bar ------------------------ */
+  "ladder.lesson": {
+    title: "Lesson",
+    body: "The teaching page for this concept. You read the explanation and run the examples — there is no drill on this rung, and leaving it is what earns you one.",
+  },
+  "ladder.faded": {
+    title: "Faded",
+    body: "Most of the solution is already written and the part that <strong>uses this concept</strong> is blanked out. You supply that part. Get a run of them right and the scaffold comes off.",
+  },
+  "ladder.example": {
+    title: "Worked example",
+    body: "A solved example of the same idea sits above the problem. Read it, then write this one yourself — nothing is filled in for you.",
+  },
+  "ladder.solo": {
+    title: "Solo",
+    body: "No scaffold: the problem and nothing else. This is the top rung of the concept's ladder, and the bar stops here — the app decides the concept is <strong>learned</strong> from your record, not from arriving.",
+  },
   "stage-ladder-kc": {
     title: "Current concept",
     body: "Skill this problem targets. Click to open it on knowledge graph.",
@@ -101,10 +118,6 @@ window.DD_INFOTIPS = {
   "stage-ladder": {
     title: "Support ladder",
     body: "Four stages: Lesson, Faded, Worked example, Solo. Filled portion shows progress toward less support.",
-  },
-  "stage-ladder-difficulty": {
-    title: "Difficulty",
-    body: "Aim is where queue points now; problem rating is item difficulty. Both select practice. Neither is mastery.",
   },
   "concept-understanding": {
     title: "Concept understanding",

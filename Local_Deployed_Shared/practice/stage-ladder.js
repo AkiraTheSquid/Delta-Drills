@@ -33,16 +33,31 @@
    WHAT THIS BAR SAYS INSTEAD — one question, one answer.
 
    The ladder is the thing the learner actually moves along, so the ladder is
-   the bar. FOUR sections, always all four, drawn left to right in decreasing
-   support: Lesson, Faded, Worked example, Solo. The section you are on is
-   named ABOVE the track, in words, and lit on it. Sections behind you are
-   filled. Sections ahead are empty.
+   the bar. FOUR rungs, always all four, left to right in decreasing support:
+   Lesson, Faded, Worked example, Solo. The rung you are on is named ABOVE the
+   track, in words, and lit under it.
+
+   ONE BAR, CUT — not four bars in a row, which is how this was drawn until
+   2026-08-22. Each rung had its own bordered track and its own fill, and four
+   meters side by side read as four quantities when the learner is asking one:
+   how far into this concept am I. Now a single rounded track runs the width of
+   the strip, the fill crosses it end to end, and the rung boundaries are
+   chevron SEAMS punched out of it — sideways Vs pointing right, in the panel's
+   own colour, so the bar reads as four arrow segments of one track. The fill
+   crossing a seam is the promotion.
+
+   The percentage rides ABOVE the fill's leading edge and says what it is
+   measuring: "20% understanding of concept array reshape". A bare number over
+   a bar is the thing the four old bars were each doing, and it is why nobody
+   could tell them apart.
 
    🔴 THERE IS NO FIFTH SECTION, and "Integrated" was one for two days.
 
-   `solo` is the top rung — `kc_graph.LADDER_STAGES` has four names, the
-   promotion arithmetic reads them back, and `kc_is_learned` declares a concept
-   finished AT solo. `ladder_integrated` is not a rung and the backend says so
+   `solo` is the top rung — `kc_graph.LADDER_STAGES` has four names and the
+   promotion arithmetic reads them back. (Reaching it is not the same as being
+   done: `kc_is_learned` wants the BKT posterior over the concept or its whole
+   pool served, which is why the bar tops out at 75% — see `_overall`.)
+   `ladder_integrated` is not a rung and the backend says so
    twice in as many files (`practice_schemas.py`, `lessons.is_integrated`): it
    is a property of the PROBLEM — this one happens to use the concept beside
    others already taught — computed at serve time and stored nowhere, while the
@@ -67,7 +82,7 @@
    So the partial fill is `bound / threshold` and nothing else. Two rules come
    out of that and both are load-bearing:
 
-     - A section with no threshold gets NO partial fill. `lesson` is left by
+     - A rung with no threshold gets NO partial fill. `lesson` is left by
        reading the page and `solo` is the top of the per-concept ladder, so a
        progress fill on either would be a promise about a promotion that no
        number drives.
@@ -96,6 +111,18 @@ const StageLadder = (() => {
     { id: "example", label: "Worked example", blurb: "Read the solved example above it, then write this one yourself." },
     { id: "solo", label: "Solo", blurb: "No scaffold. You have earned it." },
   ];
+
+  /* The ⓘ beside each rung name. Keyed by DISPLAYED rung; the copy lives in
+     `infotips-registry.js` under these exact keys, and `watch.py`'s
+     `check_infotips` reads this file as one of its anchor sources so a rung
+     with no copy (or copy with no rung) fails there rather than opening an
+     empty panel in front of a learner. */
+  const INFO_KEY = {
+    lesson: "ladder.lesson",
+    faded: "ladder.faded",
+    example: "ladder.example",
+    solo: "ladder.solo",
+  };
 
   /* Backend stage -> displayed rung. The server's `worked` is the lesson screen
      (it is the rung at which `LessonGate` takes over and no drill is served);
@@ -155,13 +182,12 @@ const StageLadder = (() => {
 
   const _el = (id) => document.getElementById(id);
   const _index = (stage) => STAGES.findIndex((s) => s.id === stage);
-  const _fmt = (v) => (Number.isFinite(v) ? v.toFixed(1) : "--");
 
   /* The concept currently on screen. `stage` is cached rather than passed
      around because a promotion can land mid-screen with nothing else in hand,
      and the caption is redrawn from it long after `show` returned. */
-  let current = { kc: null, stage: null, support: undefined, bound: null,
-                  streak: null, streakNeeded: null, estStage: null,
+  let current = { kc: null, title: null, stage: null, support: undefined,
+                  bound: null, streak: null, streakNeeded: null, estStage: null,
                   integrated: false };
   /* The difficulty caption's two numbers, held so a mid-screen promotion can
      redraw the line without them being re-fetched — and so an aim that arrives
@@ -268,96 +294,288 @@ const StageLadder = (() => {
     return Math.max(0, Math.min(1, Math.max(...parts)));
   };
 
-  const _sectionsHtml = () => {
+  /* How far along the WHOLE ladder, 0..1 — the number the bar draws and the
+     callout says as a percentage.
+
+     Rungs behind the learner are cleared, the rung they are on is worth
+     `_progress()` of its own width, and the ladder has `STAGES.length` of
+     them. Equal widths are what lets the chevron seams sit at fixed quarters
+     and still mean something: the fill crossing a seam IS the promotion.
+
+     🔴 IT TOPS OUT AT (STAGES.length - 1) / STAGES.length, i.e. 75% on Solo,
+     and that is not an off-by-one. `_progress()` returns null on Solo because
+     no threshold sits above it — and `kc_is_learned` does NOT fire on arrival
+     at Solo either: it wants the BKT posterior over the concept, or its whole
+     question pool served. Neither number is in this payload, so the last
+     quarter is the honest empty one. Filling it on arrival would tell the
+     learner they were done with a concept the queue is still going to serve
+     them. */
+  const _overall = () => {
     const active = _index(current.stage);
-    const progress = _progress();
-    return STAGES.map((s, i) => {
-      const state = i < active ? "is-done" : i === active ? "is-active" : "is-todo";
-      // Only the active section carries a partial fill. A done section is
-      // whole by definition and a todo section has no record to draw.
-      const fill = i < active ? 1 : i === active && progress !== null ? progress : 0;
-      const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${s.blurb}`;
-      return (
-        `<li class="stage-seg ${state}" data-stage="${esc(s.id)}" title="${esc(title)}"` +
-        (i === active ? ' aria-current="step"' : "") +
-        ">" +
-        /* Label FIRST, and the bar under it. The section name is a caption
-           for its length of track, not a thing sitting on the line: with the
-           two overlaid, the five names read as five boxes and the ladder
-           stopped looking like one bar cut into sections. */
-        `<span class="stage-seg-label">${esc(s.label)}</span>` +
-        '<span class="stage-seg-bar">' +
-        `<span class="stage-seg-fill" style="width:${(fill * 100).toFixed(1)}%"></span>` +
-        "</span>" +
-        "</li>"
-      );
-    }).join("");
+    if (active < 0) return null;
+    const partial = _progress();
+    return (active + (partial === null ? 0 : partial)) / STAGES.length;
   };
 
-  /* The rung's name and what it asks of the learner, ABOVE the track.
+  /* The seams: one per boundary BETWEEN rungs, so `STAGES.length - 1` of them
+     at fixed fractions. Injected rather than written into index.html so a
+     fifth rung — if the ladder ever grows one — cannot leave three cuts on a
+     five-part bar. */
+  const _seamsHtml = () =>
+    STAGES.slice(1)
+      .map((s, i) => {
+        const at = ((i + 1) / STAGES.length) * 100;
+        return `<span class="stage-ladder-seam" style="left:${at.toFixed(4)}%"></span>`;
+      })
+      .join("");
+
+  /* One rung's cell: the name, and the ⓘ that explains it.
+
+     🔴 THE DOT IS HAND-WRITTEN, not left to infotips.js to inject. Its scanner
+     mints a dot beside any `[data-dd-info]` anchor — but it skips elements
+     that ARE dots (`.dd-info`), and it only sweeps the ones it generated
+     itself, so writing the button here is supported and is the only way the
+     two label layers can stay pixel-identical: an asynchronously injected dot
+     would appear in one layer and not the other, and the clip would then show
+     two different label widths through the same window.
+
+     `interactive` is false for the clipped copy. Same box, same glyph, no key
+     — without a `data-dd-info` the scanner does not see it at all, and the
+     layer is `aria-hidden` + `pointer-events: none` so the copy is invisible
+     to both the reader and the mouse. */
+  const _cellHtml = (s, i, active, interactive) => {
+    const state = i < active ? "is-done" : i === active ? "is-active" : "is-todo";
+    const title = `Step ${i + 1} of ${STAGES.length} — ${s.label}. ${s.blurb}`;
+    const dot = interactive
+      ? `<button class="dd-info stage-seg-info" type="button" data-dd-info="${esc(INFO_KEY[s.id])}"` +
+        ` aria-expanded="false" aria-label="What is ${esc(s.label.toLowerCase())}?">i</button>`
+      : '<span class="dd-info stage-seg-info" aria-hidden="true">i</span>';
+    return (
+      `<li class="stage-seg ${state}" data-stage="${esc(s.id)}"` +
+      (interactive ? ` title="${esc(title)}"` : "") +
+      (interactive && i === active ? ' aria-current="step"' : "") +
+      `><span class="stage-seg-label">${esc(s.label)}</span>${dot}</li>`
+    );
+  };
+
+  const _trackHtml = (interactive) => {
+    const active = _index(current.stage);
+    const cls = interactive ? "stage-ladder-track--base" : "stage-ladder-track--on";
+    return (
+      `<ol class="stage-ladder-track ${cls}"` +
+      (interactive ? ' aria-label="Scaffold stage"' : ' aria-hidden="true"') +
+      ">" +
+      STAGES.map((s, i) => _cellHtml(s, i, active, interactive)).join("") +
+      "</ol>"
+    );
+  };
+
+  /* The rung names sit INSIDE the track, and a name inside a bar that fills
+     underneath it has a contrast problem no single colour solves: at 38% the
+     word "Faded" is half over the accent and half over the empty track, and in
+     the light theme those two grounds are on opposite sides of black.
+
+     So the whole row is drawn TWICE, stacked. The base layer is coloured for
+     the EMPTY track; the copy on top is coloured for the FILL and clipped to
+     exactly the filled width, so every pixel of every glyph is painted in the
+     colour that suits the ground behind that pixel. `--dd-ladder-pct` on the
+     bar is what the clip reads, so the two cannot drift apart — the same trick
+     the level pill uses for its label (styles/xp.css).
+
+     A cheaper version — one layer, colour chosen per label from whether its
+     CENTRE is inside the fill — was the first attempt and is wrong exactly
+     where it matters: the fill's leading edge spends most of its life crossing
+     a label, which is the moment that label becomes unreadable. */
+  const _renderMeter = () => {
+    const meter = _el("stage-ladder-meter");
+    if (!meter) return;
+    const overall = _overall();
+    meter.hidden = overall === null;
+    if (overall === null) return;
+
+    const pct = overall * 100;
+    const bar = _el("stage-ladder-bar");
+    if (bar) {
+      /* Rebuilt only when the RUNG changes, which is what the labels depend
+         on. Within one rung a graded answer moves the width and nothing else,
+         and a fill element replaced on every reading is born at its final
+         width — `transition: width` then has no value to animate from and the
+         one moment the bar must visibly move is a jump cut. */
+      const sig = `${current.stage}|${STAGES.length}`;
+      if (bar.dataset.ladderSig !== sig) {
+        bar.innerHTML =
+          '<span class="stage-ladder-fill"></span>' +
+          _seamsHtml() +
+          _trackHtml(true) +
+          _trackHtml(false);
+        bar.dataset.ladderSig = sig;
+      }
+      const width = `${pct.toFixed(2)}%`;
+      /* ONE number, read by both the fill's width and the clip on the
+         on-accent label layer. Two separate writes are how a label ends up
+         painted for a ground the fill has not reached yet. */
+      bar.style.setProperty("--dd-ladder-pct", width);
+      const fill = bar.querySelector(".stage-ladder-fill");
+      if (fill) fill.style.width = width;
+      bar.setAttribute("aria-valuenow", String(Math.round(pct)));
+      bar.setAttribute("aria-valuetext", `${Math.round(pct)}% understanding`);
+    }
+
+    _renderCallout(pct);
+  };
+
+  /* The reading, as a notch UNDER the bar pointing up at the seam it
+     describes: "38% understanding of concept array reshape".
+
+     It hung ABOVE the bar first. Under it is better for one reason that is
+     not taste: above, the label sits between the topbar and the track and
+     reads as a heading for the whole strip; under, with an arrow on it, it
+     is unmistakably a pointer at one position on one bar.
+
+     Centred on the fill edge, except within a hair of either end, and then
+     nudged back inside the strip by measurement — the thresholds are a guess
+     at where a label runs out of room and cannot be more than a guess,
+     because the label carries a concept NAME. */
+  const _renderCallout = (pct) => {
+    const meter = _el("stage-ladder-meter");
+    const callout = _el("stage-ladder-callout");
+    if (!meter || !callout) return;
+
+    const textEl = _el("stage-ladder-callout-text");
+    const name = current.title;
+    if (textEl) {
+      textEl.innerHTML =
+        `<b>${Math.round(pct)}%</b> understanding` + (name ? " of concept" : "");
+    }
+    /* A KC-less item has no concept to name, so the clause is dropped rather
+       than filled with a "This problem" fallback — "38% understanding of
+       concept This problem" is not a sentence. */
+    const kcBtn = _el("stage-ladder-kc");
+    if (kcBtn) kcBtn.hidden = !name;
+
+    /* What the rung asks of the learner used to be a whole row of the strip.
+       It is the ⓘ on the rung's own name now — but the case where the page
+       does NOT carry the scaffold the rung promises still has to be said out
+       loud, because the learner is about to look for it. */
+    const noteEl = _el("stage-ladder-note");
+    if (noteEl) {
+      const stage = STAGES[_index(current.stage)];
+      const parts = [];
+      if (stage && current.support === false) {
+        parts.push(NO_SUPPORT_BLURB[stage.id] ||
+          "The scaffold for this rung is not on the page — write it unaided.");
+      }
+      /* `competency-bar.js`'s TOPIC-level BKT reading. It had the difficulty
+         caption to live in; that row is gone, so it lands here. The caller
+         still owes it its own scope — a bare percentage next to this one is
+         the one thing it must never be. */
+      if (extraNote) parts.push(extraNote);
+      noteEl.textContent = parts.join(" · ");
+      noteEl.hidden = !parts.length;
+    }
+
+    callout.style.left = `${pct.toFixed(2)}%`;
+    const shift = pct <= 8 ? 0 : pct >= 92 ? 100 : 50;
+    callout.style.transform = `translateX(-${shift}%)`;
+
+    const room = meter.getBoundingClientRect();
+    const box = callout.getBoundingClientRect();
+    let dx = 0;
+    if (room.width && box.width) {
+      dx = box.left < room.left
+        ? room.left - box.left
+        : box.right > room.right
+          ? room.right - box.right
+          : 0;
+      if (dx) callout.style.transform = `translateX(calc(-${shift}% + ${dx.toFixed(2)}px))`;
+    }
+
+    _pushNotchAside(callout);
+  };
+
+  /* The notch between the panels carries the session controls and sits on the
+     same line as this callout, centred on the seam between them. When the
+     reading lands there, the reading wins and the notch steps aside.
+
+     🔴 The one place this module touches anything outside the strip, and it is
+     deliberate: the callout's position is not knowable from CSS — it follows a
+     percentage that follows a learner — so the collision can only be resolved
+     by whoever just placed it. `practice/notch-menu.js` owns everything else
+     about that control. */
+  const _pushNotchAside = (callout) => {
+    const notch = document.getElementById("practice-notch");
+    if (!notch) return;
+    notch.style.transform = "";
+    const at = notch.getBoundingClientRect();
+    // Hidden with the split on the setup screen: nothing to move.
+    if (!at.width) return;
+    const box = callout.getBoundingClientRect();
+    const GAP = 10;
+    const clashes =
+      box.bottom > at.top && box.top < at.bottom &&
+      box.right + GAP > at.left && box.left - GAP < at.right;
+    if (!clashes) return;
+    const split = notch.parentElement
+      ? notch.parentElement.getBoundingClientRect()
+      : null;
+    const right = box.right + GAP - at.left;   // move the notch right of the label
+    const left = box.left - GAP - at.right;    // or left of it
+    // Whichever side keeps the notch on screen; right unless it would run off.
+    const dx = split && at.right + right > split.right ? left : right;
+    notch.style.transform = `translate(calc(-50% + ${dx.toFixed(2)}px), -50%)`;
+  };
+
+  /* The rung's own promise, withdrawn when the page does not keep it.
 
      When the drill on screen carries neither blanks nor an example, the rung's
-     own blurb would describe a scaffold that is not there. The rung still
-     stands — it is where the record puts them — so the name is kept and only
-     the promise is withdrawn. */
+     ⓘ would describe a scaffold that is not there. The rung still stands — it
+     is where the record puts them — so the name is kept and only the promise
+     is withdrawn, in the callout's note. */
   const NO_SUPPORT_BLURB = {
     faded: "This one came through with no blanks — write it unaided.",
     example: "No solved example was available for this one — write it unaided.",
   };
 
+  /* "Integrated" — a chip in the callout, not a section of the track. Gated on
+     `solo` as well as on the flag: the backend only sets `ladder_integrated`
+     on a solo record, and a chip claiming several concepts at once over a
+     drill that still carries blanks would be the readout promising something
+     the page is not doing. */
   const _renderNow = () => {
-    const nameEl = _el("stage-ladder-now-name");
-    const blurbEl = _el("stage-ladder-now-blurb");
-    const stage = STAGES[_index(current.stage)];
-    if (nameEl) nameEl.textContent = stage ? stage.label : "";
-    /* "Integrated" — a chip beside the rung name, not a section of the track.
-       Gated on `solo` as well as on the flag: the backend only sets
-       `ladder_integrated` on a solo record, and a chip claiming several
-       concepts at once over a drill that still carries blanks would be the
-       readout promising something the page is not doing. */
     const flagEl = _el("stage-ladder-flag");
-    if (flagEl) {
-      const integrated = !!current.integrated && current.stage === "solo";
-      flagEl.textContent = integrated ? "Integrated" : "";
-      flagEl.hidden = !integrated;
-      flagEl.title = integrated
-        ? "This problem uses the concept alongside others you have already been taught."
-        : "";
-    }
-    if (!blurbEl) return;
-    if (!stage) {
-      blurbEl.textContent = "";
-      return;
-    }
-    blurbEl.textContent = current.support === false
-      ? NO_SUPPORT_BLURB[stage.id] || "The scaffold for this rung is not on the page — write it unaided."
-      : stage.blurb;
+    if (!flagEl) return;
+    const integrated = !!current.integrated && current.stage === "solo";
+    flagEl.textContent = integrated ? "Integrated" : "";
+    flagEl.hidden = !integrated;
+    flagEl.title = integrated
+      ? "This problem uses the concept alongside others you have already been taught."
+      : "";
   };
 
-  /* The caption. Difficulty lives here and only here — one line of text under
-     the bar, never a second track. `aim` is where the queue is pointing and
-     `problem` is what it actually served; they routinely differ, because the
-     queue narrows by concept and rung FIRST and takes the nearest difficulty
-     it can then reach. Saying both, in that order, is the honest version of
-     what the old two-marker track was implying. */
-  const _renderFoot = () => {
-    const foot = _el("stage-ladder-foot");
-    if (!foot) return;
-    const parts = [];
-    if (Number.isFinite(aimValue)) parts.push(`Aiming at difficulty <b>${_fmt(aimValue)}</b>`);
-    if (Number.isFinite(problemValue)) parts.push(`this problem is rated <b>${Math.round(problemValue)}</b>`);
-    if (extraNote) parts.push(esc(extraNote));
-    foot.innerHTML = parts.join(" · ");
-  };
+  /* 🪦 THE DIFFICULTY CAPTION IS GONE — 2026-08-22, at Seth's request.
 
+     It read "Aiming at difficulty 38.0 · this problem is rated 22", then for
+     one afternoon just "38.0 mastery" pinned to the right of the strip. Both
+     are off the screen now: the strip is the bar, the bar's own reading, and
+     nothing else. The rating of the item on screen was never a measure of the
+     learner, and the aim names a queue mechanic rather than anything the
+     learner is doing.
+
+     `setDifficulty` still RECORDS both numbers and `show()` still replaces
+     them unconditionally, which is what keeps a stale one from leaking onto
+     the next screen if either is ever asked for again — `watch.py` holds that
+     assignment in place. Nothing renders them.
+
+     `extraNote` outlived them: it is `competency-bar.js`'s topic-level BKT
+     reading and it now rides in the callout's note — see `_renderCallout`.
+
+     CHIP FIRST below. The Integrated chip lives INSIDE the callout, and the
+     callout is measured — after it is written — to keep it inside the strip
+     and off the notch. A chip added after that measurement changes the width
+     the placement was computed from. */
   const _render = () => {
-    const track = _el("stage-ladder-track");
-    if (track) {
-      track.innerHTML = current.stage ? _sectionsHtml() : "";
-      track.hidden = !current.stage;
-    }
     _renderNow();
-    _renderFoot();
+    _renderMeter();
   };
 
   /* Show the readout for one concept.
@@ -381,6 +599,11 @@ const StageLadder = (() => {
     if ((kc || null) !== current.kc) extraNote = "";
     current = {
       kc: kc || null,
+      /* The name the callout says out loud ("… understanding of concept array
+         reshape"). Held rather than re-read off the button, because the
+         button's text falls back to "This problem" on a KC-less item and the
+         callout has to be able to tell that case apart and say nothing. */
+      title: title || kc || null,
       stage: normalizeStage(stage),
       support,
       bound: _boundOf(estimate),
@@ -419,8 +642,12 @@ const StageLadder = (() => {
       kcBtn.title = kc ? `Open “${kc}” in the knowledge graph` : "";
       kcBtn.onclick = () => _openGraph(kcBtn.dataset.kc);
     }
-    _render();
+    /* Unhidden BEFORE the render, not after. `_renderMeter` measures the
+       callout to keep it inside the strip, and a measurement taken while the
+       section is still `display: none` comes back all zeroes — so the first
+       question of a session would draw its label uncorrected. */
     host.classList.remove("hidden");
+    _render();
   };
 
   /* A fresh reading for the concept already on screen, after a graded answer.
@@ -453,7 +680,6 @@ const StageLadder = (() => {
   const setDifficulty = (problem, aim) => {
     if (problem !== undefined) problemValue = Number.isFinite(problem) ? problem : null;
     if (aim !== undefined) aimValue = Number.isFinite(aim) ? aim : null;
-    _renderFoot();
   };
 
   /* An extra clause on the caption. The knowledge-graph focus flow uses it for
@@ -464,7 +690,7 @@ const StageLadder = (() => {
      "this concept" is the one thing this clause must never be. */
   const setNote = (text) => {
     extraNote = text || "";
-    _renderFoot();
+    _renderMeter();
   };
 
   /* No ladder context on this question — a diagnostic probe, a KC-less item,
@@ -474,13 +700,29 @@ const StageLadder = (() => {
   const hide = () => {
     const host = _el("stage-ladder");
     if (host) host.classList.add("hidden");
-    current = { kc: null, stage: null, support: undefined, bound: null,
-                streak: null, streakNeeded: null, estStage: null,
+    current = { kc: null, title: null, stage: null, support: undefined,
+                bound: null, streak: null, streakNeeded: null, estStage: null,
                 integrated: false };
     aimValue = null;
     problemValue = null;
     extraNote = "";
   };
+
+  /* The callout's clamp is measured in PIXELS against a strip whose width is a
+     percentage of the window, so a resize invalidates it — the label keeps its
+     percentage position and loses its correction, which at the ends is the
+     difference between "inside the strip" and "half off it". Re-placed on
+     resize, once per frame: the ladder itself does not change, so this reads
+     the same numbers and only moves the label. */
+  let _resizeQueued = false;
+  window.addEventListener("resize", () => {
+    if (_resizeQueued || !current.stage) return;
+    _resizeQueued = true;
+    requestAnimationFrame(() => {
+      _resizeQueued = false;
+      if (current.stage) _renderMeter();
+    });
+  });
 
   const activeKc = () => current.kc;
 

@@ -23,7 +23,7 @@ import watch_notebook
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
-from watch_invariants import check_invariants
+from watch_invariants import check_invariants, check_a_torch_question_never_grades_on_pyodide
 from watch_notebook import (
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
@@ -409,9 +409,15 @@ def check_one_progress_readout():
     # Difficulty is a CAPTION. The moment it grows a track again it is the
     # second bar this check exists to prevent, whatever it is called.
     ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
-    assert "stage-ladder-foot" in ladder_js, (
-        "stage-ladder.js no longer writes the caption — difficulty would have "
-        "nowhere to be stated"
+    # 2026-08-22: the difficulty caption is GONE from the strip, by request —
+    # first the "this problem is rated N" half, then the aim with it. What the
+    # check protects is unchanged and is the line below: difficulty may not
+    # come back as a TRACK. The clause that outlived it is `setNote`'s
+    # topic-level reading, which has to keep reaching the DOM or the knowledge-
+    # graph flow silently loses the number it ends its loop on.
+    assert "stage-ladder-note" in ladder_js, (
+        "stage-ladder.js no longer writes the callout note — setNote's "
+        "topic-level mastery reading would have nowhere to be stated"
     )
     for gone in ("difficulty-bar-track", "target-difficulty-track",
                  "target-difficulty-marker"):
@@ -569,6 +575,24 @@ def check_every_placement_question_gets_the_same_clock():
     assert "PlacementTimer?.pauseForGrading()" in events, (
         "submitting must stop the placement clock while the grade is in flight"
     )
+    # Pyodide cannot import torch, and the einops questions in the bank ARE
+    # torch questions — routing them local made every Submit unanswerable.
+    api = read(os.path.join(HERE, "api.js"))
+    assert "!needsTorchRuntime(this.currentQuestion, userCode)" in api, (
+        "einops questions that touch torch must grade on the backend — local "
+        "Pyodide refuses them and the learner gets no verdict at all"
+    )
+    # A question that CANNOT run here must not re-arm a countdown: expiry
+    # force-submits, the submit is refused again, and the clock loops at 00:30.
+    timer = read(os.path.join(HERE, "timer.js"))
+    assert "blockOnUnrunnableQuestion" in timer and "blockOnUnrunnableQuestion" in events, (
+        "a blocked submit must stop the session clock, not resume it"
+    )
+    # A probe is timed by the placement's rule even inside a learner's session.
+    assert "PlacementTimer.secondsPerQuestion()" in timer, (
+        "a placement probe inside a session must use the placement allowance, "
+        "not whatever answer time that session was set up with"
+    )
     # One writer for the start button: two copies of the label is how it
     # flickers between two names when the page refreshes its status.
     page = read(os.path.join(HERE, "diagnostic-page.js"))
@@ -582,6 +606,7 @@ def check_every_placement_question_gets_the_same_clock():
 # ── Run all checks ───────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
+              check_a_torch_question_never_grades_on_pyodide,
               check_promotion_threshold_matches_the_backend,
               check_one_progress_readout,
               check_lesson_code_can_actually_run,

@@ -8,6 +8,7 @@ that file, which fails if a check defined here is not in the list.
 import json
 import os
 import re
+import subprocess
 import sys
 
 from watch_common import HERE, SHARED, read
@@ -332,3 +333,65 @@ def check_invariants():
     assert rated["n"] == 1 and rated["history"][0]["feedback"] == "a_lot", (
         "a rated attempt must be counted once, with the level the learner gave"
     )
+def check_a_torch_question_never_grades_on_pyodide():
+    """Routing is RUN here, not pattern-matched.
+
+    The substring check in `watch.py` says the guard clause exists; it cannot
+    say the guard is on the right side of the branch. This lifts the two
+    shipped predicates and the routing expression itself and asks the question
+    that actually matters: given this question and this code, where does the
+    submission go?
+
+    The bug it exists for: `requiresLocalPyodide` was `questionNeedsEinops(q)`
+    alone, so every einops question went to Pyodide — which cannot import torch,
+    and the bank's einops questions are torch questions. Submit came back
+    "can't run in the browser sandbox", nothing was recorded, and on a placement
+    probe there was no way past the question at all.
+
+    Both directions are asserted. Sending torch to Pyodide is the dead end;
+    sending the numpy/visual einops questions to the backend would strand the
+    other half, because the local preamble is what defines their helpers.
+    """
+    ui = read(os.path.join(HERE, "ui.js"))
+    visuals = read(os.path.join(HERE, "visuals.js"))
+    api = read(os.path.join(HERE, "api.js"))
+
+    needs_torch = ui[ui.index("const TORCH_IMPORT_RE"):ui.index("const TORCH_UNAVAILABLE")]
+    assert "function needsTorchRuntime" in needs_torch, (
+        "needsTorchRuntime moved — the routing probe can no longer lift it"
+    )
+    needs_einops = visuals[
+        visuals.index("function questionNeedsEinops"):visuals.index("function questionNeedsArenaArray")
+    ]
+    routing = re.search(
+        r"const requiresLocalPyodide =\s*(.+?);", api, re.S
+    )
+    assert routing, "submitAnswer no longer decides where a submission grades"
+
+    # The slice already carries `questionIsTorch`, which `needsTorchRuntime`
+    # calls — lifting it again would redeclare the identifier.
+    probe = f"""
+{needs_torch}
+{needs_einops}
+const route = (question, userCode) => {{
+  const requiresLocalPyodide = {routing.group(1).replace("this.currentQuestion", "question")};
+  return requiresLocalPyodide ? "pyodide" : "backend";
+}};
+const eq = (got, want, why) => {{
+  if (got !== want) {{ console.error(`FAIL ${{why}}: got ${{got}} want ${{want}}`); process.exit(1); }}
+}};
+const einopsTorch = {{topic: "Einops", primary_library: "einops",
+  test_cases: [{{setup_code: "import torch as t"}}]}};
+const einopsNumpy = {{topic: "Einops", primary_library: "einops",
+  test_cases: [{{setup_code: "import numpy as np"}}]}};
+eq(route(einopsTorch, "rearrange(x, 'h w -> () h w')"), "backend",
+   "an einops question whose SETUP imports torch cannot grade on Pyodide");
+eq(route(einopsNumpy, "import torch as t\\nt.zeros(3)"), "backend",
+   "the learner reaching for torch is enough — Pyodide still cannot run it");
+eq(route(einopsNumpy, "np.reshape(x, (1, 2))"), "pyodide",
+   "numpy/visual einops keeps the local preamble that defines its helpers");
+eq(route({{topic: "Numpy", supports_visual_output: true}}, "arr.mean()"), "pyodide",
+   "a visual question still needs the local instance");
+"""
+    proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()

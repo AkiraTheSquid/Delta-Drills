@@ -337,11 +337,34 @@ def check_infotips():
         index_html,
         _read(os.path.join(HERE, "targeted-practice", "targeted-practice-dom.js")),
         _read(os.path.join(HERE, "practice", "arena-unlock-dom.js")),
+        # The stage ladder writes its own ⓘ per rung rather than letting the
+        # scanner inject one: the rung names are drawn TWICE (a base layer and
+        # an on-accent copy clipped to the fill), and a dot injected
+        # asynchronously would land in one layer and not the other, so the two
+        # would show different widths through the same clip.
+        _read(os.path.join(HERE, "practice", "stage-ladder.js")),
     ]
 
     anchors = set()
     for src in anchor_sources:
         anchors.update(_re.findall(r'data-dd-info="([^"]+)"', src))
+    # A key written through a template hole is not a key. The stage ladder
+    # emits `data-dd-info="${esc(INFO_KEY[s.id])}"`, so the literal keys come
+    # from that table instead — and they still have to be REAL keys, which is
+    # the whole point of reading them here rather than skipping the file.
+    anchors = {a for a in anchors if "${" not in a}
+    ladder_js = _read(os.path.join(HERE, "practice", "stage-ladder.js"))
+    info_key = _re.search(r"const INFO_KEY = \{(.*?)\};", ladder_js, _re.S)
+    assert info_key, (
+        "stage-ladder.js has no INFO_KEY table — the rung ⓘs are keyed "
+        "somewhere this check cannot see"
+    )
+    rung_keys = set(_re.findall(r':\s*"([^"]+)"', info_key.group(1)))
+    assert len(rung_keys) == 4, (
+        f"INFO_KEY names {len(rung_keys)} rungs, expected 4 — a rung with no "
+        f"ⓘ is a rung the learner cannot ask about"
+    )
+    anchors.update(rung_keys)
     # Registry keys are bare identifiers or quoted strings before a `: {`.
     keys = set(_re.findall(r'^\s*"?([A-Za-z][\w.-]*)"?:\s*\{', registry, _re.M))
 

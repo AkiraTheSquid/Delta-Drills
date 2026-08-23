@@ -158,21 +158,31 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
-- **2026-08-22 — the app has levels, and the progress bar IS the topbar seam.**
-  `xp.js` + `styles/xp.css` are new. The topbar carries a `Level N` chip between
-  the logo and the tab strip, and the 1px `--border` line under `.topbar` is now
-  a progress bar: `.dd-xp-seam` is absolutely positioned over it and fills from
-  the left as the learner works. 🔴 **The bar renders no numeral** — no count, no
-  percent, no `340 / 500`. The only number on screen is the level; the hover
-  `title` on the chip is the one place the raw XP is available. That is the whole
-  design brief, so a future "just show the XP on the bar" is a regression, not a
+- **2026-08-22 — the app has levels, and the `Level N` pill IS the progress
+  bar.** `xp.js` + `styles/xp.css` are new. The topbar carries a `Level N` chip
+  between the logo and the tab strip, and that chip colours in from the left as
+  the learner works — one object for both facts, which level and how far into
+  it. 🔴 **Nothing renders a numeral for the progress** — no count, no percent,
+  no `340 / 500`. The only number on screen is the level; the hover `title` on
+  the chip is the one place the raw XP is available. That is the whole design
+  brief, so a future "just show the XP on the bar" is a regression, not a
   feature.
-  - **Placement is `bottom: -2px`, and that is not arbitrary.** `.topbar` is
-    `box-sizing: border-box` at 56px with a 1px bottom border, so an absolutely
-    positioned child is laid against a **55px** padding box — and `.tab.active`
-    already owns its last 2px for the accent underline. At `bottom: 0` or even
-    `-1px` the seam clips that underline. `-2px` puts the bar on the border row
-    itself plus 1px over the page.
+  - **It was the topbar seam first, for about four hours.** The bar started as a
+    2px line laid over `.topbar`'s bottom border (`.dd-xp-seam`), which is a
+    genuinely elegant place to put it and almost invisible in practice — a
+    hairline only reads as progress if you already know to look for it. The pill
+    replaced it the same day; `.dd-xp-seam*` is gone from every file, and the
+    `bottom: -2px` measurement that made it clear `.tab.active`'s underline went
+    with it.
+  - **One custom property drives the whole pill.** `xp.js` writes
+    `--dd-xp-pct` on `.dd-level` and nothing else; the fill's width and the clip
+    on the on-accent text layer both read it, so they cannot drift apart the way
+    two separate JS writes eventually would. 🔴 The label is drawn **twice**,
+    stacked in one grid cell — a normal copy and an `--on-accent` copy clipped
+    to the filled width — because no single text colour is legible on both a
+    near-transparent chip and a saturated indigo→cyan fill in all three themes.
+    The padding lives on the text layers, not on `.dd-level`: put it on the pill
+    and the clip edge and the fill edge separate by exactly that padding.
   - **Everything the learner enters pays, and it is wired at ONE place.** Every
     recording path in this app ends at a `PracticeAPI` method, so the awards are
     a wrapper block at the bottom of `practice/api.js` rather than award() calls
@@ -192,7 +202,7 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
   - Two bugs found before shipping, both in a real browser. **The level-up snap
     painted a stale percentage**: `render()` captured `pct` when the award was
     made, so a second award landing during the 560ms hold was overwritten by the
-    first award's remainder — which was 0%, so the bar emptied. It now re-reads
+    first award's remainder — which was 0%, so the pill emptied. It now re-reads
     `state` at paint time, and a plain repaint defers to a pending snap.
     **The typing tick was dead for the first 15 seconds of every page load**
     (codex caught this one): `performance.now()` counts from navigation, so a `0`

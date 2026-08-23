@@ -25,8 +25,16 @@ practiceSubmitBtn.addEventListener("click", async () => {
       ? err.message
       : "Submit failed: " + (err.message || err);
     practiceSubmitBtn.disabled = false;
-    PracticeSession.resumeAnswerPhase();
-    window.PlacementTimer?.resumeAfterFailedSubmit();
+    if (err.blocked) {
+      // Not a transient failure: this question cannot run in this runtime at
+      // all. Re-arming a countdown means expiry force-submits, the submit is
+      // refused again, and the clock bounces back to 00:30 forever.
+      PracticeSession.blockOnUnrunnableQuestion();
+      window.PlacementTimer?.stop();
+    } else {
+      PracticeSession.resumeAnswerPhase();
+      window.PlacementTimer?.resumeAfterFailedSubmit();
+    }
     return;
   }
 
@@ -385,12 +393,9 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
       const status = await PracticeAPI.diagnosticStart();
       if (!status) throw new Error("not signed in to the practice backend");
       placementStartBtn.classList.add("hidden");
-      if (typeof showPracticeModeNotice === "function") {
-        showPracticeModeNotice(
-          "Placement test started — a few adaptive questions to locate your level, "
-          + `${Math.round((window.PlacementTimer?.secondsPerQuestion?.() ?? 120) / 60)} minutes each.`,
-        );
-      }
+      // No "placement started" notice: the learner just pressed the button on
+      // the placement page, and the badge above the question says which probe
+      // they are on. Announcing it again is a banner that says where you are.
       // The placement test is its own flow with its own (backend-driven) length —
       // don't let the current session's quota gate swallow it ("Session
       // complete" while the backend placement stays active). End the block
