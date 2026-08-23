@@ -4,8 +4,11 @@
    This row used to be a counter and two audit chips ("Question 21", "ID 490",
    "See in knowledge graph"). It is the CONCEPT now — an <h2> naming what the
    problem is about — and the two chips are in the notch's three-dot menu.
-   Seth's call, 2026-08-23. What is left in the row beside the heading is
-   #placement-timer, which is hidden on every non-placement question. */
+   Seth's call, 2026-08-23. #placement-timer was the last thing left beside the
+   heading and it went to the notch tab later the same day, so the row is now
+   the heading and nothing else — kept as a row because that is what it will be
+   again the next time something belongs next to a title, and because
+   `margin-bottom` is doing real work between the heading and the question. */
 .question-number-row {
   display: flex;
   align-items: baseline;
@@ -290,7 +293,8 @@
 
 /* The Cold Start Badge and its .cold-start-label / .cold-start-note rules were
    deleted on 2026-08-23 with the markup — see practice/ui.js. #placement-timer
-   moved to .question-number-row; its chip styling lives in diagnostic.css. */
+   outlived it and has moved twice since: into .question-number-row, and then
+   onto the notch tab, which is where it is (styling still in diagnostic.css). */
 /* Question body: separate the prose prompt from any starter/code block. */
 .question-prose { line-height: 1.6; }
 .question-prose + .question-prose { margin-top: 10px; }

@@ -38,21 +38,28 @@
        border is transparent so it does not double-draw the visible one);
      * identical wrapping — `white-space: pre-wrap` + `overflow-wrap:
        break-word`, which is what a textarea does by default;
-     * identical scrollbar gutter — `scrollbar-gutter: stable` on BOTH. A
-       scrollbar that appears on the textarea and not on the overlay narrows
-       the text column by 10px on one layer only, and every wrapped line
-       drifts.
+     * identical text-column WIDTH even when a scrollbar appears. The cells
+       auto-grow, so the textarea should never scroll — but if it does, its
+       bar narrows that layer's column by ~10px and every wrapped line below
+       drifts. `syncGutter` measures the real bar and pads the overlay to
+       match, rather than reserving the column permanently on both.
 
-   WHY THE `value` SETTER IS PATCHED
-   Assigning `editor.value = …` fires no event. `ui.js` prefills the starter
-   code that way, `events.js` resets between questions, `timer.js` restores a
-   draft, `lessons.js` loads example code, and `runner.js`'s own Tab handler
-   writes the re-indented value back without dispatching anything. Listening
-   for `input` alone leaves the overlay showing the PREVIOUS question's code
-   under the new question's text. So `attach` shadows the `value` property on
-   that one element with a getter/setter pair that delegates to the native
-   descriptor and repaints. Per-element, not on the prototype: nothing else
-   in the app pays for it.
+   HOW IT HEARS ABOUT A PROGRAMMATIC WRITE
+   Assigning `editor.value = …` fires no event, and five modules do it —
+   `ui.js` prefills the starter code, `events.js` resets between questions,
+   `timer.js` restores a draft, `lessons.js` loads example code,
+   `notebook-editor.js` seeds a cell. Listening for `input` alone leaves the
+   overlay showing the PREVIOUS question's code under the new question's
+   text. `runner.js`'s `announceValueWrites` shadows `value` on the element
+   and dispatches `delta-editor-value-set`; this file listens. The patch is
+   deliberately NOT here: the cell's auto-height needs the same signal, and
+   two modules patching the same property is a silent breakage (the second
+   captures the prototype descriptor and bypasses the first). One owner,
+   many listeners.
+
+   Consequence: calling `attach()` directly, outside
+   `installCodeEditorKeys`, gives you a highlighter that repaints on typing
+   but not on programmatic writes. Go through `installCodeEditorKeys`.
    ================================================================ */
 const DeltaCodeHighlight = (() => {
   "use strict";
@@ -187,11 +194,27 @@ const DeltaCodeHighlight = (() => {
 
   const overlayOf = (editor) => editor?.__deltaHighlight || null;
 
+  /* A scrollbar on the textarea and none on the overlay narrows the text
+     column by ~10px on one layer only, and every wrapped line below drifts.
+     `scrollbar-gutter: stable` on both would fix it by reserving that column
+     permanently — but the cells auto-grow now (notebook-editor.js), so the
+     textarea essentially never scrolls and that would be 10px of dead space
+     on every cell forever. Measure the real bar instead and pad the overlay
+     by exactly as much: normally zero, exact when it is not. Measured off
+     the TEXTAREA only, never off the overlay, which would feed its own
+     compensation back into the next measurement. */
+  const syncGutter = (editor, overlay) => {
+    const bar = Math.max(0, editor.offsetWidth - editor.clientWidth - editor.__deltaBorderLR);
+    const want = `${editor.__deltaPadRight + bar}px`;
+    if (overlay.style.paddingRight !== want) overlay.style.paddingRight = want;
+  };
+
   const render = (editor) => {
     const overlay = overlayOf(editor);
     if (!overlay) return;
     const ghost = editor.__deltaGhost || "";
     overlay.innerHTML = paint(editor.value, ghost, editor.selectionStart);
+    syncGutter(editor, overlay);
     overlay.scrollTop = editor.scrollTop;
     overlay.scrollLeft = editor.scrollLeft;
   };
@@ -232,18 +255,16 @@ const DeltaCodeHighlight = (() => {
 
     surface.appendChild(editor);
     editor.__deltaHighlight = overlay;
+    const metrics = getComputedStyle(editor);
+    editor.__deltaPadRight = parseFloat(metrics.paddingRight) || 0;
+    editor.__deltaBorderLR =
+      (parseFloat(metrics.borderLeftWidth) || 0) + (parseFloat(metrics.borderRightWidth) || 0);
 
-    const native = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value");
-    Object.defineProperty(editor, "value", {
-      configurable: true,
-      get() { return native.get.call(this); },
-      set(v) {
-        native.set.call(this, v);
-        // A programmatic rewrite is a NEW buffer; whatever the ghost was
-        // suggesting belonged to the old one.
-        this.__deltaGhost = "";
-        render(this);
-      },
+    editor.addEventListener("delta-editor-value-set", () => {
+      // A programmatic rewrite is a NEW buffer; whatever the ghost was
+      // suggesting belonged to the old one.
+      editor.__deltaGhost = "";
+      render(editor);
     });
 
     // `selectionStart` moves the ghost's insertion point, and nothing fires
@@ -256,6 +277,16 @@ const DeltaCodeHighlight = (() => {
       overlay.scrollTop = editor.scrollTop;
       overlay.scrollLeft = editor.scrollLeft;
     });
+    /* The scrollbar can appear or disappear without a repaint: the cell
+       auto-grows AFTER attach has already painted once (notebook-editor.js
+       resizes at the end of bindCell), so a first paint made at the 96px
+       floor sees a bar that is gone a moment later and the overlay keeps
+       padding for it. Cheap — `syncGutter` only touches the DOM when the
+       measurement actually changed, and padding the overlay cannot resize
+       the textarea, so this cannot feed itself. */
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(() => syncGutter(editor, overlay)).observe(editor);
+    }
 
     render(editor);
     return overlay;

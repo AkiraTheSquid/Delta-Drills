@@ -544,11 +544,37 @@ def check_a_deleted_practice_notice_stays_deleted():
         "#placement-timer went with the cold-start badge — the placement's "
         "fixed 2:00 clock has no anchor and every probe becomes untimed"
     )
+    # ...and it is ON THE NOTCH TAB (Seth, 2026-08-23: the timer belongs on the
+    # tab, not beside the concept heading). The anchor has now moved twice, so
+    # what is asserted is the CURRENT home, in the markup rather than in the JS:
+    # placement-timer.js reads it by id and no longer knows which row it is in.
+    notch_tab = index.split('id="practice-notch-tab"', 1)
+    assert len(notch_tab) == 2, "the notch tab is gone — #practice-notch-tab"
+    tab_markup = notch_tab[1].split("</div>", 1)[0]
+    assert 'id="placement-timer"' in tab_markup, (
+        "#placement-timer left the notch tab. It is the placement's only "
+        "countdown and notch-menu.js hides the session clock while it shows, "
+        "so anywhere else means a probe timed off-screen"
+    )
     timer_js = read(os.path.join(HERE, "placement-timer.js"))
     assert 'getElementById("cold-start-badge")' not in timer_js and (
-        '.question-number-row' in timer_js), (
-        "placement-timer.js still looks up the deleted badge — _chip() returns "
+        'getElementById("placement-timer")' in timer_js), (
+        "placement-timer.js is not reading its element by id — _chip() returns "
         "null and the countdown never renders"
+    )
+    # 🔴 One clock on the tab. The placement runs outside a session, so
+    # `_sessionOpen()` is false throughout and the session clock would sit
+    # beside the probe's countdown, greyed at its idle allowance — two numbers,
+    # one of them stopped.
+    notch_js = read(os.path.join(HERE, "notch-menu.js"))
+    assert '"placement-timer"' in notch_js, (
+        "notch-menu.js no longer defers to the placement clock — the tab shows "
+        "the idle session allowance next to a running probe countdown"
+    )
+    assert "PracticeNotch?.syncClock" in timer_js, (
+        "placement-timer.js must poke the notch when it shows or hides its "
+        "clock; nothing else observes this module and the session clock would "
+        "not come back when the test ends"
     )
 
     # The progress bar: anchors present, and honest about the ceiling.

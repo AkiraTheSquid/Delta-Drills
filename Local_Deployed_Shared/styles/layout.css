@@ -108,14 +108,28 @@
      — which is what "Why This App Exists" did at 390px. */
   flex: 0 0 auto;
   white-space: nowrap;
-  /* Tighter with the shorter bar: ten tabs at 20px a side is 400px of padding
-     alone, and the strip is centred now — every pixel it spends is a pixel
-     off both side columns. The padding is SYMMETRIC and there is nothing else
-     inside the button, which is what makes the active underline sit square
-     under the label: it used to span the label while a sibling ⓘ hung off the
-     right, so the line read as offset to the left (Seth, 2026-08-23). */
-  padding: 0 13px;
-  font-size: 13px;
+  /* 🔴 BACK TO THE ORIGINAL SIZE. Shortening the bar to 44px took the labels
+     down with it — 13px/13px — and Seth read the result as small (2026-08-23:
+     "the text looks really small for the tabs ... the exact size it was
+     before, but a bit more like the style"). So the METRICS are the pre-44px
+     ones (14px type, 20px a side) and only the STYLE is new: symmetric
+     padding, nothing but the label inside the button, the underline square
+     under it.
+
+     The "ten tabs would be 400px of padding" worry that justified 13px was
+     counting tabs that are not there. Basic mode shows five — Why This App
+     Exists, How to use it, Placement test, Account, Practice — because
+     Knowledge Graph, Course content and Notebooks are advanced-only and
+     Split Tool and Targeted Practice are `hidden`. Five at these metrics is
+     ~640px, comfortably inside the grid's middle column before nav-drawer.js
+     takes the strip out of the bar at 900px.
+
+     The padding is SYMMETRIC and there is nothing else inside the button,
+     which is what makes the active underline sit square under the label: it
+     used to span the label while a sibling ⓘ hung off the right, so the line
+     read as offset to the left (Seth, 2026-08-23). */
+  padding: 0 20px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--muted);
   cursor: pointer;
@@ -137,6 +151,27 @@
 .tab.active {
   color: var(--white);
   border-bottom-color: var(--accent-text);
+}
+
+/* 🔴 A LOCKED TAB MUST LOOK LOCKED. Practice is disabled for as long as a
+   placement test is running (practice/diagnostic-page.js `setPracticeLock`),
+   because the two share one workspace and one `currentQuestion` — Practice
+   mid-test would show the probe.
+
+   There was no `:disabled` rule anywhere in this app the last time a tab was
+   disabled, and that is the whole reason that attempt was ripped out: the tab
+   rendered exactly like its neighbours and simply ate the click, which reads as
+   a broken app rather than a rule. Dimmed, with the pointer cursor gone and
+   hover doing nothing, so the refusal is visible before it is tested. The
+   `title` carrying the REASON is written by the JS, not here. */
+.tab:disabled {
+  color: var(--muted-dim);
+  cursor: default;
+  opacity: 0.55;
+}
+
+.tab:disabled:hover {
+  color: var(--muted-dim);
 }
 
 .page {

@@ -12,6 +12,11 @@ verdict — so the things that can rot here are quiet and expensive:
 
 None of those fail loudly in a browser. They fail as a wrong mastery estimate or
 a blank page, so they are asserted here.
+
+The last two checks are about the OTHER notebook on the practice page —
+`notebook-editor.js`'s code cells. They live here rather than in
+`watch_invariants.py` because that file is near its LOC line, and because a
+cell editor is the same kind of thing this module already guards.
 """
 import os
 import re
@@ -317,3 +322,73 @@ def check_a_solution_stays_closed_until_asked():
     assert "open" not in re.findall(r"el\.(\w+) = true", details.group(0)), (
         "_detailsCell opens the disclosure it just built"
     )
+
+
+def check_only_one_module_patches_a_code_editors_value():
+    """`editor.value = ...` fires no event, so runner.js makes it announce.
+
+    Five modules assign a code editor's value. Nothing observes an assignment,
+    so `runner.js::announceValueWrites` shadows the property on the element with
+    a getter/setter over the native descriptor and dispatches
+    `delta-editor-value-set`. The syntax overlay repaints on it and the cell
+    re-measures its height on it.
+
+    A SECOND module patching the same property is not a conflict, it is a silent
+    breakage: `Object.defineProperty` on the instance REPLACES the descriptor,
+    and the later patch reads `HTMLTextAreaElement.prototype`'s setter -- not the
+    one already installed -- so its writes bypass the announcement entirely.
+    Nothing throws. The overlay just keeps showing the previous question's code,
+    or a long starter opens in a 96px box. One owner, many listeners.
+    """
+    owner = "runner.js"
+    patchers = sorted(
+        name for name in os.listdir(HERE)
+        if name.endswith(".js")
+        and re.search(r"""Object\.defineProperty\([^)]*?["']value["']""", read(os.path.join(HERE, name)))
+    )
+    assert patchers == [owner], (
+        f"a code editor's `value` may only be patched in {owner}; found: "
+        f"{patchers or 'nobody -- the announcement is gone and every overlay goes stale'}"
+    )
+
+    runner = read(os.path.join(HERE, owner))
+    assert "delta-editor-value-set" in runner, (
+        "runner.js patches `value` but no longer dispatches delta-editor-value-set "
+        "-- the overlay and the cell height both go stale on every programmatic write"
+    )
+    for listener in ("code-highlight.js", "notebook-editor.js"):
+        assert "delta-editor-value-set" in read(os.path.join(HERE, listener)), (
+            f"{listener} stopped listening for delta-editor-value-set"
+        )
+
+
+def check_a_code_cell_grows_to_fit_its_own_code():
+    """The cell is as tall as its code; the NOTEBOOK scrolls, not the cell.
+
+    `resize` used to clamp at 420px, which put a scrollbar inside a box that had
+    room to grow -- it hides how much code there is, and on a long starter the
+    line being typed can sit under the fold. The 96px floor stays, because an
+    empty cell still has to be a click target.
+
+    The border term is guarded for the same reason it exists: `scrollHeight` is
+    content+padding and EXCLUDES the border, while base.css is
+    `box-sizing: border-box`, so a height assigned straight from `scrollHeight`
+    leaves every cell 2px short of the content it was just measured against --
+    permanently scrolling by exactly one hairline.
+    """
+    src = read(os.path.join(HERE, "notebook-editor.js"))
+    body = re.search(r"const resize = \(editor\) => \{(.*?)\n  \};", src, re.S)
+    assert body, "notebook-editor.js no longer defines `resize`"
+    body = body.group(1)
+    assert "Math.min" not in body, (
+        "a ceiling is back in `resize` -- a code cell must grow to fit its code "
+        "and let .practice-notebook do the scrolling"
+    )
+    assert "Math.max(96" in body, "the 96px floor is gone -- an empty cell collapses"
+    assert re.search(r"scrollHeight \+ editor\.__deltaHBorders", body), (
+        "the height `resize` assigns no longer ADDS the border width -- merely "
+        "measuring it is not enough; with box-sizing: border-box a height taken "
+        "straight from scrollHeight leaves every cell 2px short and scrolling "
+        "inside itself"
+    )
+

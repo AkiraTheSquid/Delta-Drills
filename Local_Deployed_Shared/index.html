@@ -27,11 +27,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/variables.css" />
-  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/base.css?v=1" />
   <!-- Dark scrollbars. Loaded with the base layer, not as a feature, because
        it sets `color-scheme` on :root and skins every scroller in the app. -->
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
-  <link rel="stylesheet" href="styles/layout.css?v=4" />
+  <link rel="stylesheet" href="styles/layout.css?v=5" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=28" />
   <!-- The landing page's concept map, split out of how-it-works.css.
@@ -48,7 +48,7 @@
   <link rel="stylesheet" href="styles/infotips.css?v=2" />
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
-  <link rel="stylesheet" href="styles/nav-drawer.css?v=4" />
+  <link rel="stylesheet" href="styles/nav-drawer.css?v=5" />
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
@@ -67,10 +67,10 @@
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=11" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=6" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=8" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=13" />
@@ -760,7 +760,17 @@
       <p class="subtitle">A test that jumps between topics to find which concepts you still need for PyTorch. It seeds where practice begins; it never awards mastery.</p>
       <section class="card diagnostic-card">
         <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
-        <p class="diagnostic-timing">Every question is timed the same: <strong>2:00</strong> each. When the time runs out we record what you have and move on.</p>
+        <!-- HOW LONG THIS WILL TAKE, before you commit to it (Seth,
+             2026-08-23: "it should also make it more clear to the user the
+             amount of time that it will approximately take before they jump
+             into the placement test"). The static text is the floor — true
+             with no status loaded, and the only thing a signed-out visitor
+             sees. diagnostic-page.js::renderLength replaces it with the real
+             range as soon as the status call answers, because the number of
+             probes is the backend's to decide (`budget`, `min_probes`) and
+             hard-coding "about 30 minutes" here is how the page ends up
+             quoting a length the test stopped using. -->
+        <p class="diagnostic-timing" id="placement-length">Every question is timed the same: <strong>2:00</strong> each. When the time runs out we record what you have and move on.</p>
         <!-- How far through the test you are. `budget` is a CEILING, not a
              length: the placement stops as soon as it is confident, which can
              be at `min_probes`. The tick is where that becomes possible, so
@@ -961,6 +971,36 @@
                a second. -->
           <span class="practice-notch-clock hidden" id="practice-notch-clock"
                 role="timer"></span>
+          <!-- THE PLACEMENT CLOCK, in the same slot as the session one. Seth,
+               2026-08-23: "for the placement test ... the timer is on the left
+               next to the title thing instead of being on the tab." It was a
+               pill in .question-number-row, beside the concept heading; it is
+               here now, and the two clocks TAKE TURNS — practice/notch-menu.js
+               hides #practice-notch-clock for as long as a probe is being
+               timed, so the tab never shows two countdowns.
+
+               Still a static element, still written only by
+               practice/placement-timer.js, and still inside .practice-container
+               so it re-parents onto the Placement page with the workspace.
+
+               🔴 NO `data-dd-info`. It carried one ("placement-timer"), and
+               infotips.js mints the dot as a SIBLING — which in this 15px-tall
+               row is an ⓘ wedged between the clock and the three dots. The copy
+               said the probes are all 2:00 and you do not set it; the tab's own
+               tooltip says that, so the registry entry was DELETED rather than
+               left orphaned (watch.py asserts both lists stay in step). -->
+          <!-- 🔴 IT CARRIES `.practice-notch-clock` TOO, and that is the whole
+               point (Seth, 2026-08-23: the placement should be "indistinguishable
+               user experience wise from the practice ... in terms of the user
+               experience with the top bar for the timer and all that, it should
+               just be exactly the same"). It briefly had its own `--info` tint
+               to mark it as the placement's clock; that IS a distinction, and a
+               distinction is what he asked to remove. Same rules, same colour,
+               same last-30-seconds red. `.placement-timer` survives as the
+               ANCHOR — the id JS writes to and watch.py asserts — and declares
+               nothing visual. -->
+          <span class="practice-notch-clock placement-timer hidden" id="placement-timer"
+                role="timer">02:00</span>
           <button class="practice-notch-btn" id="practice-notch-btn" type="button"
                   aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
             <span aria-hidden="true">&#8943;</span>
@@ -1020,18 +1060,14 @@
                INTACT, so practice/ui.js `renderQuestionIdChip` and
                practice/graph-jump.js still write to exactly the nodes they
                always wrote to. Look for them in .practice-notch-menu. -->
+          <!-- #placement-timer is NO LONGER IN THIS ROW. Seth, 2026-08-23:
+               "for the placement test, it has the problem that the timer is on
+               the left next to the title thing instead of being on the tab."
+               It is in .practice-notch-tab now, beside the session clock it
+               takes turns with — one countdown, one place, whichever test is
+               running. Element and id intact; see the notch above. -->
           <div class="question-number-row">
             <h2 class="question-number" id="question-number"></h2>
-            <!-- Placement-only countdown. Static (not built in JS) so the ⓘ dot
-                 has a permanent anchor; practice/placement-timer.js fills it and
-                 keeps it hidden on every non-placement question.
-                 It used to live in #cold-start-badge, which was DELETED on
-                 2026-08-23 along with its "Calibrating — 1 of 3" / placement
-                 header copy. This row is its home now: it is on screen for
-                 every question, and the workspace re-parents as one node, so
-                 the countdown still follows the question onto the Placement
-                 page with no second copy to keep in sync. -->
-            <span class="placement-timer hidden" id="placement-timer" data-dd-info="placement-timer" data-dd-info-place="after">02:00</span>
           </div>
 
           <!-- Question Text -->
@@ -1258,7 +1294,7 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=3"></script>
-  <script src="app.js?v=23"></script>
+  <script src="app.js?v=24"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -1277,7 +1313,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=9"></script>
+  <script src="infotips-registry.js?v=10"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -1357,7 +1393,7 @@ t.manual_seed(0)
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
   <script src="practice/stage-ladder.js?v=13"></script>
-  <script src="practice/notch-menu.js?v=4"></script>
+  <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -1376,11 +1412,11 @@ t.manual_seed(0)
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-results.js?v=1"></script>
-  <script src="practice/diagnostic-page.js?v=6"></script>
+  <script src="practice/diagnostic-page.js?v=9"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->
-  <script src="practice/placement-timer.js?v=2"></script>
+  <script src="practice/placement-timer.js?v=4"></script>
   <script src="practice/init.js?v=15"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

@@ -17,10 +17,35 @@ const DeltaNotebook = (() => {
   const runOf = (cell) => cell?.querySelector(".notebook-cell-run");
   const execOf = (cell) => cell?.querySelector(".notebook-cell-exec");
 
+  /* A cell is as tall as its code. No ceiling: a Colab cell grows and the
+     NOTEBOOK scrolls (`.practice-notebook` is the `overflow-y: auto` one),
+     which is not the same thing as a cell that stops at 420px and scrolls
+     inside itself. The inner scrollbar was the worse of the two — it hides
+     how much code there is, it steals the wheel from the pane, and the line
+     the learner is typing on can sit under the fold of a box that has room
+     to grow. The 96px floor stays: an empty cell still has to be a target
+     you can click.
+
+     `height: auto` first is not optional — `scrollHeight` on an element
+     with an explicit height is that height, so without the reset a cell can
+     grow but never shrink back. */
   const resize = (editor) => {
     if (!editor) return;
+    if (editor.__deltaHBorders === undefined) {
+      /* `scrollHeight` is content+padding and EXCLUDES the border, but
+         base.css puts the whole app in `box-sizing: border-box`, so the
+         height we assign has to include it. Setting height = scrollHeight
+         therefore left every auto-sized cell 2px short of its own content —
+         which is why a cell that had just been measured to fit still showed
+         an inner scrollbar. Read once per element: the border width is a
+         constant of the stylesheet, and this runs on every keystroke. */
+      const box = getComputedStyle(editor);
+      editor.__deltaHBorders = box.boxSizing === "border-box"
+        ? (parseFloat(box.borderTopWidth) || 0) + (parseFloat(box.borderBottomWidth) || 0)
+        : 0;
+    }
     editor.style.height = "auto";
-    editor.style.height = `${Math.max(96, Math.min(420, editor.scrollHeight))}px`;
+    editor.style.height = `${Math.max(96, editor.scrollHeight + editor.__deltaHBorders)}px`;
   };
 
   const markRun = (cell, result = {}) => {
@@ -97,6 +122,26 @@ const DeltaNotebook = (() => {
     const button = runOf(cell);
     window.DeltaRunner?.installCodeEditorKeys(editor);
     editor?.addEventListener("input", () => resize(editor));
+    /* Typing is not the only thing that changes how tall the code is.
+         * `delta-editor-value-set` — runner.js announces the writes that
+           fire no event of their own: ui.js loading a question's starter,
+           events.js resetting, timer.js restoring a draft, lessons.js
+           loading example code. Without this a long starter opens in a 96px
+           box, which is the bug this whole change is about.
+         * width — the pane narrows (the drawer, a window resize, the Chrome
+           side panel) and the same code wraps onto more lines. Guarded on
+           WIDTH so the height we just set cannot feed the observer back into
+           itself. */
+    editor?.addEventListener("delta-editor-value-set", () => resize(editor));
+    if (editor && typeof ResizeObserver === "function") {
+      let lastWidth = 0;
+      new ResizeObserver(() => {
+        const width = editor.clientWidth;
+        if (width === lastWidth) return;
+        lastWidth = width;
+        resize(editor);
+      }).observe(editor);
+    }
     editor?.addEventListener("keydown", async (event) => {
       if (event.key !== "Enter" || (!event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey)) return;
       event.preventDefault();
