@@ -73,7 +73,7 @@
    nine nodes, and there is no side panel or dock to make room for. */
 .wta-graph {
   position: relative;
-  height: 400px;
+  height: 460px;
   margin: 20px 0 8px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -81,6 +81,46 @@
   overflow: hidden;
 }
 .wta-graph-cy { position: absolute; inset: 0; }
+
+/* Maximised: fixed over EVERYTHING, topbar included. The graph is 63 concepts
+   and the band it lives in cannot show them at a readable size — that is the
+   band's job, and this is the way out of it. z-index 300 clears every other
+   layer in the app (infotips are the highest at 200), because nothing behind
+   it should be reachable while it is open. `body.wta-max-open` kills the page
+   scroll underneath so a wheel gesture pans the graph instead of the article. */
+.wta-graph.is-max {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+body.wta-max-open { overflow: hidden; }
+
+/* Sits over the canvas, so it needs its own stacking context above it. */
+.wta-graph-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.wta-graph-btn:hover {
+  color: var(--white);
+  border-color: var(--accent);
+}
 .wta-graph-status {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   color: var(--muted); font-size: 14px;
@@ -106,7 +146,8 @@
   margin: 0 0 8px;
 }
 @media (max-width: 560px) {
-  .wta-graph { height: 320px; }
+  .wta-graph { height: 360px; }
+  .wta-graph.is-max { height: 100vh; height: 100dvh; }
 }
 
 /* --- Section scaffolding --- */

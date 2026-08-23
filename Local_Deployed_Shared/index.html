@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=21" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=22" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
@@ -248,21 +248,23 @@
           apart from "you were never taught the thing underneath it".
         </p>
         <p class="wta-graph-hint">
-          Nine concepts from the start of the NumPy track — drag them around,
-          and hover one to light up everything it depends on. A sample, drawn
-          with made-up mastery so you can see the shape; the real map runs to
-          a few hundred concepts and is coloured by your own work.
+          This is the whole map — every concept the app teaches, wired by what
+          it needs first. Hover one to light up everything underneath it, drag
+          them around, or <strong>maximize</strong> it to read the labels. The
+          colours are made up, so you can see what a learner's frontier looks
+          like; yours would be drawn from your own work.
         </p>
         <div class="wta-graph">
           <div class="wta-graph-cy" id="wta-graph-cy" role="img"
-               aria-label="An illustrative map of the first nine NumPy concepts.
-               Understanding what an ndarray is comes first; array constructors,
-               slicing and views, elementwise math and reshaping all build on it;
-               arange and linspace follow constructors; aggregations follow
-               elementwise math; boolean masks need both slicing and elementwise
-               math; np.where needs boolean masks. Nodes are coloured from red
-               for weak to blue for strong, and the two furthest concepts have no
-               estimate yet."></div>
+               aria-label="A map of every concept the app teaches, drawn bottom
+               to top: 63 concepts across NumPy, einsum and einops, joined by 81
+               arrows that each mean you need the concept an arrow comes from
+               before the one it points to. Understanding what an ndarray is
+               sits at the bottom and everything else builds on it. Nodes are
+               coloured from red for weak to blue for strong, with the concepts
+               furthest from the bottom left grey because there is no estimate
+               for them yet. The colours are illustrative, not a real learner's
+               record."></div>
           <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
         </div>
         <!-- The legend sits BELOW the canvas, not floating over it the way the
@@ -277,6 +279,13 @@
         </div>
       </section>
 
+          <!-- Maximize is not a nicety: 63 concepts do not fit a 460px band
+               at a readable size, and the band is deliberately the honest
+               version of that. The button lives inside the frame because the
+               frame is what goes full-screen. -->
+          <button type="button" class="wta-graph-btn" id="wta-graph-max"
+                  aria-pressed="false" aria-label="Maximize the map"
+                  title="Maximize">&#10530; Maximize</button>
       <div class="hiw-note">
         <p>
           <strong>Try it — no account needed.</strong> Everything works signed
@@ -907,10 +916,6 @@ t.manual_seed(0)
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
   <script src="practice/dom.js?v=18"></script>
-  <!-- The illustrative nine-node map on "Why this app exists". Needs
-       cytoscape + cytoscape-dagre above; `defer` keeps document order, so
-       both have run by the time this does. Reads no learner state. -->
-  <script src="concept-graph/why-graph.js?v=2" defer></script>
   <script src="practice/bars.js?v=11"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
@@ -952,6 +957,11 @@ t.manual_seed(0)
   <script src="practice/diagnostic-page.js?v=3"></script>
   <script src="practice/init.js?v=15"></script>
   <script src="practice.js?v=4"></script>
+  <!-- The map on "Why this app exists" — the whole lesson graph, coloured
+       illustratively. Needs cytoscape + cytoscape-dagre above; `defer` keeps
+       document order, so both have run by the time this does. Reads no
+       learner state; its only fetch is lessons/kc_registry.json. -->
+  <script src="concept-graph/why-graph.js?v=9" defer></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
        files survive because the rest of the app depends on them:
          weights.js            → practice/adaptive.js, practice/questions.js
