@@ -158,6 +158,16 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-23 — the landing story is now two tabs.** `index.html`,
+  `infotips-registry.js`, `styles/how-it-works.css`. "Why This App Exists"
+  carries Seth's value-add essay (personalized/AI-paced, no decision fatigue,
+  expertise reversal effect) in his own words; a new guest-visible
+  **How to use it** tab to its right holds the practical path (placement test
+  → live on Practice → handoff to ARENA) plus the six-step loop grid, which
+  moved there from the why page. The 3x2 `.steps-grid` override in
+  `how-it-works.css` is scoped to `#page-how-to-use` now. Tab id
+  `how-to-use`, infotip key `tab.how-to-use`.
+
 - **2026-08-23 — a 401 is three different things, and only one of them means
   "sign in".** `app.js`, `guest-session.js`, `practice/diagnostic-page.js`.
   `apiFetch` recovers an expired GUEST token in place — it holds the password —
