@@ -326,6 +326,12 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   // stragglers then arrive holding a 401 for a token that has ALREADY been
   // replaced. Those need a retry, not a second login.
   const sentWith = authToken;
+  // ...and WHOSE it was. A token that changed underneath a request is only
+  // safe to replay if it still belongs to the same account: signing in as
+  // someone else also changes `authToken`, and replaying the original options
+  // — a graded submit's POST body included — would write one person's answer
+  // into another person's account.
+  const sentAs = authEmail;
   if (authToken) {
     headers.Authorization = `Bearer ${authToken}`;
   }
@@ -344,7 +350,7 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
        the attempt and the old path reloaded the page over the top of the
        result, so the learner saw Submit do nothing. Retrying in place is the
        difference between a hiccup and losing the answer they just wrote. */
-    if (authToken && authToken !== sentWith) {
+    if (authToken && authToken !== sentWith && authEmail === sentAs) {
       return apiFetch(path, options, false);
     }
     const guested = await global_DDGuest()?.refreshExpiredSession?.();

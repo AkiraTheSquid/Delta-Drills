@@ -966,12 +966,12 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=3"></script>
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=21"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
        bindings, which do not exist until that script has evaluated. -->
-  <script src="guest-session.js?v=1"></script>
+  <script src="guest-session.js?v=2"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
@@ -1054,7 +1054,7 @@ t.manual_seed(0)
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <script src="practice/events.js?v=34"></script>
-  <script src="practice/diagnostic-page.js?v=3"></script>
+  <script src="practice/diagnostic-page.js?v=4"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->
