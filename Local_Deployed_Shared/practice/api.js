@@ -273,14 +273,26 @@ const PracticeAPI = {
     return await res.json();
   },
 
+  /* Three different answers, and they used to be one.
+
+     `null` meant "no placement for you" AND "the server said no" AND "the
+     server never answered", so the Placement page rendered its signed-out
+     copy — "Sign in to take the placement test", every button hidden — at a
+     signed-in learner whose backend was restarting. Nothing to click, and an
+     instruction that did not apply to them.
+
+     Now `null` keeps its one honest meaning (this build is not talking to a
+     backend at all) and a failure comes back marked, with the HTTP status
+     when there was one and 0 when the request never landed. Callers must
+     treat `unavailable` as "no status", not as a status. */
   async diagnosticStatus() {
     if (practiceMode !== "backend") return null;
     try {
       const res = await apiFetch("/api/practice/diagnostic/status");
-      if (!res.ok) return null;
-      return await res.json();
+      if (res.ok) return await res.json();
+      return { unavailable: true, httpStatus: res.status };
     } catch (_) {
-      return null;
+      return { unavailable: true, httpStatus: 0 };
     }
   },
 
