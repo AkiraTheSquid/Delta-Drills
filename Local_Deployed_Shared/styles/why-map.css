@@ -1,0 +1,140 @@
+/* ================================================================
+   WHY-MAP.CSS — the concept map on "Why this app exists"
+
+   Split out of how-it-works.css on 2026-08-23, which had reached 636
+   LOC (ORANGE) carrying three unrelated vocabularies: the `.hiw-*`
+   landing article, every `.kg2-*` Knowledge Graph rule, and this.
+
+   Everything here is the landing page's own map: the band it sits
+   in, its cold-start / your-mastery switch, and the maximised state
+   in which the frame HOSTS the real Knowledge Graph (see
+   concept-graph/why-graph.js, which moves `.kg-container.kg2` in
+   and out of it).
+
+   `.kg2-nodata` deliberately did NOT move — the Knowledge Graph tab
+   builds one of those into `.kg2-graph` too, so it belongs with the
+   other `.kg2-*` rules in how-it-works.css. Linked AFTER that file,
+   so a tie on specificity resolves this way.
+   ================================================================ */
+
+/* The band the preview lives in. Positioned so the .kg2-legend it borrows from
+   the Knowledge Graph — which is `position: absolute` — anchors to THIS box and
+   not to the page. Shorter than the real graph pane on purpose: there is no
+   side panel and no dock here to make room for, and the whole 63-concept map
+   is meant to read as too big for it. Maximize is the way out. */
+.wta-graph {
+  position: relative;
+  height: 460px;
+  margin: 20px 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.wta-graph-cy { position: absolute; inset: 0; }
+
+
+/* What the colours mean, as a choice rather than a caption. Same segmented
+   shape as #kg-colormode's Mastery/Lessons switch — one control vocabulary
+   across the two maps. */
+.wta-graph-foot { margin: 0 0 10px; }
+.wta-modes {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.wta-modes button {
+  background: transparent; color: var(--muted); border: 0;
+  padding: 5px 13px; font: inherit; font-size: 12px; cursor: pointer;
+}
+.wta-modes button + button { border-left: 1px solid var(--border); }
+.wta-modes button.active { background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.wta-modes button:not(.active):hover { color: var(--text); }
+
+/* Maximised: fixed over EVERYTHING, topbar included. The graph is 63 concepts
+   and the band it lives in cannot show them at a readable size — that is the
+   band's job, and this is the way out of it. z-index 300 clears every other
+   layer in the app (infotips are the highest at 200), because nothing behind
+   it should be reachable while it is open. `body.wta-max-open` kills the page
+   scroll underneath so a wheel gesture pans the graph instead of the article. */
+.wta-graph.is-max {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+body.wta-max-open { overflow: hidden; }
+
+/* Maximised, the frame HOSTS the real Knowledge Graph: concept-graph/
+   why-graph.js moves `.kg-container.kg2` in here and puts it back on the way
+   out. The preview's own canvas steps aside rather than being torn down —
+   rebuilding 63 nodes on every toggle would be work for nothing. */
+.wta-graph.is-hosting-kg > .wta-graph-cy,
+.wta-graph.is-hosting-kg > .wta-graph-status,
+.wta-graph.is-hosting-kg > .wta-graph-nodata { display: none; }
+/* Qualified by #page-why-this-app for SPECIFICITY, not scope: that page's own
+   `#page-why-this-app .container` rule is an id selector, and the Knowledge
+   Graph's `.kg-container` becomes a descendant of it the moment it is moved in
+   here — so the unqualified version lost, the container stayed 920px wide, and
+   the real graph rendered into a third of the screen. */
+#page-why-this-app .wta-graph.is-hosting-kg > .kg-container {
+  position: absolute; inset: 0; width: auto; max-width: none;
+  margin: 0; padding: 0; overflow: auto;
+}
+/* Its Fit / Mastery-Lessons controls also live in the top-right corner, so
+   they move left of the Minimize button rather than under it. */
+.wta-graph.is-max .kg2-controls { right: 152px; }
+
+/* Sits over the canvas, so it needs its own stacking context above it. */
+.wta-graph-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  /* Above `.kg2-controls` (z-index 5), which shares this corner once the real
+     Knowledge Graph is hosted in the maximised frame. */
+  z-index: 10;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.wta-graph-btn:hover {
+  color: var(--white);
+  border-color: var(--accent);
+}
+.wta-graph-status {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: var(--muted); font-size: 14px;
+}
+/* Undoes .kg2-legend's absolute positioning: on this page the legend is a
+   row under the map, not an overlay on it. Qualified by #page-why-this-app
+   because .kg2-legend is declared LATER in this file and a bare
+   .wta-graph-legend ties it on specificity and loses on source order — which
+   left the legend absolutely positioned and floating off the top of the
+   section, invisible. */
+#page-why-this-app .wta-graph-legend {
+  position: static;
+  max-width: none;
+  margin: 0 0 8px;
+}
+.wta-graph-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+@media (max-width: 560px) {
+  .wta-graph { height: 360px; }
+  .wta-graph.is-max { height: 100vh; height: 100dvh; }
+}

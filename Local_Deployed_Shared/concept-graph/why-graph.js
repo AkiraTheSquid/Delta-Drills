@@ -1,46 +1,50 @@
 /* ================================================================
    WHY-GRAPH.JS — the map on "Why this app exists"
 
-   A DEMONSTRATION, not a readout. It draws the WHOLE lesson graph —
-   every knowledge component in lessons/kc_registry.json, wired by
-   its real prerequisite edges — because the point of the page is
-   how much structure is underneath, and a nine-node excerpt read as
-   "that's the curriculum?". The one thing that is not real is the
-   colour: mastery here is DERIVED FROM GRAPH DEPTH, not from a
-   learner, because the page is read before anyone has done anything
-   and every number on it would otherwise be a prior dressed up as a
-   measurement.
+   A PREVIEW of the Knowledge Graph, on a page anyone can read.
+   It draws the whole lesson graph — every knowledge component in
+   lessons/kc_registry.json and every prerequisite edge — with no
+   side panel, no learner-model dock and no lesson pane. Two colour
+   readings, chosen at the bottom of the map:
 
-   The Knowledge Graph tab (lesson-graph.js) draws the same concepts
-   coloured by this learner's real BKT posteriors, with a side
-   panel, a docked learner-model readout, gate ticks and confidence
-   intervals. None of that belongs here.
+     COLD START  (the default) — the map as it stands before anyone
+        has answered anything: every concept grey and dashed,
+        because "no estimate" is what the model actually holds
+        then. This is the honest picture of what the app knows
+        about a visitor who has just arrived, and it is the picture
+        the page is arguing about.
+     YOUR MASTERY — the same reading the Knowledge Graph tab uses,
+        borrowed from lesson-graph.js via window.deltaKcReadinessInfo
+        so the two surfaces cannot disagree about the same learner.
 
-   THINGS THIS MAKES TRUE
-     1. Nothing here reads learner state — no localStorage, no
-        /api/practice/*, no adaptive_state_*. The only fetch is the
-        registry, which is static content.
-     2. It borrows lesson-graph.js's LOOK, deliberately and by
-        copy: the same round-rectangle nodes, the same red→blue
-        mastery ramp, the same red prerequisite arrows, the same
-        yellow "next up" ring. If that styling changes over there
-        and this page starts looking like a different product, this
-        is the file to update. It is not imported, because
-        lesson-graph.js's initialiser is entangled with the lattice
-        fetch, the crosswalk and the info pane this page must not
-        have.
-     3. There is no info pane, on purpose. Hover highlights the
-        prerequisite path; maximise fills the window. That is the
-        whole interaction.
+   Nothing here is invented. An earlier version coloured the map
+   from graph depth plus a hash, as an illustration; that is gone,
+   because a made-up frontier on the page that explains the
+   frontier is the one thing this page must not do.
+
+   MAXIMIZE hands the whole window to the REAL graph: it moves
+   `.kg-container.kg2` out of the Knowledge Graph tab and into this
+   frame, so what fills the screen is lesson-graph.js itself —
+   side panel, dock, gate ticks, Mastery/Lessons switch — and puts
+   it back on the way out. Moved, never copied: the graph is live
+   Cytoscape state, and a second instance would be a second
+   learner-model reader to keep in step.
+
+   It still borrows lesson-graph.js's LOOK by copy for the preview
+   — same round-rectangle nodes, same red→blue ramp, same red
+   prerequisite arrows. If that styling changes over there and this
+   page starts looking like a different product, this is the file
+   to update.
    ================================================================ */
 
 (function installWhyGraph(global) {
   const CONTAINER_ID = "wta-graph-cy";
   const REGISTRY_URL = "lessons/kc_registry.json";
+  const KG_SELECTOR = ".kg-container.kg2";
 
-  // Straight from lesson-graph.js so the two pages read as one product.
-  const ACCENT = "#ffd23f";                  // path highlight + "next up"
-  const UNKNOWN_COLOR = "#5b5b70";           // no estimate yet
+  // Straight from lesson-graph.js so the two maps read as one product.
+  const ACCENT = "#ffd23f";                  // prerequisite-path highlight
+  const UNKNOWN_COLOR = "#5b5b70";           // no estimate
   const EDGE_COLOR = "#e3212c";
   // red (low) → muted purple → blue (high)
   const masteryColor = (r) => {
@@ -49,49 +53,6 @@
     const lo = [214, 72, 72], hi = [59, 130, 246];
     const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * t));
     return `rgb(${c[0]},${c[1]},${c[2]})`;
-  };
-
-  /* ---- the illustrative colouring --------------------------------
-     Deterministic, so the page looks the same to everyone and to
-     anyone comparing two screenshots of it. Mastery falls off with
-     longest-path depth, which is the shape a real frontier has: the
-     things you were taught first are the things you know, and the
-     boundary is a band, not a line. Past the band there is no
-     estimate at all — the grey nodes are the honest part of the
-     picture, because a learner who has answered nothing HAS no
-     estimate there. The jitter exists so the result reads as
-     measurements rather than as a gradient.
-     --------------------------------------------------------------- */
-  const FRONTIER_DEPTH = 5;   // depth at which the illustrative estimate runs out
-  const JITTER = 0.16;
-
-  // FNV-1a over the concept id → [0,1). Any stable hash would do; this one
-  // is short and needs no dependency.
-  const hash01 = (s) => {
-    let h = 0x811c9dc5;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 0x01000193);
-    }
-    return ((h >>> 0) % 100000) / 100000;
-  };
-
-  // Longest path from a root. `seen` guards a cycle: the registry is a DAG
-  // and a cycle would be a data bug, but this file must not hang on one.
-  const depthsOf = (byId) => {
-    const cache = {};
-    const walk = (id, seen) => {
-      if (cache[id] !== undefined) return cache[id];
-      if (seen.has(id)) return 0;
-      seen.add(id);
-      const ps = (byId[id].prereqs || []).filter((p) => byId[p]);
-      const d = ps.length ? 1 + Math.max(...ps.map((p) => walk(p, seen))) : 0;
-      seen.delete(id);
-      cache[id] = d;
-      return d;
-    };
-    Object.keys(byId).forEach((id) => walk(id, new Set()));
-    return cache;
   };
 
   // Long titles ("Array constructors: zeros, ones, full, empty, ...") are the
@@ -106,40 +67,8 @@
     const kcs = (registry && registry.kcs) || [];
     const byId = {};
     kcs.forEach((k) => { byId[k.id] = k; });
-    const depth = depthsOf(byId);
-
-    const mastery = {};
-    kcs.forEach((k) => {
-      const base = 1 - depth[k.id] / FRONTIER_DEPTH;
-      const m = base + (hash01(k.id) - 0.5) * JITTER;
-      mastery[k.id] = m < 0.06 ? null : Math.min(1, m);
-    });
-
-    // "Next up" is the claim the page is making, so it is picked the way the
-    // app picks: among the concepts with no estimate, the one whose
-    // prerequisites are furthest along. Ties break on id, so it is stable.
-    let nextUp = null, bestScore = -1;
-    kcs.forEach((k) => {
-      if (mastery[k.id] !== null) return;
-      const ps = (k.prereqs || []).filter((p) => byId[p]);
-      if (!ps.length) return;
-      const known = ps.map((p) => mastery[p]).filter((v) => v !== null);
-      if (known.length !== ps.length) return;   // something underneath is unknown too
-      const score = known.reduce((a, b) => a + b, 0) / known.length;
-      if (score > bestScore || (score === bestScore && nextUp && k.id < nextUp)) {
-        bestScore = score;
-        nextUp = k.id;
-      }
-    });
-
     const elements = kcs.map((k) => ({
-      data: {
-        id: k.id,
-        label: shortLabel(k.title),
-        title: k.title,
-        color: masteryColor(mastery[k.id]),
-      },
-      classes: k.id === nextUp ? "next-up" : "",
+      data: { id: k.id, label: shortLabel(k.title), title: k.title },
     }));
     let i = 0;
     kcs.forEach((k) => {
@@ -150,7 +79,95 @@
     return elements;
   };
 
+  /* ---- the two readings ------------------------------------------------
+     "Cold start" is not a fake dataset: it is what kcReadinessInfo answers
+     for a learner with no history — r = NaN, source "none" — so it is drawn
+     the way lesson-graph.js draws that case, grey at 0.42 opacity with a
+     dashed border. "Your mastery" asks lesson-graph.js itself. If that file
+     has not loaded, the switch degrades to cold rather than inventing a
+     number.
+     --------------------------------------------------------------------- */
+  let mode = "cold";
+
+  const readingFor = (id) => {
+    if (mode !== "mine") return { r: NaN, measured: false };
+    const info = typeof global.deltaKcReadinessInfo === "function"
+      ? global.deltaKcReadinessInfo(id)
+      : null;
+    const measured = typeof global.deltaKcIsMeasured === "function"
+      ? !!global.deltaKcIsMeasured(id)
+      : false;
+    return { r: info ? info.r : NaN, measured };
+  };
+
   let cy = null;
+
+  const applyColours = () => {
+    if (!cy) return;
+    cy.batch(() => cy.nodes().forEach((n) => {
+      const { r, measured } = readingFor(n.id());
+      n.style({
+        "background-color": masteryColor(r),
+        // Same test lesson-graph.js uses: less than one attempt's worth of
+        // evidence bearing on this concept is an inference, not a measurement,
+        // and must never look like one.
+        "background-opacity": measured ? 1 : 0.42,
+        "border-style": measured ? "solid" : "dashed",
+      });
+    }));
+    refreshNote();
+  };
+
+  const anyMeasured = () => {
+    if (!cy || typeof global.deltaKcIsMeasured !== "function") return false;
+    return cy.nodes().some((n) => global.deltaKcIsMeasured(n.id()));
+  };
+
+  // The corner note. In cold start it says what the view is; switched to the
+  // learner's own reading with nothing behind it, it says so plainly rather
+  // than leaving a grey map to be read as a bug.
+  const refreshNote = () => {
+    const el = document.getElementById("wta-graph-nodata");
+    if (!el) return;
+    if (mode === "cold") {
+      el.textContent = "Cold start — the map before anyone has answered anything.";
+      el.hidden = false;
+      return;
+    }
+    const has = anyMeasured();
+    el.textContent = "No problems answered yet — nothing on this map is measured.";
+    el.hidden = has;
+  };
+
+  const wireModes = () => {
+    const box = document.getElementById("wta-graph-modes");
+    if (!box) return;
+    box.querySelectorAll("button[data-wta-mode]").forEach((b) => {
+      b.addEventListener("click", () => {
+        if (mode === b.dataset.wtaMode) return;
+        mode = b.dataset.wtaMode;
+        box.querySelectorAll("button[data-wta-mode]").forEach((x) => {
+          const on = x === b;
+          x.classList.toggle("active", on);
+          x.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        applyColours();
+      });
+    });
+  };
+
+  /* ---- layout ---------------------------------------------------------- */
+  // Tighter than lesson-graph.js's spacing, and the labels are cut at the
+  // colon: this view fits all 63 concepts at once and every pixel of node
+  // width costs zoom. BT so prerequisites sit BENEATH what they unlock, which
+  // is what the page's copy says and what the Knowledge Graph tab does.
+  const LAYOUT = {
+    name: "dagre",
+    rankDir: "BT", nodeSep: 12, rankSep: 58, edgeSep: 8,
+    animate: false, fit: true, padding: 24,
+  };
+  const layoutOpts = () =>
+    (global.cytoscapeDagre ? LAYOUT : { name: "cose", animate: false, fit: true, padding: 24 });
 
   const refit = () => {
     if (!cy) return;
@@ -159,17 +176,6 @@
     cy.resize();
     cy.fit(undefined, 24);
   };
-
-  // Tighter than lesson-graph.js's spacing for the same reason as the label
-  // width: this view fits all 63 concepts at once and the real estate is the
-  // constraint. BT so prerequisites sit BENEATH what they unlock, which is
-  // what the page's copy says and what the Knowledge Graph tab does.
-  const LAYOUT = {
-    name: "dagre",
-    rankDir: "BT", nodeSep: 12, rankSep: 58, edgeSep: 8,
-    animate: false, fit: true, padding: 24,
-  };
-  const layoutOpts = () => (global.cytoscapeDagre ? LAYOUT : { name: "cose", animate: false, fit: true, padding: 24 });
 
   const draw = (container, elements) => {
     cy = global.cytoscape({
@@ -180,17 +186,16 @@
       maxZoom: 2.5,
       style: [
         { selector: "node", style: {
-            "background-color": "data(color)",
+            "background-color": UNKNOWN_COLOR,
+            "background-opacity": 0.42,
             "shape": "round-rectangle",
             "label": "data(label)",
             "width": "label", "height": "label", "padding": "9px",
-            // 96px, not lesson-graph.js's 120px, and the labels are cut at the
-            // colon: the whole graph is 63 concepts, and every pixel of node
-            // width costs zoom in a view whose job is to fit all of them.
             "text-wrap": "wrap", "text-max-width": "96px",
             "text-valign": "center", "text-halign": "center",
             "font-size": 12, "font-weight": 600, "color": "#15151f",
             "border-width": 1, "border-color": "rgba(0,0,0,.28)",
+            "border-style": "dashed",
             "transition-property": "opacity, border-width, border-color",
             "transition-duration": "120ms",
         }},
@@ -206,13 +211,6 @@
         { selector: "edge.hl", style: {
             "opacity": 1, "width": 3, "line-color": ACCENT,
             "target-arrow-color": ACCENT, "z-index": 60,
-        }},
-        // The one thing on this page that is a claim rather than a colour:
-        // this is where the queue would send you next.
-        { selector: "node.next-up", style: {
-            "border-width": 4, "border-color": ACCENT, "border-style": "solid",
-            "outline-width": 6, "outline-color": ACCENT, "outline-opacity": 0.35,
-            "z-index": 80,
         }},
       ],
       layout: layoutOpts(),
@@ -242,17 +240,46 @@
       new global.ResizeObserver(refit).observe(container);
     }
 
+    applyColours();
     const status = document.getElementById("wta-graph-status");
     if (status) status.style.display = "none";
   };
 
-  /* ---- maximise ---------------------------------------------------
-     Sixty-three concepts do not fit a 460px band at a readable size —
-     which is the honest thing for the band to say, and the reason the
-     button exists. Maximised is `position: fixed; inset: 0` OVER the
-     topbar, so the graph is the only thing on screen, and the fit lands
-     at roughly half again the zoom the band can give it.
-     ----------------------------------------------------------------- */
+  /* ---- maximize: hand the window to the real graph ----------------------
+     `.kg-container.kg2` is MOVED here and moved back, the way nav-drawer.js
+     moves the tab strip: it is live Cytoscape state with a learner-model dock
+     reading it, and a copy would be a second reader to keep in step. Moving
+     it also means every behaviour of the real graph — the lesson pane, the
+     gate ticks, the Practice hand-off — arrives for free and cannot drift
+     from the Knowledge Graph tab, because it IS the Knowledge Graph tab.
+
+     `fitWrap()` in lesson-graph.js looks the wrap up as `.kg2 .kg2-wrap`, so
+     the element that moves has to be the `.kg2` container and not the wrap
+     inside it, or the graph loses its height the moment it arrives.
+     ----------------------------------------------------------------------- */
+  let kgHome = null;   // where to put the Knowledge Graph back
+
+  const hostKg = (frame) => {
+    const kg = document.querySelector(KG_SELECTOR);
+    if (!kg || kgHome) return false;
+    kgHome = { parent: kg.parentNode, next: kg.nextSibling };
+    frame.appendChild(kg);
+    frame.classList.add("is-hosting-kg");
+    // Builds on first use; on later ones it just resizes and refits.
+    if (typeof global.deltaInitConceptGraph === "function") global.deltaInitConceptGraph();
+    return true;
+  };
+
+  const releaseKg = (frame) => {
+    if (!kgHome) return;
+    const kg = frame.querySelector(KG_SELECTOR);
+    // insertBefore(node, null) appends, which is the right answer when the
+    // graph was the last child of its page.
+    if (kg) kgHome.parent.insertBefore(kg, kgHome.next);
+    kgHome = null;
+    frame.classList.remove("is-hosting-kg");
+  };
+
   const setMaximised = (frame, btn, on) => {
     frame.classList.toggle("is-max", on);
     document.body.classList.toggle("wta-max-open", on);
@@ -262,20 +289,30 @@
       btn.title = on ? "Minimize" : "Maximize";
       btn.textContent = on ? "⤡ Minimize" : "⤢ Maximize";
     }
+    // If the Knowledge Graph is not in this document for some reason, the
+    // preview fills the screen instead — a smaller thing, but not nothing.
+    if (on) hostKg(frame);
+    else releaseKg(frame);
     // Refit straight away rather than from a requestAnimationFrame: rAF does
     // not fire in a hidden tab, so the deferred version left the graph
     // full-screen at the band's zoom. Cytoscape's resize() reads the
-    // container's offset size, which forces the pending reflow for the class
-    // just toggled, so measuring here is safe. The ResizeObserver installed in
-    // draw() is the backstop for every other way this box can change size.
-    // Only the fit's zoom differs between the two states (~0.33 in the band,
-    // ~0.5 full-screen); dagre's packing does not depend on the viewport, so
-    // the layout is not re-run.
+    // container's offset size, which forces the pending reflow, and refit()
+    // no-ops while the preview canvas is the hidden one.
     refit();
     // Focus follows the surface: maximising with the keyboard should leave the
     // focus on the control that gets you back out.
     if (on && btn) btn.focus();
   };
+
+  // Everything inside the maximised frame a keyboard can land on, in document
+  // order. `offsetParent` drops what is hidden — the preview canvas and its
+  // notes while the real graph is hosted, and the reverse — so the cycle only
+  // ever contains what is actually on screen.
+  const TAB_STOPS =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),' +
+    ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const tabStops = (frame) =>
+    Array.from(frame.querySelectorAll(TAB_STOPS)).filter((el) => el.offsetParent !== null);
 
   const wireMaximise = (frame, page) => {
     const btn = document.getElementById("wta-graph-max");
@@ -290,14 +327,22 @@
       if (evt.key === "Escape") { setMaximised(frame, btn, false); return; }
       // The maximised frame covers the page but does not remove it from the
       // tab order, so Tab walked into a topbar and an article nobody can see.
-      // Containment is cheap here because the frame has exactly one focusable
-      // child: the button itself. The graph is a canvas.
-      if (evt.key === "Tab") { evt.preventDefault(); btn.focus(); }
+      // The frame's own controls still have to be reachable — hosting the real
+      // Knowledge Graph puts a dozen of them in here — so this is a wrap, not
+      // a pin: Tab cycles what is inside the frame and never leaves it.
+      if (evt.key !== "Tab") return;
+      const stops = tabStops(frame);
+      if (!stops.length) { evt.preventDefault(); btn.focus(); return; }
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      const at = stops.indexOf(document.activeElement);
+      if (at === -1) { evt.preventDefault(); (evt.shiftKey ? last : first).focus(); return; }
+      if (evt.shiftKey && document.activeElement === first) { evt.preventDefault(); last.focus(); }
+      else if (!evt.shiftKey && document.activeElement === last) { evt.preventDefault(); first.focus(); }
     });
     // Leaving the page while maximised would strand `body.wta-max-open` — the
-    // whole document unscrollable, with nothing on screen explaining why. The
-    // tab strip is covered, but solo-route, the back button and any programmatic
-    // switchTab can all still move off this page.
+    // whole document unscrollable — AND leave the Knowledge Graph parked in
+    // this frame, so its own tab would open empty. Both are undone here.
     new MutationObserver(() => {
       if (page.classList.contains("hidden") && frame.classList.contains("is-max")) {
         setMaximised(frame, btn, false);
@@ -359,9 +404,21 @@
       return;
     }
 
-    const elements = buildElements(registry);
+    wireModes();
+    refreshNote();
     wireMaximise(frame, page);
-    whenVisible(page, container, elements);
+    whenVisible(page, container, buildElements(registry));
+
+    // A graded attempt moves the learner's reading, so the map has to be
+    // repainted with it — but only when it is the learner's reading on show.
+    // TWO events, and both are needed. `delta:adaptive-state-changed` is the
+    // attempt itself, which is all there is when the Knowledge Graph has never
+    // been built. `delta:kc-readiness-changed` is lesson-graph.js saying its
+    // lattice refresh has landed — repainting on the first event alone reads
+    // the numbers it is in the middle of replacing.
+    const repaint = () => { if (mode === "mine") applyColours(); };
+    global.addEventListener("delta:adaptive-state-changed", repaint);
+    global.addEventListener("delta:kc-readiness-changed", repaint);
   };
 
   // cytoscape + the dagre layout are `defer`red script tags; this file is one
