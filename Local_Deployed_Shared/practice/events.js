@@ -349,7 +349,7 @@ nextProblemBtn.addEventListener("click", async () => {
 async function _notifyIfPlacementDone() {
   try {
     const status = await PracticeAPI.diagnosticStatus();
-    if (!status || status.active || !status.completed_at) return;
+    if (!status || status.unavailable || status.active || !status.completed_at) return;
     if (typeof loadBackendAdaptiveState === "function") {
       await loadBackendAdaptiveState();
     }
@@ -373,7 +373,10 @@ async function _notifyIfPlacementDone() {
 async function refreshPlacementStartBtn() {
   if (typeof placementStartBtn === "undefined" || !placementStartBtn) return;
   const status = await PracticeAPI.diagnosticStatus();
-  if (!status) {
+  // `unavailable` is a failed lookup, not a state — hiding the button is the
+  // safe read either way, because we cannot say whether it should say Take or
+  // Retake.
+  if (!status || status.unavailable) {
     placementStartBtn.classList.add("hidden");
     return;
   }

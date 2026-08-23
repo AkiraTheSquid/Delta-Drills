@@ -124,20 +124,82 @@ const DiagnosticPage = (() => {
     moveWorkspace(!!status.active);
   };
 
-  const refresh = async () => {
-    try { render(await PracticeAPI.diagnosticStatus()); }
-    catch (_) { render(null); }
+  /* An unanswerable status call is not the same thing as "not signed in".
+
+     `render(null)` writes "Sign in to take the placement test." and hides
+     every button — which is the truth for a visitor with no token, and a lie
+     for a learner whose backend is simply restarting. They got a page with no
+     start button, no continue button, and an instruction that does not apply
+     to them, with nothing to click and no way to know it was temporary.
+
+     So a failed call says so, and tries again. Every attempt after the first
+     is silent about failing until it gives up, because the common case is one
+     redeploy's worth of downtime and the page fixes itself. */
+  const UNREACHABLE_RETRIES = 4;
+  const UNREACHABLE_BACKOFF_MS = 2000;
+  let retryTimer = null;
+  /* Every refresh belongs to a generation, and only the newest may paint.
+     Clearing the timer stops a SCHEDULED retry; it cannot stop one already
+     waiting on the network, and that one is the problem — it resolves after a
+     newer refresh has already rendered and puts the page back to a state the
+     server has since moved past. */
+  let generation = 0;
+
+  const renderUnreachable = (attempt) => {
+    const statusEl = byId("diagnostic-status");
+    if (!statusEl) return;
+    statusEl.textContent = attempt < UNREACHABLE_RETRIES
+      ? "Checking your placement status…"
+      : "Couldn't reach the server. Reload the page to try again.";
+  };
+
+  const refresh = async (attempt = 0) => {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+    const mine = ++generation;
+    let status;
+    try {
+      status = await PracticeAPI.diagnosticStatus();
+    } catch (_) {
+      status = { unavailable: true, httpStatus: 0 };
+    }
+    if (mine !== generation) return;
+
+    if (status && status.unavailable) {
+      /* A 401 that survived apiFetch is a real signed-out state: a guest's
+         token is refreshed in place there, so reaching here means there is
+         nothing left to refresh with. Retrying that forever would show an
+         outage message to someone who just needs to sign in. */
+      if (status.httpStatus === 401 || status.httpStatus === 403) { render(null); return; }
+      renderUnreachable(attempt);
+      if (attempt < UNREACHABLE_RETRIES) {
+        retryTimer = setTimeout(() => refresh(attempt + 1), UNREACHABLE_BACKOFF_MS * (attempt + 1));
+      }
+      return;
+    }
+    render(status);
   };
 
   byId("diagnostic-practice-btn")?.addEventListener("click", () => {
     window.dispatchEvent(new CustomEvent("delta:diagnostic-next"));
   });
-  window.addEventListener("delta:practice-state-changed", refresh);
+  // Called with an Event, which must not land in `attempt`.
+  window.addEventListener("delta:practice-state-changed", () => refresh());
 
   // Switching elsewhere hides #page-diagnostic through app.js; the workspace
   // goes home with it, so Practice renders whether or not the placement is
   // finished. Coming back re-claims it (see refresh → render → syncWorkspace).
-  const leave = () => syncWorkspace();
+  /* Leaving the page cancels the retry chain. A pending refresh that lands
+     after app.js has moved the workspace home would call render() →
+     moveWorkspace() and haul it back under a page nobody is looking at.
+     Bumping the generation invalidates the in-flight one as well as the
+     scheduled one. */
+  const leave = () => {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+    generation += 1;
+    syncWorkspace();
+  };
 
   /* app.js calls leave() on every tab switch, but page visibility is the real
      signal and it is not ours to depend on: watch the class instead, so the
