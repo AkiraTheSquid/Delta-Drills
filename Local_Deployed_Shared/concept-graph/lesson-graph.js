@@ -1134,6 +1134,44 @@
       });
     }));
     markNextUp();
+    _refreshNoData();
+    _announceReadiness();
+  };
+
+  /* Other surfaces read the learner model through the exports at the bottom of
+     this file, and `delta:adaptive-state-changed` is NOT enough for them: this
+     graph answers that event by re-fetching the lattice and only then
+     recolouring, so anything repainting off the raw event reads the state this
+     graph is about to replace. recolor() is the moment the numbers are settled,
+     so that is what gets announced. Listener-only — nothing here reacts to it,
+     so it cannot loop. */
+  const _announceReadiness = () => {
+    window.dispatchEvent(new CustomEvent("delta:kc-readiness-changed"));
+  };
+
+  /* ---- the cold-start notice --------------------------------------------
+     At cold start every bubble is grey and dashed, which is correct and reads
+     as a broken graph. The map cannot say why on its own, so it says it here:
+     nothing has been answered, so there is nothing to colour. Top-LEFT, because
+     .kg2-controls owns the top-right corner. It goes away the moment one
+     concept has a measurement, and recolor() is the right place to decide that
+     — it already runs on build, on every lattice refresh and on every graded
+     attempt (`delta:adaptive-state-changed`). */
+  const hasAnyMeasurement = () =>
+    !!kcById && Object.keys(kcById).some((kc) => _isMeasured(kc));
+
+  const _refreshNoData = () => {
+    const graph = document.querySelector(".kg2-graph");
+    if (!graph) return;
+    let el = $("kg-nodata");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "kg-nodata";
+      el.className = "kg2-nodata";
+      el.textContent = "No problems answered yet — nothing on this map is measured.";
+      graph.appendChild(el);
+    }
+    el.hidden = hasAnyMeasurement();
   };
 
   /* ---------------- "next up": where the queue is pointing ----------------
@@ -1425,6 +1463,18 @@
     focus();
     return true;
   };
+
+  /* ---- read-only exports for the landing page's map -----------------------
+     concept-graph/why-graph.js draws the same 63 concepts on "Why this app
+     exists" and offers a cold-start / your-mastery switch. Its "your mastery"
+     side has to be THIS reading or the two surfaces disagree about the same
+     learner — so it borrows the reader rather than reimplementing the
+     atom → lattice → subtopic → extrapolation ladder. Read-only: neither
+     function touches graph state, and both answer before build() has run
+     (`lattice` is simply null, which is the offline path anyway). */
+  window.deltaKcReadinessInfo = (kc) => kcReadinessInfo(kc);
+  window.deltaKcIsMeasured = (kc) => _isMeasured(kc);
+  window.deltaKcHasAnyMeasurement = () => hasAnyMeasurement();
 
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }

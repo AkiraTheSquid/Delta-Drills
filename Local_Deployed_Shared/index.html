@@ -33,7 +33,11 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=23" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=26" />
+  <!-- The landing page's concept map, split out of how-it-works.css.
+       AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
+       rules, and the map's overrides of `.kg2-*` resolve on source order. -->
+  <link rel="stylesheet" href="styles/why-map.css?v=1" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
@@ -302,10 +306,12 @@
         </p>
         <p class="wta-graph-hint">
           This is the whole map — every concept the app teaches, wired by what
-          it needs first. Hover one to light up everything underneath it, drag
-          them around, or <strong>maximize</strong> it to read the labels. The
-          colours are made up, so you can see what a learner's frontier looks
-          like; yours would be drawn from your own work.
+          it needs first. Hover one to light up everything underneath it, or
+          drag them around. It opens on the <strong>cold start</strong>: the
+          map as it stands before you have answered anything, which is why
+          none of it is coloured in yet. Switch it to your own reading
+          underneath, and <strong>maximize</strong> for the full Knowledge
+          Graph with its learner-model panel.
         </p>
         <div class="wta-graph">
           <!-- Maximize is not a nicety: 63 concepts do not fit a 460px band
@@ -321,20 +327,37 @@
                arrows that each mean you need the concept an arrow comes from
                before the one it points to. Understanding what an ndarray is
                sits at the bottom and everything else builds on it. Nodes are
-               coloured from red for weak to blue for strong, with the concepts
-               furthest from the bottom left grey because there is no estimate
-               for them yet. The colours are illustrative, not a real learner's
-               record."></div>
+               grey and dashed at the cold start, because nothing has been
+               answered yet; switched to your own reading they are coloured
+               from red for weak to blue for strong, faded and dashed wherever
+               the colour is inferred from what sits underneath rather than
+               from anything you have been graded on, and grey where there is
+               no estimate at all."></div>
+          <!-- Top-LEFT: the top-right corner belongs to Maximize here and to
+               .kg2-controls once the real graph is hosted in this frame. Same
+               class as the Knowledge Graph's own notice, one look for one
+               fact. -->
+          <div class="kg2-nodata wta-graph-nodata" id="wta-graph-nodata" hidden></div>
           <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
         </div>
-        <!-- The legend sits BELOW the canvas, not floating over it the way the
-             Knowledge Graph's does. That pane is tall enough to give a
-             bottom-left overlay dead space; this one is 400px with the root
-             concept sitting at the bottom of a BT layout, and the overlay
-             landed straight on top of it. Same .kg2-* vocabulary either way. -->
+        <!-- The legend and the colour switch sit BELOW the canvas, not floating
+             over it the way the Knowledge Graph's do. That pane is tall enough
+             to give a bottom-left overlay dead space; this one is 460px with
+             the root concept sitting at the bottom of a BT layout, and the
+             overlay landed straight on top of it. Same .kg2-* vocabulary
+             either way. -->
+        <div class="wta-graph-foot">
+          <div class="wta-modes" id="wta-graph-modes" role="group"
+               aria-label="What the colours on the map show">
+            <button type="button" data-wta-mode="cold" class="active"
+                    aria-pressed="true">Cold start</button>
+            <button type="button" data-wta-mode="mine"
+                    aria-pressed="false">Your mastery</button>
+          </div>
+        </div>
         <div class="kg2-legend kg2-legend-mastery wta-graph-legend" id="wta-graph-legend">
-          <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate yet</span>
-          <span class="kg2-li"><span class="kg2-li-dot wta-li-nextup"></span>What it would serve next</span>
+          <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate</span>
+          <span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>
           <span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>
         </div>
       </section>
@@ -1145,12 +1168,14 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=1" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=23" defer></script>
-  <!-- The map on "Why this app exists" — the whole lesson graph, coloured
-       illustratively. Needs cytoscape + cytoscape-dagre above; `defer` keeps
-       document order, so both have run by the time this does. Reads no
-       learner state; its only fetch is lessons/kc_registry.json. -->
-  <script src="concept-graph/why-graph.js?v=9" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=25" defer></script>
+  <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
+       start or on the learner's own reading. AFTER lesson-graph.js, whose
+       exports it reads for that second mode and whose live graph it borrows
+       when maximised; and after cytoscape + cytoscape-dagre. `defer` keeps
+       document order, so all of them have run by the time this does. Its only
+       fetch is lessons/kc_registry.json. -->
+  <script src="concept-graph/why-graph.js?v=11" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
