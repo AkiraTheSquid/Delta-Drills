@@ -31,7 +31,34 @@ TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
 LOG_FILE="$LOG_DIR/deploy_delta_drills-$TIMESTAMP.txt"
 VERCEL_URL="https://delta-drills.vercel.app"
 VERCEL_PROJECT="delta-drills"
-VERCEL_SCOPE="seth-gibsons-projects"
+
+# --- Vercel auth ------------------------------------------------------------
+#
+# 2026-08-23: this script died mid-deploy with "You do not have access to the
+# specified account", having already pushed main AND the deploy branch. Two
+# separate causes, both fixed here.
+#
+# 1. The CLI's own credential (~/.local/share/com.vercel.cli/auth.json) is a
+#    SHORT-LIVED OAuth token. It carries a refreshToken, but CLI 52 does not
+#    redeem it — once expiresAt passes, every vercel command fails and the only
+#    cure is an interactive `vercel login`. A non-expiring personal token in a
+#    0600 file is read here instead. It is sourced rather than exported from
+#    ~/.bashrc because .bashrc returns early for non-interactive shells, so a
+#    script like this one never sees anything set there.
+if [ -z "${VERCEL_TOKEN:-}" ] && [ -f "$HOME/.config/vercel/token.env" ]; then
+  # shellcheck disable=SC1091
+  . "$HOME/.config/vercel/token.env"
+fi
+
+# 2. The scope was the hard-coded slug "seth-gibsons-projects", which the API
+#    no longer accepts for this account. The team ID in the deploy worktree's
+#    own project link is the authoritative answer, so read it from there and
+#    keep the slug only as a last resort.
+VERCEL_SCOPE="$(
+  python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["orgId"])' \
+    "$DEPLOY_SHARED_DIR/.vercel/project.json" 2>/dev/null \
+  || echo "seth-gibsons-projects"
+)"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
