@@ -166,11 +166,26 @@ const DiagnosticPage = (() => {
     if (mine !== generation) return;
 
     if (status && status.unavailable) {
-      /* A 401 that survived apiFetch is a real signed-out state: a guest's
-         token is refreshed in place there, so reaching here means there is
-         nothing left to refresh with. Retrying that forever would show an
-         outage message to someone who just needs to sign in. */
-      if (status.httpStatus === 401 || status.httpStatus === 403) { render(null); return; }
+      /* A 401 that survived apiFetch is USUALLY a real signed-out state: a
+         guest's token is refreshed in place there, so reaching here means
+         there was nothing left to refresh with. Retrying that forever would
+         show an outage message to someone who just needs to sign in.
+
+         Usually — but the same 401 comes back when the silent re-login could
+         not run: the backend was unreachable, or it is inside its 30s
+         cooldown. This browser still holds a guest password, so telling that
+         learner to sign in is both wrong and sticky (nothing re-renders until
+         they change tabs). DDGuest.canRecover() separates the two, and the
+         outage copy's advice — reload — is what actually fixes the other
+         case, because a reload mints a fresh guest.
+
+         401 only. A 403 is the backend refusing what this account is allowed
+         to do, and a new token for the same account changes nothing. */
+      const recoverable = status.httpStatus === 401 && window.DDGuest?.canRecover?.() === true;
+      if ((status.httpStatus === 401 || status.httpStatus === 403) && !recoverable) {
+        render(null);
+        return;
+      }
       renderUnreachable(attempt);
       if (attempt < UNREACHABLE_RETRIES) {
         retryTimer = setTimeout(() => refresh(attempt + 1), UNREACHABLE_BACKOFF_MS * (attempt + 1));
