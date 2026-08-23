@@ -124,6 +124,16 @@
   };
 
   let pending = null;
+  /* One silent re-login at a time. A page does not make one API call when a
+     token dies — the practice surface makes several at once, and without this
+     every one of them would start its own /auth/login. They all wait on the
+     same promise instead, and all of them see the same answer. */
+  let refreshing = null;
+  /* A failed silent refresh is not retried on a loop. The backend is either
+     down or refusing these credentials, and hammering it once per API call
+     for as long as the tab is open turns one bad minute into a flood. */
+  let refreshFailedAt = 0;
+  const REFRESH_RETRY_MS = 30000;
 
   const provision = async () => {
     // Already holding a token — a returning guest, or a real sign-in.
@@ -164,6 +174,55 @@
     return true;
   };
 
+  /* Log this guest back in WITHOUT reloading the page.
+
+     The reload in recoverExpiredSession() below is correct at the moment a
+     page loads holding a dead token, and destructive at any other moment: the
+     first call to 401 is often a graded submit, and reloading throws away the
+     result the learner just earned (the backend has recorded it — they simply
+     never see it) and lands them on whatever tab a fresh load picks. From
+     their seat, Submit did nothing.
+
+     We still hold the password, so the honest fix is to use it: mint a new
+     token in place, hand it to the app, and let the caller retry the one
+     request that failed. Nothing is lost and nothing moves on screen. */
+  const refreshSilently = async () => {
+    if (typeof isGuestSession !== "function" || !isGuestSession()) return false;
+    const credentials = readCredentials();
+    if (!credentials) return false;
+    if (refreshFailedAt && Date.now() - refreshFailedAt < REFRESH_RETRY_MS) return false;
+    if (refreshing) return refreshing;
+    refreshing = (async () => {
+      /* Never REJECT. The caller is apiFetch, in the middle of handling a 401
+         it is expected to hand back to the call site — a throw here would
+         replace that 401 with an exception the call site has no branch for,
+         and the last-resort reload path would never be reached. Every failure
+         is `false`, and every failure starts the cooldown. */
+      try {
+        const login = await postAuth("/auth/login", credentials);
+        if (!login.token) {
+          // 401 here means the account itself is gone (a reset database),
+          // which adopt() cannot fix — leave it to the reload path, which
+          // re-runs ensure() and will mint a fresh guest.
+          refreshFailedAt = Date.now();
+          return false;
+        }
+        adopt(login.token, credentials.email);
+        refreshFailedAt = 0;
+        return true;
+      } catch (err) {
+        console.warn("[guest] silent re-login failed:", err);
+        refreshFailedAt = Date.now();
+        return false;
+      }
+    })();
+    try {
+      return await refreshing;
+    } finally {
+      refreshing = null;
+    }
+  };
+
   global.DDGuest = {
     /**
      * Make sure this browser has a backend session, creating a guest
@@ -177,10 +236,23 @@
     },
 
     /**
-     * A 401 on a GUEST token: the 30-day JWT expired, but the account and
-     * its progress are still there and we still hold the password. Clear
-     * the dead token and reload so ensure() logs back in. Returns true if
-     * a reload was started, in which case the caller must stop.
+     * Re-login this guest in place and keep the page exactly as it is.
+     * Resolves true when a fresh token is live, in which case the caller
+     * should retry the request that 401'd. Never reloads, never touches a
+     * real signed-in session.
+     */
+    refreshExpiredSession() {
+      return refreshSilently();
+    },
+
+    /**
+     * A 401 on a GUEST token that refreshExpiredSession() could not fix:
+     * the account itself is unreachable. Clear the dead token and reload so
+     * ensure() logs back in or mints a new guest. Returns true if a reload
+     * was started, in which case the caller must stop.
+     *
+     * This is the LAST resort, not the first: a reload discards whatever the
+     * learner was looking at. Try refreshExpiredSession() first.
      *
      * Deliberately does nothing for a REAL signed-in user — silently
      * turning them into a guest would hide the fact that their sign-in
@@ -191,6 +263,12 @@
       if (!readCredentials()) return false;
       if (sessionStorage.getItem(RECOVERY_FLAG) === "1") return false;
       sessionStorage.setItem(RECOVERY_FLAG, "1");
+      // Come back to the tab the learner was on, not to whatever a fresh load
+      // would pick. app.js reads this once and clears it.
+      try {
+        const tab = document.querySelector(".tab.active")?.dataset.tab || "";
+        if (tab) sessionStorage.setItem(RECOVERED_TAB_KEY, tab);
+      } catch (_) {}
       localStorage.removeItem("auth_token");
       localStorage.removeItem("auth_email");
       localStorage.removeItem(GUEST_ACTIVE_KEY);
