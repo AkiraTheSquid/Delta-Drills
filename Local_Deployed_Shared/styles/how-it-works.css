@@ -67,88 +67,25 @@
   #page-how-to-use .steps-grid { grid-template-columns: 1fr; }
 }
 
-/* The illustrative map. Positioned so the .kg2-legend it borrows from the
-   Knowledge Graph — which is `position: absolute` — anchors to THIS box and
-   not to the page. Deliberately shorter than the real graph pane: it holds
-   nine nodes, and there is no side panel or dock to make room for. */
-.wta-graph {
-  position: relative;
-  height: 460px;
-  margin: 20px 0 8px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  overflow: hidden;
-}
-.wta-graph-cy { position: absolute; inset: 0; }
-
-/* Maximised: fixed over EVERYTHING, topbar included. The graph is 63 concepts
-   and the band it lives in cannot show them at a readable size — that is the
-   band's job, and this is the way out of it. z-index 300 clears every other
-   layer in the app (infotips are the highest at 200), because nothing behind
-   it should be reachable while it is open. `body.wta-max-open` kills the page
-   scroll underneath so a wheel gesture pans the graph instead of the article. */
-.wta-graph.is-max {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  height: 100vh;
-  height: 100dvh;
-  margin: 0;
-  border: none;
-  border-radius: 0;
-}
-body.wta-max-open { overflow: hidden; }
-
-/* Sits over the canvas, so it needs its own stacking context above it. */
-.wta-graph-btn {
+/* The cold-start notice, shared by both maps: the Knowledge Graph builds one
+   into `.kg2-graph` and the landing page carries one in its markup. Top-LEFT
+   because `.kg2-controls` owns the top-right, and so does Maximize here. */
+.kg2-nodata {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  padding: 6px 12px;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  top: 12px;
+  left: 14px;
+  z-index: 6;
+  max-width: 270px;
+  padding: 7px 11px;
+  font-size: 12px;
+  line-height: 1.35;
   color: var(--muted);
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   border: 1px solid var(--border);
   border-radius: 8px;
-  cursor: pointer;
   backdrop-filter: blur(4px);
 }
-.wta-graph-btn:hover {
-  color: var(--white);
-  border-color: var(--accent);
-}
-.wta-graph-status {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  color: var(--muted); font-size: 14px;
-}
-/* Undoes .kg2-legend's absolute positioning: on this page the legend is a
-   row under the map, not an overlay on it. Qualified by #page-why-this-app
-   because .kg2-legend is declared LATER in this file and a bare
-   .wta-graph-legend ties it on specificity and loses on source order — which
-   left the legend absolutely positioned and floating off the top of the
-   section, invisible. */
-#page-why-this-app .wta-graph-legend {
-  position: static;
-  max-width: none;
-  margin: 0 0 8px;
-}
-/* Same source-order trap as the legend above: .kg2-li-dot is declared later
-   and its own `border` shorthand was overwriting this one, leaving the
-   "next up" swatch as an empty circle with no ring. */
-#page-why-this-app .wta-li-nextup { background: transparent; border: 2px solid #ffd23f; }
-.wta-graph-hint {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 0 0 8px;
-}
-@media (max-width: 560px) {
-  .wta-graph { height: 360px; }
-  .wta-graph.is-max { height: 100vh; height: 100dvh; }
-}
+.kg2-nodata[hidden] { display: none; }
 
 /* --- Section scaffolding --- */
 .hiw-section {
