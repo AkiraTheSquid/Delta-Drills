@@ -27,6 +27,12 @@ REQUIRED_CSS = [
     "nav-drawer.css",
     # The level chip + the topbar-seam progress bar (../xp.js).
     "xp.css",
+    # The Account-tab test-user roster + the floating switch pill
+    # (../test-users-ui.js). Both surfaces are INJECTED by that script, so
+    # these class names are the only contract between the two files — nothing
+    # in index.html carries them and a missing link fails silently as unstyled
+    # markup at the bottom of the Account card.
+    "test-users.css",
     # courses tab is split into a sub-folder so each fragment stays small.
     # Order here mirrors the link order in index.html: page → forkgate →
     # detail → modal → responsive (responsive must be last so its
