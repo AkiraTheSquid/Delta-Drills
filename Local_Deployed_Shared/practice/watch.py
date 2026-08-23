@@ -415,6 +415,25 @@ def check_one_progress_readout():
     # come back as a TRACK. The clause that outlived it is `setNote`'s
     # topic-level reading, which has to keep reaching the DOM or the knowledge-
     # graph flow silently loses the number it ends its loop on.
+    # 🔴 THE NOTCH'S COUNTDOWN IS A MIRROR, NOT A CLOCK. `.session-status-row`
+    # is hidden by CSS while timer.js keeps counting and auto-submitting, so
+    # the tab on the seam is the only place the learner can see the deadline.
+    # It reads #session-countdown; the moment it starts counting on its own it
+    # is a SECOND clock, and the one that disagrees with the auto-submit is the
+    # one on screen. There is no honest reason for a timer in this file.
+    notch_js = read(os.path.join(HERE, "notch-menu.js"))
+    assert "session-countdown" in notch_js, (
+        "notch-menu.js no longer reads #session-countdown — the session's "
+        "countdown is hidden with its row, so nothing would show the learner "
+        "the deadline that auto-submits their answer"
+    )
+    for own_clock in ("setInterval", "setTimeout", "Date.now"):
+        assert own_clock not in notch_js, (
+            f"notch-menu.js calls {own_clock} — the countdown on the notch is "
+            f"a mirror of timer.js's clock, and a second clock here drifts "
+            f"from the one that actually auto-submits"
+        )
+
     assert "stage-ladder-note" in ladder_js, (
         "stage-ladder.js no longer writes the callout note — setNote's "
         "topic-level mastery reading would have nowhere to be stated"

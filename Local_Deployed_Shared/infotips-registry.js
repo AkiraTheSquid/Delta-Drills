@@ -119,10 +119,6 @@ window.DD_INFOTIPS = {
     title: "Current concept",
     body: "Skill this problem targets. Click to open it on knowledge graph.",
   },
-  "stage-ladder": {
-    title: "Support ladder",
-    body: "Four stages: Lesson, Faded, Worked example, Solo. Filled portion shows progress toward less support.",
-  },
   "concept-understanding": {
     title: "Concept understanding",
     body: "BKT estimate for this concept. Tier says whether mapping is measured or borrowed from its topic; coverage says how much rests on atoms you have attempted.",
