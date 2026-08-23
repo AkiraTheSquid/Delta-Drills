@@ -36,16 +36,22 @@
    as a bar with tick marks laid over it.
 
    The rung NAMES are inside the track now, not captions under it, and the
-   reading hangs beneath the bar as a notch pointing up at the seam it
-   describes. */
+   reading rides ON the bar as a tab at the fill's leading edge — see the
+   callout block at the foot of this file. */
 
 .stage-ladder-meter {
+  /* ONE source for the bar's height: the bar is drawn with it and the callout
+     tab is anchored `bottom:` it, so the tab sits on the bar's top edge with
+     no gap to keep in sync by hand. Overridden once, on a phone. */
+  --dd-ladder-bar-h: 30px;
   display: flex;
   flex-direction: column;
-  /* Room UNDER the bar for the callout notch, which is absolutely positioned
-     and so takes no space of its own. */
+  /* Room ABOVE the bar for the callout tab, which is absolutely positioned
+     and so takes no space of its own. The BAR stays at the bottom of the
+     strip, hard against the panels it is describing. */
+  justify-content: flex-end;
   margin: 0;
-  padding-bottom: 26px;
+  padding-top: 24px;
   position: relative;
 }
 
@@ -63,7 +69,8 @@
   background: rgb(var(--tint-rgb) / calc(0.13 * var(--tint-k)));
   border: 1px solid var(--border);
   border-radius: 999px;
-  height: 30px;
+  flex: 0 0 auto;
+  height: var(--dd-ladder-bar-h);
   overflow: hidden;
   position: relative;
 }
@@ -222,18 +229,29 @@
   color: var(--on-accent);
 }
 
-/* ── The reading: a notch UNDER the bar, pointing up at the seam ───────── */
+/* ── The reading: a TAB standing on the bar at the fill's edge ─────────── */
 
-/* It hung ABOVE the bar first. Under it, with an arrow on it, it is
-   unmistakably a pointer at one position on one bar rather than a heading for
-   the whole strip. `left` and the transform are written by the script: centred
-   on the fill's edge, except near the ends, and then nudged by measurement so
-   a long concept name cannot hang off the strip. */
+/* Three shapes, in order. A caption under the strip read as a caption for the
+   whole strip. A bordered box under the bar with an arrow on it pointed
+   correctly but floated free — its own little panel, hanging in the gap
+   between the strip and the question.
+
+   This is the third: the same tab the session notch is
+   (styles/practice/notch-menu.css), turned the other way up. Rounded on top,
+   NO bottom border, standing on the bar's own top edge — so it is attached to
+   the track rather than laid over it, and no arrow is needed to say which one
+   it is talking about. `left` and the transform are written by the script:
+   centred on the fill's edge, except near the ends, and then nudged by
+   measurement so a long concept name cannot hang off the strip. */
 .stage-ladder-callout {
   align-items: baseline;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  /* It stands ON the bar; a line between the two would cut it off from the
+     thing it is naming. */
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  bottom: var(--dd-ladder-bar-h);
   color: var(--muted);
   display: flex;
   flex-wrap: nowrap;
@@ -242,9 +260,8 @@
   left: 0;
   line-height: 1.3;
   max-width: 100%;
-  padding: 3px 9px 4px;
+  padding: 2px 9px 3px;
   position: absolute;
-  top: 36px;
   white-space: nowrap;
 }
 
@@ -252,38 +269,6 @@
   color: var(--white);
   font-size: 13px;
   font-weight: 700;
-}
-
-/* The arrow. A triangle sitting on the notch's own top edge, in the notch's
-   own colours — border on the outer one, background on the inner, so the
-   1px outline reads as continuous around the point. */
-.stage-ladder-callout-arrow {
-  height: 0;
-  left: 12px;
-  position: absolute;
-  top: -6px;
-  width: 0;
-}
-
-.stage-ladder-callout-arrow::before,
-.stage-ladder-callout-arrow::after {
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  content: "";
-  height: 0;
-  left: -6px;
-  position: absolute;
-  width: 0;
-}
-
-.stage-ladder-callout-arrow::before {
-  border-bottom: 6px solid var(--border);
-  top: 0;
-}
-
-.stage-ladder-callout-arrow::after {
-  border-bottom: 6px solid var(--surface);
-  top: 1px;
 }
 
 .stage-ladder-callout-text {
@@ -384,12 +369,12 @@
     display: none;
   }
 
-  .stage-ladder-bar {
-    height: 26px;
+  .stage-ladder-meter {
+    --dd-ladder-bar-h: 26px;
+    padding-top: 22px;
   }
 
   .stage-ladder-callout {
     font-size: 11px;
-    top: 32px;
   }
 }

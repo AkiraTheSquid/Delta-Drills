@@ -10,6 +10,11 @@
    So the buttons moved into a notch straddling the seam between the two
    panels — a tab with three dots, and a menu that opens under it.
 
+   The COUNTDOWN came back with the second pass. Hiding the row took the clock
+   off the screen while leaving it running: answer time still auto-submitted
+   with nothing counting down to it. The tab carries it now — mirrored, never
+   re-implemented (see `_syncClock`).
+
    🔴 This is a PROXY, not a second implementation. The real handlers live in
    practice/timer.js, bound to #session-pause-btn and #session-end-btn, and
    they carry state this file must not duplicate: whether a pause is safe
@@ -23,6 +28,7 @@
 
 (function () {
   const notch = document.getElementById("practice-notch");
+  const clock = document.getElementById("practice-notch-clock");
   const btn = document.getElementById("practice-notch-btn");
   const menu = document.getElementById("practice-notch-menu");
   const pauseItem = document.getElementById("practice-notch-pause");
@@ -45,6 +51,58 @@
     return !!row && !row.classList.contains("hidden");
   }
 
+  /* The clock on the tab is a MIRROR of #session-countdown, not a timer.
+     timer.js owns the only clock there is — the one that auto-submits — and a
+     second interval here would drift from it within a question and disagree
+     with it at the moment that matters. So this copies three facts and
+     computes none of them: the text, whether the session is running at all,
+     and which phase's time is being counted.
+
+     `--low` is timer.js's own last-30-seconds class, and it is applied only
+     while ANSWERING: review time running out costs nothing, so painting it
+     like a deadline would teach the wrong urgency. */
+  function _syncClock() {
+    if (!clock) return;
+    const open = _sessionOpen();
+    const tab = document.getElementById("practice-notch-tab");
+    const srPhase = document.getElementById("practice-notch-phase");
+    clock.classList.toggle("hidden", !open);
+    if (!open) {
+      /* Nothing is being counted, so nothing may still SAY it is. The clock
+         itself is hidden, but the tooltip and the screen-reader phase sit on
+         the tab, which stays — and a dots-only tab that still reads
+         "Reviewing" is describing a session that ended. */
+      clock.classList.remove(
+        "practice-notch-clock--review",
+        "practice-notch-clock--low",
+      );
+      if (tab) tab.removeAttribute("title");
+      if (srPhase) srPhase.textContent = "";
+      return;
+    }
+    const src = document.getElementById("session-countdown");
+    const row = document.getElementById("session-status-row");
+    const review = !!row && row.classList.contains("session-status--review");
+    const text = src ? src.textContent.trim() : "";
+    if (clock.textContent !== text) clock.textContent = text;
+    clock.classList.toggle("practice-notch-clock--review", review);
+    clock.classList.toggle(
+      "practice-notch-clock--low",
+      !review && !!src && src.classList.contains("session-countdown--low"),
+    );
+    /* The phase WORD is off the screen with the rest of the row. It rides in
+       two places, for two readers: the tab's tooltip, so the clock's colour is
+       not the only thing carrying it for a sighted learner, and a clipped
+       span, so it is carried at all for a screen reader — `--review` and
+       `--low` are colour, and colour is not in the accessibility tree. */
+    const phase = document.getElementById("session-phase");
+    const phaseText = phase ? phase.textContent.trim() : "";
+    if (tab) tab.title = phaseText;
+    if (srPhase && srPhase.textContent !== phaseText) {
+      srPhase.textContent = phaseText;
+    }
+  }
+
   function _syncItems() {
     const open = _sessionOpen();
     const pauseBtn = _pauseBtn();
@@ -63,11 +121,13 @@
     _syncItems();
     menu.classList.remove("hidden");
     btn.setAttribute("aria-expanded", "true");
+    notch.classList.add("is-open");
   }
 
   function _close() {
     menu.classList.add("hidden");
     btn.setAttribute("aria-expanded", "false");
+    notch.classList.remove("is-open");
   }
 
   function _isOpen() {
@@ -116,24 +176,41 @@
   const _row = document.getElementById("session-status-row");
   if (_row && typeof MutationObserver === "function") {
     new MutationObserver(() => {
+      _syncClock();
       if (_isOpen()) _syncItems();
     }).observe(_row, {
       attributes: true,
-      /* `class` is the session opening and closing; `disabled` and `title` are
-         timer.js flipping the pause button mid-question while a grade is in
-         flight (timer.js `_setPhase`). Watching only `class` left an
-         open menu showing the state it had when it opened — greyed out after
-         grading finished, or live and silently doing nothing before it did. */
+      /* `class` is the session opening and closing, and the review tint;
+         `disabled` and `title` are timer.js flipping the pause button
+         mid-question while a grade is in flight (timer.js `_setPhase`).
+         Watching only `class` left an open menu showing the state it had when
+         it opened — greyed out after grading finished, or live and silently
+         doing nothing before it did. */
       attributeFilter: ["class", "disabled", "title"],
+      /* The countdown is a TEXT NODE that timer.js rewrites once a second.
+         `characterData` alone does not see it — assigning `textContent`
+         REPLACES the node rather than editing it, which is a childList
+         record — so both are needed to mirror a ticking clock. */
+      characterData: true,
+      childList: true,
       subtree: true,
     });
   }
 
+  /* The row can already be open when this runs — a resumed session unhides it
+     from timer.js's own init, and load order between the two is not a thing
+     to depend on. */
+  _syncClock();
+
   window.PracticeNotch = {
     close: _close,
-    /* The stage ladder's percentage callout can grow far enough along the bar
-       to sit under this notch; practice/stage-ladder.js measures both and
-       offsets the notch so neither is covered. It needs the element. */
+    /* Kept for callers that need to place themselves around this tab. The
+       stage ladder used to be one — its percentage reading hung under the bar
+       and could land here — but that reading is a tab ON the bar now, inside
+       the strip, and nothing measures against the notch any more. */
     el: notch,
+    /* Exposed for tests and for anything that changes the session out of
+       band; the mirror is otherwise driven entirely by the observer. */
+    syncClock: _syncClock,
   };
 })();

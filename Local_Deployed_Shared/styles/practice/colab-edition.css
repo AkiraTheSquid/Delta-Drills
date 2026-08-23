@@ -180,9 +180,15 @@ html.dd-colab-edition .stage-seg-label {
 
 /* ~300px of rail: a 26px track with a 14px chevron in it is most of the
    strip's height, and the callout has to fit a concept name beside its
-   percentage. */
-html.dd-colab-edition .stage-ladder-bar {
-  height: 20px;
+   percentage.
+
+   🔴 Set the VARIABLE, not `.stage-ladder-bar { height }`. The reading is a
+   tab standing on the bar's top edge and is anchored `bottom:` the same
+   token — shrink the bar directly and the tab keeps the default 30px offset,
+   which leaves it floating a clear 10px above the track it is naming. */
+html.dd-colab-edition .stage-ladder-meter {
+  --dd-ladder-bar-h: 20px;
+  padding-top: 20px;
 }
 
 html.dd-colab-edition .stage-ladder-callout {

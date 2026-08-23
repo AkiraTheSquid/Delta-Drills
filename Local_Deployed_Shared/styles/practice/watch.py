@@ -100,6 +100,26 @@ def check_invariants():
         "stage-ladder.css lost the chevron seam — the rung divisions would "
         "vanish from a bar whose labels still claim them"
     )
+    # The callout is a TAB standing on the bar, not a box floating under it:
+    # it is anchored to the bar's own height and opens at the bottom. Both
+    # halves matter — a bottom border re-cuts it off from the track, and a
+    # `top:` offset puts it back below the bar where it overhangs the split.
+    assert "bottom: var(--dd-ladder-bar-h)" in ladder, (
+        "stage-ladder.css no longer stands the reading on the bar's top edge "
+        "— it is a floating box again, and nothing says which position on the "
+        "bar it is naming"
+    )
+    assert "stage-ladder-callout-arrow" not in ladder, (
+        "the callout arrow is back in stage-ladder.css — the tab touches the "
+        "bar, so an arrow points at the thing it is already standing on"
+    )
+
+    notch = _read(os.path.join(HERE, "notch-menu.css"))
+    assert ".practice-notch-clock" in notch, (
+        "notch-menu.css lost .practice-notch-clock — the session row is hidden "
+        "and this tab is the only countdown on the practice screen"
+    )
+
     feedback = _read(os.path.join(HERE, "feedback.css"))
     assert ".problem-feedback-note:focus" in feedback
 
