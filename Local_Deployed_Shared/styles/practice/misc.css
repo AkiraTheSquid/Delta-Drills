@@ -4,8 +4,8 @@
 .practice-aids-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
 .hint-section {
   margin-top: 10px; padding: 10px 12px;
-  background: var(--surface-2, #1b1f27); border-radius: 8px;
-  border: 1px solid var(--border, #2a2f3a);
+  background: var(--surface-2); border-radius: 8px;
+  border: 1px solid var(--border);
 }
 .hint-label { font-size: 12px; font-weight: 600; opacity: .7; margin-bottom: 4px; }
 /* Lesson guided items supply a NUMBERED hint list, one hint per line, ordered
@@ -25,9 +25,9 @@
 .practice-mode-intro {
   font-size: 13px;
   line-height: 1.5;
-  color: var(--muted, #9aa3b2);
-  background: var(--surface-2, #1b1f27);
-  border: 1px solid var(--border, #2a2f3a);
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 12px;
   margin: 0 0 12px;
@@ -44,7 +44,7 @@
 }
 
 .self-report-label {
-  color: var(--muted, #9aa3b2);
+  color: var(--muted);
   cursor: help;
 }
 
@@ -57,25 +57,25 @@
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 6px;
-  border: 1px solid var(--border, #2a2f3a);
-  background: var(--surface-2, #1b1f27);
-  color: var(--muted, #9aa3b2);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
   cursor: pointer;
 }
 
 .self-report-btn:hover {
-  color: var(--text, #e8ecf4);
-  border-color: var(--accent, #4f8cff);
+  color: var(--text);
+  border-color: var(--accent-text);
 }
 
 .self-report-btn.active {
-  color: var(--text, #e8ecf4);
-  border-color: var(--accent, #4f8cff);
-  background: color-mix(in srgb, var(--accent, #4f8cff) 18%, transparent);
+  color: var(--text);
+  border-color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .self-report-note {
-  color: var(--muted, #9aa3b2);
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -85,16 +85,16 @@
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 196, 0, 0.45);
-  background: rgba(255, 196, 0, 0.08);
-  color: var(--text, #e8ecf4);
+  border: 1px solid rgb(var(--warn-rgb) / 0.45);
+  background: rgb(var(--warn-rgb) / 0.08);
+  color: var(--text);
   cursor: pointer;
   margin-left: auto;
 }
 
 .placement-start-btn:hover {
-  border-color: rgba(255, 196, 0, 0.8);
-  background: rgba(255, 196, 0, 0.16);
+  border-color: rgb(var(--warn-rgb) / 0.8);
+  background: rgb(var(--warn-rgb) / 0.16);
 }
 
 .placement-start-btn:disabled {
@@ -106,17 +106,20 @@
 .torch-colab-notice {
   margin: 12px 0;
   padding: 14px 16px;
-  background: rgba(255, 196, 0, 0.07);
-  border: 1px solid rgba(255, 196, 0, 0.32);
+  background: rgb(var(--warn-rgb) / 0.07);
+  border: 1px solid rgb(var(--warn-rgb) / 0.32);
   border-radius: 10px;
 }
 .torch-colab-title { font-weight: 700; margin-bottom: 6px; }
-.torch-colab-body { font-size: 13px; line-height: 1.55; color: var(--muted, #9aa3b2); margin-bottom: 10px; }
+.torch-colab-body { font-size: 13px; line-height: 1.55; color: var(--muted); margin-bottom: 10px; }
 .torch-colab-body code,
 .question-prose code {
   font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
   font-size: 0.92em;
-  background: rgba(255, 255, 255, 0.07);
+  /* Stated rather than inherited: .torch-colab-body is --muted, and muted on
+     the code chip's own tint, on the notice's amber tint, measured 3.5:1. */
+  color: var(--text);
+  background: rgb(var(--tint-rgb) / calc(0.07 * var(--tint-k)));
   padding: 1px 5px;
   border-radius: 5px;
 }
@@ -124,14 +127,14 @@
 /* Account-tab token row + the top-bar logged-in indicator. */
 .dd-token-row { display: flex; gap: 8px; align-items: center; }
 .dd-token-row .text-input { flex: 1 1 auto; }
-.topbar-auth { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted, #9aa3b2); }
+.topbar-auth { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted); }
 /* app.js hides this with the `hidden` ATTRIBUTE (updateAuthIndicators), and a
    class rule setting `display` beats the UA's `[hidden] { display: none }`.
    Without this line the green "signed in" dot showed to signed-out guests —
    the exact confusion the indicator was added to remove. Found 2026-08-07
    when the ⓘ next to it turned up in a guest session. */
 .topbar-auth[hidden] { display: none; }
-.topbar-auth-dot { width: 8px; height: 8px; border-radius: 50%; background: #35c46a; box-shadow: 0 0 6px #35c46a; }
+.topbar-auth-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 6px var(--ok); }
 .topbar-auth-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* The COMPETENCY BAR's styles used to sit here: a phase heading, a mastery
@@ -145,9 +148,9 @@
 /* Mastered → "next concept" handoff card, shown in-frame on gate crossing. */
 .competency-done {
   margin: 0 0 18px; padding: 15px 17px;
-  border: 1px solid rgba(59, 130, 246, 0.45); border-radius: 12px;
-  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgb(var(--info-rgb) / 0.45); border-radius: 12px;
+  background: rgb(var(--info-rgb) / 0.08);
 }
 .competency-done-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
-.competency-done-body { font-size: 13px; line-height: 1.55; color: var(--muted, #9aa3b2); margin-bottom: 12px; }
+.competency-done-body { font-size: 13px; line-height: 1.55; color: var(--muted); margin-bottom: 12px; }
 .competency-done-actions { display: flex; flex-wrap: wrap; gap: 9px; }

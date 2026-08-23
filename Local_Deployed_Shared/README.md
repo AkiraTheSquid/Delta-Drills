@@ -11,9 +11,10 @@ The Vercel production branch is `deploy` and the public URL is:
 
 Direct page links use the ordinary app with global navigation hidden. Paths are
 case-insensitive; `/Knowledge-Graph` is the portfolio-facing default. Other
-routes: `/Why-This-App`, `/How-It-Works`, `/Courses`, `/Practice`, `/Notebooks`,
+routes: `/Why-This-App`, `/Courses`, `/Practice`, `/Notebooks`,
 `/Targeted-Practice`, `/Account`, and `/Split-Tool`. Each solo page keeps a faint
-"Open full app" exit in its top-left corner.
+"Open full app" exit in its top-left corner. (`/How-It-Works` was removed with
+the page it served on 2026-08-22 and now falls through to the full app.)
 
 ## Local development
 
@@ -40,9 +41,52 @@ The API base defaults to `http://localhost:8000` automatically when running on l
 
 ## Practice (adaptive learning)
 
-- The Practice tab is available when logged in (auth token present).
+- The Practice tab is available to everyone. A visitor with no account is given
+  one automatically by `guest-session.js` — see **Guest sessions** below.
 - Practice uses the backend algorithm via `/api/practice/*`.
 - Progress is persisted per user on the backend at `backend/user_data/`.
+
+## Guest sessions
+
+Nobody has to sign in. On first load `guest-session.js` mints an account
+(`POST /auth/signup`, a random `guest-<hex>@guest.delta-drills.app` address and
+a random password) and keeps the credentials in that browser's `localStorage`.
+
+This exists because the interesting half of the app is backend-only. The
+placement diagnostic, the lessons, the stage ladder and the BKT student model
+are all guarded by `practiceMode === "backend"` in `practice/`, and
+`getPracticeMode()` answers `"local"` for anyone without a token — so "guest"
+used to mean a static drill pool with no placement, no lessons and no mastery.
+Giving the visitor an account was a much smaller change than porting four
+backend modules into the browser and then keeping two copies of the pedagogy in
+step.
+
+Consequences worth knowing:
+
+- **`authToken` no longer means "a person signed in."** It means "this session
+  can call the backend". Identity questions — the guest banner, the topbar
+  email, the Account tab, which tab the app lands on — go through `isSignedIn()`
+  in `app.js`. Capability questions still ask `authToken`.
+- **The guest credentials are never deleted, not even by Log out.** Signing in
+  with Google and then signing out returns you to the same guest account with
+  the progress it already had.
+- **Progress is per browser, not per person, and signing in does NOT carry it
+  over.** Google sign-in mints a different backend account and there is no merge
+  or link endpoint, so what someone did as a guest stays with the guest account.
+  The banner and the landing page say so in those words; they used to promise
+  "continue with Google to keep it across devices", which was not true. Closing
+  the gap properly is a backend change — a guest-to-user claim endpoint — and is
+  the open follow-up here.
+- **A transient backend failure must not orphan a guest.** `postAuth` reports the
+  HTTP status, and only a **401** on `/auth/login` — the backend saying these
+  credentials are not an account — mints a replacement. A 429, a 5xx or an
+  offline browser leaves the stored credentials alone and falls back to local
+  mode for that load. Overwriting them on any failure is how one bad minute
+  costs a learner every attempt they have ever made.
+- **Failure is not fatal.** If the backend cannot be reached nothing is stored,
+  the mode stays `"local"`, and the app behaves as it did before this existed.
+- **This is not a security boundary.** Signup was already open to anyone; this
+  only skips the form. It does mean one row per browser that visits.
 
 ## Notes + fixes added
 
@@ -111,3 +155,110 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - The backend is not deployed on Vercel. Only the static frontend is.
 - `http://localhost:8000/` returns 404 by design. Use `/health` for checks.
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
+
+## Recent Changes
+
+- **2026-08-22 — the app has levels, and the progress bar IS the topbar seam.**
+  `xp.js` + `styles/xp.css` are new. The topbar carries a `Level N` chip between
+  the logo and the tab strip, and the 1px `--border` line under `.topbar` is now
+  a progress bar: `.dd-xp-seam` is absolutely positioned over it and fills from
+  the left as the learner works. 🔴 **The bar renders no numeral** — no count, no
+  percent, no `340 / 500`. The only number on screen is the level; the hover
+  `title` on the chip is the one place the raw XP is available. That is the whole
+  design brief, so a future "just show the XP on the bar" is a regression, not a
+  feature.
+  - **Placement is `bottom: -2px`, and that is not arbitrary.** `.topbar` is
+    `box-sizing: border-box` at 56px with a 1px bottom border, so an absolutely
+    positioned child is laid against a **55px** padding box — and `.tab.active`
+    already owns its last 2px for the accent underline. At `bottom: 0` or even
+    `-1px` the seam clips that underline. `-2px` puts the bar on the border row
+    itself plus 1px over the page.
+  - **Everything the learner enters pays, and it is wired at ONE place.** Every
+    recording path in this app ends at a `PracticeAPI` method, so the awards are
+    a wrapper block at the bottom of `practice/api.js` rather than award() calls
+    sprinkled through six handlers in `events.js`, `colab_mode.js` and
+    `diagnostic-page.js` — the next handler to be added gets XP for free. A MISS
+    pays too (10 vs 25): the placement test is built out of misses, and a bar
+    that only moved on a correct answer would charge the learner for using the
+    feature that finds their level. Anything outside that chokepoint
+    (`targeted-practice.js`, the lesson gate in `practice/lessons.js`) dispatches
+    `delta:xp` instead, so no caller needs a load-order relationship with
+    `xp.js`. A generic `input` tick (1 XP, throttled to 15s) covers typing.
+  - **State is localStorage keyed by `auth_email`**, exactly like
+    `practice/storage.js` — a guest keeps their levels, a signed-in account keeps
+    theirs, and `delta:auth-state-changed` re-reads the store. No merge, because
+    there is no merge anywhere else in this app and this would be the only place
+    progress silently changed owner.
+  - Two bugs found before shipping, both in a real browser. **The level-up snap
+    painted a stale percentage**: `render()` captured `pct` when the award was
+    made, so a second award landing during the 560ms hold was overwritten by the
+    first award's remainder — which was 0%, so the bar emptied. It now re-reads
+    `state` at paint time, and a plain repaint defers to a pending snap.
+    **The typing tick was dead for the first 15 seconds of every page load**
+    (codex caught this one): `performance.now()` counts from navigation, so a `0`
+    throttle sentinel means "you already earned one". It is `-Infinity` now.
+
+- **2026-08-22 — the app has three themes, and the Account page picks between
+  them.** `theme.js` is new and owns the whole switch: it stamps
+  `<html data-theme="blue|dark|light">` **synchronously from `<head>`, above the
+  stylesheet links**, so a light-theme user never sees a frame of the dark
+  palette, and on `DOMContentLoaded` it renders the radio group into
+  `#account-theme-options`. The choice lives in `localStorage["dd_theme"]`, so
+  it follows the browser rather than the account — no backend, no migration,
+  and it works signed out. `window.DDTheme` exposes `get`/`set`/`themes`, and a
+  `delta:theme-changed` event fires on set for anything that paints its own
+  canvas.
+  - **`blue` is the palette the app has always had and is the default**, both
+    as `:root` and as `:root[data-theme="blue"]`; a visitor who never opens the
+    picker sees exactly what shipped before. `dark` is Colab-style neutral
+    grey, `light` is the same app on white. Every token is defined three times
+    in `styles/variables.css` and `styles/watch.py` fails the folder if the
+    three blocks ever disagree — a token defined in only some themes drops the
+    declarations that use it, which is how white-on-white ships.
+  - **The Account markup is two additions and nothing else**: the script tag in
+    `<head>`, and a `.account-theme` block between `.account-mode` and
+    `#account-form`. It sits outside the form on purpose, exactly like the
+    advanced-mode toggle — it applies on change and has no Save. The three
+    options are rendered by `theme.js` rather than written in the markup, so
+    `variables.css` and that file's `THEMES` list stay the only two places a
+    theme is named. `infotips-registry.js` gained the `account-theme` copy;
+    `watch.py`'s `check_infotips` fails on an anchor with no entry, which is
+    how the missing one was caught.
+  - **The white-on-white problem was made loud rather than avoided.**
+    `styles/watch.py` now bans `#fff`/`#ffffff`/`rgba(255,255,255,…)` in every
+    stylesheet under `styles/`, `practice/` and `targeted-practice/`, with two
+    mechanical exemptions: the `[data-theme-preview=…]` swatches on the Account
+    page (miniatures of themes the viewer is *not* in, so `var()` would draw
+    all three identically) and lines marked `/* graph-legend */` (they must
+    match Cytoscape node colours painted from JS). Verified in a real browser
+    across every page with transitions disabled: **light 0 AA failures, dark 0,
+    blue 9** — and all nine blue findings pre-date this work, which is the
+    evidence the default palette did not move. 🔴 Disabling transitions is not
+    optional when auditing: `.tab` and `.dd-info` animate `color`, and sampling
+    mid-transition reported white-on-white at ratio 1.0 for elements that were
+    fine.
+
+- **2026-08-22 — the How It Works tab was deleted, and guests stopped getting a
+  cut-down app.** Three changes that belong together, because the landing page
+  now promises a diagnostic and a student model that a signed-out visitor could
+  not previously reach.
+  - **How It Works is gone** — tab, ⓘ, `<main id="page-how-it-works">`, its
+    `/How-It-Works` solo route, and both `watch.py` tab lists. Its content was
+    the long Math-Academy-style mechanism essay; the argument for the app lives
+    on **Why this app exists** instead. `styles/how-it-works.css` was NOT
+    deleted or renamed: it also owns every `.kg2-*` Knowledge Graph rule, and
+    several `concept-graph/` modules and READMEs name it by that path. Its three
+    `#page-how-it-works` selectors were repointed at `#page-why-this-app`, which
+    inherits the `.hiw-*` type scale.
+  - **Why this app exists is the landing page** and carries real copy: what the
+    app is (a Khan Academy / LeetCode for the ARENA curriculum, drilling the
+    PyTorch prerequisites), the "machine learning to teach machine learning"
+    claim, and the six-step loop it runs. `app.js` lands a visitor here only
+    when there is no stored token — i.e. their FIRST visit. A returning guest
+    has a token and lands on Practice, because they have already read this.
+  - **`guest-session.js` gives a signed-out visitor a real backend session**
+    (see **Guest sessions** above), so the diagnostic, the lessons and the
+    mastery model work with no sign-in. Verified end to end against the Fly
+    backend from a cleared browser: guest provisioned, `practiceMode` came up
+    `"backend"`, Practice served a real question, the placement diagnostic
+    started and its progress survived a reload.

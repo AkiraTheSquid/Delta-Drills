@@ -34,12 +34,12 @@
   width: min(880px, 100%);
   padding: 28px 32px 24px;
   border-radius: 16px;
-  border: 1px solid rgba(95, 201, 132, 0.55);
-  background: linear-gradient(180deg, rgba(28, 36, 60, 0.85), rgba(20, 26, 44, 0.85));
+  border: 1px solid rgb(var(--ok-rgb) / 0.55);
+  background: linear-gradient(180deg, var(--panel), var(--panel-deep));
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: var(--white, #f4f4f7);
+  color: var(--white);
 }
 
 .arena-unlock-banner {
@@ -47,32 +47,32 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(95, 201, 132, 0.95);
+  color: var(--ok);
 }
 
 .arena-unlock-title {
   font-size: 26px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--white, #f4f4f7);
+  color: var(--white);
 }
 
 .arena-unlock-sub {
   font-size: 14px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.72));
+  color: var(--color-muted);
   line-height: 1.5;
 }
 
 .arena-unlock-why {
   font-size: 12px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.62));
+  color: var(--color-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   line-height: 1.45;
 }
 
 .arena-unlock-heading-block {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px dashed rgba(255, 255, 255, 0.18);
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+  border: 1px dashed rgb(var(--tint-rgb) / calc(0.18 * var(--tint-k)));
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -82,7 +82,7 @@
 
 .arena-unlock-heading-label {
   font-size: 11px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.6));
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -96,7 +96,7 @@
 .arena-unlock-heading {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
-  color: var(--white, #f4f4f7);
+  color: var(--white);
   word-break: break-word;
   flex: 1 1 auto;
 }
@@ -127,10 +127,10 @@
 
 .arena-unlock-placeholder {
   font-size: 12px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  color: var(--color-muted);
   padding: 10px 12px;
-  border-left: 2px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid rgb(var(--tint-rgb) / calc(0.22 * var(--tint-k)));
+  background: rgb(var(--tint-rgb) / calc(0.03 * var(--tint-k)));
   border-radius: 0 8px 8px 0;
 }
 
@@ -153,11 +153,11 @@
 .arena-unlock-stuck-hint {
   font-size: 13px;
   font-weight: 600;
-  color: #f4a55a;
+  color: var(--warn);
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(244, 165, 90, 0.08);
-  border: 1px solid rgba(244, 165, 90, 0.45);
+  background: rgb(var(--warn-rgb) / 0.08);
+  border: 1px solid rgb(var(--warn-rgb) / 0.45);
 }
 
 .arena-unlock-stuck-hint.hidden {
@@ -184,7 +184,7 @@
 .arena-unlock-rating-prompt {
   font-size: 14px;
   font-weight: 600;
-  color: var(--white, #f4f4f7);
+  color: var(--white);
 }
 
 .arena-unlock-choice-buttons {
@@ -208,14 +208,14 @@
   font-family: inherit;
   text-align: center;
   line-height: 1.3;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: var(--white, #f4f4f7);
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+  border: 1px solid rgb(var(--tint-rgb) / calc(0.18 * var(--tint-k)));
+  color: var(--white);
   transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
 }
 
 .arena-unlock-choice-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
   transform: translateY(-1px);
 }
 
@@ -238,34 +238,37 @@
 
 .arena-unlock-choice-sub {
   font-size: 12px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  /* --text, not --muted: this sub-label sits on the choice button's GREEN
+     tint, not on the card, and muted-on-tint measured 3.1:1 in the blue
+     theme and 3.8:1 in dark. */
+  color: var(--text);
 }
 
 /* Green tiers — three "correct" outcomes, brighter for higher boost. */
 .arena-unlock-choice--best {
-  background: rgba(95, 201, 132, 0.22);
-  border-color: rgba(95, 201, 132, 0.70);
+  background: rgb(var(--ok-rgb) / 0.22);
+  border-color: rgb(var(--ok-rgb) / 0.70);
 }
-.arena-unlock-choice--best:hover:not(:disabled) { background: rgba(95, 201, 132, 0.32); }
+.arena-unlock-choice--best:hover:not(:disabled) { background: rgb(var(--ok-rgb) / 0.32); }
 
 .arena-unlock-choice--good {
-  background: rgba(95, 201, 132, 0.14);
-  border-color: rgba(95, 201, 132, 0.50);
+  background: rgb(var(--ok-rgb) / 0.14);
+  border-color: rgb(var(--ok-rgb) / 0.50);
 }
-.arena-unlock-choice--good:hover:not(:disabled) { background: rgba(95, 201, 132, 0.24); }
+.arena-unlock-choice--good:hover:not(:disabled) { background: rgb(var(--ok-rgb) / 0.24); }
 
 .arena-unlock-choice--okay {
-  background: rgba(95, 201, 132, 0.08);
-  border-color: rgba(95, 201, 132, 0.35);
+  background: rgb(var(--ok-rgb) / 0.08);
+  border-color: rgb(var(--ok-rgb) / 0.35);
 }
-.arena-unlock-choice--okay:hover:not(:disabled) { background: rgba(95, 201, 132, 0.18); }
+.arena-unlock-choice--okay:hover:not(:disabled) { background: rgb(var(--ok-rgb) / 0.18); }
 
 /* Red tier — looked up solution. */
 .arena-unlock-choice--bad {
-  background: rgba(231, 96, 96, 0.16);
-  border-color: rgba(231, 96, 96, 0.55);
+  background: rgb(var(--danger-rgb) / 0.16);
+  border-color: rgb(var(--danger-rgb) / 0.55);
 }
-.arena-unlock-choice--bad:hover:not(:disabled) { background: rgba(231, 96, 96, 0.28); }
+.arena-unlock-choice--bad:hover:not(:disabled) { background: rgb(var(--danger-rgb) / 0.28); }
 
 .arena-unlock-result-list {
   display: flex;

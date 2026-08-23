@@ -7,7 +7,7 @@
    overflow lives in styles/practice/layout.css. */
 
 .stage-ladder {
-  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  background: var(--surface-2);
   border-bottom: 1px solid var(--border);
   display: flex;
   flex: 0 0 auto;
@@ -40,7 +40,7 @@
   background: transparent;
   border: 0;
   border-bottom: 1px dashed var(--border);
-  color: var(--accent);
+  color: var(--accent-text);
   cursor: pointer;
   font-family: inherit;
   font-size: 11px;
@@ -57,7 +57,7 @@
 
 .stage-ladder-kc:hover:not(:disabled),
 .stage-ladder-kc:focus-visible:not(:disabled) {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--accent-text);
   color: var(--white);
 }
 
@@ -104,10 +104,10 @@
    section of a track that fills left to right cannot, because a section going
    from empty to full is a claim that the learner moved. */
 .stage-ladder-flag {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
   border: 1px solid var(--border);
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--text);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -170,7 +170,7 @@
    see the part that is not filled, and the five together are then a ladder of
    bars rather than a bar with tick marks on it. */
 .stage-seg-bar {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgb(var(--tint-rgb) / calc(0.07 * var(--tint-k)));
   border: 1px solid var(--border);
   border-radius: 5px;
   display: block;
@@ -189,15 +189,15 @@
 /* Cleared ground is stated quietly: it is behind the learner, and a run of
    five bright sections would compete with the one they are on. */
 .stage-seg.is-done .stage-seg-bar {
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgb(var(--tint-rgb) / calc(0.22 * var(--tint-k)));
 }
 
 .stage-seg.is-done .stage-seg-fill {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgb(var(--tint-rgb) / calc(0.4 * var(--tint-k)));
 }
 
 .stage-seg.is-done .stage-seg-label {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--muted);
 }
 
 /* The rung you are on. Named above the ladder as well — this is the second
@@ -207,11 +207,11 @@
 }
 
 .stage-seg.is-active .stage-seg-bar {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .stage-seg.is-todo .stage-seg-label {
-  color: rgba(255, 255, 255, 0.32);
+  color: var(--muted-dim);
 }
 
 /* ── The caption: difficulty, as text ──────────────────────────────────── */
@@ -223,7 +223,7 @@
 }
 
 .stage-ladder-foot b {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--text);
   font-weight: 600;
 }
 

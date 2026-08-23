@@ -503,6 +503,12 @@
   const startSession = () => {
     if (selected.size === 0) return;
     sessionActive = true;
+    // XP for choosing a set and committing to it. The drills themselves pay
+    // through PracticeAPI (see the hooks at the bottom of practice/api.js);
+    // this is the one bit of entered data on this tab that never reaches it.
+    // Dispatched rather than called so this file needs no load-order
+    // relationship with ../xp.js.
+    window.dispatchEvent(new CustomEvent("delta:xp", { detail: { kind: "targeted_session" } }));
     beforeReadiness.clear();
     selected.forEach((ex, id) => {
       beforeReadiness.set(id, readinessForNotebook(ex.notebookPath) ?? 0);

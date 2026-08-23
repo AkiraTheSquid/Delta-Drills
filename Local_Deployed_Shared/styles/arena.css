@@ -12,9 +12,9 @@
 .arena-source-note {
   min-width: 260px;
   padding: 14px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.01));
+  background: linear-gradient(180deg, rgb(var(--well-rgb) / calc(0.04 * var(--well-k))), rgb(var(--well-rgb) / calc(0.01 * var(--well-k))));
 }
 
 .arena-stage-card {
@@ -31,8 +31,8 @@
   min-width: 80px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #0f172a;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -40,7 +40,7 @@
 }
 
 .arena-stage-copy {
-  color: #334155;
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -77,7 +77,7 @@
   margin-bottom: 6px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text);
 }
 
 .arena-problem-list {
@@ -89,9 +89,9 @@
 .arena-problem-card {
   width: 100%;
   padding: 14px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: #fff;
+  background: var(--surface);
   text-align: left;
   cursor: pointer;
   transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
@@ -99,35 +99,35 @@
 
 .arena-problem-card:hover,
 .arena-problem-card:focus-visible {
-  border-color: rgba(37, 99, 235, 0.55);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-color: var(--info);
+  box-shadow: 0 10px 24px var(--shadow-soft);
   transform: translateY(-1px);
   outline: none;
 }
 
 .arena-problem-card.active {
-  border-color: #2563eb;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.14);
-  background: linear-gradient(180deg, rgba(239, 246, 255, 0.95), #fff);
+  border-color: var(--info);
+  box-shadow: 0 12px 30px var(--shadow-soft);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--info) 8%, var(--surface)), var(--surface));
 }
 
 .arena-problem-card-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--white);
 }
 
 .arena-problem-card-meta {
   margin-top: 8px;
   font-size: 0.83rem;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .arena-problem-card-summary {
   margin-top: 10px;
   font-size: 0.92rem;
   line-height: 1.5;
-  color: #334155;
+  color: var(--text);
 }
 
 .arena-detail {
@@ -140,7 +140,7 @@
   display: grid;
   place-items: center;
   min-height: 420px;
-  color: #64748b;
+  color: var(--muted);
   text-align: center;
   font-size: 1.02rem;
 }
@@ -163,8 +163,8 @@
   width: fit-content;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(37, 99, 235, 0.1);
-  color: #1d4ed8;
+  background: rgb(var(--info-rgb) / 0.12);
+  color: var(--info);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -172,16 +172,16 @@
 }
 
 .arena-problem-id {
-  color: #64748b;
+  color: var(--muted);
   font-size: 0.92rem;
 }
 
 .arena-readiness {
   min-width: 220px;
   padding: 14px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: #f8fafc;
+  background: var(--surface-2);
 }
 
 .arena-readiness-label {
@@ -189,21 +189,21 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .arena-readiness-value {
   margin-top: 6px;
   font-size: 1.45rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--white);
 }
 
 .arena-readiness-note {
   margin-top: 6px;
   font-size: 0.88rem;
   line-height: 1.5;
-  color: #475569;
+  color: var(--text);
 }
 
 .arena-section {
@@ -215,13 +215,13 @@
 .arena-section-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--white);
 }
 
 .arena-summary {
   font-size: 1rem;
   line-height: 1.7;
-  color: #334155;
+  color: var(--text);
 }
 
 .arena-chip-row {
@@ -235,8 +235,8 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #eef2ff;
-  color: #3730a3;
+  background: rgb(var(--accent-2-rgb) / 0.12);
+  color: var(--accent-2);
   font-size: 0.86rem;
   font-weight: 600;
 }
@@ -256,7 +256,7 @@
   gap: 6px;
   font-size: 0.92rem;
   line-height: 1.5;
-  color: #334155;
+  color: var(--text);
 }
 
 .arena-exercise-list li {
@@ -270,18 +270,18 @@
   font-variant-numeric: tabular-nums;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--muted);
   letter-spacing: 0.02em;
 }
 
 .arena-exercise-link {
-  color: #3730a3;
+  color: var(--accent-2);
   text-decoration: none;
-  border-bottom: 1px dashed rgba(55, 48, 163, 0.35);
+  border-bottom: 1px dashed rgb(var(--accent-2-rgb) / 0.35);
 }
 
 .arena-exercise-link:hover {
-  color: #1e1b4b;
+  color: var(--white);
   border-bottom-style: solid;
 }
 
@@ -293,44 +293,44 @@
   font-size: 0.78rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  background: #e2e8f0;
-  color: #1e293b;
+  background: rgb(var(--tint-rgb) / calc(0.1 * var(--tint-k)));
+  color: var(--text);
 }
 
-.arena-exercise-readiness--ready { background: #dcfce7; color: #166534; }
-.arena-exercise-readiness--borderline { background: #fef9c3; color: #854d0e; }
-.arena-exercise-readiness--partial { background: #ffedd5; color: #9a3412; }
-.arena-exercise-readiness--needs-prereq { background: #fee2e2; color: #991b1b; }
+.arena-exercise-readiness--ready { background: rgb(var(--ok-rgb) / 0.16); color: var(--ok); }
+.arena-exercise-readiness--borderline { background: rgb(var(--warn-rgb) / 0.16); color: var(--warn); }
+.arena-exercise-readiness--partial { background: rgb(var(--warn-rgb) / 0.3); color: var(--warn); }
+.arena-exercise-readiness--needs-prereq { background: rgb(var(--danger-rgb) / 0.16); color: var(--danger); }
 
 .arena-exercise-empty {
   font-size: 0.88rem;
-  color: #64748b;
+  color: var(--muted);
   font-style: italic;
 }
 
 .arena-skill-card {
   padding: 14px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .arena-skill-name {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--white);
 }
 
 .arena-skill-weight {
   margin-top: 8px;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1d4ed8;
+  color: var(--info);
 }
 
 .arena-skill-note {
   margin-top: 4px;
   font-size: 0.82rem;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .arena-action-row {
@@ -345,11 +345,11 @@
   justify-content: center;
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  color: #0f172a;
+  border: 1px solid var(--border);
+  color: var(--white);
   text-decoration: none;
   font-weight: 600;
-  background: #fff;
+  background: var(--surface);
 }
 
 .arena-metadata-grid {
@@ -360,9 +360,9 @@
 
 .arena-metadata-card {
   padding: 14px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #f8fafc;
+  background: var(--surface-2);
 }
 
 .arena-metadata-label {
@@ -370,12 +370,12 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .arena-metadata-value {
   margin-top: 8px;
-  color: #0f172a;
+  color: var(--white);
   word-break: break-word;
   line-height: 1.5;
 }

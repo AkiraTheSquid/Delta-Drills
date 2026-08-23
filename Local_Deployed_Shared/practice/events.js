@@ -6,15 +6,27 @@ practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
   PracticeSession.pauseForGrading();
+  // Same contract for a placement probe's fixed clock: once the grade is in
+  // flight the learner is no longer answering, so the countdown stops instead
+  // of expiring underneath the result.
+  window.PlacementTimer?.pauseForGrading();
   practiceSubmitBtn.disabled = true;
   let result;
   try {
     result = await PracticeAPI.submitAnswer(q.question_id, userCode);
   } catch (err) {
     if (PracticeAPI.currentQuestion !== q) return;
-    outputArea.textContent = "Submit failed: " + err.message;
+    /* `blocked` = we declined to run it and already said why (torch on
+       Pyodide); the reason IS the message, so don't bury it behind a prefix.
+       The `|| err` fallback matters for the unblocked case: a Pyodide
+       PythonError carries an EMPTY `.message`, which used to render as a bare
+       "Submit failed:" with nothing after it. */
+    outputArea.textContent = err.blocked
+      ? err.message
+      : "Submit failed: " + (err.message || err);
     practiceSubmitBtn.disabled = false;
     PracticeSession.resumeAnswerPhase();
+    window.PlacementTimer?.resumeAfterFailedSubmit();
     return;
   }
 
@@ -262,6 +274,9 @@ const _loadNextPracticeQuestion = async () => {
   // near 00:00 leaves the old answer timer live and it force-submits the
   // question being skipped.
   PracticeSession.pauseForAdvance();
+  // Third countdown, same reason: the placement clock must die on every
+  // advance path, or "I don't know yet" at 00:01 expires onto the NEXT probe.
+  window.PlacementTimer?.stop();
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
   practiceProgress.currentTargetDifficulty = null;
@@ -319,9 +334,9 @@ nextProblemBtn.addEventListener("click", async () => {
   await _loadNextPracticeQuestion();
 });
 
-// --- Placement diagnostic helpers ------------------------------------------
+// --- Placement test helpers ------------------------------------------------
 // After a probe is recorded (submit or "I don't know yet"), check whether the
-// diagnostic just finished; if so, tell the learner + refresh the adaptive
+// test just finished; if so, tell the learner + refresh the adaptive
 // state so the seeded BKT mastery reaches the graph/stats views immediately.
 async function _notifyIfPlacementDone() {
   try {
@@ -336,7 +351,7 @@ async function _notifyIfPlacementDone() {
     if (typeof showPracticeModeNotice === "function") {
       const strongest = (status.areas || []).slice().sort((a, b) => b.theta - a.theta)[0];
       showPracticeModeNotice(
-        `Placement complete after ${status.probes_done} questions — practice now starts at your level` +
+        `Placement test complete after ${status.probes_done} questions — practice now starts at your level` +
         (strongest ? ` (strongest area: ${strongest.topic}).` : "."),
       );
     }
@@ -345,20 +360,21 @@ async function _notifyIfPlacementDone() {
   }
 }
 
-// "Take placement diagnostic" — explicit entry from its own tab. Placement
+// The placement start button — explicit entry from its own tab. The test
 // never auto-starts inside Practice. Label flips to "Retake" once completed.
 async function refreshPlacementStartBtn() {
   if (typeof placementStartBtn === "undefined" || !placementStartBtn) return;
   const status = await PracticeAPI.diagnosticStatus();
-  if (!status || status.active) {
+  if (!status) {
     placementStartBtn.classList.add("hidden");
     return;
   }
-  placementStartBtn.textContent = status.completed_at
-    ? "Retake placement diagnostic"
-    : "Take placement diagnostic";
-  placementStartBtn.disabled = false;
-  placementStartBtn.classList.remove("hidden");
+  // diagnostic-page.js owns the label and the visibility rule — a second copy
+  // here is what made the button flicker between two names on refresh.
+  // Optional call, not a bare one: events.js is loaded BEFORE diagnostic-page.js,
+  // so anything that refreshes the button during page load would otherwise throw
+  // on a module that has not evaluated yet.
+  window.DiagnosticPage?.renderStartButton?.(status, placementStartBtn);
 }
 window.refreshPlacementStartBtn = refreshPlacementStartBtn;
 
@@ -371,12 +387,13 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
       placementStartBtn.classList.add("hidden");
       if (typeof showPracticeModeNotice === "function") {
         showPracticeModeNotice(
-          "Placement diagnostic started — a few adaptive questions to locate your level.",
+          "Placement test started — a few adaptive questions to locate your level, "
+          + `${Math.round((window.PlacementTimer?.secondsPerQuestion?.() ?? 120) / 60)} minutes each.`,
         );
       }
-      // The diagnostic is its own flow with its own (backend-driven) length —
+      // The placement test is its own flow with its own (backend-driven) length —
       // don't let the current session's quota gate swallow it ("Session
-      // complete" while the backend diagnostic stays active). End the block
+      // complete" while the backend placement stays active). End the block
       // and let the learner start a fresh one; its questions ARE the probes.
       if (PracticeSession.isActive()) {
         PracticeSession.finish("placement");
@@ -385,7 +402,7 @@ if (typeof placementStartBtn !== "undefined" && placementStartBtn) {
       await _loadNextPracticeQuestion();
       await window.DiagnosticPage?.refresh();
     } catch (err) {
-      outputArea.textContent = "Could not start the placement diagnostic: " + err.message;
+      outputArea.textContent = "Could not start the placement test: " + err.message;
       placementStartBtn.disabled = false;
     }
   });
@@ -396,7 +413,7 @@ window.addEventListener("delta:diagnostic-next", async () => {
     await _loadNextPracticeQuestion();
     await window.DiagnosticPage?.refresh();
   } catch (err) {
-    outputArea.textContent = "Could not load placement question: " + err.message;
+    outputArea.textContent = "Could not load the next placement question: " + err.message;
   }
 });
 

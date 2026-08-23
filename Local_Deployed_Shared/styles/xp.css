@@ -1,0 +1,129 @@
+/* ================================================================
+   XP.CSS — the level chip, and the progress bar that IS the seam.
+
+   THE BAR IS THE BORDER. `.topbar` draws a 1px `--border` line under
+   itself; `.dd-xp-seam` sits exactly on that line (`bottom: -2px`,
+   2px tall) and paints over it, so at 0% the chrome looks unchanged and
+   at 40% the left 40% of that same line has turned into the gradient.
+   Nothing reflows, nothing is added to the 56px row, and the bar is on
+   screen on every tab because the topbar is.
+
+   Why `bottom: -2px` and not `0`: the header is `box-sizing: border-box`
+   at 56px with a 1px bottom border, so absolute children are placed
+   against a 55px-tall padding box — and `.tab.active` already owns the
+   last 2px of that (y 53–55) for its accent underline. `bottom: 0` and
+   even `bottom: -1px` clip that underline. `-2px` puts the bar at y
+   55–57: the border row itself, plus 1px hanging over the page. The
+   overhang is deliberate — a seam belongs to both halves.
+
+   No numerals, by design. See the header of ../xp.js.
+   ================================================================ */
+
+/* ---- the seam ---------------------------------------------------------- */
+
+/* `.topbar` is `position: sticky`, which is a containing block for an
+   absolutely positioned child — so this needs no extra positioning on the
+   header itself. */
+.dd-xp-seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  /* The track is the line it replaced, so an empty bar is invisible
+     rather than being an empty bar. */
+  background: var(--border);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dd-xp-seam-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--xp-from) 0%, var(--xp-to) 100%);
+  /* The leading edge is the bright end of the gradient, so the glow reads
+     as a head travelling right rather than as a lit strip. */
+  box-shadow: 0 0 6px rgb(var(--xp-glow-rgb) / 0.55);
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Set for one frame on level-up, while the bar is snapped from full back
+   to the carried-over remainder. Without it the width animates BACKWARDS
+   across the whole topbar, which reads as losing everything you just
+   earned. ../xp.js adds and removes this around a forced reflow. */
+.dd-xp-seam-fill--snap {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-xp-seam-fill {
+    transition: none;
+  }
+}
+
+/* ---- the level chip ---------------------------------------------------- */
+
+/* Sits between the logo and the tab strip. In drawer mode (<900px) `.logo`
+   takes `margin-right: auto`, which carries the chip over to the right beside
+   the account dot — still one 56px row, still no wrap. */
+.dd-level {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  margin: 0 14px;
+  padding: 3px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.dd-level-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  /* The number changes under the label; proportional digits make the chip
+     twitch sideways every time it does. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* Level-up. One pulse, ~1.1s, then back to the resting chip — the bar has
+   already run to full and reset, and a chip that keeps glowing afterwards
+   turns a moment into a permanent decoration. */
+.dd-level--up {
+  border-color: var(--xp-to);
+  background: rgb(var(--xp-glow-rgb) / 0.14);
+  animation: dd-level-pop 1.1s ease;
+}
+
+.dd-level--up .dd-level-num {
+  color: var(--xp-to);
+}
+
+@keyframes dd-level-pop {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgb(var(--xp-glow-rgb) / 0.5);
+  }
+  25% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 6px rgb(var(--xp-glow-rgb) / 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgb(var(--xp-glow-rgb) / 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-level--up {
+    animation: none;
+  }
+}

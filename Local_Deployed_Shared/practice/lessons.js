@@ -502,6 +502,10 @@ const LessonGate = (() => {
             console.warn("[lessons] could not credit worked examples:", err);
           }
         }
+        // Reading a worked example through to the end is the one non-answer
+        // thing the XP seam credits — it is the gate the learner cannot skip,
+        // and finishing it should move the bar like anything else they did.
+        window.dispatchEvent(new CustomEvent("delta:xp", { detail: { kind: "lesson_read" } }));
         _cleanup();
         onDone();
       };

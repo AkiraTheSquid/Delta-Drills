@@ -23,7 +23,7 @@
   height: 32px;
   border-radius: 50%;
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
   font-weight: 700;
   font-size: 14px;
   display: flex;
@@ -75,7 +75,7 @@
   display: flex;
   align-items: center;
   text-align: center;
-  color: var(--color-muted, rgba(255, 255, 255, 0.55));
+  color: var(--color-muted);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -95,13 +95,13 @@
 }
 .auth-fallback > summary {
   cursor: pointer;
-  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  color: var(--color-muted);
   font-size: 13px;
   list-style: revert;
   margin-bottom: 12px;
 }
 .auth-fallback > summary:hover {
-  color: var(--white, #f4f4f7);
+  color: var(--white);
 }
 
 .field {
@@ -132,7 +132,7 @@
 
 .primary {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
   border: none;
   padding: 12px 28px;
   border-radius: 6px;
@@ -164,8 +164,8 @@
 }
 
 .ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
 }
 
 .hint {
@@ -283,6 +283,47 @@
   word-break: break-all;
 }
 
+/* App-mode toggle (basic ⇄ advanced). Sits above the settings form, not in
+   it, because it applies on change — the form below still needs its Save. */
+.account-mode {
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.account-mode-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.account-mode-row input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--accent-text);
+  cursor: pointer;
+}
+
+.account-mode-text {
+  display: grid;
+  gap: 4px;
+}
+
+.account-mode-title {
+  font-weight: 600;
+}
+
+.account-mode-hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 /* Credentials (API base, OpenAI / Mathpix keys, DD_TOKEN) — collapsed by
    default so they don't crowd the account view. */
 .account-advanced {
@@ -332,3 +373,174 @@
   color: var(--muted);
   margin-top: 8px;
 }
+
+/* ================================================================
+   THEME PICKER (Account tab)
+
+   The swatches are the ONE place in this app where raw colour literals are
+   correct: each one is a miniature of a theme the viewer is NOT currently
+   in, so it cannot be drawn with var(--bg)/var(--surface) — those resolve to
+   the ACTIVE theme and all three previews would come out identical. The
+   values below are copied from the matching block in variables.css; if a
+   theme's --bg/--surface/--border/--accent change there, change them here
+   too. Nothing else in this file may follow this precedent.
+   ================================================================ */
+
+.account-theme {
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  padding: 12px 14px;
+}
+
+.account-theme-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.account-theme-title {
+  font-weight: 600;
+}
+
+.account-theme-hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.account-theme-options {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.account-theme-option {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.account-theme-option:hover {
+  border-color: var(--border-strong);
+}
+
+/* The radio itself is the accessible control — focusable, arrow-key
+   navigable, announced as a radio group. It is only visually replaced by the
+   swatch, never removed: `display: none` would take it out of the tab order
+   and out of the a11y tree, which is how a "custom radio group" becomes
+   keyboard-unreachable. */
+.account-theme-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.account-theme-option:has(input:checked) {
+  border-color: var(--accent-text);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.account-theme-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A tiny picture of the app: topbar strip, card, two text lines. */
+.account-theme-swatch {
+  position: relative;
+  display: block;
+  height: 62px;
+  border-radius: 7px;
+  border: 1px solid;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.account-theme-swatch-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 13px;
+}
+
+.account-theme-swatch-card {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 21px;
+  bottom: 8px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+.account-theme-swatch-line {
+  position: absolute;
+  left: 14px;
+  top: 29px;
+  width: 42%;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.account-theme-swatch-line--short {
+  top: 39px;
+  width: 26%;
+}
+
+.account-theme-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--white);
+}
+
+.account-theme-note {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* ── The three miniatures. Literals on purpose — see the note above. ────── */
+
+[data-theme-preview="blue"] .account-theme-swatch {
+  background: #1a1a2e;
+  border-color: #2a2a4a;
+}
+[data-theme-preview="blue"] .account-theme-swatch-bar { background: #16213e; }
+[data-theme-preview="blue"] .account-theme-swatch-card {
+  background: #16213e;
+  border-color: #2a2a4a;
+}
+[data-theme-preview="blue"] .account-theme-swatch-line { background: #e3212c; }
+[data-theme-preview="blue"] .account-theme-swatch-line--short { background: #8a8a99; }
+
+[data-theme-preview="dark"] .account-theme-swatch {
+  background: #202124;
+  border-color: #3c4043;
+}
+[data-theme-preview="dark"] .account-theme-swatch-bar { background: #282a2e; }
+[data-theme-preview="dark"] .account-theme-swatch-card {
+  background: #2a2c30;
+  border-color: #3c4043;
+}
+[data-theme-preview="dark"] .account-theme-swatch-line { background: #e3212c; }
+[data-theme-preview="dark"] .account-theme-swatch-line--short { background: #9aa0a6; }
+
+[data-theme-preview="light"] .account-theme-swatch {
+  background: #f5f6f8;
+  border-color: #d7dbe2;
+}
+[data-theme-preview="light"] .account-theme-swatch-bar { background: #ffffff; }
+[data-theme-preview="light"] .account-theme-swatch-card {
+  background: #ffffff;
+  border-color: #d7dbe2;
+}
+[data-theme-preview="light"] .account-theme-swatch-line { background: #c8151f; }
+[data-theme-preview="light"] .account-theme-swatch-line--short { background: #4f5661; }

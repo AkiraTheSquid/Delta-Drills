@@ -9,14 +9,42 @@ function isCalibrationQuestion(q) {
   return isColdStart(q.subtopic, overrideN);
 }
 
+const TORCH_IMPORT_RE = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
+
 // A question is "torch" if the bank tags it so, or its starter/solution imports
 // torch.
 function questionIsTorch(q) {
   if (!q) return false;
   if (q.primary_library === "torch") return true;
   const blob = `${q.starter_code || ""}\n${q.solution_code || ""}`;
-  return /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/.test(blob);
+  return TORCH_IMPORT_RE.test(blob);
 }
+
+/* Would running this on Pyodide hit `import torch`? Pyodide cannot import torch
+   AT ALL, so the answer decides whether local execution is even attempted.
+
+   Wider than `questionIsTorch` on purpose, because it guards the GRADING path
+   and each extra source below is one that path actually executes:
+
+     * `userCode` — a learner who types `import torch` themselves.
+     * `test_cases[*].setup_code` — spliced verbatim into the Pyodide preamble
+       by `buildPyodidePreamble`. This is the one that bit: the bank stores
+       `import torch as t` in setup_code, the preamble runs OUTSIDE the
+       submit try/catch, and Pyodide throws a PythonError whose `.message` is
+       empty — so the learner saw a bare "Submit failed:" with no reason, on
+       every notebook-less torch question, forever. Skip was the only exit. */
+function needsTorchRuntime(q, userCode = "") {
+  if (questionIsTorch(q)) return true;
+  if (TORCH_IMPORT_RE.test(userCode || "")) return true;
+  return (Array.isArray(q?.test_cases) ? q.test_cases : []).some((c) =>
+    TORCH_IMPORT_RE.test(`${c?.setup_code || ""}\n${c?.expected_setup_code || ""}`)
+  );
+}
+
+const TORCH_UNAVAILABLE =
+  "This code uses PyTorch, which can't run in the browser sandbox. " +
+  "Open it in Colab (Show Answer / the solution notebook) to run it, " +
+  "or sign in to use the full runner.";
 
 // Colab routing applies ONLY where the runner can't grade torch. Backend mode
 // grades torch in-process now (fork runner, torch preimported at boot), so
@@ -268,10 +296,13 @@ function renderQuestion(q, count) {
   const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
   if (q.diagnostic_active) {
     coldStartLabel.textContent =
-      `Placement diagnostic — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
+      `Placement test — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
     if (coldStartNote) {
+      // Every probe gets the SAME allowance, so say the number rather than
+      // "timed" — the learner budgets the question against a figure they can
+      // check on the countdown beside this line.
       coldStartNote.textContent =
-        "A short adaptive placement: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.";
+        `A short adaptive test: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Every question gets the same ${Math.round((window.PlacementTimer?.secondsPerQuestion?.() ?? 120) / 60)} minutes — when the time is up we record what you have and move on. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.`;
     }
     coldStartBadge.classList.remove("hidden");
   } else if (coldStart && csIndex) {
@@ -340,6 +371,10 @@ function renderQuestion(q, count) {
   // Rigid session: every rendered question starts a fresh strict answer
   // countdown (no-op while no session is running).
   PracticeSession.onQuestionRendered();
+  // Placement probes run OUTSIDE a session, so they carry their own fixed
+  // clock. Also a no-op — and a stop() — on any non-probe question, so the
+  // placement countdown can never outlive the placement.
+  window.PlacementTimer?.onQuestionRendered();
 
   const pending = practiceProgress.pendingFeedback;
   if (pending) {

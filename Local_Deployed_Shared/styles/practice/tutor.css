@@ -67,7 +67,7 @@
 }
 
 .tutor-suggestion:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
   color: var(--white);
 }
 
@@ -173,7 +173,7 @@
   background: var(--accent);
   border: none;
   border-radius: 8px;
-  color: var(--white);
+  color: var(--on-accent);
   cursor: pointer;
   flex-shrink: 0;
   font-size: 13px;

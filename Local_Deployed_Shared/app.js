@@ -20,6 +20,22 @@ let API_BASE = localStorage.getItem("api_base") || defaultApiBase;
 let authToken = localStorage.getItem("auth_token") || "";
 let authEmail = localStorage.getItem("auth_email") || "";
 
+// --- Guest sessions ---------------------------------------------------
+// A visitor with no account still gets the WHOLE app: guest-session.js
+// mints one against the backend on first load and keeps its credentials in
+// this browser. That is what makes the diagnostic, the lessons and the BKT
+// student model — every one of them `practiceMode === "backend"` only —
+// work without a sign-in.
+//
+// The consequence is that `authToken` stopped meaning "a person signed in".
+// It means "this session can call the backend". Anything about IDENTITY —
+// the guest banner, the topbar email, the Account tab, which tab we land on
+// — must ask isSignedIn(); anything about CAPABILITY still asks authToken.
+const GUEST_CREDENTIALS_KEY = "dd_guest_credentials";
+const GUEST_ACTIVE_KEY = "dd_auth_is_guest";
+const isGuestSession = () => localStorage.getItem(GUEST_ACTIVE_KEY) === "1";
+const isSignedIn = () => !!authToken && !isGuestSession();
+
 // MIGRATION FLAG (2026-05-30): route auth + practice to the Fly backend
 // (own JWT auth + Neon Postgres + BKT gate) instead of Supabase, in prod too.
 // REVERSIBLE: set false to restore Supabase auth + supabase practice mode
@@ -29,13 +45,41 @@ window.DELTA_USE_BACKEND = true;
 // Guests can now use the learning surface (practice/drills) without an
 // account — progress is saved locally only (see getPracticeMode → "local").
 // Only account-management / admin tabs still require a real login.
-const guestBlockedTabs = ["split-tool", "account"];
+//
+// Account is NOT in this list: it now hosts the basic/advanced mode toggle,
+// which is a display preference kept in localStorage and is the only way to
+// reach the advanced tabs. Blocking it would leave a signed-out visitor with
+// no route into advanced mode at all. The credential controls on that page
+// are already keyed off `authToken` and render as "Not signed in" for guests.
+const guestBlockedTabs = ["split-tool"];
+
+// --- Basic / Advanced app mode ---------------------------------------
+// Basic is the DEFAULT and the app most people should see: Practice, the
+// Diagnostic and the explainer tab. Advanced adds back the tabs that
+// show the machinery. Flipped from the toggle on the Account tab; stored
+// per-browser, like api_base and the other local prefs.
+// Nothing is unloaded — the pages stay in the DOM and their scripts still
+// run; only the nav entries (and the one in-page CTA that points at a
+// hidden tab) are taken out, and switchTab refuses to route to them.
+const advancedOnlyTabs = ["knowledge-graph", "courses", "notebooks", "targeted-practice"];
+const ADVANCED_MODE_KEY = "dd_advanced_mode";
+const isAdvancedMode = () => localStorage.getItem(ADVANCED_MODE_KEY) === "1";
+const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
 
 const switchTab = (tabName) => {
   if (guestBlockedTabs.includes(tabName) && !authToken) {
     // No forced login page anymore — send guests to practice; the guest
     // banner is the standing CTA to log in.
     tabName = "practice";
+  }
+  if (isAdvancedOnlyTab(tabName) && !isAdvancedMode()) {
+    // A tab that isn't in the nav must not be reachable by other means
+    // either — e.g. a [data-goto-tab] button that outlived a mode flip.
+    // EXCEPT a solo pathname deep link (/notebooks, /knowledge-graph): that
+    // URL is an explicit request for that one page, it renders without app
+    // chrome anyway, and it's what embeds point at. Redirecting it would
+    // serve a chromeless Practice page to someone who asked for a notebook.
+    if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
@@ -93,6 +137,32 @@ document.querySelectorAll("[data-goto-tab]").forEach((b) => {
 // tabs (Account, Split Tool) stay hidden until login.
 const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-practice"];
 
+// Second visibility pass, run AFTER the auth pass below and never before it.
+// It only ever ADDS .hidden, so it can't reveal a tab auth just hid — which
+// is what keeps the two passes composable in either mode.
+// Both the .tab button and its sibling .tab-info dot carry the same data-tab,
+// so one selector takes out the pair.
+const applyModeVisibility = () => {
+  const advanced = isAdvancedMode();
+  document.body.classList.toggle("dd-basic-mode", !advanced);
+  // Tabs: ADD-only. Turning advanced back on must NOT un-hide these here —
+  // the auth pass above already restored the ones this viewer is allowed,
+  // and a symmetric toggle would hand a guest the tabs auth just took away.
+  if (!advanced) {
+    document.querySelectorAll(".tab, .tab-info").forEach((el) => {
+      if (isAdvancedOnlyTab(el.dataset.tab)) el.classList.add("hidden");
+    });
+  }
+  // In-page jumps to a tab that isn't there (How It Works → Knowledge Graph).
+  // No auth pass touches these, so this one has to be symmetric or the CTA
+  // stays hidden forever after one trip through basic mode. Hide the wrapper
+  // where there is one so no empty block is left behind.
+  document.querySelectorAll("[data-goto-tab]").forEach((b) => {
+    if (!isAdvancedOnlyTab(b.dataset.gotoTab)) return;
+    (b.closest(".hiw-graph-cta") || b).classList.toggle("hidden", !advanced);
+  });
+};
+
 const updateTabVisibility = () => {
   if (authToken) {
     authOnlyTabs.forEach((t) => t.classList.remove("hidden"));
@@ -104,7 +174,11 @@ const updateTabVisibility = () => {
     guestOnlyTabs.forEach((t) => t.classList.remove("hidden"));
   }
   const guestBanner = document.getElementById("guest-banner");
-  if (guestBanner) guestBanner.classList.toggle("hidden", !!authToken);
+  // isSignedIn, not authToken: a guest HAS a token (guest-session.js) and
+  // the banner is the only thing telling them their progress lives in this
+  // browser and how to make it follow them elsewhere.
+  if (guestBanner) guestBanner.classList.toggle("hidden", isSignedIn());
+  applyModeVisibility();
   updateAuthIndicators();
 };
 
@@ -120,17 +194,28 @@ const accountTokenCopy = document.getElementById("account-dd-token-copy");
 const accountIdentityEmail = document.getElementById("account-identity-email");
 const accountIdentityStatus = document.getElementById("account-identity-status");
 const updateAuthIndicators = () => {
-  if (topbarAuth) topbarAuth.hidden = !authToken;
-  if (topbarAuthEmail) topbarAuthEmail.textContent = authToken ? (authEmail || "Signed in") : "";
+  // Every readout here answers "who am I", so every one of them is keyed on
+  // isSignedIn(). A guest holds a token but is not signed in as anyone, and
+  // showing them their generated guest-<hex>@… address as their email would
+  // be worse than saying nothing.
+  const signedIn = isSignedIn();
+  if (topbarAuth) topbarAuth.hidden = !signedIn;
+  if (topbarAuthEmail) topbarAuthEmail.textContent = signedIn ? (authEmail || "Signed in") : "";
   if (accountIdentityEmail) {
-    accountIdentityEmail.textContent = authToken ? (authEmail || "—") : "Not signed in";
+    accountIdentityEmail.textContent = signedIn ? (authEmail || "—") : "Not signed in";
   }
   if (accountIdentityStatus) {
-    accountIdentityStatus.textContent = authToken ? "Signed in" : "Guest";
+    accountIdentityStatus.textContent = signedIn
+      ? "Signed in"
+      : "Guest — progress is saved in this browser";
   }
+  // Nothing to log out OF as a guest: the button would clear a session that
+  // guest-session.js immediately re-establishes from the same credentials,
+  // which reads as a broken button.
+  if (accountLogout) accountLogout.hidden = !signedIn;
   if (accountTokenInput) {
-    accountTokenInput.value = authToken || "";
-    accountTokenInput.placeholder = authToken ? "" : "Sign in to see your token";
+    accountTokenInput.value = signedIn ? authToken : "";
+    accountTokenInput.placeholder = signedIn ? "" : "Sign in to see your token";
   }
 };
 if (accountTokenCopy && accountTokenInput) {
@@ -157,6 +242,10 @@ const setAuthState = (token, email) => {
   if (authToken) {
     localStorage.setItem("auth_token", authToken);
     localStorage.setItem("auth_email", authEmail);
+    // This token belongs to a person now. GUEST_CREDENTIALS_KEY is left
+    // alone on purpose: logging out returns them to the same guest account
+    // and the progress it already had, instead of a blank third one.
+    localStorage.removeItem(GUEST_ACTIVE_KEY);
     authStatus.textContent = authEmail ? `Logged in as ${authEmail}` : "Logged in";
     // Guest → logged in: practice mode is detected once at init, so reload to
     // re-init in backend mode and hydrate server-side progress cleanly.
@@ -180,14 +269,30 @@ const setAuthState = (token, email) => {
   );
 };
 
-logoutButton.addEventListener("click", () => {
-  if (typeof supabaseSignOut === "function") supabaseSignOut();
+// Signing out drops back to the GUEST session, not to a dead-end. That is a
+// different backend account, and practiceMode + the whole practice surface
+// are wired up once at init, so it takes a reload rather than an in-place
+// swap. setAuthState has already cleared the token by then, so the reload
+// boots token-less and guest-session.js logs the guest back in.
+const signOutAndReload = async () => {
+  // Awaited, and reloaded only afterwards: supabaseSignOut() is async, and
+  // navigating out from under an in-flight sign-out can cancel it — after
+  // which maybeRefreshSupabaseAuth() finds the session still alive on the
+  // next load and signs the user back in, which reads as a Log out button
+  // that does nothing. Failure still reloads: a provider that will not
+  // answer must not be able to trap someone in a session.
+  if (typeof supabaseSignOut === "function") {
+    try {
+      await supabaseSignOut();
+    } catch (err) {
+      console.warn("Supabase sign-out failed; signing out locally anyway:", err);
+    }
+  }
   setAuthState("", "");
-});
-accountLogout.addEventListener("click", () => {
-  if (typeof supabaseSignOut === "function") supabaseSignOut();
-  setAuthState("", "");
-});
+  window.location.reload();
+};
+logoutButton.addEventListener("click", signOutAndReload);
+accountLogout.addEventListener("click", signOutAndReload);
 
 const maybeRefreshSupabaseAuth = async () => {
   if (isLocalHost || typeof supabaseGetSession !== "function") return false;
@@ -321,6 +426,21 @@ const initGoogleSignIn = () => {
 
 // --- Account settings ---
 
+// Advanced-mode toggle. Applies on change with no Save step — it rewrites the
+// nav the user is looking at, and a nav that only updates after a form submit
+// reads as broken. If the tab they're on is one of the ones that just went
+// away, carry them to Practice rather than leaving a page with no tab.
+const advancedModeToggle = document.getElementById("account-advanced-mode");
+if (advancedModeToggle) {
+  advancedModeToggle.checked = isAdvancedMode();
+  advancedModeToggle.addEventListener("change", () => {
+    localStorage.setItem(ADVANCED_MODE_KEY, advancedModeToggle.checked ? "1" : "0");
+    const activeTab = document.querySelector(".tab.active")?.dataset.tab || "";
+    updateTabVisibility();
+    if (!advancedModeToggle.checked && isAdvancedOnlyTab(activeTab)) switchTab("practice");
+  });
+}
+
 accountForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const apiBase = document.getElementById("account-api-base").value.trim();
@@ -376,7 +496,13 @@ if (authToken) {
 // before switching, then confirm the optimistic pre-paint class only after the
 // requested page is visible so no other page flashes first.
 const soloTab = window.DDSoloRoute?.read?.() || "";
-switchTab(soloTab || (authToken ? "practice" : "how-it-works"));
+// First visit lands on the pitch, every visit after it lands on the work.
+// `authToken` is the right test for that and isSignedIn() is not: a returning
+// GUEST has a token (guest-session.js stored one last time) and wants their
+// practice queue, not the explainer they already read. A first-time visitor
+// has nothing stored yet, which is the one moment "Why this app exists" is
+// the most useful page in the app.
+switchTab(soloTab || (authToken ? "practice" : "why-this-app"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by

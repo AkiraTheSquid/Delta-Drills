@@ -32,6 +32,11 @@ function hidePracticeModeNotice() {
  * switches this session to local mode so the page stays usable.
  */
 function handleExpiredToken() {
+  // A GUEST token that expired is not a lapsed sign-in — the account and its
+  // progress are still there and guest-session.js still holds the password.
+  // It reloads and logs back in, so there is nothing to notify and nothing to
+  // demote. Returns false for a real signed-in user, who does get the notice.
+  if (window.DDGuest?.recoverExpiredSession?.()) return;
   console.warn("[practice] Token expired or invalid — falling back to local mode.");
   showPracticeModeNotice(
     "Your sign-in expired, so progress is no longer being saved to your account. " +

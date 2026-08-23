@@ -6,7 +6,7 @@
   gap: 12px;
   margin: 2px 0 12px 52px;
 }
-.notebook-add-cell { color: var(--accent); font-size: 12px; padding: 6px 12px; }
+.notebook-add-cell { color: var(--accent-text); font-size: 12px; padding: 6px 12px; }
 .notebook-shortcuts { color: var(--muted); font-size: 10px; }
 .notebook-cells { display: flex; flex-direction: column; gap: 14px; }
 .notebook-cell { display: grid; gap: 8px; grid-template-columns: 44px minmax(0, 1fr); position: relative; }
@@ -25,12 +25,12 @@
   width: 30px;
 }
 .notebook-cell-run:hover, .notebook-cell:focus-within .notebook-cell-run {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
 }
 .notebook-cell-run:disabled { cursor: wait; opacity: .65; }
-.notebook-cell-exec { color: #7dd3fc; font-family: monospace; font-size: 11px; }
-.notebook-cell-exec--error { color: #fca5a5; }
+.notebook-cell-exec { color: var(--code-key); font-family: monospace; font-size: 11px; }
+.notebook-cell-exec--error { color: var(--code-err); }
 .notebook-cell-main { min-width: 0; }
 .notebook-cell-actions {
   align-items: center;
@@ -51,7 +51,7 @@
   font-size: 18px;
   line-height: 1;
 }
-.notebook-cell-delete:hover { color: #fca5a5; }
+.notebook-cell-delete:hover { color: var(--code-err); }
 .notebook-cell .code-editor {
   border-left: 3px solid transparent;
   border-radius: 6px;
@@ -61,8 +61,8 @@
   padding: 13px 15px;
   resize: vertical;
 }
-.notebook-cell:focus-within .code-editor { border-left-color: var(--accent); }
-.notebook-cell-output { border-left: 3px solid rgba(125, 211, 252, .35); margin-top: 2px; padding-left: 12px; }
+.notebook-cell:focus-within .code-editor { border-left-color: var(--accent-text); }
+.notebook-cell-output { border-left: 3px solid color-mix(in srgb, var(--code-key) 35%, transparent); margin-top: 2px; padding-left: 12px; }
 .notebook-cell-output.hidden { display: none; }
 .notebook-cell .output-header { font-size: 10px; margin: 8px 0 5px; }
 .notebook-cell .output-area {
@@ -75,7 +75,7 @@
 }
 .notebook-cell--stale { opacity: .72; }
 .notebook-cell--stale::after {
-  color: #fbbf24;
+  color: var(--warn);
   content: "runtime restarted — rerun this cell";
   font-size: 10px;
   position: absolute;

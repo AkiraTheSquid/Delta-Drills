@@ -236,7 +236,7 @@ const PracticeAPI = {
     return this.currentQuestion;
   },
 
-  // --- Placement diagnostic (backend mode only) -------------------------
+  // --- Placement test (backend mode only) --------------------------------
   // "I don't know yet" and self-rated probe results go here; answered probes
   // are recorded server-side by /submit while the diagnostic is active.
   async diagnosticAnswer(questionId, result) {
@@ -268,7 +268,7 @@ const PracticeAPI = {
     }
     if (!res.ok) {
       const detail = await res.text();
-      throw new Error(detail || "Failed to start the placement diagnostic.");
+      throw new Error(detail || "Failed to start the placement test.");
     }
     return await res.json();
   },
@@ -302,6 +302,20 @@ const PracticeAPI = {
       } else {
         return await res.json();
       }
+    }
+
+    /* Everything below grades on Pyodide, which cannot import torch. Refuse
+       before touching it, the same way runSnippet does for the Run button.
+
+       This THROWS rather than returning `{correct: false}` on purpose: the
+       learner's answer was never executed, so there is no verdict to record.
+       Returning a result here would mark a correct answer wrong and drag the
+       mastery estimate down for a runtime failure. `blocked` tells events.js
+       to state the reason instead of prefixing it with "Submit failed:". */
+    if (needsTorchRuntime(this.currentQuestion, userCode)) {
+      const blocked = new Error(TORCH_UNAVAILABLE);
+      blocked.blocked = true;
+      throw blocked;
     }
 
     // supabase/local or backend+einops fallback — run code with Pyodide and AI judge
@@ -607,3 +621,54 @@ json.dumps(_delta_results)
     return { success: true, queuedLocally: true };
   },
 };
+
+/* ================================================================
+   XP HOOKS — one wrap, every path that records learner data.
+
+   The topbar seam (../xp.js) has to move whenever the learner enters
+   ANYTHING: a graded submit, a placement probe, "I don't know yet", the
+   felt-difficulty rating, a torch self-rating, a content flag. Those are
+   six handlers spread over events.js, colab_mode.js and diagnostic-page.js,
+   but every one of them ends up calling a method on this object — so the
+   award belongs HERE, wrapped once, rather than as six calls that the next
+   handler to be added will forget to make.
+
+   `window.DeltaXP` is read at call time, not captured: xp.js loads before
+   this file today, and a load-order change should degrade to "no XP for
+   this attempt", never to a TypeError inside submit.
+
+   The wrappers are transparent — same arguments, same return value, same
+   rejection. An award never runs on the failure path, because a submit
+   that threw recorded nothing.
+   ================================================================ */
+(function wirePracticeXp() {
+  const award = (kind) => {
+    try {
+      window.DeltaXP?.award(kind);
+    } catch (_) {
+      /* gamification must never break a graded submit */
+    }
+  };
+
+  const wrap = (name, kindFor) => {
+    const original = PracticeAPI[name];
+    if (typeof original !== "function") return;
+    PracticeAPI[name] = async function (...args) {
+      const result = await original.apply(this, args);
+      award(kindFor(result, args));
+      return result;
+    };
+  };
+
+  // A miss still pays. The placement test is BUILT out of misses, and a bar
+  // that only moved on a correct answer would charge the learner for using
+  // the feature that finds their level.
+  wrap("submitAnswer", (result) => (result && result.correct ? "answer_correct" : "answer_wrong"));
+  // Torch / Colab self-rating and the local Pyodide engine path.
+  wrap("recordLocalEval", (_r, args) => (args[1] ? "answer_correct" : "answer_wrong"));
+  // Placement probe answered without a code attempt ("I don't know yet").
+  wrap("diagnosticAnswer", (_r, args) => (args[1] === "dont_know" ? "placement_skip" : "placement_answer"));
+  wrap("sendFeedback", () => "difficulty_rating");
+  wrap("overrideCorrect", () => "override");
+  wrap("reportProblem", () => "problem_report");
+})();

@@ -28,7 +28,7 @@ body.lesson-mode #question-text {
 /* ---- cells --------------------------------------------------------------- */
 
 .nb-cell {
-  background: rgba(0, 0, 0, 0.28);
+  background: rgb(var(--well-rgb) / calc(0.28 * var(--well-k)));
   border: 1px solid var(--border);
   border-radius: 8px;
   margin: 16px 0;
@@ -76,7 +76,7 @@ body.lesson-mode #question-text {
   background: transparent;
   border: 1px solid var(--accent);
   border-radius: 5px;
-  color: var(--accent);
+  color: var(--accent-text);
   cursor: pointer;
   font-family: inherit;
   font-size: 12px;
@@ -87,7 +87,7 @@ body.lesson-mode #question-text {
 
 .nb-run:hover:not(:disabled) {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .nb-run:disabled {
@@ -107,26 +107,26 @@ body.lesson-mode #question-text {
 }
 
 .nb-cell.has-run .nb-count {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .nb-cell.has-failed .nb-count {
-  color: #f2a3a3;
+  color: var(--danger);
 }
 
 /* A run leaves a mark on the cell itself, not only in the bar, so the learner
    can see which parts of the page they have executed while scrolling past the
    collapsed output. */
 .nb-cell.has-run {
-  border-color: rgba(227, 33, 44, 0.45);
+  border-color: rgb(var(--accent-rgb) / 0.45);
 }
 
 .nb-cell.has-failed {
-  border-color: rgba(242, 163, 163, 0.55);
+  border-color: rgb(var(--danger-rgb) / 0.55);
 }
 
 .nb-cell.is-running {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .nb-status {
@@ -136,7 +136,7 @@ body.lesson-mode #question-text {
 }
 
 .nb-out {
-  background: rgba(0, 0, 0, 0.45);
+  background: rgb(var(--well-rgb) / calc(0.45 * var(--well-k)));
   border-top: 1px solid var(--border);
   color: var(--text);
   font-size: 12.5px;
@@ -155,5 +155,5 @@ body.lesson-mode #question-text {
 /* Failure is marked by colour AND by the text itself always being the runtime's
    own message, so colour is never the only carrier. */
 .nb-out.is-error {
-  color: #f2a3a3;
+  color: var(--danger);
 }

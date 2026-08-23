@@ -30,9 +30,9 @@
   gap: 10px;
   margin-bottom: 20px;
   padding: 14px 16px;
-  border: 1px solid rgba(167, 139, 250, 0.22);
+  border: 1px solid rgb(var(--accent-2-rgb) / 0.22);
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(24, 20, 39, 0.95), rgba(17, 16, 28, 0.98));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 8%, var(--panel)), var(--panel-deep));
 }
 
 .question-imports.hidden {
@@ -64,8 +64,8 @@
   align-items: center;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgb(var(--accent-2-rgb) / 0.25);
+  background: rgb(var(--accent-2-rgb) / 0.08);
   color: var(--white);
   font-size: 12px;
   font-weight: 600;
@@ -76,20 +76,20 @@
 
 .question-import:hover {
   transform: translateY(-1px);
-  border-color: rgba(167, 139, 250, 0.5);
-  background: rgba(167, 139, 250, 0.14);
+  border-color: rgb(var(--accent-2-rgb) / 0.5);
+  background: rgb(var(--accent-2-rgb) / 0.14);
 }
 
 .question-import-item.expanded .question-import {
-  border-color: rgba(167, 139, 250, 0.6);
-  background: rgba(167, 139, 250, 0.18);
+  border-color: rgb(var(--accent-2-rgb) / 0.6);
+  background: rgb(var(--accent-2-rgb) / 0.18);
 }
 
 .question-import-detail {
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(167, 139, 250, 0.18);
-  background: rgba(10, 12, 20, 0.96);
+  border: 1px solid rgb(var(--accent-2-rgb) / 0.18);
+  background: var(--panel-deep);
 }
 
 .question-import-detail.hidden {
@@ -110,7 +110,7 @@
   padding: 10px 12px;
   overflow-x: auto;
   border-radius: 10px;
-  background: rgba(17, 24, 39, 0.92);
+  background: var(--surface-2);
   color: var(--white);
   font-size: 12px;
   line-height: 1.5;
@@ -121,7 +121,7 @@
   margin: 0 0 8px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(var(--tint-rgb) / calc(0.03 * var(--tint-k)));
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
@@ -138,7 +138,7 @@
 .question-import-detail-preview-note {
   padding: 8px 10px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
   color: var(--muted);
   font-size: 11px;
   line-height: 1.5;
@@ -147,8 +147,8 @@
 .question-import-detail-preview-canvas {
   max-width: 100%;
   border-radius: 10px;
-  border: 1px solid rgba(167, 139, 250, 0.18);
-  background: #0c1220;
+  border: 1px solid rgb(var(--accent-2-rgb) / 0.18);
+  background: var(--canvas-bg);
 }
 
 .question-import-detail-preview-json {
@@ -157,7 +157,7 @@
   overflow: auto;
   max-height: 220px;
   border-radius: 10px;
-  background: rgba(17, 24, 39, 0.92);
+  background: var(--surface-2);
   color: var(--white);
   font-size: 11px;
   line-height: 1.5;
@@ -193,7 +193,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  background: #111827;
+  background: var(--canvas-bg);
   image-rendering: pixelated;
 }
 
@@ -234,9 +234,9 @@
 .difficulty-label {
   font-size: 13px;
   font-weight: 600;
-  color: #f0a500;
-  background: rgba(240, 165, 0, 0.1);
-  border: 1px solid rgba(240, 165, 0, 0.25);
+  color: var(--warn);
+  background: rgb(var(--warn-rgb) / 0.1);
+  border: 1px solid rgb(var(--warn-rgb) / 0.25);
   border-radius: 6px;
   padding: 5px 12px;
 }
@@ -257,7 +257,7 @@
 
 .question-id-chip:hover {
   color: var(--text);
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .question-id-chip:disabled {
@@ -278,8 +278,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: rgba(99, 179, 237, 0.08);
-  border: 1px solid rgba(99, 179, 237, 0.3);
+  background: rgb(var(--info-rgb) / 0.08);
+  border: 1px solid rgb(var(--info-rgb) / 0.3);
   border-radius: 8px;
   padding: 8px 14px;
   margin-bottom: 14px;
@@ -292,7 +292,7 @@
 .cold-start-label {
   font-size: 12px;
   font-weight: 700;
-  color: #63b3ed;
+  color: var(--info);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -308,8 +308,8 @@
 .question-prose + .question-code-block,
 .question-code-block + .question-prose { margin-top: 10px; }
 .question-code-block {
-  background: var(--surface-2, #1b1f27);
-  border: 1px solid var(--border, #2a2f3a);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
   overflow-x: auto;

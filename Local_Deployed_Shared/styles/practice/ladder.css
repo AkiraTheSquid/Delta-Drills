@@ -17,16 +17,16 @@
 /* --- the worked example, beside the problem ------------------------------ */
 
 .ladder-example {
-  background: rgba(0, 0, 0, 0.18);
+  background: rgb(var(--well-rgb) / calc(0.18 * var(--well-k)));
   border: 1px solid var(--border);
-  border-left: 3px solid #3d6ea8;
+  border-left: 3px solid var(--info);
   border-radius: 8px;
   margin-top: 18px;
   padding: 0 14px;
 }
 
 .ladder-example > summary {
-  color: #9ec7f0;
+  color: var(--info);
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
@@ -76,7 +76,7 @@
 }
 
 .ladder-example-body pre {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgb(var(--well-rgb) / calc(0.4 * var(--well-k)));
   border-radius: 6px;
   font-size: 12.5px;
   margin: 8px 0;
@@ -86,7 +86,7 @@
 
 .ladder-example-body p code,
 .ladder-example-body li code {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgb(var(--well-rgb) / calc(0.35 * var(--well-k)));
   border-radius: 4px;
   font-size: 0.9em;
   padding: 1px 5px;
