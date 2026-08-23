@@ -23,5 +23,13 @@ mathpix_processor.py
 split_LADR4e_chapters.py
 test_function_validator.py
 validate_function_bank.py
-questions_structured.json
+# questions_structured.json is NOT ignored: practice/questions.js fetches it at
+# runtime (loadQuestionsSourceIndex) to build the per-question "where this came
+# from" ARENA notebook links. It was excluded here on 2026-03-10, months before
+# that fetch existed, so every deploy since shipped without it and the fetch got
+# the SPA-rewrite HTML back instead of JSON.
+#
+# arena_prereqs_structured.json stays ignored — nothing fetches it in the browser
+# (practice/runner.js only references it in a comment). Delete this line if that
+# ever changes.
 arena_prereqs_structured.json
