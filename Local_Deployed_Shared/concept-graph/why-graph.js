@@ -135,7 +135,13 @@
       return;
     }
     const has = anyMeasured();
-    el.textContent = "No problems answered yet — nothing on this map is measured.";
+    // Borrowed, not restated: lesson-graph.js decides what this says, because a
+    // learner who has finished the placement test HAS answered problems and
+    // both maps were telling them otherwise. Falls back to the old wording only
+    // when lesson-graph.js has not loaded, where the old wording is correct.
+    el.textContent = typeof global.deltaKcNoDataText === "function"
+      ? global.deltaKcNoDataText()
+      : "No problems answered yet — nothing on this map is measured.";
     el.hidden = has;
   };
 
@@ -152,6 +158,19 @@
           x.setAttribute("aria-pressed", on ? "true" : "false");
         });
         applyColours();
+        // The learner's reading needs the server's report, and on THIS page
+        // nothing has fetched it: lesson-graph.js fetches inside build(), which
+        // only runs on the Knowledge Graph tab. Without this the switch showed
+        // a signed-in learner the offline answer — grey where the queue holds a
+        // number. Both calls are cached and idempotent; paint again when they
+        // land, because the first paint above is the honest read of what is
+        // known right now. It goes through lesson-graph.js rather than the
+        // loader directly, so that file's own `lattice` is updated too — see
+        // deltaRefreshKcLattice.
+        if (mode !== "mine") return;
+        if (typeof global.deltaRefreshKcLattice === "function") {
+          global.deltaRefreshKcLattice().then(applyColours);
+        }
       });
     });
   };

@@ -42,6 +42,20 @@
   const $ = (id) => document.getElementById(id);
   const lessonColor = (lid) => LESSON_COLORS[lid] || FALLBACK;
 
+  /* The concept's topic ("Numpy", "Einops", "Einsum").
+     `lessons/kc_registry.json` does NOT carry one — 0 of its 63 entries have a
+     `topic` field, which is why the dock's meta line has always rendered a
+     leading orphan separator. The server's report does carry it for all 63
+     (kc_graph reads the fuller registry), so ask that first and treat a missing
+     one as unknown rather than printing an empty string into a sentence. */
+  const _kcTopic = (kc) => {
+    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
+    const fromRow = row && typeof row.topic === "string" ? row.topic.trim() : "";
+    if (fromRow) return fromRow;
+    const local = ((kcById[kc] || {}).topic || "").trim();
+    return local || null;
+  };
+
   /* ---- mastery colouring (BKT posterior → red↔blue, gray = no estimate) ---- */
   const BKT_P_INIT = 0.10, BKT_HALF_LIFE_DAYS = 14.0;
   const UNKNOWN_COLOR = "#5b5b70";       // no estimate yet
@@ -73,6 +87,15 @@
   //   "atom"         — this KC's own decayed BKT posterior.
   //   "subtopic"     — the lesson subtopic's BKT mastery, shared by every KC
   //                    in that lesson.
+  //   "topic"        — the server's number for this concept at TOPIC grain
+  //                    (`kcTopicReadiness`): real belief the practice queue
+  //                    acts on, shared with the concept's topic-mates. This is
+  //                    what a finished placement test leaves behind — it seeds
+  //                    per-atom posteriors from a per-AREA ability estimate
+  //                    without creating a single attempt, so both
+  //                    attempt-counting fallbacks above and below it come back
+  //                    empty and the map went grey on a learner the queue had
+  //                    already placed and locked.
   //   "extrapolated" — no evidence on this concept at all: projected from the
   //                    learner's overall demonstrated level, adjusted for how
   //                    hard this concept is (see `_extrapolated`).
@@ -116,6 +139,14 @@
       // has any evidence of its own is a separate question, answered per KC by
       // the lattice's covered_w in `_evidence` below.
       return { r: Math.max(0, Math.min(1, sub.p)), source: "subtopic", coveredW: 0 };
+    }
+    // Below the lesson average, above a projection: see the ordering note in
+    // kc_lattice_read.js::kcTopicReadiness. Gated on the server's own
+    // `evidenced` flag, so a learner who has answered nothing still gets an
+    // honest grey map rather than 63 bubbles at the starting prior.
+    if (typeof window.kcTopicReadiness === "function") {
+      const t = window.kcTopicReadiness(kc, lattice);
+      if (t) return t;
     }
     const ex = _extrapolated(kc);
     if (ex) return { r: ex.r, source: "extrapolated", coveredW: 0 };
@@ -484,9 +515,22 @@
     const sub = _subtopicState(kc);
     const nSub = Number.isFinite(sub && sub.n) ? sub.n : 0;
     const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
-    const coveredW = row && Number.isFinite(row.covered_w)
-      ? row.covered_w
-      : (info && Number.isFinite(info.coveredW) ? info.coveredW : 0);
+    // The server's covered_w is the truth for every reading EXCEPT a topic-grain
+    // one, where it is the wrong question. `kc_graph.kc_mastery` counts an atom
+    // as covered when it has a POSTERIOR, and `diagnostic.finish()` gives every
+    // atom a posterior without a single attempt behind it — so after placement
+    // covered_w is 1.0 across all 63 concepts while nothing has been observed
+    // about any of them. A `topic` reading is exactly the case where no evidence
+    // is specific to this concept, so take its own 0 and let `directEvidenceN`
+    // short-circuit. Without this, nDirect = 1 × 1.0 × specificity, and
+    // specificity falls back to 1/siblings whenever the browser's crosswalk
+    // failed to load: one single-KC lesson in kc_registry.json away from a
+    // placement seed being drawn as a measured concept with a tight band.
+    const coveredW = info && info.source === "topic"
+      ? 0
+      : (row && Number.isFinite(row.covered_w)
+          ? row.covered_w
+          : (info && Number.isFinite(info.coveredW) ? info.coveredW : 0));
     const cw = typeof window.kcCrosswalkInfo === "function" ? window.kcCrosswalkInfo(kc) : null;
     const reliability = cw && Number.isFinite(cw.reliability) ? cw.reliability : NaN;
     const siblings = _siblingCount(kc);
@@ -653,6 +697,27 @@
     // below has to say the mastery MODEL cannot see them — not that they do
     // not exist, which is what it used to say.
     const ladderN = _ladderN(kc);
+    // A topic-grain reading needs saying twice — once as the evidence behind
+    // the number, once as the reason the band is the whole scale — so work out
+    // where it came from once. `placed` is copy, not arithmetic: the reading is
+    // the same number whether or not placement is what put it there.
+    const isTopic = source === "topic";
+    const topicName = _kcTopic(kc);
+    const placedSt = typeof window.kcPlacementStatus === "function" ? window.kcPlacementStatus() : null;
+    // Placed but not practised: the placement test finished, and nothing the
+    // learner has done since bears on this concept or its lesson. Deliberately
+    // NOT conditioned on which source won — `finish()` seeds every atom it can
+    // reach, so a measured-tier concept can be sitting on a placement seed just
+    // as a topic-proxy one is, and the copy for both was describing a learner
+    // who had practised.
+    const placed = !!(placedSt && placedSt.completed && !ladderN && !sub);
+    const topicPhrase = placed
+      ? (topicName
+          ? `your placement test, which estimated ${esc(topicName)} as a whole`
+          : `your placement test, which estimated this concept's topic as a whole`)
+      : (topicName
+          ? `${esc(topicName)} as a whole — this concept shares its evidence with its topic-mates`
+          : `this concept's topic as a whole — its evidence is shared with its topic-mates`);
     const attemptsPhrase = ladderN
       ? `your ${ladderN} graded attempt${ladderN === 1 ? "" : "s"} here are not among the atoms this model measures`
       : "nothing graded has landed on this concept";
@@ -662,7 +727,9 @@
       rows += `<div class="kg2-dock-row is-next-up"><span>Next up</span>` +
               `<span>the queue's weakest unlocked concept</span></div>`;
     }
-    rows += `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
+    rows += placed && last
+      ? `<div class="kg2-dock-row"><span>Placement test</span><span>${esc(last)}</span></div>`
+      : `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
     rows += _ladderRows(kc);
     rows += parents.length
       ? `<div class="kg2-dock-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
@@ -683,10 +750,17 @@
     return (
       `<div class="kg2-dock-col kg2-dock-id">` +
         `<div class="kg2-dock-title">${esc(k.title)}</div>` +
-        `<div class="kg2-dock-meta">${esc(k.topic)} · ${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>` +
+        `<div class="kg2-dock-meta">${topicName ? esc(topicName) + " · " : ""}${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>` +
         // Named, because the numbers on the right are subtopic-wide: the count
         // and the accuracy are shared by every concept in the lesson.
-        (sub
+        (placed
+          ? `<div class="kg2-dock-evidence">Evidence: your placement test — an estimate for ` +
+            `${topicName ? esc(topicName) : "this concept's topic"}, not a measurement of this concept. ` +
+            `<strong>Nothing graded here yet</strong>.</div>`
+          : isTopic && !sub
+          ? `<div class="kg2-dock-evidence">Evidence: ${topicPhrase}. ` +
+            `<strong>${ladderN ? "Not measured on this concept" : "Nothing graded on this concept yet"}</strong>.</div>`
+          : sub
           ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}` +
             (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
             (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
@@ -708,6 +782,7 @@
             // The percentage is only about THIS concept when it came from a
             // per-atom posterior; say so when it didn't.
             (source === "subtopic" ? ` <span class="kg2-dock-dim">· lesson-level</span>` : "") +
+            (source === "topic" ? ` <span class="kg2-dock-dim">· topic-level</span>` : "") +
             (source === "extrapolated" ? ` <span class="kg2-dock-dim">· projected</span>` : "") +
             // A per-atom read can still be thin: the crosswalk may have covered
             // only a sliver of this KC's weight, or shared it with a dozen
@@ -734,6 +809,10 @@
                   : `Carried straight across from your overall level.`)
               : source === "subtopic"
                 ? `The figure is this lesson's accuracy, shared by ${sibs || "several"} concepts.`
+              : placed
+                ? `The figure is what your placement test concluded about ${topicName ? esc(topicName) : "this topic"}. It is the number the practice queue is acting on — it is just not a reading of this concept.`
+              : isTopic
+                ? `The figure is the model's belief about ${topicName ? esc(topicName) : "this concept's topic"}, shared across that topic's concepts.`
                 : `Treat it as a prior, not a measurement.`) +
             `</span>`) +
         `</div>` +
@@ -1160,6 +1239,23 @@
   const hasAnyMeasurement = () =>
     !!kcById && Object.keys(kcById).some((kc) => _isMeasured(kc));
 
+  /* What the notice SAYS, which is not the same question as whether it shows.
+     "No problems answered yet" was flatly false for anyone who had just
+     finished the placement test: they answered six to fourteen probes, and the
+     engine placed and locked the whole lattice off the result. It stayed false
+     because placement produces no per-concept evidence at all, so
+     `hasAnyMeasurement` can never go true from placement alone — the notice was
+     both permanent and wrong for exactly the learner it was talking to.
+     Exported for why-graph.js, so the landing map cannot drift from this. */
+  const noDataText = () => {
+    const pl = typeof window.kcPlacementStatus === "function" ? window.kcPlacementStatus() : null;
+    if (pl && pl.completed) {
+      return "Placed from your placement test — these are topic-level estimates, " +
+             "not measurements of single concepts. Practise one to measure it.";
+    }
+    return "No problems answered yet — nothing on this map is measured.";
+  };
+
   const _refreshNoData = () => {
     const graph = document.querySelector(".kg2-graph");
     if (!graph) return;
@@ -1168,9 +1264,11 @@
       el = document.createElement("div");
       el.id = "kg-nodata";
       el.className = "kg2-nodata";
-      el.textContent = "No problems answered yet — nothing on this map is measured.";
       graph.appendChild(el);
     }
+    // Set every time: the placement status arrives asynchronously, so the text
+    // chosen at create time is the pre-placement one for the first paint.
+    el.textContent = noDataText();
     el.hidden = hasAnyMeasurement();
   };
 
@@ -1226,6 +1324,14 @@
   let lattice = null;
 
   async function refreshLattice() {
+    // The fetch + cache live in kc_lattice_read.js so why-graph.js, which
+    // borrows this file's reader but never runs build(), reads the same body
+    // instead of asking with a permanently null lattice. `force` because this
+    // runs after a graded attempt, where a cached report is the stale one.
+    if (typeof window.loadKcLattice === "function") {
+      lattice = await window.loadKcLattice(true);
+      return;
+    }
     try {
       const fn = typeof window.apiFetch === "function" ? window.apiFetch : fetch;
       const res = await fn("/api/practice/kc-lattice");
@@ -1235,6 +1341,14 @@
     } catch (_) {
       lattice = null;   // guest / offline — fall back to the local mirror
     }
+  }
+
+  /* Placement status decides COPY only — never a number — so it is fetched
+     alongside the lattice and its failure costs wording, not the map. Once:
+     a finished placement does not un-finish. */
+  function refreshPlacement() {
+    if (typeof window.loadPlacementStatus !== "function") return Promise.resolve(null);
+    return window.loadPlacementStatus();
   }
 
   // Yellow ring on the concept, and the same yellow along the edges feeding it,
@@ -1432,6 +1546,7 @@
 
     buildLegend();
     refreshLattice().then(() => recolor());
+    refreshPlacement().then(() => { _refreshNoData(); refreshDock(); });
     recolor();
     setPlaceholder();
     building = false;
@@ -1475,6 +1590,14 @@
   window.deltaKcReadinessInfo = (kc) => kcReadinessInfo(kc);
   window.deltaKcIsMeasured = (kc) => _isMeasured(kc);
   window.deltaKcHasAnyMeasurement = () => hasAnyMeasurement();
+  window.deltaKcNoDataText = () => noDataText();
+  /* why-graph.js needs the server's report before it can show "your mastery",
+     and it must come through HERE. Calling kc_lattice_read.js's loader directly
+     would fill the shared cache while this file's own `lattice` stayed null —
+     and `lattice` is what kcReadinessInfo passes to `kcLatticeReadiness`, so
+     the 23 concepts with atom-level evidence would silently drop to their
+     topic-level reading. One refresher, one owner. */
+  window.deltaRefreshKcLattice = () => Promise.all([refreshLattice(), refreshPlacement()]);
 
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
