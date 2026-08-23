@@ -595,7 +595,6 @@ html.dd-colab-edition .kg2-controls .kg2-max {
 /* Single-concept view: the adaptive-queue framing (what Practice is, where to
    start across all topics) is about a different flow and reads as noise here.
    The competency bar is the header for this page. */
-.kg-embed .practice-mode-intro,
 .kg-embed #self-report-row { display: none !important; }
 
 /* Parent overlay: full-screen, above everything, with a slim Minimize bar. */

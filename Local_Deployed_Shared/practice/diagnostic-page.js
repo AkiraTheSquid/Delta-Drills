@@ -83,7 +83,48 @@ const DiagnosticPage = (() => {
       ? "Retake the placement test"
       : "Take the placement test";
     el.disabled = false;
-    el.classList.toggle("hidden", !!status?.active);
+    const off = !!status?.active;
+    el.classList.toggle("hidden", off);
+    /* The .placement-cta wrapper has to go with it. infotips.js already mirrors
+       `.hidden` onto the dot, so nothing is left VISIBLE — but an empty
+       inline-flex item still counts in .diagnostic-actions' `gap`, which shunted
+       "Load next placement question" 12px off the card's left edge for the whole
+       test. Measured, not guessed. */
+    el.parentElement?.classList.toggle("hidden", off);
+  };
+
+  /* How far through the test you are, in the same visual language as the
+     scaffolding bar on Practice: one continuous track that fills as probes
+     land. `budget` is a CEILING — the placement stops as soon as the estimate
+     is confident, which can be as early as `min_probes` — so the count says
+     "of at most" and the tick marks the earliest possible finish. A bar that
+     implied a fixed length would be wrong for most runs, since most stop early. */
+  const renderProgress = (status) => {
+    const host = byId("placement-progress");
+    if (!host) return;
+    const show = !!status?.active;
+    host.classList.toggle("hidden", !show);
+    if (!show) return;
+
+    const budget = Math.max(1, Number(status.budget) || 14);
+    const done = Math.min(budget, Math.max(0, Number(status.probes_done) || 0));
+    const minProbes = Number(status.min_probes) || 0;
+
+    const fill = byId("placement-progress-fill");
+    if (fill) fill.style.width = `${(done / budget) * 100}%`;
+    const tick = byId("placement-progress-tick");
+    if (tick) {
+      const usable = minProbes > 0 && minProbes < budget;
+      tick.classList.toggle("hidden", !usable);
+      if (usable) {
+        tick.style.left = `${(minProbes / budget) * 100}%`;
+        tick.title = `Can finish from ${minProbes} questions`;
+      }
+    }
+    const count = byId("placement-progress-count");
+    if (count) count.textContent = `${done} of at most ${budget}`;
+    host.setAttribute("aria-valuenow", String(done));
+    host.setAttribute("aria-valuemax", String(budget));
   };
 
   const render = (status) => {
@@ -98,6 +139,7 @@ const DiagnosticPage = (() => {
       continueEl?.classList.add("hidden");
       startEl?.classList.add("hidden");
       resultsEl?.classList.add("hidden");
+      renderProgress(null);
       moveWorkspace(false);
       return;
     }
@@ -111,6 +153,7 @@ const DiagnosticPage = (() => {
           ? `Placement test complete · ${done} questions`
           : "Placement test not started.";
     }
+    renderProgress(status);
     priorEl?.classList.toggle("hidden", !status.can_set_prior);
     // Same trap as notebook-view.js documents: `PracticeAPI` is a top-level
     // const, so it is NOT on `window` and this read was always undefined —
@@ -120,7 +163,14 @@ const DiagnosticPage = (() => {
     const hasProbeOnScreen = !!_papi?.currentQuestion?.diagnostic_active;
     continueEl?.classList.toggle("hidden", !status.active || hasProbeOnScreen);
     renderStartButton(status, startEl);
-    resultsEl?.classList.toggle("hidden", !status.completed_at || status.active);
+    /* This file owns WHETHER the results card shows; placement-results.js owns
+       what is in it. Fill before unhiding so the card never flashes the shape
+       of the previous placement, and fill only when it is actually going to be
+       shown — a mid-test status carries live estimates that would read as a
+       finished result. */
+    const showResults = !!status.completed_at && !status.active;
+    if (showResults) window.PlacementResults?.render(status);
+    resultsEl?.classList.toggle("hidden", !showResults);
     moveWorkspace(!!status.active);
   };
 

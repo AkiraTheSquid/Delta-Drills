@@ -135,10 +135,9 @@ window.DD_INFOTIPS = {
      and the single-KC mastery track. A key with no anchor and an anchor with no
      key both fail silently at runtime, which is why `watch.py::check_infotips`
      asserts both directions — it is what caught the leftovers each time. */
-  "cold-start": {
-    title: "Calibrating",
-    body: "The first three questions use fixed difficulties to find your level. Nothing you answer here moves the difficulty the queue aims at — it is locating you first.",
-  },
+  // "cold-start" removed 2026-08-23 with #cold-start-badge. (Its copy was also
+  // stale: it described the fixed-ramp calibration that was replaced by
+  // adaptive-from-question-1 selection.)
   "question-id": {
     title: "Problem ID",
     body: "The stable identifier for this problem. Click to copy it — worth quoting when reporting something broken.",

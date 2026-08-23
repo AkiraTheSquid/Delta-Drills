@@ -46,11 +46,23 @@ def check_public_api():
     expected = {
         "layout.css": [".practice-container", ".practice-split", ".practice-left", ".practice-right"],
         "timer.css": [".session-setup", ".session-status-row", ".session-countdown", ".timer-input", "session-idle"],
-        "question.css": [".question-text", ".question-imports", ".question-visual", ".cold-start-badge"],
-        "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row", ".practice-mode-notice"],
+        # .cold-start-badge left this list on 2026-08-23 — the badge, its two
+        # copy blocks and their styles were deleted together.
+        "question.css": [".question-text", ".question-imports", ".question-visual", ".question-number-row"],
+        "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row"],
         "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
         "notebook-editor.css": [".practice-notebook", ".notebook-cell", ".notebook-cell-output"],
-        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
+        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".placement-next-btn", ".practice-aids"],
+        # Written by practice/placement-results.js — every class it mints has
+        # to keep a rule here or the results card renders as unstyled spans.
+        "diagnostic.css": [
+            ".placement-cta", ".placement-overall", ".placement-overall-figure",
+            ".placement-overall-say", ".placement-overall-caveat", ".placement-areas",
+            ".placement-areas-head", ".placement-area", ".placement-area-name",
+            ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
+            ".placement-area-probes", ".placement-area--unprobed",
+            ".placement-results-meta", ".placement-results-empty",
+        ],
     }
     for fname, selectors in expected.items():
         css = _read(os.path.join(HERE, fname))

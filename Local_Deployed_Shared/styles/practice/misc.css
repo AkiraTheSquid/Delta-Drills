@@ -21,17 +21,8 @@
    rating, skip, question prose/code split, onboarding intro.
    ============================================================ */
 
-/* Practice-vs-Targeted one-liner at the top of the practice tab. */
-.practice-mode-intro {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  margin: 0 0 12px;
-}
+/* .practice-mode-intro (the Practice-vs-Targeted one-liner) was deleted on
+   2026-08-23 along with its markup and #practice-mode-notice. */
 
 /* Self-reported experience level (seeds the adaptive starting difficulty) */
 .self-report-row {
@@ -80,26 +71,58 @@
 }
 
 /* Entry point into the placement diagnostic for accounts with history
-   (auto-start is zero-attempt-only). Amber to match the placement badge. */
-.placement-start-btn {
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: 1px solid rgb(var(--warn-rgb) / 0.45);
-  background: rgb(var(--warn-rgb) / 0.08);
+   (auto-start is zero-attempt-only). Amber to match the placement badge.
+
+   #placement-start-btn is the ONLY instance of this class in the app, so
+   these values are the button, not a theme over one — sized as a real call
+   to action rather than the 12px chip it used to be.
+
+   🔴 It must NOT also carry `.primary`. That combination is what produced
+   the full-bleed 4px-tall strip: `.primary` sets width:100% and 12px/28px
+   padding, this rule overrode the padding and not the width, so the button
+   stretched the card and then collapsed to a sliver. `width: max-content`
+   below makes the button immune to inheriting a stretch from whatever flex
+   or grid parent it lands in next. */
+.placement-start-btn,
+.placement-next-btn {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 10px 20px;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 8px;
   color: var(--text);
   cursor: pointer;
-  margin-left: auto;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.placement-start-btn {
+  border: 1px solid rgb(var(--warn-rgb) / 0.55);
+  background: rgb(var(--warn-rgb) / 0.12);
 }
 
 .placement-start-btn:hover {
-  border-color: rgb(var(--warn-rgb) / 0.8);
-  background: rgb(var(--warn-rgb) / 0.16);
+  border-color: rgb(var(--warn-rgb) / 0.9);
+  background: rgb(var(--warn-rgb) / 0.22);
 }
 
 .placement-start-btn:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Same shape (shared base above), neutral colour: this one only appears
+   mid-test, where the amber CTA is hidden, so it should not compete for the
+   same attention. Sharing the base rule is deliberate — two hand-kept copies of
+   the same dimensions is how the two buttons drift a pixel apart. */
+.placement-next-btn {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.placement-next-btn:hover {
+  border-color: var(--accent-text);
 }
 
 /* Torch drills run in Colab — honest routing notice instead of a dead editor. */

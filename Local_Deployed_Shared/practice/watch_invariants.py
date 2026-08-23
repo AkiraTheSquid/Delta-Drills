@@ -395,3 +395,92 @@ eq(route({{topic: "Numpy", supports_visual_output: true}}, "arr.mean()"), "pyodi
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
+
+
+def check_a_deleted_practice_notice_stays_deleted():
+    """Three surfaces Seth removed on 2026-08-23, and the bar that replaced one.
+
+    Each of these grows back easily, because each one reads like an
+    improvement in isolation:
+
+      #cold-start-badge          two blocks of standing explanation above every
+                                 calibration/placement question
+      #practice-mode-intro       "Practice is your adaptive queue…"
+      #practice-mode-notice      the floating mode-demotion banner
+
+    They are gone from markup, JS and CSS together. Re-adding any of them from
+    one side only (a stylesheet rule with no element, or an element nothing
+    styles) is the state this check exists to reject — and re-adding the DOM
+    writer for the notice reintroduces a banner Seth asked twice to be rid of.
+
+    ⚠️ Deleting the notice DID cost something real, recorded here so nobody
+    re-derives it as a surprise: a silent demotion to the demo pool (expired
+    token, backend down) now shows up only in the console, and the practice UI
+    renders identically in that state. practice/mode.js carries the full note
+    and the shape of an acceptable replacement.
+
+    The progress bar is the other half: a placement in progress has to say how
+    far through it is, and `budget` is a CEILING, so the bar must never claim a
+    fixed length — the count says "of at most" and a tick marks the earliest
+    possible finish.
+    """
+    index = read(os.path.join(SHARED, "index.html"))
+    mode = read(os.path.join(HERE, "mode.js"))
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+
+    # Matched on the ATTRIBUTE, never the bare name: these files carry comments
+    # explaining what was deleted, and a substring check over prose fails on its
+    # own tombstone. (Cost one run to learn, twice now.)
+    for gone in ('id="cold-start-badge"', 'id="cold-start-label"',
+                 'id="cold-start-note"', 'class="cold-start-badge',
+                 'id="practice-mode-intro"', 'id="practice-mode-notice"'):
+        assert gone not in index, (
+            f"{gone} is back in index.html — it was deleted on 2026-08-23 "
+            "(markup, JS and CSS together); read practice/mode.js first"
+        )
+    assert "function showPracticeModeNotice" not in mode, (
+        "the mode-demotion banner is back. If a demotion needs to be visible "
+        "again, put it on the session status row — mode.js says why"
+    )
+    # ...and the CSS half. A rule for an element that no longer exists is the
+    # half-deletion this check is named for: it reads as live styling to the
+    # next person and invites the markup back. (codex flagged that the check
+    # claimed to cover CSS and did not.)
+    styles = os.path.join(SHARED, "styles", "practice")
+    for fname, sel in (("question.css", ".cold-start-badge {"),
+                       ("question.css", ".cold-start-label {"),
+                       ("question.css", ".cold-start-note {"),
+                       ("misc.css", ".practice-mode-intro {"),
+                       ("feedback.css", ".practice-mode-notice {")):
+        assert sel not in read(os.path.join(styles, fname)), (
+            f"{fname} still styles {sel.strip(' {')} — the element was deleted "
+            "on 2026-08-23, so this rule matches nothing"
+        )
+    # The countdown outlived the badge that used to host it.
+    assert 'id="placement-timer"' in index, (
+        "#placement-timer went with the cold-start badge — the placement's "
+        "fixed 2:00 clock has no anchor and every probe becomes untimed"
+    )
+    timer_js = read(os.path.join(HERE, "placement-timer.js"))
+    assert 'getElementById("cold-start-badge")' not in timer_js and (
+        '.question-number-row' in timer_js), (
+        "placement-timer.js still looks up the deleted badge — _chip() returns "
+        "null and the countdown never renders"
+    )
+
+    # The progress bar: anchors present, and honest about the ceiling.
+    for anchor in ("placement-progress", "placement-progress-fill",
+                   "placement-progress-tick", "placement-progress-count"):
+        assert f'id="{anchor}"' in index, f"index.html lost the #{anchor} anchor"
+    assert "of at most" in page, (
+        "the placement progress count must say 'of at most' — the test stops as "
+        "soon as it is confident, so `budget` is a ceiling and not a length"
+    )
+    assert "min_probes" in page, (
+        "the bar lost its earliest-finish tick, so it implies a run to the full "
+        "budget that most placements never make"
+    )
+    assert 'host.classList.toggle("hidden", !show)' in page, (
+        "the progress bar must hide outside an active placement — a finished "
+        "test showing a part-full bar reads as unfinished"
+    )

@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=26" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=27" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -55,18 +55,18 @@
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=4" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=7" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/feedback.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=5" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=4" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=10" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=2" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=5" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=12" />
@@ -729,6 +729,19 @@
       <section class="card diagnostic-card">
         <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
         <p class="diagnostic-timing">Every question is timed the same: <strong>2:00</strong> each. When the time runs out we record what you have and move on.</p>
+        <!-- How far through the test you are. `budget` is a CEILING, not a
+             length: the placement stops as soon as it is confident, which can
+             be at `min_probes`. The tick is where that becomes possible, so
+             the bar never promises a run to the end. Filled by
+             diagnostic-page.js; visible while the test is running, which is
+             the only time it means anything. -->
+        <div class="placement-progress hidden" id="placement-progress" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="14">
+          <div class="placement-progress-track" id="placement-progress-track">
+            <i class="placement-progress-fill" id="placement-progress-fill"></i>
+            <span class="placement-progress-tick hidden" id="placement-progress-tick"></span>
+          </div>
+          <span class="placement-progress-count" id="placement-progress-count"></span>
+        </div>
         <div class="self-report-row hidden" id="self-report-row">
           <span class="self-report-label" data-dd-info="self-report">Starting-point prior:</span>
           <div class="self-report-options" role="group" aria-label="Self-reported starting point">
@@ -738,14 +751,33 @@
           </div>
           <span class="self-report-note hidden" id="self-report-note"></span>
         </div>
+        <!-- The CTA is wrapped because infotips.js FORCES place="after" for a
+             <button> anchor (a button cannot nest a button) and inserts the
+             dot into the anchor's parentNode. Unwrapped, that dot was a flex
+             child of .diagnostic-actions sitting on its own line underneath a
+             full-width button. The wrapper is what keeps the ⓘ tight against
+             the button's right edge, as one control.
+             NOTE the buttons no longer carry `.primary`: it sets width:100%
+             and 12px/28px padding, and .placement-start-btn's own 4px/10px
+             padding won on padding only — so the button rendered as a
+             full-bleed 4px-tall strip. -->
         <div class="diagnostic-actions">
-          <button type="button" class="primary placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take the placement test</button>
-          <button type="button" class="primary hidden" id="diagnostic-practice-btn">Load next placement question</button>
+          <span class="placement-cta">
+            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take the placement test</button>
+          </span>
+          <button type="button" class="placement-next-btn hidden" id="diagnostic-practice-btn">Load next placement question</button>
         </div>
       </section>
+      <!-- Filled by practice/placement-results.js from the SAME
+           /diagnostic/status payload that drives the card above; these ids are
+           its only anchors. diagnostic-page.js decides whether the card shows,
+           placement-results.js decides what is inside it. -->
       <section class="card diagnostic-results hidden" id="diagnostic-results">
         <h2>Your placement test</h2>
-        <p>Placement results and ARENA curriculum progress will appear here.</p>
+        <p class="placement-results-meta" id="placement-results-meta"></p>
+        <div class="placement-readiness" id="placement-readiness"></div>
+        <div class="placement-areas" id="placement-areas"></div>
+        <p class="placement-results-empty hidden" id="placement-results-empty">No areas came back for this placement — retake it to get a fresh reading.</p>
       </section>
     </div>
     <div class="diagnostic-workspace-host hidden" id="diagnostic-workspace-host"></div>
@@ -870,12 +902,9 @@
         </div>
         <!-- Left Panel: Questions -->
         <div class="practice-left">
-          <!-- One-line orientation: what THIS tab is, vs Targeted Practice
-               (the tester expected them to be the same thing). -->
-          <p class="practice-mode-intro" id="practice-mode-intro">
-            <strong>Practice</strong> is your adaptive queue — we pick the next problem for you based on what you're ready for.
-            Want to drill one specific skill instead? Use <strong>Targeted Practice</strong>.
-          </p>
+          <!-- #practice-mode-intro (the "Practice is your adaptive queue…"
+               paragraph) was DELETED on 2026-08-23. #practice-mode-notice went
+               with it — see practice/mode.js for what replaced the notice. -->
           <!-- In-session status: progress, phase, countdown, pause/end. -->
           <div class="session-status-row hidden" id="session-status-row">
             <span class="session-progress" id="session-progress" data-dd-info="session-status" data-dd-info-place="before">0 / 0</span>
@@ -898,16 +927,16 @@
                  tutor's choice can be checked against the map it claims to
                  follow. Hidden when the question carries no KC tag. -->
             <button class="question-id-chip" id="practice-graph-jump" type="button" hidden data-dd-info="graph-jump" data-dd-info-place="after">See in knowledge graph</button>
-          </div>
-
-          <!-- Cold Start Badge (hidden when not calibrating) -->
-          <div class="cold-start-badge hidden" id="cold-start-badge">
-            <span class="cold-start-label" id="cold-start-label" data-dd-info="cold-start" data-dd-info-place="after">Calibrating — 1 of 3</span>
             <!-- Placement-only countdown. Static (not built in JS) so the ⓘ dot
                  has a permanent anchor; practice/placement-timer.js fills it and
-                 keeps it hidden on every non-placement question. -->
+                 keeps it hidden on every non-placement question.
+                 It used to live in #cold-start-badge, which was DELETED on
+                 2026-08-23 along with its "Calibrating — 1 of 3" / placement
+                 header copy. This row is its home now: it is on screen for
+                 every question, and the workspace re-parents as one node, so
+                 the countdown still follows the question onto the Placement
+                 page with no second copy to keep in sync. -->
             <span class="placement-timer hidden" id="placement-timer" data-dd-info="placement-timer" data-dd-info-place="after">02:00</span>
-            <span class="cold-start-note" id="cold-start-note">First questions calibrate this skill. Concept understanding reports BKT evidence separately, with coverage.</span>
           </div>
 
           <!-- Question Text -->
@@ -1179,12 +1208,12 @@ t.manual_seed(0)
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
-  <script src="practice/mode.js?v=8"></script>
+  <script src="practice/mode.js?v=9"></script>
   <script src="practice/questions.js?v=24"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
-  <script src="practice/dom.js?v=18"></script>
+  <script src="practice/dom.js?v=19"></script>
   <script src="practice/bars.js?v=11"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
@@ -1199,10 +1228,10 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=33"></script>
+  <script src="practice/ui.js?v=34"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
-  <script src="practice/api.js?v=20"></script>
+  <script src="practice/api.js?v=21"></script>
   <script src="practice/timer.js?v=17"></script>
   <script src="practice/kernel.js?v=4"></script>
   <script src="practice/runner.js?v=21"></script>
@@ -1223,12 +1252,15 @@ t.manual_seed(0)
   <script src="practice/ladder.js?v=7"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=34"></script>
-  <script src="practice/diagnostic-page.js?v=4"></script>
+  <script src="practice/events.js?v=35"></script>
+  <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
+       own refresh at load if the placement page is already on screen. -->
+  <script src="practice/placement-results.js?v=1"></script>
+  <script src="practice/diagnostic-page.js?v=6"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->
-  <script src="practice/placement-timer.js?v=1"></script>
+  <script src="practice/placement-timer.js?v=2"></script>
   <script src="practice/init.js?v=15"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

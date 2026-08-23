@@ -212,12 +212,13 @@ const PracticeAPI = {
       // difficulty/calibration widgets, and without a notice they read as a
       // live adaptive session that mysteriously never updates (tester hit
       // exactly this after a silent token-expiry demotion).
-      if (typeof showPracticeModeNotice === "function") {
-        showPracticeModeNotice(
-          "Demo questions — the adaptive engine isn't available right now, " +
-          "so difficulty won't adapt. Sign in (or reload) for the real queue.",
-        );
-      }
+      // The on-page notice was deleted on 2026-08-23 (see practice/mode.js).
+      // This demotion is therefore console-only now, which is exactly the
+      // silence that comment above warns about — read mode.js before deciding
+      // that is fine.
+      console.warn(
+        "[practice] demo pool — the adaptive engine isn't available, so difficulty won't adapt.",
+      );
       const completed = new Set(practiceProgress.completedQuestionIds);
       let attempts = 0;
       let nextIndex = practiceQuestionIndex;
