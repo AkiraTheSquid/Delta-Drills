@@ -24,6 +24,17 @@
    The card is there in BOTH modes. Basic mode hides the ladder inside it
    (`body.dd-basic-mode .stage-ladder`), not the card, so a learner who has
    never opened the Account tab still gets the title in its frame. */
+/* 🔴 NOTHING TO FRAME, NO FRAME. The heading is written by `ui.js` when a
+   question renders, so between a session opening and its first question
+   landing — and on the placement page between probes — `#question-number` is
+   an empty <h2>. That was invisible while the row had no chrome; as a bordered
+   card it is an empty rectangle sitting above nothing. `:empty` matches only
+   an element with no child nodes at all, which is exactly what
+   `textContent = ""` leaves, so a heading with a space in it still draws. */
+.question-number-row:has(> .question-number:empty) {
+  display: none;
+}
+
 .question-number-row {
   background: var(--surface-2);
   border: 1px solid var(--border);
