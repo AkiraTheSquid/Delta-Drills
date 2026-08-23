@@ -224,19 +224,9 @@
   word-break: break-word;
 }
 
-/* Mode-demotion banner — expired sign-in / demo-pool fallback. Must be
-   impossible to miss; a console.warn is not a notice. */
-.practice-mode-notice {
-  background: rgb(var(--accent-rgb) / 0.12);
-  border: 1px solid var(--accent);
-  border-radius: 6px;
-  color: var(--accent-text);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.5;
-  margin: 0 0 12px;
-  padding: 10px 14px;
-}
+/* The mode-demotion banner (.practice-mode-notice) was deleted on 2026-08-23.
+   practice/mode.js carries the reason it existed and why a replacement should
+   go on the session status row rather than back here. */
 
 /* Instant click acknowledgment while the rating posts (slow-network case). */
 .feedback-btn--pressed {

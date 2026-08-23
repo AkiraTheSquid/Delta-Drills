@@ -1,11 +1,20 @@
 /* ================================================================
-   PRACTICE SESSION — resumable blocks + strict per-question timers
+   PRACTICE SESSION — a fixed clock per QUESTION, paused and resumed
 
-   The learner commits up front: how many questions, how much time to
-   answer each one, and how much time to review each grade. Timers stay
-   strict while a session is open, but Pause & exit freezes the current
-   question so it can be resumed later. Closing/reloading the page also
-   leaves a resumable snapshot.
+   🔴 THE LEARNER SETS NOTHING. Seth, 2026-08-23: "it's the timer per
+   question, not per session ... a certain amount of time to answer the
+   question and a certain amount of time to review it ... it's a
+   predetermined timer that they don't control". Both allowances are the
+   constants below, they apply to every question alike, and the three
+   inputs that used to set them (questions / answer time / review time)
+   are gone from index.html along with the panel that held them.
+
+   A block has no LENGTH either, which is why `finish("ended")` and
+   #session-end-btn went with them: there is no quota to reach and
+   nothing to end early. Pause and resume are the only two states. Pause
+   freezes the current question — draft code, review state, clock — and
+   puts the readiness screen back; Continue practicing brings it back.
+   Closing or reloading the page leaves the same resumable snapshot.
 
    A resumed clock depends on the length of the break — see RESUME_GRACE_SECS.
    Straight back and it picks up mid-second; after a real gap the current step
@@ -21,8 +30,20 @@
        _loadNextPracticeQuestion() fetches another question
    ================================================================ */
 
-const SESSION_SETUP_KEY = "delta_drills_session_setup";
-const SESSION_STATE_VERSION = 1;
+/* 🔴 THE TWO ALLOWANCES. Per question, not per session, and not editable
+   from anywhere in the UI — changing the model means changing these.
+   02:00 each: long enough to read a prompt and write a few lines, short
+   enough that the pair fits in the four minutes a question is worth. */
+const ANSWER_SECS = 120;
+const REVIEW_SECS = 120;
+
+/* Bumped 1 → 2. A v1 snapshot carries the learner's OWN answerSecs and
+   reviewSecs — 05:00 was the old default — and resuming one would hand back a
+   clock this build has no way to set. A v2 snapshot stores neither field and
+   reads both from the constants above, so the version bump is what stops an
+   old block resuming under the old rules. `_readSaved` drops v1 outright,
+   which costs one paused question the day this ships. */
+const SESSION_STATE_VERSION = 2;
 
 /* How long a paused clock stays paused before the step starts over.
 
@@ -40,37 +61,16 @@ const SESSION_STATE_VERSION = 1;
    the question, the quota and the draft code are all still theirs. */
 const RESUME_GRACE_SECS = 120;
 
-const parseTimerInput = (value, fallback) => {
-  const raw = String(value || "").trim();
-  if (!raw) return fallback;
-  if (raw.includes(":")) {
-    const [mStr, sStr] = raw.split(":");
-    const m = Number(mStr);
-    const s = Number(sStr);
-    if (!Number.isFinite(m) || !Number.isFinite(s)) return fallback;
-    return Math.max(1, Math.min(3600, m * 60 + s));
-  }
-  const asNumber = Number(raw);
-  if (!Number.isFinite(asNumber)) return fallback;
-  return Math.max(1, Math.min(3600, Math.round(asNumber)));
-};
+/* `parseTimerInput` was DELETED here on 2026-08-23. It read "05:00" or "300"
+   out of the three setup inputs; there are no inputs, and no other file called
+   it. `formatDuration` ("1 h 10 min") went with it — it only ever wrote the
+   setup panel's total-session estimate, and a session has no total. */
 
 const formatTimer = (value) => {
   const clamped = Math.max(0, Math.min(3600, Math.round(value)));
   const m = Math.floor(clamped / 60);
   const s = clamped % 60;
   return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
-};
-
-// "1 h 10 min" / "45 min" / "90 sec" — for the setup-panel total estimate.
-const formatDuration = (secs) => {
-  const total = Math.max(0, Math.round(secs));
-  if (total < 120) return `${total} sec`;
-  const h = Math.floor(total / 3600);
-  const m = Math.round((total % 3600) / 60);
-  if (h === 0) return `${m} min`;
-  if (m === 0) return `${h} h`;
-  return `${h} h ${m} min`;
 };
 
 const PracticeSession = (() => {
@@ -113,20 +113,19 @@ const PracticeSession = (() => {
     try {
       const saved = JSON.parse(localStorage.getItem(_storageKey()) || "null");
       if (!saved || saved.version !== SESSION_STATE_VERSION) return null;
-      if (!Number.isFinite(saved.total) || !Number.isFinite(saved.served) || !saved.questionId) {
-        return null;
-      }
+      if (!Number.isFinite(saved.served) || !saved.questionId) return null;
       const phase = saved.phase === "review" && saved.review ? "review" : "answer";
-      const phaseLimit = phase === "review" ? saved.reviewSecs : saved.answerSecs;
+      /* The allowance is read from the CONSTANT, never from the snapshot. A
+         saved clock that outlived a change to ANSWER_SECS/REVIEW_SECS must not
+         resume under the old rule, and clamping to the constant is also what
+         stops a hand-edited localStorage entry buying unlimited time. */
+      const phaseLimit = phase === "review" ? REVIEW_SECS : ANSWER_SECS;
       const savedRemaining = Number.isFinite(saved.remaining) ? saved.remaining : phaseLimit;
       return {
         version: SESSION_STATE_VERSION,
-        total: Math.max(1, Math.min(50, Math.round(saved.total))),
-        answerSecs: Math.max(1, Math.min(3600, Math.round(saved.answerSecs || 300))),
-        reviewSecs: Math.max(1, Math.min(3600, Math.round(saved.reviewSecs || 120))),
-        served: Math.max(1, Math.min(Math.round(saved.served), Math.round(saved.total))),
+        served: Math.max(1, Math.round(saved.served)),
         phase,
-        remaining: Math.max(1, Math.min(3600, Math.round(savedRemaining || 30))),
+        remaining: Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
         questionId: String(saved.questionId),
         draft: typeof saved.draft === "string" || (
           saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
@@ -160,9 +159,9 @@ const PracticeSession = (() => {
     }
     return {
       version: SESSION_STATE_VERSION,
-      total: state.total,
-      answerSecs: state.answerSecs,
-      reviewSecs: state.reviewSecs,
+      // No `total`, no `answerSecs`, no `reviewSecs`: a block has no length and
+      // the two allowances are constants. Writing them would invite a reader
+      // to resume from them.
       served: state.served,
       phase: state.phase,
       remaining,
@@ -196,7 +195,7 @@ const PracticeSession = (() => {
     const stable = phase === "answer" || phase === "review" || phase === "blocked";
     sessionPauseBtn.disabled = !stable;
     sessionPauseBtn.title = stable
-      ? "Pause this session and return to setup. Resume later from this question."
+      ? "Pause and save. You come back to this question, on this clock."
       : "Pause becomes available when this short step finishes.";
   };
 
@@ -230,7 +229,7 @@ const PracticeSession = (() => {
   };
 
   const _phaseLimit = (saved) =>
-    saved.phase === "review" ? saved.reviewSecs : saved.answerSecs;
+    saved.phase === "review" ? REVIEW_SECS : ANSWER_SECS;
 
   /* What the clock should read on resume: {secs, restarted}.
 
@@ -247,7 +246,7 @@ const PracticeSession = (() => {
   const _resumeSummary = (saved) => {
     const phase = saved.phase === "review" ? "reviewing" : "answering";
     const { secs, restarted } = _effectiveRemaining(saved);
-    return `Question ${saved.served} of ${saved.total} · ${phase} · ` +
+    return `Question ${saved.served} · ${phase} · ` +
       formatTimer(secs) + (restarted ? " (this step starts over)" : " left");
   };
 
@@ -359,37 +358,17 @@ const PracticeSession = (() => {
     if (feedbackSaved) showNextProblemButton();
   };
 
-  // Live total-time readout: questions × (answer + review), recomputed as
-  // the learner edits any of the three setup fields.
-  const _updateEstimate = () => {
-    const total = Math.max(1, Math.min(50, Math.round(Number(sessionQuestionCountInput.value) || 10)));
-    const answerSecs = parseTimerInput(sessionAnswerTimeInput.value, 300);
-    const reviewSecs = parseTimerInput(sessionReviewTimeInput.value, 120);
-    const perQuestion = answerSecs + reviewSecs;
-    sessionTimeEstimate.innerHTML =
-      `Total session time: <strong>${formatDuration(total * perQuestion)}</strong>` +
-      ` · ${total} question${total === 1 ? "" : "s"} × ${formatTimer(perQuestion)} each`;
-  };
-
   const start = () => {
-    const total = Math.max(1, Math.min(50, Math.round(Number(sessionQuestionCountInput.value) || 10)));
-    const answerSecs = parseTimerInput(sessionAnswerTimeInput.value, 300);
-    const reviewSecs = parseTimerInput(sessionReviewTimeInput.value, 120);
-    sessionQuestionCountInput.value = String(total);
-    sessionAnswerTimeInput.value = formatTimer(answerSecs);
-    sessionReviewTimeInput.value = formatTimer(reviewSecs);
-    _updateEstimate();
-    try {
-      localStorage.setItem(SESSION_SETUP_KEY, JSON.stringify({ total, answerSecs, reviewSecs }));
-    } catch (_) {}
-
     _clearSaved();
     pausedState = null;
     resumeReady = false;
     _showResumeOption();
-    state = { total, answerSecs, reviewSecs, served: 0, phase: null, review: null };
+    /* No `total`. `shouldFinishInsteadOfAdvance` returns false forever now, so
+       `served` is a counter and not a quota — it is what the progress readout
+       and the resume summary say, and nothing acts on it. */
+    state = { served: 0, phase: null, review: null };
     sessionSummary.classList.add("hidden");
-    sessionProgressLabel.textContent = `0 / ${total}`;
+    sessionProgressLabel.textContent = "0";
     sessionStatusRow.classList.remove("hidden");
     pagePractice.classList.remove("session-idle");
     sessionStartBtn.disabled = true;
@@ -419,7 +398,7 @@ const PracticeSession = (() => {
   const _answerSecsFor = () =>
     _probeOnScreen() && window.PlacementTimer
       ? window.PlacementTimer.secondsPerQuestion()
-      : state.answerSecs;
+      : ANSWER_SECS;
 
   const onQuestionRendered = () => {
     if (!isActive()) {
@@ -439,7 +418,7 @@ const PracticeSession = (() => {
     _stopPoll();
     state.served += 1;
     state.review = null;
-    sessionProgressLabel.textContent = `${Math.min(state.served, state.total)} / ${state.total}`;
+    sessionProgressLabel.textContent = String(state.served);
     _setPhase("answer", "Answering");
     remaining = _answerSecsFor();
     _tick(_forceSubmitOrAdvance);
@@ -500,7 +479,7 @@ const PracticeSession = (() => {
     // new session's first question.
     if (!isActive() || state.phase !== "grading") return;
     _setPhase("review", "Reviewing");
-    remaining = state.reviewSecs;
+    remaining = REVIEW_SECS;
     _tick(_forceAdvance);
   };
 
@@ -515,7 +494,7 @@ const PracticeSession = (() => {
     resumeReady = true;
     sessionStatusRow.classList.add("hidden");
     pagePractice.classList.add("session-idle");
-    sessionSummary.textContent = "Session paused. Your question, code, timer, and review state are saved.";
+    sessionSummary.textContent = "Paused. Your question, code, clock and review state are saved.";
     sessionSummary.classList.remove("hidden");
     _showResumeOption();
   };
@@ -593,9 +572,6 @@ const PracticeSession = (() => {
     // is on screen.
     const clock = _effectiveRemaining(pausedState);
     state = {
-      total: pausedState.total,
-      answerSecs: pausedState.answerSecs,
-      reviewSecs: pausedState.reviewSecs,
       served: pausedState.served,
       phase: pausedState.phase,
       review: pausedState.review,
@@ -608,7 +584,7 @@ const PracticeSession = (() => {
     sessionResumePanel.classList.add("hidden");
     sessionSetupPanel.classList.remove("session-setup--has-resume");
     sessionSummary.classList.add("hidden");
-    sessionProgressLabel.textContent = `${Math.min(state.served, state.total)} / ${state.total}`;
+    sessionProgressLabel.textContent = String(state.served);
     sessionStatusRow.classList.remove("hidden");
     pagePractice.classList.remove("session-idle");
     _restoreDraft(state.draft);
@@ -631,14 +607,24 @@ const PracticeSession = (() => {
     sessionSummary.classList.remove("hidden");
   };
 
-  const shouldFinishInsteadOfAdvance = () => isActive() && state.served >= state.total;
+  /* 🔴 ALWAYS FALSE, and kept as a function on purpose. A block has no length
+     any more (2026-08-23), so nothing ends a session but a pause — but this is
+     the hook `_loadNextPracticeQuestion` asks before every fetch, and deleting
+     it would mean editing every call site to stop asking. Restoring a quota is
+     one line here; finding all the callers again is not. */
+  const shouldFinishInsteadOfAdvance = () => false;
 
   const hasSavedQuestion = (questionId) =>
     !!pausedState && String(questionId ?? "") === pausedState.questionId;
 
+  /* Reasons a block ends WITHOUT a pause. "ended" is gone with the button that
+     sent it, and so is "complete": the quota it counted down to no longer
+     exists. What is left is a failure to load and the placement taking over —
+     both of which happen TO the learner, which is why each one says what
+     happened rather than congratulating them. */
   const finish = (reason) => {
     if (!state) return;
-    const { served, total } = state;
+    const { served } = state;
     // "Recorded answers are kept" is printed below, so make it true: an attempt
     // that was graded and never rated is still pending in the offline engine,
     // and would otherwise wait for the learner's next session to be counted.
@@ -657,22 +643,16 @@ const PracticeSession = (() => {
     sessionStatusRow.classList.add("hidden");
     pagePractice.classList.add("session-idle");
     sessionSummary.textContent =
-      reason === "ended"
-        ? `Session ended early — ${served} of ${total} questions. Recorded answers are kept.`
-        : reason === "error"
-          ? "Could not load a question — check the connection and start again."
-          : reason === "placement"
-            ? "Placement test started — its questions are timed on their own clock, one at a time."
-            : `Session complete — ${total} question${total === 1 ? "" : "s"} done. Set up the next block when you're ready.`;
+      reason === "error"
+        ? "Could not load a question — check the connection and try again."
+        : reason === "placement"
+          ? "Placement test started — its questions are timed on their own clock, one at a time."
+          : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`;
     sessionSummary.classList.remove("hidden");
   };
 
   sessionStartBtn.addEventListener("click", start);
-  [sessionQuestionCountInput, sessionAnswerTimeInput, sessionReviewTimeInput].forEach((input) => {
-    input.addEventListener("input", _updateEstimate);
-  });
   sessionPauseBtn.addEventListener("click", pause);
-  sessionEndBtn.addEventListener("click", () => finish("ended"));
   sessionResumeBtn.addEventListener("click", resume);
   sessionDiscardBtn.addEventListener("click", discard);
   (document.getElementById("practice-notebook") || codeEditor).addEventListener("input", () => {
@@ -692,17 +672,10 @@ const PracticeSession = (() => {
     _writeSaved(snapshot);
   });
 
-  // Prefill setup fields from last session.
-  try {
-    const saved = JSON.parse(localStorage.getItem(SESSION_SETUP_KEY) || "null");
-    if (saved) {
-      if (Number.isFinite(saved.total)) sessionQuestionCountInput.value = String(saved.total);
-      if (Number.isFinite(saved.answerSecs)) sessionAnswerTimeInput.value = formatTimer(saved.answerSecs);
-      if (Number.isFinite(saved.reviewSecs)) sessionReviewTimeInput.value = formatTimer(saved.reviewSecs);
-    }
-  } catch (_) {}
-  _updateEstimate();
-
+  /* Nothing to prefill. `delta_drills_session_setup` — the localStorage key
+     that carried the learner's last questions/answer-time/review-time — is not
+     read or written anywhere any more; it is left on disk rather than migrated
+     because deleting it buys nothing and a stale key is inert. */
   pausedState = _readSaved();
   // A restored session is resumable the moment it loads. It used to stay
   // disabled until some later render happened to put the saved question on
@@ -713,6 +686,14 @@ const PracticeSession = (() => {
 
   return {
     isActive,
+    /* What the notch shows when nothing is running: the allowance the NEXT
+       question's answer phase will get. Exposed rather than duplicated so
+       notch-menu.js never holds a second copy of the number — and returned
+       already formatted, because that file is forbidden a clock of its own
+       (practice/watch.py) and mm:ss is a clock's job. */
+    idleClockText: () => formatTimer(ANSWER_SECS),
+    answerSeconds: () => ANSWER_SECS,
+    reviewSeconds: () => REVIEW_SECS,
     // True when a session was paused and is waiting to be resumed. switchTab
     // needs this to know the question on screen belongs to that session and
     // must not be replaced by a preference refresh.

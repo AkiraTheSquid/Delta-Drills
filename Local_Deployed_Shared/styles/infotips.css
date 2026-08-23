@@ -1,14 +1,16 @@
 /* ================================================================
    INFOTIPS — the small ⓘ that sits beside every tab and every feature.
 
-   Two shapes of the same control:
-     .dd-info            the generic dot, injected by infotips.js beside
-                         whatever carries data-dd-info
-     .dd-info.tab-info   the topbar variant, hand-written in index.html as a
-                         SIBLING of its .tab button (a button cannot nest a
-                         button, and app.js's auth-only/guest-only NodeLists
-                         are captured at script-eval time, so these have to
-                         exist in the markup before app.js runs)
+   ONE shape now: `.dd-info`, the generic dot infotips.js injects beside
+   whatever carries `data-dd-info`.
+
+   🔴 There was a second, `.dd-info.tab-info` — a hand-written dot beside
+   every tab. All ten were deleted on 2026-08-23 (Seth: "there's information
+   icons literally everywhere ... it's overkill"), and the topbar rules that
+   sized them went with the markup. Two things got better: the strip stopped
+   reading as ten labels each trailed by a stray "i", and `.tab`'s
+   `border-bottom` — the active underline — stopped looking offset, because
+   it spans the label and the eye had been reading label+dot as the tab.
 
    The panel (.dd-infopop) is a single reused element parked on <body> and
    positioned fixed, so it escapes every overflow:hidden ancestor — the
@@ -59,26 +61,6 @@
 .dd-info.hidden,
 .dd-info[hidden] {
   display: none !important;
-}
-
-/* ---- Topbar variant -------------------------------------------------- */
-
-/* The dot rides in the tab strip as its own flex item. The tab loses its
-   right padding to it so "Practice ⓘ" still reads as one target-sized
-   group rather than two widely spaced things. */
-.tab.has-info {
-  padding-right: 6px;
-}
-
-.dd-info.tab-info {
-  align-self: center;
-  margin: 0 14px 0 0;
-  height: 15px;
-}
-
-.tab.active + .dd-info.tab-info {
-  color: var(--white);
-  border-color: var(--muted);
 }
 
 /* ---- The panel ------------------------------------------------------- */
@@ -143,16 +125,4 @@
   border-radius: 4px;
   background: rgb(var(--well-rgb) / calc(0.3 * var(--well-k)));
   font-size: 12px;
-}
-
-/* The embedded practice view drops the whole app chrome; its info dots go
-   with it, since none of the tabs they explain are reachable from there. */
-.kg-embed .dd-info.tab-info {
-  display: none !important;
-}
-
-@media (max-width: 600px) {
-  .dd-info.tab-info {
-    margin-right: 8px;
-  }
 }

@@ -10,12 +10,12 @@ body.lesson-mode #torch-colab-notice,
 body.lesson-mode #question-meta-top,
 body.lesson-mode #question-id-chip,
 body.lesson-mode .question-number-row,
-body.lesson-mode #cold-start-badge,
 body.lesson-mode #session-status-row,
-body.lesson-mode #self-report-row,
-body.lesson-mode #practice-mode-intro {
+body.lesson-mode #self-report-row {
   display: none !important;
 }
+/* #cold-start-badge and #practice-mode-intro left this list on 2026-08-23 —
+   both elements were deleted outright, so hiding them here matched nothing. */
 
 /* The concept name, graph button and progress counter that used to live in a
    `.lesson-topbar` inside this panel are now in the page-wide concept topbar

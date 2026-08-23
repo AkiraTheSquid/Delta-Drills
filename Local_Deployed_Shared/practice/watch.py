@@ -23,7 +23,9 @@ import watch_notebook
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
-from watch_invariants import check_invariants, check_a_torch_question_never_grades_on_pyodide
+from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
+                              check_a_deleted_practice_notice_stays_deleted,
+                              check_the_session_clock_is_not_the_learners_to_set)
 from watch_notebook import (
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
@@ -96,7 +98,12 @@ def check_public_api():
     assert 'releaseClock("problem-feedback-note")' in events
     index_html = read(os.path.join(SHARED, "index.html"))
     assert 'id="page-diagnostic"' in index_html and 'data-tab="diagnostic"' in index_html
-    assert 'class="tab has-info" data-tab="diagnostic"' in index_html
+    # Class TOKENS, not the literal attribute: the tab carried a `has-info`
+    # class while it had a sibling ⓘ (2026-08-07 → 2026-08-23), and an exact
+    # match broke on both the addition and the removal.
+    assert re.search(r'<button class="tab[^"]*" data-tab="diagnostic"', index_html), (
+        "the Placement test tab is no longer a plain .tab button"
+    )
     assert 'id="diagnostic-workspace-host"' in index_html
     assert "Continue diagnostic in Practice" not in index_html
     # An unfinished placement must not cost the learner the Practice tab.
@@ -622,6 +629,117 @@ def check_every_placement_question_gets_the_same_clock():
         "the start-button label lives in diagnostic-page.js only"
     )
 
+
+def check_the_placement_result_is_the_number_the_backend_seeded():
+    """The results card must report the placement, and say what it doesn't know.
+
+    Three separate failures live in this one check, all of them from
+    2026-08-23.
+
+    1. THE READINESS FIGURE IS A COPY. `placement-results.js` turns the
+       backend's theta into a percentage with the same affine map that
+       `diagnostic.py::_mastery_from_theta` uses to SEED per-atom BKT mastery
+       at finish(). If those four constants drift apart, the card tells the
+       learner a readiness the rest of the app does not act on — the quiet
+       kind of wrong, because both halves keep working. Same reasoning as
+       check_promotion_threshold_matches_the_backend, same remedy.
+
+    2. `.primary` MUST NOT BE ON THE CTA. `.primary` sets `width: 100%` and
+       12px/28px padding; `.placement-start-btn` overrode the padding and not
+       the width, so the button rendered as a card-wide 4px-tall strip. It is
+       a two-class collision, so nothing in either rule looks wrong on its
+       own — this is the only place it can be caught.
+
+    3. AN UNPROBED AREA IS NOT A MEASUREMENT. The backend returns a theta for
+       every area whether or not the test ever probed it; the unprobed ones
+       are the prior, propagated. Rendering those as bare percentages invents
+       confidence the test never earned, and the learner plans around it. The
+       renderer must keep the label and the dimmed style that separate them.
+    """
+    results_js = read(os.path.join(HERE, "placement-results.js"))
+    index = read(os.path.join(SHARED, "index.html"))
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+    css = read(os.path.join(SHARED, "styles", "practice", "diagnostic.css"))
+
+    # 1. the readiness map is a copy of the backend's seeding map
+    diag = os.path.join(
+        HERE, "..", "..", "This-Directory-Only", "backend", "app", "diagnostic.py")
+    if os.path.exists(diag):
+        backend = read(diag)
+        for js_name, py_name in (("DIFF_FLOOR", "_DIFF_FLOOR"),
+                                 ("DIFF_SPAN", "_DIFF_SPAN"),
+                                 ("SEED_MASTERY_FLOOR", "SEED_MASTERY_FLOOR"),
+                                 ("SEED_MASTERY_CAP", "SEED_MASTERY_CAP")):
+            m_js = re.search(rf"^\s*const {js_name} = ([0-9.]+)\s*;", results_js, re.M)
+            m_py = re.search(rf"^{py_name} = ([0-9.]+)", backend, re.M)
+            assert m_js, f"placement-results.js lost its {js_name} constant"
+            assert m_py, f"diagnostic.py lost {py_name}"
+            assert float(m_js.group(1)) == float(m_py.group(1)), (
+                f"readiness map drifted: placement-results.js {js_name}="
+                f"{m_js.group(1)} but diagnostic.py {py_name}={m_py.group(1)} — "
+                "the card would report a readiness the seeding does not use"
+            )
+
+    # 2. neither placement button may carry .primary, and the CTA keeps its
+    #    wrapper (without it the infotip dot is a sibling flex item and drops
+    #    onto its own line under the button).
+    for btn_id in ("placement-start-btn", "diagnostic-practice-btn"):
+        tag = re.search(rf'<button[^>]*id="{btn_id}"[^>]*>', index)
+        assert tag, f"index.html lost #{btn_id}"
+        classes = re.search(r'class="([^"]*)"', tag.group(0))
+        assert classes and "primary" not in classes.group(1).split(), (
+            f"#{btn_id} carries .primary again — width:100% plus the placement "
+            "button's own padding is the full-bleed 4px-tall strip"
+        )
+    assert re.search(
+        r'<span class="placement-cta">\s*<button[^>]*id="placement-start-btn"', index), (
+        "the placement CTA lost its .placement-cta wrapper — infotips.js inserts "
+        "the dot into the anchor's parentNode, so unwrapped it orphans below the button"
+    )
+    assert ".placement-cta" in css, "styles/practice/diagnostic.css lost .placement-cta"
+    assert ".placement-cta.hidden" in css and "el.parentElement?.classList.toggle" in page, (
+        "the CTA wrapper must hide WITH its button, and .hidden must be re-asserted "
+        "at this file's specificity — diagnostic.css loads after components.css, so "
+        "the tie goes to .placement-cta and an empty flex item keeps its gap"
+    )
+
+    # 3. one writer for the card body, and it must be reached
+    for anchor in ("placement-results-meta", "placement-readiness",
+                   "placement-areas", "placement-results-empty"):
+        assert f'id="{anchor}"' in index, f"index.html lost the #{anchor} results anchor"
+    assert "window.PlacementResults?.render(status)" in page, (
+        "diagnostic-page.js must hand the status to placement-results.js — "
+        "without it the card is empty for someone who finished the test"
+    )
+    assert "!!status.completed_at && !status.active" in page, (
+        "the results card must render only for a FINISHED placement; a mid-test "
+        "status carries live estimates that would read as a final result"
+    )
+    assert "will appear here" not in index, (
+        "the results placeholder is back — it showed to learners who had already "
+        "finished the test, while the real numbers sat unrendered in the payload"
+    )
+    assert "placement-areas" not in page, (
+        "placement-results.js is the only writer of the card body; a second "
+        "writer is how the two halves disagree about the same placement"
+    )
+    assert index.find('src="practice/placement-results.js') < index.find(
+        'src="practice/diagnostic-page.js'), (
+        "placement-results.js must load BEFORE diagnostic-page.js, which calls it "
+        "from a refresh it starts at load"
+    )
+
+    # 4. the honesty rule: an unprobed area is visibly not a measurement
+    assert "not probed" in results_js and "placement-area--unprobed" in results_js, (
+        "an area with zero probes must be labelled and dimmed — its theta is the "
+        "prior propagated, and printing it bare invents confidence the test never earned"
+    )
+    assert ".placement-area--unprobed" in css, (
+        "diagnostic.css lost the unprobed styling, so a prior renders identically "
+        "to a measured area"
+    )
+
+
 # ── Run all checks ───────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -631,6 +749,7 @@ if __name__ == '__main__':
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,
+              check_the_session_clock_is_not_the_learners_to_set,
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
@@ -641,7 +760,9 @@ if __name__ == '__main__':
     check_a_collapsed_cell_still_knows_its_own_source,
               check_the_notebook_never_falls_back_to_the_prefix_runner,
               check_a_solution_stays_closed_until_asked,
-              check_every_placement_question_gets_the_same_clock]
+              check_every_placement_question_gets_the_same_clock,
+              check_the_placement_result_is_the_number_the_backend_seeded,
+              check_a_deleted_practice_notice_stays_deleted]
     _every_check_is_registered(checks)
     for fn in checks:
         try:

@@ -1,18 +1,33 @@
 /* Practice tab — question display: number, text, imports, visuals, meta, prose/code split. */
-/* Question Number */
+/* ---- the question's heading -------------------------------------------
+
+   This row used to be a counter and two audit chips ("Question 21", "ID 490",
+   "See in knowledge graph"). It is the CONCEPT now — an <h2> naming what the
+   problem is about — and the two chips are in the notch's three-dot menu.
+   Seth's call, 2026-08-23. What is left in the row beside the heading is
+   #placement-timer, which is hidden on every non-placement question. */
 .question-number-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 10px;
   margin-bottom: 10px;
 }
 
+/* 🔴 Uppercase and 14px MUTED was right for "QUESTION 21" and is wrong for a
+   title: a concept name is prose, it can run to five or six words, and small
+   caps at that length stop being readable. It is the largest thing in the
+   panel's first inch now, and the question text under it steps DOWN to 17px
+   rather than up. `margin: 0` because it is a real heading element and the UA
+   sheet gives <h2> a block margin the row would inherit as a gap. */
 .question-number {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+  margin: 0;
+  /* A concept name is allowed to wrap; it is not allowed to be clipped. */
+  min-width: 0;
 }
 
 /* Question Text */
@@ -273,35 +288,9 @@
   opacity: 0.75;
 }
 
-/* Cold Start Badge */
-.cold-start-badge {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: rgb(var(--info-rgb) / 0.08);
-  border: 1px solid rgb(var(--info-rgb) / 0.3);
-  border-radius: 8px;
-  padding: 8px 14px;
-  margin-bottom: 14px;
-}
-
-.cold-start-badge.hidden {
-  display: none;
-}
-
-.cold-start-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--info);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.cold-start-note {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.4;
-}
+/* The Cold Start Badge and its .cold-start-label / .cold-start-note rules were
+   deleted on 2026-08-23 with the markup — see practice/ui.js. #placement-timer
+   moved to .question-number-row; its chip styling lives in diagnostic.css. */
 /* Question body: separate the prose prompt from any starter/code block. */
 .question-prose { line-height: 1.6; }
 .question-prose + .question-prose { margin-top: 10px; }

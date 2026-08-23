@@ -1,6 +1,9 @@
-/* Practice tab — resumable session setup + per-question countdown status.
-   Timers remain strict while active; Pause & exit freezes a persisted
-   snapshot without changing the committed limits. */
+/* Practice tab — the idle screen + the (hidden) in-session status row.
+
+   The learner sets nothing: both allowances are constants in
+   practice/timer.js. What used to be a setup panel of three inputs is a
+   readiness dial and one button now — its own rules are in
+   styles/practice/readiness.css. */
 
 /* While no session is running, only the setup panel is visible; once a
    session starts, the setup panel yields to the question split. */
@@ -26,7 +29,8 @@
   display: none;
 }
 
-/* Setup panel (pre-session) */
+/* THE IDLE CARD. Same box the setup panel used, minus everything that was in
+   it — see styles/practice/readiness.css for what is. */
 .session-setup {
   max-width: 560px;
   margin: 48px auto;
@@ -36,101 +40,36 @@
   border-radius: 12px;
 }
 
-.session-setup-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: 8px;
-}
+/* 🔴 OFF THE SCREEN, NOT GONE. timer.js binds resume, discard and start to
+   these, and #session-resume-btn's `disabled` is how a saved question that is
+   no longer in the bank refuses to come back. The Continue button on the dial
+   forwards a click to whichever applies (practice/session-idle.js). Deleting
+   them means moving three handlers, not tidying up markup.
 
-.session-setup-note {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  margin: 0 0 20px;
-}
-
-.session-setup-fields {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.session-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.session-field-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Live total-time estimate under the setup fields — recomputed as the
-   learner edits count / answer time / review time. */
-.session-time-estimate {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  margin: -8px 0 20px;
-}
-
-.session-time-estimate strong {
-  color: var(--white);
-  font-weight: 700;
-}
-
+   `position: absolute` rather than `display: none`: a display-none button
+   still takes a synthetic click, but it is out of the accessibility tree, and
+   the resume path's own error text (#session-resume-summary) has to stay
+   readable to a screen reader when it refuses. */
+.session-resume-panel,
 .session-start-btn {
-  width: 100%;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.session-setup--has-resume .session-start-btn {
-  margin-top: 12px;
-}
-
-.session-resume-panel {
-  margin-top: 18px;
-  padding: 16px;
-  border: 1px solid rgb(var(--ok-rgb) / 0.35);
-  border-radius: 10px;
-  background: rgb(var(--ok-rgb) / 0.06);
-}
-
+/* The one exception to that: `.hidden` on the resume panel is timer.js saying
+   there is nothing saved, and then it really is gone. */
 .session-resume-panel.hidden {
   display: none;
 }
 
-.session-resume-title {
-  color: var(--white);
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 5px;
-}
-
-.session-resume-summary {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.session-resume-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.session-resume-actions button {
-  flex: 1 1 180px;
-}
-
 .session-summary {
-  margin-top: 14px;
+  margin: 14px 0 0;
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
@@ -140,20 +79,11 @@
   display: none;
 }
 
-/* Timer / numeric inputs (shared by all three setup fields) */
-.timer-input {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--white);
-  font-variant-numeric: tabular-nums;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 14px;
-  letter-spacing: 1px;
-  width: 92px;
-  text-align: center;
-}
+/* `.session-setup-title/-note/-fields`, `.session-field(-label)`,
+   `.session-time-estimate`, `.session-resume-title`, `.session-resume-actions`
+   and `.timer-input` were all DELETED on 2026-08-23 with the setup panel. The
+   inputs are the point: the learner does not set the clock, so there is no
+   field to style. */
 
 /* In-session status row (replaces the old timed-mode row) */
 .session-status-row {
@@ -215,8 +145,9 @@
   border-color: rgb(var(--danger-rgb) / 0.5);
 }
 
-.session-pause-btn,
-.session-end-btn {
+/* .session-end-btn went with #session-end-btn (2026-08-23): a block has no
+   length, so there is nothing to end early. */
+.session-pause-btn {
   font-size: 12px;
   padding: 6px 10px;
 }

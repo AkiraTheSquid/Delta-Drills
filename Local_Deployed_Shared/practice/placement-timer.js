@@ -113,16 +113,20 @@ const PlacementTimer = (() => {
       String(clamped % 60).padStart(2, "0");
   };
 
-  /* The chip lives inside the placement badge, which is part of the practice
+  /* The chip lives in .question-number-row, which is part of the practice
      workspace — the same node the Placement page re-parents into itself. Being
      a child of it means the countdown follows the question wherever the
-     workspace is hosted, with no second copy to keep in sync. */
+     workspace is hosted, with no second copy to keep in sync.
+
+     It was in #cold-start-badge until 2026-08-23, when that badge was deleted
+     along with its standing explanation copy. The row is a strictly better
+     home: the badge only appeared on placement and calibration questions, so
+     the chip's anchor came and went with it. */
   const _chip = () => {
     if (chip && chip.isConnected) return chip;
-    const badge = document.getElementById("cold-start-badge");
-    const label = document.getElementById("cold-start-label");
-    if (!badge) return null;
-    chip = badge.querySelector(".placement-timer");
+    const row = document.querySelector(".question-number-row");
+    if (!row) return null;
+    chip = row.querySelector(".placement-timer") || document.getElementById("placement-timer");
     if (!chip) {
       chip = document.createElement("span");
       chip.className = "placement-timer hidden";
@@ -130,8 +134,7 @@ const PlacementTimer = (() => {
       chip.setAttribute("aria-live", "off");
       chip.dataset.ddInfo = "placement-timer";
       chip.dataset.ddInfoPlace = "after";
-      if (label && label.parentElement === badge) label.insertAdjacentElement("afterend", chip);
-      else badge.appendChild(chip);
+      row.appendChild(chip);
     }
     return chip;
   };

@@ -1,0 +1,107 @@
+/* ================================================================
+   CODE-HIGHLIGHT.CSS — the syntax-colour layer under the code editors.
+
+   `practice/code-highlight.js` wraps every `<textarea class="code-editor">`
+   in a `.code-surface` and slides a `<pre class="code-highlight">` in behind
+   it holding the same text, tokenised. This file is only the part that
+   DIFFERS between the two layers — the metrics they must share (font,
+   padding, borders, wrapping, scrollbar gutter) are declared once, in the
+   `.code-editor, .code-highlight` rules in editor.css and
+   notebook-editor.css. Do not restate a metric here; a value that exists in
+   two places is a value that will disagree.
+
+   MUST LOAD AFTER editor.css AND notebook-editor.css. Every override below
+   is deliberately at the same or lower specificity than the rule it beats,
+   and wins on source order — which is also what makes the plain textarea
+   still look right if these scripts never run.
+
+   WHY THE TEXT IS TRANSPARENT AND THE SELECTION IS NOT
+   The textarea sits ON TOP so it keeps focus, the caret, the selection and
+   native scrolling. Its glyphs are transparent so the coloured copy behind
+   shows through, and the caret is painted back in with `caret-color`. The
+   selection highlight is still drawn on the TOP layer, so it would hide the
+   coloured text underneath — hence a translucent `::selection` background
+   rather than an opaque one. An opaque selection here reads as "selecting
+   text deletes it".
+   ================================================================ */
+
+.code-surface {
+  display: block;
+  position: relative;
+  min-width: 0;
+  /* The wrapper stands where the textarea used to stand, so it has to carry
+     the textarea's role in its parent's layout too. Both declarations mirror
+     an existing one exactly — `flex: 1` from editor.css, `flex: none` from
+     the .notebook-cell rule in notebook-editor.css — so wrapping changes
+     nothing. Today every code cell sits in .notebook-cell-main, which is a
+     block, so neither line does anything; they are here so that the day one
+     of these panes becomes a flex column, the enhancement does not silently
+     collapse the editor to its min-height. */
+  flex: 1;
+  min-height: 0;
+}
+
+.notebook-cell .code-surface { flex: none; }
+
+/* Only the enhanced case goes transparent. An un-attached `.code-editor`
+   (script blocked, attach not reached) keeps the opaque background and
+   readable text it has always had. */
+.code-surface .code-editor {
+  /* A textarea is inline-block, so a block wrapper leaves ~4px of descender
+     space under it — the wrapper ends up taller than the textarea and the
+     overlay, which is `inset: 0` on the wrapper, is taller too. Measured:
+     the overlay's last line sat 4px below the textarea's. */
+  display: block;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--white);
+  position: relative;
+  z-index: 1;
+}
+
+.code-surface .code-editor::selection {
+  background: rgb(var(--info-rgb) / 0.3);
+}
+
+.code-highlight {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* The visible border is the textarea's, drawn on the layer above. The
+     overlay keeps the border WIDTHS (from the shared rule) because they
+     shift where the first glyph lands, and throws away the colour so the
+     two are not drawn twice. */
+  border-color: transparent;
+}
+
+/* ── Tokens ─────────────────────────────────────────────────────────────
+   Class names are `cm-*` after the CodeMirror convention Colab itself
+   renders with, so the palette reads the way a learner expects a notebook
+   to read. Every colour is a variable from styles/variables.css, defined in
+   all three themes — a literal here is a colour that vanishes in light
+   mode. */
+.cm-kw { color: var(--code-key); font-weight: 500; }
+.cm-str { color: var(--code-str); }
+.cm-com { color: var(--code-com); font-style: italic; }
+.cm-num { color: var(--code-num); }
+.cm-const { color: var(--code-builtin); font-weight: 500; }
+.cm-builtin { color: var(--code-builtin); }
+.cm-fn { color: var(--code-fn); }
+.cm-cls { color: var(--code-cls); }
+.cm-dec { color: var(--code-dec); }
+.cm-self { color: var(--code-self); font-style: italic; }
+.cm-op { color: var(--code-op); }
+.cm-attr { color: var(--white); }
+.cm-var { color: var(--white); }
+
+/* The inline suggestion from practice/code-complete.js. Dim enough to read
+   as "not yours yet", solid enough to read at 13px. */
+.code-ghost {
+  color: var(--code-ghost);
+  background: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k)));
+  border-radius: 2px;
+}

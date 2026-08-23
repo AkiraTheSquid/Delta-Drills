@@ -1,39 +1,103 @@
+/* 🔴 ONE source for the topbar's height. It was written as a literal `56px`
+   here and then again, by hand, in every rule that had to fill the space
+   under it — `#page-practice`, the drawer's own header row, the graph
+   canvases. Shortening the bar (Seth, 2026-08-23: "vertically it should be
+   more scrunched up") meant finding all of them, which is the whole argument
+   for the token. Anything sizing itself against the bar reads this. */
+:root {
+  --dd-topbar-h: 44px;
+}
+
 .topbar {
-  display: flex;
+  /* 🔴 GRID, not flex, and that is the whole trick. `justify-content:
+     space-between` over three children centres the middle one only when the
+     two outer ones happen to be the same width — they never are, and the tab
+     strip drifted with the level pill's digit count. Two `1fr` columns are
+     EQUAL by definition, so the `auto` column between them is centred on the
+     viewport. Seth, 2026-08-23: "exactly centered". Columns cannot overlap
+     either, which `position: absolute` centring would have allowed. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 18px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  height: 56px;
+  height: var(--dd-topbar-h);
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
-.logo {
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--white);
-  white-space: nowrap;
+/* The two outer cells. Real elements rather than bare children because a grid
+   places CHILDREN into cells, and the left cell holds two controls (the
+   hamburger and the level pill). `min-width: 0` so a wide pill shrinks its
+   own column instead of stealing width from the centred strip. */
+.topbar-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
-.version-tag {
-  font-weight: 400;
-  font-size: 12px;
+.topbar-side--right {
+  justify-content: flex-end;
+}
+
+/* The cog. One wordless control on the right edge — it exists as much to
+   balance the level pill on the left (so the strip in the middle reads as
+   centred, not merely offset) as to be a shortcut. It jumps to the Account
+   tab through app.js's existing `[data-goto-tab]` hook. */
+.topbar-cog {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
   color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
+.topbar-cog:hover {
+  color: var(--white);
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  border-color: var(--border);
+}
+
+.topbar-cog:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+/* `.logo` is GONE (2026-08-23). It was the brand line, then an empty flex
+   spacer that survived it; the grid's own columns do that job now, and an
+   empty element in the middle cell would have displaced the tab strip. */
 .tabs {
   display: flex;
   gap: 0;
   height: 100%;
-  /* Hold the strip against the logo. .topbar is space-between over three
-     children, so when #topbar-auth is hidden (guest) the nav used to slide
-     across to the right edge and the tabs sat in a different place signed
-     out than signed in. Only visible once .topbar-auth[hidden] started
-     working — see styles/practice/misc.css, 2026-08-07. */
-  margin-right: auto;
+  /* No `margin-*: auto`. Both edges used to be tried — held left against the
+     brand, then right against nothing — and neither is centring: the strip's
+     position moved with whatever sat beside it. The grid's middle column is
+     the position now, and the strip fills it. */
+  /* Ten tabs at 13px still outrun a ~1100px viewport before nav-drawer.js
+     takes over at 900px, so the strip scrolls rather than wrapping the bar
+     to two lines. */
+  /* The row is `align-items: center`, so the strip has to opt back into the
+     bar's full height — the active `border-bottom` sits on the bar's bottom
+     edge, not floating mid-row. */
+  align-self: stretch;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -44,8 +108,14 @@
      — which is what "Why This App Exists" did at 390px. */
   flex: 0 0 auto;
   white-space: nowrap;
-  padding: 0 20px;
-  font-size: 14px;
+  /* Tighter with the shorter bar: ten tabs at 20px a side is 400px of padding
+     alone, and the strip is centred now — every pixel it spends is a pixel
+     off both side columns. The padding is SYMMETRIC and there is nothing else
+     inside the button, which is what makes the active underline sit square
+     under the label: it used to span the label while a sibling ⓘ hung off the
+     right, so the line read as offset to the left (Seth, 2026-08-23). */
+  padding: 0 13px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--muted);
   cursor: pointer;

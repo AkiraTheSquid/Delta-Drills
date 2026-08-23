@@ -143,8 +143,6 @@ const guestVisibleTabs = ["knowledge-graph", "courses", "practice", "targeted-pr
 // Second visibility pass, run AFTER the auth pass below and never before it.
 // It only ever ADDS .hidden, so it can't reveal a tab auth just hid — which
 // is what keeps the two passes composable in either mode.
-// Both the .tab button and its sibling .tab-info dot carry the same data-tab,
-// so one selector takes out the pair.
 const applyModeVisibility = () => {
   const advanced = isAdvancedMode();
   document.body.classList.toggle("dd-basic-mode", !advanced);
@@ -152,7 +150,10 @@ const applyModeVisibility = () => {
   // the auth pass above already restored the ones this viewer is allowed,
   // and a symmetric toggle would hand a guest the tabs auth just took away.
   if (!advanced) {
-    document.querySelectorAll(".tab, .tab-info").forEach((el) => {
+    // `.tab` alone. Each tab used to have a sibling `.tab-info` ⓘ carrying the
+    // same data-tab, and this selector took out the pair; the dots were
+    // deleted on 2026-08-23 (index.html).
+    document.querySelectorAll(".tab").forEach((el) => {
       if (isAdvancedOnlyTab(el.dataset.tab)) el.classList.add("hidden");
     });
   }
@@ -185,11 +186,15 @@ const updateTabVisibility = () => {
   updateAuthIndicators();
 };
 
-// Logged-in indicators the tester asked for: the email in the top bar + the
-// DD_TOKEN on the Account tab (he couldn't tell he was signed in, and couldn't
-// find his token). Called from updateTabVisibility (login, logout, init).
-const topbarAuth = document.getElementById("topbar-auth");
-const topbarAuthEmail = document.getElementById("topbar-auth-email");
+// Logged-in indicators the tester asked for: he couldn't tell he was signed
+// in, and couldn't find his token. Called from updateTabVisibility (login,
+// logout, init).
+//
+// The topbar half of that is GONE (Seth, 2026-08-23): #topbar-auth carried the
+// signed-in email across the top right of every screen and the tabs live on
+// that side now. "Who am I" is answered on the Account tab, which leads with
+// the address and the status — see #account-identity-email below, which is the
+// same fact from the same `signedIn` check.
 const accountTokenInput = document.getElementById("account-dd-token");
 const accountTokenCopy = document.getElementById("account-dd-token-copy");
 // The Account tab now leads with plain identity (email + signed-in status);
@@ -202,8 +207,6 @@ const updateAuthIndicators = () => {
   // showing them their generated guest-<hex>@… address as their email would
   // be worse than saying nothing.
   const signedIn = isSignedIn();
-  if (topbarAuth) topbarAuth.hidden = !signedIn;
-  if (topbarAuthEmail) topbarAuthEmail.textContent = signedIn ? (authEmail || "Signed in") : "";
   if (accountIdentityEmail) {
     accountIdentityEmail.textContent = signedIn ? (authEmail || "—") : "Not signed in";
   }

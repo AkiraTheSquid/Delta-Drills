@@ -117,6 +117,18 @@ def check_a_resumed_clock_matches_the_break():
     src = open(os.path.join(HERE, 'timer.js'), encoding='utf-8').read()
     grace = re.search(r"const RESUME_GRACE_SECS = (\d+);", src)
     assert grace, "RESUME_GRACE_SECS is gone — the resume rule has no window"
+    # 🔴 The two allowances are CONSTANTS (2026-08-23), not fields on the
+    # snapshot: the learner does not set the clock, and a restarted step has to
+    # come back at the length this build enforces rather than the one the
+    # snapshot was written under. Read out of the source so the probe below is
+    # checking the shipped numbers and not a copy of them.
+    answer = re.search(r"const ANSWER_SECS = (\d+);", src)
+    review_c = re.search(r"const REVIEW_SECS = (\d+);", src)
+    assert answer and review_c, (
+        "ANSWER_SECS/REVIEW_SECS are gone — the per-question allowances are "
+        "back to being something the learner can set, or something a snapshot "
+        "can carry"
+    )
     start = src.index("  const _awaySecs = (saved) =>")
     end = src.index("  const _resumeSummary =")
     helpers = src[start:end]
@@ -130,6 +142,8 @@ def check_a_resumed_clock_matches_the_break():
 
     probe = f"""
 const RESUME_GRACE_SECS = {grace.group(1)};
+const ANSWER_SECS = {answer.group(1)};
+const REVIEW_SECS = {review_c.group(1)};
 {helpers}
 // The clock is FROZEN for the probe. `savedAt` is an ISO string truncated to
 // milliseconds and `_awaySecs` re-reads the wall clock a moment later, so a
@@ -138,8 +152,10 @@ const RESUME_GRACE_SECS = {grace.group(1)};
 // boundary is the case worth testing; it has to be testable exactly.
 const NOW = Date.now();
 Date.now = () => NOW;
+// No `answerSecs`/`reviewSecs` on the snapshot — that is the point of the
+// change these cases were rewritten for. `_phaseLimit` reads the constants.
 const snap = (over) => ({{
-  phase: "answer", answerSecs: 300, reviewSecs: 120, remaining: 60,
+  phase: "answer", remaining: 60,
   savedAt: new Date(NOW - over * 1000).toISOString(),
 }});
 const eq = (got, want, why) => {{
@@ -152,12 +168,12 @@ eq(_effectiveRemaining(snap(1)), {{secs: 60, restarted: false}},
    "straight back must keep the time left");
 eq(_effectiveRemaining(snap(RESUME_GRACE_SECS)), {{secs: 60, restarted: false}},
    "the grace boundary itself must still resume");
-eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: 300, restarted: true}},
+eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: ANSWER_SECS, restarted: true}},
    "past the window the ANSWER step restarts at its own limit");
 const review = {{...snap(RESUME_GRACE_SECS + 1), phase: "review"}};
-eq(_effectiveRemaining(review), {{secs: 120, restarted: true}},
+eq(_effectiveRemaining(review), {{secs: REVIEW_SECS, restarted: true}},
    "a review-phase break must restart the REVIEW limit, not the answer one");
-eq(_effectiveRemaining({{...snap(0), savedAt: null}}), {{secs: 300, restarted: true}},
+eq(_effectiveRemaining({{...snap(0), savedAt: null}}), {{secs: ANSWER_SECS, restarted: true}},
    "an unknowable break must be treated as a long one, never as a fresh resume");
 eq(_effectiveRemaining(snap(-99999)), {{secs: 60, restarted: false}},
    "a clock that jumped backwards must not restart the step");

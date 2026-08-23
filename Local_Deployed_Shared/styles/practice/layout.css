@@ -18,10 +18,23 @@
   display: none;
 }
 
+/* 🔴 The 40px that used to be subtracted here was a reserve for `.footer`,
+   and there is NO FOOTER. `styles/layout.css` still styles one — fixed to the
+   bottom, 40px tall — but no `<footer>` has been in index.html for as long as
+   this file's history goes back, so the reserve bought a strip of BARE BODY
+   BACKGROUND under the practice page. Measured on prod, 2026-08-23: 0
+   `.footer, footer` elements, 96px of `--bg` below `#page-practice`.
+
+   ⚠️ `--dd-topbar-h` (styles/layout.css) is the bar's height, not a guess at
+   it — but it is still SUBTRACTED here rather than measured, and that is wrong
+   in one place: the solo route (`html.dd-solo`, styles/solo-route.css) has no
+   topbar at all, so a solo /practice embed takes off a bar that is not on the
+   page. Pre-existing, and not what the black band was. Same for
+   `#guest-banner`, which is 116px and has never been in this arithmetic. */
 #page-practice {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 56px - 40px);
+  height: calc(100vh - var(--dd-topbar-h));
   overflow: hidden;
   padding: 0;
 }
@@ -35,6 +48,11 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  /* The anchor for #practice-notch, which hangs from this box's top edge
+     (styles/practice/notch-menu.css). It used to hang off `.practice-split`,
+     which is `display: none` between sessions — and the notch has to survive
+     a session ending, so it anchors to the box that is on screen either way. */
+  position: relative;
   /* Was the viewport arithmetic itself; the page owns that now and this takes
      what the strip above it leaves. `min-height: 0` is what lets it shrink
      that far — without it a flex item refuses to go below its content. */
@@ -45,8 +63,9 @@
 .practice-split {
   display: flex;
   flex: 1 1 auto;
-  /* The anchor for #practice-notch, which hangs from this box's top edge on
-     the seam between the two panels (styles/practice/notch-menu.css). */
+  /* NOT the notch's anchor any more — that moved to `.practice-container`, so
+     the notch outlives a session (see the note there). Still positioned: the
+     panels' own overlays measure against it. */
   position: relative;
   /* Without this, a flex item refuses to shrink below its content's height and
      the panels' own `overflow-y: auto` never engages. */

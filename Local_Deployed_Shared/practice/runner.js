@@ -176,6 +176,18 @@ const EDITOR_DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
 function installCodeEditorKeys(editor) {
   if (!editor || editor.dataset.deltaEditorKeys === "1") return;
   editor.dataset.deltaEditorKeys = "1";
+  /* Every code cell in the app reaches this function exactly once — the one
+     in index.html below, and every cell notebook-editor.js mints — which is
+     why the two Colab-ish editor layers are hung here rather than at five
+     call sites that would each have to remember.
+
+     Order is load-bearing: the highlighter builds the `.code-surface`
+     wrapper and the overlay that draws the ghost, and the completion layer
+     needs both to exist. Both are optional (`?.`): if either script is
+     missing the editor is exactly the plain textarea it was before, keys
+     and all. */
+  window.DeltaCodeHighlight?.attach(editor);
+  window.DeltaCodeComplete?.attach(editor);
   let editorTabEscapes = false;
   editor.addEventListener("keydown", (e) => {
     // Enter keeps the indent you are already at, so the learner does not have

@@ -27,7 +27,6 @@
    unconditionally leaves the rail completely blank with a Continue button
    nobody can see. Caught in verification: the gate came up and the panel was
    empty apart from the concept strip. */
-html.dd-colab-edition:not(.dd-no-notebook) .practice-mode-intro,
 html.dd-colab-edition:not(.dd-no-notebook) body:not(.lesson-mode) #question-text,
 html.dd-colab-edition:not(.dd-no-notebook) #question-imports,
 html.dd-colab-edition:not(.dd-no-notebook) #question-visual {
@@ -182,13 +181,21 @@ html.dd-colab-edition .stage-seg-label {
    strip's height, and the callout has to fit a concept name beside its
    percentage.
 
-   🔴 Set the VARIABLE, not `.stage-ladder-bar { height }`. The reading is a
-   tab standing on the bar's top edge and is anchored `bottom:` the same
-   token — shrink the bar directly and the tab keeps the default 30px offset,
-   which leaves it floating a clear 10px above the track it is naming. */
+   🔴 Set the VARIABLE, not `.stage-ladder-bar { height }`. The reading is
+   anchored `bottom:` the same token — shrink the bar directly and the pop-up
+   keeps the default 30px offset, which leaves it floating a clear 10px above
+   the track it is naming.
+
+   🔴 And the reserve above the bar is NOT the bar's height here. `.stage-
+   ladder-kc` is allowed to wrap in the rail (see above), so this is the one
+   place the reading is routinely TWO lines — and unlike the wide layout, the
+   pop-up now carries an arrow under it that has to clear the track. Reserve
+   for the two-line case: `#page-practice` is `overflow: hidden`, so anything
+   this does not reserve is cut off, not drawn over the topbar. */
 html.dd-colab-edition .stage-ladder-meter {
   --dd-ladder-bar-h: 20px;
-  padding-top: 20px;
+  --dd-ladder-gap: 4px;
+  padding-top: 40px;
 }
 
 html.dd-colab-edition .stage-ladder-callout {

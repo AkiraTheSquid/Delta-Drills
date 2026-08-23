@@ -1,0 +1,342 @@
+/* ================================================================
+   TEST-USERS.CSS — the Account-tab roster and the floating pill
+
+   Everything here is drawn from the tokens already in variables.css. No
+   new token is introduced on purpose: a token has to be declared in ALL
+   THREE theme blocks or the declarations that use it are silently dropped
+   (styles/watch.py checks exactly that), and a demo affordance is not
+   worth widening that contract.
+
+   The markup is injected by ../test-users.js, not written in index.html,
+   so these selectors are the only contract between the two files.
+   ================================================================ */
+
+/* ── Account tab: the roster ─────────────────────────────────── */
+.dd-tu {
+  margin: 22px 0 4px;
+  padding: 16px 16px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgb(var(--well-rgb) / calc(0.12 * var(--well-k)));
+}
+
+.dd-tu-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.dd-tu-title {
+  font-weight: 600;
+  color: var(--white);
+  font-size: 15px;
+}
+
+.dd-tu-hint,
+.dd-tu-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* The acting-as line is the one piece of state that must not be mistaken
+   for chrome — a session recorded against the wrong learner is the whole
+   failure this feature exists to prevent. */
+.dd-tu-acting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgb(var(--warn-rgb) / 0.5);
+  border-radius: 8px;
+  background: rgb(var(--warn-rgb) / 0.12);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* The sentence is ONE flex item. Left as loose text nodes the flex gap lands
+   between "name" and the full stop, which reads as a typo. */
+.dd-tu-acting-text {
+  flex: 1 1 320px;
+}
+
+.dd-tu-acting strong {
+  color: var(--warn);
+}
+
+.dd-tu-state {
+  margin-bottom: 12px;
+}
+
+.dd-tu-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dd-tu-empty {
+  color: var(--muted-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dd-tu-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.dd-tu-row.is-acting {
+  border-color: rgb(var(--warn-rgb) / 0.55);
+}
+
+.dd-tu-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dd-tu-name {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.dd-tu-meta {
+  color: var(--muted-dim);
+  font-size: 12px;
+}
+
+.dd-tu-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dd-tu-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--warn-rgb) / 0.5);
+  background: rgb(var(--warn-rgb) / 0.14);
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* .ghost already carries the border/hover; these only tighten it so four
+   buttons fit on one row beside the name. */
+.dd-tu .dd-tu-act,
+.dd-tu .dd-tu-mini {
+  padding: 5px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.dd-tu .dd-tu-act {
+  font-weight: 600;
+  color: var(--accent-text);
+  border-color: rgb(var(--accent-rgb) / 0.55);
+}
+
+.dd-tu .dd-tu-danger {
+  color: var(--danger);
+}
+
+/* Armed = the second click destroys something. */
+.dd-tu .is-armed {
+  color: var(--danger);
+  border-color: rgb(var(--danger-rgb) / 0.7);
+  background: rgb(var(--danger-rgb) / 0.14);
+}
+
+.dd-tu button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dd-tu-rename {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.dd-tu-rename .text-input {
+  max-width: 220px;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+
+.dd-tu-new {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.dd-tu-new .text-input {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+/* .primary is a full-width block on the Account form it was written for; on
+   this one it sits beside the name field. */
+.dd-tu-new .primary {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.dd-tu-msg {
+  margin-top: 8px;
+  min-height: 1em;
+}
+
+.dd-tu-msg[data-kind="ok"] {
+  color: var(--ok);
+}
+
+.dd-tu-msg[data-kind="bad"] {
+  color: var(--danger);
+}
+
+/* ── The floating pill ───────────────────────────────────────── */
+/* Bottom LEFT: the how-it-works page already parks a fixed card at
+   bottom right (styles/how-it-works.css), and z-index 90 puts this above
+   the topbar (50) but under the nav drawer and its scrim (110/120), so an
+   open drawer covers it rather than fighting it. */
+.dd-tu-pill {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 90;
+  font-size: 13px;
+}
+
+.dd-tu-pill[hidden] {
+  display: none;
+}
+
+.dd-tu-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--panel-deep);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px var(--shadow-strong);
+}
+
+.dd-tu-pill-btn:hover {
+  border-color: var(--accent);
+}
+
+.dd-tu-pill.is-acting .dd-tu-pill-btn {
+  border-color: rgb(var(--warn-rgb) / 0.65);
+  background: rgb(var(--warn-rgb) / 0.16);
+  color: var(--white);
+}
+
+.dd-tu-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-dim);
+  flex: 0 0 auto;
+}
+
+.dd-tu-pill.is-acting .dd-tu-pill-dot {
+  background: var(--warn);
+}
+
+.dd-tu-pill-label strong {
+  color: var(--warn);
+}
+
+.dd-tu-pill-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  min-width: 220px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--panel-deep);
+  box-shadow: 0 10px 28px var(--shadow-strong);
+}
+
+.dd-tu-pill.is-open .dd-tu-pill-menu {
+  display: block;
+}
+
+.dd-tu-pill-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dd-tu-pill-menu button:hover {
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
+}
+
+.dd-tu-pill-back {
+  color: var(--warn) !important;
+  font-weight: 600;
+}
+
+.dd-tu-pill-manage {
+  color: var(--muted) !important;
+}
+
+.dd-tu-pill-empty {
+  display: block;
+  padding: 8px 10px;
+  color: var(--muted-dim);
+  font-size: 12px;
+}
+
+.dd-tu-pill-sep {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--border);
+}
+
+@media (max-width: 720px) {
+  .dd-tu-row {
+    align-items: flex-start;
+  }
+  .dd-tu-pill {
+    left: 10px;
+    bottom: 10px;
+  }
+}
