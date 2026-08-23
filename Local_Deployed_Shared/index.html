@@ -53,12 +53,12 @@
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/layout.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=8" />
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
   <link rel="stylesheet" href="styles/practice/readiness.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=5" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=5" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
@@ -66,14 +66,14 @@
   <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=6" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=8" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=13" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
@@ -827,44 +827,6 @@
 
   <main class="page hidden session-idle" id="page-practice">
     <div id="practice-workspace-home" hidden></div>
-  <!-- THE top strip: between the topbar and everything else on this page,
-       outside `.practice-container` so it sits above the setup panel too and
-       spans the full width rather than a panel's. `#page-practice` is the flex
-       column that gives it its natural height (styles/practice/layout.css).
-       One progress readout, and it is this one.
-
-       The strip is the BAR and nothing else. The rung names live INSIDE the
-       track (two stacked layers, so a name reads correctly whether the fill
-       has reached it or not — see practice/stage-ladder.js), each with its own
-       ⓘ; the reading rides ON TOP of the bar as a tab at the fill's edge, and
-       the bar itself sits at the BOTTOM of the strip, against the panels it
-       describes. There is no context row above it any more and no difficulty
-       caption beside it. -->
-  <section class="stage-ladder hidden" id="stage-ladder">
-    <div class="stage-ladder-meter" id="stage-ladder-meter" hidden>
-      <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
-           aria-label="Understanding of this concept"
-           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-      <!-- The notch. A tab sitting ON the bar's top edge, at the fill's
-           leading position (placed by the script) — no arrow, because a tab
-           that touches the track is already pointing at it. The concept name
-           inside it is the jump to the knowledge graph.
-
-           No ⓘ on the reading itself: the thing it explained was the ladder,
-           and each rung's own name already carries that copy inside the
-           track. A dot here only asked "what is this bar?" twice. -->
-      <div class="stage-ladder-callout" id="stage-ladder-callout" aria-live="polite">
-        <span class="stage-ladder-callout-text" id="stage-ladder-callout-text"></span>
-        <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
-                data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
-        <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
-        <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
-        <!-- Withdrawn promises and the topic-level reading — see
-             `_renderCallout`. Empty on a normal question. -->
-        <span class="stage-ladder-note" id="stage-ladder-note" hidden></span>
-      </div>
-    </div>
-  </section>
 
     <div class="practice-container">
       <!-- THE IDLE SURFACE — what the Practice tab is when no question is
@@ -1066,8 +1028,60 @@
                It is in .practice-notch-tab now, beside the session clock it
                takes turns with — one countdown, one place, whichever test is
                running. Element and id intact; see the notch above. -->
+          <!-- THE HEADING CARD — the concept, and how far into it you are.
+               Seth, 2026-08-23: "the bar goes on the left as well right below
+               the title of the concept, and the title of the concept is center
+               aligned for the left panel ... it is part of a rectangle that
+               holds both the bar and the concept right above it."
+
+               🔴 THE LADDER LIVES IN HERE NOW. It was `#stage-ladder`, a
+               full-width strip between the topbar and both panels — which put
+               the concept's name on the screen TWICE, once in the strip's
+               floating pop-up and once in this <h2> a couple of centimetres
+               below it, in two type sizes. One card: the name once, centred,
+               with the bar for that name directly under it.
+
+               The card is in both modes; `body.dd-basic-mode` hides the ladder
+               INSIDE it (styles/practice/stage-ladder.css), not the card, so a
+               learner who has never opened the Account tab still gets the
+               title in its frame. -->
           <div class="question-number-row">
             <h2 class="question-number" id="question-number"></h2>
+            <!-- One progress readout, and it is this one. The rung names live
+                 INSIDE the track (two stacked layers, so a name reads
+                 correctly whether the fill has reached it or not — see
+                 practice/stage-ladder.js), each with its own ⓘ. -->
+            <section class="stage-ladder hidden" id="stage-ladder">
+              <div class="stage-ladder-meter" id="stage-ladder-meter" hidden>
+                <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
+                     aria-label="Understanding of this concept"
+                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+              </div>
+              <!-- The reading, UNDER the track. 🪦 It was `.stage-ladder-callout`
+                   — an absolutely-positioned pop-up with an arrow aimed at the
+                   fill's leading edge, re-measured and re-clamped on every
+                   render and on every resize. Deleted 2026-08-23: the card
+                   above names the concept and the fill points at itself, so
+                   what is left is a percentage and the occasional caveat. -->
+              <div class="stage-ladder-reading" id="stage-ladder-reading" aria-live="polite">
+                <span class="stage-ladder-reading-text" id="stage-ladder-reading-text"></span>
+                <!-- 🔴 HIDDEN whenever its label would repeat the <h2> above,
+                     which on the practice screen is always — both are written
+                     from `ladder_kc_title`. practice/stage-ladder.js makes that
+                     call by READING the heading, so the one screen that names
+                     the concept nowhere else (the lesson, whose heading says
+                     "Lesson") still gets it. The jump itself is not lost when
+                     it hides: "See in knowledge graph" in the notch menu is the
+                     same trip, gated on the same tag, in both modes. -->
+                <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
+                        data-dd-info="stage-ladder-kc" data-dd-info-place="after" hidden></button>
+                <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
+                <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
+                <!-- Withdrawn promises and the topic-level reading — see
+                     `_renderReading`. Empty on a normal question. -->
+                <span class="stage-ladder-note" id="stage-ladder-note" hidden></span>
+              </div>
+            </section>
           </div>
 
           <!-- Question Text -->
@@ -1392,7 +1406,7 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=13"></script>
+  <script src="practice/stage-ladder.js?v=14"></script>
   <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and

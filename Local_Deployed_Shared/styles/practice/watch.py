@@ -100,11 +100,12 @@ def check_invariants():
     assert ":not(.session-idle) .session-setup" in timer, (
         "timer.css lost the rule hiding the setup panel during a session"
     )
-    # The stage ladder is a SIBLING of the split, so the rule above does not
-    # cover it. Without its own rule the setup screen shows the paused session's
-    # concept, rung and difficulty for a question that is not on screen — which
-    # is exactly what happened when this named only the old `.concept-topbar`
-    # and the difficulty bar beside it went uncovered.
+    # The ladder moved INSIDE the split on 2026-08-23 (it is a block in the
+    # question's heading card now), so the rule above covers it and this one is
+    # belt and braces. Kept because the ladder has been a sibling of the split
+    # before and would be again the moment anything puts a strip back above the
+    # panels — and without a rule of its own the setup screen shows the paused
+    # session's concept and rung for a question that is not on screen.
     assert "#page-practice.session-idle .stage-ladder" in timer, (
         "timer.css lost session-idle rule hiding ladder"
     )
@@ -119,20 +120,44 @@ def check_invariants():
         "stage-ladder.css lost the chevron seam — the rung divisions would "
         "vanish from a bar whose labels still claim them"
     )
-    # The reading is a DETACHED pop-up above the bar, aimed at the fill's edge.
-    # It has been a tab welded to the bar's top edge and that was wrong: a
-    # shape sharing an edge with the track reads as part of the track. Two
-    # halves, and both are load-bearing.
-    assert "--dd-ladder-gap" in ladder, (
-        "stage-ladder.css lost --dd-ladder-gap — the reading is standing on "
-        "the bar again, which reads as one taller lumpy track rather than as "
-        "a label about a position on it"
+    # 🪦 THE POP-UP READING IS GONE — 2026-08-23, with the strip it hung over.
+    # This used to require `--dd-ladder-gap` (the air that stopped the reading
+    # reading as a bump IN the bar) and `--dd-callout-arrow-x` (the arrow aimed
+    # in the box's own coordinates, because the box is clamped inside the strip
+    # and its centre stops being the position described the moment that clamp
+    # bites). Both variables were deleted with `.stage-ladder-callout`: the
+    # ladder sits in the heading card now and the <h2> above it names the
+    # concept, so the pop-up's whole job is done by the card and the fill.
+    #
+    # What replaces them is the pair below. The reading has to be a line under
+    # the track, and the card has to be a card — a ladder with no frame around
+    # it, directly under a left-aligned heading, is the layout Seth rejected.
+    assert ".stage-ladder-reading" in ladder, (
+        "stage-ladder.css has no .stage-ladder-reading — the percentage, the "
+        "Integrated chip and the withdrawn-scaffold note are rendered into "
+        "that line by stage-ladder.js and would be unstyled or invisible"
     )
-    assert "--dd-callout-arrow-x" in ladder, (
-        "stage-ladder.css no longer consumes --dd-callout-arrow-x, so the "
-        "arrow is parked at a static 50%. The box is clamped inside the strip "
-        "and its centre is NOT the position being described the moment that "
-        "clamp bites — which is exactly at 0% and 100%"
+    # 🔴 Checked against the RULES, not the file. Both names are still written
+    # out in this file's history comments, on purpose — that is where the next
+    # person reads why they went — so a bare substring test fails the moment
+    # the tombstone is honest about what it is a tombstone for.
+    ladder_rules = re.sub(r"/\*.*?\*/", "", ladder, flags=re.S)
+    for gone in ("--dd-callout-arrow-x", ".stage-ladder-callout"):
+        assert gone not in ladder_rules, (
+            f"stage-ladder.css declares {gone!r} again — the floating reading "
+            "is back, and it can only float over the question panel now that "
+            "the ladder lives inside it"
+        )
+    question = _read(os.path.join(HERE, "question.css"))
+    for prop in ("flex-direction: column", "border-radius"):
+        assert prop in question.split(".question-number-row {", 1)[1].split("}", 1)[0], (
+            f".question-number-row lost {prop!r} — it is the RECTANGLE that "
+            "holds the centred concept title with the bar under it (Seth, "
+            "2026-08-23), not a baseline row again"
+        )
+    assert "text-align: center" in question.split(".question-number {", 1)[1].split("}", 1)[0], (
+        ".question-number is no longer centred — the card is built around that "
+        "axis and the bar under it is full width"
     )
     # Extra information above every question, and off by default: the ladder
     # rides with Advanced mode (app.js writes `body.dd-basic-mode`).

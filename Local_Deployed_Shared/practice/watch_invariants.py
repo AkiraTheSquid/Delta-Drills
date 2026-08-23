@@ -416,6 +416,72 @@ def check_invariants():
     assert rated["n"] == 1 and rated["history"][0]["feedback"] == "a_lot", (
         "a rated attempt must be counted once, with the level the learner gave"
     )
+
+    # ---- the stage ladder lives in the question's heading card -------------
+    #
+    # Seth, 2026-08-23: "the bar goes on the left as well right below the title
+    # of the concept, and the title of the concept is center aligned for the
+    # left panel ... it is part of a rectangle that holds both the bar and the
+    # concept right above it ... it also gets rid of
+    # `class="stage-ladder-callout"`".
+    #
+    # 🔴 THIS IS A MARKUP CHECK BECAUSE THE MOVE IS A MARKUP FACT. Every rule
+    # written for the card — the rectangle in question.css, the in-card block in
+    # stage-ladder.css, the rail's retuned card in colab-edition.css — assumes
+    # #stage-ladder is a CHILD of .question-number-row. Put the section back
+    # above .practice-split and none of them error: the ladder just draws as an
+    # unframed strip with no background under a left-aligned heading, which is
+    # the layout that was replaced.
+    index_html = read(os.path.join(SHARED, "index.html"))
+    left_panel = index_html.split('<div class="practice-left">', 1)
+    assert len(left_panel) == 2, "index.html has no .practice-left panel"
+    row = left_panel[1].split('<div class="question-number-row">', 1)
+    assert len(row) == 2, ".question-number-row is not in the left panel"
+    card = row[1].split("\n          </div>", 1)[0]
+    assert 'id="question-number"' in card and 'id="stage-ladder"' in card, (
+        "#stage-ladder is not inside .question-number-row — the ladder is a "
+        "block in the question's heading card, and every rule written for it "
+        "assumes the card is its parent"
+    )
+    assert card.index('id="question-number"') < card.index('id="stage-ladder"'), (
+        "the bar is above the concept title inside the card — Seth asked for it "
+        "'right below the title of the concept'"
+    )
+    assert 'class="stage-ladder-callout"' not in index_html, (
+        "index.html mounts .stage-ladder-callout again — the floating reading "
+        "was deleted with the strip, and inside the left panel it can only "
+        "float over the question"
+    )
+    assert 'id="stage-ladder-reading-text"' in card, (
+        "the card lost #stage-ladder-reading-text — stage-ladder.js writes the "
+        "percentage there and it would be stated nowhere"
+    )
+    # The four children that outlived the callout keep their ids: two watch
+    # modules and one registry key point at them from outside this file.
+    for orphan in ("stage-ladder-kc", "stage-ladder-eyebrow",
+                   "stage-ladder-flag", "stage-ladder-note"):
+        assert f'id="{orphan}"' in card, (
+            f"#{orphan} was dropped in the move rather than re-homed — it is "
+            "written by stage-ladder.js on every render"
+        )
+
+    # The concept is named ONCE. #question-number and #stage-ladder-kc are both
+    # written from `ladder_kc_title`, and in one card that is the same words a
+    # centimetre apart in two type sizes. The button hides itself by READING the
+    # heading rather than by a flag from the caller — show() has three callers
+    # and a flag is a fourth thing to keep in step.
+    ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
+    assert 'heading === label' in ladder_js and '_el("question-number")' in ladder_js, (
+        "stage-ladder.js no longer compares its concept button against the "
+        "heading — the concept's name is back on the screen twice"
+    )
+    for gone in ("--dd-callout-arrow-x", "getBoundingClientRect"):
+        assert gone not in ladder_js, (
+            f"stage-ladder.js uses {gone!r} again — nothing in the ladder is "
+            "measured or positioned by script since the pop-up was deleted, "
+            "and a measured shape here needs the reserve and the resize "
+            "listener back with it"
+        )
 def check_a_torch_question_never_grades_on_pyodide():
     """Routing is RUN here, not pattern-matched.
 
