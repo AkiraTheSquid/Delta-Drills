@@ -156,7 +156,7 @@ body.nav-drawer-mode .nav-drawer {
   flex-direction: column;
   background: var(--surface);
   border-right: 1px solid var(--border);
-  box-shadow: 6px 0 26px rgba(0, 0, 0, 0.42);
+  box-shadow: 6px 0 26px var(--shadow-soft);
   overflow-y: auto;
   overscroll-behavior: contain;
   /* Off-canvas, and moved by transform rather than by `left` so the slide is
@@ -298,7 +298,7 @@ body.nav-drawer-mode .nav-drawer .tab:hover {
 
 body.nav-drawer-mode .nav-drawer .tab.active {
   background: var(--card);
-  border-left-color: var(--accent);
+  border-left-color: var(--accent-text);
 }
 
 body.nav-drawer-mode .nav-drawer .tab:focus-visible {

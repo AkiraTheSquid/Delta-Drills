@@ -1,5 +1,7 @@
-/* Dedicated top-nav Diagnostic page. Practice DOM moves here only while the
-   placement is active AND this page is the one on screen, so one editor
+/* Dedicated top-nav Placement test page (the route, the ids and the backend
+   endpoints all still say `diagnostic` — only the learner-facing words changed).
+   Practice DOM moves here only while the placement is active AND this page is
+   the one on screen, so one editor
    implementation serves two distinct tabs without ever exposing
    #page-practice beneath #page-diagnostic.
 
@@ -71,6 +73,19 @@ const DiagnosticPage = (() => {
     syncWorkspace();
   };
 
+  /* The ONE writer of the placement start button. events.js has its own reason
+     to refresh it (the click handler, and the state-changed sweep) and used to
+     carry a second copy of the label + visibility rules; two copies of a label
+     is how a button flickers between two names on refresh. */
+  const renderStartButton = (status, el = byId("placement-start-btn")) => {
+    if (!el) return;
+    el.textContent = status?.completed_at
+      ? "Retake the placement test"
+      : "Take the placement test";
+    el.disabled = false;
+    el.classList.toggle("hidden", !!status?.active);
+  };
+
   const render = (status) => {
     const statusEl = byId("diagnostic-status");
     const priorEl = byId("self-report-row");
@@ -78,7 +93,7 @@ const DiagnosticPage = (() => {
     const startEl = byId("placement-start-btn");
     const resultsEl = byId("diagnostic-results");
     if (!status) {
-      if (statusEl) statusEl.textContent = "Sign in to run placement.";
+      if (statusEl) statusEl.textContent = "Sign in to take the placement test.";
       priorEl?.classList.add("hidden");
       continueEl?.classList.add("hidden");
       startEl?.classList.add("hidden");
@@ -91,21 +106,20 @@ const DiagnosticPage = (() => {
     const budget = Number(status.budget) || 14;
     if (statusEl) {
       statusEl.textContent = status.active
-        ? `Placement active · ${done} of at most ${budget} probes complete`
+        ? `Placement test in progress · ${done} of at most ${budget} questions answered`
         : status.completed_at
-          ? `Placement complete · ${done} probes`
-          : "Placement not started.";
+          ? `Placement test complete · ${done} questions`
+          : "Placement test not started.";
     }
     priorEl?.classList.toggle("hidden", !status.can_set_prior);
-    const hasProbeOnScreen = !!window.PracticeAPI?.currentQuestion?.diagnostic_active;
+    // Same trap as notebook-view.js documents: `PracticeAPI` is a top-level
+    // const, so it is NOT on `window` and this read was always undefined —
+    // which left "Load next placement question" on screen underneath the probe
+    // it would replace. Script-scope binding first, window as the fallback.
+    const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    const hasProbeOnScreen = !!_papi?.currentQuestion?.diagnostic_active;
     continueEl?.classList.toggle("hidden", !status.active || hasProbeOnScreen);
-    if (startEl) {
-      startEl.textContent = status.completed_at
-        ? "Retake placement diagnostic"
-        : "Take placement diagnostic";
-      startEl.classList.toggle("hidden", status.active);
-      startEl.disabled = false;
-    }
+    renderStartButton(status, startEl);
     resultsEl?.classList.toggle("hidden", !status.completed_at || status.active);
     moveWorkspace(!!status.active);
   };
@@ -136,7 +150,7 @@ const DiagnosticPage = (() => {
   }
 
   enablePracticeTab();
-  return { refresh, leave, isRunning: () => running };
+  return { refresh, leave, renderStartButton, isRunning: () => running };
 })();
 window.DiagnosticPage = DiagnosticPage;
 if (!document.getElementById("page-diagnostic")?.classList.contains("hidden")) {

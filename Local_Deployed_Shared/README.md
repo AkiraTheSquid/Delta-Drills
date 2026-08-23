@@ -158,6 +158,86 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-22 — the app has levels, and the progress bar IS the topbar seam.**
+  `xp.js` + `styles/xp.css` are new. The topbar carries a `Level N` chip between
+  the logo and the tab strip, and the 1px `--border` line under `.topbar` is now
+  a progress bar: `.dd-xp-seam` is absolutely positioned over it and fills from
+  the left as the learner works. 🔴 **The bar renders no numeral** — no count, no
+  percent, no `340 / 500`. The only number on screen is the level; the hover
+  `title` on the chip is the one place the raw XP is available. That is the whole
+  design brief, so a future "just show the XP on the bar" is a regression, not a
+  feature.
+  - **Placement is `bottom: -2px`, and that is not arbitrary.** `.topbar` is
+    `box-sizing: border-box` at 56px with a 1px bottom border, so an absolutely
+    positioned child is laid against a **55px** padding box — and `.tab.active`
+    already owns its last 2px for the accent underline. At `bottom: 0` or even
+    `-1px` the seam clips that underline. `-2px` puts the bar on the border row
+    itself plus 1px over the page.
+  - **Everything the learner enters pays, and it is wired at ONE place.** Every
+    recording path in this app ends at a `PracticeAPI` method, so the awards are
+    a wrapper block at the bottom of `practice/api.js` rather than award() calls
+    sprinkled through six handlers in `events.js`, `colab_mode.js` and
+    `diagnostic-page.js` — the next handler to be added gets XP for free. A MISS
+    pays too (10 vs 25): the placement test is built out of misses, and a bar
+    that only moved on a correct answer would charge the learner for using the
+    feature that finds their level. Anything outside that chokepoint
+    (`targeted-practice.js`, the lesson gate in `practice/lessons.js`) dispatches
+    `delta:xp` instead, so no caller needs a load-order relationship with
+    `xp.js`. A generic `input` tick (1 XP, throttled to 15s) covers typing.
+  - **State is localStorage keyed by `auth_email`**, exactly like
+    `practice/storage.js` — a guest keeps their levels, a signed-in account keeps
+    theirs, and `delta:auth-state-changed` re-reads the store. No merge, because
+    there is no merge anywhere else in this app and this would be the only place
+    progress silently changed owner.
+  - Two bugs found before shipping, both in a real browser. **The level-up snap
+    painted a stale percentage**: `render()` captured `pct` when the award was
+    made, so a second award landing during the 560ms hold was overwritten by the
+    first award's remainder — which was 0%, so the bar emptied. It now re-reads
+    `state` at paint time, and a plain repaint defers to a pending snap.
+    **The typing tick was dead for the first 15 seconds of every page load**
+    (codex caught this one): `performance.now()` counts from navigation, so a `0`
+    throttle sentinel means "you already earned one". It is `-Infinity` now.
+
+- **2026-08-22 — the app has three themes, and the Account page picks between
+  them.** `theme.js` is new and owns the whole switch: it stamps
+  `<html data-theme="blue|dark|light">` **synchronously from `<head>`, above the
+  stylesheet links**, so a light-theme user never sees a frame of the dark
+  palette, and on `DOMContentLoaded` it renders the radio group into
+  `#account-theme-options`. The choice lives in `localStorage["dd_theme"]`, so
+  it follows the browser rather than the account — no backend, no migration,
+  and it works signed out. `window.DDTheme` exposes `get`/`set`/`themes`, and a
+  `delta:theme-changed` event fires on set for anything that paints its own
+  canvas.
+  - **`blue` is the palette the app has always had and is the default**, both
+    as `:root` and as `:root[data-theme="blue"]`; a visitor who never opens the
+    picker sees exactly what shipped before. `dark` is Colab-style neutral
+    grey, `light` is the same app on white. Every token is defined three times
+    in `styles/variables.css` and `styles/watch.py` fails the folder if the
+    three blocks ever disagree — a token defined in only some themes drops the
+    declarations that use it, which is how white-on-white ships.
+  - **The Account markup is two additions and nothing else**: the script tag in
+    `<head>`, and a `.account-theme` block between `.account-mode` and
+    `#account-form`. It sits outside the form on purpose, exactly like the
+    advanced-mode toggle — it applies on change and has no Save. The three
+    options are rendered by `theme.js` rather than written in the markup, so
+    `variables.css` and that file's `THEMES` list stay the only two places a
+    theme is named. `infotips-registry.js` gained the `account-theme` copy;
+    `watch.py`'s `check_infotips` fails on an anchor with no entry, which is
+    how the missing one was caught.
+  - **The white-on-white problem was made loud rather than avoided.**
+    `styles/watch.py` now bans `#fff`/`#ffffff`/`rgba(255,255,255,…)` in every
+    stylesheet under `styles/`, `practice/` and `targeted-practice/`, with two
+    mechanical exemptions: the `[data-theme-preview=…]` swatches on the Account
+    page (miniatures of themes the viewer is *not* in, so `var()` would draw
+    all three identically) and lines marked `/* graph-legend */` (they must
+    match Cytoscape node colours painted from JS). Verified in a real browser
+    across every page with transitions disabled: **light 0 AA failures, dark 0,
+    blue 9** — and all nine blue findings pre-date this work, which is the
+    evidence the default palette did not move. 🔴 Disabling transitions is not
+    optional when auditing: `.tab` and `.dd-info` animate `color`, and sampling
+    mid-transition reported white-on-white at ratio 1.0 for elements that were
+    fine.
+
 - **2026-08-22 — the How It Works tab was deleted, and guests stopped getting a
   cut-down app.** Three changes that belong together, because the landing page
   now promises a diagnostic and a student model that a signed-out visitor could

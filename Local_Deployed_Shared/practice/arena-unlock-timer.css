@@ -14,8 +14,8 @@
   gap: 6px;
   padding: 12px 14px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+  border: 1px solid rgb(var(--tint-rgb) / calc(0.12 * var(--tint-k)));
 }
 
 .arena-unlock-timer-row {
@@ -31,12 +31,12 @@
   font-size: 32px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--white, #f4f4f7);
+  color: var(--white);
   line-height: 1;
 }
 
 .arena-unlock-timer--over .arena-unlock-timer-elapsed {
-  color: #f4a55a;
+  color: var(--warn);
 }
 
 .arena-unlock-timer-controls {
@@ -49,28 +49,28 @@
   padding: 7px 14px;
   font-size: 12px;
   border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--white, #f4f4f7);
+  border: 1px solid rgb(var(--tint-rgb) / calc(0.18 * var(--tint-k)));
+  background: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k)));
+  color: var(--white);
   cursor: pointer;
   font-family: inherit;
 }
 
 .arena-unlock-timer-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--tint-rgb) / calc(0.1 * var(--tint-k)));
 }
 
 .arena-unlock-timer-btn[hidden] { display: none; }
 
 .arena-unlock-timer-start {
-  background: rgba(95, 201, 132, 0.18);
-  border-color: rgba(95, 201, 132, 0.55);
+  background: rgb(var(--ok-rgb) / 0.18);
+  border-color: rgb(var(--ok-rgb) / 0.55);
 }
-.arena-unlock-timer-start:hover { background: rgba(95, 201, 132, 0.32); }
+.arena-unlock-timer-start:hover { background: rgb(var(--ok-rgb) / 0.32); }
 
 .arena-unlock-timer-hint {
   font-size: 11px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.55));
+  color: var(--color-muted);
   line-height: 1.4;
   min-height: 14px;
 }
@@ -86,20 +86,20 @@
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 11px;
-  color: var(--color-muted, rgba(255, 255, 255, 0.7));
+  color: var(--color-muted);
   cursor: pointer;
   user-select: none;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgb(var(--tint-rgb) / calc(0.03 * var(--tint-k)));
+  border: 1px solid rgb(var(--tint-rgb) / calc(0.12 * var(--tint-k)));
 }
 
 .arena-unlock-timer-toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--white, #f4f4f7);
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  color: var(--white);
 }
 
 .arena-unlock-timer-toggle input[type=checkbox] {
   margin: 0;
   cursor: pointer;
-  accent-color: rgba(95, 201, 132, 0.8);
+  accent-color: rgb(var(--ok-rgb) / 0.8);
 }

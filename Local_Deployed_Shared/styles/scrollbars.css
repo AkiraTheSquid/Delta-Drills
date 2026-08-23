@@ -15,12 +15,15 @@
 
    TWO MECHANISMS, BOTH NEEDED, AND THEY ARE NOT REDUNDANT:
 
-   - `color-scheme: dark` is what tells the ENGINE the page is dark. It darkens
-     the scrollbars this file cannot reach — inside a same-origin iframe's own
-     document, on elements whose scrollbar is drawn by a widget we do not own —
-     and it keeps native form controls (date pickers, select popups, the
-     checkbox tick) consistent with the inputs `components.css` already styles
-     dark by hand. Safe here because there is no light theme to switch to.
+   - `color-scheme` is what tells the ENGINE which way round the page is. It
+     darkens (or lightens) the scrollbars this file cannot reach — inside a
+     same-origin iframe's own document, on elements whose scrollbar is drawn
+     by a widget we do not own — and it keeps native form controls (date
+     pickers, select popups, the checkbox tick) consistent with the inputs
+     `components.css` styles by hand. It is now keyed off the theme
+     `../theme.js` stamps on <html>: get this wrong and the light theme gets
+     a black date picker and a white-on-white checkbox tick, which is exactly
+     the class of bug the themes are supposed to avoid.
    - The `::-webkit-scrollbar` rules are the actual skin. Chrome IGNORES
      `color-scheme` for a scroller once any `::-webkit-scrollbar` rule matches
      it, so these have to be complete on their own — track, thumb, hover and
@@ -36,8 +39,17 @@
    should inherit this without anyone remembering to opt in.
    ================================================================ */
 
+/* Both dark themes ('blue' and 'dark') and the unstamped default are dark;
+   only 'light' flips. Written as an attribute selector rather than a
+   :root/:root[...] pair so specificity, not source order, decides — this file
+   loads AFTER variables.css and would otherwise have to be kept in sync with
+   it by hand. */
 :root {
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* Standard properties (Firefox, and Chrome's fallback). `thin` rather than
