@@ -151,16 +151,33 @@
   opacity: 0.35;
 }
 
-/* Just the dots now — the tab around it owns the frame. */
+/* Just the dots now — the tab around it owns the frame.
+
+   🔴 CENTRED BY LAYOUT, NOT BY NUDGE (Seth, 2026-08-23: "for the three dots,
+   it needs to be more center aligned"). This was a 13px button with
+   `padding: 1px 6px 3px` and a `translateY(-2px)` on the glyph — three
+   separate offsets, each correcting the last, and the sum of them put the
+   dots high and left of the box they sit in. A flex box that centres its one
+   child needs none of them: symmetric padding, `place-items: center`, and the
+   glyph lands where the box's middle is.
+
+   The height is fixed to the square's (9px glyph + 3px padding a side = 15px)
+   so the two controls flanking the clock are the same size as each other —
+   the tab is `align-items: center`, so unequal heights read as one of them
+   riding higher than the other. */
 .practice-notch-btn {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 6px;
   color: var(--muted);
   cursor: pointer;
+  display: inline-flex;
   font-size: 13px;
+  height: 15px;
+  justify-content: center;
   line-height: 1;
-  padding: 1px 6px 3px;
+  padding: 0 5px;
   transition: color 120ms ease;
 }
 
@@ -170,12 +187,24 @@
   color: var(--white);
 }
 
-/* The dots sit on the type's baseline and read as low as a comma; nudge the
-   glyph up so it is centred in the tab. */
+/* 🔴 NO `transform` HERE. The comment this replaces said the dots "sit on the
+   type's baseline and read as low as a comma" — true of `…` (U+2026,
+   HORIZONTAL ELLIPSIS), and the markup uses `&#8943;` (U+22EF, MIDLINE
+   horizontal ellipsis), which is drawn on the math axis and is already
+   vertically centred in its own em box. The -2px was correcting a problem the
+   glyph does not have, and the flex centring above makes it wrong twice.
+
+   🔴 AND NO NEGATIVE MARGIN EITHER. `letter-spacing` applies after the last
+   character too, so the obvious correction is a matching `margin-right: -1px`
+   — and measured, that made it WORSE, not better: the trailing spacing is
+   inside the span's own box (so the flex centring already accounts for it),
+   while the margin is outside it, and shaving 1px off the outer width shifts
+   a centred child half a pixel right. Measured offsets of the glyph's centre
+   from the button's, at 1680px: `translateY(-2px)` + asymmetric padding was
+   (0, -3); with the margin (0.5, 0); with neither (0, 0). Leave it alone. */
 .practice-notch-btn > span {
   display: block;
   letter-spacing: 1px;
-  transform: translateY(-2px);
 }
 
 /* The menu. Hangs under the tab, right-aligned to nothing — centred, because

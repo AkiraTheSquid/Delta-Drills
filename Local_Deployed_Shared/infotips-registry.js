@@ -42,10 +42,13 @@ window.DD_INFOTIPS = {
     title: "Placement test",
     body: "A test that jumps between different topics in order to determine what concepts you need to learn for PyTorch.<br><br>Choosing your level influences what difficulty you start at for the test, so it's okay if you're not sure where your level is at.",
   },
-  "placement-timer": {
-    title: "Time per question",
-    body: "Every question in the placement test gets the same <strong>2:00</strong> — you don't set it, and it doesn't change with difficulty. When it runs out we submit whatever you've written, or record it as one you don't know yet, and move on.",
-  },
+  /* "placement-timer" was DELETED on 2026-08-23 with its anchor's ⓘ. The
+     countdown moved out of .question-number-row and onto the notch tab
+     (index.html), where a sibling dot would sit between the clock and the
+     three dots in a 15px row. The copy — every probe gets the same 2:00, you
+     do not set it, running out submits what you have — is what the tab's own
+     `title` already says. Keys and anchors are asserted to match both ways
+     (watch.py `check_infotips`), so this had to go when the anchor did. */
   /* ---- The four rungs, named inside the bar ------------------------ */
   "ladder.lesson": {
     title: "Lesson",

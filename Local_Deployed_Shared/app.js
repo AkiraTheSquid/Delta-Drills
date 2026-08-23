@@ -84,6 +84,25 @@ const switchTab = (tabName) => {
     // serve a chromeless Practice page to someone who asked for a notebook.
     if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
   }
+  /* 🔴 A RUNNING PLACEMENT OWNS THE WORKSPACE. Practice and the placement test
+     share one editor and one `PracticeAPI.currentQuestion`, so opening Practice
+     mid-test showed the PROBE under the Practice tab's name — Seth, 2026-08-23:
+     "it has a tendency to think that you are in placement test mode whenever
+     you click on the practice, which is not the case."
+
+     diagnostic-page.js disables the tab, which stops the click. This stops
+     everything else: [data-goto-tab="practice"], the tab restored from the last
+     session at the bottom of this file, and the two redirects above that use
+     "practice" as their fallback — so the fallback has to be re-checked AFTER
+     they run, not before. Sending them to the Placement page rather than
+     dropping the request is the point: that page says what is running and is
+     the only place to finish it.
+
+     One way only. A practice session never blocks the Placement tab — that
+     page is where you read what the test is and choose to start it. */
+  if (tabName === "practice" && window.DiagnosticPage?.isRunning?.()) {
+    tabName = "diagnostic";
+  }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
   // Returning to Practice normally re-fetches the question so a preference

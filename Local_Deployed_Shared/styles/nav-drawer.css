@@ -281,6 +281,20 @@ body.nav-drawer-mode .nav-drawer .tab:hover {
   background: var(--card);
 }
 
+/* 🔴 THE LOCK HAS TO SURVIVE THE DRAWER. `.tab:disabled` in layout.css dims
+   Practice while a placement test is running, but the hover rule directly
+   above is three classes deep and beats `.tab:disabled:hover` on specificity —
+   so in drawer mode the locked tab still lit up under the pointer and read as
+   pressable. Restated here at the drawer's own weight. There is ONE strip
+   (nav-drawer.js moves this very element in and out of the topbar), so this is
+   the same button either way; only the rules around it change. */
+body.nav-drawer-mode .nav-drawer .tab:disabled,
+body.nav-drawer-mode .nav-drawer .tab:disabled:hover {
+  background: none;
+  color: var(--muted-dim);
+  cursor: default;
+}
+
 body.nav-drawer-mode .nav-drawer .tab.active {
   background: var(--card);
   border-left-color: var(--accent-text);

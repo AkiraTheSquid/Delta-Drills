@@ -113,31 +113,35 @@ const PlacementTimer = (() => {
       String(clamped % 60).padStart(2, "0");
   };
 
-  /* The chip lives in .question-number-row, which is part of the practice
-     workspace — the same node the Placement page re-parents into itself. Being
-     a child of it means the countdown follows the question wherever the
-     workspace is hosted, with no second copy to keep in sync.
+  /* The clock lives on the NOTCH TAB (.practice-notch-tab in index.html), in
+     the slot beside the session countdown it takes turns with. Seth,
+     2026-08-23: "for the placement test, it has the problem that the timer is
+     on the left next to the title thing instead of being on the tab."
 
-     It was in #cold-start-badge until 2026-08-23, when that badge was deleted
-     along with its standing explanation copy. The row is a strictly better
-     home: the badge only appeared on placement and calibration questions, so
-     the chip's anchor came and went with it. */
+     It was in .question-number-row until then, and in #cold-start-badge before
+     that. Both were the wrong shape for the same reason: a countdown is a
+     session control, and every other session control is on the tab. What has
+     not changed is that it sits inside `.practice-container`, so it still
+     re-parents onto the Placement page with the workspace and there is still
+     no second copy to keep in sync.
+
+     🔴 STATIC ONLY — no `createElement` fallback any more. The old one existed
+     because the anchor had moved once already; what it actually bought was a
+     chip minted into whatever row happened to be on screen, unstyled by the
+     notch's rules and invisible to `check_infotips`. If the element is gone
+     from index.html the right outcome is no countdown and a failing watch, not
+     a second one built at runtime. */
   const _chip = () => {
     if (chip && chip.isConnected) return chip;
-    const row = document.querySelector(".question-number-row");
-    if (!row) return null;
-    chip = row.querySelector(".placement-timer") || document.getElementById("placement-timer");
-    if (!chip) {
-      chip = document.createElement("span");
-      chip.className = "placement-timer hidden";
-      chip.id = "placement-timer";
-      chip.setAttribute("aria-live", "off");
-      chip.dataset.ddInfo = "placement-timer";
-      chip.dataset.ddInfoPlace = "after";
-      row.appendChild(chip);
-    }
+    chip = document.getElementById("placement-timer");
     return chip;
   };
+
+  /* The tab shows ONE clock. notch-menu.js decides which by asking
+     `isRunning()`, so every show/hide here has to poke it — nothing else
+     observes this module, and the session clock would otherwise sit next to
+     the probe's countdown, idling at 02:00, reading as a second timer. */
+  const _syncNotch = () => window.PracticeNotch?.syncClock?.();
 
   const _paint = () => {
     const el = _chip();
@@ -145,12 +149,19 @@ const PlacementTimer = (() => {
     const left = _remaining();
     el.textContent = _format(left);
     el.classList.remove("hidden");
-    el.classList.toggle("placement-timer--low", left <= 30);
+    /* The SESSION clock's low class, not one of this module's own. The element
+       carries `.practice-notch-clock`, so the placement's last 30 seconds are
+       the same red in the same slot as a practice question's — Seth wants the
+       two indistinguishable, and a private `--low` was the last thing making
+       them different. */
+    el.classList.toggle("practice-notch-clock--low", left <= 30);
+    _syncNotch();
   };
 
   const _hideChip = () => {
     const el = chip && chip.isConnected ? chip : null;
     el?.classList.add("hidden");
+    _syncNotch();
   };
 
   const _stopTick = () => {

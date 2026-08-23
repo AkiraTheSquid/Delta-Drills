@@ -73,11 +73,47 @@
      `--low` is timer.js's own last-30-seconds class, and it is applied only
      while ANSWERING: review time running out costs nothing, so painting it
      like a deadline would teach the wrong urgency. */
+  /* 🔴 THE TAB SHOWS ONE CLOCK. The placement test runs OUTSIDE a session —
+     starting it calls PracticeSession.finish("placement") — so `_sessionOpen()`
+     is false for the whole test and the session clock would sit beside the
+     probe's countdown greyed at 02:00, which reads as a second timer that has
+     stopped. While a probe is being timed the placement clock is the clock.
+
+     Read from the ELEMENT, not from `PlacementTimer.isRunning()`: the two
+     disagree for the moments that matter — `pauseForGrading` clears the
+     interval and hides the chip, `_expire` clears the interval before clicking
+     Submit — and the element's own `.hidden` is what is actually on screen.
+     placement-timer.js calls back in here (`_syncNotch`) on every show and
+     hide, so this runs at each of those transitions. */
+  function _placementOnClock() {
+    const el = document.getElementById("placement-timer");
+    return !!el && !el.classList.contains("hidden");
+  }
+
   function _syncClock() {
     if (!clock) return;
     const open = _sessionOpen();
     const tab = document.getElementById("practice-notch-tab");
     const srPhase = document.getElementById("practice-notch-phase");
+    if (_placementOnClock()) {
+      clock.classList.add("hidden");
+      /* The placement's phase is not the session's, and the session's is
+         stale — nothing is answering or reviewing in a block that ended when
+         the test started. Both readers get the placement's own words.
+
+         🔴 THIS TOOLTIP IS NOW THE ONLY PLACE THE PROGRESS IS SAID. The
+         placement page's status line and progress bar are hidden while a probe
+         is on screen (styles/practice/diagnostic.css) — Seth wants a probe to
+         look exactly like a practice question — so "3 of at most 14" lives
+         here, on the surface a practice session already uses for its phase.
+         `progressLabel()` returns "" when nothing is running, which is the
+         same as not having asked. */
+      const where = window.DiagnosticPage?.progressLabel?.() || "";
+      const rule = "Every question gets the same 2:00.";
+      if (tab) tab.title = where ? `${where} · ${rule}` : `Placement test — ${rule}`;
+      if (srPhase) srPhase.textContent = where || "Placement question";
+      return;
+    }
     clock.classList.remove("hidden");
     clock.classList.toggle("practice-notch-clock--idle", !open);
     if (!open) {
@@ -136,7 +172,19 @@
     }
     if (stopBtn) {
       stopBtn.disabled = !open || !pauseBtn || pauseBtn.disabled;
-      stopBtn.title = open && pauseBtn ? pauseBtn.title || "" : "No session running.";
+      /* 🔴 "No session running." IS A LIE DURING A PLACEMENT. The test runs
+         outside a session by design, so `open` is false for all of it and the
+         square is dimmed — the one place the placement still reads differently
+         from practice, and the tooltip was telling the learner nothing was
+         happening while a clock counted down in front of them. It cannot be
+         pressed either way (there is no pause in the placement: every probe is
+         a fixed allowance, which is the point), so what changes here is only
+         that the reason given is the true one. */
+      stopBtn.title = open && pauseBtn
+        ? pauseBtn.title || ""
+        : _placementOnClock()
+          ? "The placement test can't be paused — every question is timed."
+          : "No session running.";
     }
     if (note) note.classList.toggle("hidden", open);
   }
@@ -239,7 +287,18 @@
        the strip, and nothing measures against the notch any more. */
     el: notch,
     /* Exposed for tests and for anything that changes the session out of
-       band; the mirror is otherwise driven entirely by the observer. */
-    syncClock: _syncClock,
+       band; the mirror is otherwise driven entirely by the observer.
+
+       🔴 BOTH HALVES, despite the name. placement-timer.js calls this every
+       time its clock appears or disappears, and the square's tooltip depends
+       on which clock is up ("The placement test can't be paused" vs "No
+       session running") — the observer that normally pairs them watches
+       #session-status-row, and a placement changes nothing in there. Calling
+       only `_syncClock` left the square explaining a state that ended two
+       questions ago. */
+    syncClock: () => {
+      _syncClock();
+      _syncItems();
+    },
   };
 })();

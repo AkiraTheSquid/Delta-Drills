@@ -126,48 +126,64 @@
   .placement-area-conf { grid-area: conf; }
   .placement-area-probes { grid-area: probes; text-align: left; }
 }
-#page-diagnostic.diagnostic-running .diagnostic-results,
-#page-diagnostic.diagnostic-running .self-report-row,
-#page-diagnostic.diagnostic-running .placement-start-btn { display: none; }
-#page-diagnostic.diagnostic-running { padding: 12px 20px 0; }
-#page-diagnostic.diagnostic-running .placement-page { padding: 0 0 10px; }
-#page-diagnostic.diagnostic-running .diagnostic-eyebrow,
-#page-diagnostic.diagnostic-running h1,
-#page-diagnostic.diagnostic-running .diagnostic-timing,
-#page-diagnostic.diagnostic-running .subtitle { display: none; }
-#page-diagnostic.diagnostic-running .diagnostic-card { margin-top: 0; padding-bottom: 12px; padding-top: 12px; }
-#page-diagnostic.diagnostic-running .diagnostic-status { margin-bottom: 0; }
+/* ---- A PROBE ON SCREEN IS THE PRACTICE SCREEN --------------------------
+
+   🔴 EVERYTHING THIS PAGE OWNS IS HIDDEN WHILE A PROBE IS UP. Seth,
+   2026-08-23: the placement should be "indistinguishable user experience wise
+   from the practice ... aside from, obviously, serving only the types of
+   problems that are for the testing."
+
+   It used to keep a header card above the workspace — the status line
+   ("Placement test in progress · 3 of at most 14 questions answered") and the
+   progress bar — and shave 92px off the editor to make room. That card was the
+   difference: the same question, in a shorter frame, under a banner announcing
+   which mode you were in. The whole overview goes now, and the workspace gets
+   the same height it has on the Practice tab.
+
+   NOTHING IS LOST, it moved. The progress the bar was carrying is in the notch
+   tab's tooltip and its screen-reader phase, written by `notch-menu.js` from
+   `DiagnosticPage.progressLabel()` — the same place a practice session says
+   which phase it is in. That is the one surface Practice already has for this,
+   which is what makes it the right one.
+
+   `.diagnostic-running` is still the class, still written by
+   diagnostic-page.js::syncWorkspace, and it still means "a probe is hosted
+   here" rather than "a placement exists" — the overview has to come back the
+   moment the learner is between probes or looking at their results. */
+#page-diagnostic.diagnostic-running #diagnostic-overview { display: none; }
+#page-diagnostic.diagnostic-running { padding: 0; }
 /* .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
    needs hiding when the workspace is hosted here. */
 .diagnostic-workspace-host .session-setup { display: none; }
-/* The 56px was the topbar's height written out by hand; it is 44px now and
-   the token is the only place that number lives (styles/layout.css). */
-.diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h) - 92px); }
+/* 🔴 THE SAME ARITHMETIC AS THE PRACTICE TAB, and it has to stay that way.
+   `#page-practice` is `calc(100vh - var(--dd-topbar-h))`; this was that minus
+   92px for the header card, and with the card gone the 92px is a short editor
+   for no reason. The 56px it was written with before that was the topbar's
+   height by hand — the token is the only place that number lives
+   (styles/layout.css). */
+.diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h)); }
 .diagnostic-workspace-host .practice-split { display: flex; }
 
-/* Per-probe countdown, injected into the placement badge by
-   practice/placement-timer.js. Every probe gets the same allowance, so this
-   reads as a fact about the test rather than a setting: no controls, no
-   pause. The badge is a COLUMN flexbox, so the chip has to size itself or it
-   stretches into a full-width bar; tabular figures keep the digits from
-   shifting on every tick. */
-.placement-timer {
-  align-self: flex-start;
-  border: 1px solid rgb(var(--info-rgb) / 0.45);
-  border-radius: 999px;
-  color: var(--info);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 2px 9px;
-  white-space: nowrap;
-}
+/* Per-probe countdown, written by practice/placement-timer.js into the NOTCH
+   TAB (Seth, 2026-08-23 — it used to be a pill beside the concept heading in
+   .question-number-row, and before that in the deleted cold-start badge).
+
+   🔴 THIS RULE DECLARES NOTHING, ON PURPOSE. `#placement-timer` carries
+   `.practice-notch-clock` in the markup and takes every visual property from
+   it (notch-menu.css) — Seth, 2026-08-23: the placement should be
+   "indistinguishable user experience wise from the practice ... in terms of
+   the user experience with the top bar for the timer and all that, it should
+   just be exactly the same."
+
+   It has been three things in one day: a bordered pill beside the concept
+   heading, then the same pill on the notch tab (a capsule inside a bordered
+   15px tab), then a copy of the notch clock in `--info` to mark it as the
+   placement's. The tint was the last distinction left, and a distinction is
+   exactly what he asked to remove. `--low` is `.practice-notch-clock--low`
+   now, so the last 30 seconds are the same red in the same slot.
+
+   The class stays because it is the ANCHOR — the id JS writes to, the hook
+   `notch-menu.js` reads to decide which clock is on the tab, and what
+   `watch.py` asserts. Do not give it colour, size or spacing again: that is
+   how the two clocks drift back apart. */
 .placement-timer.hidden { display: none; }
-/* Last 30 seconds. Colour alone would be the only cue, so the border thickens
-   too — the chip has no text to change. */
-.placement-timer--low {
-  border-color: var(--danger);
-  box-shadow: 0 0 0 1px rgb(var(--danger-rgb) / 0.35);
-  color: var(--danger);
-}
