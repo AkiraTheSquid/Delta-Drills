@@ -1,110 +1,113 @@
 /* ================================================================
-   XP.CSS — the level chip, and the progress bar that IS the seam.
+   XP.CSS — the level pill, which IS the progress bar.
 
-   THE BAR IS THE BORDER. `.topbar` draws a 1px `--border` line under
-   itself; `.dd-xp-seam` sits exactly on that line (`bottom: -2px`,
-   2px tall) and paints over it, so at 0% the chrome looks unchanged and
-   at 40% the left 40% of that same line has turned into the gradient.
-   Nothing reflows, nothing is added to the 56px row, and the bar is on
-   screen on every tab because the topbar is.
+   THE PILL FILLS. `Level 3` sits in a rounded chip in the topbar, and
+   that chip colours in from the left as the learner works. It was a 2px
+   line on the topbar's bottom border until 2026-08-22; a 2px hairline is
+   only legible if you already know to look for it, and the point of the
+   bar is that it is noticed without being pointed at. One object now
+   carries both facts: which level you are on, and how far into it.
 
-   Why `bottom: -2px` and not `0`: the header is `box-sizing: border-box`
-   at 56px with a 1px bottom border, so absolute children are placed
-   against a 55px-tall padding box — and `.tab.active` already owns the
-   last 2px of that (y 53–55) for its accent underline. `bottom: 0` and
-   even `bottom: -1px` clip that underline. `-2px` puts the bar at y
-   55–57: the border row itself, plus 1px hanging over the page. The
-   overhang is deliberate — a seam belongs to both halves.
+   No numerals on the fill — no count, no percent. The level is still the
+   only number on screen (plus the hover `title`). That has not changed.
 
-   No numerals, by design. See the header of ../xp.js.
+   ── THE TWO TEXT LAYERS, AND WHY ─────────────────────────────────
+   A partial fill under a single text colour is a contrast trap: the same
+   `Level 3` has to be legible on the chip's near-transparent background
+   AND on a saturated indigo→cyan fill, and no one colour does both in all
+   three themes (`--white` is near-BLACK in light, and white-on-cyan is
+   ~1.9:1 in the dark ones). So the label is drawn TWICE, stacked in one
+   grid cell:
+
+     .dd-level-text            normal colours, the whole pill
+     .dd-level-text--on        `--on-accent`, clipped to the filled width
+
+   Both layers and the fill read the same `--dd-xp-pct` custom property,
+   which ../xp.js sets on `.dd-level`. Because the clip is a percentage of
+   the layer's own box, the TEXT LAYERS carry the padding and `.dd-level`
+   itself has none — with the padding on the pill, the clip edge and the
+   fill edge drift apart by exactly that padding and the two-colour seam
+   in the middle of the word stops lining up.
    ================================================================ */
 
-/* ---- the seam ---------------------------------------------------------- */
+/* ---- the pill ---------------------------------------------------------- */
 
-/* `.topbar` is `position: sticky`, which is a containing block for an
-   absolutely positioned child — so this needs no extra positioning on the
-   header itself. */
-.dd-xp-seam {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 2px;
-  /* The track is the line it replaced, so an empty bar is invisible
-     rather than being an empty bar. */
-  background: var(--border);
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.dd-xp-seam-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--xp-from) 0%, var(--xp-to) 100%);
-  /* The leading edge is the bright end of the gradient, so the glow reads
-     as a head travelling right rather than as a lit strip. */
-  box-shadow: 0 0 6px rgb(var(--xp-glow-rgb) / 0.55);
-  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Set for one frame on level-up, while the bar is snapped from full back
-   to the carried-over remainder. Without it the width animates BACKWARDS
-   across the whole topbar, which reads as losing everything you just
-   earned. ../xp.js adds and removes this around a forced reflow. */
-.dd-xp-seam-fill--snap {
-  transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dd-xp-seam-fill {
-    transition: none;
-  }
-}
-
-/* ---- the level chip ---------------------------------------------------- */
-
-/* Sits between the logo and the tab strip. In drawer mode (<900px) `.logo`
-   takes `margin-right: auto`, which carries the chip over to the right beside
-   the account dot — still one 56px row, still no wrap. */
 .dd-level {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  /* One grid cell; the fill and both text layers all occupy it, so the
+     clip percentage and the fill percentage measure the same box. */
+  display: inline-grid;
   flex: 0 0 auto;
+  isolation: isolate;
   margin: 0 14px;
-  padding: 3px 10px;
+  padding: 0;
   border: 1px solid var(--border-strong);
   border-radius: 999px;
   background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  overflow: hidden;
+  white-space: nowrap;
+  transition: border-color 0.3s;
+}
+
+.dd-level-fill {
+  grid-area: 1 / 1;
+  z-index: 0;
+  justify-self: start;
+  align-self: stretch;
+  width: var(--dd-xp-pct, 0%);
+  background: linear-gradient(90deg, var(--xp-from) 0%, var(--xp-to) 100%);
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dd-level-text {
+  grid-area: 1 / 1;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* The padding lives here, not on `.dd-level` — see the header. */
+  padding: 3px 11px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--muted);
-  white-space: nowrap;
-  transition: border-color 0.3s, background 0.3s;
+}
+
+/* The copy that sits ON the fill. `--on-accent` is the token defined for
+   exactly this — text over an accent surface — in all three themes. */
+.dd-level-text--on {
+  color: var(--on-accent);
+  clip-path: inset(0 calc(100% - var(--dd-xp-pct, 0%)) 0 0);
+  transition: clip-path 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dd-level-num {
   font-size: 13px;
   font-weight: 700;
   color: var(--white);
-  /* The number changes under the label; proportional digits make the chip
+  /* The number changes under the label; proportional digits make the pill
      twitch sideways every time it does. */
   font-variant-numeric: tabular-nums;
 }
 
-/* Level-up. One pulse, ~1.1s, then back to the resting chip — the bar has
+.dd-level-text--on .dd-level-num {
+  color: var(--on-accent);
+}
+
+/* Set for one frame on level-up, while the pill is snapped from full back
+   to the carried-over remainder. Without it the fill animates BACKWARDS
+   across the whole pill, which reads as losing what you just earned.
+   ../xp.js adds and removes this around a forced reflow. */
+.dd-level--snap .dd-level-fill,
+.dd-level--snap .dd-level-text--on {
+  transition: none;
+}
+
+/* Level-up. One pulse, ~1.1s, then back to the resting pill — the fill has
    already run to full and reset, and a chip that keeps glowing afterwards
    turns a moment into a permanent decoration. */
 .dd-level--up {
   border-color: var(--xp-to);
-  background: rgb(var(--xp-glow-rgb) / 0.14);
   animation: dd-level-pop 1.1s ease;
-}
-
-.dd-level--up .dd-level-num {
-  color: var(--xp-to);
 }
 
 @keyframes dd-level-pop {
@@ -123,6 +126,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .dd-level-fill,
+  .dd-level-text--on {
+    transition: none;
+  }
   .dd-level--up {
     animation: none;
   }

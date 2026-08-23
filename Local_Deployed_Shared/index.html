@@ -45,9 +45,9 @@
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
   <link rel="stylesheet" href="styles/nav-drawer.css?v=2" />
-  <!-- Levels + the topbar-seam XP bar. Feature layer, before
-       responsive.css like every other one. -->
-  <link rel="stylesheet" href="styles/xp.css?v=1" />
+  <!-- Levels + the level pill that doubles as the progress bar. Feature
+       layer, before responsive.css like every other one. -->
+  <link rel="stylesheet" href="styles/xp.css?v=2" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=2" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=6" />
@@ -96,14 +96,29 @@
       <span class="nav-toggle-bars" aria-hidden="true"></span>
     </button>
     <div class="logo">ARENA Delta Drills <span class="version-tag">v1.0.15</span></div>
-    <!-- LEVEL CHIP. The only place gamification puts a NUMERAL: the bar
-         itself (below) never states a count or a percent — see xp.js. Sits
-         after the logo so drawer mode, where `.logo` takes the slack, carries
-         it over to the right beside the account dot instead of stranding it
-         in the middle of a 300px row. -->
+    <!-- LEVEL PILL — and the progress bar. The chip colours in from the left
+         as the learner works; there is no separate bar anywhere. Sits after
+         the logo so drawer mode, where `.logo` takes the slack, carries it
+         over to the right beside the account dot instead of stranding it in
+         the middle of a 300px row.
+
+         The label is written TWICE on purpose. `.dd-level-text--on` is the
+         copy that sits ON the fill, in `--on-accent`, clipped to the filled
+         width; the base layer keeps the normal colours for the part of the
+         pill the fill has not reached. One text colour cannot be legible on
+         both a near-transparent chip and a saturated gradient across three
+         themes — see styles/xp.css. The duplicate is aria-hidden so the
+         aria-live region announces the level once, not twice. -->
     <div class="dd-level" id="dd-level" aria-live="polite">
-      <span class="dd-level-label">Level</span>
-      <span class="dd-level-num" id="dd-level-num">1</span>
+      <span class="dd-level-fill" aria-hidden="true"></span>
+      <span class="dd-level-text">
+        <span class="dd-level-label">Level</span>
+        <span class="dd-level-num" id="dd-level-num">1</span>
+      </span>
+      <span class="dd-level-text dd-level-text--on" aria-hidden="true">
+        <span class="dd-level-label">Level</span>
+        <span class="dd-level-num" id="dd-level-num-on">1</span>
+      </span>
     </div>
     <!-- Every tab carries a sibling ⓘ (infotips.js + infotips-registry.js).
          They are written out here rather than injected because app.js
@@ -138,13 +153,6 @@
       <span class="topbar-auth-dot" aria-hidden="true"></span>
       <span class="topbar-auth-email" id="topbar-auth-email"></span>
       <span data-dd-info="topbar-auth"></span>
-    </div>
-    <!-- THE XP BAR. Not a widget — it is the topbar's own bottom border,
-         filled in from the left as the learner enters data. Absolutely
-         positioned over that 1px line (styles/xp.css), so it adds nothing to
-         the 56px row and rides along on every tab. Driven by xp.js. -->
-    <div class="dd-xp-seam" aria-hidden="true">
-      <div class="dd-xp-seam-fill" id="dd-xp-fill"></div>
     </div>
   </header>
 
@@ -919,12 +927,12 @@ t.manual_seed(0)
   <script src="practice/arena-unlock-dom.js?v=2"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
-  <!-- Levels + the XP seam. Before app.js and guest-session.js: both of
+  <!-- Levels + the pill progress bar. Before app.js and guest-session.js: both of
        those dispatch delta:auth-state-changed during boot, and the store
        key is derived from the signed-in email, so the listener has to be
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
-  <script src="xp.js?v=1"></script>
+  <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=3"></script>
   <script src="app.js?v=20"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
