@@ -285,7 +285,25 @@ const PracticeAPI = {
   },
 
   async submitAnswer(questionId, userCode) {
-    const requiresLocalPyodide = questionNeedsEinops(this.currentQuestion);
+    /* Einops/visual questions grade on the LOCAL Pyodide instance, because the
+       preamble there is what defines `display_array_as_img` and friends.
+
+       But Pyodide cannot import torch, and the bank's einops questions are
+       torch questions now — so this routing sent the one thing Pyodide cannot
+       run to Pyodide, and every Submit came back "This code uses PyTorch,
+       which can't run in the browser sandbox" with no verdict. Signed in, on
+       the placement, with the countdown re-arming after each failure, that was
+       a question you could not answer and could not get past.
+
+       The backend grades BOTH: `requirements.txt` pins einops for exactly this
+       ("backend code grader: einops/visual questions import it in setup_code
+       and user code") and torch is preloaded into the fork runner. So local
+       Pyodide keeps only the einops questions it can actually execute — the
+       ones with no torch anywhere in the question, the test setup, or what the
+       learner wrote. */
+    const requiresLocalPyodide =
+      questionNeedsEinops(this.currentQuestion) &&
+      !needsTorchRuntime(this.currentQuestion, userCode);
 
     if (practiceMode === "backend" && !requiresLocalPyodide) {
       const res = await apiFetch("/api/practice/submit", {
