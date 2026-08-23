@@ -93,8 +93,13 @@ const DiagnosticPage = (() => {
   // Mirrors app.js's own check: the practice page owes its setup panel only
   // when nothing holds the question. Releasing the workspace must not stomp a
   // running/paused session or a lesson back to the setup screen.
+  /* A block is not the only thing that owns the question. The `?lesson=<kc>`
+     KC drill (practice/lessons.js -> practice/kc-practice.js) is DELIBERATELY
+     sessionless — "No session quota or timer", its own comment — and it clears
+     `session-idle` itself so the learner can see what it serves. */
   const practiceHoldsQuestion = () =>
     document.body.classList.contains("lesson-mode") ||
+    window.KcPractice?.isActive?.() === true ||
     (typeof PracticeSession !== "undefined" &&
       (PracticeSession.isActive?.() || PracticeSession.hasPausedSession?.()));
 
@@ -125,6 +130,10 @@ const DiagnosticPage = (() => {
     const _api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
     const probeOnScreen = !!_api?.currentQuestion?.diagnostic_active;
     const hosted = running && diagnosticOnScreen() && probeOnScreen;
+    /* Read BEFORE the write below: the idle screen is restored only for a
+       workspace that is coming HOME, and "was it hosted a moment ago" is the
+       only record of that. */
+    const wasHosted = page.classList.contains("diagnostic-running");
     page.classList.toggle("diagnostic-running", hosted);
     if (hosted) {
       if (workspace.parentElement !== host) host.appendChild(workspace);
@@ -136,7 +145,24 @@ const DiagnosticPage = (() => {
       home.insertAdjacentElement("afterend", workspace);
     }
     host.classList.add("hidden");
-    practicePage.classList.toggle("session-idle", !practiceHoldsQuestion());
+    /* 🔴 ONLY ON THE WAY HOME. This line puts the Practice page back to its
+       idle screen after a placement hands the workspace back — that is the
+       whole of its job. It used to run on EVERY call, and `syncWorkspace` is
+       wired to `delta:practice-state-changed`, which the felt-difficulty
+       rating fires (api.js sendFeedback). So a learner solving a question
+       outside a block — the `?lesson=<kc>` KC drill is exactly that — rated
+       the problem they had just solved and watched the question disappear
+       under the readiness dial. Seth, 2026-08-23: "after you solve a problem
+       ... it essentially goes back to the original page that exits out of what
+       you're currently doing."
+
+       Nothing is lost by the gate: every OTHER way a block ends already writes
+       the class itself (timer.js `pause()` and `finish()` both add it, `start()`
+       and `_resumeCore()` both remove it), so this was never the writer for any
+       of them — it was a placement-release step running on every state change. */
+    if (wasHosted) {
+      practicePage.classList.toggle("session-idle", !practiceHoldsQuestion());
+    }
   };
 
   /* `running` and the Practice lock are the SAME fact — an active placement
