@@ -198,8 +198,16 @@
          replace that 401 with an exception the call site has no branch for,
          and the last-resort reload path would never be reached. Every failure
          is `false`, and every failure starts the cooldown. */
+      const startedWith = authToken;
       try {
         const login = await postAuth("/auth/login", credentials);
+        /* A sign-in can land WHILE this login is in flight — setAuthState does
+           not reload on guest -> person (the guest already had a token, so
+           `wasAuthed` is true), so nothing stops adopt() from putting the guest
+           token back over the person's one and flipping GUEST_ACTIVE_KEY on.
+           From the learner's seat they signed in and were silently a guest
+           again. If the identity moved, this refresh is stale: drop it. */
+        if (!isGuestSession() || authToken !== startedWith) return false;
         if (!login.token) {
           // 401 here means the account itself is gone (a reset database),
           // which adopt() cannot fix — leave it to the reload path, which
@@ -243,6 +251,19 @@
      */
     refreshExpiredSession() {
       return refreshSilently();
+    },
+
+    /**
+     * Is a 401 on this browser recoverable, rather than proof of being signed
+     * out? True while this is a guest session whose password is still here —
+     * refreshExpiredSession() failing on such a browser means the backend is
+     * down, refusing, or in its cooldown, NOT that there is nobody signed in.
+     * A surface that renders a "sign in" prompt off a 401 has to ask this
+     * first, or one bad minute tells a mid-placement learner to sign in.
+     */
+    canRecover() {
+      if (typeof isGuestSession !== "function" || !isGuestSession()) return false;
+      return !!readCredentials();
     },
 
     /**
