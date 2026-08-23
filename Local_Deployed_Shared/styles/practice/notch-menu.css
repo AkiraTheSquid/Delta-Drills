@@ -1,0 +1,124 @@
+/* The notch — session controls on the seam between the panels.
+   Markup in index.html (#practice-notch), behaviour in practice/notch-menu.js.
+
+   It replaces .session-status-row's visible half: the countdown, the phase,
+   Pause & exit and End session used to take a full band above the question.
+   The two buttons anyone actually presses now live behind three dots on the
+   seam, and the rest is gone. The row itself still exists and still runs —
+   see the note in timer.css — this is only where the controls are reached. */
+
+/* The notch hangs from the top edge of the split, centred on the divider
+   between the question and the editor. Absolute, so it costs the panels no
+   height; `--dd-notch-dx` is written by practice/stage-ladder.js when the
+   ladder's percentage reading lands underneath and the notch has to step
+   aside. Default 0 — untouched, it sits on the seam. */
+.practice-notch {
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(calc(-50% + var(--dd-notch-dx, 0px)));
+  /* Above the panels' own content, below any modal. */
+  z-index: 30;
+}
+
+/* A tab, not a button: square across the top where it meets the panels' top
+   edge, rounded below. The border skips the top edge for the same reason. */
+.practice-notch-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 0 0 10px 10px;
+  border-top: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 3px 12px 5px;
+  transition: color 120ms ease, background 120ms ease;
+}
+
+.practice-notch-btn:hover,
+.practice-notch-btn:focus-visible,
+.practice-notch-btn[aria-expanded="true"] {
+  background: var(--surface);
+  color: var(--white);
+}
+
+/* The dots sit on the type's baseline and read as low as a comma; nudge the
+   glyph up so it is centred in the tab. */
+.practice-notch-btn > span {
+  display: block;
+  letter-spacing: 1px;
+  transform: translateY(-2px);
+}
+
+/* The menu. Hangs under the tab, right-aligned to nothing — centred, because
+   the tab can be pushed to either side of the reading and a menu pinned to
+   one edge would then hang off the panel it was pushed away from. */
+.practice-notch-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  left: 50%;
+  min-width: 168px;
+  padding: 6px;
+  position: absolute;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+}
+
+.practice-notch-menu.hidden {
+  display: none;
+}
+
+.practice-notch-item {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.practice-notch-item:hover:not(:disabled),
+.practice-notch-item:focus-visible:not(:disabled) {
+  background: rgb(var(--tint-rgb) / calc(0.1 * var(--tint-k)));
+  color: var(--white);
+}
+
+/* Disabled here means one of two different things — no session, or a session
+   whose current question is mid-grade — and notch-menu.js puts the second
+   one in the item's `title`. */
+.practice-notch-item:disabled {
+  color: var(--muted-dim);
+  cursor: default;
+}
+
+.practice-notch-note {
+  color: var(--muted-dim);
+  font-size: 11px;
+  margin: 2px 4px 2px;
+}
+
+.practice-notch-note.hidden {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  /* The panels stack on a phone, so there is no seam to sit on: the notch
+     keeps its place at the top of whatever is first, and the menu drops its
+     centring for the right edge, which is the only one guaranteed to be on
+     screen once the tab has been pushed. */
+  .practice-notch-menu {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+}
