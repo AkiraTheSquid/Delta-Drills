@@ -48,7 +48,7 @@
   border-bottom-color: var(--white);
 }
 
-/* --- "Why this app exists": the six-step loop, and the sample map ------
+/* --- The six-step loop (on "How to use it") and the sample map ---------
    The steps are a fixed 3 x 2, not the auto-fit grid components.css gives
    every other .steps-grid. They are ONE numbered sequence, and auto-fit
    reflows it by available width — at the default container that landed 4
@@ -57,14 +57,14 @@
    two columns and then one; at every width the row break falls between
    whole steps.
    -------------------------------------------------------------------- */
-#page-why-this-app .steps-grid {
+#page-how-to-use .steps-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 @media (max-width: 900px) {
-  #page-why-this-app .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  #page-how-to-use .steps-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
-  #page-why-this-app .steps-grid { grid-template-columns: 1fr; }
+  #page-how-to-use .steps-grid { grid-template-columns: 1fr; }
 }
 
 /* The illustrative map. Positioned so the .kg2-legend it borrows from the
