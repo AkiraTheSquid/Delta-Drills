@@ -2,6 +2,29 @@
   box-sizing: border-box;
 }
 
+/* 🔴 THE TAB STRIP JITTERS WITHOUT THIS. Seth, 2026-08-23: "the tabs kind of
+   jitter around a little bit whenever you jump between them."
+
+   Nothing about the tabs moves. What moves is the VIEWPORT. Every tab is a
+   different page of a different height, so switching to a short one (Account)
+   retracts the page scrollbar and switching to a tall one (Why This App
+   Exists) puts it back — and a scrollbar is ~15px of width taken off the
+   right of the layout viewport. `.topbar` centres the strip in the middle
+   cell of a `1fr auto 1fr` grid (styles/layout.css), so the strip's centre is
+   the viewport's centre: it slid ~7px sideways on every switch that changed
+   the page's height, and slid back on the way out.
+
+   `scrollbar-gutter: stable` reserves the gutter whether or not a scrollbar
+   is in it, so the layout viewport is one width for every page. It belongs on
+   the scrolling element — <html>, not <body>. Anything else centred on the
+   viewport (the practice notch, modals) stops moving with it.
+
+   Not `overflow-y: scroll`, which reserves the gutter by drawing a dead
+   scrollbar on pages that do not scroll. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;

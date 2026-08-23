@@ -31,6 +31,12 @@ REQUIRED_FILES = [
     "solo-route.js",
     "styles/solo-route.css",
     "courses.js",
+    # Test users (@P, 2026-08-23): a demo identity swap. Listed here because
+    # index.html loads all three unconditionally — a missing one is a 404 on
+    # every page load, not a feature that quietly stays off.
+    "test-users.js",
+    "test-users-ui.js",
+    "styles/test-users.css",
 ]
 REQUIRED_DIRS = [
     "practice",
@@ -131,6 +137,77 @@ def check_invariants():
     assert practice_pos < targeted_pos, (
         "tab order changed — Targeted Practice must come after Practice"
     )
+    # ---- the topbar, stripped and centred 2026-08-23 (Seth) -------------
+    # The brand line, the signed-in email and every tab ⓘ are gone; the level
+    # pill owns the far left, a cog owns the far right, and the tab strip is
+    # centred BETWEEN them. The centring is the part that breaks silently:
+    # `.tabs` was held against one edge with `margin-*: auto` through two
+    # earlier rounds, and either of those rules coming back moves the strip
+    # off centre without failing anything else here.
+    layout_css = _read(os.path.join(HERE, "styles", "layout.css"))
+    assert "--dd-topbar-h" in layout_css, (
+        "styles/layout.css lost --dd-topbar-h. The bar's height is read by "
+        "#page-practice and .nav-drawer-head; as a literal it has to be found "
+        "and changed by hand in every one of them"
+    )
+    topbar_block = layout_css.split(".topbar {")[1].split("}")[0]
+    assert "grid-template-columns: 1fr auto 1fr" in topbar_block, (
+        "`.topbar` is not a 1fr/auto/1fr grid any more. Only two EQUAL side "
+        "columns centre the strip on the viewport — flex `space-between` "
+        "centres it on whatever happens to sit beside it"
+    )
+    tabs_block = layout_css.split("\n.tabs {")[1].split("}")[0]
+    # A ban, not a positive check, and the comment in layout.css is worded to
+    # say `margin-*: auto` rather than either literal so this cannot fail on
+    # its own rationale (it did once, the other way round).
+    for dead in ("margin-left: auto", "margin-right: auto"):
+        assert dead not in tabs_block, (
+            f"`.tabs` is holding itself against an edge again ({dead}) — that "
+            f"un-centres the strip the grid just centred"
+        )
+    assert 'id="topbar-auth"' not in index_html, (
+        "the signed-in email is back in the topbar. It belongs on the Account "
+        "tab (#account-identity-email)"
+    )
+    assert 'class="logo"' not in index_html, (
+        "`.logo` is back. It was the brand line, then an empty flex spacer "
+        "that outlived it; in a three-column grid an extra child DISPLACES "
+        "the centred tab strip into a side column"
+    )
+    assert 'id="topbar-cog"' in index_html and 'data-goto-tab="account"' in index_html, (
+        "the topbar cog is gone or no longer routes to Account. It is the "
+        "only control on the right edge and it needs no handler of its own — "
+        "app.js wires every [data-goto-tab]"
+    )
+    level_pos = index_html.find('id="dd-level"')
+    tabs_pos = index_html.find('<nav class="tabs">')
+    cog_pos = index_html.find('id="topbar-cog"')
+    assert -1 not in (level_pos, tabs_pos, cog_pos), "topbar lost the pill, the strip or the cog"
+    assert level_pos < tabs_pos < cog_pos, (
+        "topbar source order changed. Grid auto-placement fills the columns "
+        "in DOM order, so pill → strip → cog IS the left/centre/right layout"
+    )
+
+    # ---- the question header ---------------------------------------------
+    # The heading names the CONCEPT, and the two AUDIT controls live in the
+    # notch's three-dot menu. They kept their ids so practice/ui.js and
+    # practice/graph-jump.js still find them — which is exactly why a move
+    # back into .question-number-row would go unnoticed by every other check.
+    notch_menu_pos = index_html.find('id="practice-notch-menu"')
+    assert notch_menu_pos != -1, "index.html missing the notch menu"
+    for needle in ('id="question-id-chip"', 'id="practice-graph-jump"'):
+        pos = index_html.find(needle)
+        assert pos != -1, f"index.html missing {needle}"
+        assert pos > notch_menu_pos, (
+            f"{needle} is back above the question. Both audit controls belong "
+            "in .practice-notch-menu — they exist so a problem can be quoted "
+            "in a bug report, not so the learner reads them every question"
+        )
+    assert '<h2 class="question-number"' in index_html, (
+        "the question heading is not an <h2> any more. It names the concept "
+        "under test now, not 'Question 21' — a title, and marked up as one"
+    )
+
     # The Statistics tab must not creep back in: its renderers, DOM module
     # and stylesheet were deleted, so a stray button would open a blank page.
     assert 'data-tab="statistics"' not in index_html, (
@@ -378,21 +455,26 @@ def check_infotips():
         f"infotips-registry.js keys no element carries: {orphan_keys}"
     )
 
-    # Every visible tab gets a dot, and the dot is a SIBLING of the tab
-    # button, never a child — a button cannot nest a button, and app.js
-    # captures .tab into a static NodeList that must not pick the dot up.
-    for tab in ("why-this-app", "knowledge-graph", "account",
-                "courses", "practice", "targeted-practice"):
-        assert f'data-dd-info="tab.{tab}"' in index_html, (
-            f'tab "{tab}" has no ⓘ — expected data-dd-info="tab.{tab}"'
+    # 🔴 INVERTED 2026-08-23. This used to require a dot beside every tab.
+    # Seth: "there's information icons literally everywhere ... it's overkill".
+    # All ten went, and the assertion is now that they stay gone — nothing else
+    # here fails when one comes back, and two things quietly get worse: the
+    # strip reads as ten labels each trailed by a stray "i", and `.tab`'s
+    # `border-bottom` (the active underline) spans the label while the eye
+    # reads label+dot as the tab, so the line looks offset to the left.
+    assert "tab-info" not in index_html, (
+        "a tab ⓘ is back in index.html. A tab's name is the description; the "
+        "two tabs that need more than a name ARE pages of exactly that"
+    )
+    assert 'data-dd-info="tab.' not in index_html, (
+        "a tab is carrying data-dd-info again — infotips.js would inject a "
+        "dot for it even with no hand-written .tab-info in the markup"
+    )
+    for tag in _re.findall(r'<button[^>]*class="[^"]*\btab\b[^"]*"[^>]*>', index_html):
+        assert "data-dd-info" not in tag, (
+            f"a .tab carries data-dd-info; infotips.js forces a BUTTON anchor "
+            f"to place=after, so this mints a sibling dot: {tag}"
         )
-    for tag in _re.findall(r'<button[^>]*>', index_html):
-        classes = (_re.search(r'class="([^"]*)"', tag) or _re.match(r'()', '')).group(1).split()
-        if "tab-info" in classes:
-            assert "tab" not in classes, (
-                f"a tab ⓘ also carries the .tab class, so app.js will treat it "
-                f"as a tab button: {tag}"
-            )
 
     # Load order: behaviour reads window.DD_INFOTIPS at IIFE-eval time.
     reg_pos = index_html.find('src="infotips-registry.js')

@@ -97,12 +97,11 @@ def check_invariants():
         "app.js#guestVisibleTabs no longer includes targeted-practice"
     )
     # Matched on class TOKENS, not on the literal attribute string: the tab
-    # picked up a `has-info` class when the ⓘ dots landed (2026-08-07), and an
-    # `class="tab auth-only"` exact match failed on a purely additive change.
-    # Both the tab and its sibling ⓘ (.tab-info, same data-tab) are driven by
-    # app.js's .auth-only NodeList, so the contract is: every element tagged
-    # data-tab="targeted-practice" carries auth-only, or the dot is left
-    # hanging beside a hidden tab.
+    # picked up a `has-info` class when the ⓘ dots landed (2026-08-07) and lost
+    # it again when they were deleted (2026-08-23), and an `class="tab
+    # auth-only"` exact match broke on both. The contract is what matters:
+    # every element tagged data-tab="targeted-practice" carries auth-only, or
+    # app.js's .auth-only NodeList leaves a guest looking at a tab that 403s.
     tp_tags = [
         m.group(0)
         for m in re.finditer(r'<button[^>]*>', index_html)

@@ -11,7 +11,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
 CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
-             "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css", "diagnostic.css"]
+             "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css", "diagnostic.css",
+             # The syntax-highlight overlay (@M, 2026-08-23). Its metrics are
+             # SHARED with .code-editor in editor.css — a font, padding or
+             # border restated in one and not the other drifts the overlay off
+             # the textarea it sits behind.
+             "code-highlight.css",
+             # The Practice tab's idle readiness dial (2026-08-23).
+             "readiness.css"]
 
 
 def _read(path):
@@ -46,11 +53,23 @@ def check_public_api():
     expected = {
         "layout.css": [".practice-container", ".practice-split", ".practice-left", ".practice-right"],
         "timer.css": [".session-setup", ".session-status-row", ".session-countdown", ".timer-input", "session-idle"],
-        "question.css": [".question-text", ".question-imports", ".question-visual", ".cold-start-badge"],
-        "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row", ".practice-mode-notice"],
+        # .cold-start-badge left this list on 2026-08-23 — the badge, its two
+        # copy blocks and their styles were deleted together.
+        "question.css": [".question-text", ".question-imports", ".question-visual", ".question-number-row"],
+        "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row"],
         "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
         "notebook-editor.css": [".practice-notebook", ".notebook-cell", ".notebook-cell-output"],
-        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".practice-aids"],
+        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".placement-next-btn", ".practice-aids"],
+        # Written by practice/placement-results.js — every class it mints has
+        # to keep a rule here or the results card renders as unstyled spans.
+        "diagnostic.css": [
+            ".placement-cta", ".placement-overall", ".placement-overall-figure",
+            ".placement-overall-say", ".placement-overall-caveat", ".placement-areas",
+            ".placement-areas-head", ".placement-area", ".placement-area-name",
+            ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
+            ".placement-area-probes", ".placement-area--unprobed",
+            ".placement-results-meta", ".placement-results-empty",
+        ],
     }
     for fname, selectors in expected.items():
         css = _read(os.path.join(HERE, fname))
@@ -100,21 +119,44 @@ def check_invariants():
         "stage-ladder.css lost the chevron seam — the rung divisions would "
         "vanish from a bar whose labels still claim them"
     )
-    # The callout is a TAB standing on the bar, not a box floating under it:
-    # it is anchored to the bar's own height and opens at the bottom. Both
-    # halves matter — a bottom border re-cuts it off from the track, and a
-    # `top:` offset puts it back below the bar where it overhangs the split.
-    assert "bottom: var(--dd-ladder-bar-h)" in ladder, (
-        "stage-ladder.css no longer stands the reading on the bar's top edge "
-        "— it is a floating box again, and nothing says which position on the "
-        "bar it is naming"
+    # The reading is a DETACHED pop-up above the bar, aimed at the fill's edge.
+    # It has been a tab welded to the bar's top edge and that was wrong: a
+    # shape sharing an edge with the track reads as part of the track. Two
+    # halves, and both are load-bearing.
+    assert "--dd-ladder-gap" in ladder, (
+        "stage-ladder.css lost --dd-ladder-gap — the reading is standing on "
+        "the bar again, which reads as one taller lumpy track rather than as "
+        "a label about a position on it"
     )
-    assert "stage-ladder-callout-arrow" not in ladder, (
-        "the callout arrow is back in stage-ladder.css — the tab touches the "
-        "bar, so an arrow points at the thing it is already standing on"
+    assert "--dd-callout-arrow-x" in ladder, (
+        "stage-ladder.css no longer consumes --dd-callout-arrow-x, so the "
+        "arrow is parked at a static 50%. The box is clamped inside the strip "
+        "and its centre is NOT the position being described the moment that "
+        "clamp bites — which is exactly at 0% and 100%"
+    )
+    # Extra information above every question, and off by default: the ladder
+    # rides with Advanced mode (app.js writes `body.dd-basic-mode`).
+    assert "body.dd-basic-mode .stage-ladder" in ladder, (
+        "stage-ladder.css no longer hides the ladder in basic mode — it is "
+        "back above every question for every learner, which is the cognitive "
+        "load it was gated to avoid"
     )
 
     notch = _read(os.path.join(HERE, "notch-menu.css"))
+    # The two audit controls (#question-id-chip, #practice-graph-jump) were
+    # moved out of the question row and into this menu. They keep their
+    # `.question-id-chip` class so graph-jump.js's `.is-untagged` marking still
+    # lands, which means the chip's BOX comes with them unless it is overridden.
+    assert ".practice-notch-item.question-id-chip" in notch, (
+        "notch-menu.css no longer re-shapes the moved audit controls — they "
+        "are bordered pills sitting in a menu of flat rows"
+    )
+    assert ".practice-notch-item.question-id-chip.is-untagged" in notch, (
+        "the untagged marking is gone. `.question-id-chip.is-untagged` only "
+        "says `border-style: dashed`, which draws NOTHING on a borderless "
+        "menu row — and a question the tutor cannot place on its own map is "
+        "the one thing this control exists to show"
+    )
     assert ".practice-notch-clock" in notch, (
         "notch-menu.css lost .practice-notch-clock — the session row is hidden "
         "and this tab is the only countdown on the practice screen"

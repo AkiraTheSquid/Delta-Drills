@@ -12,25 +12,37 @@
    same reason — they are what the markup keys on.
    ================================================================ */
 
-#page-why-this-app .container {
-  max-width: 920px;
+/* One measure for both explainer pages, centred by `.container`'s own
+   `margin: 0 auto` — 985px of text with the SAME gutter left and right at
+   every width. `#page-how-to-use` joins it here rather than inheriting the
+   720px default, so the two tabs do not change width as you switch between
+   them. */
+#page-why-this-app .container,
+#page-how-to-use .container {
+  max-width: 985px;
 }
 
 /* --- Hero --- */
 .hiw-hero {
   padding: 28px 0 8px;
 }
+/* The page title is CENTRED over the full 985px measure, so it reads as a
+   masthead rather than as the first line of the prose underneath it. */
 .hiw-hero h1 {
   font-size: 40px;
   line-height: 1.1;
   margin: 0 0 16px;
   letter-spacing: -0.02em;
+  text-align: center;
 }
+/* No `max-width` of its own: the lead runs the full 985px measure the
+   container sets. A narrower cap here left the text ragged on the right
+   while the title above it was centred on the wider box — which is exactly
+   the asymmetry this pass removes. */
 .hiw-hero .hiw-lead {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.6;
   color: var(--text);
-  max-width: 640px;
   margin: 0 0 8px;
 }
 .hiw-hero .hiw-lead strong {
@@ -105,11 +117,13 @@
   margin: 0 0 14px;
   letter-spacing: -0.01em;
 }
+/* Body prose, one size across both pages. Like `.hiw-lead` it carries no
+   `max-width`: the container owns the measure so every block of text starts
+   and ends on the same two vertical edges. */
 .hiw-section p {
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.7;
   color: var(--text);
-  max-width: 680px;
   margin: 0 0 16px;
 }
 .hiw-section p .hiw-em {
@@ -353,7 +367,7 @@
 }
 .hiw-note p {
   margin: 0;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.7;
   color: var(--muted);
   max-width: none;
@@ -380,7 +394,11 @@
    ============================================================ */
 .kg2 .kg2-wrap {
   display: flex;
-  height: calc(100vh - 92px);
+  /* Was a flat `calc(100vh - 92px)`: the topbar's height plus 36px of page
+     padding, with the bar's half of it written out by hand. The bar is 44px
+     now (styles/layout.css `--dd-topbar-h`), and a literal here would have
+     left the pane 12px short of the space it has. */
+  height: calc(100vh - var(--dd-topbar-h) - 36px);
   min-height: 480px;
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -573,7 +591,7 @@ html.dd-colab-edition .kg2-controls .kg2-max {
   /* Colab edition: the pane is gone, so the wrap has one child. Give it a real
      height and let the graph fill it, instead of pinning the graph to 74vh and
      leaving dead space under it. */
-  html.dd-colab-edition .kg2 .kg2-wrap { height: calc(100vh - 92px); }
+  html.dd-colab-edition .kg2 .kg2-wrap { height: calc(100vh - var(--dd-topbar-h) - 36px); }
   html.dd-colab-edition .kg2-graph { height: auto; }
   /* Narrow: the dock's three columns stack, so it needs more room. */
   .kg2-graph { height: 74vh; --kg2-dock-h: 220px; }
@@ -595,7 +613,6 @@ html.dd-colab-edition .kg2-controls .kg2-max {
 /* Single-concept view: the adaptive-queue framing (what Practice is, where to
    start across all topics) is about a different flow and reads as noise here.
    The competency bar is the header for this page. */
-.kg-embed .practice-mode-intro,
 .kg-embed #self-report-row { display: none !important; }
 
 /* Parent overlay: full-screen, above everything, with a slim Minimize bar. */

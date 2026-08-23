@@ -1,12 +1,14 @@
 /* The notch — session controls on the seam between the panels.
    Markup in index.html (#practice-notch), behaviour in practice/notch-menu.js.
 
-   It replaces .session-status-row's visible half: the countdown, the phase,
-   Pause & exit and End session used to take a full band above the question.
-   The countdown is HERE now, on the tab itself, and the two buttons anyone
-   actually presses are behind the dots beside it. The row itself still exists
-   and still runs — see the note in timer.css — this is only where it is read
-   and reached. */
+   It replaces .session-status-row's visible half: the countdown, the phase and
+   Pause & exit used to take a full band above the question. The tab carries
+   three things now, left to right — a square that pauses, the countdown, and
+   the dots that open the menu. The row itself still exists and still runs
+   (see the note in timer.css); this is only where it is read and reached.
+
+   End session is GONE, here and everywhere: a block has no length any more,
+   so there is nothing to end early. Pause and resume are the two states. */
 
 /* The notch hangs from the top edge of the split, centred on the divider
    between the question and the editor. Absolute, so it costs the panels no
@@ -32,9 +34,9 @@
   border-top: 0;
   display: flex;
   gap: 6px;
-  /* Symmetric. Between sessions the clock is `display: none` and the tab is
-     nothing but the dots — a left inset sized for a clock that is not there
-     would sit them off-centre on the seam. The clock buys its own room. */
+  /* The tab's contents no longer change between sessions — square, clock,
+     dots, always all three — so this is a plain symmetric inset. It used to
+     be sized around a clock that disappeared when nothing was running. */
   padding: 2px 6px 4px;
   transition: background 120ms ease;
 }
@@ -46,8 +48,11 @@
 /* The countdown, mirrored from #session-countdown by practice/notch-menu.js.
    Tabular figures: a clock whose glyphs are different widths jiggles the tab
    — and the tab is centred on the seam, so the jiggle moves the whole thing.
-   Hidden outright between sessions rather than showing a dash, so the tab
-   collapses back to just the dots. */
+   🔴 It does NOT disappear between sessions. Idle, notch-menu.js writes the
+   allowance the next question's answer phase will get (02:00) and adds
+   `--idle`, so the tab is a standing statement of the rule rather than a
+   control that comes and goes — Seth, 2026-08-23. `.hidden` survives for the
+   one case that still needs it: a page with no session machinery at all. */
 .practice-notch-clock {
   color: var(--white);
   padding-left: 4px;
@@ -89,16 +94,90 @@
   color: var(--danger);
 }
 
-/* Just the dots now — the tab around it owns the frame. */
+/* Idle: the number is a rule, not a countdown, and it must not be mistaken for
+   one that has stopped ticking. Muted and un-bolded — the same figure the
+   running clock uses, in the weight everything else on the tab uses. */
+.practice-notch-clock--idle {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ---- the square ------------------------------------------------------- */
+
+/* Pause, to the LEFT of the clock (Seth, 2026-08-23). A square, because that
+   is the shape he asked for and because it is the one glyph that reads as
+   "stop what is running" without a label; what it actually does is pause —
+   the question, the draft, the review state and the clock are all saved, and
+   the readiness screen comes up. There is no End anywhere: pause and resume
+   are the only two states this session model has. */
+.practice-notch-stop {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: 3px;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+
+.practice-notch-stop-glyph {
+  background: var(--muted);
+  /* 2px, not a circle and not a rounded rect: at 9px the corner radius is the
+     whole difference between reading as a stop square and reading as a dot. */
+  border-radius: 2px;
+  display: block;
+  height: 9px;
+  transition: background 120ms ease;
+  width: 9px;
+}
+
+.practice-notch-stop:hover:not(:disabled) .practice-notch-stop-glyph {
+  background: var(--danger);
+}
+
+.practice-notch-stop:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 1px;
+}
+
+/* 🔴 Dimmed, not hidden. Between sessions, and for the few seconds a grade is
+   in flight, there is nothing to pause — but a control that vanishes and comes
+   back moves the clock beside it, and the tab is centred on the seam, so the
+   whole notch would shift twice a question. */
+.practice-notch-stop:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+/* Just the dots now — the tab around it owns the frame.
+
+   🔴 CENTRED BY LAYOUT, NOT BY NUDGE (Seth, 2026-08-23: "for the three dots,
+   it needs to be more center aligned"). This was a 13px button with
+   `padding: 1px 6px 3px` and a `translateY(-2px)` on the glyph — three
+   separate offsets, each correcting the last, and the sum of them put the
+   dots high and left of the box they sit in. A flex box that centres its one
+   child needs none of them: symmetric padding, `place-items: center`, and the
+   glyph lands where the box's middle is.
+
+   The height is fixed to the square's (9px glyph + 3px padding a side = 15px)
+   so the two controls flanking the clock are the same size as each other —
+   the tab is `align-items: center`, so unequal heights read as one of them
+   riding higher than the other. */
 .practice-notch-btn {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 6px;
   color: var(--muted);
   cursor: pointer;
+  display: inline-flex;
   font-size: 13px;
+  height: 15px;
+  justify-content: center;
   line-height: 1;
-  padding: 1px 6px 3px;
+  padding: 0 5px;
   transition: color 120ms ease;
 }
 
@@ -108,12 +187,24 @@
   color: var(--white);
 }
 
-/* The dots sit on the type's baseline and read as low as a comma; nudge the
-   glyph up so it is centred in the tab. */
+/* 🔴 NO `transform` HERE. The comment this replaces said the dots "sit on the
+   type's baseline and read as low as a comma" — true of `…` (U+2026,
+   HORIZONTAL ELLIPSIS), and the markup uses `&#8943;` (U+22EF, MIDLINE
+   horizontal ellipsis), which is drawn on the math axis and is already
+   vertically centred in its own em box. The -2px was correcting a problem the
+   glyph does not have, and the flex centring above makes it wrong twice.
+
+   🔴 AND NO NEGATIVE MARGIN EITHER. `letter-spacing` applies after the last
+   character too, so the obvious correction is a matching `margin-right: -1px`
+   — and measured, that made it WORSE, not better: the trailing spacing is
+   inside the span's own box (so the flex centring already accounts for it),
+   while the margin is outside it, and shaving 1px off the outer width shifts
+   a centred child half a pixel right. Measured offsets of the glyph's centre
+   from the button's, at 1680px: `translateY(-2px)` + asymmetric padding was
+   (0, -3); with the margin (0.5, 0); with neither (0, 0). Leave it alone. */
 .practice-notch-btn > span {
   display: block;
   letter-spacing: 1px;
-  transform: translateY(-2px);
 }
 
 /* The menu. Hangs under the tab, right-aligned to nothing — centred, because
@@ -164,6 +255,50 @@
 .practice-notch-item:disabled {
   color: var(--muted-dim);
   cursor: default;
+}
+
+/* ---- the two AUDIT items -----------------------------------------------
+
+   #question-id-chip and #practice-graph-jump moved in here from
+   .question-number-row on 2026-08-23, element and id intact, so the code that
+   drives them did not have to move with them. They still carry
+   `.question-id-chip`, and deliberately: practice/graph-jump.js marks an
+   untagged question with `.question-id-chip.is-untagged` and
+   `renderQuestionIdChip` disables the copy button when a question has no
+   stable id. What they must NOT keep is the CHIP BOX — a bordered pill inside
+   a menu of flat rows. This file is loaded after styles/practice/question.css,
+   so `.practice-notch-item` already wins on every property it declares; these
+   are the three it does not. */
+.practice-notch-item.question-id-chip {
+  font-weight: 500;
+  line-height: 1.35;
+  min-height: 0;
+}
+
+/* 🔴 No ⓘ dots in here. Both items carried `data-dd-info` in the question row
+   and infotips.js mints the dot as a SIBLING — in a column-flex menu that is
+   its own row, so each item grew a stray "i" hanging underneath it. The copy
+   was two short sentences, so it moved into the buttons' `title` instead (and
+   for the ID button, practice/ui.js overwrites that title with the live id),
+   and both registry entries were deleted rather than left orphaned. If a
+   `data-dd-info` anchor is ever added to this menu, this is the reason it
+   will not look right. */
+
+/* A question the tutor cannot place on its own map. `.question-id-chip.is-untagged`
+   says `border-style: dashed`, which draws nothing on a borderless menu row —
+   so the marking is restated here as something a flat row can show. The point
+   of the control is that the mismatch stays VISIBLE. */
+.practice-notch-item.question-id-chip.is-untagged {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* The audit tools are not session controls. One hairline says so, instead of a
+   heading nobody needs to read twice. */
+.practice-notch-sep {
+  background: var(--border);
+  height: 1px;
+  margin: 4px 4px;
 }
 
 .practice-notch-note {

@@ -7,49 +7,183 @@
    test is running the countdown itself says it, so this line goes away. */
 .diagnostic-timing { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
 .diagnostic-timing strong { color: var(--text, inherit); font-variant-numeric: tabular-nums; }
-.diagnostic-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+/* ---- How far through the test you are ---------------------------------
+   One continuous track, same reading as the scaffolding bar on Practice.
+   It sits at the BOTTOM of the card and survives .diagnostic-running (see
+   below) because that is the only state where it says anything. */
+.placement-progress { align-items: center; display: flex; gap: 12px; margin-top: 16px; }
+.placement-progress.hidden { display: none; }
+.placement-progress-track {
+  background: var(--surface-2);
+  border-radius: 999px;
+  flex: 1 1 auto;
+  height: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.placement-progress-fill {
+  background: var(--info);
+  border-radius: 999px;
+  display: block;
+  height: 100%;
+  transition: width 0.25s ease;
+}
+/* Earliest possible finish. `overflow: hidden` on the track would clip a
+   zero-width child at 100%, so the tick is inset by its own width. */
+.placement-progress-tick {
+  background: rgb(var(--info-rgb) / 0.75);
+  bottom: 0;
+  margin-left: -1px;
+  position: absolute;
+  top: 0;
+  width: 2px;
+}
+.placement-progress-tick.hidden { display: none; }
+.placement-progress-count {
+  color: var(--muted);
+  flex: none;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.diagnostic-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+/* The ⓘ belongs TO the button, not under it. infotips.js forces place="after"
+   for a <button> anchor and inserts the dot into the anchor's parentNode, so
+   the only way to keep the two together is to give them a parent of their own
+   — otherwise the dot is a sibling flex item and wraps onto its own line.
+   `align-items: center` is what puts it beside the label rather than on the
+   button's baseline. */
+.placement-cta { align-items: center; display: inline-flex; gap: 8px; }
+/* Re-assert .hidden. Same specificity (0,1,0) as the rule above, and this file
+   loads AFTER components.css, so the global `.hidden { display: none }` loses
+   the tie — the wrapper stayed a zero-width flex item and its `gap` shunted the
+   next button 12px off the card edge. Same trap styles/practice/README.md
+   records for #practice-submit-area. */
+.placement-cta.hidden { display: none; }
+/* `.dd-info` ships `margin: 0 0 0 6px` for the anchors it is usually squeezed
+   next to; here the wrapper's gap already does that job and the two stack to
+   14px, which reads as a stray dot rather than part of the control. */
+.placement-cta > .dd-info { flex: none; margin: 0; position: relative; top: 0; }
 .diagnostic-results { margin-top: 20px; }
 .diagnostic-results h2 { font-size: 17px; margin: 0 0 8px; }
 .diagnostic-results p { color: var(--muted); margin: 0; }
-#page-diagnostic.diagnostic-running .diagnostic-results,
-#page-diagnostic.diagnostic-running .self-report-row,
-#page-diagnostic.diagnostic-running .placement-start-btn { display: none; }
-#page-diagnostic.diagnostic-running { padding: 12px 20px 0; }
-#page-diagnostic.diagnostic-running .placement-page { padding: 0 0 10px; }
-#page-diagnostic.diagnostic-running .diagnostic-eyebrow,
-#page-diagnostic.diagnostic-running h1,
-#page-diagnostic.diagnostic-running .diagnostic-timing,
-#page-diagnostic.diagnostic-running .subtitle { display: none; }
-#page-diagnostic.diagnostic-running .diagnostic-card { margin-top: 0; padding-bottom: 12px; padding-top: 12px; }
-#page-diagnostic.diagnostic-running .diagnostic-status { margin-bottom: 0; }
-.diagnostic-workspace-host .session-setup,
-.diagnostic-workspace-host .practice-mode-intro { display: none; }
-.diagnostic-workspace-host .practice-container { height: calc(100vh - 56px - 92px); }
+
+/* ---- Results: what the placement actually measured ---------------------
+   Written by practice/placement-results.js. Two jobs: make the headline
+   readable at a glance, and make an UNPROBED area visibly weaker evidence
+   than a probed one — a learner who cannot tell them apart will plan around
+   a number the test never earned. */
+.placement-results-meta { color: var(--muted); font-size: 12.5px; margin: 0 0 16px; }
+.placement-results-empty { color: var(--muted); font-size: 13px; margin: 0; }
+
+.placement-overall {
+  align-items: center;
+  background: rgb(var(--info-rgb) / 0.06);
+  border: 1px solid rgb(var(--info-rgb) / 0.28);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 16px 18px;
+}
+.placement-overall-figure { display: flex; flex-direction: column; line-height: 1.1; min-width: 104px; }
+.placement-overall-figure strong { color: var(--info); font-size: 34px; font-variant-numeric: tabular-nums; font-weight: 800; }
+.placement-overall-figure span { color: var(--muted); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+.placement-overall-say { flex: 1 1 260px; }
+.placement-overall-say p { color: var(--text); font-size: 13px; margin: 0; }
+.placement-overall-say .placement-overall-caveat { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+
+.placement-areas { margin-top: 20px; }
+.placement-areas-head { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+/* Fixed track column so every bar starts and ends on the same two pixels —
+   rows that each size their own bar cannot be compared by eye, which is the
+   entire point of the list. */
+.placement-area {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(120px, 1.4fr) minmax(80px, 3fr) 44px 40px 78px;
+  padding: 6px 0;
+}
+.placement-area-name { color: var(--text); font-size: 13px; }
+.placement-area-bar { background: var(--surface-2); border-radius: 999px; height: 8px; overflow: hidden; }
+.placement-area-bar i { background: var(--info); display: block; height: 100%; }
+.placement-area-pct { color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
+.placement-area-conf { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; text-align: right; }
+.placement-area-probes { color: var(--muted); font-size: 11.5px; text-align: right; }
+/* An unprobed area is a prior wearing a percentage. Everything about the row
+   is dialled down, and the bar is hollow rather than filled, so it never
+   reads as a measurement taken. */
+.placement-area--unprobed .placement-area-name,
+.placement-area--unprobed .placement-area-pct { color: var(--muted); }
+.placement-area--unprobed .placement-area-bar i { background: rgb(var(--info-rgb) / 0.3); }
+.placement-area--unprobed .placement-area-probes { font-style: italic; }
+
+@media (max-width: 620px) {
+  .placement-area { grid-template-columns: 1fr 44px 40px; grid-template-areas: "name pct conf" "bar bar probes"; }
+  .placement-area-name { grid-area: name; }
+  .placement-area-bar { grid-area: bar; }
+  .placement-area-pct { grid-area: pct; }
+  .placement-area-conf { grid-area: conf; }
+  .placement-area-probes { grid-area: probes; text-align: left; }
+}
+/* ---- A PROBE ON SCREEN IS THE PRACTICE SCREEN --------------------------
+
+   🔴 EVERYTHING THIS PAGE OWNS IS HIDDEN WHILE A PROBE IS UP. Seth,
+   2026-08-23: the placement should be "indistinguishable user experience wise
+   from the practice ... aside from, obviously, serving only the types of
+   problems that are for the testing."
+
+   It used to keep a header card above the workspace — the status line
+   ("Placement test in progress · 3 of at most 14 questions answered") and the
+   progress bar — and shave 92px off the editor to make room. That card was the
+   difference: the same question, in a shorter frame, under a banner announcing
+   which mode you were in. The whole overview goes now, and the workspace gets
+   the same height it has on the Practice tab.
+
+   NOTHING IS LOST, it moved. The progress the bar was carrying is in the notch
+   tab's tooltip and its screen-reader phase, written by `notch-menu.js` from
+   `DiagnosticPage.progressLabel()` — the same place a practice session says
+   which phase it is in. That is the one surface Practice already has for this,
+   which is what makes it the right one.
+
+   `.diagnostic-running` is still the class, still written by
+   diagnostic-page.js::syncWorkspace, and it still means "a probe is hosted
+   here" rather than "a placement exists" — the overview has to come back the
+   moment the learner is between probes or looking at their results. */
+#page-diagnostic.diagnostic-running #diagnostic-overview { display: none; }
+#page-diagnostic.diagnostic-running { padding: 0; }
+/* .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
+   needs hiding when the workspace is hosted here. */
+.diagnostic-workspace-host .session-setup { display: none; }
+/* 🔴 THE SAME ARITHMETIC AS THE PRACTICE TAB, and it has to stay that way.
+   `#page-practice` is `calc(100vh - var(--dd-topbar-h))`; this was that minus
+   92px for the header card, and with the card gone the 92px is a short editor
+   for no reason. The 56px it was written with before that was the topbar's
+   height by hand — the token is the only place that number lives
+   (styles/layout.css). */
+.diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h)); }
 .diagnostic-workspace-host .practice-split { display: flex; }
 
-/* Per-probe countdown, injected into the placement badge by
-   practice/placement-timer.js. Every probe gets the same allowance, so this
-   reads as a fact about the test rather than a setting: no controls, no
-   pause. The badge is a COLUMN flexbox, so the chip has to size itself or it
-   stretches into a full-width bar; tabular figures keep the digits from
-   shifting on every tick. */
-.placement-timer {
-  align-self: flex-start;
-  border: 1px solid rgb(var(--info-rgb) / 0.45);
-  border-radius: 999px;
-  color: var(--info);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 2px 9px;
-  white-space: nowrap;
-}
+/* Per-probe countdown, written by practice/placement-timer.js into the NOTCH
+   TAB (Seth, 2026-08-23 — it used to be a pill beside the concept heading in
+   .question-number-row, and before that in the deleted cold-start badge).
+
+   🔴 THIS RULE DECLARES NOTHING, ON PURPOSE. `#placement-timer` carries
+   `.practice-notch-clock` in the markup and takes every visual property from
+   it (notch-menu.css) — Seth, 2026-08-23: the placement should be
+   "indistinguishable user experience wise from the practice ... in terms of
+   the user experience with the top bar for the timer and all that, it should
+   just be exactly the same."
+
+   It has been three things in one day: a bordered pill beside the concept
+   heading, then the same pill on the notch tab (a capsule inside a bordered
+   15px tab), then a copy of the notch clock in `--info` to mark it as the
+   placement's. The tint was the last distinction left, and a distinction is
+   exactly what he asked to remove. `--low` is `.practice-notch-clock--low`
+   now, so the last 30 seconds are the same red in the same slot.
+
+   The class stays because it is the ANCHOR — the id JS writes to, the hook
+   `notch-menu.js` reads to decide which clock is on the tab, and what
+   `watch.py` asserts. Do not give it colour, size or spacing again: that is
+   how the two clocks drift back apart. */
 .placement-timer.hidden { display: none; }
-/* Last 30 seconds. Colour alone would be the only cue, so the border thickens
-   too — the chip has no text to change. */
-.placement-timer--low {
-  border-color: var(--danger);
-  box-shadow: 0 0 0 1px rgb(var(--danger-rgb) / 0.35);
-  color: var(--danger);
-}

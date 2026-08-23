@@ -173,9 +173,54 @@ const EDITOR_INDENT = " ".repeat(EDITOR_SPACE_INDENT_WIDTH);
 // nothing can follow `return` at the same depth inside the same suite.
 const EDITOR_DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
 
+/* ASSIGNING `editor.value` FIRES NOTHING, AND FIVE MODULES DO IT.
+
+   `ui.js` prefills a question's starter code, `events.js` resets between
+   questions, `timer.js` restores a saved draft, `lessons.js` loads example
+   code, `notebook-editor.js` seeds a new cell — none of them dispatch an
+   event, because a textarea does not need one. Two features now do: the
+   syntax overlay has to repaint, and the cell has to re-measure its height.
+
+   So the property is shadowed ON THE ELEMENT, delegating to the native
+   descriptor and then announcing itself. `delta-editor-value-set` does NOT
+   bubble and is NOT an `input` event on purpose — it is a repaint signal,
+   not a learner edit, and the notebook's draft autosave listens for `input`
+   on the whole pane.
+
+   🔴 THIS IS THE ONLY PLACE THAT MAY PATCH `value` ON A CODE EDITOR. A
+   second patch installed later would capture the PROTOTYPE descriptor, not
+   this one, so its setter would bypass this announcement entirely and
+   whichever feature got here first would silently stop updating. Anything
+   that needs to know a value was written listens for the event. */
+function announceValueWrites(editor) {
+  const native = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value");
+  Object.defineProperty(editor, "value", {
+    configurable: true,
+    get() { return native.get.call(this); },
+    set(v) {
+      native.set.call(this, v);
+      this.dispatchEvent(new Event("delta-editor-value-set"));
+    },
+  });
+}
+
 function installCodeEditorKeys(editor) {
   if (!editor || editor.dataset.deltaEditorKeys === "1") return;
   editor.dataset.deltaEditorKeys = "1";
+  /* Every code cell in the app reaches this function exactly once — the one
+     in index.html below, and every cell notebook-editor.js mints — which is
+     why the editor's shared plumbing is hung here rather than at five call
+     sites that would each have to remember.
+
+     Order is load-bearing: the announcement has to be in place before
+     anything that listens for it, and the highlighter builds the
+     `.code-surface` wrapper and the overlay that draws the ghost, which the
+     completion layer needs. Both layers are optional (`?.`): if either
+     script is missing the editor is exactly the plain textarea it was
+     before, keys and all. */
+  announceValueWrites(editor);
+  window.DeltaCodeHighlight?.attach(editor);
+  window.DeltaCodeComplete?.attach(editor);
   let editorTabEscapes = false;
   editor.addEventListener("keydown", (e) => {
     // Enter keeps the indent you are already at, so the learner does not have

@@ -14,6 +14,89 @@ import sys
 from watch_common import HERE, SHARED, read
 
 
+def check_the_session_clock_is_not_the_learners_to_set():
+    """Fixed per-QUESTION allowances, pause/resume only, and a notch that stays.
+
+    Four halves of one 2026-08-23 decision, and each one comes undone on its
+    own without anything else here failing:
+
+      1. The two allowances are constants in timer.js. Putting them back on the
+         snapshot, or back behind an input, is how "predetermined" quietly
+         stops being true — and a v2 snapshot that carries `answerSecs` again
+         would resume a question under a clock this build never set.
+      2. A block has no LENGTH. `shouldFinishInsteadOfAdvance` returning a
+         quota comparison again reinstates a session that ends on its own,
+         which is the thing pause replaced.
+      3. There is no End session — not the button, not the handler, not the
+         menu item. Pause is the only way out.
+      4. The notch outlives the session, so it hangs off `.practice-container`
+         and not off `.practice-split` (which is display:none between blocks).
+         This one is pure DOM order: nothing throws when it regresses, the
+         notch simply is not on the idle screen.
+    """
+    timer = read(os.path.join(HERE, "timer.js"))
+    for name in ("ANSWER_SECS", "REVIEW_SECS"):
+        assert re.search(rf"const {name} = \d+;", timer), (
+            f"timer.js lost {name} — the per-question allowance is settable again"
+        )
+    snapshot = timer.split("const _snapshot = () => {", 1)
+    assert len(snapshot) == 2, "timer.js::_snapshot is gone"
+    body = snapshot[1].split("\n  };", 1)[0]
+    for dead in ("answerSecs:", "reviewSecs:", "total:"):
+        assert dead not in body, (
+            f"_snapshot writes `{dead}` again. The clock is a constant and a "
+            f"block has no length; a snapshot carrying either resumes under "
+            f"rules this build does not enforce"
+        )
+    assert "const shouldFinishInsteadOfAdvance = () => false;" in timer, (
+        "a session quota is back — `shouldFinishInsteadOfAdvance` compares "
+        "again, so a block can end on its own instead of being paused"
+    )
+
+    index_html = read(os.path.join(SHARED, "index.html"))
+    for dead in ('id="session-end-btn"', 'id="practice-notch-end"',
+                 'id="session-question-count"', 'id="session-answer-time"',
+                 'id="session-review-time"'):
+        assert dead not in index_html, (
+            f"{dead} is back in index.html — the learner is setting the "
+            f"session again, or ending it early"
+        )
+    assert 'id="practice-notch-stop"' in index_html, (
+        "the notch lost its square. It is the pause control that is always on "
+        "screen; the menu item alone is two clicks for the only way out"
+    )
+    # The square is LEFT of the clock: it is the first thing in the tab after
+    # the screen-reader phase span, and the clock follows it.
+    tab = index_html.split('id="practice-notch-tab"', 1)[1].split("</div>", 1)[0]
+    stop_at = tab.find('id="practice-notch-stop"')
+    clock_at = tab.find('id="practice-notch-clock"')
+    assert -1 not in (stop_at, clock_at) and stop_at < clock_at, (
+        "the square is no longer to the LEFT of the clock in the notch tab"
+    )
+    # And the notch hangs off the container, so it survives the split going away.
+    container_at = index_html.find('<div class="practice-container">')
+    notch_at = index_html.find('id="practice-notch"', container_at)
+    split_at = index_html.find('<div class="practice-split">', container_at)
+    assert -1 not in (container_at, notch_at, split_at), "practice page lost a landmark"
+    assert notch_at < split_at, (
+        "#practice-notch is inside .practice-split again. The split is "
+        "display:none between sessions, so the notch would vanish with it — "
+        "and it has to stay, showing the allowance the next question gets"
+    )
+
+    # The idle screen reads a real number, and says so honestly when it cannot.
+    idle = read(os.path.join(HERE, "session-idle.js"))
+    assert "PracticeReadiness" in idle and "hasPausedSession" in idle, (
+        "session-idle.js no longer reads readiness, or decides resume-vs-start "
+        "from timer.js's own answer"
+    )
+    assert 'pctEl.textContent = "—"' in idle, (
+        "the idle screen renders an unreadable readiness as a number. A "
+        "registry that would not load is a claim about the network, not a 0% "
+        "claim about the learner"
+    )
+
+
 def check_invariants():
     for fname in ("README.md", "watch.py"):
         first = read(os.path.join(HERE, fname)).splitlines()[:1]
@@ -395,3 +478,118 @@ eq(route({{topic: "Numpy", supports_visual_output: true}}, "arr.mean()"), "pyodi
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
+
+
+def check_a_deleted_practice_notice_stays_deleted():
+    """Three surfaces Seth removed on 2026-08-23, and the bar that replaced one.
+
+    Each of these grows back easily, because each one reads like an
+    improvement in isolation:
+
+      #cold-start-badge          two blocks of standing explanation above every
+                                 calibration/placement question
+      #practice-mode-intro       "Practice is your adaptive queue…"
+      #practice-mode-notice      the floating mode-demotion banner
+
+    They are gone from markup, JS and CSS together. Re-adding any of them from
+    one side only (a stylesheet rule with no element, or an element nothing
+    styles) is the state this check exists to reject — and re-adding the DOM
+    writer for the notice reintroduces a banner Seth asked twice to be rid of.
+
+    ⚠️ Deleting the notice DID cost something real, recorded here so nobody
+    re-derives it as a surprise: a silent demotion to the demo pool (expired
+    token, backend down) now shows up only in the console, and the practice UI
+    renders identically in that state. practice/mode.js carries the full note
+    and the shape of an acceptable replacement.
+
+    The progress bar is the other half: a placement in progress has to say how
+    far through it is, and `budget` is a CEILING, so the bar must never claim a
+    fixed length — the count says "of at most" and a tick marks the earliest
+    possible finish.
+    """
+    index = read(os.path.join(SHARED, "index.html"))
+    mode = read(os.path.join(HERE, "mode.js"))
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+
+    # Matched on the ATTRIBUTE, never the bare name: these files carry comments
+    # explaining what was deleted, and a substring check over prose fails on its
+    # own tombstone. (Cost one run to learn, twice now.)
+    for gone in ('id="cold-start-badge"', 'id="cold-start-label"',
+                 'id="cold-start-note"', 'class="cold-start-badge',
+                 'id="practice-mode-intro"', 'id="practice-mode-notice"'):
+        assert gone not in index, (
+            f"{gone} is back in index.html — it was deleted on 2026-08-23 "
+            "(markup, JS and CSS together); read practice/mode.js first"
+        )
+    assert "function showPracticeModeNotice" not in mode, (
+        "the mode-demotion banner is back. If a demotion needs to be visible "
+        "again, put it on the session status row — mode.js says why"
+    )
+    # ...and the CSS half. A rule for an element that no longer exists is the
+    # half-deletion this check is named for: it reads as live styling to the
+    # next person and invites the markup back. (codex flagged that the check
+    # claimed to cover CSS and did not.)
+    styles = os.path.join(SHARED, "styles", "practice")
+    for fname, sel in (("question.css", ".cold-start-badge {"),
+                       ("question.css", ".cold-start-label {"),
+                       ("question.css", ".cold-start-note {"),
+                       ("misc.css", ".practice-mode-intro {"),
+                       ("feedback.css", ".practice-mode-notice {")):
+        assert sel not in read(os.path.join(styles, fname)), (
+            f"{fname} still styles {sel.strip(' {')} — the element was deleted "
+            "on 2026-08-23, so this rule matches nothing"
+        )
+    # The countdown outlived the badge that used to host it.
+    assert 'id="placement-timer"' in index, (
+        "#placement-timer went with the cold-start badge — the placement's "
+        "fixed 2:00 clock has no anchor and every probe becomes untimed"
+    )
+    # ...and it is ON THE NOTCH TAB (Seth, 2026-08-23: the timer belongs on the
+    # tab, not beside the concept heading). The anchor has now moved twice, so
+    # what is asserted is the CURRENT home, in the markup rather than in the JS:
+    # placement-timer.js reads it by id and no longer knows which row it is in.
+    notch_tab = index.split('id="practice-notch-tab"', 1)
+    assert len(notch_tab) == 2, "the notch tab is gone — #practice-notch-tab"
+    tab_markup = notch_tab[1].split("</div>", 1)[0]
+    assert 'id="placement-timer"' in tab_markup, (
+        "#placement-timer left the notch tab. It is the placement's only "
+        "countdown and notch-menu.js hides the session clock while it shows, "
+        "so anywhere else means a probe timed off-screen"
+    )
+    timer_js = read(os.path.join(HERE, "placement-timer.js"))
+    assert 'getElementById("cold-start-badge")' not in timer_js and (
+        'getElementById("placement-timer")' in timer_js), (
+        "placement-timer.js is not reading its element by id — _chip() returns "
+        "null and the countdown never renders"
+    )
+    # 🔴 One clock on the tab. The placement runs outside a session, so
+    # `_sessionOpen()` is false throughout and the session clock would sit
+    # beside the probe's countdown, greyed at its idle allowance — two numbers,
+    # one of them stopped.
+    notch_js = read(os.path.join(HERE, "notch-menu.js"))
+    assert '"placement-timer"' in notch_js, (
+        "notch-menu.js no longer defers to the placement clock — the tab shows "
+        "the idle session allowance next to a running probe countdown"
+    )
+    assert "PracticeNotch?.syncClock" in timer_js, (
+        "placement-timer.js must poke the notch when it shows or hides its "
+        "clock; nothing else observes this module and the session clock would "
+        "not come back when the test ends"
+    )
+
+    # The progress bar: anchors present, and honest about the ceiling.
+    for anchor in ("placement-progress", "placement-progress-fill",
+                   "placement-progress-tick", "placement-progress-count"):
+        assert f'id="{anchor}"' in index, f"index.html lost the #{anchor} anchor"
+    assert "of at most" in page, (
+        "the placement progress count must say 'of at most' — the test stops as "
+        "soon as it is confident, so `budget` is a ceiling and not a length"
+    )
+    assert "min_probes" in page, (
+        "the bar lost its earliest-finish tick, so it implies a run to the full "
+        "budget that most placements never make"
+    )
+    assert 'host.classList.toggle("hidden", !show)' in page, (
+        "the progress bar must hide outside an active placement — a finished "
+        "test showing a part-full bar reads as unfinished"
+    )

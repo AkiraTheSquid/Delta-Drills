@@ -29,7 +29,15 @@
   overflow-x: auto;
 }
 
-/* Code Editor */
+/* Code Editor.
+
+   `.code-highlight` (the syntax-colour overlay `practice/code-highlight.js`
+   paints BEHIND the textarea) shares this rule rather than restating it.
+   The overlay only lines up while its font metrics and box model are
+   identical to the textarea's, so the two must never be able to drift apart
+   in a later edit — one rule is the only way to guarantee that. Anything
+   that is genuinely per-layer (background, text colour, the caret) lives in
+   styles/practice/code-highlight.css. */
 .editor-header {
   font-size: 12px;
   font-weight: 600;
@@ -39,7 +47,8 @@
   margin-bottom: 10px;
 }
 
-.code-editor {
+.code-editor,
+.code-highlight {
   width: 100%;
   flex: 1;
   min-height: 200px;
@@ -51,9 +60,16 @@
   font-size: 13px;
   color: var(--white);
   line-height: 1.6;
+  letter-spacing: normal;
   resize: none;
   tab-size: 4;
   outline: none;
+  /* A textarea's own defaults, written down because the overlay is a <pre>
+     and a <pre> does not wrap at all unless told to. Different wrapping on
+     the two layers is a one-line-at-a-time drift down the whole cell. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
   transition: border-color 0.15s;
 }
 

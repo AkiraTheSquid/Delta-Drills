@@ -2,12 +2,11 @@
    PRACTICE UI — rendering + feedback widgets
    ================================================================ */
 
-function isCalibrationQuestion(q) {
-  if (!q) return false;
-  if (typeof q.is_cold_start === "boolean") return q.is_cold_start;
-  const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
-  return isColdStart(q.subtopic, overrideN);
-}
+/* isCalibrationQuestion() lived here until 2026-08-23. Its only caller was the
+   #cold-start-badge block below, deleted with the badge — a predicate with no
+   consumer is a trap for the next reader, who assumes something still branches
+   on it. adaptive.js::coldStartIndex is now unused for the same reason; it is
+   left alone because that file belongs to another module. */
 
 const TORCH_IMPORT_RE = /(^|\n)\s*(import\s+torch\b|from\s+torch[\s.])/;
 
@@ -223,14 +222,18 @@ function renderQuestionIdChip(q) {
   if (!questionIdChip) return;
   const id = stableQuestionId(q);
   if (!id) {
-    questionIdChip.textContent = "ID --";
+    questionIdChip.textContent = "No question ID";
     questionIdChip.disabled = true;
     questionIdChip.removeAttribute("data-question-id");
     return;
   }
   questionIdChip.disabled = false;
   questionIdChip.dataset.questionId = id;
-  questionIdChip.textContent = `ID ${id}`;
+  /* Reads as a menu item now, not a chip — it lives in the notch's three-dot
+     menu (index.html, .practice-notch-menu). The id is still in the label
+     because quoting it in a bug report is the whole point of the thing, and
+     out of the question row nothing is competing for the width. */
+  questionIdChip.textContent = `Copy question ID · ${id}`;
   questionIdChip.title = `Copy stable problem ID: ${id}`;
   questionIdChip.onclick = async () => {
     const value = `question_id=${id}`;
@@ -240,7 +243,9 @@ function renderQuestionIdChip(q) {
       }
       questionIdChip.textContent = "Copied";
       window.setTimeout(() => {
-        if (questionIdChip.dataset.questionId === id) questionIdChip.textContent = `ID ${id}`;
+        if (questionIdChip.dataset.questionId === id) {
+          questionIdChip.textContent = `Copy question ID · ${id}`;
+        }
       }, 900);
     } catch (_) {
       questionIdChip.textContent = `ID ${id}`;
@@ -261,7 +266,20 @@ function renderQuestion(q, count) {
     return;
   }
   practiceQuestionCount = count;
-  questionNumber.textContent = "Question " + practiceQuestionCount;
+  /* The heading names the CONCEPT under test, not the running question count
+     (Seth, 2026-08-23). "Question 21" is a number that only goes up; "Reshape,
+     ravel, and element order" is what the next ten minutes are about.
+
+     `ladder_kc_title` is the same string the stage ladder says out loud and it
+     comes from the same field practice/ladder.js reads, so the two can never
+     disagree. Two fallbacks, in order, because a KC-less item is a real case:
+     the subtopic, which is coarser but still the topic, and finally the count
+     — better a stale-feeling counter than a blank heading. */
+  const conceptHeading =
+    (q.ladder_kc_title || "").trim() ||
+    displaySubtopic(String(q.subtopic || "")).trim() ||
+    "Question " + practiceQuestionCount;
+  questionNumber.textContent = conceptHeading;
   renderQuestionBody(q);
   // Names the concept under test and, on the scaffolded rungs, puts the worked
   // example back on screen beside the problem. Must run AFTER renderQuestionBody
@@ -289,37 +307,16 @@ function renderQuestion(q, count) {
   if (typeof updateGraphJump === "function") updateGraphJump(q);
   questionMetaTop.classList.add("hidden");
 
-  // Placement diagnostic badge (backend ALEKS-style placement) takes priority
-  // over the legacy per-skill cold-start badge (offline staircase only).
-  const overrideN = Number.isFinite(q.subtopic_n) ? q.subtopic_n : undefined;
-  const coldStart = isCalibrationQuestion(q);
-  const csIndex = Number.isFinite(q.subtopic_n) ? q.subtopic_n + 1 : coldStartIndex(q.subtopic, overrideN);
-  if (q.diagnostic_active) {
-    coldStartLabel.textContent =
-      `Placement test — question ${q.diagnostic_probe_index} of ≤${q.diagnostic_budget} · exploring ${q.diagnostic_area || q.topic}`;
-    if (coldStartNote) {
-      // Every probe gets the SAME allowance, so say the number rather than
-      // "timed" — the learner budgets the question against a figure they can
-      // check on the countdown beside this line.
-      coldStartNote.textContent =
-        `A short adaptive test: each question is picked to tell us the most about your level, hopping across topics instead of grinding one area. Every question gets the same ${Math.round((window.PlacementTimer?.secondsPerQuestion?.() ?? 120) / 60)} minutes — when the time is up we record what you have and move on. Answer what you can — and hit “I don't know yet” when something is clearly above you; that's a fast, honest signal (no penalty). It ends automatically once your level is pinned down, and regular practice starts exactly there.`;
-    }
-    coldStartBadge.classList.remove("hidden");
-  } else if (coldStart && csIndex) {
-    // Calibration is PER SKILL, not global — say so, or "1 of 3" on overall
-    // Question 8 reads as a stuck counter (tester hit exactly this).
-    coldStartLabel.textContent = `Calibrating “${displaySubtopic(q.subtopic)}” — ${csIndex} of 3`;
-    if (coldStartNote) {
-      // Copy must match reality: selection is adaptive from question 1
-      // (wrong → easier, right → harder), NOT "3 questions at fixed
-      // difficulties" (that described the old fixed-ramp system, removed).
-      coldStartNote.textContent =
-        `The first few questions in each skill probe your level — difficulty adapts from your answers (easier after a miss, harder after a hit). This counter restarts whenever a new skill (like “${displaySubtopic(q.subtopic)}”) first comes up; concept understanding reports its own BKT evidence and coverage.`;
-    }
-    coldStartBadge.classList.remove("hidden");
-  } else {
-    coldStartBadge.classList.add("hidden");
-  }
+  /* #cold-start-badge was DELETED on 2026-08-23. It carried two blocks of
+     standing explanation — the "Calibrating <skill> — 1 of 3" counter and the
+     placement probe header with its paragraph about how the test works — above
+     every question they applied to. Seth's call: neither is worth the space,
+     the learner already knows which test they are in, and the paragraph was
+     read once at most.
+
+     What survives is the part that changes: #placement-timer, now in
+     .question-number-row (see index.html). Nothing else read those nodes, so
+     there is no state to migrate — this is a deletion, not a move. */
   // "I don't know yet" only exists during placement — in normal practice the
   // Skip button (nothing recorded) covers that need.
   if (typeof practiceDontKnowBtn !== "undefined" && practiceDontKnowBtn) {

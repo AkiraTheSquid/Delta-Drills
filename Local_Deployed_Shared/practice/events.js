@@ -356,13 +356,10 @@ async function _notifyIfPlacementDone() {
     refreshPlacementStartBtn().catch(() => {});
     window.DiagnosticPage?.refresh();
     emitPracticeStateChanged();
-    if (typeof showPracticeModeNotice === "function") {
-      const strongest = (status.areas || []).slice().sort((a, b) => b.theta - a.theta)[0];
-      showPracticeModeNotice(
-        `Placement test complete after ${status.probes_done} questions — practice now starts at your level` +
-        (strongest ? ` (strongest area: ${strongest.topic}).` : "."),
-      );
-    }
+    /* The "placement complete" banner was deleted on 2026-08-23 with the rest
+       of #practice-mode-notice, and nothing is lost: the results card on the
+       Placement page now reports the same finish with the actual per-area
+       numbers behind it, instead of one sentence naming the strongest area. */
   } catch (_) {
     /* best-effort — never blocks the practice flow */
   }
