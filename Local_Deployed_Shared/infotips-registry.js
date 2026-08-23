@@ -22,7 +22,11 @@ window.DD_INFOTIPS = {
   /* ---- Tabs -------------------------------------------------------- */
   "tab.why-this-app": {
     title: "Why this app exists",
-    body: "The landing page: what Delta Drills is for, and the loop it runs — place you, pick the concept, teach it, then hand you the real <strong>ARENA</strong> problem.",
+    body: "The landing page: what Delta Drills is, and what sets it apart from LeetCode, Khan Academy, or a chatbot tutor.",
+  },
+  "tab.how-to-use": {
+    title: "How to use it",
+    body: "The three steps: take the placement test, live on the <strong>Practice</strong> tab, and let the app hand you the real ARENA exercise when you're ready.",
   },
   "tab.knowledge-graph": {
     title: "Knowledge Graph",

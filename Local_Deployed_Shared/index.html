@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=2" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=22" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=23" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
@@ -131,6 +131,8 @@
     <nav class="tabs">
       <button class="tab active has-info" data-tab="why-this-app" type="button">Why This App Exists</button>
       <button class="dd-info tab-info" data-dd-info="tab.why-this-app" data-tab="why-this-app" type="button" aria-expanded="false" aria-label="What is Why This App Exists?">i</button>
+      <button class="tab has-info" data-tab="how-to-use" type="button">How to use it</button>
+      <button class="dd-info tab-info" data-dd-info="tab.how-to-use" data-tab="how-to-use" type="button" aria-expanded="false" aria-label="What is How to use it?">i</button>
       <button class="tab auth-only has-info" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
       <button class="dd-info tab-info auth-only" data-dd-info="tab.knowledge-graph" data-tab="knowledge-graph" type="button" aria-expanded="false" aria-label="What is the Knowledge Graph?">i</button>
       <button class="tab has-info" data-tab="diagnostic" type="button">Placement test</button>
@@ -221,53 +223,72 @@
       <section class="hiw-hero">
         <h1>Why this app exists</h1>
         <p class="hiw-lead">
-          Delta Drills is a <strong>Khan Academy / LeetCode for the AI-safety
-          ARENA curriculum</strong>. ARENA assumes you can already write the
-          PyTorch; this drills the prerequisites until you can.
-        </p>
-        <p class="hiw-lead">
-          It uses <strong>machine learning to teach machine learning</strong>.
-          A statistical model estimates your strengths and
-          weaknesses as you work, and serves you the right concept at the right
-          level of difficulty and scaffolding.
+          Delta Drills is an <strong>intelligent tutoring system</strong> that
+          serves the learner LeetCode-style problems to train PyTorch
+          prerequisites specifically for the AI-safety <strong>ARENA</strong>
+          curriculum. Given that it is an intelligent tutoring system, there
+          are three markers that distinguish it in value from something like
+          LeetCode or Khan Academy (or simply prompting ChatGPT or Claude as
+          a tutor).
         </p>
       </section>
 
       <section class="hiw-section">
-        <p class="hiw-eyebrow">What it does today</p>
-        <h2>One loop, run against your own frontier</h2>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <div class="step-card-title">A placement test places you</div>
-            <div class="step-card-text">A short placement shows you where you actually stand against what ARENA will ask of you.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <div class="step-card-title">It picks the concept</div>
-            <div class="step-card-text">The app chooses the next concept to teach you, matched to your current level of mastery.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <div class="step-card-title">And picks how to teach it</div>
-            <div class="step-card-text">For that concept it serves one of three things: a lesson, a worked example, or practice problems.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">4</div>
-            <div class="step-card-title">Your answer moves the model</div>
-            <div class="step-card-text">How you do updates the student model, so the next choice is made on newer evidence than the last one.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">5</div>
-            <div class="step-card-title">The scaffolding fades</div>
-            <div class="step-card-text">As you solve problems the model tracks your learning frontier and pulls the support back to match it.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">6</div>
-            <div class="step-card-title">Then the real thing</div>
-            <div class="step-card-text">Once you're ready for an ARENA problem, it gives you the ARENA problem.</div>
-          </div>
-        </div>
+        <p class="hiw-eyebrow">The value add</p>
+        <h2>It is personalized, and AI-paced (as opposed to self-paced)</h2>
+        <p>
+          The app maintains a student model that estimates a student's
+          strengths and weaknesses as they work. It then serves them the
+          right concept at the right level of difficulty and scaffolding.
+          Students move on from a concept when they have mastered it, rather
+          than after they run out of time in a course where time conditions
+          dictate keeping up with everyone else in your cohort (as with any
+          in-person program).
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <h2>It eliminates decision fatigue of choosing content, while
+          preserving human connection</h2>
+        <p>
+          For this MVP, I target PyTorch, but these principles apply just as
+          well to all the other concepts necessary for ARENA prerequisites
+          (and beyond, to ARENA itself). In order to prepare for ARENA, the
+          learner is left with prioritizing learning linear algebra, calculus,
+          information theory, and neural networks, all before even touching
+          the curriculum. Self-diagnosing and practicing the right concepts
+          with the right investment becomes irrelevant if one has a tool that
+          does all of that automatically. There are no modules to click on
+          like one has with Khan Academy.
+        </p>
+        <p>
+          For the ARENA curriculum itself, one may wonder how this would
+          align with a linear 8-week program. It doesn't. Or rather, not
+          without adjustment. My vision is to give the option to go through
+          the ARENA curriculum with Delta Drills driving it all. Interacting
+          with other humans is also valuable, however, which is why I
+          designed a path that syncs well with the in-person program. The
+          curriculum already serves up suggested time limits for working on
+          problems. If a learner spends 15 minutes on a problem they
+          struggled with, they should spend time later shoring up the
+          concepts that made it hard. Delta Drills queues that practice for
+          them, so they keep pace with the cohort and the gaps still get
+          closed.
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <h2>It leverages the expertise reversal effect</h2>
+        <p>
+          Instruction that helps a novice can actively hurt someone further
+          along. A full worked example is exactly what you need the first
+          time you meet a concept; once you are competent, that same example
+          gets in your way. So the app picks more than the concept. It also
+          picks the level of support: a lesson or worked example when a
+          concept is new to you, a partially worked example as you improve,
+          and a bare problem once you are strong. Same material, support
+          matched to where you stand.
+        </p>
       </section>
 
       <section class="hiw-section">
@@ -330,6 +351,105 @@
       <p class="hiw-graph-cta">
         <button type="button" class="hiw-graph-cta-btn" data-goto-tab="diagnostic">
           Start with the placement test →
+        </button>
+      </p>
+
+    </div>
+  </main>
+
+
+  <!-- HOW TO USE IT — the practical companion to the tab on its left: that
+       one says why the app is worth using, this one says what to actually
+       do. Three steps, then the six-step loop that used to live on Why This
+       App Exists. Same .hiw-* type scale; the 3x2 .steps-grid override in
+       how-it-works.css is scoped to THIS page now. -->
+  <main class="page hidden" id="page-how-to-use">
+    <div class="container">
+
+      <section class="hiw-hero">
+        <h1>How to use it</h1>
+        <p class="hiw-lead">
+          Three steps. You will spend nearly all of your time on the second
+          one.
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">Step 1</p>
+        <h2>Take the placement test</h2>
+        <p>
+          Start here. The placement test serves you at most six problems and
+          takes twelve minutes at the outside, since each problem is capped
+          at two minutes. Every answer updates the app's estimate of your
+          understanding across every concept in the knowledge graph, not just
+          the concept the question came from. That is why six problems are
+          enough: when the test ends, Practice knows where to start you.
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">Step 2</p>
+        <h2>Live on the Practice tab</h2>
+        <p>
+          Day to day, the Practice tab is the whole app. Open it and solve
+          what it gives you. You do not pick topics or track what is due, and
+          you do not decide when you are done with a concept; the app works
+          that out from your answers. This is where you spend most of your
+          time, and there is nothing else you need to manage.
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">Step 3</p>
+        <h2>Then ARENA itself</h2>
+        <p>
+          Whenever you are ready, the app brings you over to the ARENA
+          curriculum itself, landing you on the exact coding problem for the
+          ARENA exercise you are ready for. That handoff is the point of
+          everything before it.
+        </p>
+      </section>
+
+      <section class="hiw-section">
+        <p class="hiw-eyebrow">Under the hood</p>
+        <h2>One loop, run against your own frontier</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-card-title">A placement test places you</div>
+            <div class="step-card-text">A short placement shows you where you actually stand against what ARENA will ask of you.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-card-title">It picks the concept</div>
+            <div class="step-card-text">The app chooses the next concept to teach you, matched to your current level of mastery.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-card-title">And picks how to teach it</div>
+            <div class="step-card-text">For that concept it serves one of three things: a lesson, a worked example, or practice problems.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-card-title">Your answer moves the model</div>
+            <div class="step-card-text">How you do updates the student model, so the next choice is made on newer evidence than the last one.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">5</div>
+            <div class="step-card-title">The scaffolding fades</div>
+            <div class="step-card-text">As you solve problems the model tracks your learning frontier and pulls the support back to match it.</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">6</div>
+            <div class="step-card-title">Then the real thing</div>
+            <div class="step-card-text">Once you're ready for an ARENA problem, it gives you the ARENA problem.</div>
+          </div>
+        </div>
+      </section>
+
+      <p class="hiw-graph-cta">
+        <button type="button" class="hiw-graph-cta-btn" data-goto-tab="diagnostic">
+          Start with the placement test &rarr;
         </button>
       </p>
 
@@ -977,7 +1097,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=6"></script>
+  <script src="infotips-registry.js?v=7"></script>
   <script src="infotips.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those

@@ -158,6 +158,42 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-23 — the landing story is now two tabs.** `index.html`,
+  `infotips-registry.js`, `styles/how-it-works.css`. "Why This App Exists"
+  carries Seth's value-add essay (personalized/AI-paced, no decision fatigue,
+  expertise reversal effect) in his own words; a new guest-visible
+  **How to use it** tab to its right holds the practical path (placement test
+  → live on Practice → handoff to ARENA) plus the six-step loop grid, which
+  moved there from the why page. The 3x2 `.steps-grid` override in
+  `how-it-works.css` is scoped to `#page-how-to-use` now. Tab id
+  `how-to-use`, infotip key `tab.how-to-use`.
+
+- **2026-08-23 — a 401 is three different things, and only one of them means
+  "sign in".** `app.js`, `guest-session.js`, `practice/diagnostic-page.js`.
+  `apiFetch` recovers an expired GUEST token in place — it holds the password —
+  and retries the one request that failed, so a token dying under a graded
+  submit is a hiccup instead of "Submit did nothing". Three rules keep that
+  from becoming its own bug, all three found by codex on the first cut:
+  - 🔴 **A replay is only safe while the identity has not moved.** The retry
+    fires when `authToken` changed mid-flight, and a second sign-in changes
+    `authToken` too. `setAuthState` does NOT reload on guest → person (the
+    guest already held a token, so `wasAuthed` is true), so the request's POST
+    body — a graded answer — could be replayed against a different account.
+    `apiFetch` now captures `authEmail` beside the token and replays only while
+    they still match.
+  - 🔴 **The same race runs backwards inside `refreshSilently`**, which checked
+    `isGuestSession()` before awaiting `/auth/login` and adopted the result
+    after. Signing in during that await put the guest token back on top and set
+    `GUEST_ACTIVE_KEY` again — sign in, be a guest. A login whose identity moved
+    underneath it is now dropped.
+  - 🔴 **A failed silent re-login is not proof of being signed out.** It also
+    declines to run while the backend is unreachable and during its 30s
+    cooldown, and the caller sees the original 401 either way. `DDGuest.
+    canRecover()` (guest session + credentials still in this browser) separates
+    them, so a learner mid-placement gets outage copy and a retry instead of a
+    stuck "Sign in to take the placement test". **403 is untouched** — a fresh
+    token for the same account cannot fix an authorization refusal.
+
 - **2026-08-22 — the app has levels, and the `Level N` pill IS the progress
   bar.** `xp.js` + `styles/xp.css` are new. The topbar carries a `Level N` chip
   between the logo and the tab strip, and that chip colours in from the left as
