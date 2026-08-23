@@ -33,6 +33,9 @@ let authEmail = localStorage.getItem("auth_email") || "";
 // — must ask isSignedIn(); anything about CAPABILITY still asks authToken.
 const GUEST_CREDENTIALS_KEY = "dd_guest_credentials";
 const GUEST_ACTIVE_KEY = "dd_auth_is_guest";
+// Where the learner was when a recovery reload took the page out from under
+// them. Written by guest-session.js, read once on the next load.
+const RECOVERED_TAB_KEY = "dd_recovered_tab";
 const isGuestSession = () => localStorage.getItem(GUEST_ACTIVE_KEY) === "1";
 const isSignedIn = () => !!authToken && !isGuestSession();
 
@@ -318,6 +321,11 @@ const maybeRefreshSupabaseAuth = async () => {
 
 const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   const headers = options.headers ? { ...options.headers } : {};
+  // Remember which token this request actually carried. Several calls are in
+  // flight whenever a token dies, and the first one back refreshes it — the
+  // stragglers then arrive holding a 401 for a token that has ALREADY been
+  // replaced. Those need a retry, not a second login.
+  const sentWith = authToken;
   if (authToken) {
     headers.Authorization = `Bearer ${authToken}`;
   }
@@ -327,9 +335,30 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
     if (refreshed && authToken) {
       return apiFetch(path, options, false);
     }
+    /* A GUEST token that expired is recoverable without anyone noticing: the
+       account is fine and this browser still holds its password. Mint a new
+       token and retry the one request that failed.
+
+       This has to happen HERE, at the fetch, rather than at each call site.
+       The 401 that matters most is the graded submit — the backend records
+       the attempt and the old path reloaded the page over the top of the
+       result, so the learner saw Submit do nothing. Retrying in place is the
+       difference between a hiccup and losing the answer they just wrote. */
+    if (authToken && authToken !== sentWith) {
+      return apiFetch(path, options, false);
+    }
+    const guested = await global_DDGuest()?.refreshExpiredSession?.();
+    if (guested && authToken) {
+      return apiFetch(path, options, false);
+    }
   }
   return response;
 };
+
+// Read through `window` rather than the binding: guest-session.js is loaded
+// AFTER this file, so `DDGuest` does not exist yet when apiFetch is defined —
+// only when it is called.
+const global_DDGuest = () => window.DDGuest;
 
 // --- Sign in with Google (Google Identity Services) ---
 
@@ -496,13 +525,27 @@ if (authToken) {
 // before switching, then confirm the optimistic pre-paint class only after the
 // requested page is visible so no other page flashes first.
 const soloTab = window.DDSoloRoute?.read?.() || "";
+/* A reload the LEARNER did not ask for should put them back where they were.
+   The only one left is guest-session.js's last-resort recovery, and landing a
+   learner mid-placement on the practice setup card reads as the app having
+   thrown their work away. Read once and clear: this is for the reload that
+   just happened, never for the next one. */
+const recoveredTab = (() => {
+  try {
+    const tab = sessionStorage.getItem(RECOVERED_TAB_KEY) || "";
+    if (tab) sessionStorage.removeItem(RECOVERED_TAB_KEY);
+    return tab;
+  } catch (_) {
+    return "";
+  }
+})();
 // First visit lands on the pitch, every visit after it lands on the work.
 // `authToken` is the right test for that and isSignedIn() is not: a returning
 // GUEST has a token (guest-session.js stored one last time) and wants their
 // practice queue, not the explainer they already read. A first-time visitor
 // has nothing stored yet, which is the one moment "Why this app exists" is
 // the most useful page in the app.
-switchTab(soloTab || (authToken ? "practice" : "why-this-app"));
+switchTab(soloTab || recoveredTab || (authToken ? "practice" : "why-this-app"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by

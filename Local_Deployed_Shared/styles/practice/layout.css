@@ -45,6 +45,9 @@
 .practice-split {
   display: flex;
   flex: 1 1 auto;
+  /* The anchor for #practice-notch, which hangs from this box's top edge on
+     the seam between the two panels (styles/practice/notch-menu.css). */
+  position: relative;
   /* Without this, a flex item refuses to shrink below its content's height and
      the panels' own `overflow-y: auto` never engages. */
   min-height: 0;

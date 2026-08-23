@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
 CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
-             "misc.css", "stage-ladder.css", "notebook-editor.css", "diagnostic.css"]
+             "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css", "diagnostic.css"]
 
 
 def _read(path):

@@ -490,6 +490,25 @@ const StageLadder = (() => {
       if (dx) callout.style.transform = `translateX(calc(-${shift}% + ${dx.toFixed(2)}px))`;
     }
 
+    /* The arrow has to point at the FILL'S EDGE, which is not the middle of
+       the notch: near either end of the bar the notch stops sliding (`shift`
+       goes to 0 or 100) and the measured nudge above can move it further
+       still, while the thing it is pointing at has not moved at all. So the
+       arrow is placed last, from the bar's own geometry, and clamped inside
+       the notch's corners so it never hangs off a rounded edge. */
+    const arrow = callout.querySelector(".stage-ladder-callout-arrow");
+    const bar = _el("stage-ladder-bar");
+    if (arrow && bar) {
+      const track = bar.getBoundingClientRect();
+      const here = callout.getBoundingClientRect();
+      if (track.width && here.width) {
+        const edge = track.left + (pct / 100) * track.width;
+        const INSET = 12;  // clear of the 8px corner radius
+        const at = Math.max(INSET, Math.min(here.width - INSET, edge - here.left));
+        arrow.style.left = `${at.toFixed(2)}px`;
+      }
+    }
+
     _pushNotchAside(callout);
   };
 
@@ -505,7 +524,9 @@ const StageLadder = (() => {
   const _pushNotchAside = (callout) => {
     const notch = document.getElementById("practice-notch");
     if (!notch) return;
-    notch.style.transform = "";
+    // Clear last frame's offset before measuring, or the notch is measured
+    // where the PREVIOUS reading pushed it and every render compounds.
+    notch.style.removeProperty("--dd-notch-dx");
     const at = notch.getBoundingClientRect();
     // Hidden with the split on the setup screen: nothing to move.
     if (!at.width) return;
@@ -522,7 +543,10 @@ const StageLadder = (() => {
     const left = box.left - GAP - at.right;    // or left of it
     // Whichever side keeps the notch on screen; right unless it would run off.
     const dx = split && at.right + right > split.right ? left : right;
-    notch.style.transform = `translate(calc(-50% + ${dx.toFixed(2)}px), -50%)`;
+    /* A variable, not a transform. The notch's own placement on the seam is
+       CSS's business (styles/practice/notch-menu.css) and writing a whole
+       transform here would silently overwrite it. */
+    notch.style.setProperty("--dd-notch-dx", `${dx.toFixed(2)}px`);
   };
 
   /* The rung's own promise, withdrawn when the page does not keep it.
