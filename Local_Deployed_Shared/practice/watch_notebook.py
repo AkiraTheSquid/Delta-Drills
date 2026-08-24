@@ -297,30 +297,57 @@ def check_the_notebook_never_falls_back_to_the_prefix_runner():
     assert "runSource" in notebook, "notebook.js no longer exports runSource"
 
 
-def check_a_solution_stays_closed_until_asked():
-    """The answer is one click away, never zero.
+def check_the_solution_is_shown_and_the_hints_are_not():
+    """The answer is on screen and runnable; a hint is still one click away.
 
-    Both the solution and the hints are compiled into the notebook as ordinary
-    cells sitting directly under the problem. Rendered as plain cells they would
-    simply be on screen, and the drill above them would be decoration.
+    This check used to read `check_a_solution_stays_closed_until_asked` and
+    enforced the opposite for the solution, on the reasoning that an answer on
+    screen makes the drill above it decoration. Seth reversed it on 2026-08-24
+    ("below your code answer it displays the actual solution that you can
+    scroll down to and run"): this surface is not graded, nothing on it records
+    an attempt except the line `dd_check` prints, and a closed disclosure on a
+    656-cell page is not findable. The point of compiling the solution in as a
+    CELL rather than as prose is that it runs.
+
+    HINTS DID NOT MOVE, and that asymmetry is the whole check. A hint read
+    before the attempt replaces the thinking it exists to prompt, and unlike
+    the solution there is no "I am stuck, show me it working" that a hint
+    answers better than the answer does.
+
+    Both stay `<details>` either way, so the summary is a real collapse
+    control — what changed is which one starts open.
     """
     view = read(os.path.join(HERE, "notebook-view.js"))
     solution = re.search(r"const _solutionCell = .*?\n  \};", view, re.S)
     assert solution, "notebook-view.js no longer has a _solutionCell"
     assert "_detailsCell" in solution.group(0), (
-        "the solution cell is no longer wrapped in a <details> — the answer "
-        "would be visible beside the problem it answers"
+        "the solution cell is no longer wrapped in a <details> — it must keep "
+        "the summary as a collapse control even though it starts open"
+    )
+    assert re.search(r"_detailsCell\([^)]*,\s*true\s*\)", solution.group(0), re.S), (
+        "the solution disclosure no longer starts open — the answer is back to "
+        "being a closed footer on a 656-cell page, which is what Seth asked to "
+        "fix on 2026-08-24"
+    )
+    assert "_codeCell" in solution.group(0), (
+        "the solution is no longer a runnable code cell — showing it as prose "
+        "gives up the one thing this surface has over reading the answer"
     )
     hints = re.search(r"const _hintsCell = .*?\n  \};", view, re.S)
     assert hints and "_detailsCell" in hints.group(0), (
         "the hints cell is no longer collapsed"
     )
+    assert not re.search(r"_detailsCell\([^)]*,\s*true\s*\)", hints.group(0), re.S), (
+        "the hints disclosure now starts open — a hint read before the attempt "
+        "replaces the thinking it was written to prompt; only the solution opens"
+    )
     details = re.search(r"const _detailsCell = .*?\n  \};", view, re.S)
     assert details and "document.createElement(\"details\")" in details.group(0), (
         "_detailsCell no longer builds a <details> element"
     )
-    assert "open" not in re.findall(r"el\.(\w+) = true", details.group(0)), (
-        "_detailsCell opens the disclosure it just built"
+    assert re.search(r"if \(open\) el\.open = true;", details.group(0)), (
+        "_detailsCell no longer opens on request — the `open` argument is what "
+        "keeps the solution/hints asymmetry in ONE place instead of two builders"
     )
 
 

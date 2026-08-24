@@ -65,6 +65,7 @@
        declares the control that replaces the strip as the way around the
        app. Nothing here is mode-scoped — the menu is the same in both. -->
   <link rel="stylesheet" href="styles/account-menu.css?v=2" />
+  <link rel="stylesheet" href="styles/instructor-review.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
@@ -91,7 +92,7 @@
        default. Strips the practice question down to the concept title, the
        problem, and the worked example; the rest of the rails come back with the
        Advanced toggle. -->
-  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=2" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -557,7 +558,7 @@
            also reachable later from the account dropdown, which is what the
            note promises. -->
       <button type="button" class="welcome-arm welcome-arm--instructor"
-              id="welcome-arm-instructor" data-goto-tab="practice">
+              id="welcome-arm-instructor" data-goto-tab="instructor-review">
         <span class="welcome-arm-label">I'm an instructor — enter instructor feedback mode</span>
         <span class="welcome-arm-note">Review the content and give feedback on it, rather than
           practicing it. You can switch back any time from the account menu.</span>
@@ -876,6 +877,66 @@
         </aside>
       </div>
     </div>
+  </main>
+
+
+  <!-- INSTRUCTOR REVIEW — what instructor feedback mode shows. NOT a tab:
+       reached from the welcome fork's third arm and the account-menu row
+       (both land here via [data-goto-tab]). Two doors — feedback through the
+       QUESTIONS or through the GRAPH (Seth, 2026-08-24). Logic in
+       instructor-review.js; styles/instructor-review.css. -->
+  <main class="page hidden" id="page-instructor-review">
+    <div class="container ir-container">
+      <div class="ir-head">
+        <h1>Instructor review</h1>
+        <p class="subtitle">You're reviewing the content, not practicing it. Everything you flag lands with a maintainer.</p>
+        <button class="ghost ir-back hidden" id="ir-back" type="button">&larr; Choose review type</button>
+      </div>
+      <div class="ir-chooser" id="ir-chooser">
+        <button class="ir-door" id="ir-door-questions" type="button">
+          <span class="ir-door-title">Review the questions</span>
+          <span class="ir-door-note">Browse the bank topic by topic — every question with its canonical
+            solution — and flag what's broken, unclear, wrong, or good. Actionable flags feed the
+            repair queue.</span>
+        </button>
+        <button class="ir-door" id="ir-door-graph" type="button">
+          <span class="ir-door-title">Review the graph</span>
+          <span class="ir-door-note">Inspect the concept graph's sequencing: tap a prerequisite or
+            encompassing edge to flag it, tap a concept to flag its label or placement, or propose
+            an edge that's missing.</span>
+        </button>
+      </div>
+      <section class="ir-view hidden" id="ir-questions">
+        <div class="ir-topics" id="ir-topics"></div>
+        <div class="ir-subtopics" id="ir-subtopics"></div>
+        <div class="ir-qlist" id="ir-qlist"></div>
+      </section>
+      <section class="ir-view hidden" id="ir-graph">
+        <div class="ir-graph-wrap">
+          <div class="ir-cy-wrap">
+            <div id="ir-cy"></div>
+            <div class="ir-graph-status" id="ir-graph-status">Loading the graph&hellip;</div>
+          </div>
+          <aside class="ir-panel">
+            <div class="ir-hint" id="ir-panel-hint">Tap an edge or a concept to flag it.</div>
+            <button class="ghost" id="ir-missing-edge" type="button">Propose a missing edge</button>
+            <div class="hidden" id="ir-form">
+              <div id="ir-form-target"></div>
+              <div id="ir-form-tags"></div>
+              <textarea id="ir-form-note" maxlength="5000"
+                placeholder="Optional note &mdash; why, or what it should be instead&hellip;"></textarea>
+              <button class="primary" id="ir-form-send" type="button">Send feedback</button>
+              <span class="ir-form-status hidden" id="ir-form-status"></span>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+    <!-- switchTab is a top-level const in app.js (not on window, on purpose);
+         these proxies are how scripts navigate: app.js wires every
+         [data-goto-tab] at boot, so a programmatic .click() routes. -->
+    <button data-goto-tab="instructor-review" hidden id="ir-goto" type="button"></button>
+    <button data-goto-tab="practice" hidden id="ir-exit-goto" type="button"></button>
   </main>
 
   <main class="page hidden" id="page-split-tool">
@@ -1632,6 +1693,7 @@ t.manual_seed(0)
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
   <script src="instructor-mode.js?v=1"></script>
+  <script src="instructor-review.js?v=1"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->
@@ -1678,7 +1740,7 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=35"></script>
+  <script src="practice/ui.js?v=36"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <script src="practice/api.js?v=21"></script>
@@ -1715,7 +1777,7 @@ t.manual_seed(0)
   <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
-  <script src="practice/notebook-view.js?v=1"></script>
+  <script src="practice/notebook-view.js?v=2"></script>
   <script src="practice/ladder.js?v=7"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>

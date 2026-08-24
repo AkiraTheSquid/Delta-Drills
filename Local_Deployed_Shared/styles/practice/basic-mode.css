@@ -142,3 +142,30 @@ html:not(.dd-colab-edition) body.dd-basic-mode #ai-explanation-section,
 html:not(.dd-colab-edition) body.dd-basic-mode #tutor-section {
   display: none;
 }
+
+/* 🔴 EXCEPT THE SOLUTION, AND ONLY AFTER A MISS.
+
+   Seth, 2026-08-24: "after you submit a problem, it essentially does not
+   display the actual correct answer ... make it such that it displays the
+   correct answer to the problem you got wrong after submitting."
+
+   Basic mode is the default, so the rule above was what every learner got:
+   a red Incorrect badge and no way to find out what the answer was. The
+   review step is the half of a wrong answer worth having, and it is not the
+   "too much information" the mode was cut down to remove — the felt-difficulty
+   rating, the BKT bar, the failing-case dump and the tutor still are, and all
+   of them stay hidden here.
+
+   Scoped to the miss on purpose. A correct answer already told the learner
+   what the answer was — theirs — so revealing a second copy of it is the
+   noise this file exists to cut. Advanced mode is unchanged and still shows
+   the solution either way.
+
+   `.result-incorrect` is written on #practice-feedback-area by
+   `ui.js::applyResult` and cleared on the next render, so it tracks the
+   VERDICT rather than the phase. The id is what lets this out-specify the
+   rule above without !important; keep both in this file so the pair is
+   read together. */
+html:not(.dd-colab-edition) body.dd-basic-mode #practice-feedback-area.result-incorrect .solution-section {
+  display: block;
+}

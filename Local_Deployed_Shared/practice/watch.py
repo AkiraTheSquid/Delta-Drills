@@ -34,7 +34,7 @@ from watch_notebook import (
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
     check_a_problem_is_recorded_once_per_visit,
-    check_a_solution_stays_closed_until_asked,
+    check_the_solution_is_shown_and_the_hints_are_not,
     check_the_notebook_never_falls_back_to_the_prefix_runner,
     check_the_notebook_view_is_loaded_after_what_it_calls,
     check_the_verdict_line_is_read_the_same_way_everywhere,
@@ -736,7 +736,19 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
         "the results card must render only for a FINISHED placement; a mid-test "
         "status carries live estimates that would read as a final result"
     )
-    assert "will appear here" not in index, (
+    # 🔴 SCOPED TO THE RESULTS CARD, not to the whole file. This read
+    # `"will appear here" not in index` until 2026-08-24, when e4a65d2b gave the
+    # Account tab's instructor-mode hint the sentence "Review tools will appear
+    # here as they are built" — copy in another tab, about another feature, that
+    # turned this into a standing false failure for every session in the repo.
+    # The invariant was always about ONE element: #diagnostic-results, which
+    # placement-results.js fills from the status payload. A placeholder anywhere
+    # else is not this bug, and a substring test over 1,700 lines of markup will
+    # keep colliding with unrelated copy.
+    results_card = re.search(
+        r'<section[^>]*id="diagnostic-results".*?</section>', index, re.S)
+    assert results_card, "index.html lost the #diagnostic-results card"
+    assert "will appear here" not in results_card.group(0), (
         "the results placeholder is back — it showed to learners who had already "
         "finished the test, while the real numbers sat unrendered in the payload"
     )
@@ -780,7 +792,7 @@ if __name__ == '__main__':
               check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
               check_the_notebook_never_falls_back_to_the_prefix_runner,
-              check_a_solution_stays_closed_until_asked,
+              check_the_solution_is_shown_and_the_hints_are_not,
               check_only_one_module_patches_a_code_editors_value,
               check_a_code_cell_grows_to_fit_its_own_code,
               check_every_placement_question_gets_the_same_clock,
