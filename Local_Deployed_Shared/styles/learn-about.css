@@ -81,9 +81,13 @@ body.dd-basic-mode .dd-basic-nav {
    what pushed the fork 44px past the fold and put a scrollbar on a page with
    nothing to scroll to. Zeroed here, and the fork carries its own. */
 #page-welcome { padding: 0; }
+/* A COLUMN since the instructor arm (2026-08-24): the learner pair rides in
+   .welcome-fork-arms, which takes all the height the fork used to give the
+   arms directly (flex: 1), and the instructor bar below it takes only its
+   content height. The fork's own numbers are unchanged. */
 #page-welcome .welcome-fork {
-  align-items: stretch;
   display: flex;
+  flex-direction: column;
   gap: 20px;
   justify-content: center;
   margin: 0 auto;
@@ -92,6 +96,13 @@ body.dd-basic-mode .dd-basic-nav {
      with wrapping labels, so this is a floor and never a ceiling. */
   min-height: calc(100dvh - 120px);
   padding: 32px 20px;
+}
+#page-welcome .welcome-fork-arms {
+  align-items: stretch;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 20px;
+  justify-content: center;
 }
 
 /* Each arm is one button, not a card with a button in it: the whole
@@ -150,6 +161,25 @@ body.dd-basic-mode .dd-basic-nav {
   opacity: 0.7;
 }
 
+/* ── The third, quiet arm: instructor feedback mode ────────────────
+   Below the learner pair, full row, a size down (Seth, 2026-08-24).
+   Deliberately NOT a third equal panel — no arrow, content height
+   only (flex: 0 on the fork column), less padding, dimmed until
+   hovered — because to a first-time learner the fork must still read
+   as a binary choice. */
+.welcome-arm--instructor {
+  flex: 0 0 auto;
+  gap: 6px;
+  opacity: 0.75;
+  padding: 20px 24px;
+}
+.welcome-arm--instructor:hover,
+.welcome-arm--instructor:focus-visible { opacity: 1; }
+.welcome-arm--instructor .welcome-arm-label { font-size: 1.05rem; }
+/* The note is one sentence on a full-width bar; 30ch would fold it
+   into a ragged block taller than the label it explains. */
+.welcome-arm--instructor .welcome-arm-note { max-width: 60ch; }
+
 /* The guest banner is a standing invitation on every other screen and
    the one thing that would make this one not be two choices. It comes
    back the moment a path is taken. */
@@ -157,11 +187,16 @@ body.dd-welcome .guest-banner { display: none; }
 
 @media (max-width: 700px) {
   #page-welcome .welcome-fork {
-    flex-direction: column;
     min-height: 0;
     padding: 20px 16px 40px;
   }
+  /* The PAIR stacks; the fork itself is already a column. */
+  #page-welcome .welcome-fork-arms { flex-direction: column; }
   .welcome-arm { padding: 28px 20px; }
+  /* Equal specificity, later rule: without this the line above hands the
+     instructor arm the full learner-arm padding and the size hierarchy the
+     arm exists to keep goes away on exactly the screens that stack it. */
+  .welcome-arm--instructor { padding: 18px 20px; }
   .welcome-arrow { font-size: 2.25rem; }
   .welcome-arm-label { font-size: 1.15rem; }
   /* Stacked, "left" and "right" mean nothing; up/down is what the reader
