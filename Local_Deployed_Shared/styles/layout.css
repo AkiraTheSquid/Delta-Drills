@@ -39,39 +39,53 @@
   min-width: 0;
 }
 
-.topbar-side--right {
-  justify-content: flex-end;
+/* 🔴 EVERY CELL IS PLACED BY NUMBER, and that is not tidiness — it is the fix
+   for the bug Seth reported on 2026-08-24 ("put the cog icon in the top right
+   rather than the middle").
+
+   The three children used to be placed by AUTO-FLOW: first child to column 1,
+   second to column 2, third to column 3. That is correct only while all three
+   children are laid out. `.tabs` is `display: none` in basic mode
+   (styles/learn-about.css), and a `display: none` grid item is not laid out at
+   all — so it took NO cell, the right-hand side flowed into column 2, and the
+   account control sat dead centre. Measured on the live app at 1440px: its box
+   was x=700..730, with the viewport's midpoint at 720.
+
+   Explicit `grid-column` is immune to that. The middle cell collapses to zero
+   width when nothing in it is displayed, the two `1fr` columns stay equal, and
+   the right cell is the right cell either way. */
+.topbar-side--left {
+  grid-column: 1;
 }
 
-/* The cog. One wordless control on the right edge — it exists as much to
-   balance the level pill on the left (so the strip in the middle reads as
-   centred, not merely offset) as to be a shortcut. It jumps to the Account
-   tab through app.js's existing `[data-goto-tab]` hook. */
-.topbar-cog {
-  display: inline-flex;
+/* THE MIDDLE CELL holds two things and centres them as one group: the tab strip
+   (advanced mode only) and the session clock, which moved up here out of
+   `.practice-container` on 2026-08-24 — see styles/practice/notch-menu.css. In
+   basic mode the strip is hidden and the clock is alone in the middle, which is
+   what Seth asked for; in advanced mode they share the cell with a 14px gap. */
+.topbar-mid {
   align-items: center;
+  display: flex;
+  gap: 14px;
+  grid-column: 2;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  min-width: 0;
 }
 
-.topbar-cog:hover {
-  color: var(--white);
-  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
-  border-color: var(--border);
+.topbar-side--right {
+  grid-column: 3;
+  justify-content: flex-end;
+  /* The anchor for #account-menu, which hangs under the control at the right
+     edge of this cell. Nothing else in here is positioned. */
+  position: relative;
 }
 
-.topbar-cog:focus-visible {
-  outline: 2px solid var(--accent-text);
-  outline-offset: 2px;
-}
+/* `.topbar-cog` USED TO BE HERE — a 30px square with a gear in it, and the only
+   control on the right edge. It was replaced on 2026-08-24 by a labelled
+   account control with a caret and a drop-down menu; the rules live in
+   styles/account-menu.css, which is loaded after this file. Deleted rather than
+   left behind: a stylesheet full of selectors that match nothing is how the
+   next person reading this concludes the cog is still somewhere. */
 
 /* `.logo` is GONE (2026-08-23). It was the brand line, then an empty flex
    spacer that survived it; the grid's own columns do that job now, and an

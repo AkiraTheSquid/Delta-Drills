@@ -16,7 +16,10 @@
     "why-this-app": "learn-about-app",
     "how-to-use": "learn-about-app",
     "knowledge-graph": "knowledge-graph",
-    diagnostic: "diagnostic",
+    // Legacy slug too, since 2026-08-24: the Placement test stopped being a
+    // page of its own and moved onto the Learner Home (#page-practice). The
+    // pathname keeps working and lands where the test now is.
+    diagnostic: "practice",
     "split-tool": "split-tool",
     account: "account",
     courses: "courses",

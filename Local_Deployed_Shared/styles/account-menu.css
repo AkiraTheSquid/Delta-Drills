@@ -1,0 +1,193 @@
+/* THE TOP-RIGHT ACCOUNT CONTROL AND ITS MENU
+   Markup in index.html (#topbar-account / #account-menu), behaviour in
+   account-menu.js.
+
+   It replaces `.topbar-cog`, a 30px square with a gear in it. Seth,
+   2026-08-24: "instead of a vague cog ... making it clear that it is
+   clickable". So: a bordered control with an avatar glyph, a label and a
+   caret — three signals that it opens something, where the cog had none.
+
+   🔴 THE LABEL IS NOT THE EMAIL. That was the obvious thing to put on an
+   account control and it is ruled out on purpose (same message): an address
+   answers "who am I signed in as", which is asked once a session and says
+   nothing about what the button does. #account-identity-email on the Account
+   page is where the address lives. */
+
+.topbar-account {
+  align-items: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  gap: 7px;
+  line-height: 1;
+  padding: 5px 10px 5px 7px;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  /* The label is the widest thing in the right cell and the cell is a `1fr`
+     column — without this a long label pushes the grid instead of ellipsing. */
+  max-width: 100%;
+  min-width: 0;
+}
+
+.topbar-account:hover,
+.topbar-account:focus-visible,
+.topbar-account.is-open {
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
+  border-color: var(--accent-text);
+  color: var(--white);
+}
+
+.topbar-account:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.topbar-account-avatar {
+  align-items: center;
+  background: rgb(var(--tint-rgb) / calc(0.14 * var(--tint-k)));
+  border-radius: 999px;
+  color: var(--accent-text);
+  display: inline-flex;
+  flex: none;
+  height: 22px;
+  justify-content: center;
+  width: 22px;
+}
+
+.topbar-account-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-account-caret {
+  align-items: center;
+  color: var(--muted);
+  display: inline-flex;
+  flex: none;
+  transition: transform 140ms ease;
+}
+
+.topbar-account.is-open .topbar-account-caret {
+  transform: rotate(180deg);
+}
+
+/* ---- the menu ---------------------------------------------------------- */
+
+/* Anchored to the topbar's right cell (`.topbar-side--right` is
+   `position: relative` in styles/layout.css) and pinned to the RIGHT edge —
+   the control is in the corner, so a centred menu would hang off the viewport.
+   z-index clears `.topbar`'s own 50 so the menu is not clipped by the pages
+   under it. */
+.account-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.32);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 232px;
+  padding: 6px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 60;
+}
+
+.account-menu.hidden {
+  display: none;
+}
+
+.account-menu-item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 13px;
+  gap: 10px;
+  padding: 9px 10px;
+  text-align: left;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.account-menu-item:hover,
+.account-menu-item:focus-visible {
+  background: rgb(var(--tint-rgb) / calc(0.1 * var(--tint-k)));
+  color: var(--white);
+}
+
+/* 🔴 EVERY ROW CARRIES AN ICON (Seth, 2026-08-24: "the other options in
+   settings should also have an icon next to them"), and they are all the same
+   16px box — a menu where one glyph is wider than the next puts the labels on
+   four different left edges. `flex: none` because a long label must not squash
+   the icon into an ellipse. */
+.account-menu-icon {
+  align-items: center;
+  color: var(--muted);
+  display: inline-flex;
+  flex: none;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+}
+
+.account-menu-item:hover .account-menu-icon,
+.account-menu-item:focus-visible .account-menu-icon {
+  color: var(--accent-text);
+}
+
+/* 🔴 LEARNER HOME IS NOT ONE OF THE FIVE (Seth, 2026-08-24: it "should stand
+   out significantly relative to everything else"). It is the destination the
+   learner wants nine times out of ten and the other four are places you visit
+   once, so it is bolder, larger, tinted, and its icon is already in the accent
+   colour rather than waiting for a hover. The separator under it is the rest of
+   the distinction: this row is the app, the rows below are about the app. */
+.account-menu-item--home {
+  background: rgb(var(--tint-rgb) / calc(0.07 * var(--tint-k)));
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 10px;
+}
+
+.account-menu-item--home .account-menu-icon {
+  color: var(--accent-text);
+}
+
+.account-menu-item--home:hover,
+.account-menu-item--home:focus-visible {
+  background: rgb(var(--tint-rgb) / calc(0.16 * var(--tint-k)));
+}
+
+.account-menu-sep {
+  background: var(--border);
+  height: 1px;
+  margin: 5px 4px;
+}
+
+/* On a phone the label is most of the topbar's width. The words go, the avatar
+   and caret stay — the control still reads as a menu, and the menu itself says
+   what everything is. It is not the cog coming back: a caret next to an avatar
+   is a disclosure, which a lone gear is not. */
+@media (max-width: 560px) {
+  .topbar-account-label {
+    display: none;
+  }
+  .topbar-account {
+    padding: 5px 7px;
+  }
+  .account-menu {
+    min-width: 208px;
+  }
+}

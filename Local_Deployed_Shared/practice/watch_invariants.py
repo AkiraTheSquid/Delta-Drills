@@ -73,15 +73,26 @@ def check_the_session_clock_is_not_the_learners_to_set():
     assert -1 not in (stop_at, clock_at) and stop_at < clock_at, (
         "the square is no longer to the LEFT of the clock in the notch tab"
     )
-    # And the notch hangs off the container, so it survives the split going away.
+    # 🔴 THE CLOCK IS IN THE TOPBAR NOW (Seth, 2026-08-24: "put the timer in
+    # the top middle bar rather than as the notch"), and this check inverted
+    # with it. It used to assert the notch hung off `.practice-container`
+    # rather than off `.practice-split` — the split is display:none between
+    # sessions, so a clock inside it vanished with it.
+    #
+    # The container has the same problem one level up: it is MOVED into
+    # #diagnostic-workspace-host while a placement probe is on screen, and it
+    # is not on any page except the Learner Home. A clock that is app chrome
+    # must not be a child of either. `.topbar-mid` is the only place that is
+    # true, and the ids are unchanged so timer.js / placement-timer.js /
+    # notch-menu.js all still find what they write.
+    mid_at = index_html.find('<div class="topbar-mid">')
     container_at = index_html.find('<div class="practice-container">')
-    notch_at = index_html.find('id="practice-notch"', container_at)
-    split_at = index_html.find('<div class="practice-split">', container_at)
-    assert -1 not in (container_at, notch_at, split_at), "practice page lost a landmark"
-    assert notch_at < split_at, (
-        "#practice-notch is inside .practice-split again. The split is "
-        "display:none between sessions, so the notch would vanish with it — "
-        "and it has to stay, showing the allowance the next question gets"
+    notch_at = index_html.find('id="practice-notch"')
+    assert -1 not in (mid_at, container_at, notch_at), "topbar or practice page lost a landmark"
+    assert mid_at < notch_at < container_at, (
+        "the session clock is back inside the practice workspace. It has to "
+        "live in .topbar-mid: inside .practice-container it travels into the "
+        "placement host and off every page that is not the Learner Home"
     )
 
     # The idle screen reads a real number, and says so honestly when it cannot.

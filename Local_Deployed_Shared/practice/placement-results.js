@@ -186,10 +186,23 @@ const PlacementResults = (() => {
       });
   };
 
+  /* 🔴 CALLED ON EVERY STATUS READ, not only on a finished placement. The block
+     it fills moved out of #diagnostic-results and onto the Learner Home's idle
+     surface on 2026-08-24 — same element, same id, same writer — because the
+     card it used to live in shows only after the test is complete, and the
+     screen a learner opens every day was naming nothing at all. Seth: "it should
+     display the information about einops, numpy, and einsum to be learned".
+
+     `#learner-areas` is the section around it; `.is-empty` takes the whole
+     bordered box off the screen when there is nothing honest to draw, which is
+     not the same as drawing an empty box. A signed-out visitor and a failed
+     status call both land there. */
   const renderAreas = (areas) => {
     const host = byId("placement-areas");
+    const section = byId("learner-areas");
     if (!host) return;
     host.textContent = "";
+    section?.classList.toggle("is-empty", !areas.length);
     if (!areas.length) return;
 
     /* Deliberately NOT "this is the order practice will work through".
@@ -244,6 +257,9 @@ const PlacementResults = (() => {
     empty?.classList.toggle("hidden", areas.length > 0);
   };
 
-  return { render, readiness, band };
+  /* `renderAreas` is public now: diagnostic-page.js calls it on every status,
+     while `render` (the meta chips and the overall figure, which ARE about one
+     completed test) stays gated on `completed_at`. */
+  return { render, renderAreas, readiness, band };
 })();
 window.PlacementResults = PlacementResults;

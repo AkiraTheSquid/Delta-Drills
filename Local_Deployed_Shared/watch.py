@@ -175,18 +175,111 @@ def check_invariants():
         "that outlived it; in a three-column grid an extra child DISPLACES "
         "the centred tab strip into a side column"
     )
-    assert 'id="topbar-cog"' in index_html and 'data-goto-tab="account"' in index_html, (
-        "the topbar cog is gone or no longer routes to Account. It is the "
-        "only control on the right edge and it needs no handler of its own — "
-        "app.js wires every [data-goto-tab]"
+    # The bare cog was replaced on 2026-08-24 by a LABELLED account control
+    # that opens a menu. Seth: "instead of a vague cog ... making it clear that
+    # it is clickable", and the label is the words, not the signed-in email.
+    assert 'id="topbar-cog"' not in index_html, (
+        "the wordless topbar cog is back. It reads as decoration, and in basic "
+        "mode this control is the ONLY way off the Learner Home"
+    )
+    assert 'id="topbar-account"' in index_html and 'id="account-menu"' in index_html, (
+        "the topbar account control or its menu is gone"
+    )
+    assert 'data-goto-tab="account"' not in index_html.split('id="topbar-account"')[1][:900], (
+        "the account button jumps straight to the Account tab again. It has to "
+        "OPEN THE MENU — Account is one of five destinations now, and the menu "
+        "is the only navigation basic mode has"
+    )
+    assert ">Account and Settings<" in index_html, (
+        "the account control lost its label. A wordless glyph is the thing "
+        "this replaced"
+    )
+    # 🔴 EVERY ASSERTION BELOW READS `menu`, NOT `index_html`. Codex caught the
+    # first version of this check computing the slice and then matching against
+    # the whole document: ">Knowledge graph<" appears in the nav copy too, so a
+    # deleted or renamed menu row passed as long as the words survived anywhere
+    # on the page. A test that cannot fail is worse than no test.
+    # The menu is the last thing in `.topbar-side--right`; its own closing tag
+    # is the only `</div>` at six-space indent after it.
+    menu = index_html.split('id="account-menu"')[1].split("\n      </div>")[0]
+    assert 0 < len(menu) < 6000, (
+        "the #account-menu slice did not terminate where check_front_door "
+        "expects it to — every row assertion below is now reading the wrong "
+        "span of the document"
+    )
+    for label in ("Learner home", "Account and Settings", "Knowledge graph",
+                  "Why this app exists", "How this app works"):
+        assert f">{label}<" in menu, f"the account menu lost the {label!r} row"
+    # Learner home is FIRST and it is not styled like the other four (Seth:
+    # it "should stand out significantly relative to everything else").
+    home_pos = menu.find("account-menu-item--home")
+    assert home_pos != -1, "the Learner home row lost its distinguishing class"
+    assert home_pos < menu.find('data-goto-tab="account"'), (
+        "Learner home is no longer the first row of the account menu"
+    )
+    # Every row carries an icon, home included.
+    assert menu.count("account-menu-icon") == 5, (
+        "an account-menu row is missing its icon — Seth asked for one on each"
+    )
+    # The two explainer rows open a DISCLOSURE on the shared page, not a page
+    # each. account-menu.js reads this attribute.
+    for lab in ("lab-why", "lab-how"):
+        assert f'data-lab-open="{lab}"' in menu, (
+            f"the account menu no longer opens the {lab} disclosure"
+        )
+    menu_js = _read(os.path.join(HERE, "account-menu.js"))
+    assert "data-lab-open" in menu_js or "labOpen" in menu_js, (
+        "account-menu.js stopped reading data-lab-open, so both explainer rows "
+        "land on the same closed page"
+    )
+    # 🔴 role="menu" IS A PROMISE OF ARROW KEYS. Announcing menu semantics to a
+    # screen reader and then supporting only Tab is a worse state than a plain
+    # list of buttons would have been. Codex, 2026-08-24.
+    assert 'role="menu"' not in menu or all(k in menu_js for k in ("ArrowDown", "ArrowUp")), (
+        "#account-menu still claims role=\"menu\" but account-menu.js no longer "
+        "implements arrow-key navigation"
+    )
+
+    # ---- topbar cells are PLACED, not auto-flowed -------------------------
+    # A `display: none` grid item takes no cell, so with the tab strip hidden
+    # (basic mode) auto-placement put the right-hand side in the MIDDLE column
+    # — which is exactly the bug Seth reported: "put the cog icon in the top
+    # right rather than the middle". Explicit grid-column is the fix and it is
+    # invisible until someone deletes it.
+    layout_css = _read(os.path.join(HERE, "styles", "layout.css"))
+    for sel, col in ((".topbar-side--left", "1"), (".topbar-mid", "2"),
+                     (".topbar-side--right", "3")):
+        block = layout_css.split(sel + " {")[1].split("}")[0]
+        assert f"grid-column: {col};" in block, (
+            f"{sel} lost `grid-column: {col}`. Without it the topbar falls back "
+            "to auto-placement, and a hidden tab strip slides the right-hand "
+            "side into the centre column"
+        )
+    assert "position: relative;" in layout_css.split(".topbar-side--right {")[1].split("}")[0], (
+        "#account-menu is absolutely positioned against .topbar-side--right; "
+        "without the containing block it hangs off the viewport"
     )
     level_pos = index_html.find('id="dd-level"')
-    tabs_pos = index_html.find('<nav class="tabs">')
-    cog_pos = index_html.find('id="topbar-cog"')
-    assert -1 not in (level_pos, tabs_pos, cog_pos), "topbar lost the pill, the strip or the cog"
-    assert level_pos < tabs_pos < cog_pos, (
-        "topbar source order changed. Grid auto-placement fills the columns "
-        "in DOM order, so pill → strip → cog IS the left/centre/right layout"
+    mid_pos = index_html.find('<div class="topbar-mid">')
+    acct_pos = index_html.find('id="topbar-account"')
+    assert -1 not in (level_pos, mid_pos, acct_pos), "topbar lost the pill, the middle cell or the account control"
+    assert level_pos < mid_pos < acct_pos, (
+        "topbar source order changed. It is placed by grid-column now, but "
+        "DOM order is still the reading order and the tab order"
+    )
+
+    # ---- the clock is topbar chrome, not a notch on the workspace ---------
+    # Seth, 2026-08-24: "put the timer in the top middle bar rather than as the
+    # notch". As a child of .practice-container it TRAVELLED with the workspace
+    # — into the placement host, out again, and off every page that is not the
+    # Learner Home.
+    notch_pos = index_html.find('id="practice-notch"')
+    container_pos = index_html.find('<div class="practice-container">')
+    assert notch_pos != -1 and container_pos != -1, "index.html lost the clock or the workspace"
+    assert mid_pos < notch_pos < container_pos, (
+        "the session clock is back inside .practice-container. It is topbar "
+        "chrome now and belongs in .topbar-mid, or it disappears with the "
+        "workspace on every page that is not the Learner Home"
     )
 
     # ---- the question header ---------------------------------------------
@@ -713,8 +806,11 @@ def check_front_door():
     assert fork.count("data-goto-tab") == 2, (
         "the fork is exactly two choices and nothing else (Seth)"
     )
-    assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="diagnostic"' in fork, (
-        "left arm reads about the app, right arm starts the placement test"
+    # The right arm points at "practice" since the merge: the placement test
+    # is a card ON the Learner Home now, not a page of its own.
+    assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="practice"' in fork, (
+        "left arm reads about the app, right arm goes to the Learner Home "
+        "where the placement test is"
     )
     assert "optional" in fork, (
         "the reading path must say out loud that it is optional, or a fork "
@@ -772,10 +868,129 @@ def check_front_door():
         "without it an unknown tab name hides every page and shows nothing"
     )
 
-    # Placement hands off to Practice.
-    assert 'switchTab("practice")' in diagnostic and "justFinished" in diagnostic, (
-        "a finished placement must hand the learner to Practice — in basic "
-        "mode there is no strip, so nothing else can"
+    # ---- ONE TAB: the Learner Home ---------------------------------------
+    # Seth, 2026-08-24: "the diagnostic and practice should be combined into
+    # one tab, with it being called Learner Home". #page-diagnostic is deleted
+    # and everything that was on it lives inside #page-practice.
+    assert 'id="page-diagnostic"' not in index_html, (
+        "#page-diagnostic is back. The placement test is a card on the Learner "
+        "Home; two pages sharing one editor is what the tab lock existed for"
+    )
+    assert 'data-tab="diagnostic"' not in markup, (
+        "the Placement test tab is back in the strip"
+    )
+    assert ">Learner Home<" in index_html, (
+        "the Practice tab is called Learner Home now"
+    )
+    home = index_html.split('id="page-practice"')[1]
+    for needle in ('id="diagnostic-overview"', 'id="diagnostic-results"',
+                   'id="diagnostic-workspace-host"', 'id="learner-areas"',
+                   'id="placement-areas"', 'id="readiness-dial"'):
+        assert needle in home, (
+            f"{needle} is not on the Learner Home — the merge moved the whole "
+            "placement surface onto #page-practice"
+        )
+    # 🔴 THE STATUS READ IS WIRED TO THE PAGE THE PLACEMENT IS ON. app.js calls
+    # DiagnosticPage.refresh() on entry to that tab and leave() on entry to any
+    # other; pointed at the retired name it silently took the leave branch every
+    # time, and the Learner Home sat on "Loading placement status…" with no area
+    # bars. Nothing throws when this is wrong.
+    assert 'if (tabName === "practice") window.DiagnosticPage.refresh();' in app_js, (
+        "app.js must refresh the placement status when the Learner Home opens"
+    )
+    assert 'diagnostic: "practice"' in app_js, (
+        "switchTab must map the retired `diagnostic` name onto the Learner "
+        "Home: it still arrives from /diagnostic, from a stale "
+        "dd_recovered_tab and from practice/events.js"
+    )
+    # The lock, and its redirect, are gone with the second tab.
+    # `setPracticeLock(` — the call or the definition, not the WORD: the file
+    # documents at length what the lock was and why it went, and an assertion
+    # that a name is gone must not be tripped by the note explaining it.
+    assert "setPracticeLock(" not in diagnostic, (
+        "the Practice tab lock is back. One tab cannot be locked against "
+        "itself, and a disabled tab has no :disabled style — it looks live "
+        "and eats the click"
+    )
+    assert 'byId("page-diagnostic")' not in diagnostic, (
+        "diagnostic-page.js is still looking for the deleted placement page; "
+        "every one of those reads is silently undefined"
+    )
+
+    # 🔴 THE AREA BARS ARE ON THE IDLE SCREEN, not locked inside the results
+    # card. Seth, 2026-08-24: "it should display the information about einops,
+    # numpy, and einsum to be learned". /diagnostic/status returns all three
+    # areas from the first call on a new account, so there is always something
+    # to draw; before this they appeared only after a COMPLETED placement.
+    setup = home.split('id="practice-session-setup"')[1].split('class="practice-split"')[0]
+    assert 'id="learner-areas"' in setup and 'id="placement-areas"' in setup, (
+        "the area bars must sit on the idle surface, which is what a learner "
+        "opens every day — inside #diagnostic-results they show only after a "
+        "placement is complete"
+    )
+    results = index_html.split('id="diagnostic-results"')[1].split("</section>")[0]
+    assert 'id="placement-areas"' not in results, (
+        "there are two area lists again. One writer, one host: "
+        "placement-results.js renderAreas fills #placement-areas and it is on "
+        "the idle surface"
+    )
+    placement_results = _read(os.path.join(HERE, "practice", "placement-results.js"))
+    assert "renderAreas," in placement_results or "renderAreas }" in placement_results, (
+        "renderAreas must be public — diagnostic-page.js calls it on every "
+        "status read, not only on a finished placement"
+    )
+    assert "PlacementResults?.renderAreas(" in diagnostic, (
+        "the area bars are only drawn when a placement COMPLETES again"
+    )
+
+    # 🔴 THE SPECIFICITY GUARD. With the host on the same page as the idle
+    # screen, `#page-practice.session-idle .practice-split { display: none }`
+    # (styles/practice/timer.css) outranks `.diagnostic-workspace-host
+    # .practice-split { display: flex }` — a probe would render as a blank idle
+    # screen. Two IDs settle it without depending on stylesheet order.
+    diag_css = _read(os.path.join(HERE, "styles", "practice", "diagnostic.css"))
+    assert "#page-practice #diagnostic-workspace-host .practice-split" in diag_css, (
+        "the hosted workspace has no rule that outranks #page-practice."
+        "session-idle, so a placement probe renders as a blank idle screen"
+    )
+    assert "#page-practice.diagnostic-running #diagnostic-overview" in diag_css, (
+        ".diagnostic-running is written on #page-practice now; the old "
+        "#page-diagnostic selector matches nothing"
+    )
+
+    # 🔴 THE BOOT REFRESH MUST WAIT FOR THE MODE. diagnostic-page.js parses
+    # before practice/init.js, and `PracticeAPI.diagnosticStatus()` returns null
+    # — not a failure, NULL — while `practiceMode` is still its "local" default.
+    # `render(null)` paints "Sign in to take the placement test." with the area
+    # bars hidden. Harmless while the placement had its own (hidden-at-load)
+    # page; since the merge the guard reads #page-practice, which every visitor
+    # lands on, so a parse-time refresh is the first thing they see.
+    init_js = _read(os.path.join(HERE, "practice", "init.js"))
+    assert "delta:practice-mode-ready" in init_js and "detectPracticeMode();" in init_js, (
+        "practice/init.js no longer announces the decided mode; "
+        "diagnostic-page.js is waiting on an event that never fires"
+    )
+    assert "delta:practice-mode-ready" in diagnostic, (
+        "diagnostic-page.js refreshes at parse time again — before "
+        "detectPracticeMode() has run, which renders the signed-out copy at "
+        "signed-in learners"
+    )
+    boot = diagnostic.split("window.DiagnosticPage = DiagnosticPage;")[-1]
+    assert "DiagnosticPage.refresh();" in boot and "addEventListener" in boot, (
+        "the boot block must refresh THROUGH the mode-ready event, not at "
+        "parse time"
+    )
+
+    # 🔴 apiFetch MUST BE ON `window`. It is a top-level const in app.js, so it
+    # is not one by default, and concept-graph/kc_lattice_read.js and
+    # concept-graph/lesson-graph.js both guard `window.apiFetch || fetch` — the
+    # fallback being a RELATIVE url that never reaches the backend. Locally a
+    # 404; on Vercel a 200 text/html from the SPA rewrite, which reads as
+    # "guest" on both the knowledge graph and the "Why this app exists" map.
+    app_js = _read(os.path.join(HERE, "app.js"))
+    assert "window.apiFetch = apiFetch;" in app_js, (
+        "apiFetch is no longer published on window; concept-graph's two "
+        "readers are silently fetching relative /api urls again"
     )
 
 
