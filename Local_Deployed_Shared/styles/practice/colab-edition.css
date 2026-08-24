@@ -145,8 +145,16 @@ html.dd-colab-edition .practice-left {
    width without colliding. It bought the horizontal space back at the cost of
    a row height nothing could exceed, and it only ever fit FOUR rungs — the
    fifth is what finally broke it. Two rows of boxes need none of that. */
+/* 🔴 The ladder has no padding of its own any more — it is a block inside
+   `.question-number-row`, which is the card, and that card is already inside
+   the rail's own padding. What the rail retunes is the CARD, which is tight
+   here for the same reason everything else in the rail is. */
 html.dd-colab-edition .stage-ladder {
-  padding: 10px 18px 12px;
+  gap: 4px;
+}
+
+html.dd-colab-edition .question-number-row {
+  padding: 8px 10px 9px;
 }
 
 /* The concept name is allowed to wrap here. On a wide page it is one line with
@@ -177,32 +185,28 @@ html.dd-colab-edition .stage-seg-label {
   white-space: normal;
 }
 
-/* ~300px of rail: a 26px track with a 14px chevron in it is most of the
-   strip's height, and the callout has to fit a concept name beside its
-   percentage.
+/* ~300px of rail: a 26px track with a 14px chevron cut into it is most of a
+   card's height here.
 
-   🔴 Set the VARIABLE, not `.stage-ladder-bar { height }`. The reading is
-   anchored `bottom:` the same token — shrink the bar directly and the pop-up
-   keeps the default 30px offset, which leaves it floating a clear 10px above
-   the track it is naming.
+   🔴 Set the VARIABLE, not `.stage-ladder-bar { height }`. Nothing is anchored
+   off this token any more (the pop-up that was is deleted), but the rail is
+   not the only place that retunes the bar and one token is what keeps the
+   phone breakpoint and this file from fighting over the same rule.
 
-   🔴 And the reserve above the bar is NOT the bar's height here. `.stage-
-   ladder-kc` is allowed to wrap in the rail (see above), so this is the one
-   place the reading is routinely TWO lines — and unlike the wide layout, the
-   pop-up now carries an arrow under it that has to clear the track. Reserve
-   for the two-line case: `#page-practice` is `overflow: hidden`, so anything
-   this does not reserve is cut off, not drawn over the topbar. */
+   🪦 `--dd-ladder-gap: 4px` and `padding-top: 40px` were here too: a reserve
+   above the track for a floating reading that was routinely two lines in the
+   rail, because `.stage-ladder-kc` wraps here. The reading is a line of text
+   UNDER the track now — it takes its own height, in flow, and reserving space
+   above the bar would just push the bar off its title. */
 html.dd-colab-edition .stage-ladder-meter {
   --dd-ladder-bar-h: 20px;
-  --dd-ladder-gap: 4px;
-  padding-top: 40px;
 }
 
-html.dd-colab-edition .stage-ladder-callout {
+html.dd-colab-edition .stage-ladder-reading {
   font-size: 10px;
 }
 
-html.dd-colab-edition .stage-ladder-callout b {
+html.dd-colab-edition .stage-ladder-reading b {
   font-size: 11.5px;
 }
 

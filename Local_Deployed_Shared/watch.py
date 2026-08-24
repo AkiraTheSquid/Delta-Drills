@@ -6,6 +6,7 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import sys
 import os
+import re
 import json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -610,11 +611,17 @@ def check_solo_routes():
     # Every visible app tab gets a stable pathname spelling. Internal values
     # remain exact data-tab names so switchTab stays sole page owner.
     for tab in (
-        "why-this-app", "knowledge-graph", "split-tool",
+        "learn-about-app", "knowledge-graph", "split-tool",
         "account", "courses", "practice", "notebooks", "targeted-practice",
     ):
         assert f'data-tab="{tab}"' in index_html, f"missing tab {tab}"
         assert f'"{tab}"' in solo_js, f"solo-route.js missing route {tab}"
+
+    for legacy in ("why-this-app", "how-to-use"):
+        assert f'"{legacy}": "learn-about-app"' in solo_js, (
+            f"/{legacy} was a linkable pathname before the 2026-08-23 merge and "
+            "must still open the page those two tabs became"
+        )
 
     assert 'classList.add("dd-solo")' in index_html, (
         "index.html must stamp solo mode before paint"
@@ -647,10 +654,135 @@ def check_solo_routes():
     )
 
 
+
+# ── Front door: the welcome fork + "Learn about the App" ──────────
+def check_front_door():
+    """The 2026-08-23 merge (Seth). Two tabs that both answered "what is this"
+    became one, and the landing page became a two-arrow fork with nothing else
+    on it. Every assertion here is a thing that fails SILENTLY — a page with no
+    route in, a tab strip that comes back, a map that never draws — rather than
+    raising anything at runtime."""
+    index_html = _read(os.path.join(HERE, "index.html"))
+    app_js = _read(os.path.join(HERE, "app.js"))
+    learn_css = _read(os.path.join(HERE, "styles", "learn-about.css"))
+    why_graph = _read(os.path.join(HERE, "concept-graph", "why-graph.js"))
+    diagnostic = _read(os.path.join(HERE, "practice", "diagnostic-page.js"))
+
+    # ONE tab, and the two it replaced are gone from the markup entirely.
+    assert index_html.count('data-tab="learn-about-app"') == 1, (
+        "there must be exactly one Learn about the App tab"
+    )
+    assert 'id="page-learn-about-app"' in index_html, "merged page missing"
+    for dead in ('data-tab="why-this-app"', 'data-tab="how-to-use"',
+                 'id="page-why-this-app"', 'id="page-how-to-use"'):
+        assert dead not in index_html, f"{dead} came back; the merge is one page"
+
+    # The disclosures. The lead paragraph stays OUTSIDE them on purpose: what
+    # is unconditionally on screen is what the app is.
+    assert index_html.count('class="lab-disclosure"') == 2, (
+        "Learn about the App is two disclosures: the three markers, and How "
+        "the app works"
+    )
+    hero = index_html.split('id="page-learn-about-app"')[1].split("<details")[0]
+    assert "<h1>Why this app exists</h1>" in hero and 'class="hiw-lead"' in hero, (
+        "the heading and the lead paragraph must sit ABOVE the first "
+        "disclosure — everything else on the page is opt-in reading"
+    )
+    # Comment-stripped: this file's own comments narrate the merge and name
+    # the old tab, and an assertion that a phrase is gone must not be fooled
+    # by prose that is explaining why it is gone.
+    markup = re.sub(r"<!--.*?-->", "", index_html, flags=re.S)
+    assert "How the app works" in markup and "How to use it" not in markup, (
+        'the second disclosure is titled "How the app works" (Seth), not '
+        '"How to use it"'
+    )
+    # The map moved under "How the app works" and must have stayed there.
+    how_block = index_html.split('id="lab-how"')[1].split("</details>")[0]
+    assert 'id="wta-graph-cy"' in how_block, (
+        "the concept map belongs inside the How-the-app-works disclosure"
+    )
+    assert 'container.closest("details")' in why_graph and '"toggle"' in why_graph, (
+        "why-graph.js must draw on the <details> toggle as well as on the "
+        "page's class: inside a closed disclosure offsetParent is null, so "
+        "the page-class observer alone leaves the map on 'Loading the map...'"
+    )
+
+    # The fork. Two arms, both [data-goto-tab], and NOT a tab.
+    assert 'id="page-welcome"' in index_html, "the welcome fork is missing"
+    fork = index_html.split('id="page-welcome"')[1].split("</main>")[0]
+    assert fork.count("data-goto-tab") == 2, (
+        "the fork is exactly two choices and nothing else (Seth)"
+    )
+    assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="diagnostic"' in fork, (
+        "left arm reads about the app, right arm starts the placement test"
+    )
+    assert "optional" in fork, (
+        "the reading path must say out loud that it is optional, or a fork "
+        "reads as a prerequisite"
+    )
+    assert 'data-tab="welcome"' not in markup, (
+        "#page-welcome is a fork, not a tab"
+    )
+    assert '"welcome")' in app_js and 'dd-welcome' in app_js, (
+        "app.js must land a first-time visitor on the fork and stamp "
+        "body.dd-welcome so the guest banner comes off that one screen"
+    )
+    assert "body.dd-welcome .guest-banner" in learn_css, (
+        "the guest banner lives outside every .page, so only a body-class "
+        "rule can take it off the fork"
+    )
+
+    # The strip. Basic mode has none; advanced mode is the whole way back.
+    for selector in ("body.dd-basic-mode .tabs",
+                     "body.dd-basic-mode .nav-drawer .tabs",
+                     "body.dd-basic-mode .nav-toggle"):
+        assert selector in learn_css, (
+            f"{selector} missing: basic mode must have no tab strip, in the "
+            "topbar OR parked in the drawer, and no hamburger to open an "
+            "empty drawer with"
+        )
+    css_pos = index_html.find('href="styles/learn-about.css')
+    drawer_pos = index_html.find('href="styles/nav-drawer.css')
+    assert css_pos > drawer_pos >= 0, (
+        "learn-about.css must load AFTER nav-drawer.css — its rule for the "
+        "strip parked in the drawer ties on specificity with nav-drawer.css's "
+        "own, and source order is the only thing that settles it"
+    )
+    assert 'class="dd-basic-nav"' in index_html and ".dd-basic-nav" in learn_css, (
+        "the Account page needs the basic-mode escape row: with no strip, the "
+        "cog is the only way off Practice and this row is the only way back"
+    )
+    assert 'data-goto-tab="practice"' in index_html.split('class="dd-basic-nav"')[1][:600], (
+        "the escape row must lead back to Practice"
+    )
+
+    # 🔴 A NAME THAT MATCHES NO PAGE BLANKS THE APP. switchTab hides every
+    # `.page` whose id is not `page-<name>`, so an unknown name leaves a topbar
+    # over nothing, silently. The rename is the case we know about — a stale
+    # `dd_recovered_tab` written by guest-session.js before a reload that
+    # crosses a deploy — but the guard has to be general, because the next
+    # rename will not come with a note.
+    assert "renamedTabs" in app_js and '"why-this-app": "learn-about-app"' in app_js, (
+        "switchTab must map the two retired tab names onto the page they "
+        "merged into: a URL alias in solo-route.js cannot reach a name that "
+        "arrives from sessionStorage"
+    )
+    assert "if (!document.getElementById(`page-${tabName}`))" in app_js, (
+        "switchTab must fall back when the requested page does not exist — "
+        "without it an unknown tab name hides every page and shows nothing"
+    )
+
+    # Placement hands off to Practice.
+    assert 'switchTab("practice")' in diagnostic and "justFinished" in diagnostic, (
+        "a finished placement must hand the learner to Practice — in basic "
+        "mode there is no strip, so nothing else can"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants, check_infotips,
-              check_nav_drawer, check_solo_routes]
+              check_nav_drawer, check_solo_routes, check_front_door]
     for fn in checks:
         try:
             fn()

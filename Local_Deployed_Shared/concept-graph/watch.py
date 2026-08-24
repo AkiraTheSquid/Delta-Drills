@@ -130,6 +130,129 @@ def check_the_measured_tier_is_never_widened():
     )
 
 
+def check_the_topic_reading_cannot_claim_a_measurement():
+    """The floor under every reading must stay labelled as a floor.
+
+    `kcTopicReadiness` exists so a concept the server holds a number for is not
+    drawn "no estimate" — the case a finished placement test creates for 40 of
+    the 63 concepts at once. It is a TOPIC-grain number, though, so three things
+    have to hold or it becomes the overclaim the tiering exists to prevent: it
+    reports its own source, it reports no concept-specific evidence, and it is
+    gated on the server saying it has evidence at all. Drop the last one and a
+    learner who has answered nothing gets 63 bubbles at the starting prior,
+    which is the 2026-08-06 production bug wearing new clothes.
+    """
+    src = _read(os.path.join(HERE, 'kc_lattice_read.js'))
+    assert 'function kcTopicReadiness' in src, (
+        'kcTopicReadiness is gone — concepts the server can measure at topic '
+        'grain will fall through to "no estimate" again'
+    )
+    body = src[src.index('function kcTopicReadiness'):]
+    body = body[:body.index('\n  }') + 4]
+    assert '!row.evidenced' in body, (
+        'kcTopicReadiness must decline a row the server reports as unevidenced, '
+        'or a learner who has answered nothing is shown 63 bubbles at the prior'
+    )
+    assert 'source: "topic"' in body, (
+        'the topic-grain reading must name its own source, or the dock will '
+        'present a number shared across a topic as this concept\'s own'
+    )
+    assert 'coveredW: 0' in body, (
+        'a topic-grain reading has no concept-specific evidence; a non-zero '
+        'coveredW would narrow the confidence band on nothing'
+    )
+
+
+def check_the_topic_reading_sits_below_the_lesson_average():
+    """Source precedence, which is the whole claim this file makes.
+
+    A subtopic number rests on the learner's own graded attempts at LESSON
+    grain. A topic number can rest on nothing but a placement seed. Reordering
+    these swaps a measurement for an estimate without any visible symptom —
+    the bubble keeps its colour and only the label underneath changes.
+    """
+    src = _read(os.path.join(HERE, 'lesson-graph.js'))
+    for needle in ('source: "subtopic"', 'window.kcTopicReadiness', '_extrapolated(kc)'):
+        assert needle in src, f'lesson-graph.js no longer contains {needle}'
+    assert (src.index('source: "subtopic"')
+            < src.index('window.kcTopicReadiness')
+            < src.index('const ex = _extrapolated(kc)')), (
+        'kcReadinessInfo must try the topic reading AFTER the subtopic average '
+        'and BEFORE the extrapolation — see kc_lattice_read.js for why'
+    )
+
+
+def check_a_topic_reading_contributes_no_direct_evidence():
+    """A topic-grain number must never size a confidence band.
+
+    `kc_graph.kc_mastery` counts an atom as covered once it has a POSTERIOR, and
+    placement seeds a posterior onto every atom without one attempt behind it —
+    so `covered_w` is 1.0 on all 63 concepts for a learner who has answered
+    nothing per concept. Feed that to `directEvidenceN` and nDirect becomes
+    1 x 1.0 x specificity, where specificity degrades to 1/siblings whenever the
+    browser's crosswalk fetch failed. One single-KC lesson in kc_registry.json
+    and a placement seed draws as a measured concept with a tight band.
+    """
+    src = _read(os.path.join(HERE, 'lesson-graph.js'))
+    assert 'info && info.source === "topic"' in src, (
+        "_evidence must take a topic reading's own coveredW (0) rather than the "
+        "server's covered_w, or a placement seed can be sized like observation"
+    )
+
+
+def check_a_placed_learner_is_not_told_they_answered_nothing():
+    """The notice has to be able to say something other than one sentence.
+
+    "No problems answered yet" was hard-coded, and it was false for every
+    learner who had just finished the placement test — they answered six to
+    fourteen probes and the engine placed and locked the whole lattice on the
+    result. It was also permanent: placement produces no per-concept evidence,
+    so the condition that hides the notice can never go true from placement
+    alone. Both maps must read the text from one place.
+    """
+    lesson = _read(os.path.join(HERE, 'lesson-graph.js'))
+    assert 'const noDataText = ()' in lesson, (
+        'lesson-graph.js must choose the cold-start notice text at call time; '
+        'a hard-coded string tells a placed learner they have answered nothing'
+    )
+    assert 'window.kcPlacementStatus' in lesson, (
+        'the notice must consult the placement status, or it cannot tell a '
+        'placed learner from an untouched one'
+    )
+    assert 'el.textContent = noDataText();' in lesson, (
+        'the notice text must be set on every refresh — the placement status '
+        'arrives after the first paint'
+    )
+    why = _read(os.path.join(HERE, 'why-graph.js'))
+    assert 'global.deltaKcNoDataText' in why, (
+        'why-graph.js must borrow the notice text from lesson-graph.js, or the '
+        'landing map and the Knowledge Graph will disagree about one learner'
+    )
+    assert 'global.deltaRefreshKcLattice' in why, (
+        '"Your mastery" on the landing map needs the server report fetched '
+        'through lesson-graph.js; without it that map reads the offline answer '
+        'for a signed-in learner'
+    )
+
+
+def _assert_every_check_is_listed(checks):
+    """A check this module defines but never calls is worse than no check.
+
+    Twice now a guard has been written, reviewed and left out of the runner
+    list, so it passed by never executing. This is NOT itself one of the listed
+    checks — dropping it from the list is precisely the mistake it catches, and
+    a dropped check does not run to complain about being dropped. It runs from
+    the runner, before anything else, whatever the list says.
+    """
+    defined = {n for n, v in globals().items()
+               if n.startswith('check_') and callable(v)}
+    missing = sorted(defined - {fn.__name__ for fn in checks})
+    assert not missing, (
+        f'these checks are defined but never run: {missing} — add them to the '
+        '`checks` list at the bottom of this file'
+    )
+
+
 if __name__ == '__main__':
     checks = [
         check_crosswalk_is_present_and_tiered,
@@ -137,7 +260,16 @@ if __name__ == '__main__':
         check_the_graph_reads_the_live_learner_model,
         check_the_server_reading_is_preferred,
         check_the_measured_tier_is_never_widened,
+        check_the_topic_reading_cannot_claim_a_measurement,
+        check_the_topic_reading_sits_below_the_lesson_average,
+        check_a_topic_reading_contributes_no_direct_evidence,
+        check_a_placed_learner_is_not_told_they_answered_nothing,
     ]
+    try:
+        _assert_every_check_is_listed(checks)
+    except AssertionError as e:
+        print(f"FAIL _assert_every_check_is_listed: {e}", file=sys.stderr)
+        sys.exit(1)
     for fn in checks:
         try:
             fn()

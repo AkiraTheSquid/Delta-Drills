@@ -257,14 +257,20 @@ const DiagnosticPage = (() => {
        minutes" for a test that usually ends less than half way through is the
        overclaim this whole line exists to avoid. */
     const span = minProbes > 0 && minProbes < budget
-      ? `about ${mins(minProbes)}–${mins(budget)} minutes`
-      : `up to about ${mins(budget)} minutes`;
+      ? `about <strong>${mins(minProbes)}–${mins(budget)} min</strong>`
+      : `about <strong>${mins(budget)} min</strong>`;
     const count = minProbes > 0 && minProbes < budget
-      ? `${minProbes}–${budget} questions`
-      : `up to ${budget} questions`;
+      ? `<strong>${minProbes}–${budget}</strong> questions`
+      : `<strong>${budget}</strong> questions`;
+    /* Chips, not sentences: `.placement-chip` (styles/practice/diagnostic.css)
+       is the unit the whole page states a fact in now. The "stops early" chip
+       is what keeps the range honest — the top of it is a ceiling almost no
+       run reaches — and it is four words instead of a clause. */
     el.innerHTML =
-      `Plan for <strong>${span}</strong> — ${count}, <strong>${each}</strong> each. ` +
-      `It stops as soon as it is confident, so most runs are shorter than the top of that range.`;
+      `<span class="placement-chip">${count}</span>` +
+      `<span class="placement-chip"><strong>${each}</strong> each</span>` +
+      `<span class="placement-chip">${span}</span>` +
+      `<span class="placement-chip">stops early when confident</span>`;
   };
 
   /* What the notch tab says while a probe is up. The placement page's own
@@ -304,10 +310,10 @@ const DiagnosticPage = (() => {
     const budget = Number(status.budget) || 14;
     if (statusEl) {
       statusEl.textContent = status.active
-        ? `Placement test in progress · ${done} of at most ${budget} questions answered`
+        ? `In progress · ${done} of at most ${budget} answered`
         : status.completed_at
-          ? `Placement test complete · ${done} questions`
-          : "Placement test not started.";
+          ? `Complete · ${done} questions`
+          : "Not started";
     }
     renderProgress(status);
     renderLength(status);
@@ -328,7 +334,37 @@ const DiagnosticPage = (() => {
     const showResults = !!status.completed_at && !status.active;
     if (showResults) window.PlacementResults?.render(status);
     resultsEl?.classList.toggle("hidden", !showResults);
+    /* Read BEFORE moveWorkspace, which is the one writer of `running`. */
+    const justFinished = running && showResults && diagnosticOnScreen();
     moveWorkspace(!!status.active);
+    /* THE PLACEMENT HANDS OFF TO PRACTICE. Seth, 2026-08-23: "after taking the
+       placement diagnostic, it needs to take the learner to the practice.
+       After it takes them to the practice they just continue studying that."
+       In basic mode there is no tab strip (styles/learn-about.css), so a
+       learner left standing on a finished placement has nowhere to go and no
+       control that says what to do next — the hand-off is not a convenience
+       there, it is the only exit.
+
+       BASIC MODE ONLY, and that is deliberate: advanced mode HAS the strip, so
+       #diagnostic-results (the readiness card placement-results.js renders
+       three lines above this) stays readable for as long as the learner wants
+       it. Nothing is lost in basic mode either — practice/readiness.js is the
+       single writer of that figure and the Practice idle dial prints the same
+       reading with the same caption and detail line.
+
+       AFTER moveWorkspace, never before: it releases the workspace back to
+       #page-practice and clears the Practice tab lock, and switching first
+       would land on a Practice page still holding the probe.
+
+       `justFinished` is the TRANSITION, not the state: `render()` runs on
+       every `delta:practice-state-changed` and on every tab entry, so keying
+       on `showResults` alone would drag a learner off the Placement tab every
+       time they opened it after finishing a test months ago. */
+    if (justFinished &&
+        document.body.classList.contains("dd-basic-mode") &&
+        typeof switchTab === "function") {
+      switchTab("practice");
+    }
   };
 
   /* An unanswerable status call is not the same thing as "not signed in".

@@ -31,6 +31,12 @@ REQUIRED_JS = [
     # The Practice tab's idle screen (2026-08-23).
     "readiness.js",  # % of the 63 KCs mastered, atom-sourced readings only
     "session-idle.js",  # paints the dial and proxies Continue to the real buttons
+    # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
+    # difficulty rating; this file is what still commits the attempt to mastery
+    # and still reveals Next problem once it is hidden. A missing file is a
+    # silently frozen student model, so it is asserted rather than optional-
+    # chained away.
+    "basic-mode.js",
 ]
 REQUIRED_DOCS = ["README.md", "RUNTIME_CONTRACT.md"]
 REQUIRED_ASSETS = [

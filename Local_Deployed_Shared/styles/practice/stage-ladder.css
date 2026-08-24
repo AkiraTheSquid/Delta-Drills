@@ -1,30 +1,42 @@
-/* Stage ladder — the one progress readout above the practice split.
-   Markup in index.html (#stage-ladder), behaviour in practice/stage-ladder.js.
+/* Stage ladder — the progress readout INSIDE the question's heading card.
+   Markup in index.html (inside .question-number-row), behaviour in
+   practice/stage-ladder.js.
+
+   🔴 IT IS NOT A TOP STRIP ANY MORE (Seth, 2026-08-23: "the bar goes on the
+   left as well right below the title of the concept ... it is part of a
+   rectangle that holds both the bar and the concept right above it"). It was a
+   full-width band between the topbar and both panels, and the concept it was
+   describing was named twice on the screen — once by the band's pop-up and
+   once by the <h2> at the top of the left panel, eight pixels apart. The band
+   is gone: the ladder is now a block inside `.question-number-row`, which is
+   the rectangle, and the <h2> in that same rectangle is the title it belongs
+   to. The rectangle's own chrome (border, radius, padding, the centred
+   heading) lives in styles/practice/question.css — this file styles what goes
+   INSIDE it.
+
+   Two consequences worth stating before you edit anything here:
+
+   1. The width is a PANEL's, not the page's. Four rung names have to fit in
+      half a window rather than a whole one, which is why `.stage-seg-label`
+      ellipsises and why the Colab rail's overrides (colab-edition.css) now
+      apply to the normal layout's narrow end too.
+   2. Nothing in here is measured or positioned by script any more. The
+      pop-up callout — an absolutely-positioned box with an arrow aimed at the
+      fill's leading edge, re-clamped on every render and on resize — was
+      DELETED with the strip, and `--dd-ladder-gap`, `--dd-callout-arrow-x`
+      and the reserve above the bar went with it. The reading is a plain line
+      of text under the track now.
 
    Replaces concept-topbar.css and difficulty-bar.css, which drew two separate
-   full-width strips for two quantities that were being read as one. The column
-   layout that lets this sit above the split without pushing the page into an
-   overflow lives in styles/practice/layout.css. */
+   full-width strips for two quantities that were being read as one. */
 
-/* THE top strip. A direct child of `#page-practice` (not of
-   `.practice-container`) so it spans the tab edge to edge, directly under the
-   topbar, above the setup panel and the split alike. Two rows: one line of
-   context, then the meter. It used to be four — the concept, the rung, the
-   meter and a difficulty caption — and four rows of chrome between the topbar
-   and the question is most of a laptop's first screenful. */
+/* The ladder inside the card: the track, then one line of reading under it.
+   No background and no border of its own — the rectangle around it is the
+   card, and a bordered box inside a bordered box is two boxes. */
 .stage-ladder {
-  background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
   display: flex;
-  flex: 0 0 auto;
   flex-direction: column;
-  gap: 2px;
-  /* Tight top and bottom, and deliberately. The reading is a pop-up standing
-     clear of the bar now, so the meter has to reserve a couple more pixels
-     above the track than the old welded tab did; that comes out of THIS
-     padding rather than out of the split below. The strip is a hair shorter
-     than it was when the reading was a tab. */
-  padding: 4px 32px 8px;
+  gap: 5px;
 }
 
 .stage-ladder.hidden {
@@ -34,15 +46,18 @@
 /* 🔴 OFF unless the learner asked for it. Seth, 2026-08-23: the ladder is
    extra information above every question and it costs attention the question
    needs — so it rides with Advanced mode (the Account toggle that also
-   restores Knowledge Graph, Course content, Notebooks and Targeted Practice),
-   and basic mode is the default.
+   restores Knowledge Graph, Course content and Notebooks), and basic mode is
+   the default.
 
-   `display: none`, not `visibility` and not a JS teardown: the strip is
-   `flex: 0 0 auto` inside `#page-practice`, so this hands its whole height
-   back to the split rather than leaving a gap. practice/stage-ladder.js is
-   untouched and still renders into it — nothing has to be re-wired when the
-   toggle flips, and the reading is correct the instant it is switched on.
-   `body.dd-basic-mode` is written by app.js `applyModeVisibility`. */
+   `display: none`, not `visibility` and not a JS teardown: practice/stage-
+   ladder.js is untouched and still renders into it — nothing has to be
+   re-wired when the toggle flips, and the reading is correct the instant it is
+   switched on. `body.dd-basic-mode` is written by app.js
+   `applyModeVisibility`.
+
+   🔴 The heading card SURVIVES this. `.question-number-row` keeps its border
+   and its centred title in both modes — basic mode loses the bar, not the
+   concept it is about. */
 body.dd-basic-mode .stage-ladder {
   display: none;
 }
@@ -56,31 +71,22 @@ body.dd-basic-mode .stage-ladder {
    the panel's own colour so the bar reads as four arrow segments rather than
    as a bar with tick marks laid over it.
 
-   The rung NAMES are inside the track now, not captions under it, and the
-   reading rides ON the bar as a tab at the fill's leading edge — see the
-   callout block at the foot of this file. */
+   The rung NAMES are inside the track now, not captions under it. The reading
+   is a line of text under the track — see `.stage-ladder-reading` below. */
 
 .stage-ladder-meter {
-  /* ONE source for the bar's height: the bar is drawn with it and the callout
-     is anchored off it, so the two cannot drift apart by hand. Overridden on
-     a phone and on the Colab rail. */
-  --dd-ladder-bar-h: 30px;
-  /* How far the pop-up's arrow tip stands off the bar. This is the whole
-     point of round 5: welded to the bar, the reading read as a BUMP IN THE
-     BAR — one taller shape, not a label about a position. A few pixels of
-     air, and it is a separate thing pointing at one. */
-  --dd-ladder-gap: 6px;
+  /* ONE source for the bar's height, kept as a variable because the Colab rail
+     and the phone breakpoint both retune it. It no longer has anything
+     anchored off it — the reading that used to be positioned against this
+     token is a line of text below the track now. */
+  --dd-ladder-bar-h: 26px;
   display: flex;
   flex-direction: column;
-  /* Room ABOVE the bar for the pop-up, which is absolutely positioned and so
-     takes no space of its own. 🔴 It has to be RESERVED here: `#page-practice`
-     is `overflow: hidden` (styles/practice/layout.css) and this strip is its
-     first child, so anything the pop-up overhangs at the top is not drawn
-     over the topbar — it is CLIPPED AWAY. The BAR stays at the bottom of the
-     strip, hard against the panels it is describing. */
-  justify-content: flex-end;
   margin: 0;
-  padding-top: 28px;
+  /* 🔴 NO `padding-top`. The strip reserved 28px above the bar for a pop-up
+     that was absolutely positioned and would otherwise have been clipped by
+     `#page-practice { overflow: hidden }`. There is no pop-up and no reserve;
+     adding one back here just pushes the bar off its title. */
   position: relative;
 }
 
@@ -258,98 +264,62 @@ body.dd-basic-mode .stage-ladder {
   color: var(--on-accent);
 }
 
-/* ── The reading: a POP-UP standing off the bar, aimed at the fill's edge ── */
+/* ── The reading: one line of text UNDER the track ─────────────────────
 
-/* Four shapes, in order, and the fourth is close to the second on purpose.
+   Five shapes, in order, and the fifth is the plainest.
 
    1. A caption under the whole strip — read as a caption for the whole strip.
    2. A bordered box UNDER the bar with an arrow pointing up at the fill edge.
-      It said the right thing, but it hung in the gap between the strip and the
-      question and could land on `#practice-notch`, so the script had to
-      measure both and shove the notch sideways.
-   3. A tab welded to the bar's top edge — no arrow, no bottom border. That
-      killed the collision, and it also killed the point: a shape sharing an
-      edge with the bar reads as PART of the bar, one taller lumpy track,
-      not a label about one position on it.
-   4. This. Shape 2's pop-up, moved to the top where it cannot reach the
-      notch: all four borders, all four corners, lifted off the surface by a
-      shadow, standing `--dd-ladder-gap` clear of the track, with the arrow
-      back — pointing DOWN at the fill's leading edge.
+      It could land on `#practice-notch`, so the script had to measure both and
+      shove the notch sideways.
+   3. A tab welded to the bar's top edge — which read as PART of the bar, one
+      taller lumpy track rather than a label about a position on it.
+   4. Shape 2's pop-up moved above the bar, out of the notch's reach: all four
+      borders, a shadow, and an arrow aimed at the fill's leading edge in the
+      box's own coordinates (`--dd-callout-arrow-x`), re-clamped on every
+      render and again on resize.
+   5. This. The ladder sits in the heading card now and the concept is named
+      by the <h2> directly above it, so the pop-up's whole job — say which
+      concept, and point at where you are in it — is done by the card and the
+      fill. What is left is the percentage and the occasional caveat, and
+      neither of those is worth a floating box with an arrow: they are a line
+      of small text under the track.
 
-   🔴 The arrow is aimed independently of the box. `left`/`transform` centre
-   the BOX on the fill edge and are then clamped by measurement so a long
-   concept name cannot hang off the strip; the moment that clamp bites, the
-   box's centre is no longer the position being described. So the script also
-   writes `--dd-callout-arrow-x` — the fill edge in the box's OWN coordinates.
-   Parking the arrow at a static 50% would make it lie at both ends of the bar,
-   which is exactly where the reading matters most. */
-.stage-ladder-callout {
+   🔴 That deletion is why nothing in this file is script-positioned any more.
+   If a future shape needs aiming again, it needs `--dd-ladder-gap`, the
+   reserve above the bar, and the resize handler back — all three were removed
+   together (practice/stage-ladder.js, styles/practice/watch.py). */
+.stage-ladder-reading {
   align-items: baseline;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  /* Anchored to the bar's top edge, then held off it by the gap — the two are
-     separate declarations because they are separate decisions, and the gap is
-     the one that makes this a pop-up rather than a bump. */
-  bottom: var(--dd-ladder-bar-h);
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.22);
   color: var(--muted);
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   font-size: 11.5px;
   gap: 5px;
-  left: 0;
+  /* Centred under a centred title, on the axis the card is built around. */
+  justify-content: center;
   line-height: 1.3;
-  margin-bottom: var(--dd-ladder-gap);
-  max-width: 100%;
-  padding: 2px 9px 3px;
-  position: absolute;
-  white-space: nowrap;
-  /* Over the track's two text layers (z-index 2), which it briefly overlaps
-     at the very top of the bar on a short viewport. */
-  z-index: 3;
 }
 
-/* The arrow: two stacked triangles, the outer one in the border colour and
-   the inner one in the fill colour a pixel higher, so the point carries the
-   pop-up's own 1px outline instead of being a bare wedge of `--surface`
-   against the strip. `left` is the aimed value; the negative margin turns it
-   from the triangle's left corner into its TIP. */
-.stage-ladder-callout::before,
-.stage-ladder-callout::after {
-  border: 6px solid transparent;
-  border-bottom: 0;
-  content: "";
-  height: 0;
-  left: var(--dd-callout-arrow-x, 50%);
-  position: absolute;
-  top: 100%;
-  width: 0;
-}
-
-.stage-ladder-callout::before {
-  border-top-color: var(--border);
-  margin-left: -6px;
-}
-
-.stage-ladder-callout::after {
-  border-top-color: var(--surface);
-  border-width: 5px 5px 0;
-  margin-left: -5px;
-  margin-top: -1px;
-}
-
-.stage-ladder-callout b {
+.stage-ladder-reading b {
   color: var(--white);
   font-size: 13px;
   font-weight: 700;
 }
 
-.stage-ladder-callout-text {
-  min-width: 0;
-}
+/* The concept's name, and the jump to it on the map.
 
-/* The concept, and the jump to it on the map. */
+   🔴 HIDDEN ON THE PRACTICE SCREEN, and that is the point of the move. The
+   <h2> at the top of this same card already IS the concept name — ui.js writes
+   it from `ladder_kc_title`, the same field this button is labelled from — so
+   showing both put the name on screen twice, a centimetre apart, in two
+   different type sizes. practice/stage-ladder.js hides this button whenever
+   its label would repeat the heading, which leaves it for the one screen where
+   the heading says something else: the lesson (`#question-number` = "Lesson").
+
+   The jump itself is not lost when it is hidden — "See in knowledge graph" in
+   the notch's three-dot menu (#practice-graph-jump) is the same trip, gated on
+   the same thing, and it is on screen in both modes. */
 .stage-ladder-kc {
   background: transparent;
   border: 0;
@@ -426,10 +396,6 @@ body.dd-basic-mode .stage-ladder {
 }
 
 @media (max-width: 720px) {
-  .stage-ladder {
-    padding: 4px 16px 8px;
-  }
-
   /* A quarter of a phone is about six characters. The names stay — dropping
      any of them would take the point of the ladder with it — and the ⓘs go,
      because a 13px target beside a truncated word is neither readable nor
@@ -443,16 +409,11 @@ body.dd-basic-mode .stage-ladder {
     display: none;
   }
 
-  /* 🔴 The reserve above the bar tracks the POP-UP's height, not the bar's:
-     the bar shrinks on a phone and the reading does not shrink with it. Cut
-     this to the bar's ratio and the arrow tip is the first thing clipped. */
   .stage-ladder-meter {
-    --dd-ladder-bar-h: 26px;
-    --dd-ladder-gap: 5px;
-    padding-top: 26px;
+    --dd-ladder-bar-h: 24px;
   }
 
-  .stage-ladder-callout {
+  .stage-ladder-reading {
     font-size: 11px;
   }
 }

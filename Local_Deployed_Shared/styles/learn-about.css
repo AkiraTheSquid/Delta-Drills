@@ -1,0 +1,240 @@
+/* ================================================================
+   LEARN-ABOUT.CSS — the front door: the two-arrow welcome fork, the
+   disclosures on "Learn about the App", and the one rule that takes
+   the tab strip off the screen in basic mode.
+
+   Written 2026-08-23 (Seth). Three things that are really one thing:
+   a first-time visitor used to land on a pitch page with a nav strip
+   of five tabs above it, and the ask was for exactly two choices and
+   nothing else — read about it, or start using it.
+
+   🔴 THIS FILE IS LINKED AFTER nav-drawer.css AND THAT IS LOAD-BEARING.
+   Below 900px nav-drawer.js MOVES `.tabs` into `#nav-drawer`, where
+   `body.nav-drawer-mode .nav-drawer .tabs` (0,3,1) would re-show it;
+   the basic-mode rule below matches that specificity exactly, so the
+   tie is settled by source order and by nothing else. Moving this
+   link above nav-drawer.css puts the whole tab strip back on a narrow
+   screen in basic mode.
+
+   NOT IN HERE: anything about what a page CONTAINS. The article type
+   scale is still styles/how-it-works.css and the concept map is still
+   styles/why-map.css; this file only owns the shell around them.
+   ================================================================ */
+
+/* ── The tab strip, in basic mode ──────────────────────────────────
+   Basic mode is the DEFAULT (app.js `applyModeVisibility` writes
+   `body.dd-basic-mode` whenever the Account toggle is off), so for
+   almost everyone the app has no tab strip at all. Navigation is the
+   welcome fork, the cog, and the app moving the learner on by itself:
+   placement → Practice, and then Practice for good.
+
+   Advanced mode is the whole way back — every tab returns, unchanged,
+   because this is a display rule and nothing is unmounted. The cog
+   (→ Account) is what stays reachable in between, and the Account
+   page carries `.dd-basic-nav` so arriving there is not a dead end.
+
+   The HAMBURGER goes with it. It exists only to open the drawer the
+   strip moves into; leaving it would be a button that opens an empty
+   panel. */
+body.dd-basic-mode .tabs,
+body.dd-basic-mode .nav-drawer .tabs,
+body.dd-basic-mode .nav-toggle {
+  display: none;
+}
+
+/* The escape row on the Account page — the inverse of the rule above,
+   and it only exists because of it. Advanced mode has the strip, so
+   this row would be a second, worse copy of it. */
+.dd-basic-nav { display: none; }
+body.dd-basic-mode .dd-basic-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 18px;
+}
+.dd-basic-nav-link {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim, inherit);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 6px 14px;
+}
+.dd-basic-nav-link:hover {
+  border-color: var(--accent, currentColor);
+  color: var(--text, inherit);
+}
+
+/* ── The welcome fork ──────────────────────────────────────────────
+   Two arms, and deliberately nothing else on the screen: no pitch, no
+   guest banner (app.js stamps `body.dd-welcome`, and the rule for that
+   is below), no nav. `#page-welcome` is not a tab and there is no route
+   back to it — a fork is a thing you pass through once.
+
+   `min-height` rather than `height`: the arms are buttons with wrapping
+   labels, and on a narrow screen they stack. 100dvh, not 100vh, so the
+   mobile URL bar cannot push the second arm below the fold. */
+/* `.page` carries 60px/100px of its own padding for an article, which is
+   160px of nothing on a screen whose whole content is two panels — and it is
+   what pushed the fork 44px past the fold and put a scrollbar on a page with
+   nothing to scroll to. Zeroed here, and the fork carries its own. */
+#page-welcome { padding: 0; }
+#page-welcome .welcome-fork {
+  align-items: stretch;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 900px;
+  /* 120 = the topbar plus slack. Deliberately generous: the arms are buttons
+     with wrapping labels, so this is a floor and never a ceiling. */
+  min-height: calc(100dvh - 120px);
+  padding: 32px 20px;
+}
+
+/* Each arm is one button, not a card with a button in it: the whole
+   panel is the target, which is the only sane hit area for a screen
+   whose entire job is a binary choice. */
+.welcome-arm {
+  align-items: center;
+  background: var(--panel, transparent);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  font: inherit;
+  gap: 14px;
+  justify-content: center;
+  padding: 40px 28px;
+  text-align: center;
+  transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+.welcome-arm:hover,
+.welcome-arm:focus-visible {
+  border-color: var(--accent, currentColor);
+  transform: translateY(-2px);
+}
+
+/* The arrow is the loudest thing in the arm on purpose — it is what
+   makes the two panels read as directions rather than as two buttons
+   that happen to sit side by side. aria-hidden in the markup: the
+   label already says where it goes, and "left arrow" read aloud
+   before it is noise. */
+.welcome-arrow {
+  font-size: 3rem;
+  line-height: 1;
+  opacity: 0.75;
+}
+.welcome-arm:hover .welcome-arrow,
+.welcome-arm:focus-visible .welcome-arrow { opacity: 1; }
+
+.welcome-arm-label {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+/* One dimmed line under each label. On the LEFT it is the required
+   part — Seth: the reading path has to say out loud that it is
+   optional, or a first-time visitor reads a fork as a prerequisite.
+   On the RIGHT it names the destination, because a button that drops
+   you into a timed test should say so before you press it. */
+.welcome-arm-note {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 30ch;
+  opacity: 0.7;
+}
+
+/* The guest banner is a standing invitation on every other screen and
+   the one thing that would make this one not be two choices. It comes
+   back the moment a path is taken. */
+body.dd-welcome .guest-banner { display: none; }
+
+@media (max-width: 700px) {
+  #page-welcome .welcome-fork {
+    flex-direction: column;
+    min-height: 0;
+    padding: 20px 16px 40px;
+  }
+  .welcome-arm { padding: 28px 20px; }
+  .welcome-arrow { font-size: 2.25rem; }
+  .welcome-arm-label { font-size: 1.15rem; }
+  /* Stacked, "left" and "right" mean nothing; up/down is what the reader
+     now sees, and the arrows have to agree with the layout. ONE rotation for
+     both, not a mirrored pair: turning each arm toward the other edge points
+     them BOTH down, which says nothing. Clockwise, ← becomes ↑ (the arm
+     above) and → becomes ↓ (the arm below). */
+  .welcome-arrow { transform: rotate(90deg); }
+}
+
+/* ── The disclosures on "Learn about the App" ──────────────────────
+   Native <details>/<summary>. No script, so they work on a solo deep
+   link and before app.js has run, and the open/closed state lives in
+   the element rather than in a variable something else could disagree
+   with.
+
+   The page ships with BOTH CLOSED: what is unconditionally on screen
+   is one heading and one paragraph saying what Delta Drills is, and
+   everything else is a choice to read more. */
+.lab-disclosure {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 18px 0;
+}
+.lab-disclosure > summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 1.25rem;
+  font-weight: 600;
+  gap: 12px;
+  justify-content: space-between;
+  list-style: none;
+  padding: 18px 22px;
+}
+/* Both spellings. `::-webkit-details-marker` is what Safari still
+   reads; `display: list-item` off the summary is what everything else
+   needs, and neither alone removes the triangle everywhere. */
+.lab-disclosure > summary::-webkit-details-marker { display: none; }
+.lab-disclosure > summary::marker { content: ""; }
+.lab-disclosure > summary:hover { color: var(--accent, inherit); }
+.lab-disclosure > summary:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: -2px;
+}
+.lab-disclosure-title { flex: 1 1 auto; }
+
+/* The chevron is drawn, not typed: a rotated border corner keeps its
+   weight in step with the border of the box it sits in, which a glyph
+   from the body font does not. */
+.lab-disclosure-chevron {
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  flex: 0 0 auto;
+  height: 9px;
+  margin-top: -4px;
+  opacity: 0.6;
+  transform: rotate(45deg);
+  transition: transform 140ms ease, margin 140ms ease;
+  width: 9px;
+}
+.lab-disclosure[open] > summary .lab-disclosure-chevron {
+  margin-top: 4px;
+  transform: rotate(-135deg);
+}
+
+.lab-disclosure-body {
+  border-top: 1px solid var(--border);
+  padding: 4px 22px 18px;
+}
+/* The sections inside were top-level article sections a moment ago and
+   still carry their own top margin from how-it-works.css; the box's
+   own padding is the gap now, so the first one must not add a second. */
+.lab-disclosure-body > .hiw-section:first-child,
+.lab-disclosure-body > .hiw-lead:first-child { margin-top: 14px; }
+.lab-disclosure-body > .hiw-section:last-child { margin-bottom: 0; }

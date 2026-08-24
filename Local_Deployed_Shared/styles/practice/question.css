@@ -1,19 +1,49 @@
 /* Practice tab — question display: number, text, imports, visuals, meta, prose/code split. */
-/* ---- the question's heading -------------------------------------------
+/* ---- the question's heading CARD ---------------------------------------
 
-   This row used to be a counter and two audit chips ("Question 21", "ID 490",
-   "See in knowledge graph"). It is the CONCEPT now — an <h2> naming what the
-   problem is about — and the two chips are in the notch's three-dot menu.
-   Seth's call, 2026-08-23. #placement-timer was the last thing left beside the
-   heading and it went to the notch tab later the same day, so the row is now
-   the heading and nothing else — kept as a row because that is what it will be
-   again the next time something belongs next to a title, and because
-   `margin-bottom` is doing real work between the heading and the question. */
+   This started as a counter and two audit chips ("Question 21", "ID 490",
+   "See in knowledge graph"). It became an <h2> naming the CONCEPT, with the
+   chips moved into the notch's three-dot menu; #placement-timer was the last
+   thing beside the heading and it went to the notch tab the same day.
+
+   🔴 It is a RECTANGLE now, and it holds the progress ladder (Seth,
+   2026-08-23: "the bar goes on the left as well right below the title of the
+   concept, and the title of the concept is center aligned ... it is part of a
+   rectangle that holds both the bar and the concept right above it"). The
+   ladder used to be a full-width band above both panels — which meant the
+   concept was named twice on one screen, by the band's pop-up and by this
+   heading, in two type sizes and two places. One card, one name, and the bar
+   directly under the thing it is a bar for.
+
+   So this is a COLUMN, not a row: heading, then `#stage-ladder` (markup in
+   index.html, contents styled by styles/practice/stage-ladder.css). Default
+   `align-items: stretch` is load-bearing — it is what gives the track the
+   card's full width; the heading is centred by `text-align` rather than by
+   flex so it keeps that width and wraps inside it.
+
+   The card is there in BOTH modes. Basic mode hides the ladder inside it
+   (`body.dd-basic-mode .stage-ladder`), not the card, so a learner who has
+   never opened the Account tab still gets the title in its frame. */
+/* 🔴 NOTHING TO FRAME, NO FRAME. The heading is written by `ui.js` when a
+   question renders, so between a session opening and its first question
+   landing — and on the placement page between probes — `#question-number` is
+   an empty <h2>. That was invisible while the row had no chrome; as a bordered
+   card it is an empty rectangle sitting above nothing. `:empty` matches only
+   an element with no child nodes at all, which is exactly what
+   `textContent = ""` leaves, so a heading with a space in it still draws. */
+.question-number-row:has(> .question-number:empty) {
+  display: none;
+}
+
 .question-number-row {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 10px;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 11px 14px 12px;
 }
 
 /* 🔴 Uppercase and 14px MUTED was right for "QUESTION 21" and is wrong for a
@@ -21,8 +51,14 @@
    caps at that length stop being readable. It is the largest thing in the
    panel's first inch now, and the question text under it steps DOWN to 17px
    rather than up. `margin: 0` because it is a real heading element and the UA
-   sheet gives <h2> a block margin the row would inherit as a gap. */
+   sheet gives <h2> a block margin the row would inherit as a gap.
+
+   Centred, because the card is (Seth, 2026-08-23) — and by `text-align`, so a
+   name that wraps still occupies the card's full width and centres line by
+   line. Centring it with flex instead would shrink the box to the text and
+   take the ladder's width with it. */
 .question-number {
+  text-align: center;
   color: var(--white);
   font-size: 20px;
   font-weight: 700;
