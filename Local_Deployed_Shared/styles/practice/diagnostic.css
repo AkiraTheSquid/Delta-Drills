@@ -217,11 +217,22 @@
    `.diagnostic-running` is still the class, still written by
    diagnostic-page.js::syncWorkspace, and it still means "a probe is hosted
    here" rather than "a placement exists" — the overview has to come back the
-   moment the learner is between probes or looking at their results. */
-#page-diagnostic.diagnostic-running #diagnostic-overview { display: none; }
-#page-diagnostic.diagnostic-running { padding: 0; }
+   moment the learner is between probes or looking at their results.
+
+   🔴 IT IS WRITTEN ON #page-practice NOW. There is no #page-diagnostic: the
+   Placement test and Practice were merged into one Learner Home tab on
+   2026-08-24 (Seth: "the diagnostic and practice should be combined into one
+   tab"), and the overview, the results card and the workspace host all moved
+   onto that page. The selector had to follow; the class did not change. */
+#page-practice.diagnostic-running #diagnostic-overview { display: none; }
+#page-practice.diagnostic-running #learner-areas { display: none; }
+#page-practice.diagnostic-running { padding: 0; }
 /* .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
-   needs hiding when the workspace is hosted here. */
+   needs hiding when the workspace is hosted here.
+
+   🔴 AND THE IDLE SURFACE IS INSIDE IT. `#diagnostic-overview` is a child of
+   `.session-setup` since the merge, so this one rule takes the dial, the areas
+   and the placement card off the screen together while a probe is up. */
 .diagnostic-workspace-host .session-setup { display: none; }
 /* 🔴 THE SAME ARITHMETIC AS THE PRACTICE TAB, and it has to stay that way.
    `#page-practice` is `calc(100vh - var(--dd-topbar-h))`; this was that minus
@@ -231,6 +242,35 @@
    (styles/layout.css). */
 .diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h)); }
 .diagnostic-workspace-host .practice-split { display: flex; }
+
+/* 🔴 THE SPECIFICITY FIGHT THE MERGE CREATED, and it is not cosmetic.
+   `#page-practice.session-idle` (styles/practice/timer.css) hides `.practice-split`
+   and shows `.session-setup` — and until 2026-08-24 that never collided with the
+   two rules above, because the host lived on a DIFFERENT page and the workspace
+   simply stopped being a descendant of #page-practice while it was hosted.
+
+   It is a descendant of it now, both ways round. `#page-practice.session-idle
+   .practice-split` is (1,2,0) and `.diagnostic-workspace-host .practice-split` is
+   (0,2,0), so the ID rule wins and a placement probe would render as a blank
+   idle screen. Two IDs settle it outright rather than leaving it to the order
+   two stylesheets happen to be linked in.
+
+   The learner is not "idle" during a probe, so nothing here is a lie — but the
+   class is timer.js's to write and a placement is not a session, so this is
+   fixed where the conflict is rather than by teaching timer.js about placements. */
+#page-practice #diagnostic-workspace-host .practice-split { display: flex; }
+#page-practice #diagnostic-workspace-host .session-setup { display: none; }
+/* 🪦 `#page-practice #diagnostic-workspace-host .stage-ladder { display: block }`
+   lived here for a few hours on 2026-08-24 and was WRONG twice over. Nothing
+   ever needed it — the host shows placement probes, which carry no `ladder_kc`,
+   so practice/stage-ladder.js keeps `.hidden` on the element throughout. And at
+   (2,1,0) it outranked BOTH of the gates that are supposed to hide the ladder —
+   `.stage-ladder.hidden` and `body.dd-basic-mode .stage-ladder`, each (0,2,0) —
+   so it forced an empty advanced-only widget onto a basic-mode probe, with the
+   wrong `display` keyword on top (the element's own rule is `flex`). Do not
+   re-add it to "match" the two rules above: those exist to beat
+   `#page-practice.session-idle`, which is on the page during a probe and hides
+   things this host must show. The ladder is not one of them. */
 
 /* Per-probe countdown, written by practice/placement-timer.js into the NOTCH
    TAB (Seth, 2026-08-23 — it used to be a pill beside the concept heading in
@@ -255,3 +295,53 @@
    `watch.py` asserts. Do not give it colour, size or spacing again: that is
    how the two clocks drift back apart. */
 .placement-timer.hidden { display: none; }
+
+
+/* ================================================================
+   WHAT YOU ARE LEARNING — the area bars on the Learner Home
+   ================================================================
+
+   The rows themselves are `.placement-area*`, styled above and unchanged: this
+   is only the block that hosts them now. It used to sit inside
+   #diagnostic-results, which shows only after a placement is COMPLETE — so the
+   one screen a learner opens every day named nothing at all and reported "0%
+   ready". Seth, 2026-08-24: "it should display the information about einops,
+   numpy, and einsum to be learned".
+
+   /api/practice/diagnostic/status returns all three areas from the first call
+   on a brand-new account (theta = the prior, probes = 0), so there is always
+   something honest to draw here — the rows carry their own "not probed" marking
+   and their ± band, which is what keeps an unmeasured area from reading as a
+   measurement. */
+.learner-areas {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 22px auto 0;
+  max-width: 560px;
+  padding: 18px 20px 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.learner-areas-head {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.learner-areas-note {
+  color: var(--muted-dim);
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 12px 0 0;
+}
+
+/* Nothing came back — a network failure, or a signed-out visitor whose status
+   call has not answered yet. An empty bordered box that says nothing is worse
+   than no box, so the whole block goes. Written by
+   practice/placement-results.js renderAreas. */
+.learner-areas.is-empty {
+  display: none;
+}

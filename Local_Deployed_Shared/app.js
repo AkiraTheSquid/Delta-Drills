@@ -64,7 +64,12 @@ const guestBlockedTabs = ["split-tool"];
 // Nothing is unloaded — the pages stay in the DOM and their scripts still
 // run; only the nav entries (and the one in-page CTA that points at a
 // hidden tab) are taken out, and switchTab refuses to route to them.
-const advancedOnlyTabs = ["knowledge-graph", "courses", "notebooks", "targeted-practice"];
+/* Knowledge Graph is NOT in this list any more. It is one of the five rows in
+   the topbar account menu (index.html #account-menu), which is the only
+   navigation basic mode has — putting a menu row behind a mode the menu itself
+   is the way to reach would have made it a row that silently routes to Practice
+   instead. Seth asked for it there by name, 2026-08-24. */
+const advancedOnlyTabs = ["courses", "notebooks", "targeted-practice"];
 const ADVANCED_MODE_KEY = "dd_advanced_mode";
 const isAdvancedMode = () => localStorage.getItem(ADVANCED_MODE_KEY) === "1";
 const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
@@ -76,7 +81,19 @@ const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
    before a recovery reload. A reload that crosses a deploy boundary — the old
    build wrote the name, the new build reads it — would ask for a page that is
    not in the document any more. */
-const renamedTabs = { "why-this-app": "learn-about-app", "how-to-use": "learn-about-app" };
+const renamedTabs = {
+  "why-this-app": "learn-about-app",
+  "how-to-use": "learn-about-app",
+  /* 🔴 AND "diagnostic", since 2026-08-24. The Placement test stopped being a
+     tab of its own that day — Seth: "the diagnostic and practice should be
+     combined into one tab, with it being called Learner Home" — so the
+     placement card, its results and the workspace host all moved onto
+     #page-practice and #page-diagnostic was deleted. This name still arrives
+     from three live places: `/diagnostic` in solo-route.js, a stale
+     `dd_recovered_tab`, and practice/events.js. All three land on the page the
+     placement is actually on. */
+  diagnostic: "practice",
+};
 
 const switchTab = (tabName) => {
   tabName = renamedTabs[tabName] || tabName;
@@ -103,25 +120,16 @@ const switchTab = (tabName) => {
     // serve a chromeless Practice page to someone who asked for a notebook.
     if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
   }
-  /* 🔴 A RUNNING PLACEMENT OWNS THE WORKSPACE. Practice and the placement test
-     share one editor and one `PracticeAPI.currentQuestion`, so opening Practice
-     mid-test showed the PROBE under the Practice tab's name — Seth, 2026-08-23:
-     "it has a tendency to think that you are in placement test mode whenever
-     you click on the practice, which is not the case."
+  /* 🔴 THE PRACTICE/PLACEMENT LOCK USED TO BE HERE, and it is gone with the
+     thing it was protecting against. Practice and the placement test share one
+     editor and one `PracticeAPI.currentQuestion`, so opening Practice mid-test
+     showed the PROBE under the Practice tab's name — and the fix was to disable
+     the Practice tab and redirect every route to it back to #page-diagnostic.
 
-     diagnostic-page.js disables the tab, which stops the click. This stops
-     everything else: [data-goto-tab="practice"], the tab restored from the last
-     session at the bottom of this file, and the two redirects above that use
-     "practice" as their fallback — so the fallback has to be re-checked AFTER
-     they run, not before. Sending them to the Placement page rather than
-     dropping the request is the point: that page says what is running and is
-     the only place to finish it.
-
-     One way only. A practice session never blocks the Placement tab — that
-     page is where you read what the test is and choose to start it. */
-  if (tabName === "practice" && window.DiagnosticPage?.isRunning?.()) {
-    tabName = "diagnostic";
-  }
+     There is one page now. A probe and a practice question cannot be on two
+     tabs at once because there is no second tab to be on, so there is nothing
+     to redirect and nothing to lock. diagnostic-page.js lost `setPracticeLock`
+     in the same change. */
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
   /* #page-welcome is a PAGE WITHOUT A TAB — the two-arrow fork a first-time
@@ -168,8 +176,16 @@ const switchTab = (tabName) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
+  /* 🔴 "practice", NOT "diagnostic". The placement lives on the Learner Home
+     since 2026-08-24, and this is the call that fills it: the status read is
+     what writes the placement card, the start button and — since the merge —
+     the area bars, which are on the idle surface a learner opens every day.
+     Left saying "diagnostic" it matched a tab name that no longer exists, so
+     every entry took the `leave` branch and the Learner Home rendered "Loading
+     placement status…" and an empty area list, forever. Caught in the browser,
+     not by a check: nothing throws. */
   if (window.DiagnosticPage) {
-    if (tabName === "diagnostic") window.DiagnosticPage.refresh();
+    if (tabName === "practice") window.DiagnosticPage.refresh();
     else window.DiagnosticPage.leave(tabName);
   }
 };
@@ -410,6 +426,28 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
   }
   return response;
 };
+
+/* 🔴 PUBLISHED ON PURPOSE — do not delete this line as redundant.
+
+   `apiFetch` is a top-level `const` in a classic script, so it is NOT a window
+   property (the same trap this tree documents for `switchTab`, `PracticeAPI`
+   and `PracticeSession`). Two readers guard on exactly that and fall back:
+
+     concept-graph/kc_lattice_read.js:  window.apiFetch || window.fetch
+     concept-graph/lesson-graph.js:     window.apiFetch || fetch
+
+   The fallback is bare `fetch` with a RELATIVE path, which never reaches the
+   backend — it hits whatever is serving the page. Locally that is a 404 in the
+   console; on Vercel the SPA rewrite answers `/api/practice/kc-lattice` with
+   200 text/html, `res.ok` is true, `res.json()` throws, the catch writes null,
+   and both surfaces render the guest/offline reading for a signed-in learner
+   with no error anywhere. Found 2026-08-24 by counting boot 404s. Same shape as
+   the `.vercelignore` runtime-fetch trap: check the content type, not the code.
+
+   Assigning here rather than converting the const to a `function` declaration
+   keeps the token-refresh recursion above (`apiFetch(path, options, false)`)
+   bound to this exact implementation. */
+window.apiFetch = apiFetch;
 
 // Read through `window` rather than the binding: guest-session.js is loaded
 // AFTER this file, so `DDGuest` does not exist yet when apiFetch is defined —

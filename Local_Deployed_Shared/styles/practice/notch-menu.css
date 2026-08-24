@@ -10,34 +10,48 @@
    End session is GONE, here and everywhere: a block has no length any more,
    so there is nothing to end early. Pause and resume are the two states. */
 
-/* The notch hangs from the top edge of the split, centred on the divider
-   between the question and the editor. Absolute, so it costs the panels no
-   height. */
+/* 🔴 IT IS NOT A NOTCH ANY MORE — it is the topbar's middle cell (Seth,
+   2026-08-24: "put the timer in the top middle bar rather than as the notch").
+   The class names are unchanged on purpose: practice/notch-menu.js,
+   practice/timer.js and practice/placement-timer.js all address this thing by
+   id, and renaming the markup would have meant editing three files that had no
+   other reason to change.
+
+   WHAT THE MOVE FIXED, beyond where it is drawn. As a notch it hung off
+   `.practice-container`, which means it TRAVELLED with the workspace: into the
+   placement host, back out, and off the screen entirely on every page that is
+   not the Learner Home. The clock is app chrome — one clock, one place,
+   whatever the learner is doing — so it belongs to the bar, not to a panel.
+
+   Static, not absolute: `.topbar-mid` is a centred flex row and this is one of
+   its two children (the tab strip is the other, in advanced mode only).
+   `position: relative` is what the menu below hangs from. */
 .practice-notch {
-  left: 50%;
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  /* Above the panels' own content, below any modal. */
+  position: relative;
+  /* Above the pages under the bar, below any modal. */
   z-index: 30;
 }
 
-/* The tab. Square across the top where it meets the panels' top edge, rounded
-   below; the border skips the top edge for the same reason. It carries the
-   background for BOTH halves — the clock and the dots read as one control,
-   not as a readout with a button stuck to it. */
+/* The control itself: square, clock, dots, read as one thing rather than as a
+   readout with buttons stuck to it — which is why the background and the border
+   are here and not on the three children.
+
+   🔴 ROUNDED ON ALL FOUR CORNERS NOW. It used to be `0 0 10px 10px` with
+   `border-top: 0`, because it hung off a panel's top edge and shared it; in the
+   middle of the bar a control with no top border reads as clipped. */
 .practice-notch-tab {
   align-items: center;
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 0 0 10px 10px;
-  border-top: 0;
+  border-radius: 999px;
   display: flex;
   gap: 6px;
   /* The tab's contents no longer change between sessions — square, clock,
      dots, always all three — so this is a plain symmetric inset. It used to
      be sized around a clock that disappeared when nothing was running. */
-  padding: 2px 6px 4px;
+  /* Symmetric now that nothing is flush against an edge, and short enough that
+     the control clears the 44px bar (--dd-topbar-h) with room either side. */
+  padding: 3px 8px;
   transition: background 120ms ease;
 }
 
@@ -207,9 +221,9 @@
   letter-spacing: 1px;
 }
 
-/* The menu. Hangs under the tab, right-aligned to nothing — centred, because
-   the tab can be pushed to either side of the reading and a menu pinned to
-   one edge would then hang off the panel it was pushed away from. */
+/* The menu. Hangs under the control, centred on it — the control is centred on
+   the viewport, so there is no edge for it to fall off. `top` clears the
+   topbar's own bottom border. */
 .practice-notch-menu {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -222,8 +236,11 @@
   min-width: 168px;
   padding: 6px;
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 10px);
   transform: translateX(-50%);
+  /* Over the pages below the bar. `.topbar` is z-index 50 and creates the
+     stacking context this sits in, so this only has to beat its siblings. */
+  z-index: 60;
 }
 
 .practice-notch-menu.hidden {
@@ -312,10 +329,10 @@
 }
 
 @media (max-width: 720px) {
-  /* The panels stack on a phone, so there is no seam to sit on: the notch
-     keeps its place at the top of whatever is first, and the menu drops its
-     centring for the right edge, which is the only one guaranteed to be on
-     screen once the tab has been pushed. */
+  /* The bar is tight on a phone: the level pill on one side, the account
+     control on the other, and this between them. The menu drops its centring
+     for the right edge — the control can be pushed left by a wide pill, and the
+     right edge is the one still guaranteed to be on screen. */
   .practice-notch-menu {
     left: auto;
     right: 0;

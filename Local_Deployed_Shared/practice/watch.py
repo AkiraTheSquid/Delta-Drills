@@ -101,14 +101,20 @@ def check_public_api():
     assert 'holdClock("problem-feedback-note")' in events
     assert 'releaseClock("problem-feedback-note")' in events
     index_html = read(os.path.join(SHARED, "index.html"))
-    assert 'id="page-diagnostic"' in index_html and 'data-tab="diagnostic"' in index_html
-    # Class TOKENS, not the literal attribute: the tab carried a `has-info`
-    # class while it had a sibling ⓘ (2026-08-07 → 2026-08-23), and an exact
-    # match broke on both the addition and the removal.
-    assert re.search(r'<button class="tab[^"]*" data-tab="diagnostic"', index_html), (
-        "the Placement test tab is no longer a plain .tab button"
+    # 🔴 ONE TAB SINCE 2026-08-24. The Placement test stopped being a page and
+    # a tab of its own — Seth: "the diagnostic and practice should be combined
+    # into one tab, with it being called Learner Home" — so the overview card,
+    # the results card and the workspace host all live inside #page-practice.
+    assert 'id="page-diagnostic"' not in index_html and 'data-tab="diagnostic"' not in index_html, (
+        "the Placement test is a page/tab of its own again. Two tabs sharing "
+        "one editor and one PracticeAPI.currentQuestion is what the Practice "
+        "tab lock existed to paper over"
     )
     assert 'id="diagnostic-workspace-host"' in index_html
+    assert 'id="diagnostic-workspace-host"' in index_html.split('id="page-practice"')[1], (
+        "the placement workspace host must be inside #page-practice: it is "
+        "what takes the idle surface off the screen while a probe is up"
+    )
     assert "Continue diagnostic in Practice" not in index_html
     # An unfinished placement must not cost the learner the Practice tab.
     diagnostic_page = read(os.path.join(HERE, "diagnostic-page.js"))
@@ -121,12 +127,23 @@ def check_public_api():
         "an active placement must never disable the Practice tab: no :disabled "
         "style exists, so the tab looks live and silently eats the click"
     )
+    assert "setPracticeLock(" not in diagnostic_page, (
+        "the Practice tab lock is back. There is one tab now and it cannot be "
+        "locked against itself"
+    )
     assert "const diagnosticOnScreen =" in diagnostic_page and (
         "running && diagnosticOnScreen()" in diagnostic_page
     ), (
-        "the practice workspace may live in #page-diagnostic only while that page "
-        "is on screen — delta:practice-state-changed fires from any tab, and keying "
-        "on the placement alone yanks the workspace out of a visible Practice tab"
+        "the workspace may be hosted only while the page that owns the "
+        "placement is on screen — delta:practice-state-changed fires from any "
+        "tab, and keying on the placement alone hauls the workspace under a "
+        "page nobody is looking at"
+    )
+    assert 'byId("page-practice")' in diagnostic_page and (
+        'byId("page-diagnostic")' not in diagnostic_page
+    ), (
+        "diagnostic-page.js must address the Learner Home; every read of the "
+        "deleted #page-diagnostic is silently undefined"
     )
     assert 'practicePage.classList.add("hidden")' not in diagnostic_page and (
         "practicePage.hidden = true" not in diagnostic_page

@@ -1,94 +1,58 @@
-/* Dedicated top-nav Placement test page (the route, the ids and the backend
-   endpoints all still say `diagnostic` — only the learner-facing words changed).
-   Practice DOM moves here only while the placement is active AND this page is
-   the one on screen, so one editor
-   implementation serves two distinct tabs without ever exposing
-   #page-practice beneath #page-diagnostic.
+/* THE PLACEMENT TEST, on the Learner Home.
 
-   THE ON-SCREEN HALF OF THAT CONDITION IS LOAD-BEARING. It used to key on the
-   placement alone, which broke the Practice tab outright for anyone with an
-   unfinished placement:
-     - the Practice tab was marked `disabled`, and no `:disabled` style exists
-       anywhere, so the tab looked normal and simply ate the click; and
-     - the workspace stayed parented to the hidden #page-diagnostic while
-       #page-practice was force-hidden, so even a programmatic switch landed
-       on an empty page.
-   Worse, `render()` also runs on `delta:practice-state-changed` — which fires
-   on every question load — so a learner who did reach Practice had the
-   workspace yanked back out from under them a moment later.
-   🔴 THE PRACTICE TAB IS LOCKED AGAIN — DELIBERATELY, AND DIFFERENTLY.
-   Seth, 2026-08-23: "whenever you're jumping in between the placement test and
-   the practice ... it has a tendency to think that you are in placement test
-   mode whenever you click on the practice, which is not the case. I think you
-   should make it such that whenever you do the placement test, it locks you out
-   of the practice. But the reverse is not true."
+   The route, the ids and the backend endpoints all still say `diagnostic` —
+   only the learner-facing words changed, and then where they are drawn.
 
-   He is describing a real thing, not a misreading. Leaving mid-probe sent the
-   workspace home to #page-practice with the PROBE still in it — same editor,
-   same "I don't know yet" button, the placement's clock ticking on it — and
-   PracticeAPI.currentQuestion is a single global, so there was no second
-   question to put there. Practice WAS the placement test, wearing the Practice
-   tab's name. A block that starts from there would then be built on a probe.
+   🔴 THERE IS NO PLACEMENT PAGE ANY MORE (Seth, 2026-08-24: "the diagnostic and
+   practice should be combined into one tab, with it being called Learner
+   Home"). #page-diagnostic is deleted; the overview card, the results card and
+   #diagnostic-workspace-host all live inside #page-practice now, and this file
+   drives them there.
 
-   So an active placement takes the Practice tab out of reach, and the lock is
-   the fix for the exact three failures the old one caused:
-     - it is VISIBLE — `.tab:disabled` is styled now (styles/layout.css), and
-       the tab carries a `title` saying why. The old lock had no style at all,
-       so the tab looked normal and silently ate the click;
-     - it is ROUTED — app.js `switchTab` sends "practice" to "diagnostic" while
-       the lock is on, so [data-goto-tab] and a restored tab name land on the
-       page that explains itself instead of on a hidden one;
-     - it is RELEASED by the same status read that set it, on every
-       `delta:practice-state-changed`, so finishing (or abandoning, from the
-       backend's side) unlocks without a reload.
+   WHAT THAT MADE UNNECESSARY, and what it did not:
 
-   NOT the reverse. The Placement tab stays reachable from a running practice
-   session — that page is where you read what the test is and choose to start
-   it, and taking that away is how you get a learner who cannot find out. */
+     GONE — the Practice tab lock. Two tabs sharing one editor and one
+     `PracticeAPI.currentQuestion` meant opening Practice mid-test showed the
+     PROBE under the Practice tab's name; the fix was to disable the tab for the
+     length of a placement and redirect every route to it. One tab cannot be
+     locked against itself, so `setPracticeLock` and app.js's matching redirect
+     both went (see the note where the lock used to be).
+
+     KEPT — the workspace host. `.practice-container` still moves into
+     #diagnostic-workspace-host while a probe is on screen and back to
+     #practice-workspace-home when it is not, and that is now what takes the
+     idle surface (readiness dial, area bars, placement card) off the screen for
+     the duration of a probe and puts it back afterwards. Same mechanism, one
+     page, and `syncWorkspace` is still idempotent — re-inserting a node that is
+     already in place would tear a live editor out of the document and back in.
+
+     KEPT — the on-screen half of `hosted`. It used to stop the workspace being
+     parented to a hidden page; it now stops a status call that lands while the
+     learner is reading the explainer tab from hauling the workspace anywhere. */
 const DiagnosticPage = (() => {
   const byId = (id) => document.getElementById(id);
   let running = false;
 
-  /* The one writer of the lock. `disabled` is what actually stops the click
-     (app.js binds the handler to the button, and a disabled button fires no
-     click event); `aria-disabled` and the title are what make it legible.
-     Called with `false` on load, so a build that latched the flag and a
-     placement that ended while the tab was closed both clear on the next
-     status read rather than inheriting a dead Practice tab. */
-  const LOCK_WHY =
-    "Finish the placement test first — it uses the same workspace, so Practice " +
-    "would show you the placement question.";
-  const setPracticeLock = (locked) => {
-    document.querySelectorAll('.tab[data-tab="practice"]').forEach((tab) => {
-      tab.disabled = !!locked;
-      if (locked) {
-        tab.setAttribute("aria-disabled", "true");
-        tab.title = LOCK_WHY;
-      } else {
-        tab.removeAttribute("aria-disabled");
-        tab.removeAttribute("title");
-      }
-    });
-    /* Locking the tab the learner is standing on would leave them there with
-       no way off. Cannot normally happen — the test starts from this page —
-       but a status that turns active underneath an open Practice tab (another
-       device, a resumed placement) is exactly the case the old code got wrong
-       by hiding #page-practice and leaving them on it. */
-    /* 🔴 `switchTab` is a top-level `const` in app.js, so it is NOT
-       `window.switchTab` — a classic script's top-level const never becomes a
-       window property, and `window.switchTab?.()` would have been a silent
-       no-op forever. Same trap this file already documents for `PracticeAPI`.
-       app.js is loaded before this file, so the script-scope binding is
-       there; the typeof guard is for a page that loads one without the
-       other. */
-    if (locked && document.querySelector(".tab.active")?.dataset.tab === "practice" &&
-        typeof switchTab === "function") {
-      switchTab("diagnostic");
-    }
-  };
+  /* 🔴 `setPracticeLock` USED TO BE HERE, and it is deleted rather than left
+     unwired. It disabled `.tab[data-tab="practice"]` for the length of a
+     placement, because Practice and the placement test shared one editor and
+     one `PracticeAPI.currentQuestion` — so opening Practice mid-test showed the
+     PROBE under the Practice tab's name (Seth, 2026-08-23).
 
+     They are ONE TAB now (Seth, 2026-08-24), and a tab cannot be locked against
+     itself: the probe and the practice question are the same workspace on the
+     same page, which is what the lock was trying to fake. app.js lost the
+     matching `tabName === "practice" -> "diagnostic"` redirect in the same
+     change. `moveWorkspace` still writes `running`, which is what
+     `isRunning()` and `progressLabel()` read. */
+
+  /* THE PAGE THE PLACEMENT IS ON. It was #page-diagnostic until 2026-08-24 and
+     it is #page-practice now — the Learner Home, which carries the placement
+     card, its results, the readiness dial and the area bars on one screen. The
+     name of this helper is kept because what it asks has not changed: is the
+     surface that owns the placement on screen? */
   const diagnosticOnScreen = () =>
-    byId("page-diagnostic")?.classList.contains("hidden") === false;
+    byId("page-practice")?.classList.contains("hidden") === false;
 
   // Mirrors app.js's own check: the practice page owes its setup panel only
   // when nothing holds the question. Releasing the workspace must not stomp a
@@ -107,12 +71,19 @@ const DiagnosticPage = (() => {
   // its subtree out of the document and back in, which would reload any live
   // editor/iframe inside the workspace. Only move when it is in the wrong home.
   const syncWorkspace = () => {
-    const page = byId("page-diagnostic");
-    const practicePage = byId("page-practice");
+    /* 🔴 ONE PAGE, TWO NAMES. `page` and `practicePage` were #page-diagnostic
+       and #page-practice; since the merge they are the same element, and both
+       bindings are kept because they mean different things three lines apart —
+       `page` is what carries `.diagnostic-running` (styles/practice/diagnostic.css
+       hangs the overview's visibility off it), `practicePage` is what carries
+       `.session-idle` (timer.js owns that one). Collapsing them to one name
+       would hide which class belongs to which owner. */
+    const page = byId("page-practice");
+    const practicePage = page;
     const host = byId("diagnostic-workspace-host");
     const home = byId("practice-workspace-home");
     const workspace = document.querySelector(".practice-container");
-    if (!page || !practicePage || !host || !home || !workspace) return;
+    if (!page || !host || !home || !workspace) return;
 
     /* 🔴 A PROBE ON SCREEN, not merely a placement in progress. Self-review
        caught this the moment the overview started hiding on `running` alone:
@@ -165,15 +136,13 @@ const DiagnosticPage = (() => {
     }
   };
 
-  /* `running` and the Practice lock are the SAME fact — an active placement
-     owns the workspace, and the lock is what stops a second tab claiming it —
-     so they are written together and there is no path that sets one without
-     the other. Lock last, and after `syncWorkspace`: it can switch tabs, and
-     switching tabs re-enters this file through app.js. */
+  /* `running` is the one fact this file publishes about a placement, and
+     `syncWorkspace` is the only thing that acts on it. (There was a Practice
+     tab lock written alongside it until the two tabs were merged — see the note
+     above `diagnosticOnScreen`.) */
   const moveWorkspace = (active) => {
     running = !!active;
     syncWorkspace();
-    setPracticeLock(running);
   };
 
   /* The ONE writer of the placement start button. events.js has its own reason
@@ -302,6 +271,7 @@ const DiagnosticPage = (() => {
       startEl?.classList.add("hidden");
       resultsEl?.classList.add("hidden");
       renderProgress(null);
+      window.PlacementResults?.renderAreas([]);
       moveWorkspace(false);
       return;
     }
@@ -331,40 +301,34 @@ const DiagnosticPage = (() => {
        of the previous placement, and fill only when it is actually going to be
        shown — a mid-test status carries live estimates that would read as a
        finished result. */
+    /* 🔴 THE AREA BARS ARE NOT PART OF THE RESULTS CARD ANY MORE. They used to
+       be drawn only inside `render(status)` below, which runs only when a
+       placement is COMPLETE — so the one screen a learner opens every day named
+       nothing and reported "0% ready" (Seth, 2026-08-24: "it should display the
+       information about einops, numpy, and einsum to be learned").
+
+       `areas` comes back populated from the very first status call on a new
+       account — theta is the prior, `probes` is 0 — and the rows carry their own
+       "not probed" marking and ± band, so drawing them early claims nothing the
+       test has not measured. Drawn on EVERY status, including a mid-test one:
+       watching an area move as you answer is the point of having it there. */
+    window.PlacementResults?.renderAreas(Array.isArray(status.areas) ? status.areas : []);
+
     const showResults = !!status.completed_at && !status.active;
     if (showResults) window.PlacementResults?.render(status);
     resultsEl?.classList.toggle("hidden", !showResults);
-    /* Read BEFORE moveWorkspace, which is the one writer of `running`. */
-    const justFinished = running && showResults && diagnosticOnScreen();
     moveWorkspace(!!status.active);
-    /* THE PLACEMENT HANDS OFF TO PRACTICE. Seth, 2026-08-23: "after taking the
-       placement diagnostic, it needs to take the learner to the practice.
-       After it takes them to the practice they just continue studying that."
-       In basic mode there is no tab strip (styles/learn-about.css), so a
-       learner left standing on a finished placement has nowhere to go and no
-       control that says what to do next — the hand-off is not a convenience
-       there, it is the only exit.
+    /* 🔴 THE HAND-OFF TO PRACTICE USED TO BE HERE and is gone, because there is
+       nowhere to hand off TO. A finished placement in basic mode was switched to
+       the Practice tab the moment its results arrived — that was the only exit
+       from a page with no tab strip on it.
 
-       BASIC MODE ONLY, and that is deliberate: advanced mode HAS the strip, so
-       #diagnostic-results (the readiness card placement-results.js renders
-       three lines above this) stays readable for as long as the learner wants
-       it. Nothing is lost in basic mode either — practice/readiness.js is the
-       single writer of that figure and the Practice idle dial prints the same
-       reading with the same caption and detail line.
-
-       AFTER moveWorkspace, never before: it releases the workspace back to
-       #page-practice and clears the Practice tab lock, and switching first
-       would land on a Practice page still holding the probe.
-
-       `justFinished` is the TRANSITION, not the state: `render()` runs on
-       every `delta:practice-state-changed` and on every tab entry, so keying
-       on `showResults` alone would drag a learner off the Placement tab every
-       time they opened it after finishing a test months ago. */
-    if (justFinished &&
-        document.body.classList.contains("dd-basic-mode") &&
-        typeof switchTab === "function") {
-      switchTab("practice");
-    }
+       The placement finishes on the Learner Home now. `moveWorkspace(false)`
+       releases the workspace, the idle surface comes back with the readiness
+       dial and the area bars already updated by this same status, and the
+       results card appears above them. Nothing switches, so nothing can drag a
+       learner off a page they opened on purpose — which is what the old
+       `justFinished` guard existed to prevent. */
   };
 
   /* An unanswerable status call is not the same thing as "not signed in".
@@ -452,7 +416,7 @@ const DiagnosticPage = (() => {
      in the wrong home, so running it twice per event costs nothing. */
   window.addEventListener("delta:practice-state-changed", () => syncWorkspace());
 
-  // Switching elsewhere hides #page-diagnostic through app.js; the workspace
+  // Switching elsewhere hides #page-practice through app.js; the workspace
   // goes home with it, so Practice renders whether or not the placement is
   // finished. Coming back re-claims it (see refresh → render → syncWorkspace).
   /* Leaving the page cancels the retry chain. A pending refresh that lands
@@ -469,22 +433,60 @@ const DiagnosticPage = (() => {
 
   /* app.js calls leave() on every tab switch, but page visibility is the real
      signal and it is not ours to depend on: watch the class instead, so the
-     workspace follows the Diagnostic page even if some other route (a solo
-     deep link, a future nav) shows or hides it without telling us. */
-  const watched = byId("page-diagnostic");
+     workspace follows the Learner Home even if some other route (a solo deep
+     link, a future nav) shows or hides it without telling us. */
+  const watched = byId("page-practice");
   if (watched && typeof MutationObserver === "function") {
     new MutationObserver(() => syncWorkspace())
       .observe(watched, { attributes: true, attributeFilter: ["class"] });
   }
 
-  /* Start unlocked. Nothing is known about the placement until the first
-     status read, and a Practice tab that is dead until the network answers is
-     worse than one that locks a moment later — the lock exists to stop a probe
-     being mistaken for practice, and there is no probe on screen yet. */
-  setPracticeLock(false);
   return { refresh, leave, renderStartButton, isRunning: () => running, progressLabel };
 })();
 window.DiagnosticPage = DiagnosticPage;
-if (!document.getElementById("page-diagnostic")?.classList.contains("hidden")) {
-  DiagnosticPage.refresh();
-}
+
+/* 🔴 THE MODE IS NOT DECIDED YET WHEN THIS FILE RUNS.
+
+   `PracticeAPI.diagnosticStatus()` returns null — not a status, not a failure,
+   NULL — whenever `practiceMode !== "backend"`, and `practiceMode` starts as
+   "local" and is only set by `detectPracticeMode()` inside `initPractice()`,
+   which lives in practice/init.js and is loaded AFTER this file. Refreshing at
+   parse time therefore asked a question whose answer was already fixed: null,
+   which `render(null)` paints as "Sign in to take the placement test." with the
+   area bars and every button hidden — at a signed-in learner, on a backend that
+   was answering 200 the whole time.
+
+   This did not bite while the placement lived on its own tab, because the boot
+   guard read #page-diagnostic and that page is hidden at load, so this never
+   ran. The 2026-08-24 merge pointed the guard at #page-practice, which IS the
+   landing page — so the broken call became the FIRST thing every visitor got.
+
+   So: wait for the signal init.js fires once the mode is real. The interim copy
+   is the "checking" one, never the signed-out one, because at this point we do
+   not yet know which is true. The timer is for a page that loads this without
+   init.js (a solo route, a test harness) — it must still end up rendering
+   something rather than sitting on "Checking…" forever. */
+(function bootDiagnosticPage() {
+  if (document.getElementById("page-practice")?.classList.contains("hidden")) return;
+  const statusEl = document.getElementById("diagnostic-status");
+  if (statusEl) statusEl.textContent = "Checking your placement status…";
+  /* 🔴 THE FALLBACK MUST NOT LATCH. An earlier version set one `fired` flag from
+     both paths, so a slow `DDGuest.ensure()` — it is a network round trip, and
+     eight seconds is not impossible on a cold backend — let the timer refresh
+     FIRST, while `practiceMode` was still "local". That paints the signed-out
+     copy, and latching meant the real `delta:practice-mode-ready` that arrived a
+     second later was dropped: the page stayed wrong until something else
+     refreshed it. The event is authoritative and always gets its turn; only IT
+     may close the door. The double refresh that costs is harmless — `refresh()`
+     bumps `generation`, so the later call is the one that paints. */
+  let ready = false;
+  const go = () => {
+    if (ready) return;
+    ready = true;
+    DiagnosticPage.refresh();
+  };
+  window.addEventListener("delta:practice-mode-ready", go, { once: true });
+  // Already past us (another entry point called initPractice first).
+  if (window.DDPracticeModeReady === true) go();
+  else setTimeout(() => { if (!ready) DiagnosticPage.refresh(); }, 8000);
+})();

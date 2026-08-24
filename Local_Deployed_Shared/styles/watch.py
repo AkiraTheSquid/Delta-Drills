@@ -39,6 +39,7 @@ REQUIRED_CSS = [
     # ../watch.py::check_front_door, not here: it has to come after
     # nav-drawer.css or the strip reappears in the drawer on a narrow screen.
     "learn-about.css",
+    "account-menu.css",
     # courses tab is split into a sub-folder so each fragment stays small.
     # Order here mirrors the link order in index.html: page → forkgate →
     # detail → modal → responsive (responsive must be last so its
