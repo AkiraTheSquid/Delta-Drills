@@ -341,6 +341,11 @@ function renderQuestion(q, count) {
   practiceSubmitBtn.disabled = false;
   practiceFeedbackArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("checking");
+  // The verdict classes applyResult() writes. Cleared here, on render, so a
+  // new question never inherits the previous one's outcome — Basic mode keys
+  // the reference solution off `.result-incorrect` (basic-mode.css), so a
+  // stale class would show the answer before the learner has answered.
+  practiceFeedbackArea.classList.remove("result-correct", "result-incorrect");
   showFeedbackButtons();
   resetMissedFactRow();
   questionMetaTop.classList.add("hidden");
@@ -612,6 +617,16 @@ function applyResult(correct) {
   overrideRow.classList.toggle("hidden", correct);
   practiceFeedbackArea.classList.remove("checking");
   questionMetaTop.classList.remove("hidden");
+  /* The verdict, as a class, so a stylesheet can branch on it. Basic mode
+     hides the reference solution and un-hides it here — a wrong answer with
+     nothing to compare it against was the whole of the review step
+     (basic-mode.css). Written on every path that reaches a graded result,
+     including the pause/reload restore (applyPendingFeedbackState) and the
+     Colab edition's two verdict buttons, because both call this function.
+     🔴 DISPLAY ONLY: nothing may read this class back to decide what to
+     render or what to POST — the same rule the rest of Basic mode follows. */
+  practiceFeedbackArea.classList.toggle("result-correct", !!correct);
+  practiceFeedbackArea.classList.toggle("result-incorrect", !correct);
   // Buttons map to the engine's not_much / somewhat / a_lot. The LEVEL is the
   // size of the correction; the OUTCOME is its direction, which is why the same
   // three buttons read "easy" after a correct answer and "hard" after a miss.
