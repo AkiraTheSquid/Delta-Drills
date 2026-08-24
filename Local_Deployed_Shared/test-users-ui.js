@@ -163,7 +163,10 @@
         return;
       }
       input.value = "";
-      say(`Added ${res.user.name}. Press “Act as” to hand them the app.`, "ok");
+      say(
+        `Added ${res.user.name}. Press “Act as” to hand them the app — a test user who has never been used opens on the welcome screen, exactly as a first-time visitor does.`,
+        "ok",
+      );
       renderPanel();
       renderPill();
     });

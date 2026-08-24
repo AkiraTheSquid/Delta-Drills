@@ -87,6 +87,13 @@
   const SESSION_KEY = "dd_test_user_session_v1";
   /* Parked copies of the SHARED_KEYS, per identity email. */
   const SCRATCH_KEY = "dd_identity_scratch_v1";
+  /* app.js's one-shot landing key (FIRST_RUN_TAB_KEY there), read once on the
+     next load and cleared. sessionStorage on purpose: it describes the reload
+     this file is about to trigger and must not outlive the tab. */
+  const FIRST_RUN_TAB_KEY = "dd_first_run_tab";
+  /* The page a first-time visitor lands on — the two-arrow fork, #page-welcome
+     in index.html. NOT a tab; app.js reaches it by name only. */
+  const ONBOARDING_TAB = "welcome";
 
   /* Well-formed for the backend's EmailStr validation and obviously not a
      person. Nothing is ever sent to it. */
@@ -287,6 +294,26 @@
     localStorage.removeItem("dd_auth_is_guest");
   };
 
+  /* A test user who has never been used IS a first-time learner, and the app
+     already has a first screen for one: the welcome fork, with the optional
+     "learn how this works" path on one side and the placement test on the
+     other. app.js picks that screen on `authToken` being absent, which a test
+     user can never satisfy — it holds a real token from the moment it is
+     minted — so the demo would otherwise open on the practice surface and skip
+     the fork that the person being handed the app is exactly the audience for.
+     Asking for it here rather than teaching app.js about test users keeps the
+     identity rules in this file.
+
+     Best-effort: a browser that refuses the write costs the demo its fork, and
+     nothing else, so it must not abort a switch that is otherwise fine. */
+  const requestOnboardingLanding = () => {
+    try {
+      sessionStorage.setItem(FIRST_RUN_TAB_KEY, ONBOARDING_TAB);
+    } catch (err) {
+      console.warn("[test-users] could not ask for the onboarding landing:", err);
+    }
+  };
+
   /** Become `user`. Safe to call while already acting as somebody else. */
   const actAs = async (user) => {
     const owner = ownerEmail();
@@ -326,6 +353,12 @@
     parkIdentity(authEmail);
     adoptToken(got.token, user.email);
     unparkIdentity(user.email);
+
+    /* BEFORE lastUsedAt is stamped below, which is the thing that says this
+       account has been demoed. Reset clears it back to null, so a test user
+       started over gets the first screen again — which is the whole point of
+       starting one over. */
+    if (!user.lastUsedAt) requestOnboardingLanding();
 
     const list = readRoster(owner).map((u) =>
       u.id === user.id ? { ...u, lastUsedAt: new Date().toISOString() } : u,

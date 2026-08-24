@@ -36,6 +36,13 @@ const GUEST_ACTIVE_KEY = "dd_auth_is_guest";
 // Where the learner was when a recovery reload took the page out from under
 // them. Written by guest-session.js, read once on the next load.
 const RECOVERED_TAB_KEY = "dd_recovered_tab";
+// The landing page for a session that is starting as somebody who has never
+// used the app. Written by test-users.js immediately before the reload that
+// commits an identity swap into a NEVER-USED test user, and read once here.
+// A test user holds a real token, so the `authToken ? "practice"` line at the
+// bottom of this file would otherwise drop a first-time demo learner straight
+// onto the work and skip the fork every other first-time visitor gets.
+const FIRST_RUN_TAB_KEY = "dd_first_run_tab";
 const isGuestSession = () => localStorage.getItem(GUEST_ACTIVE_KEY) === "1";
 const isSignedIn = () => !!authToken && !isGuestSession();
 
@@ -624,15 +631,27 @@ const soloTab = window.DDSoloRoute?.read?.() || "";
    learner mid-placement on the practice setup card reads as the app having
    thrown their work away. Read once and clear: this is for the reload that
    just happened, never for the next one. */
-const recoveredTab = (() => {
+/* Read once and clear, for BOTH one-shot landing keys. Every one of them is
+   about the reload that just happened and never about the next one, so a key
+   that is read must also be consumed — including on a load that ends up
+   preferring a different one, or a stale value lands the session on that page
+   the next time anything reloads. */
+const takeSessionTab = (key) => {
   try {
-    const tab = sessionStorage.getItem(RECOVERED_TAB_KEY) || "";
-    if (tab) sessionStorage.removeItem(RECOVERED_TAB_KEY);
+    const tab = sessionStorage.getItem(key) || "";
+    if (tab) sessionStorage.removeItem(key);
     return tab;
   } catch (_) {
     return "";
   }
-})();
+};
+const recoveredTab = takeSessionTab(RECOVERED_TAB_KEY);
+/* A brand-new test user has never seen this app. See FIRST_RUN_TAB_KEY. It
+   sits BELOW recoveredTab because a recovery reload is the app taking the page
+   away from somebody mid-work, and putting them back is the more urgent of the
+   two — the two cannot both be pending in practice (a recovery only ever fires
+   for a guest, and a test user is not one). */
+const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
 // First visit lands on the FORK, every visit after it lands on the work.
 // `authToken` is the right test for that and isSignedIn() is not: a returning
 // GUEST has a token (guest-session.js stored one last time) and wants their
@@ -643,7 +662,7 @@ const recoveredTab = (() => {
 // argument for the app assumed the visitor wanted to read one. #page-welcome
 // offers that path and the other one, says which is optional, and shows
 // nothing else.
-switchTab(soloTab || recoveredTab || (authToken ? "practice" : "welcome"));
+switchTab(soloTab || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by
