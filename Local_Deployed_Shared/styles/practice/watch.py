@@ -18,7 +18,13 @@ CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.
              # the textarea it sits behind.
              "code-highlight.css",
              # The Practice tab's idle readiness dial (2026-08-23).
-             "readiness.css"]
+             "readiness.css",
+             # Basic mode (2026-08-23). Rides on `body.dd-basic-mode`, the same
+             # class the stage ladder is gated on. 🔴 Must stay LAST in
+             # index.html's <link> order: every rule in it overrides something
+             # declared in the sheets above, so a link moved earlier loses the
+             # ties and the screen quietly comes back.
+             "basic-mode.css"]
 
 
 def _read(path):
@@ -62,9 +68,16 @@ def check_public_api():
         "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".placement-next-btn", ".practice-aids"],
         # Written by practice/placement-results.js — every class it mints has
         # to keep a rule here or the results card renders as unstyled spans.
+        # .placement-overall-figure left this list on 2026-08-23: the card's
+        # headline is the Practice tab's readiness dial now (.readiness-dial,
+        # styled in readiness.css) showing the same figure, so the card no
+        # longer mints a figure block of its own. .placement-chip and the two
+        # -caption/-detail lines replaced the sentences that were there.
         "diagnostic.css": [
-            ".placement-cta", ".placement-overall", ".placement-overall-figure",
-            ".placement-overall-say", ".placement-overall-caveat", ".placement-areas",
+            ".placement-cta", ".placement-overall", ".placement-chip",
+            ".placement-overall-say", ".placement-overall-caption",
+            ".placement-overall-detail", ".placement-overall-caveat",
+            ".placement-areas",
             ".placement-areas-head", ".placement-area", ".placement-area-name",
             ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
             ".placement-area-probes", ".placement-area--unprobed",
@@ -189,6 +202,38 @@ def check_invariants():
 
     feedback = _read(os.path.join(HERE, "feedback.css"))
     assert ".problem-feedback-note:focus" in feedback
+
+    # Basic mode is a pile of overrides, so its position in the cascade IS its
+    # behaviour. index.html must link it after every sheet it overrides.
+    basic = _read(os.path.join(HERE, "basic-mode.css"))
+    assert "body.dd-basic-mode" in basic, (
+        "basic-mode.css no longer keys on body.dd-basic-mode — it is either "
+        "inert or applying to everyone, and neither is a mode"
+    )
+    index_html = _read(os.path.join(SHARED, "index.html"))
+    basic_at = index_html.find('href="styles/practice/basic-mode.css')
+    assert basic_at != -1, "index.html lost the basic-mode.css <link>"
+    for other in CSS_FILES:
+        if other == "basic-mode.css":
+            continue
+        at = index_html.find(f'href="styles/practice/{other}')
+        assert at < basic_at, (
+            f"styles/practice/{other} is linked AFTER basic-mode.css, so it wins "
+            "the ties basic-mode.css exists to win — the practice screen shows "
+            "rails that Basic mode believes it hid"
+        )
+    # What Basic mode must NEVER hide. #next-problem-btn lives inside
+    # .feedback-buttons beside the three rating buttons and carries none of
+    # their classes, so hiding the row takes the only way forward with it;
+    # the rest is the question itself.
+    for keep in (".feedback-buttons", "#practice-submit-area", "#question-text",
+                 ".question-number-row", "#question-visual", "#torch-colab-notice",
+                 "#next-problem-btn", ".ladder-example"):
+        assert f"body.dd-basic-mode {keep}" not in basic, (
+            f"basic-mode.css hides {keep}. Basic mode is allowed to strip the "
+            "rails around a problem, never the problem, its worked example, or "
+            "the controls that answer it and move on"
+        )
 
 
 # ── Run all checks ────────────────────────────

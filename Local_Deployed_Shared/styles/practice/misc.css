@@ -34,6 +34,16 @@
   font-size: 13px;
 }
 
+/* 🔴 IT COULD NEVER HIDE. `.hidden { display: none }` (components.css) and the
+   rule above are both (0,1,0), and this file is linked AFTER components.css —
+   so the tie went to `display: flex` and diagnostic-page.js's
+   `priorEl.classList.toggle("hidden", !status.can_set_prior)` did nothing at
+   all. The three starting-point buttons therefore sat on a FINISHED placement,
+   where the backend refuses the prior and pressing one changes nothing. Same
+   trap styles/practice/README.md records for #practice-submit-area, and the
+   same remedy: re-assert `.hidden` at this file's own specificity. */
+.self-report-row.hidden { display: none; }
+
 .self-report-label {
   color: var(--muted);
   cursor: help;

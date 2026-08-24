@@ -104,6 +104,14 @@ practiceSubmitBtn.addEventListener("click", async () => {
     }
   }
 
+  // Basic mode hides the difficulty rating, and that row is both the
+  // mastery commit and the only thing that reveals Next problem — so it is
+  // settled here, on the learner's behalf, at the neutral default. No-op in
+  // Advanced mode and no-op on the placement branch above, which already
+  // showed Next. See practice/basic-mode.js for what the neutral default
+  // costs.
+  window.PracticeBasicMode?.settleRating();
+
   // NOTE: ARENA unlock interstitial does NOT fire on Submit — student
   // needs to see feedback + give a difficulty rating first. The unlock
   // pops on the Next-problem click (handler below). We do, however,
@@ -582,6 +590,9 @@ const _rateTorchAndAdvance = async (correct) => {
         ? "Recorded as correct. How did that feel?"
         : "Recorded as a miss. How did that feel?";
       showFeedbackButtons();
+      // Same rating, same reason as the Submit path above — a Colab verdict
+      // with a pending attempt is graded work waiting on the same commit.
+      window.PracticeBasicMode?.settleRating();
     } else {
       feedbackPrompt.textContent = correct
         ? "Recorded as correct. The reference answer is below — worth a look even when you got it."

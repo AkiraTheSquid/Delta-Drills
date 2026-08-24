@@ -33,6 +33,12 @@ REQUIRED_CSS = [
     # in index.html carries them and a missing link fails silently as unstyled
     # markup at the bottom of the Account card.
     "test-users.css",
+    # The front door (2026-08-23): the two-arrow welcome fork, the disclosures
+    # on "Learn about the App", and the rule that takes the tab strip off the
+    # screen in basic mode. 🔴 Its LINK POSITION is asserted in
+    # ../watch.py::check_front_door, not here: it has to come after
+    # nav-drawer.css or the strip reappears in the drawer on a narrow screen.
+    "learn-about.css",
     # courses tab is split into a sub-folder so each fragment stays small.
     # Order here mirrors the link order in index.html: page → forkgate →
     # detail → modal → responsive (responsive must be last so its

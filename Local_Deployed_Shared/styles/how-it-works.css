@@ -4,7 +4,7 @@
 
    The filename is historical. The How It Works page this was written for
    was DELETED on 2026-08-22 and its .hiw-* type scale was inherited by
-   "Why this app exists" (#page-why-this-app), which is now the landing
+   "Why this app exists" (#page-learn-about-app), which is now the landing
    page. The file was not renamed because it also owns every .kg2-* rule
    for the Knowledge Graph tab, which several READMEs and concept-graph/
    modules name by this path; a rename would be a large diff for no
@@ -12,13 +12,13 @@
    same reason — they are what the markup keys on.
    ================================================================ */
 
-/* One measure for both explainer pages, centred by `.container`'s own
+/* One measure for the explainer page, centred by `.container`'s own
    `margin: 0 auto` — 985px of text with the SAME gutter left and right at
-   every width. `#page-how-to-use` joins it here rather than inheriting the
-   720px default, so the two tabs do not change width as you switch between
-   them. */
-#page-why-this-app .container,
-#page-how-to-use .container {
+   every width, rather than the 720px default. Two selectors stood here until
+   2026-08-23, when "Why This App Exists" and "How to use it" became the one
+   #page-learn-about-app; the measure was already identical, which is why the
+   merged page needed no re-tuning. */
+#page-learn-about-app .container {
   max-width: 985px;
 }
 
@@ -50,12 +50,12 @@
 }
 
 /* Inline links (e.g. the Math Academy reference) */
-#page-why-this-app a {
+#page-learn-about-app a {
   color: var(--accent-text);
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
 }
-#page-why-this-app a:hover {
+#page-learn-about-app a:hover {
   color: var(--white);
   border-bottom-color: var(--white);
 }
@@ -69,14 +69,14 @@
    two columns and then one; at every width the row break falls between
    whole steps.
    -------------------------------------------------------------------- */
-#page-how-to-use .steps-grid {
+#page-learn-about-app .steps-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 @media (max-width: 900px) {
-  #page-how-to-use .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  #page-learn-about-app .steps-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
-  #page-how-to-use .steps-grid { grid-template-columns: 1fr; }
+  #page-learn-about-app .steps-grid { grid-template-columns: 1fr; }
 }
 
 /* The cold-start notice, shared by both maps: the Knowledge Graph builds one
@@ -609,7 +609,22 @@ html.dd-colab-edition .kg2-controls .kg2-max {
 .kg-embed .guest-banner,
 .kg-embed .tp-banner { display: none !important; }
 .kg-embed main.page:not(#page-practice) { display: none !important; }
-.kg-embed #page-practice { display: block !important; }
+/* 🔴 `display: flex`, NOT `block`. This rule exists to beat `.hidden` so the
+   practice page is on screen in the embed — but `#page-practice` is a FLEX
+   COLUMN with a fixed height (`calc(100vh - var(--dd-topbar-h))`) and
+   `overflow: hidden` (styles/practice/layout.css). Forcing it to `block` threw
+   that away: `.practice-container` stopped being a flex item, took its
+   content's full natural height instead of the page's, and `.practice-left`
+   grew with it — so the panel's own `overflow-y: auto` never engaged and the
+   lesson was simply CUT OFF at the bottom of the iframe with nothing to
+   scroll. A long lesson (einops, 2119px in a 1037px page) lost half its text.
+   Keep the display value the page's own rule uses; only the visibility is
+   this rule's business.
+
+   The height is re-stated for the same reason: the embed hides `.topbar`
+   above, so subtracting its 44px reserves a dead band at the bottom of the
+   iframe for a bar that is not on the page. */
+.kg-embed #page-practice { display: flex !important; height: 100vh; }
 /* Single-concept view: the adaptive-queue framing (what Practice is, where to
    start across all topics) is about a different flow and reads as noise here.
    The competency bar is the header for this page. */
