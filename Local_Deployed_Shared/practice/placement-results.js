@@ -1,5 +1,5 @@
 /* ================================================================
-   PLACEMENT RESULTS — what the test actually measured.
+   PLACEMENT RESULTS — what the test measured, and where it left you.
 
    The results card used to say "Placement results and ARENA curriculum
    progress will appear here." It said that to someone who had ALREADY
@@ -16,6 +16,24 @@
    card's body — diagnostic-page.js decides WHETHER the card shows, this
    decides what is in it.
 
+   🔴 THE HEADLINE FIGURE IS NOT COMPUTED HERE ANY MORE
+     It used to be the mean of `readiness(theta)` over the nine areas — a
+     second, independent answer to the same question the Practice tab's idle
+     dial answers, and the two never matched. `diagnostic.py` seeds a finished
+     placement at SEED_MASTERY_CAP = 0.92, under the 0.95 the dial counted as
+     mastered, so this card said "45% ready for ARENA" and the next screen the
+     learner saw said 0%. Seth, 2026-08-23: "it needs to be the same".
+
+     So the figure comes from practice/readiness.js — the same call, the same
+     concepts, the same words underneath — and it is handed the placement's
+     `completed_at` as its stamp so the server's per-concept report is
+     re-fetched once after the seeding runs, rather than being read from a
+     cache filled before the test finished.
+
+     The theta→readiness map below did NOT go away with it. It is still the
+     only thing that can score the nine AREAS, which are what this test
+     actually estimates and the one thing the shared figure cannot show.
+
    THE HONESTY RULE THIS FILE EXISTS TO KEEP
      A placement built from two probes knows almost nothing about seven of
      its nine areas, and the backend still returns a theta for every one of
@@ -25,6 +43,13 @@
      area carries its own ± band from `sd`, and the summary says how many
      of the areas were actually probed. A number the learner can't trust is
      worse than no number, because they will plan around it.
+
+   SHORT ON PURPOSE
+     Seth, 2026-08-23: get rid of "the information overload of text for the
+     placement diagnostic". Every sentence that used to explain the figure is
+     now either a chip (three or four words, scannable) or gone. What survived
+     is the part that changes what the learner does: which areas are weakest,
+     and which of them the test never actually looked at.
    ================================================================ */
 
 const PlacementResults = (() => {
@@ -62,72 +87,103 @@ const PlacementResults = (() => {
     return node;
   };
 
+  /* Day and month, and the year only when it is not this one — a chip is two
+     or three words and "2026" is a word that says nothing 51 weeks of the
+     year. It says everything on the 52nd, when the card is reporting a
+     placement the learner took last winter. */
   const completedOn = (iso) => {
     if (!iso) return null;
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return null;
-    return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+    const opts = { day: "numeric", month: "short" };
+    if (d.getFullYear() !== new Date().getFullYear()) opts.year = "numeric";
+    return d.toLocaleDateString(undefined, opts);
   };
-
-  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
   /* ---- the three blocks -------------------------------------------- */
 
+  /* Was a sentence of four clauses joined by "·". Now chips: the same four
+     facts, each two or three words, read at a glance instead of parsed. */
   const renderMeta = (status, areas, probedCount) => {
     const host = byId("placement-results-meta");
     if (!host) return;
-    const bits = [];
+    host.textContent = "";
+    const chip = (text) => host.appendChild(el("span", "placement-chip", text));
     const on = completedOn(status.completed_at);
-    if (on) bits.push(`Completed ${on}`);
-    bits.push(plural(Number(status.probes_done) || 0, "question answered", "questions answered"));
-    if (areas.length) bits.push(`${probedCount} of ${areas.length} areas probed`);
-    if (Number.isFinite(Number(status.atoms_seeded))) {
-      bits.push(plural(Number(status.atoms_seeded), "concept seeded", "concepts seeded"));
-    }
-    host.textContent = bits.join(" · ");
+    if (on) chip(on);
+    chip(`${Number(status.probes_done) || 0} questions`);
+    if (areas.length) chip(`${probedCount}/${areas.length} areas probed`);
+    const seeded = Number(status.atoms_seeded);
+    if (Number.isFinite(seeded)) chip(`${seeded} concepts seeded`);
   };
 
+  /* The headline. Same dial, same number and same caption as the Practice
+     tab's idle screen (practice/session-idle.js) — the point is that a
+     learner reading this card and then opening Practice sees one figure, not
+     two. Drawn here rather than shared as markup because the two live on
+     different pages; the class names are the shared part, and they are styled
+     once in styles/practice/readiness.css. */
   const renderOverall = (status, areas, probedCount) => {
     const host = byId("placement-readiness");
     if (!host) return;
     host.textContent = "";
-    if (!areas.length) return;
-
-    const mean = areas.reduce((sum, a) => sum + readiness(a.theta), 0) / areas.length;
-    const meanTheta = areas.reduce((sum, a) => sum + Number(a.theta), 0) / areas.length;
 
     const figure = el("div", "placement-overall");
-    const dial = el("div", "placement-overall-figure");
-    dial.appendChild(el("strong", null, `${pct(mean)}%`));
-    dial.appendChild(el("span", null, "ready for ARENA"));
-    figure.appendChild(dial);
+    const dial = el("div", "readiness-dial readiness-dial--sm readiness-dial--unknown");
+    dial.setAttribute("role", "img");
+    /* Labelled before it has a number, or a screen reader meets an image with
+       no name at all for as long as the read takes. Replaced with the figure
+       itself once there is one. */
+    dial.setAttribute("aria-label", "Readiness for the ARENA curriculum");
+    const value = el("span", "readiness-pct", "—");
+    dial.appendChild(value);
 
     const say = el("div", "placement-overall-say");
-    say.appendChild(
-      el(
-        "p",
-        null,
-        `Averaged across the ${areas.length} areas the test covers. Practice now starts you around ` +
-          `difficulty ${Math.round(meanTheta)} on the 0-100 scale, and everything below that is unlocked.`,
-      ),
-    );
-    /* The caveat is not boilerplate — it is the difference between a number
-       the learner can act on and one they will over-trust. It states exactly
-       which part of the figure is evidence and which part is still a guess. */
+    const caption = el("p", "placement-overall-caption", "ready for the ARENA curriculum");
+    const detail = el("p", "placement-overall-detail", "reading your concept map…");
+    say.appendChild(caption);
+    say.appendChild(detail);
+
+    /* The only caveat left on the card, and it is the one that changes a
+       decision: an area the test never probed is the prior wearing a
+       percentage. One clause, not the paragraph that was here. */
     const unprobed = areas.length - probedCount;
     if (unprobed > 0) {
       say.appendChild(
         el(
           "p",
           "placement-overall-caveat",
-          `${probedCount === 0 ? "No area" : plural(probedCount, "area was", "areas were")} probed directly; ` +
-            `the other ${unprobed} ${unprobed === 1 ? "is" : "are"} carried from your answers and your stated ` +
-            `starting point. Those move fastest once you practise them.`,
+          `${unprobed} of ${areas.length} areas carried from your other answers, not probed directly.`,
         ),
       );
     }
+
+    figure.appendChild(dial);
     figure.appendChild(say);
     host.appendChild(figure);
+
+    /* 🔴 ONE READER, and it is asynchronous — the concept map is 63 lookups
+       behind a registry fetch and a lattice refresh. The card paints its shape
+       first and fills the number in, rather than holding the whole results
+       screen back on a network call.
+
+       `stamp` is the placement's completion time: it forces exactly one fresh
+       lattice fetch after finish() seeded the concepts, so this card cannot
+       report the level the learner had BEFORE the test they just took. Every
+       later re-render (the status refresh fires on each practice state change)
+       reuses that same fetch. */
+    window.PracticeReadiness?.read({ stamp: status.completed_at })
+      .then((info) => {
+        if (!info) return; // unknown, not zero — the "—" already says so
+        dial.classList.remove("readiness-dial--unknown");
+        dial.style.setProperty("--dd-ready-pct", String(info.pct));
+        dial.setAttribute("aria-label", `${info.pct} percent ready for the ARENA curriculum`);
+        value.textContent = `${info.pct}%`;
+        detail.textContent = window.PracticeReadiness.detail(info);
+      })
+      .catch(() => {
+        detail.textContent = "readiness unavailable right now";
+      });
   };
 
   const renderAreas = (areas) => {
@@ -140,14 +196,9 @@ const PlacementResults = (() => {
        prioritization.py is weakest-first, but over SUBTOPICS, weighted, and
        scaled by how reachable the easiest available question is — so the real
        order will not match this list row for row. Promising that it would is
-       a claim the app then breaks in front of the learner. */
-    host.appendChild(
-      el(
-        "div",
-        "placement-areas-head",
-        "Weakest first. Practice picks weakest-first too, but subtopic by subtopic inside these areas.",
-      ),
-    );
+       a claim the app then breaks in front of the learner. Two words now: the
+       sentence that used to hedge all of that was longer than the list. */
+    host.appendChild(el("div", "placement-areas-head", "Weakest first"));
 
     // Weakest first: the card answers "what do I still need", so the thing
     // the learner needs most has to be the first row, not an alphabetical
@@ -172,7 +223,7 @@ const PlacementResults = (() => {
       const b = band(area.sd);
       row.appendChild(el("span", "placement-area-conf", b === null ? "" : `±${b}`));
       row.appendChild(
-        el("span", "placement-area-probes", probes ? plural(probes, "probe", "probes") : "not probed"),
+        el("span", "placement-area-probes", probes ? `${probes} probed` : "not probed"),
       );
       host.appendChild(row);
     });

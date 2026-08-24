@@ -9,7 +9,12 @@
   // Public URL slug -> existing internal tab/page id. Slugs match without case
   // or an optional .html suffix; values stay identical to data-tab/page-*.
   const ROUTES = Object.freeze({
-    "why-this-app": "why-this-app",
+    "learn-about-app": "learn-about-app",
+    // Legacy slugs. "Why This App Exists" and "How to use it" were two tabs
+    // until 2026-08-23 and both were linkable pathnames; they are one page
+    // now, and a link that used to open one of them still opens it.
+    "why-this-app": "learn-about-app",
+    "how-to-use": "learn-about-app",
     "knowledge-graph": "knowledge-graph",
     diagnostic: "diagnostic",
     "split-tool": "split-tool",

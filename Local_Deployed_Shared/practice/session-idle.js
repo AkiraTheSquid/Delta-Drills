@@ -69,21 +69,12 @@
       `${info.pct} percent ready for the ARENA curriculum`,
     );
     if (captionEl) captionEl.textContent = "ready for the ARENA curriculum";
-    if (detailEl) {
-      /* A bare 0% with no denominator reads as a grade. The count says what
-         the percentage is a percentage OF, and the not-started case says it
-         in words instead — nothing has been measured, so nothing failed. */
-      /* `borrowed` are concepts sitting above the mastery threshold on a
-         number that is the LESSON's, not this concept's — readiness.js keeps
-         them out of the percentage. Naming them is the difference between a
-         number that looks stuck and one the learner can act on. */
-      const borrowed = info.borrowed
-        ? `, ${info.borrowed} nearly there`
-        : "";
-      detailEl.textContent = info.measured
-        ? `${info.mastered} of ${info.total} concepts mastered${borrowed}`
-        : `${info.total} concepts to go — none measured yet`;
-    }
+    /* 🔴 THE WORDS COME FROM readiness.js TOO, not just the number. This
+       screen and the placement results card show the same figure, and two
+       hand-written captions for one number is how they start disagreeing
+       again in a smaller way — "8 concepts mastered" here against "12 of 63
+       measured" there, about the same learner in the same minute. */
+    if (detailEl) detailEl.textContent = window.PracticeReadiness.detail(info);
   };
 
   const refresh = () => {

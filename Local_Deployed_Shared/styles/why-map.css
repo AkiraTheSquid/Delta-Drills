@@ -78,12 +78,12 @@ body.wta-max-open { overflow: hidden; }
 .wta-graph.is-hosting-kg > .wta-graph-cy,
 .wta-graph.is-hosting-kg > .wta-graph-status,
 .wta-graph.is-hosting-kg > .wta-graph-nodata { display: none; }
-/* Qualified by #page-why-this-app for SPECIFICITY, not scope: that page's own
-   `#page-why-this-app .container` rule is an id selector, and the Knowledge
+/* Qualified by #page-learn-about-app for SPECIFICITY, not scope: that page's own
+   `#page-learn-about-app .container` rule is an id selector, and the Knowledge
    Graph's `.kg-container` becomes a descendant of it the moment it is moved in
    here — so the unqualified version lost, the container stayed 920px wide, and
    the real graph rendered into a third of the screen. */
-#page-why-this-app .wta-graph.is-hosting-kg > .kg-container {
+#page-learn-about-app .wta-graph.is-hosting-kg > .kg-container {
   position: absolute; inset: 0; width: auto; max-width: none;
   margin: 0; padding: 0; overflow: auto;
 }
@@ -119,12 +119,12 @@ body.wta-max-open { overflow: hidden; }
   color: var(--muted); font-size: 14px;
 }
 /* Undoes .kg2-legend's absolute positioning: on this page the legend is a
-   row under the map, not an overlay on it. Qualified by #page-why-this-app
+   row under the map, not an overlay on it. Qualified by #page-learn-about-app
    because .kg2-legend is declared LATER in this file and a bare
    .wta-graph-legend ties it on specificity and loses on source order — which
    left the legend absolutely positioned and floating off the top of the
    section, invisible. */
-#page-why-this-app .wta-graph-legend {
+#page-learn-about-app .wta-graph-legend {
   position: static;
   max-width: none;
   margin: 0 0 8px;

@@ -69,7 +69,26 @@ const ADVANCED_MODE_KEY = "dd_advanced_mode";
 const isAdvancedMode = () => localStorage.getItem(ADVANCED_MODE_KEY) === "1";
 const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
 
+/* TAB NAMES THAT USED TO EXIST. "why-this-app" and "how-to-use" were two tabs
+   until 2026-08-23 and are one page now. solo-route.js keeps the two PATHNAMES
+   working, but a name also reaches switchTab from places a URL alias cannot
+   reach: `dd_recovered_tab` in sessionStorage, written by guest-session.js
+   before a recovery reload. A reload that crosses a deploy boundary — the old
+   build wrote the name, the new build reads it — would ask for a page that is
+   not in the document any more. */
+const renamedTabs = { "why-this-app": "learn-about-app", "how-to-use": "learn-about-app" };
+
 const switchTab = (tabName) => {
+  tabName = renamedTabs[tabName] || tabName;
+  /* 🔴 AND THE GENERAL CASE, because the rename is only the instance we know
+     about. The `pages.forEach` line below hides EVERY page when the name
+     matches none of them — no error, no console warning, just a blank app
+     under a topbar. Any stale stored tab, any [data-goto-tab] typo
+     and any future rename lands here, so the fallback is the same pair the
+     boot call at the bottom of this file chooses between. */
+  if (!document.getElementById(`page-${tabName}`)) {
+    tabName = authToken ? "practice" : "welcome";
+  }
   if (guestBlockedTabs.includes(tabName) && !authToken) {
     // No forced login page anymore — send guests to practice; the guest
     // banner is the standing CTA to log in.
@@ -105,6 +124,15 @@ const switchTab = (tabName) => {
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
+  /* #page-welcome is a PAGE WITHOUT A TAB — the two-arrow fork a first-time
+     visitor lands on. It is reached by name from the boot call at the bottom
+     of this file and by nothing else, and no `.tab` carries that name, so the
+     line above simply leaves the strip with nothing active, which is correct.
+
+     The body class is here because the fork has to be the ONLY thing on that
+     screen (Seth, 2026-08-23) and the guest banner lives OUTSIDE every
+     `.page`, so no page-scoped rule can reach it. styles/learn-about.css. */
+  document.body.classList.toggle("dd-welcome", tabName === "welcome");
   // Returning to Practice normally re-fetches the question so a preference
   // change takes effect. But that fetch is DESTRUCTIVE to a session in
   // progress: the timer's resume check is
@@ -567,13 +595,17 @@ const recoveredTab = (() => {
     return "";
   }
 })();
-// First visit lands on the pitch, every visit after it lands on the work.
+// First visit lands on the FORK, every visit after it lands on the work.
 // `authToken` is the right test for that and isSignedIn() is not: a returning
 // GUEST has a token (guest-session.js stored one last time) and wants their
-// practice queue, not the explainer they already read. A first-time visitor
-// has nothing stored yet, which is the one moment "Why this app exists" is
-// the most useful page in the app.
-switchTab(soloTab || recoveredTab || (authToken ? "practice" : "why-this-app"));
+// practice queue, not a choice they already made. A first-time visitor has
+// nothing stored yet, which is the one moment the fork is the right screen.
+//
+// "welcome" replaced "why-this-app" on 2026-08-23: landing straight on the
+// argument for the app assumed the visitor wanted to read one. #page-welcome
+// offers that path and the other one, says which is optional, and shows
+// nothing else.
+switchTab(soloTab || recoveredTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by

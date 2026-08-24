@@ -161,6 +161,86 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-23 — one front door: a two-arrow fork, one "Learn about the App"
+  tab, and no tab strip in basic mode.** `index.html`, `app.js`,
+  `solo-route.js`, `concept-graph/why-graph.js`, `practice/diagnostic-page.js`,
+  `styles/learn-about.css` (new), `styles/{how-it-works,why-map}.css`,
+  `watch.py`, `styles/watch.py`.
+  Seth's ask, in his words: two arrows and "literally nothing else for the user
+  experience"; the left one says it is optional, the right one goes straight to
+  the placement test; "after taking the placement diagnostic, it needs to take
+  the learner to the practice"; and "when you enable the advanced mode it should
+  show you all the other tabs that it currently has, so you actually get the
+  tabs back".
+  - **The two explainer tabs became one.** `Why This App Exists` +
+    `How to use it` → `#page-learn-about-app`, tab `learn-about-app`, label
+    **Learn about the App**. What is unconditionally on screen is one heading
+    and one paragraph — what Delta Drills is. Everything else is a native
+    `<details>`: *The three markers, in full* and *How the app works* (the old
+    "How to use it" body, renamed on Seth's instruction), both closed on
+    arrival. **The concept map moved into *How the app works*** — it is the
+    mechanism, not the argument. 🔴 That put it inside a CLOSED disclosure, so
+    `why-graph.js::whenVisible` now listens for the `<details>` `toggle` event
+    as well as the page's class list; the page can be perfectly visible with the
+    map still unrendered, and the page-class observer alone leaves it on
+    "Loading the map…" forever. `/why-this-app` and `/how-to-use` still resolve
+    — both are legacy slugs pointing at the merged page in `solo-route.js`.
+  - **`#page-welcome` is a page with no tab.** Two `[data-goto-tab]` arms and
+    nothing else: no pitch, no CTA, and no guest banner (that lives outside
+    every `.page`, so `app.js` stamps `body.dd-welcome` and the rule is in
+    `learn-about.css`). `app.js` lands a first-time visitor here instead of on
+    the old pitch page. There is deliberately **no route back to it** — a fork
+    is a thing you pass through once.
+  - 🔴 **Basic mode has no tab strip at all, and basic mode is the default.**
+    `body.dd-basic-mode` hides `.tabs`, the copy `nav-drawer.js` parks in the
+    drawer, and `.nav-toggle`. Navigation is the fork, the topbar cog
+    (→ Account), and the app moving the learner on by itself. **Advanced mode
+    is the whole way back** — every tab returns unchanged, because this is a
+    display rule and nothing is unmounted. Because the cog is then the only
+    control that leaves Practice, the Account page carries `.dd-basic-nav`
+    ("← Back to practice" / "Learn about the App"), hidden in advanced mode.
+  - **A finished placement hands the learner to Practice** (`diagnostic-page.js`
+    `render()`), and stops there — "after it takes them to the practice they
+    just continue studying that". 🔴 It keys on the **transition**, not the
+    state: `render()` runs on every `delta:practice-state-changed` and on every
+    tab entry, so keying on "is complete" alone would drag a learner off the
+    Placement tab every time they opened it months later. **Basic mode only** —
+    advanced mode still has the strip, so `#diagnostic-results` stays readable
+    there for as long as the learner wants it. Nothing is lost in basic mode
+    either: `practice/readiness.js` is the single writer of that figure and the
+    Practice idle dial prints the same reading, caption and detail line.
+  - `watch.py::check_front_door` asserts the lot — one tab and no trace of the
+    two it replaced, two disclosures with the lead paragraph OUTSIDE them, the
+    map inside *How the app works*, the toggle listener in `why-graph.js`, the
+    fork's two arms and the word "optional", `#page-welcome` never becoming a
+    tab, all three basic-mode strip rules, the **link order** of
+    `learn-about.css` after `nav-drawer.css`, the Account escape row, and the
+    hand-off to Practice. Every one of those fails silently rather than
+    raising.
+  - **Criticked, and it found a real one.** Codex is answering again — the
+    08-27 usage wall other sessions hit today has lifted. 🔴 **A tab name that
+    matches no page blanks the app**: `switchTab` hides every `.page` whose id
+    is not `page-<name>`, so a stale `dd_recovered_tab` — the sessionStorage
+    key `guest-session.js` writes before a recovery reload — carrying
+    `why-this-app` across a deploy would have left a topbar over nothing, with
+    no error anywhere. The URL aliases in `solo-route.js` cannot help; that
+    name never goes near a pathname. Fixed BOTH ways in `app.js`: `renamedTabs`
+    maps the two retired names onto the merged page, and a general existence
+    check falls back to the same pair the boot call chooses between, so the
+    next rename and every `[data-goto-tab]` typo land softly too. Both are
+    asserted in `check_front_door`, and both were reproduced in the browser
+    before and after. Codex's second finding is real but is **not this diff**:
+    `renderLength`'s fallback chip says "N questions" when `min_probes` is
+    missing, and `budget` is a ceiling — it should read "up to N". That line
+    belongs to the placement-readiness session's uncommitted work; flagged in
+    `collab`, not edited here.
+  - Verified in a real browser: the fork at 1854px and 390px with no scrollbar
+    either way,
+    the disclosures and the map drawing on open, the right arm landing on the
+    Placement tab, the cog landing on Account and the escape row landing back on
+    Practice, advanced mode restoring the strip, and a stubbed placement going
+    active → complete switching to Practice once and NOT bouncing a re-visit.
+
 - **2026-08-23 — the topbar is a three-column grid, and 28 ⓘ dots are gone.**
   `index.html`, `app.js`, `nav-drawer.js`, `infotips-registry.js`,
   `styles/{layout,nav-drawer,infotips,xp}.css`, `watch.py`.

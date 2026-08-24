@@ -33,11 +33,11 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=5" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=28" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=30" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
-  <link rel="stylesheet" href="styles/why-map.css?v=1" />
+  <link rel="stylesheet" href="styles/why-map.css?v=2" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
   <link rel="stylesheet" href="styles/courses/page.css?v=2" />
@@ -52,28 +52,44 @@
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
+  <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
+       and the rule that takes the tab strip off the screen in basic mode.
+       🔴 POSITION IS LOAD-BEARING: it must come after nav-drawer.css, whose
+       `body.nav-drawer-mode .nav-drawer .tabs` is the same specificity as this
+       file's basic-mode rule for the strip parked in the drawer — a tie that
+       source order, and only source order, settles this way. Still before
+       responsive.css and solo-route.css, like every other feature sheet. -->
+  <link rel="stylesheet" href="styles/learn-about.css?v=1" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/layout.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=8" />
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
-  <link rel="stylesheet" href="styles/practice/readiness.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/readiness.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=5" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=5" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=8" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=6" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=9" />
+  <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
+       a `body.dd-basic-mode` override of something declared above, so it has to
+       win the ties. Inert until app.js `applyModeVisibility` writes that class,
+       which it does whenever Advanced mode on the Account tab is off — i.e. by
+       default. Strips the practice question down to the concept title, the
+       problem, and the worked example; the rest of the rails come back with the
+       Advanced toggle. -->
+  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=1" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=13" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
@@ -152,8 +168,13 @@
          themselves tabs. Local_Deployed_Shared/watch.py asserts the dots stay
          gone, because nothing else here fails when one comes back. -->
     <nav class="tabs">
-      <button class="tab active" data-tab="why-this-app" type="button">Why This App Exists</button>
-      <button class="tab" data-tab="how-to-use" type="button">How to use it</button>
+      <!-- ONE tab where there were two. "Why This App Exists" and "How to use
+           it" both answered "what is this thing" and sat side by side, so a
+           first-time visitor had to open both to get one answer. Merged into
+           #page-learn-about-app on 2026-08-23 (Seth). No `active` class on any
+           tab here any more: the landing page is #page-welcome, which is NOT a
+           tab, and app.js's boot switchTab writes the active state anyway. -->
+      <button class="tab" data-tab="learn-about-app" type="button">Learn about the App</button>
       <button class="tab auth-only" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
       <button class="tab" data-tab="diagnostic" type="button">Placement test</button>
       <button class="tab auth-only" data-tab="split-tool" type="button" hidden>Split Tool</button>
@@ -244,14 +265,62 @@
     </div>
   </div>
 
-  <!-- WHY THIS APP EXISTS — the landing page, and the first tab in the nav.
-       A first-time visitor has no auth token yet, which is exactly what
-       app.js lands on this page (see the switchTab call at the bottom of
-       app.js); a returning one goes straight back to Practice.
-       Styling reuses the .hiw-* type scale in styles/how-it-works.css. That
-       file kept its name after the How It Works page was deleted on
-       2026-08-22 because it also owns every .kg2-* Knowledge Graph rule. -->
-  <main class="page" id="page-why-this-app">
+  <!-- WELCOME — the fork, and the first thing a visitor sees. Two arrows and
+       nothing else (Seth, 2026-08-23): one path reads about the app, the other
+       starts using it, and a landing page that also carried a pitch, a banner
+       and a nav strip was asking a first-time visitor to make five decisions
+       before the first one.
+
+       NOT A TAB. There is no [data-tab="welcome"], so the strip never shows it
+       and there is no way back to it once a path is taken — that is deliberate,
+       it is a fork, not a home page. app.js lands here (the switchTab call at
+       the bottom of that file) and stamps `body.dd-welcome`, which is what
+       takes the guest banner off this one screen; styles/learn-about.css.
+
+       Both arms are [data-goto-tab], app.js's existing jump-to-a-tab hook, so
+       neither needs a handler of its own. The RIGHT arm goes to the Placement
+       tab and stops there — that page is where the test is explained and
+       started, and auto-starting a timed test from a landing button is not a
+       thing to do to someone who has just arrived. -->
+  <main class="page hidden" id="page-welcome">
+    <div class="welcome-fork">
+      <button type="button" class="welcome-arm welcome-arm--left" data-goto-tab="learn-about-app">
+        <span class="welcome-arrow" aria-hidden="true">&#8592;</span>
+        <span class="welcome-arm-label">Learn how the app works, and why it exists</span>
+        <span class="welcome-arm-note">This path is optional — you can skip it entirely.</span>
+      </button>
+      <button type="button" class="welcome-arm welcome-arm--right" data-goto-tab="diagnostic">
+        <span class="welcome-arrow" aria-hidden="true">&#8594;</span>
+        <span class="welcome-arm-label">Jump into practicing the app</span>
+        <span class="welcome-arm-note">Starts with the placement test.</span>
+      </button>
+    </div>
+  </main>
+
+
+  <!-- LEARN ABOUT THE APP — one tab, two disclosures, merged on 2026-08-23
+       from "Why This App Exists" and "How to use it" (Seth).
+
+       THE SHAPE IS THE POINT. What is on screen unconditionally is one heading
+       and one paragraph: what Delta Drills is, in the fewest words there are.
+       Everything else is behind a <details> — the three markers under "Why this
+       app exists", and the whole article under "How the app works". Native
+       <details>, no script: keyboard and screen readers get the disclosure
+       semantics for free, it survives a solo deep link, and there is no open/
+       closed state for anything else to disagree with.
+
+       THE MAP moved in here, under "How the app works" (Seth): it is the
+       mechanism, not the argument. 🔴 It is now inside a CLOSED <details> on
+       first paint, so `container.offsetParent` is null and cytoscape cannot
+       measure it — concept-graph/why-graph.js `whenVisible` watches the
+       enclosing <details> `toggle` event as well as the page's class for
+       exactly that reason. Removing the <details> without removing that
+       listener is fine; the reverse is a map that never draws.
+
+       Styling: the .hiw-* type scale in styles/how-it-works.css (whose
+       #page-why-this-app / #page-how-to-use selectors were repointed here), the
+       map in styles/why-map.css, the disclosures in styles/learn-about.css. -->
+  <main class="page hidden" id="page-learn-about-app">
     <div class="container">
 
       <section class="hiw-hero">
@@ -267,130 +336,225 @@
         </p>
       </section>
 
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">The value add</p>
-        <h2>It is personalized, and AI-paced (as opposed to self-paced)</h2>
-        <p>
-          The app maintains a student model that estimates a student's
-          strengths and weaknesses as they work. It then serves them the
-          right concept at the right level of difficulty and scaffolding.
-          Students move on from a concept when they have mastered it, rather
-          than after they run out of time in a course where time conditions
-          dictate keeping up with everyone else in your cohort (as with any
-          in-person program).
-        </p>
-      </section>
+      <details class="lab-disclosure" id="lab-why">
+        <summary>
+          <span class="lab-disclosure-title">The three markers, in full</span>
+          <span class="lab-disclosure-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="lab-disclosure-body">
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">The value add</p>
+          <h2>It is personalized, and AI-paced (as opposed to self-paced)</h2>
+          <p>
+            The app maintains a student model that estimates a student's
+            strengths and weaknesses as they work. It then serves them the
+            right concept at the right level of difficulty and scaffolding.
+            Students move on from a concept when they have mastered it, rather
+            than after they run out of time in a course where time conditions
+            dictate keeping up with everyone else in your cohort (as with any
+            in-person program).
+          </p>
+        </section>
 
-      <section class="hiw-section">
-        <h2>It eliminates decision fatigue of choosing content, while
-          preserving human connection</h2>
-        <p>
-          For this MVP, I target PyTorch, but these principles apply just as
-          well to all the other concepts necessary for ARENA prerequisites
-          (and beyond, to ARENA itself). In order to prepare for ARENA, the
-          learner is left with prioritizing learning linear algebra, calculus,
-          information theory, and neural networks, all before even touching
-          the curriculum. Self-diagnosing and practicing the right concepts
-          with the right investment becomes irrelevant if one has a tool that
-          does all of that automatically. There are no modules to click on
-          like one has with Khan Academy.
-        </p>
-        <p>
-          For the ARENA curriculum itself, one may wonder how this would
-          align with a linear 8-week program. It doesn't. Or rather, not
-          without adjustment. My vision is to give the option to go through
-          the ARENA curriculum with Delta Drills driving it all. Interacting
-          with other humans is also valuable, however, which is why I
-          designed a path that syncs well with the in-person program. The
-          curriculum already serves up suggested time limits for working on
-          problems. If a learner spends 15 minutes on a problem they
-          struggled with, they should spend time later shoring up the
-          concepts that made it hard. Delta Drills queues that practice for
-          them, so they keep pace with the cohort and the gaps still get
-          closed.
-        </p>
-      </section>
+        <section class="hiw-section">
+          <h2>It eliminates decision fatigue of choosing content, while
+            preserving human connection</h2>
+          <p>
+            For this MVP, I target PyTorch, but these principles apply just as
+            well to all the other concepts necessary for ARENA prerequisites
+            (and beyond, to ARENA itself). In order to prepare for ARENA, the
+            learner is left with prioritizing learning linear algebra, calculus,
+            information theory, and neural networks, all before even touching
+            the curriculum. Self-diagnosing and practicing the right concepts
+            with the right investment becomes irrelevant if one has a tool that
+            does all of that automatically. There are no modules to click on
+            like one has with Khan Academy.
+          </p>
+          <p>
+            For the ARENA curriculum itself, one may wonder how this would
+            align with a linear 8-week program. It doesn't. Or rather, not
+            without adjustment. My vision is to give the option to go through
+            the ARENA curriculum with Delta Drills driving it all. Interacting
+            with other humans is also valuable, however, which is why I
+            designed a path that syncs well with the in-person program. The
+            curriculum already serves up suggested time limits for working on
+            problems. If a learner spends 15 minutes on a problem they
+            struggled with, they should spend time later shoring up the
+            concepts that made it hard. Delta Drills queues that practice for
+            them, so they keep pace with the cohort and the gaps still get
+            closed.
+          </p>
+        </section>
 
-      <section class="hiw-section">
-        <h2>It leverages the expertise reversal effect</h2>
-        <p>
-          Instruction that helps a novice can actively hurt someone further
-          along. A full worked example is exactly what you need the first
-          time you meet a concept; once you are competent, that same example
-          gets in your way. So the app picks more than the concept. It also
-          picks the level of support: a lesson or worked example when a
-          concept is new to you, a partially worked example as you improve,
-          and a bare problem once you are strong. Same material, support
-          matched to where you stand.
-        </p>
-      </section>
+        <section class="hiw-section">
+          <h2>It leverages the expertise reversal effect</h2>
+          <p>
+            Instruction that helps a novice can actively hurt someone further
+            along. A full worked example is exactly what you need the first
+            time you meet a concept; once you are competent, that same example
+            gets in your way. So the app picks more than the concept. It also
+            picks the level of support: a lesson or worked example when a
+            concept is new to you, a partially worked example as you improve,
+            and a bare problem once you are strong. Same material, support
+            matched to where you stand.
+          </p>
+        </section>
 
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">The map underneath</p>
-        <h2>Every concept, and what it needs first</h2>
-        <p>
-          The app knows the curriculum as a graph: each box is one concept, and
-          an arrow means you need the concept it comes from before the one it
-          points to. That is what lets it tell "you have not learned this yet"
-          apart from "you were never taught the thing underneath it".
-        </p>
-        <p class="wta-graph-hint">
-          This is the whole map — every concept the app teaches, wired by what
-          it needs first. Hover one to light up everything underneath it, or
-          drag them around. It opens on the <strong>cold start</strong>: the
-          map as it stands before you have answered anything, which is why
-          none of it is coloured in yet. Switch it to your own reading
-          underneath, and <strong>maximize</strong> for the full Knowledge
-          Graph with its learner-model panel.
-        </p>
-        <div class="wta-graph">
-          <!-- Maximize is not a nicety: 63 concepts do not fit a 460px band
-               at a readable size, and the band is deliberately the honest
-               version of that. The button lives inside the frame because the
-               frame is what goes full-screen. -->
-          <button type="button" class="wta-graph-btn" id="wta-graph-max"
-                  aria-pressed="false" aria-label="Maximize the map"
-                  title="Maximize">&#10530; Maximize</button>
-          <div class="wta-graph-cy" id="wta-graph-cy" role="img"
-               aria-label="A map of every concept the app teaches, drawn bottom
-               to top: 63 concepts across NumPy, einsum and einops, joined by 81
-               arrows that each mean you need the concept an arrow comes from
-               before the one it points to. Understanding what an ndarray is
-               sits at the bottom and everything else builds on it. Nodes are
-               grey and dashed at the cold start, because nothing has been
-               answered yet; switched to your own reading they are coloured
-               from red for weak to blue for strong, faded and dashed wherever
-               the colour is inferred from what sits underneath rather than
-               from anything you have been graded on, and grey where there is
-               no estimate at all."></div>
-          <!-- Top-LEFT: the top-right corner belongs to Maximize here and to
-               .kg2-controls once the real graph is hosted in this frame. Same
-               class as the Knowledge Graph's own notice, one look for one
-               fact. -->
-          <div class="kg2-nodata wta-graph-nodata" id="wta-graph-nodata" hidden></div>
-          <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
         </div>
-        <!-- The legend and the colour switch sit BELOW the canvas, not floating
-             over it the way the Knowledge Graph's do. That pane is tall enough
-             to give a bottom-left overlay dead space; this one is 460px with
-             the root concept sitting at the bottom of a BT layout, and the
-             overlay landed straight on top of it. Same .kg2-* vocabulary
-             either way. -->
-        <div class="wta-graph-foot">
-          <div class="wta-modes" id="wta-graph-modes" role="group"
-               aria-label="What the colours on the map show">
-            <button type="button" data-wta-mode="cold" class="active"
-                    aria-pressed="true">Cold start</button>
-            <button type="button" data-wta-mode="mine"
-                    aria-pressed="false">Your mastery</button>
+      </details>
+
+      <details class="lab-disclosure" id="lab-how">
+        <summary>
+          <span class="lab-disclosure-title">How the app works</span>
+          <span class="lab-disclosure-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="lab-disclosure-body">
+          <p class="hiw-lead">
+            Three steps. You will spend nearly all of your time on the second
+            one.
+          </p>
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">Step 1</p>
+          <h2>Take the placement test</h2>
+          <p>
+            Start here. The placement test serves you at most six problems and
+            takes twelve minutes at the outside, since each problem is capped
+            at two minutes. Every answer updates the app's estimate of your
+            understanding across every concept in the knowledge graph, not just
+            the concept the question came from. That is why six problems are
+            enough: when the test ends, Practice knows where to start you.
+          </p>
+        </section>
+
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">Step 2</p>
+          <h2>Live on the Practice tab</h2>
+          <p>
+            Day to day, the Practice tab is the whole app. Open it and solve
+            what it gives you. You do not pick topics or track what is due, and
+            you do not decide when you are done with a concept; the app works
+            that out from your answers. This is where you spend most of your
+            time, and there is nothing else you need to manage.
+          </p>
+        </section>
+
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">Step 3</p>
+          <h2>Then ARENA itself</h2>
+          <p>
+            Whenever you are ready, the app brings you over to the ARENA
+            curriculum itself, landing you on the exact coding problem for the
+            ARENA exercise you are ready for. That handoff is the point of
+            everything before it.
+          </p>
+        </section>
+
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">Under the hood</p>
+          <h2>One loop, run against your own frontier</h2>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <div class="step-card-title">A placement test places you</div>
+              <div class="step-card-text">A short placement shows you where you actually stand against what ARENA will ask of you.</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <div class="step-card-title">It picks the concept</div>
+              <div class="step-card-text">The app chooses the next concept to teach you, matched to your current level of mastery.</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <div class="step-card-title">And picks how to teach it</div>
+              <div class="step-card-text">For that concept it serves one of three things: a lesson, a worked example, or practice problems.</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">4</div>
+              <div class="step-card-title">Your answer moves the model</div>
+              <div class="step-card-text">How you do updates the student model, so the next choice is made on newer evidence than the last one.</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">5</div>
+              <div class="step-card-title">The scaffolding fades</div>
+              <div class="step-card-text">As you solve problems the model tracks your learning frontier and pulls the support back to match it.</div>
+            </div>
+            <div class="step-card">
+              <div class="step-number">6</div>
+              <div class="step-card-title">Then the real thing</div>
+              <div class="step-card-text">Once you're ready for an ARENA problem, it gives you the ARENA problem.</div>
+            </div>
           </div>
+        </section>
+
+        <section class="hiw-section">
+          <p class="hiw-eyebrow">The map underneath</p>
+          <h2>Every concept, and what it needs first</h2>
+          <p>
+            The app knows the curriculum as a graph: each box is one concept, and
+            an arrow means you need the concept it comes from before the one it
+            points to. That is what lets it tell "you have not learned this yet"
+            apart from "you were never taught the thing underneath it".
+          </p>
+          <p class="wta-graph-hint">
+            This is the whole map — every concept the app teaches, wired by what
+            it needs first. Hover one to light up everything underneath it, or
+            drag them around. It opens on the <strong>cold start</strong>: the
+            map as it stands before you have answered anything, which is why
+            none of it is coloured in yet. Switch it to your own reading
+            underneath, and <strong>maximize</strong> for the full Knowledge
+            Graph with its learner-model panel.
+          </p>
+          <div class="wta-graph">
+            <!-- Maximize is not a nicety: 63 concepts do not fit a 460px band
+                 at a readable size, and the band is deliberately the honest
+                 version of that. The button lives inside the frame because the
+                 frame is what goes full-screen. -->
+            <button type="button" class="wta-graph-btn" id="wta-graph-max"
+                    aria-pressed="false" aria-label="Maximize the map"
+                    title="Maximize">&#10530; Maximize</button>
+            <div class="wta-graph-cy" id="wta-graph-cy" role="img"
+                 aria-label="A map of every concept the app teaches, drawn bottom
+                 to top: 63 concepts across NumPy, einsum and einops, joined by 81
+                 arrows that each mean you need the concept an arrow comes from
+                 before the one it points to. Understanding what an ndarray is
+                 sits at the bottom and everything else builds on it. Nodes are
+                 grey and dashed at the cold start, because nothing has been
+                 answered yet; switched to your own reading they are coloured
+                 from red for weak to blue for strong, faded and dashed wherever
+                 the colour is inferred from what sits underneath rather than
+                 from anything you have been graded on, and grey where there is
+                 no estimate at all."></div>
+            <!-- Top-LEFT: the top-right corner belongs to Maximize here and to
+                 .kg2-controls once the real graph is hosted in this frame. Same
+                 class as the Knowledge Graph's own notice, one look for one
+                 fact. -->
+            <div class="kg2-nodata wta-graph-nodata" id="wta-graph-nodata" hidden></div>
+            <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
+          </div>
+          <!-- The legend and the colour switch sit BELOW the canvas, not floating
+               over it the way the Knowledge Graph's do. That pane is tall enough
+               to give a bottom-left overlay dead space; this one is 460px with
+               the root concept sitting at the bottom of a BT layout, and the
+               overlay landed straight on top of it. Same .kg2-* vocabulary
+               either way. -->
+          <div class="wta-graph-foot">
+            <div class="wta-modes" id="wta-graph-modes" role="group"
+                 aria-label="What the colours on the map show">
+              <button type="button" data-wta-mode="cold" class="active"
+                      aria-pressed="true">Cold start</button>
+              <button type="button" data-wta-mode="mine"
+                      aria-pressed="false">Your mastery</button>
+            </div>
+          </div>
+          <div class="kg2-legend kg2-legend-mastery wta-graph-legend" id="wta-graph-legend">
+            <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate</span>
+            <span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>
+            <span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>
+          </div>
+        </section>
+
         </div>
-        <div class="kg2-legend kg2-legend-mastery wta-graph-legend" id="wta-graph-legend">
-          <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate</span>
-          <span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>
-          <span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>
-        </div>
-      </section>
+      </details>
 
       <div class="hiw-note">
         <p>
@@ -400,106 +564,6 @@
           guest stays in this browser.
         </p>
       </div>
-
-      <p class="hiw-graph-cta">
-        <button type="button" class="hiw-graph-cta-btn" data-goto-tab="diagnostic">
-          Start with the placement test →
-        </button>
-      </p>
-
-    </div>
-  </main>
-
-
-  <!-- HOW TO USE IT — the practical companion to the tab on its left: that
-       one says why the app is worth using, this one says what to actually
-       do. Three steps, then the six-step loop that used to live on Why This
-       App Exists. Same .hiw-* type scale; the 3x2 .steps-grid override in
-       how-it-works.css is scoped to THIS page now. -->
-  <main class="page hidden" id="page-how-to-use">
-    <div class="container">
-
-      <section class="hiw-hero">
-        <h1>How to use it</h1>
-        <p class="hiw-lead">
-          Three steps. You will spend nearly all of your time on the second
-          one.
-        </p>
-      </section>
-
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">Step 1</p>
-        <h2>Take the placement test</h2>
-        <p>
-          Start here. The placement test serves you at most six problems and
-          takes twelve minutes at the outside, since each problem is capped
-          at two minutes. Every answer updates the app's estimate of your
-          understanding across every concept in the knowledge graph, not just
-          the concept the question came from. That is why six problems are
-          enough: when the test ends, Practice knows where to start you.
-        </p>
-      </section>
-
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">Step 2</p>
-        <h2>Live on the Practice tab</h2>
-        <p>
-          Day to day, the Practice tab is the whole app. Open it and solve
-          what it gives you. You do not pick topics or track what is due, and
-          you do not decide when you are done with a concept; the app works
-          that out from your answers. This is where you spend most of your
-          time, and there is nothing else you need to manage.
-        </p>
-      </section>
-
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">Step 3</p>
-        <h2>Then ARENA itself</h2>
-        <p>
-          Whenever you are ready, the app brings you over to the ARENA
-          curriculum itself, landing you on the exact coding problem for the
-          ARENA exercise you are ready for. That handoff is the point of
-          everything before it.
-        </p>
-      </section>
-
-      <section class="hiw-section">
-        <p class="hiw-eyebrow">Under the hood</p>
-        <h2>One loop, run against your own frontier</h2>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <div class="step-card-title">A placement test places you</div>
-            <div class="step-card-text">A short placement shows you where you actually stand against what ARENA will ask of you.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <div class="step-card-title">It picks the concept</div>
-            <div class="step-card-text">The app chooses the next concept to teach you, matched to your current level of mastery.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <div class="step-card-title">And picks how to teach it</div>
-            <div class="step-card-text">For that concept it serves one of three things: a lesson, a worked example, or practice problems.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">4</div>
-            <div class="step-card-title">Your answer moves the model</div>
-            <div class="step-card-text">How you do updates the student model, so the next choice is made on newer evidence than the last one.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">5</div>
-            <div class="step-card-title">The scaffolding fades</div>
-            <div class="step-card-text">As you solve problems the model tracks your learning frontier and pulls the support back to match it.</div>
-          </div>
-          <div class="step-card">
-            <div class="step-number">6</div>
-            <div class="step-card-title">Then the real thing</div>
-            <div class="step-card-text">Once you're ready for an ARENA problem, it gives you the ARENA problem.</div>
-          </div>
-        </div>
-      </section>
-
       <p class="hiw-graph-cta">
         <button type="button" class="hiw-graph-cta-btn" data-goto-tab="diagnostic">
           Start with the placement test &rarr;
@@ -508,6 +572,7 @@
 
     </div>
   </main>
+
 
   <main class="page hidden" id="page-knowledge-graph">
     <div class="container kg-container kg2">
@@ -603,6 +668,17 @@
     <div class="container">
       <h1>Account</h1>
       <p class="subtitle">Your Delta Drills account.</p>
+      <!-- THE WAY BACK. In basic mode the tab strip is not on screen at all
+           (styles/learn-about.css), and the cog in the topbar is the only
+           control that leaves Practice — so without this row, arriving here
+           is a dead end with no route to anywhere except turning Advanced
+           mode on. Hidden in advanced mode, where the strip does this job.
+           [data-goto-tab] is app.js's jump hook; neither target is an
+           advanced-only tab, so applyModeVisibility leaves both alone. -->
+      <nav class="dd-basic-nav" aria-label="Back to the app">
+        <button type="button" class="dd-basic-nav-link" data-goto-tab="practice">&#8592; Back to practice</button>
+        <button type="button" class="dd-basic-nav-link" data-goto-tab="learn-about-app">Learn about the App</button>
+      </nav>
       <section class="card">
         <!-- Plain account identity first. Everything credential-shaped (API base,
              OpenAI / Mathpix keys, DD_TOKEN) moved into the collapsed Advanced
@@ -635,8 +711,13 @@
                 Adds <strong>Knowledge Graph</strong>, <strong>Course content</strong>,
                 and <strong>Notebooks</strong> back to the
                 nav, and puts the <strong>progress ladder</strong> back above the question —
-                the strip that shows how far into the current concept you are. Off by
-                default, so the app is just Practice and the Placement test.
+                the strip that shows how far into the current concept you are. It also
+                restores everything the practice screen keeps out of your way by
+                default: the <strong>hint</strong>, the <strong>reference solution</strong>,
+                the <strong>explanation and tutor</strong>, the
+                <strong>difficulty rating</strong>, the failed test cases and the
+                reporting controls. Off by default, so a problem is just its concept,
+                the question, and the worked example.
                 Applies immediately — no need to save.
               </span>
             </span>
@@ -757,7 +838,7 @@
     <div class="container placement-page" id="diagnostic-overview">
       <div class="diagnostic-eyebrow">ARENA placement</div>
       <h1>Placement test</h1>
-      <p class="subtitle">A test that jumps between topics to find which concepts you still need for PyTorch. It seeds where practice begins; it never awards mastery.</p>
+      <p class="subtitle">Finds where to start you. It seeds practice; it never awards mastery.</p>
       <section class="card diagnostic-card">
         <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
         <!-- HOW LONG THIS WILL TAKE, before you commit to it (Seth,
@@ -770,7 +851,7 @@
              probes is the backend's to decide (`budget`, `min_probes`) and
              hard-coding "about 30 minutes" here is how the page ends up
              quoting a length the test stopped using. -->
-        <p class="diagnostic-timing" id="placement-length">Every question is timed the same: <strong>2:00</strong> each. When the time runs out we record what you have and move on.</p>
+        <p class="diagnostic-timing" id="placement-length"><span class="placement-chip"><strong>2:00</strong> per question</span></p>
         <!-- How far through the test you are. `budget` is a CEILING, not a
              length: the placement stops as soon as it is confident, which can
              be at `min_probes`. The tick is where that becomes possible, so
@@ -785,7 +866,7 @@
           <span class="placement-progress-count" id="placement-progress-count"></span>
         </div>
         <div class="self-report-row hidden" id="self-report-row">
-          <span class="self-report-label" data-dd-info="self-report">Starting-point prior:</span>
+          <span class="self-report-label" data-dd-info="self-report">Starting point</span>
           <div class="self-report-options" role="group" aria-label="Self-reported starting point">
             <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
             <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
@@ -815,7 +896,7 @@
            its only anchors. diagnostic-page.js decides whether the card shows,
            placement-results.js decides what is inside it. -->
       <section class="card diagnostic-results hidden" id="diagnostic-results">
-        <h2>Your placement test</h2>
+        <h2>Your placement</h2>
         <p class="placement-results-meta" id="placement-results-meta"></p>
         <div class="placement-readiness" id="placement-readiness"></div>
         <div class="placement-areas" id="placement-areas"></div>
@@ -827,44 +908,6 @@
 
   <main class="page hidden session-idle" id="page-practice">
     <div id="practice-workspace-home" hidden></div>
-  <!-- THE top strip: between the topbar and everything else on this page,
-       outside `.practice-container` so it sits above the setup panel too and
-       spans the full width rather than a panel's. `#page-practice` is the flex
-       column that gives it its natural height (styles/practice/layout.css).
-       One progress readout, and it is this one.
-
-       The strip is the BAR and nothing else. The rung names live INSIDE the
-       track (two stacked layers, so a name reads correctly whether the fill
-       has reached it or not — see practice/stage-ladder.js), each with its own
-       ⓘ; the reading rides ON TOP of the bar as a tab at the fill's edge, and
-       the bar itself sits at the BOTTOM of the strip, against the panels it
-       describes. There is no context row above it any more and no difficulty
-       caption beside it. -->
-  <section class="stage-ladder hidden" id="stage-ladder">
-    <div class="stage-ladder-meter" id="stage-ladder-meter" hidden>
-      <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
-           aria-label="Understanding of this concept"
-           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-      <!-- The notch. A tab sitting ON the bar's top edge, at the fill's
-           leading position (placed by the script) — no arrow, because a tab
-           that touches the track is already pointing at it. The concept name
-           inside it is the jump to the knowledge graph.
-
-           No ⓘ on the reading itself: the thing it explained was the ladder,
-           and each rung's own name already carries that copy inside the
-           track. A dot here only asked "what is this bar?" twice. -->
-      <div class="stage-ladder-callout" id="stage-ladder-callout" aria-live="polite">
-        <span class="stage-ladder-callout-text" id="stage-ladder-callout-text"></span>
-        <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
-                data-dd-info="stage-ladder-kc" data-dd-info-place="after"></button>
-        <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
-        <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
-        <!-- Withdrawn promises and the topic-level reading — see
-             `_renderCallout`. Empty on a normal question. -->
-        <span class="stage-ladder-note" id="stage-ladder-note" hidden></span>
-      </div>
-    </div>
-  </section>
 
     <div class="practice-container">
       <!-- THE IDLE SURFACE — what the Practice tab is when no question is
@@ -1066,8 +1109,60 @@
                It is in .practice-notch-tab now, beside the session clock it
                takes turns with — one countdown, one place, whichever test is
                running. Element and id intact; see the notch above. -->
+          <!-- THE HEADING CARD — the concept, and how far into it you are.
+               Seth, 2026-08-23: "the bar goes on the left as well right below
+               the title of the concept, and the title of the concept is center
+               aligned for the left panel ... it is part of a rectangle that
+               holds both the bar and the concept right above it."
+
+               🔴 THE LADDER LIVES IN HERE NOW. It was `#stage-ladder`, a
+               full-width strip between the topbar and both panels — which put
+               the concept's name on the screen TWICE, once in the strip's
+               floating pop-up and once in this <h2> a couple of centimetres
+               below it, in two type sizes. One card: the name once, centred,
+               with the bar for that name directly under it.
+
+               The card is in both modes; `body.dd-basic-mode` hides the ladder
+               INSIDE it (styles/practice/stage-ladder.css), not the card, so a
+               learner who has never opened the Account tab still gets the
+               title in its frame. -->
           <div class="question-number-row">
             <h2 class="question-number" id="question-number"></h2>
+            <!-- One progress readout, and it is this one. The rung names live
+                 INSIDE the track (two stacked layers, so a name reads
+                 correctly whether the fill has reached it or not — see
+                 practice/stage-ladder.js), each with its own ⓘ. -->
+            <section class="stage-ladder hidden" id="stage-ladder">
+              <div class="stage-ladder-meter" id="stage-ladder-meter" hidden>
+                <div class="stage-ladder-bar" id="stage-ladder-bar" role="progressbar"
+                     aria-label="Understanding of this concept"
+                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+              </div>
+              <!-- The reading, UNDER the track. 🪦 It was `.stage-ladder-callout`
+                   — an absolutely-positioned pop-up with an arrow aimed at the
+                   fill's leading edge, re-measured and re-clamped on every
+                   render and on every resize. Deleted 2026-08-23: the card
+                   above names the concept and the fill points at itself, so
+                   what is left is a percentage and the occasional caveat. -->
+              <div class="stage-ladder-reading" id="stage-ladder-reading" aria-live="polite">
+                <span class="stage-ladder-reading-text" id="stage-ladder-reading-text"></span>
+                <!-- 🔴 HIDDEN whenever its label would repeat the <h2> above,
+                     which on the practice screen is always — both are written
+                     from `ladder_kc_title`. practice/stage-ladder.js makes that
+                     call by READING the heading, so the one screen that names
+                     the concept nowhere else (the lesson, whose heading says
+                     "Lesson") still gets it. The jump itself is not lost when
+                     it hides: "See in knowledge graph" in the notch menu is the
+                     same trip, gated on the same tag, in both modes. -->
+                <button class="stage-ladder-kc" id="stage-ladder-kc" type="button"
+                        data-dd-info="stage-ladder-kc" data-dd-info-place="after" hidden></button>
+                <span class="stage-ladder-eyebrow" id="stage-ladder-eyebrow" hidden></span>
+                <span class="stage-ladder-flag" id="stage-ladder-flag" hidden></span>
+                <!-- Withdrawn promises and the topic-level reading — see
+                     `_renderReading`. Empty on a normal question. -->
+                <span class="stage-ladder-note" id="stage-ladder-note" hidden></span>
+              </div>
+            </section>
           </div>
 
           <!-- Question Text -->
@@ -1293,8 +1388,8 @@ t.manual_seed(0)
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
-  <script src="solo-route.js?v=3"></script>
-  <script src="app.js?v=24"></script>
+  <script src="solo-route.js?v=4"></script>
+  <script src="app.js?v=25"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -1343,7 +1438,7 @@ t.manual_seed(0)
        when maximised; and after cytoscape + cytoscape-dagre. `defer` keeps
        document order, so all of them have run by the time this does. Its only
        fetch is lessons/kc_registry.json. -->
-  <script src="concept-graph/why-graph.js?v=11" defer></script>
+  <script src="concept-graph/why-graph.js?v=12" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
@@ -1392,15 +1487,15 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=13"></script>
+  <script src="practice/stage-ladder.js?v=14"></script>
   <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
        timer.js, whose `hasPausedSession()` decides which of those two the one
        button means, and after notch-menu.js for no reason but reading order. -->
-  <script src="practice/readiness.js?v=3"></script>
-  <script src="practice/session-idle.js?v=5"></script>
+  <script src="practice/readiness.js?v=4"></script>
+  <script src="practice/session-idle.js?v=6"></script>
   <script src="practice/lessons.js?v=28"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
@@ -1408,11 +1503,13 @@ t.manual_seed(0)
   <script src="practice/ladder.js?v=7"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
-  <script src="practice/events.js?v=35"></script>
+  <!-- Before events.js, which calls settleRating() on both graded paths. -->
+  <script src="practice/basic-mode.js?v=1"></script>
+  <script src="practice/events.js?v=36"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-results.js?v=1"></script>
-  <script src="practice/diagnostic-page.js?v=10"></script>
+  <script src="practice/placement-results.js?v=2"></script>
+  <script src="practice/diagnostic-page.js?v=12"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->

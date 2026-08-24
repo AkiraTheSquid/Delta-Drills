@@ -1,7 +1,11 @@
 /* ================================================================
-   WHY-GRAPH.JS — the map on "Why this app exists"
+   WHY-GRAPH.JS — the map on "Learn about the App"
 
    A PREVIEW of the Knowledge Graph, on a page anyone can read.
+   It hangs under "How the app works" on #page-learn-about-app; the
+   file keeps its name (and every `wta-` id in the markup) from the
+   "Why this app exists" tab it was written for, which merged into
+   that page on 2026-08-23.
    It draws the whole lesson graph — every knowledge component in
    lessons/kc_registry.json and every prerequisite edge — with no
    side panel, no learner-model dock and no lesson pane. Two colour
@@ -135,7 +139,13 @@
       return;
     }
     const has = anyMeasured();
-    el.textContent = "No problems answered yet — nothing on this map is measured.";
+    // Borrowed, not restated: lesson-graph.js decides what this says, because a
+    // learner who has finished the placement test HAS answered problems and
+    // both maps were telling them otherwise. Falls back to the old wording only
+    // when lesson-graph.js has not loaded, where the old wording is correct.
+    el.textContent = typeof global.deltaKcNoDataText === "function"
+      ? global.deltaKcNoDataText()
+      : "No problems answered yet — nothing on this map is measured.";
     el.hidden = has;
   };
 
@@ -152,6 +162,19 @@
           x.setAttribute("aria-pressed", on ? "true" : "false");
         });
         applyColours();
+        // The learner's reading needs the server's report, and on THIS page
+        // nothing has fetched it: lesson-graph.js fetches inside build(), which
+        // only runs on the Knowledge Graph tab. Without this the switch showed
+        // a signed-in learner the offline answer — grey where the queue holds a
+        // number. Both calls are cached and idempotent; paint again when they
+        // land, because the first paint above is the honest read of what is
+        // known right now. It goes through lesson-graph.js rather than the
+        // loader directly, so that file's own `lattice` is updated too — see
+        // deltaRefreshKcLattice.
+        if (mode !== "mine") return;
+        if (typeof global.deltaRefreshKcLattice === "function") {
+          global.deltaRefreshKcLattice().then(applyColours);
+        }
       });
     });
   };
@@ -353,6 +376,15 @@
   // Cytoscape measures the container, so it cannot be drawn while the page is
   // display:none — which it is for anyone whose landing tab is Practice (i.e.
   // every returning visitor). Draw on first reveal, and refit on later ones.
+  //
+  // 🔴 TWO SIGNALS, and one page-class observer is no longer enough. Since the
+  // 2026-08-23 merge the map lives inside the CLOSED <details> "How the app
+  // works" on #page-learn-about-app, so the page can be perfectly visible with
+  // the map still unrendered — `offsetParent` is null inside a closed
+  // <details>, which is what `visible()` already (correctly) refuses to draw
+  // into. Opening the disclosure changes nothing about the PAGE's class list,
+  // so without the `toggle` listener below the map never draws at all: the
+  // learner opens the section and gets "Loading the map…" forever.
   const whenVisible = (page, container, elements) => {
     const visible = () => !page.classList.contains("hidden") && container.offsetParent !== null;
     const run = () => {
@@ -366,6 +398,14 @@
     // signal. No polling, and nothing for app.js to have to call.
     const observer = new MutationObserver(() => { if (run()) observer.disconnect(); });
     observer.observe(page, { attributes: true, attributeFilter: ["class"] });
+    // The disclosure the map sits in, if it is in one. `toggle` fires on close
+    // too; `run()` is false then and the listener stays for the next open.
+    // It retires the PAGE observer on success for the same reason that
+    // observer retires itself — whichever of the two gets there first, the map
+    // is drawn and `refit()` afterwards belongs to the ResizeObserver in
+    // draw(), which watches the box rather than the things that change it.
+    const details = container.closest("details");
+    if (details) details.addEventListener("toggle", () => { if (run()) observer.disconnect(); });
   };
 
   // Idempotent: deltaInitWhyGraph is exported, and every call used to add
@@ -381,7 +421,7 @@
   const init = async () => {
     if (installed) return;
     const container = document.getElementById(CONTAINER_ID);
-    const page = document.getElementById("page-why-this-app");
+    const page = document.getElementById("page-learn-about-app");
     const frame = container && container.closest(".wta-graph");
     if (!container || !page || !frame) return;
     if (typeof global.cytoscape !== "function") {

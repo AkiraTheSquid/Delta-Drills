@@ -295,7 +295,7 @@ const StageLadder = (() => {
   };
 
   /* How far along the WHOLE ladder, 0..1 — the number the bar draws and the
-     callout says as a percentage.
+     line under it states as a percentage.
 
      Rungs behind the learner are cleared, the rung they are on is worth
      `_progress()` of its own width, and the ladder has `STAGES.length` of
@@ -421,47 +421,59 @@ const StageLadder = (() => {
       bar.setAttribute("aria-valuetext", `${Math.round(pct)}% understanding`);
     }
 
-    _renderCallout(pct);
+    _renderReading(pct);
   };
 
-  /* The reading, as a pop-up standing OFF the bar and pointing down at the
-     fill's leading edge: "38% understanding of concept array reshape".
+  /* The reading: one line of small text under the track.
 
-     It has been a caption under the strip, a box under the bar, and a tab
-     welded to the bar's top edge. The tab was wrong: a shape sharing an edge
-     with the track reads as part of the track — a lumpy taller bar rather
-     than a label about one position on it. So it is detached again, with its
-     arrow back, on the top side where it cannot reach `#practice-notch`.
+     It has been a caption under the strip, a box under the bar with an arrow,
+     a tab welded to the bar's top edge, and a detached pop-up above it whose
+     box AND arrow were separately measured and clamped on every render and on
+     every resize. All four were solving the same problem — say WHICH concept
+     this bar is about, and point at where on it you are — and the ladder does
+     not have that problem any more: it lives inside the heading card now
+     (index.html, styles/practice/question.css) and the <h2> a few pixels above
+     it is the concept's name. The fill points at itself.
 
-     Two placements happen here, and they are NOT the same number:
-
-       the BOX  — centred on the fill edge, except within a hair of either
-                  end, then nudged back inside the strip by measurement. The
-                  thresholds are a guess at where a label runs out of room and
-                  cannot be more than a guess, because the label carries a
-                  concept NAME.
-       the ARROW — the fill edge itself, in the box's own coordinates, written
-                  as `--dd-callout-arrow-x`. 🔴 The instant the clamp bites
-                  (and near 0% or 100% it always does) the box's centre is no
-                  longer the position being described, so an arrow parked at
-                  50% points somewhere the learner is not. It has to be aimed
-                  AFTER the box has finished moving. */
-  const _renderCallout = (pct) => {
-    const meter = _el("stage-ladder-meter");
-    const callout = _el("stage-ladder-callout");
-    if (!meter || !callout) return;
-
-    const textEl = _el("stage-ladder-callout-text");
+     So what is left for this function is the percentage, the caveats, and one
+     decision — see the button below. Nothing here measures anything, and the
+     resize listener that existed only to re-clamp the pop-up is gone with it.
+     🔴 If a floating shape ever comes back, it needs `--dd-ladder-gap`, the
+     reserve above the bar, the arrow variable and that listener — they were
+     removed together and they only work together. */
+  const _renderReading = (pct) => {
+    const readingEl = _el("stage-ladder-reading-text");
     const name = current.title;
-    if (textEl) {
-      textEl.innerHTML =
-        `<b>${Math.round(pct)}%</b> understanding` + (name ? " of concept" : "");
+    if (readingEl) {
+      /* No "… of concept <name>" clause any more: the heading directly above
+         is that name, written by ui.js from the same `ladder_kc_title` this
+         readout is titled from, so the sentence was naming it twice. */
+      readingEl.innerHTML = `<b>${Math.round(pct)}%</b> understanding`;
     }
-    /* A KC-less item has no concept to name, so the clause is dropped rather
-       than filled with a "This problem" fallback — "38% understanding of
-       concept This problem" is not a sentence. */
+
+    /* The concept button, which is BOTH the name and the jump to the map.
+       Hidden whenever its label would repeat the heading — which on the
+       practice screen is always, because both come from `ladder_kc_title`.
+       What it is kept for is the screen where the heading says something else:
+       the lesson sets `#question-number` to "Lesson" (practice/lessons.js) and
+       names the concept nowhere else.
+
+       🔴 Read the heading rather than assuming the screen. `show()` is called
+       from three places (ui.js, lessons.js, concept-graph/lesson-graph.js) and
+       a flag passed by the caller is a fourth thing to keep in step; the
+       question this is really asking is "is this name already on screen", and
+       the heading is where the answer is. Both writers set the heading BEFORE
+       they call in here, so this reads the current question's, not the last
+       one's.
+
+       Hiding it costs no route to the map: #practice-graph-jump in the notch
+       menu is the same trip, gated on the same tag, in both modes. */
     const kcBtn = _el("stage-ladder-kc");
-    if (kcBtn) kcBtn.hidden = !name;
+    if (kcBtn) {
+      const heading = (_el("question-number")?.textContent || "").trim();
+      const label = (name || "").trim();
+      kcBtn.hidden = !label || (!!heading && heading === label);
+    }
 
     /* What the rung asks of the learner used to be a whole row of the strip.
        It is the ⓘ on the rung's own name now — but the case where the page
@@ -483,74 +495,30 @@ const StageLadder = (() => {
       noteEl.textContent = parts.join(" · ");
       noteEl.hidden = !parts.length;
     }
-
-    callout.style.left = `${pct.toFixed(2)}%`;
-    const shift = pct <= 8 ? 0 : pct >= 92 ? 100 : 50;
-    callout.style.transform = `translateX(-${shift}%)`;
-
-    const room = meter.getBoundingClientRect();
-    const box = callout.getBoundingClientRect();
-    let dx = 0;
-    if (room.width && box.width) {
-      dx = box.left < room.left
-        ? room.left - box.left
-        : box.right > room.right
-          ? room.right - box.right
-          : 0;
-      if (dx) callout.style.transform = `translateX(calc(-${shift}% + ${dx.toFixed(2)}px))`;
-    }
-
-    /* Aim the arrow. Re-measured rather than derived from `shift`/`dx`,
-       because those describe where the box was ASKED to go and this has to
-       describe where it ENDED UP — `max-width: 100%` can also change the
-       box's width between the two reads.
-
-       The tip is pulled in from the corners by the pop-up's border radius,
-       which is the point past which an arrow stops looking attached to
-       anything. When the fill edge is further out than that — 0% and 100%,
-       mostly — the arrow stops at the corner and the box, already flush with
-       the end of the strip, is what carries the last few pixels of meaning. */
-    const track = _el("stage-ladder-bar");
-    const aimed = callout.getBoundingClientRect();
-    if (track && aimed.width) {
-      /* 🔴 The fill's own box is NOT the thing to measure: `transition: width`
-         means that immediately after the write it is still at the PREVIOUS
-         reading, and the arrow would spend 400ms pointing at where the
-         learner used to be. Derive the edge from the track instead.
-         `clientLeft`/`clientWidth` are the bar's border width and its
-         padding-box width — the box the fill is actually laid out in — so
-         this stays exact if the track's border ever changes. */
-      const rect = track.getBoundingClientRect();
-      const edge = rect.left + track.clientLeft + (track.clientWidth * pct) / 100;
-      const inset = Math.min(11, aimed.width / 2);
-      const ax = Math.max(inset, Math.min(aimed.width - inset, edge - aimed.left));
-      callout.style.setProperty("--dd-callout-arrow-x", `${ax.toFixed(2)}px`);
-    }
   };
 
   /* 🔴 THIS MODULE NO LONGER TOUCHES THE SESSION NOTCH, and the absence is
-     load-bearing. While the reading hung UNDER the bar it overhung the top of
-     the split and could land on `#practice-notch`, so it measured both and
-     wrote `--dd-notch-dx` to push the notch aside. The reading is a detached
-     pop-up ABOVE the bar now: arrow and all, it lives inside the strip, above
-     the split entirely, and cannot collide with anything down there. Round 5
-     gave it its arrow back but NOT its old side — if the reading is ever
-     moved back below the bar, that collision comes back with it, and the
-     notch is wider than it was because it carries the countdown now.
-     (styles/practice/notch-menu.css, practice/notch-menu.js.) */
+     load-bearing. One shape of the reading hung UNDER the bar, overhung the
+     top of the split, and could land on `#practice-notch` — so it measured
+     both and wrote `--dd-notch-dx` to push the notch aside. Nothing here can
+     reach the notch now: the whole ladder is inside the left panel's heading
+     card, and the notch hangs off `.practice-container`, above the split
+     entirely. Any future floating shape in this module brings that collision
+     back — and the notch is wider than it was, because it carries the
+     countdown. (styles/practice/notch-menu.css, practice/notch-menu.js.) */
 
   /* The rung's own promise, withdrawn when the page does not keep it.
 
      When the drill on screen carries neither blanks nor an example, the rung's
      ⓘ would describe a scaffold that is not there. The rung still stands — it
      is where the record puts them — so the name is kept and only the promise
-     is withdrawn, in the callout's note. */
+     is withdrawn, in the reading's note. */
   const NO_SUPPORT_BLURB = {
     faded: "This one came through with no blanks — write it unaided.",
     example: "No solved example was available for this one — write it unaided.",
   };
 
-  /* "Integrated" — a chip in the callout, not a section of the track. Gated on
+  /* "Integrated" — a chip in the reading line, not a section of the track. Gated on
      `solo` as well as on the flag: the backend only sets `ladder_integrated`
      on a solo record, and a chip claiming several concepts at once over a
      drill that still carries blanks would be the readout promising something
@@ -581,12 +549,14 @@ const StageLadder = (() => {
      assignment in place. Nothing renders them.
 
      `extraNote` outlived them: it is `competency-bar.js`'s topic-level BKT
-     reading and it now rides in the callout's note — see `_renderCallout`.
+     reading and it rides in the reading line's note — see `_renderReading`.
 
-     CHIP FIRST below. The Integrated chip lives INSIDE the callout, and the
-     callout is measured — after it is written — to keep it inside the strip
-     and off the notch. A chip added after that measurement changes the width
-     the placement was computed from. */
+     CHIP FIRST below, and it no longer has to be. The Integrated chip sits in
+     the same line as the percentage, and while that line was a measured pop-up
+     a chip added after the measurement changed the width the placement had
+     been computed from. Nothing is measured now; the order is kept because
+     writing the whole line before drawing the bar is still the readable way
+     round, not because anything breaks if it changes. */
   const _render = () => {
     _renderNow();
     _renderMeter();
@@ -613,10 +583,11 @@ const StageLadder = (() => {
     if ((kc || null) !== current.kc) extraNote = "";
     current = {
       kc: kc || null,
-      /* The name the callout says out loud ("… understanding of concept array
-         reshape"). Held rather than re-read off the button, because the
-         button's text falls back to "This problem" on a KC-less item and the
-         callout has to be able to tell that case apart and say nothing. */
+      /* The concept's name. Held rather than re-read off the button, because
+         the button's text falls back to "This problem" on a KC-less item and
+         the reading has to be able to tell that case apart — it is what
+         decides whether the button is a duplicate of the heading or the only
+         place the name appears. */
       title: title || kc || null,
       stage: normalizeStage(stage),
       support,
@@ -656,10 +627,11 @@ const StageLadder = (() => {
       kcBtn.title = kc ? `Open “${kc}” in the knowledge graph` : "";
       kcBtn.onclick = () => _openGraph(kcBtn.dataset.kc);
     }
-    /* Unhidden BEFORE the render, not after. `_renderMeter` measures the
-       callout to keep it inside the strip, and a measurement taken while the
-       section is still `display: none` comes back all zeroes — so the first
-       question of a session would draw its label uncorrected. */
+    /* Unhidden BEFORE the render, not after. Nothing in the render measures
+       anything any more (the pop-up that did was deleted with the strip), so
+       this is no longer load-bearing — but a section that is revealed only
+       after it has been filled is the order that cannot flash a stale reading,
+       and reversing it buys nothing. */
     host.classList.remove("hidden");
     _render();
   };
@@ -722,21 +694,13 @@ const StageLadder = (() => {
     extraNote = "";
   };
 
-  /* The callout's clamp is measured in PIXELS against a strip whose width is a
-     percentage of the window, so a resize invalidates it — the label keeps its
-     percentage position and loses its correction, which at the ends is the
-     difference between "inside the strip" and "half off it". Re-placed on
-     resize, once per frame: the ladder itself does not change, so this reads
-     the same numbers and only moves the label. */
-  let _resizeQueued = false;
-  window.addEventListener("resize", () => {
-    if (_resizeQueued || !current.stage) return;
-    _resizeQueued = true;
-    requestAnimationFrame(() => {
-      _resizeQueued = false;
-      if (current.stage) _renderMeter();
-    });
-  });
+  /* 🔴 NO RESIZE LISTENER, deliberately. There was one: the pop-up's clamp was
+     measured in pixels against a strip whose width was a percentage of the
+     window, so a resize left the label with its old correction and could hang
+     it half off the strip. Nothing in this readout is measured any more — the
+     track is a percentage width inside a flex card and the reading is a line
+     of text under it, both of which reflow on their own. A listener here would
+     re-render on every frame of a drag for no change at all. */
 
   const activeKc = () => current.kc;
 

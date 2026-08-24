@@ -1,0 +1,144 @@
+/* ================================================================
+   BASIC MODE — the practice question, stripped to what you answer
+
+   Seth, 2026-08-23: the practice tab "shows way too much information.
+   For now it just needs to show the title of the problem area, the
+   question, and the examples if it's a faded or worked example problem
+   ... keep the feedback and all the other extra information for
+   Advanced mode from the settings."
+
+   So this file is the OFF half of a toggle that already existed. app.js
+   `applyModeVisibility` writes `body.dd-basic-mode` whenever the Account
+   tab's Advanced mode checkbox is off (it is off by default), and the
+   progress ladder was already gated on exactly this class
+   (stage-ladder.css). Everything below rides with it.
+
+   🔴 DISPLAY ONLY, and that is deliberate. Every element here keeps its
+   id, stays in the DOM, and is still written to by the same code that
+   always wrote to it — the AI explanation still loads, the tutor still
+   opens, `solutionCode.textContent` is still set on every grade. Ticking
+   Advanced mode reveals content that is already there rather than
+   starting a fetch. Nothing in practice/*.js may start reading this
+   class to decide whether to RENDER something; the one behavioural
+   consequence of hiding the difficulty rating is handled in exactly one
+   place, practice/basic-mode.js, and is documented there.
+
+   🔴 NOT ON THE COLAB EDITION, and that is why every selector here is
+   prefixed `html:not(.dd-colab-edition)`. That deploy has already cut
+   this rail down, differently and on purpose (colab-edition.css): the
+   question text, the imports, the target image, the whole right-hand
+   editor panel, the AI explanation and the tutor are gone there, and the
+   two things it deliberately KEEPS are the two this file would have
+   taken. The reference solution — "after pressing submit… it should
+   display the solution to the problem at the bottom", which is the
+   review step that deploy is built around — and the felt-difficulty
+   rating with its help line, which colab-edition.css restyles into a
+   stacked column because "nothing advances until one is pressed".
+   `body.dd-basic-mode` is written there too (app.js runs on both
+   deploys and Advanced is off by default), and these rules out-specified
+   colab-edition.css's, which only touches border and padding on
+   `.solution-section` — so unguarded, Basic mode silently deleted the
+   solution that edition exists to show.
+
+   ⚠️ The guard is the whole edition, not `:not(.dd-no-notebook)` as
+   colab-edition.css scopes itself. So on the ~75 Colab questions with no
+   published notebook — where that sheet turns itself off and the rail is
+   the whole screen — Basic mode stays off as well and the learner gets
+   the full panel. One predicate that both this file and
+   practice/basic-mode.js can state identically is worth more than
+   covering that corner with a second, subtly different one.
+
+   WHAT SURVIVES, in DOM order:
+     .question-number-row   the concept this problem is about
+     #question-text         the problem, and the worked example that
+                            ladder.js appends INSIDE it at the faded and
+                            partial rungs (`.ladder-example`)
+     #question-visual       a target image is part of the question — a
+                            question that asks you to reproduce a picture
+                            is unanswerable without it
+     #torch-colab-notice    the only route to actually doing a PyTorch
+                            drill, not decoration
+     #practice-submit-area  Submit / Skip
+     .result-row            Correct / Incorrect
+     #next-problem-btn      the way on
+   ================================================================ */
+
+/* ---------- before the answer ---------- */
+
+/* The starter's imports, expanded into pills with array previews behind
+   them. Reference material about code the learner can already read in
+   the editor. */
+html:not(.dd-colab-edition) body.dd-basic-mode #question-imports {
+  display: none;
+}
+
+/* Show hint + the revealed hint. */
+html:not(.dd-colab-edition) body.dd-basic-mode .practice-aids {
+  display: none;
+}
+
+/* ---------- after the answer ---------- */
+
+/* "Is this a mistake? Correct it with [I got it right]" — a grading
+   appeal, and appeals are an advanced concern. */
+html:not(.dd-colab-edition) body.dd-basic-mode #override-row {
+  display: none;
+}
+
+/* The felt-difficulty rating: its prompt, its explainer, and the three
+   buttons. 🔴 #next-problem-btn is a SIBLING inside .feedback-buttons and
+   is NOT a .feedback-btn — the row must keep laying out so it can appear
+   there. Hiding the three buttons individually, rather than the row, is
+   what keeps that true.
+
+   Hiding these takes away the only click that commits the attempt to
+   mastery (`POST /api/practice/feedback` is the only backend mutation
+   that moves a subtopic baseline; submit/override only touch
+   pending_attempt) AND the only thing that reveals Next problem. Both
+   are restored by practice/basic-mode.js, which settles the rating at
+   the neutral default on the learner's behalf. Do not hide these without
+   reading that file. */
+html:not(.dd-colab-edition) body.dd-basic-mode #feedback-prompt,
+html:not(.dd-colab-edition) body.dd-basic-mode #feedback-help,
+html:not(.dd-colab-edition) body.dd-basic-mode .feedback-btn {
+  display: none;
+}
+
+/* 🔴 AND ITS ⓘ, which is NOT inside it. infotips.js mints the dot as a
+   SIBLING of the element carrying data-dd-info, so `#feedback-prompt`
+   going away leaves a bare 15px "i" floating under the Correct badge with
+   nothing left on screen for it to be about. Same trap the placement
+   timer hit (see index.html) — hide the host, hunt the dot. Every other
+   data-dd-info host this file hides (#ewma-accuracy-label) sits inside a
+   container that is hidden as a whole, so its dot goes with it. */
+html:not(.dd-colab-edition) body.dd-basic-mode .dd-info[data-dd-info="feedback-rating"] {
+  display: none;
+}
+
+/* Which test cases failed, expected vs got. */
+html:not(.dd-colab-edition) body.dd-basic-mode .failed-tests-block {
+  display: none;
+}
+
+/* "I missed one specific thing — it wasn't too hard", and the content
+   flags (Broken / Unclear / Wrong image / Good) with their note box. Two
+   separate reporting channels, neither of which is the problem. */
+html:not(.dd-colab-edition) body.dd-basic-mode #missed-fact-row,
+html:not(.dd-colab-edition) body.dd-basic-mode #problem-feedback-row {
+  display: none;
+}
+
+/* Concept understanding — the BKT bar with its tier, coverage and
+   target-difficulty markers. The same reading the stage ladder gives,
+   and the ladder is already Advanced-only. */
+html:not(.dd-colab-edition) body.dd-basic-mode #ewma-accuracy {
+  display: none;
+}
+
+/* The reference solution, the generated explanation, and the tutor
+   thread. The heaviest block on the screen by a wide margin. */
+html:not(.dd-colab-edition) body.dd-basic-mode .solution-section,
+html:not(.dd-colab-edition) body.dd-basic-mode #ai-explanation-section,
+html:not(.dd-colab-edition) body.dd-basic-mode #tutor-section {
+  display: none;
+}

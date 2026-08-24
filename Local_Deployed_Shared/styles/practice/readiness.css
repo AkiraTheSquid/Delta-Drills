@@ -57,6 +57,27 @@
   background: rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k)));
 }
 
+/* ---- THE SAME DIAL, ON THE PLACEMENT RESULTS CARD ----------------------
+   Minted by practice/placement-results.js, showing the number this same
+   file's dial shows on Practice — that is the point of it. The two screens
+   used to answer "how ready am I for ARENA" with two different figures
+   computed two different ways (see practice/readiness.js), and one of the
+   ways they now agree is by LOOKING like the same instrument.
+
+   Smaller, because there it shares a card with the nine areas rather than
+   being the whole screen. Only the two size knobs change: the ring, its
+   hole and the unknown state all derive from them. */
+.readiness-dial--sm {
+  --dd-ready-ring: 9px;
+  width: 108px;
+  height: 108px;
+}
+
+.readiness-dial--sm .readiness-pct {
+  font-size: 27px;
+  letter-spacing: -0.5px;
+}
+
 .readiness-pct {
   position: relative;
   z-index: 1;

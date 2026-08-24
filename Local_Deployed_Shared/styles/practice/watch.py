@@ -18,7 +18,13 @@ CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.
              # the textarea it sits behind.
              "code-highlight.css",
              # The Practice tab's idle readiness dial (2026-08-23).
-             "readiness.css"]
+             "readiness.css",
+             # Basic mode (2026-08-23). Rides on `body.dd-basic-mode`, the same
+             # class the stage ladder is gated on. 🔴 Must stay LAST in
+             # index.html's <link> order: every rule in it overrides something
+             # declared in the sheets above, so a link moved earlier loses the
+             # ties and the screen quietly comes back.
+             "basic-mode.css"]
 
 
 def _read(path):
@@ -62,9 +68,16 @@ def check_public_api():
         "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".placement-next-btn", ".practice-aids"],
         # Written by practice/placement-results.js — every class it mints has
         # to keep a rule here or the results card renders as unstyled spans.
+        # .placement-overall-figure left this list on 2026-08-23: the card's
+        # headline is the Practice tab's readiness dial now (.readiness-dial,
+        # styled in readiness.css) showing the same figure, so the card no
+        # longer mints a figure block of its own. .placement-chip and the two
+        # -caption/-detail lines replaced the sentences that were there.
         "diagnostic.css": [
-            ".placement-cta", ".placement-overall", ".placement-overall-figure",
-            ".placement-overall-say", ".placement-overall-caveat", ".placement-areas",
+            ".placement-cta", ".placement-overall", ".placement-chip",
+            ".placement-overall-say", ".placement-overall-caption",
+            ".placement-overall-detail", ".placement-overall-caveat",
+            ".placement-areas",
             ".placement-areas-head", ".placement-area", ".placement-area-name",
             ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
             ".placement-area-probes", ".placement-area--unprobed",
@@ -100,11 +113,12 @@ def check_invariants():
     assert ":not(.session-idle) .session-setup" in timer, (
         "timer.css lost the rule hiding the setup panel during a session"
     )
-    # The stage ladder is a SIBLING of the split, so the rule above does not
-    # cover it. Without its own rule the setup screen shows the paused session's
-    # concept, rung and difficulty for a question that is not on screen — which
-    # is exactly what happened when this named only the old `.concept-topbar`
-    # and the difficulty bar beside it went uncovered.
+    # The ladder moved INSIDE the split on 2026-08-23 (it is a block in the
+    # question's heading card now), so the rule above covers it and this one is
+    # belt and braces. Kept because the ladder has been a sibling of the split
+    # before and would be again the moment anything puts a strip back above the
+    # panels — and without a rule of its own the setup screen shows the paused
+    # session's concept and rung for a question that is not on screen.
     assert "#page-practice.session-idle .stage-ladder" in timer, (
         "timer.css lost session-idle rule hiding ladder"
     )
@@ -119,20 +133,44 @@ def check_invariants():
         "stage-ladder.css lost the chevron seam — the rung divisions would "
         "vanish from a bar whose labels still claim them"
     )
-    # The reading is a DETACHED pop-up above the bar, aimed at the fill's edge.
-    # It has been a tab welded to the bar's top edge and that was wrong: a
-    # shape sharing an edge with the track reads as part of the track. Two
-    # halves, and both are load-bearing.
-    assert "--dd-ladder-gap" in ladder, (
-        "stage-ladder.css lost --dd-ladder-gap — the reading is standing on "
-        "the bar again, which reads as one taller lumpy track rather than as "
-        "a label about a position on it"
+    # 🪦 THE POP-UP READING IS GONE — 2026-08-23, with the strip it hung over.
+    # This used to require `--dd-ladder-gap` (the air that stopped the reading
+    # reading as a bump IN the bar) and `--dd-callout-arrow-x` (the arrow aimed
+    # in the box's own coordinates, because the box is clamped inside the strip
+    # and its centre stops being the position described the moment that clamp
+    # bites). Both variables were deleted with `.stage-ladder-callout`: the
+    # ladder sits in the heading card now and the <h2> above it names the
+    # concept, so the pop-up's whole job is done by the card and the fill.
+    #
+    # What replaces them is the pair below. The reading has to be a line under
+    # the track, and the card has to be a card — a ladder with no frame around
+    # it, directly under a left-aligned heading, is the layout Seth rejected.
+    assert ".stage-ladder-reading" in ladder, (
+        "stage-ladder.css has no .stage-ladder-reading — the percentage, the "
+        "Integrated chip and the withdrawn-scaffold note are rendered into "
+        "that line by stage-ladder.js and would be unstyled or invisible"
     )
-    assert "--dd-callout-arrow-x" in ladder, (
-        "stage-ladder.css no longer consumes --dd-callout-arrow-x, so the "
-        "arrow is parked at a static 50%. The box is clamped inside the strip "
-        "and its centre is NOT the position being described the moment that "
-        "clamp bites — which is exactly at 0% and 100%"
+    # 🔴 Checked against the RULES, not the file. Both names are still written
+    # out in this file's history comments, on purpose — that is where the next
+    # person reads why they went — so a bare substring test fails the moment
+    # the tombstone is honest about what it is a tombstone for.
+    ladder_rules = re.sub(r"/\*.*?\*/", "", ladder, flags=re.S)
+    for gone in ("--dd-callout-arrow-x", ".stage-ladder-callout"):
+        assert gone not in ladder_rules, (
+            f"stage-ladder.css declares {gone!r} again — the floating reading "
+            "is back, and it can only float over the question panel now that "
+            "the ladder lives inside it"
+        )
+    question = _read(os.path.join(HERE, "question.css"))
+    for prop in ("flex-direction: column", "border-radius"):
+        assert prop in question.split(".question-number-row {", 1)[1].split("}", 1)[0], (
+            f".question-number-row lost {prop!r} — it is the RECTANGLE that "
+            "holds the centred concept title with the bar under it (Seth, "
+            "2026-08-23), not a baseline row again"
+        )
+    assert "text-align: center" in question.split(".question-number {", 1)[1].split("}", 1)[0], (
+        ".question-number is no longer centred — the card is built around that "
+        "axis and the bar under it is full width"
     )
     # Extra information above every question, and off by default: the ladder
     # rides with Advanced mode (app.js writes `body.dd-basic-mode`).
@@ -164,6 +202,38 @@ def check_invariants():
 
     feedback = _read(os.path.join(HERE, "feedback.css"))
     assert ".problem-feedback-note:focus" in feedback
+
+    # Basic mode is a pile of overrides, so its position in the cascade IS its
+    # behaviour. index.html must link it after every sheet it overrides.
+    basic = _read(os.path.join(HERE, "basic-mode.css"))
+    assert "body.dd-basic-mode" in basic, (
+        "basic-mode.css no longer keys on body.dd-basic-mode — it is either "
+        "inert or applying to everyone, and neither is a mode"
+    )
+    index_html = _read(os.path.join(SHARED, "index.html"))
+    basic_at = index_html.find('href="styles/practice/basic-mode.css')
+    assert basic_at != -1, "index.html lost the basic-mode.css <link>"
+    for other in CSS_FILES:
+        if other == "basic-mode.css":
+            continue
+        at = index_html.find(f'href="styles/practice/{other}')
+        assert at < basic_at, (
+            f"styles/practice/{other} is linked AFTER basic-mode.css, so it wins "
+            "the ties basic-mode.css exists to win — the practice screen shows "
+            "rails that Basic mode believes it hid"
+        )
+    # What Basic mode must NEVER hide. #next-problem-btn lives inside
+    # .feedback-buttons beside the three rating buttons and carries none of
+    # their classes, so hiding the row takes the only way forward with it;
+    # the rest is the question itself.
+    for keep in (".feedback-buttons", "#practice-submit-area", "#question-text",
+                 ".question-number-row", "#question-visual", "#torch-colab-notice",
+                 "#next-problem-btn", ".ladder-example"):
+        assert f"body.dd-basic-mode {keep}" not in basic, (
+            f"basic-mode.css hides {keep}. Basic mode is allowed to strip the "
+            "rails around a problem, never the problem, its worked example, or "
+            "the controls that answer it and move on"
+        )
 
 
 # ── Run all checks ────────────────────────────
