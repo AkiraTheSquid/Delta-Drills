@@ -85,6 +85,11 @@ def check_front_door():
         "the instructor arm lost the id instructor-mode.js listens on — the "
         "button would still navigate but never flip the flag"
     )
+    assert 'data-goto-tab="instructor-review"' in fork, (
+        "the instructor arm lands on the REVIEW SURFACE (2026-08-24), not on "
+        "Practice — retargeting it to a learner page makes entering the mode "
+        "drop an expert into drills with nothing to review"
+    )
     assert fork.find("welcome-arm--right") < fork.find("welcome-arm--instructor"), (
         "the instructor arm sits BELOW the learner pair, not among them"
     )

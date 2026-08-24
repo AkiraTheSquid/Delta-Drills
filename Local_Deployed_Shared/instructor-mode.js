@@ -11,9 +11,10 @@
  *
  * THE THREE DOORS, all defined in index.html:
  *   #welcome-arm-instructor      the quiet third arm on the welcome fork. It
- *                                also carries [data-goto-tab="practice"] —
- *                                app.js's own hook does the navigation on the
- *                                same click; this file only flips the flag.
+ *                                also carries [data-goto-tab="instructor-review"]
+ *                                — app.js's own hook navigates to the review
+ *                                surface on the same click; this file only
+ *                                flips the flag.
  *   #account-menu-instructor     the account dropdown row. Its LABEL is the
  *                                state display: "Enter …" ↔ "Exit …". No
  *                                data-goto-tab, so clicking it only closes
@@ -80,7 +81,17 @@
   };
 
   const menuItem = document.getElementById("account-menu-instructor");
-  if (menuItem) menuItem.addEventListener("click", () => set(!isOn()));
+  if (menuItem) {
+    menuItem.addEventListener("click", () => {
+      const turningOn = !isOn();
+      set(turningOn);
+      /* Entering the mode LANDS somewhere: the review surface. #ir-goto is a
+         hidden [data-goto-tab="instructor-review"] proxy (app.js wires those
+         at boot; switchTab itself is not on window). Exiting stays put —
+         instructor-review.js leaves its own page when the flag drops. */
+      if (turningOn) document.getElementById("ir-goto")?.click();
+    });
+  }
 
   const box = document.getElementById("account-instructor-mode");
   if (box) box.addEventListener("change", () => set(box.checked));
