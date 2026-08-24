@@ -50,8 +50,10 @@
      dots, always all three — so this is a plain symmetric inset. It used to
      be sized around a clock that disappeared when nothing was running. */
   /* Symmetric now that nothing is flush against an edge, and short enough that
-     the control clears the 44px bar (--dd-topbar-h) with room either side. */
-  padding: 3px 8px;
+     the control clears the 44px bar (--dd-topbar-h) with room either side.
+     Widened with the clock on 2026-08-24 — a 17px figure in an 8px-wide pill
+     reads as text that overflowed its border rather than as a control. */
+  padding: 4px 12px;
   transition: background 120ms ease;
 }
 
@@ -67,12 +69,19 @@
    `--idle`, so the tab is a standing statement of the rule rather than a
    control that comes and goes — Seth, 2026-08-23. `.hidden` survives for the
    one case that still needs it: a page with no session machinery at all. */
+/* 🔴 IT IS THE LOUDEST THING ON THE BAR, ON PURPOSE (Seth, 2026-08-24: "make
+   the timer at the top stand out a lot more ... bold and the text for it should
+   be a bit bigger"). At 13px/700 it read as one more label in a row of labels,
+   and the one number on this bar that changes while you work is the one that
+   must be legible without looking for it. 17px is the ceiling: the tab has to
+   clear `--dd-topbar-h` (44px) — 17px text + 8px of vertical padding + 2px of
+   border is 27px, and the pill still has room either side. */
 .practice-notch-clock {
   color: var(--white);
   padding-left: 4px;
-  font-size: 13px;
+  font-size: 17px;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.5px;
   line-height: 1;
 }
@@ -109,11 +118,18 @@
 }
 
 /* Idle: the number is a rule, not a countdown, and it must not be mistaken for
-   one that has stopped ticking. Muted and un-bolded — the same figure the
-   running clock uses, in the weight everything else on the tab uses. */
+   one that has stopped ticking. So it steps DOWN from the running clock — but
+   only by colour now.
+
+   🔴 IT USED TO BE `font-weight: 500` AND `--muted`, and that was the state the
+   learner sees nearly all the time: the clock was thin grey text on every visit
+   that did not have a question open, which is exactly the "not obvious enough"
+   Seth named on 2026-08-24. Dropping the weight override keeps the 800 above,
+   so the figure has the same presence idle or running; `--text` instead of
+   `--muted` keeps it a shade under the running clock's `--white`, which is all
+   the distinction this state ever needed. */
 .practice-notch-clock--idle {
-  color: var(--muted);
-  font-weight: 500;
+  color: var(--text);
 }
 
 /* ---- the square ------------------------------------------------------- */
