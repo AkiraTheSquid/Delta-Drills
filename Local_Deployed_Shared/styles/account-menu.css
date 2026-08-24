@@ -191,3 +191,32 @@
     min-width: 208px;
   }
 }
+
+/* ── Instructor-feedback-mode badge ─────────────────────────────────
+   The one always-on sign the mode is active, next to the control that
+   toggles it. Visibility is PURE CSS off the body class instructor-
+   mode.js stamps — the js never touches this element, so the badge
+   cannot disagree with the flag. In this file because it lives in the
+   same topbar-right cell the account control anchors to. */
+.topbar-instructor-badge { display: none; }
+body.dd-instructor-mode .topbar-instructor-badge {
+  align-items: center;
+  border: 1px solid var(--accent, currentColor);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.topbar-instructor-badge .tib-short { display: none; }
+/* Same breakpoint as the account label above: the full words do not
+   fit next to the avatar on a phone, but the badge itself must NOT
+   vanish — it is the only always-visible sign the mode is on. Swap
+   to the one-word label instead. */
+@media (max-width: 560px) {
+  .topbar-instructor-badge .tib-full { display: none; }
+  .topbar-instructor-badge .tib-short { display: inline; }
+}

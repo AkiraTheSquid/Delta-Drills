@@ -210,6 +210,13 @@ def check_invariants():
     for label in ("Learner home", "Account and Settings", "Knowledge graph",
                   "Why this app exists", "How this app works"):
         assert f">{label}<" in menu, f"the account menu lost the {label!r} row"
+    # The instructor row (Seth, 2026-08-24) is the late door into the mode and
+    # the only way out. Its label is REWRITTEN by instructor-mode.js
+    # (Enter ↔ Exit), so assert the id it rewrites through, not the text.
+    assert 'id="account-menu-instructor-label"' in menu, (
+        "the instructor row lost the label id instructor-mode.js rewrites — "
+        "the row would toggle the flag but never show which state it is in"
+    )
     # Learner home is FIRST and it is not styled like the other four (Seth:
     # it "should stand out significantly relative to everything else").
     home_pos = menu.find("account-menu-item--home")
@@ -218,7 +225,7 @@ def check_invariants():
         "Learner home is no longer the first row of the account menu"
     )
     # Every row carries an icon, home included.
-    assert menu.count("account-menu-icon") == 5, (
+    assert menu.count("account-menu-icon") == 6, (
         "an account-menu row is missing its icon — Seth asked for one on each"
     )
     # The two explainer rows open a DISCLOSURE on the shared page, not a page
@@ -800,11 +807,23 @@ def check_front_door():
         "the page-class observer alone leaves the map on 'Loading the map...'"
     )
 
-    # The fork. Two arms, both [data-goto-tab], and NOT a tab.
+    # The fork. Two learner arms plus the quiet instructor arm below them
+    # (Seth, 2026-08-24: the expert's workflow parts from the learner's here),
+    # all [data-goto-tab], and NOT a tab.
     assert 'id="page-welcome"' in index_html, "the welcome fork is missing"
-    fork = index_html.split('id="page-welcome"')[1].split("</main>")[0]
-    assert fork.count("data-goto-tab") == 2, (
-        "the fork is exactly two choices and nothing else (Seth)"
+    # Comment-stripped for the same reason as `markup` above: the arm comments
+    # narrate the data-goto-tab idiom by name.
+    fork = markup.split('id="page-welcome"')[1].split("</main>")[0]
+    assert fork.count("data-goto-tab") == 3, (
+        "the fork is the two learner choices plus the instructor arm, and "
+        "nothing else (Seth)"
+    )
+    assert 'id="welcome-arm-instructor"' in fork, (
+        "the instructor arm lost the id instructor-mode.js listens on — the "
+        "button would still navigate but never flip the flag"
+    )
+    assert fork.find("welcome-arm--right") < fork.find("welcome-arm--instructor"), (
+        "the instructor arm sits BELOW the learner pair, not among them"
     )
     # The right arm points at "practice" since the merge: the placement test
     # is a card ON the Learner Home now, not a page of its own.
