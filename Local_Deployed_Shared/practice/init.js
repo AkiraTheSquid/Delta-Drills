@@ -62,6 +62,15 @@ const initPractice = async () => {
     await window.DDGuest.ensure();
   }
   detectPracticeMode();
+  /* 🔴 ANNOUNCE THE MODE. practice/diagnostic-page.js parses BEFORE this file
+     and its first status call is worthless until the line above has run —
+     `PracticeAPI.diagnosticStatus()` short-circuits to null in local mode, and
+     the Learner Home paints that null as "Sign in to take the placement test."
+     Fired here rather than at the end of initPractice because the mode is the
+     only thing that call is waiting on; the question bank below is a second or
+     more of work the placement status does not need. */
+  window.DDPracticeModeReady = true;
+  window.dispatchEvent(new CustomEvent("delta:practice-mode-ready"));
   await loadQuestionsBank();
 
   // For supabase/local modes, load engine + questions + state

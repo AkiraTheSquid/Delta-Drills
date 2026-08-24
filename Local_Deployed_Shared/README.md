@@ -161,6 +161,111 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-24 — the top-right account menu, the timer in the topbar, and one
+  Learner Home.** `index.html`, `app.js`, `account-menu.js` (new),
+  `styles/account-menu.css` (new), `styles/layout.css`,
+  `styles/practice/{notch-menu,diagnostic}.css`,
+  `practice/{diagnostic-page,init,placement-results}.js`, `solo-route.js`,
+  `watch.py`, `styles/watch.py`, `practice/watch*.py`.
+  Seth, in his words: "put the cog icon in the top right rather than the
+  middle", "put the timer in the top middle bar rather than as the notch",
+  "instead of a vague cog ... making it clear that it is clickable", "it should
+  say 'Account and Settings'", "'Learner home' should stand out significantly
+  relative to everything else", and "the diagnostic and practice should be
+  combined into one tab, with it being called 'Learner Home'".
+  - 🔴 **The cog was not mis-styled, it was mis-placed by CSS Grid.** `.topbar`
+    is a three-column grid and the middle child was the tab strip, which basic
+    mode sets to `display: none`. A `display: none` grid item takes **no cell**,
+    so auto-placement slid the right-hand side into column 2 and the cog landed
+    at x≈700 on a 1440 viewport — dead centre. All three cells now carry an
+    explicit `grid-column`, which is what actually fixes it; no amount of
+    `justify-content` on the right cell would have. Measured after:
+    `L [18,660] M [660,770] R [770,1412]` on a 1430px bar, mid centre 715 =
+    page centre 715.
+  - **The clock moved into that middle cell.** `#practice-notch` was
+    `position: absolute` with a `translateX(-50%)` and a downward-hanging
+    notch shape; it is an ordinary flex child of `.topbar-mid` now with a pill
+    radius, so it sits beside the tab strip in advanced mode and alone in basic
+    mode. Its menu is unchanged apart from re-anchoring to `calc(100% + 10px)`.
+  - **The cog is a labelled control.** `#topbar-account` is an avatar glyph, the
+    words **Account and Settings** and a caret; `#account-menu` is five rows,
+    each with a 16px icon, with **Learner home** first, bold, tinted, and cut
+    off from the rest by a separator. 🔴 **The label is deliberately not the
+    email** — an address answers "who am I signed in as", asked once a session,
+    and says nothing about what the button does. On a phone the words drop and
+    the avatar + caret stay.
+  - **Why a menu at all:** basic mode has no tab strip, so before this the cog
+    was the ONLY control that left the practice screen and it went to exactly
+    one place. "Why this app exists" was reachable from the welcome fork once,
+    on a first visit, and never again — which is what Seth hit as "when you
+    click the left option to read about Delta Drills, make it such that it
+    actually works". The clicks always worked; the page was a dead end.
+    `data-lab-open` on the two explainer rows opens the matching `<details>`
+    after the switch, exclusively, on the next frame (before layout exists,
+    `scrollIntoView` scrolls to the top of the document instead).
+  - **One tab.** `#page-diagnostic` is **deleted**. `#diagnostic-overview` is a
+    card inside `.session-setup`; `#diagnostic-workspace-host` is the last child
+    of `#page-practice` and the workspace moves between it and
+    `#practice-workspace-home` as a probe comes and goes. The whole Practice-tab
+    LOCK went with it — `setPracticeLock`, `LOCK_WHY`, and app.js's matching
+    redirect — because one tab cannot be locked against itself. 🔴 The merge
+    created a specificity collision: `#page-practice.session-idle
+    .practice-split { display: none }` outranks `.diagnostic-workspace-host
+    .practice-split`, so a probe rendered as a blank idle screen; settled with
+    two-ID selectors in `styles/practice/diagnostic.css`, not a JS class dance.
+  - **The area bars are on the idle screen now.** Seth: "it should display the
+    information about einops, numpy, and einsum to be learned". No hard-coded
+    list was needed — `/api/practice/diagnostic/status` returns all three areas
+    with `probes: 0` from the first call on a new account, so
+    `PlacementResults.renderAreas` is public and called on **every** status
+    read rather than only on a completed placement.
+  - 🔴 **Two real bugs fell out of it, and neither threw anything.**
+    (1) `diagnostic-page.js` refreshed at parse time, and it parses BEFORE
+    `practice/init.js` runs `detectPracticeMode()` —
+    `PracticeAPI.diagnosticStatus()` returns **null**, not a failure, while the
+    mode is still its `"local"` default, and `render(null)` paints "Sign in to
+    take the placement test." with every button and both area lists hidden. It
+    did not bite while the placement had its own page, because that page is
+    hidden at load and the boot guard never fired; pointing the guard at
+    `#page-practice` made the broken call the first thing every visitor saw, on
+    a backend that was answering 200 the whole time. init.js announces
+    `delta:practice-mode-ready` and the boot block waits for it.
+    (2) `apiFetch` is a top-level `const`, so it was never a window property,
+    and `concept-graph/{kc_lattice_read,lesson-graph}.js` both guard
+    `window.apiFetch || fetch` — falling back to a **relative** URL that never
+    reaches the backend. Locally a boot 404; on Vercel the SPA rewrite answers
+    `/api/practice/kc-lattice` with 200 text/html, `res.ok` is true,
+    `res.json()` throws, the catch writes null, and the knowledge graph and the
+    "Why this app exists" map render the guest/offline reading for a signed-in
+    learner. `window.apiFetch = apiFetch` publishes it; the two boot 404s are
+    gone and the dial went from "0 of 63 concepts" to "23 of 63 concepts
+    measured directly" on the same account. Same shape as the `.vercelignore`
+    runtime-fetch trap: check the content type, not the code.
+  - **Criticked** (codex, `gpt-5.6-sol`): five findings, four real and fixed.
+    (1) The boot fallback latched — a `DDGuest.ensure()` slower than 8s would
+    have let the timer paint the signed-out copy and then DROPPED the real
+    mode-ready event; only the event closes the door now. (2) A
+    `#page-practice #diagnostic-workspace-host .stage-ladder { display: block }`
+    line I had added on spec outranked BOTH `.stage-ladder.hidden` and
+    `body.dd-basic-mode .stage-ladder` (each `(0,2,0)`) and forced an empty
+    advanced-only widget onto basic-mode probes — deleted, with a tombstone;
+    measured `display: none` on a live probe after. (3) `role="menu"` promised
+    arrow keys the menu did not have: focus now lands on the first row, Up/Down
+    wrap, Home/End jump, Escape returns focus to the trigger — all six checked
+    with real key events. (4) `watch.py` computed the `#account-menu` slice and
+    then matched labels against the WHOLE document; scoped to the slice, whose
+    terminator turned out never to have matched — mutation-tested by renaming a
+    row, which now fails the suite. **Disputed:** codex read the menu as staying
+    open across tab switches; it missed the document-level click-away listener.
+    Checked on a real 1440px tab strip — clicking Notebooks switched the page
+    AND closed the menu with `aria-expanded="false"`.
+  - Verified in a real browser against the live Fly backend: a full six-probe
+    placement driven end to end on the merged tab (workspace hosted and
+    released, results unhidden in place with no tab switch, bars moving from
+    28%/not-probed to 2%/2-probed, start button relabelled "Retake the
+    placement test"), plus 390px (no horizontal overflow, menu inside the
+    viewport), light and blue themes, and a clean console.
+
 - **2026-08-23 — one front door: a two-arrow fork, one "Learn about the App"
   tab, and no tab strip in basic mode.** `index.html`, `app.js`,
   `solo-route.js`, `concept-graph/why-graph.js`, `practice/diagnostic-page.js`,
