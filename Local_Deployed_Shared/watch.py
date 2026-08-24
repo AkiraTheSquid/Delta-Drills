@@ -758,7 +758,13 @@ def check_solo_routes():
 # ── Front door: the welcome fork + "Learn about the App" ──────────
 # Split into watch_front_door.py (2026-08-24, Modulario 700-LOC line).
 # Imported back here so dir(watch) and the checks list below still carry it.
-from watch_front_door import check_front_door  # noqa: E402
+# Relative first: covers anything loading this as package.watch; the fallback
+# covers `python3 watch.py` and a bare `import watch` from this folder, where
+# there is no package for a relative import to resolve against.
+try:
+    from .watch_front_door import check_front_door  # noqa: E402
+except ImportError:
+    from watch_front_door import check_front_door  # noqa: E402
 
 
 # ── Run all checks ────────────────────────────
