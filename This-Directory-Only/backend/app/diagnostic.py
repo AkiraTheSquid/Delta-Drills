@@ -41,6 +41,7 @@ from app.adaptive import UserPracticeState
 from app.questions import (
     get_all_questions,
     get_atoms_for_subtopic,
+    get_questions_by_subtopic,
     get_subtopics,
     get_topic_for_subtopic,
 )
@@ -442,6 +443,91 @@ def area_estimates(user_state: UserPracticeState) -> List[dict]:
     if diag["completed_at"] and diag.get("estimates"):
         return diag["estimates"]
     return _compute_area_estimates(user_state)
+
+
+# --- the readout: what the LEARNER is learning ----------------------------------
+
+# 🔴 THE BANK'S TOPICS ARE CSV-SOURCE LABELS, NOT A CURRICULUM. `_areas()` reads
+# them straight off the `subtopic_key` prefixes, so the model carries eight —
+# Numpy, Einops, Einsum, CNN, CNNs, PyTorch Fundamentals, Autograd, Optimizers —
+# and the biggest of them is a lie on the screen: all 265 "Numpy" questions were
+# converted to torch dialect on 2026-07-28 and every question in the bank now
+# reports primary_library="torch". Nobody using this app learns numpy.
+#
+# Seth, 2026-08-24: "the learner does not learn numpy ... it should only display
+# what they have learned for einops einsum and pytorch. those are the only three
+# things."
+#
+# 🔴 THE MODEL KEEPS ITS EIGHT AREAS. Probe selection targets the widest-SD area,
+# the partial pooling runs area-to-area, and `finish()` seeds BKT per area — all
+# of that is what makes the test six questions instead of thirty, and collapsing
+# it to three would coarsen the estimate to buy a label. Only the READOUT is
+# grouped, and only here: `area_estimates` is the display reader (the status
+# endpoint is its one caller) while `finish()` goes to `_compute_area_estimates`
+# directly and never sees this function.
+#
+# Renaming the topics in the bank would have been the other fix and is the wrong
+# one: `subtopic_key` is "{Topic}: {Subtopic}", so it is the key every learner's
+# served-question log, custom weights and arena_prereqs_structured.json rows are
+# stored under. A rename silently orphans all of it.
+DISPLAY_AREAS: Tuple[str, ...] = ("PyTorch", "Einops", "Einsum")
+
+
+def display_area_for_topic(topic: str) -> str:
+    """Bank topic -> the area the learner sees. Everything that is not one of
+    the two einops/einsum libraries is torch, because the questions are."""
+    name = (topic or "").strip()
+    return name if name in ("Einops", "Einsum") else "PyTorch"
+
+
+def _topic_question_counts() -> Dict[str, int]:
+    """How much of the bank each topic is. This is the grouping weight: the
+    PyTorch row has to read as the 340 torch questions it stands for, not as the
+    unweighted average of six topics of wildly different size."""
+    counts: Dict[str, int] = {}
+    for subtopic in get_subtopics():
+        topic = get_topic_for_subtopic(subtopic) or "Other"
+        counts[topic] = counts.get(topic, 0) + len(get_questions_by_subtopic(subtopic))
+    return counts
+
+
+def display_area_estimates(user_state: UserPracticeState) -> List[dict]:
+    """`area_estimates` folded into DISPLAY_AREAS, same {topic, theta, sd,
+    probes} shape the UI already reads.
+
+    theta and sd are both bank-share-weighted means over the group's members.
+    🔴 sd is AVERAGED, NOT COMBINED. Pooling independent measurements of one
+    quantity would shrink it (1/√Σ1/sd²) — but these are estimates of six
+    DIFFERENT skills, and a group is no better known than its members are. The
+    ± band on the row has to keep saying how much the test actually learned.
+
+    `probes` sums, so an area the test never touched still shows up as
+    "not probed" and dimmed — the honesty rule the card is built around."""
+    counts = _topic_question_counts()
+    groups: Dict[str, Dict[str, float]] = {}
+    for est in area_estimates(user_state):
+        name = display_area_for_topic(est.get("topic"))
+        # A topic with no questions left in the bank still has a posterior; it
+        # gets weight 1 rather than 0 so it cannot vanish from its own group.
+        weight = float(counts.get(est.get("topic"), 0)) or 1.0
+        group = groups.setdefault(name, {"w": 0.0, "theta": 0.0, "sd": 0.0, "probes": 0})
+        group["w"] += weight
+        group["theta"] += weight * float(est.get("theta") or 0.0)
+        group["sd"] += weight * float(est.get("sd") or 0.0)
+        group["probes"] += int(est.get("probes") or 0)
+
+    out: List[dict] = []
+    for name in DISPLAY_AREAS:
+        group = groups.get(name)
+        if not group or group["w"] <= 0:
+            continue
+        out.append({
+            "topic": name,
+            "theta": round(group["theta"] / group["w"], 1),
+            "sd": round(group["sd"] / group["w"], 1),
+            "probes": int(group["probes"]),
+        })
+    return out
 
 
 def _mastery_from_theta(theta: float) -> float:
