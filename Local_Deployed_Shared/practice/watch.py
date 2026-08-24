@@ -745,10 +745,25 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
     # placement-results.js fills from the status payload. A placeholder anywhere
     # else is not this bug, and a substring test over 1,700 lines of markup will
     # keep colliding with unrelated copy.
-    results_card = re.search(
-        r'<section[^>]*id="diagnostic-results".*?</section>', index, re.S)
-    assert results_card, "index.html lost the #diagnostic-results card"
-    assert "will appear here" not in results_card.group(0), (
+    #
+    # 🔴 `\sid=` AND THE NESTING ASSERT ARE BOTH LOAD-BEARING (codex, 2026-08-24).
+    # `[^>]*id="` also matches `aria-labelledby="diagnostic-results"`, which would
+    # scope this to the wrong element; and a non-greedy `.*?</section>` stops at
+    # the FIRST close tag, so nesting a <section> in the card would silently slice
+    # off the part the placeholder is most likely to be in. A check that quietly
+    # covers less than it claims is worse than one that fails — hence the assert
+    # rather than a balanced-scan parser.
+    start = re.search(r'<section\b[^>]*\sid="diagnostic-results"[^>]*>', index)
+    assert start, "index.html lost the #diagnostic-results card"
+    rest = index[start.end():]
+    end = rest.find("</section>")
+    assert end != -1, "#diagnostic-results is never closed"
+    results_card = rest[:end]
+    assert "<section" not in results_card, (
+        "#diagnostic-results now nests a <section>, so this slice stops at the "
+        "inner close tag and the assertion below would cover only part of the card"
+    )
+    assert "will appear here" not in results_card, (
         "the results placeholder is back — it showed to learners who had already "
         "finished the test, while the real numbers sat unrendered in the payload"
     )
