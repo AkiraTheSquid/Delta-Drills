@@ -197,14 +197,35 @@ const LadderUI = (() => {
       (window.LessonGate && window.LessonGate.renderMarkdown) ||
       ((text) => "<pre>" + esc(text) + "</pre>");
     const blurb = STAGE_BLURB[stage] || "";
+    /* The blurb sits OUTSIDE the <details>, as a callout above it, since
+       2026-08-24: as a muted line inside the example it was the single most
+       important sentence on the card ("most of the solution is written for
+       you") rendered least visibly, and a tester read the faded rung as
+       write-it-from-scratch — "I almost didn't see this." */
     return (
+      (blurb ? `<p class="ladder-stage-callout">${esc(blurb)}</p>` : "") +
       '<details class="ladder-example" open>' +
       `<summary>Worked example — ${esc(seg.title || kp.title)}</summary>` +
-      (blurb ? `<p class="ladder-example-blurb">${esc(blurb)}</p>` : "") +
       '<div class="ladder-example-body">' +
       render(seg.worked_example_markdown) +
       "</div></details>"
     );
+  };
+
+  /* The example's code fences, in order, for the notebook editor. Prose stays
+     in the rail; these become runnable cells above the learner's own
+     (DeltaNotebook.showExamples). The fence regex tolerates an info string
+     after the language ("```python title=x") but takes only real fences — an
+     indented code block has no reliable boundary in this markdown. */
+  const _exampleSnippets = (markdown) => {
+    const codes = [];
+    const fence = /```(?:python|py)?[^\n]*\n([\s\S]*?)```/g;
+    let match;
+    while ((match = fence.exec(String(markdown || "")))) {
+      const code = match[1].trim();
+      if (code) codes.push(code);
+    }
+    return codes;
   };
 
   /* Pick the segment whose example matches the problem being asked.
@@ -240,6 +261,13 @@ const LadderUI = (() => {
     const token = ++_decorateToken;
     const kc = _kcOf(question);
     const stage = _stageOf(question);
+
+    /* Synchronously, before any early return below: the previous question's
+       example cells must not survive onto a question that attaches none (a
+       solo rung, a KC-less item, a concept with no KP page). ui.js calls
+       DeltaNotebook.reset AFTER decorate in the same task, and the KP fetch
+       resolves after both, so the insert can never be wiped by the reset. */
+    window.DeltaNotebook?.clearExamples?.();
 
     _syncTopbar(question);
     if (!kc || !stage) return;
@@ -281,6 +309,9 @@ const LadderUI = (() => {
         const seg = _segmentFor(found.kp, question.question_id);
         if (!seg || !seg.worked_example_markdown) return;
         host.insertAdjacentHTML("beforeend", _exampleHtml(found.kp, seg, stage));
+        // The same example's code, runnable in the editor (tester ask,
+        // 2026-08-24). showExamples handles the pane-hidden case itself.
+        window.DeltaNotebook?.showExamples?.(_exampleSnippets(seg.worked_example_markdown));
       })
       .catch((err) => console.warn("[ladder] example unavailable:", err));
   };
