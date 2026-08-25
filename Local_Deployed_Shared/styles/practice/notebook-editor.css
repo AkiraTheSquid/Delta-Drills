@@ -96,3 +96,34 @@
   .notebook-toolbar { margin-left: 40px; }
   .notebook-cell { grid-template-columns: 34px minmax(0, 1fr); }
 }
+
+/* ---- the reference solution, as a cell ----------------------------------
+   notebook-editor.js::showSolution appends this below the learner's own
+   cells after a wrong answer. It has to read as THE ANSWER rather than as
+   one more cell you wrote, or the two blur together at a glance — hence the
+   accent left border and the labelled header, which is the same
+   `.notebook-cell-actions` row every other cell uses (minus the delete
+   button: this cell is not the learner's to remove; it goes when the
+   question does).
+
+   🔴 This label survives `.notebook-cell:first-child .notebook-cell-actions
+   { display: none }` above only because the solution can never BE the first
+   child: cell 1 is static markup in index.html, reset() never removes it, and
+   the delete handler refuses when one cell is left. If that ever stops being
+   true this rule loses on specificity (0,2,0 vs 0,3,0) and the answer renders
+   as an unlabelled cell that looks like the learner's own code. */
+.notebook-cell--solution .notebook-cell-actions--solution {
+  color: var(--accent-text);
+  display: flex;
+  justify-content: flex-start;
+  text-transform: none;
+  font-size: 11px;
+  letter-spacing: .3px;
+}
+.notebook-cell--solution .code-editor,
+.notebook-cell--solution .code-highlight {
+  border-left-color: var(--accent-text);
+}
+.notebook-cell--solution .notebook-cell-output {
+  border-left-color: color-mix(in srgb, var(--accent-text) 45%, transparent);
+}

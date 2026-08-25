@@ -244,6 +244,28 @@
     },
 
     /**
+     * ensure() memoizes ONE provision attempt per page load, which is right
+     * at boot (every surface awaits the same answer) and wrong forever after:
+     * a backend that was cold for the first second of the page load strands
+     * the whole session in local mode, where every torch Run/Submit is
+     * refused — even though this browser could mint or log in a guest at any
+     * moment. A later user action is a fresh chance: re-run provision, and
+     * leave the new promise in `pending` so every waiter sees the retry.
+     * Chains on any in-flight attempt so two provisions never race (a
+     * concurrent double-signup would mint two accounts and clobber the
+     * credentials of one of them).
+     */
+    retryProvision() {
+      const prior = pending;
+      pending = (async () => {
+        if (prior && (await prior)) return true;
+        if (authToken) return true;
+        return provision();
+      })();
+      return pending;
+    },
+
+    /**
      * Re-login this guest in place and keep the page exactly as it is.
      * Resolves true when a fresh token is live, in which case the caller
      * should retry the request that 401'd. Never reloads, never touches a

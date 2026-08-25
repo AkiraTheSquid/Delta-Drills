@@ -53,6 +53,14 @@ practiceSubmitBtn.addEventListener("click", async () => {
 
   applyResult(result.correct);
   if (typeof renderFailedTests === "function") renderFailedTests(result, q);
+  /* The answer, under the code that missed it. Ordered AFTER renderFailedTests
+     because showSolution re-appends itself last, so the read is: your cells →
+     which cases failed → what it should have been. Only on a miss: a correct
+     answer already showed you a working one, yours — and a correct RESUBMIT
+     has to take the old one away, or the answer to a question you have since
+     solved sits under your working code until the next question loads. */
+  if (result.correct) window.DeltaNotebook?.clearSolution?.();
+  else window.DeltaNotebook?.showSolution?.(solCode);
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);

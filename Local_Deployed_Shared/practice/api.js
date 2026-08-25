@@ -298,6 +298,23 @@ const PracticeAPI = {
   },
 
   async submitAnswer(questionId, userCode) {
+    /* A torch submit from a session stranded in local mode (guest provision
+       failed once at boot and DDGuest.ensure() memoized it) used to throw the
+       TORCH_UNAVAILABLE refusal below with no way out. Retry provisioning
+       HERE, at the top, not by recursing at the dead-end: submitAnswer is
+       wrapped by the XP layer, so a recursive call would award twice for one
+       submit. If provisioning lands, the ordinary backend branch below grades
+       this very call. A real signed-in user demoted by a 401 is not
+       re-provisioned (practiceRealUserDemoted, practice/mode.js). */
+    if (
+      practiceMode !== "backend" &&
+      !practiceRealUserDemoted &&
+      needsTorchRuntime(this.currentQuestion, userCode)
+    ) {
+      const provisioned = await window.DDGuest?.retryProvision?.();
+      if (provisioned) upgradePracticeModeToBackend();
+    }
+
     /* Einops/visual questions grade on the LOCAL Pyodide instance, because the
        preamble there is what defines `display_array_as_img` and friends.
 

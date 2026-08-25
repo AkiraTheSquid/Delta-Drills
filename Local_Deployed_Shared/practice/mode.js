@@ -27,6 +27,10 @@ function handleExpiredToken() {
   // It reloads and logs back in, so there is nothing to notify and nothing to
   // demote. Returns false for a real signed-in user, who does get the notice.
   if (window.DDGuest?.recoverExpiredSession?.()) return;
+  // A demotion that guest credentials cannot undo was a REAL sign-in lapsing.
+  // Remember that, so the late-provision retry (runner.js / api.js) does not
+  // "fix" this session by silently logging the person in as their old guest.
+  if (!window.DDGuest?.canRecover?.()) practiceRealUserDemoted = true;
   console.warn(
     "[practice] Token expired or invalid — falling back to local mode. " +
     "Progress is no longer saved to the account; sign in again for the adaptive queue.",
@@ -44,6 +48,34 @@ function handleExpiredToken() {
 
 // practiceMode is set once at init based on email + environment
 let practiceMode = "local"; // default fallback
+
+// True only after a 401 demoted a session that guest credentials cannot
+// recover — i.e. a real person's sign-in lapsed. Read by the late-provision
+// retry in runner.js/api.js. Boot-time provision failures leave it false.
+let practiceRealUserDemoted = false;
+
+/**
+ * The one sanctioned way practiceMode moves AFTER init, and it only moves
+ * one direction: local -> backend, once a token exists (guest-session.js
+ * retryProvision succeeding mid-session). Re-runs the same detection init
+ * used rather than hard-assigning, so a token that still does not qualify
+ * for backend mode (e.g. the env flag is off) cannot force it.
+ */
+function upgradePracticeModeToBackend() {
+  if (practiceMode === "backend") return true;
+  const email = typeof authEmail === "string" ? authEmail : "";
+  if (typeof getPracticeMode === "function") {
+    const detected = getPracticeMode(email);
+    if (detected !== "backend") return false;
+    practiceMode = "backend";
+  } else if (typeof apiFetch === "function" && typeof authToken === "string" && !!authToken) {
+    practiceMode = "backend";
+  } else {
+    return false;
+  }
+  console.log("[practice] mode upgraded to backend after late provision");
+  return true;
+}
 
 function detectPracticeMode() {
   const email = typeof authEmail === "string" ? authEmail : "";

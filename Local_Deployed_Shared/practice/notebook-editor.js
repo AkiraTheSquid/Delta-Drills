@@ -10,7 +10,34 @@ const DeltaNotebook = (() => {
   let nextId = 2;
   let localExecCount = 0;
 
-  const cells = () => Array.from(cellsHost?.querySelectorAll(".notebook-cell") || []);
+  /* 🔴 THE LEARNER'S CELLS, WHICH IS NOT THE SAME AS EVERY CELL ON SCREEN.
+     The reference solution is appended as a real `.notebook-cell` below them
+     (showSolution), so that it sits under the code you typed and runs like any
+     other cell. Everything that treats a cell as the learner's WORK has to
+     skip it, and this one selector is how:
+
+       submissionCode()  — otherwise Submit posts the answer key as the answer
+       serialize()       — otherwise the saved draft carries the solution into
+                           the next session, and restore() re-lays it out as
+                           an ordinary editable cell with a delete button
+       reset()           — `cells().slice(1)` is what clears the notebook
+                           between questions; clearSolution() handles this one
+       markRun()         — staleness is about the learner's chain of cells
+
+     A marker attribute rather than the class, because `.notebook-cell` is what
+     the CSS grid and every existing handler key on and the solution cell wants
+     all of that. */
+  const cells = () =>
+    Array.from(cellsHost?.querySelectorAll(".notebook-cell:not([data-solution-cell])") || []);
+  const solutionCell = () => cellsHost?.querySelector("[data-solution-cell]") || null;
+  /* Where the learner's own cells stop and the graded feedback begins: the
+     failed-case block (parented here by ui.js::renderFailedTests) and the
+     answer both live at the tail of this list, and anything the learner adds
+     belongs above them. querySelector returns the FIRST match in document
+     order, so this is the boundary whichever of the two came first, and null
+     — i.e. "append" — before a grade. */
+  const feedbackBoundary = () =>
+    cellsHost?.querySelector("#failed-tests-block, [data-solution-cell]") || null;
   const editorOf = (cell) => cell?.querySelector(".notebook-cell-editor");
   const outputOf = (cell) => cell?.querySelector(".output-area");
   const outputShellOf = (cell) => cell?.querySelector("[data-cell-output]");
@@ -182,7 +209,16 @@ const DeltaNotebook = (() => {
         </div>
       </div>`;
     editorOf(cell).value = code;
-    cellsHost.appendChild(cell);
+    /* Above the graded feedback, never below it. A learner who keeps
+       experimenting after a wrong grade calls this while the tail of the list
+       is already [failed cases, answer], and a plain append would bury their
+       new scratch cell under both. The boundary is the FIRST of the two, not
+       the solution cell alone — inserting before only the answer still drops
+       the new cell below the failure report and breaks the intended reading
+       order (your work → what failed → what it should have been).
+       insertBefore(null) === appendChild, so an ungraded notebook is
+       unchanged. */
+    cellsHost.insertBefore(cell, feedbackBoundary());
     bindCell(cell);
     if (saved?.output) {
       outputOf(cell).textContent = saved.output;
@@ -192,8 +228,103 @@ const DeltaNotebook = (() => {
     return cell;
   }
 
+  /* The reference answer, as a cell under the learner's own.
+
+     Seth, 2026-08-24: "it needs to render BELOW the code you typed" — the
+     solution has always been written to `#solution-code`, a dead <pre> at the
+     BOTTOM of the left rail, under the question, the worked example and the
+     Next problem button. It rendered; nobody scrolled that far, so in practice
+     the app did not show you the answer. Putting it where your code is means
+     you read the two side by side, and because it is a real cell you can run
+     it and see what it prints instead of taking its word for it.
+
+     Editable on purpose, exactly like Colab's: poking at the reference answer
+     to see what breaks is the point. Nothing here is graded — the marker
+     attribute keeps it out of submissionCode() — so an edit costs nothing. */
+  const showSolution = (code) => {
+    if (!cellsHost || !code) return null;
+    /* 🔴 EXISTS IS NOT VISIBLE. #notebook-cells stays in the DOM on surfaces
+       that hide the whole right pane — a torch drill routed out to Colab, the
+       Colab edition, an idle session. Appending there would put the answer
+       somewhere nobody can scroll to AND set dd-solution-in-notebook, which
+       hides the left-rail copy that IS on screen: the learner would end up
+       with no answer at all, which is the exact bug this feature fixes.
+       Refusing here leaves the class unset, so the rail fallback survives.
+
+       🔴 CLEAR BEFORE REFUSING. Unset is not the same as never set: a visible
+       question that graded wrong leaves the class on, and if the NEXT question
+       hides the pane an early return would keep the suppression while the only
+       copy of the answer sits in a pane nobody can see — the same
+       nothing-anywhere failure, arrived at from the other direction. */
+    if (!cellsHost.getClientRects().length) {
+      clearSolution();
+      return null;
+    }
+    let cell = solutionCell();
+    if (!cell) {
+      cell = document.createElement("section");
+      cell.className = "notebook-cell notebook-cell--solution";
+      cell.dataset.solutionCell = "1";
+      cell.dataset.cellId = "solution";
+      cell.innerHTML = `
+      <div class="notebook-cell-gutter">
+        <button class="notebook-cell-run" type="button" aria-label="Run the solution">▶</button>
+        <span class="notebook-cell-exec" aria-label="Not run">[ ]</span>
+      </div>
+      <div class="notebook-cell-main">
+        <div class="notebook-cell-actions notebook-cell-actions--solution">
+          <span>💡 Solution — the answer this was graded against</span>
+        </div>
+        <textarea class="code-editor notebook-cell-editor" spellcheck="false"
+                  aria-label="Reference solution"></textarea>
+        <div class="notebook-cell-output hidden" data-cell-output>
+          <div class="output-header">Output</div>
+          <pre class="output-area"></pre>
+        </div>
+      </div>`;
+      /* 🔴 APPEND BEFORE BIND, the same order addCell uses, and for a reason
+         that is invisible if you get it wrong. bindCell ends in resize(), and
+         resize memoises the editor's border height ONCE per element from
+         getComputedStyle. On a DETACHED node that read returns defaults, so
+         `boxSizing === "border-box"` is false, the borders are recorded as 0,
+         and every later resize lands 2px short of the content — a permanent
+         hairline scrollbar on the answer, forever, because the memo is never
+         recomputed. */
+      cellsHost.appendChild(cell);
+      bindCell(cell);
+    }
+    const editor = editorOf(cell);
+    editor.value = code;
+    /* The source just changed underneath any run the learner did on the
+       previous question's answer, so the old output and its [n] marker now
+       describe code that is no longer in the box. Clear both rather than
+       leave a result sitting under source that did not produce it. */
+    outputOf(cell).textContent = "";
+    outputShellOf(cell)?.classList.add("hidden");
+    execOf(cell).textContent = "[ ]";
+    cell.dataset.executed = "";
+    cell.classList.remove("notebook-cell--stale");
+    // Re-appended every time, not inserted once: keeps the answer last even
+    // if something else touched the list between grades.
+    cellsHost.appendChild(cell);
+    resize(editor);
+    /* Tells basic-mode.css that the answer is already on screen, so the left
+       rail's copy of it can stay hidden. 🔴 The rail copy is NOT dead code —
+       it is the fallback for every question that has no notebook to append to
+       (a torch drill routed to Colab hides the whole right panel; so does the
+       Colab edition). Without this class the two would both show. */
+    document.body.classList.add("dd-solution-in-notebook");
+    return cell;
+  };
+
+  const clearSolution = () => {
+    solutionCell()?.remove();
+    document.body.classList.remove("dd-solution-in-notebook");
+  };
+
   const reset = (code, { addScratch = true } = {}) => {
     if (!primary) return;
+    clearSolution();
     cells().slice(1).forEach((cell) => cell.remove());
     const editor = editorOf(primary);
     editor.value = code || "";
@@ -248,7 +379,10 @@ const DeltaNotebook = (() => {
     }).observe(outputArea, { childList: true, characterData: true, subtree: true });
   }
 
-  return { addCell, markRun, reset, restore, runCell, serialize, submissionCode };
+  return {
+    addCell, markRun, reset, restore, runCell, serialize, submissionCode,
+    showSolution, clearSolution,
+  };
 })();
 
 window.DeltaNotebook = DeltaNotebook;

@@ -280,4 +280,33 @@ def check_front_door():
         "readers are silently fetching relative /api urls again"
     )
 
-
+    # 🔴 THE FIRST-RUN LANDING IS A TWO-FILE HANDSHAKE ON A STRING. test-users.js
+    # writes sessionStorage["dd_first_run_tab"] = "welcome" just before the
+    # reload that commits a switch INTO a never-used test user; app.js reads it
+    # once at boot and prefers it over its `authToken ? "practice"` default. A
+    # test user always has a token, so with either half missing the demo opens
+    # on the practice surface — the exact screen the fork exists to come before,
+    # and nothing anywhere says the handover was skipped.
+    test_users = _read(os.path.join(HERE, "test-users.js"))
+    assert '"dd_first_run_tab"' in test_users and '"dd_first_run_tab"' in app_js, (
+        "the first-run landing key must be spelled the same in test-users.js "
+        "(writer) and app.js (reader), or a new test user silently opens on "
+        "the practice surface instead of the welcome fork"
+    )
+    # 🔴 THE GUARD, NOT JUST THE CALL. A bare "is requestOnboardingLanding()
+    # mentioned" check passes just as happily on an unconditional call or an
+    # inverted test — and both of those send a test user who has been demoed a
+    # dozen times back to the fork, which is a wrong answer that looks like a
+    # working feature. Match the guarded line itself.
+    assert re.search(r"if\s*\(\s*!user\.lastUsedAt\s*\)\s*requestOnboardingLanding\(\);", test_users), (
+        "test-users.js must ask for the onboarding landing ONLY for a test "
+        "user that has never been used — `if (!user.lastUsedAt) "
+        "requestOnboardingLanding();`"
+    )
+    assert "firstRunTab ||" in app_js, (
+        "app.js's boot switchTab no longer consults the first-run landing key"
+    )
+    assert "takeSessionTab(FIRST_RUN_TAB_KEY)" in app_js, (
+        "the first-run key must be read THROUGH the read-once-and-clear "
+        "helper; a value left behind lands a later reload on the fork"
+    )

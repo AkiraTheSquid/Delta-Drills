@@ -1657,20 +1657,20 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=5"></script>
-  <script src="app.js?v=28"></script>
+  <script src="app.js?v=29"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
        bindings, which do not exist until that script has evaluated. -->
-  <script src="guest-session.js?v=2"></script>
+  <script src="guest-session.js?v=3"></script>
   <!-- Test users (@P, 2026-08-23). Seth demos the app and hands someone a clean,
        named learner state without losing his own; each test user is a REAL
        backend account minted the way guest-session.js mints a guest. AFTER
        guest-session.js because switching identity rewrites the same
        auth_token/auth_email that file owns, and test-users.js MUST precede
        test-users-ui.js — the UI reads the store at IIFE-eval time. -->
-  <script src="test-users.js?v=1"></script>
-  <script src="test-users-ui.js?v=1"></script>
+  <script src="test-users.js?v=2"></script>
+  <script src="test-users-ui.js?v=2"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
@@ -1720,7 +1720,7 @@ t.manual_seed(0)
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
-  <script src="practice/mode.js?v=9"></script>
+  <script src="practice/mode.js?v=10"></script>
   <script src="practice/questions.js?v=24"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
@@ -1743,7 +1743,7 @@ t.manual_seed(0)
   <script src="practice/ui.js?v=36"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
-  <script src="practice/api.js?v=21"></script>
+  <script src="practice/api.js?v=22"></script>
   <script src="practice/timer.js?v=18"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
@@ -1756,7 +1756,7 @@ t.manual_seed(0)
        one without the other or the overlay drifts off its textarea. -->
   <script src="practice/code-highlight.js?v=1"></script>
   <script src="practice/code-complete.js?v=1"></script>
-  <script src="practice/runner.js?v=21"></script>
+  <script src="practice/runner.js?v=22"></script>
   <script src="practice/notebook.js?v=7"></script>
   <script src="practice/notebook-editor.js?v=1"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
