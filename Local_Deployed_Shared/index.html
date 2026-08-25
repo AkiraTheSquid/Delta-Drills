@@ -1657,7 +1657,7 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=5"></script>
-  <script src="app.js?v=28"></script>
+  <script src="app.js?v=29"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -1669,8 +1669,8 @@ t.manual_seed(0)
        guest-session.js because switching identity rewrites the same
        auth_token/auth_email that file owns, and test-users.js MUST precede
        test-users-ui.js — the UI reads the store at IIFE-eval time. -->
-  <script src="test-users.js?v=1"></script>
-  <script src="test-users-ui.js?v=1"></script>
+  <script src="test-users.js?v=2"></script>
+  <script src="test-users-ui.js?v=2"></script>
   <!-- The ⓘ beside every tab and every feature. Registry (copy) must precede
        infotips.js (behaviour), which reads window.DD_INFOTIPS at IIFE-eval
        time. Both load AFTER app.js on purpose: the tab dots are already in
