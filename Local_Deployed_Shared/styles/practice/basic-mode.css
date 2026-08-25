@@ -115,10 +115,18 @@ html:not(.dd-colab-edition) body.dd-basic-mode .dd-info[data-dd-info="feedback-r
   display: none;
 }
 
-/* Which test cases failed, expected vs got. */
-html:not(.dd-colab-edition) body.dd-basic-mode .failed-tests-block {
-  display: none;
-}
+/* WHICH TEST CASES FAILED, expected vs got — NO LONGER HIDDEN.
+
+   Seth, 2026-08-24, asked for this back alongside the solution: "why it was
+   wrong (failed cases)". It was cut here as detail, and that was defensible
+   while it rendered in the left rail under the Next problem button, where it
+   was detail nobody reached. It now renders inside `#notebook-cells`, directly
+   beneath the code that failed those cases (ui.js::renderFailedTests), which
+   is the only place the comparison means anything.
+
+   No rule is needed to scope it to a miss: renderFailedTests already returns
+   early and re-hides the block on a correct answer, so visibility follows the
+   verdict without CSS. */
 
 /* "I missed one specific thing — it wasn't too hard", and the content
    flags (Broken / Unclear / Wrong image / Good) with their note box. Two
@@ -168,4 +176,21 @@ html:not(.dd-colab-edition) body.dd-basic-mode #tutor-section {
    read together. */
 html:not(.dd-colab-edition) body.dd-basic-mode #practice-feedback-area.result-incorrect .solution-section {
   display: block;
+}
+
+/* 🔴 UNLESS THE NOTEBOOK ALREADY HAS IT. The rule above was the whole fix on
+   2026-08-24 and it was not enough: the rail puts the solution below the
+   question, the worked example, the failed cases and the Next problem button,
+   in a pane that scrolls on its own, so it rendered and nobody ever saw it
+   ("the feedback is still not showing"). The answer now goes in as a runnable
+   cell under the learner's own code instead — see
+   notebook-editor.js::showSolution, which writes this class while that cell is
+   on screen and clears it with the cell.
+
+   So the rule above is now the FALLBACK, not the main path, and it still
+   matters: a question with no notebook to append to (torch routed to Colab
+   hides the right panel entirely) has nowhere else to put the answer. */
+html:not(.dd-colab-edition) body.dd-basic-mode.dd-solution-in-notebook
+  #practice-feedback-area.result-incorrect .solution-section {
+  display: none;
 }

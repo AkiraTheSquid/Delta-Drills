@@ -419,3 +419,107 @@ def check_a_code_cell_grows_to_fit_its_own_code():
         "inside itself"
     )
 
+
+
+def check_the_solution_cell_is_never_the_learners_work():
+    """The answer sits in the notebook but must never be graded or saved.
+
+    `showSolution` appends the reference solution as a real `.notebook-cell`
+    below the learner's own, so it lands under the code they typed and runs
+    like any other cell (Seth, 2026-08-24: "it needs to render BELOW the code
+    you typed"). That puts the answer key inside the same container every
+    "what did the learner write" reader walks.
+
+    The marker attribute is the whole defence, and the failure it prevents is
+    silent in the worst way: `submissionCode()` joining the solution cell would
+    POST the reference answer as the learner's own and grade it correct, which
+    looks like the app working. `serialize()` would carry it into the saved
+    draft, and `restore()` would lay it back out as an ordinary editable cell.
+    """
+    editor = read(os.path.join(HERE, "notebook-editor.js"))
+    cells = re.search(r"const cells = \(\) =>.*?;", editor, re.S)
+    assert cells, "notebook-editor.js no longer has a cells() accessor"
+    assert ":not([data-solution-cell])" in cells.group(0), (
+        "cells() no longer excludes the solution cell — submissionCode() would "
+        "post the reference answer as the learner's own and grade it correct"
+    )
+    show = re.search(r"const showSolution = .*?\n  \};", editor, re.S)
+    assert show, "notebook-editor.js no longer has a showSolution"
+    assert "dataset.solutionCell" in show.group(0), (
+        "the appended solution cell carries no data-solution-cell marker, so "
+        "cells() cannot tell it apart from the learner's work"
+    )
+    assert "cellsHost.appendChild(cell)" in show.group(0), (
+        "the solution is no longer appended LAST — a scratch cell added after "
+        "the grade would render below the answer instead of above it"
+    )
+    reset = re.search(r"const reset = .*?\n  \};", editor, re.S)
+    assert reset and "clearSolution()" in reset.group(0), (
+        "reset() no longer clears the solution cell, so the previous question's "
+        "answer stays on screen under the next question's code"
+    )
+    assert "showSolution" in read(os.path.join(HERE, "events.js")), (
+        "nothing calls showSolution — the answer is built but never shown"
+    )
+
+
+def check_the_answer_only_lives_where_the_learner_can_see_it():
+    """Four lifecycle rules, each one a way the answer goes wrong quietly.
+
+    1. VISIBLE, not merely present. `#notebook-cells` stays in the DOM on
+       surfaces that hide the whole right pane (a torch drill routed out to
+       Colab, the Colab edition, an idle session). Appending there hides the
+       left-rail fallback too — via `dd-solution-in-notebook` — so the learner
+       ends up with NO answer anywhere, which is the bug this feature exists
+       to fix. `renderFailedTests` makes the same test, and both must agree or
+       the failures and the answer land in different columns.
+    2. A correct RESUBMIT takes the answer away. Otherwise the solution to a
+       question already solved sits under the learner's working code.
+    3. Replacing the source clears the run. The output and its `[n]` marker
+       would otherwise describe code no longer in the box.
+    4. New cells go BEFORE the answer. `addCell` is reachable after a grade,
+       and a plain append would bury the learner's new scratch cell under the
+       solution.
+    """
+    editor = read(os.path.join(HERE, "notebook-editor.js"))
+    show = re.search(r"const showSolution = .*?\n  \};", editor, re.S)
+    assert show, "notebook-editor.js no longer has a showSolution"
+    assert "getClientRects().length" in show.group(0), (
+        "showSolution no longer checks that the notebook is VISIBLE — on a "
+        "surface with a hidden right pane it appends the answer out of reach "
+        "AND suppresses the rail copy, leaving the learner nothing"
+    )
+    ui = read(os.path.join(HERE, "ui.js"))
+    failed = re.search(r"function renderFailedTests.*?\n\}", ui, re.S)
+    assert failed and "getClientRects().length" in failed.group(0), (
+        "renderFailedTests places the failed cases on element existence alone; "
+        "it must use the same visibility test as showSolution"
+    )
+    for token, why in (
+        ('outputOf(cell).textContent = ""',
+         "a replaced solution keeps the output of the code it replaced"),
+        ('execOf(cell).textContent = "[ ]"',
+         "a replaced solution keeps the [n] marker of an older run"),
+    ):
+        assert token in show.group(0), f"showSolution: {why}"
+    assert "clearSolution();" in show.group(0), (
+        "showSolution refuses a hidden notebook without clearing an EARLIER "
+        "answer — the suppression class outlives the visible cell and the rail "
+        "fallback stays hidden with nothing to fall back to"
+    )
+    add = re.search(r"function addCell\(.*?\n  \}", editor, re.S)
+    assert add and "insertBefore(cell, feedbackBoundary())" in add.group(0), (
+        "addCell no longer inserts above the graded feedback, so a scratch "
+        "cell added after a wrong grade renders below the failed cases"
+    )
+    boundary = re.search(r"const feedbackBoundary = .*?;", editor, re.S)
+    assert boundary and "#failed-tests-block" in boundary.group(0) \
+        and "[data-solution-cell]" in boundary.group(0), (
+        "the insertion boundary no longer covers BOTH the failed-case block "
+        "and the answer; a new cell would land between them"
+    )
+    events = read(os.path.join(HERE, "events.js"))
+    assert "clearSolution" in events, (
+        "a correct resubmission never clears the solution cell — the answer to "
+        "a question the learner just got right stays on screen under their code"
+    )

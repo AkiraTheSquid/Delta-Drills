@@ -663,6 +663,38 @@ function renderFailedTests(result, question) {
     block = document.createElement("div");
     block.id = "failed-tests-block";
     block.className = "failed-tests-block";
+  }
+  /* 🔴 UNDER THE CODE, not under the badge, wherever there is a notebook.
+     "Which cases failed" is read against the code that failed them, and the
+     left rail puts it below the question, the worked example and the Next
+     problem button — far enough down that the honest description of the old
+     placement is that the app did not show it. `#notebook-cells` is the same
+     column the learner's cells are in, so it lands directly beneath them and
+     above the solution cell events.js appends right after this runs.
+
+     🔴 RE-APPENDED ON EVERY RENDER, not placed once when the block is minted.
+     The block is a singleton looked up by id and it is only ever HIDDEN
+     between questions, never removed — while `DeltaNotebook.reset` rebuilds
+     the cells around it. Placing it once left it stranded wherever the last
+     question's cells happened to put it, so the next question's failures
+     rendered ABOVE the scratch cell instead of below the work.
+
+     The #feedback-prompt anchor is the fallback for surfaces with no notebook
+     (a torch drill routed to Colab hides the right panel; so does the Colab
+     edition), and there it must be inserted only once. 🔴 That fallback turns
+     on VISIBILITY, not existence: #notebook-cells is still in the DOM on those
+     surfaces, just in a hidden pane, so testing for the element alone would
+     move the failures somewhere unreachable and the learner would again see
+     nothing. getClientRects() is empty for a display:none subtree. This is
+     the same test showSolution makes, and both must agree — otherwise the
+     failures and the answer end up in different columns. */
+  let nbHost = document.getElementById("notebook-cells");
+  if (nbHost && !nbHost.getClientRects().length) nbHost = null;
+  if (nbHost) {
+    nbHost.appendChild(block);
+  } else if (!block.parentNode || block.parentNode.id === "notebook-cells") {
+    // Second clause: a block left in the notebook by an earlier, visible
+    // question would otherwise stay parented there and never reach the rail.
     const anchor = document.getElementById("feedback-prompt");
     if (!anchor || !anchor.parentNode) return;
     anchor.parentNode.insertBefore(block, anchor);
