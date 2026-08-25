@@ -51,6 +51,28 @@
   content: "▸ ";
 }
 
+/* The stage instruction, OUTSIDE and above the example, loud on purpose.
+   As `.ladder-example-blurb` — a muted 12px line inside the <details> — the
+   one sentence that reframes the whole card ("most of the solution is written
+   for you") was the least visible thing on it, and a tester read a faded
+   problem as write-from-scratch. This is the one block on the card that is
+   allowed to shout. */
+.ladder-stage-callout {
+  background: color-mix(in srgb, var(--info) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--info) 45%, transparent);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 18px 0 0;
+  padding: 10px 14px;
+}
+
+.ladder-stage-callout + .ladder-example {
+  margin-top: 8px;
+}
+
+/* Kept for any cached ladder.js still rendering the blurb inside the details. */
 .ladder-example-blurb {
   color: var(--muted);
   font-size: 12px;

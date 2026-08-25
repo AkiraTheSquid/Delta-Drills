@@ -127,3 +127,33 @@
 .notebook-cell--solution .notebook-cell-output {
   border-left-color: color-mix(in srgb, var(--accent-text) 45%, transparent);
 }
+
+/* ---- the worked example, as cells above the learner's ---------------------
+   notebook-editor.js::showExamples lays the rail example's code fences in as
+   runnable cells at the TOP of the notebook (tester ask, 2026-08-24: "have
+   the python snippets that are currently in the left column WITHIN the code
+   editor"). Info-blue like the rail's `.ladder-example`, NOT the solution
+   cell's accent: blue is "reference you copy from", accent is "the answer".
+
+   🔴 The first example cell IS `:first-child`, so the blanket
+   `.notebook-cell:first-child .notebook-cell-actions { display: none }` above
+   would eat its label and leave the scaffold looking like code the learner
+   wrote. The doubled class ties its (0,3,0) specificity and wins on source
+   order — this block must stay BELOW that rule. */
+.notebook-cell.notebook-cell--example .notebook-cell-actions {
+  display: flex;
+}
+.notebook-cell--example .notebook-cell-actions--example {
+  color: var(--info);
+  justify-content: flex-start;
+  text-transform: none;
+  font-size: 11px;
+  letter-spacing: .3px;
+}
+.notebook-cell--example .code-editor,
+.notebook-cell--example .code-highlight {
+  border-left-color: var(--info);
+}
+.notebook-cell--example .notebook-cell-output {
+  border-left-color: color-mix(in srgb, var(--info) 45%, transparent);
+}
