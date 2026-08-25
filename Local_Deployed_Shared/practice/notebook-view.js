@@ -165,12 +165,13 @@ const LessonNotebookView = (() => {
 
   /* A `<details>` the compiler authored as literal HTML. Unwrapped rather than
      passed through: the shared renderer escapes HTML, so the tags would print. */
-  const _detailsCell = (cell, summary, body, extraClass) => {
+  const _detailsCell = (cell, summary, body, extraClass, open = false) => {
     const el = document.createElement("details");
     el.className = `nbv-cell ${extraClass}`;
     el.dataset.role = cell.role;
     el.id = `nbv-${cell.id}`;
     if (cell.q) el.dataset.q = String(cell.q);
+    if (open) el.open = true;
     const head = document.createElement("summary");
     head.textContent = summary;
     el.appendChild(head);
@@ -190,9 +191,30 @@ const LessonNotebookView = (() => {
     return _detailsCell(cell, "Hints", body, "nbv-hints");
   };
 
-  /* The answer, closed. Runnable once open, exactly as it is in Colab — the
-     comment the compiler put at the top of it explains that running it rebinds
-     `solve`, which is a thing a learner may legitimately want to do. */
+  /* The answer, SHOWN, as a runnable cell below the problem it answers.
+
+     Seth, 2026-08-24: "below your code answer it displays the actual solution
+     that you can scroll down to and run ... as another code cell that can be
+     ran in the code below your solution."
+
+     It was a closed disclosure until then, on the reasoning that an answer on
+     screen makes the drill above it decoration. That trade is the right one on
+     the graded surface and the wrong one here: this notebook is not graded and
+     nothing on it records an attempt except the line `dd_check` prints, so the
+     cost of the answer being visible is a learner reading it early, while the
+     cost of it being hidden is a learner who cannot find it at all. Which is
+     what happened — the disclosure reads as a footer on a 656-cell page, and
+     the whole point of compiling the solution in as a CELL rather than as
+     prose is that you can run it.
+
+     Still a `<details>`, so the summary is a real collapse control and one
+     click puts it back. Hints stay closed: a hint read early replaces the
+     thinking it was written to prompt, and there is no equivalent "I am stuck
+     and want to see it work" for a hint you have already been handed.
+
+     Runnable exactly as it is in Colab — the comment the compiler put at the
+     top of it explains that running it rebinds `solve`, which is a thing a
+     learner may legitimately want to do. */
   const _solutionCell = (cell) => {
     const body = _codeCell(cell);
     body.classList.add("nbv-solution-body");
@@ -200,7 +222,7 @@ const LessonNotebookView = (() => {
     // one id would make `getElementById` (the concept jump, the beacon's status
     // line) pick whichever came first.
     body.id = `nbv-${cell.id}-body`;
-    return _detailsCell(cell, `💡 Show the solution — problem ${cell.q}`, body, "nbv-solution");
+    return _detailsCell(cell, `💡 Solution — problem ${cell.q}`, body, "nbv-solution", true);
   };
 
   const _checkerCell = (cell) => {

@@ -358,6 +358,20 @@ async function runSnippet(code, { question = null, onStatus = null, source = nul
      torch on generated scaffolding rather than on what the learner wrote is
      how a torch cell talks itself onto Pyodide. */
   const isTorch = questionIsTorch(question) || TORCH_IMPORT.test(source || code || "");
+  /* Torch only runs on the backend. A session that booted without a token
+     (backend cold for one second at load time -> DDGuest.ensure() memoized a
+     failure) used to be stranded: every torch Run hit the refusal below for
+     the rest of the page load. This click is a fresh chance — provision now,
+     upgrade the mode, and let the normal backend path handle the run. A real
+     signed-in user demoted by a 401 is deliberately NOT re-provisioned; that
+     would silently turn them into their old guest (practiceRealUserDemoted,
+     practice/mode.js). */
+  if (isTorch && practiceMode !== "backend" && !practiceRealUserDemoted) {
+    say("Connecting to the practice backend...");
+    const provisioned = await window.DDGuest?.retryProvision?.();
+    if (provisioned) upgradePracticeModeToBackend();
+    say("");
+  }
   let useLocalPyodide =
     practiceMode !== "backend" ||
     ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(question)) && !isTorch);
