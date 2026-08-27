@@ -21,6 +21,7 @@ import watch_invariants
 import watch_lessons
 import watch_notebook
 import watch_basic_mode
+import watch_feedback
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
@@ -28,6 +29,11 @@ from watch_invariants import (check_invariants, check_a_torch_question_never_gra
                               check_a_deleted_practice_notice_stays_deleted,
                               check_the_session_clock_is_not_the_learners_to_set)
 from watch_basic_mode import check_a_hidden_rating_still_commits_the_attempt
+from watch_feedback import (
+    check_a_learner_can_always_report_a_broken_problem,
+    check_a_lesson_can_be_reported_without_touching_the_question,
+    check_feedback_that_never_left_the_browser_is_not_called_logged,
+)
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
     check_only_one_module_patches_a_code_editors_value,
@@ -552,7 +558,7 @@ def _every_check_is_registered(checks):
     function in another module cannot stand in for the one that was dropped."""
     registered = {id(fn) for fn in checks}
     for module in (sys.modules[__name__], watch_invariants, watch_lessons,
-                   watch_notebook, watch_basic_mode):
+                   watch_notebook, watch_basic_mode, watch_feedback):
         for name in dir(module):
             fn = getattr(module, name)
             if name.startswith("check_") and callable(fn) and id(fn) not in registered:
@@ -817,7 +823,10 @@ if __name__ == '__main__':
               check_every_placement_question_gets_the_same_clock,
               check_the_placement_result_is_the_number_the_backend_seeded,
               check_a_deleted_practice_notice_stays_deleted,
-              check_a_hidden_rating_still_commits_the_attempt]
+              check_a_hidden_rating_still_commits_the_attempt,
+              check_a_learner_can_always_report_a_broken_problem,
+              check_a_lesson_can_be_reported_without_touching_the_question,
+              check_feedback_that_never_left_the_browser_is_not_called_logged]
     _every_check_is_registered(checks)
     for fn in checks:
         try:

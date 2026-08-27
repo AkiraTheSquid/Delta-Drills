@@ -1599,6 +1599,16 @@
      topic-level reading. One refresher, one owner. */
   window.deltaRefreshKcLattice = () => Promise.all([refreshLattice(), refreshPlacement()]);
 
+  /* The live Cytoscape instance, for a surface that LAYERS on this graph
+     rather than drawing its own. instructor-review.js hosts this very
+     container full-bleed and needs to bind its own edge taps: an instructor
+     flags the prerequisite arrow between two concepts, which this file has no
+     handler for (a learner taps bubbles, never edges). Read-only by contract —
+     the caller adds listeners, it does not restyle or mutate elements, so the
+     lesson pane and the gate ticks stay this file's alone. Null until build()
+     has run, which is the same "not yet" every other export here answers. */
+  window.deltaConceptGraphCy = () => cy;
+
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
     let tries = 0;

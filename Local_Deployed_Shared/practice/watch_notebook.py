@@ -555,6 +555,11 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
         "the rating step reads the graded detail without the question-id guard; "
         "one question's failed cases can be saved next to another's verdict"
     )
+    assert "retries" in restore.group(0), (
+        "the restore path scrolls once and gives up — the pane is still "
+        "settling when a resume runs, and a scroll past the current "
+        "scrollHeight is clamped to 0 rather than queued"
+    )
     assert "scrollToSolution" in restore.group(0), (
         "a restored review appends the answer under a restored draft without "
         "scrolling to it — a long attempt puts it below the fold again, which "

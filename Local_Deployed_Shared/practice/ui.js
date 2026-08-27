@@ -808,7 +808,8 @@ function restoreGradedFeedbackInNotebook({ correct, failedTests, solutionCode: s
      and a resume would hand back a review whose second half is invisible —
      the failure this feature exists to fix, arriving by the other door.
      Instant, not smooth: nothing was on screen to animate away from. */
-  requestAnimationFrame(() => window.DeltaNotebook?.scrollToSolution?.({ instant: true }));
+  requestAnimationFrame(() =>
+    window.DeltaNotebook?.scrollToSolution?.({ instant: true, retries: 6 }));
 }
 
 // Clear the "missed one concrete thing" affordance between questions.

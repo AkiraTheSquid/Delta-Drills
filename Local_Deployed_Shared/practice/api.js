@@ -6,6 +6,91 @@ function emitPracticeStateChanged() {
   window.dispatchEvent(new CustomEvent("delta:practice-state-changed"));
 }
 
+/* Feedback written while signed out — or while the backend was unreachable —
+   sits in localStorage. Push it the next time a report DOES reach the server.
+   Without this the queue is written and never read again, so the panel's
+   "logged ✓" would be a lie for every offline report. */
+/* One drain at a time, per queue.
+
+   🔴 The naive version — read the whole queue, await N posts, setItem(rest) —
+   loses feedback two ways. Anything the learner queues DURING the drain is
+   absent from the snapshot and is erased by that final write, and two
+   overlapping drains send the same entries twice. So: a per-key in-flight
+   latch, and the write-back re-reads storage and removes only the entries this
+   drain actually delivered, one occurrence each. Whatever arrived meanwhile
+   stays. */
+const _flushing = new Set();
+
+const _readQueue = (key) => {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+};
+
+/* Returns true only if the entry is genuinely on disk. Quota exhaustion and
+   disabled storage both land here, and the panel must not call either one
+   "saved". */
+const _queueFeedback = (key, entry) => {
+  try {
+    const queue = _readQueue(key);
+    queue.push({ ...entry, timestamp: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(queue));
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
+const _flushFeedbackQueue = async (key, path) => {
+  if (_flushing.has(key)) return;
+  const queue = _readQueue(key);
+  if (!queue.length) return;
+  _flushing.add(key);
+  const delivered = [];
+  try {
+    // Bounded: a long-offline learner drains 50 per successful report, so one
+    // send never turns into a hundred requests.
+    for (const entry of queue.slice(0, 50)) {
+      const { timestamp: _ts, ...body } = entry || {};
+      try {
+        const res = await apiFetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) delivered.push(JSON.stringify(entry));
+      } catch (_) {
+        /* keep it queued */
+      }
+    }
+    if (!delivered.length) return;
+    // Re-read: this is the merge. Drop one occurrence per delivered entry.
+    const current = _readQueue(key);
+    const pending = delivered.slice();
+    const remaining = current.filter((entry) => {
+      const at = pending.indexOf(JSON.stringify(entry));
+      if (at === -1) return true;
+      pending.splice(at, 1);
+      return false;
+    });
+    try {
+      localStorage.setItem(key, JSON.stringify(remaining));
+    } catch (_) {
+      /* ignore storage errors */
+    }
+  } finally {
+    _flushing.delete(key);
+  }
+};
+
+const FEEDBACK_QUEUES = [
+  ["problem_feedback_queue", "/api/practice/problem-feedback"],
+  ["lesson_feedback_queue", "/api/practice/lesson-feedback"],
+];
+
 const PracticeAPI = {
   currentQuestion: practiceQuestionPool[0],
 
@@ -651,6 +736,8 @@ json.dumps(_delta_results)
           // on Seth's machine, through the local Claude Code runner — so this
           // is "someone will look", not "it is being fixed right now".
           const body = await res.json().catch(() => ({}));
+          _flushFeedbackQueue("problem_feedback_queue", "/api/practice/problem-feedback")
+            .catch(() => {});
           return { success: true, improvementQueued: !!body.improvement_queued };
         }
       } catch (_) {
@@ -658,17 +745,70 @@ json.dumps(_delta_results)
       }
     }
     // Local fallback queue — survives offline / non-backend modes.
-    try {
-      const key = "problem_feedback_queue";
-      const queue = JSON.parse(localStorage.getItem(key) || "[]");
-      queue.push({ ...entry, timestamp: new Date().toISOString() });
-      localStorage.setItem(key, JSON.stringify(queue));
-    } catch (_) {
-      /* ignore storage errors */
+    const stored = _queueFeedback("problem_feedback_queue", entry);
+    return stored ? { success: true, queuedLocally: true } : { success: false };
+  },
+
+  // Feedback on a LESSON page. Deliberately not reportProblem: that endpoint
+  // takes an integer question_id and, for an actionable tag, queues an AI
+  // rewrite of THAT QUESTION — so a note about a confusing worked example
+  // would file itself against the drill the lesson is gating and then try to
+  // repair it. Same log directory, different subject, no repair queue.
+  async reportLesson({ kc, lessonTitle, questionId, tag, note }) {
+    const entry = {
+      kc: kc || "",
+      lesson_title: lessonTitle || "",
+      question_id: typeof questionId === "number" ? questionId : null,
+      tag,
+      note: note || "",
+    };
+    if (practiceMode === "backend") {
+      try {
+        const res = await apiFetch("/api/practice/lesson-feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(entry),
+        });
+        if (res.status === 401) {
+            handleExpiredToken();
+          } else if (res.ok) {
+            _flushFeedbackQueue("lesson_feedback_queue", "/api/practice/lesson-feedback")
+              .catch(() => {});
+            return { success: true };
+          }
+      } catch (_) {
+        /* fall through to local queue */
+      }
     }
-    return { success: true, queuedLocally: true };
+    // Same local fallback contract as reportProblem — a guest, an offline
+    // session or a backend error must not silently drop what someone wrote.
+    const stored = _queueFeedback("lesson_feedback_queue", entry);
+    return stored ? { success: true, queuedLocally: true } : { success: false };
+  },
+
+  /* Drain whatever is still on this device. Signing in RELOADS the app into
+     backend mode (app.js::setAuthState), so a boot-time call is the sign-in
+     trigger — without it a report only leaves the browser when the learner
+     happens to file a second one on the same surface, which the panel's
+     "it sends when you are signed in" promises it does not require. */
+  flushFeedbackQueues() {
+    if (practiceMode !== "backend") return;
+    FEEDBACK_QUEUES.forEach(([key, path]) => {
+      _flushFeedbackQueue(key, path).catch(() => {});
+    });
   },
 };
+
+// Boot-time drain. Deferred so a queue of 50 never competes with the first
+// paint or the first question fetch.
+if (typeof window !== "undefined") {
+  const _bootFlush = () => setTimeout(() => PracticeAPI.flushFeedbackQueues(), 2000);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", _bootFlush, { once: true });
+  } else {
+    _bootFlush();
+  }
+}
 
 /* ================================================================
    XP HOOKS — one wrap, every path that records learner data.
@@ -719,4 +859,7 @@ json.dumps(_delta_results)
   wrap("sendFeedback", () => "difficulty_rating");
   wrap("overrideCorrect", () => "override");
   wrap("reportProblem", () => "problem_report");
+  // A lesson report is the same act on a different surface, and the seam
+  // must not go quiet just because the learner is reading rather than drilling.
+  wrap("reportLesson", () => "problem_report");
 })();
