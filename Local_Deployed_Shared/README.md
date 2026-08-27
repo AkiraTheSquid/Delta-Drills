@@ -162,6 +162,97 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-27 (later still) — the instructor's graph door became an EDITOR:
+  click an edge to inspect it on the right, delete it or flip its direction,
+  and press ✛ on a bubble to add a concept (or drag ✛ onto another bubble to
+  connect them).** Added: `instructor-graph-edit.js`. Changed:
+  `instructor-review.js`, `index.html`, `styles/instructor-review.css`,
+  `watch_instructor_graph.py`, and the backend's `graph_feedback_router.py`.
+
+  Seth: "you should be able to click on an edge without deleting it, and
+  whenever you click on it, it should show the information about it on the
+  right… either delete it or change its direction to either be bidirectional or
+  monodirectional… you should be able to click the plus button on a node for
+  the top edge of it and when you do that it should create a new node right
+  there connected to it. Or… drag to another node. This makes the graph
+  editable and interactable and more fun to deal with."
+
+  **Nothing here writes the curriculum.** The graph is built from
+  `lessons/kc_registry.json` and its edges ARE the unlock lattice the tutor
+  serves from. Every gesture is a PROPOSAL: drawn on the live graph
+  immediately, so the instructor argues with a picture instead of a form, and
+  filed as a `/api/practice/graph-feedback` entry for a human. The endpoint
+  still has no repair runner behind it, on purpose.
+
+  🔴 **The graph being edited is the LEARNER'S.** There is one Cytoscape
+  instance in the app; the door borrows it out of `#page-knowledge-graph` and
+  gives it back. So every edit is expressed as one primitive pair — `remove`
+  plus `add` — and the ledger keeps the collection each removal returned,
+  because `.restore()` on that collection is Cytoscape's own exact inverse.
+  `detach()` reverts the ledger in REVERSE order (a proposed edge can hang off
+  a proposed node) and runs BEFORE the DOM move home. Verified in a browser:
+  node-id and edge-pair hashes are identical before the visit, after a dirty
+  exit, and after a second round trip.
+
+  🔴 **Proposals are marked with INLINE element styles, never a stylesheet
+  rule.** The Cytoscape stylesheet belongs to `concept-graph/lesson-graph.js`
+  and a selector added from here would outlive the visit. Same reason the
+  drag's drop-target highlight is `removeStyle`'d rather than written back: a
+  bubble's border comes from that stylesheet, and restoring the value read off
+  it leaves an inline override that silently outranks the owner forever.
+
+  🔑 **The ledger outlives `detach`.** An instructor who tabs away mid-review
+  and comes back finds their proposals still on the map — `attach()` replays
+  them in order. A sent proposal stays drawn and struck through, and drops out
+  of the Send count: the log is append-only, so a second press would file the
+  same claim twice.
+
+  Backend: `graph_feedback_router.py` gained the `missing_node` kind and a
+  `label` field. A proposed concept's `source` is a placeholder id this browser
+  minted, so the NAME is the only part of it a maintainer can act on; `target`
+  carries what it was drawn hanging off. The connecting arrow is deliberately
+  NOT a second `missing_edge` row — an edge to a concept that does not exist
+  yet is not a claim anyone can act on separately.
+
+  ⚠️ The practice session's clock notch hangs ~25px below the topbar in the
+  middle of the screen (`styles/practice/notch-menu.css`, another slice), which
+  is the same strip the graph door's toolbar occupies. The toolbar hint is
+  short for that reason; the full instructions are the inspector's empty state.
+
+  🔑 **Codex found the failure modes that need a second pointer.** Four, all
+  fixed and each re-verified in a browser: a ✛ drag binds `pointermove`/`up` on
+  **window**, so leaving the screen mid-drag left them live and the next
+  pointer event asked a null Cytoscape where a node was (one `dragCleanup`,
+  called from the drop, from `pointercancel`, and from `detach`); undoing a
+  proposed concept that another proposal hung off left an edit naming a source
+  that no longer existed, which survived to the next `attach()` and threw on
+  the replay (undo cascades now); a note typed *before* pressing Delete was
+  discarded, because the note bound to an edit that did not exist yet (a draft
+  is carried into whatever is staged next); and the panel read "is this
+  deleted?" off the last-selected edit rather than off the ledger, so flagging
+  an already-deleted edge offered to delete it again. It also caught the
+  ✛ handle sitting at `z-index: 6` — *above* `.kg2-controls` and
+  `.kg2-legend` at 5 — where it could swallow a press meant for Fit or the
+  Mastery/Lessons switch; it is 4 now, and the comment that claimed otherwise
+  was simply wrong. Backend: `missing_node` now requires both `label` and
+  `target`, since a proposed concept with neither is a row no maintainer can
+  read.
+
+  ⚠️ **A stray NUL byte** had landed in `edgeKey`'s template literal, which is
+  why `file` reported the module as `data` and git diffed it as **binary** —
+  the first critic pass could not read the editor at all and reviewed only the
+  CSS and the backend. Worth knowing as a symptom: a JS file that reviews as
+  binary is a file with a control character in it, not a tooling quirk.
+
+  Guards: `watch_instructor_graph.py` grew the editor half — load order,
+  `window.DDGraphEdit` on both sides (anchored, because `DDGraphEditor`
+  contains `DDGraphEdit`), the restore call and the reverse-order revert, an
+  unbind for every `cy.on` (anchored at line start, so commenting one out
+  fails), no `cy.style(` at all, the stale-poll guard scoped to `attachEditor`,
+  and the inspector's right edge / z-index / `touch-action`, plus the drag
+  teardown on detach, the undo cascade, and the checked `attach()`. 15
+  mutations, 15 bite.
+
 - **2026-08-27 (later) — the concept pill stopped flickering: it is down when
   there is no question on screen, and a resume no longer loses the concept.**
   Changed: `concept-pill.js`, `practice/timer.js`, `watch_concept_pill.py`.

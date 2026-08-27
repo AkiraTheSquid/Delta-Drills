@@ -228,48 +228,28 @@
   };
 
   /* ══ GRAPH ═══════════════════════════════════════════════════════
-     The lesson graph, hosted. `.kg-container.kg2` is the Knowledge Graph
-     tab's live element — one Cytoscape instance, one lesson pane, one
-     learner-model dock — and it is MOVED into #ir-kg-frame and moved back
-     when the instructor leaves, the way concept-graph/why-graph.js already
-     borrows it for the landing page's maximise. Moving beats copying for the
-     same reason it does there: every behaviour of the real graph arrives for
-     free and cannot drift, because it IS the real graph.
+     The lesson graph, hosted and EDITABLE. `.kg-container.kg2` is the
+     Knowledge Graph tab's live element — one Cytoscape instance, one lesson
+     pane, one learner-model dock — and it is MOVED into #ir-kg-frame and moved
+     back when the instructor leaves, the way concept-graph/why-graph.js
+     already borrows it for the landing page's maximise. Moving beats copying
+     for the same reason it does there: every behaviour of the real graph
+     arrives for free and cannot drift, because it IS the real graph.
 
-     What this file adds on top is the only thing an instructor needs that a
-     learner does not: flagging. Bubble taps stay lesson-graph.js's (they open
-     the lesson, which is the whole point of tapping one); this file binds the
-     EDGE taps that file has no handler for, and offers the tapped concept to
-     a flag button rather than stealing the tap for a form. */
+     This file owns the BORROWING — finding the element, taking it only from
+     home, putting it back, and keeping the two ends of that honest. What an
+     instructor then does to the graph belongs to instructor-graph-edit.js:
+     selection, the right-hand inspector, edge direction, deleting, the ✛
+     handle, and the proposal ledger. The split is the same one the page
+     already makes elsewhere — this file is the surface, that file is the
+     interaction — and it keeps a single owner for the rule that matters most
+     here, that every edit is reversible on the way out. */
   const KG_SELECTOR = ".kg-container.kg2";
 
-  const EDGE_TAGS = [
-    ["wrong_direction", "Points the wrong way"],
-    ["should_not_exist", "Not really a prerequisite"],
-    ["good", "👍 Good edge"],
-  ];
-  const NODE_TAGS = [
-    ["mislabeled", "Mislabeled"],
-    ["wrong_topic", "Filed under the wrong lesson"],
-    ["should_not_exist", "Shouldn't exist"],
-    ["good", "👍 Good concept"],
-  ];
-  /* One entry, not two. graph-viz.json had a second "encompassing" lane; the
-     lesson graph's edges are all prerequisites, so offering `enc` here would
-     let an instructor propose an edge the graph has no way to draw. The
-     button stays because the submission still has to say WHICH lane, and one
-     explicit button beats a hidden default. */
-  const MISSING_TAGS = [["prereq", "Should be a prerequisite edge"]];
-
-  let cy = null;            // lesson-graph.js's instance, borrowed read-only
-  let tapsArmed = false;
+  let cy = null;            // lesson-graph.js's instance, borrowed
   let kgHome = null;        // where to put the Knowledge Graph back
-  let selection = null;     // {kind, source, target, edge_type}
-  let missingArm = null;    // null | "first" | node-id awaiting the second tap
-  let chosenTag = null;
-  let tappedKc = null;      // the concept whose lesson is open, for the flag button
+  const editor = () => window.DDGraphEdit || null;
 
-  const hosting = () => !!kgHome;
   const setPanelHint = (t) => { const h = el("ir-panel-hint"); if (h) h.textContent = t; };
   const setStatus = (t) => {
     const s = el("ir-graph-status");
@@ -277,128 +257,26 @@
     if (t) { s.textContent = t; s.classList.remove("hidden"); } else s.classList.add("hidden");
   };
 
-  const openForm = (title, tags) => {
-    chosenTag = null;
-    el("ir-form").classList.remove("hidden");
-    el("ir-form-target").innerHTML = title;
-    const box = el("ir-form-tags");
-    box.innerHTML = "";
-    tags.forEach(([tag, label]) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "ghost ir-flag";
-      b.textContent = label;
-      b.addEventListener("click", () => {
-        chosenTag = tag;
-        box.querySelectorAll(".ir-flag").forEach((p) => p.classList.toggle("ir-flag--on", p === b));
-      });
-      box.appendChild(b);
-    });
-    const formNote = el("ir-form-note");
-    /* `data-autogrow` is set from here rather than in the markup because this
-       file already owns this element's behaviour, and it keeps the whole
-       autogrow change out of #ir-graph's markup while that is being rebuilt.
-       Idempotent, and autogrow.js reads the attribute per event, so setting
-       it late costs nothing. */
-    formNote.setAttribute("data-autogrow", "");
-    formNote.value = "";
-    /* Assigning `.value` fires no `input`, and the form was `display: none`
-       until the line above unhid it — a note measured while hidden measures
-       0. Both are cases autogrow.js cannot see for itself, so re-measure
-       here, or the box we just emptied keeps the last note's height. */
-    if (window.DDAutoGrow) window.DDAutoGrow.grow(formNote);
-    const s = el("ir-form-status");
-    if (s) s.classList.add("hidden");
-  };
-
-  const closeForm = () => {
-    const f = el("ir-form");
-    if (f) f.classList.add("hidden");
-    selection = null;
-    chosenTag = null;
-  };
-
-  /* The flag button names its target, so the instructor can see WHICH concept
-     a flag is about to be filed against — the lesson pane beside the map can
-     be showing a different one if they tapped, read, then tapped again. */
-  const offerConcept = (node) => {
-    tappedKc = node ? { id: node.id(), label: node.data("label") || node.id(), lesson: node.data("lesson") || "" } : null;
+  /* The toolbar's flag button names the concept the ✛ is currently on, so an
+     instructor can see WHICH one a flag is about to be filed against. */
+  const onFocus = (name) => {
     const btn = el("ir-flag-concept");
     if (!btn) return;
-    btn.disabled = !tappedKc;
-    btn.textContent = tappedKc ? `Flag “${tappedKc.label}”` : "Flag this concept";
+    btn.disabled = !name;
+    btn.textContent = name ? `Inspect “${name}”` : "Inspect this concept";
   };
-
-  const selectEdge = (e) => {
-    missingArm = null;
-    /* Every edge in the lesson graph is a prerequisite — kc_registry.json's
-       `prereqs` is the only edge list lesson-graph.js reads — so the lane is
-       known without asking the element for a type it does not carry. */
-    selection = { kind: "edge", source: e.data("source"), target: e.data("target"), edge_type: "prereq" };
-    const label = (id) => {
-      const n = cy && cy.getElementById(id);
-      return esc((n && n.length && n.data("label")) || id);
-    };
-    openForm(
-      `<strong>${label(selection.source)}</strong> → <strong>${label(selection.target)}</strong><br>` +
-        `<span class="ir-hint">prerequisite edge</span>`,
-      EDGE_TAGS
-    );
-    setPanelHint("Say what's wrong with this prerequisite, then send.");
-  };
-
-  const flagConcept = () => {
-    if (!tappedKc) return;
-    missingArm = null;
-    selection = { kind: "node", source: tappedKc.id, target: null, edge_type: null };
-    openForm(
-      `<strong>${esc(tappedKc.label)}</strong><br><span class="ir-hint">${esc(tappedKc.lesson)}</span>`,
-      NODE_TAGS
-    );
-    setPanelHint("Say what's wrong with this concept, then send.");
-  };
-
-  /* Bubble taps belong to lesson-graph.js: tapping one opens its lesson, which
-     is what an instructor is here to read. This runs BESIDE that handler and
-     never cancels it — it only records what was tapped, unless the missing-edge
-     arm is up, in which case the two taps are naming an edge. */
-  const onNodeTap = (evt) => {
-    if (!hosting()) return;
-    const n = evt.target;
-    if (missingArm === "first") {
-      missingArm = n.id();
-      setPanelHint(`First concept: ${n.data("label") || n.id()}. Now tap the SECOND concept (the one it should point to).`);
-      return;
-    }
-    if (missingArm && missingArm !== n.id()) {
-      selection = { kind: "missing_edge", source: missingArm, target: n.id(), edge_type: null };
-      missingArm = null;
-      const label = (id) => {
-        const node = cy && cy.getElementById(id);
-        return esc((node && node.length && node.data("label")) || id);
-      };
-      openForm(
-        `Missing edge: <strong>${label(selection.source)}</strong> → <strong>${label(selection.target)}</strong>`,
-        MISSING_TAGS
-      );
-      setPanelHint("Pick which kind of edge it should be, add a note, send.");
-      return;
-    }
-    offerConcept(n);
-  };
-
-  const onEdgeTap = (evt) => { if (hosting()) selectEdge(evt.target); };
 
   /* lesson-graph.js builds on first use and answers null until it has, so the
-     taps are armed the same way that file's own deltaFocusConceptGraphKc waits
-     for it: poll briefly, then give up rather than leak a timer. The handlers
-     stay bound for the life of the page — cy outlives every host/release — and
-     `hosting()` is what keeps them inert while the Knowledge Graph tab is
-     showing the same graph to a learner. */
-  const armTaps = () => {
-    if (tapsArmed) return;
+     editor is attached the same way that file's own deltaFocusConceptGraphKc
+     waits for it: poll briefly, then give up rather than leak a timer. */
+  const attachEditor = () => {
+    if (!editor()) { setStatus("The graph editor didn't load."); return; }
+    if (editor().isActive()) return;
     let tries = 0;
     const tick = () => {
+      // The instructor can leave inside the poll window; attaching after that
+      // would arm a ✛ handle on the learner's own Knowledge Graph tab.
+      if (!kgHome) return;
       const c = typeof window.deltaConceptGraphCy === "function" ? window.deltaConceptGraphCy() : null;
       if (!c) {
         if (tries++ < 80) setTimeout(tick, 120);
@@ -406,14 +284,21 @@
         return;
       }
       cy = c;
-      tapsArmed = true;
+      /* attach() answers false when it cannot find the overlay layer inside the
+         borrowed graph — it builds the inspector and the ✛ handle in there.
+         Left unchecked, the toolbar would keep its buttons and none of them
+         would do anything, which is the failure that looks like a working
+         screen. */
+      if (!editor().attach({ cy, frame: el("ir-kg-frame"), post: postGraph, onFocus })) {
+        setStatus("The graph loaded, but its editing layer didn't — reload the page.");
+        return;
+      }
       setStatus("");
-      cy.on("tap", "edge", onEdgeTap);
-      cy.on("tap", "node", onNodeTap);
-      cy.on("tap", (evt) => { if (hosting() && evt.target === cy) offerConcept(null); });
     };
     tick();
   };
+
+  const postGraph = (body) => post("/api/practice/graph-feedback", body, "graph_feedback_queue");
 
   const hostKg = () => {
     const frame = el("ir-kg-frame");
@@ -441,7 +326,7 @@
     // Builds on first use; on later ones it just resizes and refits.
     if (typeof window.deltaInitConceptGraph === "function") window.deltaInitConceptGraph();
     setStatus("");
-    armTaps();
+    attachEditor();
   };
 
   const releaseKg = () => {
@@ -449,6 +334,12 @@
        be open while nothing is hosted (the graph was borrowed elsewhere). */
     document.body.classList.remove("ir-kg-open");
     if (!kgHome) return;
+    /* Detach FIRST. It reverts every staged proposal, so the element handed
+       back is the one that was borrowed — an instructor's deleted edge must
+       never reach the learner's own tab, and their ✛ handle must not either.
+       The ledger itself survives, and is replayed on the way back in. */
+    if (editor()) editor().detach();
+    onFocus(null);
     const frame = el("ir-kg-frame");
     const kg = frame && frame.querySelector(KG_SELECTOR);
     // insertBefore(node, null) appends, which is the right answer when the
@@ -467,54 +358,27 @@
     if (kg && kg.offsetParent !== null && typeof window.deltaInitConceptGraph === "function") {
       window.deltaInitConceptGraph();
     }
-    missingArm = null;
-    offerConcept(null);
-    closeForm();
   };
 
   const openGraph = () => {
     show("graph");
-    setPanelHint("Tap a bubble to read its lesson. Tap an arrow to flag a prerequisite.");
+    /* Short on purpose. The practice session's clock notch hangs ~25px below
+       the topbar in the middle of this strip (styles/practice/notch-menu.css),
+       so a sentence that reaches the centre reads under it. The full
+       instructions are the inspector's empty state, which has the room. */
+    setPanelHint("Tap an arrow to inspect it.");
     // Cytoscape can't size a display:none container — host only now, once the
     // pane is actually visible (the same deferral lesson-graph.js documents).
     requestAnimationFrame(hostKg);
   };
 
   el("ir-missing-edge").addEventListener("click", () => {
-    missingArm = "first";
-    closeForm();
-    setPanelHint("Tap the FIRST concept (the prerequisite).");
+    if (editor()) editor().armMissingEdge();
   });
-
-  el("ir-flag-concept").addEventListener("click", flagConcept);
+  el("ir-flag-concept").addEventListener("click", () => {
+    if (editor()) editor().inspectFocused();
+  });
   el("ir-kg-exit").addEventListener("click", () => show("chooser"));
-
-  el("ir-form-send").addEventListener("click", async () => {
-    if (!selection || !chosenTag) {
-      flashStatus(el("ir-form-status"), false);
-      el("ir-form-status").textContent = "pick a flag first";
-      return;
-    }
-    const body = {
-      kind: selection.kind,
-      source: selection.source,
-      target: selection.target,
-      edge_type: selection.kind === "missing_edge" ? chosenTag : selection.edge_type,
-      tag: selection.kind === "missing_edge" ? "proposed" : chosenTag,
-      note: el("ir-form-note").value.trim(),
-      /* WHICH graph the ids belong to. They are kc_registry.json ids now
-         ("np-2-c"), not the ARENA atom ids this endpoint logged before, and a
-         log that does not say so cannot be read later. The field is additive:
-         a backend that has not learned it yet ignores it and still records the
-         flag. */
-      graph: "lesson-kc",
-    };
-    const btn = el("ir-form-send");
-    btn.disabled = true;
-    const { sent } = await post("/api/practice/graph-feedback", body, "graph_feedback_queue");
-    btn.disabled = false;
-    flashStatus(el("ir-form-status"), sent);
-  });
 
   /* ── doors + mode exit ──────────────────────────────────────────── */
   el("ir-door-questions").addEventListener("click", openQuestions);

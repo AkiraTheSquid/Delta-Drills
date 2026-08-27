@@ -66,7 +66,7 @@
        declares the control that replaces the strip as the way around the
        app. Nothing here is mode-scoped — the menu is the same in both. -->
   <link rel="stylesheet" href="styles/account-menu.css?v=2" />
-  <link rel="stylesheet" href="styles/instructor-review.css?v=2" />
+  <link rel="stylesheet" href="styles/instructor-review.css?v=3" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
@@ -991,32 +991,26 @@
            #ir-kg-frame and puts it back on the way out, the same move
            concept-graph/why-graph.js makes for the landing page's maximise.
            So there is no canvas in here, only the frame the real one lands in
-           and the flag controls a learner never sees. Full-bleed under the
-           topbar (styles/instructor-review.css), because reviewing sequencing
-           means seeing the whole network at once. -->
+           and the toolbar a learner never sees. Full-bleed under the topbar
+           (styles/instructor-review.css), because reviewing sequencing means
+           seeing the whole network at once.
+
+           The INSPECTOR is not here either. instructor-graph-edit.js builds it
+           inside the frame at attach time, because it has to be re-parented
+           into whichever `.kg2-graph` overlay layer arrived with the borrowed
+           graph — markup in this file would be a second, permanently empty
+           copy sitting outside it. -->
       <section class="ir-view hidden" id="ir-graph">
         <div class="ir-kg">
           <div class="ir-kg-bar">
             <button class="ghost" id="ir-kg-exit" type="button">&larr; Choose review type</button>
-            <span class="ir-hint ir-kg-hint" id="ir-panel-hint">Tap a bubble to read its lesson. Tap an arrow to flag a prerequisite.</span>
-            <button class="ghost" id="ir-flag-concept" type="button" disabled>Flag this concept</button>
-            <button class="ghost" id="ir-missing-edge" type="button">Propose a missing edge</button>
+            <span class="ir-hint ir-kg-hint" id="ir-panel-hint">Tap an arrow to inspect it.</span>
+            <button class="ghost" id="ir-flag-concept" type="button" disabled>Inspect this concept</button>
+            <button class="ghost" id="ir-missing-edge" type="button">Connect two concepts</button>
           </div>
           <div class="ir-kg-frame" id="ir-kg-frame">
             <div class="ir-graph-status" id="ir-graph-status">Loading the lesson graph&hellip;</div>
           </div>
-          <!-- Floats over the canvas rather than taking a third column: the
-               graph already ships a lesson pane on its right, and a second
-               permanent aside would leave the map itself the narrowest thing
-               on an instructor's screen. -->
-          <aside class="ir-panel hidden" id="ir-form">
-            <div id="ir-form-target"></div>
-            <div id="ir-form-tags"></div>
-            <textarea id="ir-form-note" maxlength="5000"
-              placeholder="Optional note &mdash; why, or what it should be instead&hellip;"></textarea>
-            <button class="primary" id="ir-form-send" type="button">Send feedback</button>
-            <span class="ir-form-status hidden" id="ir-form-status"></span>
-          </aside>
         </div>
       </section>
     </div>
@@ -1840,10 +1834,16 @@ t.manual_seed(0)
        notes are `resize: none; overflow-y: hidden` in
        styles/instructor-review.css and styles/practice/feedback.css, so with
        this file missing a long note is a clipped box with no scrollbar and no
-       drag handle. instructor-review.js's openForm also calls
+       drag handle. instructor-graph-edit.js's inspector also calls
        window.DDAutoGrow.grow. Grows any textarea[data-autogrow]. -->
   <script src="autogrow.js?v=1"></script>
-  <script src="instructor-review.js?v=2"></script>
+  <!-- BEFORE instructor-review.js: that file hands the borrowed cytoscape to
+       window.DDGraphEdit the moment the graph lands in its frame, and a door
+       opened before this parsed would host a graph with no editor on it (the
+       "graph editor didn't load" status, not a crash). Both are plain scripts,
+       so source order IS load order. -->
+  <script src="instructor-graph-edit.js?v=1"></script>
+  <script src="instructor-review.js?v=3"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->
