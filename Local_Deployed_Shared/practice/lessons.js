@@ -489,6 +489,36 @@ const LessonGate = (() => {
       if (!questionText || !editor) return false;
 
       document.body.classList.add("lesson-mode");
+
+      /* 🔴 THE GATE OWNS THE SCREEN IT RENDERS INTO, and until 2026-08-27 it
+         did not. Everything below draws into `#question-text`, which lives
+         inside `.practice-split` — and `styles/practice/timer.css` sets
+         `#page-practice.session-idle .practice-split { display: none }`. So a
+         gate that fired while the practice page was IDLE rendered a whole
+         lesson into a display:none box and returned TRUE, telling its caller
+         the learner was reading something. They were looking at the idle dial.
+
+         `resume()` is exactly that caller. It restores the saved question,
+         asks the gate, and hands `_resumeCore` over as `onDone` — and
+         `_resumeCore` is the only thing that takes `session-idle` off. So the
+         one Continue button on the idle screen led to a screen that never
+         changed, with an invisible lesson behind it and no way back into the
+         session but a reload. Seth, 2026-08-27: "once I pressed the button to
+         continue practice, the top bar completely disappears".
+
+         Cleared HERE rather than in `resume()` because it is true of every
+         caller: a lesson on screen is a screen, whoever asked for it. The two
+         paths that already clear it (timer.js `start()`, and the `?lesson=`
+         bootstrap at the foot of this file) are unaffected — removing a class
+         that is not there is not an error.
+
+         🔴 AND ONLY THIS CLASS. The gate does not switch tabs and does not
+         unhide the page: `#page-practice.hidden` means the learner is reading
+         something else, and yanking them out of it is not the gate's call.
+         This is the point of no return — every path above it has already
+         returned false — so the screen is opened exactly when a lesson is
+         actually about to be drawn on it. */
+      _el("page-practice")?.classList.remove("session-idle");
       let index = 0;
       let finished = false;
       // KPs whose worked example the learner actually read through to the end.
