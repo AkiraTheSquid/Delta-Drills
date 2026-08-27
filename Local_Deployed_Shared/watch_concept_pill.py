@@ -397,6 +397,37 @@ def check_concept_pill():
         "else means the chip survives a pause and a tab switch unchanged"
     )
 
+    # ── A LESSON ON SCREEN IS A SCREEN ─────────────────────────────
+    # The gate draws into #question-text, which is inside .practice-split, and
+    # styles/practice/timer.css sets
+    # `#page-practice.session-idle .practice-split { display: none }`. A gate
+    # that fires while the page is idle therefore renders a whole lesson into a
+    # display:none box and returns TRUE, telling its caller the learner is
+    # reading. timer.js `resume()` is exactly that caller: it hands _resumeCore
+    # over as onDone, and _resumeCore is the only thing that takes
+    # `session-idle` off — so Continue led to a screen that never changed, with
+    # an invisible lesson behind it and no way back but a reload.
+    lessons_code = _code(_read("practice", "lessons.js"))
+    gate = re.search(r'classList\.add\("lesson-mode"\).*?showPage\(\);', lessons_code, re.S)
+    assert gate, (
+        "practice/lessons.js: could not find the gate body between "
+        "`lesson-mode` and its first showPage() — this guard can no longer see "
+        "the screen it opens"
+    )
+    assert re.search(r'"page-practice"\)\??\.classList\.remove\("session-idle"\)', gate.group(0)), (
+        "the lesson gate must clear `session-idle` on #page-practice before it "
+        "draws. Its own screen lives inside .practice-split, which that class "
+        "hides, so without this the gate renders a lesson nobody can see and "
+        "tells its caller the learner is reading it"
+    )
+    # And ONLY that: unhiding the page would yank a learner out of whatever tab
+    # they are actually reading.
+    assert not re.search(r'"page-practice"\)\??\.classList\.remove\("hidden"\)', gate.group(0)), (
+        "the lesson gate must NOT unhide #page-practice. `hidden` means the "
+        "learner is on another tab, and pulling them off it is not the gate's "
+        "call"
+    )
+
     # ── RESUMING A SESSION KEEPS THE CONCEPT ───────────────────────
     # `buildPracticeQuestionFromBank` maps a BANK record to the render shape,
     # and the bank has no ladder_kc / ladder_stage / ladder_kc_title - those
