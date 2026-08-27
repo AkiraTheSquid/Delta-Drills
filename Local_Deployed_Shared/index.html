@@ -1893,8 +1893,11 @@ t.manual_seed(0)
   <script src="practice/ui.js?v=38"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
-  <script src="practice/api.js?v=24"></script>
-  <script src="practice/timer.js?v=19"></script>
+  <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
+       DDFeedbackQueue at module scope. -->
+  <script src="practice/feedback-queue.js?v=1"></script>
+  <script src="practice/api.js?v=25"></script>
+  <script src="practice/timer.js?v=20"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
        behind a transparent-text textarea, plus name-only ghost autocomplete.
@@ -1919,7 +1922,7 @@ t.manual_seed(0)
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=1"></script>
+  <script src="concept-pill.js?v=2"></script>
   <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
@@ -1938,7 +1941,7 @@ t.manual_seed(0)
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=1"></script>
   <script src="practice/events.js?v=38"></script>
-  <script src="practice/feedback-panel.js?v=2"></script>
+  <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-results.js?v=3"></script>

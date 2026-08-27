@@ -31,9 +31,9 @@ def _slice(text, start_marker, end_marker):
 def _css_rules(css):
     """(selector, body) for every top-level rule, selectors joined across lines.
 
-    Not a parser — nested at-rules keep their inner braces in `body`, which is
-    fine here: every caller asks what a selector matches and whether its body
-    hides something.
+    At-rules are containers, not rules: their inner rules are returned
+    individually, so a selector nested in an @media block is checked like any
+    other.
     """
     out = []
     depth = 0
@@ -51,7 +51,16 @@ def _css_rules(css):
         elif ch == "}":
             depth -= 1
             if depth == 0:
-                out.append((" ".join("".join(sel).split()), "".join(body)))
+                selector = " ".join("".join(sel).split())
+                inner = "".join(body)
+                if selector.startswith("@"):
+                    # 🔴 An at-rule is a CONTAINER. Recording @media as the
+                    # selector hides every rule inside it, so a
+                    # body.dd-basic-mode { display: none } nested in a media
+                    # query slipped the check entirely (codex, round 4).
+                    out.extend(_css_rules(inner))
+                else:
+                    out.append((selector, inner))
                 sel, body = [], []
                 continue
         (body if depth else sel).append(ch)
@@ -82,6 +91,13 @@ def check_a_learner_can_always_report_a_broken_problem():
     #    broken across two lines, which is how anyone would write a long one —
     #    it would have missed the exact regression it was written for (codex,
     #    round 3).
+    # The reader itself must see INTO at-rules, or every assertion below is
+    # one @media wrapper away from vacuous.
+    _probe = _css_rules("@media (max-width: 900px) { body.dd-basic-mode #x { display: none; } }")
+    assert _probe and _probe[0][0] == "body.dd-basic-mode #x", (
+        "_css_rules stopped recursing into at-rules, so a rule nested in an "
+        "@media block is invisible to every check in this file: %r" % (_probe,)
+    )
     hidden_in_basic = [
         sel.strip() for sel, body in _css_rules(basic)
         if "dd-basic-mode" in sel and "problem-feedback" in sel
@@ -239,17 +255,34 @@ def check_feedback_that_never_left_the_browser_is_not_called_logged():
     """
     api = read(os.path.join(HERE, "api.js"))
     panel = read(os.path.join(HERE, "feedback-panel.js"))
+    queue = read(os.path.join(HERE, "feedback-queue.js"))
+    index_html = read(os.path.join(SHARED, "index.html"))
+
+    # 0. The delivery module is LOADED, and loaded before its caller: api.js
+    #    calls DDFeedbackQueue at module scope, so the wrong order is a boot
+    #    ReferenceError that takes the whole practice API with it.
+    assert "practice/feedback-queue.js" in index_html, (
+        "index.html does not load practice/feedback-queue.js — api.js "
+        "references DDFeedbackQueue at module scope, so nothing in the "
+        "practice API parses"
+    )
+    assert index_html.index("practice/feedback-queue.js") < index_html.index(
+        "practice/api.js"
+    ), (
+        "practice/feedback-queue.js loads AFTER practice/api.js, which "
+        "references DDFeedbackQueue at module scope"
+    )
 
     # 1. Both queues are DRAINED on the next report that reaches the server.
     for key, path in (
         ("problem_feedback_queue", "/api/practice/problem-feedback"),
         ("lesson_feedback_queue", "/api/practice/lesson-feedback"),
     ):
-        assert '_flushFeedbackQueue("%s", "%s")' % (key, path) in api, (
+        assert 'DDFeedbackQueue.flush("%s", "%s")' % (key, path) in api, (
             "nothing drains %s — feedback written offline stays in that one "
             "browser forever" % key
         )
-    flush = _slice(api, "const _flushFeedbackQueue", "const FEEDBACK_QUEUES")
+    flush = _slice(queue, "const _flushFeedbackQueue", "  /* Drain whatever")
     assert "localStorage.setItem(key, JSON.stringify(remaining))" in flush, (
         "the flush never writes the queue back, so a delivered entry is re-sent forever"
     )
@@ -269,7 +302,7 @@ def check_feedback_that_never_left_the_browser_is_not_called_logged():
     # 1b. Signing in reloads the app, so a boot drain is what makes the
     #     panel's promise ('it sends when you are signed in') true. Without
     #     it a queued report only leaves once a SECOND report is filed.
-    assert "flushFeedbackQueues" in api, (
+    assert "flushFeedbackQueues" in api and "flushAll" in queue, (
         "nothing drains the queues on load — a learner who queues one report "
         "and signs in never sends it, which the status line promises they do"
     )
@@ -279,7 +312,7 @@ def check_feedback_that_never_left_the_browser_is_not_called_logged():
     #     only one of them checks (it did; the mutation survived).
     for key in ("problem_feedback_queue", "lesson_feedback_queue"):
         fallback = _slice(
-            api, 'const stored = _queueFeedback("%s"' % key, "},",
+            api, 'const stored = DDFeedbackQueue.queue("%s"' % key, "},",
         )
         assert "stored ?" in fallback and "{ success: false }" in fallback, (
             "the %s fallback claims queuedLocally without checking that "
@@ -324,3 +357,68 @@ def check_feedback_that_never_left_the_browser_is_not_called_logged():
         "the lesson key is defined more than once — the draft-clearing rule "
         "and the in-flight-send rule have to agree on what one lesson is"
     )
+
+    # 6. The box stays editable while the request is in flight. Clearing on
+    #    completion without checking what is in it now loses a sentence the
+    #    learner added about the SAME question (codex, round 4).
+    assert panel.count("if (!stillSent) return;") == 2, (
+        "a send path clears the panel without checking the note and tag are "
+        "still exactly what it sent — an edit made during the send is lost"
+    )
+
+    # 7. A queue longer than one batch comes back for the rest.
+    assert "if (more) await _flushFeedbackQueue(key, path, round + 1);" in queue, (
+        "the drain stops after one batch and never returns — a long-offline "
+        "learner strands everything past the first 50 reports"
+    )
+    # ...but it must also STOP. Unbounded recursion turned one boot with a
+    # corrupt, never-shrinking queue into thousands of requests (codex, split
+    # review: feedback).
+    assert "round + 1 < _FLUSH_ROUNDS" in queue, (
+        "the drain repeats without a ceiling — a queue that never shrinks "
+        "makes one page load issue requests forever"
+    )
+
+    # 8. A queue lives in one BROWSER, which more than one person can sign
+    #    into. Sending the previous person's report under the next account
+    #    misattributes it and shows it back to the wrong learner.
+    assert "_readQueue(key).filter(_sendableHere)" in queue, (
+        "the drain no longer filters by the account that wrote each entry — "
+        "a report typed by the previous person in this browser is filed, and "
+        "shown back, under the next account. (Pin the CALL: leaving "
+        "_sendableHere defined but unused passed this check.)"
+    )
+    assert "account: _currentAccount()" in queue, (
+        "queued feedback is no longer stamped with the account that wrote it"
+    )
+
+    # 9. A retry must be recognisable as the SAME report. Without a stable id
+    #    a lost response, or a tab closed mid-drain, files it twice — and for
+    #    an actionable tag that queues the same AI repair twice.
+    assert api.count("client_id: DDFeedbackQueue.clientId()") == 2, (
+        "a report is sent without a stable client_id, so a retry is stored as "
+        "a second, separate report"
+    )
+    if os.path.isfile(_BACKEND_ROUTER):
+        router = read(_BACKEND_ROUTER)
+        assert 'e.get("client_id") == client_id' in router, (
+            "the backend appends a replayed report again instead of ignoring "
+            "the client_id it already stored"
+        )
+        # 🔴 Read-modify-write with no lock loses one of two concurrent
+        #    submissions, and a truncating write lets a reader see an empty
+        #    file and overwrite the history.
+        # The ACQUISITION, specifically. `fcntl.flock` also appears in the
+        # release, so asserting the bare name passed a tree whose lock was
+        # never taken.
+        assert "fcntl.flock(handle, fcntl.LOCK_EX)" in router, (
+            "the feedback log is read, appended and rewritten without taking "
+            "an exclusive lock — two concurrent submissions lose one of the two"
+        )
+        assert "with _log_lock(path):" in _fn_body(router, "def _append_entry"), (
+            "_append_entry no longer runs its read-modify-write under the lock"
+        )
+        assert "os.replace(tmp, path)" in router, (
+            "the log is written in place, so a concurrent reader can see a "
+            "half-written file, read it as empty and overwrite the history"
+        )

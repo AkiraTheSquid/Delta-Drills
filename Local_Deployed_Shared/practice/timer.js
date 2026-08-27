@@ -536,7 +536,41 @@ const PracticeSession = (() => {
           ? getQuestionFromBank(Number(pausedState.questionId))
           : null;
       if (!bankQ) return false;
-      const restored = buildPracticeQuestionFromBank(bankQ);
+      /* 🔴 THE LADDER FIELDS ARE NOT IN THE BANK, so rebuilding from it alone
+         LOSES them. `buildPracticeQuestionFromBank` maps a bank record to the
+         render shape and the bank has no `ladder_kc` / `ladder_stage` /
+         `ladder_kc_title` — those come from the backend queue, per served
+         question. Rebuilding from the bank therefore handed `renderQuestion` a
+         question with no concept on it, and `LadderUI.decorate` reads exactly
+         those two fields: no kc, no stage, so `StageLadder.hide()`. Resuming a
+         paused session took the concept off the screen — the heading fell back
+         to the subtopic, the ladder card went, and the topbar's concept pill
+         went with it — and it only came back at the NEXT question, which is
+         served by the queue and carries the fields again. Seth, 2026-08-27:
+         "once I pressed the button to continue practice, the top bar
+         completely disappears ... only appears again after going to the next
+         problem."
+
+         The saved question is the one place those fields still exist: `api.js`
+         writes the whole served question into `practiceProgress.currentQuestion`
+         and `storage.js` persists it, so it survives a reload the same way the
+         snapshot does. `hydrateSavedPracticeQuestionFromBank` is the function
+         built for this exact pair — it spreads the saved question FIRST and
+         then overwrites every artifact field from the bank, so the bank stays
+         authoritative for the question itself (a re-authored prompt still
+         wins) and only the fields the bank has no opinion about survive.
+
+         Falls back to the plain build when the saved question is missing or is
+         a different question, which is the behaviour this had before. A resume
+         with no ladder context is worse than one with it; it is not broken. */
+      const saved = practiceProgress.currentQuestion;
+      const canHydrate =
+        typeof hydrateSavedPracticeQuestionFromBank === "function" &&
+        saved &&
+        String(saved.question_id ?? "") === String(pausedState.questionId);
+      const restored = canHydrate
+        ? hydrateSavedPracticeQuestionFromBank(saved)
+        : buildPracticeQuestionFromBank(bankQ);
       PracticeAPI.currentQuestion = restored;
       practiceProgress.currentQuestion = restored;
       practiceProgress.currentQuestionId = restored.question_id;

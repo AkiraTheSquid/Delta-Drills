@@ -162,6 +162,56 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-27 (later) — the concept pill stopped flickering: it is down when
+  there is no question on screen, and a resume no longer loses the concept.**
+  Changed: `concept-pill.js`, `practice/timer.js`, `watch_concept_pill.py`.
+
+  Seth: "whenever I first joined the page the top bar wasn't there and then it
+  took like a second later before the top bar appeared. And then once I pressed
+  the button to continue practice, the top bar completely disappears … the top
+  progress bar only appears again after going to the next problem." Two
+  separate causes, one visible symptom.
+
+  🔴 **Resuming a paused session threw the ladder fields away.**
+  `timer.js:_restoreSavedQuestion` rebuilt the saved question with
+  `buildPracticeQuestionFromBank`, and the BANK has no `ladder_kc` /
+  `ladder_stage` / `ladder_kc_title` — those are per-served-question, from the
+  backend queue. So `renderQuestion` got a question with no concept on it,
+  `LadderUI.decorate` found no kc, and `StageLadder.hide()` took the concept
+  off the screen for the whole of the resumed question: the topbar chip, the
+  ladder card, and the heading (which fell back to the subtopic) together. It
+  came back at the next question because that one is served by the queue. The
+  fix prefers `hydrateSavedPracticeQuestionFromBank` — the function built for
+  exactly this pair, which spreads the saved question first and then overwrites
+  every artifact field from the bank, so the bank stays authoritative for the
+  question and only the fields it has no opinion about survive. Gated on the
+  saved question being THIS question, and it falls back to the plain build.
+
+  🔴 **The chip drew whether or not a question was on screen.** The ladder
+  publishes per QUESTION and knows nothing about tabs or the idle screen, and
+  it renders once in the background at load (timer.js `start()`: "nothing about
+  the one rendered in the background at init is recorded") — which is the
+  second-late pop-in on a cold load, for a question nobody had asked for. It
+  also stayed up across the Notebooks and Account tabs. `concept-pill.js` now
+  reads the same two facts `styles/practice/timer.css` uses to hide the ladder
+  card itself: `#page-practice.hidden` (another tab) and
+  `#page-practice.session-idle` (the practice page with no question on it,
+  which a lesson page correctly clears). A CSS rule cannot do this — the chip
+  is in the topbar, a sibling of every page, so no selector rooted at
+  `#page-practice` reaches it. A MutationObserver on that one class is the
+  other half: a pause and a tab switch change nothing about the READING, so the
+  ladder never fires for either.
+
+  🔑 `hidden` is also the class the chip puts on ITSELF, so the guards are
+  scoped to `_onScreen` and to the observer block rather than to the file.
+  11 new mutations, all biting.
+
+  ⚠️ Found while fixing this, NOT fixed: `practice/kc-practice.js` builds its
+  queue items with the same bank builder, so the single-KC lesson ladder has
+  the same gap. It supplies its own `StageLadder.show`, so it does not show the
+  same symptom; it is still a second place where a rebuilt question has no
+  ladder fields.
+
 - **2026-08-27 — the concept under test moved into the topbar as a bar that
   fills, and the session clock went back to being a notch.** New:
   `concept-pill.js`, `styles/concept-pill.css`, `watch_concept_pill.py`.
