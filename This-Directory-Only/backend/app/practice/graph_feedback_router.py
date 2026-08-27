@@ -5,7 +5,8 @@ sibling to problem_feedback_router.py.
 Lets an instructor (anyone with instructor feedback mode on — it is a workflow
 choice, not a privilege) flag the STRUCTURE of the concept graph: an edge that
 points the wrong way or should not exist, a node that is mislabeled or filed
-under the wrong topic, or an edge that is MISSING between two concepts. This is
+under the wrong topic, an edge that is MISSING between two concepts, or a
+concept that is missing altogether. This is
 sequencing feedback (is the *graph* right?), NOT content feedback about any one
 question (that is problem_feedback_router.py) and NOT the difficulty rating
 that feeds the adaptive engine (feedback_router.py).
@@ -22,7 +23,16 @@ Endpoints (mounted under /api/practice by the parent router):
   POST /graph-feedback -> append one entry
   GET  /graph-feedback -> list this user's entries (newest first)
 
-Node/edge ids are the string ids from concept-graph/graph-viz.json. They are
+`missing_node` is the one kind whose `source` is not an id that exists: the
+instructor drew a concept the curriculum does not have yet, so `source` carries
+the client-minted placeholder id it was drawn under ("new:<slug>"), `label`
+carries what they named it, and `target` names the existing concept it was
+drawn hanging off — which is the proposed placement, so a maintainer can accept
+the concept and reject where it went. The connecting arrow is NOT a second
+`missing_edge` row: an edge to a concept that does not exist yet is not a claim
+anyone can act on separately.
+
+Node/edge ids are the string ids from the graph named in `graph`. They are
 NOT validated against the live graph on purpose: the frontend bakes a graph
 snapshot, the backend's may differ mid-deploy, and a flag on a node that was
 just renamed is exactly the feedback worth keeping.
@@ -46,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-GraphFeedbackKind = Literal["edge", "node", "missing_edge"]
+GraphFeedbackKind = Literal["edge", "node", "missing_edge", "missing_node"]
 
 # One flat tag vocabulary across kinds; the frontend offers the subset that
 # makes sense for what was tapped. "proposed" is the missing_edge submission
@@ -83,6 +93,11 @@ class GraphFeedbackRequest(BaseModel):
     # cannot be read a month later. Optional so an older client, and every
     # entry already on disk, stays valid.
     graph: Optional[GraphNamespace] = None
+    # What a PROPOSED concept was named. Only `missing_node` fills it — every
+    # other kind names things that already exist, and their label is whatever
+    # the registry says today, which is the reading a maintainer should get
+    # rather than a snapshot of what it said when the flag was filed.
+    label: Optional[str] = Field(default=None, max_length=200)
 
 
 class GraphFeedbackEntry(BaseModel):
@@ -93,6 +108,7 @@ class GraphFeedbackEntry(BaseModel):
     tag: str
     note: str = ""
     graph: Optional[str] = None
+    label: Optional[str] = None
     timestamp: str
 
 
@@ -136,8 +152,20 @@ def submit_graph_feedback(
     """Append one graph-structure flag. Append-only; nothing else moves."""
     if payload.kind in ("edge", "missing_edge") and not (payload.target or "").strip():
         raise HTTPException(status_code=422, detail="target is required for edge feedback")
-    if payload.kind == "missing_edge" and payload.tag != "proposed":
-        raise HTTPException(status_code=422, detail="a missing edge is submitted as tag=proposed")
+    if payload.kind in ("missing_edge", "missing_node") and payload.tag != "proposed":
+        raise HTTPException(status_code=422, detail="a missing edge or node is submitted as tag=proposed")
+    # A proposed concept's `source` is a placeholder id this request minted, so
+    # the NAME is the only part of it anyone can act on. Without it the entry is
+    # a row saying a concept is missing without saying which — unreadable a
+    # month later, and indistinguishable from a client bug.
+    if payload.kind == "missing_node":
+        if not (payload.label or "").strip():
+            raise HTTPException(status_code=422, detail="label is required for a proposed concept")
+        # And where it goes. A concept with no placement is a wish, not a
+        # proposal — a maintainer cannot accept or reject it, and the client
+        # always has one (a proposed concept is drawn hanging off a bubble).
+        if not (payload.target or "").strip():
+            raise HTTPException(status_code=422, detail="target is required for a proposed concept")
     user_id = str(user.id)
     entries = _read_entries(user_id)
     entry = {
@@ -148,6 +176,7 @@ def submit_graph_feedback(
         "tag": payload.tag,
         "note": payload.note.strip(),
         "graph": payload.graph or None,
+        "label": (payload.label or "").strip() or None,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
     entries.append(entry)

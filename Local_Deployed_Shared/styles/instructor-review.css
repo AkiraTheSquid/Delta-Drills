@@ -239,50 +239,203 @@ body.ir-kg-open { overflow: hidden; }
   transform: translate(-50%, -50%);
 }
 
-/* ── the flag card ────────────────────────────────────────────────
-   Floats over the bottom-left of the map instead of taking a third column.
-   The hosted graph already carries a lesson pane down its right side, and a
-   permanent aside beside it would have left the network — the thing being
-   reviewed — the narrowest panel on the screen. It only exists while
-   something is selected, so nothing is covered while you are reading.
+/* ── the ✛ handle ─────────────────────────────────────────────────
+   Cytoscape draws to a canvas, so there is no DOM per node to hang this off:
+   instructor-graph-edit.js positions it from the node's rendered box and
+   re-places it on pan, zoom and drags. It lives in `.kg2-graph`, the overlay
+   layer the Fit control and the legend already sit in, so it inherits that
+   stacking context.
 
-   `:not(.hidden)` because `.hidden { display: none }` (components.css) has
-   the same specificity as a bare `.ir-panel`, and which one won would then
-   depend on stylesheet order. */
-.ir-panel:not(.hidden) {
+   z-index 4: OVER the canvas, UNDER `.kg2-controls` and `.kg2-legend` (both 5
+   in styles/how-it-works.css). Those are the graph's own furniture, one half
+   of it clickable — a handle that landed on the Fit button or the
+   Mastery/Lessons switch and swallowed the press would break the map for the
+   sake of an instructor affordance. Overlap is rare (top-right and
+   bottom-left corners); when it happens the fixed control wins. The dock
+   (z-index 20) is above both, and a node under it is hidden anyway.
+
+   `translate(-50%, -115%)` hangs it just clear of the node's TOP edge, which
+   is the edge Seth asked for and — under dagre's rankDir BT — the side the
+   things a concept unlocks are drawn on. */
+.ir-handle {
+  align-items: center;
+  background: #3ddc84;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  color: #10331f;
+  cursor: crosshair;
   display: flex;
-}
-.ir-panel {
-  backdrop-filter: blur(6px);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  border: 1px solid var(--border-strong);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  flex-direction: column;
-  gap: 12px;
-  left: 14px;
-  max-height: min(62%, 460px);
-  overflow-y: auto;
-  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  height: 26px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
   position: absolute;
-  /* Vertically CENTRED on the left edge, not docked to a corner. Both corners
-     on that side are already taken by the hosted graph's own furniture: the
-     no-data notice at the top, and the mastery legend sitting on top of the
-     learner-model dock at the bottom (styles/how-it-works.css). The middle is
-     the one band nothing else claims at any pane height. */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 320px;
-  /* Above the dock (z-index 20), which is opaque and would otherwise cut the
-     card off at its top edge — the send button was the half that vanished. */
+  touch-action: none;   /* the drag is ours; a phone must not pan the page with it */
+  transform: translate(-50%, -115%);
+  width: 26px;
+  z-index: 4;
+}
+.ir-handle:hover { filter: brightness(1.12); }
+
+/* The rubber band during a ✛ drag. Never a hit target — a pointer test
+   against it would shadow the bubble the instructor is aiming at. */
+.ir-band {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 3;
+}
+
+/* ── the inspector ────────────────────────────────────────────────
+   RIGHT-hand side, per Seth ("it should show the information about it on the
+   right, and you should be able to have the options on the right sidebar").
+
+   It OVERLAYS the hosted graph's lesson pane rather than taking a third
+   column. The pane is the reason tapping a bubble is worth doing, and the map
+   is the thing being reviewed — a permanent third column would have made the
+   network the narrowest panel on the screen. An edge has no lesson behind it,
+   so for the selection that needs this room the pane underneath has nothing
+   to say anyway; closing the inspector hands it straight back.
+
+   `:not(.hidden)` because `.hidden { display: none }` (components.css) has the
+   same specificity as a bare `.ir-insp`, and which one won would then depend
+   on stylesheet order. */
+.ir-insp:not(.hidden) { display: flex; }
+.ir-insp {
+  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border-left: 1px solid var(--border-strong);
+  bottom: 0;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: min(360px, 42%);
+  /* Above the learner-model dock (z-index 20 in styles/how-it-works.css),
+     which is opaque and would otherwise cut this panel off at its top edge. */
   z-index: 30;
 }
-#ir-form-target { font-size: 0.95rem; line-height: 1.4; }
-#ir-form-tags { display: flex; flex-direction: column; gap: 6px; }
-/* Same behaviour as the question note, smaller numbers: this one lives in
-   a 320px floating card, so its measure is the card and there is no room to
-   open at four lines. It still grows as you type. */
-#ir-form-note {
+.ir-insp-head {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  justify-content: space-between;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  padding: 9px 12px;
+  text-transform: uppercase;
+}
+.ir-insp-x {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 2px 4px;
+}
+.ir-insp-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px;
+}
+.ir-insp-title { font-size: 1.05rem; font-weight: 600; line-height: 1.35; }
+.ir-arrow { opacity: 0.6; }
+.ir-insp-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+.ir-warn { color: #ffb454; }
+
+/* Direction: three states of one fact, so they read as one control rather
+   than three buttons that happen to be adjacent. */
+.ir-dirs { display: flex; flex-direction: column; gap: 6px; }
+.ir-dir {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 7px 10px;
+  text-align: left;
+}
+.ir-dir:hover { border-color: var(--accent, currentColor); }
+.ir-dir--on { border-color: #3ddc84; font-weight: 600; }
+
+.ir-insp-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ir-danger { border-color: color-mix(in srgb, #e3212c 55%, var(--border)); }
+.ir-danger:hover { border-color: #e3212c; }
+.ir-tags { display: flex; flex-direction: column; gap: 6px; }
+
+#ir-new-name {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: inherit;
+  font: inherit;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+/* The ledger. Every proposal is undoable from here and not only from the
+   element it was made on — a deleted edge has no arrow left to click. */
+.ir-ledger { display: flex; flex-direction: column; gap: 5px; list-style: none; margin: 0; padding: 0; }
+.ir-ledger li {
+  align-items: flex-start;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  font-size: 0.88rem;
+  gap: 8px;
+  justify-content: space-between;
+  line-height: 1.35;
+  padding: 7px 9px;
+}
+/* Sent, not gone: the proposal is still drawn on the map, so the row stays —
+   struck through, and out of the Send button's count. */
+.ir-ledger li.is-sent { opacity: 0.55; }
+.ir-ledger li.is-sent span { text-decoration: line-through; }
+.ir-undo {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  opacity: 0.55;
+  padding: 0 2px;
+}
+.ir-undo:hover { opacity: 1; }
+.ir-count {
+  background: #3ddc84;
+  border-radius: 999px;
+  color: #10331f;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+.ir-insp-status { font-size: 0.85rem; opacity: 0.85; }
+
+/* Same behaviour as the question note, smaller numbers: this one lives in a
+   360px panel, so its measure is the panel and there is no room to open at
+   four lines. It still grows as you type (autogrow.js). */
+#ir-insp-note {
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -291,7 +444,7 @@ body.ir-kg-open { overflow: hidden; }
   font: inherit;
   font-size: 15px;
   line-height: 1.55;
-  min-height: 92px;
+  min-height: 84px;
   overflow-y: hidden;
   padding: 9px 11px;
   resize: none;
@@ -299,15 +452,13 @@ body.ir-kg-open { overflow: hidden; }
 
 @media (max-width: 800px) {
   .ir-chooser { flex-direction: column; }
-  /* Narrow, the card stops floating over a map that has no room to spare and
-     takes the bottom of the screen instead. */
-  .ir-panel {
-    border-radius: 14px 14px 0 0;
-    bottom: 0;
-    left: 0;
-    max-height: 55%;
+  /* Narrow, the inspector stops being a sidebar over a map that has no room
+     to spare and takes the bottom of the screen instead. */
+  .ir-insp {
+    border-left: none;
+    border-top: 1px solid var(--border-strong);
+    height: 58%;
     top: auto;
-    transform: none;
     width: 100%;
   }
 }
