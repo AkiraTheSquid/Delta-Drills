@@ -186,6 +186,7 @@ const DDFeedbackPanel = (() => {
     }
     const note = problem.note ? problem.note.value.trim() : "";
     const subject = question.question_id;
+    const tag = problem.tag;
     problem.sending = true;
     if (problem.sendBtn) problem.sendBtn.disabled = true;
     _setStatus(problem.status, "Sending…", false);
@@ -202,6 +203,11 @@ const DDFeedbackPanel = (() => {
          NEXT question, and the status line would describe a send they cannot
          see the subject of. If the screen moved, this completion is silent. */
       if (_currentQuestionId() !== subject) return;
+      /* 🔴 And the box stays editable while the request is in flight, so the
+         learner can add a sentence about the SAME question. Clear only what
+         is still exactly what was sent. */
+      const stillSent = (problem.note ? problem.note.value.trim() : "") === note
+        && problem.tag === tag;
       // Say which of the outcomes happened. A queued repair is picked up by
       // the local runner, which may not be running this minute.
       // queuedLocally means it never left this browser — saying "logged ✓"
@@ -217,6 +223,7 @@ const DDFeedbackPanel = (() => {
         said = "Thanks — logged ✓ and queued for a rewrite";
       }
       _setStatus(problem.status, said, false);
+      if (!stillSent) return;
       _clearNote(problem.note);
       _clearChips(problem.chips);
       problem.tag = "";
@@ -298,6 +305,7 @@ const DDFeedbackPanel = (() => {
     }
     const note = lesson.note ? lesson.note.value.trim() : "";
     const subject = _lessonKey(lesson.context);
+    const tag = lesson.tag;
     lesson.sending = true;
     if (lesson.sendBtn) lesson.sendBtn.disabled = true;
     _setStatus(lesson.status, "Sending…", false);
@@ -312,6 +320,8 @@ const DDFeedbackPanel = (() => {
       // Same rule as the problem panel: if the learner walked to another
       // concept while this was in flight, say nothing and clear nothing.
       if (_lessonKey(lesson.context) !== subject) return;
+      const stillSent = (lesson.note ? lesson.note.value.trim() : "") === note
+        && lesson.tag === tag;
       if (result && result.success === false) {
         _setStatus(lesson.status, "Could not save that — this browser is blocking storage.", true);
         return;
@@ -323,6 +333,7 @@ const DDFeedbackPanel = (() => {
           : "Thanks — logged ✓",
         false,
       );
+      if (!stillSent) return;
       _clearNote(lesson.note);
       _clearChips(lesson.chips);
       lesson.tag = "";

@@ -37,8 +37,11 @@ authenticates as the person whose feedback it is acting on.
 
 from __future__ import annotations
 
+import fcntl
 import json
+import os
 import logging
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Literal, Optional
 
@@ -77,6 +80,9 @@ class ProblemFeedbackRequest(BaseModel):
     note: str = Field(default="", max_length=5000)
     # For triage context: was the learner marked correct on this attempt?
     correct: Optional[bool] = None
+    # Minted by the browser when the report is written, so a queued report that
+    # is retried is recognised as the SAME report rather than filed twice.
+    client_id: str = Field(default="", max_length=64)
 
 
 # A lesson is prose, so its defects are different ones: nothing here maps onto
@@ -95,6 +101,7 @@ class LessonFeedbackRequest(BaseModel):
     question_id: Optional[int] = None
     tag: LessonFeedbackTag
     note: str = Field(default="", max_length=5000)
+    client_id: str = Field(default="", max_length=64)
 
 
 class LessonFeedbackEntry(BaseModel):
@@ -103,6 +110,7 @@ class LessonFeedbackEntry(BaseModel):
     question_id: Optional[int] = None
     tag: LessonFeedbackTag
     note: str = ""
+    client_id: Optional[str] = None
     timestamp: str
 
 
@@ -121,6 +129,7 @@ class ProblemFeedbackEntry(BaseModel):
     tag: ProblemFeedbackTag
     note: str = ""
     correct: Optional[bool] = None
+    client_id: Optional[str] = None
     timestamp: str
 
 
@@ -199,9 +208,7 @@ def _read_entries(user_id: str) -> List[dict]:
 
 
 def _write_entries(user_id: str, entries: List[dict]) -> None:
-    path = _log_file(user_id)
-    payload = {"user_id": user_id, "entries": entries}
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    _write_log(_log_file(user_id), user_id, entries)
 
 
 def _lesson_log_file(user_id: str):
@@ -222,9 +229,60 @@ def _read_lesson_entries(user_id: str) -> List[dict]:
 
 
 def _write_lesson_entries(user_id: str, entries: List[dict]) -> None:
-    path = _lesson_log_file(user_id)
+    _write_log(_lesson_log_file(user_id), user_id, entries)
+
+
+def _write_log(path, user_id: str, entries: List[dict]) -> None:
+    """Replace a log file atomically.
+
+    A plain write_text truncates first, so a concurrent reader can see an empty
+    or half-written file, decide the history is gone, and overwrite it. Write a
+    sibling and rename: on the same filesystem os.replace is atomic, and a
+    reader sees either the old file or the new one.
+    """
     payload = {"user_id": user_id, "entries": entries}
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
+
+
+@contextmanager
+def _log_lock(path):
+    """Hold an exclusive lock for one read-modify-write of `path`.
+
+    🔴 Every handler here reads the whole file, appends in memory and writes it
+    back. Two requests interleaved on that sequence lose one of the two
+    submissions — the second read happens before the first write, so the second
+    write drops it. The lock is a sibling file so it never appears in the log
+    directory listing as data.
+    """
+    lock_path = path.with_suffix(path.suffix + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(lock_path, "w") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
+def _append_entry(path, user_id: str, read, write, entry: dict) -> List[dict]:
+    """Append one entry under the lock, ignoring a replay of one already stored.
+
+    `client_id` is minted by the browser when the report is WRITTEN, so a queued
+    report that is retried carries the id it was created with. Without it a
+    response lost on the way back — or a tab closed after the server committed
+    but before the queue was rewritten — files the same report twice, and for an
+    actionable tag that means queueing the same AI repair twice.
+    """
+    with _log_lock(path):
+        entries = read(user_id)
+        client_id = entry.get("client_id")
+        if client_id and any(e.get("client_id") == client_id for e in entries):
+            return entries
+        entries.append(entry)
+        write(user_id, entries)
+        return entries
 
 
 def _require_allowlisted(user: User) -> str:
@@ -247,16 +305,17 @@ def submit_problem_feedback(
     the queue could not be written.
     """
     user_id = str(user.id)
-    entries = _read_entries(user_id)
     entry = {
         "question_id": payload.question_id,
         "tag": payload.tag,
         "note": payload.note.strip(),
         "correct": payload.correct,
+        "client_id": (payload.client_id or "").strip() or None,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    entries.append(entry)
-    _write_entries(user_id, entries)
+    entries = _append_entry(
+        _log_file(user_id), user_id, _read_entries, _write_entries, entry,
+    )
     logger.info(
         "problem_feedback user=%s q=%s tag=%s note=%r",
         user_id, payload.question_id, payload.tag, entry["note"][:120],
@@ -303,17 +362,19 @@ def submit_lesson_feedback(
     then used to rewrite it. Different subject, different log, no repair queue.
     """
     user_id = str(user.id)
-    entries = _read_lesson_entries(user_id)
     entry = {
         "kc": payload.kc.strip(),
         "lesson_title": payload.lesson_title.strip(),
         "question_id": payload.question_id,
         "tag": payload.tag,
         "note": payload.note.strip(),
+        "client_id": (payload.client_id or "").strip() or None,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    entries.append(entry)
-    _write_lesson_entries(user_id, entries)
+    entries = _append_entry(
+        _lesson_log_file(user_id), user_id, _read_lesson_entries,
+        _write_lesson_entries, entry,
+    )
     logger.info(
         "lesson_feedback user=%s kc=%s tag=%s note=%r",
         user_id, entry["kc"], payload.tag, entry["note"][:120],
