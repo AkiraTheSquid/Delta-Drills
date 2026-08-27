@@ -381,7 +381,7 @@ function renderQuestion(q, count) {
   const pending = practiceProgress.pendingFeedback;
   if (pending) {
     if (pending.questionId === q.question_id) {
-      applyPendingFeedbackState(pending);
+      applyPendingFeedbackState(pending, q);
     } else {
       practiceProgress.pendingFeedback = null;
       savePracticeProgress(practiceProgress);
@@ -591,10 +591,26 @@ function shortSubtopicName(subtopic) {
   return colon >= 0 ? subtopic.slice(colon + 2) : subtopic;
 }
 
-function applyPendingFeedbackState(pending) {
+function applyPendingFeedbackState(pending, q) {
   practiceSubmitArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("hidden");
   applyResult(!!pending.correct);
+  /* 🔴 `applyResult` alone re-opens the LEFT RAIL's copy of the answer — it
+     writes `.result-incorrect`, and basic-mode.css un-hides `.solution-section`
+     for exactly that class whenever `dd-solution-in-notebook` is absent. So a
+     restore that stopped at applyResult put the answer back in the one place
+     this feature exists to move it out of (tester, on a reload+resume: "it
+     goes back to the thing where it shows the solution below the problem
+     itself, which is not good"). Re-render it into the notebook here and the
+     class goes back on, which re-hides the rail. */
+  restoreGradedFeedbackInNotebook(
+    {
+      correct: !!pending.correct,
+      failedTests: pending.failedTests,
+      solutionCode: pending.solutionCode,
+    },
+    q || PracticeAPI.currentQuestion,
+  );
   questionMetaTop.classList.remove("hidden");
   overrideRow.classList.add("hidden");
   showNextProblemButton();
@@ -718,6 +734,81 @@ function renderFailedTests(result, question) {
 function hideFailedTests() {
   const block = document.getElementById("failed-tests-block");
   if (block) block.classList.add("hidden");
+}
+
+/* The last grade, in the two parts the felt-difficulty step does not carry.
+
+   Owned here rather than in events.js because BOTH writers live on this side
+   of the handoff: a live submit records it, and a RESTORED review re-arms it.
+   That second write is the one that is easy to miss — after a resume the page
+   is new, so the record is empty, and rating the restored question would then
+   save a `pendingFeedback` with no failed cases at all. The next reload would
+   come back with a verdict and no reason for it, which is a quieter version of
+   the same "the app doesn't show me anything" bug.
+
+   Not persisted: it only has to survive from a grade to the rating that
+   follows it in the same page, and `pendingFeedback` — which IS persisted —
+   takes a copy at that moment. */
+let lastGradedDetail = { questionId: null, failedTests: [], solutionCode: "" };
+
+function recordGradedDetail(questionId, failedTests, solutionCode) {
+  lastGradedDetail = {
+    questionId: questionId ?? null,
+    failedTests: Array.isArray(failedTests) ? failedTests : [],
+    solutionCode: solutionCode || "",
+  };
+}
+
+// Never the record for a DIFFERENT question: a rating must not save another
+// question's failed cases alongside this one's verdict.
+function gradedDetailFor(questionId) {
+  return lastGradedDetail.questionId === questionId ? lastGradedDetail : null;
+}
+
+/* Put a grade that has ALREADY happened back on screen, in the notebook.
+
+   Two paths reach this and they must not disagree, because the learner cannot
+   tell them apart: `applyPendingFeedbackState` (a plain reload lands back on a
+   rated question) and `PracticeSession` restoring a paused review (the Resume
+   button). Both used to stop at `applyResult`, which repaints the verdict and
+   nothing else — so the failed cases came back only on the session path and
+   the answer came back only in the left rail, i.e. the layout the notebook
+   solution cell replaced.
+
+   🔴 ORDER IS THE MESSAGE: failed cases first, answer second. `renderFailedTests`
+   re-parents its block into `#notebook-cells` and `showSolution` re-appends
+   itself last, so calling them in this order is what makes the column read
+   "your cells → which cases failed → what it should have been", the same as it
+   reads right after a live submit.
+
+   🔴 CALL THIS AFTER THE DRAFT IS RESTORED, never before. `DeltaNotebook.restore`
+   runs `reset`, and `reset` starts with `clearSolution()` — a solution cell
+   added first is silently swept away by the code that puts the learner's own
+   cells back. */
+function restoreGradedFeedbackInNotebook({ correct, failedTests, solutionCode: solCode }, q) {
+  // Re-arm the record for the rating that may still be ahead of this restore
+  // (a paused session resumes mid-review, with the three buttons still live).
+  recordGradedDetail(q?.question_id, failedTests, solCode || q?.solution_code || "");
+  if (correct) {
+    // A rated-correct question keeps no answer key under it: the working code
+    // on screen is the learner's own.
+    hideFailedTests();
+    window.DeltaNotebook?.clearSolution?.();
+    return;
+  }
+  renderFailedTests(
+    { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
+    q,
+  );
+  // A saved state from before this field existed has no code of its own; the
+  // question payload carries the same answer, so the restore is not lossy.
+  if (!window.DeltaNotebook?.showSolution?.(solCode || q?.solution_code || "")) return;
+  /* 🔴 A RESTORE HAS THE SAME FOLD AS A SUBMIT. The draft that comes back is
+     the learner's own long attempt, so the answer lands under it, off-screen,
+     and a resume would hand back a review whose second half is invisible —
+     the failure this feature exists to fix, arriving by the other door.
+     Instant, not smooth: nothing was on screen to animate away from. */
+  requestAnimationFrame(() => window.DeltaNotebook?.scrollToSolution?.({ instant: true }));
 }
 
 // Clear the "missed one concrete thing" affordance between questions.

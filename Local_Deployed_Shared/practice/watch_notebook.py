@@ -480,6 +480,14 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
     4. New cells go BEFORE the answer. `addCell` is reachable after a grade,
        and a plain append would bury the learner's new scratch cell under the
        solution.
+    5. A RESTORED grade goes back into the notebook, on both paths. `applyResult`
+       alone re-opens the left rail's copy (basic-mode.css keys it off
+       `.result-incorrect`), so a reload or a session resume that stops there
+       puts the answer back below the question — the layout this feature moved
+       it out of.
+    6. Appending is not showing. The answer lands below the fold of the pane,
+       under cells as tall as the learner's own code, so the submit path has to
+       scroll it into view or the screen looks unchanged by the grade.
     """
     editor = read(os.path.join(HERE, "notebook-editor.js"))
     show = re.search(r"const showSolution = .*?\n  \};", editor, re.S)
@@ -522,4 +530,71 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
     assert "clearSolution" in events, (
         "a correct resubmission never clears the solution cell — the answer to "
         "a question the learner just got right stays on screen under their code"
+    )
+
+    # 5. Both restore paths rebuild the feedback in the notebook, and both do it
+    #    AFTER the draft is back: DeltaNotebook.restore runs reset, and reset
+    #    opens with clearSolution(), so an answer put back first is swept away
+    #    by the code that returns the learner's own cells.
+    restore = re.search(
+        r"function restoreGradedFeedbackInNotebook.*?\n\}", ui, re.S)
+    assert restore, (
+        "ui.js no longer defines restoreGradedFeedbackInNotebook — the reload "
+        "and resume paths have nothing shared to rebuild a graded review with"
+    )
+    assert "showSolution" in restore.group(0) and "renderFailedTests" in restore.group(0), (
+        "the restore helper no longer puts BOTH halves of the review back; a "
+        "restored grade must read the same as a live one"
+    )
+    assert "recordGradedDetail" in restore.group(0), (
+        "a RESTORED review no longer re-arms the graded-detail record — rating "
+        "a resumed question then saves a pendingFeedback with no failed cases, "
+        "so the next reload shows a verdict with no reason for it"
+    )
+    assert "gradedDetailFor(q.question_id)" in events, (
+        "the rating step reads the graded detail without the question-id guard; "
+        "one question's failed cases can be saved next to another's verdict"
+    )
+    assert "scrollToSolution" in restore.group(0), (
+        "a restored review appends the answer under a restored draft without "
+        "scrolling to it — a long attempt puts it below the fold again, which "
+        "is the invisible-answer bug arriving through the resume door"
+    )
+    pending = re.search(r"function applyPendingFeedbackState.*?\n\}", ui, re.S)
+    assert pending and "restoreGradedFeedbackInNotebook" in pending.group(0), (
+        "a reload onto a rated question repaints the verdict without the "
+        "notebook feedback, so the left rail shows the answer again"
+    )
+    timer = read(os.path.join(HERE, "timer.js"))
+    review = re.search(r"const _restoreReview = .*?\n  \};", timer, re.S)
+    assert review and "restoreGradedFeedbackInNotebook(" in review.group(0), (
+        "resuming a paused review no longer restores the notebook answer — "
+        "this is the exact regression the Resume button showed: the solution "
+        "reappears under the question instead of under the code"
+    )
+    draft_at = review.group(0).index("_restoreDraft")
+    restore_at = review.group(0).index("restoreGradedFeedbackInNotebook")
+    assert draft_at < restore_at, (
+        "_restoreReview rebuilds the answer BEFORE restoring the draft; "
+        "DeltaNotebook.restore -> reset -> clearSolution() then deletes it"
+    )
+
+    # 6. The submit path scrolls the pane to the answer, and does it by moving
+    #    that pane rather than scrollIntoView, which drags every scrollable
+    #    ancestor (the page, the left rail) along with it.
+    reveal = re.search(r"const scrollToSolution = .*?\n  \};", editor, re.S)
+    assert reveal, "notebook-editor.js no longer defines scrollToSolution"
+    assert "scrollIntoView" not in reveal.group(0), (
+        "scrollToSolution uses scrollIntoView, which scrolls the document and "
+        "the left rail too; scroll .practice-notebook itself"
+    )
+    assert "getClientRects().length" in reveal.group(0), (
+        "scrollToSolution scrolls a pane it never checked is on screen"
+    )
+    # `DeltaNotebook?.` and not the bare name: events.js also calls an
+    # unrelated `DDColab.revealSolution`, and matching a bare identifier is how
+    # an invariant quietly starts passing on the wrong call.
+    assert "DeltaNotebook?.scrollToSolution" in events, (
+        "submitting a wrong answer appends the solution without scrolling to "
+        "it — it lands below the fold and the learner never learns it is there"
     )
