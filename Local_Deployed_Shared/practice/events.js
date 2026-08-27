@@ -249,42 +249,13 @@ feedbackButtons.forEach((btn) => {
   });
 });
 
-// Per-problem content-quality flags. One click logs immediately; the optional
-// note (if typed) rides along with whichever tag is clicked. Non-blocking —
-// never interferes with the difficulty rating or Next-problem flow.
-problemFlagButtons.forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    const q = PracticeAPI.currentQuestion;
-    if (!q) return;
-    PracticeSession.holdClock("problem-feedback-submit");
-    const tag = btn.dataset.flag;
-    const note = problemFeedbackNote ? problemFeedbackNote.value.trim() : "";
-    problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
-    btn.classList.add("flagged");
-    try {
-      const result = await PracticeAPI.reportProblem(
-        q.question_id,
-        tag,
-        note,
-        practiceProgress.lastResultCorrect,
-      );
-      if (problemFeedbackStatus) {
-        // Say which of the two things happened. A queued repair is picked up by
-        // the local runner, which may not be running this minute, so "logged ✓"
-        // alone would read as "nothing else is going to happen" right when
-        // something is — and promising a rewrite NOW would overstate it.
-        problemFeedbackStatus.textContent = result && result.improvementQueued
-          ? "logged ✓ — queued for rewrite"
-          : "logged ✓";
-        problemFeedbackStatus.classList.remove("hidden");
-      }
-    } catch (_) {
-      /* feedback is best-effort; ignore */
-    } finally {
-      PracticeSession.releaseClock("problem-feedback-submit");
-    }
-  });
-});
+/* Per-problem content-quality feedback moved to practice/feedback-panel.js on
+   2026-08-27. The chips used to POST on click, which made the note box under
+   them a decoration — anything typed after the click was never sent, and in
+   basic mode (the default) the whole row was `display:none`, so there was no
+   way to report a problem at all. Selecting a kind, writing a note and sending
+   are three separate acts now, and the panel owns all three. The clock hold
+   below stays here: it belongs to the session, not to the panel. */
 
 if (problemFeedbackNote) {
   problemFeedbackNote.addEventListener("focus", () => {
@@ -295,11 +266,19 @@ if (problemFeedbackNote) {
   });
 }
 
+/* Between questions. The panel owns its own widgets, so this asks it to clear
+   rather than reaching into them — but it still falls back to clearing them
+   directly, because a feedback panel that failed to load must not leave the
+   previous problem's note attached to the next one. */
 const _resetProblemFeedbackRow = () => {
+  if (window.DDFeedbackPanel && typeof window.DDFeedbackPanel.resetProblem === "function") {
+    window.DDFeedbackPanel.resetProblem();
+    return;
+  }
   problemFlagButtons.forEach((b) => b.classList.remove("flagged"));
   if (problemFeedbackNote) problemFeedbackNote.value = "";
   if (problemFeedbackStatus) {
-    problemFeedbackStatus.textContent = "logged ✓";
+    problemFeedbackStatus.textContent = "";
     problemFeedbackStatus.classList.add("hidden");
   }
 };

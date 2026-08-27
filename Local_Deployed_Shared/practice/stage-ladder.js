@@ -560,6 +560,42 @@ const StageLadder = (() => {
   const _render = () => {
     _renderNow();
     _renderMeter();
+    _publish();
+  };
+
+  /* ── THE TOPBAR PILL'S ONLY INPUT ──────────────────────────────────────
+
+     `concept-pill.js` draws the concept under test as a filling chip in the
+     topbar, and it must not compute anything: the fraction it draws is the
+     SAME `_overall()` this file's own bar draws, so the two can never disagree
+     about how far in the learner is. It is an event rather than a direct call
+     because the pill is app chrome that may not be on the page (the placement
+     host, the graph, any screen with no practice machinery at all) — a missing
+     listener is silence, whereas a missing global is a TypeError inside the
+     render path of the readout that IS on screen.
+
+     🔴 `pct` IS ALLOWED TO BE NULL, and null is not zero. `_overall()` returns
+     null when the rung is unknown — a KC-less item, a stage no backend sends —
+     and a bar drawn at 0% for that says "you have made no progress on this
+     concept", which is a claim about the learner rather than an admission that
+     there is no reading. The listener draws an empty track and says so.
+
+     🔴 IT ALSO TOPS OUT AT 75%, for the reason `_overall` gives: arriving at
+     Solo is not being done with the concept. The pill inherits that ceiling
+     deliberately — rescaling it to 100 here would make the chip read "finished"
+     at the exact moment the queue is still going to serve this concept. */
+  const _publish = () => {
+    const overall = _overall();
+    window.dispatchEvent(
+      new CustomEvent("dd-concept-progress", {
+        detail: {
+          kc: current.kc,
+          title: current.title,
+          stage: current.stage,
+          pct: overall === null ? null : overall * 100,
+        },
+      })
+    );
   };
 
   /* Show the readout for one concept.
@@ -692,6 +728,10 @@ const StageLadder = (() => {
     aimValue = null;
     problemValue = null;
     extraNote = "";
+    /* AFTER the reset, so the pill is told about the cleared state and not the
+       concept that just left the screen. `current.kc` is null here, which is
+       what `concept-pill.js` reads as "put the chip away". */
+    _publish();
   };
 
   /* 🔴 NO RESIZE LISTENER, deliberately. There was one: the pop-up's clamp was

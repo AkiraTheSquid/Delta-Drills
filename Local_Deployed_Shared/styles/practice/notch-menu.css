@@ -10,24 +10,51 @@
    End session is GONE, here and everywhere: a block has no length any more,
    so there is nothing to end early. Pause and resume are the two states. */
 
-/* 🔴 IT IS NOT A NOTCH ANY MORE — it is the topbar's middle cell (Seth,
-   2026-08-24: "put the timer in the top middle bar rather than as the notch").
-   The class names are unchanged on purpose: practice/notch-menu.js,
-   practice/timer.js and practice/placement-timer.js all address this thing by
-   id, and renaming the markup would have meant editing three files that had no
-   other reason to change.
+/* 🔴 IT IS A NOTCH AGAIN — and this time it hangs off the TOPBAR (Seth,
+   2026-08-27: "the timer is below the top tab and the timer is like kind of a
+   notch or whatever").
 
-   WHAT THE MOVE FIXED, beyond where it is drawn. As a notch it hung off
-   `.practice-container`, which means it TRAVELLED with the workspace: into the
+   READ THE TWO MOVES TOGETHER, because the second is not a revert of the first:
+
+     until 2026-08-24  a notch on `.practice-container`'s top edge — the seam
+                       between the two panels.
+     2026-08-24        the topbar's middle cell, in flow beside the tab strip.
+     2026-08-27        a notch on the TOPBAR's bottom edge. THIS.
+
+   What the 08-24 move fixed is kept intact. The old notch hung off
+   `.practice-container`, so it TRAVELLED with the workspace — into the
    placement host, back out, and off the screen entirely on every page that is
-   not the Learner Home. The clock is app chrome — one clock, one place,
-   whatever the learner is doing — so it belongs to the bar, not to a panel.
+   not the Learner Home. This one hangs off the bar, which is on every page and
+   never re-parents. The clock is still app chrome: one clock, one place,
+   whatever the learner is doing. Only where it is DRAWN changed, and it is
+   still the same element with the same ids, so practice/notch-menu.js,
+   practice/timer.js and practice/placement-timer.js are all untouched.
 
-   Static, not absolute: `.topbar-mid` is a centred flex row and this is one of
-   its two children (the tab strip is the other, in advanced mode only).
-   `position: relative` is what the menu below hangs from. */
+   🔴 IT IS A DIRECT CHILD OF `<header class="topbar">`, and that is deliberate
+   rather than incidental. `position: absolute` resolves against the nearest
+   POSITIONED ancestor; `.topbar` is one (`position: sticky` — a sticky box is a
+   positioned box) and the cells inside it are not. So this worked for its first
+   hour while the markup still sat in `.topbar-mid` — on a NEGATIVE invariant
+   held by every element in between, any one of which is one `position:
+   relative` away from re-anchoring the clock back INTO the bar with nothing
+   thrown and nothing to grep for. As a child of the box it is positioned
+   against there is nothing in between to get wrong. `watch_concept_pill.py`
+   parses index.html and asserts the parent.
+
+   Out of flow either way, which is what frees the middle cell: `.topbar-mid`
+   centres the tab strip (advanced mode) and the concept pill
+   (styles/concept-pill.css) with no clock between them. An absolutely-
+   positioned child of a grid container takes no column, so being a direct
+   child of the header's `1fr auto 1fr` grid costs nothing. */
 .practice-notch {
-  position: relative;
+  position: absolute;
+  /* The bar's padding box ends ON its 1px bottom border (`box-sizing:
+     border-box`, styles/base.css), so `100%` puts this element's top edge
+     exactly on that border — welded to the bar rather than floating under it,
+     which is the whole difference between a notch and a toolbar. */
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   /* Above the pages under the bar, below any modal. */
   z-index: 30;
 }
@@ -36,14 +63,18 @@
    readout with buttons stuck to it — which is why the background and the border
    are here and not on the three children.
 
-   🔴 ROUNDED ON ALL FOUR CORNERS NOW. It used to be `0 0 10px 10px` with
-   `border-top: 0`, because it hung off a panel's top edge and shared it; in the
-   middle of the bar a control with no top border reads as clipped. */
+   🔴 ROUNDED ON THE BOTTOM ONLY, AND NO TOP BORDER — the shape that makes it a
+   notch. It was `999px` on all four corners for the three days it sat inside
+   the bar, where a control with no top border reads as clipped; hanging off the
+   bar's bottom edge the opposite is true, and a fully rounded pill floating
+   below the bar reads as a detached toolbar. The top edge is the bar's own
+   border, shared, which is why there is not a second one here. */
 .practice-notch-tab {
   align-items: center;
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
   display: flex;
   gap: 6px;
   /* The tab's contents no longer change between sessions — square, clock,
@@ -53,7 +84,9 @@
      the control clears the 44px bar (--dd-topbar-h) with room either side.
      Widened with the clock on 2026-08-24 — a 17px figure in an 8px-wide pill
      reads as text that overflowed its border rather than as a control. */
-  padding: 4px 12px;
+  /* Asymmetric now that the top edge is the bar's: the extra pixel at the
+     bottom is what keeps the glyphs off the rounded corners. */
+  padding: 3px 12px 5px;
   transition: background 120ms ease;
 }
 

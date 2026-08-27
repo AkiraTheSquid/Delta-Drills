@@ -128,11 +128,17 @@ html:not(.dd-colab-edition) body.dd-basic-mode .dd-info[data-dd-info="feedback-r
    early and re-hides the block on a correct answer, so visibility follows the
    verdict without CSS. */
 
-/* "I missed one specific thing — it wasn't too hard", and the content
-   flags (Broken / Unclear / Wrong image / Good) with their note box. Two
-   separate reporting channels, neither of which is the problem. */
-html:not(.dd-colab-edition) body.dd-basic-mode #missed-fact-row,
-html:not(.dd-colab-edition) body.dd-basic-mode #problem-feedback-row {
+/* "I missed one specific thing — it wasn't too hard": a second difficulty
+   signal, and a second dial next to the rating is the thing basic mode exists
+   to remove.
+
+   🔴 #problem-feedback-row LEFT THIS LIST on 2026-08-27, and the row it named
+   is gone with it. Hiding it here hid the ONLY way to report a broken problem
+   from every learner in the default mode — the flags are not a difficulty dial
+   and were never the noise this rule is about. Reporting a problem is now a
+   button beside Submit that opens #problem-feedback-panel, which basic mode
+   deliberately does not touch. */
+html:not(.dd-colab-edition) body.dd-basic-mode #missed-fact-row {
   display: none;
 }
 

@@ -23,6 +23,13 @@
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   height: var(--dd-topbar-h);
+  /* 🔴 STICKY IS ALSO WHAT ANCHORS THE NOTCH. A sticky box is a POSITIONED box,
+     so it is the containing block for `#practice-notch`, which hangs off this
+     bar's bottom edge as an absolutely-positioned tab (Seth, 2026-08-27 —
+     styles/practice/notch-menu.css). The notch is a DIRECT child of this
+     element for exactly that reason, so nothing in between can re-anchor it;
+     dropping `position: sticky` here, though, hands it to the viewport and the
+     clock detaches from the bar. */
   position: sticky;
   top: 0;
   z-index: 50;
@@ -30,13 +37,34 @@
 
 /* The two outer cells. Real elements rather than bare children because a grid
    places CHILDREN into cells, and the left cell holds two controls (the
-   hamburger and the level pill). `min-width: 0` so a wide pill shrinks its
-   own column instead of stealing width from the centred strip. */
+   hamburger and the level pill).
+
+   🔴 `min-width: auto`, AND IT USED TO BE 0. The 0 was written so "a wide pill
+   shrinks its own column instead of stealing width from the centred strip",
+   which is not what it did: `min-width: 0` waives a grid item's automatic
+   minimum, so these two `1fr` tracks were free to size BELOW their contents
+   and the contents simply overflowed them. Nothing shrank, because neither the
+   level pill nor the account control can — both are `white-space: nowrap`.
+
+   It went unnoticed while the middle cell was small. The concept pill
+   (styles/concept-pill.css) asks for a third of the viewport, and in ADVANCED
+   mode — where the ten-button tab strip shares that cell — the auto column
+   then took 1269 of 1440px at Seth's own window size: the left track collapsed
+   to 62px with the level pill hanging 8px past its edge and under the strip,
+   and the account control was pushed flush to the right margin. Measured, not
+   inferred.
+
+   `auto` restores the automatic minimum, so each side track is at least as
+   wide as what is in it, both stay `1fr` (equal, so the middle is still
+   centred on the viewport), and the middle cell gets what is left. The concept
+   pill is `flex: 0 1 33vw` precisely so it is the thing that gives way — it
+   settles at ~29vw in advanced mode and the full third in basic mode, which is
+   the default. */
 .topbar-side {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 0;
+  min-width: auto;
 }
 
 /* 🔴 EVERY CELL IS PLACED BY NUMBER, and that is not tidiness — it is the fix
@@ -58,11 +86,17 @@
   grid-column: 1;
 }
 
-/* THE MIDDLE CELL holds two things and centres them as one group: the tab strip
-   (advanced mode only) and the session clock, which moved up here out of
-   `.practice-container` on 2026-08-24 — see styles/practice/notch-menu.css. In
-   basic mode the strip is hidden and the clock is alone in the middle, which is
-   what Seth asked for; in advanced mode they share the cell with a 14px gap. */
+/* THE MIDDLE CELL. It holds the tab strip (advanced mode only) and the concept
+   pill (styles/concept-pill.css), centred as one group.
+
+   🔴 THE CLOCK IS NOT ONE OF THEM ANY MORE. `#practice-notch` was in flow
+   beside the strip between 2026-08-24 and 2026-08-27; it is a notch hanging
+   under the bar now, positioned against `.topbar`, whose direct child it is.
+   Nothing of it is in this cell, so this cell centres what is left. The
+   comment that used to say the clock lived here is why this one exists.
+
+   In basic mode the strip is hidden and the concept pill is alone in the
+   middle; in advanced mode they share the cell with a 14px gap. */
 .topbar-mid {
   align-items: center;
   display: flex;

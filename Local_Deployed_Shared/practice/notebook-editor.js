@@ -350,17 +350,33 @@ const DeltaNotebook = (() => {
      button — animates from a position that was never on screen, so it reads as
      the page settling rather than as the app taking them somewhere. After a
      live submit the motion is the point: it says the grade moved you. */
-  const scrollToSolution = ({ instant = false } = {}) => {
+  const scrollToSolution = ({ instant = false, retries = 0 } = {}) => {
     const cell = solutionCell();
     if (!cell || !cellsHost?.getClientRects().length) return false;
     const pane = cell.closest(".practice-notebook") || host;
     if (!pane || !pane.getClientRects().length) return false;
+    const inPane = () => {
+      const c = cell.getBoundingClientRect(), p = pane.getBoundingClientRect();
+      return c.top < p.bottom && c.bottom > p.top;
+    };
     const offset = cell.getBoundingClientRect().top - pane.getBoundingClientRect().top;
     const top = Math.max(0, pane.scrollTop + offset - SOLUTION_SCROLL_LEAD_IN);
     /* Honour the OS setting: a long smooth scroll is one of the motions
        `prefers-reduced-motion` exists for, and jumping there still shows it. */
     const reduced = instant || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     pane.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    /* 🔴 A RESTORE SCROLLS INTO A PANE THAT IS STILL SETTLING, and a scroll
+       past the current scrollHeight is CLAMPED, not queued — so it silently
+       lands at 0. Resuming a paused review does three things after this runs:
+       it un-hides the session status row, re-lays the restored cells, and only
+       then is the pane as tall as its content. Observed on prod: the answer was
+       in the notebook, correctly ordered, and the pane sat at scrollTop 0.
+       Re-aim while the cell is still out of view rather than guess one delay. */
+    if (retries > 0) {
+      setTimeout(() => {
+        if (!inPane()) scrollToSolution({ instant, retries: retries - 1 });
+      }, 120);
+    }
     return true;
   };
 
