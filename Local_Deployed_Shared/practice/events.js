@@ -59,8 +59,20 @@ practiceSubmitBtn.addEventListener("click", async () => {
      answer already showed you a working one, yours — and a correct RESUBMIT
      has to take the old one away, or the answer to a question you have since
      solved sits under your working code until the next question loads. */
-  if (result.correct) window.DeltaNotebook?.clearSolution?.();
-  else window.DeltaNotebook?.showSolution?.(solCode);
+  if (result.correct) {
+    window.DeltaNotebook?.clearSolution?.();
+  } else if (window.DeltaNotebook?.showSolution?.(solCode)) {
+    /* Appended is not seen: the answer lands under cells as tall as whatever
+       the learner just wrote, i.e. below the fold of the notebook pane. Scroll
+       it into view in the next frame — the cell was appended and auto-sized in
+       this one, and a frame later is when the pane's own scrollHeight has
+       caught up with it. */
+    requestAnimationFrame(() => window.DeltaNotebook?.scrollToSolution?.());
+  }
+  /* What the grade said, kept for the rating step that follows it: that is
+     where `pendingFeedback` is written, and a reload replays that and nothing
+     else (ui.js `recordGradedDetail`). */
+  recordGradedDetail(q.question_id, result.failed_tests, solCode);
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
@@ -226,6 +238,12 @@ feedbackButtons.forEach((btn) => {
       kcTier: response?.kc_tier,
       kcTitle: q.ladder_kc_title,
       ladderEstimate: response?.ladder_estimate,
+      /* Carried so a reload can rebuild the whole review, not just its verdict
+         (ui.js `restoreGradedFeedbackInNotebook`). `gradedDetailFor` returns
+         null for any other question, so a rating can never save the previous
+         question's failed cases next to this one's verdict. */
+      failedTests: gradedDetailFor(q.question_id)?.failedTests || [],
+      solutionCode: gradedDetailFor(q.question_id)?.solutionCode || q.solution_code || "",
     };
     savePracticeProgress(practiceProgress);
   });

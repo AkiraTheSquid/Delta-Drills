@@ -348,7 +348,26 @@ const PracticeSession = (() => {
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(!!review.correct);
-    if (typeof renderFailedTests === "function") {
+    /* Both halves of the review — which cases failed and what the answer was —
+       go back into the NOTEBOOK, under the restored draft, exactly where the
+       live submit put them.
+
+       🔴 AFTER `_restoreDraft` ABOVE, never before it: restoring the draft runs
+       `DeltaNotebook.reset`, which begins by clearing the solution cell, so a
+       cell added first is swept away by the code that puts the learner's own
+       cells back. And `applyResult` on its own re-opens the left rail's copy
+       (basic-mode.css keys it off `.result-incorrect`), which is why resuming
+       used to move the answer back below the question. */
+    if (typeof restoreGradedFeedbackInNotebook === "function") {
+      restoreGradedFeedbackInNotebook(
+        {
+          correct: !!review.correct,
+          failedTests: review.result?.failed_tests,
+          solutionCode: review.solutionCode,
+        },
+        PracticeAPI.currentQuestion,
+      );
+    } else if (typeof renderFailedTests === "function") {
       renderFailedTests(review.result || { correct: !!review.correct }, PracticeAPI.currentQuestion);
     }
     const feedbackSaved =

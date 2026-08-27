@@ -326,6 +326,44 @@ const DeltaNotebook = (() => {
     document.body.classList.remove("dd-solution-in-notebook");
   };
 
+  /* Scroll the notebook pane down to the answer.
+
+     🔴 APPENDING IS NOT SHOWING. The cells above the solution are as tall as
+     the code the learner just wrote, so the answer lands below the fold of
+     `.practice-notebook` and the screen looks exactly like it did before the
+     grade — which is the tester's original complaint arriving a second time
+     ("it needs to automatically scroll down ... rather than not realizing
+     that it's there"). The scroll is what turns an appended cell into a
+     delivered one.
+
+     Scrolls THAT pane, by arithmetic, rather than calling scrollIntoView:
+     scrollIntoView walks every scrollable ancestor, so it also moves the
+     document and the left rail underneath a learner who did not ask for it.
+
+     The 56px lead-in is deliberate — it leaves the tail of the failed-case
+     block on screen above the solution header, so the read stays "these
+     cases failed → here is what it should have been" instead of dropping
+     the learner straight onto an answer with no cause. */
+  const SOLUTION_SCROLL_LEAD_IN = 56;
+  /* `instant` for a RESTORE. Animating a scroll on a pane the learner has not
+     looked at yet — one that was rebuilt a frame ago by a reload or the Resume
+     button — animates from a position that was never on screen, so it reads as
+     the page settling rather than as the app taking them somewhere. After a
+     live submit the motion is the point: it says the grade moved you. */
+  const scrollToSolution = ({ instant = false } = {}) => {
+    const cell = solutionCell();
+    if (!cell || !cellsHost?.getClientRects().length) return false;
+    const pane = cell.closest(".practice-notebook") || host;
+    if (!pane || !pane.getClientRects().length) return false;
+    const offset = cell.getBoundingClientRect().top - pane.getBoundingClientRect().top;
+    const top = Math.max(0, pane.scrollTop + offset - SOLUTION_SCROLL_LEAD_IN);
+    /* Honour the OS setting: a long smooth scroll is one of the motions
+       `prefers-reduced-motion` exists for, and jumping there still shows it. */
+    const reduced = instant || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    pane.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    return true;
+  };
+
   /* The worked example's code, as runnable cells ABOVE the learner's own.
 
      The tester (2026-08-24): "have the python snippets that are currently in
@@ -462,7 +500,7 @@ const DeltaNotebook = (() => {
 
   return {
     addCell, markRun, reset, restore, runCell, serialize, submissionCode,
-    showSolution, clearSolution, showExamples, clearExamples,
+    showSolution, clearSolution, scrollToSolution, showExamples, clearExamples,
   };
 })();
 
