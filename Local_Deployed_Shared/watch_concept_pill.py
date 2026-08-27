@@ -428,6 +428,32 @@ def check_concept_pill():
         "call"
     )
 
+    # ── AND DOES NOT RE-TEACH WHAT WAS ALREADY READ ────────────────
+    # In backend mode `_pendingSteps` does not consult exposure at all — it
+    # reads `question.lesson_gate`, an array the SERVER attached when the
+    # question was served. The exposure writes the gate makes are about the
+    # NEXT question the server picks; they cannot reach a `lesson_gate` already
+    # sitting in a question object in this tab. resume() asks the gate about
+    # exactly that object, rehydrated from what was persisted at pause — so
+    # without this, pausing on a drill and pressing Continue re-taught the
+    # lesson the learner had already read on the way to it.
+    assert re.search(r"page\.lastOfKp\)\s*_forgetGateEntry\(", lessons_code), (
+        "the gate must drop a fully-read KC from `question.lesson_gate`, and "
+        "only on `lastOfKp` — the KC stays pending until its WHOLE KP has been "
+        "read, so pausing halfway through a three-concept lesson still resumes "
+        "into the rest of it"
+    )
+    forget = re.search(r"const _forgetGateEntry\s*=.*?\n      \};", lessons_code, re.S)
+    assert forget, "practice/lessons.js has no _forgetGateEntry"
+    # 🔴 An ABSENT id must not match another absent id. `String(x ?? "")` on two
+    # missing ids is "" === "", a match on a pair that identifies nothing, and
+    # the write would stamp this question over an unrelated persisted record.
+    assert re.search(r'id === null \|\| id === undefined \|\| id === ""', forget.group(0)), (
+        "_forgetGateEntry must refuse to persist when the question has no id. "
+        "Two absent ids compare EQUAL through String(x ?? \"\"), so the "
+        "same-question check passes on a pair that identifies nothing"
+    )
+
     # ── RESUMING A SESSION KEEPS THE CONCEPT ───────────────────────
     # `buildPracticeQuestionFromBank` maps a BANK record to the render shape,
     # and the bank has no ladder_kc / ladder_stage / ladder_kc_title - those
