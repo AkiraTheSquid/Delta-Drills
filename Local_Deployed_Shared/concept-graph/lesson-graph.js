@@ -1601,12 +1601,18 @@
 
   /* The live Cytoscape instance, for a surface that LAYERS on this graph
      rather than drawing its own. instructor-review.js hosts this very
-     container full-bleed and needs to bind its own edge taps: an instructor
-     flags the prerequisite arrow between two concepts, which this file has no
-     handler for (a learner taps bubbles, never edges). Read-only by contract —
-     the caller adds listeners, it does not restyle or mutate elements, so the
-     lesson pane and the gate ticks stay this file's alone. Null until build()
-     has run, which is the same "not yet" every other export here answers. */
+     container full-bleed, and instructor-graph-edit.js then lets an instructor
+     edit it: edge taps (which this file has no handler for — a learner taps
+     bubbles, never edges), deletions, direction changes, proposed concepts.
+
+     🔴 NOT read-only, and the contract is the way back. The borrower may add
+     and remove elements, but every change is one `remove`/`add` pair whose
+     removal collection it keeps, and it must `.restore()` all of them before
+     handing the container back — the graph a learner is served is THIS one.
+     It may not touch the stylesheet (proposals are styled inline) and it may
+     not repaint gate state; the lesson pane and the gate ticks stay this
+     file's alone. Null until build() has run, which is the same "not yet"
+     every other export here answers. */
   window.deltaConceptGraphCy = () => cy;
 
   window.deltaInitConceptGraph = function () {

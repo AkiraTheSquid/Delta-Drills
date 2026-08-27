@@ -13,6 +13,15 @@ it MOVES `.kg-container.kg2` out of the Knowledge Graph tab and puts it back.
 Every failure mode of that move is silent. A graph left in a hidden page looks
 like an empty tab; a door that quietly falls back to graph-viz.json looks like
 a working screen showing the wrong curriculum. Nothing throws in either case.
+
+And, later the same day, the door became an EDITOR: edges are selected and
+inspected on the right, deleted, or reversed; a ✛ handle on the focused bubble
+creates a concept or drags out an edge. Every one of those is drawn on the
+LEARNER'S OWN live graph, because there is only one. So the checks below are
+mostly about the way back: the ledger's reverts, the order they run in, and
+the fact that nothing here may write the shared cytoscape stylesheet. An edit
+that survives the exit is a curriculum change no one approved, showing up on a
+learner's map with no way to trace it.
 """
 import os
 import re
@@ -27,6 +36,7 @@ def _read(path):
 
 def check_instructor_graph():
     ir = _read(os.path.join(HERE, "instructor-review.js"))
+    ed = _read(os.path.join(HERE, "instructor-graph-edit.js"))
     index_html = _read(os.path.join(HERE, "index.html"))
     ir_css = _read(os.path.join(HERE, "styles", "instructor-review.css"))
     lesson_graph = _read(os.path.join(HERE, "concept-graph", "lesson-graph.js"))
@@ -79,15 +89,106 @@ def check_instructor_graph():
     # ── the borrowed cytoscape ─────────────────────────────────────
     assert "window.deltaConceptGraphCy" in lesson_graph, (
         "lesson-graph.js must export its live cytoscape instance; the "
-        "instructor door binds the EDGE taps that file has no handler for"
+        "instructor door edits the graph the learner is served"
     )
     assert "window.deltaConceptGraphCy" in ir, (
         "instructor-review.js must borrow the instance rather than build a "
         "second one over the same data"
     )
-    assert "hosting()" in ir, (
-        "the tap handlers are bound for the life of the page and must go inert "
-        "while the graph is back on the Knowledge Graph tab serving a learner"
+
+    # ── the editor is wired, and wired FIRST ───────────────────────
+    assert os.path.exists(os.path.join(HERE, "instructor-graph-edit.js")), (
+        "instructor-graph-edit.js is the editor; without it the graph door is "
+        "a viewer with a disabled toolbar"
+    )
+    i_edit = index_html.find('src="instructor-graph-edit.js')
+    i_review = index_html.find('src="instructor-review.js')
+    assert i_edit != -1 and i_review != -1 and i_edit < i_review, (
+        "instructor-graph-edit.js must be loaded BEFORE instructor-review.js: "
+        "the door hands it the borrowed cytoscape the moment the graph lands, "
+        "and both are plain scripts, so source order is load order"
+    )
+    # \b, because `window.DDGraphEditor` contains `window.DDGraphEdit` and a
+    # substring test called a renamed export wired.
+    assert re.search(r"window\.DDGraphEdit\s*=\s*api", ed), (
+        "the editor must publish itself at exactly window.DDGraphEdit"
+    )
+    assert re.search(r"window\.DDGraphEdit\b", ir), (
+        "the two halves meet at window.DDGraphEdit — the editor publishes it, "
+        "the door consumes it"
+    )
+
+    # attach() answers false when it cannot build its chrome inside the
+    # borrowed graph. Ignored, the toolbar keeps its buttons and none of them
+    # does anything — the failure that looks like a working screen.
+    assert re.search(r"if \(!editor\(\)\.attach\(\{", ir), (
+        "attachEditor must act on attach()'s answer, not just call it"
+    )
+
+    # ── every edit is reversible, and reverted on the way out ──────
+    # This is the whole safety story. cy belongs to the Knowledge Graph tab;
+    # an edit that outlives the visit is a silent curriculum change on a
+    # learner's map.
+    # The CALL, at the start of a line of code — the file header explains the
+    # restore contract in prose, and a guard satisfied by its own explanation
+    # guards nothing.
+    assert re.search(r"^\s*if \(e\.removed\) \{ e\.removed\.restore\(\); ", ed, re.M), (
+        "reverting a removal has to be cytoscape's own restore() on the "
+        "collection remove() returned — rebuilding the element from its data "
+        "loses position, classes and the styles lesson-graph.js put on it"
+    )
+    assert re.search(r"for \(let i = edits\.length - 1; i >= 0; i--\) revertEdit", ed), (
+        "detach must revert in REVERSE order: an edge can hang off a node "
+        "staged before it, and undoing the older edit first strands the newer "
+        "one's elements"
+    )
+    assert re.search(r"if \(editor\(\)\) editor\(\)\.detach\(\);", ir), (
+        "releaseKg must detach the editor; the element handed back to the "
+        "Knowledge Graph tab has to be the one that was borrowed"
+    )
+    detach_at = ir.find("editor().detach()")
+    move_at = ir.find("kgHome.parent.insertBefore")
+    assert detach_at != -1 and move_at != -1 and detach_at < move_at, (
+        "detach BEFORE the DOM move: reverting reads the frame the editor's "
+        "panel and ✛ handle live in, and moving first hands the learner's tab "
+        "an element with instructor chrome still parented inside it"
+    )
+    # Anchored to the START of a line so commenting the unbind out fails the
+    # check; a `//` in front of it is exactly the edit this is here to catch.
+    for ev in ('"tap", "edge"', '"tap", "node"', '"pan zoom position"'):
+        assert re.search(r"^\s*cy\.on\(" + re.escape(ev), ed, re.M) and re.search(
+            r"^\s*cy\.removeListener\(" + re.escape(ev), ed, re.M
+        ), (
+            f"the editor binds {ev} on a BORROWED instance and must unbind it "
+            "in detach — a handler left behind puts a ✛ handle and an "
+            "inspector on the learner's own Knowledge Graph tab"
+        )
+    # A ✛ drag binds move/up on WINDOW, so it outlives the page under it. Exit
+    # mid-drag and the next pointer event asks a null cytoscape where a node is.
+    assert re.search(r"^\s*if \(dragCleanup\) dragCleanup\(\);", ed, re.M), (
+        "detach must tear down an in-flight ✛ drag: its pointermove/pointerup "
+        "live on window and are otherwise removed only by the drop that never "
+        "came"
+    )
+    # An edge drawn FROM a proposed concept cannot outlive it: the orphaned
+    # edit survives to the next attach(), where the replay adds an edge whose
+    # source does not exist and cytoscape throws.
+    assert "dependsOn" in ed and re.search(r"forEach\(\(e\) => unstage\(e, true\)\)", ed), (
+        "undoing a proposed concept must cascade to every edit that references "
+        "it"
+    )
+    assert "cy.style(" not in ed, (
+        "proposals are marked with INLINE element styles, never a rule added "
+        "to the shared stylesheet: the stylesheet is lesson-graph.js's and a "
+        "selector added here would outlive the visit"
+    )
+    # Scoped to the poll itself: `if (!kgHome) return;` is also releaseKg's
+    # own early return, so an unscoped test passes with the poll unguarded.
+    poll = re.search(r"const attachEditor = \(\) => \{(.*?)\n  \};", ir, re.S)
+    assert poll and "if (!kgHome) return;" in poll.group(1), (
+        "attachEditor polls for a cytoscape that may not exist yet, and the "
+        "instructor can leave inside that window — attaching afterwards arms "
+        "the editor on a graph that is back home serving a learner"
     )
 
     # ── full-bleed, under the topbar ───────────────────────────────
@@ -99,14 +200,29 @@ def check_instructor_graph():
         "the overlay covers the page and leaves the topbar — and it reads the "
         "bar's height from the one token, never a literal 44px"
     )
-    for marker in ("id=\"ir-kg-frame\"", "id=\"ir-kg-exit\""):
+    for marker in ('id="ir-kg-frame"', 'id="ir-kg-exit"'):
         assert marker in index_html, f"index.html missing {marker}"
     assert "ir-kg-open" in ir and "ir-kg-open" in ir_css, (
         "a fixed overlay leaves the page under it scrollable; the body lock "
         "and the class that applies it have to ship together"
     )
-    z = re.search(r"\.ir-panel\s*\{[^}]*z-index:\s*(\d+)", ir_css, re.S)
+
+    # ── the inspector, on the right ────────────────────────────────
+    insp = re.search(r"\.ir-insp\s*\{(.*?)\}", ir_css, re.S)
+    assert insp, "styles/instructor-review.css must style the inspector"
+    assert re.search(r"right:\s*0", insp.group(1)), (
+        "Seth asked for the information and the options on the RIGHT; the "
+        "panel docks to that edge of the frame"
+    )
+    z = re.search(r"z-index:\s*(\d+)", insp.group(1))
     assert z and int(z.group(1)) > 20, (
-        "the flag card must sit above the learner-model dock (z-index 20 in "
-        "styles/how-it-works.css), which is opaque and cut the send button off"
+        "the inspector must sit above the learner-model dock (z-index 20 in "
+        "styles/how-it-works.css), which is opaque and cut the old flag card's "
+        "send button off"
+    )
+    handle = re.search(r"\.ir-handle\s*\{(.*?)\}", ir_css, re.S)
+    assert handle, "the ✛ handle needs a rule; it is positioned from JS but sized here"
+    assert "touch-action: none" in handle.group(1), (
+        "the ✛ drag is a pointer gesture we own; without touch-action a phone "
+        "scrolls the page instead of drawing the edge"
     )
