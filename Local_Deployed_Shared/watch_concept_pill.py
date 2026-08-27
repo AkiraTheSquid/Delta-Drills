@@ -345,6 +345,93 @@ def check_concept_pill():
             "the three scripts that write to it did not have to change" % el_id
         )
 
+    # ── THE CHIP IS DOWN WHEN THE QUESTION IS NOT ON SCREEN ────────
+    # The ladder publishes per QUESTION and renders once in the background at
+    # load, so on the event alone the chip named a concept on the idle screen
+    # (a second after a cold load, for a question nobody had asked for) and on
+    # every other tab. It reads the same two facts styles/practice/timer.css
+    # uses to hide the ladder card itself.
+    # 🔴 SCOPED TO THE TWO PLACES THAT DO THE WORK, not the file. Whole-file
+    # substring checks pass on any other line that happens to contain the same
+    # token — `"hidden"` is the class this file puts on the chip ITSELF, twice
+    # — so a gate that had been disconnected from the page would still satisfy
+    # them. Codex flagged the shape; these two slices are the fix.
+    onscreen = re.search(r"const _onScreen\s*=.*?\n  \};", pill_code, re.S)
+    assert onscreen, (
+        "concept-pill.js has no _onScreen — the chip has no way to tell whether "
+        "the question it names is on the screen, so it draws on the idle dial "
+        "and on every other tab, naming a concept nothing on screen is about"
+    )
+    onscreen = onscreen.group(0)
+    assert "page-practice" in onscreen, (
+        "_onScreen must read #page-practice. It is the element whose state "
+        "says whether there is a question on the screen at all"
+    )
+    for cls in ("hidden", "session-idle"):
+        assert '.contains("%s")' % cls in onscreen, (
+            "_onScreen must consult the %r class on #page-practice. `hidden` is "
+            "another tab being up; `session-idle` is the practice page being up "
+            "with no question on it - both mean the chip has nothing to "
+            "describe. (`.contains`, not the bare name: this file writes the "
+            "class `hidden` onto the chip itself.)" % cls
+        )
+    # The gate has to be ON the hide branch, not merely defined. A helper that
+    # is written and never consulted is what this would otherwise miss.
+    assert re.search(r"!\s*title\s*\|\|\s*!\s*_onScreen\(\)", pill_code), (
+        "the chip's hide branch must test BOTH: no concept published, OR no "
+        "question on screen to have one. Either alone leaves one of the two "
+        "ways it goes stale"
+    )
+    # And the other half: a tab switch and a pause change nothing about the
+    # READING, so the ladder never fires for either. Without an observer the
+    # chip keeps whatever it had when the last question rendered.
+    obs = re.search(r"if \(typeof MutationObserver.*?\n  \}", pill_code, re.S)
+    assert obs, "concept-pill.js has no MutationObserver block"
+    obs = obs.group(0)
+    assert re.search(r"new MutationObserver\([^)]*\)\.observe\(", obs), (
+        "the MutationObserver must actually observe something — constructing "
+        "one and never calling .observe is the same as not having it"
+    )
+    assert "page-practice" in obs and 'attributeFilter: ["class"]' in obs, (
+        "the observer must watch #page-practice's CLASS. Watching anything "
+        "else means the chip survives a pause and a tab switch unchanged"
+    )
+
+    # ── RESUMING A SESSION KEEPS THE CONCEPT ───────────────────────
+    # `buildPracticeQuestionFromBank` maps a BANK record to the render shape,
+    # and the bank has no ladder_kc / ladder_stage / ladder_kc_title - those
+    # are per-served-question, from the backend queue. Rebuilding a paused
+    # question from the bank alone handed renderQuestion a question with no
+    # concept on it, LadderUI.decorate found no kc and called
+    # StageLadder.hide(), and the concept left the screen for the whole of the
+    # resumed question - heading, ladder card and topbar chip together. It came
+    # back only at the next question, which is served by the queue.
+    timer_code = _code(_read("practice", "timer.js"))
+    restore = re.search(r"const _restoreSavedQuestion\s*=.*?\n  \};", timer_code, re.S)
+    assert restore, (
+        "practice/timer.js has no _restoreSavedQuestion - the resume path was "
+        "renamed and this guard can no longer see it"
+    )
+    restore = restore.group(0)
+    assert re.search(r"\?\s*hydrateSavedPracticeQuestionFromBank", restore), (
+        "resume must PREFER hydrateSavedPracticeQuestionFromBank over a plain "
+        "buildPracticeQuestionFromBank: the saved question is the only place "
+        "the ladder fields still exist, and the hydrate overwrites every "
+        "artifact field from the bank afterwards, so the bank stays "
+        "authoritative for the question itself"
+    )
+    # The comparison itself, not the identifier: `pausedState.questionId` is
+    # already read one line above, by the early return.
+    assert re.search(
+        r"String\(\s*saved\.question_id[^)]*\)\s*===\s*String\(\s*pausedState\.questionId",
+        restore,
+    ), (
+        "the hydrate must be gated on the saved question being THIS question. "
+        "practiceProgress.currentQuestion is whatever was served last, and "
+        "hydrating a different one would put another concept's name over a "
+        "resumed question"
+    )
+
     # ── All three tags, or none ────────────────────────────────────
     css_tag = "styles/concept-pill.css" in index_html
     js_tag = re.search(r'src="concept-pill\.js', index_html) is not None

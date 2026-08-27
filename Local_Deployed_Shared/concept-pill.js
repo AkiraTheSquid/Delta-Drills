@@ -104,16 +104,68 @@
     );
   };
 
+  /* The last reading the ladder published, held so the chip can be redrawn
+     when the SCREEN changes underneath it without the ladder having rendered.
+     See `_onScreen` — the chip has two reasons to be up, and only one of them
+     arrives as an event. */
+  let last = null;
+
+  /* 🔴 IS THE QUESTION THIS CHIP NAMES ACTUALLY ON THE SCREEN?
+
+     The ladder publishes per QUESTION and knows nothing about tabs or about
+     the idle screen, and it renders once in the background at load — timer.js
+     `start()` says so out loud: "nothing about the one rendered in the
+     background at init is recorded". Drawn on that alone, the chip named a
+     concept for a question nobody had asked for yet: Seth, 2026-08-27, "when I
+     first joined the page the top bar wasn't there and then it took like a
+     second later before the top bar appeared". It also stayed up across the
+     Notebooks and Account tabs, naming a concept nothing on screen was about.
+
+     The two facts below are the same two `styles/practice/timer.css` uses to
+     hide the ladder card itself (`#page-practice.session-idle .stage-ladder`),
+     which is why this is a read and not a second opinion:
+
+       `.hidden`       — another tab is up; the practice page is not.
+       `.session-idle` — the practice page is up, but between blocks: the
+                         question split is display:none and the idle dial has
+                         the screen. timer.js adds it on pause/finish and
+                         removes it on start/resume; diagnostic-page.js sets it
+                         from `practiceHoldsQuestion()`. A lesson page removes
+                         it too (lessons.js), which is correct — a lesson is a
+                         concept on screen.
+
+     🔴 A CSS RULE CANNOT DO THIS. The chip is in the topbar, a sibling of every
+     page, so no selector rooted at #page-practice reaches it. */
+  const _onScreen = () => {
+    const page = _el("page-practice");
+    if (!page) return false;
+    return (
+      !page.classList.contains("hidden") && !page.classList.contains("session-idle")
+    );
+  };
+
   const _render = (detail) => {
+    last = detail || null;
+    _paint();
+  };
+
+  function _paint() {
     const host = _el("dd-concept");
     if (!host) return;
 
+    const detail = last;
     const title = (detail && (detail.title || detail.kc)) || null;
-    /* No concept on screen: the readout goes, it does not go blank. An empty
-       chip in the topbar is a control the learner will try to click. */
-    if (!title) {
+    /* No concept, or no question on screen to have one: the readout goes, it
+       does not go blank. An empty chip in the topbar is a control the learner
+       will try to click.
+
+       🔴 `shownTitle` IS NOT CLEARED HERE. It guards the two label writes, and
+       the labels are still holding the right string while the chip is away —
+       clearing it would make every tab switch rewrite two nodes for no change.
+       A title that changed while the chip was down still differs from it and
+       still writes. */
+    if (!title || !_onScreen()) {
       host.classList.add("hidden");
-      shownTitle = null;
       return;
     }
 
@@ -147,9 +199,24 @@
 
     host.title = _tooltip(title, pct);
     host.classList.remove("hidden");
-  };
+  }
 
   window.addEventListener("dd-concept-progress", (e) => _render(e.detail));
+
+  /* The other half of `_onScreen`: a tab switch and a pause change nothing
+     about the reading, so the ladder never fires for either, and without this
+     the chip would keep whatever it had when the last question rendered.
+     Cheap enough to be unconditional — one attribute filter on one element,
+     and `_paint` writes only what changed. */
+  if (typeof MutationObserver === "function") {
+    const page = _el("page-practice");
+    if (page) {
+      new MutationObserver(_paint).observe(page, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+  }
 
   /* 🔴 NO BOOT RENDER, and nothing read off the DOM at load. The ladder fires
      this event on every one of its renders, including the first one of a
