@@ -162,6 +162,48 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+- **2026-08-27 (third pass) — Continue was a dead end, and it re-taught.**
+  Changed: `practice/lessons.js`, `watch_concept_pill.py`. Shipped as
+  `04c17f8d` and the commit after it.
+
+  Seth: "it still doesn't really work." Reproduced on prod against a real
+  backend queue rather than reasoned about, and it was two more bugs — both of
+  which the previous commit's own fix had made reachable.
+
+  🔴 **A gated lesson rendered into a `display:none` box.** The gate draws into
+  `#question-text`, inside `.practice-split`, and
+  `#page-practice.session-idle .practice-split { display: none }`. `resume()`
+  restores the question, asks the gate, and hands `_resumeCore` over as
+  `onDone` — and `_resumeCore` is the only thing that removes `session-idle`.
+  So Continue led to a screen that never changed: `#lesson-continue-btn`
+  present in the DOM, 0px tall, session unreachable without a reload. The gate
+  clears the class itself now, at its point of no return, and only that class —
+  `hidden` means the learner is on another tab.
+
+  🔴 **`lesson_gate` is a SNAPSHOT the server attaches to a served question.**
+  In backend mode `_pendingSteps` reads it and never consults exposure, so a
+  question rehydrated at resume still listed a page the learner had already
+  read. The exposure map held `numpy.ndarray-model#s0-…` and the question's own
+  gate still listed it. `_pendingSteps` now drops an entry whose own
+  `exposure_key` is in this browser's map — a suppression on top of the
+  server's decision, never a replacement (`_stepFromGate` still builds every
+  step; the per-account map stays authoritative). 🔴 Filtered BEFORE the
+  dedupe-by-kc: a dropped entry would otherwise take a later unread entry for
+  the same KC with it, and a concept never taught is the unrecoverable mistake.
+
+  🪦 A first attempt pruned the gate entry in the lesson's own Continue
+  handler, on `lastOfKp`. It was more code and it never fired — the page that
+  was re-teaching sat at `segment_index: 0` of a three-segment KP. Deleted, not
+  layered over. 🔑 The prod repro is what found that; the guard runner caught
+  the deletion taking one line too many with it.
+
+  ⚠️ Open, deliberately not changed: the pill reads **0% for the whole lesson
+  rung**. `_overall()` is `(rungIndex + partial) / 4` and `PROMOTE_AT` has no
+  `lesson` key, so `_progress()` is null there — the first thing a new learner
+  sees is an empty bar, and the ladder's own caption says "0% understanding".
+  Honest, but it is mastery-display arithmetic mirrored from the backend and
+  asserted by `practice/watch.py`; changing it is Seth's call, not a bug fix.
+
 - **2026-08-27 (later still) — the instructor's graph door became an EDITOR:
   click an edge to inspect it on the right, delete it or flip its direction,
   and press ✛ on a bubble to add a concept (or drag ✛ onto another bubble to
