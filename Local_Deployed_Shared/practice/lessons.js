@@ -490,6 +490,38 @@ const LessonGate = (() => {
 
       document.body.classList.add("lesson-mode");
 
+      /* Take one KC off the copy of the gate that rides on THIS question, and
+         persist it, so a resume of this same question does not re-teach what
+         has just been read. See the call site for why the server's map cannot
+         do this on its own.
+
+         Written back through `practiceProgress` because that is what
+         `timer.js:_restoreSavedQuestion` rehydrates from; the two hold the
+         same object on every path that serves a question (`api.js` assigns
+         both), and the comparison below keeps a stale progress record from
+         being edited to match a question it is not about. */
+      const _forgetGateEntry = (kc) => {
+        if (!question || !Array.isArray(question.lesson_gate)) return;
+        question.lesson_gate = question.lesson_gate.filter((e) => e && e.kc !== kc);
+        /* 🔴 THE ID HAS TO BE THERE BEFORE IT CAN MATCH. `String(x ?? "")` on
+           two ABSENT ids gives "" === "" — a match, on a pair that identifies
+           nothing — and the write below would then stamp this question over an
+           unrelated persisted record, which is the exact thing the comparison
+           is here to prevent. A KC-less or hand-built question really can
+           arrive with no id. Codex caught it. */
+        const id = question.question_id;
+        if (id === null || id === undefined || id === "") return;
+        try {
+          if (typeof practiceProgress === "object" && practiceProgress
+              && String(practiceProgress.currentQuestionId ?? "") === String(id)) {
+            practiceProgress.currentQuestion = question;
+            savePracticeProgress(practiceProgress);
+          }
+        } catch (err) {
+          console.warn("[lessons] could not persist the read gate entry:", err);
+        }
+      };
+
       /* 🔴 THE GATE OWNS THE SCREEN IT RENDERS INTO, and until 2026-08-27 it
          did not. Everything below draws into `#question-text`, which lives
          inside `.practice-split` — and `styles/practice/timer.css` sets
@@ -633,6 +665,27 @@ const LessonGate = (() => {
           if (page.lastOfKp && page.step.exposureKey !== page.kp.kc) keys.push(page.kp.kc);
           _markLocalExposure(keys);
           _markBackendExposure(keys);
+          /* 🔴 AND THE COPY OF THE GATE THAT TRAVELS WITH THIS QUESTION.
+
+             In backend mode `_pendingSteps` does not consult exposure at all —
+             it reads `question.lesson_gate`, an array the SERVER attached when
+             the question was served. The exposure writes above are about the
+             next question the server picks; they cannot reach a `lesson_gate`
+             already sitting in a question object in this tab.
+
+             `timer.js:resume()` asks the gate about exactly that object,
+             rehydrated from what was persisted when the session was paused. So
+             pausing on a drill and pressing Continue re-taught, from page one,
+             a lesson the learner had already read on the way to that drill —
+             the stale array still said the concept was pending. Reproduced on
+             prod: after Continue the heading went back to "Lesson".
+
+             Only on `lastOfKp`, matching the rule directly above: the KC stays
+             pending until its WHOLE KP has been read, so pausing halfway
+             through a three-concept lesson still resumes into the rest of it.
+             The server's own map is untouched and stays authoritative for
+             every question it serves after this one. */
+          if (page.lastOfKp) _forgetGateEntry(page.kp.kc);
           // Also credits the ladder's `worked` rung — but in finishAll, not
           // here, because the response re-stages the pending question and
           // that has to land before it renders. Without any crediting at
