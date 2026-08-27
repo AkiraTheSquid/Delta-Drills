@@ -429,29 +429,47 @@ def check_concept_pill():
     )
 
     # ── AND DOES NOT RE-TEACH WHAT WAS ALREADY READ ────────────────
-    # In backend mode `_pendingSteps` does not consult exposure at all — it
-    # reads `question.lesson_gate`, an array the SERVER attached when the
-    # question was served. The exposure writes the gate makes are about the
-    # NEXT question the server picks; they cannot reach a `lesson_gate` already
-    # sitting in a question object in this tab. resume() asks the gate about
-    # exactly that object, rehydrated from what was persisted at pause — so
-    # without this, pausing on a drill and pressing Continue re-taught the
-    # lesson the learner had already read on the way to it.
-    assert re.search(r"page\.lastOfKp\)\s*_forgetGateEntry\(", lessons_code), (
-        "the gate must drop a fully-read KC from `question.lesson_gate`, and "
-        "only on `lastOfKp` — the KC stays pending until its WHOLE KP has been "
-        "read, so pausing halfway through a three-concept lesson still resumes "
-        "into the rest of it"
+    # In backend mode `_pendingSteps` takes its steps from
+    # `question.lesson_gate`, which the SERVER attached when the question was
+    # served — a snapshot. Nothing the learner does afterwards changes the copy
+    # riding on a question object already in this tab, and the exposure posts
+    # made when a page is read are about the NEXT question the server picks.
+    # resume() asks about exactly that object, rehydrated from what was
+    # persisted at pause, so without a local check, pausing on a drill and
+    # pressing Continue re-taught the page the learner had just read on the way
+    # to it. Measured on prod: the exposure map held the concept's key while
+    # the question's own gate still listed it as pending.
+    backend_branch = re.search(
+        r'if \(practiceMode === "backend"\).*?\n    \}', lessons_code, re.S
     )
-    forget = re.search(r"const _forgetGateEntry\s*=.*?\n      \};", lessons_code, re.S)
-    assert forget, "practice/lessons.js has no _forgetGateEntry"
-    # 🔴 An ABSENT id must not match another absent id. `String(x ?? "")` on two
-    # missing ids is "" === "", a match on a pair that identifies nothing, and
-    # the write would stamp this question over an unrelated persisted record.
-    assert re.search(r'id === null \|\| id === undefined \|\| id === ""', forget.group(0)), (
-        "_forgetGateEntry must refuse to persist when the question has no id. "
-        "Two absent ids compare EQUAL through String(x ?? \"\"), so the "
-        "same-question check passes on a pair that identifies nothing"
+    assert backend_branch, (
+        "practice/lessons.js: could not find _pendingSteps' backend branch"
+    )
+    backend_branch = backend_branch.group(0)
+    assert "_localExposure()" in backend_branch, (
+        "the backend branch of _pendingSteps must drop gate entries this "
+        "browser has already shown. Without it a resumed question re-teaches "
+        "from its own stale snapshot of the gate"
+    )
+    assert re.search(r"exposed\[entry\.exposure_key \|\| entry\.kc\]", backend_branch), (
+        "the suppression must key on the entry's OWN `exposure_key` (falling "
+        "back to the kc), which is what `_markLocalExposure` writes when the "
+        "page is read. Keying on anything else either never matches or "
+        "suppresses concepts of the same KP that have not been taught yet"
+    )
+    # 🔴 ORDER. Dedupe-by-kc first would let a suppressed entry take a later,
+    # UNREAD entry for the same KC down with it — the concept is then never
+    # taught, which this file's own comments call the unrecoverable mistake.
+    assert backend_branch.index("exposed[") < backend_branch.index("seen.has("), (
+        "filter the gate by exposure BEFORE the dedupe-by-kc, or a dropped "
+        "entry silently takes a later unread entry for the same KC with it"
+    )
+    # And it stays a SUPPRESSION, not a replacement: the server's per-account
+    # map still decides what to teach next.
+    assert "_stepFromGate" in backend_branch, (
+        "backend mode must still build its steps from the server's gate "
+        "entries — the exposure map is per BROWSER and cannot be the source of "
+        "truth for an account that practises on two machines"
     )
 
     # ── RESUMING A SESSION KEEPS THE CONCEPT ───────────────────────
