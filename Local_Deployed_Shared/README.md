@@ -197,12 +197,15 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
   layered over. 🔑 The prod repro is what found that; the guard runner caught
   the deletion taking one line too many with it.
 
-  ⚠️ Open, deliberately not changed: the pill reads **0% for the whole lesson
-  rung**. `_overall()` is `(rungIndex + partial) / 4` and `PROMOTE_AT` has no
-  `lesson` key, so `_progress()` is null there — the first thing a new learner
-  sees is an empty bar, and the ladder's own caption says "0% understanding".
-  Honest, but it is mastery-display arithmetic mirrored from the backend and
-  asserted by `practice/watch.py`; changing it is Seth's call, not a bug fix.
+  🔴 **DECIDED, NOT OVERLOOKED: the lesson rung reads 0% and STAYS THAT WAY.**
+  `_overall()` is `(rungIndex + partial) / 4` and `PROMOTE_AT` has no `lesson`
+  key, so `_progress()` is null there — a new learner's first screen is an
+  empty bar captioned "0% understanding". Asked Seth directly on 2026-08-27,
+  with the alternatives drawn out (fill it across the lesson's pages; or give
+  the rung its own non-meter look). His answer was to leave it: nothing has
+  been demonstrated yet, and the bar starts moving at 25% when the first drill
+  arrives. So an empty pill during a lesson is CORRECT — do not "fix" it, and
+  do not give rung 0 a partial fill without asking again.
 
 - **2026-08-27 (later still) — the instructor's graph door became an EDITOR:
   click an edge to inspect it on the right, delete it or flip its direction,
