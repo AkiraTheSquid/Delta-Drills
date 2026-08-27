@@ -767,10 +767,37 @@ except ImportError:
     from watch_front_door import check_front_door  # noqa: E402
 
 
+# ── Instructor review: the graph door that HOSTS the lesson graph ──
+# Split out for the same reason, same import dance. See
+# watch_instructor_graph.py.
+try:
+    from .watch_instructor_graph import check_instructor_graph  # noqa: E402
+except ImportError:
+    from watch_instructor_graph import check_instructor_graph  # noqa: E402
+
+
+# ── Topbar: the concept pill, and the clock hanging under the bar ──
+# Split out for the same reason, same import dance. See
+# watch_concept_pill.py.
+try:
+    from .watch_concept_pill import check_concept_pill  # noqa: E402
+except ImportError:
+    from watch_concept_pill import check_concept_pill  # noqa: E402
+
+
+# ── Jargon: the glossary links inside lesson prose ──
+# Split out for the same reason, same import dance. See watch_jargon.py.
+try:
+    from .watch_jargon import check_jargon_links  # noqa: E402
+except ImportError:
+    from watch_jargon import check_jargon_links  # noqa: E402
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants, check_infotips,
-              check_nav_drawer, check_solo_routes, check_front_door]
+              check_nav_drawer, check_solo_routes, check_front_door,
+              check_instructor_graph, check_concept_pill, check_jargon_links]
     for fn in checks:
         try:
             fn()

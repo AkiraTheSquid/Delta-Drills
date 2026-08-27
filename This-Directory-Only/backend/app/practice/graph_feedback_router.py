@@ -62,6 +62,12 @@ GraphFeedbackTag = Literal[
 ]
 
 
+# WHICH graph an id names. Closed, not free text: the whole point of the field
+# is to tell two id spaces apart, and a namespace that accepts a typo is a
+# namespace that does not.
+GraphNamespace = Literal["lesson-kc", "arena-atom"]
+
+
 class GraphFeedbackRequest(BaseModel):
     kind: GraphFeedbackKind
     source: str = Field(min_length=1, max_length=200)
@@ -71,6 +77,12 @@ class GraphFeedbackRequest(BaseModel):
     edge_type: Optional[Literal["prereq", "enc"]] = None
     tag: GraphFeedbackTag
     note: str = Field(default="", max_length=5000)
+    # WHICH graph the ids name. The instructor surface used to flag the ARENA
+    # atom graph and now flags the lesson graph (kc_registry.json ids), and the
+    # two id spaces do not overlap — a log that does not say which one it is
+    # cannot be read a month later. Optional so an older client, and every
+    # entry already on disk, stays valid.
+    graph: Optional[GraphNamespace] = None
 
 
 class GraphFeedbackEntry(BaseModel):
@@ -80,6 +92,7 @@ class GraphFeedbackEntry(BaseModel):
     edge_type: Optional[str] = None
     tag: str
     note: str = ""
+    graph: Optional[str] = None
     timestamp: str
 
 
@@ -134,6 +147,7 @@ def submit_graph_feedback(
         "edge_type": payload.edge_type,
         "tag": payload.tag,
         "note": payload.note.strip(),
+        "graph": payload.graph or None,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
     entries.append(entry)

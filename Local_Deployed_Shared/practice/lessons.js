@@ -454,6 +454,13 @@ const LessonGate = (() => {
 
   const _cleanup = () => {
     document.body.classList.remove("lesson-mode");
+    // The dock is a flex child of .practice-left only while the lesson owns
+    // that column; leaving `dd-lesson-feedback-open` set would lay the
+    // question screen out as two columns.
+    if (window.DDFeedbackPanel) {
+      window.DDFeedbackPanel.setLessonContext(null);
+      window.DDFeedbackPanel.closeLesson();
+    }
     activeQuestion = null;
     const editor = _el("code-editor");
     if (window.DeltaNotebook) window.DeltaNotebook.reset(DEFAULT_EDITOR, { addScratch: false });
@@ -555,6 +562,17 @@ const LessonGate = (() => {
           // clean one.
           window.LessonNotebook.mount(questionText, `${page.kp.kc}#${page.segIndex}`);
           _redrawWhenColabIndexLands(page);
+        }
+        // Name the concept the feedback panel is about. A lesson is several
+        // pages, and a note written on concept 2 must never be filed against
+        // concept 3 — setLessonContext clears a half-written note when the
+        // subject changes, which is the only correct thing to do with it.
+        if (window.DDFeedbackPanel) {
+          window.DDFeedbackPanel.setLessonContext({
+            kc: page.kp.kc,
+            title: page.seg.title || page.kp.title,
+            questionId: question ? question.question_id : null,
+          });
         }
         questionText.scrollTop = 0;
         window.scrollTo({ top: 0 });

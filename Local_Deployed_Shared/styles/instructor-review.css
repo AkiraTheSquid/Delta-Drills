@@ -8,12 +8,31 @@
 
 .ir-container { max-width: 1100px; }
 
+/* ── the reading measure ─────────────────────────────────────────────
+   985px, centred — the SAME measure "Why this app exists" sets on its
+   own container (styles/how-it-works.css). Seth, 2026-08-27: reviewing
+   a question is reading, and it was being done at the width of a
+   dashboard. Everything prose-shaped rides this measure.
+
+   NOT the graph view, which is why the measure lives on these three
+   children and not on `.ir-container` above them: #ir-graph escapes the
+   container entirely (`position: fixed`, full-bleed under the topbar —
+   see the graph pane block below), and an inspector wants every pixel
+   for the same reason prose does not. */
+.ir-head,
+#ir-chooser,
+#ir-questions {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 985px;
+}
+
 .ir-head {
   align-items: baseline;
   display: flex;
   flex-wrap: wrap;
   gap: 10px 18px;
-  margin: 0 0 18px;
+  margin-bottom: 18px;
 }
 .ir-head h1 { margin: 0; }
 .ir-head .subtitle { flex: 1 1 auto; margin: 0; }
@@ -84,7 +103,16 @@
   opacity: 0.75;
 }
 .ir-q-id { font-weight: 600; }
-.ir-q-text { line-height: 1.5; margin-bottom: 10px; white-space: pre-wrap; }
+/* Reading size, a step down from the 20px the explainer pages set: the
+   question is the prose on this card, but a card also carries a header,
+   three code disclosures and a flag row, and 20px made those read as
+   footnotes to it. */
+.ir-q-text {
+  font-size: 18px;
+  line-height: 1.7;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
 .ir-q-details { margin: 6px 0; }
 .ir-q-details > summary { cursor: pointer; font-size: 0.88rem; opacity: 0.75; }
 .ir-q-details > pre {
@@ -106,69 +134,180 @@
 }
 .ir-q-status,
 .ir-form-status { font-size: 0.85rem; opacity: 0.8; }
+/* The note is where the review actually is — "what's wrong with this
+   problem" is a paragraph, not a label. So: opens at four lines instead
+   of one, grows itself from there (autogrow.js), and sits on a prose
+   measure rather than the full width of the card.
+
+   `resize: none` + `overflow-y: hidden` are the two halves of "the box
+   is always exactly as tall as the text". The drag handle is gone
+   because a self-sizing box can only be dragged wrong, and the
+   scrollbar is gone because the height is measured to make it
+   unnecessary — if autogrow ever failed, hiding it would hide text, so
+   that pairing is deliberate and load-bearing, not decoration. */
 .ir-q-note {
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 8px;
+  box-sizing: border-box;
   color: inherit;
+  display: block;
   font: inherit;
-  font-size: 0.9rem;
-  padding: 8px 10px;
-  resize: vertical;
+  font-size: 17px;
+  line-height: 1.6;
+  /* ~4 lines: an empty note that already looks like somewhere to write
+     a paragraph. autogrow never sets a height below this — min-height
+     wins over the height it assigns. */
+  min-height: 132px;
+  max-width: 68ch;
+  overflow-y: hidden;
+  padding: 10px 12px;
+  resize: none;
   width: 100%;
 }
 
-/* ── graph pane ──────────────────────────────────────────────────── */
-.ir-graph-wrap {
-  display: flex;
-  gap: 16px;
-  /* Same reason the KG tab sizes its pane: cytoscape needs a real box. */
-  height: calc(100dvh - 220px);
-  min-height: 420px;
+/* ── graph pane: FULL-BLEED, hosting the real lesson map ──────────
+   Seth, 2026-08-27: the graph door should "cover the whole screen, or not
+   the whole screen, still leaving like the top bar".
+
+   So #ir-graph leaves the page's 1100px container and pins itself under the
+   topbar. It has to be `position: fixed` rather than a tall block, because
+   what lands inside it is `.kg-container.kg2` — a Cytoscape canvas that sizes
+   itself from its box — and a box that ends at the fold is a map that ends at
+   the fold. `--dd-topbar-h` is the one source for the bar's height
+   (styles/layout.css); the inset reads it rather than repeating 44px.
+
+   z-index 40 sits UNDER the topbar (50) and the nav drawer (110/120) on
+   purpose: this covers the page, not the app's chrome. */
+#ir-graph:not(.hidden) {
+  background: var(--bg);
+  inset: var(--dd-topbar-h) 0 0 0;
+  position: fixed;
+  z-index: 40;
 }
-.ir-cy-wrap {
-  border: 1px solid var(--border);
-  border-radius: 14px;
+body.ir-kg-open { overflow: hidden; }
+
+.ir-kg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* The instructor's own strip. Everything a learner gets — Fit, the
+   Mastery/Lessons switch, the lesson pane — arrives inside the hosted graph;
+   only flagging belongs to this file. */
+.ir-kg-bar {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  padding: 8px 14px;
+}
+.ir-kg-hint { flex: 1 1 240px; min-width: 0; }
+/* Reads as a target, not a label: it names the concept it will file against. */
+#ir-flag-concept:disabled { cursor: default; opacity: 0.45; }
+
+.ir-kg-frame {
   flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   position: relative;
 }
-#ir-cy { height: 100%; width: 100%; }
+/* Qualified by #page-instructor-review for SPECIFICITY, not scope — the same
+   trick styles/why-map.css documents for its own host. The Knowledge Graph's
+   `.kg-container` becomes a descendant of `.ir-container` the moment it is
+   moved in, and would otherwise keep that container's 1100px measure and
+   render the map into a slice of the screen. */
+#page-instructor-review .ir-kg-frame.is-hosting-kg > .kg-container {
+  inset: 0;
+  margin: 0;
+  max-width: none;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  width: auto;
+}
 .ir-graph-status {
   left: 50%;
   opacity: 0.7;
   position: absolute;
+  text-align: center;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.ir-panel {
-  border: 1px solid var(--border);
-  border-radius: 14px;
+
+/* ── the flag card ────────────────────────────────────────────────
+   Floats over the bottom-left of the map instead of taking a third column.
+   The hosted graph already carries a lesson pane down its right side, and a
+   permanent aside beside it would have left the network — the thing being
+   reviewed — the narrowest panel on the screen. It only exists while
+   something is selected, so nothing is covered while you are reading.
+
+   `:not(.hidden)` because `.hidden { display: none }` (components.css) has
+   the same specificity as a bare `.ir-panel`, and which one won would then
+   depend on stylesheet order. */
+.ir-panel:not(.hidden) {
   display: flex;
-  flex: 0 0 300px;
+}
+.ir-panel {
+  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   flex-direction: column;
   gap: 12px;
+  left: 14px;
+  max-height: min(62%, 460px);
   overflow-y: auto;
   padding: 16px;
+  position: absolute;
+  /* Vertically CENTRED on the left edge, not docked to a corner. Both corners
+     on that side are already taken by the hosted graph's own furniture: the
+     no-data notice at the top, and the mastery legend sitting on top of the
+     learner-model dock at the bottom (styles/how-it-works.css). The middle is
+     the one band nothing else claims at any pane height. */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  /* Above the dock (z-index 20), which is opaque and would otherwise cut the
+     card off at its top edge — the send button was the half that vanished. */
+  z-index: 30;
 }
-#ir-form { display: flex; flex-direction: column; gap: 10px; }
 #ir-form-target { font-size: 0.95rem; line-height: 1.4; }
 #ir-form-tags { display: flex; flex-direction: column; gap: 6px; }
+/* Same behaviour as the question note, smaller numbers: this one lives in
+   a 320px floating card, so its measure is the card and there is no room to
+   open at four lines. It still grows as you type. */
 #ir-form-note {
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 8px;
+  box-sizing: border-box;
   color: inherit;
   font: inherit;
-  font-size: 0.9rem;
-  min-height: 64px;
-  padding: 8px 10px;
-  resize: vertical;
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 92px;
+  overflow-y: hidden;
+  padding: 9px 11px;
+  resize: none;
 }
 
 @media (max-width: 800px) {
   .ir-chooser { flex-direction: column; }
-  .ir-graph-wrap { flex-direction: column; height: auto; }
-  .ir-cy-wrap { height: 55dvh; }
-  .ir-panel { flex: 0 0 auto; }
+  /* Narrow, the card stops floating over a map that has no room to spare and
+     takes the bottom of the screen instead. */
+  .ir-panel {
+    border-radius: 14px 14px 0 0;
+    bottom: 0;
+    left: 0;
+    max-height: 55%;
+    top: auto;
+    transform: none;
+    width: 100%;
+  }
 }

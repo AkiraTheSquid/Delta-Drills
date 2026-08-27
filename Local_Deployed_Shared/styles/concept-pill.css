@@ -1,0 +1,226 @@
+/* ================================================================
+   CONCEPT-PILL.CSS — the concept under test, as a chip in the topbar
+   that fills.
+
+   Behaviour in ../concept-pill.js; the number it draws is computed in
+   practice/stage-ladder.js and handed over as an event. Read that file's
+   header for what the fraction means and why it stops short of full.
+
+   THIS IS THE LEVEL PILL'S TWIN, on purpose (Seth, 2026-08-27: "kind of like
+   how you have the level thing that gets filled up as you level up ... a pill
+   at the top that gets filled up as you make progress"). Everything structural
+   here is xp.css's, for the same reasons xp.css gives at length:
+
+     - ONE GRID CELL holds the fill and both text layers, so the clip
+       percentage and the fill percentage measure the same box.
+     - THE LABEL IS DRAWN TWICE. `.dd-concept-text` in the empty track's
+       colours, `.dd-concept-text--on` in `--on-accent` clipped to the filled
+       width. A single text colour cannot be legible on both a near-transparent
+       chip and a saturated fill across three themes.
+     - THE PADDING IS ON THE TEXT LAYERS, not on the pill. With padding on the
+       pill, the clip edge and the fill edge drift apart by exactly that
+       padding and the two-colour seam stops landing in the same place in the
+       same word.
+
+   ── WHY A DIFFERENT GRADIENT ──────────────────────────────────────
+   Two chips that fill, in one 44px bar, must not be mistaken for each other:
+   one is the account's level and the other is this question's concept. They
+   are told apart by width and by label, but a shared hue would have them read
+   as one meter split in two. So this one runs `--accent-2` → `--xp-to` where
+   the level pill runs `--xp-from` → `--xp-to` — a violet start against an
+   indigo one, ending on the same leading edge.
+
+   🔴 BOTH TOKENS ARE EXISTING, THEMED ONES. A third hand-picked colour pair
+   would need its own contrast pass in all three themes; these two already have
+   one (styles/variables.css darkens both for the light theme precisely because
+   the dark themes' pastels vanish on white).
+   ================================================================ */
+
+.dd-concept {
+  display: inline-grid;
+  /* Its own stacking context, so the fill's z-index cannot interleave with
+     anything else the topbar draws. */
+  isolation: isolate;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  overflow: hidden;
+
+  /* ── IT IS BIG, AND THE SIZE IS THE POINT ──────────────────────────
+     Seth, 2026-08-27, on the first version — which was the level pill's exact
+     dimensions: "make it such that it's much bigger and that it goes from left
+     to right much bigger for the bar, because you have a lot of extra space
+     ... probably one-third of the screen for the top bar should be devoted to
+     the progress bar for the progress on your understanding of that concept."
+
+     A 12px chip sized to its text is a LABEL that happens to have a fill
+     behind it. At a third of the viewport it is a METER with a name written
+     on it, which is what it is: the one reading on this screen that answers
+     "how far into this concept am I". The width is fixed rather than
+     content-sized for the same reason a progress bar always is — a track whose
+     length changes with the concept's name makes two different fractions look
+     like the same amount of progress.
+
+     🔴 `flex: 0 1 33vw`, SHRINKABLE — the third number is the wish, not a
+     floor. In advanced mode this cell also holds the ten-button tab strip, and
+     `flex: 0 0 auto` there would push the topbar's two `1fr` side columns out
+     of the viewport. `min-width: 0` is what actually lets it give way; without
+     it the flex item refuses to shrink below its content and the shrink factor
+     never applies. */
+  flex: 0 1 33vw;
+  width: 33vw;
+  min-width: 0;
+
+  /* 🔴 THE HEIGHT DOES NOT GROW THE BAR (Seth, same message: "you don't want
+     to like increase the height of the bar"). `--dd-topbar-h` is 44px and this
+     is 34, which fills the bar to 4-5px of air top and bottom — the text reads
+     as occupying the bar's height without anything sizing against it. Fixed,
+     not derived from the token: deriving it would make a future change to the
+     bar's height silently change this, and the two are being tuned by eye. */
+  height: 34px;
+
+  /* A concept name is prose and runs to five or six words. The bar is one row,
+     so the name CLIPS rather than wraps — a second line would push the height
+     of every screen in the app. The full name is in the `title`
+     concept-pill.js writes. */
+  white-space: nowrap;
+  transition: border-color 0.3s;
+}
+
+.dd-concept.hidden {
+  display: none;
+}
+
+.dd-concept-fill {
+  grid-area: 1 / 1;
+  z-index: 0;
+  justify-self: start;
+  align-self: stretch;
+  width: var(--dd-concept-pct, 0%);
+  background: linear-gradient(90deg, var(--accent-2) 0%, var(--xp-to) 100%);
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* No reading for this concept yet — an unknown rung, a KC-less item. The track
+   is EMPTY, not zero-filled: see concept-pill.js on why those are different
+   claims. The dashed border is the visible half of saying so; the tooltip is
+   the other half. */
+.dd-concept.is-unmeasured {
+  border-style: dashed;
+}
+
+.dd-concept-text {
+  grid-area: 1 / 1;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* Here, not on `.dd-concept` — see the header. Vertical padding is ZERO on
+     purpose: the pill's own `height` sets the box and `align-items: center`
+     centres the line in it, so padding here would only fight that. The
+     horizontal figure is what holds the first glyph off the rounded end. */
+  padding: 0 16px;
+  /* Sized against the 34px pill, not against the 12px chip this replaced — at
+     12px the name floated in the middle of a track three times its height and
+     read as a caption that had been dropped into a bar. */
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--white);
+  min-width: 0;
+}
+
+/* The copy that sits ON the fill. `--on-accent` is the token defined for
+   exactly this — text over an accent surface — in all three themes. */
+.dd-concept-text--on {
+  color: var(--on-accent);
+  clip-path: inset(0 calc(100% - var(--dd-concept-pct, 0%)) 0 0);
+  transition: clip-path 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Invisible to the reader and to the mouse: the base layer carries the
+     accessible name, and a pointer landing on this copy would take the
+     tooltip off the element that owns it. */
+  pointer-events: none;
+}
+
+/* 🔴 THE ELLIPSIS IS ON BOTH LAYERS AND MUST BE IDENTICAL. The clip is a
+   percentage of the layer's own box, so if one layer truncated at a different
+   character the seam would fall in the middle of a glyph that is not there on
+   the other. Same rule, both layers, one declaration. */
+.dd-concept-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* The eyebrow that used to sit above the concept in the left panel's heading
+   card is NOT reproduced here. The chip is a name and a fraction; anything
+   else on it makes it the thing it replaced. */
+
+/* ── NARROW ───────────────────────────────────────────────────────────
+   Below the drawer breakpoint the tab strip has already moved into
+   #nav-drawer and the bar is hamburger / level / concept / account. The chip
+   gives up width first — it is the only item here whose content is prose. */
+@media (max-width: 900px) {
+  .dd-concept {
+    /* A LARGER fraction, not a smaller one. The tab strip has moved into
+       #nav-drawer by here, so the middle cell is the chip's alone — and a
+       third of a narrow viewport is not enough characters to name a concept.
+       It is still the same object; it just takes the room the strip left. */
+    flex: 0 1 44vw;
+    width: 44vw;
+    height: 32px;
+  }
+
+  .dd-concept-text {
+    font-size: 14px;
+    padding: 0 13px;
+  }
+}
+
+/* Under 620px there is no room for a second chip beside the level pill without
+   one of them becoming three characters and an ellipsis, which names no
+   concept at all. The heading card in the left panel still carries the name on
+   these widths (styles/practice/question.css), so nothing is lost by dropping
+   the chip rather than shrinking it into uselessness. */
+@media (max-width: 620px) {
+  .dd-concept {
+    display: none;
+  }
+}
+
+/* ── THE NAME IS IN ONE PLACE, AND IT IS UP HERE ──────────────────────
+   Seth, 2026-08-27: the concept "should be on the top bar instead of on the
+   left". `.question-number-row` is the heading card in the left panel — the
+   concept's name in a 20px <h2> with the four-rung stage ladder under it — and
+   leaving it there would put the same concept on the screen twice, in two type
+   sizes, which is the exact duplication the ladder was moved INTO that card to
+   end back on 2026-08-23.
+
+   🔴 `display: none`, NOT a markup deletion, and the difference is load-
+   bearing. `practice/ui.js` writes `#question-number`'s text on every question
+   and `practice/stage-ladder.js` READS it back (`_renderReading`) to decide
+   whether its own KC button would be a duplicate of the heading. Both still
+   work on a display-none element; neither survives the node going away. The
+   ladder inside the card keeps rendering too, and its render is what fires the
+   event this chip draws.
+
+   🔴 `body .question-number-row`, NOT `.question-number-row`. The bare
+   selector is the SAME specificity question.css declares that card with, so it
+   wins on source order alone — and source order in a 60-tag <head> is not an
+   invariant anyone can see. Reordering two <link>s would then bring the card
+   back with no error anywhere: the concept named twice, once up here and once
+   in a 20px <h2> under it. One `body` ahead of it (0,1,1 against 0,1,0) makes
+   the rule win wherever this sheet is linked. Codex flagged the order
+   dependency; this is the fix, and it is why nothing asserts the link order.
+
+   The card comes BACK under 620px, where the chip is dropped rather than
+   shrunk into an ellipsis (see the media query above). One rule, one
+   breakpoint, and the name is on the screen exactly once at every width. */
+@media (min-width: 621px) {
+  body .question-number-row {
+    display: none;
+  }
+}

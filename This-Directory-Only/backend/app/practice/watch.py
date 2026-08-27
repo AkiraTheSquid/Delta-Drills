@@ -32,6 +32,7 @@ EXPECTED_PATHS = {
     '/api/practice/override',
     '/api/practice/feedback',
     '/api/practice/problem-feedback',
+    '/api/practice/lesson-feedback',
     '/api/practice/problem-feedback/revisions',
     '/api/practice/problem-feedback/rollback',
     '/api/practice/problem-feedback/repair-queue',

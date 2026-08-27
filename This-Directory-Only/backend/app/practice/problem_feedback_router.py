@@ -20,6 +20,8 @@ the feedback log is unaffected.
 
 Endpoints (mounted under /api/practice by the parent router):
   POST /problem-feedback                    -> append one entry (+ maybe queue a repair)
+  POST /lesson-feedback                     -> append one entry about a LESSON page
+  GET  /lesson-feedback                     -> list this user's lesson entries
   GET  /problem-feedback                    -> list this user's entries (newest first)
   GET  /problem-feedback/revisions          -> AI repairs applied to the bank
   POST /problem-feedback/rollback           -> revert one question's AI repair
@@ -75,6 +77,43 @@ class ProblemFeedbackRequest(BaseModel):
     note: str = Field(default="", max_length=5000)
     # For triage context: was the learner marked correct on this attempt?
     correct: Optional[bool] = None
+
+
+# A lesson is prose, so its defects are different ones: nothing here maps onto
+# "wrong image", and "broken" means the code in the worked example does not run.
+LessonFeedbackTag = Literal["wrong", "confusing", "too_shallow", "too_verbose", "good"]
+
+
+class LessonFeedbackRequest(BaseModel):
+    # The KC the lesson page teaches. Not an int question id: a lesson exists
+    # before any question is on screen and can gate several of them.
+    kc: str = Field(default="", max_length=200)
+    lesson_title: str = Field(default="", max_length=300)
+    # The drill the gate was standing in front of, when there is one. Context
+    # for triage only — it is NEVER the subject of the feedback, which is why
+    # this endpoint does not touch the repair queue.
+    question_id: Optional[int] = None
+    tag: LessonFeedbackTag
+    note: str = Field(default="", max_length=5000)
+
+
+class LessonFeedbackEntry(BaseModel):
+    kc: str = ""
+    lesson_title: str = ""
+    question_id: Optional[int] = None
+    tag: LessonFeedbackTag
+    note: str = ""
+    timestamp: str
+
+
+class LessonFeedbackResponse(BaseModel):
+    success: bool
+    count: int
+
+
+class LessonFeedbackListResponse(BaseModel):
+    success: bool
+    entries: List[LessonFeedbackEntry]
 
 
 class ProblemFeedbackEntry(BaseModel):
@@ -165,6 +204,29 @@ def _write_entries(user_id: str, entries: List[dict]) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def _lesson_log_file(user_id: str):
+    safe_id = user_id.replace("/", "_").replace("..", "_")
+    return DATA_DIR / f"{safe_id}.lesson-feedback.json"
+
+
+def _read_lesson_entries(user_id: str) -> List[dict]:
+    path = _lesson_log_file(user_id)
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return list(data.get("entries") or [])
+    except Exception as e:  # corrupt file shouldn't break a lesson
+        logger.error("Failed to read lesson-feedback log for %s: %s", user_id, e)
+        return []
+
+
+def _write_lesson_entries(user_id: str, entries: List[dict]) -> None:
+    path = _lesson_log_file(user_id)
+    payload = {"user_id": user_id, "entries": entries}
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
 def _require_allowlisted(user: User) -> str:
     """Repair endpoints are for the people who can trigger a repair, nobody else."""
     email = (getattr(user, "email", "") or "").strip()
@@ -224,6 +286,51 @@ def list_problem_feedback(
     return ProblemFeedbackListResponse(
         success=True,
         entries=[ProblemFeedbackEntry(**e) for e in entries],
+    )
+
+
+@router.post("/lesson-feedback", response_model=LessonFeedbackResponse)
+def submit_lesson_feedback(
+    payload: LessonFeedbackRequest,
+    user: User = Depends(get_current_user),
+) -> LessonFeedbackResponse:
+    """Append one piece of feedback about a LESSON page.
+
+    Deliberately separate from /problem-feedback rather than a flag on it. That
+    endpoint's subject is an integer question id, and an actionable tag on it
+    queues an AI rewrite of that question — so a note saying a worked example
+    was confusing would have been filed against the drill the lesson gates and
+    then used to rewrite it. Different subject, different log, no repair queue.
+    """
+    user_id = str(user.id)
+    entries = _read_lesson_entries(user_id)
+    entry = {
+        "kc": payload.kc.strip(),
+        "lesson_title": payload.lesson_title.strip(),
+        "question_id": payload.question_id,
+        "tag": payload.tag,
+        "note": payload.note.strip(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    entries.append(entry)
+    _write_lesson_entries(user_id, entries)
+    logger.info(
+        "lesson_feedback user=%s kc=%s tag=%s note=%r",
+        user_id, entry["kc"], payload.tag, entry["note"][:120],
+    )
+    return LessonFeedbackResponse(success=True, count=len(entries))
+
+
+@router.get("/lesson-feedback", response_model=LessonFeedbackListResponse)
+def list_lesson_feedback(
+    user: User = Depends(get_current_user),
+) -> LessonFeedbackListResponse:
+    """Return this user's lesson feedback entries, newest first."""
+    user_id = str(user.id)
+    entries = list(reversed(_read_lesson_entries(user_id)))
+    return LessonFeedbackListResponse(
+        success=True,
+        entries=[LessonFeedbackEntry(**e) for e in entries],
     )
 
 

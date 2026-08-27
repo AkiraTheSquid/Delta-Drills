@@ -1,0 +1,125 @@
+/* ================================================================
+   JARGON LINKS — the underline in lesson prose, and the definition
+   panel it opens. Behaviour and copy live in jargon.js and
+   lessons/glossary.js; this file is only how they look.
+
+   THE UNDERLINE IS QUIET ON PURPOSE
+     A lesson page can carry a dozen of these. Anything with the
+     weight of a real link would turn a paragraph into a menu, and
+     Seth has already thrown out one round of "information icons
+     literally everywhere" (2026-08-23, see infotips-registry.js).
+     So: no colour change at rest, no icon, no bold — a dotted rule
+     under the word, in the muted ink, that only warms up under the
+     pointer. It reads as a footnote, which is what it is.
+
+   THE PANEL IS position: fixed
+     Same reason .dd-infopop is: it is parked on <body> and has to
+     escape every overflow:hidden ancestor between it and the word —
+     the practice split, the notebook column, the graph's right-hand
+     pane. jargon.js positions it in VIEWPORT coordinates to match;
+     adding scroll offsets here would push it off screen on a
+     scrolled page.
+   ================================================================ */
+
+.dd-jargon {
+  border-bottom: 1px dotted var(--muted);
+  cursor: help;
+  /* The word must stay part of the sentence: no padding, no inline-block, no
+     line-height of its own. Anything that changes the box changes where the
+     line wraps, and a paragraph that re-wraps as it decorates is a flicker. */
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+.dd-jargon:hover,
+.dd-jargon:focus-visible,
+.dd-jargon.dd-jargon-open {
+  color: var(--accent-text);
+  border-bottom-color: var(--accent-text);
+  border-bottom-style: solid;
+  outline: none;
+}
+
+.dd-jargon:focus-visible {
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgb(var(--accent-rgb) / 0.45);
+}
+
+/* ---- the definition panel ---------------------------------------- */
+
+.dd-jargon-pop {
+  position: fixed;
+  /* Over the practice split and the graph pane, under the maximize overlay
+     (.kg-maxi) — a panel floating above a full-bleed lesson would be orphaned
+     from the word that opened it. */
+  z-index: 200;
+  width: min(340px, calc(100vw - 24px));
+  padding: 12px 14px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: 0 10px 30px var(--shadow-strong);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.dd-jargon-pop[hidden] {
+  display: none;
+}
+
+.dd-jargon-pop-term {
+  margin-bottom: 4px;
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  /* The glossary spells terms in lower case; the heading is where they get
+     their capital, so the panel title matches the sentence it came from. */
+  text-transform: capitalize;
+}
+
+.dd-jargon-pop-def {
+  color: var(--text);
+}
+
+.dd-jargon-pop-where {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dd-jargon-pop-where[hidden] {
+  display: none;
+}
+
+.dd-jargon-pop-where strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.dd-jargon-pop-go {
+  width: 100%;
+  margin-top: 10px;
+  padding: 7px 10px;
+  border: 1px solid rgb(var(--accent-rgb) / 0.55);
+  border-radius: 7px;
+  background: rgb(var(--accent-rgb) / 0.12);
+  color: var(--accent-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.dd-jargon-pop-go:hover,
+.dd-jargon-pop-go:focus-visible {
+  background: var(--accent);
+  color: var(--on-accent);
+  outline: none;
+}
+
+/* The Colab edition renders lessons in the notebook beside the app, and the
+   embedded practice frame (?embed=1) is a lesson with no chrome. Both still
+   want the underline; neither wants a panel that can outlive its host frame's
+   scroll position, which is what the fixed panel already handles. Nothing to
+   override here — kept as a note so the next person does not add one. */

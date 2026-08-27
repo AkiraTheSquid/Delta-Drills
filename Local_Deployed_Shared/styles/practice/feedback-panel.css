@@ -1,0 +1,218 @@
+/* In-app feedback surfaces. Two panels, one shape.
+
+   PROBLEM — opens from a button beside Submit and expands at the BOTTOM of
+   .practice-left (the left column is its own scroller), so it never pushes the
+   question or the editor around. The old #problem-feedback-row lived INSIDE
+   #practice-feedback-area, which meant it only existed after a submit and was
+   `display:none` outright in basic mode — i.e. for everybody, since basic mode
+   is the default. That is why there was no way to report a problem.
+
+   LESSON — a lesson is one measured column (notebook.css collapses the split),
+   so its panel docks to the LEFT of that column and the lesson keeps reading on
+   the right. Sticky, not fixed: .practice-left is the scrolling element, so a
+   fixed panel would have to guess the header height and would drift.
+
+   The note itself is styled by feedback.css (.problem-feedback-note) — a real
+   starting height, no ceiling, autogrow. Nothing here restates it. */
+
+/* ---- shared shell ------------------------------------------------------- */
+.dd-fb-panel {
+  background: rgb(var(--well-rgb) / calc(0.3 * var(--well-k)));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px 18px;
+}
+
+.dd-fb-head {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.dd-fb-title {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dd-fb-sub {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 2px 0 12px;
+}
+
+.dd-fb-close {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.dd-fb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* The chips are a CHOICE now, not a send button. Clicking one used to post
+   immediately, which left no room for the note underneath it — you typed into
+   a box whose submit had already happened. */
+.dd-fb-chip {
+  font-size: 12px;
+  padding: 6px 11px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.dd-fb-chip:hover {
+  background: rgb(var(--accent-rgb) / 0.1);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+}
+
+.dd-fb-chip.flagged {
+  background: var(--accent);
+  border-color: var(--accent-text);
+  color: var(--on-accent);
+}
+
+.dd-fb-note-label {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.dd-fb-send-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.dd-fb-send-btn {
+  padding: 9px 18px;
+}
+
+.dd-fb-status {
+  color: var(--accent-text);
+  font-size: 12px;
+}
+
+.dd-fb-status.dd-fb-status-error {
+  color: var(--warn);
+}
+
+/* The trigger sits beside Submit, so it must not read as a second Submit. */
+.dd-fb-trigger {
+  white-space: nowrap;
+}
+
+/* ---- problem panel ------------------------------------------------------ */
+.problem-feedback-panel {
+  margin: 4px 0 28px;
+}
+
+/* ID beats the global `.hidden` class, so the hide has to be re-asserted at
+   the same weight — the same trap #practice-submit-area.hidden documents in
+   feedback.css. Without this the panel can never close. */
+#problem-feedback-panel.hidden {
+  display: none;
+}
+
+/* A lesson has no problem to report and no submit button to sit beside. */
+body.lesson-mode #problem-feedback-panel,
+body.lesson-mode .dd-fb-trigger[data-fb-target="problem"] {
+  display: none;
+}
+
+/* ---- lesson panel ------------------------------------------------------- */
+/* The dock is ONE flex item holding the button and the panel, so opening it
+   cannot turn the reading column into a three-column layout. Closed, it is the
+   width of the lesson and its button sits at the lesson's top-left; open, it
+   becomes the 340px column to the LEFT of the lesson — which is the direction
+   the button was pointing. */
+#lesson-feedback-dock {
+  display: none;
+}
+
+body.lesson-mode #lesson-feedback-dock {
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 780px;
+  width: 100%;
+}
+
+body.lesson-mode.dd-lesson-feedback-open #lesson-feedback-dock {
+  align-self: flex-start;
+  flex: 0 0 340px;
+  margin: 0;
+  max-width: 340px;
+  position: sticky;
+  top: 0;
+  width: 340px;
+}
+
+.lesson-feedback-toggle {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+body.lesson-mode.dd-lesson-feedback-open .lesson-feedback-toggle {
+  margin-bottom: 10px;
+}
+
+#lesson-feedback-panel.hidden {
+  display: none;
+}
+
+.lesson-feedback-panel {
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+}
+
+/* Only the reading column is visible in lesson mode (lessons.css hides the
+   other eight children of .practice-left), so turning that column into a row
+   here lays out exactly two things: the dock and the lesson.
+
+   🔴 `flex-direction` is the switch, NOT `display`. layout.css already makes
+   .practice-left `display: flex; flex-direction: column`, so a rule that only
+   restated `display: flex` changed nothing and the panel stacked ABOVE the
+   lesson — which measured as a 340px-wide panel overlapping a lesson that
+   still started at the same x. */
+body.lesson-mode.dd-lesson-feedback-open .practice-left {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  gap: 26px;
+}
+
+/* Beats notebook.css's `body.lesson-mode #question-text` on class count, not
+   on load order — this sheet must not depend on where it is linked. */
+body.lesson-mode.dd-lesson-feedback-open #question-text {
+  flex: 1 1 auto;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Under ~900px the two columns stop being two columns; the panel goes above
+   the lesson rather than squeezing it to nothing. */
+@media (max-width: 900px) {
+  body.lesson-mode.dd-lesson-feedback-open .practice-left {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  body.lesson-mode.dd-lesson-feedback-open #lesson-feedback-dock {
+    margin: 0 auto 20px;
+    max-width: 780px;
+    position: static;
+    width: 100%;
+  }
+
+  .lesson-feedback-panel {
+    max-height: none;
+  }
+}

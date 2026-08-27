@@ -31,7 +31,7 @@
   <!-- Dark scrollbars. Loaded with the base layer, not as a feature, because
        it sets `color-scheme` on :root and skins every scroller in the app. -->
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
-  <link rel="stylesheet" href="styles/layout.css?v=6" />
+  <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=30" />
   <!-- The landing page's concept map, split out of how-it-works.css.
@@ -46,6 +46,7 @@
   <link rel="stylesheet" href="styles/courses/modal.css?v=2" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/infotips.css?v=2" />
+  <link rel="stylesheet" href="styles/jargon.css?v=1" />
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
   <link rel="stylesheet" href="styles/nav-drawer.css?v=5" />
@@ -65,7 +66,7 @@
        declares the control that replaces the strip as the way around the
        app. Nothing here is mode-scoped — the menu is the same in both. -->
   <link rel="stylesheet" href="styles/account-menu.css?v=2" />
-  <link rel="stylesheet" href="styles/instructor-review.css?v=1" />
+  <link rel="stylesheet" href="styles/instructor-review.css?v=2" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
@@ -73,7 +74,8 @@
        After timer.css, which still owns the card the dial sits in. -->
   <link rel="stylesheet" href="styles/practice/readiness.css?v=2" />
   <link rel="stylesheet" href="styles/practice/question.css?v=5" />
-  <link rel="stylesheet" href="styles/practice/feedback.css?v=5" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=8" />
@@ -81,7 +83,7 @@
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=2" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=11" />
@@ -92,7 +94,16 @@
        default. Strips the practice question down to the concept title, the
        problem, and the worked example; the rest of the rails come back with the
        Advanced toggle. -->
-  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=3" />
+  <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
+       that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
+       AFTER styles/practice/question.css, and this is the only thing about its
+       position that matters: it hides `.question-number-row`, the heading card
+       that used to name the concept in the left panel, at the SAME specificity
+       question.css declares that card with. Later sheet wins. Reversed, the
+       concept is named twice — once up here and once in a 20px <h2> under it —
+       and nothing throws. `watch_concept_pill.py` asserts the order. -->
+  <link rel="stylesheet" href="styles/concept-pill.css?v=1" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -211,97 +222,42 @@
            longer be started). -->
       <button class="tab auth-only" data-tab="targeted-practice" type="button" hidden>Targeted Practice</button>
     </nav>
-    <div class="practice-notch" id="practice-notch">
-      <!-- One tab, two parts: the countdown and the dots that open the
-           menu. The clock is a MIRROR of #session-countdown, written by
-           notch-menu.js — timer.js owns the only clock there is, and a
-           second one counting on its own would drift from the one that
-           auto-submits.
+    <!-- THE CONCEPT PILL. The concept this question is about, and how far into
+         it the learner is, as one chip that fills from the left — Seth,
+         2026-08-27: "for the concept that's being tested it should be on the
+         top bar instead of on the left ... a pill at the top that gets filled
+         up as you make progress ... and it won't have the other complicated
+         thing where it has the different stages".
 
-           🔴 It does NOT go away between sessions (Seth, 2026-08-23:
-           "even after you exit the session, the notch should still be
-           there ... with the amount of time that you would want to set").
-           Idle, it shows the answer allowance the next question WILL get
-           — 02:00 — greyed, so the tab is a standing statement of the
-           rule rather than a control that appears and disappears. -->
-      <div class="practice-notch-tab" id="practice-notch-tab">
-        <!-- The phase word, for screen readers only. The countdown alone
-             does not say whether running out costs an answer or just
-             loads the next problem, and sighted readers get that from the
-             clock's colour and the tab's tooltip. Before the clock in the
-             DOM so it is read as "Answering, 4:12". -->
-        <span class="practice-notch-sr" id="practice-notch-phase"></span>
-        <!-- THE SQUARE, left of the clock (Seth, 2026-08-23). It pauses:
-             the question, the draft code, the review state and the clock
-             are all written to the resume snapshot, the block closes, and
-             the readiness screen comes up. There is no separate "end" —
-             pause and resume are the only two states this session model
-             has. A PROXY for #session-pause-btn, like everything else in
-             this notch; timer.js owns what pausing means, including when
-             it is refused (mid-grade). -->
-        <button class="practice-notch-stop" id="practice-notch-stop" type="button"
-                aria-label="Pause and save this session">
-          <span class="practice-notch-stop-glyph" aria-hidden="true"></span>
-        </button>
-        <!-- 🔴 NOT aria-hidden. `.session-status-row` is display:none, so
-             this is the only countdown in the accessibility tree as well
-             as the only one on screen. `role="timer"` carries an implicit
-             aria-live="off": discoverable on demand, never announced once
-             a second. -->
-        <span class="practice-notch-clock hidden" id="practice-notch-clock"
-              role="timer"></span>
-        <!-- THE PLACEMENT CLOCK, in the same slot as the session one. Seth,
-             2026-08-23: "for the placement test ... the timer is on the left
-             next to the title thing instead of being on the tab." It was a
-             pill in .question-number-row, beside the concept heading; it is
-             here now, and the two clocks TAKE TURNS — practice/notch-menu.js
-             hides #practice-notch-clock for as long as a probe is being
-             timed, so the tab never shows two countdowns.
+         It replaces the heading card in the left panel: a 20px <h2> with the
+         four-rung stage ladder under it, each rung named inside the track with
+         its own ⓘ. That card is `display: none` from 621px up
+         (styles/concept-pill.css) rather than deleted — `practice/ui.js` still
+         writes `#question-number` and `practice/stage-ladder.js` still reads it
+         back, and the ladder's own render is what feeds this chip.
 
-             Still a static element, still written only by
-             practice/placement-timer.js, and still inside .practice-container
-             so it re-parents onto the Placement page with the workspace.
+         🔴 THE LABEL IS WRITTEN TWICE, exactly as the level pill on the left
+         writes its own — see the long note there and in styles/xp.css. One text
+         colour cannot be legible on both a near-transparent chip and a
+         saturated fill across three themes, so the base layer is coloured for
+         the empty track and the clipped copy is coloured for the fill. The copy
+         is aria-hidden: the live region announces the concept once.
 
-             🔴 NO `data-dd-info`. It carried one ("placement-timer"), and
-             infotips.js mints the dot as a SIBLING — which in this 15px-tall
-             row is an ⓘ wedged between the clock and the three dots. The copy
-             said the probes are all 2:00 and you do not set it; the tab's own
-             tooltip says that, so the registry entry was DELETED rather than
-             left orphaned (watch.py asserts both lists stay in step). -->
-        <!-- 🔴 IT CARRIES `.practice-notch-clock` TOO, and that is the whole
-             point (Seth, 2026-08-23: the placement should be "indistinguishable
-             user experience wise from the practice ... in terms of the user
-             experience with the top bar for the timer and all that, it should
-             just be exactly the same"). It briefly had its own `--info` tint
-             to mark it as the placement's clock; that IS a distinction, and a
-             distinction is what he asked to remove. Same rules, same colour,
-             same last-30-seconds red. `.placement-timer` survives as the
-             ANCHOR — the id JS writes to and watch.py asserts — and declares
-             nothing visual. -->
-        <span class="practice-notch-clock placement-timer hidden" id="placement-timer"
-              role="timer">02:00</span>
-        <button class="practice-notch-btn" id="practice-notch-btn" type="button"
-                aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
-          <span aria-hidden="true">&#8943;</span>
-        </button>
-      </div>
-      <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
-           aria-labelledby="practice-notch-btn">
-        <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
-        <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
-        <!-- 🔴 THE REAL ELEMENTS, not proxies. Everything above this line
-             forwards a click to a hidden button in #session-status-row;
-             these two ARE the buttons. They were moved here out of
-             .question-number-row with their ids and their ⓘ keys, so
-             practice/ui.js `renderQuestionIdChip` (which writes the label,
-             the title and the click handler) and practice/graph-jump.js
-             (which unhides this one only when the question carries a KC
-             tag) both still find them by id. Nothing about their
-             behaviour moved — only where they are drawn. -->
-        <div class="practice-notch-sep" role="separator"></div>
-        <button class="practice-notch-item question-id-chip" id="question-id-chip" type="button" role="menuitem" title="The stable identifier for this problem — worth quoting when reporting something broken.">Copy question ID</button>
-        <button class="practice-notch-item question-id-chip" id="practice-graph-jump" type="button" role="menuitem" hidden title="Opens the concept this problem is tagged to, so you can check the tutor's choice against the map it claims to be following.">See in knowledge graph</button>
-      </div>
+         🔴 `role="progressbar"` WITH NO `aria-valuenow` AT BOOT. There is no
+         reading until a question lands, and a 0 there is a claim that the
+         learner has made no progress rather than an admission that nothing has
+         been measured. concept-pill.js writes valuenow, or writes
+         aria-valuetext saying there is none. -->
+    <div class="dd-concept hidden" id="dd-concept" role="progressbar"
+         aria-valuemin="0" aria-valuemax="100"
+         aria-label="Progress through the current concept" aria-live="polite">
+      <span class="dd-concept-fill" aria-hidden="true"></span>
+      <span class="dd-concept-text">
+        <span class="dd-concept-label" id="dd-concept-label"></span>
+      </span>
+      <span class="dd-concept-text dd-concept-text--on" aria-hidden="true">
+        <span class="dd-concept-label" id="dd-concept-label-on"></span>
+      </span>
     </div>
     </div>
     <!-- The signed-in EMAIL used to sit here. It is on the Account tab
@@ -456,6 +412,124 @@
           </span>
           <span class="account-menu-label" id="account-menu-instructor-label">Enter instructor feedback mode</span>
         </button>
+      </div>
+    </div>
+
+    <!-- 🔴 IT IS A NOTCH AGAIN, AND THE MARKUP DID NOT MOVE TO MAKE IT ONE.
+         Seth, 2026-08-27: "the timer is below the top tab and the timer is like
+         kind of a notch or whatever". This is still a child of `.topbar-mid`;
+         it is drawn under the bar by `position: absolute` against `.topbar`,
+         which is the nearest positioned ancestor because `.topbar` is sticky
+         and nothing between the two is positioned (styles/practice/notch-menu.css,
+         styles/layout.css). Out of flow, so the cell above centres the tab strip
+         and the concept pill without a clock between them.
+
+         🔴 IT IS A DIRECT CHILD OF THE HEADER, and that is the point of the
+         move. It sat inside `.topbar-mid` for the first hour of this change
+         and worked — an absolutely-positioned box resolves against the
+         nearest POSITIONED ancestor, and `.topbar-mid` is not one — but that
+         is a NEGATIVE invariant held by three elements at once: anyone
+         adding `position: relative` to any of them re-anchors the clock into
+         the bar, silently. As a child of the box it is positioned against,
+         there is nothing in between to get it wrong. Out of flow, so it
+         takes no column in the header's `1fr auto 1fr` grid.
+
+         What the 2026-08-24 move fixed is KEPT: the old notch hung off
+         `.practice-container` and travelled with the workspace — into the
+         placement host, out again, off the screen on every page that is not the
+         Learner Home. This one hangs off the bar, which is on every page. Every
+         id below is unchanged, so practice/timer.js, practice/placement-timer.js
+         and practice/notch-menu.js are untouched by the move. -->
+    <div class="practice-notch" id="practice-notch">
+      <!-- One tab, two parts: the countdown and the dots that open the
+           menu. The clock is a MIRROR of #session-countdown, written by
+           notch-menu.js — timer.js owns the only clock there is, and a
+           second one counting on its own would drift from the one that
+           auto-submits.
+
+           🔴 It does NOT go away between sessions (Seth, 2026-08-23:
+           "even after you exit the session, the notch should still be
+           there ... with the amount of time that you would want to set").
+           Idle, it shows the answer allowance the next question WILL get
+           — 02:00 — greyed, so the tab is a standing statement of the
+           rule rather than a control that appears and disappears. -->
+      <div class="practice-notch-tab" id="practice-notch-tab">
+        <!-- The phase word, for screen readers only. The countdown alone
+             does not say whether running out costs an answer or just
+             loads the next problem, and sighted readers get that from the
+             clock's colour and the tab's tooltip. Before the clock in the
+             DOM so it is read as "Answering, 4:12". -->
+        <span class="practice-notch-sr" id="practice-notch-phase"></span>
+        <!-- THE SQUARE, left of the clock (Seth, 2026-08-23). It pauses:
+             the question, the draft code, the review state and the clock
+             are all written to the resume snapshot, the block closes, and
+             the readiness screen comes up. There is no separate "end" —
+             pause and resume are the only two states this session model
+             has. A PROXY for #session-pause-btn, like everything else in
+             this notch; timer.js owns what pausing means, including when
+             it is refused (mid-grade). -->
+        <button class="practice-notch-stop" id="practice-notch-stop" type="button"
+                aria-label="Pause and save this session">
+          <span class="practice-notch-stop-glyph" aria-hidden="true"></span>
+        </button>
+        <!-- 🔴 NOT aria-hidden. `.session-status-row` is display:none, so
+             this is the only countdown in the accessibility tree as well
+             as the only one on screen. `role="timer"` carries an implicit
+             aria-live="off": discoverable on demand, never announced once
+             a second. -->
+        <span class="practice-notch-clock hidden" id="practice-notch-clock"
+              role="timer"></span>
+        <!-- THE PLACEMENT CLOCK, in the same slot as the session one. Seth,
+             2026-08-23: "for the placement test ... the timer is on the left
+             next to the title thing instead of being on the tab." It was a
+             pill in .question-number-row, beside the concept heading; it is
+             here now, and the two clocks TAKE TURNS — practice/notch-menu.js
+             hides #practice-notch-clock for as long as a probe is being
+             timed, so the tab never shows two countdowns.
+
+             Still a static element, still written only by
+             practice/placement-timer.js, and still inside .practice-container
+             so it re-parents onto the Placement page with the workspace.
+
+             🔴 NO `data-dd-info`. It carried one ("placement-timer"), and
+             infotips.js mints the dot as a SIBLING — which in this 15px-tall
+             row is an ⓘ wedged between the clock and the three dots. The copy
+             said the probes are all 2:00 and you do not set it; the tab's own
+             tooltip says that, so the registry entry was DELETED rather than
+             left orphaned (watch.py asserts both lists stay in step). -->
+        <!-- 🔴 IT CARRIES `.practice-notch-clock` TOO, and that is the whole
+             point (Seth, 2026-08-23: the placement should be "indistinguishable
+             user experience wise from the practice ... in terms of the user
+             experience with the top bar for the timer and all that, it should
+             just be exactly the same"). It briefly had its own `--info` tint
+             to mark it as the placement's clock; that IS a distinction, and a
+             distinction is what he asked to remove. Same rules, same colour,
+             same last-30-seconds red. `.placement-timer` survives as the
+             ANCHOR — the id JS writes to and watch.py asserts — and declares
+             nothing visual. -->
+        <span class="practice-notch-clock placement-timer hidden" id="placement-timer"
+              role="timer">02:00</span>
+        <button class="practice-notch-btn" id="practice-notch-btn" type="button"
+                aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
+          <span aria-hidden="true">&#8943;</span>
+        </button>
+      </div>
+      <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
+           aria-labelledby="practice-notch-btn">
+        <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
+        <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
+        <!-- 🔴 THE REAL ELEMENTS, not proxies. Everything above this line
+             forwards a click to a hidden button in #session-status-row;
+             these two ARE the buttons. They were moved here out of
+             .question-number-row with their ids and their ⓘ keys, so
+             practice/ui.js `renderQuestionIdChip` (which writes the label,
+             the title and the click handler) and practice/graph-jump.js
+             (which unhides this one only when the question carries a KC
+             tag) both still find them by id. Nothing about their
+             behaviour moved — only where they are drawn. -->
+        <div class="practice-notch-sep" role="separator"></div>
+        <button class="practice-notch-item question-id-chip" id="question-id-chip" type="button" role="menuitem" title="The stable identifier for this problem — worth quoting when reporting something broken.">Copy question ID</button>
+        <button class="practice-notch-item question-id-chip" id="practice-graph-jump" type="button" role="menuitem" hidden title="Opens the concept this problem is tagged to, so you can check the tutor's choice against the map it claims to be following.">See in knowledge graph</button>
       </div>
     </div>
   </header>
@@ -911,23 +985,37 @@
         <div class="ir-subtopics" id="ir-subtopics"></div>
         <div class="ir-qlist" id="ir-qlist"></div>
       </section>
+      <!-- The graph door does NOT draw a graph. It borrows one: instructor-
+           review.js moves `.kg-container.kg2` — the Knowledge Graph tab's live
+           Cytoscape, its lesson pane, its learner-model dock — into
+           #ir-kg-frame and puts it back on the way out, the same move
+           concept-graph/why-graph.js makes for the landing page's maximise.
+           So there is no canvas in here, only the frame the real one lands in
+           and the flag controls a learner never sees. Full-bleed under the
+           topbar (styles/instructor-review.css), because reviewing sequencing
+           means seeing the whole network at once. -->
       <section class="ir-view hidden" id="ir-graph">
-        <div class="ir-graph-wrap">
-          <div class="ir-cy-wrap">
-            <div id="ir-cy"></div>
-            <div class="ir-graph-status" id="ir-graph-status">Loading the graph&hellip;</div>
-          </div>
-          <aside class="ir-panel">
-            <div class="ir-hint" id="ir-panel-hint">Tap an edge or a concept to flag it.</div>
+        <div class="ir-kg">
+          <div class="ir-kg-bar">
+            <button class="ghost" id="ir-kg-exit" type="button">&larr; Choose review type</button>
+            <span class="ir-hint ir-kg-hint" id="ir-panel-hint">Tap a bubble to read its lesson. Tap an arrow to flag a prerequisite.</span>
+            <button class="ghost" id="ir-flag-concept" type="button" disabled>Flag this concept</button>
             <button class="ghost" id="ir-missing-edge" type="button">Propose a missing edge</button>
-            <div class="hidden" id="ir-form">
-              <div id="ir-form-target"></div>
-              <div id="ir-form-tags"></div>
-              <textarea id="ir-form-note" maxlength="5000"
-                placeholder="Optional note &mdash; why, or what it should be instead&hellip;"></textarea>
-              <button class="primary" id="ir-form-send" type="button">Send feedback</button>
-              <span class="ir-form-status hidden" id="ir-form-status"></span>
-            </div>
+          </div>
+          <div class="ir-kg-frame" id="ir-kg-frame">
+            <div class="ir-graph-status" id="ir-graph-status">Loading the lesson graph&hellip;</div>
+          </div>
+          <!-- Floats over the canvas rather than taking a third column: the
+               graph already ships a lesson pane on its right, and a second
+               permanent aside would leave the map itself the narrowest thing
+               on an instructor's screen. -->
+          <aside class="ir-panel hidden" id="ir-form">
+            <div id="ir-form-target"></div>
+            <div id="ir-form-tags"></div>
+            <textarea id="ir-form-note" maxlength="5000"
+              placeholder="Optional note &mdash; why, or what it should be instead&hellip;"></textarea>
+            <button class="primary" id="ir-form-send" type="button">Send feedback</button>
+            <span class="ir-form-status hidden" id="ir-form-status"></span>
           </aside>
         </div>
       </section>
@@ -1426,6 +1514,41 @@
           </div>
 
           <!-- Question Text -->
+          <!-- Lesson feedback. ONE dock holding the button and the panel:
+               body.lesson-mode collapses the split to a single column, and a
+               separate button would become a third flex item when the panel
+               opens. Closed it sits at the lesson's top-left; open it becomes
+               the column to the LEFT of the lesson (feedback-panel.css).
+               Hidden outside lesson mode. -->
+          <div id="lesson-feedback-dock">
+            <button class="ghost lesson-feedback-toggle" id="lesson-feedback-toggle" type="button"
+                    aria-controls="lesson-feedback-panel">💬 Feedback on this lesson</button>
+            <div class="dd-fb-panel lesson-feedback-panel hidden" id="lesson-feedback-panel">
+              <div class="dd-fb-head">
+                <span class="dd-fb-title">Feedback on this lesson</span>
+                <button class="ghost dd-fb-close" id="lesson-feedback-close" type="button">Close</button>
+              </div>
+              <p class="dd-fb-sub" id="lesson-feedback-subject">About this lesson</p>
+              <div class="dd-fb-chips" role="group" aria-label="What kind of feedback is this?">
+                <button class="ghost dd-fb-chip lesson-flag-btn" data-flag="wrong" type="button">🚩 Something is wrong</button>
+                <button class="ghost dd-fb-chip lesson-flag-btn" data-flag="confusing" type="button">😕 Confusing</button>
+                <button class="ghost dd-fb-chip lesson-flag-btn" data-flag="too_shallow" type="button">🔍 Not enough detail</button>
+                <button class="ghost dd-fb-chip lesson-flag-btn" data-flag="too_verbose" type="button">🐌 Too long-winded</button>
+                <button class="ghost dd-fb-chip lesson-flag-btn" data-flag="good" type="button">👍 This was good</button>
+              </div>
+              <label class="dd-fb-note-label" for="lesson-feedback-note">What would have made this land? The more concrete, the better.</label>
+              <!-- Same class as the problem note on purpose: feedback.css owns
+                   one measured, no-ceiling, autogrowing note box and there is
+                   no reason for a second copy of it here. -->
+              <textarea class="problem-feedback-note" id="lesson-feedback-note" rows="6" data-autogrow
+                        placeholder="Which step lost you, what the worked example skipped, what you expected it to say…"
+                        maxlength="5000" autocomplete="off"></textarea>
+              <div class="dd-fb-send-row">
+                <button class="primary dd-fb-send-btn" id="lesson-feedback-send" type="button">Send feedback</button>
+                <span class="dd-fb-status hidden" id="lesson-feedback-status" role="status" aria-live="polite"></span>
+              </div>
+            </div>
+          </div>
           <div class="question-text" id="question-text"></div>
           <div class="question-imports hidden" id="question-imports">
             <div class="question-imports-label">Imported helpers</div>
@@ -1469,6 +1592,13 @@
           <div id="practice-submit-area">
             <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
             <button class="ghost practice-dontknow-btn hidden" id="practice-dontknow-btn" type="button" title="Placement only: counts as strong evidence this is above your current level and moves the test along — faster and more honest than guessing.">I don't know yet</button>
+            <!-- Reporting a problem was reachable only after a submit, and
+                 `display:none` in basic mode — i.e. for everyone. It lives
+                 here now, beside Submit, and opens #problem-feedback-panel at
+                 the bottom of this column (practice/feedback-panel.js). -->
+            <button class="ghost dd-fb-trigger" id="problem-feedback-open-btn" data-fb-target="problem" type="button"
+                    aria-controls="problem-feedback-panel"
+                    title="Something wrong with this problem? Opens a note at the bottom of this column.">💬 Provide feedback</button>
             <button class="ghost practice-skip-btn" id="practice-skip-btn" type="button" title="Move on without answering — nothing is recorded, and it isn't counted as looking up the solution.">Skip</button>
           </div>
 
@@ -1492,6 +1622,8 @@
               <button class="primary next-problem-btn hidden" id="next-problem-btn" type="button">
                 Next problem
               </button>
+              <button class="ghost dd-fb-trigger" data-fb-target="problem" type="button"
+                      aria-controls="problem-feedback-panel">💬 Provide feedback</button>
             </div>
             <!-- "Wrong for one concrete reason, not because it was too hard" — a
                  separate signal so a single missed fact isn't read as "too hard".
@@ -1500,23 +1632,6 @@
             <div class="missed-fact-row hidden" id="missed-fact-row">
               <button class="ghost missed-fact-btn" id="missed-fact-btn" type="button">I missed one specific thing — it wasn't “too hard”</button>
               <span class="missed-fact-status hidden" id="missed-fact-status">noted ✓</span>
-            </div>
-            <!-- Per-problem quality feedback — content flags, NOT the difficulty rating above -->
-            <div class="problem-feedback-row" id="problem-feedback-row">
-              <div class="problem-feedback-actions">
-                <span class="problem-feedback-label">Issue with this problem?</span>
-                <button class="ghost problem-flag-btn" data-flag="broken" type="button">🚩 Broken</button>
-                <button class="ghost problem-flag-btn" data-flag="unclear" type="button">😕 Unclear</button>
-                <button class="ghost problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong image</button>
-                <button class="ghost problem-flag-btn" data-flag="good" type="button">👍 Good</button>
-                <span class="problem-feedback-status hidden" id="problem-feedback-status">logged ✓</span>
-              </div>
-              <label class="problem-feedback-note-wrap" for="problem-feedback-note">
-                <span>Optional detailed note</span>
-                <textarea class="problem-feedback-note" id="problem-feedback-note" rows="1"
-                          placeholder="What happened? Include expected behavior, exact error, confusing wording, or image details…"
-                          maxlength="5000" autocomplete="off"></textarea>
-              </label>
             </div>
             <!-- Legacy class retained for compatibility. Value is per-concept
                  BKT understanding, with required crosswalk tier + coverage. -->
@@ -1565,6 +1680,32 @@
                           placeholder="Ask the tutor…" spellcheck="false"></textarea>
                 <button class="tutor-send-btn" id="tutor-send-btn" type="button">Send</button>
               </div>
+            </div>
+          </div>
+          <!-- Report-a-problem panel. Bottom of the LEFT column, outside
+               #practice-feedback-area, so it can be opened BEFORE a submit as
+               well as after and so expanding it never moves the question or
+               the notebook. Chips choose the kind, the note says what
+               happened, Send is the only thing that posts. -->
+          <div class="dd-fb-panel problem-feedback-panel hidden" id="problem-feedback-panel">
+            <div class="dd-fb-head">
+              <span class="dd-fb-title">Feedback on this problem</span>
+              <button class="ghost dd-fb-close" id="problem-feedback-close" type="button">Close</button>
+            </div>
+            <p class="dd-fb-sub">This reaches the person who maintains the question bank. Say what kind of thing it is, then what happened.</p>
+            <div class="dd-fb-chips" role="group" aria-label="What kind of feedback is this?">
+              <button class="ghost dd-fb-chip problem-flag-btn" data-flag="broken" type="button">🚩 The problem is broken</button>
+              <button class="ghost dd-fb-chip problem-flag-btn" data-flag="unclear" type="button">😕 The content needs improvement</button>
+              <button class="ghost dd-fb-chip problem-flag-btn" data-flag="wrong_image" type="button">🖼 Wrong or missing image</button>
+              <button class="ghost dd-fb-chip problem-flag-btn" data-flag="good" type="button">👍 This one was good</button>
+            </div>
+            <label class="dd-fb-note-label" for="problem-feedback-note">What happened? Optional — but the detail is what makes it fixable.</label>
+            <textarea class="problem-feedback-note" id="problem-feedback-note" rows="5" data-autogrow
+                      placeholder="Expected behaviour, the exact error, the confusing wording, what the image should have shown…"
+                      maxlength="5000" autocomplete="off"></textarea>
+            <div class="dd-fb-send-row">
+              <button class="primary dd-fb-send-btn" id="problem-feedback-send" type="button">Send feedback</button>
+              <span class="dd-fb-status hidden" id="problem-feedback-status" role="status" aria-live="polite"></span>
             </div>
           </div>
         </div>
@@ -1678,6 +1819,8 @@ t.manual_seed(0)
        injected later is re-derived from the DOM by infotips.js's observer. -->
   <script src="infotips-registry.js?v=10"></script>
   <script src="infotips.js?v=2"></script>
+  <script src="lessons/glossary.js?v=1"></script>
+  <script src="jargon.js?v=1"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
        must already have captured (and dotted) the tabs where the markup put
@@ -1693,7 +1836,14 @@ t.manual_seed(0)
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
   <script src="instructor-mode.js?v=1"></script>
-  <script src="instructor-review.js?v=1"></script>
+  <!-- 🔴 BEFORE instructor-review.js, and not optional at all: the feedback
+       notes are `resize: none; overflow-y: hidden` in
+       styles/instructor-review.css and styles/practice/feedback.css, so with
+       this file missing a long note is a clipped box with no scrollbar and no
+       drag handle. instructor-review.js's openForm also calls
+       window.DDAutoGrow.grow. Grows any textarea[data-autogrow]. -->
+  <script src="autogrow.js?v=1"></script>
+  <script src="instructor-review.js?v=2"></script>
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->
@@ -1709,7 +1859,7 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=1" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=25" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=26" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -1743,7 +1893,7 @@ t.manual_seed(0)
   <script src="practice/ui.js?v=38"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
-  <script src="practice/api.js?v=22"></script>
+  <script src="practice/api.js?v=24"></script>
   <script src="practice/timer.js?v=19"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
@@ -1765,7 +1915,11 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=14"></script>
+  <script src="practice/stage-ladder.js?v=15"></script>
+  <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
+       it computes nothing and only listens for `dd-concept-progress`, which
+       cannot fire before a question lands. -->
+  <script src="concept-pill.js?v=1"></script>
   <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
@@ -1774,7 +1928,7 @@ t.manual_seed(0)
        button means, and after notch-menu.js for no reason but reading order. -->
   <script src="practice/readiness.js?v=4"></script>
   <script src="practice/session-idle.js?v=6"></script>
-  <script src="practice/lessons.js?v=28"></script>
+  <script src="practice/lessons.js?v=29"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=2"></script>
@@ -1783,7 +1937,8 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=1"></script>
-  <script src="practice/events.js?v=37"></script>
+  <script src="practice/events.js?v=38"></script>
+  <script src="practice/feedback-panel.js?v=2"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-results.js?v=3"></script>

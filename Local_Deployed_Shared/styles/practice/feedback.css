@@ -136,16 +136,29 @@
   color: var(--on-accent);
 }
 
+/* The note grows with what you type (autogrow.js, via `data-autogrow` in
+   the markup), so it carries no drag handle and no scrollbar: the height
+   is measured to fit on every keystroke and the PAGE scrolls.
+
+   It used to open at one line (38px) and jump to 160px on focus. That
+   pairing is gone — an expand-on-focus box still stops growing at the
+   height someone guessed, which is the whole complaint (Seth,
+   2026-08-27), and a min-height that changes on focus fights a measured
+   height: the box would shrink back the moment it lost focus. What is
+   left is a real starting size and no ceiling. `transition` keeps its
+   border/shadow halves and drops min-height for the same reason —
+   animating the box against a per-keystroke height reads as lag. */
 .problem-feedback-note {
   box-sizing: border-box;
   display: block;
   font: inherit;
-  font-size: 13px;
-  line-height: 1.5;
-  min-height: 38px;
-  padding: 8px 10px;
-  resize: vertical;
-  transition: min-height .18s ease, border-color .15s ease, box-shadow .15s ease;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 112px;
+  overflow-y: hidden;
+  padding: 10px 12px;
+  resize: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
   width: 100%;
   background: var(--input-bg);
   border: 1px solid var(--border);
@@ -156,7 +169,6 @@
 .problem-feedback-note:focus {
   border-color: var(--accent-text);
   box-shadow: 0 0 0 2px rgb(var(--accent-rgb) / .12);
-  min-height: 160px;
   outline: none;
 }
 

@@ -113,6 +113,7 @@ Consequences worth knowing:
 ## UI layout note
 
 - **The topbar is chrome and nothing else** (2026-08-23). No brand line, no version tag, no signed-in email: the tab strip owns the right edge, the level pill sits on the left beside the hamburger, and `.logo` survives only as an empty flexible spacer that `nav-drawer.js` needs below 900px. The bar's height is `--dd-topbar-h` in `styles/layout.css` — 🔴 set it there, not as a literal, because `#page-practice` and `.nav-drawer-head` size themselves against it.
+- **What is in the bar, left to right** (2026-08-27): the hamburger, the **level pill**, the tab strip (advanced mode only), the **concept pill** — a third of the viewport wide, naming the concept under test and filling as the learner works — and the account control. The **session clock hangs UNDER the bar as a notch**, a direct child of `<header class="topbar">` positioned against it. 🔴 Two of these are progress bars that fill; they are told apart by size and label, not by hue, so do not give them the same gradient. 🔴 `.topbar-side` must keep `min-width: auto`: both side tracks are `1fr`, and waiving their automatic minimum lets the middle cell size them below their contents, which overlap instead of shrinking (neither can — both are `nowrap`).
 - ⚠️ **`.footer` is styled and never rendered.** `styles/layout.css` has a fixed 40px `.footer` rule and no `<footer>` element exists anywhere in `index.html`. `#page-practice` used to subtract 40px for it, which drew a strip of bare page background under the practice tab; that reserve is gone. The rule is left in place — deleting it is a separate call — but nothing should size itself against it.
 
 - The root UI is now the primary interface (served at `/home/stellar-thread/Applications/Delta-Drills-Local/index.html`).
@@ -160,6 +161,179 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+
+- **2026-08-27 — the concept under test moved into the topbar as a bar that
+  fills, and the session clock went back to being a notch.** New:
+  `concept-pill.js`, `styles/concept-pill.css`, `watch_concept_pill.py`.
+  Changed: `index.html`, `practice/stage-ladder.js`, `styles/layout.css`,
+  `styles/practice/notch-menu.css`.
+
+  Seth: the concept "should be on the top bar instead of on the left … a pill
+  at the top that gets filled up as you make progress … and it won't have the
+  other complicated thing where it has the different stages", and "the timer is
+  below the top tab and the timer is like kind of a notch". On the first build
+  the pill was the level pill's size and the note back was "much bigger …
+  probably one-third of the screen for the top bar should be devoted to the
+  progress bar", without growing the bar's height.
+
+  - **The pill is the level pill's twin** — one grid cell, a gradient fill, and
+    the label drawn TWICE (base colours off the fill, `--on-accent` clipped to
+    the filled width). See `styles/xp.css` for why one text colour cannot work.
+    It is `flex: 0 1 33vw` with `min-width: 0`, 34px tall in a 44px bar, and it
+    is the item that gives way when advanced mode's tab strip shares the cell.
+  - 🔴 **It computes nothing.** `practice/stage-ladder.js` fires
+    `dd-concept-progress` at the end of every render (and from `hide()`), and
+    the pill draws the `pct` it is handed. The ladder's arithmetic — Wilson
+    lower bound against the promotion threshold, or the promotion streak, over
+    four rungs — stays in one place. A second implementation would be a second
+    answer to "how far into this concept am I", which is what the ladder exists
+    to have ended.
+  - 🔴 **`pct: null` is not 0.** No reading (an unknown rung, a KC-less item)
+    draws an empty dashed track and says so in the tooltip; 0% is a claim about
+    the learner. A "skip the write if it has not changed" cache on `pct` cannot
+    work for the same reason — `null` is both a legal value and the cache's
+    reset state, and it collapsed on exactly the case it must not skip. Caught
+    in the browser, not in review.
+  - 🔴 **The fill tops out at 75%**, inherited from `_overall()` unrescaled:
+    reaching the Solo rung is not being done with the concept.
+  - **The heading card in the left panel is `display: none` from 621px up**
+    (`body .question-number-row` — out-specifying `question.css` rather than
+    out-ordering it), so the concept is named exactly once at every width. The
+    card comes back under 620px, where the pill is dropped rather than shrunk
+    into an ellipsis. The card and the four-rung ladder inside it are HIDDEN,
+    not deleted: `practice/ui.js` still writes `#question-number`,
+    `stage-ladder.js` still reads it back, and the ladder's render is what feeds
+    the pill.
+  - **The notch hangs off the topbar**, not off `.practice-container` the way it
+    did before 2026-08-24 — so it is still app chrome that never re-parents and
+    never travels with the workspace. Bottom-only corners, no top border, the
+    bar's own border shared. Every id is unchanged, so `practice/timer.js`,
+    `practice/placement-timer.js` and `practice/notch-menu.js` are untouched.
+  - 🔴 **`.topbar-side` lost `min-width: 0`.** That waived the two `1fr` side
+    tracks' automatic minimum, so they were free to size below their contents —
+    which then overlapped rather than shrinking. Invisible until the middle cell
+    got big: measured at 1440px in advanced mode, the left track collapsed to
+    62px with the level pill hanging past its edge and under the tab strip.
+  - ⚠️ **`watch_concept_pill.py` is not in `Local_Deployed_Shared/watch.py`'s
+    list yet** — that file belongs to another live session. It needs
+    `from watch_concept_pill import check_concept_pill` and the entry in
+    `__main__`, or it only runs when someone runs it directly.
+  - 🪦 Considered and NOT done: folding `styles/xp.css` and
+    `styles/concept-pill.css` into one filled-pill primitive. They genuinely
+    duplicate the fill, the clip, the two label layers and the transitions, and
+    codex flagged it — but the two pills are being tuned independently right
+    now and a shared contract would freeze that. Worth doing once the concept
+    pill's size settles.
+
+- **2026-08-27 — the "Review the graph" door reviews the graph the app teaches
+  from.** `instructor-review.js`, `index.html`, `styles/instructor-review.css`,
+  `concept-graph/lesson-graph.js`, `watch_instructor_graph.py` (new),
+  `This-Directory-Only/backend/app/practice/graph_feedback_router.py`.
+  Seth: it "is not utilizing the other graph that's significantly better… the
+  one that's interactive that whenever you click on it it displays the lesson",
+  and the door should make it "cover the whole screen, or not the whole screen,
+  still leaving like the top bar". Also, explicitly, the **PyTorch** graph —
+  "not the whole entire graph that's part of the other part that's connected to
+  the entire curriculum… the hierarchical graph".
+  - **It was drawing the dead graph.** The door built its OWN cytoscape over
+    `concept-graph/graph-viz.json` — the ARENA 205-atom export, force-directed,
+    no lessons behind its nodes, and **not wired into `index.html` anywhere
+    else** since `lesson-graph.js` superseded it. So an instructor was flagging
+    the sequencing of a curriculum no learner is served from. It now hosts the
+    63-KC lesson graph: dagre, `rankDir: BT`, prerequisites underneath what they
+    unlock.
+  - 🔴 **Hosted, not copied.** `.kg-container.kg2` is MOVED into `#ir-kg-frame`
+    and moved back — the same borrow `concept-graph/why-graph.js` makes for the
+    landing page's maximise, and for the same reason: the lesson pane, the
+    learner-model dock and the Practice hand-off all arrive for free and cannot
+    drift, because it IS the Knowledge Graph tab. The element that moves is the
+    `.kg2` **container**, never the `.kg2-wrap` inside it — `fitWrap()` looks the
+    wrap up as `.kg2 .kg2-wrap` and the graph loses its height if the wrap is
+    what travels.
+  - 🔴 **Two borrowers, one graph.** `hostKg` takes it only when it is still
+    `.closest("#page-knowledge-graph")`, because each borrower remembers its own
+    home and whichever releases second finds nothing to put back — the tab is
+    then permanently empty with nothing raised. Release covers all three exits:
+    `show()` (the back button), the instructor-mode flag dropping, and a
+    `MutationObserver` on the page's own `hidden` class, which is the only
+    signal that `switchTab` navigated away (app.js fires no tab event).
+  - 🔴 **A deferred host can outlive the view.** `openGraph` defers `hostKg` by a
+    frame so cytoscape has a sized container, and a frame is long enough to
+    leave in — a stale callback would then park the graph inside a hidden page.
+    `hostKg` re-checks that the page and the view are still showing.
+  - **Taps: bubbles stay the learner's, edges become the instructor's.**
+    `lesson-graph.js` gained exactly one export, `window.deltaConceptGraphCy()`,
+    and this file binds the EDGE taps that file has no handler for. A bubble tap
+    is NOT stolen for a form — it opens the lesson, which is what an instructor
+    is here to read — and the tapped concept is offered to a `Flag "<name>"`
+    button instead. Handlers are bound once for the life of the page and gated
+    on `hosting()`, so they are inert while a learner has the same graph.
+  - **The flag card floats mid-left, not in a corner.** Both left corners are
+    already taken by the hosted graph's own furniture: the no-data notice at the
+    top, the mastery legend riding on the learner-model dock at the bottom. The
+    dock is opaque at `z-index: 20` and cut the Send button clean off.
+  - **The log now says which graph an id names** — `graph: "lesson-kc"`, a
+    closed `Literal` beside `"arena-atom"`. `kc_registry.json` ids and ARENA atom
+    ids do not overlap, and a mixed append-only log with no namespace cannot be
+    read a month later. Optional, so every entry already on disk stays valid.
+    ⚠️ **The backend half is not deployed** — the frontend works either way (an
+    older backend ignores the extra field), but the namespace is only persisted
+    once `graph_feedback_router.py` ships.
+  - Verified in a browser, not by eye: overlay pinned at `top: 44px` full width,
+    63 nodes / 81 edges hosted, bubble tap opens the lesson AND names the flag
+    button, edge tap opens the edge form, the two-tap missing-edge flow names
+    both concepts by label, and the graph returns home on all three exits —
+    including straight from the hosted view to the Knowledge Graph tab, which
+    renders at 866×665 with its own fit. `watch_instructor_graph.py` carries 13
+    guards; **7 mutations were introduced one at a time and all 7 were caught**.
+    Cache-bust: `instructor-review.js?v=2`, `instructor-review.css?v=2`,
+    `lesson-graph.js?v=26`.
+
+- **2026-08-27 — a feedback note is as tall as what you wrote in it.**
+  `autogrow.js` (new), `index.html`, `instructor-review.js`,
+  `styles/instructor-review.css`, `styles/practice/feedback.css`.
+  Seth, in his words: the feedback box "doesn't have an enlarged text box in
+  order to improve the questions with deeper, more in-depth feedback", it
+  should expand "automatically" as you type "rather than forcing you to
+  scroll down or increase the size of the text box", and it is "extremely
+  wide" — make it "more like the 'why this app exists' and 'how this app
+  works' pages in terms of its formatting for the width and text size".
+  - **`autogrow.js` is the whole behaviour, wired by attribute.** Any
+    `textarea[data-autogrow]` grows on `input`; the listener is DELEGATED on
+    `document`, so the `.ir-q-note` that `instructor-review.js` builds per
+    question card needs no registration. Three notes are on it today:
+    `.ir-q-note`, `#ir-form-note`, `#problem-feedback-note`. Each keeps its
+    own `min-height` in CSS — that is the empty box's size, a per-surface
+    design choice, and it also means the script never needs a floor.
+  - 🔴 **The stylesheets DEPEND on the script being loaded.** All three notes
+    are now `resize: none; overflow-y: hidden`. With no script to size them a
+    long note is clipped, with no scrollbar and no drag handle to escape
+    with — strictly worse than the one-line box this replaced. The
+    `<script src="autogrow.js">` tag and the CSS must ship together.
+  - 🔴 **`input` alone is not enough, and `scrollHeight` excludes the
+    border.** A note can hold text it never got a keystroke for — a restored
+    value, or a box that was `display: none` at load and is shown later — and
+    measuring one while hidden reads 0 and writes a height nothing corrects.
+    So a `ResizeObserver` re-measures on any WIDTH change (0 → rendered, and
+    re-wraps), `focusin` catches the rest, and height changes are ignored
+    because those are ours and reacting to them is a loop. The border is
+    added back on every measure, cached per element: the app is border-box,
+    so `height = scrollHeight` lands 2px short and shows a permanent hairline
+    scrollbar (same fix, same reason as `practice/notebook-editor.js`).
+  - **The one case it cannot see:** assigning `note.value = …` from script
+    fires no `input` and changes no width. A surface that prefills a note
+    must call `DDAutoGrow.grow(note)` — which is what `openForm` does after
+    it clears `#ir-form-note`.
+  - **Width and type follow the explainer pages.** `.ir-head`, `#ir-chooser`
+    and `#ir-questions` take the same 985px measure
+    `#page-learn-about-app .container` sets; the question text is 18px/1.7
+    and the note 17px/1.6 on a 68ch measure. `.ir-container` stays 1100px
+    and the measure sits on those three children instead, because `#ir-graph`
+    is `position: fixed` full-bleed and wants every pixel.
+  - **The practice note's expand-on-focus is gone** (`min-height: 38px` →
+    `160px` on `:focus`). An expand-on-focus box still stops at a height
+    someone guessed, and a `min-height` that changes on focus fights a
+    measured height — the box would shrink back the moment it blurred.
 
 - **2026-08-24 — the top-right account menu, the timer in the topbar, and one
   Learner Home.** `index.html`, `app.js`, `account-menu.js` (new),
