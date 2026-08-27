@@ -134,9 +134,33 @@ const LessonGate = (() => {
   const _pendingSteps = async (question) => {
     if (question?.diagnostic_active) return [];
     if (practiceMode === "backend") {
+      /* 🔴 …MINUS ANYTHING THIS BROWSER HAS ALREADY SHOWN.
+
+         `lesson_gate` is attached by the SERVER when the question is served,
+         and it is a snapshot: nothing the learner does afterwards changes the
+         copy riding on a question object already in this tab. The exposure
+         posts made when a page is read are about the NEXT question the server
+         picks.
+
+         `timer.js:resume()` asks about exactly that object, rehydrated from
+         what was persisted at pause. So pausing on a drill and pressing
+         Continue re-taught, from page one, the concept the learner had just
+         read on the way to that drill — the snapshot still said it was
+         pending. Reproduced on prod: the local exposure map held
+         `numpy.ndarray-model#s0-…` while the question's gate still listed it.
+
+         So a page whose `exposure_key` is already in this browser's map is
+         dropped. That is a SUPPRESSION on top of the server's decision, never
+         a replacement for it: the server stays authoritative for what to teach
+         next (it is per account, not per browser, which is why `_stepFromGate`
+         exists at all), and this only declines to show the same page to the
+         same browser twice. Filtered BEFORE the dedupe, so an entry that is
+         dropped cannot take a later, unread entry for the same KC with it. */
+      const exposed = _localExposure();
       const seen = new Set();
       return (question?.lesson_gate || [])
-        .filter((entry) => entry?.kc && !seen.has(entry.kc) && seen.add(entry.kc))
+        .filter((entry) => entry?.kc && !exposed[entry.exposure_key || entry.kc])
+        .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc))
         .map(_stepFromGate);
     }
     await _ensureQmatrix();
@@ -490,38 +514,6 @@ const LessonGate = (() => {
 
       document.body.classList.add("lesson-mode");
 
-      /* Take one KC off the copy of the gate that rides on THIS question, and
-         persist it, so a resume of this same question does not re-teach what
-         has just been read. See the call site for why the server's map cannot
-         do this on its own.
-
-         Written back through `practiceProgress` because that is what
-         `timer.js:_restoreSavedQuestion` rehydrates from; the two hold the
-         same object on every path that serves a question (`api.js` assigns
-         both), and the comparison below keeps a stale progress record from
-         being edited to match a question it is not about. */
-      const _forgetGateEntry = (kc) => {
-        if (!question || !Array.isArray(question.lesson_gate)) return;
-        question.lesson_gate = question.lesson_gate.filter((e) => e && e.kc !== kc);
-        /* 🔴 THE ID HAS TO BE THERE BEFORE IT CAN MATCH. `String(x ?? "")` on
-           two ABSENT ids gives "" === "" — a match, on a pair that identifies
-           nothing — and the write below would then stamp this question over an
-           unrelated persisted record, which is the exact thing the comparison
-           is here to prevent. A KC-less or hand-built question really can
-           arrive with no id. Codex caught it. */
-        const id = question.question_id;
-        if (id === null || id === undefined || id === "") return;
-        try {
-          if (typeof practiceProgress === "object" && practiceProgress
-              && String(practiceProgress.currentQuestionId ?? "") === String(id)) {
-            practiceProgress.currentQuestion = question;
-            savePracticeProgress(practiceProgress);
-          }
-        } catch (err) {
-          console.warn("[lessons] could not persist the read gate entry:", err);
-        }
-      };
-
       /* 🔴 THE GATE OWNS THE SCREEN IT RENDERS INTO, and until 2026-08-27 it
          did not. Everything below draws into `#question-text`, which lives
          inside `.practice-split` — and `styles/practice/timer.css` sets
@@ -534,9 +526,9 @@ const LessonGate = (() => {
          asks the gate, and hands `_resumeCore` over as `onDone` — and
          `_resumeCore` is the only thing that takes `session-idle` off. So the
          one Continue button on the idle screen led to a screen that never
-         changed, with an invisible lesson behind it and no way back into the
-         session but a reload. Seth, 2026-08-27: "once I pressed the button to
-         continue practice, the top bar completely disappears".
+         changed, with a fully rendered lesson behind it and no way back into
+         the session but a reload. Seth, 2026-08-27: "once I pressed the button
+         to continue practice, the top bar completely disappears".
 
          Cleared HERE rather than in `resume()` because it is true of every
          caller: a lesson on screen is a screen, whoever asked for it. The two
@@ -551,6 +543,7 @@ const LessonGate = (() => {
          returned false — so the screen is opened exactly when a lesson is
          actually about to be drawn on it. */
       _el("page-practice")?.classList.remove("session-idle");
+
       let index = 0;
       let finished = false;
       // KPs whose worked example the learner actually read through to the end.
@@ -665,27 +658,6 @@ const LessonGate = (() => {
           if (page.lastOfKp && page.step.exposureKey !== page.kp.kc) keys.push(page.kp.kc);
           _markLocalExposure(keys);
           _markBackendExposure(keys);
-          /* 🔴 AND THE COPY OF THE GATE THAT TRAVELS WITH THIS QUESTION.
-
-             In backend mode `_pendingSteps` does not consult exposure at all —
-             it reads `question.lesson_gate`, an array the SERVER attached when
-             the question was served. The exposure writes above are about the
-             next question the server picks; they cannot reach a `lesson_gate`
-             already sitting in a question object in this tab.
-
-             `timer.js:resume()` asks the gate about exactly that object,
-             rehydrated from what was persisted when the session was paused. So
-             pausing on a drill and pressing Continue re-taught, from page one,
-             a lesson the learner had already read on the way to that drill —
-             the stale array still said the concept was pending. Reproduced on
-             prod: after Continue the heading went back to "Lesson".
-
-             Only on `lastOfKp`, matching the rule directly above: the KC stays
-             pending until its WHOLE KP has been read, so pausing halfway
-             through a three-concept lesson still resumes into the rest of it.
-             The server's own map is untouched and stays authoritative for
-             every question it serves after this one. */
-          if (page.lastOfKp) _forgetGateEntry(page.kp.kc);
           // Also credits the ladder's `worked` rung — but in finishAll, not
           // here, because the response re-stages the pending question and
           // that has to land before it renders. Without any crediting at
