@@ -90,6 +90,22 @@
      text write needed a guard, and the text has no null state. */
   let shownTitle = null;
 
+  /* The last fraction actually written, held for ONE decision and no other:
+     animate forwards, snap backwards. It is not a write guard — see the note
+     above for what happened the last time this file cached a value whose
+     "empty" state was also a legal state — and `_paint` still writes the
+     property unconditionally every time.
+
+     🔴 A BAR THAT SLIDES BACKWARDS READS AS BEING PUNISHED. Measured
+     2026-08-28: answering a question wrong and rating it drove the pill from
+     25% to 0% as a 600ms drain, 151px sliding away to nothing right after the
+     learner pressed a button — the concept looked deleted. The reading itself
+     is honest (a missed drill can drop a rung, and a new concept genuinely
+     starts near zero), so the number is not softened; only the SLIDE is
+     dropped, and the lower value appears at once instead. `xp.js` reached the
+     same conclusion for the level pill and snaps for the same reason. */
+  let shownPct = null;
+
   /* A concept name is prose and can run to six words. The chip clips with an
      ellipsis (CSS) rather than wrapping — the topbar is 44px tall and a second
      line would push the bar's whole height — so the full name has to be
@@ -172,7 +188,8 @@
     const raw = detail ? detail.pct : null;
     const pct = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : null;
 
-    if (title !== shownTitle) {
+    const conceptChanged = title !== shownTitle;
+    if (conceptChanged) {
       /* BOTH layers, same string, same call — see the header. */
       const base = _el("dd-concept-label");
       const on = _el("dd-concept-label-on");
@@ -181,11 +198,31 @@
       shownTitle = title;
     }
 
+    /* Snap, don't slide, for the two moves that are not progress: a drop, and
+       a different concept (whose fill has nothing to do with the one on
+       screen — the label has already been swapped above, so an animated slide
+       would be the OLD concept's bar draining under the NEW concept's name,
+       which is what it looked like in the browser). Everything else animates.
+       The class is removed again in the same call, after a forced reflow, so
+       the next move — which is normally forwards — still transitions. */
+    const nextPct = pct === null ? 0 : pct;
+    const snap =
+      conceptChanged || (shownPct !== null && nextPct < shownPct - 0.01);
+    if (snap) host.classList.add("dd-concept--snap");
+    shownPct = nextPct;
+
     /* UNCONDITIONAL — see the note on the cache above. */
     /* ONE property, read by the fill's width AND by the clip on the on-accent
        layer. Two separate writes are how a label ends up painted for a ground
        the fill has not reached. */
-    host.style.setProperty("--dd-concept-pct", `${(pct === null ? 0 : pct).toFixed(2)}%`);
+    host.style.setProperty("--dd-concept-pct", `${nextPct.toFixed(2)}%`);
+    if (snap) {
+      // The width has to LAND while the transition is off; without the reflow
+      // the browser coalesces the add and the remove and the slide happens
+      // anyway. Same trick, same reason, as the level-up snap in xp.js.
+      void host.offsetWidth;
+      host.classList.remove("dd-concept--snap");
+    }
     host.classList.toggle("is-unmeasured", pct === null);
     /* `aria-valuenow` on a `progressbar` with no value is what `aria-valuetext`
        is for; a missing reading is stated, not implied by a zero. */
