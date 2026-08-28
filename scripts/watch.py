@@ -178,6 +178,80 @@ def check_colab_grader():
     )
 
 
+# ── Solution / prerequisite ratchet ───────────
+def check_solution_prereq_ratchet():
+    """No drill may require syntax its own concept has not been taught yet.
+
+    `audit_solution_prereqs.py` reads every solution in the bank, collects
+    every function, method, attribute and language construct it uses, and asks
+    the prerequisite lattice whether a lesson for it exists AT OR BEFORE that
+    drill's concept. `a.T` on the first concept of the course is the case this
+    was built for: eight faded drills asked for it, the page that teaches
+    transposition sat four lessons later, and nothing failed.
+
+    The corpus carries a large backlog, so this is a RATCHET, not a gate:
+    `solution_prereq_baseline.json` records what is already broken and this
+    fails only on something NEW. Fixing content leaves stale entries behind —
+    those are reported by the audit, not failed on, because a shrinking
+    baseline should never turn the build red.
+    """
+    import audit_solution_prereqs as A
+
+    violations = A.find(("solution",))
+    known = A.load_baseline()
+    assert known is not None, (
+        'solution_prereq_baseline.json is missing — the ratchet cannot tell '
+        'new debt from old; re-record it with '
+        'audit_solution_prereqs.py --write-baseline')
+    new = sorted({A.key(v) for v in violations} - known)
+    assert not new, (
+        f'{len(new)} drill(s) require syntax their concept has not reached: '
+        + '; '.join(new[:6])
+        + '  — teach it earlier, retag the drill, or rewrite the solution. '
+          'Re-recording the baseline is admitting the debt, not fixing it.')
+
+    # The check has to actually be able to see the case it exists for. This is
+    # the shape of the original bug, asserted against live data rather than
+    # remembered: transposition is taught somewhere, and somewhere LATER than
+    # the course's first concept.
+    declared, kc_of_page = A.declaring_kcs()
+    rank = A.lesson_order(kc_of_page)
+    owner = A.owner_of('Tensor.T', declared, rank)
+    assert owner is not None, 'no lesson declares Tensor.T — the audit is blind to it'
+    first = 'numpy.ndarray-model'
+    assert rank.get(owner, -1) > rank.get(first, 0), (
+        f'Tensor.T is owned by {owner}, which no longer sits after {first}; '
+        'if that is deliberate, this assertion is the thing to update')
+
+
+def check_solution_symbol_coverage():
+    """The collector must not walk past a construct without naming it.
+
+    "Every function whatsoever needs a prerequisite" is only a guarantee while
+    nothing is invisible to the pass that collects them. A drill written with a
+    construct the collector has no visitor for would sail through the ratchet
+    reporting nothing, which is the worst possible failure for a guard: green,
+    and blind.
+    """
+    import json
+    import solution_symbols as S
+    import audit_solution_prereqs as A
+
+    bank = json.loads(A.QUESTIONS.read_text(encoding='utf-8'))
+    questions = bank if isinstance(bank, list) else bank.get('questions', bank)
+    sources = [q.get('answer_code') or '' for q in questions]
+    sources += [q.get('starter_code') or '' for q in questions]
+    missed = S.unhandled_node_types(sources)
+    assert not missed, (
+        f'solution_symbols has no visitor for {sorted(missed)} — a drill uses '
+        'it and the prerequisite audit cannot see it. Add a visitor, or list '
+        'the node in STRUCTURAL with the reason it teaches nothing.')
+
+    # And the collector must still see the thing it was built for.
+    assert 'Tensor.T' in S.collect('def solve(a):\n    return a.T\n'), \
+        'attribute access stopped being collected — a.T is the case this exists for'
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
@@ -186,7 +260,8 @@ if __name__ == '__main__':
         print('FAIL: watch.py needs assertions enabled (do not run under -O)',
               file=sys.stderr)
         sys.exit(1)
-    checks = [check_imports, check_public_api, check_invariants, check_colab_grader]
+    checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
+              check_solution_prereq_ratchet, check_solution_symbol_coverage]
     for fn in checks:
         try:
             fn()
