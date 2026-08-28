@@ -117,18 +117,26 @@ def check_a_resumed_clock_matches_the_break():
     src = open(os.path.join(HERE, 'timer.js'), encoding='utf-8').read()
     grace = re.search(r"const RESUME_GRACE_SECS = (\d+);", src)
     assert grace, "RESUME_GRACE_SECS is gone — the resume rule has no window"
-    # 🔴 The two allowances are CONSTANTS (2026-08-23), not fields on the
-    # snapshot: the learner does not set the clock, and a restarted step has to
-    # come back at the length this build enforces rather than the one the
-    # snapshot was written under. Read out of the source so the probe below is
-    # checking the shipped numbers and not a copy of them.
-    answer = re.search(r"const ANSWER_SECS = (\d+);", src)
-    review_c = re.search(r"const REVIEW_SECS = (\d+);", src)
-    assert answer and review_c, (
-        "ANSWER_SECS/REVIEW_SECS are gone — the per-question allowances are "
-        "back to being something the learner can set, or something a snapshot "
-        "can carry"
+    # 🔴 THE ALLOWANCES ARE FUNCTIONS, NOT CONSTANTS, since 2026-08-28: the
+    # learner picks the time per question (practice/session-clock.js) and "No
+    # limit" is one of the choices. What has NOT changed is that a snapshot
+    # cannot carry its own allowance — a restarted step comes back at the
+    # length in force NOW, not the one it was paused under. The probe below
+    # therefore stubs `window.SessionClock` rather than reading two integers
+    # out of the source, and exercises the untimed cases too.
+    assert re.search(r"const ANSWER_SECS = \(\) => \{", src), (
+        "timer.js no longer reads the answer allowance through a function — a "
+        "value captured once cannot follow the learner's picker"
     )
+    assert re.search(r"const REVIEW_SECS = \(\) => \{", src), (
+        "timer.js no longer reads the review allowance through a function"
+    )
+    snapshot_body = src.split("const _snapshot = () => {", 1)[1].split("\n  };", 1)[0]
+    for carried in ("answerSecs:", "reviewSecs:"):
+        assert carried not in snapshot_body, (
+            f"_snapshot writes `{carried}` again — a paused question would "
+            f"resume under an allowance the picker has since changed"
+        )
     start = src.index("  const _awaySecs = (saved) =>")
     end = src.index("  const _resumeSummary =")
     helpers = src[start:end]
@@ -140,10 +148,17 @@ def check_a_resumed_clock_matches_the_break():
         "to be read at the moment of resuming, not at page load"
     )
 
+    # The stub is what the picker would have stored. `secs` is swapped between
+    # cases, so the SAME shipped helpers are exercised timed and untimed.
     probe = f"""
 const RESUME_GRACE_SECS = {grace.group(1)};
-const ANSWER_SECS = {answer.group(1)};
-const REVIEW_SECS = {review_c.group(1)};
+const window = {{ SessionClock: {{
+  secs: 120,
+  answerSecs() {{ return this.secs; }},
+  reviewSecs() {{ return this.secs; }},
+}} }};
+const ANSWER_SECS = () => window.SessionClock.answerSecs();
+const REVIEW_SECS = () => window.SessionClock.reviewSecs();
 {helpers}
 // The clock is FROZEN for the probe. `savedAt` is an ISO string truncated to
 // milliseconds and `_awaySecs` re-reads the wall clock a moment later, so a
@@ -168,15 +183,44 @@ eq(_effectiveRemaining(snap(1)), {{secs: 60, restarted: false}},
    "straight back must keep the time left");
 eq(_effectiveRemaining(snap(RESUME_GRACE_SECS)), {{secs: 60, restarted: false}},
    "the grace boundary itself must still resume");
-eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: ANSWER_SECS, restarted: true}},
+eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: ANSWER_SECS(), restarted: true}},
    "past the window the ANSWER step restarts at its own limit");
 const review = {{...snap(RESUME_GRACE_SECS + 1), phase: "review"}};
-eq(_effectiveRemaining(review), {{secs: REVIEW_SECS, restarted: true}},
+eq(_effectiveRemaining(review), {{secs: REVIEW_SECS(), restarted: true}},
    "a review-phase break must restart the REVIEW limit, not the answer one");
-eq(_effectiveRemaining({{...snap(0), savedAt: null}}), {{secs: ANSWER_SECS, restarted: true}},
+eq(_effectiveRemaining({{...snap(0), savedAt: null}}), {{secs: ANSWER_SECS(), restarted: true}},
    "an unknowable break must be treated as a long one, never as a fresh resume");
 eq(_effectiveRemaining(snap(-99999)), {{secs: 60, restarted: false}},
    "a clock that jumped backwards must not restart the step");
+
+// 🔴 NO LIMIT. The picker's answer comes FIRST: there is no step to restart
+// and no clock to hand back, however long the break was. `restarted: true`
+// here would tell the learner a step started over that was never running.
+window.SessionClock.secs = null;
+eq(_effectiveRemaining(snap(1)), {{secs: null, restarted: false}},
+   "an untimed question must resume untimed, straight back");
+eq(_effectiveRemaining(snap(99999)), {{secs: null, restarted: false}},
+   "an untimed question must resume untimed after a long break too");
+
+// Paused untimed, then the learner picked a real allowance. There is nothing
+// to pick up mid-step, so the step starts at the new limit.
+window.SessionClock.secs = 300;
+eq(_effectiveRemaining({{...snap(1), remaining: null}}), {{secs: 300, restarted: true}},
+   "a snapshot with no clock must start the step at the allowance now in force");
+// And the reverse: the allowance in force is what a restarted step gets, not
+// whatever the snapshot was written under.
+window.SessionClock.secs = 60;
+eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: 60, restarted: true}},
+   "a restarted step must restart at the CURRENT allowance");
+// 🔴 THE GRACE-WINDOW BRANCH IS CLAMPED TOO. _readSaved clamps when the
+// snapshot is PARSED; the picker can move after that, while the paused screen
+// is up. Paused with 8:00 left, switched to 1:00, resumed straight away: the
+// step is not restarted (no break), but it cannot hand back more than the
+// allowance now in force. Codex, 2026-08-28.
+eq(_effectiveRemaining({{...snap(1), remaining: 480}}), {{secs: 60, restarted: false}},
+   "a resume inside the grace window must not exceed the CURRENT allowance");
+eq(_effectiveRemaining({{...snap(1), remaining: 30}}), {{secs: 30, restarted: false}},
+   "the clamp must not inflate a clock that is already under the allowance");
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()

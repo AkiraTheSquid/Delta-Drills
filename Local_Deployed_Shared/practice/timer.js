@@ -1,13 +1,27 @@
 /* ================================================================
-   PRACTICE SESSION — a fixed clock per QUESTION, paused and resumed
+   PRACTICE SESSION — one clock per QUESTION, paused and resumed
 
-   🔴 THE LEARNER SETS NOTHING. Seth, 2026-08-23: "it's the timer per
-   question, not per session ... a certain amount of time to answer the
-   question and a certain amount of time to review it ... it's a
-   predetermined timer that they don't control". Both allowances are the
-   constants below, they apply to every question alike, and the three
-   inputs that used to set them (questions / answer time / review time)
-   are gone from index.html along with the panel that held them.
+   🔴 THE ALLOWANCE IS THE LEARNER'S AGAIN, AS OF 2026-08-28, and it is
+   NOT a constant in this file any more. Seth: "I can change the amount of
+   time that I have per problem before I start the practice so that I
+   actually have more time to read the problems and the lessons ... Or I
+   can disable the timer entirely." One number, picked on the idle screen
+   before the block starts (practice/session-clock.js owns the store and
+   the presets; practice/session-idle.js draws the picker), and it is what
+   EACH STEP gets — answering and reviewing alike, per question.
+
+   That reverses 2026-08-23 ("it's a predetermined timer that they don't
+   control"), and the reason is in the timing of the LESSON: nothing in
+   lessons.js holds this clock, so a first-encounter lesson is read while
+   the answer countdown runs, and 02:00 has to cover reading a concept and
+   then writing the answer. What did NOT come back is the old setup panel:
+   there is still no question quota and no session length — the three
+   inputs that set those are still gone, and so is the End session button.
+
+   🔴 "No limit" IS A REAL STATE, not a large number: `SessionClock`
+   answers `null`, and then this file runs no interval, never expires and
+   never force-submits. `remaining` is `null` for the whole step, so every
+   piece of arithmetic on it below asks first.
 
    A block has no LENGTH either, which is why `finish("ended")` and
    #session-end-btn went with them: there is no quota to reach and
@@ -30,19 +44,39 @@
        _loadNextPracticeQuestion() fetches another question
    ================================================================ */
 
-/* 🔴 THE TWO ALLOWANCES. Per question, not per session, and not editable
-   from anywhere in the UI — changing the model means changing these.
-   02:00 each: long enough to read a prompt and write a few lines, short
-   enough that the pair fits in the four minutes a question is worth. */
-const ANSWER_SECS = 120;
-const REVIEW_SECS = 120;
+/* THE ALLOWANCE, per question and per step. `null` means no limit.
 
-/* Bumped 1 → 2. A v1 snapshot carries the learner's OWN answerSecs and
-   reviewSecs — 05:00 was the old default — and resuming one would hand back a
-   clock this build has no way to set. A v2 snapshot stores neither field and
-   reads both from the constants above, so the version bump is what stops an
-   old block resuming under the old rules. `_readSaved` drops v1 outright,
-   which costs one paused question the day this ships. */
+   🔴 READ THROUGH THE FUNCTION, NEVER CACHED IN A CONSTANT. The learner can
+   change this between blocks — and in another tab, at any moment — so a value
+   captured at load is a clock running under a rule the picker says is no
+   longer in force. Both steps get the same number; that is what "time per
+   problem" means, and it is exactly what the two 02:00 constants that lived
+   here did.
+
+   The fallback is the old constant, and it is only reachable if
+   practice/session-clock.js failed to load: a page where the picker is missing
+   still times a question the way every account was timed before today. */
+const FALLBACK_SECS = 120;
+const _clockPrefs = () => window.SessionClock || null;
+const ANSWER_SECS = () => {
+  const prefs = _clockPrefs();
+  return prefs ? prefs.answerSecs() : FALLBACK_SECS;
+};
+const REVIEW_SECS = () => {
+  const prefs = _clockPrefs();
+  return prefs ? prefs.reviewSecs() : FALLBACK_SECS;
+};
+
+/* 🔴 NOT BUMPED FOR THE LEARNER-SET CLOCK (2026-08-28), deliberately. A bump
+   DISCARDS every paused question already on a learner's machine, and it buys
+   nothing here: a v2 snapshot stores no allowance of its own, so it resumes
+   under whatever the picker now says — which is the correct answer, and the
+   same one a snapshot written today gets.
+
+   The 1 → 2 bump it still carries is a different case. A v1 snapshot stored
+   the learner's OWN answerSecs/reviewSecs from the FIRST setup panel, and
+   resuming one meant honouring a per-session pair of allowances this model
+   does not have. `_readSaved` drops v1 outright. */
 const SESSION_STATE_VERSION = 2;
 
 /* How long a paused clock stays paused before the step starts over.
@@ -72,6 +106,18 @@ const formatTimer = (value) => {
   const s = clamped % 60;
   return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
 };
+
+/* What a clock READS, including when there is no clock. `null` is the untimed
+   state and it has to draw as something — a blank where a countdown lives says
+   "broken", and 00:00 says "your time is up", which is the opposite of what is
+   true. The infinity sign is the one glyph that is honest at a glance and fits
+   the same narrow slot in the topbar as mm:ss.
+
+   🔴 EVERY CLOCK READOUT GOES THROUGH HERE. `formatTimer(null)` is "00:00" —
+   `Math.round(null)` is 0 — so a single caller that skips this prints an
+   expired countdown over a question that will never expire. */
+const NO_LIMIT_TEXT = "∞";
+const clockText = (secs) => (secs === null ? NO_LIMIT_TEXT : formatTimer(secs));
 
 const PracticeSession = (() => {
   const pagePractice = document.getElementById("page-practice");
@@ -140,17 +186,26 @@ const PracticeSession = (() => {
       if (!saved || saved.version !== SESSION_STATE_VERSION) return null;
       if (!Number.isFinite(saved.served) || !saved.questionId) return null;
       const phase = saved.phase === "review" && saved.review ? "review" : "answer";
-      /* The allowance is read from the CONSTANT, never from the snapshot. A
-         saved clock that outlived a change to ANSWER_SECS/REVIEW_SECS must not
-         resume under the old rule, and clamping to the constant is also what
-         stops a hand-edited localStorage entry buying unlimited time. */
-      const phaseLimit = phase === "review" ? REVIEW_SECS : ANSWER_SECS;
+      /* The allowance is read from the PICKER, never from the snapshot, and
+         the snapshot's own `remaining` is clamped to it. A question paused
+         under 10:00 and resumed after the learner moved to 2:00 comes back on
+         2:00 — the choice in force is the one on screen — and the clamp is
+         also what stops a hand-edited localStorage entry buying itself time
+         the picker never offered.
+
+         🔴 UNLIMITED CLAMPS TO UNLIMITED. `phaseLimit === null` means there is
+         no number to clamp to and no number to count down, so `remaining`
+         stays null all the way through resume; `Math.min(null, x)` is 0, which
+         would resume the question already expired. */
+      const phaseLimit = phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
       const savedRemaining = Number.isFinite(saved.remaining) ? saved.remaining : phaseLimit;
       return {
         version: SESSION_STATE_VERSION,
         served: Math.max(1, Math.round(saved.served)),
         phase,
-        remaining: Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
+        remaining: phaseLimit === null
+          ? null
+          : Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
         questionId: String(saved.questionId),
         ladder: _readLadder(saved.ladder),
         draft: typeof saved.draft === "string" || (
@@ -253,8 +308,14 @@ const PracticeSession = (() => {
   const _persist = () => _writeSaved(_snapshot());
 
   const _updateCountdown = () => {
-    sessionCountdown.textContent = formatTimer(remaining);
-    sessionCountdown.classList.toggle("session-countdown--low", remaining <= 30);
+    sessionCountdown.textContent = clockText(remaining);
+    /* `null <= 30` is TRUE in JS. Without the explicit test an untimed
+       question paints the last-30-seconds colour for its whole life — the one
+       piece of urgency the learner turned off. */
+    sessionCountdown.classList.toggle(
+      "session-countdown--low",
+      remaining !== null && remaining <= 30,
+    );
   };
 
   const _setPhase = (phase, label) => {
@@ -274,6 +335,13 @@ const PracticeSession = (() => {
     _stopTick();
     _updateCountdown();
     _persist();
+    /* 🔴 NO LIMIT MEANS NO INTERVAL. Not a very large `remaining`, not a
+       countdown that is ignored at zero: the expiry callbacks are what
+       force-submit an answer and force-advance a review, and the only way to
+       be sure neither ever fires is for nothing to be counting. The phase, the
+       pause button, the snapshot and the resume path are all unchanged — an
+       untimed question is a normal question whose clock reads ∞. */
+    if (remaining === null) return;
     if (clockHolds.size) return;
     interval = setInterval(() => {
       remaining--;
@@ -300,7 +368,7 @@ const PracticeSession = (() => {
   };
 
   const _phaseLimit = (saved) =>
-    saved.phase === "review" ? REVIEW_SECS : ANSWER_SECS;
+    saved.phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
 
   /* What the clock should read on resume: {secs, restarted}.
 
@@ -308,17 +376,35 @@ const PracticeSession = (() => {
      read, because the resume panel can sit on screen for as long as the
      learner likes and the break is still running while it does. */
   const _effectiveRemaining = (saved) => {
+    /* 🔴 THE PICKER DECIDES FIRST. Under "No limit" there is no clock to hand
+       back and no step to restart, however long the break was — asking about
+       the break at all would resume an untimed question with `restarted: true`
+       and tell the learner a step started over that was never running. */
+    const limit = _phaseLimit(saved);
+    if (limit === null) return { secs: null, restarted: false };
+    /* A snapshot written while untimed carries `remaining: null`. If the
+       picker has since moved to a real allowance there is nothing to pick up
+       mid-step, so that step starts at the new limit. */
+    if (saved.remaining === null) return { secs: limit, restarted: true };
     if (_awaySecs(saved) <= RESUME_GRACE_SECS) {
-      return { secs: saved.remaining, restarted: false };
+      /* 🔴 CLAMPED HERE TOO, not only in `_readSaved`. That clamp runs when the
+         snapshot is PARSED, and the picker can move after it: a question paused
+         with 8:00 left under 10:00, then switched to 1:00 on the idle screen,
+         resumed inside the grace window and came back with the whole 8:00 —
+         the allowance the learner had just replaced. Codex, 2026-08-28. */
+      return { secs: Math.min(saved.remaining, limit), restarted: false };
     }
-    return { secs: _phaseLimit(saved), restarted: true };
+    return { secs: limit, restarted: true };
   };
 
   const _resumeSummary = (saved) => {
     const phase = saved.phase === "review" ? "reviewing" : "answering";
     const { secs, restarted } = _effectiveRemaining(saved);
-    return `Question ${saved.served} · ${phase} · ` +
-      formatTimer(secs) + (restarted ? " (this step starts over)" : " left");
+    const head = `Question ${saved.served} · ${phase} · `;
+    // "∞ left" is not a sentence. Untimed says what is true and stops there.
+    if (secs === null) return head + "no time limit";
+    return head + formatTimer(secs) +
+      (restarted ? " (this step starts over)" : " left");
   };
 
   /* The summary is a live number, so it has to be redrawn while the panel sits
@@ -474,12 +560,14 @@ const PracticeSession = (() => {
       });
   };
 
-  /* A placement probe is timed by the PLACEMENT's rule, not the learner's
-     session settings. Starting the placement ends the running session, but a
-     learner can start a fresh session while a placement is still open, and
-     then the probes were inheriting whatever answer time that session was set
-     to — 5:00 for one probe and 2:00 for the next is exactly the comparison
-     the fixed allowance exists to prevent. */
+  /* 🔴 A PLACEMENT PROBE IS TIMED BY THE PLACEMENT'S RULE, and this matters
+     MORE now that the session clock is the learner's again (2026-08-28). The
+     placement compares a learner against the bank's difficulty, so every probe
+     has to get the same fixed 2:00 — the learner's own allowance, and above
+     all "No limit", would make the test measure how long they chose to sit
+     there. Starting the placement ends the running session, but a learner can
+     start a fresh session while a placement is still open, and then the probes
+     were inheriting whatever that session was set to. */
   const _probeOnScreen = () => {
     const api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
     return !!api?.currentQuestion?.diagnostic_active;
@@ -488,7 +576,7 @@ const PracticeSession = (() => {
   const _answerSecsFor = () =>
     _probeOnScreen() && window.PlacementTimer
       ? window.PlacementTimer.secondsPerQuestion()
-      : ANSWER_SECS;
+      : ANSWER_SECS();
 
   const onQuestionRendered = () => {
     if (!isActive()) {
@@ -543,8 +631,9 @@ const PracticeSession = (() => {
     if (!isActive() || state.phase !== "grading") return;
     _setPhase("answer", "Answering");
     // A failed submit at 00:00 must not retry-loop forever; grant a short
-    // grace window instead of skipping the learner's work.
-    remaining = Math.max(remaining, 30);
+    // grace window instead of skipping the learner's work. Untimed stays
+    // untimed: there was no 00:00 to fail at.
+    if (remaining !== null) remaining = Math.max(remaining, 30);
     _tick(_forceSubmitOrAdvance);
   };
 
@@ -569,7 +658,7 @@ const PracticeSession = (() => {
     // new session's first question.
     if (!isActive() || state.phase !== "grading") return;
     _setPhase("review", "Reviewing");
-    remaining = REVIEW_SECS;
+    remaining = REVIEW_SECS();
     _tick(_forceAdvance);
   };
 
@@ -826,7 +915,12 @@ const PracticeSession = (() => {
     if (snapshot && !["answer", "review"].includes(snapshot.phase)) {
       snapshot.phase = "answer";
       snapshot.review = null;
-      snapshot.remaining = Math.max(30, snapshot.remaining || 0);
+      /* `|| 0` on a null `remaining` would hand an untimed question 30
+         seconds on the next load — the one thing "No limit" promises it will
+         not do. Untimed snapshots pass through untouched. */
+      if (snapshot.remaining !== null) {
+        snapshot.remaining = Math.max(30, snapshot.remaining || 0);
+      }
     }
     _writeSaved(snapshot);
   });
@@ -850,9 +944,9 @@ const PracticeSession = (() => {
        notch-menu.js never holds a second copy of the number — and returned
        already formatted, because that file is forbidden a clock of its own
        (practice/watch.py) and mm:ss is a clock's job. */
-    idleClockText: () => formatTimer(ANSWER_SECS),
-    answerSeconds: () => ANSWER_SECS,
-    reviewSeconds: () => REVIEW_SECS,
+    idleClockText: () => clockText(ANSWER_SECS()),
+    answerSeconds: () => ANSWER_SECS(),
+    reviewSeconds: () => REVIEW_SECS(),
     // True when a session was paused and is waiting to be resumed. switchTab
     // needs this to know the question on screen belongs to that session and
     // must not be replaced by a preference refresh.
