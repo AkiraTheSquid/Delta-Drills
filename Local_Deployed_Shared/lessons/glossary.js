@@ -58,10 +58,28 @@ window.DD_GLOSSARY = {
       def: "The tuple of axis lengths describing how the flat block of memory is laid out — (2, 3) is two rows of three. It is metadata, not data, which is why reshaping is usually free.",
     },
     {
+      term: "transpose",
+      aliases: ["transposes", "transposed", "transposing", "transposition"],
+      kc: "numpy.transpose-axes",
+      def: "Turning a grid on its side: row i of the result is column i of the original, and the shape reverses. Spelled a.T, with no parentheses \u2014 it is an attribute, not a method.",
+    },
+    {
+      term: "block",
+      aliases: ["memory block", "block of memory", "buffer", "the same block"],
+      kc: "numpy.views-and-copies",
+      def: "The one long strip of numbers a tensor actually occupies in memory. Two tensors share a block when both describe the same strip; shape and dtype are just the note saying how to read it. data_ptr() compares where each STARTS, so a slice can share the block and still answer a different address.",
+    },
+    {
       term: "contiguous",
-      aliases: ["contiguity", "non-contiguous", "reading order"],
-      kc: "numpy.ndarray-model",
-      def: "A tensor is contiguous when its elements sit in memory in the order you read them. Transposes and stepped slices break that, which is what .contiguous() exists to repair by copying.",
+      aliases: ["contiguity", "non-contiguous", "reading order", "in reading order"],
+      kc: "numpy.views-and-copies",
+      def: "A tensor is contiguous when its numbers sit on the strip in the same order you read them off the grid \u2014 no hopping. A freshly built tensor always is; a transpose usually is not.",
+    },
+    {
+      term: "packed copy",
+      aliases: ["packed", "pack", "packing"],
+      kc: "numpy.views-and-copies",
+      def: "What .contiguous() gives you: the same numbers written out in reading order. That normally means a new strip of its own \u2014 unless the tensor was already in order, in which case it hands the same one back.",
     },
     {
       term: "constructor",
@@ -78,8 +96,8 @@ window.DD_GLOSSARY = {
     {
       term: "view",
       aliases: ["views"],
-      kc: "numpy.slicing-views",
-      def: "A tensor that re-describes another tensor's memory instead of owning its own. Writing into a view writes into the original — the single most common source of surprise in tensor code.",
+      kc: "numpy.views-and-copies",
+      def: "A tensor that re-describes another tensor's block instead of owning one. Writing into a view writes into the original — the single most common source of surprise in tensor code.",
     },
     {
       term: "slice assignment",
@@ -512,7 +530,16 @@ window.DD_GLOSSARY = {
    cannot fail that way. watch_jargon.py re-derives this map from the registry
    on every run, so the copy cannot drift without failing the guard. */
 window.DD_GLOSSARY.kcLesson = {
+    "python.values-and-names": ["Python you need first", "Values and names — what = really does"],
+    "python.types-and-conversion": ["Python you need first", "The everyday types, and converting between them"],
+    "python.lists-and-tuples": ["Python you need first", "Lists and tuples — holding more than one value"],
+    "python.indexing": ["Python you need first", "Indexing — pulling one item out, counting from zero"],
+    "python.calling-functions": ["Python you need first", "Calling a function — arguments in, one value out"],
+    "python.defining-functions": ["Python you need first", "Writing your own function — def and return"],
+    "python.dots-and-imports": ["Python you need first", "Dots — importing a library, attributes, and methods"],
     "numpy.ndarray-model": ["Arrays from the ground up", "What a tensor is — data + shape + dtype"],
+    "numpy.transpose-axes": ["Arrays from the ground up", "Transpose — swapping which axis is which"],
+    "numpy.views-and-copies": ["Arrays from the ground up", "Views and copies — the same numbers, read a different way"],
     "numpy.constructors": ["Arrays from the ground up", "Tensor constructors — zeros, ones, full, eye, *_like"],
     "numpy.slicing-views": ["Arrays from the ground up", "Slicing, views, and slice assignment"],
     "numpy.ranges": ["Arrays from the ground up", "Numeric ranges — arange and linspace"],

@@ -15,7 +15,11 @@ import json
 import sys
 from lesson_lib import LESSONS_DIR, all_kp_paths, load_bank, load_registry, parse_kp
 
-EASY_TOPICS = ("Numpy", "Einsum", "Einops")
+# "Python" joined these on 2026-08-28 with lesson py-0: the first-encounter
+# course now starts BELOW numpy.ndarray-model, and its drills have to be
+# tagged like any other course question or the crosswalk cannot measure the
+# seven concepts under it.
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops")
 
 # Hand-assigned target KCs for questions not referenced by any KP.
 LEFTOVER_TARGETS = {

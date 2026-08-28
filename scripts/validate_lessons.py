@@ -34,7 +34,7 @@ from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
 
-EASY_TOPICS = ("Numpy", "Einsum", "Einops")
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops")  # "Python" = lesson py-0, the prerequisite floor
 
 
 def run_code(code, ns):

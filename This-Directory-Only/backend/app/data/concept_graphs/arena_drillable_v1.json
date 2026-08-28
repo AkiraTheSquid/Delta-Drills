@@ -3456,6 +3456,97 @@
    "tags": [
     "drill-atom"
    ]
+  },
+  {
+   "id": "python-values-and-names",
+   "title": "name a value with = and read it back",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-values-and-names — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-types-and-conversion",
+   "title": "tell int/float/str/bool apart and convert between them",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-types-and-conversion — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-lists-and-tuples",
+   "title": "build a list or a tuple and measure it",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-lists-and-tuples — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-indexing",
+   "title": "index a sequence from zero, from the end, and through a nesting",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-indexing — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-calling-functions",
+   "title": "call a function with positional and keyword arguments",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-calling-functions — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-defining-functions",
+   "title": "define a function with def, parameters, defaults and return",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-defining-functions — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
+  },
+  {
+   "id": "python-dots-and-imports",
+   "title": "import a module, read an attribute, call a method",
+   "topic": "Python",
+   "subtopic": "Python: Getting started",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "python-dots-and-imports — the py-0 prerequisite floor under numpy.ndarray-model",
+   "tags": [
+    "drill-atom"
+   ]
   }
  ],
  "prerequisite_edges": [
@@ -7308,6 +7399,66 @@
    "is_encompassing": true,
    "propagation_weight": 0.4,
    "rationale": "[manual 2026-07-08 orphan-atom fix] gating + FIRe edge wiring question-bank atom into the graph"
+  },
+  {
+   "prerequisite_id": "python-values-and-names",
+   "dependent_id": "python-types-and-conversion",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] a type is a property of a named value"
+  },
+  {
+   "prerequisite_id": "python-types-and-conversion",
+   "dependent_id": "python-lists-and-tuples",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] a container holds typed values"
+  },
+  {
+   "prerequisite_id": "python-lists-and-tuples",
+   "dependent_id": "python-indexing",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] you can only index something that holds items"
+  },
+  {
+   "prerequisite_id": "python-types-and-conversion",
+   "dependent_id": "python-calling-functions",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] arguments and return values are typed values"
+  },
+  {
+   "prerequisite_id": "python-calling-functions",
+   "dependent_id": "python-defining-functions",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] you call functions before you write them"
+  },
+  {
+   "prerequisite_id": "python-calling-functions",
+   "dependent_id": "python-dots-and-imports",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] a method is a call reached through a dot"
   }
  ],
  "lessons": [],
@@ -12161,6 +12312,7 @@
   "isfinite-mask",
   "linspace-evenly-spaced",
   "manual-seed",
+  "python-values-and-names",
   "tensor-pow",
   "tensor-unbind",
   "tensor-zeros-init",

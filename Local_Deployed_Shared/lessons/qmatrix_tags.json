@@ -3119,11 +3119,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5311,11 +5307,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5335,11 +5327,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5359,11 +5347,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5383,11 +5367,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5407,11 +5387,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5431,11 +5407,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -5455,11 +5427,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6086,25 +6054,13 @@
  },
  "523": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
   "source": "kp-independent"
  },
@@ -6232,11 +6188,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6256,11 +6208,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6280,11 +6228,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6300,49 +6244,25 @@
  },
  "535": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
-  "source": "kp-faded"
+  "source": "kp-integrated"
  },
  "536": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
   "source": "kp-faded"
  },
@@ -6352,11 +6272,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6376,11 +6292,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6400,11 +6312,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6424,11 +6332,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6448,11 +6352,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6472,11 +6372,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6496,11 +6392,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6520,11 +6412,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6544,11 +6432,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6568,11 +6452,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6592,11 +6472,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6616,11 +6492,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6640,11 +6512,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6664,11 +6532,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6688,11 +6552,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6708,49 +6568,23 @@
  },
  "552": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.transpose-axes"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.T"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "553": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
   "source": "kp-independent"
  },
@@ -6760,11 +6594,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6784,11 +6614,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6808,11 +6634,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6832,11 +6654,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6852,27 +6670,13 @@
  },
  "558": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.transpose-axes"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.T"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "559": {
   "target_kcs": [
@@ -6880,11 +6684,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6904,11 +6704,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6924,25 +6720,13 @@
  },
  "561": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
   "source": "kp-integrated"
  },
@@ -6952,11 +6736,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -6976,11 +6756,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -7000,11 +6776,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -7020,25 +6792,13 @@
  },
  "565": {
   "target_kcs": [
-   "numpy.ndarray-model"
+   "numpy.views-and-copies"
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
    "Tensor.contiguous",
    "Tensor.data_ptr",
-   "Tensor.dtype",
-   "Tensor.is_contiguous",
-   "Tensor.item",
-   "Tensor.ndim",
-   "Tensor.numel",
-   "Tensor.shape",
-   "Tensor.tolist",
-   "torch.equal",
-   "torch.float32",
-   "torch.int64",
-   "torch.tensor",
-   "torch.tensor#dtype"
+   "Tensor.is_contiguous"
   ],
   "source": "kp-integrated"
  },
@@ -7048,11 +6808,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -7072,11 +6828,7 @@
   ],
   "supporting_kcs": [],
   "new_syntax": [
-   "Tensor.T",
-   "Tensor.contiguous",
-   "Tensor.data_ptr",
    "Tensor.dtype",
-   "Tensor.is_contiguous",
    "Tensor.item",
    "Tensor.ndim",
    "Tensor.numel",
@@ -7089,5 +6841,797 @@
    "torch.tensor#dtype"
   ],
   "source": "kp-integrated"
+ },
+ "568": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "569": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "570": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "571": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "572": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "573": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "574": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-faded"
+ },
+ "575": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-faded"
+ },
+ "576": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-independent"
+ },
+ "577": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-independent"
+ },
+ "578": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-integrated"
+ },
+ "579": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name"
+  ],
+  "source": "kp-integrated"
+ },
+ "580": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "581": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "582": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "583": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "584": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "585": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "586": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "587": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "588": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "589": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "590": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
+ },
+ "591": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
+ },
+ "592": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "593": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "594": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "595": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "596": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-integrated"
+ },
+ "597": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-integrated"
+ },
+ "598": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-faded"
+ },
+ "599": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-faded"
+ },
+ "600": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-independent"
+ },
+ "601": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-independent"
+ },
+ "602": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-integrated"
+ },
+ "603": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-integrated"
+ },
+ "604": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-faded"
+ },
+ "605": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-faded"
+ },
+ "606": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-independent"
+ },
+ "607": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-independent"
+ },
+ "608": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-integrated"
+ },
+ "609": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-integrated"
+ },
+ "610": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-faded"
+ },
+ "611": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-faded"
+ },
+ "612": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "613": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "614": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-integrated"
+ },
+ "615": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-integrated"
+ },
+ "616": {
+  "target_kcs": [
+   "numpy.views-and-copies"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.is_contiguous"
+  ],
+  "source": "kp-faded"
+ },
+ "617": {
+  "target_kcs": [
+   "numpy.views-and-copies"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.is_contiguous"
+  ],
+  "source": "kp-faded"
+ },
+ "618": {
+  "target_kcs": [
+   "numpy.views-and-copies"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.is_contiguous"
+  ],
+  "source": "kp-faded"
  }
 }

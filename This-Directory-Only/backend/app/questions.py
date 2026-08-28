@@ -726,6 +726,9 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
         servable = [
             q for q in servable
             if lessons.is_torch_dialect(q.answer_code, q.starter_code)
+            # The py-0 floor is library-free BY DESIGN, not un-converted; see
+            # lessons.is_prelibrary for what parking it costs.
+            or lessons.is_prelibrary(q.id)
         ]
     parked = len(questions) - len(servable)
     _questions = servable

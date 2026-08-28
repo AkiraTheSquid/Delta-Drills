@@ -365,6 +365,14 @@ def blank_new_syntax(starter, new_syntax, fn_name="solve"):
     Applied to the function body only, and only to symbols the KP itself
     declares as new. A symbol taught by an earlier KP is exactly the supporting
     structure that is supposed to stay visible.
+
+    🔴 THE DOCSTRING IS NOT CODE — it is the PROMPT, and blanking it is how a
+    faded drill stops saying what it wants. q535's docstring reads "Return (does
+    a.T share a's block?, does its packed copy?)"; the KP declares `Tensor.T`,
+    so the sweep rewrote it to "does a._____ share a's block?" and the learner
+    was left with seven blanks and no statement of the task. Reported as "just
+    tell me what the damn question is asking for". The body is faded; the
+    sentence describing what to build is left alone.
     """
     if not starter or not new_syntax:
         return starter
@@ -372,12 +380,41 @@ def blank_new_syntax(starter, new_syntax, fn_name="solve"):
     if not span:
         return starter
     start, end = span
+    skip = _docstring_lines(starter, fn_name)
     lines = starter.splitlines()
     for symbol in new_syntax:
         for pattern, replacement in new_syntax_patterns(symbol):
             for i in range(start, end):
+                if i in skip:
+                    continue
                 lines[i] = pattern.sub(replacement, lines[i])
     return "\n".join(lines) + ("\n" if starter.endswith("\n") else "")
+
+
+def _docstring_lines(source, fn_name="solve"):
+    """0-based line indices covered by `fn_name`'s docstring, or an empty set.
+
+    Read with `ast` rather than by hunting for triple quotes: a docstring can be
+    one line or ten, single- or double-quoted, and a raw/f prefix is legal. When
+    the source does not parse — a hand-cut starter that already carries blanks —
+    nothing is protected, which is the same behaviour as before this existed.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return set()
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name != fn_name or not node.body:
+            continue
+        first = node.body[0]
+        if (isinstance(first, ast.Expr)
+                and isinstance(first.value, ast.Constant)
+                and isinstance(first.value.value, str)):
+            end = getattr(first, "end_lineno", first.lineno) or first.lineno
+            return set(range(first.lineno - 1, end))
+    return set()
 
 
 _CALL = re.compile(r"(?<=\.)([A-Za-z_]\w*)(?=\s*\()")

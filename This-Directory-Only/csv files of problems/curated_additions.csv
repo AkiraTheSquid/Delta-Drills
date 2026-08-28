@@ -1054,3 +1054,489 @@ def solve(values, as_int):
 example = ([1.9, 2.2], True)
 print(solve(*example))
 ",45,"(False, (2,), 'torch.int64')"
+Python,Getting started,"Write a function solve(a, b) that gives the sum of a and b a NAME, `total`, and then returns that name. Assignment stores a value under a name; the name is what you return.","def solve(a, b):
+    """"""Store the sum under a name, then return the name.""""""
+    total = a + b
+    return total
+
+
+example = (2, 3)
+print(solve(*example))
+",10,5
+Python,Getting started,"Write a function solve(x, y) that swaps the two values — returning the tuple (y, x) — by first storing each one under a new name. Return (first, second).","def solve(x, y):
+    """"""Swap, via two names.""""""
+    first = y
+    second = x
+    return (first, second)
+
+
+example = (1, 2)
+print(solve(*example))
+",12,"(2, 1)"
+Python,Getting started,"Write a function solve(price, qty) that returns a tuple (total, doubled): `total` is price times qty, and `doubled` is that same total added to itself. Compute `total` ONCE, store it under a name, and build `doubled` out of that name rather than multiplying again.","def solve(price, qty):
+    """"""One computation, named once, reused.""""""
+    total = price * qty
+    doubled = total + total
+    return (total, doubled)
+
+
+example = (3, 4)
+print(solve(*example))
+",20,"(12, 24)"
+Python,Getting started,"Write a function solve(n) that adds 3 to n, then adds 3 again, RE-USING the same name `n` both times, and returns the final value. A name can be reassigned; the right-hand side is worked out first, using the OLD value.","def solve(n):
+    """"""Rebind the same name twice.""""""
+    n = n + 3
+    n = n + 3
+    return n
+
+
+example = (0,)
+print(solve(*example))
+",22,6
+Python,Getting started,"Write a function solve(a, b) that returns a 3-tuple (total, difference, swapped). Store the sum under `total` and the difference a - b under `difference`, then return those two names plus `swapped`, the tuple (b, a). Every value must be stored under a name before it is returned.","def solve(a, b):
+    """"""Three named results, returned together.""""""
+    total = a + b
+    difference = a - b
+    swapped = (b, a)
+    return (total, difference, swapped)
+
+
+example = (5, 2)
+print(solve(*example))
+",28,"(7, 3, (2, 5))"
+Python,Getting started,"Write a function solve(start) that walks a value through three named steps and returns all four numbers as a tuple (start, step1, step2, step3): step1 is start plus 10, step2 is step1 times 2, step3 is step2 minus start. Each step must be built from the PREVIOUS name.","def solve(start):
+    """"""Each step reads the name the step before it wrote.""""""
+    step1 = start + 10
+    step2 = step1 * 2
+    step3 = step2 - start
+    return (start, step1, step2, step3)
+
+
+example = (0,)
+print(solve(*example))
+",30,"(0, 10, 20, 20)"
+Python,Getting started,"Write a function solve(value) that returns the NAME of the value's type as a string, such as 'int' or 'str'. `type(value)` gives the type itself; its `__name__` is the readable name.","def solve(value):
+    """"""The name of the value's type.""""""
+    return type(value).__name__
+
+
+example = (3,)
+print(solve(*example))
+",12,'int'
+Python,Getting started,"Write a function solve(digits) that takes a STRING of digits such as '42' and returns that value plus 8, as a number. A string of digits is text until it is converted.","def solve(digits):
+    """"""Text in, number out.""""""
+    return int(digits) + 8
+
+
+example = ('42',)
+print(solve(*example))
+",14,50
+Python,Getting started,"Write a function solve(text) that takes a string of digits and returns the 3-tuple (as_int, as_float, back_to_text): the value as an int, the same value as a float, and str() of the int. Converting is a one-way trip each time — nothing changes the original string.","def solve(text):
+    """"""One string, three ways of reading it.""""""
+    as_int = int(text)
+    as_float = float(text)
+    return (as_int, as_float, str(as_int))
+
+
+example = ('7',)
+print(solve(*example))
+",20,"(7, 7.0, '7')"
+Python,Getting started,"Write a function solve(x) that takes a float and returns the tuple (truncated, rounded): int(x), which throws the fraction AWAY, and round(x), which goes to the nearest whole number. Show that the two disagree.","def solve(x):
+    """"""int() truncates; round() goes to the nearest.""""""
+    return (int(x), round(x))
+
+
+example = (3.9,)
+print(solve(*example))
+",24,"(3, 4)"
+Python,Getting started,"Write a function solve(value) that returns a 3-tuple (kind, as_text, is_number): `kind` is the name of the value's type, `as_text` is str(value), and `is_number` is True when the type name is 'int' or 'float' and False otherwise.","def solve(value):
+    """"""Name the type, show the text, say whether it is a number.""""""
+    kind = type(value).__name__
+    return (kind, str(value), kind in (""int"", ""float""))
+
+
+example = (5,)
+print(solve(*example))
+",30,"('int', '5', True)"
+Python,Getting started,"Write a function solve(text, add) that takes a string of digits and a number. Return the tuple (glued, added): `glued` is the two written next to each other as TEXT, `added` is the arithmetic sum as a number. The same `+` does both jobs, and which one you get is decided by the types.","def solve(text, add):
+    """"""The same + is text-joining or arithmetic, depending on types.""""""
+    glued = text + str(add)
+    added = int(text) + add
+    return (glued, added)
+
+
+example = ('4', 2)
+print(solve(*example))
+",32,"('42', 6)"
+Python,Getting started,"Write a function solve(a, b, c) that puts the three values into a LIST, in order, and returns the tuple (items, count) where `count` is how many items the list holds.","def solve(a, b, c):
+    """"""Build the list, then measure it.""""""
+    items = [a, b, c]
+    return (items, len(items))
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",12,"([1, 2, 3], 3)"
+Python,Getting started,"Write a function solve(a, b) that returns a TUPLE holding the two values. A tuple is written with parentheses and, unlike a list, cannot be changed afterwards.","def solve(a, b):
+    """"""A tuple of the two values.""""""
+    return (a, b)
+
+
+example = (1, 2)
+print(solve(*example))
+",14,"(1, 2)"
+Python,Getting started,"Write a function solve(rows) that takes a list whose items are themselves lists (all the same length) and returns the tuple (n_rows, n_cols): how many inner lists there are, and how many items the FIRST inner list holds.","def solve(rows):
+    """"""Outer length, then inner length.""""""
+    return (len(rows), len(rows[0]))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",22,"(2, 3)"
+Python,Getting started,"Write a function solve(items) that takes a list and returns the tuple (as_tuple, back_to_list, same_length): the list converted to a tuple, that tuple converted back to a list, and whether the two lengths agree.","def solve(items):
+    """"""A round trip between the two sequence types.""""""
+    as_tuple = tuple(items)
+    back = list(as_tuple)
+    return (as_tuple, back, len(items) == len(back))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",24,"((1, 2, 3), [1, 2, 3], True)"
+Python,Getting started,"Write a function solve(a, b, c) that returns a 3-tuple (as_list, as_tuple, sizes): the three values in a list, the same three in a tuple, and `sizes`, a tuple holding the length of each of those two containers.","def solve(a, b, c):
+    """"""The same three values in both containers, plus their sizes.""""""
+    as_list = [a, b, c]
+    as_tuple = (a, b, c)
+    return (as_list, as_tuple, (len(as_list), len(as_tuple)))
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",30,"([1, 2, 3], (1, 2, 3), (3, 3))"
+Python,Getting started,"Write a function solve(rows) that takes a list of inner lists and returns the tuple (n_rows, widths, all_same): the number of rows, a TUPLE holding the length of every row in order, and True when every row is the same length.","def solve(rows):
+    """"""Count the rows, measure each one, say whether they agree.""""""
+    widths = tuple(len(row) for row in rows)
+    return (len(rows), widths, len(set(widths)) <= 1)
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",32,"(2, (2, 2), True)"
+Python,Getting started,"Write a function solve(items) that returns the FIRST item of the list. Positions are counted from zero, so the first item lives at position 0.","def solve(items):
+    """"""First item — position zero.""""""
+    return items[0]
+
+
+example = ([10, 20, 30],)
+print(solve(*example))
+",12,10
+Python,Getting started,"Write a function solve(items) that returns the LAST item of the list, without measuring its length first. A negative position counts back from the end.","def solve(items):
+    """"""Last item — count back from the end.""""""
+    return items[-1]
+
+
+example = ([10, 20, 30],)
+print(solve(*example))
+",14,30
+Python,Getting started,"Write a function solve(rows, i, j) that takes a list of inner lists and two positions, and returns the single value at row i, column j. Reading a nested structure is one index per level, left to right.","def solve(rows, i, j):
+    """"""One index per level: pick the row, then the item.""""""
+    return rows[i][j]
+
+
+example = ([[1, 2], [3, 4]], 0, 1)
+print(solve(*example))
+",22,2
+Python,Getting started,"Write a function solve(items) that returns the tuple (first, last, second_from_end) for a list of at least two items, using a negative position for the last two.","def solve(items):
+    """"""Front from zero, back from minus one.""""""
+    return (items[0], items[-1], items[-2])
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",24,"(1, 3, 2)"
+Python,Getting started,"Write a function solve(rows, i) that takes a list of inner lists and a row position, and returns the tuple (row, width, last_in_row): the whole inner list at position i, how many items it holds, and its final item.","def solve(rows, i):
+    """"""Pull one row out, then read it.""""""
+    row = rows[i]
+    return (row, len(row), row[-1])
+
+
+example = ([[1, 2, 3], [4, 5]], 0)
+print(solve(*example))
+",30,"([1, 2, 3], 3, 3)"
+Python,Getting started,"Write a function solve(rows) that returns the tuple (corner_tl, corner_br, shape) for a list of inner lists: the top-left value, the bottom-right value, and `shape`, the tuple (number of rows, length of the first row).","def solve(rows):
+    """"""The two opposite corners, and the shape they sit in.""""""
+    return (rows[0][0], rows[-1][-1], (len(rows), len(rows[0])))
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",32,"(1, 4, (2, 2))"
+Python,Getting started,"Write a function solve(items) that returns how many items the list holds, by CALLING the built-in len. A call is the name followed by parentheses holding the argument.","def solve(items):
+    """"""Call len on the list.""""""
+    return len(items)
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",12,3
+Python,Getting started,"Write a function solve(x, places) that returns x rounded to `places` decimal places, by calling the built-in round with TWO arguments. Arguments are separated by a comma, in order.","def solve(x, places):
+    """"""round takes the value first, then how many places.""""""
+    return round(x, places)
+
+
+example = (3.14159, 2)
+print(solve(*example))
+",14,3.14
+Python,Getting started,"Write a function solve(numbers) that returns the tuple (total, biggest, smallest) by calling the built-ins sum, max and min on the same list. Each call gives back ONE value.","def solve(numbers):
+    """"""Three built-in calls over one list.""""""
+    return (sum(numbers), max(numbers), min(numbers))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",22,"(6, 3, 1)"
+Python,Getting started,"Write a function solve(items) that returns the list sorted from LARGEST to smallest, by calling sorted with the keyword argument reverse=True. A keyword argument names the setting it is changing.","def solve(items):
+    """"""sorted, with the direction named.""""""
+    return sorted(items, reverse=True)
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",24,"[3, 2, 1]"
+Python,Getting started,"Write a function solve(numbers, places) that returns the tuple (count, mean_rounded): how many numbers there are, and their mean rounded to `places` decimal places. Build it from calls to len, sum and round only.","def solve(numbers, places):
+    """"""Count, average, round — three calls feeding each other.""""""
+    count = len(numbers)
+    return (count, round(sum(numbers) / count, places))
+
+
+example = ([1, 2, 3], 2)
+print(solve(*example))
+",30,"(3, 2.0)"
+Python,Getting started,"Write a function solve(items) that returns the tuple (largest_two, span): the two largest values as a list in descending order, and the difference between the biggest and smallest. Use sorted with reverse=True, indexing, max and min.","def solve(items):
+    """"""One sorted call, then read the ends.""""""
+    ordered = sorted(items, reverse=True)
+    return (ordered[0:2], max(items) - min(items))
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",32,"([3, 2], 2)"
+Python,Getting started,Write a function solve(x) that gives back x multiplied by 3. A function hands a value back with `return`; without it the call produces None.,"def solve(x):
+    """"""Hand back three times x.""""""
+    return x * 3
+
+
+example = (2,)
+print(solve(*example))
+",14,6
+Python,Getting started,"Write a function solve(a, b) that takes TWO parameters and returns a times b. Parameters are the names in the def line; the caller decides what they refer to.","def solve(a, b):
+    """"""Two parameters, one returned value.""""""
+    return a * b
+
+
+example = (2, 3)
+print(solve(*example))
+",16,6
+Python,Getting started,"Write a function solve(x, times=2) whose second parameter has a DEFAULT of 2, and which returns x multiplied by `times`. Callers that pass one argument must get double; callers that pass two must get their own multiplier.","def solve(x, times=2):
+    """"""A default is used only when the caller says nothing.""""""
+    return x * times
+
+
+example = (5,)
+print(solve(*example))
+",24,10
+Python,Getting started,"Write a function solve(a, b) that returns TWO values as a tuple: their sum and their product. One `return` can hand back a tuple, which is how a function gives more than one answer.","def solve(a, b):
+    """"""Two answers, one return.""""""
+    return (a + b, a * b)
+
+
+example = (2, 3)
+print(solve(*example))
+",26,"(5, 6)"
+Python,Getting started,"Write a function solve(values) that defines its OWN helper function inside itself — one that doubles a number — calls that helper on the first and last item of `values`, and returns the tuple (first_doubled, last_doubled).","def solve(values):
+    """"""A helper defined here, then called twice.""""""
+    def double(n):
+        """"""Twice n.""""""
+        return n * 2
+
+    return (double(values[0]), double(values[-1]))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",32,"(2, 6)"
+Python,Getting started,"Write a function solve(a, b, swap=False) that returns the pair (a, b) as a tuple, but returns (b, a) when the caller passes swap=True. The default must be the un-swapped order.","def solve(a, b, swap=False):
+    """"""The default answer, and the one the caller can ask for.""""""
+    if swap:
+        return (b, a)
+    return (a, b)
+
+
+example = (1, 2)
+print(solve(*example))
+",34,"(1, 2)"
+Python,Getting started,"Write a function solve(x) that returns the square root of x. The `math` module is imported for you; reach into it with a dot to get `sqrt`, then call it.","import math
+
+
+def solve(x):
+    """"""Reach into the module with a dot, then call.""""""
+    return math.sqrt(x)
+
+
+example = (9,)
+print(solve(*example))
+",16,3.0
+Python,Getting started,"Write a function solve(text) that returns the string in CAPITALS. `upper` is a method that belongs to the string itself, so it is reached with a dot and CALLED with parentheses.","def solve(text):
+    """"""A method belongs to the value, and still has to be called.""""""
+    return text.upper()
+
+
+example = ('hi',)
+print(solve(*example))
+",16,'HI'
+Python,Getting started,"Write a function solve(text) that returns the tuple (shouted, size): the string in capitals, and how long it is. One of those is a METHOD on the string, the other is a built-in function that takes the string as an argument.","def solve(text):
+    """"""A method on the value, and a function taking the value.""""""
+    return (text.upper(), len(text))
+
+
+example = ('hi',)
+print(solve(*example))
+",24,"('HI', 2)"
+Python,Getting started,"Write a function solve(x) that imports `math` under the shorter name `m` and returns the tuple (floor_value, ceil_value): x rounded down, and x rounded up. `import math as m` gives the same module a shorter name.","import math as m
+
+
+def solve(x):
+    """"""The same module, under a shorter name.""""""
+    return (m.floor(x), m.ceil(x))
+
+
+example = (2.3,)
+print(solve(*example))
+",26,"(2, 3)"
+Python,Getting started,"Write a function solve(text, x) that returns the 3-tuple (shouted, length, root): the text in capitals via a method, its length via a built-in call, and the square root of x via the `math` module.","import math
+
+
+def solve(text, x):
+    """"""A method, a built-in call, and a module function.""""""
+    return (text.upper(), len(text), math.sqrt(x))
+
+
+example = ('hi', 9)
+print(solve(*example))
+",32,"('HI', 2, 3.0)"
+Python,Getting started,"Write a function solve(items, value) that appends `value` to a COPY of the list using the list's own `append` method, and returns the tuple (grown, original_length): the extended copy and how long the list was before. Note that `append` changes the list in place and hands back None.","def solve(items, value):
+    """"""append() changes the list and returns None — so return the list.""""""
+    original_length = len(items)
+    grown = list(items)
+    grown.append(value)
+    return (grown, original_length)
+
+
+example = ([1, 2], 3)
+print(solve(*example))
+",34,"([1, 2, 3], 2)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns the TRANSPOSE's shape as a plain tuple of ints. Transposing turns the rows into columns, so a tensor with 2 rows and 3 columns comes back with 3 rows and 2 columns. None of the numbers move.","import torch as t
+
+def solve(rows):
+    """"""Return the transpose's shape as a plain tuple.""""""
+    a = t.tensor(rows)
+    return tuple(a.T.shape)
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",14,"(3, 2)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns the TRANSPOSE's first row as a plain Python list. Row 0 of the transpose is column 0 of the original — the first number of every row, read top to bottom.","import torch as t
+
+def solve(rows):
+    """"""Return the transpose's first row as a plain list.""""""
+    a = t.tensor(rows)
+    return a.T.tolist()[0]
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",16,"[1, 4]"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (same_values, shape_after) — whether transposing TWICE gives back a tensor equal to a, and the shape after those two transposes, as a plain tuple. Each transpose swaps the axes, so doing it twice puts them back.","import torch as t
+
+def solve(rows):
+    """"""Return (is a.T.T equal to a?, its shape).""""""
+    a = t.tensor(rows)
+    back = a.T.T
+    return (t.equal(back, a), tuple(back.shape))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",20,"(True, (2, 3))"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (transposed_values, transposed_shape): the transpose's contents as a plain nested Python list, and its shape as a plain tuple of ints.","import torch as t
+
+def solve(rows):
+    """"""Return (the transpose's contents, the transpose's shape).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.tolist(), tuple(view.shape))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",22,"([[1, 4], [2, 5], [3, 6]], (3, 2))"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (shape, transposed_shape, transposed_values, axes): a's shape and the transpose's shape as plain tuples, the transpose's contents as a plain nested list, and how many axes a has.","import torch as t
+
+def solve(rows):
+    """"""Return (a's shape, a.T's shape, a.T's values, a's axis count).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (tuple(a.shape), tuple(view.shape), view.tolist(), a.ndim)
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",26,"((2, 3), (3, 2), [[1, 4], [2, 5], [3, 6]], 2)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (dtype_name, transposed_values, same_count): str() of a's element type, the transpose's contents as a plain nested list, and one bool for whether a and its transpose hold the same NUMBER of elements. Transposing rearranges how the block is read; it neither converts nor discards anything.","import torch as t
+
+def solve(rows):
+    """"""Return (a's dtype name, a.T's values, do they hold the same count?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (str(a.dtype), view.tolist(), a.numel() == view.numel())
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",28,"('torch.int64', [[1, 4], [2, 5], [3, 6]], True)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple of two bools: is a itself in reading order, and is its transpose? A tensor you just built is written into memory in the order you read it. The transpose reads that same run of numbers by hopping, so it usually is not.","import torch as t
+
+def solve(rows):
+    """"""Return (is a in reading order?, is a.T?).""""""
+    a = t.tensor(rows)
+    return (a.is_contiguous(), a.T.is_contiguous())
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",18,"(True, False)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple of two bools: does a.T start at the same address as a, and is a.T in reading order? Those are two different questions about the same tensor, and the answers do not have to agree.","import torch as t
+
+def solve(rows):
+    """"""Return (does a.T start where a does?, is a.T in reading order?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.data_ptr() == a.data_ptr(), view.is_contiguous())
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",20,"(True, False)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple of two bools: after asking for a packed copy, does a's copy start at a's address, and does the TRANSPOSE's copy? Asking a tensor that is already in reading order to pack itself has nothing to do, so it hands the same tensor back.","import torch as t
+
+def solve(rows):
+    """"""Return (does a's packed copy start where a does?, does a.T's?).""""""
+    a = t.tensor(rows)
+    return (a.contiguous().data_ptr() == a.data_ptr(),
+            a.T.contiguous().data_ptr() == a.data_ptr())
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",22,"(True, False)"

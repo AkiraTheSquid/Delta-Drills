@@ -392,6 +392,38 @@ def has_target_kcs(question_id: int) -> bool:
     return bool(_question_target_kcs.get(question_id))
 
 
+# Lesson topics that teach the language itself, below any library. Their drills
+# import nothing, which is the whole point of them.
+_PRELIBRARY_TOPICS = {"Python"}
+
+
+def is_prelibrary(question_id: int) -> bool:
+    """True when every concept this question drills is taught library-free.
+
+    🔴 WITHOUT THIS THE FLOOR OF THE GRAPH IS UNREACHABLE. `torch_only_serving`
+    parks any question whose code does not import torch, because an unconverted
+    numpy drill after a torch lesson teaches the wrong muscle memory. The py-0
+    lesson is not that: it teaches names, types, lists, indexing and `def`
+    BEFORE any library exists for the learner, so its drills import nothing on
+    purpose. Parked, they leave `numpy.ndarray-model` locked behind concepts
+    with nothing to serve — and a concept with no questions can never become
+    learned, so a brand-new account gets no question at all, forever. Measured
+    on a fresh signup: frontier `['python.values-and-names']`, 0 servable, and
+    /api/practice/next-question 404s "No questions available".
+
+    Scoped by the LESSON's topic rather than by "has no import", so parking
+    still catches the un-converted numpy residue it exists for.
+    """
+    _load()
+    kcs = _question_target_kcs.get(int(question_id)) or []
+    if not kcs:
+        return False
+    return all(
+        (_kc_gate_info.get(kc) or {}).get("topic") in _PRELIBRARY_TOPICS
+        for kc in kcs
+    )
+
+
 def kc_only_serving() -> bool:
     """Whether the ITS may serve ONLY questions tagged to a lesson-graph KC.
 

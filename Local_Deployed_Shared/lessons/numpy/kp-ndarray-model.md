@@ -2,19 +2,20 @@
 kc: numpy.ndarray-model
 title: What a tensor is — data + shape + dtype
 supporting: []
-new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.equal, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
-faded: [224, 482, 484, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546]
+new_syntax: [Tensor.dtype, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.equal, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
+faded: [224, 482, 484, 532, 533, 534, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546]
 guided: []
-independent: [480, 481, 483, 485, 486, 523, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559]
-integrated: [560, 561, 562, 563, 564, 565, 566, 567]
+independent: [480, 481, 483, 485, 486, 547, 548, 549, 550, 551, 554, 555, 556, 557, 559]
+integrated: [560, 562, 563, 564, 566, 567]
 ---
 
 ## Concept: a tensor is one block of one type
 
 
-PyTorch's core object is the **tensor** (n-dimensional array). Everything else in
-this course — indexing, broadcasting, einsum, einops — is a way of manipulating
-this one object, so it pays to know exactly what it is.
+PyTorch's core object is the **tensor** (n-dimensional array). Every other
+thing this course teaches — selecting parts of one, doing arithmetic on whole
+ones at a time, rearranging them — is a way of manipulating this one object, so
+it pays to know exactly what it is.
 
 A Python list is a bag of pointers: each element can be a different type, live
 anywhere in memory, and even be another list of a different length. A tensor is
@@ -37,22 +38,11 @@ print(a)
 print("dtype of the whole block:", a.dtype)
 ```
 
-A freshly built tensor lays those elements out contiguously. Operations that
-only re-describe the block — transposing, slicing with a step — hand back a
-tensor that *shares the same memory* in a different reading order. That is
-cheap, and it is why `.contiguous()` exists: it is how you ask for the copy.
-
-```python
-at = a.T  # `a` is still defined — this cell continues the one above.
-
-# Same numbers, same memory, read down the columns instead of along the rows.
-print("shares storage with a:", at.data_ptr() == a.data_ptr())
-print("still in reading order:", at.is_contiguous())
-
-packed = at.contiguous()
-print("the copy owns its memory:", packed.data_ptr() != a.data_ptr())
-assert t.equal(packed, at)
-```
+That one block is also why some operations are nearly free. Re-describing how
+the block should be read costs almost nothing, while producing a block of your
+own costs a write of every element. Which operations are which — and how to
+ask a tensor the question — is the concept after next, and this page does not
+assume any of it.
 
 Why this design? Because when every element is the same type and sits at a
 predictable memory address, PyTorch can hand whole-tensor operations to fast
@@ -207,54 +197,6 @@ def solve(rows_a, rows_b):
     a = t.tensor(rows_a)
     b = t.tensor(rows_b)
     return t.equal(a, b)
-```
-
-### q535
-Two bools: does the transpose read a's block, and does the packed copy?
-
-```python starter
-import torch as t
-
-def solve(rows):
-    """Return (does a.T share a's block?, does its packed copy?)."""
-    a = t.tensor(rows)
-    view = a.T
-    return (view.data_ptr() == a.data_ptr(),
-            view.contiguous().data_ptr() == a.data_ptr())
-```
-
-```python solution
-import torch as t
-
-def solve(rows):
-    """Return (does a.T share a's block?, does its packed copy?)."""
-    a = t.tensor(rows)
-    view = a.T
-    return (view.data_ptr() == a.data_ptr(),
-            view.contiguous().data_ptr() == a.data_ptr())
-```
-
-### q536
-Two bools: is the transpose still in reading order, and is its packed copy?
-
-```python starter
-import torch as t
-
-def solve(rows):
-    """Return (is a.T in reading order?, is its packed copy?)."""
-    a = t.tensor(rows)
-    view = a.T
-    return (view.is_contiguous(), view.contiguous().is_contiguous())
-```
-
-```python solution
-import torch as t
-
-def solve(rows):
-    """Return (is a.T in reading order?, is its packed copy?)."""
-    a = t.tensor(rows)
-    view = a.T
-    return (view.is_contiguous(), view.contiguous().is_contiguous())
 ```
 
 ## Concept: nesting becomes axes — shape, ndim, numel
@@ -710,25 +652,6 @@ Three levels of nesting. Report the axes, the shape and the element count.
 ### q486
 Inferred versus forced: build the same numbers twice and compare the element types.
 
-### q523
-A transpose and its packed copy: which one reads a's block, and what do the numbers look like?
-
-Transposing never moves data — it hands back a tensor reading the SAME block
-in a different order. `.contiguous()` is how you ask for the move, and
-`.data_ptr()` is what tells the two apart:
-
-```python worked
-import torch as t
-
-a = t.tensor([[1, 2], [3, 4], [5, 6]])
-view = a.T
-packed = view.contiguous()
-
-print("a.T shares a's block :", view.data_ptr() == a.data_ptr())
-print("the copy owns its own:", packed.data_ptr() != a.data_ptr())
-print("same numbers either way:", t.equal(packed, view))
-```
-
 ### q547
 A flat list, described three ways: axes, elements, shape.
 
@@ -774,28 +697,6 @@ for values in ([7], [1, 2, 3]):
 
 ### q551
 Agreeing on shape is half a question. Answer both halves.
-
-### q552
-The shape before and after transposing.
-
-### q553
-Reading order for three tensors: the original, its transpose, and the packed copy.
-
-A freshly built tensor is laid out in reading order. Its transpose is the same
-block read a different way, so it is not — and asking for the packed copy is
-what puts one back in order:
-
-```python worked
-import torch as t
-
-a = t.tensor([[1, 2, 3], [4, 5, 6]])
-view = a.T
-packed = view.contiguous()
-
-print("a      ", a.is_contiguous())
-print("a.T    ", view.is_contiguous())
-print("packed ", packed.is_contiguous())
-```
 
 ### q554
 Force an integer type onto floats and report what survived.
@@ -851,9 +752,6 @@ print("a[0]:", tuple(row.shape), "ndim", row.ndim)
 assert row.ndim == a.ndim - 1
 ```
 
-### q558
-The transposed numbers, as a plain nested list.
-
 ### q559
 A one-element tensor is still 1-D. Show it.
 
@@ -861,9 +759,6 @@ A one-element tensor is still 1-D. Show it.
 
 ### q560
 The three answers that fully describe a tensor, in one tuple.
-
-### q561
-Shape, transposed shape, element type, and whether the transpose shares the block.
 
 ### q562
 Shape, dtype and whole-tensor equality are three separate verdicts. The third is not implied by the other two.
@@ -873,9 +768,6 @@ Choose the element type from an argument, then report the tensor three ways.
 
 ### q564
 Every piece of metadata for a triply nested input.
-
-### q565
-Four bools about a transpose and its packed copy: order, order, values, and whose memory.
 
 ### q566
 Count, value and element type — where the value only exists for a one-element tensor.

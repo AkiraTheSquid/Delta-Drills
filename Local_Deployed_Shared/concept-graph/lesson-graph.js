@@ -27,6 +27,10 @@
 
   // One pastel per lesson (grouped by topic hue) so black labels stay legible.
   const LESSON_COLORS = {
+    // py-0 is the prerequisite floor (2026-08-28) and sits BELOW np-1 in the
+    // layout, so it gets its own warm hue rather than a fifth blue — the point
+    // of the row is that it is not part of the numpy course.
+    "py-0": "#f6e3c5",
     "np-1": "#cbe8f7", "np-2": "#aedaf0", "np-3": "#8fcbe9", "np-4": "#72bde1",
     "eo-1": "#cdf2d6", "eo-2": "#a9e6b8", "eo-3": "#88db9c",
     "es-1": "#e6d2ff", "es-2": "#d3b4ff",

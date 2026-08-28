@@ -1,5 +1,5 @@
 {
- "total": 535,
+ "total": 586,
  "questions": {
   "448": [
    {
@@ -21,9 +21,23 @@
     "var": "example",
     "detail": "post-setup var 'example' already equals the expected value"
    }
+  ],
+  "581": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "603": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
   ]
  },
  "counts": {
-  "precompute_leak": 3
+  "precompute_leak": 5
  }
 }
