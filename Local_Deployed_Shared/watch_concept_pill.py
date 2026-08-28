@@ -507,6 +507,102 @@ def check_concept_pill():
         "resumed question"
     )
 
+    # ── The concept survives a RELOAD, not just a pause ────────────
+    # 🔴 THE HYDRATE ABOVE IS NOT ENOUGH ON ITS OWN, measured on prod
+    # 2026-08-28. `practiceProgress.currentQuestion` is not a record of the
+    # question on screen — the queue overwrites it with whatever it serves
+    # next — so the id gate fails on the ordinary case and the restore falls
+    # back to the bank, which has no ladder fields at all. The pause snapshot
+    # is the record that is by definition about the on-screen question, so the
+    # concept rides in it.
+    snapshot = re.search(r"const _snapshot\s*=.*?\n  \};", timer_code, re.S)
+    assert snapshot, (
+        "practice/timer.js has no _snapshot - the pause path was renamed and "
+        "this guard can no longer see it"
+    )
+    assert re.search(r"ladder:\s*_ladderContext\(\)", snapshot.group(0)), (
+        "the pause snapshot must carry the ladder context "
+        "(`ladder: _ladderContext()`). Without it a resume AFTER A RELOAD has "
+        "no concept to put back: the question is rebuilt from the bank, "
+        "LadderUI.decorate finds no kc, StageLadder.hide() fires and the "
+        "topbar pill is out for the whole resumed question"
+    )
+
+    ctx = re.search(r"const _ladderContext\s*=.*?\n  \};", timer_code, re.S)
+    assert ctx, "practice/timer.js has no _ladderContext"
+    ctx = ctx.group(0)
+    # 🔴 THE ON-SCREEN QUESTION, NOT THE STORED ONE. Reading this off
+    # practiceProgress is the exact bug this replaced; a mutation that swaps
+    # the source back must fail here.
+    assert "PracticeAPI.currentQuestion" in ctx and "practiceProgress" not in ctx, (
+        "_ladderContext must read PracticeAPI.currentQuestion (the question on "
+        "screen). practiceProgress.currentQuestion is whatever the queue "
+        "served last and is a DIFFERENT question by the time of the pause"
+    )
+    assert re.search(r"if\s*\(\s*!q\s*\|\|\s*!q\.ladder_kc\s*\|\|\s*!q\.ladder_stage\s*\)", ctx), (
+        "_ladderContext must return null unless BOTH ladder_kc and "
+        "ladder_stage are present - LadderUI.decorate needs both, and half a "
+        "context restores a rung with no concept"
+    )
+
+    read_saved = re.search(r"const _readSaved\s*=.*?\n  \};", timer_code, re.S)
+    assert read_saved and re.search(r"ladder:\s*_readLadder\(\s*saved\.ladder", read_saved.group(0)), (
+        "_readSaved must return the snapshot's ladder through _readLadder - a "
+        "field written at pause and dropped on read is the same as never "
+        "having written it"
+    )
+    read_ladder = re.search(r"const _readLadder\s*=.*?\n  \};", timer_code, re.S)
+    assert read_ladder, "practice/timer.js has no _readLadder sanitiser"
+    read_ladder = read_ladder.group(0)
+    # localStorage is untrusted input and this value reaches StageLadder.show,
+    # which writes the title into the DOM and hands `estimate` to _boundOf.
+    assert re.search(r"typeof\s+raw\s*!==\s*[\"']object[\"']", read_ladder) and (
+        "if (!kc || !stage) return null;" in read_ladder
+    ), (
+        "_readLadder must reject anything that is not an object carrying both "
+        "kc and stage - it is read straight out of localStorage"
+    )
+    # 🔴 STRINGS, not truthy values: `String([])` is "" and `String({})` is
+    # "[object Object]", either of which reaches the DOM as the concept's name.
+    assert re.search(
+        r"const _str\s*=.*?typeof\s+value\s*===\s*[\"']string[\"'].*?value\.trim\(\)",
+        timer_code,
+        re.S,
+    ), (
+        "the snapshot's ladder strings must be validated as NONEMPTY STRINGS "
+        "before they are used - a truthy check passes an array or an object "
+        "and then stringifies it into the concept's name"
+    )
+
+    # The stamp itself, and its guard: a genuine hydrate must win over an
+    # older snapshot's copy of the same fields.
+    # 🔴 FIELD BY FIELD. The first shape of this gated the whole merge on
+    # `!restored.ladder_kc`, which leaves a PARTIAL hydrate (kc but no stage)
+    # broken in exactly the way the fix exists to prevent - decorate needs
+    # both. The kc match is what keeps the per-field merge honest.
+    assert re.search(
+        r"if\s*\(\s*ladder\s*&&\s*\(\s*!restored\.ladder_kc\s*\|\|\s*"
+        r"restored\.ladder_kc\s*===\s*ladder\.kc\s*\)\s*\)",
+        restore,
+    ), (
+        "the restore must merge the snapshot's concept field by field, and "
+        "only when the rebuilt question names the SAME concept (or none). "
+        "Gating on `!restored.ladder_kc` alone strands a partial hydrate; "
+        "merging with no kc check at all puts one concept's rung under "
+        "another concept's name"
+    )
+    assert re.search(r"if\s*\(\s*!restored\.ladder_stage\s*\)", restore), (
+        "the restore must fill a MISSING ladder_stage from the snapshot - "
+        "LadderUI.decorate hides on a missing stage just as it does on a "
+        "missing kc"
+    )
+    for field in ("ladder_kc", "ladder_stage", "ladder_kc_title"):
+        assert re.search(r"restored\.%s\s*=" % field, restore), (
+            "the restore must put %s back - LadderUI.decorate reads ladder_kc "
+            "and ladder_stage, and ui.js writes ladder_kc_title as the "
+            "concept's name" % field
+        )
+
     # ── All three tags, or none ────────────────────────────────────
     css_tag = "styles/concept-pill.css" in index_html
     js_tag = re.search(r'src="concept-pill\.js', index_html) is not None
