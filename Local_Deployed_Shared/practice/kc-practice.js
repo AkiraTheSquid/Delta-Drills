@@ -89,11 +89,19 @@ const KcPractice = (() => {
     const independent = (kp.independent_items || [])
       .filter((id) => Number.isFinite(id))
       .map((id) => ({ kind: "independent", questionId: id, starter: null }));
+    /* The fourth rung. `integrated_items` is written by compile_lessons.py from
+       a KP's `## Integrated practice`; KPs that have not been rewritten have
+       none and this is empty, which is the same ladder as before. It always
+       goes LAST, whichever way round the rest is ordered — a whole-KP problem
+       is not an entry point for anybody, however strong the posterior. */
+    const integrated = (kp.integrated_items || [])
+      .filter((it) => Number.isFinite(it?.question_id))
+      .map((it) => ({ kind: "integrated", questionId: it.question_id, starter: null }));
     const p = _mastery();
     const scaffoldFirst = !Number.isFinite(p) || p < FADED_CEIL;
     return scaffoldFirst
-      ? [...faded, ...guided, ...independent]
-      : [...independent, ...guided, ...faded];
+      ? [...faded, ...guided, ...independent, ...integrated]
+      : [...independent, ...guided, ...faded, ...integrated];
   };
 
   // Any bank record for this KP — used only to read its subtopic naming.
@@ -103,6 +111,7 @@ const KcPractice = (() => {
       ...(kp.faded_items || []).map((it) => it && it.question_id),
       ...(kp.guided_items || []).map((it) => it && it.question_id),
       ...(kp.independent_items || []),
+      ...(kp.integrated_items || []).map((it) => it && it.question_id),
     ].filter((id) => Number.isFinite(id));
     for (const id of ids) {
       const q = getQuestionFromBank(id);

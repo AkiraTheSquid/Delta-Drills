@@ -124,14 +124,6 @@ practiceSubmitBtn.addEventListener("click", async () => {
     }
   }
 
-  // Basic mode hides the difficulty rating, and that row is both the
-  // mastery commit and the only thing that reveals Next problem — so it is
-  // settled here, on the learner's behalf, at the neutral default. No-op in
-  // Advanced mode and no-op on the placement branch above, which already
-  // showed Next. See practice/basic-mode.js for what the neutral default
-  // costs.
-  window.PracticeBasicMode?.settleRating();
-
   // NOTE: ARENA unlock interstitial does NOT fire on Submit — student
   // needs to see feedback + give a difficulty rating first. The unlock
   // pops on the Next-problem click (handler below). We do, however,
@@ -155,11 +147,10 @@ overrideCorrectBtn.addEventListener("click", async () => {
 
   resultBadge.textContent = "Correct";
   resultBadge.className = "result-badge correct";
-  feedbackPrompt.textContent = "Nice work. How did that feel?";
-  const labels = ["About right", "A little easy", "Way too easy"];
-  feedbackButtons.forEach((btn, i) => {
-    btn.textContent = labels[i];
-  });
+  // Through ui.js's helper, not a second copy of the wording here. The verdict
+  // just flipped, so the question has to flip with it, and this path is exactly
+  // the one that goes stale when the copy lives in two places.
+  paintDifficultyQuestion(true);
   overrideRow.classList.add("hidden");
   if (typeof resetMissedFactRow === "function") resetMissedFactRow();
   practiceProgress.lastResultCorrect = true;
@@ -246,6 +237,27 @@ feedbackButtons.forEach((btn) => {
       solutionCode: gradedDetailFor(q.question_id)?.solutionCode || q.solution_code || "",
     };
     savePracticeProgress(practiceProgress);
+
+    /* THE ANSWER IS THE NEXT BUTTON. Seth, 2026-08-28: "whenever you click
+       it, it should automatically move on rather than making you click it and
+       then press next". The three choices are now a question about the NEXT
+       problem ("how much harder / easier do you want it to be?"), so pressing
+       one and then being asked to press Next was asking the learner to
+       confirm a decision they had already made.
+
+       🔴 A SYNTHETIC CLICK ON THE REAL BUTTON, not a call to
+       `_loadNextPracticeQuestion`. That handler is not just a loader: it gives
+       `ArenaUnlock.tryShow` its chance to put the unlock interstitial up
+       first, and calling the loader directly here would silently skip the
+       interstitial for every learner who unlocked an ARENA exercise on the
+       question they just rated. `timer.js::_forceAdvance` reaches the next
+       question the same way, for the same reason.
+
+       Fired AFTER `savePracticeProgress` so the rating is durable before
+       anything can navigate: the load is async and a learner who closes the
+       tab mid-flight must not lose the answer they gave. `showNextProblemButton()`
+       above has already revealed the button this clicks. */
+    nextProblemBtn.click();
   });
 });
 
@@ -580,24 +592,25 @@ const _rateTorchAndAdvance = async (correct) => {
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(correct);
-    // The felt-difficulty step, back on this route. The verdict says WHETHER it
-    // worked; this says whether it was pitched anywhere near right, which is the
-    // one thing no grade can tell us and the thing that decides where the next
+    // The difficulty step, back on this route. The verdict says WHETHER it
+    // worked; this says how big a step to take from here, which is the one
+    // thing no grade can tell us and the thing that decides where the next
     // problem lands (adaptive.nudge_difficulty_offset). applyResult has already
-    // set the three labels for this outcome — "Way too easy" after a correct
-    // answer, "Way too hard" after a miss.
+    // set the three labels for this outcome — "Significantly harder" after a
+    // correct answer, "Significantly easier" after a miss.
+    //
+    // 🔴 The learner answers this one themselves now, on every surface. Basic
+    // mode used to hide the buttons and click the default here; that stand-in
+    // is gone (practice/basic-mode.js).
     //
     // Only when there is an attempt parked for the rating to apply to. During a
     // placement diagnostic nothing is pending, and a null `pending` is an older
     // backend that was never asked — both fall through to the plain review.
     if (record && record.pending === true) {
       feedbackPrompt.textContent = correct
-        ? "Recorded as correct. How did that feel?"
-        : "Recorded as a miss. How did that feel?";
+        ? "Recorded as correct. How much harder do you want the next problem to be?"
+        : "Recorded as a miss. How much easier do you want the next problem to be?";
       showFeedbackButtons();
-      // Same rating, same reason as the Submit path above — a Colab verdict
-      // with a pending attempt is graded work waiting on the same commit.
-      window.PracticeBasicMode?.settleRating();
     } else {
       feedbackPrompt.textContent = correct
         ? "Recorded as correct. The reference answer is below — worth a look even when you got it."

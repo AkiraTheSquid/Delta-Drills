@@ -85,35 +85,35 @@ html:not(.dd-colab-edition) body.dd-basic-mode #override-row {
   display: none;
 }
 
-/* The felt-difficulty rating: its prompt, its explainer, and the three
-   buttons. 🔴 #next-problem-btn is a SIBLING inside .feedback-buttons and
-   is NOT a .feedback-btn — the row must keep laying out so it can appear
-   there. Hiding the three buttons individually, rather than the row, is
-   what keeps that true.
+/* ---------- the difficulty question is NOT hidden any more ----------
 
-   Hiding these takes away the only click that commits the attempt to
-   mastery (`POST /api/practice/feedback` is the only backend mutation
-   that moves a subtopic baseline; submit/override only touch
-   pending_attempt) AND the only thing that reveals Next problem. Both
-   are restored by practice/basic-mode.js, which settles the rating at
-   the neutral default on the learner's behalf. Do not hide these without
-   reading that file. */
-html:not(.dd-colab-edition) body.dd-basic-mode #feedback-prompt,
-html:not(.dd-colab-edition) body.dd-basic-mode #feedback-help,
-html:not(.dd-colab-edition) body.dd-basic-mode .feedback-btn {
-  display: none;
-}
+   🔴 2026-08-28 REVERSAL, and the reason this block is a comment instead of
+   a rule. Basic mode used to hide the felt-difficulty rating — its prompt,
+   its explainer and its three buttons — and practice/basic-mode.js clicked
+   the neutral default on the learner's behalf so that the attempt still
+   committed and Next problem still appeared. The cost was stated plainly at
+   the time: in basic mode, which is what everyone who has not ticked
+   Advanced is in, the difficulty signal was `not_much` every time and never
+   the learner's.
 
-/* 🔴 AND ITS ⓘ, which is NOT inside it. infotips.js mints the dot as a
-   SIBLING of the element carrying data-dd-info, so `#feedback-prompt`
-   going away leaves a bare 15px "i" floating under the Correct badge with
-   nothing left on screen for it to be about. Same trap the placement
-   timer hit (see index.html) — hide the host, hunt the dot. Every other
-   data-dd-info host this file hides (#ewma-accuracy-label) sits inside a
-   container that is hidden as a whole, so its dot goes with it. */
-html:not(.dd-colab-edition) body.dd-basic-mode .dd-info[data-dd-info="feedback-rating"] {
-  display: none;
-}
+   Seth, 2026-08-28, live-testing, asked for the opposite: after Submit the
+   button is replaced by three DIRECTIONAL choices — "how much harder do you
+   want the next problem to be?" after a correct answer, "how much easier?"
+   after a miss — frozen to the bottom of the viewport "so that it's
+   extremely obvious", and clicking one both rates and advances. That is the
+   whole of the post-submit interface now, so the default mode is precisely
+   the mode that must show it. practice/difficulty-dock.js moves the prompt
+   and the button row into `#difficulty-dock`; styles/practice/difficulty-dock.css
+   dresses it.
+
+   The auto-click went with the hiding — a stand-in that answered a visible
+   question would answer it before the learner could, and it would now
+   advance the question too. `#feedback-help` is still hidden, by
+   difficulty-dock.css rather than here, because its copy described the old
+   "About right is the safe default" answer that no longer exists.
+
+   The ⓘ for `feedback-rating` is likewise no longer hidden: its host is on
+   screen for everyone, so the dot has something to be about again. */
 
 /* WHICH TEST CASES FAILED, expected vs got — NO LONGER HIDDEN.
 

@@ -42,6 +42,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -90,6 +91,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -133,6 +135,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -181,6 +184,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -224,6 +228,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -272,6 +277,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -320,6 +326,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -363,6 +370,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -406,6 +414,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -454,6 +463,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -502,6 +512,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -545,6 +556,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -588,6 +600,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -631,6 +644,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -674,6 +688,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -722,6 +737,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -765,6 +781,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -813,6 +830,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -861,6 +879,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -909,6 +928,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -957,6 +977,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1005,6 +1026,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1053,6 +1075,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1101,6 +1124,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1149,6 +1173,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1192,6 +1217,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1240,6 +1266,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1288,6 +1315,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1336,6 +1364,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1384,6 +1413,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1432,6 +1462,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1480,6 +1511,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1523,6 +1555,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1571,6 +1604,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1619,6 +1653,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1667,6 +1702,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1715,6 +1751,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1758,6 +1795,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1806,6 +1844,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1854,6 +1893,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1902,6 +1942,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1950,6 +1991,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -1993,6 +2035,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2041,6 +2084,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2089,6 +2133,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2132,6 +2177,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2175,6 +2221,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2218,6 +2265,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2266,6 +2314,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2314,6 +2363,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2362,6 +2412,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2405,6 +2456,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2453,6 +2505,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2501,6 +2554,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2549,6 +2603,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2592,6 +2647,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2635,6 +2691,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2683,6 +2740,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2731,6 +2789,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2779,6 +2838,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2827,6 +2887,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2875,6 +2936,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2918,6 +2980,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -2961,6 +3024,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3004,6 +3068,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3047,6 +3112,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3090,6 +3156,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3133,6 +3200,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3176,6 +3244,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3219,6 +3288,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3262,6 +3332,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3310,6 +3381,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3353,6 +3425,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3396,6 +3469,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3439,6 +3513,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3482,6 +3557,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3525,6 +3601,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3568,6 +3645,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3611,6 +3689,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3654,6 +3733,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3697,6 +3777,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3740,6 +3821,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3783,6 +3865,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3826,6 +3909,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3869,6 +3953,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3912,6 +3997,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -3960,6 +4046,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4003,6 +4090,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4046,6 +4134,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4094,6 +4183,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4137,6 +4227,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4180,6 +4271,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4223,6 +4315,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4266,6 +4359,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4309,6 +4403,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4352,6 +4447,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4395,6 +4491,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4438,6 +4535,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4481,6 +4579,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4524,6 +4623,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4567,6 +4667,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4610,6 +4711,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4653,6 +4755,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4696,6 +4799,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4739,6 +4843,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4782,6 +4887,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4825,6 +4931,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4868,6 +4975,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4911,6 +5019,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4954,6 +5063,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -4997,6 +5107,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5040,6 +5151,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5083,6 +5195,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5126,6 +5239,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5169,6 +5283,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5217,6 +5332,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5265,6 +5381,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5308,6 +5425,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5356,6 +5474,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5399,6 +5518,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5447,6 +5567,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5490,6 +5611,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5533,6 +5655,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5581,6 +5704,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5629,6 +5753,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5672,6 +5797,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5720,6 +5846,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5763,6 +5890,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5806,6 +5934,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5849,6 +5978,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5892,6 +6022,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5935,6 +6066,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -5978,6 +6110,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6021,6 +6154,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6064,6 +6198,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6107,6 +6242,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6155,6 +6291,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6198,6 +6335,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6241,6 +6379,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6284,6 +6423,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6327,6 +6467,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6370,6 +6511,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6413,6 +6555,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6456,6 +6599,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6499,6 +6643,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6542,6 +6687,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6585,6 +6731,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6628,6 +6775,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6671,6 +6819,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6714,6 +6863,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6757,6 +6907,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6800,6 +6951,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6843,6 +6995,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6886,6 +7039,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6929,6 +7083,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -6972,6 +7127,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7015,6 +7171,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7058,6 +7215,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7101,6 +7259,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7144,6 +7303,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7187,6 +7347,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7230,6 +7391,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7273,6 +7435,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7316,6 +7479,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7359,6 +7523,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7407,6 +7572,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7450,6 +7616,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7493,6 +7660,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7541,6 +7709,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7584,6 +7753,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7627,6 +7797,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7670,6 +7841,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7713,6 +7885,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7756,6 +7929,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7799,6 +7973,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7842,6 +8017,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7885,6 +8061,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7928,6 +8105,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -7971,6 +8149,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8014,6 +8193,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8057,6 +8237,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8100,6 +8281,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8143,6 +8325,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8186,6 +8369,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8229,6 +8413,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8272,6 +8457,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8315,6 +8501,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8363,6 +8550,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8411,6 +8599,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8459,6 +8648,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8507,6 +8697,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8550,6 +8741,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8598,6 +8790,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8641,6 +8834,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8689,6 +8883,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8732,6 +8927,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8780,6 +8976,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
+        "output": "(True, 1, [1, 2, 3])",
+        "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. `t.tensor(rows)` copies the whole nested list into one block."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8828,6 +9031,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8876,6 +9080,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8924,6 +9129,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -8972,6 +9178,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9020,6 +9227,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9068,6 +9276,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9116,6 +9325,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9164,6 +9374,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9207,6 +9418,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9250,6 +9462,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9298,6 +9511,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9341,6 +9555,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9389,6 +9604,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9437,6 +9653,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9480,6 +9697,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9528,6 +9746,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9576,6 +9795,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9619,6 +9839,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9662,6 +9883,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9705,6 +9927,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9748,6 +9971,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9791,6 +10015,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9834,6 +10059,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9877,6 +10103,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9920,6 +10147,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -9963,6 +10191,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10006,6 +10235,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10049,6 +10279,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10092,6 +10323,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10135,6 +10367,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10178,6 +10411,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10221,6 +10455,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10264,6 +10499,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10307,6 +10543,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10350,6 +10587,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10393,6 +10631,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10436,6 +10675,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10479,6 +10719,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10522,6 +10763,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10565,6 +10807,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10608,6 +10851,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10651,6 +10895,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10694,6 +10939,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10737,6 +10983,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10780,6 +11027,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10823,6 +11071,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10866,6 +11115,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10909,6 +11159,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10952,6 +11203,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -10995,6 +11247,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11038,6 +11291,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11081,6 +11335,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11124,6 +11379,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11167,6 +11423,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11210,6 +11467,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11253,6 +11511,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11296,6 +11555,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11339,6 +11599,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11382,6 +11643,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11425,6 +11687,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11468,6 +11731,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11511,6 +11775,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11554,6 +11819,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11597,6 +11863,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11640,6 +11907,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11683,6 +11951,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11726,6 +11995,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11769,6 +12039,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11812,6 +12083,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11855,6 +12127,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11898,6 +12171,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11941,6 +12215,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -11984,6 +12259,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12027,6 +12303,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12070,6 +12347,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12113,6 +12391,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12156,6 +12435,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12199,6 +12479,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12242,6 +12523,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12285,6 +12567,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12328,6 +12611,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12371,6 +12655,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12414,6 +12699,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12457,6 +12743,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12500,6 +12787,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12543,6 +12831,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12586,6 +12875,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12629,6 +12919,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12672,6 +12963,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12710,6 +13002,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -12748,6 +13041,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -12791,6 +13085,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12829,6 +13124,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -12872,6 +13168,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12910,6 +13207,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -12953,6 +13251,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -12991,6 +13290,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -13034,6 +13334,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13077,6 +13378,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13120,6 +13422,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13163,6 +13466,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13206,6 +13510,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13249,6 +13554,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13292,6 +13598,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13330,6 +13637,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -13373,6 +13681,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13411,6 +13720,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -13454,6 +13764,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13497,6 +13808,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13540,6 +13852,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13583,6 +13896,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13626,6 +13940,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13669,6 +13984,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13712,6 +14028,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13755,6 +14072,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13798,6 +14116,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13841,6 +14160,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13884,6 +14204,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13927,6 +14248,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -13970,6 +14292,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14008,6 +14331,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -14051,6 +14375,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14089,6 +14414,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -14127,6 +14453,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -14170,6 +14497,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14213,6 +14541,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14256,6 +14585,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14299,6 +14629,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14342,6 +14673,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14380,6 +14712,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -14423,6 +14756,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14466,6 +14800,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14509,6 +14844,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14552,6 +14888,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14595,6 +14932,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14633,6 +14971,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -14676,6 +15015,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14719,6 +15059,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14762,6 +15103,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14805,6 +15147,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14848,6 +15191,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14891,6 +15235,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14934,6 +15279,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -14977,6 +15323,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15015,6 +15362,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15058,6 +15406,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15101,6 +15450,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15139,6 +15489,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15182,6 +15533,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15225,6 +15577,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15263,6 +15616,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15306,6 +15660,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15344,6 +15699,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15382,6 +15738,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15425,6 +15782,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15468,6 +15826,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15506,6 +15865,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15544,6 +15904,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15587,6 +15948,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15625,6 +15987,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15668,6 +16031,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15711,6 +16075,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15754,6 +16119,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15792,6 +16158,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15835,6 +16202,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15873,6 +16241,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -15916,6 +16285,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -15959,6 +16329,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16002,6 +16373,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16040,6 +16412,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -16083,6 +16456,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16121,6 +16495,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -16159,6 +16534,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
     "source_type": "csv",
@@ -16202,6 +16578,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16245,6 +16622,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16288,6 +16666,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16331,6 +16710,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16369,6 +16749,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16412,6 +16793,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16455,6 +16837,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16493,6 +16876,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16531,6 +16915,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16569,6 +16954,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16607,6 +16993,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16645,6 +17032,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16688,6 +17076,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16731,6 +17120,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16769,6 +17159,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16807,6 +17198,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16845,6 +17237,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16883,6 +17276,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16921,6 +17315,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16959,6 +17354,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -16997,6 +17393,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17035,6 +17432,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17078,6 +17476,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17116,6 +17515,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17154,6 +17554,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17192,6 +17593,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17235,6 +17637,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17273,6 +17676,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17316,6 +17720,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17354,6 +17759,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17392,6 +17798,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17430,6 +17837,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17468,6 +17876,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17511,6 +17920,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17554,6 +17964,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17592,6 +18003,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17630,6 +18042,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17673,6 +18086,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17716,6 +18130,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17759,6 +18174,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17802,6 +18218,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17840,6 +18257,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17878,6 +18296,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17916,6 +18335,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -17959,6 +18379,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18002,6 +18423,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18045,6 +18467,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18083,6 +18506,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18121,6 +18545,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18159,6 +18584,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18197,6 +18623,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18235,6 +18662,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18273,6 +18701,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18316,6 +18745,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18359,6 +18789,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18402,6 +18833,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18440,6 +18872,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18478,6 +18911,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18516,6 +18950,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18554,6 +18989,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18592,6 +19028,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18635,6 +19072,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18678,6 +19116,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18716,6 +19155,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18754,6 +19194,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18792,6 +19233,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18830,6 +19272,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18868,6 +19311,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18906,6 +19350,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18944,6 +19389,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -18982,6 +19428,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19020,6 +19467,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19058,6 +19506,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19096,6 +19545,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19134,6 +19584,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19172,6 +19623,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19210,6 +19662,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19258,6 +19711,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2, 3], [4, 5, 6]]\n(lambda r: (r[0].tolist(), r[1], type(r[1]) is tuple, r[2]))(solve(x))",
+        "output": "([[1, 2, 3], [4, 5, 6]], torch.Size([2, 3]), False, False)",
+        "why": "`.shape` is a `torch.Size`. `tuple(...)` is what turns it into the plain tuple this drill asks for."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19301,6 +19761,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [4, 1, 7]\n(lambda r: (r[0].tolist(), r[1]))(solve(x))",
+        "output": "([4, 1, 7], 3)",
+        "why": "`.ndim` counts AXES — a flat list has 1. `.numel()` counts elements."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19344,6 +19811,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2, 3], [4, 5, 6]]\nsolve(x)",
+        "output": "(2, 2)",
+        "why": "`len(rows)` is the outer length only. The total element count is `.numel()`."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19387,6 +19861,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [1, 2, 3]\nsolve(x)",
+        "output": "('torch.int64', 1)",
+        "why": "The second slot is the ELEMENT count, not the number of axes."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19430,6 +19911,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2, 3]]\ny = [[1, 2]]\nsolve(x, y)",
+        "output": "(True, True)",
+        "why": "Having the same number of AXES is not having the same shape — 1x3 and 1x2 are both 2-axis blocks."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19473,6 +19961,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
+        "output": "(3, (2, 2, 2), 2)",
+        "why": "`len()` is the first axis only. The element count is `.numel()` — 8 for a 2x2x2 cube."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19516,6 +20011,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2], [3, 4]]\nsolve(x)",
+        "output": "('torch.int64', 'torch.int64', True)",
+        "why": "The second tensor has to be BUILT with `dtype=t.float32`. Without it torch infers the same dtype twice and they always agree."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19559,6 +20061,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19602,6 +20105,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19645,6 +20149,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19688,6 +20193,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19731,6 +20237,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19774,6 +20281,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19817,6 +20325,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19860,6 +20369,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19903,6 +20413,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19946,6 +20457,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -19989,6 +20501,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20032,6 +20545,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20075,6 +20589,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20118,6 +20633,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20161,6 +20677,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20204,6 +20721,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20247,6 +20765,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20290,6 +20809,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20333,6 +20853,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20376,6 +20897,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20419,6 +20941,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20462,6 +20985,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20505,6 +21029,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20548,6 +21073,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20591,6 +21117,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20634,6 +21161,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20677,6 +21205,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20720,6 +21249,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20763,6 +21293,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20806,6 +21337,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20849,6 +21381,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20892,6 +21425,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20935,6 +21469,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -20978,6 +21513,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21021,6 +21557,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21064,6 +21601,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21107,6 +21645,13 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "rows = [[1, 2, 3], [4, 5, 6]]\nsolve(rows)",
+        "output": "(True, True, [[1, 4], [2, 5], [3, 6]])",
+        "why": "`.contiguous()` returns a NEW packed tensor with its own block. Reusing the view says the copy shares, and hands back the view's values instead of the packed ones."
+      }
+    ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21150,6 +21695,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21193,6 +21739,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21236,6 +21783,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21279,6 +21827,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21322,6 +21871,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21365,6 +21915,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21408,6 +21959,7 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
     "source_type": "csv",
@@ -21451,8 +22003,1669 @@
       }
     ],
     "submission_mode": "function",
+    "wrong_examples": [],
     "expected_artifact_type": "image",
     "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 532,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor from the nested list rows and returns its contents back as a plain nested Python list. Building a tensor copies the values into one block; reading them out again is the check worth running whenever you are not sure a conversion did what you meant.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return the tensor's contents as a plain nested Python list.\"\"\"\n    a = t.tensor(rows)\n    return a.tolist()\n\n\nexample = [[7, 8], [9, 10]]\nprint(solve(example))\n",
+    "difficulty_score": 10,
+    "difficulty_label": "easy",
+    "expected_output": "[[7, 8], [9, 10]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return the tensor's contents as a plain nested Python list.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[7, 8], [9, 10]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[7, 8], [9, 10]])",
+        "expected_expr": "[[7, 8], [9, 10]]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]])",
+        "expected_expr": "[[1, 2, 3]]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[0, 0], [0, 1], [1, 0]])",
+        "expected_expr": "[[0, 0], [0, 1], [1, 0]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[7, 8], [9, 10]])",
+        "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
+        "why": "`.tolist()` is what converts the block back to Python. Returning the tensor hands back a tensor object, not a list."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 533,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that builds a tensor from the FLAT list values, which holds exactly one number, and returns that number as a plain Python int or float — not as a tensor. There is one call that pulls a single element out, and it refuses unless the tensor holds exactly one.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the tensor's only element as a plain Python number.\"\"\"\n    a = t.tensor(values)\n    return a.item()\n\n\nexample = [7]\nprint(solve(example))\n",
+    "difficulty_score": 12,
+    "difficulty_label": "easy",
+    "expected_output": "7",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the tensor's only element as a plain Python number.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [7]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([7])",
+        "expected_expr": "7"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([-3])",
+        "expected_expr": "-3"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([2.5])",
+        "expected_expr": "2.5"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([7])",
+        "output": "tensor(7)",
+        "why": "Indexing gives a 0-d TENSOR. `.item()` is the call that hands back a plain Python number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 534,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows_a, rows_b) that builds a tensor from each nested list and returns ONE bool: do the two tensors hold the same values in the same layout? Use the whole-tensor comparison, not a per-element one — you want a single answer, not a tensor of them.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return True when the two tensors match on shape AND values.\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return t.equal(a, b)\n\n\nexample = ([[1, 2], [3, 4]], [[1, 2], [3, 4]])\nprint(solve(*example))\n",
+    "difficulty_score": 14,
+    "difficulty_label": "easy",
+    "expected_output": "True",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return True when the two tensors match on shape AND values.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 2], [3, 4]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "True"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 5]])",
+        "expected_expr": "False"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2, 3]])",
+        "expected_expr": "True"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2], [3, 4]])",
+        "expected_expr": "False"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "output": "tensor([[True, True],\n        [True, True]])",
+        "why": "`==` compares elementwise and returns a tensor of bools. `t.equal` returns the one verdict the question asks for."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 535,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a and returns a tuple (view_shares, copy_shares) of two bools: whether a.T reads the same block of memory as a, and whether the packed copy of a.T does. Transposing only re-describes the block; the copy is how you ask for a block of your own. Answer both by comparing where each tensor's data starts.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (does a.T share a's block?, does its packed copy?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    return (view.data_ptr() == a.data_ptr(),\n            view.contiguous().data_ptr() == a.data_ptr())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 16,
+    "difficulty_label": "easy",
+    "expected_output": "(True, False)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (does a.T share a's block?, does its packed copy?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(True, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "(True, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[9]])",
+        "expected_expr": "(True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2]])",
+        "expected_expr": "(True, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(True, True)",
+        "why": "`.contiguous()` on a transposed view has to build a NEW block, so its `data_ptr()` is never the original's. Asking the view twice says the copy shares."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 536,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (transpose_in_order, copy_in_order) of two bools: whether a.T is still in reading order, and whether the packed copy of a.T is. One call asks for the copy; one attribute-free call reports the order.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (is a.T in reading order?, is its packed copy?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    return (view.is_contiguous(), view.contiguous().is_contiguous())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 18,
+    "difficulty_label": "easy",
+    "expected_output": "(False, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (is a.T in reading order?, is its packed copy?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4], [5, 6]])",
+        "expected_expr": "(False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2]])",
+        "expected_expr": "(True, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(True, True)",
+        "why": "`a` is already in reading order — the question is about `a.T`, which is not."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 537,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor from the nested list and returns its shape as a plain Python tuple of ints — not a torch.Size. The two compare equal, but anything that asks you for a tuple wants a real one.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return the tensor's shape as a plain tuple of ints.\"\"\"\n    a = t.tensor(rows)\n    return tuple(a.shape)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 11,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 3)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return the tensor's shape as a plain tuple of ints.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(2, 3)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2], [3], [4]])",
+        "expected_expr": "(4, 1)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[5, 6]])",
+        "expected_expr": "(1, 2)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "torch.Size([2, 3])",
+        "why": "`.shape` is a `torch.Size`, not a plain tuple. `tuple(...)` is what converts it."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 538,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor from the nested list and returns a tuple (rows_count, columns_count) — the length along axis 0 and the length along axis 1, as plain ints. Axis 0 is the outermost nesting level.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (length along axis 0, length along axis 1).\"\"\"\n    a = t.tensor(rows)\n    return (a.shape[0], a.shape[1])\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 13,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 3)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (length along axis 0, length along axis 1).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(2, 3)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2], [3], [4]])",
+        "expected_expr": "(4, 1)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[5, 6]])",
+        "expected_expr": "(1, 2)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(3, 2)",
+        "why": "Axis 0 is the OUTER length (how many rows). Reading the shape backwards swaps the two answers."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 539,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(data) that builds a tensor from a Python list nested to ANY depth and returns its number of axes as a plain int. Nesting depth is what decides this, not how many numbers are inside.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(data):\n    \"\"\"Return the tensor's number of axes.\"\"\"\n    a = t.tensor(data)\n    return a.ndim\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "difficulty_score": 15,
+    "difficulty_label": "easy",
+    "expected_output": "3",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(data):\n    \"\"\"Return the tensor's number of axes.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "3"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3, 4])",
+        "expected_expr": "1"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "2"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1, 2, 3]]])",
+        "expected_expr": "3"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "8",
+        "why": "`.ndim` counts AXES; `.numel()` counts elements. A 2x2x2 cube has 3 axes and 8 numbers."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 540,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor from the nested list and returns a tuple (element_count, outer_length): the tensor's total number of elements, and len(rows). They are different questions — one counts numbers, the other counts rows.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (total element count, number of outer rows).\"\"\"\n    a = t.tensor(rows)\n    return (a.numel(), len(rows))\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 17,
+    "difficulty_label": "easy",
+    "expected_output": "(6, 2)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (total element count, number of outer rows).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(6, 2)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2], [3], [4]])",
+        "expected_expr": "(4, 4)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3, 4, 5]])",
+        "expected_expr": "(5, 1)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(2, 2)",
+        "why": "`len()` on a tensor is the first axis only. The total element count is `.numel()`."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 541,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows, wanted) that builds a tensor from rows and returns ONE bool: does its shape equal the tuple wanted? Compare the shape against wanted directly.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows, wanted):\n    \"\"\"Return True when the tensor's shape equals `wanted`.\"\"\"\n    a = t.tensor(rows)\n    return tuple(a.shape) == tuple(wanted)\n\n\nexample = ([[1, 2, 3], [4, 5, 6]], (2, 3))\nprint(solve(*example))\n",
+    "difficulty_score": 19,
+    "difficulty_label": "easy",
+    "expected_output": "True",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows, wanted):\n    \"\"\"Return True when the tensor's shape equals `wanted`.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]], (2, 3))\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]], (2, 3))",
+        "expected_expr": "True"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]], (3, 2))",
+        "expected_expr": "False"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2]], (2, 1))",
+        "expected_expr": "True"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]], (2, 3))",
+        "output": "False",
+        "why": "Matching shapes is not matching sizes. Compare the shape tuple itself, axis lengths and all."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 542,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that builds a tensor from the FLAT list and returns its dtype's NAME as a string — 'torch.int64' or 'torch.float32'. The dtype is an attribute; turning it into a string is a separate step.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return str() of the tensor's dtype.\"\"\"\n    a = t.tensor(values)\n    return str(a.dtype)\n\n\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "difficulty_score": 12,
+    "difficulty_label": "easy",
+    "expected_output": "torch.int64",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return str() of the tensor's dtype.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "'torch.int64'"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2.5, 3])",
+        "expected_expr": "'torch.float32'"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0])",
+        "expected_expr": "'torch.int64'"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "'int'",
+        "why": "The dtype belongs to the tensor's block, not to the Python value you pull out of it."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 543,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that builds a tensor from the FLAT list and returns ONE bool: is the whole block held as 64-bit integers? Compare the tensor's dtype against the integer dtype by name, not against a string.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return True when the tensor's dtype is the 64-bit integer one.\"\"\"\n    a = t.tensor(values)\n    return a.dtype == t.int64\n\n\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "difficulty_score": 14,
+    "difficulty_label": "easy",
+    "expected_output": "True",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return True when the tensor's dtype is the 64-bit integer one.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "True"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2.5, 3])",
+        "expected_expr": "False"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([4.0])",
+        "expected_expr": "False"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "False",
+        "why": "The dtype compares against torch's own `t.int64`, never Python's `int` — that comparison is always False."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 544,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that builds a tensor from the FLAT list but FORCES it to 32-bit floats rather than letting PyTorch infer the type, and returns its contents as a plain Python list. Say what you want up front with the keyword argument.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the values as a float32 tensor, read back as a list.\"\"\"\n    a = t.tensor(values, dtype=t.float32)\n    return a.tolist()\n\n\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "difficulty_score": 18,
+    "difficulty_label": "easy",
+    "expected_output": "[1.0, 2.0, 3.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the values as a float32 tensor, read back as a list.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "[1.0, 2.0, 3.0]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0, -4])",
+        "expected_expr": "[0.0, -4.0]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([2.5, 3.5])",
+        "expected_expr": "[2.5, 3.5]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "[1, 2, 3]",
+        "why": "Without `dtype=t.float32` torch infers int64 from the values, so they come back as ints."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 545,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that builds a tensor from the FLAT list and returns a tuple (is_float, element_count). One float anywhere in the input re-types the WHOLE block, and the element count does not move — that is why these are two separate questions.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (is the block float32?, how many elements).\"\"\"\n    a = t.tensor(values)\n    return (a.dtype == t.float32, a.numel())\n\n\nexample = [1, 2.5, 3]\nprint(solve(example))\n",
+    "difficulty_score": 20,
+    "difficulty_label": "easy",
+    "expected_output": "(True, 3)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (is the block float32?, how many elements).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2.5, 3]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2.5, 3])",
+        "expected_expr": "(True, 3)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3, 4])",
+        "expected_expr": "(False, 4)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([7.0])",
+        "expected_expr": "(True, 1)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2.5, 3])",
+        "output": "(False, 3)",
+        "why": "One float in the list makes the WHOLE block float32. Checking for int64 answers a different question."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 546,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values_a, values_b) that builds a tensor from each FLAT list and returns ONE bool: do the two agree on dtype? Two tensors can hold the same count of numbers and still disagree here.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values_a, values_b):\n    \"\"\"Return True when the two tensors share a dtype.\"\"\"\n    a = t.tensor(values_a)\n    b = t.tensor(values_b)\n    return a.dtype == b.dtype\n\n\nexample = ([1, 2, 3], [4, 5, 6])\nprint(solve(*example))\n",
+    "difficulty_score": 16,
+    "difficulty_label": "easy",
+    "expected_output": "True",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values_a, values_b):\n    \"\"\"Return True when the two tensors share a dtype.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3], [4, 5, 6])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3], [4, 5, 6])",
+        "expected_expr": "True"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3], [4.0, 5, 6])",
+        "expected_expr": "False"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.5], [2.5, 3.5])",
+        "expected_expr": "True"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3], [4, 5, 6])",
+        "output": "False",
+        "why": "Sharing a dtype is about the block's type, not about the values stored in it."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 547,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT Python list of numbers and returns a tuple (ndim, numel, shape), where shape is a plain tuple of ints. A flat list is one level of nesting however many numbers are in it.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (number of axes, element count, shape as a tuple).\"\"\"\n    a = t.tensor(values)\n    return (a.ndim, a.numel(), tuple(a.shape))\n\n\nexample = [4, 1, 7, 2, 9]\nprint(solve(example))\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "(1, 5, (5,))",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (number of axes, element count, shape as a tuple).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [4, 1, 7, 2, 9]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([4, 1, 7, 2, 9])",
+        "expected_expr": "(1, 5, (5,))"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0])",
+        "expected_expr": "(1, 1, (1,))"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2])",
+        "expected_expr": "(1, 2, (2,))"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([4, 1, 7, 2, 9])",
+        "output": "(5, 1, (5,))",
+        "why": "Axes and elements are swapped. A flat list of 5 numbers has 1 axis and 5 elements."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 548,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT list and returns a tuple (dtype_name, is_float) — str() of the tensor's dtype, and whether that dtype is torch.float32. A single float in the input decides the type of the whole block.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (dtype name as a string, is it float32?).\"\"\"\n    a = t.tensor(values)\n    return (str(a.dtype), a.dtype == t.float32)\n\n\nexample = [1, 2, 3.5]\nprint(solve(example))\n",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "('torch.float32', True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (dtype name as a string, is it float32?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3.5]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3.5])",
+        "expected_expr": "('torch.float32', True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "('torch.int64', False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0.0])",
+        "expected_expr": "('torch.float32', True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3.5])",
+        "output": "('torch.int64', True)",
+        "why": "The dtype is a property of the whole block, not of one value in it — a single float makes every entry float32."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 549,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(cube) that takes a TRIPLY nested Python list and returns a tuple (shape, numel, product_matches). shape is a plain tuple of ints; product_matches is a bool saying whether multiplying the shape together gives the element count. Compute the product with a plain Python loop over the shape.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (shape, element count, does the shape multiply out?).\"\"\"\n    a = t.tensor(cube)\n    shape = tuple(a.shape)\n    product = 1\n    for length in shape:\n        product = product * length\n    return (shape, a.numel(), product == a.numel())\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "difficulty_score": 28,
+    "difficulty_label": "easy",
+    "expected_output": "((2, 2, 2), 8, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (shape, element count, does the shape multiply out?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "((2, 2, 2), 8, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1, 2, 3]], [[4, 5, 6]]])",
+        "expected_expr": "((2, 1, 3), 6, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[9]]])",
+        "expected_expr": "((1, 1, 1), 1, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "((2, 2, 2), 3, False)",
+        "why": "The middle slot is the ELEMENT count (`.numel()`), and the shape multiplies out to that, not to the number of axes."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 550,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT list and returns the tensor's only element as a plain Python number when the tensor holds exactly one, and None otherwise. Check the element count yourself rather than letting the call raise.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the single element as a Python number, or None.\"\"\"\n    a = t.tensor(values)\n    if a.numel() != 1:\n        return None\n    return a.item()\n\n\nexample = [42]\nprint(solve(example))\n",
+    "difficulty_score": 26,
+    "difficulty_label": "easy",
+    "expected_output": "42",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the single element as a Python number, or None.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [42]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([42])",
+        "expected_expr": "42"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "None"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([2.5])",
+        "expected_expr": "2.5"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([])",
+        "expected_expr": "None"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
+        "why": "`.item()` refuses on anything but a one-element tensor. Without the `.numel() != 1` guard it raises instead of returning None."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 551,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows_a, rows_b) that returns a tuple (equal, same_shape): the whole-tensor comparison of the two tensors, and whether they merely agree on shape. Code that checks only the shape is checking half the question — two tensors can be the same size and hold completely different numbers.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (whole-tensor equal?, same shape?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (t.equal(a, b), tuple(a.shape) == tuple(b.shape))\n\n\nexample = ([[1, 2], [3, 4]], [[9, 9], [9, 9]])\nprint(solve(*example))\n",
+    "difficulty_score": 27,
+    "difficulty_label": "easy",
+    "expected_output": "(False, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (whole-tensor equal?, same shape?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[9, 9], [9, 9]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "(True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[9, 9], [9, 9]])",
+        "expected_expr": "(False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2], [3, 4]])",
+        "expected_expr": "(False, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2, 3]])",
+        "expected_expr": "(True, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "output": "(tensor([[True, True],\n        [True, True]]), True)",
+        "why": "`==` is elementwise and returns a tensor of bools. `t.equal` returns the single verdict."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 552,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (shape, transposed_shape), both as plain tuples of ints. Transposing swaps which axis is which without touching the numbers.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a's shape, a.T's shape), both plain tuples.\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), tuple(a.T.shape))\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 23,
+    "difficulty_label": "easy",
+    "expected_output": "((2, 3), (3, 2))",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a's shape, a.T's shape), both plain tuples.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "((2, 3), (3, 2))"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2], [3]])",
+        "expected_expr": "((3, 1), (1, 3))"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[7, 8]])",
+        "expected_expr": "((1, 2), (2, 1))"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "((2, 3), (2, 3))",
+        "why": "Transposing reverses the axis order. Reading `.shape` off `a` twice never shows the swap."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 553,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a and returns a tuple of three bools: is a itself in reading order, is a.T, and is the packed copy of a.T. A freshly built tensor is laid out contiguously; a transpose is the same block read in a different order.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a in order?, a.T in order?, packed copy in order?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (a.is_contiguous(), view.is_contiguous(), packed.is_contiguous())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 32,
+    "difficulty_label": "easy",
+    "expected_output": "(True, False, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a in order?, a.T in order?, packed copy in order?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(True, False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "(True, False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[5, 6, 7, 8]])",
+        "expected_expr": "(True, True, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(True, False, False)",
+        "why": "`.contiguous()` returns a NEW packed tensor. Reusing the view means the third answer is still the view's."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 554,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT list which may contain floats, forces the tensor to 64-bit integers, and returns a tuple (dtype_name, contents) — str() of the dtype and the values read back as a plain list. Forcing an integer type truncates toward zero, which is the point: say what you want rather than relying on the input.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (forced dtype name, the values as a plain list).\"\"\"\n    a = t.tensor(values, dtype=t.int64)\n    return (str(a.dtype), a.tolist())\n\n\nexample = [1.9, 2.2, 3.7]\nprint(solve(example))\n",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "('torch.int64', [1, 2, 3])",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (forced dtype name, the values as a plain list).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1.9, 2.2, 3.7]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.9, 2.2, 3.7])",
+        "expected_expr": "('torch.int64', [1, 2, 3])"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "('torch.int64', [1, 2, 3])"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([-1.5, 0.5])",
+        "expected_expr": "('torch.int64', [-1, 0])"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1.9, 2.2, 3.7])",
+        "output": "('torch.int64', [1.9, 2.2, 3.7])",
+        "why": "Casting to int64 TRUNCATES toward zero, so the tensor holds 1, 2, 3 — not the floats that were passed in. Read the values back OUT of the tensor."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 555,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that returns a tuple (inferred_name, forced_name, same) — the dtype name PyTorch infers from the FLAT list, the dtype name you get by forcing torch.float32 on the same list, and whether the two names are equal.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (inferred dtype name, forced float32 name, equal?).\"\"\"\n    inferred = t.tensor(values)\n    forced = t.tensor(values, dtype=t.float32)\n    return (str(inferred.dtype), str(forced.dtype),\n            inferred.dtype == forced.dtype)\n\n\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "difficulty_score": 29,
+    "difficulty_label": "easy",
+    "expected_output": "('torch.int64', 'torch.float32', False)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (inferred dtype name, forced float32 name, equal?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "('torch.int64', 'torch.float32', False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.0, 2.0])",
+        "expected_expr": "('torch.float32', 'torch.float32', True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0])",
+        "expected_expr": "('torch.int64', 'torch.float32', False)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "('torch.int64', 'torch.int64', True)",
+        "why": "The second tensor has to be BUILT with `dtype=t.float32`. Without it torch infers int64 again and the two agree."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 556,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows_a, rows_b) that returns a tuple (same_numel, same_shape) for the two tensors built from the nested lists. Two tensors can hold the same COUNT of numbers arranged differently, so these are not the same question.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (same element count?, same shape?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.numel() == b.numel(), a.shape == b.shape)\n\n\nexample = ([[1, 2, 3], [4, 5, 6]], [[1, 2], [3, 4], [5, 6]])\nprint(solve(*example))\n",
+    "difficulty_score": 25,
+    "difficulty_label": "easy",
+    "expected_output": "(True, False)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (same element count?, same shape?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]], [[1, 2], [3, 4], [5, 6]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]], [[1, 2], [3, 4], [5, 6]])",
+        "expected_expr": "(True, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[9, 8], [7, 6]])",
+        "expected_expr": "(True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2]])",
+        "expected_expr": "(False, False)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]], [[1, 2], [3, 4], [5, 6]])",
+        "output": "(True, True)",
+        "why": "Holding the same number of elements is not having the same shape — 2x3 and 3x2 both hold 6."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 557,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a 2-D tensor and returns a tuple (row_shape, row_ndim) describing its FIRST row, indexed as rows[0] would be. Indexing away the outermost axis leaves one fewer.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape of the first row as a tuple, its number of axes).\"\"\"\n    a = t.tensor(rows)\n    first = a[0]\n    return (tuple(first.shape), first.ndim)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 31,
+    "difficulty_label": "easy",
+    "expected_output": "((3,), 1)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape of the first row as a tuple, its number of axes).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "((3,), 1)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2]])",
+        "expected_expr": "((1,), 1)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[5, 6, 7, 8]])",
+        "expected_expr": "((4,), 1)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "((2, 3), 2)",
+        "why": "`a[0]` drops the outer axis. One row is a 1-axis tensor, not the whole block."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 558,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a and returns the TRANSPOSE's contents as a plain nested Python list. The numbers never moved in memory — reading them out is what puts them in the new order.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    a = t.tensor(rows)\n    return a.T.tolist()\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 33,
+    "difficulty_label": "easy",
+    "expected_output": "[[1, 4], [2, 5], [3, 6]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "[[1, 4], [2, 5], [3, 6]]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[[1, 3], [2, 4]]"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[7], [8], [9]])",
+        "expected_expr": "[[7, 8, 9]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "[[1, 2, 3], [4, 5, 6]]",
+        "why": "`.T` has to be applied before the values are read out, or the original layout comes straight back."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 559,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT list and returns a tuple (numel, ndim, is_scalar_sized) — the element count, the number of axes, and a bool saying whether the tensor holds exactly one element. A one-element tensor is still 1-D.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (element count, number of axes, holds exactly one?).\"\"\"\n    a = t.tensor(values)\n    return (a.numel(), a.ndim, a.numel() == 1)\n\n\nexample = [5]\nprint(solve(example))\n",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
+    "expected_output": "(1, 1, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (element count, number of axes, holds exactly one?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [5]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([5])",
+        "expected_expr": "(1, 1, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "(3, 1, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([2.5])",
+        "expected_expr": "(1, 1, True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "(1, 3, False)",
+        "why": "Axes and elements are swapped: the first slot is how many numbers there are, the second is how many axes."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 560,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor from the nested list and returns the three things that fully describe it: a tuple (shape, dtype_name, numel) — the shape as a plain tuple of ints, str() of the dtype, and the element count.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape as a tuple, dtype name, element count).\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), str(a.dtype), a.numel())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "((2, 3), 'torch.int64', 6)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape as a tuple, dtype name, element count).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "((2, 3), 'torch.int64', 6)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1.5, 2], [3, 4]])",
+        "expected_expr": "((2, 2), 'torch.float32', 4)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[9]])",
+        "expected_expr": "((1, 1), 'torch.int64', 1)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "((2, 3), 'torch.int64', 2)",
+        "why": "The last slot is the ELEMENT count (`.numel()`), not the axis count."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 561,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a and returns a tuple (shape, transposed_shape, dtype_name, shares_memory): both shapes as plain tuples, str() of a's dtype, and a bool for whether a.T reads the same block as a. Transposing changes the shape and nothing else.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape, a.T shape, dtype name, does a.T share a's block?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    return (tuple(a.shape), tuple(view.shape), str(a.dtype),\n            view.data_ptr() == a.data_ptr())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "((2, 3), (3, 2), 'torch.int64', True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape, a.T shape, dtype name, does a.T share a's block?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "((2, 3), (3, 2), 'torch.int64', True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1.0, 2.0]])",
+        "expected_expr": "((1, 2), (2, 1), 'torch.float32', True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1], [2], [3]])",
+        "expected_expr": "((3, 1), (1, 3), 'torch.int64', True)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "((2, 3), (2, 3), 'torch.int64', True)",
+        "why": "`a.T` reverses the shape even though it is the same block of numbers — the second slot has to be read off the view."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 562,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows_a, rows_b) that returns a tuple of three bools: do the two tensors agree on shape, do they agree on dtype, and does the whole-tensor comparison call them equal. All three can differ, and the third is not implied by the first two.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (same shape?, same dtype?, t.equal verdict).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (a.shape == b.shape, a.dtype == b.dtype, t.equal(a, b))\n\n\nexample = ([[1, 2], [3, 4]], [[1.0, 2.0], [3.0, 4.0]])\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "(True, False, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (same shape?, same dtype?, t.equal verdict).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1.0, 2.0], [3.0, 4.0]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[1.0, 2.0], [3.0, 4.0]])",
+        "expected_expr": "(True, False, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "(True, True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3]], [[1, 2], [3, 4]])",
+        "expected_expr": "(False, True, False)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]], [[9, 9], [9, 9]])",
+        "expected_expr": "(True, True, False)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3]], [[1, 2], [3, 4]])",
+        "output": "(True, True, False)",
+        "why": "Having the same number of AXES is not having the same shape — 1x3 and 2x2 are both 2-axis blocks."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 563,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values, as_float) that takes a FLAT list and a bool. When as_float is True, force the tensor to torch.float32; otherwise force it to torch.int64. Return a tuple (dtype_name, ndim, numel).",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values, as_float):\n    \"\"\"Return (forced dtype name, number of axes, element count).\"\"\"\n    wanted = t.float32 if as_float else t.int64\n    a = t.tensor(values, dtype=wanted)\n    return (str(a.dtype), a.ndim, a.numel())\n\n\nexample = ([1, 2, 3], True)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "('torch.float32', 1, 3)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values, as_float):\n    \"\"\"Return (forced dtype name, number of axes, element count).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3], True)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3], True)",
+        "expected_expr": "('torch.float32', 1, 3)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3], False)",
+        "expected_expr": "('torch.int64', 1, 3)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.9, 2.9], False)",
+        "expected_expr": "('torch.int64', 1, 2)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([0.5], True)",
+        "expected_expr": "('torch.float32', 1, 1)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3], True)",
+        "output": "('torch.int64', 1, 3)",
+        "why": "The flag has to choose the dtype at build time. Letting torch infer gives int64 whatever the flag says."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 564,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(cube) that takes a TRIPLY nested Python list and returns a tuple (ndim, shape, numel, dtype_name) — the number of axes, the shape as a plain tuple of ints, the element count, and str() of the dtype. Nesting depth gives the axes; the numbers inside give the dtype.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (axes, shape as a tuple, element count, dtype name).\"\"\"\n    a = t.tensor(cube)\n    return (a.ndim, tuple(a.shape), a.numel(), str(a.dtype))\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "(3, (2, 2, 2), 8, 'torch.int64')",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (axes, shape as a tuple, element count, dtype name).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "(3, (2, 2, 2), 8, 'torch.int64')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1.0, 2.0]]])",
+        "expected_expr": "(3, (1, 1, 2), 2, 'torch.float32')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[[1]], [[2]], [[3]]])",
+        "expected_expr": "(3, (3, 1, 1), 3, 'torch.int64')"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "(3, (2, 2, 2), 2, 'torch.int64')",
+        "why": "`len()` is the first axis only. The element count is `.numel()`."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 565,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(rows) that builds a tensor a, takes its transpose, and makes a packed copy of that transpose. Return a tuple of four bools: is the transpose in reading order, is the packed copy, does the packed copy hold the same values as the transpose, and does the packed copy own its OWN block of memory rather than a's.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a.T in order?, copy in order?, same values?, own block?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (view.is_contiguous(), packed.is_contiguous(),\n            t.equal(packed, view), packed.data_ptr() != a.data_ptr())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "(False, True, True, True)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a.T in order?, copy in order?, same values?, own block?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "(False, True, True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "(False, True, True, True)"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([[5, 6, 7]])",
+        "expected_expr": "(True, True, True, False)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(False, False, True, False)",
+        "why": "`.contiguous()` returns a NEW tensor with its own block, in reading order. Reusing the view leaves three of the four answers wrong."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 566,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values) that takes a FLAT list and returns a tuple (numel, value, dtype_name). value is the tensor's only element as a plain Python number when it holds exactly one, and None otherwise. dtype_name is str() of the dtype either way.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (element count, the single value or None, dtype name).\"\"\"\n    a = t.tensor(values)\n    value = a.item() if a.numel() == 1 else None\n    return (a.numel(), value, str(a.dtype))\n\n\nexample = [7]\nprint(solve(example))\n",
+    "difficulty_score": 39,
+    "difficulty_label": "medium",
+    "expected_output": "(1, 7, 'torch.int64')",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (element count, the single value or None, dtype name).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [7]\nprint(solve(example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([7])",
+        "expected_expr": "(1, 7, 'torch.int64')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3])",
+        "expected_expr": "(3, None, 'torch.int64')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([2.5])",
+        "expected_expr": "(1, 2.5, 'torch.float32')"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([7])",
+        "output": "(1, tensor(7), 'torch.int64')",
+        "why": "Indexing gives a 0-d tensor. `.item()` is what hands back the Python number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 567,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Write a function solve(values, as_int) that takes a FLAT list and a bool. Force the tensor to torch.int64 when as_int is True; otherwise let PyTorch infer the dtype. Return a tuple (unchanged, shape, dtype_name): whether reading the tensor back out as a plain list gives exactly values again, the shape as a plain tuple, and str() of the dtype. Forcing an integer type onto floats is where a round-trip stops being lossless.",
+    "answer_code": "import torch\nimport torch as t\n\ndef solve(values, as_int):\n    \"\"\"Return (does .tolist() give values back?, shape, dtype name).\"\"\"\n    a = t.tensor(values, dtype=t.int64) if as_int else t.tensor(values)\n    return (a.tolist() == values, tuple(a.shape), str(a.dtype))\n\n\nexample = ([1.9, 2.2], True)\nprint(solve(*example))\n",
+    "difficulty_score": 45,
+    "difficulty_label": "medium",
+    "expected_output": "(False, (2,), 'torch.int64')",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch\nimport torch as t\n\ndef solve(values, as_int):\n    \"\"\"Return (does .tolist() give values back?, shape, dtype name).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.9, 2.2], True)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.9, 2.2], True)",
+        "expected_expr": "(False, (2,), 'torch.int64')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1, 2, 3], False)",
+        "expected_expr": "(True, (3,), 'torch.int64')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([1.5, 2.5], False)",
+        "expected_expr": "(True, (2,), 'torch.float32')"
+      },
+      {
+        "setup_code": "import torch as t",
+        "call": "solve([4, 5], True)",
+        "expected_expr": "(True, (2,), 'torch.int64')"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "solve([1.9, 2.2], True)",
+        "output": "(False, (2,), 'torch.float32')",
+        "why": "Forcing int64 TRUNCATES 1.9 to 1, so the values do not come back unchanged — noticing that is the whole point of the check."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }

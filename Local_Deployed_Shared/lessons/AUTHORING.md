@@ -15,9 +15,10 @@ supporting: [numpy.ndarray-model]   # KCs used but not taught here
 new_syntax: []                      # symbols this page is the lesson for
 previews: []                        # symbols shown here but taught LATER, on purpose
 concepts: [repeat-elements]         # stable id per atomic segment, in order
-faded: [111, 151]                   # bank question ids used as faded practice
-guided: [90]                        # bank ids used as guided (hinted) practice
-independent: [144, 84]              # bank ids for unaided practice
+faded: [111, 151]                   # STAGE 2 — fill-in-the-blank drills, no example
+guided: []                          # legacy rung, folded into faded; empty on new KPs
+independent: [144, 84]              # STAGE 3 — solo drills, a few open with an example
+integrated: [560, 561]              # STAGE 4 — solo, all ideas at once, never an example
 ---
 
 ## Concept
@@ -51,16 +52,91 @@ One-line framing of the task (shown above the starter).
 # the completed version — MUST pass q111's bank test cases
 ```
 
-## Guided practice
-### q90
-1. First hint (conceptual nudge).
-2. Second hint (names the function).
-3. Third hint (near-solution).
+## Solo practice
+### q144
+One-line framing of the task. No starter and no blanks — the learner writes
+the whole function. MOST items here carry no example. A MINORITY open with one,
+and only when the drill needs an idea the lesson page never showed:
+```python worked
+# a small commented demo of the new use; the learner reads it,
+# then writes the drill from scratch. Optional, and rare on purpose.
+```
 
-## Independent practice
-(only the frontmatter `independent:` ids matter; prose here optional)
+## Integrated practice
+### q560
+One-line framing. Stage 4 items NEVER carry a ```python worked``` fence.
 
 ```
+
+## The four stages (2026-08-28)
+
+A learner meets one concept across FOUR stages, and what changes between them is
+how much of the answer is on screen. Seth set this out while testing the ndarray
+KP; the whole rung system exists to produce it.
+
+| Stage | Rung id (stored) | What is on screen | Authored as |
+|---|---|---|---|
+| 1 Lesson | `worked` | The lesson page: prose, several small runnable fences, one worked example per segment | `## Concept` + `## Worked example` |
+| 2 Faded | `faded` | The problem on the left, a mostly-written solution with `_____` blanks on the right, **and no example** | `## Faded practice` |
+| 3 Solo | `partial` | Write the whole thing. **Some** items open with a worked example that introduces a new use of the concept; most do not | `## Solo practice` |
+| 4 Integrated | `solo` | Every idea in the concept at once, **never** an example | `## Integrated practice` |
+
+The stored rung ids are frozen — every attempt ever recorded is filed under
+`worked/faded/partial/solo` and the promotion bound reads them back, so they are
+indices, not labels. Only the meanings and the on-screen names changed.
+
+Two consequences for the person writing content:
+
+- **Stage 2 shows no example, so stage 1 has to carry it.** The learner has
+  already read the lesson; the faded drill is the same idea from memory. Putting
+  the worked example beside a faded starter is what made q484 unpassable-by-
+  thinking — its example printed the two values the blanks asked for.
+- **The stage 3 → 4 fade is CONTENT, not a schedule.** Nothing counts examples
+  down. Some solo items author one, the queue serves the example-bearing ones
+  first, and a question is never served twice — so examples simply run out, and
+  the last stretch of stage 3 already looks like stage 4. Write examples for the
+  solo items that introduce a NEW use of the concept and for no others.
+
+### Nothing may require a symbol the page has not shown (required)
+
+A drill may only ask for moves the learner has already seen — Seth: "make sure
+to do checks like for finding whether something was used before … it doesn't
+introduce requiring you to do something that you haven't used before with a
+function that you haven't seen before."
+
+The rule is per KP and cumulative down the page: a drill's solution may use a
+symbol declared in this KP's `new_syntax`, shown in any earlier segment's
+`## Concept` or `## Worked example`, or taught by an earlier KP. Anything else
+is a new concept smuggled into practice.
+
+`audit_ladder_pairing.py` measures this as COVERAGE, scoring each drill against
+everything the page has shown UP TO that segment — concept fences included, not
+just the worked example, because the learner reads both. A symbol that a drill
+needs and the page never shows is a finding; the fix is to show it in the
+lesson, not to weaken the drill.
+
+### Every drill states its input and output (required)
+
+Under the prompt the learner sees the graded cases as `input → expected output`
+rows, plus any authored near miss as an `input ✗ wrong output` row with a
+sentence saying what the mistake was (`practice/question-examples.js`).
+
+- The CORRECT rows need no authoring at all: they are read straight off
+  `test_cases[*].call` and `test_cases[*].expected_expr`, which is the same data
+  the grader compares. What you owe them is decent CASES — vary the expected
+  value across them so a constant-return answer cannot pass, and so the rows
+  show the learner the SHAPE of the mapping rather than one coincidence.
+- A near miss is authored in the override record's `wrong_examples`, as
+  `[{"call": ..., "output": ..., "why": ...}]`. Author the OUTPUT by RUNNING a
+  wrong implementation on one of the drill's own grader inputs — never by hand.
+  A hand-written wrong value is a guess about what a mistake produces, and half
+  the time the mistake produces something else. Choose an input on which right
+  and wrong actually disagree; a misconception that passes every case is not a
+  near miss, it is a second correct answer.
+- The `why` is the part that teaches. One sentence, naming the confusion
+  ("`.ndim` counts axes; `.numel()` counts elements"), not "this is wrong".
+- Omit `call` to reuse the first graded case's input, so both blocks describe
+  the same call.
 
 ## Segments — ONE concept at a time (required)
 
@@ -105,14 +181,15 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
   single small demo of the one idea, not a tour of variations. The rhythm is:
   teach one concept → inspect or optionally run one worked example → continue.
   Extra variations belong in practice, not lesson screen.
-- Each segment MUST have one or two faded exercises (validator-enforced).
-  Two is a FADING SERIES, not two drills: the first sits adjacent to the
-  worked example, the second asks for the same idea one step out, so the blank
-  cannot be filled by transcription. `audit_ladder_pairing.py` measures that
-  step ("series never reaching distance"). A third belongs in independent
-  practice — a segment teaches one idea, and more completions of it are drill.
-  PILOT as of 2026-07-30: 3 of 122 segments have a second item; awaiting
-  Seth's review before the rest follow.
+- Each segment MUST have at least one faded exercise (validator-enforced).
+  There is no ceiling. Several is a FADING SERIES, not a pile of drills: the
+  first sits adjacent to the worked example, each later one asks for the same
+  idea one step further out, so the blank cannot be filled by transcription.
+  `audit_ladder_pairing.py` measures that step ("series never reaching
+  distance"). The ceiling used to be two, and that was the content-side cause
+  of the ladder repeating itself — with three faded items on a KC the queue ran
+  out inside a single sitting and re-served what the learner had memorised.
+  Write as many as the idea has surfaces.
 - Faded exercise is downstream practice metadata. LessonGate does NOT render or
   grade it immediately after teaching.
 - `## Watch out` is optional segment content. It renders only inside that
@@ -120,9 +197,10 @@ segment. A segment heading may carry a subtitle: `## Concept: np.trace`.
 - In-app sequence is fixed: teaching + worked explanation on left, complete
   worked code preloaded on right for optional running/editing, then next
   concept or normal question queue. No popup; no faded exercise inside lesson.
-- Guided/Independent stay KP-level, after the last segment. `## Misconceptions`
-  remains a legacy fallback for single-segment KPs; new/multi-segment content
-  uses `## Watch out` inside each relevant segment.
+- Solo/Integrated stay KP-level, after the last segment — they are about the
+  whole KP, not one segment. `## Misconceptions` remains a legacy fallback for
+  single-segment KPs; new/multi-segment content uses `## Watch out` inside each
+  relevant segment.
 - A faded qid may appear in only one segment.
 
 ### The blanks must cover the concept, never the scaffold (required, enforced)
@@ -212,9 +290,9 @@ Example skeleton:
   never example-only).
 - Worked example comments explain WHY each step, not what the syntax is.
 - Starter code blanks use `_____` and must be syntactically obvious to fill.
-- Faded/guided/independent ids should come from the same subtopic as the KC's
+- Faded/solo/integrated ids should come from the same subtopic as the KC's
   lesson where possible (keeps BKT mapping clean).
-- Every KP carries all three rungs. When the subtopic's pool is exhausted —
+- Every KP carries all three drill rungs. When the subtopic's pool is exhausted —
   every question already spoken for by some KP — author a NEW bank question
   rather than serving one twice; the recipe (curated CSV → overrides →
   export → qmatrix → atom tags) is in `pipeline/README.md`. Pick a move the
