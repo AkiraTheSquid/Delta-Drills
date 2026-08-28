@@ -39,6 +39,7 @@ from app.practice_schemas import (
     SubmitRequest,
     SubmitResponse,
 )
+from app import content_gaps
 from app.prioritization import (
     ladder_fields,
     ladder_starter,
@@ -101,6 +102,7 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
         starter_code=question.starter_code,
         test_cases=question.test_cases,
         submission_mode=question.submission_mode,
+        wrong_examples=question.wrong_examples,
         hint=question.hint,
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,
@@ -156,9 +158,35 @@ def next_question(
     # aim has to be measured on a concept on both paths, or focused practice
     # keeps the subtopic-wide average this change exists to remove.
     served = set(sub_state.served_question_ids)
-    narrowed, next_kc = narrow_to_next_kc(user_state, candidates, served)
+    narrowed, next_kc, gap = narrow_to_next_kc(user_state, candidates, served)
+    # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
+    # the whole subtopic pool on purpose, so `narrowed` being empty says nothing
+    # about whether there is anything to serve — 409ing on it would tell a
+    # focused learner the course had run out while unseen questions from a
+    # sibling concept sat in their own pool. Gate on the pool actually used.
+    # (codex, 2026-08-28.)
     if focus_subtopic is None:
         candidates = narrowed
+    if gap:
+        # This concept's current rung holds nothing the learner has not already
+        # answered. Serving a repeat is what this replaces — see
+        # prioritization.narrow_to_next_kc — so the gap is written down where
+        # the /drill-gaps skill will find it, every time it is hit. Recorded on
+        # both paths: the rung really did run dry, whatever gets served instead.
+        content_gaps.record(user_id, gap)
+        if not [q for q in candidates if q.id not in served]:
+            # Nothing unseen anywhere on the concept. 409 rather than 404: the
+            # request was fine and the queue is healthy, the COURSE is out of
+            # material here. api.js reads the JSON detail and renders `message`
+            # verbatim.
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "reason": "content_exhausted",
+                    "message": content_gaps.learner_message(gap),
+                    **gap,
+                },
+            )
     target_diff = target_difficulty(user_state, subtopic, kc=next_kc)
     question = select_question_for_difficulty(
         candidates, target_diff, served, sub_state.served_question_ids
@@ -191,6 +219,8 @@ def next_question(
     # it. On the faded/partial rungs the learner is handed the canonical
     # solution with its TAIL removed (backward fading), not a blank page.
     ladder = ladder_fields(user_state, question.id)
+    if gap and ladder:
+        ladder["ladder_gap"] = gap
     mastery_fields = {}
     if ladder.get("ladder_kc"):
         mastery, coverage, tier = kc_graph.kc_mastery(
@@ -231,6 +261,7 @@ def next_question(
         starter_code=starter,
         test_cases=question.test_cases,
         submission_mode=question.submission_mode,
+        wrong_examples=question.wrong_examples,
         hint=question.hint,
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,

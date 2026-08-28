@@ -72,6 +72,16 @@
   margin-top: 8px;
 }
 
+/* The spent-rung notice. Same block, warning tint rather than info: it is not
+   describing the scaffold on this card, it is telling the learner the course
+   has run out of new problems at the rung they earned. Different thing, and it
+   should not read as one more piece of instructions. */
+.ladder-gap-callout {
+  background: color-mix(in srgb, var(--warn, #d98324) 12%, transparent);
+  border-color: color-mix(in srgb, var(--warn, #d98324) 45%, transparent);
+  font-weight: 500;
+}
+
 /* Kept for any cached ladder.js still rendering the blurb inside the details. */
 .ladder-example-blurb {
   color: var(--muted);

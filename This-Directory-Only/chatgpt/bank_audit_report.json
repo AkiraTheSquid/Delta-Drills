@@ -1,5 +1,5 @@
 {
- "total": 499,
+ "total": 535,
  "questions": {
   "448": [
    {
@@ -7,9 +7,23 @@
     "var": "hw",
     "detail": "post-setup var 'hw' already equals the expected value"
    }
+  ],
+  "532": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "544": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
   ]
  },
  "counts": {
-  "precompute_leak": 1
+  "precompute_leak": 3
  }
 }

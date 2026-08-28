@@ -154,11 +154,18 @@ def _load() -> None:
                     if isinstance(starter, str) and starter.strip():
                         _authored_faded[qid] = starter
 
-            # Applied practice: independent-rung drills the KP wrote an example
-            # for. Having one is what puts a drill on the ladder's third rung
-            # (`partial` — read an example, then write the whole thing) instead
-            # of its fourth (`solo` — write it with nothing to read first).
-            for item in kp.get("applied_items") or []:
+            # Solo-rung drills the KP wrote an example for. Having one no
+            # longer decides which RUNG the drill sits on — every unaided
+            # single-concept drill is on `partial` now — it decides the ORDER
+            # within that rung: `kc_graph.with_example_first` serves the
+            # example-bearing ones first, so examples thin out as the learner
+            # works through the rung and are gone by the time they reach the
+            # integrated one.
+            #
+            # `applied_items` is the old section name (`## Applied practice`),
+            # still read because 62 KPs have not been rewritten to
+            # `## Solo practice` yet.
+            for item in (kp.get("applied_items") or []) + (kp.get("solo_items") or []):
                 if not isinstance(item, dict):
                     continue
                 try:
@@ -176,11 +183,13 @@ def _load() -> None:
 
 
 def has_worked_example(question_id: int) -> bool:
-    """Does an independent-rung drill come with an example above it?
+    """Does a solo-rung drill come with an example above it?
 
-    True only for questions listed under a KP's `## Applied practice`, which is
-    the ladder's third rung: the learner writes the whole function, but has just
-    read the same move worked through. Everything else on that rung is `solo`.
+    True for questions the KP gave a ```python worked``` fence under
+    `## Solo practice` (or the older `## Applied practice`). Read by
+    `kc_graph.with_example_first` to order the solo rung: examples first, then
+    the unaided remainder — which is how the example fades out across the rung
+    without a counter deciding when.
     """
     _load()
     return int(question_id) in _applied_with_example
@@ -189,26 +198,22 @@ def has_worked_example(question_id: int) -> bool:
 def rung_support(question_id: int, stage: str, scaffold: Optional[str]) -> bool:
     """Is the support THIS rung promises actually on the page?
 
-    The two supported rungs promise different things and one boolean covering
-    both let each cover for the other. `faded` promises blanks — most of the
-    solution written, supply the rest — and a worked example does not supply
-    them. `partial` promises an example directly above the problem, and blanks
-    are not one. Reporting "supported" whenever either exists means a rung can
-    be labelled with a scaffold of the wrong kind, which reads to the learner
-    as the app describing a page they are not looking at.
+    Only `faded` makes a promise this can break: most of the solution written,
+    supply the rest. Served without blanks — a KC whose faded drills are all
+    spent used to fall through to an unaided one — the strip described a page
+    the learner was not looking at.
 
-    Both mismatches are reachable: `narrow_to_next_kc` falls back to the
-    unfiltered pool when a rung's own drills are spent, so a KC with no faded
-    drill can serve an applied problem at `faded`, and one with no applied
-    section can serve a faded drill at `partial`.
+    `partial` no longer appears here. It used to promise an example directly
+    above the problem, but that example is authored per ITEM and most solo
+    drills have none, so the rung could not keep the promise and reported
+    "unsupported" on the majority of perfectly correct cards. Examples now
+    order the rung rather than define it (`kc_graph.with_example_first`).
 
-    Anything else is True — `worked` is a page, `solo` is the rung defined by
+    Everything else is True — `worked` is a page, `solo` is the rung defined by
     having no support, and neither is making a promise this could break.
     """
     if stage == "faded":
         return bool(scaffold)
-    if stage == "partial":
-        return has_worked_example(question_id)
     return True
 
 
@@ -253,7 +258,11 @@ def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
     # screen, and the queue can fall back to the unfiltered pool when a rung is
     # spent — which would put the fifth rung's label on a fill-in-the-blank
     # drill for one of the three ideas.
-    if _question_source.get(int(question_id)) != "kp-independent":
+    # `kp-integrated` is the authored top rung (a KP's `integrated:` frontmatter
+    # list, `## Integrated practice`). `kp-independent` is still accepted
+    # because 62 KPs have not been rewritten and their whole-KP problems are
+    # still filed there.
+    if _question_source.get(int(question_id)) not in ("kp-integrated", "kp-independent"):
         return False
     for kc in _question_target_kcs.get(int(question_id), []):
         segments = _kc_segments.get(kc) or []

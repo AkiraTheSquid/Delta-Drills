@@ -327,6 +327,9 @@ function buildPracticeQuestionFromBank(q, overrides = {}) {
     starter_code: q.starter_code || null,
     test_cases: Array.isArray(q.test_cases) ? q.test_cases : [],
     submission_mode: q.submission_mode || "stdout",
+    // Authored near-miss outputs, rendered under the prompt by
+    // practice/question-examples.js. Empty for most bank questions.
+    wrong_examples: Array.isArray(q.wrong_examples) ? q.wrong_examples : [],
     target_difficulty:
       (typeof getTargetDifficultyFromAdaptiveState === "function"
         ? getTargetDifficultyFromAdaptiveState(q.subtopic)
@@ -370,6 +373,7 @@ function hydrateSavedPracticeQuestionFromBank(savedQuestion) {
     starter_code: bankQ.starter_code || null,
     test_cases: Array.isArray(bankQ.test_cases) ? bankQ.test_cases : [],
     submission_mode: bankQ.submission_mode || "stdout",
+    wrong_examples: Array.isArray(bankQ.wrong_examples) ? bankQ.wrong_examples : [],
     _artifactChanged: artifactChanged,
   };
 }

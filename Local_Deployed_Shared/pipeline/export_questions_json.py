@@ -597,12 +597,20 @@ def load_questions() -> list[dict]:
             else:
                 starter_code, test_cases, submission_mode = None, [], "function"
 
+            wrong_examples: list[dict] = []
             override = function_overrides.get(qid)
             if override:
                 function_name = override.get("function_name", function_name)
                 starter_code = override.get("starter_code", starter_code)
                 test_cases = override.get("test_cases", test_cases)
                 submission_mode = override.get("submission_mode", submission_mode)
+                # Authored near-miss outputs shown under the prompt, as
+                # [{"call": ..., "output": ..., "why": ...}]. Override-only:
+                # there is no honest way to DERIVE a wrong answer (a mutated
+                # correct one is as likely to be a second correct one), and the
+                # `why` is the part that teaches. Absent for most questions,
+                # and the UI simply omits the block then.
+                wrong_examples = override.get("wrong_examples", wrong_examples)
                 question_text = override.get("question_text", question_text)
                 answer_code = override.get("answer_code", answer_code)
                 # Reference stdout shown beside the drill. Override-able because
@@ -659,6 +667,7 @@ def load_questions() -> list[dict]:
                     "starter_code": starter_code,
                     "test_cases": test_cases,
                     "submission_mode": submission_mode,
+                    "wrong_examples": wrong_examples,
                     "expected_artifact_type": expected_artifact_type,
                     "supports_visual_output": supports_visual_output,
                     "source_type": "csv",
@@ -695,6 +704,7 @@ def build_structured_questions(flat_questions: list[dict]) -> list[dict]:
                     "starter_code": question["starter_code"],
                     "test_cases": question["test_cases"],
                     "submission_mode": question["submission_mode"],
+                    "wrong_examples": question.get("wrong_examples") or [],
                     "canonical_solution": question["answer_code"],
                     "expected_output": question["expected_output"],
                     "expected_artifact_type": question["expected_artifact_type"],

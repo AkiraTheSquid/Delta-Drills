@@ -2,8 +2,9 @@
 """Build Local_Deployed_Shared/lessons/qmatrix_tags.json.
 
 Tag sources, in priority order:
-  1. KP frontmatter — a question referenced as faded/guided/independent by a KP
-     gets that KP's KC as target, the KP's supporting list, and its new_syntax.
+  1. KP frontmatter — a question referenced as faded/guided/independent/
+     integrated by a KP gets that KP's KC as target, the KP's supporting list,
+     and its new_syntax.
   2. LEFTOVER_TARGETS below — hand-assigned targets for easy-topic questions no
      KP references (reviewed against each question's text; see
      docs/spec-first-encounter-course-content.md).
@@ -102,7 +103,9 @@ def build():
         }
 
     for kc_id, kp in kp_by_kc.items():
-        for role in ("faded", "guided", "independent"):
+        # `integrated` last: it is the top rung, and a question may sit on
+        # exactly one rung (the duplicate check below enforces that).
+        for role in ("faded", "guided", "independent", "integrated"):
             for qid in kp[role]:
                 if qid in tags:
                     raise SystemExit(f"q{qid} referenced twice ({tags[qid]}, {kc_id})")

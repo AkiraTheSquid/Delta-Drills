@@ -151,9 +151,19 @@ def check_kp(path, registry, bank, errors):
     # Two, not one, because of what audit_ladder_pairing.py measures: a first
     # completion item sitting adjacent to the example is correct fading, but a
     # series that never grows past it is transcription, and the ladder promotes
-    # on that. The second item is where the distance lives. Two is the ceiling
-    # on purpose — a segment teaches one concept, and a third completion of the
-    # same concept is drill, which is what the independent rung is for.
+    # on that. The second item is where the distance lives.
+    #
+    # 🔴 THE CEILING OF TWO IS GONE (2026-08-28). It read "a third completion of
+    # the same concept is drill, which is what the independent rung is for", and
+    # that reasoning was wrong in the one way that matters: the rung a learner
+    # is ON is decided by their attempt record, not by how much content the rung
+    # holds, so a two-deep faded rung does not send anyone to the independent
+    # one — it sends the QUEUE round again over the same two drills. Seth,
+    # testing on numpy.ndarray-model: "I basically memorized all the problems
+    # for the first part ... they're currently repeating." A segment may now
+    # carry as many faded drills as its author is willing to write, and running
+    # out of them is reported to the learner rather than papered over with a
+    # repeat (see prioritization.narrow_to_next_kc).
     faded_ids = set()
     for si, seg in enumerate(kp["segments"]):
         seg_label = f"segment {si + 1}" + (f" ({seg['title']})" if seg["title"] else "")
@@ -170,8 +180,8 @@ def check_kp(path, registry, bank, errors):
             # editor; the notebook and the lesson player render every block.
             errors.append(f"{name}: {seg_label} must have a Python worked example")
         items = split_items(seg["faded"])
-        if not 1 <= len(items) <= 2:
-            errors.append(f"{name}: {seg_label} must have one or two faded exercises")
+        if not items:
+            errors.append(f"{name}: {seg_label} must have at least one faded exercise")
         for qid, content in items.items():
             if qid in faded_ids:
                 errors.append(f"{name}: faded q{qid} appears in more than one segment")
@@ -228,6 +238,34 @@ def check_kp(path, registry, bank, errors):
                 errors.extend(
                     quality.check_pairing(content, bank[qid], label, info="python worked")
                 )
+
+    # 4d. Solo and Integrated are the third and fourth rungs, and each of them
+    # is declared TWICE — once in frontmatter (which is what `build_qmatrix.py`
+    # tags and what the backend rung selector reads) and once as a section
+    # (which is what `compile_lessons.py` compiles and serves). Nothing tied
+    # the two together, so a drill listed in only one place either got tagged
+    # and never served or got served carrying no target concept at all. Both
+    # halves are silent. (codex, 2026-08-28.)
+    solo_ids = set(split_items(kp["sections"].get("Solo practice", "")).keys())
+    for qid in sorted(solo_ids - set(kp["independent"])):
+        errors.append(
+            f"{name}: solo q{qid} is not in the frontmatter `independent` list — "
+            f"it would be served from the section and tagged by nothing"
+        )
+    integrated_ids = set(split_items(kp["sections"].get("Integrated practice", "")).keys())
+    if set(kp.get("integrated") or []) != integrated_ids:
+        errors.append(
+            f"{name}: frontmatter integrated {sorted(kp.get('integrated') or [])} "
+            f"!= sections {sorted(integrated_ids)}"
+        )
+    for qid in sorted(integrated_ids & set(kp["independent"])):
+        errors.append(
+            f"{name}: q{qid} is listed as BOTH integrated and independent — "
+            f"one drill cannot be two rungs, and the selector prefers integrated"
+        )
+    for qid in sorted(set(kp.get("integrated") or [])):
+        if qid not in bank:
+            errors.append(f"{name}: integrated q{qid} not in bank")
 
     # 5. refs exist and are consistent
     if set(kp["faded"]) != faded_ids:

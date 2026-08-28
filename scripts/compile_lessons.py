@@ -167,6 +167,32 @@ def compile_lessons():
                 "prompt": content.split("```", 1)[0].strip(),
                 "worked_example_code": worked[0] if worked else "",
             })
+        # Solo practice — the ladder's THIRD rung. The learner writes the whole
+        # function unaided; an item may carry a ```python worked``` fence, and
+        # when it does that example is shown ABOVE the problem the way the
+        # lesson's is. Most items do not carry one, and that is the fade: the
+        # queue serves the example-bearing items of a rung first (see
+        # kc_graph.questions_at_stage), so examples thin out on their own as the
+        # learner works through the rung rather than stopping on a cutoff.
+        #
+        # Supersedes `## Applied practice`, which is still parsed for the 62
+        # KPs that have not been rewritten.
+        solo_items = []
+        for qid, content in split_items(kp["sections"].get("Solo practice", "")).items():
+            worked = code_fences(content, "python worked")
+            solo_items.append({
+                "question_id": qid,
+                "prompt": content.split("```", 1)[0].strip(),
+                "worked_example_code": worked[0] if worked else "",
+            })
+        # Integrated practice — the FOURTH rung. Whole-KP problems, and never an
+        # example: this is the rung the examples have faded out of entirely.
+        integrated_items = []
+        for qid, content in split_items(kp["sections"].get("Integrated practice", "")).items():
+            integrated_items.append({
+                "question_id": qid,
+                "prompt": content.split("```", 1)[0].strip(),
+            })
         lessons[kc["lesson"]]["kps"].append({
             "kc": kp["kc"],
             "title": kp["title"] or kc["title"],
@@ -178,6 +204,8 @@ def compile_lessons():
             "faded_items": faded_items,
             "guided_items": guided_items,
             "applied_items": applied_items,
+            "solo_items": solo_items,
+            "integrated_items": integrated_items,
             "independent_items": kp["independent"],
             "misconceptions_markdown": kp["sections"].get("Misconceptions", ""),
         })

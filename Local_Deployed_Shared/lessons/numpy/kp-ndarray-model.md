@@ -3,12 +3,14 @@ kc: numpy.ndarray-model
 title: What a tensor is — data + shape + dtype
 supporting: []
 new_syntax: [Tensor.T, Tensor.contiguous, Tensor.data_ptr, Tensor.dtype, Tensor.is_contiguous, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.equal, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]
-faded: [224, 482, 484]
-guided: [523]
-independent: [480, 481, 483, 485, 486]
+faded: [224, 482, 484, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546]
+guided: []
+independent: [480, 481, 483, 485, 486, 523, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559]
+integrated: [560, 561, 562, 563, 564, 565, 566, 567]
 ---
 
 ## Concept: a tensor is one block of one type
+
 
 PyTorch's core object is the **tensor** (n-dimensional array). Everything else in
 this course — indexing, broadcasting, einsum, einops — is a way of manipulating
@@ -93,6 +95,7 @@ except RuntimeError as exc:
 
 ## Worked example
 
+
 The problem below asks you to turn a nested Python list into a 2-D tensor. This
 example shows that move once. Start with the list — three inner lists of two
 integers each — and hand it to `t.tensor`:
@@ -121,6 +124,7 @@ those two answers, because they are where almost every tensor bug lives.
 
 ## Faded practice
 
+
 ### q224
 Turn a nested Python list of equal-length integer rows into a 2-D tensor.
 
@@ -140,7 +144,121 @@ def solve(rows):
     return t.tensor(rows)
 ```
 
+### q532
+Read the tensor's numbers back out as a plain nested Python list.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return the tensor's contents as a plain nested Python list."""
+    a = t.tensor(rows)
+    return a.tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return the tensor's contents as a plain nested Python list."""
+    a = t.tensor(rows)
+    return a.tolist()
+```
+
+### q533
+The tensor holds exactly one number. Hand that number back as a plain Python value.
+
+```python starter
+import torch as t
+
+def solve(values):
+    """Return the tensor's only element as a plain Python number."""
+    a = t.tensor(values)
+    return a.item()
+```
+
+```python solution
+import torch as t
+
+def solve(values):
+    """Return the tensor's only element as a plain Python number."""
+    a = t.tensor(values)
+    return a.item()
+```
+
+### q534
+One bool for the whole pair: same layout AND same numbers?
+
+```python starter
+import torch as t
+
+def solve(rows_a, rows_b):
+    """Return True when the two tensors match on shape AND values."""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return t.equal(a, b)
+```
+
+```python solution
+import torch as t
+
+def solve(rows_a, rows_b):
+    """Return True when the two tensors match on shape AND values."""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return t.equal(a, b)
+```
+
+### q535
+Two bools: does the transpose read a's block, and does the packed copy?
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return (does a.T share a's block?, does its packed copy?)."""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.data_ptr() == a.data_ptr(),
+            view.contiguous().data_ptr() == a.data_ptr())
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return (does a.T share a's block?, does its packed copy?)."""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.data_ptr() == a.data_ptr(),
+            view.contiguous().data_ptr() == a.data_ptr())
+```
+
+### q536
+Two bools: is the transpose still in reading order, and is its packed copy?
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return (is a.T in reading order?, is its packed copy?)."""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.is_contiguous(), view.contiguous().is_contiguous())
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return (is a.T in reading order?, is its packed copy?)."""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.is_contiguous(), view.contiguous().is_contiguous())
+```
+
 ## Concept: nesting becomes axes — shape, ndim, numel
+
 
 The **shape** is a tuple giving the length along each dimension (axis). A 3×4
 matrix has `shape == (3, 4)`: axis 0 has length 3 (rows), axis 1 has length 4
@@ -176,6 +294,7 @@ for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
 ```
 
 ## Worked example
+
 
 The problem below asks for a tensor's number of axes and its element count.
 Those sound like the same question and are not, so this example takes them
@@ -213,6 +332,7 @@ assert tuple(grid.shape) == (3, 4)
 
 ## Faded practice
 
+
 ### q482
 Count the axes and the elements. Remember which one takes parentheses.
 
@@ -234,7 +354,113 @@ def solve(rows):
     return (a.ndim, a.numel())
 ```
 
+### q537
+Return the tensor's shape as a plain Python tuple of ints.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return the tensor's shape as a plain tuple of ints."""
+    a = t.tensor(rows)
+    return tuple(a.shape)
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return the tensor's shape as a plain tuple of ints."""
+    a = t.tensor(rows)
+    return tuple(a.shape)
+```
+
+### q538
+Return the length along axis 0 and the length along axis 1.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return (length along axis 0, length along axis 1)."""
+    a = t.tensor(rows)
+    return (a.shape[0], a.shape[1])
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return (length along axis 0, length along axis 1)."""
+    a = t.tensor(rows)
+    return (a.shape[0], a.shape[1])
+```
+
+### q539
+Return how many axes the tensor has, as a plain int.
+
+```python starter
+import torch as t
+
+def solve(data):
+    """Return the tensor's number of axes."""
+    a = t.tensor(data)
+    return a.ndim
+```
+
+```python solution
+import torch as t
+
+def solve(data):
+    """Return the tensor's number of axes."""
+    a = t.tensor(data)
+    return a.ndim
+```
+
+### q540
+Two counts that are not the same question: every number in the tensor, and the rows in the input.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return (total element count, number of outer rows)."""
+    a = t.tensor(rows)
+    return (a.numel(), len(rows))
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return (total element count, number of outer rows)."""
+    a = t.tensor(rows)
+    return (a.numel(), len(rows))
+```
+
+### q541
+One bool: does the tensor's shape equal the tuple you were handed?
+
+```python starter
+import torch as t
+
+def solve(rows, wanted):
+    """Return True when the tensor's shape equals `wanted`."""
+    a = t.tensor(rows)
+    return tuple(a.shape) == tuple(wanted)
+```
+
+```python solution
+import torch as t
+
+def solve(rows, wanted):
+    """Return True when the tensor's shape equals `wanted`."""
+    a = t.tensor(rows)
+    return tuple(a.shape) == tuple(wanted)
+```
+
 ## Concept: dtype is a property of the whole block
+
 
 The **dtype** is the single element type shared by every entry — `torch.int64`,
 `torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,
@@ -255,6 +481,11 @@ print(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block
 
 # Say what you want up front rather than relying on how the input is spelled.
 print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
+
+# The two dtype names you will meet constantly, written out rather than
+# printed — this is how you ASK the question in code.
+print("all ints ->", t.tensor([1, 2, 3]).dtype == t.int64)
+print("one float ->", t.tensor([1, 2.5, 3]).dtype == t.float32)
 ```
 
 Ordinary division still works on an integer tensor — `a / 2` quietly hands back
@@ -278,6 +509,7 @@ dtype. Shape and dtype are independent, and code that checks only one of them
 is checking half the question.
 
 ## Worked example
+
 
 The problem below asks you to compare two tensors on shape and on dtype and
 report a `True`/`False` for each. The point of this example is to show that
@@ -329,6 +561,7 @@ parentheses.
 
 ## Faded practice
 
+
 ### q484
 Two tensors, two independent questions. Compare each piece of metadata on its
 own.
@@ -353,95 +586,305 @@ def solve(rows_a, rows_b):
     return (a.shape == b.shape, a.dtype == b.dtype)
 ```
 
-## Guided practice
+### q542
+Return the name of the tensor's element type as a string.
+
+```python starter
+import torch as t
+
+def solve(values):
+    """Return str() of the tensor's dtype."""
+    a = t.tensor(values)
+    return str(a.dtype)
+```
+
+```python solution
+import torch as t
+
+def solve(values):
+    """Return str() of the tensor's dtype."""
+    a = t.tensor(values)
+    return str(a.dtype)
+```
+
+### q543
+One bool: is the whole block held as 64-bit integers?
+
+```python starter
+import torch as t
+
+def solve(values):
+    """Return True when the tensor's dtype is the 64-bit integer one."""
+    a = t.tensor(values)
+    return a.dtype == t.int64
+```
+
+```python solution
+import torch as t
+
+def solve(values):
+    """Return True when the tensor's dtype is the 64-bit integer one."""
+    a = t.tensor(values)
+    return a.dtype == t.int64
+```
+
+### q544
+Build the tensor as 32-bit floats rather than letting the input decide, then read it back as a list.
+
+```python starter
+import torch as t
+
+def solve(values):
+    """Return the values as a float32 tensor, read back as a list."""
+    a = t.tensor(values, dtype=t.float32)
+    return a.tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(values):
+    """Return the values as a float32 tensor, read back as a list."""
+    a = t.tensor(values, dtype=t.float32)
+    return a.tolist()
+```
+
+### q545
+Two answers: is the block float32, and how many numbers are in it?
+
+```python starter
+import torch as t
+
+def solve(values):
+    """Return (is the block float32?, how many elements)."""
+    a = t.tensor(values)
+    return (a.dtype == t.float32, a.numel())
+```
+
+```python solution
+import torch as t
+
+def solve(values):
+    """Return (is the block float32?, how many elements)."""
+    a = t.tensor(values)
+    return (a.dtype == t.float32, a.numel())
+```
+
+### q546
+One bool: do the two tensors agree on element type?
+
+```python starter
+import torch as t
+
+def solve(values_a, values_b):
+    """Return True when the two tensors share a dtype."""
+    a = t.tensor(values_a)
+    b = t.tensor(values_b)
+    return a.dtype == b.dtype
+```
+
+```python solution
+import torch as t
+
+def solve(values_a, values_b):
+    """Return True when the two tensors share a dtype."""
+    a = t.tensor(values_a)
+    b = t.tensor(values_b)
+    return a.dtype == b.dtype
+```
+
+## Solo practice
+
+### q481
+A flat list becomes a 1-D tensor, however many numbers are in it.
+
+### q480
+Build it, describe its shape, and say whether one float re-typed the block.
+
+### q483
+Name the element type and count the elements — two answers, one of which the input decides.
+
+### q485
+Three levels of nesting. Report the axes, the shape and the element count.
+
+### q486
+Inferred versus forced: build the same numbers twice and compare the element types.
 
 ### q523
+A transpose and its packed copy: which one reads a's block, and what do the numbers look like?
+
+Transposing never moves data — it hands back a tensor reading the SAME block
+in a different order. `.contiguous()` is how you ask for the move, and
+`.data_ptr()` is what tells the two apart:
+
 ```python worked
 import torch as t
 
 a = t.tensor([[1, 2], [3, 4], [5, 6]])
+view = a.T
+packed = view.contiguous()
 
-# .reshape re-describes the SAME block: 6 numbers, read 2 rows of 3 instead
-# of 3 rows of 2. Nothing is copied, so both names read one buffer.
-view = a.reshape(2, 3)
-assert view.data_ptr() == a.data_ptr()
-
-# .clone() is the opposite request: give me my own block.
-copy = a.clone()
-assert copy.data_ptr() != a.data_ptr()
-
-# Sharing is about memory, not values — the copy holds the same numbers.
-assert copy.tolist() == a.tolist()
-print("view shares a's block:", view.data_ptr() == a.data_ptr())
-print("copy shares a's block:", copy.data_ptr() == a.data_ptr())
-print("view reads as:", view.tolist())
+print("a.T shares a's block :", view.data_ptr() == a.data_ptr())
+print("the copy owns its own:", packed.data_ptr() != a.data_ptr())
+print("same numbers either way:", t.equal(packed, view))
 ```
 
-Your turn: the same three questions, but for the TRANSPOSE and for
-`.contiguous()` rather than for `.reshape` and `.clone()`.
+### q547
+A flat list, described three ways: axes, elements, shape.
 
-1. Two of the three answers are memory questions, not value questions: does
-   the tensor you got back read the ORIGINAL block, or a fresh one?
-   Transposing never moves data; `.contiguous()` exists precisely to ask for
-   the move.
-2. `a.T` is the transpose and `a.T.contiguous()` the packed copy;
-   `.data_ptr()` reports which block each one reads.
-3. `view = a.T`, `packed = view.contiguous()`, then return
-   `(view.data_ptr() == a.data_ptr(), packed.data_ptr() == a.data_ptr(),
-   packed.tolist())`.
+### q548
+Name the element type, and say whether it is the float one.
 
-## Applied practice
+### q549
+Three levels of nesting. Show that the shape multiplies out to the element count.
 
-### q481
-The problem below hands you a FLAT list and asks for the tensor plus its number
-of axes. This example is here so you have seen the move once; the problem is the
-same move on different data, and you write the whole function yourself.
-
-One level of nesting gives one axis, however many numbers are inside it:
+Multiplying a shape out is a plain Python loop over the tuple — nothing
+tensor-specific about it. The element count is the answer that loop should
+reach:
 
 ```python worked
 import torch as t
 
-flat = t.tensor([3, 1, 4, 1, 5])
-print(flat, "-> ndim", flat.ndim)
-assert flat.ndim == 1
+a = t.tensor([[1, 2, 3], [4, 5, 6]])
+shape = tuple(a.shape)
+
+product = 1
+for length in shape:
+    product = product * length
+
+print(shape, "multiplies out to", product, "and numel is", a.numel())
+assert product == a.numel()
 ```
 
-Five numbers, still one axis. Adding a nesting level is what adds an axis — the
-count of numbers never does:
+### q550
+Pull out the single element — but only when there really is exactly one.
 
-```python worked
-nested = t.tensor([[3, 1], [4, 1]])
-print(nested, "-> ndim", nested.ndim)
-assert nested.ndim == 2
-```
-
-### q483
-The problem below asks for the dtype's NAME as a string and the element count.
-Two inputs here, because the dtype depends on what is in the list — that is the
-whole point of the question.
-
-All-integer input infers the integer type, and `str()` is what turns a dtype
-into the name the problem asks for:
+`.item()` refuses on anything but a one-element tensor, and that refusal is
+the point — a silent "first element" would be a guess. Ask the element count
+first and you never have to catch anything:
 
 ```python worked
 import torch as t
 
-ints = t.tensor([2, 4, 6, 8])
-print(str(ints.dtype), ints.numel())
-assert (str(ints.dtype), ints.numel()) == ("torch.int64", 4)
+for values in ([7], [1, 2, 3]):
+    a = t.tensor(values)
+    answer = a.item() if a.numel() == 1 else None
+    print(values, "-> numel", a.numel(), "->", answer)
 ```
 
-Now one float, same four numbers. The dtype changes for the whole block, and
-`numel` does not move — that is why they are two separate questions:
+### q551
+Agreeing on shape is half a question. Answer both halves.
+
+### q552
+The shape before and after transposing.
+
+### q553
+Reading order for three tensors: the original, its transpose, and the packed copy.
+
+A freshly built tensor is laid out in reading order. Its transpose is the same
+block read a different way, so it is not — and asking for the packed copy is
+what puts one back in order:
 
 ```python worked
-mixed = t.tensor([2, 4.5, 6, 8])
-print(str(mixed.dtype), mixed.numel())
-assert (str(mixed.dtype), mixed.numel()) == ("torch.float32", 4)
+import torch as t
+
+a = t.tensor([[1, 2, 3], [4, 5, 6]])
+view = a.T
+packed = view.contiguous()
+
+print("a      ", a.is_contiguous())
+print("a.T    ", view.is_contiguous())
+print("packed ", packed.is_contiguous())
 ```
+
+### q554
+Force an integer type onto floats and report what survived.
+
+Forcing an integer type is not rounding — it truncates toward zero, and it
+does it to every element at once because there is one type for the whole
+block:
+
+```python worked
+import torch as t
+
+a = t.tensor([1.9, -2.7, 3.2], dtype=t.int64)
+print(str(a.dtype), a.tolist())
+assert a.tolist() == [1, -2, 3]
+```
+
+### q555
+What PyTorch infers versus what you asked for.
+
+`t.tensor` reads the dtype off the data unless you tell it otherwise. Naming
+the dtype up front is how you stop the input's spelling from deciding it:
+
+```python worked
+import torch as t
+
+values = [1, 2, 3]
+inferred = t.tensor(values)
+forced = t.tensor(values, dtype=t.float32)
+
+print("inferred:", str(inferred.dtype))
+print("forced  :", str(forced.dtype))
+assert inferred.dtype != forced.dtype
+```
+
+### q556
+Same count of numbers, different arrangement — two separate bools.
+
+### q557
+Describe ONE row of a 2-D tensor.
+
+Indexing a tensor with a single int hands back one slice along axis 0, with
+that axis gone. A row of a 2-D tensor is therefore 1-D — same numbers, one
+fewer axis:
+
+```python worked
+import torch as t
+
+a = t.tensor([[1, 2, 3], [4, 5, 6]])
+row = a[0]
+
+print("a   :", tuple(a.shape), "ndim", a.ndim)
+print("a[0]:", tuple(row.shape), "ndim", row.ndim)
+assert row.ndim == a.ndim - 1
+```
+
+### q558
+The transposed numbers, as a plain nested list.
+
+### q559
+A one-element tensor is still 1-D. Show it.
+
+## Integrated practice
+
+### q560
+The three answers that fully describe a tensor, in one tuple.
+
+### q561
+Shape, transposed shape, element type, and whether the transpose shares the block.
+
+### q562
+Shape, dtype and whole-tensor equality are three separate verdicts. The third is not implied by the other two.
+
+### q563
+Choose the element type from an argument, then report the tensor three ways.
+
+### q564
+Every piece of metadata for a triply nested input.
+
+### q565
+Four bools about a transpose and its packed copy: order, order, values, and whose memory.
+
+### q566
+Count, value and element type — where the value only exists for a one-element tensor.
+
+### q567
+Does the tensor give the input back unchanged? It depends on the type you asked for.
 
 ## Misconceptions
+
 
 - **"A tensor is just a faster list."** — A list stores anything, a tensor
   stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`

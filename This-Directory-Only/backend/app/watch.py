@@ -163,9 +163,10 @@ def check_a_kp_is_taught_one_concept_at_a_time():
     # gets labelled as the problem that needs all of them.
     whole_kp = [
         qid for qid, src in lessons._question_source.items()
-        if src == "kp-independent" and kc in lessons._question_target_kcs.get(qid, [])
+        if src in ("kp-integrated", "kp-independent")
+        and kc in lessons._question_target_kcs.get(qid, [])
     ]
-    assert whole_kp, f"{kc}: no independent problems — nothing can be integrated"
+    assert whole_kp, f"{kc}: no top-rung problems — nothing can be integrated"
     for qid in whole_kp:
         assert lessons.is_integrated(qid, exposure), \
             f"{kc}: q{qid} needs the whole KP but is not reported integrated"
@@ -176,29 +177,28 @@ def check_a_kp_is_taught_one_concept_at_a_time():
 
 
 def check_a_rung_reports_the_support_it_promises():
-    """`faded` promises blanks; `partial` promises an example. Not each other.
+    """`faded` promises blanks. It is the only rung that promises anything.
 
-    One boolean covering both rungs let each cover for the other: a faded drill
-    with only an example still read as "most of the solution is written", and a
-    partial one with only blanks still read as "read the example above". Both
-    are reachable — the queue falls back to the unfiltered pool when a rung's
-    own drills are spent — and both describe a page the learner is not looking
-    at.
+    A faded drill served without blanks — reachable whenever a KC's own faded
+    drills are spent — reads as "most of the solution is written for you" over
+    a blank page, which describes a screen the learner is not looking at.
+
+    `partial` is deliberately NOT here any more (2026-08-28). It used to promise
+    an example above the problem, but examples are authored per ITEM: thirteen
+    of the nineteen solo drills on `numpy.ndarray-model` have none, and the rung
+    reported itself unsupported on every one of them. Examples now ORDER that
+    rung (`kc_graph.with_example_first`) instead of defining it.
     """
     from app import lessons
     lessons._load()
     with_example = next(iter(lessons._applied_with_example), None)
-    assert with_example, "no drill has a worked example — the third rung is empty"
+    assert with_example, "no solo drill has a worked example — the fade has nothing to fade"
 
     assert not lessons.rung_support(with_example, "faded", None), \
         "a worked example is being counted as blanks on the faded rung"
     assert lessons.rung_support(with_example, "faded", "def solve():\n    return _____"), \
         "blanks in the starter are not being counted on the faded rung"
-    assert lessons.rung_support(with_example, "partial", None), \
-        "a worked example is not being counted on the rung that promises one"
-    assert not lessons.rung_support(0, "partial", "def solve():\n    return _____"), \
-        "blanks are standing in for the example the partial rung promises"
-    for stage in ("worked", "solo", ""):
+    for stage in ("worked", "partial", "solo", ""):
         assert lessons.rung_support(0, stage, None), \
             f"stage {stage!r} promises no scaffold and must not report one missing"
 

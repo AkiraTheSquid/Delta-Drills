@@ -596,3 +596,461 @@ print(solve(*example)[:, :, 0])
         [1., 1., 4., 4.],
         [2., 2., 5., 5.],
         [2., 2., 5., 5.]])"
+Numpy,Core array literacy,Write a function solve(rows) that builds a tensor from the nested list rows and returns its contents back as a plain nested Python list. Building a tensor copies the values into one block; reading them out again is the check worth running whenever you are not sure a conversion did what you meant.,"import torch
+import torch as t
+
+def solve(rows):
+    """"""Return the tensor's contents as a plain nested Python list.""""""
+    a = t.tensor(rows)
+    return a.tolist()
+
+
+example = [[7, 8], [9, 10]]
+print(solve(example))
+",10,"[[7, 8], [9, 10]]"
+Numpy,Core array literacy,"Write a function solve(values) that builds a tensor from the FLAT list values, which holds exactly one number, and returns that number as a plain Python int or float — not as a tensor. There is one call that pulls a single element out, and it refuses unless the tensor holds exactly one.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return the tensor's only element as a plain Python number.""""""
+    a = t.tensor(values)
+    return a.item()
+
+
+example = [7]
+print(solve(example))
+",12,7
+Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that builds a tensor from each nested list and returns ONE bool: do the two tensors hold the same values in the same layout? Use the whole-tensor comparison, not a per-element one — you want a single answer, not a tensor of them.","import torch
+import torch as t
+
+def solve(rows_a, rows_b):
+    """"""Return True when the two tensors match on shape AND values.""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return t.equal(a, b)
+
+
+example = ([[1, 2], [3, 4]], [[1, 2], [3, 4]])
+print(solve(*example))
+",14,True
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (view_shares, copy_shares) of two bools: whether a.T reads the same block of memory as a, and whether the packed copy of a.T does. Transposing only re-describes the block; the copy is how you ask for a block of your own. Answer both by comparing where each tensor's data starts.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (does a.T share a's block?, does its packed copy?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.data_ptr() == a.data_ptr(),
+            view.contiguous().data_ptr() == a.data_ptr())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",16,"(True, False)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (transpose_in_order, copy_in_order) of two bools: whether a.T is still in reading order, and whether the packed copy of a.T is. One call asks for the copy; one attribute-free call reports the order.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (is a.T in reading order?, is its packed copy?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.is_contiguous(), view.contiguous().is_contiguous())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",18,"(False, True)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns its shape as a plain Python tuple of ints — not a torch.Size. The two compare equal, but anything that asks you for a tuple wants a real one.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return the tensor's shape as a plain tuple of ints.""""""
+    a = t.tensor(rows)
+    return tuple(a.shape)
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",11,"(2, 3)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns a tuple (rows_count, columns_count) — the length along axis 0 and the length along axis 1, as plain ints. Axis 0 is the outermost nesting level.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (length along axis 0, length along axis 1).""""""
+    a = t.tensor(rows)
+    return (a.shape[0], a.shape[1])
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",13,"(2, 3)"
+Numpy,Core array literacy,"Write a function solve(data) that builds a tensor from a Python list nested to ANY depth and returns its number of axes as a plain int. Nesting depth is what decides this, not how many numbers are inside.","import torch
+import torch as t
+
+def solve(data):
+    """"""Return the tensor's number of axes.""""""
+    a = t.tensor(data)
+    return a.ndim
+
+
+example = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+print(solve(example))
+",15,3
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns a tuple (element_count, outer_length): the tensor's total number of elements, and len(rows). They are different questions — one counts numbers, the other counts rows.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (total element count, number of outer rows).""""""
+    a = t.tensor(rows)
+    return (a.numel(), len(rows))
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",17,"(6, 2)"
+Numpy,Core array literacy,"Write a function solve(rows, wanted) that builds a tensor from rows and returns ONE bool: does its shape equal the tuple wanted? Compare the shape against wanted directly.","import torch
+import torch as t
+
+def solve(rows, wanted):
+    """"""Return True when the tensor's shape equals `wanted`.""""""
+    a = t.tensor(rows)
+    return tuple(a.shape) == tuple(wanted)
+
+
+example = ([[1, 2, 3], [4, 5, 6]], (2, 3))
+print(solve(*example))
+",19,True
+Numpy,Core array literacy,Write a function solve(values) that builds a tensor from the FLAT list and returns its dtype's NAME as a string — 'torch.int64' or 'torch.float32'. The dtype is an attribute; turning it into a string is a separate step.,"import torch
+import torch as t
+
+def solve(values):
+    """"""Return str() of the tensor's dtype.""""""
+    a = t.tensor(values)
+    return str(a.dtype)
+
+
+example = [1, 2, 3]
+print(solve(example))
+",12,torch.int64
+Numpy,Core array literacy,"Write a function solve(values) that builds a tensor from the FLAT list and returns ONE bool: is the whole block held as 64-bit integers? Compare the tensor's dtype against the integer dtype by name, not against a string.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return True when the tensor's dtype is the 64-bit integer one.""""""
+    a = t.tensor(values)
+    return a.dtype == t.int64
+
+
+example = [1, 2, 3]
+print(solve(example))
+",14,True
+Numpy,Core array literacy,"Write a function solve(values) that builds a tensor from the FLAT list but FORCES it to 32-bit floats rather than letting PyTorch infer the type, and returns its contents as a plain Python list. Say what you want up front with the keyword argument.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return the values as a float32 tensor, read back as a list.""""""
+    a = t.tensor(values, dtype=t.float32)
+    return a.tolist()
+
+
+example = [1, 2, 3]
+print(solve(example))
+",18,"[1.0, 2.0, 3.0]"
+Numpy,Core array literacy,"Write a function solve(values) that builds a tensor from the FLAT list and returns a tuple (is_float, element_count). One float anywhere in the input re-types the WHOLE block, and the element count does not move — that is why these are two separate questions.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (is the block float32?, how many elements).""""""
+    a = t.tensor(values)
+    return (a.dtype == t.float32, a.numel())
+
+
+example = [1, 2.5, 3]
+print(solve(example))
+",20,"(True, 3)"
+Numpy,Core array literacy,"Write a function solve(values_a, values_b) that builds a tensor from each FLAT list and returns ONE bool: do the two agree on dtype? Two tensors can hold the same count of numbers and still disagree here.","import torch
+import torch as t
+
+def solve(values_a, values_b):
+    """"""Return True when the two tensors share a dtype.""""""
+    a = t.tensor(values_a)
+    b = t.tensor(values_b)
+    return a.dtype == b.dtype
+
+
+example = ([1, 2, 3], [4, 5, 6])
+print(solve(*example))
+",16,True
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT Python list of numbers and returns a tuple (ndim, numel, shape), where shape is a plain tuple of ints. A flat list is one level of nesting however many numbers are in it.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (number of axes, element count, shape as a tuple).""""""
+    a = t.tensor(values)
+    return (a.ndim, a.numel(), tuple(a.shape))
+
+
+example = [4, 1, 7, 2, 9]
+print(solve(example))
+",22,"(1, 5, (5,))"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT list and returns a tuple (dtype_name, is_float) — str() of the tensor's dtype, and whether that dtype is torch.float32. A single float in the input decides the type of the whole block.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (dtype name as a string, is it float32?).""""""
+    a = t.tensor(values)
+    return (str(a.dtype), a.dtype == t.float32)
+
+
+example = [1, 2, 3.5]
+print(solve(example))
+",24,"('torch.float32', True)"
+Numpy,Core array literacy,"Write a function solve(cube) that takes a TRIPLY nested Python list and returns a tuple (shape, numel, product_matches). shape is a plain tuple of ints; product_matches is a bool saying whether multiplying the shape together gives the element count. Compute the product with a plain Python loop over the shape.","import torch
+import torch as t
+
+def solve(cube):
+    """"""Return (shape, element count, does the shape multiply out?).""""""
+    a = t.tensor(cube)
+    shape = tuple(a.shape)
+    product = 1
+    for length in shape:
+        product = product * length
+    return (shape, a.numel(), product == a.numel())
+
+
+example = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+print(solve(example))
+",28,"((2, 2, 2), 8, True)"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT list and returns the tensor's only element as a plain Python number when the tensor holds exactly one, and None otherwise. Check the element count yourself rather than letting the call raise.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return the single element as a Python number, or None.""""""
+    a = t.tensor(values)
+    if a.numel() != 1:
+        return None
+    return a.item()
+
+
+example = [42]
+print(solve(example))
+",26,42
+Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that returns a tuple (equal, same_shape): the whole-tensor comparison of the two tensors, and whether they merely agree on shape. Code that checks only the shape is checking half the question — two tensors can be the same size and hold completely different numbers.","import torch
+import torch as t
+
+def solve(rows_a, rows_b):
+    """"""Return (whole-tensor equal?, same shape?).""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return (t.equal(a, b), tuple(a.shape) == tuple(b.shape))
+
+
+example = ([[1, 2], [3, 4]], [[9, 9], [9, 9]])
+print(solve(*example))
+",27,"(False, True)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (shape, transposed_shape), both as plain tuples of ints. Transposing swaps which axis is which without touching the numbers.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (a's shape, a.T's shape), both plain tuples.""""""
+    a = t.tensor(rows)
+    return (tuple(a.shape), tuple(a.T.shape))
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",23,"((2, 3), (3, 2))"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple of three bools: is a itself in reading order, is a.T, and is the packed copy of a.T. A freshly built tensor is laid out contiguously; a transpose is the same block read in a different order.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (a in order?, a.T in order?, packed copy in order?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    packed = view.contiguous()
+    return (a.is_contiguous(), view.is_contiguous(), packed.is_contiguous())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",32,"(True, False, True)"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT list which may contain floats, forces the tensor to 64-bit integers, and returns a tuple (dtype_name, contents) — str() of the dtype and the values read back as a plain list. Forcing an integer type truncates toward zero, which is the point: say what you want rather than relying on the input.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (forced dtype name, the values as a plain list).""""""
+    a = t.tensor(values, dtype=t.int64)
+    return (str(a.dtype), a.tolist())
+
+
+example = [1.9, 2.2, 3.7]
+print(solve(example))
+",30,"('torch.int64', [1, 2, 3])"
+Numpy,Core array literacy,"Write a function solve(values) that returns a tuple (inferred_name, forced_name, same) — the dtype name PyTorch infers from the FLAT list, the dtype name you get by forcing torch.float32 on the same list, and whether the two names are equal.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (inferred dtype name, forced float32 name, equal?).""""""
+    inferred = t.tensor(values)
+    forced = t.tensor(values, dtype=t.float32)
+    return (str(inferred.dtype), str(forced.dtype),
+            inferred.dtype == forced.dtype)
+
+
+example = [1, 2, 3]
+print(solve(example))
+",29,"('torch.int64', 'torch.float32', False)"
+Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that returns a tuple (same_numel, same_shape) for the two tensors built from the nested lists. Two tensors can hold the same COUNT of numbers arranged differently, so these are not the same question.","import torch
+import torch as t
+
+def solve(rows_a, rows_b):
+    """"""Return (same element count?, same shape?).""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return (a.numel() == b.numel(), a.shape == b.shape)
+
+
+example = ([[1, 2, 3], [4, 5, 6]], [[1, 2], [3, 4], [5, 6]])
+print(solve(*example))
+",25,"(True, False)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a 2-D tensor and returns a tuple (row_shape, row_ndim) describing its FIRST row, indexed as rows[0] would be. Indexing away the outermost axis leaves one fewer.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (shape of the first row as a tuple, its number of axes).""""""
+    a = t.tensor(rows)
+    first = a[0]
+    return (tuple(first.shape), first.ndim)
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",31,"((3,), 1)"
+Numpy,Core array literacy,Write a function solve(rows) that builds a tensor a and returns the TRANSPOSE's contents as a plain nested Python list. The numbers never moved in memory — reading them out is what puts them in the new order.,"import torch
+import torch as t
+
+def solve(rows):
+    """"""Return a.T's contents as a plain nested list.""""""
+    a = t.tensor(rows)
+    return a.T.tolist()
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",33,"[[1, 4], [2, 5], [3, 6]]"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT list and returns a tuple (numel, ndim, is_scalar_sized) — the element count, the number of axes, and a bool saying whether the tensor holds exactly one element. A one-element tensor is still 1-D.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (element count, number of axes, holds exactly one?).""""""
+    a = t.tensor(values)
+    return (a.numel(), a.ndim, a.numel() == 1)
+
+
+example = [5]
+print(solve(example))
+",34,"(1, 1, True)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns the three things that fully describe it: a tuple (shape, dtype_name, numel) — the shape as a plain tuple of ints, str() of the dtype, and the element count.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (shape as a tuple, dtype name, element count).""""""
+    a = t.tensor(rows)
+    return (tuple(a.shape), str(a.dtype), a.numel())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",38,"((2, 3), 'torch.int64', 6)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a and returns a tuple (shape, transposed_shape, dtype_name, shares_memory): both shapes as plain tuples, str() of a's dtype, and a bool for whether a.T reads the same block as a. Transposing changes the shape and nothing else.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (shape, a.T shape, dtype name, does a.T share a's block?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (tuple(a.shape), tuple(view.shape), str(a.dtype),
+            view.data_ptr() == a.data_ptr())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",42,"((2, 3), (3, 2), 'torch.int64', True)"
+Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that returns a tuple of three bools: do the two tensors agree on shape, do they agree on dtype, and does the whole-tensor comparison call them equal. All three can differ, and the third is not implied by the first two.","import torch
+import torch as t
+
+def solve(rows_a, rows_b):
+    """"""Return (same shape?, same dtype?, t.equal verdict).""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return (a.shape == b.shape, a.dtype == b.dtype, t.equal(a, b))
+
+
+example = ([[1, 2], [3, 4]], [[1.0, 2.0], [3.0, 4.0]])
+print(solve(*example))
+",44,"(True, False, True)"
+Numpy,Core array literacy,"Write a function solve(values, as_float) that takes a FLAT list and a bool. When as_float is True, force the tensor to torch.float32; otherwise force it to torch.int64. Return a tuple (dtype_name, ndim, numel).","import torch
+import torch as t
+
+def solve(values, as_float):
+    """"""Return (forced dtype name, number of axes, element count).""""""
+    wanted = t.float32 if as_float else t.int64
+    a = t.tensor(values, dtype=wanted)
+    return (str(a.dtype), a.ndim, a.numel())
+
+
+example = ([1, 2, 3], True)
+print(solve(*example))
+",40,"('torch.float32', 1, 3)"
+Numpy,Core array literacy,"Write a function solve(cube) that takes a TRIPLY nested Python list and returns a tuple (ndim, shape, numel, dtype_name) — the number of axes, the shape as a plain tuple of ints, the element count, and str() of the dtype. Nesting depth gives the axes; the numbers inside give the dtype.","import torch
+import torch as t
+
+def solve(cube):
+    """"""Return (axes, shape as a tuple, element count, dtype name).""""""
+    a = t.tensor(cube)
+    return (a.ndim, tuple(a.shape), a.numel(), str(a.dtype))
+
+
+example = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+print(solve(example))
+",46,"(3, (2, 2, 2), 8, 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a, takes its transpose, and makes a packed copy of that transpose. Return a tuple of four bools: is the transpose in reading order, is the packed copy, does the packed copy hold the same values as the transpose, and does the packed copy own its OWN block of memory rather than a's.","import torch
+import torch as t
+
+def solve(rows):
+    """"""Return (a.T in order?, copy in order?, same values?, own block?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    packed = view.contiguous()
+    return (view.is_contiguous(), packed.is_contiguous(),
+            t.equal(packed, view), packed.data_ptr() != a.data_ptr())
+
+
+example = [[1, 2, 3], [4, 5, 6]]
+print(solve(example))
+",48,"(False, True, True, True)"
+Numpy,Core array literacy,"Write a function solve(values) that takes a FLAT list and returns a tuple (numel, value, dtype_name). value is the tensor's only element as a plain Python number when it holds exactly one, and None otherwise. dtype_name is str() of the dtype either way.","import torch
+import torch as t
+
+def solve(values):
+    """"""Return (element count, the single value or None, dtype name).""""""
+    a = t.tensor(values)
+    value = a.item() if a.numel() == 1 else None
+    return (a.numel(), value, str(a.dtype))
+
+
+example = [7]
+print(solve(example))
+",39,"(1, 7, 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(values, as_int) that takes a FLAT list and a bool. Force the tensor to torch.int64 when as_int is True; otherwise let PyTorch infer the dtype. Return a tuple (unchanged, shape, dtype_name): whether reading the tensor back out as a plain list gives exactly values again, the shape as a plain tuple, and str() of the dtype. Forcing an integer type onto floats is where a round-trip stops being lossless.","import torch
+import torch as t
+
+def solve(values, as_int):
+    """"""Return (does .tolist() give values back?, shape, dtype name).""""""
+    a = t.tensor(values, dtype=t.int64) if as_int else t.tensor(values)
+    return (a.tolist() == values, tuple(a.shape), str(a.dtype))
+
+
+example = ([1.9, 2.2], True)
+print(solve(*example))
+",45,"(False, (2,), 'torch.int64')"

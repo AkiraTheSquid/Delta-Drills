@@ -30,6 +30,13 @@ SECTIONS = [
     # it. Listed here so `## Applied practice` parses; `compile_lessons.py`
     # turns it into `applied_items`.
     "Applied practice",
+    # 2026-08-28: the four rungs the learner is actually shown are Lesson,
+    # Faded, Solo and Integrated. `## Solo practice` and `## Integrated
+    # practice` are the two new authoring sections; `## Guided practice` and
+    # `## Applied practice` stay listed because 62 other KPs still use them
+    # (guided folds into the faded rung, applied into the solo one).
+    "Solo practice",
+    "Integrated practice",
     "Independent practice",
     "Misconceptions",
 ]
@@ -449,6 +456,10 @@ def parse_kp(path):
         "faded": meta.get("faded", []),
         "guided": meta.get("guided", []),
         "independent": meta.get("independent", []),
+        # Whole-KP problems: the ladder's top rung, which needs every concept
+        # of the KP at once rather than one of them. Optional — a KP that
+        # teaches a single idea has nothing to integrate.
+        "integrated": meta.get("integrated", []),
         "sections": sections,
     }
     return kp

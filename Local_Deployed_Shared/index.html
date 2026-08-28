@@ -82,6 +82,7 @@
   <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
@@ -1566,6 +1567,11 @@
             </div>
           </div>
           <div class="question-text" id="question-text"></div>
+          <!-- "For this input, return this" + "Not this". Correct rows are
+               derived from the graded test cases; wrong rows are authored per
+               question in `wrong_examples`. Written by
+               practice/question-examples.js, which owns this node entirely. -->
+          <div class="question-examples hidden" id="question-examples"></div>
           <div class="question-imports hidden" id="question-imports">
             <div class="question-imports-label">Imported helpers</div>
             <div class="question-imports-list" id="question-imports-list"></div>
@@ -1903,6 +1909,7 @@ t.manual_seed(0)
   <script src="practice/session-clock.js?v=1"></script>
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=11"></script>
+  <script src="practice/question-examples.js?v=1"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)

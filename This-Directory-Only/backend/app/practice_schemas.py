@@ -40,6 +40,9 @@ class NextQuestionResponse(BaseModel):
     starter_code: str | None = None
     test_cases: list[dict] = Field(default_factory=list)
     submission_mode: str = "stdout"
+    # Authored near-miss outputs shown under the prompt, as
+    # [{"call": ..., "output": ..., "why": ...}]. Empty for most questions.
+    wrong_examples: list[dict] = Field(default_factory=list)
     hint: str | None = None  # short nudge, revealed by the Show Hint button
     # repo-relative path to the per-question solution Colab (arena-procedural-drills/…);
     # the frontend routes it to GitHub via colabUpstreamHref for the Show Answer button.
@@ -97,6 +100,14 @@ class NextQuestionResponse(BaseModel):
     # the promotion arithmetic reads back; a fifth would either rewrite that
     # history or invent a rung nothing can be promoted out of.
     ladder_integrated: bool = False
+
+    # Set only when this concept's CURRENT rung had nothing left the learner
+    # had not already answered, and the queue reached down a rung for something
+    # unseen rather than re-serving a solved problem. Carries the rung it
+    # reached to (`served_from`) and how many the spent rung held, so the strip
+    # can say so instead of silently looking like a demotion. None is the
+    # ordinary case. See prioritization.narrow_to_next_kc.
+    ladder_gap: dict | None = None
 
 
 class SubmitRequest(BaseModel):

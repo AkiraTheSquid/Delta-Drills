@@ -231,8 +231,30 @@ def audit(only_kc: str | None = None, summary: bool = False, strict: bool = Fals
             if not kc or (only_kc and kc != only_kc):
                 continue
             already = _known_before(kc, rank, declared)
+            # Symbols this KP has already put in front of the learner, segment
+            # by segment. COVERAGE used to read the segment's `## Worked
+            # example` alone, and that is not the page: the learner is shown
+            # `## Concept` and `## Worked example` together, one segment at a
+            # time, in order (lessons._segment_step), and the drill comes after.
+            # Scoring only the worked example reported a drill on `.item()` as
+            # uncovered while the concept prose two paragraphs above it ran
+            # `one.item()` and printed the result.
+            #
+            # Accumulated ACROSS segments, not reset per segment, for the same
+            # reason: segment 3's drill may lean on something segment 1 taught,
+            # and it has been taught. Seth's rule, 2026-08-28: "make sure to do
+            # checks like for finding whether something was used before ... it
+            # doesn't introduce requiring you to do something that you haven't
+            # used before with a function that you haven't seen before".
+            taught_earlier: set = set()
             for seg in _segments(kp):
-                shown = example_symbols(seg.get("worked_example_markdown", ""))
+                page = (
+                    (seg.get("concept_markdown") or "")
+                    + "\n"
+                    + (seg.get("worked_example_markdown") or "")
+                )
+                shown = example_symbols(page) | taught_earlier
+                taught_earlier = shown
                 example_shapes = {
                     s
                     for block in FENCE.findall(seg.get("worked_example_markdown", "") or "")

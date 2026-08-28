@@ -170,6 +170,29 @@ const PracticeAPI = {
       if (res.status === 401) {
         handleExpiredToken();
         // fall through to local mode below
+      } else if (res.status === 409) {
+        /* The concept's current rung holds nothing this learner has not
+           already answered. The server stopped rather than re-serving a solved
+           problem (backend/app/prioritization.py) and sent the sentence to
+           show; `detail.message` is written for the learner, so surface it
+           verbatim instead of the JSON around it. Anything unexpected in the
+           body falls back to the generic line — a parse failure must not turn
+           a handled state into "[object Object]". */
+        let message = "";
+        try {
+          const body = await res.json();
+          message = (body && body.detail && body.detail.message) || "";
+          if (message) {
+            const err = new Error(message);
+            err.contentExhausted = body.detail;
+            throw err;
+          }
+        } catch (parseErr) {
+          if (parseErr && parseErr.contentExhausted) throw parseErr;
+        }
+        throw new Error(
+          "You have finished every problem available for this concept. Ask Claude to write more drills for it, or pick a different concept from the Knowledge Graph.",
+        );
       } else if (!res.ok) {
         const detail = await res.text();
         throw new Error(detail || "Failed to load next question.");

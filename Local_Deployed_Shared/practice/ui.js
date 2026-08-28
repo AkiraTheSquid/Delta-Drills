@@ -286,6 +286,9 @@ function renderQuestion(q, count) {
   // — that call replaces #question-text wholesale.
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
+  // Input → expected output for the graded cases, plus any authored near-miss
+  // outputs. Sibling of #question-text, so it survives LadderUI.decorate.
+  window.QuestionExamples?.render(q);
   renderQuestionVisual(q);
   if (window.DeltaNotebook) {
     window.DeltaNotebook.reset(q.starter_code || DEFAULT_EDITOR_CODE);

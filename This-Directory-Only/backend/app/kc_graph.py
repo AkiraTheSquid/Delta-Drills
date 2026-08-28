@@ -421,8 +421,22 @@ def questions_for_kc(kc: str) -> Sequence[int]:
 # `leftover-assignment` is not a rung: those tags were hand-assigned to drills no
 # KP references, so nothing has been faded for them. They sort last, after every
 # authored rung.
-_LADDER_RANK = {"kp-faded": 0, "kp-guided": 1, "kp-independent": 2}
-_LADDER_UNRANKED = 3
+_LADDER_RANK = {
+    "kp-faded": 0,
+    "kp-guided": 1,
+    "kp-independent": 2,
+    # Whole-KP problems (`integrated:` in the KP frontmatter). Its own rank
+    # rather than a flag on `kp-independent`, because the top rung has to be
+    # SELECTABLE — `lessons.is_integrated` could only ever relabel a question
+    # the queue had already chosen for some other reason.
+    "kp-integrated": 3,
+}
+_LADDER_UNRANKED = 4
+# Public because `prioritization` has to be able to say "this question carries
+# no rung at all" when it looks for spare work: anything with a rank belongs to
+# some rung, and serving a rung the learner has not earned is exactly the
+# promotion-on-exhaustion the ladder rewrite removes.
+LADDER_UNRANKED = _LADDER_UNRANKED
 
 
 def ladder_rank(qid: int) -> int:
@@ -774,59 +788,108 @@ def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "indepen
     return touched
 
 
-# Which authored rung serves which ladder stage. "worked" is not a drill at all
-# — it is a page the frontend renders — so it has no entry and never selects a
-# question. `guided` counts as faded-side support: it still shows the learner
-# how, which is the property that matters when support is what they need.
-_STAGE_TO_RANKS = {"faded": (0, 1), "partial": (2, 3), "solo": (2, 3)}
-
-# `partial` and `solo` draw from the SAME rung on purpose. What separates them
-# is not how much of the answer is pre-written — by that point none of it is —
-# but whether the learner has just read the move worked through. Third rung:
-# see an example, then write the whole function. Fourth rung: write it with
-# nothing above it. `lessons.has_worked_example` is the split, and it is
-# authored (a KP's `## Applied practice` section), not inferred.
-_STAGE_NEEDS_EXAMPLE = {"partial": True, "solo": False}
+# Which authored rung serves which ladder stage, IN PREFERENCE ORDER. "worked"
+# is not a drill at all — it is the lesson page the frontend renders — so it has
+# no entry and never selects a question.
+#
+# The four rungs the learner is shown, and what each one puts on screen
+# (2026-08-28, from Seth's own description of the loop he wants):
+#
+#   worked  / Lesson      the KP's pages, examples and all. Not graded.
+#   faded   / Faded       the problem, and a starter with the new syntax blanked
+#                         out. NO example beside it — the learner met the
+#                         examples in the lesson they just read, and one sitting
+#                         next to the blanks spells the answer (which is exactly
+#                         the defect reported against q484).
+#   partial / Solo        write the whole function unaided. An example appears
+#                         above SOME of these — the ones whose KP authored a
+#                         ```python worked``` fence for them — and the queue
+#                         serves those first, so examples thin out across the
+#                         rung instead of stopping on a cutoff.
+#   solo    / Integrated  whole-KP problems, every concept of the KP at once,
+#                         and never an example.
+#
+# The STORED stage strings are unchanged on purpose. Every attempt a learner has
+# ever made is filed under one of these four names and the promotion arithmetic
+# reads them back; renaming them would either rewrite that history or silently
+# reset it. What changed is what each rung serves and what it is called on
+# screen (practice/stage-ladder.js).
+#
+# `guided` sits with `faded`: a guided item carries hints and a derived
+# blank-starter, which is faded-rung support by another name. `partial` falls
+# back to unranked leftovers, and `solo` falls back to `kp-independent` and then
+# leftovers, so a KP that authored no `## Integrated practice` still has a top
+# rung to serve.
+_STAGE_TO_RANKS = {
+    "faded": (0, 1),
+    "partial": (2, _LADDER_UNRANKED),
+    "solo": (3, 2, _LADDER_UNRANKED),
+}
 
 
 # The rungs that put support in front of the learner: an authored faded drill
-# carries the `_____` blanks, a guided one carries hints. Independent and
-# unranked carry neither.
+# carries the `_____` blanks, a guided one carries hints. Independent,
+# integrated and unranked carry neither.
 _SUPPORTED_RANKS = frozenset({0, 1})
 
 
 def stage_requires_support(stage: str) -> bool:
     """Does this stage promise the learner something to work from?
 
-    Support arrives two ways, and both count. A `faded` drill carries it in the
-    question — the `_____` blanks, or hints. A `partial` drill carries it in the
-    notebook — the whole function is the learner's to write, but an example of
-    the move is directly above it. `solo` is the one rung defined by having
-    neither, so it is the only stage that is False.
+    Only `faded` does now: the blanks, or a guided item's hints. `partial` used
+    to count because an example sat above the problem, but that example is
+    authored per ITEM rather than per rung — most solo drills have none — so it
+    was never a promise the rung could keep.
 
-    `narrow_to_next_kc` uses this to decide whether running out of unserved
-    drills licenses serving the next rung up. At a supported stage it does
-    not — that would promote on exhaustion instead of on evidence.
+    Kept because `lessons.rung_support` still reports, per card, whether the
+    promise this rung makes is on the page; the strip draws it.
     """
     ranks = _STAGE_TO_RANKS.get(stage)
     if not ranks:
         return False
-    return set(ranks) <= _SUPPORTED_RANKS or bool(_STAGE_NEEDS_EXAMPLE.get(stage))
+    return set(ranks) <= _SUPPORTED_RANKS
 
 
 def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
+    """The questions this rung serves, from the FIRST authored rank that has any.
+
+    Preference order, not a set union. `solo` prefers a whole-KP `integrated`
+    problem and settles for an `independent` one; `faded` prefers a hand-cut
+    faded drill and settles for a guided one. Taking the union instead would let
+    the difficulty picker hand a learner on the top rung a single-concept drill
+    while a whole-KP problem sat unserved beside it.
+
+    Returns [] when the stage has nothing — the caller reads that as "this rung
+    is spent", which is now a reportable state rather than a licence to repeat.
+    """
     ranks = _STAGE_TO_RANKS.get(stage)
     if not ranks:
         return []
-    out = [q for q in qids if ladder_rank(q) in ranks]
-    wants_example = _STAGE_NEEDS_EXAMPLE.get(stage)
-    if wants_example is None:
-        return out
-    # A KC with no `## Applied practice` written for it has nothing on the third
-    # rung. Returning [] there is correct rather than a stall: the caller falls
-    # back to the least-scaffolded rung available, which for that KC is the
-    # exampleless drill it would have served anyway.
-    return [q for q in out if lessons.has_worked_example(q) is wants_example]
+    pool = list(qids)
+    for rank in ranks:
+        at_rank = [q for q in pool if ladder_rank(q) == rank]
+        if at_rank:
+            return at_rank
+    return []
+
+
+def with_example_first(qids: Iterable[int]) -> List[int]:
+    """The rung's example-bearing drills, if it still has any unserved.
+
+    THE FADE FROM `partial` TO `solo`, and it needs no schedule and no counter.
+    A solo drill carries an example only when its KP authored one for it (six of
+    nineteen on `numpy.ndarray-model`), and the queue never repeats a served
+    question — so serving the example-bearing ones first means a learner meets
+    an example, then a few unaided problems, then another example introducing
+    the next move, and then none at all once they are spent. "It shows examples
+    less and less until it doesn't show any examples at all."
+
+    Returns the whole input when no example-bearing drill is left, which is the
+    far end of that fade rather than a failure.
+    """
+    pool = list(qids)
+    with_example = [q for q in pool if lessons.has_worked_example(q)]
+    return with_example or pool
 
 
 def lowest_rung(qids: Iterable[int]) -> List[int]:

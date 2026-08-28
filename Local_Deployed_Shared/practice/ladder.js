@@ -8,15 +8,21 @@
      1. pointing the page-wide concept topbar (practice/concept-topbar.js) at
         whatever concept and rung the current card is on;
      2. the worked example itself at the `worked` rung, before any question;
-     3. that same worked example kept ON SCREEN through the faded and partial
-        rungs, beside the problem.
+     3. an example beside the problem on the `partial` rung ONLY, and only for
+        the drills whose KP authored one.
 
-   (3) is the load-bearing one. Renkl & Atkinson's completion problems are
-   completion problems because the example is still visible — the learner is
-   filling in a solution they can see the shape of. Show the example, take it
-   away, then ask for the missing step and you have not built a scaffold, you
-   have built a recall test with extra ceremony. The example only disappears at
-   `solo`, which is the rung that is supposed to be unsupported.
+   (3) used to include `faded`, on the reading that a completion problem needs
+   its example visible. It does not survive contact with what the two things
+   actually are here: the example is the segment's worked solution and the
+   faded starter is that same solution with the blanks cut into it, so side by
+   side the example is an answer key. The scaffold that makes the faded rung a
+   completion problem is the STARTER — most of the code, one move missing —
+   and that is still on the page.
+
+   Where the examples went: all of them are on the Lesson rung, which the
+   learner reads immediately before the faded rung opens. On `partial` a few
+   drills carry one of their own, served first so they thin out (see
+   kc_graph.with_example_first); by `solo` there are none.
 
    The lesson content comes from `lessons_structured.json` through LessonGate,
    which already loads and caches it — no second copy of the KP records, and no
@@ -26,14 +32,35 @@
 const LadderUI = (() => {
   "use strict";
 
-  // Rungs on which the worked example stays beside the problem. `solo` is
-  // absent on purpose: the whole point of that rung is that support is gone.
-  const SUPPORTED_STAGES = new Set(["faded", "partial"]);
+  /* Rungs on which an example is rendered beside the problem.
+
+     🔴 `faded` IS NOT ONE OF THEM ANY MORE (2026-08-28), and removing it is the
+     whole point of this change. It used to be, on the Renkl-and-Atkinson
+     reading that a completion problem needs its example visible — but the
+     example that was shown is the KP SEGMENT's example, and the faded starter
+     is that same segment's solution with the new syntax blanked out. On q484
+     the example printed
+
+         print("shapes:", tuple(a.shape), ..., "-> match?", a.shape == b.shape)
+         print("dtypes:", a.dtype, b.dtype, "-> match?", a.dtype == b.dtype)
+
+     directly beside `return (a._____ == b._____, a._____ == b._____)`. Every
+     blank was spelled out one column to the left. Seth, in-app feedback:
+     "The scaffolding on the right is perfect ... but the problem is that the
+     example on the left completely gives away the scaffolded answer."
+
+     The examples have not been taken away — they moved. The learner reads them
+     on the Lesson rung, all of them, immediately before this rung starts; the
+     faded drill is then recall against a scaffold rather than transcription.
+     `partial` (displayed "Solo") keeps an example for the MINORITY of its
+     drills that authored one, which is how a new move is introduced without
+     stopping the rung. `solo` (displayed "Integrated") never has one. */
+  const SUPPORTED_STAGES = new Set(["partial"]);
 
   const STAGE_BLURB = {
-    faded: "Most of the solution is written for you — supply the last step.",
-    partial: "Read the example above, then write this one yourself.",
-    solo: "No scaffold on this one. You have earned it.",
+    faded: "You read the example in the lesson — this one is from memory. Fill in the blanks.",
+    partial: "Write the whole thing yourself.",
+    solo: "Every idea in this concept at once. Nothing to read first.",
   };
 
   // Quotes matter here: every one of these values is interpolated into a
@@ -50,6 +77,39 @@ const LadderUI = (() => {
 
   const _kcOf = (q) => (q && q.ladder_kc) || null;
   const _stageOf = (q) => (q && q.ladder_stage) || null;
+
+  // What the learner is told when their own rung ran out of unseen problems
+  // and the queue reached down a rung for something they have not done. Named
+  // by the rung it reached TO, because that is the one on the screen.
+  const GAP_FROM_LABEL = {
+    faded: "fill-in-the-blank",
+    partial: "solo",
+    solo: "integrated",
+    unranked: "unsorted",
+  };
+
+  /* The banner for a spent rung.
+
+     Shown instead of silently looking like a demotion: the strip still names
+     the rung the learner has EARNED (that is what their record says), while
+     the problem in front of them came from a lower one because the earned rung
+     has nothing left they have not already answered. Saying so is the whole
+     difference between "the app went backwards" and "you have finished these".
+     The server never repeats a solved problem — see
+     prioritization.narrow_to_next_kc. */
+  const _gapHtml = (gap) => {
+    if (!gap || !gap.served_from) return "";
+    const spent = GAP_FROM_LABEL[gap.stage] || gap.stage;
+    const from = GAP_FROM_LABEL[gap.served_from] || gap.served_from;
+    return (
+      '<p class="ladder-stage-callout ladder-gap-callout">'
+      + `You have done every ${esc(spent)} problem written for this concept`
+      + (gap.seen ? ` (all ${esc(gap.seen)})` : "")
+      + `. Nothing is being repeated — this one is from the ${esc(from)} rung `
+      + "until more are written. Ask Claude for more drills on this concept."
+      + "</p>"
+    );
+  };
 
   /* ---------- worked-example acknowledgement --------------------------- */
 
@@ -271,6 +331,14 @@ const LadderUI = (() => {
 
     _syncTopbar(question);
     if (!kc || !stage) return;
+
+    /* Before the Colab early-return and before the supported-stage check: a
+       spent rung is worth saying on EVERY card it affects, including the ones
+       that attach no example at all (which, on the faded and integrated rungs,
+       is all of them). Putting it below either guard is how it would end up
+       shown on a minority of the cards it applies to. */
+    const gapHtml = _gapHtml(question.ladder_gap);
+    if (gapHtml) host.insertAdjacentHTML("beforeend", gapHtml);
 
     /* THE COLAB EDITION DOES NOT GET THE EXAMPLE HERE.
 

@@ -6106,7 +6106,7 @@
    "torch.tensor",
    "torch.tensor#dtype"
   ],
-  "source": "kp-guided"
+  "source": "kp-independent"
  },
  "524": {
   "target_kcs": [
@@ -6225,5 +6225,869 @@
   ],
   "new_syntax": [],
   "source": "kp-independent"
+ },
+ "532": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "533": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "534": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "535": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "536": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "537": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "538": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "539": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "540": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "541": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "542": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "543": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "544": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "545": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "546": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-faded"
+ },
+ "547": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "548": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "549": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "550": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "551": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "552": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "553": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "554": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "555": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "556": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "557": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "558": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "559": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-independent"
+ },
+ "560": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "561": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "562": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "563": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "564": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "565": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "566": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "567": {
+  "target_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T",
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.dtype",
+   "Tensor.is_contiguous",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
  }
 }

@@ -321,6 +321,10 @@ class Question:
     starter_code: str | None = None
     test_cases: List[dict] = field(default_factory=list)
     submission_mode: str = "stdout"
+    # Authored near-miss outputs shown under the prompt, as
+    # [{"call": ..., "output": ..., "why": ...}]. Override-only and usually
+    # empty — see the note beside the override read below.
+    wrong_examples: List[dict] = field(default_factory=list)
     # Concept-graph atoms this question's solution exercises, each with a
     # confidence ∈ [0,1] (see data/question_atom_tags.jsonl). Drives the
     # per-atom BKT mastery update on submit. Empty until tags are loaded.
@@ -582,6 +586,7 @@ def _load_csv_into(
                 question_text, answer_code, primary_library, task_type
             )
 
+            wrong_examples: List[dict] = []
             override = overrides.get(qid)
             # Default visual-output flags from inferred task_type; an override
             # can flip them per-id without changing the rest of the pipeline.
@@ -592,6 +597,14 @@ def _load_csv_into(
                 starter_code = override.get("starter_code", starter_code)
                 test_cases = override.get("test_cases", test_cases)
                 submission_mode = override.get("submission_mode", submission_mode)
+                # Authored near-miss outputs shown under the prompt, as
+                # [{"call": ..., "output": ..., "why": ...}]. Override-only:
+                # there is no honest way to DERIVE a wrong answer (a mutated
+                # correct one is as likely to be a second correct one), and the
+                # `why` is the part that teaches. Absent for most questions,
+                # and the UI simply omits the block then. Keep in sync with
+                # pipeline/export_questions_json.py.
+                wrong_examples = override.get("wrong_examples", wrong_examples)
                 task_type = override.get("task_type", task_type)
                 question_text = override.get("question_text", question_text)
                 answer_code = override.get("answer_code", answer_code)
@@ -630,6 +643,7 @@ def _load_csv_into(
                     starter_code=starter_code,
                     test_cases=test_cases,
                     submission_mode=submission_mode,
+                    wrong_examples=wrong_examples,
                 )
             )
             idx += 1

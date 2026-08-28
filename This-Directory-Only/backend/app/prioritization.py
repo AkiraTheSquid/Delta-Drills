@@ -86,21 +86,43 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
 
 def narrow_to_next_kc(
     user_state: UserPracticeState, candidates: List, served: Optional[set] = None
-) -> Tuple[List, Optional[str]]:
+) -> Tuple[List, Optional[str], Optional[dict]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
-    actually intends to teach next, when the subtopic carries any.
+    actually intends to teach next, and to the RUNG that concept is on.
 
     A subtopic can hold questions for several frontier KCs at once, so passing
     the gate is not the same as being the next thing to learn. Without this the
     graph could truthfully highlight one node while the queue served a sibling —
-    the exact "visualisation that does not represent the system" problem. If the
-    next KC has nothing left unserved here, the unnarrowed list is returned so
-    the learner is never stalled by the preference.
+    the exact "visualisation that does not represent the system" problem.
 
-    Returns `(candidates, kc)`, where `kc` is the concept the narrowing settled
-    on, or None when it could not settle on one. The caller needs it: the
-    difficulty aim has to be measured on the concept about to be served, and
-    this function is the only place that knows which concept that is.
+    Returns `(candidates, kc, gap)`.
+
+    `gap` is None in the ordinary case. It is a dict — `{"kc", "kc_title",
+    "stage", "seen", "total"}` — when the concept's current rung holds nothing
+    the learner has not already answered. THAT IS NOT A REASON TO SERVE A
+    REPEAT, and it used to be:
+
+        if kc_graph.stage_requires_support(stage):
+            supported = set(kc_graph.questions_at_stage(...))
+            if supported:
+                fresh = [q for q in narrowed if ... q.id not in served]
+                return fresh or [q for q in narrowed if q.id in supported], next_kc
+                       #        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                       #        every drill on the rung, served or not
+
+    With three faded drills authored for `numpy.ndarray-model`, that `or`
+    branch was the steady state within about ten minutes of practice, and the
+    learner then went round the same three problems indefinitely. Seth,
+    2026-08-28: "I basically memorized all the problems for the first part ...
+    the problem is that, like, they're currently repeating ... it should notify
+    the user that they need to make the AI create more problems since they ran
+    out of problems to practice rather than serving up the old problems they
+    have already done."
+
+    So a spent rung reports itself and serves nothing. The caller decides what
+    to tell the learner; falling through to the next rung would promote on
+    exhaustion rather than on evidence, and repeating is the behaviour being
+    removed.
     """
     here = {q.id for q in candidates}
     served = served or set()
@@ -113,67 +135,89 @@ def narrow_to_next_kc(
         user_state, eligible=lambda qid: qid in here and qid not in served
     )
     if not next_kc:
-        # Nothing here is unserved. That is not "no frontier concept" — it is a
-        # learner who has been round this subtopic before, which on a KC with
-        # nine drills and twenty attempts is the ordinary state rather than the
-        # end of the road. Dropping the narrowing here returns the whole
-        # subtopic unfiltered, so the rung filter below never runs and the
-        # difficulty picker is free to hand a `solo` problem to somebody sitting
-        # on `Worked` — the exact complaint, and the reason the rung guard added
-        # further down was never reached.
-        #
-        # Re-asking on membership alone is safe because `select_question_for_
-        # difficulty` recycles by staleness: an all-served list is still
-        # servable, so preferring the right concept cannot stall the queue.
+        # Nothing here is unserved. Re-ask on membership alone so the concept
+        # the learner is actually on can still report its own exhaustion —
+        # dropping the narrowing here is what used to hand the difficulty
+        # picker the whole subtopic and let a `solo` problem reach somebody
+        # sitting on `Worked`.
         next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here)
     if not next_kc:
-        return candidates, None
+        return candidates, None, None
     narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
     if not narrowed:
-        return candidates, None
+        return candidates, None, None
 
-    # Within the KC, serve the rung the learner's own attempt record says they
-    # are on — faded (fill in the blank) or independent (write it unaided).
-    # `kc_stage` owns that decision; here we only honour it, and fall back to
-    # the least-scaffolded rung still available when the wanted rung is spent,
-    # so an exhausted rung can never stall the queue.
+    # Serve the rung the learner's own attempt record says they are on —
+    # `kc_stage` owns that decision; here we only honour it.
     stage = kc_graph.kc_stage(user_state, next_kc)
+    at_stage = set(kc_graph.questions_at_stage([q.id for q in narrowed], stage))
+    rung = [q for q in narrowed if q.id in at_stage]
+    if not rung:
+        # This concept authored nothing at this rung at all. Not a content gap
+        # the learner can do anything about — fall back to the least-scaffolded
+        # drill available, which is what they would have been served anyway.
+        floor = set(kc_graph.lowest_rung([q.id for q in narrowed]))
+        rung = [q for q in narrowed if q.id in floor]
 
-    # The supported rungs are SMALL — `numpy.ndarray-model` authors three faded
-    # drills and one guided against five independent ones — so "spent" arrives
-    # after a handful of questions and long before the ladder has the twenty
-    # attempts it wants to promote on. Falling through to the next rung there is
-    # the ladder promoting on exhaustion instead of on evidence: the strip still
-    # reads `Worked` (that is what `kc_stage` says, and it is right), the learner
-    # is told an example is coming, and what arrives is an unaided problem with
-    # nothing above it. Repeating a supported drill is the honest answer — the
-    # rung has not been earned yet, and a second pass at a faded drill is
-    # ordinary spaced practice. Only a KC with NO supported drill at all may fall
-    # through, which is what the rung fallback below still handles.
-    #
-    # 🔴 THIS RUNS BEFORE THE UNSERVED CHECK, and that ordering is the whole
-    # rule. A learner who has been round a concept several times has served
-    # EVERY question in it — 20 attempts against this KC's nine drills — and the
-    # `if not unserved` shortcut below returns the unfiltered pool, so gating
-    # this on unserved work skipped it in precisely the case it exists for. That
-    # is how a `solo` problem reached a learner sitting on the `Worked` rung
-    # after every drill had been seen once. Prefer an unserved supported drill,
-    # but never leave the rung just because the good ones have all been met.
-    if kc_graph.stage_requires_support(stage):
-        supported = set(kc_graph.questions_at_stage([q.id for q in narrowed], stage))
-        if supported:
-            fresh = [q for q in narrowed if q.id in supported and q.id not in served]
-            return fresh or [q for q in narrowed if q.id in supported], next_kc
+    fresh = [q for q in rung if q.id not in served]
+    if not fresh:
+        # The learner's own rung is spent. Two different situations, and
+        # collapsing them was the first version's mistake:
+        #
+        #   a) lower rungs still hold problems they have not seen. Serve those.
+        #      They are NOT repeats, the learner keeps practising, and the gap
+        #      is still reported so the strip can say where the problem came
+        #      from and `/drill-gaps` still gets the work item. Stopping here
+        #      instead would deadlock the queue: the top rung is the smallest,
+        #      and a learner who exhausts it can no longer answer anything, so
+        #      no evidence can ever move them off it.
+        #   b) nothing anywhere on this concept is unseen. Now there genuinely
+        #      is nothing to serve, and the caller 409s.
+        #
+        # Walk DOWN from the learner's rung rather than up. Serving a rung they
+        # have not earned is the promotion-on-exhaustion this whole change
+        # removes; serving one they have already left is just review.
+        node = kc_graph.registry_node(next_kc) or {}
+        gap = {
+            "kc": next_kc,
+            "kc_title": node.get("title") or next_kc,
+            "stage": stage,
+            "seen": len(rung),
+            "total": len(narrowed),
+            "served_from": None,
+        }
+        order = list(kc_graph.LADDER_STAGES)
+        below = order[: order.index(stage)] if stage in order else []
+        for lower in reversed(below):
+            at_lower = set(kc_graph.questions_at_stage([q.id for q in narrowed], lower))
+            spare = [q for q in narrowed if q.id in at_lower and q.id not in served]
+            if spare:
+                gap["served_from"] = lower
+                return spare, next_kc, gap
+        # Last resort: drills this KC owns that carry NO rung tag at all.
+        # 🔴 This used to be every unseen question in `narrowed`, which quietly
+        # included the rungs ABOVE the learner — a spent `faded` rung with an
+        # unseen integrated problem behind it handed over that problem, labelled
+        # "unranked", and promoted on exhaustion instead of on evidence. That is
+        # the one thing this whole change exists to stop. (codex, 2026-08-28.)
+        spare = [
+            q for q in narrowed
+            if q.id not in served and kc_graph.ladder_rank(q.id) == kc_graph.LADDER_UNRANKED
+        ]
+        if spare:
+            gap["served_from"] = "unranked"
+            return spare, next_kc, gap
+        return [], next_kc, gap
 
-    unserved = [q for q in narrowed if q.id not in served]
-    if not unserved:
-        return narrowed, next_kc
-    wanted = kc_graph.questions_at_stage([q.id for q in unserved], stage)
-    if wanted:
-        return [q for q in unserved if q.id in set(wanted)], next_kc
+    if stage == "partial":
+        # Examples first, then the unaided remainder — see
+        # kc_graph.with_example_first. This is the whole of the third-to-fourth
+        # rung fade: no schedule, no counter, just "the ones with something to
+        # read come first and then there are none left".
+        preferred = set(kc_graph.with_example_first([q.id for q in fresh]))
+        fresh = [q for q in fresh if q.id in preferred]
 
-    rung = [q for q in unserved if q.id in set(kc_graph.lowest_rung([q.id for q in unserved]))]
-    if stage == "worked" and rung:
+    if stage == "worked":
         # The `worked` rung is the concept's first contact, and the question
         # attached to it is what the learner meets the moment they finish
         # reading the example. There is no evidence yet, so `target_difficulty`
@@ -181,35 +225,40 @@ def narrow_to_next_kc(
         # random inside its band, which on a rung with several drills can open a
         # brand-new concept on its hardest one. Serve the easiest instead; the
         # difficulty ladder starts moving on the next question, from evidence.
-        return [min(rung, key=lambda q: (q.difficulty_score, q.id))], next_kc
-    return rung, next_kc
+        return [min(fresh, key=lambda q: (q.difficulty_score, q.id))], next_kc, None
+    return fresh, next_kc, None
 
 
 def ladder_starter(question, stage: str) -> Optional[str]:
     """The starter to hand the learner at this rung, or None to keep the
     question's own.
 
-    `worked` and `solo` never override — one has no question yet, the other is
-    the rung defined by having no support.
+    `faded` is now the ONLY rung that overrides. `worked` has no question yet,
+    and `partial` and `solo` are both rungs where the learner writes the whole
+    function — the difference between them is how many concepts the problem
+    needs, not how much of it is pre-written.
+
+    `partial` used to get a half-faded starter as well, which meant the rung
+    labelled "write this one yourself" handed over half the answer. Renkl's
+    completion problems fade to nothing; they do not fade to half forever.
 
     At `faded`, an authored starter from the KP wins when one exists: it was cut
     by hand for the idea the lesson just taught, and for a one-statement
     solution it is the only faded form there is (nothing to remove but the whole
-    answer). Otherwise, and always at `partial`, the starter is backward-faded
-    from the canonical answer (see ladder_fade). A body too short to fade
-    returns None and is served unmodified, which is correct — there is no honest
-    middle between "one line shown" and "one line hidden".
+    answer). Otherwise the starter is backward-faded from the canonical answer
+    (see ladder_fade). A body too short to fade returns None and is served
+    unmodified, which is correct — there is no honest middle between "one line
+    shown" and "one line hidden".
     """
-    if stage not in ("faded", "partial"):
+    if stage != "faded":
         return None
-    if stage == "faded":
-        authored = lessons.authored_faded_starter(getattr(question, "id", -1))
-        if authored:
-            return authored
+    authored = lessons.authored_faded_starter(getattr(question, "id", -1))
+    if authored:
+        return authored
     return ladder_fade.fade(
         getattr(question, "answer_code", "") or "",
         getattr(question, "function_name", "") or "solve",
-        reveal="most" if stage == "faded" else "half",
+        reveal="most",
     )
 
 
