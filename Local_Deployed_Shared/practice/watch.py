@@ -27,7 +27,7 @@ from watch_common import (  # noqa: F401 — re-exported for anything importing 
 )
 from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
                               check_a_deleted_practice_notice_stays_deleted,
-                              check_the_session_clock_is_not_the_learners_to_set)
+                              check_the_clock_is_one_choice_made_before_the_block)
 from watch_basic_mode import check_a_hidden_rating_still_commits_the_attempt
 from watch_feedback import (
     check_a_learner_can_always_report_a_broken_problem,
@@ -805,7 +805,7 @@ if __name__ == '__main__':
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,
-              check_the_session_clock_is_not_the_learners_to_set,
+              check_the_clock_is_one_choice_made_before_the_block,
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,

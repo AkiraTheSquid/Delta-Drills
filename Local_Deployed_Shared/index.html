@@ -72,7 +72,7 @@
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
-  <link rel="stylesheet" href="styles/practice/readiness.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/readiness.css?v=3" />
   <link rel="stylesheet" href="styles/practice/question.css?v=5" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=6" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
@@ -1292,6 +1292,28 @@
           </div>
           <p class="readiness-caption" id="readiness-caption">ready for the ARENA curriculum</p>
           <p class="readiness-detail" id="readiness-detail"></p>
+          <!-- HOW LONG EACH QUESTION GETS, chosen BEFORE the block starts.
+               Seth, 2026-08-28: "I can change the amount of time that I have
+               per problem before I start the practice so that I actually have
+               more time to read the problems and the lessons ... Or I can
+               disable the timer entirely."
+
+               🔴 THE OPTIONS ARE NOT WRITTEN HERE. practice/session-clock.js
+               owns the presets and the stored choice; practice/session-idle.js
+               renders them into #question-clock-picker. A hard-coded list in
+               this file is a second copy of the rule that the clock in
+               practice/timer.js does not read.
+
+               🔴 IT SITS ON THE IDLE SURFACE ON PURPOSE, which is the only
+               screen that exists between blocks: the choice applies from the
+               next question onward, and a control that could be reached
+               mid-question would move a countdown while it was running. -->
+          <div class="question-clock" id="question-clock">
+            <span class="question-clock-label" id="question-clock-label">Time per question</span>
+            <div class="question-clock-options" id="question-clock-picker"
+                 role="radiogroup" aria-labelledby="question-clock-label"></div>
+            <p class="question-clock-note" id="question-clock-note"></p>
+          </div>
           <!-- ONE button, two meanings: resume the paused question if there is
                one, otherwise start a fresh block. It PROXIES to the buttons
                below rather than reimplementing either — see the note there. -->
@@ -1875,6 +1897,10 @@ t.manual_seed(0)
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
+  <!-- BEFORE timer.js: it reads the learner's per-question allowance through
+       window.SessionClock on every phase change, and AFTER storage.js, whose
+       getPracticeStorageKey() is what makes the choice per-account. -->
+  <script src="practice/session-clock.js?v=1"></script>
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=11"></script>
   <script src="practice/visuals.js?v=16"></script>
@@ -1897,7 +1923,7 @@ t.manual_seed(0)
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=25"></script>
-  <script src="practice/timer.js?v=21"></script>
+  <script src="practice/timer.js?v=22"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
        behind a transparent-text textarea, plus name-only ghost autocomplete.
@@ -1930,7 +1956,7 @@ t.manual_seed(0)
        timer.js, whose `hasPausedSession()` decides which of those two the one
        button means, and after notch-menu.js for no reason but reading order. -->
   <script src="practice/readiness.js?v=4"></script>
-  <script src="practice/session-idle.js?v=6"></script>
+  <script src="practice/session-idle.js?v=7"></script>
   <script src="practice/lessons.js?v=32"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
