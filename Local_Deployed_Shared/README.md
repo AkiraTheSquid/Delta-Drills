@@ -162,6 +162,41 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 
 ## Recent Changes
 
+### 2026-08-28 — the concept survives a RELOAD, not just a pause
+
+Seth, with a screenshot of a drill and an empty topbar: "it's still not showing
+the top bar when I first jump in." Yesterday's resume fix was not enough, and
+the reason is worth keeping.
+
+- 🔴 **`practiceProgress.currentQuestion` IS NOT THE QUESTION ON SCREEN.** The
+  queue overwrites it with whatever it serves next. Yesterday's fix restored
+  the ladder fields from that record, gated on it being the paused question —
+  measured on prod today, paused on question 484, the persisted
+  currentQuestion was already **224**. The gate failed, the restore fell back
+  to `buildPracticeQuestionFromBank` (no ladder fields at all),
+  `LadderUI.decorate` found no kc, `StageLadder.hide()` fired, and the pill was
+  out for the whole resumed question.
+- 🟢 **The concept now rides in the pause snapshot** — the one record that is by
+  definition about the on-screen question, written by `pause()` from live
+  state. `_readSaved` sanitises it back; the restore merges it into the rebuilt
+  question **field by field**, only where a field is missing and only when both
+  records name the same concept.
+- 🔴 **NOT covered by `SESSION_STATE_VERSION`, on purpose.** Bumping it discards
+  every paused session already on a learner's machine. An older snapshot simply
+  has no `ladder` and restores exactly as it did before.
+- 🔑 **WHY YESTERDAY'S VERIFICATION WENT GREEN ANYWAY.** An in-memory resume
+  never rebuilds the question — `_restoreSavedQuestion` returns early when the
+  paused id is already on screen. Pause and Continue inside ONE page load was
+  always fine; only a reload between them hits the rebuild path. Reload between
+  the pause and the resume or the path under test is not the learner's.
+- 🔴 Strings, not truthy values, out of localStorage: `String([])` is `""` and
+  `String({})` is `"[object Object]"`, either of which reaches the DOM as the
+  concept's name. Codex found that and the partial-hydrate gap (a saved
+  question with `ladder_kc` but no `ladder_stage` skipped the whole merge and
+  hid the readout just the same); both fixed before shipping.
+- 11 mutations bite. Verified on prod, fresh profile, two pause→reload→Continue
+  cycles: the drill comes back with the concept named at 25% both times.
+
 - **2026-08-27 (third pass) — Continue was a dead end, and it re-taught.**
   Changed: `practice/lessons.js`, `watch_concept_pill.py`. Shipped as
   `04c17f8d` and the commit after it.
