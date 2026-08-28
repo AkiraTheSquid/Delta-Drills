@@ -92,17 +92,38 @@ FEEDBACK_ALPHA: Dict[FeedbackLevel, float] = {
 # can do and only evidence may move it; this is a claim about where to aim,
 # which is the one thing the learner is better placed to judge than we are.
 #
-# Signed by the OUTCOME, sized by the rating: "way too easy" after a correct
-# answer pushes the aim up, "way too hard" after a miss pulls it down. "About
-# right" decays whatever offset has accumulated back toward the model's own
-# number, so a one-off click fades instead of sticking forever. An UNRATED
-# attempt moves nothing at all — nobody was asked, so nothing was said.
+# Signed by the OUTCOME, sized by the rating: the learner is asked how much
+# HARDER they want the next problem after a correct answer and how much EASIER
+# after a miss, so the direction is already settled by the grade and the three
+# choices only say how big a step to take.
 #
-# v0 numbers, same caveat as everything else in this block: two "way off"s in a
-# row move the aim by a band (12 points of 80), and the cap is a quarter of the
-# span in either direction, which is enough to matter and not enough to serve a
-# learner problems their mastery says they cannot read.
-DIFFICULTY_NUDGE: Dict[str, float] = {"somewhat": 3.0, "a_lot": 6.0}
+# 🔴 2026-08-28: ALL THREE LEVELS NOW CARRY A STEP, INCLUDING `not_much`.
+# The three buttons used to read "About right / A bit off / Way off", where the
+# first one meant *stop correcting* and therefore mapped to no step at all —
+# it was absent from this table on purpose, and `nudge_difficulty_offset`
+# decayed the accumulated offset instead. The learner-facing question is now
+# "how much harder/easier do you want the next problem to be?", and under that
+# wording there is no neutral answer left to give: "slightly harder" is a
+# request for a small step, not a request for none. A `not_much` that still
+# mapped to zero would move the aim the OPPOSITE way from the words on the
+# button, because the decay pulls the offset back toward the model's number.
+#
+# The decay did not go away, it moved: `nudge_difficulty_offset` now decays
+# BEFORE it adds, on every rated attempt. That keeps the property the old
+# neutral option existed to provide — a correction from weeks ago fades
+# instead of sticking forever — while still honouring what was just asked
+# for. A sustained request converges on step/(1 - DECAY) rather than running
+# away: 6.0 for "slightly", 12.0 for "somewhat", and "significantly" pins at
+# the cap.
+#
+# v0 numbers, same caveat as everything else in this block: the cap is a
+# quarter of the span in either direction, which is enough to matter and not
+# enough to serve a learner problems their mastery says they cannot read.
+DIFFICULTY_NUDGE: Dict[str, float] = {
+    "not_much": 1.5,   # "slightly harder" / "slightly easier"
+    "somewhat": 3.0,   # "somewhat harder" / "somewhat easier"
+    "a_lot": 6.0,      # "significantly harder" / "significantly easier"
+}
 DIFFICULTY_OFFSET_DECAY: float = 0.75
 DIFFICULTY_OFFSET_LIMIT: float = 20.0
 
@@ -461,13 +482,17 @@ def nudge_difficulty_offset(
         # the offset is left exactly as it was. Decaying here would quietly
         # erode a real signal every time an attempt went unrated.
         return sub_state.difficulty_offset
+    # Decay FIRST, then add. Every one of the three answers is now a request
+    # for a step (see DIFFICULTY_NUDGE), so there is no longer a level whose
+    # whole meaning is "shrink what has accumulated" — but the accumulated
+    # offset still has to be able to fade, or one "significantly harder" from
+    # weeks ago would outlive the whole run of problems that answered it.
+    # Doing both in that order means the newest request is the one applied at
+    # full size, and the standing correction is the decayed remainder of the
+    # older ones.
+    sub_state.difficulty_offset *= DIFFICULTY_OFFSET_DECAY
     step = DIFFICULTY_NUDGE.get(feedback)
-    if step is None:
-        # "About right" — an answer, and the answer is "stop correcting". If the
-        # offset froze here instead, one "way too easy" from weeks ago would
-        # outlive the whole run of problems that answered it.
-        sub_state.difficulty_offset *= DIFFICULTY_OFFSET_DECAY
-    else:
+    if step is not None:
         sub_state.difficulty_offset += step if correct else -step
     sub_state.difficulty_offset = max(
         -DIFFICULTY_OFFSET_LIMIT,

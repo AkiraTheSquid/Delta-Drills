@@ -60,7 +60,13 @@ STAIRCASE_SEED_BY_LEVEL = {
 }
 STAIRCASE_DEFAULT_SEED = 40.0
 STAIRCASE_STEP_UP = 15.0      # on a correct answer
-STAIRCASE_FEELING_BONUS = {"somewhat": 3.0, "a_lot": 6.0}  # felt-difficulty
+# How much the learner's own answer to "how much harder/easier do you want the
+# next problem to be?" adds to the staircase step. 🔴 `not_much` carries a step
+# now (2026-08-28): it is the "slightly" button, not an "about right" opt-out,
+# and a zero here would make the smallest request indistinguishable from never
+# having been asked. Mirrors DIFFICULTY_NUDGE in the backend twin
+# (This-Directory-Only/backend/app/adaptive.py); keep the two tables equal.
+STAIRCASE_FEELING_BONUS = {"not_much": 1.5, "somewhat": 3.0, "a_lot": 6.0}
 STAIRCASE_STEP_DOWN = 20.0    # on a wrong answer (down harder: wrong at level
                               # k is stronger evidence than right at level k)
 
@@ -273,10 +279,12 @@ def step_staircase(
 ) -> float:
     """Advance the staircase after a graded attempt and return the new target.
 
-    The felt-difficulty rating sizes the step. Offline there is no posterior to
-    correct, so the rating rides the staircase directly: "way too easy" after a
-    correct answer takes a bigger step up than "about right" does, and "way too
-    hard" after a miss falls further. The backend twin does the equivalent with
+    The learner's requested step size rides the staircase directly — offline
+    there is no posterior to correct. The grade fixes the DIRECTION (up after a
+    correct answer, down after a miss) and the rating fixes the SIZE, which is
+    exactly the question the learner is asked: "significantly harder" after a
+    correct answer takes a bigger step up than "slightly harder" does, and
+    "significantly easier" after a miss falls further. The backend twin does the equivalent with
     a persisted offset (adaptive.nudge_difficulty_offset) because its target is
     a function of mastery rather than a running number. An unrated attempt gets
     the plain step — nobody was asked, so there is nothing to size it by."""

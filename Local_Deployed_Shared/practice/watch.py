@@ -28,7 +28,8 @@ from watch_common import (  # noqa: F401 — re-exported for anything importing 
 from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
                               check_a_deleted_practice_notice_stays_deleted,
                               check_the_clock_is_one_choice_made_before_the_block)
-from watch_basic_mode import check_a_hidden_rating_still_commits_the_attempt
+from watch_basic_mode import (check_a_hidden_rating_still_commits_the_attempt,
+                             check_the_difficulty_question_is_one_row_docked_to_the_bottom)
 from watch_feedback import (
     check_a_learner_can_always_report_a_broken_problem,
     check_a_lesson_can_be_reported_without_touching_the_question,
@@ -824,6 +825,7 @@ if __name__ == '__main__':
               check_the_placement_result_is_the_number_the_backend_seeded,
               check_a_deleted_practice_notice_stays_deleted,
               check_a_hidden_rating_still_commits_the_attempt,
+              check_the_difficulty_question_is_one_row_docked_to_the_bottom,
               check_a_learner_can_always_report_a_broken_problem,
               check_a_lesson_can_be_reported_without_touching_the_question,
               check_feedback_that_never_left_the_browser_is_not_called_logged]

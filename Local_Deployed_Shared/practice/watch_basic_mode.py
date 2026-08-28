@@ -12,7 +12,20 @@ import re
 from watch_common import HERE, SHARED, read
 
 def check_a_hidden_rating_still_commits_the_attempt():
-    """Basic mode hides the felt-difficulty rating. That row is not decoration:
+    """🔴 2026-08-28: BASIC MODE NO LONGER HIDES THE RATING, so most of this
+    check is dormant — it returns early at `hides_rating`. Kept whole, and not
+    deleted, because it is the contract that has to come back INTACT if the
+    hiding ever does: the stand-in click, its two call sites, the load order
+    and the ⓘ. Seth asked for the three choices to be the post-submit
+    interface itself (docked to the bottom of the viewport, "how much harder /
+    easier do you want the next problem to be?", one click to rate AND
+    advance), which makes the default mode exactly the mode that must show
+    them. See practice/difficulty-dock.js and the header of
+    styles/practice/basic-mode.css.
+
+    What the dormant half asserted, and why:
+
+    Basic mode hid the felt-difficulty rating. That row is not decoration:
     `POST /api/practice/feedback` is the ONLY backend mutation that moves a
     subtopic baseline (submit and override write `pending_attempt` and stop),
     and `#next-problem-btn` is revealed inside that button's own click handler.
@@ -115,3 +128,139 @@ def check_a_hidden_rating_still_commits_the_attempt():
             "attempt against the same problem"
         )
 
+
+
+def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
+    """The post-submit interface is three buttons, docked, and they advance.
+
+    Seth, 2026-08-28: after Submit the button is replaced by a bar frozen to
+    the bottom of the viewport asking how much harder (correct) or easier
+    (miss) the next problem should be, and clicking one is the Next button.
+    Four ways that regresses without anyone noticing, so four assertions.
+
+    1. The dock is MOVED markup, never a second copy. `difficulty-dock.js`
+       re-parents `#feedback-prompt` and `.feedback-buttons`, so the buttons
+       on screen are the ones `events.js` bound and `ui.js` relabels. A dock
+       that minted its own `data-feedback` buttons and forwarded the clicks
+       would be a second copy of a list this folder has already watched drift
+       once (see `settleRating` in practice/README.md), and the copy would go
+       stale the first time the labels changed.
+
+    2. Its two files are actually loaded. A dock that never builds leaves the
+       rating where it was — visible, but back in the left rail and no longer
+       the obvious thing on screen, which is the whole of the request.
+
+    3. Rating advances. `nextProblemBtn.click()` is in the feedback handler
+       and it is a synthetic click on the REAL button, not a direct call to
+       the loader, because that handler is also where ArenaUnlock gets its
+       chance to show the unlock interstitial.
+
+    4. Nothing answers the question on the learner's behalf while it is
+       visible. Basic mode's stand-in click is gone; if it ever comes back
+       while the buttons are on screen, it both invents an opinion and — now
+       that the same click advances — skips the problem before the learner
+       has answered.
+    """
+    dock_js = os.path.join(HERE, "difficulty-dock.js")
+    dock_css = os.path.join(SHARED, "styles", "practice", "difficulty-dock.css")
+    assert os.path.isfile(dock_js), "practice/difficulty-dock.js is gone"
+    assert os.path.isfile(dock_css), "styles/practice/difficulty-dock.css is gone"
+
+    dock = read(dock_js)
+    css = read(os.path.join(SHARED, "styles", "practice", "basic-mode.css"))
+    index = read(os.path.join(SHARED, "index.html"))
+    events = read(os.path.join(HERE, "events.js"))
+    basic = read(os.path.join(HERE, "basic-mode.js"))
+
+    # 1. Moved, not copied.
+    assert "data-feedback" not in dock, (
+        "difficulty-dock.js is minting its own rating buttons. It must MOVE "
+        "#feedback-prompt and .feedback-buttons into the dock — the handler in "
+        "events.js and the labels in ui.js::applyResult are bound to those "
+        "exact nodes, and a forwarded copy drifts from them silently"
+    )
+    for node in ("feedback-prompt", ".feedback-buttons"):
+        assert node in dock, (
+            f"difficulty-dock.js no longer re-parents {node} — the dock is "
+            "empty and the rating is back in the left rail"
+        )
+
+    # 1a. The question and its ⓘ share one row. `#feedback-prompt` is a block
+    #     and infotips' icon is inline-flex, so as bare siblings the icon wraps
+    #     onto its own line and renders as a stray "i" between the question and
+    #     the answers — found on the first build, in the browser.
+    assert "difficulty-dock-question" in dock and "difficulty-dock-question" in read(dock_css), (
+        "the dock's question row is gone. #feedback-prompt and the ⓘ that "
+        "infotips mints next to it must share one flex row, or the icon wraps "
+        "below the question as a stray \"i\""
+    )
+
+    # 1a2. ONE OWNER OF THE ADVANCE. The rating click is the navigation now, so
+    #      `timer.js::_forceAdvance`'s watchdog must not click Next as well. It
+    #      used to — before the dock, the feedback handler only REVEALED the
+    #      button and the review-clock timeout polled for it and clicked. Both
+    #      clicking is a double advance in a wide window: Next stays visible
+    #      from the handler's click until the next question renders, a network
+    #      fetch away, and the watchdog ticks every 250ms. The learner silently
+    #      loses a question and ArenaUnlock is asked twice.
+    timer = read(os.path.join(HERE, "timer.js"))
+    poll_start = timer.find("advancePoll = setInterval(")
+    assert poll_start != -1, "timer.js no longer has the _forceAdvance watchdog"
+    poll = timer[poll_start:timer.find("}, 250);", poll_start)]
+    assert "nextProblemBtn.click()" not in poll, (
+        "timer.js's _forceAdvance watchdog clicks #next-problem-btn again. The "
+        "feedback handler in events.js already clicks it, in the same "
+        "synchronous run as showNextProblemButton() — two owners of one "
+        "advance skips a question. The watchdog may only act when Next is "
+        "still HIDDEN, which is the rating-POST-failed case"
+    )
+
+    # 1b. It closes when the practice tab does. The dock hangs off <body> so
+    #     that it can sit over the viewport, which also means leaving the tab
+    #     does not take it away the way it takes the rest of the practice UI.
+    assert 'getElementById("page-practice")' in dock, (
+        "difficulty-dock.js no longer checks whether the practice page itself "
+        "is visible — the dock hangs off <body>, so a difficulty question "
+        "stays pinned to the bottom of the window on Account, Concepts and "
+        "every other tab"
+    )
+
+    # 2. Both halves linked.
+    assert 'src="practice/difficulty-dock.js' in index, (
+        "index.html no longer loads practice/difficulty-dock.js — the rating "
+        "never leaves the rail and the bottom dock does not exist"
+    )
+    assert 'href="styles/practice/difficulty-dock.css' in index, (
+        "index.html no longer links styles/practice/difficulty-dock.css — the "
+        "dock builds but is not fixed to the bottom of the viewport"
+    )
+
+    # 3. One click rates AND advances. 🔴 Matched against the handler with its
+    #    comments STRIPPED: the block above the call explains it at length and
+    #    names it, so a plain substring search passes on a commented-out call —
+    #    which is exactly how this regresses.
+    rate_start = events.find("feedbackButtons.forEach((btn) => {")
+    assert rate_start != -1, "events.js no longer binds the rating buttons"
+    handler = events[rate_start:]
+    live = "\n".join(
+        ln for ln in handler.splitlines()
+        if not ln.lstrip().startswith(("//", "*", "/*"))
+    )
+    assert "nextProblemBtn.click()" in live, (
+        "events.js no longer advances on the rating click — the learner is "
+        "back to answering the difficulty question and then pressing Next"
+    )
+
+    # 4. Nobody answers it for them while it is visible.
+    hides_rating = "body.dd-basic-mode .feedback-btn" in css
+    if not hides_rating:
+        assert "settleRating" not in events, (
+            "the rating buttons are visible to everyone, but events.js still "
+            "calls settleRating — that answers the question the learner is "
+            "being asked and, because the same click advances, skips the "
+            "problem out from under them"
+        )
+        assert ".feedback-btn--default\").click()" not in basic.replace(" ", ""), (
+            "basic-mode.js is clicking the default rating button while the "
+            "rating is on screen for everyone"
+        )

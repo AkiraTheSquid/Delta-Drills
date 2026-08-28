@@ -353,11 +353,50 @@ def check_felt_difficulty_reaches_the_next_question():
     down_off, _ = answer(False, "a_lot")
     assert down_off < up_off, "'way too hard' after a miss did not lower the aim"
 
-    answer(True, "a_lot")
-    for _ in range(6):
-        settled_off, _ = answer(True, "not_much")
-    assert abs(settled_off) < abs(up_off), (
-        "'about right' does not decay the correction — one stale click would "
+    # 🔴 THE SMALLEST ANSWER IS STILL AN ANSWER (2026-08-28). The three
+    # choices used to be "About right / A bit off / Way off", where the first
+    # meant "stop correcting" and moved the offset by nothing. They are now
+    # "Slightly / Somewhat / Significantly harder-or-easier": every one of
+    # them asks for a step, and a `not_much` that moved nothing would push the
+    # aim the OPPOSITE way from the words on the button, because the decay
+    # pulls the offset back toward the model's own number.
+    fresh = UserPracticeState(user_id="watch-check-felt-slight")
+
+    def answer_on(st, correct, feedback):
+        record_attempt(
+            user_state=st, question_id=-1, subtopic=sub,
+            difficulty_score=50, correct=correct,
+        )
+        scoring.finalize_attempt(st, feedback)
+        return st.get_subtopic_state(sub).difficulty_offset
+
+    slight_off = 0.0
+    for _ in range(8):
+        slight_off = answer_on(fresh, True, "not_much")
+    assert slight_off > 0, (
+        "'slightly harder' does not raise the aim at all — the smallest of "
+        "the three choices is behaving like the neutral answer it replaced, so "
+        "a learner asking for a harder problem gets one pitched no higher"
+    )
+
+    # ...and it must stay the SMALLEST answer. The decay still lives in the
+    # nudge (it runs before the step now), so a sustained request converges
+    # instead of running away, and a sustained small request has to converge
+    # somewhere below a sustained large one or the sizes mean nothing.
+    loud = UserPracticeState(user_id="watch-check-felt-loud")
+    loud_off = 0.0
+    for _ in range(8):
+        loud_off = answer_on(loud, True, "a_lot")
+    assert slight_off < loud_off, (
+        f"'slightly harder' settles at {slight_off}, not below 'significantly "
+        f"harder' at {loud_off} — the three choices no longer size the step"
+    )
+
+    # A correction still fades when the learner stops asking for it: eight
+    # small requests must not preserve a big old one at full size.
+    faded = answer_on(loud, True, "not_much")
+    assert faded < loud_off, (
+        "a standing correction never decays — one 'significantly harder' would "
         "outlive every problem that answered it"
     )
     for _ in range(12):
@@ -564,6 +603,59 @@ def check_repair_queue_never_loses_an_open_job():
                 os.environ['DELTA_FEEDBACK_AI_DIR'] = previous
 
 
+def check_the_two_nudge_tables_agree():
+    """The learner's step sizes exist TWICE, and drift between them is silent.
+
+    `adaptive.DIFFICULTY_NUDGE` is what the live backend applies when a learner
+    answers the post-submit question; `practice_engine.STAIRCASE_FEELING_BONUS`
+    is the offline twin used to simulate the same staircase. They sit on
+    opposite sides of a deployment boundary and cannot share an import, and
+    nothing fails when one is edited alone — the offline model just starts
+    recommending a schedule the live engine does not follow, which surfaces as
+    a tuning result that will not reproduce.
+
+    🔴 READ BY AST, NOT BY IMPORT. This watcher also runs under a bare
+    interpreter with none of the backend's third-party deps installed;
+    importing `app.adaptive` there raises ModuleNotFoundError and the check
+    reads as a failure of the thing it is checking.
+    """
+    import ast
+
+    def table(path, name):
+        tree = ast.parse(open(path, encoding='utf-8').read())
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == name for t in node.targets
+            ):
+                return ast.literal_eval(node.value)
+            if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) \
+                    and node.target.id == name and node.value is not None:
+                return ast.literal_eval(node.value)
+        return None
+
+    repo = os.path.abspath(os.path.join(THIS, '..', '..', '..', '..'))
+    twin = os.path.join(repo, 'Local_Deployed_Shared', 'practice_engine.py')
+    assert os.path.isfile(twin), f"the offline staircase twin is gone ({twin})"
+
+    live = table(os.path.join(THIS, '..', 'adaptive.py'), 'DIFFICULTY_NUDGE')
+    offline = table(twin, 'STAIRCASE_FEELING_BONUS')
+    assert live, "adaptive.py no longer defines DIFFICULTY_NUDGE"
+    assert offline, "practice_engine.py no longer defines STAIRCASE_FEELING_BONUS"
+    assert live == offline, (
+        f"the difficulty step-size tables have drifted.\n  live    {live}\n"
+        f"  offline {offline}\nEdit both, or the offline runs describe a "
+        "staircase the backend does not climb."
+    )
+    # All three answers now name a DIRECTION, so a zero is a button whose words
+    # promise a move it never makes. "About right" was retired on 2026-08-28.
+    assert all(live.get(k, 0) > 0 for k in ('not_much', 'somewhat', 'a_lot')), \
+        f"a step size is missing or zero: {live}"
+    assert live['not_much'] < live['somewhat'] < live['a_lot'], (
+        f"the steps are not increasing: {live}. The buttons are ordered "
+        "smallest-to-largest on screen and the learner is choosing a SIZE"
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -571,7 +663,8 @@ if __name__ == '__main__':
               check_felt_difficulty_reaches_the_next_question,
               check_ai_repairs_are_gated,
               check_repair_runs_off_the_local_cli,
-              check_repair_queue_never_loses_an_open_job]
+              check_repair_queue_never_loses_an_open_job,
+              check_the_two_nudge_tables_agree]
     for fn in checks:
         try:
             fn()
