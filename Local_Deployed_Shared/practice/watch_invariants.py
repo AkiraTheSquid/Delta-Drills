@@ -14,31 +14,133 @@ import sys
 from watch_common import HERE, SHARED, read
 
 
-def check_the_session_clock_is_not_the_learners_to_set():
-    """Fixed per-QUESTION allowances, pause/resume only, and a notch that stays.
+def check_the_clock_is_one_choice_made_before_the_block():
+    """The learner picks the time per QUESTION, and nothing else about a block.
 
-    Four halves of one 2026-08-23 decision, and each one comes undone on its
-    own without anything else here failing:
+    🔴 THIS CHECK WAS INVERTED ON 2026-08-28, and the name went with it. It
+    used to be `check_the_session_clock_is_not_the_learners_to_set` and it
+    asserted the two allowances were integer constants in timer.js — Seth's
+    2026-08-23 rule, "it's a predetermined timer that they don't control".
+    Seth, 2026-08-28: "I can change the amount of time that I have per problem
+    before I start the practice so that I actually have more time to read the
+    problems and the lessons ... Or I can disable the timer entirely." What
+    broke the old rule is that the first-encounter LESSON is read on the answer
+    clock (nothing in lessons.js holds it), so 02:00 had to cover reading a
+    concept and then answering a question about it.
 
-      1. The two allowances are constants in timer.js. Putting them back on the
-         snapshot, or back behind an input, is how "predetermined" quietly
-         stops being true — and a v2 snapshot that carries `answerSecs` again
-         would resume a question under a clock this build never set.
-      2. A block has no LENGTH. `shouldFinishInsteadOfAdvance` returning a
-         quota comparison again reinstates a session that ends on its own,
-         which is the thing pause replaced.
-      3. There is no End session — not the button, not the handler, not the
+    What survives the reversal, and is what this check is now for:
+
+      1. There is ONE allowance and one place it lives. timer.js reads it
+         through `window.SessionClock` per phase; the picker writes it there.
+         A number captured into a constant at load, or carried on the pause
+         snapshot, is a clock running under a rule the picker no longer says.
+      2. "No limit" is a real state (`secs: null`), never a large number. The
+         countdown callbacks force-submit an answer and force-advance a review,
+         so the untimed case must run NO interval at all.
+      3. A block still has no LENGTH and no quota. `shouldFinishInsteadOfAdvance`
+         returning a comparison again reinstates a session that ends on its own,
+         which is the thing pause replaced — and the two inputs that set those
+         (questions, and a session length) must stay gone.
+      4. There is no End session — not the button, not the handler, not the
          menu item. Pause is the only way out.
-      4. The notch outlives the session, so it hangs off `.practice-container`
-         and not off `.practice-split` (which is display:none between blocks).
-         This one is pure DOM order: nothing throws when it regresses, the
-         notch simply is not on the idle screen.
+      5. The notch outlives the session, so it hangs off the topbar and not off
+         `.practice-split` (which is display:none between blocks). This one is
+         pure DOM order: nothing throws when it regresses, the notch simply is
+         not on the idle screen.
     """
     timer = read(os.path.join(HERE, "timer.js"))
     for name in ("ANSWER_SECS", "REVIEW_SECS"):
-        assert re.search(rf"const {name} = \d+;", timer), (
-            f"timer.js lost {name} — the per-question allowance is settable again"
+        assert re.search(rf"const {name} = \(\) => \{{", timer), (
+            f"timer.js reads {name} as a fixed value again — the learner's "
+            f"choice cannot reach a clock that captured its allowance once"
         )
+    assert "window.SessionClock" in timer, (
+        "timer.js no longer reads the learner's allowance from SessionClock — "
+        "the picker on the idle screen would set something nothing enforces"
+    )
+    # 🔴 The one line that makes "No limit" real. Everything else about the
+    # untimed state is a consequence of never starting the interval.
+    tick = timer.split("const _tick = (onExpire) => {", 1)
+    assert len(tick) == 2, "timer.js::_tick is gone"
+    tick_body = tick[1].split("\n  };", 1)[0]
+    assert "if (remaining === null) return;" in tick_body, (
+        "_tick starts an interval with no allowance set — under \"No limit\" "
+        "the expiry callback force-submits an answer the learner is still "
+        "writing, which is the whole thing the option turns off"
+    )
+    assert tick_body.index("if (remaining === null) return;") < tick_body.index("setInterval"), (
+        "the no-limit guard is below setInterval — the countdown already started"
+    )
+    clock = read(os.path.join(HERE, "session-clock.js"))
+    assert "secs: null" in clock, (
+        "session-clock.js has no untimed preset. A big number is not the same "
+        "option: it looks identical for an hour and then submits mid-sentence"
+    )
+    # The picker is drawn from the store, not written into the page: a list of
+    # minutes in index.html is a second rule the countdown does not read.
+    index_for_picker = read(os.path.join(SHARED, "index.html"))
+    assert 'id="question-clock-picker"' in index_for_picker, (
+        "the idle screen lost the per-question clock picker — the choice Seth "
+        "asked for has nowhere to be made"
+    )
+    assert index_for_picker.index('practice/session-clock.js') < index_for_picker.index('practice/timer.js?'), (
+        "session-clock.js must load BEFORE timer.js, which reads it"
+    )
+    idle_js = read(os.path.join(HERE, "session-idle.js"))
+    assert "prefs.OPTIONS.forEach" in idle_js, (
+        "session-idle.js hard-codes the presets instead of drawing SessionClock's"
+    )
+
+    # 🔴 A CHOICE STORAGE WOULD NOT KEEP IS STILL THE CHOICE, for this page
+    # load. Run rather than pattern-matched: the failure this pins is silent
+    # and specific — `set` caught the write error and then re-derived state by
+    # RE-READING storage, so the picker snapped back to the old preset the
+    # instant it was clicked and the clock went on enforcing it. Codex found
+    # it on 2026-08-28; a source check would have passed either way.
+    clock_src = read(os.path.join(HERE, "session-clock.js"))
+    probe = """
+const store = {};
+let blocked = false;
+const localStorage = {
+  getItem: (k) => (k in store ? store[k] : null),
+  setItem: (k, v) => { if (blocked) throw new Error("denied"); store[k] = v; },
+};
+const getPracticeStorageKey = () => "practice_progress_probe";
+const window = {};
+""" + clock_src + """
+const eq = (got, want, why) => {
+  if (got !== want) {
+    console.error(`FAIL ${why}: got ${JSON.stringify(got)} want ${JSON.stringify(want)}`);
+    process.exit(1);
+  }
+};
+const C = window.SessionClock;
+eq(C.currentId(), C.DEFAULT_ID, "an account that never chose is on the default");
+eq(C.set("10m"), true, "a real preset is accepted");
+eq(C.currentId(), "10m", "a written choice is the choice");
+eq(C.answerSecs(), 600, "the allowance follows the choice");
+
+// Storage now refuses every write. The choice must still be in force.
+blocked = true;
+eq(C.set("off"), true, "a refused write is still a choice made");
+eq(C.currentId(), "off", "a choice storage would not keep is still in force");
+eq(C.answerSecs(), null, "No limit means no allowance, not the old one");
+let heard = null;
+C.subscribe((o) => { heard = o.id; });
+eq(C.set("1m"), true, "the picker can be moved again while storage is refusing");
+eq(heard, "1m", "listeners are told what was chosen, not what storage kept");
+eq(C.currentId(), "1m", "the newest refused choice wins");
+
+// Another tab writes. That is a NEWER statement than our unpersisted one.
+store["practice_progress_probe_clock"] = "5m";
+eq(C.currentId(), "5m", "a write from elsewhere must beat a held choice");
+
+// An unknown id changes nothing.
+eq(C.set("90m"), false, "an unknown preset is refused");
+eq(C.currentId(), "5m", "a refused set must not reset the choice");
+"""
+    proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
     snapshot = timer.split("const _snapshot = () => {", 1)
     assert len(snapshot) == 2, "timer.js::_snapshot is gone"
     body = snapshot[1].split("\n  };", 1)[0]

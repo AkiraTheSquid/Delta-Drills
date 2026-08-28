@@ -2,9 +2,13 @@
    THE READINESS DIAL — the whole of the Practice tab's idle screen.
 
    One ring, one percentage, one sentence, one button. It replaced a panel
-   of three inputs and a total-time estimate on 2026-08-23; the learner does
-   not set the clock any more, so the only thing worth showing between blocks
-   is how far through the map they are.
+   of three inputs and a total-time estimate on 2026-08-23, so what is worth
+   showing between blocks is how far through the map the learner is.
+
+   The clock picker at the foot of this file joined it on 2026-08-28 — the
+   time each QUESTION gets is the learner's again, "No limit" included — and
+   it is the ONLY setting on this screen: there is still no question quota
+   and no session length.
 
    The ring is a CONIC GRADIENT with a hard stop at `--dd-ready-pct`,
    masked to an annulus by a smaller disc drawn on top (`::after`). No SVG
@@ -128,3 +132,80 @@
 /* The dial is a progress READOUT, not an animation. Nothing here moves on its
    own, so there is nothing for prefers-reduced-motion to turn off — noted so
    the next person to add a fill transition remembers to guard it. */
+
+/* ================================================================
+   THE PER-QUESTION CLOCK PICKER — 2026-08-28
+
+   One row of presets under the dial, and the last of them is "No limit".
+   Seth: "I can change the amount of time that I have per problem before I
+   start the practice ... Or I can disable the timer entirely."
+
+   It sits ABOVE the Continue button because it is a decision about the
+   block that button starts, and reading order is the only thing that says
+   so. Styled as the same small pills as the placement's starting-point
+   row (styles/practice/misc.css) rather than as a second kind of control:
+   two pickers on one screen that look different read as two unrelated
+   settings.
+   ================================================================ */
+
+.question-clock {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.question-clock-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.question-clock-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.question-clock-opt {
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.question-clock-opt:hover {
+  color: var(--text);
+  border-color: var(--accent-text);
+}
+
+/* 🔴 THE SELECTED ONE IS THE RULE IN FORCE, so it has to be legible as such
+   without colour alone — the border and the weight carry it for anyone who
+   cannot see the tint, and aria-checked carries it for a screen reader
+   (practice/session-idle.js sets both). */
+.question-clock-opt--on {
+  color: var(--text);
+  font-weight: 600;
+  border-color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.question-clock-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  /* Two lines' worth. The note changes length with the choice ("No countdown
+     ..." is longer than the timed sentence), and a box that grows moves the
+     Continue button under the cursor that just pressed a preset. */
+  min-height: 36px;
+}
