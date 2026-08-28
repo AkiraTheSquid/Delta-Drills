@@ -138,6 +138,21 @@ sentence saying what the mistake was (`practice/question-examples.js`).
 - Omit `call` to reuse the first graded case's input, so both blocks describe
   the same call.
 
+## Which concept to work on (scope rule, 2026-08-28)
+
+Content work is scoped to the ONE concept Seth is currently practising, and on
+that concept it covers **every rung of the ladder** — Lesson, Faded, Solo,
+Integrated. Not a rung, not a sample across several KPs: one node, the whole
+climb. He sends feedback per concept to the session working on that concept, so
+a session that widens its scope is answering feedback it was never given.
+
+Read his position rather than guessing it — his account is
+`sethbgibson@gmail.com` (backend `user_id` `c813fa78-7e0f-4859-bcb3-a2183ef98eb4`),
+and the recipe for reading the `kc` he is on is in the repo's `CLAUDE.md` under
+"Content work: ONE concept at a time". That file also tracks which concepts have
+had the four-stage treatment and which have not — as of 2026-08-28 only
+`numpy.ndarray-model` has; PyTorch, `einsum` and `einops` have not, and are next.
+
 ## Segments — ONE concept at a time (required)
 
 A KP is a sequence of single-concept SEGMENTS. Each `## Concept` heading starts

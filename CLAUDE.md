@@ -7,3 +7,60 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Content work: ONE concept at a time (Seth's rule, 2026-08-28)
+
+Seth learns on this app himself, one knowledge point at a time, and he sends
+feedback to whichever Claude is working on the concept he is standing on right
+now. So content work is scoped by HIS position, not by the shape of the bank.
+
+**The rule.** Pick the single concept Seth is currently practising. Improve the
+content for that concept across **every rung of the ladder** — Lesson, Faded,
+Solo, Integrated — so the whole climb on that one node is good. Then stop. Do
+not spread thin work across sibling concepts, do not "while I'm here" a
+neighbouring KP, and do not rewrite the bank. Another session is handling
+another concept; the improvements land one node at a time, moving up.
+
+**His account.** `sethbgibson@gmail.com` — that is the account he actually
+progresses through the content on, so it is the one to read. Internally the
+backend keys on a UUID, not the email:
+
+    user_id = c813fa78-7e0f-4859-bcb3-a2183ef98eb4
+
+**Finding out which concept he is on.** Do not guess and do not ask him if you
+can read it. His practice state lives on the Fly volume, not in the repo:
+
+```bash
+FLYCTL="${HOME}/.fly/bin/flyctl"
+[ -z "${FLY_API_TOKEN:-}" ] && export FLY_API_TOKEN="$(awk '/access_token/ {print $2}' "$HOME/.fly/config.yml" | tr -d '"')"
+U=c813fa78-7e0f-4859-bcb3-a2183ef98eb4
+"$FLYCTL" ssh console -a delta-drills-backend -C \
+  "tail -5 /data/user_data/$U.attempts.jsonl"          # kc of the last drills served
+"$FLYCTL" ssh console -a delta-drills-backend -C \
+  "cat /data/user_data/$U.json"                        # kc_ladder: rung + attempts per KC
+```
+
+The `kc` on his most recent attempts is the concept he is on. `kc_ladder[<kc>]`
+tells you which rung he is stuck on (`worked`=Lesson, `faded`=Faded,
+`partial`=Solo, `solo`=Integrated — the stored ids are historical, the meanings
+are the four stages). A rung he keeps failing, or one the app reported as
+exhausted, is where the writing goes first. `/content-gaps` and the `drill-gaps`
+skill report the same thing from the other side.
+
+**Where the content work has actually reached (keep this current).**
+
+- `numpy.ndarray-model` — "What an ndarray is: data + shape + dtype".
+  DONE 2026-08-28: four-stage ladder, 36 new drills (ids 532–567), input→output
+  and "not this" examples under every prompt. This is the only concept that has
+  had the full treatment.
+- **PyTorch, `einsum` and `einops` have NOT had it.** Their KPs still carry the
+  pre-2026-08-28 content: thin rungs, no Solo/Integrated split, no worked
+  input/output tables. They are the next frontier — do them as Seth reaches
+  them, one concept at a time, same full-ladder treatment. Keep moving forward
+  in that direction rather than circling back over numpy.
+
+When you finish a concept, update the list above with the date and the ids, so
+the next session can see where the frontier is without re-deriving it.
+
+The authoring contract itself — the four stages, the vocabulary rule, the
+input/output requirement — is `Local_Deployed_Shared/lessons/AUTHORING.md`.
