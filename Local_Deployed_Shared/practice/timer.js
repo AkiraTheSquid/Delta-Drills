@@ -109,6 +109,31 @@ const PracticeSession = (() => {
     }
   };
 
+  /* Everything out of localStorage is untrusted input — this one is read back
+     into `StageLadder.show`, which writes the title into the DOM. Shapes only:
+     an unknown rung draws no sections rather than guessing, so a junk `stage`
+     is safe, but a junk `estimate` would reach `_boundOf`/`_streakOf`. */
+  const _str = (value) =>
+    typeof value === "string" && value.trim() ? value : null;
+  const _readLadder = (raw) => {
+    if (!raw || typeof raw !== "object") return null;
+    /* 🔴 STRINGS, NOT TRUTHY VALUES. `String([])` is `""` and
+       `String({})` is `"[object Object]"`, so a truthiness check hands the
+       ladder an empty kc or a literal "[object Object]" as the concept's name
+       instead of refusing the record. Codex, 2026-08-28. */
+    const kc = _str(raw.kc);
+    const stage = _str(raw.stage);
+    if (!kc || !stage) return null;
+    return {
+      kc,
+      stage,
+      title: _str(raw.title),
+      estimate: raw.estimate && typeof raw.estimate === "object" ? raw.estimate : null,
+      support: raw.support !== false,
+      integrated: !!raw.integrated,
+    };
+  };
+
   const _readSaved = () => {
     try {
       const saved = JSON.parse(localStorage.getItem(_storageKey()) || "null");
@@ -127,6 +152,7 @@ const PracticeSession = (() => {
         phase,
         remaining: Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
         questionId: String(saved.questionId),
+        ladder: _readLadder(saved.ladder),
         draft: typeof saved.draft === "string" || (
           saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
         ) ? saved.draft : "",
@@ -151,6 +177,45 @@ const PracticeSession = (() => {
     else if (typeof draft === "string") codeEditor.value = draft;
   };
 
+  /* THE CONCEPT CONTEXT FOR THE QUESTION ON SCREEN, captured at pause.
+
+     🔴 IT CANNOT BE READ BACK OFF `practiceProgress.currentQuestion`, and a fix
+     that did exactly that shipped on 2026-08-27 and did not hold. `ladder_kc` /
+     `ladder_stage` / `ladder_kc_title` exist only on a question the BACKEND
+     QUEUE served — the static bank has no opinion about them — and
+     `practiceProgress.currentQuestion` is NOT a record of what is on the
+     screen: the queue overwrites it with whatever it serves next. Measured on
+     prod, 2026-08-28: paused on question 484, the persisted currentQuestion was
+     already 224, so the id check below failed, the restore fell back to
+     `buildPracticeQuestionFromBank`, `LadderUI.decorate` found no kc, and
+     `StageLadder.hide()` took the topbar pill out for the whole resumed
+     question. Seth: "it's still not showing the top bar when I first jump in."
+
+     The snapshot is the one record that is BY DEFINITION about the question on
+     screen — `pause()` writes it from the live state — so the concept travels
+     with it and no other writer can move it.
+
+     🔑 WHY THIS ONLY EVER SHOWED UP AFTER A RELOAD. An in-memory resume never
+     rebuilds the question at all: `_restoreSavedQuestion` returns early when
+     the paused id is already on screen, ladder fields and all. Pause and
+     Continue inside one page load therefore looked correct while the same two
+     clicks either side of a reload did not — which is why the earlier fix
+     verified green. Reload BETWEEN the pause and the resume or the path under
+     test is not the one the learner takes. */
+  const _ladderContext = () => {
+    const q = typeof PracticeAPI !== "undefined" ? PracticeAPI.currentQuestion : null;
+    if (!q || !q.ladder_kc || !q.ladder_stage) return null;
+    return {
+      kc: String(q.ladder_kc),
+      stage: String(q.ladder_stage),
+      title: q.ladder_kc_title ? String(q.ladder_kc_title) : null,
+      estimate: q.ladder_estimate && typeof q.ladder_estimate === "object"
+        ? q.ladder_estimate : null,
+      support: q.ladder_support !== false,
+      integrated: !!q.ladder_integrated,
+    };
+  };
+
   const _snapshot = () => {
     if (!state) return null;
     const review = state.review ? { ...state.review } : null;
@@ -166,6 +231,12 @@ const PracticeSession = (() => {
       phase: state.phase,
       remaining,
       questionId: _questionId(),
+      /* 🔴 NOT COVERED BY `SESSION_STATE_VERSION`, deliberately. Bumping the
+         version DISCARDS every paused session that is already on a learner's
+         machine, and this field is optional in both directions: an older
+         snapshot simply has no `ladder` and restores exactly as it did before.
+         A silent data loss is not a fair price for a field that degrades. */
+      ladder: _ladderContext(),
       draft: _draft(),
       review,
       savedAt: new Date().toISOString(),
@@ -571,6 +642,41 @@ const PracticeSession = (() => {
       const restored = canHydrate
         ? hydrateSavedPracticeQuestionFromBank(saved)
         : buildPracticeQuestionFromBank(bankQ);
+      /* Put the concept back. The hydrate above keeps these fields when the
+         persisted served question really is this one; this is what makes the
+         restore correct when it is NOT, which on prod is the common case — see
+         `_ladderContext`. Only fills what is missing, so a genuine hydrate is
+         never overwritten by an older snapshot's copy. */
+      /* 🔴 FIELD BY FIELD, AND ONLY THE MISSING ONES. Gating the whole merge
+         on `!restored.ladder_kc` — the first shape of this fix — leaves a
+         PARTIAL hydrate broken: a saved question carrying `ladder_kc` but no
+         `ladder_stage` skips the merge entirely, and `LadderUI.decorate` wants
+         BOTH, so it hides the readout exactly as if there had been no concept
+         at all. Codex, 2026-08-28.
+
+         The kc match is what makes the field-by-field merge safe. Both records
+         describe the same question — the hydrate is gated on the saved id
+         being the paused id, and the snapshot is written from the question on
+         screen — but if they disagree about the CONCEPT, the hydrated one is
+         the newer statement and grafting a rung off the other would put one
+         concept's name over another's progress. */
+      const ladder = pausedState.ladder;
+      if (ladder && (!restored.ladder_kc || restored.ladder_kc === ladder.kc)) {
+        if (!restored.ladder_kc) restored.ladder_kc = ladder.kc;
+        if (!restored.ladder_stage) restored.ladder_stage = ladder.stage;
+        if (!restored.ladder_kc_title) {
+          restored.ladder_kc_title = ladder.title || ladder.kc;
+        }
+        if (restored.ladder_support === undefined) {
+          restored.ladder_support = ladder.support;
+        }
+        if (restored.ladder_integrated === undefined) {
+          restored.ladder_integrated = ladder.integrated;
+        }
+        if (!restored.ladder_estimate && ladder.estimate) {
+          restored.ladder_estimate = ladder.estimate;
+        }
+      }
       PracticeAPI.currentQuestion = restored;
       practiceProgress.currentQuestion = restored;
       practiceProgress.currentQuestionId = restored.question_id;
