@@ -82,6 +82,7 @@
   <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
@@ -94,7 +95,13 @@
        default. Strips the practice question down to the concept title, the
        problem, and the worked example; the rest of the rails come back with the
        Advanced toggle. -->
-  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/basic-mode.css?v=4" />
+  <!-- The post-submit difficulty question, frozen to the bottom of the
+       viewport. Loaded AFTER basic-mode.css because it neutralises
+       .feedback-btn--default (there is no safe default answer any more)
+       and because basic-mode.css no longer hides these buttons at all —
+       see the 2026-08-28 REVERSAL block in that file. -->
+  <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=2" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
        AFTER styles/practice/question.css, and this is the only thing about its
@@ -1566,6 +1573,11 @@
             </div>
           </div>
           <div class="question-text" id="question-text"></div>
+          <!-- "For this input, return this" + "Not this". Correct rows are
+               derived from the graded test cases; wrong rows are authored per
+               question in `wrong_examples`. Written by
+               practice/question-examples.js, which owns this node entirely. -->
+          <div class="question-examples hidden" id="question-examples"></div>
           <div class="question-imports hidden" id="question-imports">
             <div class="question-imports-label">Imported helpers</div>
             <div class="question-imports-list" id="question-imports-list"></div>
@@ -1630,11 +1642,29 @@
               </div>
             </div>
             <div class="feedback-prompt" id="feedback-prompt" data-dd-info="feedback-rating" data-dd-info-place="after"></div>
-            <div class="feedback-help" id="feedback-help">Difficulty is set by your mastery — this tells us how far off that aim is landing, and moves the next problem toward where you actually are. <strong>“About right” is the safe default if you're not sure.</strong></div>
+            <!-- Kept in the DOM (ui.js and the watch suite both reference it) but
+                 hidden by styles/practice/difficulty-dock.css: the dock asks one
+                 short question and Seth asked for the interface to stay simple.
+                 Copy rewritten anyway — the old line named “About right” as the
+                 safe default, and that answer does not exist any more. -->
+            <div class="feedback-help" id="feedback-help">Your answer sets how far the next problem moves from where this one was pitched.</div>
             <div class="feedback-buttons">
-              <button class="ghost feedback-btn feedback-btn--default" data-feedback="not_much" type="button">About right</button>
-              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">A bit off</button>
-              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">Way off</button>
+              <!-- 🔴 THESE LABELS ARE THE PRE-PAINT COPY ONLY. The live wording
+                   is `paintDifficultyQuestion` in practice/ui.js, which rewrites
+                   all three the moment a grade lands; what is written here is
+                   what flashes before the first one. Change both or the flash
+                   asks a question the app no longer asks.
+
+                   🔴 data-feedback values are the WIRE and never change:
+                   not_much / somewhat / a_lot are stored on every attempt
+                   ever recorded and are the keys of adaptive.DIFFICULTY_NUDGE.
+                   Only the text moved. The class name --default is likewise
+                   kept for continuity but no longer styled as a default:
+                   under this wording all three answers move the aim, so
+                   there is no safe one to pre-select. -->
+              <button class="ghost feedback-btn feedback-btn--default" data-feedback="not_much" type="button">Slightly harder</button>
+              <button class="ghost feedback-btn" data-feedback="somewhat" type="button">Somewhat harder</button>
+              <button class="ghost feedback-btn" data-feedback="a_lot" type="button">Significantly harder</button>
               <button class="primary next-problem-btn hidden" id="next-problem-btn" type="button">
                 Next problem
               </button>
@@ -1903,6 +1933,7 @@ t.manual_seed(0)
   <script src="practice/session-clock.js?v=1"></script>
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=11"></script>
+  <script src="practice/question-examples.js?v=1"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
@@ -1916,14 +1947,14 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=38"></script>
+  <script src="practice/ui.js?v=39"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=25"></script>
-  <script src="practice/timer.js?v=22"></script>
+  <script src="practice/timer.js?v=23"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
        behind a transparent-text textarea, plus name-only ghost autocomplete.
@@ -1965,8 +1996,16 @@ t.manual_seed(0)
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
-  <script src="practice/basic-mode.js?v=1"></script>
-  <script src="practice/events.js?v=38"></script>
+  <script src="practice/basic-mode.js?v=2"></script>
+  <script src="practice/events.js?v=39"></script>
+  <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
+       the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
+       of #practice-feedback-area and into a bar pinned to the bottom of the
+       viewport. events.js binds the click handler by element, not by
+       position, so the order is not strictly load-bearing for the binding —
+       but keeping the re-parent last means every earlier script sees the
+       markup exactly where index.html declares it. -->
+  <script src="practice/difficulty-dock.js?v=2"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->

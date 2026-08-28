@@ -1,0 +1,119 @@
+/* ================================================================
+   styles/practice/difficulty-dock.css — the post-submit difficulty
+   question, frozen to the bottom of the viewport.
+
+   Pairs with practice/difficulty-dock.js, which MOVES `#feedback-prompt`
+   and `.feedback-buttons` into `#difficulty-dock` (it does not mint copies
+   of them). Everything here therefore restyles nodes that were written for
+   the left rail, and the rules that follow are mostly undoing rail-shaped
+   assumptions: the row's bottom margin, the accent ring on the old default
+   answer, and the helper paragraph that explained a question we no longer
+   ask.
+   ================================================================ */
+
+.difficulty-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: var(--panel);
+  border-top: 1px solid var(--border-strong);
+  box-shadow: 0 -6px 20px var(--shadow-strong);
+  /* Closed is the resting state: the dock only exists between a grade and
+     the next question. Kept out of the layout entirely rather than merely
+     transparent, so it cannot swallow clicks meant for the page under it. */
+  display: none;
+}
+
+.difficulty-dock.is-open {
+  display: block;
+}
+
+.difficulty-dock-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px 20px 16px;
+}
+
+/* The question, then the three answers under it — Seth's words, and the
+   reason the prompt is centred and sized up from its 14px rail form: down
+   here it is the only thing being asked, not a caption on a column. */
+.difficulty-dock-question {
+  /* Holds the question and its ⓘ on ONE line. Without this row the icon is an
+     inline-flex sibling of a block prompt and wraps underneath it, reading as
+     a stray "i" between the question and the answers. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.difficulty-dock .feedback-prompt {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.difficulty-dock .feedback-buttons {
+  /* The rail put 24px under this row to separate it from the concept bar
+     below it. There is nothing below it now. */
+  margin-bottom: 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.difficulty-dock .feedback-btn {
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+/* 🔴 NO DEFAULT ANSWER ANY MORE. `.feedback-btn--default` still marks the
+   first button — `timer.js::_forceAdvance` clicks it when review time runs
+   out and needs a selector to find it by — but the accent ring around it
+   was telling the learner "this is the safe one", which was true of "About
+   right" and is false of "Slightly harder". All three are equal requests. */
+.difficulty-dock .feedback-btn--default {
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+
+/* Reporting a bad problem stays reachable after a submit (it was unreachable
+   for everyone until 2026-08-27, because the only trigger lived in the
+   hidden submit area) — but it is not one of the three answers, so it does
+   not take an equal share of the row. */
+.difficulty-dock .dd-fb-trigger {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* The old helper line described the old question: "Difficulty is set by your
+   mastery ... About right is the safe default if you're not sure." There is
+   no "about right" now, and the dock asks the whole question in one
+   sentence. Hidden rather than deleted — the markup is index.html's. */
+#feedback-help {
+  display: none;
+}
+
+/* Room to scroll clear of a bar that floats over the page. Paired with
+   `dd-dock-open` on <body> so the measurement lives in one place. */
+body.dd-dock-open {
+  padding-bottom: 132px;
+}
+
+@media (max-width: 640px) {
+  .difficulty-dock-inner {
+    padding: 10px 12px 12px;
+  }
+  .difficulty-dock .feedback-btn {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+  body.dd-dock-open {
+    padding-bottom: 160px;
+  }
+}

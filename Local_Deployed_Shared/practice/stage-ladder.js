@@ -108,9 +108,17 @@ const StageLadder = (() => {
   const STAGES = [
     { id: "lesson", label: "Lesson", blurb: "Read the explanation and run the examples." },
     { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
-    { id: "example", label: "Worked example", blurb: "Read the solved example above it, then write this one yourself." },
-    { id: "solo", label: "Solo", blurb: "No scaffold. You have earned it." },
+    { id: "example", label: "Solo", blurb: "Write the whole thing yourself. Some of these open with an example." },
+    { id: "solo", label: "Integrated", blurb: "Every idea in this concept at once, with nothing to read first." },
   ];
+
+  /* 🔴 THE THIRD SECTION'S ID IS STILL `example` (2026-08-28). Its LABEL is now
+     "Solo" and the fourth's is "Integrated", because that is what the two rungs
+     actually serve — an unaided single-concept drill, then a whole-KP problem.
+     The ids are not display vocabulary: `INFO_KEY`, `STAGE_ALIASES` and
+     `watch.py check_infotips` all key off them, and renaming `example` to
+     `solo` would collide with the id the fourth section already holds. Labels
+     move; ids do not. */
 
   /* The ⓘ beside each rung name. Keyed by DISPLAYED rung; the copy lives in
      `infotips-registry.js` under these exact keys, and `watch.py`'s
@@ -515,22 +523,32 @@ const StageLadder = (() => {
      is withdrawn, in the reading's note. */
   const NO_SUPPORT_BLURB = {
     faded: "This one came through with no blanks — write it unaided.",
-    example: "No solved example was available for this one — write it unaided.",
+    // `example` (the Solo rung) is deliberately absent since 2026-08-28: that
+    // rung no longer PROMISES an example, so arriving without one is the
+    // ordinary case rather than a withdrawn scaffold. Most solo drills have
+    // none; the ones that do are served first (kc_graph.with_example_first) so
+    // the examples fade out across the rung.
   };
 
-  /* "Integrated" — a chip in the reading line, not a section of the track. Gated on
-     `solo` as well as on the flag: the backend only sets `ladder_integrated`
-     on a solo record, and a chip claiming several concepts at once over a
-     drill that still carries blanks would be the readout promising something
-     the page is not doing. */
+  /* The chip that used to read "Integrated" in the reading line.
+
+     RETIRED 2026-08-28, and this is why it still exists as an element. The
+     fourth SECTION is now labelled "Integrated", so a chip saying the same
+     word beside it said nothing twice. What is still worth saying is the
+     opposite case: the top rung serving a fallback — a single-concept
+     `kp-independent` drill because the KP authored no `## Integrated practice`
+     — where the section name overstates the problem. The chip now carries that
+     one, so the readout is honest in both directions instead of redundant in
+     one. `current.integrated` is `ladder_integrated` from the server, which is
+     true only for a genuine whole-KP problem. */
   const _renderNow = () => {
     const flagEl = _el("stage-ladder-flag");
     if (!flagEl) return;
-    const integrated = !!current.integrated && current.stage === "solo";
-    flagEl.textContent = integrated ? "Integrated" : "";
+    const integrated = current.stage === "solo" && !current.integrated;
+    flagEl.textContent = integrated ? "Single concept" : "";
     flagEl.hidden = !integrated;
     flagEl.title = integrated
-      ? "This problem uses the concept alongside others you have already been taught."
+      ? "This concept has no whole-KP problem authored yet, so the top rung is serving a single-concept one."
       : "";
   };
 

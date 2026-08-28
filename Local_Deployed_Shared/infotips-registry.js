@@ -59,12 +59,12 @@ window.DD_INFOTIPS = {
     body: "Most of the solution is already written and the part that <strong>uses this concept</strong> is blanked out. You supply that part. Get a run of them right and the scaffold comes off.",
   },
   "ladder.example": {
-    title: "Worked example",
-    body: "A solved example of the same idea sits above the problem. Read it, then write this one yourself — nothing is filled in for you.",
+    title: "Solo",
+    body: "You write the whole function, unaided, on one idea at a time. Some of these open with a short solved example — the ones introducing a move you have not used yet — and they run out as you work through the rung, which is the point.",
   },
   "ladder.solo": {
-    title: "Solo",
-    body: "No scaffold: the problem and nothing else. This is the top rung of the concept's ladder, and the bar stops here — the app decides the concept is <strong>learned</strong> from your record, not from arriving.",
+    title: "Integrated",
+    body: "The top rung: problems that need <strong>every</strong> idea in this concept at once, with nothing to read first. The bar stops here — the app decides the concept is <strong>learned</strong> from your record, not from arriving.",
   },
   "stage-ladder-kc": {
     title: "Current concept",

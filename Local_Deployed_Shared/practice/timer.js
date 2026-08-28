@@ -452,9 +452,22 @@ const PracticeSession = (() => {
     _loadNextPracticeQuestion().catch(() => {});
   };
 
-  // Review time is up. If the felt-difficulty rating was never given, record
-  // the default ("About right") so the mastery update still lands, then click
-  // Next as soon as it appears (the rating POST is async).
+  // Review time is up. If the difficulty question was never answered, click
+  // the first choice ("Slightly harder"/"Slightly easier") so the mastery
+  // update still lands, then click Next as soon as it appears (the rating POST
+  // is async).
+  //
+  // 🔴 That first choice stopped being a NEUTRAL answer on 2026-08-28. The
+  // three buttons used to read "About right / A bit off / Way off" and the
+  // default meant "stop correcting"; they now read "Slightly / Somewhat /
+  // Significantly harder-or-easier" and the smallest one still asks for a
+  // step (adaptive.DIFFICULTY_NUDGE). Timing out therefore nudges the aim by
+  // the smallest amount the learner could have chosen, in the direction their
+  // grade already implies, rather than by nothing. That is the closest thing
+  // to silence the new question has — the alternative is finalizing UNRATED,
+  // which is reserved for routes where nobody was asked at all, and the
+  // learner WAS asked here; the buttons were on screen and docked to the
+  // bottom of the viewport for the whole review clock.
   const _forceAdvance = () => {
     if (!isActive()) return;
     _stopPoll();
@@ -463,18 +476,37 @@ const PracticeSession = (() => {
       return;
     }
     const defBtn = document.querySelector(".feedback-btn--default");
-    if (defBtn && !defBtn.classList.contains("hidden") && !defBtn.disabled) {
-      defBtn.click();
+    if (!defBtn || defBtn.classList.contains("hidden") || defBtn.disabled) {
+      // Nothing to rate — no question was asked, so advance directly.
+      _loadNextPracticeQuestion().catch(() => {});
+      return;
     }
+    defBtn.click();
+
+    /* 🔴 THE RATING CLICK IS NOW THE NAVIGATION, SO THIS POLL MUST NOT CLICK
+       NEXT (2026-08-28). It used to: it waited for `#next-problem-btn` to be
+       revealed by the feedback handler and clicked it, because before the dock
+       the handler only revealed the button and stopped. The handler clicks it
+       itself now, in the same synchronous run as `showNextProblemButton()` —
+       so a poll that also clicks it is a SECOND advance, and the window it
+       fires in is wide: Next stays visible from the handler's click until the
+       new question renders, which is a network fetch away, and this ticks
+       every 250ms. The learner loses a question, ArenaUnlock is asked twice.
+
+       What is left is a watchdog, and it deliberately does NOT click Next.
+       Next being visible at 10s means the handler already ran and already
+       navigated (it reveals and clicks with no yield in between) and the load
+       is merely slow — clicking again would be the very double-advance this
+       fixes. Next still HIDDEN at 10s means the rating POST failed: that path
+       re-enables the buttons and leaves the button hidden, and nothing else
+       will move the learner on. `onQuestionRendered` calls `_stopPoll`, so a
+       normal advance disarms this before it ever fires. */
     let tries = 0;
     advancePoll = setInterval(() => {
       tries++;
-      if (!nextProblemBtn.classList.contains("hidden")) {
-        _stopPoll();
-        nextProblemBtn.click();
-      } else if (tries >= 40) {
-        // 10s — the rating POST failed or never ran; advance anyway.
-        _stopPoll();
+      if (tries < 40) return;
+      _stopPoll();
+      if (nextProblemBtn.classList.contains("hidden")) {
         _loadNextPracticeQuestion().catch(() => {});
       }
     }, 250);

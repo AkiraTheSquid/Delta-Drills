@@ -286,6 +286,9 @@ function renderQuestion(q, count) {
   // — that call replaces #question-text wholesale.
   if (window.LadderUI) window.LadderUI.decorate(q);
   renderQuestionImports(q);
+  // Input → expected output for the graded cases, plus any authored near-miss
+  // outputs. Sibling of #question-text, so it survives LadderUI.decorate.
+  window.QuestionExamples?.render(q);
   renderQuestionVisual(q);
   if (window.DeltaNotebook) {
     window.DeltaNotebook.reset(q.starter_code || DEFAULT_EDITOR_CODE);
@@ -627,6 +630,47 @@ function applyPendingFeedbackState(pending, q) {
 }
 
 // Apply correct/incorrect result to the feedback area UI.
+/* THE ONE PLACE THE DIFFICULTY QUESTION IS WORDED.
+   Called by `applyResult` for a normal grade and by the "I got it right"
+   override in events.js, which paints the same question after flipping the
+   verdict. It used to be written out in both, and index.html holds a third
+   pre-paint copy for the flash before the first grade — three copies of one
+   sentence, which is how the override path ends up asking last month's
+   question. The markup copy cannot be removed (it is what renders before any
+   script runs), so index.html carries a comment pointing here.
+*/
+/* The three buttons are not_much / somewhat / a_lot on the wire, in that
+ order, and those values are what every stored attempt carries — the text
+ is the only thing that changes here.
+
+ 🔴 THE GRADE FIXES THE DIRECTION, THE ANSWER FIXES THE SIZE. The learner
+ is never asked which way to move: getting it right can only make the next
+ problem harder and missing it can only make it easier, and
+ adaptive.nudge_difficulty_offset takes the sign from `correct`, not from
+ the button. So the wording asks one question — how big a step — and both
+ ends map onto the same three sizes (1.5 / 3.0 / 6.0 points of
+ difficulty_offset).
+
+ 🔴 THERE IS NO "NO CHANGE" ANSWER ANY MORE (2026-08-28, Seth's wording).
+ The first option used to read "About right" and meant *stop correcting*;
+ `not_much` was deliberately absent from DIFFICULTY_NUDGE so it moved
+ nothing. Under "slightly harder" it must move, so it gained a step, and
+ the decay that answer used to supply now runs on EVERY rated attempt
+ (decay-then-add in adaptive.py) — otherwise a learner who keeps asking
+ for harder never drifts back. Anything relabelling these buttons has to
+ keep asking the same question the step sizes answer. */
+function paintDifficultyQuestion(correct) {
+  feedbackPrompt.textContent = correct
+    ? "Nice work. How much harder do you want the next problem to be?"
+    : "No worries. How much easier do you want the next problem to be?";
+  const labels = correct
+    ? ["Slightly harder", "Somewhat harder", "Significantly harder"]
+    : ["Slightly easier", "Somewhat easier", "Significantly easier"];
+  feedbackButtons.forEach((btn, i) => {
+    btn.textContent = labels[i];
+  });
+}
+
 function applyResult(correct) {
   resultBadge.textContent = correct ? "Correct" : "Incorrect";
   resultBadge.className = "result-badge " + (correct ? "correct" : "incorrect");
@@ -643,24 +687,7 @@ function applyResult(correct) {
      render or what to POST — the same rule the rest of Basic mode follows. */
   practiceFeedbackArea.classList.toggle("result-correct", !!correct);
   practiceFeedbackArea.classList.toggle("result-incorrect", !correct);
-  // Buttons map to the engine's not_much / somewhat / a_lot. The LEVEL is the
-  // size of the correction; the OUTCOME is its direction, which is why the same
-  // three buttons read "easy" after a correct answer and "hard" after a miss.
-  // Both ends land in adaptive.nudge_difficulty_offset, which moves where the
-  // next problem is pitched — so "About right" is a real answer ("stop
-  // correcting"), not an opt-out, and it is the default for that reason (see
-  // the helper line + .feedback-btn--default).
-  if (correct) {
-    feedbackPrompt.textContent = "Nice work. How did that feel?";
-    feedbackButtons.forEach((btn, i) => {
-      btn.textContent = ["About right", "A little easy", "Way too easy"][i];
-    });
-  } else {
-    feedbackPrompt.textContent = "No worries. How did that feel?";
-    feedbackButtons.forEach((btn, i) => {
-      btn.textContent = ["About right", "A little hard", "Way too hard"][i];
-    });
-  }
+  paintDifficultyQuestion(correct);
   // "I missed one concrete thing" only makes sense after a wrong answer.
   if (missedFactRow) missedFactRow.classList.toggle("hidden", correct);
 }
@@ -695,7 +722,7 @@ function renderFailedTests(result, question) {
      question's cells happened to put it, so the next question's failures
      rendered ABOVE the scratch cell instead of below the work.
 
-     The #feedback-prompt anchor is the fallback for surfaces with no notebook
+     The result-row anchor is the fallback for surfaces with no notebook
      (a torch drill routed to Colab hides the right panel; so does the Colab
      edition), and there it must be inserted only once. 🔴 That fallback turns
      on VISIBILITY, not existence: #notebook-cells is still in the DOM on those
@@ -711,9 +738,17 @@ function renderFailedTests(result, question) {
   } else if (!block.parentNode || block.parentNode.id === "notebook-cells") {
     // Second clause: a block left in the notebook by an earlier, visible
     // question would otherwise stay parented there and never reach the rail.
-    const anchor = document.getElementById("feedback-prompt");
-    if (!anchor || !anchor.parentNode) return;
-    anchor.parentNode.insertBefore(block, anchor);
+    /* 🔴 ANCHORED ON THE RESULT ROW, NOT ON #feedback-prompt (2026-08-28).
+       That element used to sit right here in #practice-feedback-area; it now
+       lives inside the fixed bottom bar practice/difficulty-dock.js builds, so
+       inserting beside it would render the failing cases INSIDE a ~130px strip
+       pinned to the bottom of the viewport — scrolled out of reach on exactly
+       the surfaces this fallback exists for. #result-badge cannot move: it is
+       declared inside .result-row in index.html and nothing re-parents it. */
+    const badge = document.getElementById("result-badge");
+    const row = badge && badge.parentNode;
+    if (!row || !row.parentNode) return;
+    row.parentNode.insertBefore(block, row.nextSibling);
   }
   const total = (question && Array.isArray(question.test_cases) && question.test_cases.length) || result.failed_tests.length;
   const id = stableQuestionId(question);

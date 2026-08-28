@@ -56,30 +56,30 @@ const PracticeBasicMode = (() => {
     document.body.classList.contains("dd-basic-mode") &&
     !document.documentElement.classList.contains("dd-colab-edition");
 
-  /* Settle the felt-difficulty rating for a grade that has just landed.
+  /* 🪦 `settleRating()` LIVED HERE UNTIL 2026-08-28, AND IS NOT COMING BACK
+     WITHOUT THE HIDING COMING BACK WITH IT.
 
-     No-op in Advanced mode, and no-op whenever the rating is not the thing
-     standing between the learner and Next — which covers every path that
-     already called `showNextProblemButton()` itself: placement probes, a
-     Colab verdict with no pending attempt, and a review restored from a
-     paused session (`applyPendingFeedbackState`), where the rating was
-     sent before the pause and must not be sent twice.
+     It clicked `.feedback-btn--default` on the learner's behalf, because
+     basic-mode.css hid the three rating buttons from everyone who had not
+     ticked Advanced mode, and that row is both the only backend mutation
+     that moves a subtopic baseline and the only thing that revealed Next
+     problem. A stand-in was the right answer to a hidden question.
 
-     Safe to call more than once per question: the handler disables all
-     three buttons on its first click, and this refuses a disabled one. */
-  const settleRating = () => {
-    if (!active()) return false;
-    const area = document.getElementById("practice-feedback-area");
-    if (!area || area.classList.contains("hidden")) return false;
-    const next = document.getElementById("next-problem-btn");
-    if (!next || !next.classList.contains("hidden")) return false;
-    const def = document.querySelector(".feedback-btn--default");
-    if (!def || def.disabled || def.classList.contains("hidden")) return false;
-    def.click();
-    return true;
-  };
+     The question is not hidden any more. Seth asked for the three choices to
+     BE the post-submit interface — docked to the bottom of the viewport,
+     phrased as "how much harder / easier do you want the next problem to
+     be?", and advancing the question on the same click (see
+     practice/difficulty-dock.js and the top of styles/practice/basic-mode.css
+     for the reversal). Answering it for the learner would now do two wrong
+     things at once: invent an opinion they were visibly being asked for, and
+     skip past the problem before they had given it.
 
-  return { active, settleRating };
+     🔴 If a future change hides the rating again, restore BOTH halves
+     together — the click-the-real-button stand-in and its call sites in
+     events.js. watch_basic_mode.py still holds the whole contract; it stops
+     checking it the moment basic-mode.css stops hiding `.feedback-btn`. */
+
+  return { active };
 })();
 
 window.PracticeBasicMode = PracticeBasicMode;
