@@ -62,6 +62,7 @@
 5. Completing lesson records KC exposure; normal question queue resumes.
 
 ## Invariants & Constraints
+- 🔴 **Every function in a drill's solution or problem must be taught by a concept at or before it, and must appear in the ARENA corpus.** Both are enforced by this folder's `watch.py` via `scripts/guard_checks.py`, scoped to `einops.`, as ratchets against `scripts/solution_prereq_baseline.json` and `scripts/arena_grounding_baseline.json` — they fail on NEW debt only. Re-recording a baseline admits debt rather than paying it.
 
 - One concept per segment; exactly one Python worked example and one faded
   exercise per segment. One faded qid may belong to only one segment.
@@ -118,6 +119,7 @@
   - Status: permanent authoring risk.
 
 ## Recent Changes
+- 2026-08-29: `watch.py` gained the two standing content guards (prerequisite order and ARENA grounding), scoped to `einops.`. Editing anything here now runs them, so a drill reaching for an untaught or ungrounded function is refused at the point it is written rather than found later. 🔴 The ARENA figures published on 2026-08-28 are superseded: the corpus scan was reading only code cells and ARENA keeps its worked solutions in markdown fences. For this folder that moved a real conclusion: `einops.repeat` is in 15 notebooks and `einops.reduce` in 14, not 2 and 5 — the earlier suggestion to collapse them into one node is withdrawn.
 
 - 2026-07-31: q387 retired as a duplicate of q322 — same pattern string
   (`'b c (h hs) (w ws) -> (hs ws b) c h w'`), same `solve` body, differing only

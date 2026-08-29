@@ -134,13 +134,31 @@ def check_no_python_atom_gates_the_numpy_floor():
             "atom_tag_unwired and the gate refuses the deploy" % atom)
 
 
+
+# ── The two standing content guards ───────────
+# Filled 2026-08-29 on Seth's instruction. This folder is where the guards bite
+# hardest: py-0 is the FLOOR, so a drill here reaching for an untaught
+# construct has nothing earlier to be taught by. The three open cases recorded
+# in README.md (q578 membership, q585 generator expression + set, q603 an `if`)
+# are exactly this rule, found by hand before it was mechanised.
+# ARENA grounding is scoped to `python.` too, and is expected to be silent
+# here: the floor teaches no library at all, and a python page that starts
+# declaring torch symbols has stopped being the floor.
+import importlib.util as _ilu
+_GUARD = os.path.join(REPO, 'scripts', 'guard_checks.py')
+_spec = _ilu.spec_from_file_location('guard_checks', _GUARD)
+_guard = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_guard)
+
+_CONTENT_GUARDS = _guard.run('python.')
+
 if __name__ == '__main__':
     checks = [
         check_every_page_is_a_registered_py0_concept,
         check_the_floor_stays_under_the_numpy_course,
         check_pages_teach_plain_python,
         check_no_python_atom_gates_the_numpy_floor,
-    ]
+    ] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()

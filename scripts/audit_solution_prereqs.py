@@ -254,7 +254,12 @@ def report(violations: list[dict], args) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--surface", default="solution",
+    # All three by default since 2026-08-29. The rule Seth stated is "every
+    # function utilised in the solution OR THE PROBLEM", and the problem is
+    # what the learner is handed: the starter they type into and the prompt
+    # they read. A starter is not merely a faded solution — at the worked rung
+    # it IS the code, and it carries scaffold lines the solution never shows.
+    ap.add_argument("--surface", default=",".join(SURFACES),
                     help="comma-separated: solution,starter,prompt")
     ap.add_argument("--qid", type=int, default=None)
     ap.add_argument("--summary", action="store_true")
@@ -276,9 +281,9 @@ def main() -> int:
         pre = tuple(p.strip() for p in args.kc_prefix.split(",") if p.strip())
         violations = [v for v in violations if v["kc"].startswith(pre)]
     if args.write_baseline:
-        if args.qid is not None or surfaces != ("solution",):
-            raise SystemExit("--write-baseline records the whole solution surface; "
-                             "drop --qid/--surface")
+        if args.qid is not None or tuple(surfaces) != SURFACES:
+            raise SystemExit("--write-baseline records every surface of the "
+                             "whole bank; drop --qid/--surface")
         write_baseline(violations)
         print(f"baseline written: {len({key(v) for v in violations})} entries")
         return 0

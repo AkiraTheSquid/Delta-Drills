@@ -54,6 +54,14 @@
    `python.dots-and-imports` unlocks `numpy.ndarray-model`.
 
 ## Invariants & Constraints
+- 🔴 **Every construct a py-0 drill uses must be taught by one of the seven
+  concepts, at or before the drill's own.** This folder is the FLOOR, so a
+  drill reaching past it has nothing earlier to be taught by — that is what
+  the three ACTIVE cases below are. Enforced by `watch.py` via
+  `scripts/guard_checks.py` scoped to `python.`, as a ratchet against
+  `scripts/solution_prereq_baseline.json`. The ARENA-grounding half runs too
+  and should stay silent here: the floor teaches no library at all, and a
+  page declaring torch symbols has stopped being the floor.
 - **Exactly one root.** `python.values-and-names` has no prereqs and every
   other KC in the registry is reachable from it.
 - **Nothing here imports a library.** Checked over the page bodies; a page that
@@ -126,6 +134,12 @@
     production outage.
 
 ## Recent Changes
+- 2026-08-29: `watch.py` gained the two standing content guards. The three
+  drills recorded ACTIVE below (q578, q585, q603) are now MECHANISED —
+  they sit in the recorded baseline rather than being remembered in prose,
+  and a fourth drill of the same kind is refused at the point it is written.
+  Fixing those three should SHRINK the baseline; that is the intended
+  direction and needs no re-record.
 - 2026-08-28: Folder created. Seven KPs, 42 drills (ids 568–609), the registry
   rewire that gives `numpy.ndarray-model` prerequisites for the first time, and
   `watch.py`'s four invariants. `lessons.is_prelibrary` added on the backend so

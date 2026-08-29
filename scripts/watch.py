@@ -189,6 +189,12 @@ def check_solution_prereq_ratchet():
     was built for: eight faded drills asked for it, the page that teaches
     transposition sat four lessons later, and nothing failed.
 
+    Widened 2026-08-29 from the solution alone to every surface — the solution
+    AND the problem the learner is handed. A starter is not just a faded
+    solution: at the worked rung it IS the code, and it carries scaffold lines
+    the solution never shows. That widening is what took the known backlog from
+    646 to 1464.
+
     The corpus carries a large backlog, so this is a RATCHET, not a gate:
     `solution_prereq_baseline.json` records what is already broken and this
     fails only on something NEW. Fixing content leaves stale entries behind —
@@ -197,7 +203,7 @@ def check_solution_prereq_ratchet():
     """
     import audit_solution_prereqs as A
 
-    violations = A.find(("solution",))
+    violations = A.find(A.SURFACES)
     known = A.load_baseline()
     assert known is not None, (
         'solution_prereq_baseline.json is missing — the ratchet cannot tell '
@@ -252,6 +258,42 @@ def check_solution_symbol_coverage():
         'attribute access stopped being collected — a.T is the case this exists for'
 
 
+def check_arena_grounding_ratchet():
+    """No drill may teach a function ARENA never uses.
+
+    ARENA is what the course exists to prepare people for, so it is the source
+    of truth for what is worth teaching, and the test is empirical: a library
+    symbol appearing in ZERO of the 458 notebooks is attention spent on
+    something no learner will ever need. `torch.einsum` is the case this was
+    built for — 69 of our drill solutions are written in it and the corpus does
+    not contain one notebook that uses it; ARENA writes `einops.einsum`, whose
+    arguments come in a different order.
+
+    A RATCHET, like the prerequisite check above: `arena_grounding_baseline.json`
+    holds the existing backlog and this fails only on something NEW.
+    """
+    import guard_checks
+
+    guard_checks.check_arena_grounding()
+
+
+def check_arena_index_is_current():
+    """The frozen corpus summary must still describe the corpus on disk.
+
+    The grounding guard answers from `arena_symbol_index.json` rather than
+    rescanning 458 notebooks, which is what makes it fast enough for a
+    watcher. The cost of that is an artifact that can go stale in silence, and
+    a stale guard is worse than none — it keeps answering, confidently, about
+    a corpus that is no longer there. Only the notebook COUNT is verified
+    here; recomputing the symbols needs torch, and this is the failure that
+    actually happens (the corpus is updated, or moved, and nobody re-ran the
+    scan).
+    """
+    import guard_checks
+
+    guard_checks.check_arena_index_is_current()
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
@@ -261,7 +303,8 @@ if __name__ == '__main__':
               file=sys.stderr)
         sys.exit(1)
     checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
-              check_solution_prereq_ratchet, check_solution_symbol_coverage]
+              check_solution_prereq_ratchet, check_solution_symbol_coverage,
+              check_arena_grounding_ratchet, check_arena_index_is_current]
     for fn in checks:
         try:
             fn()

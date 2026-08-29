@@ -24,6 +24,7 @@
 3. Each segment renders inline: concept + worked explanation left, complete worked code right for optional running; faded exercise stays out of lesson UI.
 
 ## Invariants & Constraints
+- 🔴 **Every function in a drill's solution or problem must be taught by a concept at or before it, and must appear in the ARENA corpus.** Both are enforced by this folder's `watch.py` via `scripts/guard_checks.py`, scoped to `einsum.`, as ratchets against `scripts/solution_prereq_baseline.json` and `scripts/arena_grounding_baseline.json` — they fail on NEW debt only. Re-recording a baseline admits debt rather than paying it.
 - One einsum concept (one spec-string idea) per segment; exactly ONE worked example + ONE faded exercise per segment.
 - Watch out belongs to concept's lesson screen; no faded prompt or grading appears there.
 - Introduce spec rules in dependency order — later specs build on earlier ones (e.g. `bii->b` after `ii->`).
@@ -44,6 +45,7 @@
   - Status: `ACTIVE` for remaining legacy einsum KPs.
 
 ## Recent Changes
+- 2026-08-29: `watch.py` gained the two standing content guards (prerequisite order and ARENA grounding), scoped to `einsum.`. Editing anything here now runs them, so a drill reaching for an untaught or ungrounded function is refused at the point it is written rather than found later. 🔴 The ARENA figures published on 2026-08-28 are superseded: the corpus scan was reading only code cells and ARENA keeps its worked solutions in markdown fences. For this folder the finding got stronger, not weaker: `einops.einsum` is in 61 of the 458 notebooks and `torch.einsum` is in ZERO, while all 8 einsum KPs declare `torch.einsum` across 69 drill solutions.
 - 2026-07-27: Converted all 10 KP pages and the 68 einsum drills to the PyTorch dialect. `watch.py` filled in: one dialect per page, page-vs-drill dialect match, and every page must still demonstrate einsum.
 - 2026-07-20: `kp-reductions.md` split into 4 atomic concept/worked sequences; worked code runs optionally on right.
 - 2026-07-20: `kp-diag-trace.md` rewritten into 6 atomic single-concept segments.
