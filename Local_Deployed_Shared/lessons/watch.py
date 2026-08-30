@@ -20,14 +20,27 @@ sys.path.insert(0, os.path.join(_DIR, '../..'))
 # Lowered from 64 to 63 on 2026-07-28: numpy.structured-dtypes was RETIRED, not
 # lost. Record dtypes, datetime64 and genfromtxt have no PyTorch form — a tensor
 # is homogeneous — so the KC could not follow the course into torch.
-_MIN_KCS = 63
+# 63 -> 37 on 2026-08-30, the cut back to the ARENA-necessary path. 35 KCs were
+# retired in one pass: the whole einsum course (ARENA writes einops.einsum in 61
+# of its 458 notebooks and torch.einsum in NONE), all of np-4, and the np-2/np-3
+# concepts whose own operations appear in fewer than ~5% of the corpus. What is
+# left is the closure of the einops nodes plus the high-frequency tensor
+# literacy under them, which is why the floor equals the count exactly: this
+# graph is meant to stop shrinking. The retired pages are in
+# This-Directory-Only/archive/retired-content-2026-08-30/ and their drills in
+# Local_Deployed_Shared/pipeline/retired_question_ids.json.
+_MIN_KCS = 37
 # 380 -> 370 on 2026-07-28. The retirements cost exactly 7 tagged questions
 # (six numpy.structured-dtypes drills plus q65), leaving 373. An earlier edit
 # in the same pass dropped this to 343, which was 30 questions of unexplained
 # slack -- a floor that loose would let a quarter of a lesson fall out of the
 # ITS without failing. 370 keeps the small headroom a floor needs and nothing
 # more.
-_MIN_TAGGED_QUESTIONS = 370
+# 370 -> 290 on 2026-08-30 with the same cut: 218 drills went with their
+# concepts, leaving 293 tagged. Three questions of headroom, for the same
+# reason as above -- the floor is here to catch a lesson falling out silently,
+# not to permit one.
+_MIN_TAGGED_QUESTIONS = 290
 
 
 def _read(name):
@@ -115,8 +128,24 @@ def check_invariants():
     )
 
 
+
+# ── The two standing content guards ───────────
+# Filled 2026-08-29 on Seth's instruction: these must fire on the folder being
+# EDITED, not only from scripts/, so that adding a drill or a KP page here is
+# what trips them. The implementations live in scripts/guard_checks.py — one
+# copy, because a guard duplicated six times becomes six different guards
+# inside a month. Scoped to the whole bank so this watcher reports its own concepts.
+import importlib.util as _ilu
+_GUARD = os.path.join(os.path.join(_DIR, '..', '..'), 'scripts', 'guard_checks.py')
+_spec = _ilu.spec_from_file_location('guard_checks', _GUARD)
+_guard = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_guard)
+
+_CONTENT_GUARDS = _guard.run(None)
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api,
+              check_invariants] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()

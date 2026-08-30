@@ -36,7 +36,21 @@ def check_crosswalk_is_present_and_tiered():
         'prior. Regenerate: This-Directory-Only/scripts/export_kc_atom_crosswalk.py'
     )
     kcs = (json.loads(_read(path)) or {}).get('kcs') or {}
-    assert len(kcs) >= 60, f'crosswalk covers only {len(kcs)} KCs — expected all 63'
+    # Counted against the registry rather than a literal since 2026-08-30, when
+    # the ARENA cut took the graph from 63 concepts to 37 and this check failed
+    # on a crosswalk that was in fact complete. What it is really asking is
+    # whether the export covered EVERY concept, and only the registry knows how
+    # many that is.
+    registry = json.loads(_read(os.path.join(HERE, '..', 'lessons', 'kc_registry.json')))
+    missing = sorted({kc['id'] for kc in registry['kcs']} - set(kcs))
+    # By identity, not by count: a crosswalk carrying enough STALE keys — the
+    # retired concepts, say — passes a count test while the concepts actually
+    # being served are the ones absent from it.
+    assert not missing, (
+        f'crosswalk is missing {len(missing)} registry KC(s): '
+        + ', '.join(missing[:6]) + (' …' if len(missing) > 6 else '')
+        + '. Regenerate: This-Directory-Only/scripts/export_kc_atom_crosswalk.py'
+    )
     tiers = {row.get('tier') for row in kcs.values()}
     assert 'measured' in tiers, (
         'no KC is in the `measured` tier — with every concept a topic proxy, '

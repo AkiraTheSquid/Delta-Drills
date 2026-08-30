@@ -5,7 +5,7 @@ supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim]
 faded: [220, 135]
 guided: [503, 504]
-independent: [108, 130, 505, 174]
+independent: [108, 505, 174]
 ---
 
 ## Concept: axis= — the axis you name disappears

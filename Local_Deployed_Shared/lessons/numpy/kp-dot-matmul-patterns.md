@@ -3,7 +3,7 @@ kc: numpy.dot-matmul-patterns
 title: Dot products and matrix-multiply patterns
 supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rules]
 new_syntax: [torch.dot]
-faded: [37, 144, 121, 5]
+faded: [37, 144, 121]
 guided: [514]
 independent: [141, 515, 95]
 ---
@@ -167,52 +167,6 @@ import torch as t
 def solve(a, b):
     """Length-n array: entry i = (row i of a) . (row i of b)."""
     return (a * b).sum(dim=1)
-```
-
-## Concept: norms — a dot with itself, rooted
-
-**Norms** are the same atom again: a vector's Euclidean length is
-`t.sqrt(v @ v)`. Applied to a whole matrix's entries — √(sum of all
-squares) — it's the **Frobenius norm**, `t.linalg.norm(z)` with no
-arguments (as if the matrix were one long vector). Operator norms exist
-behind `ord=`, but Frobenius is the drills' default meaning of "the norm".
-
-## Worked example
-
-```python
-import torch as t
-
-# Frobenius norm: sqrt of the sum of ALL squared entries.
-f = t.tensor([[3.0, 4.0],
-              [0.0, 0.0]])
-assert t.linalg.norm(f) == 5.0
-assert t.isclose(t.linalg.norm(f), t.sqrt((f * f).sum()))
-print("norm", t.linalg.norm(f).item(), "| sqrt((f*f).sum())",
-      t.sqrt((f * f).sum()).item())
-```
-
-Why: the first-principles spelling `t.sqrt((z * z).sum())` is
-multiply+reduce again — the whole KP is one atom wearing different hats.
-
-## Faded practice
-
-### q5
-The Frobenius norm of a matrix.
-
-```python starter
-import torch as t
-
-def solve(z):
-    """Square root of the sum of squares of ALL entries of z."""
-    return t.linalg._____(z)
-```
-
-```python solution
-import torch as t
-
-def solve(z):
-    """Square root of the sum of squares of ALL entries of z."""
-    return t.linalg.norm(z)
 ```
 
 ## Independent practice

@@ -144,6 +144,24 @@
   pointer-events: none;
 }
 
+/* BOTH LAYERS, ONE CLASS. The fill's width and the clip on the on-accent text
+   are the same edge drawn twice (see `--dd-concept-pct` above); switching off
+   one transition and not the other would slide the label's colour boundary
+   across a bar that had already jumped. `concept-pill.js` adds this, forces a
+   reflow so the new width lands with the transition off, and removes it again
+   in the same call — it is never on the element between two paints.
+
+   What it is for: a bar that slides BACKWARDS reads as progress being taken
+   away, and the two moves that are not progress — a drop, and a switch to a
+   different concept — are exactly the ones that would slide backwards. The
+   value still changes; only the animation is dropped. `styles/xp.css` does the
+   same thing for the level pill's snap-back after a level-up. */
+.dd-concept--snap .dd-concept-fill,
+.dd-concept--snap .dd-concept-text--on {
+  transition: none;
+}
+
+
 /* 🔴 THE ELLIPSIS IS ON BOTH LAYERS AND MUST BE IDENTICAL. The clip is a
    percentage of the layer's own box, so if one layer truncated at a different
    character the seam would fall in the middle of a glyph that is not there on

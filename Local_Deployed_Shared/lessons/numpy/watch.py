@@ -156,8 +156,24 @@ def check_invariants():
             )
 
 
+
+# ── The two standing content guards ───────────
+# Filled 2026-08-29 on Seth's instruction: these must fire on the folder being
+# EDITED, not only from scripts/, so that adding a drill or a KP page here is
+# what trips them. The implementations live in scripts/guard_checks.py — one
+# copy, because a guard duplicated six times becomes six different guards
+# inside a month. Scoped to numpy. so this watcher reports its own concepts.
+import importlib.util as _ilu
+_GUARD = os.path.join(os.path.join(_DIR, '..', '..', '..'), 'scripts', 'guard_checks.py')
+_spec = _ilu.spec_from_file_location('guard_checks', _GUARD)
+_guard = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_guard)
+
+_CONTENT_GUARDS = _guard.run('numpy.')
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api,
+              check_invariants] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()

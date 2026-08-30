@@ -2,87 +2,390 @@
   "version": 1,
   "description": "Knowledge-component registry for first-encounter course content (spec: docs/spec-first-encounter-course-content.md). KCs are a finer layer under existing subtopic_key values; subtopic_key mapping keeps BKT compatibility.",
   "lessons": [
-    { "id": "np-1", "topic": "Numpy", "title": "Arrays from the ground up", "subtopic_key": "Numpy: Core array literacy" },
-    { "id": "np-2", "topic": "Numpy", "title": "Indexing and selection", "subtopic_key": "Numpy: Indexing and selection" },
-    { "id": "np-3", "topic": "Numpy", "title": "Vectorization and broadcasting", "subtopic_key": "Numpy: Vectorization and broadcasting" },
-    { "id": "np-4", "topic": "Numpy", "title": "Applied patterns", "subtopic_key": "Numpy: Applied patterns and advanced" },
-    { "id": "es-1", "topic": "Einsum", "title": "Einsum notation", "subtopic_key": "Einsum: Core array literacy" },
-    { "id": "es-2", "topic": "Einsum", "title": "Batch dimensions and applied einsum", "subtopic_key": "Einsum: Applied patterns and advanced" },
-    { "id": "eo-1", "topic": "Einops", "title": "Rearrange", "subtopic_key": "Einops: Rearrange" },
-    { "id": "eo-2", "topic": "Einops", "title": "Reduce", "subtopic_key": "Einops: Reduce" },
-    { "id": "eo-3", "topic": "Einops", "title": "Repeat and deep-learning patterns", "subtopic_key": "Einops: Deep Learning" }
+    {
+      "id": "py-0",
+      "topic": "Python",
+      "title": "Python you need first",
+      "subtopic_key": "Python: Getting started"
+    },
+    {
+      "id": "np-1",
+      "topic": "Numpy",
+      "title": "Arrays from the ground up",
+      "subtopic_key": "Numpy: Core array literacy"
+    },
+    {
+      "id": "np-2",
+      "topic": "Numpy",
+      "title": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection"
+    },
+    {
+      "id": "np-3",
+      "topic": "Numpy",
+      "title": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": "eo-1",
+      "topic": "Einops",
+      "title": "Rearrange",
+      "subtopic_key": "Einops: Rearrange"
+    },
+    {
+      "id": "eo-2",
+      "topic": "Einops",
+      "title": "Reduce",
+      "subtopic_key": "Einops: Reduce"
+    },
+    {
+      "id": "eo-3",
+      "topic": "Einops",
+      "title": "Repeat and deep-learning patterns",
+      "subtopic_key": "Einops: Deep Learning"
+    }
   ],
   "kcs": [
-    { "id": "numpy.ndarray-model", "lesson": "np-1", "title": "What an ndarray is: data + shape + dtype", "syntax": true, "prereqs": [] },
-    { "id": "numpy.constructors", "lesson": "np-1", "title": "Array constructors: zeros, ones, full, empty, eye", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.slicing-views", "lesson": "np-1", "title": "Slicing, views, and slice assignment", "syntax": true, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.ranges", "lesson": "np-1", "title": "Numeric ranges: arange and linspace", "syntax": false, "prereqs": ["numpy.constructors"] },
-    { "id": "numpy.dtype-astype", "lesson": "np-1", "title": "Dtypes, astype, and memory size", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.reshape-flatten", "lesson": "np-1", "title": "Reshape, ravel, and element order", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.elementwise-ufuncs", "lesson": "np-1", "title": "Elementwise math (ufuncs)", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.aggregations", "lesson": "np-1", "title": "Whole-array aggregations and Python scalars", "syntax": false, "prereqs": ["numpy.elementwise-ufuncs"] },
-    { "id": "numpy.sorting", "lesson": "np-1", "title": "Sorting arrays", "syntax": false, "prereqs": ["numpy.ndarray-model"] },
-    { "id": "numpy.tile-repeat-meshgrid", "lesson": "np-1", "title": "Tiling and repetition: tile, repeat, meshgrid", "syntax": false, "prereqs": ["numpy.reshape-flatten"] },
-    { "id": "numpy.random-generator", "lesson": "np-1", "title": "Random numbers with Generator", "syntax": false, "prereqs": ["numpy.constructors"] },
-    { "id": "numpy.linalg-basics", "lesson": "np-1", "title": "Matrix multiply and np.linalg basics", "syntax": true, "prereqs": ["numpy.aggregations"] },
-
-    { "id": "numpy.boolean-masking", "lesson": "np-2", "title": "Boolean masks: compare, count, filter", "syntax": false, "prereqs": ["numpy.slicing-views", "numpy.elementwise-ufuncs"] },
-    { "id": "numpy.where-select", "lesson": "np-2", "title": "Conditional values with np.where", "syntax": false, "prereqs": ["numpy.boolean-masking"] },
-    { "id": "numpy.nonzero-argwhere", "lesson": "np-2", "title": "Finding positions: nonzero and argwhere", "syntax": false, "prereqs": ["numpy.boolean-masking"] },
-    { "id": "numpy.argmin-argmax", "lesson": "np-2", "title": "Locating extremes: argmin and argmax", "syntax": false, "prereqs": ["numpy.aggregations"] },
-    { "id": "numpy.fancy-indexing", "lesson": "np-2", "title": "Fancy indexing: index arrays and lookup tables", "syntax": true, "prereqs": ["numpy.slicing-views"] },
-    { "id": "numpy.unique", "lesson": "np-2", "title": "Distinct values with np.unique", "syntax": false, "prereqs": ["numpy.boolean-masking"] },
-    { "id": "numpy.diag-triangles", "lesson": "np-2", "title": "Diagonals, triangles, and trace", "syntax": false, "prereqs": ["numpy.constructors"] },
-    { "id": "numpy.argsort-ranking", "lesson": "np-2", "title": "Order statistics: argsort, ranks, top-k", "syntax": false, "prereqs": ["numpy.fancy-indexing", "numpy.sorting"] },
-    { "id": "numpy.nan-handling", "lesson": "np-2", "title": "NaN and Inf: detecting and repairing", "syntax": false, "prereqs": ["numpy.boolean-masking"] },
-    { "id": "numpy.pad-borders", "lesson": "np-2", "title": "Borders and padding", "syntax": false, "prereqs": ["numpy.slicing-views"] },
-    { "id": "numpy.index-grids", "lesson": "np-2", "title": "Index-pattern grids: checkerboards and index matrices", "syntax": false, "prereqs": ["numpy.slicing-views", "numpy.constructors"] },
-
-    { "id": "numpy.broadcasting-rules", "lesson": "np-3", "title": "Broadcasting rules", "syntax": true, "prereqs": ["numpy.elementwise-ufuncs", "numpy.reshape-flatten"] },
-    { "id": "numpy.axis-reductions", "lesson": "np-3", "title": "Reductions along an axis and keepdims", "syntax": false, "prereqs": ["numpy.aggregations", "numpy.broadcasting-rules"] },
-    { "id": "numpy.centering", "lesson": "np-3", "title": "Centering and standardizing rows/columns", "syntax": false, "prereqs": ["numpy.axis-reductions"] },
-    { "id": "numpy.rescaling", "lesson": "np-3", "title": "Rescaling: min-max, unit norm, probability rows", "syntax": false, "prereqs": ["numpy.axis-reductions"] },
-    { "id": "numpy.cumulative-diff", "lesson": "np-3", "title": "Cumulative ops and discrete differences", "syntax": false, "prereqs": ["numpy.aggregations"] },
-    { "id": "numpy.dot-matmul-patterns", "lesson": "np-3", "title": "Dot products and matrix-multiply patterns", "syntax": false, "prereqs": ["numpy.linalg-basics", "numpy.axis-reductions"] },
-    { "id": "numpy.stack-concat-interleave", "lesson": "np-3", "title": "Stacking, concatenating, interleaving", "syntax": false, "prereqs": ["numpy.reshape-flatten"] },
-    { "id": "numpy.onehot-bincount", "lesson": "np-3", "title": "Labels: one-hot encoding and bincount", "syntax": false, "prereqs": ["numpy.fancy-indexing"] },
-    { "id": "numpy.topk-selection", "lesson": "np-3", "title": "Top-k selection", "syntax": false, "prereqs": ["numpy.argsort-ranking"] },
-    { "id": "numpy.inplace-out", "lesson": "np-3", "title": "In-place operations and the out= argument", "syntax": false, "prereqs": ["numpy.elementwise-ufuncs", "numpy.slicing-views"] },
-    { "id": "numpy.sliding-windows", "lesson": "np-3", "title": "Sliding windows and moving averages", "syntax": false, "prereqs": ["numpy.axis-reductions", "numpy.slicing-views"] },
-
-    { "id": "numpy.pairwise-metrics", "lesson": "np-4", "title": "Pairwise distances and similarities", "syntax": false, "prereqs": ["numpy.broadcasting-rules", "numpy.axis-reductions"] },
-    { "id": "numpy.scatter-gather", "lesson": "np-4", "title": "Scatter/gather: np.add.at and grouped aggregation", "syntax": false, "prereqs": ["numpy.fancy-indexing", "numpy.onehot-bincount"] },
-    { "id": "numpy.memory-model", "lesson": "np-4", "title": "Memory model: views, reinterpreting bytes, bit unpacking", "syntax": false, "prereqs": ["numpy.dtype-astype", "numpy.slicing-views"] },
-    { "id": "numpy.set-combinatorics", "lesson": "np-4", "title": "Set operations, cartesian products, run-length encoding", "syntax": false, "prereqs": ["numpy.unique", "numpy.cumulative-diff"] },
-    { "id": "numpy.window-stencil", "lesson": "np-4", "title": "2-D windows and stencils: block sums, correlation, Life", "syntax": false, "prereqs": ["numpy.sliding-windows", "numpy.pad-borders"] },
-    { "id": "numpy.random-sampling", "lesson": "np-4", "title": "Sampling: bootstrap, choice, multinomial checks", "syntax": false, "prereqs": ["numpy.random-generator", "numpy.fancy-indexing"] },
-    { "id": "numpy.geometry-transforms", "lesson": "np-4", "title": "Geometry: coordinates and transforms", "syntax": false, "prereqs": ["numpy.dot-matmul-patterns"] },
-    { "id": "numpy.linalg-applied", "lesson": "np-4", "title": "Applied linear algebra: multi-RHS, batched solve, block matrices", "syntax": false, "prereqs": ["numpy.linalg-basics"] },
-
-    { "id": "einsum.notation-model", "lesson": "es-1", "title": "Reading an einsum spec string", "syntax": true, "prereqs": ["numpy.axis-reductions", "numpy.dot-matmul-patterns"] },
-    { "id": "einsum.reductions", "lesson": "es-1", "title": "Sums as index removal", "syntax": false, "prereqs": ["einsum.notation-model"] },
-    { "id": "einsum.dot-frobenius", "lesson": "es-1", "title": "Dot and Frobenius inner products", "syntax": false, "prereqs": ["einsum.reductions"] },
-    { "id": "einsum.outer-products", "lesson": "es-1", "title": "Outer products: new axes from free indices", "syntax": false, "prereqs": ["einsum.notation-model"] },
-    { "id": "einsum.matvec-matmul", "lesson": "es-1", "title": "Matrix-vector and matrix-matrix products", "syntax": false, "prereqs": ["einsum.dot-frobenius"] },
-    { "id": "einsum.diag-trace", "lesson": "es-1", "title": "Repeated indices on one operand: diagonal and trace", "syntax": false, "prereqs": ["einsum.notation-model"] },
-
-    { "id": "einsum.batch-dims", "lesson": "es-2", "title": "Batch dimensions: carrying axes through", "syntax": false, "prereqs": ["einsum.matvec-matmul"] },
-    { "id": "einsum.broadcast-scaling", "lesson": "es-2", "title": "Weighted sums and per-axis scaling", "syntax": false, "prereqs": ["einsum.batch-dims"] },
-    { "id": "einsum.attention-patterns", "lesson": "es-2", "title": "Attention-shaped contractions", "syntax": false, "prereqs": ["einsum.batch-dims"] },
-    { "id": "einsum.matrix-forms", "lesson": "es-2", "title": "Matrix forms: quadratic, Gram, covariance", "syntax": false, "prereqs": ["einsum.matvec-matmul"] },
-
-    { "id": "einops.pattern-language", "lesson": "eo-1", "title": "The einops pattern language: naming and permuting axes", "syntax": true, "prereqs": ["numpy.reshape-flatten"] },
-    { "id": "einops.merge-axes", "lesson": "eo-1", "title": "Merging axes with (parentheses)", "syntax": false, "prereqs": ["einops.pattern-language"] },
-    { "id": "einops.split-axes", "lesson": "eo-1", "title": "Splitting axes with named factors", "syntax": false, "prereqs": ["einops.merge-axes"] },
-    { "id": "einops.singleton-and-lists", "lesson": "eo-1", "title": "Singleton axes and lists as an axis", "syntax": false, "prereqs": ["einops.pattern-language"] },
-    { "id": "einops.grids-montage", "lesson": "eo-1", "title": "Laying batches out as grids", "syntax": false, "prereqs": ["einops.split-axes"] },
-    { "id": "einops.patches-space-depth", "lesson": "eo-1", "title": "Patches, space-to-depth, depth-to-space", "syntax": false, "prereqs": ["einops.split-axes"] },
-
-    { "id": "einops.reduce-model", "lesson": "eo-2", "title": "einops.reduce: dropping axes with an aggregation", "syntax": false, "prereqs": ["einops.pattern-language", "numpy.axis-reductions"] },
-    { "id": "einops.pooling", "lesson": "eo-2", "title": "Pooling with factored axes", "syntax": false, "prereqs": ["einops.reduce-model", "einops.split-axes"] },
-
-    { "id": "einops.repeat-model", "lesson": "eo-3", "title": "einops.repeat: new axes and stretched axes", "syntax": false, "prereqs": ["einops.split-axes"] },
-    { "id": "einops.dl-flatten-heads", "lesson": "eo-3", "title": "Deep-learning shapes: flattening and attention heads", "syntax": false, "prereqs": ["einops.merge-axes", "einops.split-axes"] },
-    { "id": "einops.channel-groups-temporal", "lesson": "eo-3", "title": "Channel groups and temporal windows", "syntax": false, "prereqs": ["einops.dl-flatten-heads", "einops.pooling"] }
+    {
+      "id": "python.values-and-names",
+      "lesson": "py-0",
+      "title": "Values and names: what = really does",
+      "syntax": true,
+      "prereqs": []
+    },
+    {
+      "id": "python.types-and-conversion",
+      "lesson": "py-0",
+      "title": "The everyday types, and converting between them",
+      "syntax": true,
+      "prereqs": [
+        "python.values-and-names"
+      ]
+    },
+    {
+      "id": "python.lists-and-tuples",
+      "lesson": "py-0",
+      "title": "Lists and tuples: holding more than one value",
+      "syntax": true,
+      "prereqs": [
+        "python.types-and-conversion"
+      ]
+    },
+    {
+      "id": "python.indexing",
+      "lesson": "py-0",
+      "title": "Indexing: pulling one item out, counting from zero",
+      "syntax": true,
+      "prereqs": [
+        "python.lists-and-tuples"
+      ]
+    },
+    {
+      "id": "python.calling-functions",
+      "lesson": "py-0",
+      "title": "Calling a function: arguments in, one value out",
+      "syntax": true,
+      "prereqs": [
+        "python.types-and-conversion"
+      ]
+    },
+    {
+      "id": "python.defining-functions",
+      "lesson": "py-0",
+      "title": "Writing your own function: def and return",
+      "syntax": true,
+      "prereqs": [
+        "python.calling-functions"
+      ]
+    },
+    {
+      "id": "python.dots-and-imports",
+      "lesson": "py-0",
+      "title": "Dots: importing a library, attributes, and methods",
+      "syntax": true,
+      "prereqs": [
+        "python.calling-functions"
+      ]
+    },
+    {
+      "id": "numpy.ndarray-model",
+      "lesson": "np-1",
+      "title": "What an ndarray is: data + shape + dtype",
+      "syntax": true,
+      "prereqs": [
+        "python.indexing",
+        "python.defining-functions",
+        "python.dots-and-imports"
+      ]
+    },
+    {
+      "id": "numpy.transpose-axes",
+      "lesson": "np-1",
+      "title": "Transpose: swapping which axis is which",
+      "syntax": true,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.views-and-copies",
+      "lesson": "np-1",
+      "title": "Views and copies: the same numbers, read a different way",
+      "syntax": true,
+      "prereqs": [
+        "numpy.transpose-axes"
+      ]
+    },
+    {
+      "id": "numpy.constructors",
+      "lesson": "np-1",
+      "title": "Array constructors: zeros, ones, full, empty, eye",
+      "syntax": false,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.slicing-views",
+      "lesson": "np-1",
+      "title": "Slicing, views, and slice assignment",
+      "syntax": true,
+      "prereqs": [
+        "numpy.views-and-copies"
+      ]
+    },
+    {
+      "id": "numpy.ranges",
+      "lesson": "np-1",
+      "title": "Numeric ranges: arange and linspace",
+      "syntax": false,
+      "prereqs": [
+        "numpy.constructors"
+      ]
+    },
+    {
+      "id": "numpy.dtype-astype",
+      "lesson": "np-1",
+      "title": "Dtypes, astype, and memory size",
+      "syntax": false,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.reshape-flatten",
+      "lesson": "np-1",
+      "title": "Reshape, ravel, and element order",
+      "syntax": false,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.elementwise-ufuncs",
+      "lesson": "np-1",
+      "title": "Elementwise math (ufuncs)",
+      "syntax": false,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.aggregations",
+      "lesson": "np-1",
+      "title": "Whole-array aggregations and Python scalars",
+      "syntax": false,
+      "prereqs": [
+        "numpy.elementwise-ufuncs"
+      ]
+    },
+    {
+      "id": "numpy.sorting",
+      "lesson": "np-1",
+      "title": "Sorting arrays",
+      "syntax": false,
+      "prereqs": [
+        "numpy.ndarray-model"
+      ]
+    },
+    {
+      "id": "numpy.random-generator",
+      "lesson": "np-1",
+      "title": "Random numbers with Generator",
+      "syntax": false,
+      "prereqs": [
+        "numpy.constructors"
+      ]
+    },
+    {
+      "id": "numpy.linalg-basics",
+      "lesson": "np-1",
+      "title": "Matrix multiply and np.linalg basics",
+      "syntax": true,
+      "prereqs": [
+        "numpy.aggregations"
+      ]
+    },
+    {
+      "id": "numpy.boolean-masking",
+      "lesson": "np-2",
+      "title": "Boolean masks: compare, count, filter",
+      "syntax": false,
+      "prereqs": [
+        "numpy.slicing-views",
+        "numpy.elementwise-ufuncs"
+      ]
+    },
+    {
+      "id": "numpy.argmin-argmax",
+      "lesson": "np-2",
+      "title": "Locating extremes: argmin and argmax",
+      "syntax": false,
+      "prereqs": [
+        "numpy.aggregations"
+      ]
+    },
+    {
+      "id": "numpy.broadcasting-rules",
+      "lesson": "np-3",
+      "title": "Broadcasting rules",
+      "syntax": true,
+      "prereqs": [
+        "numpy.elementwise-ufuncs",
+        "numpy.reshape-flatten"
+      ]
+    },
+    {
+      "id": "numpy.axis-reductions",
+      "lesson": "np-3",
+      "title": "Reductions along an axis and keepdims",
+      "syntax": false,
+      "prereqs": [
+        "numpy.aggregations",
+        "numpy.broadcasting-rules"
+      ]
+    },
+    {
+      "id": "numpy.dot-matmul-patterns",
+      "lesson": "np-3",
+      "title": "Dot products and matrix-multiply patterns",
+      "syntax": false,
+      "prereqs": [
+        "numpy.linalg-basics",
+        "numpy.axis-reductions"
+      ]
+    },
+    {
+      "id": "numpy.stack-concat-interleave",
+      "lesson": "np-3",
+      "title": "Stacking, concatenating, interleaving",
+      "syntax": false,
+      "prereqs": [
+        "numpy.reshape-flatten"
+      ]
+    },
+    {
+      "id": "einops.pattern-language",
+      "lesson": "eo-1",
+      "title": "The einops pattern language: naming and permuting axes",
+      "syntax": true,
+      "prereqs": [
+        "numpy.reshape-flatten"
+      ]
+    },
+    {
+      "id": "einops.merge-axes",
+      "lesson": "eo-1",
+      "title": "Merging axes with (parentheses)",
+      "syntax": false,
+      "prereqs": [
+        "einops.pattern-language"
+      ]
+    },
+    {
+      "id": "einops.split-axes",
+      "lesson": "eo-1",
+      "title": "Splitting axes with named factors",
+      "syntax": false,
+      "prereqs": [
+        "einops.merge-axes"
+      ]
+    },
+    {
+      "id": "einops.singleton-and-lists",
+      "lesson": "eo-1",
+      "title": "Singleton axes and lists as an axis",
+      "syntax": false,
+      "prereqs": [
+        "einops.pattern-language"
+      ]
+    },
+    {
+      "id": "einops.grids-montage",
+      "lesson": "eo-1",
+      "title": "Laying batches out as grids",
+      "syntax": false,
+      "prereqs": [
+        "einops.split-axes"
+      ]
+    },
+    {
+      "id": "einops.patches-space-depth",
+      "lesson": "eo-1",
+      "title": "Patches, space-to-depth, depth-to-space",
+      "syntax": false,
+      "prereqs": [
+        "einops.split-axes"
+      ]
+    },
+    {
+      "id": "einops.reduce-model",
+      "lesson": "eo-2",
+      "title": "einops.reduce: dropping axes with an aggregation",
+      "syntax": false,
+      "prereqs": [
+        "einops.pattern-language",
+        "numpy.axis-reductions"
+      ]
+    },
+    {
+      "id": "einops.pooling",
+      "lesson": "eo-2",
+      "title": "Pooling with factored axes",
+      "syntax": false,
+      "prereqs": [
+        "einops.reduce-model",
+        "einops.split-axes"
+      ]
+    },
+    {
+      "id": "einops.repeat-model",
+      "lesson": "eo-3",
+      "title": "einops.repeat: new axes and stretched axes",
+      "syntax": false,
+      "prereqs": [
+        "einops.split-axes"
+      ]
+    },
+    {
+      "id": "einops.dl-flatten-heads",
+      "lesson": "eo-3",
+      "title": "Deep-learning shapes: flattening and attention heads",
+      "syntax": false,
+      "prereqs": [
+        "einops.merge-axes",
+        "einops.split-axes"
+      ]
+    },
+    {
+      "id": "einops.channel-groups-temporal",
+      "lesson": "eo-3",
+      "title": "Channel groups and temporal windows",
+      "syntax": false,
+      "prereqs": [
+        "einops.dl-flatten-heads",
+        "einops.pooling"
+      ]
+    }
   ]
 }

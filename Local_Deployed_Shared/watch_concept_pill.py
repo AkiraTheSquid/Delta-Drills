@@ -651,6 +651,49 @@ def check_concept_pill():
         )
 
 
+    # ── A DROP DOES NOT SLIDE ──────────────────────────────────────
+    # Measured 2026-08-28: rating a missed question drove the pill 25% -> 0%
+    # as a 600ms drain, 151px of fill sliding away right after the learner
+    # pressed a button. The value is honest; the animation was not. Both
+    # layers must lose their transition together (they draw the same edge),
+    # the class must be forced to land with a reflow, and it must come off
+    # again in the same call or the NEXT move — normally forwards — is dead
+    # too. xp.js snaps for the same reason and says so.
+    # Matched as a block rather than through `_rule`, which keys on ONE
+    # selector: this rule is a group of two and either order is legal CSS.
+    snap_m = re.search(
+        r"([^{}]*\.dd-concept--snap[^{}]*)\{([^}]*)\}",
+        re.sub(r"/\*.*?\*/", "", pill_css, flags=re.S),
+    )
+    snap_sel = snap_m.group(1) if snap_m else ""
+    snap_css = snap_m.group(2) if snap_m else ""
+    assert (
+        ".dd-concept--snap .dd-concept-fill" in snap_sel
+        and ".dd-concept--snap .dd-concept-text--on" in snap_sel
+        and "transition: none" in snap_css
+    ), (
+        "styles/concept-pill.css must switch OFF the transition for both "
+        "`.dd-concept--snap .dd-concept-fill` and "
+        "`.dd-concept--snap .dd-concept-text--on` in one rule. Only the fill, "
+        "and the label's colour seam still slides across a bar that jumped"
+    )
+    assert 'classList.add("dd-concept--snap")' in pill_code, (
+        "concept-pill.js never adds `dd-concept--snap` — the stylesheet's "
+        "snap rule is then dead code and a drop animates backwards again"
+    )
+    assert "offsetWidth" in pill_code and "classList.remove(\"dd-concept--snap\")" in pill_code, (
+        "the snap must force a reflow (`void host.offsetWidth`) between the "
+        "width write and removing the class. Without it the browser coalesces "
+        "add+remove and the slide happens anyway; without the remove, the pill "
+        "never animates forwards again"
+    )
+    assert re.search(r"nextPct\s*<\s*shownPct", pill_code), (
+        "the snap has to be decided by comparing the new reading with the "
+        "drawn one (`nextPct < shownPct`). Snapping unconditionally throws "
+        "away the fill animation that is the whole point of the chip"
+    )
+
+
 if __name__ == "__main__":
     check_concept_pill()
     print("watch_concept_pill: ok")

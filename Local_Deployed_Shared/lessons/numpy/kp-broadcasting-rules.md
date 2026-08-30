@@ -5,7 +5,7 @@ supporting: [numpy.elementwise-ufuncs, numpy.reshape-flatten]
 new_syntax: [none-newaxis-indexing, torch.broadcast_shapes]
 faded: [111, 151]
 guided: [499, 500]
-independent: [60, 81, 501, 502]
+independent: [501, 502]
 ---
 
 ## Concept: the right-alignment rule
