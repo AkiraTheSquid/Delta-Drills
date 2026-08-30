@@ -23,66 +23,34 @@ EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops")
 
 # Hand-assigned target KCs for questions not referenced by any KP.
 LEFTOVER_TARGETS = {
-    # Numpy: Vectorization and broadcasting
+    # Trimmed 2026-08-30 with the cut back to the ARENA-necessary concepts:
+    # 38 of these 77 entries named a concept the course no
+    # longer teaches, or a drill retired with it. See
+    # Local_Deployed_Shared/pipeline/retired_question_ids.json.
+    # 103 and 198 kept back from the 2026-08-30 retirement because each was the
+    # only trainer of a gating BKT atom; re-homed onto the surviving concept
+    # that owns what they actually do. See pipeline/retired_question_ids.json.
+    103: "numpy.axis-reductions", 198: "numpy.broadcasting-rules",
     1: "numpy.argmin-argmax", 48: "numpy.constructors",
-    63: "numpy.elementwise-ufuncs", 68: "numpy.cumulative-diff",
-    74: "numpy.slicing-views", 85: "numpy.boolean-masking",
-    95: "numpy.dot-matmul-patterns", 120: "numpy.nan-handling",
-    154: "numpy.centering", 155: "numpy.tile-repeat-meshgrid",
-    160: "numpy.diag-triangles", 164: "numpy.index-grids",
-    177: "numpy.fancy-indexing", 240: "numpy.where-select",
-    # Numpy: Indexing and selection
-    # 73 was assigned numpy.ndarray-model, which put a double comprehension
-    # over z[i, j] plus .item() at the ROOT of the whole prerequisite lattice —
-    # it became the first question in the course when KC gating went live.
-    # Its actual subject is building index pairs from a tensor's shape, and
-    # numpy.index-grids is the KC whose lesson owns that AND whose subtopic
-    # matches the question's own ("Numpy: Indexing and selection").
-    73: "numpy.index-grids", 78: "numpy.diag-triangles",
-    87: "numpy.dtype-astype", 91: "numpy.random-sampling",
-    103: "numpy.rescaling", 126: "numpy.window-stencil",
-    129: "numpy.pairwise-metrics", 136: "numpy.fancy-indexing",
-    145: "numpy.boolean-masking", 163: "numpy.cumulative-diff",
+    63: "numpy.elementwise-ufuncs", 74: "numpy.slicing-views",
+    85: "numpy.boolean-masking", 87: "numpy.dtype-astype",
+    95: "numpy.dot-matmul-patterns", 145: "numpy.boolean-masking",
     168: "numpy.argmin-argmax", 174: "numpy.axis-reductions",
-    202: "numpy.boolean-masking", 211: "numpy.set-combinatorics",
-    # Numpy: Applied patterns and advanced
-    133: "numpy.set-combinatorics", 147: "numpy.rescaling",
-    158: "numpy.set-combinatorics", 170: "numpy.nan-handling",
-    172: "numpy.onehot-bincount", 180: "numpy.diag-triangles",
-    184: "numpy.fancy-indexing", 186: "numpy.pad-borders",
-    189: "numpy.slicing-views", 198: "numpy.set-combinatorics",
-    207: "numpy.set-combinatorics",
-    # Einsum
-    249: "einsum.reductions", 250: "einsum.batch-dims",
-    253: "einsum.broadcast-scaling", 261: "einsum.reductions",
-    # 279 is no longer here: kp-batch-dims.md now names it as a faded item, and
-    # a KP reference already assigns the same KC. Keeping both made the build
-    # abort ("both referenced and in LEFTOVER_TARGETS").
-    286: "einsum.matvec-matmul",
-    290: "einsum.reductions", 293: "einsum.diag-trace",
-    294: "einsum.matvec-matmul", 300: "einsum.notation-model",
-    302: "einsum.reductions", 303: "einsum.notation-model",
-    # Einops: Rearrange
-    319: "einops.pattern-language", 327: "einops.pattern-language",
-    331: "einops.split-axes", 334: "einops.singleton-and-lists",
+    189: "numpy.slicing-views", 202: "numpy.boolean-masking",
+    316: "einops.channel-groups-temporal", 319: "einops.pattern-language",
+    321: "einops.patches-space-depth", 322: "einops.grids-montage",
+    327: "einops.pattern-language", 331: "einops.split-axes",
+    333: "einops.singleton-and-lists", 334: "einops.singleton-and-lists",
+    336: "einops.pooling", 340: "einops.reduce-model",
     344: "einops.pattern-language", 346: "einops.merge-axes",
-    353: "einops.merge-axes", 373: "einops.merge-axes",
-    392: "einops.merge-axes", 398: "einops.patches-space-depth",
-    400: "einops.merge-axes", 403: "einops.patches-space-depth",
-    # Einops: Reduce / Repeat
-    336: "einops.pooling", 352: "einops.repeat-model",
-    355: "einops.repeat-model",
-    # Einops: Deep Learning
-    316: "einops.channel-groups-temporal", 321: "einops.patches-space-depth",
-    322: "einops.grids-montage", 333: "einops.singleton-and-lists",
-    340: "einops.reduce-model", 359: "einops.channel-groups-temporal",
+    352: "einops.repeat-model", 353: "einops.merge-axes",
+    355: "einops.repeat-model", 359: "einops.channel-groups-temporal",
     365: "einops.singleton-and-lists", 370: "einops.reduce-model",
-    371: "einops.grids-montage", 377: "einops.pooling",
-    380: "einops.merge-axes",
-    # 387 retired 2026-07-31: same pattern string and same solve body as q322,
-    # differing only in which slice of the fixture it loaded. Replaced by q531
-    # (column-major montage), which kp-grids-montage references directly.
-    395: "einops.patches-space-depth",
+    371: "einops.grids-montage", 373: "einops.merge-axes",
+    377: "einops.pooling", 380: "einops.merge-axes",
+    392: "einops.merge-axes", 395: "einops.patches-space-depth",
+    398: "einops.patches-space-depth", 400: "einops.merge-axes",
+    403: "einops.patches-space-depth", 
 }
 
 

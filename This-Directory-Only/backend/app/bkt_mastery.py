@@ -130,6 +130,15 @@ NON_GATING_ATOMS = frozenset({
     # permanently locked their dependents; no trainable twin exists to rewrite to.
     "tensor-item-scalar", "singular-matrix-mask-trick", "unbroadcast-pattern",
     "validation-no-grad",
+    # 2026-08-30, same failure and same remedy after the ARENA content cut. Every
+    # question training these two went with the concepts that taught them, and a
+    # gating prereq with no trainer locks its dependents forever: as-strided
+    # windowing was the whole of numpy.sliding-windows / window-stencil (Tensor.
+    # unfold appears in ZERO of the 458 ARENA notebooks — einops does this job in
+    # the corpus), and inf-masking was carried only by retired triangle drills.
+    # The two atoms whose concepts SURVIVED the cut are not here: q103 and q198
+    # were kept in the bank instead, which is the better fix where it is available.
+    "as-strided-windowing", "inf-masking",
 })
 
 

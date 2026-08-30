@@ -5,7 +5,7 @@ supporting: [einops.reduce-model, einops.split-axes]
 new_syntax: []
 faded: [324]
 guided: [363]
-independent: [386, 368, 354, 336, 377]
+independent: [368, 354, 336, 377]
 ---
 
 ## Concept

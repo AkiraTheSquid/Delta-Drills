@@ -161,6 +161,7 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+- 2026-08-30: The jargon glossary lost 37 of its 76 entries in the ARENA content cut — each defined a term for a concept that no longer exists, and `deltaFocusConceptGraphKc` returns quietly on an unknown id, so "Take me to the lesson" would have opened the graph and focused nothing. `watch_jargon.py`'s parser-blindness floor moved 60 → 37 with it; it tracks the real count on purpose, since its only job is to catch the PARSER going blind.
 
 ### 2026-08-28 — the concept survives a RELOAD, not just a pause
 

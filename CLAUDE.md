@@ -53,11 +53,17 @@ skill report the same thing from the other side.
   DONE 2026-08-28: four-stage ladder, 36 new drills (ids 532–567), input→output
   and "not this" examples under every prompt. This is the only concept that has
   had the full treatment.
-- **PyTorch, `einsum` and `einops` have NOT had it.** Their KPs still carry the
-  pre-2026-08-28 content: thin rungs, no Solo/Integrated split, no worked
-  input/output tables. They are the next frontier — do them as Seth reaches
-  them, one concept at a time, same full-ladder treatment. Keep moving forward
-  in that direction rather than circling back over numpy.
+- **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
+  thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
+  next frontier — do it as Seth reaches it, one concept at a time, same
+  full-ladder treatment. Keep moving forward rather than circling back over numpy.
+- **The einsum course is RETIRED (2026-08-30).** ARENA writes `einops.einsum` in
+  61 of its 458 notebooks and `torch.einsum` in zero, and all ten einsum KPs were
+  written in `torch.einsum`. The pages are in
+  `This-Directory-Only/archive/retired-content-2026-08-30/`. The replacement is
+  ONE `einops.einsum` node inside the einops course — the highest-frequency
+  einops operation ARENA has, and nothing currently teaches it. That is the
+  single most valuable concept left to author.
 
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.

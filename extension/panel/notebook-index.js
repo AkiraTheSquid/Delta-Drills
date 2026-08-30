@@ -4,6 +4,14 @@ window.DD_NOTEBOOKS = {
   "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
+      "id": "py-0",
+      "title": "Python you need first",
+      "topic": "Python",
+      "subtopic_key": "Python: Getting started",
+      "file": "py-0-python-you-need-first.ipynb",
+      "problems": 28
+    },
+    {
       "id": "np-1",
       "title": "Arrays from the ground up",
       "topic": "Numpy",
@@ -17,7 +25,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Indexing and selection",
       "file": "np-2-indexing-and-selection.ipynb",
-      "problems": 66
+      "problems": 14
     },
     {
       "id": "np-3",
@@ -25,31 +33,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 67
-    },
-    {
-      "id": "np-4",
-      "title": "Applied patterns",
-      "topic": "Numpy",
-      "subtopic_key": "Numpy: Applied patterns and advanced",
-      "file": "np-4-applied-patterns.ipynb",
-      "problems": 48
-    },
-    {
-      "id": "es-1",
-      "title": "Einsum notation",
-      "topic": "Einsum",
-      "subtopic_key": "Einsum: Core array literacy",
-      "file": "es-1-einsum-notation.ipynb",
-      "problems": 38
-    },
-    {
-      "id": "es-2",
-      "title": "Batch dimensions and applied einsum",
-      "topic": "Einsum",
-      "subtopic_key": "Einsum: Applied patterns and advanced",
-      "file": "es-2-batch-dimensions-and-applied-einsum.ipynb",
-      "problems": 30
+      "problems": 25
     },
     {
       "id": "eo-1",
@@ -57,7 +41,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 52
+      "problems": 51
     },
     {
       "id": "eo-2",
@@ -65,7 +49,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Reduce",
       "file": "eo-2-reduce.ipynb",
-      "problems": 16
+      "problems": 15
     },
     {
       "id": "eo-3",
@@ -77,12 +61,10 @@ window.DD_NOTEBOOKS = {
     }
   ],
   "subtopics": {
+    "Python: Getting started": "py-0",
     "Numpy: Core array literacy": "np-1",
     "Numpy: Indexing and selection": "np-2",
     "Numpy: Vectorization and broadcasting": "np-3",
-    "Numpy: Applied patterns and advanced": "np-4",
-    "Einsum: Core array literacy": "es-1",
-    "Einsum: Applied patterns and advanced": "es-2",
     "Einops: Rearrange": "eo-1",
     "Einops: Reduce": "eo-2",
     "Einops: Deep Learning": "eo-3"

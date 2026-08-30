@@ -63,7 +63,13 @@ def check_jargon_links():
     registry = json.loads(_read(os.path.join(HERE, "lessons", "kc_registry.json")))
 
     terms = _glossary_terms(glossary)
-    assert len(terms) >= 60, (
+    # 60 -> 37 on 2026-08-30: 37 of the 76 entries defined a term for a concept
+    # the ARENA cut retired, and a glossary entry pointing at a KC that no longer
+    # exists sends the learner to a graph that focuses nothing. A hand-set literal
+    # on purpose — this floor exists only to catch the PARSER going blind, so it
+    # has to be independent of the file it parses. It does NOT track the glossary
+    # (39 terms today) or the registry; re-set it by hand when a cut moves it.
+    assert len(terms) >= 37, (
         "parsed only %d glossary terms — the entry shape this check reads must "
         "have changed, and a parser that silently finds nothing asserts "
         "nothing" % len(terms)

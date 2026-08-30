@@ -5,7 +5,7 @@ supporting: [einops.merge-axes]
 new_syntax: []
 faded: [390]
 guided: [315]
-independent: [337, 320, 393, 331]
+independent: [337, 320, 331]
 ---
 
 ## Concept

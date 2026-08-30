@@ -2,7 +2,7 @@
  "curriculum_id": "arena-drillable-v1",
  "title": "ARENA Chapter 0 — drillable-atom graph (v1)",
  "version": "1.1.0",
- "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.]",
+ "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.] [2026-08-30: the content cut retired every question that trained as-strided-windowing and inf-masking, so both are NON_GATING now; conv-output-shape and stride-zero-broadcast had no other prerequisite and are declared intentional roots rather than left silently ungated.]",
  "concepts": [
   {
    "id": "1x1-conv-channel-reshape",
@@ -12304,6 +12304,7 @@
  },
  "intentional_root_atoms": [
   "argmax-prediction",
+  "conv-output-shape",
   "einops-einsum",
   "einops-rearrange",
   "einops-reduce",
@@ -12313,6 +12314,7 @@
   "linspace-evenly-spaced",
   "manual-seed",
   "python-values-and-names",
+  "stride-zero-broadcast",
   "tensor-pow",
   "tensor-unbind",
   "tensor-zeros-init",

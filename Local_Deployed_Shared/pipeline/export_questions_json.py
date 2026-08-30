@@ -35,6 +35,12 @@ STRUCTURED_OUT_PATH = SHARED_DIR / "questions_structured.json"
 FUNCTION_OVERRIDES_PATH = CHATGPT_RUNTIME_DIR / "function_mode_overrides.jsonl"
 DELETED_IDS_PATH = CHATGPT_RUNTIME_DIR / "function_mode_deleted_ids.json"
 BROKEN_IDS_PATH = CHATGPT_RUNTIME_DIR / "function_mode_broken_ids.json"
+# Concepts the course no longer teaches. Separate from the function-mode list
+# above because the reason is different and outlives it: those ids are drills
+# whose function-mode payload was broken, these are drills whose CONCEPT was
+# retired (2026-08-30, the cut back to what ARENA uses). Keeping the two lists
+# apart is what lets a concept come back without resurrecting broken payloads.
+RETIRED_IDS_PATH = SHARED_DIR / "pipeline" / "retired_question_ids.json"
 
 # Same marker backend/app/lessons.py uses: a question is a torch drill when its
 # own code imports torch, not when a label says so.
@@ -528,6 +534,36 @@ def load_deleted_ids() -> set[int]:
     return {int(item) for item in data}
 
 
+def load_retired_ids() -> set[int]:
+    """Ids whose concept the course retired. See retired_question_ids.json.
+
+    Applied AFTER the id is assigned, never by dropping the CSV row: ids are
+    positional, so removing a row renumbers every question below it.
+
+    Loud on failure, unlike `load_broken_ids` below: an unreadable broken-id
+    list leaves a few bad drills in the bank, an unreadable retirement list
+    puts 216 retired ones BACK in, tagged to concepts the registry dropped —
+    and that looks exactly like a successful export.
+    """
+    if not RETIRED_IDS_PATH.exists():
+        raise FileNotFoundError(
+            f"{RETIRED_IDS_PATH} is missing — without it the export silently "
+            "restores every retired drill. Restore the file (it is committed) "
+            "rather than removing this check.")
+    data = json.loads(RETIRED_IDS_PATH.read_text(encoding="utf-8"))
+    ids = data.get("ids") if isinstance(data, dict) else data
+    if not isinstance(ids, list):
+        raise ValueError(
+            f"{RETIRED_IDS_PATH}: expected a list of ids, or an object with an "
+            f"\"ids\" list; got {type(ids).__name__}")
+    bad = [i for i in ids if isinstance(i, bool) or not isinstance(i, int)]
+    if bad:
+        raise ValueError(
+            f"{RETIRED_IDS_PATH}: {bad[:4]} are not question ids — ids are the "
+            "positional integers this exporter assigns.")
+    return set(ids)
+
+
 def load_broken_ids() -> set[int]:
     if not BROKEN_IDS_PATH.exists():
         return set()
@@ -554,6 +590,7 @@ def load_questions() -> list[dict]:
     next_id = 1
     function_overrides = load_function_overrides()
     deleted_ids = load_deleted_ids()
+    retired_ids = load_retired_ids()
 
     for source in CSV_SOURCES:
         path = source["path"]
@@ -579,6 +616,8 @@ def load_questions() -> list[dict]:
             if qid in CURATED_EXCLUDED_IDS:
                 continue
             if qid in deleted_ids:
+                continue
+            if qid in retired_ids:
                 continue
 
             try:
