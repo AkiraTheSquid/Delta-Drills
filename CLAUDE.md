@@ -53,6 +53,19 @@ skill report the same thing from the other side.
   DONE 2026-08-28: four-stage ladder, 36 new drills (ids 532–567), input→output
   and "not this" examples under every prompt. This is the only concept that has
   had the full treatment.
+- The six dependents of `numpy.ndarray-model` — `reshape-flatten`, `elementwise-ufuncs`,
+  `constructors`, `dtype-astype`, `sorting`, `transpose-axes` — DONE 2026-08-30: 57 new
+  drills (ids 619–675) so every rung has enough unseen drills for Seth's local topology
+  (Faded ≥ 2 per segment, Solo ≥ 6, Integrated ≥ 3). `reshape-flatten` was re-cut into
+  three segments. Seth's own record at the time: failing `reshape-flatten`'s one faded
+  drill, so that node came first.
+- **Worked examples now POP UP on a schedule** (2026-08-30): `This-Directory-Only/
+  SPEC_WORKED_EXAMPLE_SCHEDULE.md`, table in `backend/app/example_schedule.py`. It is an
+  experiment — retune the table, nothing else. That spec has a
+  **"Deferred — 🤖 AI: REMIND SETH"** section: per-drill encompassing-credit propagation
+  (which prerequisite nodes a drill exercises, encoded per drill), splitting the neighbour
+  nodes, retuning the schedule. Bring the first one up whenever he talks about credit
+  propagation or a prerequisite feeling under-practised.
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

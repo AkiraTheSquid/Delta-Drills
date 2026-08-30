@@ -3,9 +3,10 @@ kc: numpy.sorting
 title: Sorting tensors
 supporting: [numpy.ndarray-model, numpy.slicing-views]
 new_syntax: [torch.sort, torch.sort#descending, torch.sort#dim, torch.argsort, torch.argsort#descending, torch.argsort#dim, torch.topk, Tensor.values, Tensor.indices]
-faded: [58, 520, 521]
+faded: [58, 520, 521, 660, 661, 662]
 guided: [516, 517]
-independent: [518, 519, 522]
+independent: [518, 519, 522, 663, 664, 665]
+integrated: [666, 667, 668]
 ---
 
 ## Concept: sort returns a pair, not a tensor
@@ -117,6 +118,27 @@ def solve(z):
     return t.sort(z).values
 ```
 
+### q660
+Both halves of the pair that sort returns.
+
+```python starter
+import torch as t
+
+def solve(z):
+    """Return (sorted values, where each came from), both as lists."""
+    s = t._____(z)
+    return (s._____.tolist(), s._____.tolist())
+```
+
+```python solution
+import torch as t
+
+def solve(z):
+    """Return (sorted values, where each came from), both as lists."""
+    s = t.sort(z)
+    return (s.values.tolist(), s.indices.tolist())
+```
+
 ## Concept: argsort — the positions, and reordering by them
 
 `t.argsort(z)` gives you the indices half on its own: `order[0]` is the position
@@ -205,6 +227,27 @@ def solve(names, scores):
     """Return (names, scores) as lists, both ordered highest score first."""
     order = t.argsort(scores, descending=True)
     return (names[order].tolist(), scores[order].tolist())
+```
+
+### q661
+Reorder one tensor by another's ranking.
+
+```python starter
+import torch as t
+
+def solve(ids, scores):
+    """Return ids reordered by ascending score, as a list."""
+    order = t._____(scores)
+    return ids[order].tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(ids, scores):
+    """Return ids reordered by ascending score, as a list."""
+    order = t.argsort(scores)
+    return ids[order].tolist()
 ```
 
 ## Concept: picking an axis, and taking only the top k
@@ -296,6 +339,27 @@ def solve(x):
     return t.argsort(x, dim=1, descending=True)
 ```
 
+### q662
+The top k, with their positions.
+
+```python starter
+import torch as t
+
+def solve(x, k):
+    """Return (the k largest values largest first, their positions), as lists."""
+    top = t._____(x, k)
+    return (top._____.tolist(), top._____.tolist())
+```
+
+```python solution
+import torch as t
+
+def solve(x, k):
+    """Return (the k largest values largest first, their positions), as lists."""
+    top = t.topk(x, k)
+    return (top.values.tolist(), top.indices.tolist())
+```
+
 ## Guided practice
 
 ### q516
@@ -310,11 +374,48 @@ def solve(x):
    position of the smallest element.
 3. `t.argsort(z)`.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q518 (sort each row of a matrix independently).
-From the drill bank: q519 (the k largest values — sorting everything does more work than asked).
-From the drill bank: q522 (sort a matrix's ROWS by one column, keeping each row intact).
+### q518
+Each row sorted on its own — name the axis.
+
+### q519
+The k largest, largest first — without sorting everything.
+
+### q522
+Rows reordered by one column's values — rank the column, index the matrix.
+
+### q663
+Sort down the columns, not across the rows.
+
+### q664
+Where the largest entry is — through argsort.
+
+### q665
+The bottom k — the question topk does not answer.
+
+topk is one-directional. For the smallest values, sort ascending and keep
+the front — the slice you met on the slicing page:
+
+```python worked
+import torch as t
+
+v = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])
+print("largest two ", t.topk(v, 2).values)
+print("smallest two", t.sort(v).values[:2])
+assert t.sort(v).values[:2].tolist() == [1.0, 3.0]
+```
+
+## Integrated practice
+
+### q666
+A leaderboard: rank once, index twice, cut to k.
+
+### q667
+An axis, a direction, and both halves of the pair.
+
+### q668
+Up, down, and the untouched original.
 
 ## Misconceptions
 

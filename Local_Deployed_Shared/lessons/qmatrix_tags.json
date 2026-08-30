@@ -145,7 +145,7 @@
    "Tensor.flatten",
    "Tensor.reshape"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "37": {
   "target_kcs": [
@@ -2519,7 +2519,7 @@
    "Tensor.flatten",
    "Tensor.reshape"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "491": {
   "target_kcs": [
@@ -2533,7 +2533,7 @@
    "Tensor.flatten",
    "Tensor.reshape"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "492": {
   "target_kcs": [
@@ -4543,5 +4543,1024 @@
    "Tensor.is_contiguous"
   ],
   "source": "kp-faded"
+ },
+ "619": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "620": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "621": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "622": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "623": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "624": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "625": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "626": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "627": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "628": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "629": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "630": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-faded"
+ },
+ "631": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-faded"
+ },
+ "632": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-faded"
+ },
+ "633": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "634": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "635": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "636": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-integrated"
+ },
+ "637": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-integrated"
+ },
+ "638": {
+  "target_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-integrated"
+ },
+ "639": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-faded"
+ },
+ "640": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-faded"
+ },
+ "641": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-faded"
+ },
+ "642": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-faded"
+ },
+ "643": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "644": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "645": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "646": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-integrated"
+ },
+ "647": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-integrated"
+ },
+ "648": {
+  "target_kcs": [
+   "numpy.constructors"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-integrated"
+ },
+ "649": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-faded"
+ },
+ "650": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-faded"
+ },
+ "651": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-faded"
+ },
+ "652": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-independent"
+ },
+ "653": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-independent"
+ },
+ "654": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-independent"
+ },
+ "655": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-independent"
+ },
+ "656": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-independent"
+ },
+ "657": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-integrated"
+ },
+ "658": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-integrated"
+ },
+ "659": {
+  "target_kcs": [
+   "numpy.dtype-astype"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.element_size",
+   "Tensor.to",
+   "builtin.getattr",
+   "torch.arange#dtype",
+   "torch.float64",
+   "torch.int16"
+  ],
+  "source": "kp-integrated"
+ },
+ "660": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-faded"
+ },
+ "661": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-faded"
+ },
+ "662": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-faded"
+ },
+ "663": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-independent"
+ },
+ "664": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-independent"
+ },
+ "665": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-independent"
+ },
+ "666": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-integrated"
+ },
+ "667": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-integrated"
+ },
+ "668": {
+  "target_kcs": [
+   "numpy.sorting"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-integrated"
+ },
+ "669": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-faded"
+ },
+ "670": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-faded"
+ },
+ "671": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "672": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "673": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "674": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-independent"
+ },
+ "675": {
+  "target_kcs": [
+   "numpy.transpose-axes"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.T"
+  ],
+  "source": "kp-integrated"
  }
 }

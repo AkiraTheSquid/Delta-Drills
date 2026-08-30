@@ -3,9 +3,10 @@ kc: numpy.dtype-astype
 title: Dtypes, .to(), and memory size
 supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype, torch.float64, torch.int16]
-faded: [230, 215, 51]
+faded: [230, 215, 51, 649, 650, 651]
 guided: [87]
-independent: [19]
+independent: [19, 652, 653, 654, 655, 656]
+integrated: [657, 658, 659]
 ---
 
 ## Concept: .to() — converting an existing tensor
@@ -93,6 +94,25 @@ def solve(x):
     return x.to(t.float32)
 ```
 
+### q649
+Float to integer — the fraction is cut, not rounded.
+
+```python starter
+import torch as t
+
+def solve(x):
+    """Return x converted to int64, as a plain list."""
+    return x._____(t.int64).tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """Return x converted to int64, as a plain list."""
+    return x.to(t.int64).tolist()
+```
+
 ## Concept: dtypes at creation, and dtype names as strings
 
 Rather than build-then-convert, request the dtype at creation: every
@@ -168,6 +188,27 @@ def solve(n, dtype_str):
     return t.arange(n, dtype=getattr(t, dtype_str))
 ```
 
+### q650
+A dtype that arrives as a string.
+
+```python starter
+import torch as t
+
+def solve(n, name):
+    """Return (n ones stored as the dtype named `name`, that dtype's name)."""
+    o = t.ones(n, dtype=_____(t, name))
+    return (o.tolist(), str(o.dtype))
+```
+
+```python solution
+import torch as t
+
+def solve(n, name):
+    """Return (n ones stored as the dtype named `name`, that dtype's name)."""
+    o = t.ones(n, dtype=getattr(t, name))
+    return (o.tolist(), str(o.dtype))
+```
+
 ## Concept: dtype is a memory choice — element_size and numel
 
 The number in a dtype's name is bits: `int32` = 4 bytes per element,
@@ -237,6 +278,25 @@ def solve(z):
     return f"{z.numel() * z.element_size()} bytes"
 ```
 
+### q651
+What one element costs, and what they all cost together.
+
+```python starter
+import torch as t
+
+def solve(x):
+    """Return (bytes per element, total bytes) for x."""
+    return (x._____(), x.numel() * x._____())
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """Return (bytes per element, total bytes) for x."""
+    return (x.element_size(), x.numel() * x.element_size())
+```
+
 ## Guided practice
 
 ### q87
@@ -248,10 +308,49 @@ def solve(z):
    dtype lesson in miniature: the numbers were already right, only their
    type was wrong.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q19 (split a complex tensor into real and imaginary
-parts — `z.real` / `z.imag`; `complex64` values carry two floats).
+### q19
+Real and imaginary parts of a complex tensor, as two real tensors.
+
+### q652
+Convert, then check that the original did not change.
+
+### q653
+Build the run in the named dtype and read what each element costs.
+
+### q654
+The memory cost of a dtype choice.
+
+### q655
+Through an integer type and back out — what survives?
+
+### q656
+Convert to a dtype you only know by name.
+
+The two halves of this page meet here: `.to()` wants a dtype object, and
+`getattr` turns a name into one:
+
+```python worked
+import torch as t
+
+x = t.tensor([1.5, -2.5])
+name = 'int16'
+y = x.to(getattr(t, name))
+print(y, y.dtype)
+assert y.dtype == t.int16
+```
+
+## Integrated practice
+
+### q657
+Convert by name and account for every consequence.
+
+### q658
+A run of integers in a named dtype, fully described.
+
+### q659
+Two conversions from one tensor, and the original untouched.
 
 ## Misconceptions
 

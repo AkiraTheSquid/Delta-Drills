@@ -1540,3 +1540,625 @@ def solve(rows):
 example = ([[1, 2, 3], [4, 5, 6]],)
 print(solve(*example))
 ",22,"(True, False)"
+Numpy,Core array literacy,"Write a function solve(x, rows, cols) that takes a 1-D tensor x and returns it re-described as a 2-D tensor with `rows` rows and `cols` columns, as a plain nested Python list. rows * cols always equals x's length, and the values keep their reading order — the first `cols` of them fill row 0.","import torch as t
+
+def solve(x, rows, cols):
+    """"""Return x re-described as (rows, cols), as a plain nested list.""""""
+    return x.reshape(rows, cols).tolist()
+
+
+example = (t.arange(6), 2, 3,)
+print(solve(*example))
+",14,"[[0, 1, 2], [3, 4, 5]]"
+Numpy,Core array literacy,"Write a function solve(x, k) that takes a tensor of any shape and an index k, and returns the k-th number in reading order as a plain Python number: across row 0 first, then row 1, the last axis moving fastest. Collapse the tensor to one axis and the answer is one index away.","import torch as t
+
+def solve(x, k):
+    """"""Return the k-th number of x in reading order (row-major).""""""
+    return x.flatten()[k].item()
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]), 4,)
+print(solve(*example))
+",16,5
+Numpy,Core array literacy,"Write a function solve(n, rows) that lays the integers 0..n-1 out as a matrix with `rows` rows (n is always divisible by rows), then returns a tuple of two plain lists: the numbers read row by row, and the numbers read column by column. There is no order= keyword — the column read is a transpose away.","import torch as t
+
+def solve(n, rows):
+    """"""Return (row-major read, column-major read) of the counting matrix, as lists.""""""
+    g = t.arange(n).reshape(rows, -1)
+    return (g.flatten().tolist(), g.T.flatten().tolist())
+
+
+example = (6, 2,)
+print(solve(*example))
+",20,"([0, 1, 2, 3, 4, 5], [0, 3, 1, 4, 2, 5])"
+Numpy,Core array literacy,"Write a function solve(x, v) that takes a 2-D tensor x built directly from a list (so it is in reading order) and a value v. Re-describe x as 1-D, write v into the LAST slot of that result, and return x's contents as a plain nested list — the original, not the reshaped one. Reshape did not copy the numbers, so the write shows up in both.","import torch as t
+
+def solve(x, v):
+    """"""Reshape x to 1-D, write v into the LAST slot of the result, return x's values.""""""
+    flat = x.reshape(-1)
+    flat[-1] = v
+    return x.tolist()
+
+
+example = (t.tensor([[1, 2], [3, 4]]), 9,)
+print(solve(*example))
+",22,"[[1, 2], [3, 9]]"
+Numpy,Core array literacy,"Write a function solve(x) that flattens x and then re-describes the flat run with x's own shape, and returns a tuple (same, shape): whether the round trip equals x, and the round trip's shape as a plain tuple. Nothing moved, so the answer to the first half is always the same — the shape is what varies.","import torch as t
+
+def solve(x):
+    """"""Flatten x and reshape it back; return (equal to x?, shape of the round trip).""""""
+    back = x.flatten().reshape(x.shape)
+    return (t.equal(back, x), tuple(back.shape))
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]),)
+print(solve(*example))
+",20,"(True, (2, 3))"
+Numpy,Core array literacy,"Write a function solve(x) that takes a tensor of ANY rank and returns a tuple (values, before, after): the values as one plain flat list in reading order, how many axes x had, and how many axes the flattened result has.","import torch as t
+
+def solve(x):
+    """"""Return (flat values, axes before, axes after).""""""
+    flat = x.flatten()
+    return (flat.tolist(), x.ndim, flat.ndim)
+
+
+example = (t.tensor([[1, 2], [3, 4]]),)
+print(solve(*example))
+",18,"([1, 2, 3, 4], 2, 1)"
+Numpy,Core array literacy,"Write a function solve(x, r, c) that takes a 2-D tensor x of shape (r, c) and returns a tuple of two plain nested lists: x re-described as (c, r), and x transposed. Both have the same shape; only one of them moved any numbers.","import torch as t
+
+def solve(x, r, c):
+    """"""Return (x reshaped to (c, r), x transposed), both as nested lists.""""""
+    return (x.reshape(c, r).tolist(), x.T.tolist())
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]), 2, 3,)
+print(solve(*example))
+",24,"([[1, 2], [3, 4], [5, 6]], [[1, 4], [2, 5], [3, 6]])"
+Numpy,Core array literacy,"Write a function solve(x, a, b) that takes a 1-D tensor and two axis lengths, re-describes x as a 3-D tensor whose first two axes have lengths a and b, and returns a tuple (values, shape): the nested list and the shape as a plain tuple. Do not compute the third length — let -1 do it.","import torch as t
+
+def solve(x, a, b):
+    """"""Return (x as an (a, b, ?) tensor, its shape) — the last axis inferred.""""""
+    g = x.reshape(a, b, -1)
+    return (g.tolist(), tuple(g.shape))
+
+
+example = (t.arange(12), 2, 3,)
+print(solve(*example))
+",24,"([[[0, 1], [2, 3], [4, 5]], [[6, 7], [8, 9], [10, 11]]], (2, 3, 2))"
+Numpy,Core array literacy,"Write a function solve(n, rows) that builds the matrix of 0..n-1 in reading order with `rows` rows (n is divisible by rows) and returns a tuple (grid, by_column, shape, count): the grid as a nested list, its numbers read column by column as a flat list, its shape as a plain tuple, and how many elements it holds.","import torch as t
+
+def solve(n, rows):
+    """"""Counting matrix: (grid, column-major read, shape, element count).""""""
+    g = t.arange(n).reshape(rows, -1)
+    return (g.tolist(), g.T.flatten().tolist(), tuple(g.shape), g.numel())
+
+
+example = (6, 2,)
+print(solve(*example))
+",26,"([[0, 1, 2], [3, 4, 5]], [0, 3, 1, 4, 2, 5], (2, 3), 6)"
+Numpy,Core array literacy,"Write a function solve(x, cols) that takes a tensor of any rank and a column count that divides its element count, and returns a tuple (flat, grid, rows): x's values as a flat list, x re-described as a 2-D grid with `cols` columns as a nested list, and how many rows that grid has. Infer the row count rather than computing it.","import torch as t
+
+def solve(x, cols):
+    """"""Return (flat values, x as `cols` columns, that grid's row count).""""""
+    g = x.reshape(-1, cols)
+    return (x.flatten().tolist(), g.tolist(), len(g))
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]), 2,)
+print(solve(*example))
+",26,"([1, 2, 3, 4, 5, 6], [[1, 2], [3, 4], [5, 6]], 3)"
+Numpy,Core array literacy,"Write a function solve(n, a, b) that lays 0..n-1 out as a 3-D tensor whose first two axis lengths are a and b (the third is for PyTorch to work out), and returns a tuple (values, shape, flat, axes): the nested list, the shape as a plain tuple, the numbers flattened back to one list, and how many axes the 3-D tensor has.","import torch as t
+
+def solve(n, a, b):
+    """"""0..n-1 as an (a, b, ?) tensor: (values, shape, flat run, axis count).""""""
+    g = t.arange(n).reshape(a, b, -1)
+    return (g.tolist(), tuple(g.shape), g.flatten().tolist(), g.ndim)
+
+
+example = (6, 1, 2,)
+print(solve(*example))
+",28,"([[[0, 1, 2], [3, 4, 5]]], (1, 2, 3), [0, 1, 2, 3, 4, 5], 3)"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, m, b) that takes a float tensor and two numbers and returns a new tensor where every entry has been put through the line m * x + b. Write the rule once for the whole tensor — no loop.","import torch as t
+
+def solve(x, m, b):
+    """"""Return m * x + b for every entry.""""""
+    return m * x + b
+
+
+example = (t.tensor([1.0, 2.0, 3.0]), 2.0, 0.5,)
+print(solve(*example))
+",12,"tensor([2.5000, 4.5000, 6.5000])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x) that takes a float tensor and returns the fractional part of every entry with the sign kept: 1.5 → 0.5, -2.25 → -0.25, 3.0 → 0.0. Subtract the integer part that lies toward zero.","import torch as t
+
+def solve(x):
+    """"""Return the fractional part of every entry, keeping its sign.""""""
+    return x - t.trunc(x)
+
+
+example = (t.tensor([1.5, -2.25, 3.0]),)
+print(solve(*example))
+",18,"tensor([ 0.5000, -0.2500,  0.0000])"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two float tensors of the same shape and returns a new tensor holding, at each position, the SMALLER of the two entries there.","import torch as t
+
+def solve(a, b):
+    """"""Return the smaller of each pair of corresponding entries.""""""
+    return t.minimum(a, b)
+
+
+example = (t.tensor([1.0, 5.0, 3.0]), t.tensor([4.0, 2.0, 3.0]),)
+print(solve(*example))
+",12,"tensor([1., 2., 3.])"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two float tensors of the same shape (the two legs of a right triangle, entry by entry) and returns the hypotenuse for each: the square root of a squared plus b squared.","import torch as t
+
+def solve(a, b):
+    """"""Return the hypotenuse sqrt(a² + b²) for each pair of entries.""""""
+    return t.sqrt(a ** 2 + b ** 2)
+
+
+example = (t.tensor([3.0, 5.0]), t.tensor([4.0, 12.0]),)
+print(solve(*example))
+",16,"tensor([ 5., 13.])"
+Numpy,Vectorization and broadcasting,Write a function solve(x) that takes a float tensor and returns a tuple of two plain lists: the integer just below each entry (or the entry itself when it is already whole) and the integer just above it. Both stay floats.,"import torch as t
+
+def solve(x):
+    """"""Return (floor of each entry, ceil of each entry) as lists.""""""
+    return (t.floor(x).tolist(), t.ceil(x).tolist())
+
+
+example = (t.tensor([1.5, -1.5, 2.0]),)
+print(solve(*example))
+",16,"([1.0, -2.0, 2.0], [2.0, -1.0, 2.0])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, floor_value) that returns a new tensor in which every entry below floor_value has been raised to floor_value, using maximum against a tensor of that constant shaped like x (not clamp). Entries already at or above it are unchanged.","import torch as t
+
+def solve(x, floor_value):
+    """"""Raise every entry to at least floor_value, using maximum against a constant tensor.""""""
+    return t.maximum(x, t.full_like(x, floor_value))
+
+
+example = (t.tensor([-2.0, 0.5, 3.0]), 0.0,)
+print(solve(*example))
+",20,"tensor([0.0000, 0.5000, 3.0000])"
+Numpy,Vectorization and broadcasting,"Write a function solve(x, lo, hi) that pulls every entry of the float tensor x into the range [lo, hi] and returns a tuple (clamped, rounded, untouched): the clamped values as a list, those values rounded to the nearest whole number as a list, and whether the clamp changed nothing (the clamped tensor equals x).","import torch as t
+
+def solve(x, lo, hi):
+    """"""Clamp into [lo, hi]; return (clamped, rounded clamped, was x already inside?).""""""
+    c = x.clamp(min=lo, max=hi)
+    return (c.tolist(), t.round(c).tolist(), t.equal(c, x))
+
+
+example = (t.tensor([1.75, 2.25]), 0.0, 5.0,)
+print(solve(*example))
+",24,"([1.75, 2.25], [2.0, 2.0], True)"
+Numpy,Vectorization and broadcasting,"Write a function solve(a, b) that takes two float tensors of the same shape and returns a tuple of three plain lists: the larger entry at each position, the smaller entry at each position, and the gap between them (never negative).","import torch as t
+
+def solve(a, b):
+    """"""Return (larger of each pair, smaller of each pair, their gap) as lists.""""""
+    hi = t.maximum(a, b)
+    lo = t.minimum(a, b)
+    return (hi.tolist(), lo.tolist(), (hi - lo).tolist())
+
+
+example = (t.tensor([1.0, 5.0, 3.0]), t.tensor([4.0, 2.0, 3.0]),)
+print(solve(*example))
+",22,"([4.0, 5.0, 3.0], [1.0, 2.0, 3.0], [3.0, 3.0, 0.0])"
+Numpy,Vectorization and broadcasting,"Write a function solve(c) that takes a float tensor of Celsius temperatures and returns a tuple of three plain lists: each converted to Fahrenheit (multiply by 9, divide by 5, add 32), the Fahrenheit values with their fractions dropped DOWNWARD to whole degrees, and the Fahrenheit values with anything below zero raised to 0.0.","import torch as t
+
+def solve(c):
+    """"""Celsius → Fahrenheit: (converted, floored, clamped at or above zero).""""""
+    f = c * 9 / 5 + 32
+    return (f.tolist(), t.floor(f).tolist(), f.clamp(min=0.0).tolist())
+
+
+example = (t.tensor([-19.375, 0.0, 37.5, 100.0]),)
+print(solve(*example))
+",24,"([-2.875, 32.0, 99.5, 212.0], [-3.0, 32.0, 99.0, 212.0], [0.0, 32.0, 99.5, 212.0])"
+Numpy,Core array literacy,"Write a function solve(rows, cols, v) that returns a tensor with `rows` rows and `cols` columns in which every entry is v, as a plain nested Python list.","import torch as t
+
+def solve(rows, cols, v):
+    """"""Return a rows x cols tensor of v, as a nested list.""""""
+    return t.full((rows, cols), v).tolist()
+
+
+example = (2, 3, 7.0,)
+print(solve(*example))
+",10,"[[7.0, 7.0, 7.0], [7.0, 7.0, 7.0]]"
+Numpy,Core array literacy,"Write a function solve(n) that returns a tuple (values, dtype_name): n zeros stored as 64-bit integers, as a plain list, and str() of their dtype. The default would give you floats that merely print like zeros.","import torch as t
+
+def solve(n):
+    """"""Return (n integer zeros as a list, their dtype name).""""""
+    z = t.zeros(n, dtype=t.int64)
+    return (z.tolist(), str(z.dtype))
+
+
+example = (3,)
+print(solve(*example))
+",12,"([0, 0, 0], 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(x, v) that returns a tuple (values, dtype_name): a tensor filled with v that copies BOTH the shape and the dtype of x, as a nested list, and str() of its dtype.","import torch as t
+
+def solve(x, v):
+    """"""Return (a tensor of v shaped AND typed like x, its dtype name).""""""
+    filled = t.full_like(x, v)
+    return (filled.tolist(), str(filled.dtype))
+
+
+example = (t.tensor([1, 2, 3], dtype=t.int32), -1,)
+print(solve(*example))
+",14,"([-1, -1, -1], 'torch.int32')"
+Numpy,Core array literacy,"Write a function solve(n) that returns a tuple (values, shape): the n-by-n identity matrix — 1.0 on the main diagonal, 0.0 elsewhere — as a plain nested list, and its shape as a plain tuple.","import torch as t
+
+def solve(n):
+    """"""Return (the n x n identity as a nested list, its shape).""""""
+    I = t.eye(n)
+    return (I.tolist(), tuple(I.shape))
+
+
+example = (2,)
+print(solve(*example))
+",10,"([[1.0, 0.0], [0.0, 1.0]], (2, 2))"
+Numpy,Core array literacy,"Write a function solve(rows, cols) that returns a tuple (values, dtype_name): a rows x cols tensor of boolean False, as a nested list, and str() of its dtype. Zeros of the right type, not floats that print like them.","import torch as t
+
+def solve(rows, cols):
+    """"""Return (an all-False rows x cols mask as a list, its dtype name).""""""
+    mask = t.zeros((rows, cols), dtype=t.bool)
+    return (mask.tolist(), str(mask.dtype))
+
+
+example = (2, 3,)
+print(solve(*example))
+",12,"([[False, False, False], [False, False, False]], 'torch.bool')"
+Numpy,Core array literacy,"Write a function solve(x) that returns a tuple (values, count, dtype_name): a tensor of ones with x's shape and x's dtype as a nested list, how many elements it has, and str() of its dtype.","import torch as t
+
+def solve(x):
+    """"""Return (ones shaped like x, their count, their dtype name).""""""
+    o = t.ones_like(x)
+    return (o.tolist(), o.numel(), str(o.dtype))
+
+
+example = (t.tensor([[1, 2, 3], [4, 5, 6]]),)
+print(solve(*example))
+",14,"([[1, 1, 1], [1, 1, 1]], 6, 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(n) that returns a tuple (values, dtype_name): the n-by-n identity matrix stored as 64-bit INTEGERS (1 and 0, not 1.0 and 0.0), as a nested list, and str() of its dtype.","import torch as t
+
+def solve(n):
+    """"""Return (the n x n identity as int64, its dtype name).""""""
+    I = t.eye(n, dtype=t.int64)
+    return (I.tolist(), str(I.dtype))
+
+
+example = (2,)
+print(solve(*example))
+",14,"([[1, 0], [0, 1]], 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(rows, cols, v) that builds two rows x cols tensors — all zeros, and all v — and returns a tuple (zeros, filled, shape, dtype_name): both as nested lists, the filled one's shape as a plain tuple, and str() of the zeros' dtype.","import torch as t
+
+def solve(rows, cols, v):
+    """"""Return (zeros grid, grid of v, its shape, the zeros' dtype name).""""""
+    z = t.zeros((rows, cols))
+    f = t.full((rows, cols), v)
+    return (z.tolist(), f.tolist(), tuple(f.shape), str(z.dtype))
+
+
+example = (2, 3, 7.0,)
+print(solve(*example))
+",20,"([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[7.0, 7.0, 7.0], [7.0, 7.0, 7.0]], (2, 3), 'torch.float32')"
+Numpy,Core array literacy,"Write a function solve(x, v) that returns a tuple (zeros, filled, dtype_name): a zero tensor shaped and typed like x, a tensor of v shaped and typed like x — both as nested lists — and str() of the dtype a tensor of ones shaped like x would get.","import torch as t
+
+def solve(x, v):
+    """"""Return (zeros like x, v like x, the dtype name ones_like x gets).""""""
+    z = t.zeros_like(x)
+    f = t.full_like(x, v)
+    return (z.tolist(), f.tolist(), str(t.ones_like(x).dtype))
+
+
+example = (t.tensor([[1, 2], [3, 4]]), 5,)
+print(solve(*example))
+",20,"([[0, 0], [0, 0]], [[5, 5], [5, 5]], 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(n, v) that returns a tuple (diag, mask_dtype, zeros): an n x n float tensor with v on the main diagonal and 0.0 elsewhere as a nested list, str() of the dtype of an n x n tensor of boolean True, and n zeros stored as 64-bit integers as a plain list.","import torch as t
+
+def solve(n, v):
+    """"""Return (v on the diagonal, the dtype name of an all-True n x n mask, n integer zeros).""""""
+    diag = t.eye(n) * v
+    mask = t.ones((n, n), dtype=t.bool)
+    zeros = t.zeros(n, dtype=t.int64)
+    return (diag.tolist(), str(mask.dtype), zeros.tolist())
+
+
+example = (2, 3.0,)
+print(solve(*example))
+",22,"([[3.0, 0.0], [0.0, 3.0]], 'torch.bool', [0, 0])"
+Numpy,Core array literacy,"Write a function solve(x) that takes a float tensor and returns its values converted to 64-bit integers, as a plain list. The conversion cuts toward zero: 1.9 → 1 and -1.9 → -1.","import torch as t
+
+def solve(x):
+    """"""Return x converted to int64, as a plain list.""""""
+    return x.to(t.int64).tolist()
+
+
+example = (t.tensor([1.9, -1.9, 0.5]),)
+print(solve(*example))
+",12,"[1, -1, 0]"
+Numpy,Core array literacy,"Write a function solve(n, name) that takes a length and a dtype NAME as a string ('int32', 'float64', 'bool', ...) and returns a tuple (values, dtype_name): n ones stored as that dtype, as a plain list, and str() of their dtype. PyTorch will not take the string itself — look the dtype object up by name.","import torch as t
+
+def solve(n, name):
+    """"""Return (n ones stored as the dtype named `name`, that dtype's name).""""""
+    o = t.ones(n, dtype=getattr(t, name))
+    return (o.tolist(), str(o.dtype))
+
+
+example = (3, 'int32',)
+print(solve(*example))
+",14,"([1, 1, 1], 'torch.int32')"
+Numpy,Core array literacy,"Write a function solve(x) that takes any tensor and returns a tuple (per_element, total): how many bytes one element occupies, and how many bytes the whole tensor occupies (element count times bytes per element).","import torch as t
+
+def solve(x):
+    """"""Return (bytes per element, total bytes) for x.""""""
+    return (x.element_size(), x.numel() * x.element_size())
+
+
+example = (t.zeros((2, 3)),)
+print(solve(*example))
+",12,"(4, 24)"
+Numpy,Core array literacy,"Write a function solve(x) that returns a tuple (values, new_dtype, old_dtype): a float64 copy of x as a plain list, str() of the copy's dtype, and str() of x's own dtype afterwards — which the conversion must not have changed.","import torch as t
+
+def solve(x):
+    """"""Return (x as float64, the copy's dtype name, the original's dtype name).""""""
+    y = x.to(t.float64)
+    return (y.tolist(), str(y.dtype), str(x.dtype))
+
+
+example = (t.tensor([1, 2, 3]),)
+print(solve(*example))
+",14,"([1.0, 2.0, 3.0], 'torch.float64', 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(n, name) that builds the integers 0 through n-1 already stored as the dtype named by the string `name` (no build-then-convert), and returns a tuple (values, per_element): the values as a plain list and how many bytes each element takes.","import torch as t
+
+def solve(n, name):
+    """"""Return (0..n-1 built as dtype `name`, bytes per element).""""""
+    z = t.arange(n, dtype=getattr(t, name))
+    return (z.tolist(), z.element_size())
+
+
+example = (4, 'int16',)
+print(solve(*example))
+",16,"([0, 1, 2, 3], 2)"
+Numpy,Core array literacy,"Write a function solve(x, name) that returns the number of bytes x's data would occupy if stored as the dtype named by the string `name`: convert, then multiply element count by bytes per element.","import torch as t
+
+def solve(x, name):
+    """"""Return how many bytes x occupies once stored as the dtype named `name`.""""""
+    y = x.to(getattr(t, name))
+    return y.numel() * y.element_size()
+
+
+example = (t.zeros((10, 10)), 'float64',)
+print(solve(*example))
+",16,800
+Numpy,Core array literacy,"Write a function solve(x) that takes a float tensor, converts it to 64-bit integers and then back to float32, and returns a tuple (values, dtype_name): the round-tripped values as a plain list and str() of their dtype. The fractions are gone; the type is float again.","import torch as t
+
+def solve(x):
+    """"""Return (x → int64 → float32 values, the result's dtype name).""""""
+    back = x.to(t.int64).to(t.float32)
+    return (back.tolist(), str(back.dtype))
+
+
+example = (t.tensor([1.5, 2.0, -3.75]),)
+print(solve(*example))
+",16,"([1.0, 2.0, -3.0], 'torch.float32')"
+Numpy,Core array literacy,"Write a function solve(x, name) that converts x to the dtype named by the string `name` and returns a tuple (values, dtype_name): the converted values as a plain list and str() of their dtype.","import torch as t
+
+def solve(x, name):
+    """"""Return (x converted to the dtype named `name`, its dtype name).""""""
+    y = x.to(getattr(t, name))
+    return (y.tolist(), str(y.dtype))
+
+
+example = (t.tensor([1.75, -1.75]), 'int64',)
+print(solve(*example))
+",16,"([1, -1], 'torch.int64')"
+Numpy,Core array literacy,"Write a function solve(x, name) that converts x to the dtype named by the string `name` and returns a tuple (values, new_dtype, total_bytes, old_dtype): the converted values as a plain list, str() of the new dtype, how many bytes the converted tensor occupies, and str() of x's own dtype afterwards.","import torch as t
+
+def solve(x, name):
+    """"""Convert x to `name`: (values, new dtype name, its bytes, x's dtype name).""""""
+    y = x.to(getattr(t, name))
+    return (y.tolist(), str(y.dtype), y.numel() * y.element_size(), str(x.dtype))
+
+
+example = (t.tensor([1.9, -1.9, 0.5]), 'int64',)
+print(solve(*example))
+",22,"([1, -1, 0], 'torch.int64', 24, 'torch.float32')"
+Numpy,Core array literacy,"Write a function solve(n, name) that builds 0 through n-1 directly in the dtype named by the string `name` and returns a tuple (values, dtype_name, per_element, count): the values as a plain list, str() of the dtype, bytes per element, and how many elements there are.","import torch as t
+
+def solve(n, name):
+    """"""0..n-1 built as `name`: (values, dtype name, bytes per element, element count).""""""
+    z = t.arange(n, dtype=getattr(t, name))
+    return (z.tolist(), str(z.dtype), z.element_size(), z.numel())
+
+
+example = (4, 'int16',)
+print(solve(*example))
+",20,"([0, 1, 2, 3], 'torch.int16', 2, 4)"
+Numpy,Core array literacy,"Write a function solve(x) that takes a float tensor and returns a tuple (ints, bytes64, dtype_name): x converted to 64-bit integers as a plain list, the number of bytes x would occupy as float64, and str() of x's own dtype — still what it was, since neither conversion touches x.","import torch as t
+
+def solve(x):
+    """"""Return (x as int64, bytes of x as float64, x's dtype name unchanged).""""""
+    ints = x.to(t.int64)
+    wide = x.to(t.float64)
+    return (ints.tolist(), wide.numel() * wide.element_size(), str(x.dtype))
+
+
+example = (t.tensor([1.9, -1.9, 0.5]),)
+print(solve(*example))
+",22,"([1, -1, 0], 24, 'torch.float32')"
+Numpy,Indexing and selection,"Write a function solve(z) that takes a 1-D float tensor and returns a tuple of two plain lists: the values sorted smallest to largest, and the position each sorted value came from in z. One call returns both halves.","import torch as t
+
+def solve(z):
+    """"""Return (sorted values, where each came from), both as lists.""""""
+    s = t.sort(z)
+    return (s.values.tolist(), s.indices.tolist())
+
+
+example = (t.tensor([0.5, 0.25, 0.75]),)
+print(solve(*example))
+",14,"([0.25, 0.5, 0.75], [1, 0, 2])"
+Numpy,Indexing and selection,"Write a function solve(ids, scores) that takes two 1-D tensors of the same length and returns the ids reordered so their scores go smallest to largest, as a plain list. Rank the scores once, then index ids with that order.","import torch as t
+
+def solve(ids, scores):
+    """"""Return ids reordered by ascending score, as a list.""""""
+    order = t.argsort(scores)
+    return ids[order].tolist()
+
+
+example = (t.tensor([10, 20, 30]), t.tensor([0.5, 0.25, 0.75]),)
+print(solve(*example))
+",16,"[20, 10, 30]"
+Numpy,Indexing and selection,"Write a function solve(x, k) that takes a 1-D float tensor and an integer k, and returns a tuple of two plain lists: the k largest values ordered largest first, and the positions they sit at in x. One call answers both.","import torch as t
+
+def solve(x, k):
+    """"""Return (the k largest values largest first, their positions), as lists.""""""
+    top = t.topk(x, k)
+    return (top.values.tolist(), top.indices.tolist())
+
+
+example = (t.tensor([5.0, 1.0, 9.0, 3.0, 7.0]), 2,)
+print(solve(*example))
+",16,"([9.0, 7.0], [2, 4])"
+Numpy,Indexing and selection,"Write a function solve(x) that takes a 2-D float tensor and returns it with each COLUMN sorted smallest to largest independently, as a plain nested list. Columns do not mix — name the axis that runs down a column.","import torch as t
+
+def solve(x):
+    """"""Return x with each COLUMN sorted ascending on its own, as a nested list.""""""
+    return t.sort(x, dim=0).values.tolist()
+
+
+example = (t.tensor([[3.0, 1.0], [1.0, 2.0], [2.0, 0.0]]),)
+print(solve(*example))
+",16,"[[1.0, 0.0], [2.0, 1.0], [3.0, 2.0]]"
+Numpy,Indexing and selection,Write a function solve(z) that takes a 1-D float tensor and returns the POSITION of its largest entry as a plain int. Rank the positions largest-first and take the first one.,"import torch as t
+
+def solve(z):
+    """"""Return the position of the largest entry, via a descending argsort.""""""
+    return t.argsort(z, descending=True)[0].item()
+
+
+example = (t.tensor([0.4, 0.9, 0.1]),)
+print(solve(*example))
+",16,1
+Numpy,Indexing and selection,"Write a function solve(z, k) that takes a 1-D float tensor and an integer k, and returns the k SMALLEST values ordered smallest first, as a plain list. topk answers the opposite question — build this one from a sort.","import torch as t
+
+def solve(z, k):
+    """"""Return the k SMALLEST values, smallest first, as a list.""""""
+    return t.sort(z).values[:k].tolist()
+
+
+example = (t.tensor([5.0, 1.0, 9.0, 3.0, 7.0]), 2,)
+print(solve(*example))
+",18,"[1.0, 3.0]"
+Numpy,Indexing and selection,"Write a function solve(names, scores, k) that takes two 1-D tensors of the same length and an integer k, and returns a tuple of two plain lists: the k names with the highest scores, best first, and those scores in the same order. The names never get sorted — only indexed.","import torch as t
+
+def solve(names, scores, k):
+    """"""Return (top-k names by score, their scores), best first, as lists.""""""
+    order = t.argsort(scores, descending=True)[:k]
+    return (names[order].tolist(), scores[order].tolist())
+
+
+example = (t.tensor([10, 20, 30, 40]), t.tensor([0.5, 0.25, 0.75, 0.125]), 2,)
+print(solve(*example))
+",24,"([30, 10], [0.75, 0.5])"
+Numpy,Indexing and selection,"Write a function solve(x) that takes a 2-D float tensor and returns a tuple of two plain nested lists: each ROW sorted largest first on its own, and for each row the column positions those values came from.","import torch as t
+
+def solve(x):
+    """"""Each row sorted descending: (values, the positions they came from), nested lists.""""""
+    s = t.sort(x, dim=1, descending=True)
+    return (s.values.tolist(), s.indices.tolist())
+
+
+example = (t.tensor([[0.5, 0.75, 0.25], [5.0, 1.0, 3.0]]),)
+print(solve(*example))
+",22,"([[0.75, 0.5, 0.25], [5.0, 3.0, 1.0]], [[1, 0, 2], [0, 2, 1]])"
+Numpy,Indexing and selection,"Write a function solve(z) that takes a 1-D float tensor and returns a tuple of three plain lists: its values smallest first, its values largest first, and z itself afterwards — which sorting must have left exactly as it was.","import torch as t
+
+def solve(z):
+    """"""Return (ascending values, descending values, z afterwards), as lists.""""""
+    up = t.sort(z).values
+    down = t.sort(z, descending=True).values
+    return (up.tolist(), down.tolist(), z.tolist())
+
+
+example = (t.tensor([0.5, 0.25, 0.75]),)
+print(solve(*example))
+",20,"([0.25, 0.5, 0.75], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (before, after): how many rows a has, and how many rows its transpose has. The second number is the original's column count — transposing turns columns into rows.","import torch as t
+
+def solve(rows):
+    """"""Return (how many rows a has, how many rows a.T has).""""""
+    a = t.tensor(rows)
+    return (len(a), len(a.T))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",12,"(2, 3)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list and returns the LAST row of its transpose as a plain Python list — which is the last column of the original, read top to bottom.","import torch as t
+
+def solve(rows):
+    """"""Return the transpose's LAST row as a plain list.""""""
+    a = t.tensor(rows)
+    return a.T.tolist()[-1]
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",14,"[3, 6]"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns one bool: whether a is equal to its own transpose — same shape and the same numbers in every position. Only a square tensor can be, and not every square one is.","import torch as t
+
+def solve(rows):
+    """"""Return whether a equals its own transpose.""""""
+    a = t.tensor(rows)
+    return t.equal(a, a.T)
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",16,False
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor from the nested list (always at least two columns) and returns a tuple (row, count): the SECOND row of its transpose as a plain list, and how many numbers that row holds — which is the original's row count.","import torch as t
+
+def solve(rows):
+    """"""Return (the transpose's second row, how many numbers it has).""""""
+    a = t.tensor(rows)
+    row = a.T.tolist()[1]
+    return (row, len(row))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",16,"([2, 5], 2)"
+Numpy,Core array literacy,"Write a function solve(rows, i, j) that builds a tensor a from the nested list and returns a tuple of two plain numbers: the entry at row i, column j of a, and the entry at row j, column i of a's transpose. Read both out of nested lists.","import torch as t
+
+def solve(rows, i, j):
+    """"""Return (a's entry at row i col j, a.T's entry at row j col i).""""""
+    a = t.tensor(rows)
+    return (a.tolist()[i][j], a.T.tolist()[j][i])
+
+
+example = ([[1, 2], [3, 4]], 0, 1,)
+print(solve(*example))
+",18,"(2, 2)"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple of two plain nested lists: the transpose's contents, and the contents after transposing a second time.","import torch as t
+
+def solve(rows):
+    """"""Return (a.T's values, a.T.T's values), both as nested lists.""""""
+    a = t.tensor(rows)
+    return (a.T.tolist(), a.T.T.tolist())
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",14,"([[1, 4], [2, 5], [3, 6]], [[1, 2, 3], [4, 5, 6]])"
+Numpy,Core array literacy,"Write a function solve(rows) that builds a tensor a from the nested list and returns a tuple (values, shape, first_row, symmetric): the transpose's contents as a plain nested list, its shape as a plain tuple, its first row as a plain list, and whether a equals its own transpose.","import torch as t
+
+def solve(rows):
+    """"""Return (a.T's values, a.T's shape, a.T's first row, is a its own transpose?).""""""
+    a = t.tensor(rows)
+    view = a.T
+    return (view.tolist(), tuple(view.shape), view.tolist()[0], t.equal(a, view))
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",22,"([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 4], False)"

@@ -998,6 +998,12 @@
          "prompt": "Both shapes at once: the tensor's own, then the transpose's.",
          "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (a's shape, a.T's shape), both plain tuples.\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), tuple(a._____.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (a's shape, a.T's shape), both plain tuples.\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), tuple(a.T.shape))\n"
+        },
+        {
+         "question_id": 669,
+         "prompt": "Rows before and rows after \u2014 the second is the old column count.",
+         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (how many rows a has, how many rows a.T has).\"\"\"\n    a = t.tensor(rows)\n    return (len(a), len(a._____))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (how many rows a has, how many rows a.T has).\"\"\"\n    a = t.tensor(rows)\n    return (len(a), len(a.T))\n"
         }
        ]
       },
@@ -1020,6 +1026,12 @@
          "prompt": "The whole transpose, as a plain nested Python list.",
          "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    a = t.tensor(rows)\n    return a._____.tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    a = t.tensor(rows)\n    return a.T.tolist()\n"
+        },
+        {
+         "question_id": 670,
+         "prompt": "The last row of the transpose \u2014 the last column of the original.",
+         "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return the transpose's LAST row as a plain list.\"\"\"\n    a = t.tensor(rows)\n    return a._____.tolist()[-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return the transpose's LAST row as a plain list.\"\"\"\n    a = t.tensor(rows)\n    return a.T.tolist()[-1]\n"
         }
        ]
       }
@@ -1038,6 +1050,12 @@
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (a's shape, a.T's shape), both plain tuples.\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), tuple(a.T.shape))\n"
       },
       {
+       "question_id": 669,
+       "prompt": "Rows before and rows after \u2014 the second is the old column count.",
+       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (how many rows a has, how many rows a.T has).\"\"\"\n    a = t.tensor(rows)\n    return (len(a), len(a._____))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (how many rows a has, how many rows a.T has).\"\"\"\n    a = t.tensor(rows)\n    return (len(a), len(a.T))\n"
+      },
+      {
        "question_id": 611,
        "prompt": "The transpose's first row \u2014 which is the first number of every original row.",
        "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return the transpose's first row as a plain list.\"\"\"\n    a = t.tensor(rows)\n    return a._____.tolist()[0]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
@@ -1048,6 +1066,12 @@
        "prompt": "The whole transpose, as a plain nested Python list.",
        "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    a = t.tensor(rows)\n    return a._____.tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return a.T's contents as a plain nested list.\"\"\"\n    a = t.tensor(rows)\n    return a.T.tolist()\n"
+      },
+      {
+       "question_id": 670,
+       "prompt": "The last row of the transpose \u2014 the last column of the original.",
+       "starter_code": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return the transpose's LAST row as a plain list.\"\"\"\n    a = t.tensor(rows)\n    return a._____.tolist()[-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return the transpose's LAST row as a plain list.\"\"\"\n    a = t.tensor(rows)\n    return a.T.tolist()[-1]\n"
       }
      ],
      "guided_items": [],
@@ -1062,6 +1086,26 @@
        "question_id": 613,
        "prompt": "The transpose described two ways: its contents and its shape.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 671,
+       "prompt": "Is it its own transpose?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 672,
+       "prompt": "The second row of the transpose, and its length.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 673,
+       "prompt": "One number, two addresses.\n\nTransposing swaps the two indices of every entry. Whatever sits at row i,\ncolumn j of `a` sits at row j, column i of `a.T`:",
+       "worked_example_code": "import torch as t\n\na = t.tensor([[10, 20, 30], [40, 50, 60]])\nprint(\"a   at row 0, col 2:\", a.tolist()[0][2])\nprint(\"a.T at row 2, col 0:\", a.T.tolist()[2][0])\nassert a.tolist()[0][2] == a.T.tolist()[2][0]\n"
+      },
+      {
+       "question_id": 674,
+       "prompt": "Once, then twice.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -1072,11 +1116,19 @@
       {
        "question_id": 615,
        "prompt": "The element type, the transposed contents, and whether the count survived."
+      },
+      {
+       "question_id": 675,
+       "prompt": "Everything this page knows about one transpose."
       }
      ],
      "independent_items": [
       612,
-      613
+      613,
+      671,
+      672,
+      673,
+      674
      ],
      "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept."
     },
@@ -1243,6 +1295,12 @@
          "prompt": "All-zeros float vector of a given length (must also work for length 0).",
          "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return a 1-D float tensor of n zeros.\"\"\"\n    return t._____(n)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 4\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return a 1-D float tensor of n zeros.\"\"\"\n    return t.zeros(n)\n"
+        },
+        {
+         "question_id": 639,
+         "prompt": "A grid of one value \u2014 say how big, then say the value.",
+         "starter_code": "import torch as t\n\ndef solve(rows, cols, v):\n    \"\"\"Return a rows x cols tensor of v, as a nested list.\"\"\"\n    return t._____((rows, cols), v).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 7.0,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(rows, cols, v):\n    \"\"\"Return a rows x cols tensor of v, as a nested list.\"\"\"\n    return t.full((rows, cols), v).tolist()\n"
         }
        ]
       },
@@ -1259,6 +1317,12 @@
          "prompt": "A rows\u00d7cols tensor where every entry is the boolean `True`.",
          "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t._____((rows, cols), _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
          "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=t.bool)\n"
+        },
+        {
+         "question_id": 640,
+         "prompt": "Zeros that are actually integers.",
+         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (n integer zeros as a list, their dtype name).\"\"\"\n    z = t._____(n, _____=t.int64)\n    return (z.tolist(), str(z.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (n integer zeros as a list, their dtype name).\"\"\"\n    z = t.zeros(n, dtype=t.int64)\n    return (z.tolist(), str(z.dtype))\n"
         }
        ]
       },
@@ -1275,6 +1339,12 @@
          "prompt": "Blank tensor matching BOTH the shape and dtype of an existing tensor.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return an all-zeros tensor with x's shape and x's dtype.\"\"\"\n    return t._____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return an all-zeros tensor with x's shape and x's dtype.\"\"\"\n    return t.zeros_like(x)\n"
+        },
+        {
+         "question_id": 641,
+         "prompt": "Shaped and typed like x, filled with v.",
+         "starter_code": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Return (a tensor of v shaped AND typed like x, its dtype name).\"\"\"\n    filled = t._____(x, v)\n    return (filled.tolist(), str(filled.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1, 2, 3], dtype=t.int32), -1,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Return (a tensor of v shaped AND typed like x, its dtype name).\"\"\"\n    filled = t.full_like(x, v)\n    return (filled.tolist(), str(filled.dtype))\n"
         }
        ]
       },
@@ -1291,6 +1361,12 @@
          "prompt": "The n\u00d7n identity matrix.",
          "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n-by-n identity matrix.\"\"\"\n    return t._____(n)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n-by-n identity matrix.\"\"\"\n    return t.eye(n)\n"
+        },
+        {
+         "question_id": 642,
+         "prompt": "The identity, and its shape.",
+         "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (the n x n identity as a nested list, its shape).\"\"\"\n    I = t._____(n)\n    return (I.tolist(), tuple(I.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (the n x n identity as a nested list, its shape).\"\"\"\n    I = t.eye(n)\n    return (I.tolist(), tuple(I.shape))\n"
         }
        ]
       }
@@ -1303,10 +1379,22 @@
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return a 1-D float tensor of n zeros.\"\"\"\n    return t.zeros(n)\n"
       },
       {
+       "question_id": 639,
+       "prompt": "A grid of one value \u2014 say how big, then say the value.",
+       "starter_code": "import torch as t\n\ndef solve(rows, cols, v):\n    \"\"\"Return a rows x cols tensor of v, as a nested list.\"\"\"\n    return t._____((rows, cols), v).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 7.0,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(rows, cols, v):\n    \"\"\"Return a rows x cols tensor of v, as a nested list.\"\"\"\n    return t.full((rows, cols), v).tolist()\n"
+      },
+      {
        "question_id": 212,
        "prompt": "A rows\u00d7cols tensor where every entry is the boolean `True`.",
        "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t._____((rows, cols), _____=_____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2, 3))\n",
        "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"All-True boolean matrix of shape (rows, cols).\"\"\"\n    return t.ones((rows, cols), dtype=t.bool)\n"
+      },
+      {
+       "question_id": 640,
+       "prompt": "Zeros that are actually integers.",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (n integer zeros as a list, their dtype name).\"\"\"\n    z = t._____(n, _____=t.int64)\n    return (z.tolist(), str(z.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (n integer zeros as a list, their dtype name).\"\"\"\n    z = t.zeros(n, dtype=t.int64)\n    return (z.tolist(), str(z.dtype))\n"
       },
       {
        "question_id": 41,
@@ -1315,10 +1403,22 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return an all-zeros tensor with x's shape and x's dtype.\"\"\"\n    return t.zeros_like(x)\n"
       },
       {
+       "question_id": 641,
+       "prompt": "Shaped and typed like x, filled with v.",
+       "starter_code": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Return (a tensor of v shaped AND typed like x, its dtype name).\"\"\"\n    filled = t._____(x, v)\n    return (filled.tolist(), str(filled.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1, 2, 3], dtype=t.int32), -1,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Return (a tensor of v shaped AND typed like x, its dtype name).\"\"\"\n    filled = t.full_like(x, v)\n    return (filled.tolist(), str(filled.dtype))\n"
+      },
+      {
        "question_id": 228,
        "prompt": "The n\u00d7n identity matrix.",
        "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n-by-n identity matrix.\"\"\"\n    return t._____(n)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n-by-n identity matrix.\"\"\"\n    return t.eye(n)\n"
+      },
+      {
+       "question_id": 642,
+       "prompt": "The identity, and its shape.",
+       "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (the n x n identity as a nested list, its shape).\"\"\"\n    I = t._____(n)\n    return (I.tolist(), tuple(I.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (the n x n identity as a nested list, its shape).\"\"\"\n    I = t.eye(n)\n    return (I.tolist(), tuple(I.shape))\n"
       }
      ],
      "guided_items": [
@@ -1330,12 +1430,59 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 225,
+       "prompt": "n ones in the default float dtype.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50,
+       "prompt": "v on the diagonal, zeros elsewhere \u2014 the identity, scaled.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 213,
+       "prompt": "A one-hot vector: zeros first, then one write.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 643,
+       "prompt": "An all-False mask.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 644,
+       "prompt": "Ones shaped like x, counted and typed.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 645,
+       "prompt": "An integer identity \u2014 eye takes dtype= like the others.\n\nEvery constructor on this page takes the same `dtype=` keyword, and `eye`\nis no exception:",
+       "worked_example_code": "import torch as t\n\nflags = t.eye(3, dtype=t.bool)\nprint(flags)\nprint(flags.dtype)\nassert flags.dtype == t.bool\n"
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 646,
+       "prompt": "Two grids of the same shape, and what each reports about itself."
+      },
+      {
+       "question_id": 647,
+       "prompt": "The whole _like family on one tensor."
+      },
+      {
+       "question_id": 648,
+       "prompt": "Three constructors, three dtypes, one call."
+      }
+     ],
      "independent_items": [
       225,
       50,
-      213
+      213,
+      643,
+      644,
+      645
      ],
      "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything."
     },
@@ -1536,6 +1683,12 @@
          "prompt": "Float32 copy of an integer tensor, original left unmodified.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return a float32 copy of integer tensor x.\"\"\"\n    return x._____(t.float32)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1, 2, 3])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return a float32 copy of integer tensor x.\"\"\"\n    return x.to(t.float32)\n"
+        },
+        {
+         "question_id": 649,
+         "prompt": "Float to integer \u2014 the fraction is cut, not rounded.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x converted to int64, as a plain list.\"\"\"\n    return x._____(t.int64).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.9, -1.9, 0.5]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x converted to int64, as a plain list.\"\"\"\n    return x.to(t.int64).tolist()\n"
         }
        ]
       },
@@ -1552,6 +1705,12 @@
          "prompt": "The integers 0..n-1 stored with a dtype named by a string.",
          "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, _____=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
          "solution": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=getattr(t, dtype_str))\n"
+        },
+        {
+         "question_id": 650,
+         "prompt": "A dtype that arrives as a string.",
+         "starter_code": "import torch as t\n\ndef solve(n, name):\n    \"\"\"Return (n ones stored as the dtype named `name`, that dtype's name).\"\"\"\n    o = t.ones(n, _____=_____(t, name))\n    return (o.tolist(), str(o.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 'int32',)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(n, name):\n    \"\"\"Return (n ones stored as the dtype named `name`, that dtype's name).\"\"\"\n    o = t.ones(n, dtype=getattr(t, name))\n    return (o.tolist(), str(o.dtype))\n"
         }
        ]
       },
@@ -1568,6 +1727,12 @@
          "prompt": "A tensor's buffer size, reported as the string \"&lt;n&gt; bytes\".",
          "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return z's data-buffer size as e.g. '24 bytes'.\"\"\"\n    return f\"{z.numel() * z._____()} bytes\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.zeros((10, 10))\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return z's data-buffer size as e.g. '24 bytes'.\"\"\"\n    return f\"{z.numel() * z.element_size()} bytes\"\n"
+        },
+        {
+         "question_id": 651,
+         "prompt": "What one element costs, and what they all cost together.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (bytes per element, total bytes) for x.\"\"\"\n    return (x._____(), x.numel() * x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.zeros((2, 3)),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (bytes per element, total bytes) for x.\"\"\"\n    return (x.element_size(), x.numel() * x.element_size())\n"
         }
        ]
       }
@@ -1580,16 +1745,34 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return a float32 copy of integer tensor x.\"\"\"\n    return x.to(t.float32)\n"
       },
       {
+       "question_id": 649,
+       "prompt": "Float to integer \u2014 the fraction is cut, not rounded.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x converted to int64, as a plain list.\"\"\"\n    return x._____(t.int64).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.9, -1.9, 0.5]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x converted to int64, as a plain list.\"\"\"\n    return x.to(t.int64).tolist()\n"
+      },
+      {
        "question_id": 215,
        "prompt": "The integers 0..n-1 stored with a dtype named by a string.",
        "starter_code": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, _____=_____(t, dtype_str))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, \"int32\"))\n",
        "solution": "import torch as t\n\ndef solve(n, dtype_str):\n    \"\"\"0..n-1 with the dtype named by dtype_str (e.g. 'int32').\"\"\"\n    return t.arange(n, dtype=getattr(t, dtype_str))\n"
       },
       {
+       "question_id": 650,
+       "prompt": "A dtype that arrives as a string.",
+       "starter_code": "import torch as t\n\ndef solve(n, name):\n    \"\"\"Return (n ones stored as the dtype named `name`, that dtype's name).\"\"\"\n    o = t.ones(n, _____=_____(t, name))\n    return (o.tolist(), str(o.dtype))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 'int32',)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(n, name):\n    \"\"\"Return (n ones stored as the dtype named `name`, that dtype's name).\"\"\"\n    o = t.ones(n, dtype=getattr(t, name))\n    return (o.tolist(), str(o.dtype))\n"
+      },
+      {
        "question_id": 51,
        "prompt": "A tensor's buffer size, reported as the string \"&lt;n&gt; bytes\".",
        "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return z's data-buffer size as e.g. '24 bytes'.\"\"\"\n    return f\"{z.numel() * z._____()} bytes\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.zeros((10, 10))\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return z's data-buffer size as e.g. '24 bytes'.\"\"\"\n    return f\"{z.numel() * z.element_size()} bytes\"\n"
+      },
+      {
+       "question_id": 651,
+       "prompt": "What one element costs, and what they all cost together.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (bytes per element, total bytes) for x.\"\"\"\n    return (x._____(), x.numel() * x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.zeros((2, 3)),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (bytes per element, total bytes) for x.\"\"\"\n    return (x.element_size(), x.numel() * x.element_size())\n"
       }
      ],
      "guided_items": [
@@ -1601,10 +1784,59 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 19,
+       "prompt": "Real and imaginary parts of a complex tensor, as two real tensors.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 652,
+       "prompt": "Convert, then check that the original did not change.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 653,
+       "prompt": "Build the run in the named dtype and read what each element costs.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 654,
+       "prompt": "The memory cost of a dtype choice.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 655,
+       "prompt": "Through an integer type and back out \u2014 what survives?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 656,
+       "prompt": "Convert to a dtype you only know by name.\n\nThe two halves of this page meet here: `.to()` wants a dtype object, and\n`getattr` turns a name into one:",
+       "worked_example_code": "import torch as t\n\nx = t.tensor([1.5, -2.5])\nname = 'int16'\ny = x.to(getattr(t, name))\nprint(y, y.dtype)\nassert y.dtype == t.int16\n"
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 657,
+       "prompt": "Convert by name and account for every consequence."
+      },
+      {
+       "question_id": 658,
+       "prompt": "A run of integers in a named dtype, fully described."
+      },
+      {
+       "question_id": 659,
+       "prompt": "Two conversions from one tensor, and the original untouched."
+      }
+     ],
      "independent_items": [
-      19
+      19,
+      652,
+      653,
+      654,
+      655,
+      656
      ],
      "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes."
     },
@@ -1619,22 +1851,90 @@
       "Tensor.flatten",
       "Tensor.reshape"
      ],
-     "concept_markdown": "A tensor's data is one flat block of memory; the shape is just metadata saying\nhow to read it. **Reshaping changes the metadata without touching the data** \u2014\nwhich is why it's usually free (no copy) and why the one hard rule is:\n\n> the new shape's element count must equal the old one\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe two directions:\n\n- **`x.reshape(shape)`** \u2014 reinterpret the flat data as a new shape.\n  A convenience worth memorizing: one dimension may be **`-1`**, meaning\n  \"compute this one for me\": `x.reshape(3, -1)` figures out the columns.\n- **`x.flatten()`** \u2014 collapse any shape back to 1-D.\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, -1)\", x.reshape(3, -1).shape)\nprint(\"flatten\", x.reshape(3, 4).flatten())\n\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n```\n\nThe count rule is not a guideline \u2014 a mismatch raises rather than padding or\ntruncating.\n\nYou will also meet **`x.view(shape)`**, which is reshape's stricter sibling: it\n*only* ever re-labels the existing memory and raises if that is impossible.\n`reshape` falls back to copying in that case. Prefer `reshape` unless you\nspecifically want the error.\n\nThe question that makes reshape make sense is: **in what order do elements\nfill the new shape?** PyTorch's order is **row-major (\"C order\")**: the\n*last* axis varies fastest. Reading a 2-D tensor in row-major order means\nwalking across row 0 left to right, then row 1, and so on. So\n\n```python no-run\nt.arange(6).reshape(2, 3)   # \u2192 [[0, 1, 2],\n                            #    [3, 4, 5]]\n```\n\nfills row 0 first. This single fact explains most reshape results, including\nhigher-dimensional ones: `reshape(2, 2, 3)` fills the last axis (length 3)\nfastest, the first axis slowest.\n\n```python\nprint(t.arange(6).reshape(2, 3))\nprint(t.arange(12).reshape(2, 2, 3))\n```\n\nRead the 3-D print bottom-up: the innermost brackets (length 3) count by one,\nso that axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by changing the axis\norder first and then flattening: `z.T.flatten()` reads the matrix column by\ncolumn.\n\n```python\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nSince reshape only re-labels memory, a reshaped tensor is often a **view** \u2014\nwriting into it writes the original:\n\n```python\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"base:\", base)\nassert base[0].item() == 9.0\n```",
-     "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom \u2014 then flatten it back both ways.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat sequence 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). Row-major fill means 0,1,2 land in row 0 \u2014\n# exactly the \"reading order\" the task describes. No data is copied.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n\n# Step 3: flatten undoes it \u2014 row-major walk gives back 0..8 in order.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Column-major walk reads DOWN each column instead. No order= keyword\n# exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then organize\n   them. It works because reshape's fill order IS reading order.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.\n3. The two flattens show that \"flatten\" is not one operation until you say the\n   order. The default matches how the matrix prints; the column-by-column read\n   is a transpose away.",
+     "concept_markdown": "A tensor's data is one flat run of numbers in memory; the shape is a note\nsaying how to cut that run into rows. **Reshaping rewrites the note without\ntouching the run** \u2014 which is why it is usually free (no copy) and why the one\nhard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```\n\n**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nSince reshape only rewrites the note, the result usually shares the original's\nmemory \u2014 it is a **view**. Writing into the view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\nassert base[0].item() == 9.0\n```\n\nThat sharing is the whole reason reshape is free, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\nassert t.equal(back, z)\n```",
+     "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\nprint(grid)\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then cut them.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.\n\nTask: take the counting matrix apart again, both ways.\n\n```python\nimport torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n```\n\nWhy: \"flatten\" is not one operation until you say the order. The default\nmatches how the matrix prints; the column-by-column read is a transpose away.\n\nTask: prove the view shares memory, then prove the round trip is exact.\n\n```python\nimport torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nassert t.equal(again, x)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n```\n\nWhy: step 1 is the difference between reshape and a copy, and it is what\nmakes a stray write into a \"temporary\" reshaped tensor show up in the original.",
      "segments": [
       {
-       "concept_id": "s0-",
-       "title": "",
-       "concept_markdown": "A tensor's data is one flat block of memory; the shape is just metadata saying\nhow to read it. **Reshaping changes the metadata without touching the data** \u2014\nwhich is why it's usually free (no copy) and why the one hard rule is:\n\n> the new shape's element count must equal the old one\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe two directions:\n\n- **`x.reshape(shape)`** \u2014 reinterpret the flat data as a new shape.\n  A convenience worth memorizing: one dimension may be **`-1`**, meaning\n  \"compute this one for me\": `x.reshape(3, -1)` figures out the columns.\n- **`x.flatten()`** \u2014 collapse any shape back to 1-D.\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, -1)\", x.reshape(3, -1).shape)\nprint(\"flatten\", x.reshape(3, 4).flatten())\n\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n```\n\nThe count rule is not a guideline \u2014 a mismatch raises rather than padding or\ntruncating.\n\nYou will also meet **`x.view(shape)`**, which is reshape's stricter sibling: it\n*only* ever re-labels the existing memory and raises if that is impossible.\n`reshape` falls back to copying in that case. Prefer `reshape` unless you\nspecifically want the error.\n\nThe question that makes reshape make sense is: **in what order do elements\nfill the new shape?** PyTorch's order is **row-major (\"C order\")**: the\n*last* axis varies fastest. Reading a 2-D tensor in row-major order means\nwalking across row 0 left to right, then row 1, and so on. So\n\n```python no-run\nt.arange(6).reshape(2, 3)   # \u2192 [[0, 1, 2],\n                            #    [3, 4, 5]]\n```\n\nfills row 0 first. This single fact explains most reshape results, including\nhigher-dimensional ones: `reshape(2, 2, 3)` fills the last axis (length 3)\nfastest, the first axis slowest.\n\n```python\nprint(t.arange(6).reshape(2, 3))\nprint(t.arange(12).reshape(2, 2, 3))\n```\n\nRead the 3-D print bottom-up: the innermost brackets (length 3) count by one,\nso that axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by changing the axis\norder first and then flattening: `z.T.flatten()` reads the matrix column by\ncolumn.\n\n```python\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nSince reshape only re-labels memory, a reshaped tensor is often a **view** \u2014\nwriting into it writes the original:\n\n```python\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"base:\", base)\nassert base[0].item() == 9.0\n```",
+       "concept_id": "s0-reshape-re-describes-the-same-run-of-numbers",
+       "title": "reshape re-describes the same run of numbers",
+       "concept_markdown": "A tensor's data is one flat run of numbers in memory; the shape is a note\nsaying how to cut that run into rows. **Reshaping rewrites the note without\ntouching the run** \u2014 which is why it is usually free (no copy) and why the one\nhard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```",
        "watch_out_markdown": "",
-       "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom \u2014 then flatten it back both ways.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat sequence 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). Row-major fill means 0,1,2 land in row 0 \u2014\n# exactly the \"reading order\" the task describes. No data is copied.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n\n# Step 3: flatten undoes it \u2014 row-major walk gives back 0..8 in order.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Column-major walk reads DOWN each column instead. No order= keyword\n# exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then organize\n   them. It works because reshape's fill order IS reading order.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.\n3. The two flattens show that \"flatten\" is not one operation until you say the\n   order. The default matches how the matrix prints; the column-by-column read\n   is a transpose away.",
-       "worked_example_code": "import torch as t\n\nn = 3\n# Step 1: make the flat sequence 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). Row-major fill means 0,1,2 land in row 0 \u2014\n# exactly the \"reading order\" the task describes. No data is copied.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n\n# Step 3: flatten undoes it \u2014 row-major walk gives back 0..8 in order.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Column-major walk reads DOWN each column instead. No order= keyword\n# exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n",
+       "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\nprint(grid)\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then cut them.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.",
+       "worked_example_code": "import torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\nprint(grid)\n",
        "faded_items": [
         {
          "question_id": 46,
          "prompt": "n\u00d7n matrix containing 0..n\u00b2-1 in reading order.",
          "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____)._____(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(n * n).reshape(n, n)\n"
+        },
+        {
+         "question_id": 36,
+         "prompt": "A 1-D run cut into a 3-D shape whose product matches its length.",
+         "starter_code": "import torch as t\n\ndef solve(a, shape):\n    \"\"\"Return a re-described with the given 3-D shape.\"\"\"\n    return a._____(shape)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(12.0)\nprint(solve(example, (2, 2, 3)))\n",
+         "solution": "import torch as t\n\ndef solve(a, shape):\n    \"\"\"Return a re-described with the given 3-D shape.\"\"\"\n    return a.reshape(shape)\n"
+        },
+        {
+         "question_id": 491,
+         "prompt": "You know the column count. Do not compute the rows \u2014 let -1 do it.",
+         "starter_code": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x._____(_____, cols)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.arange(6), 3)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x.reshape(-1, cols)\n"
+        },
+        {
+         "question_id": 619,
+         "prompt": "The same run of numbers, re-described as `rows` rows of `cols`.",
+         "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x._____(rows, cols).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.arange(6), 2, 3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x.reshape(rows, cols).tolist()\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "s1-flatten-and-the-order-the-numbers-come-out-in",
+       "title": "flatten, and the order the numbers come out in",
+       "concept_markdown": "**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Task: take the counting matrix apart again, both ways.\n\n```python\nimport torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n```\n\nWhy: \"flatten\" is not one operation until you say the order. The default\nmatches how the matrix prints; the column-by-column read is a transpose away.",
+       "worked_example_code": "import torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n",
+       "faded_items": [
+        {
+         "question_id": 490,
+         "prompt": "Any shape in, exactly one axis out.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x._____()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(solve(example))\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x.flatten()\n"
+        },
+        {
+         "question_id": 620,
+         "prompt": "The k-th number in reading order \u2014 flatten, then index.",
+         "starter_code": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return the k-th number of x in reading order (row-major).\"\"\"\n    return x._____()[k].item()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]), 4,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return the k-th number of x in reading order (row-major).\"\"\"\n    return x.flatten()[k].item()\n"
+        },
+        {
+         "question_id": 621,
+         "prompt": "Two reads of one grid: across the rows, then down the columns.",
+         "starter_code": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n)._____(rows, -1)\n    return (g._____().tolist(), g.T._____().tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 2,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n).reshape(rows, -1)\n    return (g.flatten().tolist(), g.T.flatten().tolist())\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "s2-reshape-is-a-view-of-the-same-memory",
+       "title": "reshape is a view of the same memory",
+       "concept_markdown": "Since reshape only rewrites the note, the result usually shares the original's\nmemory \u2014 it is a **view**. Writing into the view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\nassert base[0].item() == 9.0\n```\n\nThat sharing is the whole reason reshape is free, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\nassert t.equal(back, z)\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Task: prove the view shares memory, then prove the round trip is exact.\n\n```python\nimport torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nassert t.equal(again, x)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n```\n\nWhy: step 1 is the difference between reshape and a copy, and it is what\nmakes a stray write into a \"temporary\" reshaped tensor show up in the original.",
+       "worked_example_code": "import torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nassert t.equal(again, x)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n",
+       "faded_items": [
+        {
+         "question_id": 622,
+         "prompt": "Write through the reshaped view and read the original.",
+         "starter_code": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Reshape x to 1-D, write v into the LAST slot of the result, return x's values.\"\"\"\n    flat = x._____(-1)\n    flat[-1] = v\n    return x.tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2], [3, 4]]), 9,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Reshape x to 1-D, write v into the LAST slot of the result, return x's values.\"\"\"\n    flat = x.reshape(-1)\n    flat[-1] = v\n    return x.tolist()\n"
+        },
+        {
+         "question_id": 623,
+         "prompt": "Flatten, then reshape back \u2014 the round trip changes nothing.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x._____()._____(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x.flatten().reshape(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n"
         }
        ]
       }
@@ -1645,36 +1945,117 @@
        "prompt": "n\u00d7n matrix containing 0..n\u00b2-1 in reading order.",
        "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(_____)._____(_____, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return the n x n matrix of 0..n*n-1 in row-major reading order.\"\"\"\n    return t.arange(n * n).reshape(n, n)\n"
-      }
-     ],
-     "guided_items": [
-      {
-       "question_id": 36,
-       "hints_markdown": "1. You get a 1-D tensor and a target 3-D shape whose product equals its length \u2014\n   this is a pure reorganize-the-metadata task.\n2. \"Same row-major order (the last axis varies fastest)\" in the prompt is\n   describing reshape's DEFAULT fill order \u2014 no reordering needed on your part.\n3. One method call on the input tensor does the whole job.",
-       "worked_example_code": "",
-       "starter_code": "import torch as t\n\ndef solve(a, shape):\n    return a._____(shape)\n\n\nexample = t.arange(12.0)\nprint(solve(example, (2, 2, 3)))\n"
       },
       {
-       "question_id": 490,
-       "hints_markdown": "1. Any shape in, exactly one axis out.\n2. You are not choosing a new shape, you are removing all structure \u2014 so no\n   dimensions need naming.\n3. `x.flatten()`.",
-       "worked_example_code": "",
-       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x._____()\n\n\nexample = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(solve(example))\n"
+       "question_id": 36,
+       "prompt": "A 1-D run cut into a 3-D shape whose product matches its length.",
+       "starter_code": "import torch as t\n\ndef solve(a, shape):\n    \"\"\"Return a re-described with the given 3-D shape.\"\"\"\n    return a._____(shape)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.arange(12.0)\nprint(solve(example, (2, 2, 3)))\n",
+       "solution": "import torch as t\n\ndef solve(a, shape):\n    \"\"\"Return a re-described with the given 3-D shape.\"\"\"\n    return a.reshape(shape)\n"
       },
       {
        "question_id": 491,
-       "hints_markdown": "1. You know one of the two numbers in the target shape. You do not know the\n   other, and you should not compute it.\n2. Reshape accepts -1 in exactly one position, meaning 'work this out'.\n3. `x.reshape(-1, cols)`.",
-       "worked_example_code": "",
-       "starter_code": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x._____(-1, cols)\n\n\nexample = (t.arange(6), 3)\nprint(solve(*example))\n"
+       "prompt": "You know the column count. Do not compute the rows \u2014 let -1 do it.",
+       "starter_code": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x._____(_____, cols)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.arange(6), 3)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return x reshaped to `cols` columns, inferring the row count.\"\"\"\n    return x.reshape(-1, cols)\n"
+      },
+      {
+       "question_id": 619,
+       "prompt": "The same run of numbers, re-described as `rows` rows of `cols`.",
+       "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x._____(rows, cols).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.arange(6), 2, 3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x.reshape(rows, cols).tolist()\n"
+      },
+      {
+       "question_id": 490,
+       "prompt": "Any shape in, exactly one axis out.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x._____()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(solve(example))\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x.flatten()\n"
+      },
+      {
+       "question_id": 620,
+       "prompt": "The k-th number in reading order \u2014 flatten, then index.",
+       "starter_code": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return the k-th number of x in reading order (row-major).\"\"\"\n    return x._____()[k].item()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]), 4,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return the k-th number of x in reading order (row-major).\"\"\"\n    return x.flatten()[k].item()\n"
+      },
+      {
+       "question_id": 621,
+       "prompt": "Two reads of one grid: across the rows, then down the columns.",
+       "starter_code": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n)._____(rows, -1)\n    return (g._____().tolist(), g.T._____().tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 2,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n).reshape(rows, -1)\n    return (g.flatten().tolist(), g.T.flatten().tolist())\n"
+      },
+      {
+       "question_id": 622,
+       "prompt": "Write through the reshaped view and read the original.",
+       "starter_code": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Reshape x to 1-D, write v into the LAST slot of the result, return x's values.\"\"\"\n    flat = x._____(-1)\n    flat[-1] = v\n    return x.tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2], [3, 4]]), 9,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Reshape x to 1-D, write v into the LAST slot of the result, return x's values.\"\"\"\n    flat = x.reshape(-1)\n    flat[-1] = v\n    return x.tolist()\n"
+      },
+      {
+       "question_id": 623,
+       "prompt": "Flatten, then reshape back \u2014 the round trip changes nothing.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x._____()._____(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x.flatten().reshape(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n"
       }
      ],
+     "guided_items": [],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 23,
+       "prompt": "Every entry in COLUMN-major order \u2014 there is no `order=` keyword, so which\naxis rearrangement gets you there?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 492,
+       "prompt": "Lay 0..n-1 out with a given row count \u2014 build the run, then reshape it.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 493,
+       "prompt": "The flattened values AND the shape they came from \u2014 everything needed to\nrebuild the tensor.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 494,
+       "prompt": "Write into a reshaped result and see what happens to the original.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 624,
+       "prompt": "Any rank in, one axis out \u2014 and count the axes on both sides.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 625,
+       "prompt": "Reshape to the transposed SHAPE is not a transpose. Show both.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 626,
+       "prompt": "Three axes, two of them given \u2014 infer the last with -1.\n\n-1 works in any position and at any rank: it stands for \"the one length\nthat makes the count come out\". Here it fills a THIRD axis:",
+       "worked_example_code": "import torch as t\n\nx = t.arange(12)\n\ng = x.reshape(2, 2, -1)      # 12 = 2 * 2 * ?, so the last axis is 3\nprint(g)\nprint(\"shape:\", tuple(g.shape))\nassert tuple(g.shape) == (2, 2, 3)\n"
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 627,
+       "prompt": "Build the counting grid, then describe it every way you know."
+      },
+      {
+       "question_id": 628,
+       "prompt": "Flatten it, re-cut it into `cols` columns, and count the rows you got."
+      },
+      {
+       "question_id": 629,
+       "prompt": "Three axes from one run, and back again."
+      }
+     ],
      "independent_items": [
       23,
       492,
       493,
-      494
+      494,
+      624,
+      625,
+      626
      ],
      "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read."
     },
@@ -1712,6 +2093,12 @@
          "prompt": "Elementwise cube.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each entry raised to the third power.\"\"\"\n    return x _____ 3\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, -3.0])))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each entry raised to the third power.\"\"\"\n    return x ** 3\n"
+        },
+        {
+         "question_id": 630,
+         "prompt": "A line through every entry \u2014 one formula, no loop.",
+         "starter_code": "import torch as t\n\ndef solve(x, m, b):\n    \"\"\"Return m * x + b for every entry.\"\"\"\n    return m _____ x _____ b\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.0, 2.0, 3.0]), 2.0, 0.5,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, m, b):\n    \"\"\"Return m * x + b for every entry.\"\"\"\n    return m * x + b\n"
         }
        ]
       },
@@ -1728,6 +2115,12 @@
          "prompt": "Floor every entry (note what floor does to negatives).",
          "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Replace each entry by the largest integer value <= it.\"\"\"\n    return t._____(z)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.2, 3.7, -0.3])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Replace each entry by the largest integer value <= it.\"\"\"\n    return t.floor(z)\n"
+        },
+        {
+         "question_id": 631,
+         "prompt": "The fractional part, sign kept \u2014 pick the rounding family member that cuts toward zero.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the fractional part of every entry, keeping its sign.\"\"\"\n    return x - t._____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.5, -2.25, 3.0]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the fractional part of every entry, keeping its sign.\"\"\"\n    return x - t.trunc(x)\n"
         }
        ]
       },
@@ -1744,6 +2137,12 @@
          "prompt": "Negatives become 0.0, non-negatives pass through (ReLU).",
          "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z._____(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(min=0.0)\n"
+        },
+        {
+         "question_id": 632,
+         "prompt": "Position by position, keep the smaller of the two.",
+         "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the smaller of each pair of corresponding entries.\"\"\"\n    return t._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.0, 5.0, 3.0]), t.tensor([4.0, 2.0, 3.0]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the smaller of each pair of corresponding entries.\"\"\"\n    return t.minimum(a, b)\n"
         }
        ]
       }
@@ -1756,16 +2155,34 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each entry raised to the third power.\"\"\"\n    return x ** 3\n"
       },
       {
+       "question_id": 630,
+       "prompt": "A line through every entry \u2014 one formula, no loop.",
+       "starter_code": "import torch as t\n\ndef solve(x, m, b):\n    \"\"\"Return m * x + b for every entry.\"\"\"\n    return m _____ x _____ b\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.0, 2.0, 3.0]), 2.0, 0.5,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, m, b):\n    \"\"\"Return m * x + b for every entry.\"\"\"\n    return m * x + b\n"
+      },
+      {
        "question_id": 49,
        "prompt": "Floor every entry (note what floor does to negatives).",
        "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Replace each entry by the largest integer value <= it.\"\"\"\n    return t._____(z)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.2, 3.7, -0.3])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Replace each entry by the largest integer value <= it.\"\"\"\n    return t.floor(z)\n"
       },
       {
+       "question_id": 631,
+       "prompt": "The fractional part, sign kept \u2014 pick the rounding family member that cuts toward zero.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the fractional part of every entry, keeping its sign.\"\"\"\n    return x - t._____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.5, -2.25, 3.0]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return the fractional part of every entry, keeping its sign.\"\"\"\n    return x - t.trunc(x)\n"
+      },
+      {
        "question_id": 67,
        "prompt": "Negatives become 0.0, non-negatives pass through (ReLU).",
        "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z._____(_____=0.0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([-2.0, 0.5, 3.0])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Each negative entry replaced by 0.0 (new tensor; z unmodified).\"\"\"\n    return z.clamp(min=0.0)\n"
+      },
+      {
+       "question_id": 632,
+       "prompt": "Position by position, keep the smaller of the two.",
+       "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the smaller of each pair of corresponding entries.\"\"\"\n    return t._____(a, b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([1.0, 5.0, 3.0]), t.tensor([4.0, 2.0, 3.0]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the smaller of each pair of corresponding entries.\"\"\"\n    return t.minimum(a, b)\n"
       }
      ],
      "guided_items": [
@@ -1783,12 +2200,59 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 43,
+       "prompt": "The larger of each pair of corresponding entries.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 489,
+       "prompt": "Pull every entry into [lo, hi] \u2014 both bounds at once.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 63,
+       "prompt": "The integer part of positive entries \u2014 several members of the family agree here.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 633,
+       "prompt": "Pythagoras on every pair \u2014 square, add, root.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 634,
+       "prompt": "The two integers each entry sits between.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 635,
+       "prompt": "A floor under every entry, written as a maximum against a constant.\n\nmaximum compares two tensors position by position. Pair x with a tensor of\nzeros shaped like it and you have ReLU without clamp:",
+       "worked_example_code": "import torch as t\n\nx = t.tensor([-2.0, 0.5, 3.0])\nzeros = t.zeros_like(x)\nprint(\"x     \", x)\nprint(\"zeros \", zeros)\nprint(\"relu  \", t.maximum(x, zeros))\nassert t.equal(t.maximum(x, zeros), x.clamp(min=0.0))\n"
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 636,
+       "prompt": "Clamp, round, and report whether the clamp had anything to do."
+      },
+      {
+       "question_id": 637,
+       "prompt": "Larger, smaller, and the gap \u2014 three elementwise results from one pair."
+      },
+      {
+       "question_id": 638,
+       "prompt": "One conversion formula, then two different elementwise clean-ups."
+      }
+     ],
      "independent_items": [
       43,
       489,
-      63
+      63,
+      633,
+      634,
+      635
      ],
      "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data."
     },
@@ -1937,6 +2401,12 @@
          "prompt": "Sorted copy, smallest to largest, input left unmodified.",
          "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t._____(z)._____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([0.4, 0.1, 0.9])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
+        },
+        {
+         "question_id": 660,
+         "prompt": "Both halves of the pair that sort returns.",
+         "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return (sorted values, where each came from), both as lists.\"\"\"\n    s = t._____(z)\n    return (s._____.tolist(), s._____.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([0.5, 0.25, 0.75]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return (sorted values, where each came from), both as lists.\"\"\"\n    s = t.sort(z)\n    return (s.values.tolist(), s.indices.tolist())\n"
         }
        ]
       },
@@ -1953,6 +2423,12 @@
          "prompt": "Rank by score, then move both tensors with the same order.",
          "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t._____(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
+        },
+        {
+         "question_id": 661,
+         "prompt": "Reorder one tensor by another's ranking.",
+         "starter_code": "import torch as t\n\ndef solve(ids, scores):\n    \"\"\"Return ids reordered by ascending score, as a list.\"\"\"\n    order = t._____(scores)\n    return ids[order].tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.5, 0.25, 0.75]),)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(ids, scores):\n    \"\"\"Return ids reordered by ascending score, as a list.\"\"\"\n    order = t.argsort(scores)\n    return ids[order].tolist()\n"
         }
        ]
       },
@@ -1969,6 +2445,12 @@
          "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t._____(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
+        },
+        {
+         "question_id": 662,
+         "prompt": "The top k, with their positions.",
+         "starter_code": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return (the k largest values largest first, their positions), as lists.\"\"\"\n    top = t._____(x, k)\n    return (top._____.tolist(), top._____.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([5.0, 1.0, 9.0, 3.0, 7.0]), 2,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return (the k largest values largest first, their positions), as lists.\"\"\"\n    top = t.topk(x, k)\n    return (top.values.tolist(), top.indices.tolist())\n"
         }
        ]
       }
@@ -1981,16 +2463,34 @@
        "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return a NEW tensor with z's values in ascending order.\"\"\"\n    return t.sort(z).values\n"
       },
       {
+       "question_id": 660,
+       "prompt": "Both halves of the pair that sort returns.",
+       "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return (sorted values, where each came from), both as lists.\"\"\"\n    s = t._____(z)\n    return (s._____.tolist(), s._____.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([0.5, 0.25, 0.75]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return (sorted values, where each came from), both as lists.\"\"\"\n    s = t.sort(z)\n    return (s.values.tolist(), s.indices.tolist())\n"
+      },
+      {
        "question_id": 520,
        "prompt": "Rank by score, then move both tensors with the same order.",
        "starter_code": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t._____(scores, _____=True)\n    return (names[_____].tolist(), scores[_____].tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.4, 0.9, 0.1]))\nprint(solve(*example))\n",
        "solution": "import torch as t\n\ndef solve(names, scores):\n    \"\"\"Return (names, scores) as lists, both ordered highest score first.\"\"\"\n    order = t.argsort(scores, descending=True)\n    return (names[order].tolist(), scores[order].tolist())\n"
       },
       {
+       "question_id": 661,
+       "prompt": "Reorder one tensor by another's ranking.",
+       "starter_code": "import torch as t\n\ndef solve(ids, scores):\n    \"\"\"Return ids reordered by ascending score, as a list.\"\"\"\n    order = t._____(scores)\n    return ids[order].tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([10, 20, 30]), t.tensor([0.5, 0.25, 0.75]),)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(ids, scores):\n    \"\"\"Return ids reordered by ascending score, as a list.\"\"\"\n    order = t.argsort(scores)\n    return ids[order].tolist()\n"
+      },
+      {
        "question_id": 521,
        "prompt": "Per-row rankings, largest first \u2014 an axis and a direction at the same time.",
        "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t._____(x, _____=1, _____=True)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[0.4, 0.9, 0.1], [5.0, 1.0, 3.0]])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return each row's column indices ordered by that row's values, largest first.\"\"\"\n    return t.argsort(x, dim=1, descending=True)\n"
+      },
+      {
+       "question_id": 662,
+       "prompt": "The top k, with their positions.",
+       "starter_code": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return (the k largest values largest first, their positions), as lists.\"\"\"\n    top = t._____(x, k)\n    return (top._____.tolist(), top._____.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([5.0, 1.0, 9.0, 3.0, 7.0]), 2,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(x, k):\n    \"\"\"Return (the k largest values largest first, their positions), as lists.\"\"\"\n    top = t.topk(x, k)\n    return (top.values.tolist(), top.indices.tolist())\n"
       }
      ],
      "guided_items": [
@@ -2008,12 +2508,59 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 518,
+       "prompt": "Each row sorted on its own \u2014 name the axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 519,
+       "prompt": "The k largest, largest first \u2014 without sorting everything.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 522,
+       "prompt": "Rows reordered by one column's values \u2014 rank the column, index the matrix.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 663,
+       "prompt": "Sort down the columns, not across the rows.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 664,
+       "prompt": "Where the largest entry is \u2014 through argsort.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 665,
+       "prompt": "The bottom k \u2014 the question topk does not answer.\n\ntopk is one-directional. For the smallest values, sort ascending and keep\nthe front \u2014 the slice you met on the slicing page:",
+       "worked_example_code": "import torch as t\n\nv = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])\nprint(\"largest two \", t.topk(v, 2).values)\nprint(\"smallest two\", t.sort(v).values[:2])\nassert t.sort(v).values[:2].tolist() == [1.0, 3.0]\n"
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 666,
+       "prompt": "A leaderboard: rank once, index twice, cut to k."
+      },
+      {
+       "question_id": 667,
+       "prompt": "An axis, a direction, and both halves of the pair."
+      },
+      {
+       "question_id": 668,
+       "prompt": "Up, down, and the untouched original."
+      }
+     ],
      "independent_items": [
       518,
       519,
-      522
+      522,
+      663,
+      664,
+      665
      ],
      "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP)."
     },
