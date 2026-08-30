@@ -108,7 +108,7 @@ const StageLadder = (() => {
   const STAGES = [
     { id: "lesson", label: "Lesson", blurb: "Read the explanation and run the examples." },
     { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
-    { id: "example", label: "Solo", blurb: "Write the whole thing yourself. Some of these open with an example." },
+    { id: "example", label: "Solo", blurb: "Write the whole thing yourself. An example pops up now and then, less and less." },
     { id: "solo", label: "Integrated", blurb: "Every idea in this concept at once, with nothing to read first." },
   ];
 

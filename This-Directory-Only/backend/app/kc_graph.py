@@ -61,6 +61,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from app import lessons
+from app import example_schedule
 
 from app import bkt_mastery
 
@@ -305,7 +306,16 @@ def kc_evidence_exhausted(user_state, kc: str) -> bool:
         return False
     if not pool <= _served_question_ids(user_state):
         return False
-    return kc_stage(user_state, kc) == "solo"
+    if kc_stage(user_state, kc) != "solo":
+        return False
+    # Third clause (2026-08-30): the top rung's entry drill opens behind a
+    # worked example (example_schedule.SCHEDULE["solo"]), and an answer read
+    # off an example is not the test. The last UNAIDED_TO_FINISH answers at
+    # `solo` must have been made without one — "you should really be tested
+    # before you move on".
+    return example_schedule.unaided_finish(
+        ladder_view(user_state, kc).get("attempts") or [], "solo"
+    )
 
 
 def _served_question_ids(user_state) -> set:
@@ -758,8 +768,16 @@ def note_worked_seen(user_state, kc: str) -> None:
     ladder_row(user_state, kc)["worked_seen"] += 1
 
 
-def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "independent") -> List[str]:
+def record_kc_outcome(
+    user_state, qid: int, correct: bool, stage: str = "independent", example: bool = False
+) -> List[str]:
     """Log a graded attempt against every KC the question targets.
+
+    `example` is whether the drill was served behind a worked-example popup
+    (example_schedule.plan). Stored with the attempt because the schedule reads
+    it back — a miss made behind an example does not buy a second example —
+    and because kc_evidence_exhausted requires the last top-rung answers to
+    have been made without one.
 
     Returns the KCs touched, so a caller can report what moved. Placement
     probes must NOT come through here: the diagnostic measures prior knowledge,
@@ -783,6 +801,7 @@ def record_kc_outcome(user_state, qid: int, correct: bool, stage: str = "indepen
             # match, which is the safe direction: the engine declines the
             # attempt rather than scoring it at a rung it is guessing.
             "question_id": int(qid),
+            "example": bool(example),
         })
         del row["attempts"][:-_LADDER_WINDOW]
     return touched

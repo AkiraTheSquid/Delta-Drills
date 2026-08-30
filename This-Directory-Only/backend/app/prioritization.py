@@ -19,6 +19,7 @@ import logging
 from typing import Dict, List, Optional, Tuple
 
 from app import bkt_mastery
+from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
 from app import ladder_fade
@@ -288,19 +289,51 @@ def ladder_fields(user_state: UserPracticeState, qid: int) -> dict:
         # keeps saying `solo` while the strip says something further along.
         "ladder_integrated": stage == "solo"
         and lessons.is_integrated(qid, user_state.kc_exposure),
+        # Whether this drill opens behind a worked-example popup, and why
+        # (example_schedule.plan). The frontend's ExampleGate reads `show`;
+        # `record_ladder_outcome` recomputes the same decision from the same
+        # record so the stored attempt carries it.
+        "ladder_example": example_plan(user_state, kc),
     }
 
 
-def record_ladder_outcome(user_state: UserPracticeState, qid: int, correct: bool) -> None:
+def example_plan(user_state: UserPracticeState, kc: str) -> dict:
+    """The worked-example decision for the NEXT drill on `kc`, from its record."""
+    row = kc_graph.ladder_view(user_state, kc)
+    return example_schedule.plan(
+        row.get("attempts") or [], kc_graph.kc_stage(user_state, kc)
+    )
+
+
+def record_ladder_outcome(
+    user_state: UserPracticeState, qid: int, correct: bool, example_shown: Optional[bool] = None
+) -> None:
     """Log a graded attempt onto the ladder, at the stage it was actually served.
 
     The stage is recomputed here rather than trusted from the client, and it is
     read BEFORE the attempt is appended — `kc_stage` reflects the record so far,
     which is precisely the rung the learner was just sitting on.
+
+    `example_shown` IS trusted from the client when it reports one, because it
+    is a fact about the screen and not about the record: the server scheduled
+    an example, but the client can decline to draw it (no KP page, Colab
+    edition, diagnostic), and an example nobody saw stored as assistance would
+    hold the learner off the unaided finish for help they never had (codex,
+    2026-08-30). An older client sends nothing and gets the schedule's answer.
     """
     for kc in kc_graph.question_kcs(qid):
         kc_graph.record_kc_outcome(
-            user_state, qid, correct, stage=kc_graph.kc_stage(user_state, kc)
+            user_state,
+            qid,
+            correct,
+            stage=kc_graph.kc_stage(user_state, kc),
+            example=(
+                bool(example_shown)
+                if example_shown is not None
+                # Same read, same moment as the stage: the decision the learner
+                # was served under, recomputed before the attempt lands.
+                else bool(example_plan(user_state, kc).get("show"))
+            ),
         )
         break  # record_kc_outcome already fans out to every KC the question tags
 

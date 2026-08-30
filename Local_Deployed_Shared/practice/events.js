@@ -404,6 +404,15 @@ const _loadNextPracticeQuestion = async () => {
   ) {
     return;
   }
+  // Worked-example popup on the drill rungs, when the server scheduled one
+  // (question.ladder_example — app/example_schedule.py). After the two gates
+  // above so a lesson is never followed by its own example on the same card.
+  if (
+    window.ExampleGate &&
+    (await window.ExampleGate.maybeShow(nextQ, () => renderQuestion(nextQ, nextCount)))
+  ) {
+    return;
+  }
   renderQuestion(nextQ, nextCount);
 };
 

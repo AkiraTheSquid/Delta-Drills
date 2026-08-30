@@ -315,7 +315,7 @@ def submit_answer(
         # probe measures prior knowledge on questions the learner was never
         # taught, so counting it would demote them to worked examples for
         # concepts the probe never intended to teach.
-        record_ladder_outcome(user_state, question.id, correct)
+        record_ladder_outcome(user_state, question.id, correct, example_shown=payload.example_shown)
     save_user_state(user_id)
     ladder = {} if is_diagnostic else ladder_fields(user_state, question.id)
 
@@ -389,7 +389,7 @@ def submit_local_eval(
         difficulty_score=question.difficulty_score,
         correct=payload.correct,
     )
-    record_ladder_outcome(user_state, question.id, payload.correct)
+    record_ladder_outcome(user_state, question.id, payload.correct, example_shown=payload.example_shown)
 
     attempt = None
     if payload.finalize:

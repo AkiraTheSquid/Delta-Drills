@@ -1953,7 +1953,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=25"></script>
+  <script src="practice/api.js?v=26"></script>
   <script src="practice/timer.js?v=23"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
@@ -1975,7 +1975,7 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=15"></script>
+  <script src="practice/stage-ladder.js?v=16"></script>
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
@@ -1992,12 +1992,13 @@ t.manual_seed(0)
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=2"></script>
-  <script src="practice/ladder.js?v=8"></script>
+  <script src="practice/ladder.js?v=9"></script>
+  <script src="practice/example-gate.js?v=1"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=40"></script>
+  <script src="practice/events.js?v=41"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
        the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
        of #practice-feedback-area and into a bar pinned to the bottom of the

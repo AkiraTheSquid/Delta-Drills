@@ -329,6 +329,68 @@ def check_a_fresh_kernel_does_not_run_the_clicked_cell_twice():
         "the fresh-kernel shortcut returns before the harness is installed"
 
 
+def check_the_example_schedule_fades_and_then_tests():
+    """The worked example on the drill rungs pops up on a schedule and fades.
+
+    app/example_schedule.py, 2026-08-30. Behavioural, on the table's SHAPE
+    rather than its numbers (they are the experiment): Faded shows one only
+    after an unaided miss and never on a schedule; Solo shows one on entry;
+    the gaps between Solo's examples never shrink; Integrated shows one on
+    entry and then none; and a small-pool concept cannot count as learned off
+    an answer made behind an example.
+    """
+    from types import SimpleNamespace
+    from app import example_schedule as es, kc_graph
+
+    ok = lambda st, ex=False: {"correct": True, "stage": st, "example": ex}
+    miss = lambda st, ex=False: {"correct": False, "stage": st, "example": ex}
+
+    assert es.SCHEDULE["faded"]["at"] == (), \
+        "Faded schedules an example — beside the blanks it spells them out (q484)"
+    assert not es.plan([ok("faded")], "faded")["show"], "Faded shows an example after a correct answer"
+    assert es.plan([miss("faded")], "faded")["why"] == "after_miss", \
+        "a miss on Faded no longer brings the example back"
+    assert not es.plan([miss("faded", True)], "faded")["show"], \
+        "a miss made BEHIND an example buys a second example — two in a row"
+
+    at = es.SCHEDULE["partial"]["at"]
+    assert at and at[0] == 0, "Solo does not open with an example"
+    gaps = [b - a for a, b in zip(at, at[1:])]
+    assert gaps == sorted(gaps), f"Solo's example gaps shrink ({at}) — the fade runs backwards"
+    assert es.SCHEDULE["solo"]["at"] == (0,), "Integrated shows more than the entry example"
+    assert not es.SCHEDULE["solo"]["after_miss"], "Integrated re-shows an example on a miss"
+
+    # Position is TRAILING: re-entering a rung restarts the schedule.
+    assert es.position([ok("partial")] * 3 + [miss("faded")], "faded") == 1
+    assert es.position([ok("faded")] * 3, "partial") == 0
+
+    # The record carries the flag, and the small-pool finish reads it.
+    state = SimpleNamespace(kc_ladder={})
+    kc, qids = next(iter(kc_graph._questions_by_kc().items()))
+    kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
+    assert state.kc_ladder[kc]["attempts"][-1].get("example") is True, \
+        "record_kc_outcome dropped the example flag — the schedule cannot see its own past"
+    # The client's report wins over the schedule: a popup the client could
+    # not draw (Colab, diagnostic, no KP page) is not assistance.
+    from app import prioritization
+    state = SimpleNamespace(kc_ladder={kc: {"worked_seen": 1, "attempts": [ok("faded")] * 3}},
+                            kc_exposure={})
+    assert prioritization.example_plan(state, kc)["show"], "control: entry to Solo schedules an example"
+    prioritization.record_ladder_outcome(state, qids[0], True, example_shown=False)
+    assert state.kc_ladder[kc]["attempts"][-1]["example"] is False, \
+        "an example the client reported NOT drawn was stored as assistance"
+    prioritization.record_ladder_outcome(state, qids[0], True)
+    assert "example" in state.kc_ladder[kc]["attempts"][-1], \
+        "an older client that reports nothing no longer gets the schedule's answer"
+    assert not es.unaided_finish([ok("solo", True), ok("solo", True)]), \
+        "two Integrated answers made behind examples count as an unaided finish"
+    assert es.unaided_finish([ok("solo", True), ok("solo"), ok("solo")]), \
+        "two unaided correct Integrated answers do not finish"
+    assert not es.unaided_finish([ok("solo"), miss("solo")]), "a miss finishes"
+    assert not es.unaided_finish([ok("partial"), ok("partial")]), \
+        "answers at the rung BELOW count as the Integrated test"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [
@@ -340,6 +402,7 @@ if __name__ == '__main__':
         check_a_new_rung_starts_empty,
         check_a_notebook_kernel_cannot_read_the_server,
         check_a_fresh_kernel_does_not_run_the_clicked_cell_twice,
+        check_the_example_schedule_fades_and_then_tests,
     ]
     for fn in checks:
         try:

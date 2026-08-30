@@ -113,11 +113,18 @@ class NextQuestionResponse(BaseModel):
 class SubmitRequest(BaseModel):
     question_id: int
     user_code: str
+    # Did the learner actually SEE a worked-example popup in front of this
+    # drill? The server scheduled one (`ladder_example.show`) but the client
+    # can decline to draw it (no KP page, Colab edition, diagnostic), and an
+    # example nobody saw must not be stored as assistance. None = an older
+    # client that does not report; the server then falls back to its schedule.
+    example_shown: bool | None = None
 
 
 class LocalEvalSubmitRequest(BaseModel):
     question_id: int
     correct: bool
+    example_shown: bool | None = None  # see SubmitRequest
     # Whether this submit is the WHOLE submit. The Colab edition has no
     # felt-difficulty step — running the notebook's checker is the entire
     # interaction — so nothing comes back to close the attempt out and it must
