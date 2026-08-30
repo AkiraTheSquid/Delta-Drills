@@ -91,11 +91,21 @@ Two consequences for the person writing content:
   already read the lesson; the faded drill is the same idea from memory. Putting
   the worked example beside a faded starter is what made q484 unpassable-by-
   thinking — its example printed the two values the blanks asked for.
-- **The stage 3 → 4 fade is CONTENT, not a schedule.** Nothing counts examples
-  down. Some solo items author one, the queue serves the example-bearing ones
-  first, and a question is never served twice — so examples simply run out, and
-  the last stretch of stage 3 already looks like stage 4. Write examples for the
-  solo items that introduce a NEW use of the concept and for no others.
+- **The stage 3 → 4 fade is a SCHEDULE now (2026-08-30), and content feeds it.**
+  The server decides when a worked example pops up in front of a drill
+  (`backend/app/example_schedule.py`: Faded only after an unaided miss, Solo
+  at positions 0/2/5/9, Integrated once on entry — see
+  `This-Directory-Only/SPEC_WORKED_EXAMPLE_SCHEDULE.md`). What the popup SHOWS
+  is authored here: the drill's own ```python worked``` fence when it has one,
+  else the worked example of the segment that owns it. So a Solo item's fence
+  is still worth writing for a NEW use of the concept — it is what the learner
+  reads when the schedule picks that drill — but nothing counts examples down
+  by how many items carry one. Stage 4 items never carry a fence; the popup
+  there shows the segment's example, once.
+- **A drill is never served twice**, and a rung whose drills are all spent
+  reaches DOWN a rung, then reports `content_exhausted`. So the floor per
+  concept is a real number, not a wish: **Faded ≥ 2 per segment, Solo ≥ 6,
+  Integrated ≥ 3**, and no two drills the same move on the same rung.
 
 ### Nothing may require a symbol the page has not shown (required)
 

@@ -3,10 +3,10 @@ kc: numpy.transpose-axes
 title: Transpose — swapping which axis is which
 supporting: []
 new_syntax: [Tensor.T]
-faded: [610, 552, 611, 558]
+faded: [610, 552, 611, 558, 669, 670]
 guided: []
-independent: [612, 613]
-integrated: [614, 615]
+independent: [612, 613, 671, 672, 673, 674]
+integrated: [614, 615, 675]
 ---
 
 ## Concept: transpose turns the rows into the columns
@@ -115,6 +115,27 @@ def solve(rows):
     return (tuple(a.shape), tuple(a.T.shape))
 ```
 
+### q669
+Rows before and rows after — the second is the old column count.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return (how many rows a has, how many rows a.T has)."""
+    a = t.tensor(rows)
+    return (len(a), len(a._____))
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return (how many rows a has, how many rows a.T has)."""
+    a = t.tensor(rows)
+    return (len(a), len(a.T))
+```
+
 ## Concept: reading the transposed numbers back out
 
 
@@ -208,6 +229,27 @@ def solve(rows):
     return a.T.tolist()
 ```
 
+### q670
+The last row of the transpose — the last column of the original.
+
+```python starter
+import torch as t
+
+def solve(rows):
+    """Return the transpose's LAST row as a plain list."""
+    a = t.tensor(rows)
+    return a._____.tolist()[-1]
+```
+
+```python solution
+import torch as t
+
+def solve(rows):
+    """Return the transpose's LAST row as a plain list."""
+    a = t.tensor(rows)
+    return a.T.tolist()[-1]
+```
+
 ## Solo practice
 
 ### q612
@@ -216,6 +258,30 @@ Transpose twice. Does it come back, and what shape is it then?
 ### q613
 The transpose described two ways: its contents and its shape.
 
+### q671
+Is it its own transpose?
+
+### q672
+The second row of the transpose, and its length.
+
+### q673
+One number, two addresses.
+
+Transposing swaps the two indices of every entry. Whatever sits at row i,
+column j of `a` sits at row j, column i of `a.T`:
+
+```python worked
+import torch as t
+
+a = t.tensor([[10, 20, 30], [40, 50, 60]])
+print("a   at row 0, col 2:", a.tolist()[0][2])
+print("a.T at row 2, col 0:", a.T.tolist()[2][0])
+assert a.tolist()[0][2] == a.T.tolist()[2][0]
+```
+
+### q674
+Once, then twice.
+
 ## Integrated practice
 
 ### q614
@@ -223,6 +289,9 @@ Both shapes, the transposed contents, and how many axes there are.
 
 ### q615
 The element type, the transposed contents, and whether the count survived.
+
+### q675
+Everything this page knows about one transpose.
 
 ## Misconceptions
 

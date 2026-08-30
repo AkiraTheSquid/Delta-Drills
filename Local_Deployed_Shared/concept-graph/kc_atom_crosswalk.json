@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 295,
+  "questions_joined": 352,
   "kcs_covered": 37,
   "kcs_total": 37,
-  "kcs_measured": 28,
-  "atoms_used": 49,
-  "pairs": 78
+  "kcs_measured": 27,
+  "atoms_used": 51,
+  "pairs": 80
  },
  "kcs": {
   "einops.channel-groups-temporal": {
@@ -406,22 +406,22 @@
    ]
   },
   "numpy.constructors": {
-   "n": 8,
-   "reliability": 0.872,
+   "n": 18,
+   "reliability": 0.939,
    "shared_with": 0.1,
    "tier": "measured",
    "atoms": [
     {
      "a": "tensor-zeros-init",
-     "w": 0.977,
-     "share": 0.852,
+     "w": 0.99,
+     "share": 0.93,
      "spec": 1.0,
-     "n": 7
+     "n": 17
     },
     {
      "a": "slice-view-mutation",
-     "w": 0.023,
-     "share": 0.148,
+     "w": 0.01,
+     "share": 0.07,
      "spec": 0.138,
      "n": 1
     }
@@ -464,79 +464,86 @@
    ]
   },
   "numpy.dtype-astype": {
-   "n": 5,
-   "reliability": 0.417,
-   "shared_with": 1.4,
-   "tier": "measured",
+   "n": 16,
+   "reliability": 0.29,
+   "shared_with": 2.5,
+   "tier": "topic-proxy",
    "atoms": [
     {
+     "a": "torch-arange",
+     "w": 0.285,
+     "share": 0.273,
+     "spec": 0.303,
+     "n": 3
+    },
+    {
      "a": "stride-zero-broadcast",
-     "w": 0.456,
-     "share": 0.19,
+     "w": 0.279,
+     "share": 0.081,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "tensor-unbind",
-     "w": 0.405,
-     "share": 0.169,
+     "w": 0.248,
+     "share": 0.072,
      "spec": 1.0,
      "n": 1
     },
     {
-     "a": "torch-arange",
-     "w": 0.124,
-     "share": 0.304,
-     "spec": 0.171,
-     "n": 1
+     "a": "tensor-wraps-ndarray",
+     "w": 0.183,
+     "share": 0.503,
+     "spec": 0.105,
+     "n": 10
     },
     {
      "a": "einops-reduce",
-     "w": 0.008,
-     "share": 0.169,
+     "w": 0.005,
+     "share": 0.072,
      "spec": 0.019,
-     "n": 1
-    },
-    {
-     "a": "tensor-wraps-ndarray",
-     "w": 0.007,
-     "share": 0.169,
-     "spec": 0.017,
      "n": 1
     }
    ]
   },
   "numpy.elementwise-ufuncs": {
-   "n": 8,
+   "n": 17,
    "reliability": 1.0,
-   "shared_with": -0.0,
+   "shared_with": 0.0,
    "tier": "measured",
    "atoms": [
     {
      "a": "where-clip-negative",
-     "w": 0.495,
-     "share": 0.495,
+     "w": 0.428,
+     "share": 0.428,
      "spec": 1.0,
-     "n": 5
+     "n": 9
     },
     {
      "a": "relu-elementwise-max",
-     "w": 0.237,
-     "share": 0.237,
+     "w": 0.348,
+     "share": 0.348,
      "spec": 1.0,
-     "n": 2
+     "n": 6
     },
     {
      "a": "tensor-pow",
-     "w": 0.175,
-     "share": 0.175,
+     "w": 0.144,
+     "share": 0.144,
      "spec": 1.0,
-     "n": 2
+     "n": 3
     },
     {
      "a": "maximum-backward-tie-split",
-     "w": 0.093,
-     "share": 0.093,
+     "w": 0.048,
+     "share": 0.048,
+     "spec": 1.0,
+     "n": 1
+    },
+    {
+     "a": "sqrt-eps-stabilize",
+     "w": 0.032,
+     "share": 0.032,
      "spec": 1.0,
      "n": 1
     }
@@ -566,15 +573,15 @@
   },
   "numpy.ndarray-model": {
    "n": 37,
-   "reliability": 0.983,
-   "shared_with": 0.0,
+   "reliability": 0.895,
+   "shared_with": 0.1,
    "tier": "measured",
    "atoms": [
     {
      "a": "tensor-wraps-ndarray",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.983,
+     "spec": 0.895,
      "n": 37
     }
    ]
@@ -610,27 +617,27 @@
   },
   "numpy.ranges": {
    "n": 5,
-   "reliability": 0.759,
-   "shared_with": 0.3,
+   "reliability": 0.711,
+   "shared_with": 0.4,
    "tier": "measured",
    "atoms": [
     {
      "a": "linspace-evenly-spaced",
-     "w": 0.479,
+     "w": 0.511,
      "share": 0.363,
      "spec": 1.0,
      "n": 2
     },
     {
      "a": "torch-arange",
-     "w": 0.399,
+     "w": 0.358,
      "share": 0.544,
-     "spec": 0.557,
+     "spec": 0.468,
      "n": 3
     },
     {
      "a": "linspace-out-param",
-     "w": 0.122,
+     "w": 0.13,
      "share": 0.093,
      "spec": 1.0,
      "n": 1
@@ -638,30 +645,30 @@
    ]
   },
   "numpy.reshape-flatten": {
-   "n": 8,
-   "reliability": 0.499,
-   "shared_with": 1.0,
+   "n": 19,
+   "reliability": 0.66,
+   "shared_with": 0.5,
    "tier": "measured",
    "atoms": [
     {
      "a": "reshape-backward",
-     "w": 0.757,
-     "share": 0.377,
+     "w": 0.856,
+     "share": 0.565,
      "spec": 1.0,
-     "n": 4
+     "n": 12
     },
     {
      "a": "view-vs-reshape",
-     "w": 0.125,
-     "share": 0.406,
-     "spec": 0.153,
-     "n": 4
+     "w": 0.109,
+     "share": 0.335,
+     "spec": 0.216,
+     "n": 7
     },
     {
      "a": "torch-arange",
-     "w": 0.119,
-     "share": 0.217,
-     "spec": 0.273,
+     "w": 0.035,
+     "share": 0.1,
+     "spec": 0.229,
      "n": 2
     }
    ]
@@ -689,17 +696,24 @@
    ]
   },
   "numpy.sorting": {
-   "n": 8,
+   "n": 17,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
    "atoms": [
     {
      "a": "topk-predictions",
-     "w": 1.0,
-     "share": 1.0,
+     "w": 0.879,
+     "share": 0.879,
      "spec": 1.0,
-     "n": 8
+     "n": 15
+    },
+    {
+     "a": "permute-back-argsort",
+     "w": 0.121,
+     "share": 0.121,
+     "spec": 1.0,
+     "n": 3
     }
    ]
   },
@@ -726,31 +740,31 @@
    ]
   },
   "numpy.transpose-axes": {
-   "n": 8,
-   "reliability": 0.399,
-   "shared_with": 1.5,
+   "n": 15,
+   "reliability": 0.431,
+   "shared_with": 1.3,
    "tier": "measured",
    "atoms": [
     {
      "a": "view-vs-reshape",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.399,
-     "n": 8
+     "spec": 0.431,
+     "n": 15
     }
    ]
   },
   "numpy.views-and-copies": {
    "n": 9,
-   "reliability": 0.448,
-   "shared_with": 1.2,
+   "reliability": 0.353,
+   "shared_with": 1.8,
    "tier": "measured",
    "atoms": [
     {
      "a": "view-vs-reshape",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.448,
+     "spec": 0.353,
      "n": 9
     }
    ]

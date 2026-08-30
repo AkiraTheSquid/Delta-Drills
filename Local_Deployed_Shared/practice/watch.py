@@ -35,6 +35,7 @@ from watch_feedback import (
     check_a_lesson_can_be_reported_without_touching_the_question,
     check_feedback_that_never_left_the_browser_is_not_called_logged,
 )
+from watch_example_gate import check_the_example_gate_runs_after_the_lesson_gates
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
     check_only_one_module_patches_a_code_editors_value,
@@ -798,6 +799,8 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
 
 
 # ── Run all checks ───────────────────────────────
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_a_torch_question_never_grades_on_pyodide,
@@ -811,6 +814,7 @@ if __name__ == '__main__':
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
               check_the_notebook_view_is_loaded_after_what_it_calls,
+              check_the_example_gate_runs_after_the_lesson_gates,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
               check_a_slow_run_cannot_touch_another_notebook,

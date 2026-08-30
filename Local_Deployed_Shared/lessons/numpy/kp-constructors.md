@@ -4,9 +4,10 @@ title: Tensor constructors — zeros, ones, full, eye, *_like
 supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.all, torch.bool, torch.eye, torch.full, torch.full_like, torch.int32, torch.ones, torch.ones#dtype, torch.ones_like, torch.zeros, torch.zeros#dtype, torch.zeros_like]
 previews: [syntax.matmul]
-faded: [227, 212, 41, 228]
+faded: [227, 212, 41, 228, 639, 640, 641, 642]
 guided: [48]
-independent: [225, 50, 213]
+independent: [225, 50, 213, 643, 644, 645]
+integrated: [646, 647, 648]
 ---
 
 ## Concept: constructors and the shape argument
@@ -87,6 +88,25 @@ def solve(n):
     return t.zeros(n)
 ```
 
+### q639
+A grid of one value — say how big, then say the value.
+
+```python starter
+import torch as t
+
+def solve(rows, cols, v):
+    """Return a rows x cols tensor of v, as a nested list."""
+    return t._____((rows, cols), v).tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(rows, cols, v):
+    """Return a rows x cols tensor of v, as a nested list."""
+    return t.full((rows, cols), v).tolist()
+```
+
 ## Concept: the dtype is float32 unless you say otherwise
 
 **The default floating dtype is `torch.float32`,** even though the values print
@@ -159,6 +179,27 @@ def solve(rows, cols):
     return t.ones((rows, cols), dtype=t.bool)
 ```
 
+### q640
+Zeros that are actually integers.
+
+```python starter
+import torch as t
+
+def solve(n):
+    """Return (n integer zeros as a list, their dtype name)."""
+    z = t._____(n, _____=t.int64)
+    return (z.tolist(), str(z.dtype))
+```
+
+```python solution
+import torch as t
+
+def solve(n):
+    """Return (n integer zeros as a list, their dtype name)."""
+    z = t.zeros(n, dtype=t.int64)
+    return (z.tolist(), str(z.dtype))
+```
+
 ## Concept: *_like — copy shape AND dtype from an existing tensor
 
 The **`*_like` variants** (`t.zeros_like(x)`, `t.ones_like(x)`,
@@ -225,6 +266,27 @@ def solve(x):
     return t.zeros_like(x)
 ```
 
+### q641
+Shaped and typed like x, filled with v.
+
+```python starter
+import torch as t
+
+def solve(x, v):
+    """Return (a tensor of v shaped AND typed like x, its dtype name)."""
+    filled = t._____(x, v)
+    return (filled.tolist(), str(filled.dtype))
+```
+
+```python solution
+import torch as t
+
+def solve(x, v):
+    """Return (a tensor of v shaped AND typed like x, its dtype name)."""
+    filled = t.full_like(x, v)
+    return (filled.tolist(), str(filled.dtype))
+```
+
 ## Concept: t.eye — the identity matrix
 
 **`t.eye(n)`** is the n×n identity matrix: `1.0` on the main diagonal,
@@ -288,6 +350,27 @@ def solve(n):
     return t.eye(n)
 ```
 
+### q642
+The identity, and its shape.
+
+```python starter
+import torch as t
+
+def solve(n):
+    """Return (the n x n identity as a nested list, its shape)."""
+    I = t._____(n)
+    return (I.tolist(), tuple(I.shape))
+```
+
+```python solution
+import torch as t
+
+def solve(n):
+    """Return (the n x n identity as a nested list, its shape)."""
+    I = t.eye(n)
+    return (I.tolist(), tuple(I.shape))
+```
+
 ## Guided practice
 
 ### q48
@@ -298,11 +381,48 @@ def solve(n):
 3. `out = v.clone()` then `out[1::2] = fill`. Skipping the clone mutates
    the caller's tensor, which the drill checks for.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q225 (all-ones vector — mind the dtype it checks), q50
-(v on the diagonal — combine `t.eye` with a scalar multiply), q213 (one-hot
-basis vector — a zeros canvas plus one assignment).
+### q225
+n ones in the default float dtype.
+
+### q50
+v on the diagonal, zeros elsewhere — the identity, scaled.
+
+### q213
+A one-hot vector: zeros first, then one write.
+
+### q643
+An all-False mask.
+
+### q644
+Ones shaped like x, counted and typed.
+
+### q645
+An integer identity — eye takes dtype= like the others.
+
+Every constructor on this page takes the same `dtype=` keyword, and `eye`
+is no exception:
+
+```python worked
+import torch as t
+
+flags = t.eye(3, dtype=t.bool)
+print(flags)
+print(flags.dtype)
+assert flags.dtype == t.bool
+```
+
+## Integrated practice
+
+### q646
+Two grids of the same shape, and what each reports about itself.
+
+### q647
+The whole _like family on one tensor.
+
+### q648
+Three constructors, three dtypes, one call.
 
 ## Misconceptions
 
