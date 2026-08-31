@@ -17,23 +17,14 @@
  },
  "8": {
   "target_kcs": [
-   "numpy.random-generator"
+   "numpy.random-threading"
   ],
   "supporting_kcs": [
-   "numpy.constructors"
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
   ],
-  "new_syntax": [
-   "Tensor.manual_seed",
-   "torch.Generator",
-   "torch.rand",
-   "torch.rand#generator",
-   "torch.randint",
-   "torch.randint#generator",
-   "torch.randn",
-   "torch.randn#generator",
-   "torch.randperm",
-   "torch.randperm#generator"
-  ],
+  "new_syntax": [],
   "source": "kp-faded"
  },
  "12": {
@@ -202,24 +193,19 @@
  },
  "42": {
   "target_kcs": [
-   "numpy.random-generator"
+   "numpy.random-samplers"
   ],
   "supporting_kcs": [
-   "numpy.constructors"
+   "numpy.constructors",
+   "numpy.ndarray-model"
   ],
   "new_syntax": [
-   "Tensor.manual_seed",
-   "torch.Generator",
    "torch.rand",
-   "torch.rand#generator",
-   "torch.randint",
-   "torch.randint#generator",
    "torch.randn",
-   "torch.randn#generator",
-   "torch.randperm",
-   "torch.randperm#generator"
+   "torch.randint",
+   "torch.randperm"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "43": {
   "target_kcs": [
@@ -652,24 +638,15 @@
  },
  "104": {
   "target_kcs": [
-   "numpy.random-generator"
+   "numpy.random-threading"
   ],
   "supporting_kcs": [
-   "numpy.constructors"
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
   ],
-  "new_syntax": [
-   "Tensor.manual_seed",
-   "torch.Generator",
-   "torch.rand",
-   "torch.rand#generator",
-   "torch.randint",
-   "torch.randint#generator",
-   "torch.randn",
-   "torch.randn#generator",
-   "torch.randperm",
-   "torch.randperm#generator"
-  ],
-  "source": "kp-independent"
+  "new_syntax": [],
+  "source": "kp-integrated"
  },
  "107": {
   "target_kcs": [
@@ -5561,6 +5538,518 @@
   "new_syntax": [
    "Tensor.T"
   ],
+  "source": "kp-integrated"
+ },
+ "676": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-faded"
+ },
+ "677": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-faded"
+ },
+ "678": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "679": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "680": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "681": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "682": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "683": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-independent"
+ },
+ "684": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-integrated"
+ },
+ "685": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-integrated"
+ },
+ "686": {
+  "target_kcs": [
+   "numpy.random-samplers"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.rand",
+   "torch.randn",
+   "torch.randint",
+   "torch.randperm"
+  ],
+  "source": "kp-integrated"
+ },
+ "687": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "688": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "689": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "690": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "691": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "692": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "693": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "694": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "695": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "696": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-faded"
+ },
+ "697": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-faded"
+ },
+ "698": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "699": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "700": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "701": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "702": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "703": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-independent"
+ },
+ "704": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-integrated"
+ },
+ "705": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-integrated"
+ },
+ "706": {
+  "target_kcs": [
+   "numpy.random-seeding"
+  ],
+  "supporting_kcs": [
+   "numpy.random-samplers",
+   "numpy.constructors",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "torch.Generator",
+   "Tensor.manual_seed",
+   "torch.rand#generator",
+   "torch.randn#generator",
+   "torch.randint#generator",
+   "torch.randperm#generator"
+  ],
+  "source": "kp-integrated"
+ },
+ "707": {
+  "target_kcs": [
+   "numpy.random-threading"
+  ],
+  "supporting_kcs": [
+   "numpy.random-seeding",
+   "numpy.random-samplers",
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [],
   "source": "kp-integrated"
  }
 }

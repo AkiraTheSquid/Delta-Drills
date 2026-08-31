@@ -21915,5 +21915,1635 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 676,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows, cols) that draws a standard-normal tensor of shape (rows, cols) and returns a tuple (shape, dtype_name, ndim): its shape as a plain tuple, the name of its dtype as a string, and how many axes it has.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2, 3)",
+          "expected_expr": "((2, 3), 'torch.float32', 2)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, 1)",
+          "expected_expr": "((1, 1), 'torch.float32', 2)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4, 2)",
+          "expected_expr": "((4, 2), 'torch.float32', 2)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3, 5)",
+          "expected_expr": "((3, 5), 'torch.float32', 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((3, 2), 'torch.float32', 2)",
+          "why": "The size arguments are read in order: `t.randn(rows, cols)` makes rows rows of cols numbers. Swapping them transposes the shape you asked for."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t.randn(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n\n\nexample = (2, 3,)\nprint(solve(*example))\n",
+      "expected_output": "((2, 3), 'torch.float32', 2)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 677,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(low, high, n) that draws n random integers from the half-open range [low, high) and returns a tuple (shape, all_at_least_low, all_below_high): the shape as a plain tuple, and two booleans checking the bounds.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 10, 5,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 10, 5)",
+          "expected_expr": "((5,), True, True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3, 4, 6)",
+          "expected_expr": "((6,), True, True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(-2, 2, 8)",
+          "expected_expr": "((8,), True, True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1, 3)",
+          "expected_expr": "((3,), True, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((5, 1), True, True)",
+          "why": "The third argument is the SHAPE, not a count. `(n, 1)` is a column of n single-element rows; the flat row of n values is `(n,)`, trailing comma included."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    x = t.randint(low, high, (n,))\n    return (tuple(x.shape), bool((x >= low).all()), bool((x < high).all()))\n\n\nexample = (0, 10, 5,)\nprint(solve(*example))\n",
+      "expected_output": "((5,), True, True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 678,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n) that draws n uniform random floats and returns a tuple (shape, all_at_least_zero, all_below_one, dtype_name).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"Return (shape, all >= 0?, all < 1?, dtype name) for n uniform draws.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(5)",
+          "expected_expr": "((5,), True, True, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1)",
+          "expected_expr": "((1,), True, True, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(100)",
+          "expected_expr": "((100,), True, True, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3)",
+          "expected_expr": "((3,), True, True, 'torch.float32')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (shape, all >= 0?, all < 1?, dtype name) for n uniform draws.\"\"\"\n    x = t.rand(n)\n    return (tuple(x.shape), bool((x >= 0).all()), bool((x < 1).all()), str(x.dtype))\n\n\nexample = (5,)\nprint(solve(*example))\n",
+      "expected_output": "((5,), True, True, 'torch.float32')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 679,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n) that draws a random permutation of the whole numbers 0 to n-1 and returns a tuple (shape, sorted_values): the shape as a plain tuple and the drawn values sorted back into order as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"Return (shape, the values sorted back into order) for a random permutation.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4)",
+          "expected_expr": "((4,), [0, 1, 2, 3])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1)",
+          "expected_expr": "((1,), [0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(7)",
+          "expected_expr": "((7,), [0, 1, 2, 3, 4, 5, 6])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2)",
+          "expected_expr": "((2,), [0, 1])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((4,), [1, 1, 2, 3])",
+          "why": "`t.randint` draws WITH replacement, so it repeats values and skips others. `t.randperm` is a shuffling: every number 0..n-1 appears exactly once."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (shape, the values sorted back into order) for a random permutation.\"\"\"\n    p = t.randperm(n)\n    return (tuple(p.shape), sorted(p.tolist()))\n\n\nexample = (4,)\nprint(solve(*example))\n",
+      "expected_output": "((4,), [0, 1, 2, 3])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 680,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that builds a tensor from the nested list, shuffles its ROWS into a random order, and returns a tuple (shape, sorted_rows): the shuffled tensor's shape as a plain tuple and its rows as a plain nested list sorted back into a canonical order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"Shuffle a's rows at random; return (shape, the rows sorted back into order).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve([[1, 2], [3, 4], [5, 6]])",
+          "expected_expr": "((3, 2), [[1, 2], [3, 4], [5, 6]])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve([[9]])",
+          "expected_expr": "((1, 1), [[9]])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve([[1, 1], [2, 2]])",
+          "expected_expr": "((2, 2), [[1, 1], [2, 2]])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve([[7, 8, 9], [1, 2, 3]])",
+          "expected_expr": "((2, 3), [[1, 2, 3], [7, 8, 9]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Shuffle a's rows at random; return (shape, the rows sorted back into order).\"\"\"\n    a = t.tensor(rows)\n    order = t.randperm(a.shape[0])\n    shuffled = a[order]\n    return (tuple(shuffled.shape), sorted(shuffled.tolist()))\n\n\nexample = ([[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "expected_output": "((3, 2), [[1, 2], [3, 4], [5, 6]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 681,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows, cols, high) that draws a 2-D tensor of random integers from [0, high) and returns a tuple (shape, all_at_least_zero, all_below_high, dtype_name).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, cols, high):\n    \"\"\"Return (shape, all >= 0?, all < high?, dtype name) for a 2-D random int draw.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 10,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2, 3, 10)",
+          "expected_expr": "((2, 3), True, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, 1, 2)",
+          "expected_expr": "((1, 1), True, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4, 4, 5)",
+          "expected_expr": "((4, 4), True, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3, 2, 100)",
+          "expected_expr": "((3, 2), True, True, 'torch.int64')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rows, cols, high):\n    \"\"\"Return (shape, all >= 0?, all < high?, dtype name) for a 2-D random int draw.\"\"\"\n    x = t.randint(0, high, (rows, cols))\n    return (tuple(x.shape), bool((x >= 0).all()), bool((x < high).all()), str(x.dtype))\n\n\nexample = (2, 3, 10,)\nprint(solve(*example))\n",
+      "expected_output": "((2, 3), True, True, 'torch.int64')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 682,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(shape) that draws a uniform random tensor of the given shape (handed to you as a plain tuple) and returns a tuple (shape, ndim, numel, dtype_name).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(shape):\n    \"\"\"Return (shape, ndim, numel, dtype name) for a uniform draw of the given shape.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((2, 3),)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve((2, 3))",
+          "expected_expr": "((2, 3), 2, 6, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve((5,))",
+          "expected_expr": "((5,), 1, 5, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve((2, 2, 2))",
+          "expected_expr": "((2, 2, 2), 3, 8, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve((1, 4))",
+          "expected_expr": "((1, 4), 2, 4, 'torch.float32')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(shape):\n    \"\"\"Return (shape, ndim, numel, dtype name) for a uniform draw of the given shape.\"\"\"\n    x = t.rand(shape)\n    return (tuple(x.shape), x.ndim, x.numel(), str(x.dtype))\n\n\nexample = ((2, 3),)\nprint(solve(*example))\n",
+      "expected_output": "((2, 3), 2, 6, 'torch.float32')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 683,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 18,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows, cols) that draws a standard-normal tensor of shape (rows, cols) and returns a tuple (shape, numel, first_row_length, dtype_name), where first_row_length is how many numbers the first row holds.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, numel, length of row 0, dtype name) for a 2-D normal draw.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2, 3)",
+          "expected_expr": "((2, 3), 6, 3, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, 1)",
+          "expected_expr": "((1, 1), 1, 1, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4, 2)",
+          "expected_expr": "((4, 2), 8, 2, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3, 6)",
+          "expected_expr": "((3, 6), 18, 6, 'torch.float32')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, numel, length of row 0, dtype name) for a 2-D normal draw.\"\"\"\n    x = t.randn(rows, cols)\n    return (tuple(x.shape), x.numel(), len(x[0].tolist()), str(x.dtype))\n\n\nexample = (2, 3,)\nprint(solve(*example))\n",
+      "expected_output": "((2, 3), 6, 3, 'torch.float32')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 684,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n) that draws once from each of the four samplers — uniform floats, standard-normal floats, random integers in [0, 10), and a random permutation of 0..n-1, each of length n — and returns a tuple (uniform_dtype, normal_dtype, int_dtype, permutation_sorted): the three dtype names as strings and the permutation sorted back into order as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"Draw with all four samplers; return their dtypes and the sorted permutation.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4)",
+          "expected_expr": "('torch.float32', 'torch.float32', 'torch.int64', [0, 1, 2, 3])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1)",
+          "expected_expr": "('torch.float32', 'torch.float32', 'torch.int64', [0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(6)",
+          "expected_expr": "('torch.float32', 'torch.float32', 'torch.int64', [0, 1, 2, 3, 4, 5])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2)",
+          "expected_expr": "('torch.float32', 'torch.float32', 'torch.int64', [0, 1])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Draw with all four samplers; return their dtypes and the sorted permutation.\"\"\"\n    uniform = t.rand(n)\n    normal = t.randn(n)\n    ints = t.randint(0, 10, (n,))\n    perm = t.randperm(n)\n    return (str(uniform.dtype), str(normal.dtype), str(ints.dtype), sorted(perm.tolist()))\n\n\nexample = (4,)\nprint(solve(*example))\n",
+      "expected_output": "('torch.float32', 'torch.float32', 'torch.int64', [0, 1, 2, 3])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 685,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n) that builds a random permutation MATRIX — the n-by-n identity with its rows shuffled into a random order — and returns a tuple (shape, is_still_a_permutation, total): the shape as a plain tuple, whether its rows are the identity's rows in some order, and the sum of every entry as a plain number.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"Shuffle the identity's rows; return (shape, still a permutation matrix?, total).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3)",
+          "expected_expr": "((3, 3), True, 3.0)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1)",
+          "expected_expr": "((1, 1), True, 1.0)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(4)",
+          "expected_expr": "((4, 4), True, 4.0)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2)",
+          "expected_expr": "((2, 2), True, 2.0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Shuffle the identity's rows; return (shape, still a permutation matrix?, total).\"\"\"\n    order = t.randperm(n)\n    perm = t.eye(n)[order]\n    return (tuple(perm.shape), sorted(perm.tolist()) == sorted(t.eye(n).tolist()), perm.sum().item())\n\n\nexample = (3,)\nprint(solve(*example))\n",
+      "expected_output": "((3, 3), True, 3.0)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 686,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n, high) that draws n random integers from [0, high) and returns a tuple (shape, count, all_in_range, dtype_name): the shape as a plain tuple, how many numbers were drawn, whether every one of them lies in [0, high), and the dtype name.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, high):\n    \"\"\"Return (shape, count, every value in [0, high)?, dtype name) for n random ints.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 10,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(5, 10)",
+          "expected_expr": "((5,), 5, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, 2)",
+          "expected_expr": "((1,), 1, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(20, 3)",
+          "expected_expr": "((20,), 20, True, 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(8, 100)",
+          "expected_expr": "((8,), 8, True, 'torch.int64')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(n, high):\n    \"\"\"Return (shape, count, every value in [0, high)?, dtype name) for n random ints.\"\"\"\n    x = t.randint(0, high, (n,))\n    low_ok = bool((x >= 0).all())\n    high_ok = bool((x < high).all())\n    return (tuple(x.shape), x.numel(), low_ok and high_ok, str(x.dtype))\n\n\nexample = (5, 10,)\nprint(solve(*example))\n",
+      "expected_output": "((5,), 5, True, 'torch.int64')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 687,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that returns the next n standard-normal floats from rng's stream, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 3)",
+          "expected_expr": "[1.5409960746765137, -0.293428897857666, -2.1787893772125244]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(7), 2)",
+          "expected_expr": "[-0.1467950940132141, 0.7861412763595581]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "[1.5409960746765137]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(42), 4)",
+          "expected_expr": "[0.33669036626815796, 0.12880940735340118, 0.23446236550807953, 0.23033303022384644]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0.6475618481636047, 2.695812225341797, -0.6863242387771606]",
+          "why": "Dropping `generator=rng` draws from the process-wide stream instead of the one you were handed, so the numbers are unrelated to the caller's seed."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return t.randn(n, generator=rng).tolist()\n\n\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "expected_output": "[1.5409960746765137, -0.293428897857666, -2.1787893772125244]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 688,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, low, high, n) that returns the next n random integers from [low, high) drawn from rng's stream, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, low, high, n):\n    \"\"\"Return the next n random ints in [low, high) from rng's stream.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 0, 10, 4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 0, 10, 4)",
+          "expected_expr": "[4, 9, 3, 0]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(1), 5, 6, 3)",
+          "expected_expr": "[5, 5, 5]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), -3, 3, 5)",
+          "expected_expr": "[-1, 0, 2, -3, -2]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(9), 0, 2, 2)",
+          "expected_expr": "[0, 0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, low, high, n):\n    \"\"\"Return the next n random ints in [low, high) from rng's stream.\"\"\"\n    return t.randint(low, high, (n,), generator=rng).tolist()\n\n\nexample = (t.Generator().manual_seed(0), 0, 10, 4,)\nprint(solve(*example))\n",
+      "expected_output": "[4, 9, 3, 0]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 689,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that returns a random permutation of 0..n-1 drawn from rng's stream, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Return a random permutation of 0..n-1 from rng's stream.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 4)",
+          "expected_expr": "[0, 1, 3, 2]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(3), 5)",
+          "expected_expr": "[1, 0, 3, 4, 2]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "[0]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(11), 3)",
+          "expected_expr": "[0, 2, 1]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return a random permutation of 0..n-1 from rng's stream.\"\"\"\n    return t.randperm(n, generator=rng).tolist()\n\n\nexample = (t.Generator().manual_seed(0), 4,)\nprint(solve(*example))\n",
+      "expected_output": "[0, 1, 3, 2]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 690,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that takes two consecutive draws of n uniform floats from rng's stream and returns a tuple (first, second, they_differ): both draws as plain lists and whether the second draw differs from the first.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Two consecutive draws from one stream; return (first, second, do they differ?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.08847743272781372, 0.13203048706054688], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(5), 3)",
+          "expected_expr": "([0.8302518725395203, 0.12611091136932373, 0.9074696898460388], [0.8199270367622375, 0.9201034307479858, 0.1166452169418335], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "([0.49625658988952637], [0.7682217955589294], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(99), 2)",
+          "expected_expr": "([0.10330969095230103, 0.9701558947563171], [0.9480701088905334, 0.9787087440490723], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], False)",
+          "why": "Making a fresh generator for the second draw abandons the caller's stream, so the second draw no longer continues where the first left off."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Two consecutive draws from one stream; return (first, second, do they differ?).\"\"\"\n    first = t.rand(n, generator=rng)\n    second = t.rand(n, generator=rng)\n    return (first.tolist(), second.tolist(), first.tolist() != second.tolist())\n\n\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [0.08847743272781372, 0.13203048706054688], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 691,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that returns the next n uniform floats from rng's stream as a plain list, and does not disturb the stream in any other way.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 3)",
+          "expected_expr": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(1), 2)",
+          "expected_expr": "[0.7576315999031067, 0.2793108820915222]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "[0.49625658988952637]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(123), 4)",
+          "expected_expr": "[0.29611194133758545, 0.516562283039093, 0.2516707181930542, 0.6885567903518677]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, generator=rng).tolist()\n\n\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "expected_output": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 692,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that adds uniform noise to a row of n zeros using rng's stream and returns the noisy row as a plain list. The point is that the generator is threaded through to the draw rather than replaced.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Add uniform noise from rng to n zeros; return the row.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 3)",
+          "expected_expr": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(2), 2)",
+          "expected_expr": "[0.6146950721740723, 0.38101285696029663]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "[0.49625658988952637]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(8), 4)",
+          "expected_expr": "[0.5979272723197937, 0.8452961444854736, 0.9464102387428284, 0.2965303063392639]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Add uniform noise from rng to n zeros; return the row.\"\"\"\n    noise = t.rand(n, generator=rng)\n    return (t.zeros(n) + noise).tolist()\n\n\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "expected_output": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 693,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, rows) that builds a tensor from the nested list and shuffles its ROWS using a permutation drawn from rng's stream, returning a tuple (shuffled, order): the shuffled rows as a plain nested list and the permutation used, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, rows):\n    \"\"\"Shuffle a's rows with a permutation from rng; return (shuffled rows, the order).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), [[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), [[1, 2], [3, 4], [5, 6]])",
+          "expected_expr": "([[5, 6], [1, 2], [3, 4]], [2, 0, 1])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(1), [[9]])",
+          "expected_expr": "([[9]], [0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), [[1, 1], [2, 2]])",
+          "expected_expr": "([[1, 1], [2, 2]], [0, 1])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(4), [[7, 8], [1, 2], [3, 4]])",
+          "expected_expr": "([[1, 2], [7, 8], [3, 4]], [1, 0, 2])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, rows):\n    \"\"\"Shuffle a's rows with a permutation from rng; return (shuffled rows, the order).\"\"\"\n    a = t.tensor(rows)\n    order = t.randperm(a.shape[0], generator=rng)\n    return (a[order].tolist(), order.tolist())\n\n\nexample = (t.Generator().manual_seed(0), [[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "expected_output": "([[5, 6], [1, 2], [3, 4]], [2, 0, 1])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 694,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that draws n standard-normal floats from rng's stream and returns a tuple (values, shape, dtype_name).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Return (values, shape, dtype name) for n normal draws from rng's stream.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 2)",
+          "expected_expr": "([1.5409960746765137, -0.293428897857666], (2,), 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(6), 3)",
+          "expected_expr": "([-1.8743985891342163, -0.9936632513999939, 0.7184672355651855], (3,), 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "([1.5409960746765137], (1,), 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(77), 2)",
+          "expected_expr": "([-0.35683774948120117, 0.6007267236709595], (2,), 'torch.float32')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return (values, shape, dtype name) for n normal draws from rng's stream.\"\"\"\n    x = t.randn(n, generator=rng)\n    return (x.tolist(), tuple(x.shape), str(x.dtype))\n\n\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "expected_output": "([1.5409960746765137, -0.293428897857666], (2,), 'torch.float32')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 695,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that draws from all four samplers off the SAME stream, in this order — n uniform floats, n standard-normal floats, n random integers in [0, 10), then a permutation of 0..n-1 — and returns all four as a tuple of plain lists.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Draw uniform, normal, int and permutation from one stream, in that order.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [-0.29050925374031067, -1.0703703165054321], [7, 3], [1, 0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(1), 3)",
+          "expected_expr": "([0.7576315999031067, 0.2793108820915222, 0.40306925773620605], [0.7244127988815308, -0.7022190093994141, 1.166091799736023], [9, 6, 3], [1, 0, 2])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "([0.49625658988952637], [0.20723548531532288], [9], [0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(31), 2)",
+          "expected_expr": "([0.22977936267852783, 0.42184966802597046], [0.41718074679374695, 1.2895472049713135], [4, 2], [0, 1])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Draw uniform, normal, int and permutation from one stream, in that order.\"\"\"\n    uniform = t.rand(n, generator=rng)\n    normal = t.randn(n, generator=rng)\n    ints = t.randint(0, 10, (n,), generator=rng)\n    perm = t.randperm(n, generator=rng)\n    return (uniform.tolist(), normal.tolist(), ints.tolist(), perm.tolist())\n\n\nexample = (t.Generator().manual_seed(0), 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [-0.29050925374031067, -1.0703703165054321], [7, 3], [1, 0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 696,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that builds its OWN generator seeded with seed and returns the first n uniform floats from that stream, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 3)",
+          "expected_expr": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(42, 2)",
+          "expected_expr": "[0.8822692632675171, 0.9150039553642273]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1)",
+          "expected_expr": "[0.49625658988952637]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(7, 4)",
+          "expected_expr": "[0.5349225401878357, 0.19880318641662598, 0.6592116951942444, 0.6568902730941772]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
+          "why": "An unseeded `t.Generator()` starts from a nondeterministic state, so the same seed argument no longer replays the same numbers."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    return t.rand(n, generator=rng).tolist()\n\n\nexample = (0, 3,)\nprint(solve(*example))\n",
+      "expected_output": "[0.49625658988952637, 0.7682217955589294, 0.08847743272781372]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 697,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 18,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that builds TWO generators from the same seed, draws n uniform floats from each, and returns a tuple (first, second, identical): both draws as plain lists and whether they came out identical.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (42, 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(42, 3)",
+          "expected_expr": "([0.8822692632675171, 0.9150039553642273, 0.38286375999450684], [0.8822692632675171, 0.9150039553642273, 0.38286375999450684], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(7, 1)",
+          "expected_expr": "([0.5349225401878357], [0.5349225401878357], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(123, 2)",
+          "expected_expr": "([0.29611194133758545, 0.516562283039093], [0.29611194133758545, 0.516562283039093], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    rng_a = t.Generator().manual_seed(seed)\n    rng_b = t.Generator().manual_seed(seed)\n    a = t.rand(n, generator=rng_a)\n    b = t.rand(n, generator=rng_b)\n    return (a.tolist(), b.tolist(), a.tolist() == b.tolist())\n\n\nexample = (42, 3,)\nprint(solve(*example))\n",
+      "expected_output": "([0.8822692632675171, 0.9150039553642273, 0.38286375999450684], [0.8822692632675171, 0.9150039553642273, 0.38286375999450684], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 698,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that shows a seeded stream replays: build a generator from seed and draw n floats, then build a SECOND generator from the same seed and draw n floats again. Return a tuple (draw, replay, they_match).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Show that reseeding replays: return (first draw, replayed draw, do they match?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(5, 3)",
+          "expected_expr": "([0.8302518725395203, 0.12611091136932373, 0.9074696898460388], [0.8302518725395203, 0.12611091136932373, 0.9074696898460388], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(99, 1)",
+          "expected_expr": "([0.10330969095230103], [0.10330969095230103], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, 2)",
+          "expected_expr": "([0.7576315999031067, 0.2793108820915222], [0.7576315999031067, 0.2793108820915222], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Show that reseeding replays: return (first draw, replayed draw, do they match?).\"\"\"\n    first = t.rand(n, generator=t.Generator().manual_seed(seed))\n    replay = t.rand(n, generator=t.Generator().manual_seed(seed))\n    return (first.tolist(), replay.tolist(), first.tolist() == replay.tolist())\n\n\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 699,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed_a, seed_b, n) that draws n uniform floats from a generator seeded with seed_a and n from one seeded with seed_b, returning a tuple (draw_a, draw_b, they_differ).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed_a, seed_b, n):\n    \"\"\"Two different seeds: return (draw a, draw b, do they differ?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 1, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.7576315999031067, 0.2793108820915222], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(42, 43, 3)",
+          "expected_expr": "([0.8822692632675171, 0.9150039553642273, 0.38286375999450684], [0.4539682865142822, 0.19649124145507812, 0.9210357069969177], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(7, 7, 2)",
+          "expected_expr": "([0.5349225401878357, 0.19880318641662598], [0.5349225401878357, 0.19880318641662598], False)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(100, 200, 1)",
+          "expected_expr": "([0.1116642951965332], [0.5938583612442017], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed_a, seed_b, n):\n    \"\"\"Two different seeds: return (draw a, draw b, do they differ?).\"\"\"\n    a = t.rand(n, generator=t.Generator().manual_seed(seed_a))\n    b = t.rand(n, generator=t.Generator().manual_seed(seed_b))\n    return (a.tolist(), b.tolist(), a.tolist() != b.tolist())\n\n\nexample = (0, 1, 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [0.7576315999031067, 0.2793108820915222], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 700,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that builds one seeded generator and takes TWO consecutive draws of n uniform floats from it, returning a tuple (first, second, they_differ) — the evidence that each draw consumes the stream.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"One seeded stream, two draws: return (first, second, do they differ?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.08847743272781372, 0.13203048706054688], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(11, 3)",
+          "expected_expr": "([0.14904171228408813, 0.4865531325340271, 0.985661506652832], [0.16840142011642456, 0.5839434266090393, 0.6935991644859314], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1)",
+          "expected_expr": "([0.49625658988952637], [0.7682217955589294], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(64, 2)",
+          "expected_expr": "([0.04922127723693848, 0.5989364385604858], [0.17713111639022827, 0.2638648748397827], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"One seeded stream, two draws: return (first, second, do they differ?).\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    first = t.rand(n, generator=rng)\n    second = t.rand(n, generator=rng)\n    return (first.tolist(), second.tolist(), first.tolist() != second.tolist())\n\n\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [0.08847743272781372, 0.13203048706054688], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 701,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that draws n uniform floats from a seeded generator, then RESEEDS that same generator with the same seed and draws n again. Return a tuple (before, after, restarted) — whether reseeding put the stream back to the beginning.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Reseed mid-stream; return (draw before, draw after, did it restart?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(8, 3)",
+          "expected_expr": "([0.5979272723197937, 0.8452961444854736, 0.9464102387428284], [0.5979272723197937, 0.8452961444854736, 0.9464102387428284], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1)",
+          "expected_expr": "([0.49625658988952637], [0.49625658988952637], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(55, 2)",
+          "expected_expr": "([0.8357208371162415, 0.9377838373184204], [0.8357208371162415, 0.9377838373184204], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Reseed mid-stream; return (draw before, draw after, did it restart?).\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    before = t.rand(n, generator=rng)\n    rng.manual_seed(seed)\n    after = t.rand(n, generator=rng)\n    return (before.tolist(), after.tolist(), before.tolist() == after.tolist())\n\n\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [0.49625658988952637, 0.7682217955589294], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 702,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, low, high, n) that builds a generator from seed and returns the first n random integers from [low, high) off that stream, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, low, high, n):\n    \"\"\"Seed a generator and return its first n random ints in [low, high).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 0, 10, 4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 0, 10, 4)",
+          "expected_expr": "[4, 9, 3, 0]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(3, 5, 6, 2)",
+          "expected_expr": "[5, 5]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, -2, 2, 3)",
+          "expected_expr": "[-2, 1, -1]"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(21, 0, 100, 2)",
+          "expected_expr": "[53, 43]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, low, high, n):\n    \"\"\"Seed a generator and return its first n random ints in [low, high).\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    return t.randint(low, high, (n,), generator=rng).tolist()\n\n\nexample = (0, 0, 10, 4,)\nprint(solve(*example))\n",
+      "expected_output": "[4, 9, 3, 0]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 703,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that builds a generator from seed and returns a tuple (permutation, shape, dtype_name) for a random permutation of 0..n-1 drawn off that stream.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Seed a generator; return (permutation, shape, dtype name).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 4,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 4)",
+          "expected_expr": "([0, 1, 3, 2], (4,), 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(9, 3)",
+          "expected_expr": "([1, 0, 2], (3,), 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1)",
+          "expected_expr": "([0], (1,), 'torch.int64')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(17, 5)",
+          "expected_expr": "([4, 2, 0, 3, 1], (5,), 'torch.int64')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a generator; return (permutation, shape, dtype name).\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    p = t.randperm(n, generator=rng)\n    return (p.tolist(), tuple(p.shape), str(p.dtype))\n\n\nexample = (0, 4,)\nprint(solve(*example))\n",
+      "expected_output": "([0, 1, 3, 2], (4,), 'torch.int64')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 704,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that builds one generator from seed and draws from all four samplers off it in this order — n uniform floats, n standard-normal floats, n random integers in [0, 10), then a permutation of 0..n-1 — returning all four as a tuple of plain lists.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Seed one stream and draw with all four samplers, in that order.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "([0.49625658988952637, 0.7682217955589294], [-0.29050925374031067, -1.0703703165054321], [7, 3], [1, 0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(42, 3)",
+          "expected_expr": "([0.8822692632675171, 0.9150039553642273, 0.38286375999450684], [-0.829319179058075, -1.6137069463729858, -0.21470452845096588], [4, 0, 4], [0, 1, 2])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 1)",
+          "expected_expr": "([0.49625658988952637], [0.20723548531532288], [9], [0])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(5, 2)",
+          "expected_expr": "([0.8302518725395203, 0.12611091136932373], [-0.05797164887189865, 0.944352388381958], [2, 3], [0, 1])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed one stream and draw with all four samplers, in that order.\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    uniform = t.rand(n, generator=rng)\n    normal = t.randn(n, generator=rng)\n    ints = t.randint(0, 10, (n,), generator=rng)\n    perm = t.randperm(n, generator=rng)\n    return (uniform.tolist(), normal.tolist(), ints.tolist(), perm.tolist())\n\n\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "expected_output": "([0.49625658988952637, 0.7682217955589294], [-0.29050925374031067, -1.0703703165054321], [7, 3], [1, 0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 705,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, n) that proves a seed fixes a whole SEQUENCE, not just one draw: from two generators seeded identically, take two consecutive draws of n uniform floats from each, and return a tuple (first_match, second_match, advanced, first_draw) — whether the first draws agree, whether the second draws agree, whether the second draw differs from the first, and the first draw itself as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, n):\n    \"\"\"Two identical seeds, two draws each: do both agree, did the stream move, and what was drawn?\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, 2)",
+          "expected_expr": "(True, True, True, [0.49625658988952637, 0.7682217955589294])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(42, 1)",
+          "expected_expr": "(True, True, True, [0.8822692632675171])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(7, 3)",
+          "expected_expr": "(True, True, True, [0.5349225401878357, 0.19880318641662598, 0.6592116951942444])"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(2026, 2)",
+          "expected_expr": "(True, True, True, [0.15248113870620728, 0.2519153356552124])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two identical seeds, two draws each: do both agree, did the stream move, and what was drawn?\"\"\"\n    rng_a = t.Generator().manual_seed(seed)\n    rng_b = t.Generator().manual_seed(seed)\n    a1 = t.rand(n, generator=rng_a)\n    b1 = t.rand(n, generator=rng_b)\n    a2 = t.rand(n, generator=rng_a)\n    b2 = t.rand(n, generator=rng_b)\n    return (a1.tolist() == b1.tolist(), a2.tolist() == b2.tolist(), a1.tolist() != a2.tolist(), a1.tolist())\n\n\nexample = (0, 2,)\nprint(solve(*example))\n",
+      "expected_output": "(True, True, True, [0.49625658988952637, 0.7682217955589294])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 706,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(seed, rows) that builds a tensor from the nested list and shuffles its ROWS reproducibly: the shuffle must be driven by a generator you build from seed. Return a tuple (shuffled, order, reproducible) — the shuffled rows as a plain nested list, the permutation used, and whether repeating the whole procedure from the same seed gives the same order back.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(seed, rows):\n    \"\"\"Reproducibly shuffle a's rows from a seed; return (rows, order, reproducible?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, [[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, [[1, 2], [3, 4], [5, 6]])",
+          "expected_expr": "([[5, 6], [1, 2], [3, 4]], [2, 0, 1], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(1, [[9]])",
+          "expected_expr": "([[9]], [0], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(0, [[1, 1], [2, 2]])",
+          "expected_expr": "([[1, 1], [2, 2]], [0, 1], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(12, [[7, 8], [1, 2], [3, 4]])",
+          "expected_expr": "([[7, 8], [3, 4], [1, 2]], [0, 2, 1], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(seed, rows):\n    \"\"\"Reproducibly shuffle a's rows from a seed; return (rows, order, reproducible?).\"\"\"\n    a = t.tensor(rows)\n    order = t.randperm(a.shape[0], generator=t.Generator().manual_seed(seed))\n    again = t.randperm(a.shape[0], generator=t.Generator().manual_seed(seed))\n    return (a[order].tolist(), order.tolist(), order.tolist() == again.tolist())\n\n\nexample = (0, [[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "expected_output": "([[5, 6], [1, 2], [3, 4]], [2, 0, 1], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 707,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rng, n) that builds a random permutation MATRIX driven by rng's stream — the n-by-n identity with its rows shuffled by a permutation drawn from rng — and returns a tuple (matrix, order, still_a_permutation): the matrix as a plain nested list, the permutation used as a plain list, and whether its rows are still the identity's rows in some order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rng, n):\n    \"\"\"Build a permutation matrix off rng's stream; return (matrix, order, valid?).\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 3)",
+          "expected_expr": "([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], [2, 0, 1], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(1), 2)",
+          "expected_expr": "([[0.0, 1.0], [1.0, 0.0]], [1, 0], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(0), 1)",
+          "expected_expr": "([[1.0]], [0], True)"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve(t.Generator().manual_seed(13), 4)",
+          "expected_expr": "([[0.0, 0.0, 1.0, 0.0], [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]], [2, 0, 1, 3], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Build a permutation matrix off rng's stream; return (matrix, order, valid?).\"\"\"\n    order = t.randperm(n, generator=rng)\n    perm = t.eye(n)[order]\n    return (perm.tolist(), order.tolist(), sorted(perm.tolist()) == sorted(t.eye(n).tolist()))\n\n\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+      "expected_output": "([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], [2, 0, 1], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

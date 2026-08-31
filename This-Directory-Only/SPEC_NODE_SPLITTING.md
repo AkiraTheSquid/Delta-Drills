@@ -90,9 +90,9 @@ Worked examples of the test:
 Eight new nodes, three symbol evictions, one merge.
 
 ```
-numpy.random-generator          -> 3   seeding & the stream
-                                       the four samplers (rand/randn/randint/randperm)
-                                       threading generator= into a call
+numpy.random-generator          -> 3   the four samplers (rand/randn/randint/randperm)
+                                       seeding your own stream (DONE 2026-08-31)
+                                       using a stream you were handed
 numpy.stack-concat-interleave   -> 2   stack vs cat (does it add an axis?)
                                        hstack/vstack/column_stack conventions
                                   evict torch.empty + torch.empty#dtype -> numpy.constructors
@@ -128,6 +128,34 @@ independently-failable test, not on missing evidence.
 
 ---
 
+## What the first split changed about the plan
+
+Two things the plan did not anticipate, both worth carrying to the next one.
+
+**The teaching order can be forced by the symbols, not by the pedagogy.** The
+plan said seeding first, then the samplers, then threading — which reads well
+and is impossible. Whichever of "seed your own generator" and "thread a
+generator into a call" comes first needs the other's symbols: you cannot
+demonstrate a seeded stream without drawing from it, and you cannot draw from
+it without `generator=`. The prerequisite guard says so out loud, and it is
+right. So the node that OWNS the symbols has to come first, and the split
+landed as samplers → seeding → threading.
+
+**A node can be worth having with no symbols of its own.** Once seeding owned
+`torch.Generator`, `Tensor.manual_seed` and all four `generator=` kwargs,
+threading had nothing left to declare — and it is still the most valuable of
+the three. It teaches the discipline: *use the generator you were handed; do
+not make one, do not reseed it*. Both mistakes run fine and return plausible
+numbers, which is exactly the kind of failure that deserves its own mastery
+estimate. It is the same shape as the seven `einops.*` pattern nodes. When a
+split leaves one half with no symbols, that is a signal the half is about a
+practice rather than an API — not a signal to abandon the split.
+
+A consequence for the coverage guard: a node declaring nothing has nothing to
+check, so the guard is silent on exactly the nodes where the drills carry the
+whole burden. Their floor is the rung floor (Faded ≥ 2, Solo ≥ 6,
+Integrated ≥ 3), which nothing currently enforces per node.
+
 ## What a split actually costs
 
 Not a registry edit. Every one of these, or the split is worse than the blob:
@@ -148,7 +176,24 @@ Not a registry edit. Every one of these, or the split is worse than the blob:
    coverage — because the KC ids in their keys change. Re-recording is the
    mechanism for admitting debt on purpose; say in the commit what moved and
    why, and check the counts moved the direction you expected.
-6. **Seth's stored `kc_ladder` still names the old id.** It loads and resolves
+6. **Everything else that names the id.** The registry is the least of it. The
+   2026-08-31 split had to touch the glossary (`lessons/glossary.js`, both the
+   term's `kc` and the lesson map), the retirement manifest and its archive
+   watcher, `concept-graph/kc_atom_crosswalk.json` and `kc_difficulty.json`
+   (regenerate — a registry KC missing from the crosswalk fails its watcher),
+   and `backend/app/data/question_atom_tags.jsonl`, because a brand-new node
+   whose drills are all brand-new has no atom tags and therefore no crosswalk
+   entry at all. The watchers found every one of these; none was predicted.
+
+   One more that NO watcher finds, because it lives in generated Colab
+   artifacts: `scripts/generate_colab_notebooks.py` writes the old concept id
+   into `lessons/colab_notebooks.json`, `lessons/notebooks/manifest.json` and
+   `extension/panel/notebook-index-concepts.js`. After a split those hold a
+   dead key and no key for the new nodes, so the in-app Notebooks tab and the
+   Colab fork have nothing to open for them. Regenerate as part of the split —
+   it was NOT done on 2026-08-31 because the Colab lane was already failing its
+   own preflight for unrelated reasons and another session was mid-deploy.
+7. **Seth's stored `kc_ladder` still names the old id.** It loads and resolves
    (verified during the 2026-08-30 ARENA cut), but his progress on the old node
    does not transfer to the new ones. Splitting a node he is standing on resets
    him on it. Read his position off Fly before cutting — the procedure is in
@@ -161,8 +206,21 @@ Not a registry edit. Every one of these, or the split is worse than the blob:
 - [x] Measured, and the measurement is now standing: `audit_symbol_coverage.py`,
       wired into all five watchers via `scripts/guard_checks.py`.
 - [x] Plan written down (this file).
-- [ ] `numpy.random-generator` → 3.
+- [x] `numpy.random-generator` → 3, **done 2026-08-31**. `numpy.random-samplers`
+      → `numpy.random-seeding` → `numpy.random-threading`, 32 new drills
+      (676–707), every rung floor met (Faded ≥ 2, Solo ≥ 6, Integrated ≥ 3) and
+      **zero symbols under the coverage floor on all three nodes**. The old page
+      is archived and recorded under a new `split_kcs` key in the retirement
+      manifest — a split is not a retirement, and filing it as one would tell
+      the next reader that random numbers left the course.
 - [ ] `numpy.stack-concat-interleave` → 2, plus the three evictions.
 - [ ] `numpy.slicing-views` → 2, plus the merge into `views-and-copies`.
 - [ ] `python.dots-and-imports` → 2.
 - [ ] `python.calling-functions` → 2.
+- [ ] **Nothing in the course teaches `*args` or `None`.** Found while recording
+      the 2026-08-31 prereq baseline: `syntax.star-args` is used, untaught, by
+      drills on 138 concepts and `syntax.none` by drills on 352 — the two
+      largest single entries in the prerequisite debt, and every new drill that
+      writes `def f(*shape)` or `generator=None` adds to them. That is a missing
+      node in the python course, not a per-drill defect, and no split will
+      close it.

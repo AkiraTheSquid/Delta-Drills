@@ -2565,39 +2565,279 @@
      "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP)."
     },
     {
-     "kc": "numpy.random-generator",
-     "title": "Random numbers with a Generator",
+     "kc": "numpy.random-samplers",
+     "title": "Drawing random numbers",
      "supporting_kcs": [
-      "numpy.constructors"
+      "numpy.constructors",
+      "numpy.ndarray-model"
      ],
      "new_syntax": [
-      "Tensor.manual_seed",
-      "torch.Generator",
       "torch.rand",
-      "torch.rand#generator",
-      "torch.randint",
-      "torch.randint#generator",
       "torch.randn",
-      "torch.randn#generator",
-      "torch.randperm",
-      "torch.randperm#generator"
+      "torch.randint",
+      "torch.randperm"
      ],
-     "concept_markdown": "Reproducible randomness in PyTorch goes through a **`Generator`** object \u2014 you\nmake one, then hand it to the sampling functions:\n\n```python no-run\nrng = t.Generator().manual_seed(seed)   # fixing the seed makes runs reproducible\nt.rand(5, generator=rng)                # 5 uniform floats in [0, 1)\nt.rand((3, 3), generator=rng)           # any shape, same convention as constructors\nt.randint(0, 10, (4,), generator=rng)   # random ints in [0, 10)\nt.randn((2, 2), generator=rng)          # standard-normal draws\nt.randperm(n, generator=rng)            # a random shuffling of 0..n-1\n```\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(\"rand    \", t.rand(3, generator=rng))\nprint(\"randint \", t.randint(0, 10, (5,), generator=rng))\nprint(\"randn   \", t.randn(3, generator=rng))\nprint(\"randperm\", t.randperm(6, generator=rng))\n```\n\nNote the shape of the API: unlike NumPy, where you call *methods on* the\ngenerator (`rng.random(5)`), in PyTorch the generator is an **argument** to a\nnormal function (`t.rand(5, generator=rng)`). Same idea, inverted spelling.\n\nThe key mental model: a generator is a **deterministic stream**. Seeded with\nthe same value, it produces the same sequence forever; each draw consumes the\nnext chunk of the stream. That's why reproducible code (and graders, and\nexperiments) *passes the rng in as an argument* instead of creating one\ninternally: whoever owns the stream controls reproducibility. When a function\nreceives `rng`, use it directly \u2014 creating a new generator or reseeding inside\nbreaks the caller's stream.\n\n```python\na = t.Generator().manual_seed(42)\nb = t.Generator().manual_seed(42)\nprint(\"a:\", t.rand(3, generator=a))\nprint(\"b:\", t.rand(3, generator=b))\n\n# a has now advanced three draws; b is replayed from the start.\nprint(\"a again:\", t.rand(3, generator=a))\nassert not t.equal(t.rand(3, generator=a), t.rand(3, generator=b))\n```\n\nThe second line of that output is the whole reproducibility contract, and the\nlast assert is why an *extra* draw slipped in anywhere shifts every value\nafter it.\n\nYou will also see the **global** API in the wild (`t.manual_seed(0)`, then\nplain `t.rand(shape)` with no generator) \u2014 a shared, process-level stream. It\nstill works and some bank drills use it, but for anything you need to\nreproduce, prefer the explicit `Generator`: no hidden global state, no spooky\ninterference between distant modules.\n\nA pattern this unlocks immediately: **random structure via deterministic\nbuilding blocks** \u2014 e.g. a random permutation *matrix* is just the identity\nmatrix with its rows shuffled: `t.eye(n)[t.randperm(n, generator=rng)]`.\n\n```python\nrng = t.Generator().manual_seed(1)\norder = t.randperm(4, generator=rng)\nperm = t.eye(4)[order]\nprint(\"order\", order)\nprint(perm)\n\n# Every row and every column still has exactly one 1 \u2014 that is what makes it\n# a permutation matrix rather than just a random 0/1 grid.\nassert t.equal(perm.sum(dim=0), t.ones(4))\nassert t.equal(perm.sum(dim=1), t.ones(4))\n```",
-     "worked_example_markdown": "Task: given a seeded generator, draw floats reproducibly; show that the same\nseed replays the same stream and that consuming draws advances it.\n\n```python\nimport torch as t\n\n# Two generators, same seed -> identical streams.\nrng_a = t.Generator().manual_seed(42)\nrng_b = t.Generator().manual_seed(42)\n\nfirst_a = t.rand(3, generator=rng_a)\nfirst_b = t.rand(3, generator=rng_b)\nassert t.equal(first_a, first_b)          # same stream position, same values\nassert first_a.shape == (3,)\nassert bool(((0 <= first_a) & (first_a < 1)).all())   # uniform in [0, 1)\nprint(\"rng_a first draw:\", first_a)\nprint(\"rng_b first draw:\", first_b)\n\n# Each draw CONSUMES stream: the next request continues where we left off.\nsecond_a = t.rand(3, generator=rng_a)\nassert not t.equal(first_a, second_a)\nprint(\"rng_a second draw:\", second_a)\n\n# A function that receives a generator must use it as given \u2014\n# this is what \"use the next n draws from rng\" means in the drills.\ndef noisy_zeros(rng, n):\n    return t.zeros(n) + t.rand(n, generator=rng)\n\nout1 = noisy_zeros(t.Generator().manual_seed(7), 4)\nout2 = noisy_zeros(t.Generator().manual_seed(7), 4)\nassert t.equal(out1, out2)                # reproducible: caller owns the seed\nprint(\"seed 7, run 1:\", out1)\nprint(\"seed 7, run 2:\", out2)\n```\n\nWhy each step:\n\n1. Seeding twice with 42 and comparing draws makes \"deterministic stream\"\n   concrete \u2014 randomness here is repeatable on demand.\n2. The consumed-stream check explains grader behavior: a drill that hands you\n   `rng` has pre-computed what the *next* draws will be. Reseeding or making\n   your own generator inside `solve` produces different numbers and fails.\n3. `noisy_zeros` is the shape of every rng-taking function you'll write:\n   thread the generator through, never create one mid-function.",
+     "concept_markdown": "Four functions cover almost all the random tensors you will ever need. They are\nconstructors like `t.zeros` and `t.ones` \u2014 you say what SHAPE you want and get a\ntensor of that shape back \u2014 except the numbers are drawn rather than fixed.\n\n```python\nimport torch as t\n\nprint(\"rand    \", t.rand(3))            # uniform floats in [0, 1)\nprint(\"randn   \", t.randn(3))           # standard normal: mean 0, spread 1\nprint(\"randint \", t.randint(0, 10, (3,)))   # whole numbers in [0, 10)\nprint(\"randperm\", t.randperm(6))        # 0..5 shuffled into a random order\n```\n\nThe four differ in **what they draw from**, not in how you call them:\n\n| Call | What comes out |\n|---|---|\n| `t.rand(shape)` | floats spread evenly across `[0, 1)` \u2014 0 possible, 1 never |\n| `t.randn(shape)` | floats from the standard normal \u2014 negatives are normal here |\n| `t.randint(low, high, shape)` | whole numbers in `[low, high)` \u2014 `high` excluded |\n| `t.randperm(n)` | every number `0..n-1` exactly once, in a random order |\n\n`rand` and `randn` take the shape the way the constructors do \u2014 loose integers or\na tuple, whichever reads better:\n\n```python\nimport torch as t\n\nprint(t.rand(2, 3).shape)      # loose integers\nprint(t.rand((2, 3)).shape)    # the same shape as a tuple\nprint(t.randn(4).shape)        # 1-D, four numbers\n```\n\n`randint` is the odd one out: its shape argument comes **third and must be a\ntuple**, because the first two slots are already spoken for by the range.\n\n```python\nimport torch as t\n\nx = t.randint(0, 10, (5,))\nprint(x, x.dtype)              # note the dtype: whole numbers, not floats\nprint(t.randint(0, 10, (2, 3)))\n```\n\n`randperm` is not a draw from a distribution at all \u2014 it is a **shuffling**.\nEvery number from `0` to `n-1` comes out exactly once, which is what makes it\nthe tool for putting things in a random order rather than picking random things.\n\n```python\nimport torch as t\n\np = t.randperm(5)\nprint(\"a permutation:\", p)\nprint(\"sorted back  :\", sorted(p.tolist()))\nassert sorted(p.tolist()) == [0, 1, 2, 3, 4]\n```\n\nThat last assert is the whole difference between `randperm` and `randint`:\n`randint` draws **with replacement**, so it repeats values and skips others.\n\n```python\nimport torch as t\n\nprint(\"randint may repeat:\", t.randint(0, 5, (5,)))\nprint(\"randperm never does:\", t.randperm(5))\n```\n\nBecause a draw is different every time you run it, the things you can *assert*\nabout a random tensor are its structure and its bounds \u2014 shape, dtype, and the\nrange the values fall in \u2014 not the values themselves. That is what the drills\nbelow ask for.",
+     "worked_example_markdown": "Task: draw with each of the four samplers and report the facts about the result\nthat are true on every run.\n\n```python\nimport torch as t\n\n# Uniform: shape you asked for, floats, every value in [0, 1).\nu = t.rand(2, 3)\nassert tuple(u.shape) == (2, 3)\nassert str(u.dtype) == \"torch.float32\"\nassert bool((u >= 0).all())\nassert bool((u < 1).all())\nprint(\"uniform:\", u)\n\n# Normal: same shape rules, same dtype, but NOT bounded to [0, 1).\ng = t.randn(2, 3)\nassert tuple(g.shape) == (2, 3)\nassert str(g.dtype) == \"torch.float32\"\nprint(\"normal :\", g)\n\n# Ints: the range comes first, the SHAPE third, and the dtype is integral.\ni = t.randint(0, 10, (5,))\nassert tuple(i.shape) == (5,)\nassert str(i.dtype) == \"torch.int64\"\nassert bool((i >= 0).all())\nassert bool((i < 10).all())\nprint(\"ints   :\", i)\n\n# Permutation: a count, not a shape \u2014 and every value appears exactly once.\np = t.randperm(5)\nassert tuple(p.shape) == (5,)\nassert sorted(p.tolist()) == [0, 1, 2, 3, 4]\nprint(\"perm   :\", p)\n```\n\nWhy each step:\n\n1. Asserting shape and dtype rather than values is the only thing that can be\n   true on every run \u2014 and it is what the graders below check.\n2. The bound checks are what distinguish `rand` from `randn` in code: only the\n   uniform one is trapped in `[0, 1)`.\n3. `sorted(p.tolist())` is the definition of a permutation, written out. If it\n   ever came back with a repeat, `randperm` would not be doing its job.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Reproducible randomness in PyTorch goes through a **`Generator`** object \u2014 you\nmake one, then hand it to the sampling functions:\n\n```python no-run\nrng = t.Generator().manual_seed(seed)   # fixing the seed makes runs reproducible\nt.rand(5, generator=rng)                # 5 uniform floats in [0, 1)\nt.rand((3, 3), generator=rng)           # any shape, same convention as constructors\nt.randint(0, 10, (4,), generator=rng)   # random ints in [0, 10)\nt.randn((2, 2), generator=rng)          # standard-normal draws\nt.randperm(n, generator=rng)            # a random shuffling of 0..n-1\n```\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(\"rand    \", t.rand(3, generator=rng))\nprint(\"randint \", t.randint(0, 10, (5,), generator=rng))\nprint(\"randn   \", t.randn(3, generator=rng))\nprint(\"randperm\", t.randperm(6, generator=rng))\n```\n\nNote the shape of the API: unlike NumPy, where you call *methods on* the\ngenerator (`rng.random(5)`), in PyTorch the generator is an **argument** to a\nnormal function (`t.rand(5, generator=rng)`). Same idea, inverted spelling.\n\nThe key mental model: a generator is a **deterministic stream**. Seeded with\nthe same value, it produces the same sequence forever; each draw consumes the\nnext chunk of the stream. That's why reproducible code (and graders, and\nexperiments) *passes the rng in as an argument* instead of creating one\ninternally: whoever owns the stream controls reproducibility. When a function\nreceives `rng`, use it directly \u2014 creating a new generator or reseeding inside\nbreaks the caller's stream.\n\n```python\na = t.Generator().manual_seed(42)\nb = t.Generator().manual_seed(42)\nprint(\"a:\", t.rand(3, generator=a))\nprint(\"b:\", t.rand(3, generator=b))\n\n# a has now advanced three draws; b is replayed from the start.\nprint(\"a again:\", t.rand(3, generator=a))\nassert not t.equal(t.rand(3, generator=a), t.rand(3, generator=b))\n```\n\nThe second line of that output is the whole reproducibility contract, and the\nlast assert is why an *extra* draw slipped in anywhere shifts every value\nafter it.\n\nYou will also see the **global** API in the wild (`t.manual_seed(0)`, then\nplain `t.rand(shape)` with no generator) \u2014 a shared, process-level stream. It\nstill works and some bank drills use it, but for anything you need to\nreproduce, prefer the explicit `Generator`: no hidden global state, no spooky\ninterference between distant modules.\n\nA pattern this unlocks immediately: **random structure via deterministic\nbuilding blocks** \u2014 e.g. a random permutation *matrix* is just the identity\nmatrix with its rows shuffled: `t.eye(n)[t.randperm(n, generator=rng)]`.\n\n```python\nrng = t.Generator().manual_seed(1)\norder = t.randperm(4, generator=rng)\nperm = t.eye(4)[order]\nprint(\"order\", order)\nprint(perm)\n\n# Every row and every column still has exactly one 1 \u2014 that is what makes it\n# a permutation matrix rather than just a random 0/1 grid.\nassert t.equal(perm.sum(dim=0), t.ones(4))\nassert t.equal(perm.sum(dim=1), t.ones(4))\n```",
-       "watch_out_markdown": "",
-       "worked_example_markdown": "Task: given a seeded generator, draw floats reproducibly; show that the same\nseed replays the same stream and that consuming draws advances it.\n\n```python\nimport torch as t\n\n# Two generators, same seed -> identical streams.\nrng_a = t.Generator().manual_seed(42)\nrng_b = t.Generator().manual_seed(42)\n\nfirst_a = t.rand(3, generator=rng_a)\nfirst_b = t.rand(3, generator=rng_b)\nassert t.equal(first_a, first_b)          # same stream position, same values\nassert first_a.shape == (3,)\nassert bool(((0 <= first_a) & (first_a < 1)).all())   # uniform in [0, 1)\nprint(\"rng_a first draw:\", first_a)\nprint(\"rng_b first draw:\", first_b)\n\n# Each draw CONSUMES stream: the next request continues where we left off.\nsecond_a = t.rand(3, generator=rng_a)\nassert not t.equal(first_a, second_a)\nprint(\"rng_a second draw:\", second_a)\n\n# A function that receives a generator must use it as given \u2014\n# this is what \"use the next n draws from rng\" means in the drills.\ndef noisy_zeros(rng, n):\n    return t.zeros(n) + t.rand(n, generator=rng)\n\nout1 = noisy_zeros(t.Generator().manual_seed(7), 4)\nout2 = noisy_zeros(t.Generator().manual_seed(7), 4)\nassert t.equal(out1, out2)                # reproducible: caller owns the seed\nprint(\"seed 7, run 1:\", out1)\nprint(\"seed 7, run 2:\", out2)\n```\n\nWhy each step:\n\n1. Seeding twice with 42 and comparing draws makes \"deterministic stream\"\n   concrete \u2014 randomness here is repeatable on demand.\n2. The consumed-stream check explains grader behavior: a drill that hands you\n   `rng` has pre-computed what the *next* draws will be. Reseeding or making\n   your own generator inside `solve` produces different numbers and fails.\n3. `noisy_zeros` is the shape of every rng-taking function you'll write:\n   thread the generator through, never create one mid-function.",
-       "worked_example_code": "import torch as t\n\n# Two generators, same seed -> identical streams.\nrng_a = t.Generator().manual_seed(42)\nrng_b = t.Generator().manual_seed(42)\n\nfirst_a = t.rand(3, generator=rng_a)\nfirst_b = t.rand(3, generator=rng_b)\nassert t.equal(first_a, first_b)          # same stream position, same values\nassert first_a.shape == (3,)\nassert bool(((0 <= first_a) & (first_a < 1)).all())   # uniform in [0, 1)\nprint(\"rng_a first draw:\", first_a)\nprint(\"rng_b first draw:\", first_b)\n\n# Each draw CONSUMES stream: the next request continues where we left off.\nsecond_a = t.rand(3, generator=rng_a)\nassert not t.equal(first_a, second_a)\nprint(\"rng_a second draw:\", second_a)\n\n# A function that receives a generator must use it as given \u2014\n# this is what \"use the next n draws from rng\" means in the drills.\ndef noisy_zeros(rng, n):\n    return t.zeros(n) + t.rand(n, generator=rng)\n\nout1 = noisy_zeros(t.Generator().manual_seed(7), 4)\nout2 = noisy_zeros(t.Generator().manual_seed(7), 4)\nassert t.equal(out1, out2)                # reproducible: caller owns the seed\nprint(\"seed 7, run 1:\", out1)\nprint(\"seed 7, run 2:\", out2)\n",
+       "concept_markdown": "Four functions cover almost all the random tensors you will ever need. They are\nconstructors like `t.zeros` and `t.ones` \u2014 you say what SHAPE you want and get a\ntensor of that shape back \u2014 except the numbers are drawn rather than fixed.\n\n```python\nimport torch as t\n\nprint(\"rand    \", t.rand(3))            # uniform floats in [0, 1)\nprint(\"randn   \", t.randn(3))           # standard normal: mean 0, spread 1\nprint(\"randint \", t.randint(0, 10, (3,)))   # whole numbers in [0, 10)\nprint(\"randperm\", t.randperm(6))        # 0..5 shuffled into a random order\n```\n\nThe four differ in **what they draw from**, not in how you call them:\n\n| Call | What comes out |\n|---|---|\n| `t.rand(shape)` | floats spread evenly across `[0, 1)` \u2014 0 possible, 1 never |\n| `t.randn(shape)` | floats from the standard normal \u2014 negatives are normal here |\n| `t.randint(low, high, shape)` | whole numbers in `[low, high)` \u2014 `high` excluded |\n| `t.randperm(n)` | every number `0..n-1` exactly once, in a random order |\n\n`rand` and `randn` take the shape the way the constructors do \u2014 loose integers or\na tuple, whichever reads better:\n\n```python\nimport torch as t\n\nprint(t.rand(2, 3).shape)      # loose integers\nprint(t.rand((2, 3)).shape)    # the same shape as a tuple\nprint(t.randn(4).shape)        # 1-D, four numbers\n```\n\n`randint` is the odd one out: its shape argument comes **third and must be a\ntuple**, because the first two slots are already spoken for by the range.\n\n```python\nimport torch as t\n\nx = t.randint(0, 10, (5,))\nprint(x, x.dtype)              # note the dtype: whole numbers, not floats\nprint(t.randint(0, 10, (2, 3)))\n```\n\n`randperm` is not a draw from a distribution at all \u2014 it is a **shuffling**.\nEvery number from `0` to `n-1` comes out exactly once, which is what makes it\nthe tool for putting things in a random order rather than picking random things.\n\n```python\nimport torch as t\n\np = t.randperm(5)\nprint(\"a permutation:\", p)\nprint(\"sorted back  :\", sorted(p.tolist()))\nassert sorted(p.tolist()) == [0, 1, 2, 3, 4]\n```\n\nThat last assert is the whole difference between `randperm` and `randint`:\n`randint` draws **with replacement**, so it repeats values and skips others.\n\n```python\nimport torch as t\n\nprint(\"randint may repeat:\", t.randint(0, 5, (5,)))\nprint(\"randperm never does:\", t.randperm(5))\n```\n\nBecause a draw is different every time you run it, the things you can *assert*\nabout a random tensor are its structure and its bounds \u2014 shape, dtype, and the\nrange the values fall in \u2014 not the values themselves. That is what the drills\nbelow ask for.",
+       "watch_out_markdown": "- **`t.randint`'s `high` is EXCLUSIVE** \u2014 `t.randint(0, 10, (5,))` never\n  produces a 10. Same convention as `range` and as slicing.\n- **`t.randint` wants a SHAPE, not a count** \u2014 the third argument is `(n,)`,\n  with the trailing comma, not `n`. `(n, 1)` is a column, which is a different\n  tensor.\n- **`t.rand` is not `t.randn`** \u2014 one is uniform on `[0, 1)`, the other is the\n  standard normal and goes negative. They have the same shape and the same\n  dtype, so the shape cannot tell you which one you called.\n- **`t.randperm(n)` takes a COUNT, not a shape** \u2014 it is always 1-D, and it is a\n  permutation of `0..n-1`, never of your own values.",
+       "worked_example_markdown": "Task: draw with each of the four samplers and report the facts about the result\nthat are true on every run.\n\n```python\nimport torch as t\n\n# Uniform: shape you asked for, floats, every value in [0, 1).\nu = t.rand(2, 3)\nassert tuple(u.shape) == (2, 3)\nassert str(u.dtype) == \"torch.float32\"\nassert bool((u >= 0).all())\nassert bool((u < 1).all())\nprint(\"uniform:\", u)\n\n# Normal: same shape rules, same dtype, but NOT bounded to [0, 1).\ng = t.randn(2, 3)\nassert tuple(g.shape) == (2, 3)\nassert str(g.dtype) == \"torch.float32\"\nprint(\"normal :\", g)\n\n# Ints: the range comes first, the SHAPE third, and the dtype is integral.\ni = t.randint(0, 10, (5,))\nassert tuple(i.shape) == (5,)\nassert str(i.dtype) == \"torch.int64\"\nassert bool((i >= 0).all())\nassert bool((i < 10).all())\nprint(\"ints   :\", i)\n\n# Permutation: a count, not a shape \u2014 and every value appears exactly once.\np = t.randperm(5)\nassert tuple(p.shape) == (5,)\nassert sorted(p.tolist()) == [0, 1, 2, 3, 4]\nprint(\"perm   :\", p)\n```\n\nWhy each step:\n\n1. Asserting shape and dtype rather than values is the only thing that can be\n   true on every run \u2014 and it is what the graders below check.\n2. The bound checks are what distinguish `rand` from `randn` in code: only the\n   uniform one is trapped in `[0, 1)`.\n3. `sorted(p.tolist())` is the definition of a permutation, written out. If it\n   ever came back with a repeat, `randperm` would not be doing its job.",
+       "worked_example_code": "import torch as t\n\n# Uniform: shape you asked for, floats, every value in [0, 1).\nu = t.rand(2, 3)\nassert tuple(u.shape) == (2, 3)\nassert str(u.dtype) == \"torch.float32\"\nassert bool((u >= 0).all())\nassert bool((u < 1).all())\nprint(\"uniform:\", u)\n\n# Normal: same shape rules, same dtype, but NOT bounded to [0, 1).\ng = t.randn(2, 3)\nassert tuple(g.shape) == (2, 3)\nassert str(g.dtype) == \"torch.float32\"\nprint(\"normal :\", g)\n\n# Ints: the range comes first, the SHAPE third, and the dtype is integral.\ni = t.randint(0, 10, (5,))\nassert tuple(i.shape) == (5,)\nassert str(i.dtype) == \"torch.int64\"\nassert bool((i >= 0).all())\nassert bool((i < 10).all())\nprint(\"ints   :\", i)\n\n# Permutation: a count, not a shape \u2014 and every value appears exactly once.\np = t.randperm(5)\nassert tuple(p.shape) == (5,)\nassert sorted(p.tolist()) == [0, 1, 2, 3, 4]\nprint(\"perm   :\", p)\n",
+       "faded_items": [
+        {
+         "question_id": 42,
+         "prompt": "A uniform random tensor of a given 3-D shape.",
+         "starter_code": "import torch as t\n\ndef solve(shape):\n    \"\"\"Return a tensor of the given shape, uniform in [0, 1).\"\"\"\n    return t._____(shape)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nt.manual_seed(0)\nexample = (3, 3, 3)\nprint(solve(example))\n",
+         "solution": "import torch as t\n\ndef solve(shape):\n    \"\"\"Return a tensor of the given shape, uniform in [0, 1).\"\"\"\n    return t.rand(shape)\n"
+        },
+        {
+         "question_id": 676,
+         "prompt": "The shape, dtype and rank of a standard-normal draw.",
+         "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t._____(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t.randn(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n"
+        },
+        {
+         "question_id": 677,
+         "prompt": "Random integers, and a check that they landed inside the half-open range.",
+         "starter_code": "import torch as t\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    x = t._____(low, high, (n,))\n    return (tuple(x.shape), bool((x >= low).all()), bool((x < high).all()))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 10, 5,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    x = t.randint(low, high, (n,))\n    return (tuple(x.shape), bool((x >= low).all()), bool((x < high).all()))\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 42,
+       "prompt": "A uniform random tensor of a given 3-D shape.",
+       "starter_code": "import torch as t\n\ndef solve(shape):\n    \"\"\"Return a tensor of the given shape, uniform in [0, 1).\"\"\"\n    return t._____(shape)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nt.manual_seed(0)\nexample = (3, 3, 3)\nprint(solve(example))\n",
+       "solution": "import torch as t\n\ndef solve(shape):\n    \"\"\"Return a tensor of the given shape, uniform in [0, 1).\"\"\"\n    return t.rand(shape)\n"
+      },
+      {
+       "question_id": 676,
+       "prompt": "The shape, dtype and rank of a standard-normal draw.",
+       "starter_code": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t._____(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t.randn(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n"
+      },
+      {
+       "question_id": 677,
+       "prompt": "Random integers, and a check that they landed inside the half-open range.",
+       "starter_code": "import torch as t\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    x = t._____(low, high, (n,))\n    return (tuple(x.shape), bool((x >= low).all()), bool((x < high).all()))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 10, 5,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(low, high, n):\n    \"\"\"Return (shape, every value >= low?, every value < high?) for n random ints.\"\"\"\n    x = t.randint(low, high, (n,))\n    return (tuple(x.shape), bool((x >= low).all()), bool((x < high).all()))\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 678,
+       "prompt": "The shape, bounds and dtype of a uniform draw.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 679,
+       "prompt": "A random permutation, and the values sorted back into order.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 680,
+       "prompt": "Shuffle a tensor's rows with a random permutation.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 681,
+       "prompt": "A 2-D draw of random integers, with the bounds checked.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 682,
+       "prompt": "A uniform draw whose shape arrives as a tuple.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 683,
+       "prompt": "A 2-D normal draw, reported by shape, size and row length.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 684,
+       "prompt": "All four samplers at once, reported by dtype and by the sorted permutation."
+      },
+      {
+       "question_id": 685,
+       "prompt": "A random permutation MATRIX: the identity with its rows shuffled."
+      },
+      {
+       "question_id": 686,
+       "prompt": "Random integers reported by shape, count, range and dtype together."
+      }
+     ],
+     "independent_items": [
+      678,
+      679,
+      680,
+      681,
+      682,
+      683
+     ],
+     "misconceptions_markdown": ""
+    },
+    {
+     "kc": "numpy.random-seeding",
+     "title": "Seeding your own reproducible stream",
+     "supporting_kcs": [
+      "numpy.random-samplers",
+      "numpy.constructors",
+      "numpy.ndarray-model"
+     ],
+     "new_syntax": [
+      "torch.Generator",
+      "Tensor.manual_seed",
+      "torch.rand#generator",
+      "torch.randn#generator",
+      "torch.randint#generator",
+      "torch.randperm#generator"
+     ],
+     "concept_markdown": "So far the generator has always arrived from somewhere else. Making one is two\ncalls, and they are almost always written as one line:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(rng)\nprint(t.rand(3, generator=rng))\n```\n\n`t.Generator()` builds an empty stream; `.manual_seed(seed)` fixes where that\nstream starts and **returns the generator**, which is why the two chain onto one\nline. An unseeded `t.Generator()` still works \u2014 it just starts somewhere nobody\nchose, so nothing about it can be reproduced.\n\nEvery sampler takes the generator the same way \u2014 as a keyword argument named\n`generator`, always last:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(\"rand    \", t.rand(3, generator=rng))\nprint(\"randn   \", t.randn(3, generator=rng))\nprint(\"randint \", t.randint(0, 10, (3,), generator=rng))\nprint(\"randperm\", t.randperm(4, generator=rng))\n```\n\nNote the shape of the API. In NumPy you call **methods on** the generator \u2014\n`rng.random(5)`. In PyTorch the generator is an **argument** to an ordinary\nfunction \u2014 `t.rand(5, generator=rng)`. Same idea, inverted spelling, and it is\nthe thing most often got wrong coming from NumPy. `randint` keeps its own\nargument order: the shape stays third and `generator=` comes after it.\n\nThe seed is not a source of randomness. It is a **name for a whole sequence**.\nTwo generators given the same seed are not merely similar; they are the same\nstream, and they stay in step for as long as you draw from them equally:\n\n```python\nimport torch as t\n\na = t.Generator().manual_seed(42)\nb = t.Generator().manual_seed(42)\nprint(\"a:\", t.rand(3, generator=a))\nprint(\"b:\", t.rand(3, generator=b))\n```\n\nDraws consume that sequence, so position matters as much as the seed. After the\ndraws above, `a` and `b` are three numbers in \u2014 and a fresh generator on the\nsame seed is back at the start:\n\n```python\nimport torch as t\n\na = t.Generator().manual_seed(42)\nfirst = t.rand(3, generator=a)\nsecond = t.rand(3, generator=a)\nfresh = t.rand(3, generator=t.Generator().manual_seed(42))\n\nprint(\"first :\", first)\nprint(\"second:\", second)\nprint(\"fresh :\", fresh)\nassert first.tolist() != second.tolist()   # the stream moved on\nassert fresh.tolist() == first.tolist()    # the seed replayed it\n```\n\nThat pair of asserts is the entire contract. It is also why an *extra* draw\nslipped in anywhere shifts every value after it: you have not changed the\nsequence, you have changed your position in it.\n\nReseeding an existing generator rewinds it to the same starting point:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(5)\nbefore = t.rand(2, generator=rng)\nrng.manual_seed(5)                      # back to the beginning of the stream\nafter = t.rand(2, generator=rng)\nprint(\"before:\", before)\nprint(\"after :\", after)\nassert before.tolist() == after.tolist()\n```\n\nDo that to a generator **you** made. Never to one you were handed \u2014 that is the\ncaller's position in their stream, and rewinding it is the bug the previous\nlesson warned about.\n\nYou will also meet the **global** API in the wild: `t.manual_seed(0)` followed by\nplain `t.rand(shape)` with no generator. It seeds one shared, process-level\nstream. It works, and plenty of code uses it, but any function anywhere can draw\nfrom it and move everyone else along. For anything you need to reproduce, prefer\nan explicit `Generator`: no hidden global state, and no interference between\ndistant pieces of code.",
+     "worked_example_markdown": "Task: build a seeded stream, show that the same seed replays it exactly, and\nshow that consuming the stream moves you along it.\n\n```python\nimport torch as t\n\n# One expression: build the stream, then fix where it starts.\nrng = t.Generator().manual_seed(42)\n\nfirst = t.rand(3, generator=rng)\nprint(\"first draw :\", first)\n\n# The SAME generator again: the stream has advanced past the first three.\nsecond = t.rand(3, generator=rng)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# A NEW generator on the same seed starts the same sequence over.\nreplay = t.rand(3, generator=t.Generator().manual_seed(42))\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n\n# Reseeding in place does the same thing to a generator you own.\nrng.manual_seed(42)\nrewound = t.rand(3, generator=rng)\nassert rewound.tolist() == first.tolist()\nprint(\"rewound    :\", rewound)\n\n# A different seed is a different sequence entirely.\nother = t.rand(3, generator=t.Generator().manual_seed(43))\nassert other.tolist() != first.tolist()\nprint(\"seed 43    :\", other)\n```\n\nWhy each step:\n\n1. Building and seeding in one line is the idiom; the assert on `second` is what\n   \"each draw consumes the stream\" means, written as code.\n2. `replay` and `rewound` are the same claim reached two ways \u2014 a fresh\n   generator on the seed, and rewinding the one you have. Both land at the\n   start of the same sequence.\n3. The last block is the check people forget: reproducibility is only useful if\n   *different* seeds really do give different runs.",
+     "segments": [
+      {
+       "concept_id": "s0-",
+       "title": "",
+       "concept_markdown": "So far the generator has always arrived from somewhere else. Making one is two\ncalls, and they are almost always written as one line:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(rng)\nprint(t.rand(3, generator=rng))\n```\n\n`t.Generator()` builds an empty stream; `.manual_seed(seed)` fixes where that\nstream starts and **returns the generator**, which is why the two chain onto one\nline. An unseeded `t.Generator()` still works \u2014 it just starts somewhere nobody\nchose, so nothing about it can be reproduced.\n\nEvery sampler takes the generator the same way \u2014 as a keyword argument named\n`generator`, always last:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(0)\nprint(\"rand    \", t.rand(3, generator=rng))\nprint(\"randn   \", t.randn(3, generator=rng))\nprint(\"randint \", t.randint(0, 10, (3,), generator=rng))\nprint(\"randperm\", t.randperm(4, generator=rng))\n```\n\nNote the shape of the API. In NumPy you call **methods on** the generator \u2014\n`rng.random(5)`. In PyTorch the generator is an **argument** to an ordinary\nfunction \u2014 `t.rand(5, generator=rng)`. Same idea, inverted spelling, and it is\nthe thing most often got wrong coming from NumPy. `randint` keeps its own\nargument order: the shape stays third and `generator=` comes after it.\n\nThe seed is not a source of randomness. It is a **name for a whole sequence**.\nTwo generators given the same seed are not merely similar; they are the same\nstream, and they stay in step for as long as you draw from them equally:\n\n```python\nimport torch as t\n\na = t.Generator().manual_seed(42)\nb = t.Generator().manual_seed(42)\nprint(\"a:\", t.rand(3, generator=a))\nprint(\"b:\", t.rand(3, generator=b))\n```\n\nDraws consume that sequence, so position matters as much as the seed. After the\ndraws above, `a` and `b` are three numbers in \u2014 and a fresh generator on the\nsame seed is back at the start:\n\n```python\nimport torch as t\n\na = t.Generator().manual_seed(42)\nfirst = t.rand(3, generator=a)\nsecond = t.rand(3, generator=a)\nfresh = t.rand(3, generator=t.Generator().manual_seed(42))\n\nprint(\"first :\", first)\nprint(\"second:\", second)\nprint(\"fresh :\", fresh)\nassert first.tolist() != second.tolist()   # the stream moved on\nassert fresh.tolist() == first.tolist()    # the seed replayed it\n```\n\nThat pair of asserts is the entire contract. It is also why an *extra* draw\nslipped in anywhere shifts every value after it: you have not changed the\nsequence, you have changed your position in it.\n\nReseeding an existing generator rewinds it to the same starting point:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(5)\nbefore = t.rand(2, generator=rng)\nrng.manual_seed(5)                      # back to the beginning of the stream\nafter = t.rand(2, generator=rng)\nprint(\"before:\", before)\nprint(\"after :\", after)\nassert before.tolist() == after.tolist()\n```\n\nDo that to a generator **you** made. Never to one you were handed \u2014 that is the\ncaller's position in their stream, and rewinding it is the bug the previous\nlesson warned about.\n\nYou will also meet the **global** API in the wild: `t.manual_seed(0)` followed by\nplain `t.rand(shape)` with no generator. It seeds one shared, process-level\nstream. It works, and plenty of code uses it, but any function anywhere can draw\nfrom it and move everyone else along. For anything you need to reproduce, prefer\nan explicit `Generator`: no hidden global state, and no interference between\ndistant pieces of code.",
+       "watch_out_markdown": "- **`t.Generator()` on its own is not reproducible.** Without `.manual_seed(...)`\n  it starts from a state nobody chose. Seeding is the whole point.\n- **`.manual_seed` returns the generator**, which is what makes\n  `t.Generator().manual_seed(0)` one expression. It also mutates in place, so\n  `rng.manual_seed(0)` on an existing generator rewinds it.\n- **A seed names a SEQUENCE, not a number.** Same seed and same draw order gives\n  the same values; change either and everything after the change moves.\n- **Never reseed a generator you were handed.** Your own: fine. The caller's:\n  that is their stream position, and rewinding it corrupts their run.\n- **`t.manual_seed(0)` and `t.Generator().manual_seed(0)` are different things.**\n  The first seeds the shared global stream; the second seeds a private one.\n- **`generator=` is a KEYWORD argument.** It never rides along positionally:\n  `t.rand(n, rng)` is not the same call and will not do what you want.",
+       "worked_example_markdown": "Task: build a seeded stream, show that the same seed replays it exactly, and\nshow that consuming the stream moves you along it.\n\n```python\nimport torch as t\n\n# One expression: build the stream, then fix where it starts.\nrng = t.Generator().manual_seed(42)\n\nfirst = t.rand(3, generator=rng)\nprint(\"first draw :\", first)\n\n# The SAME generator again: the stream has advanced past the first three.\nsecond = t.rand(3, generator=rng)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# A NEW generator on the same seed starts the same sequence over.\nreplay = t.rand(3, generator=t.Generator().manual_seed(42))\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n\n# Reseeding in place does the same thing to a generator you own.\nrng.manual_seed(42)\nrewound = t.rand(3, generator=rng)\nassert rewound.tolist() == first.tolist()\nprint(\"rewound    :\", rewound)\n\n# A different seed is a different sequence entirely.\nother = t.rand(3, generator=t.Generator().manual_seed(43))\nassert other.tolist() != first.tolist()\nprint(\"seed 43    :\", other)\n```\n\nWhy each step:\n\n1. Building and seeding in one line is the idiom; the assert on `second` is what\n   \"each draw consumes the stream\" means, written as code.\n2. `replay` and `rewound` are the same claim reached two ways \u2014 a fresh\n   generator on the seed, and rewinding the one you have. Both land at the\n   start of the same sequence.\n3. The last block is the check people forget: reproducibility is only useful if\n   *different* seeds really do give different runs.",
+       "worked_example_code": "import torch as t\n\n# One expression: build the stream, then fix where it starts.\nrng = t.Generator().manual_seed(42)\n\nfirst = t.rand(3, generator=rng)\nprint(\"first draw :\", first)\n\n# The SAME generator again: the stream has advanced past the first three.\nsecond = t.rand(3, generator=rng)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# A NEW generator on the same seed starts the same sequence over.\nreplay = t.rand(3, generator=t.Generator().manual_seed(42))\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n\n# Reseeding in place does the same thing to a generator you own.\nrng.manual_seed(42)\nrewound = t.rand(3, generator=rng)\nassert rewound.tolist() == first.tolist()\nprint(\"rewound    :\", rewound)\n\n# A different seed is a different sequence entirely.\nother = t.rand(3, generator=t.Generator().manual_seed(43))\nassert other.tolist() != first.tolist()\nprint(\"seed 43    :\", other)\n",
+       "faded_items": [
+        {
+         "question_id": 696,
+         "prompt": "Build your own seeded generator and take the first draw off it.",
+         "starter_code": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t._________()._________(seed)\n    return t.rand(n, _____=rng).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    return t.rand(n, generator=rng).tolist()\n"
+        },
+        {
+         "question_id": 697,
+         "prompt": "Two generators on one seed, and the proof they agree.",
+         "starter_code": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    rng_a = t._________()._________(seed)\n    rng_b = t._________()._________(seed)\n    a = t.rand(n, _____=rng_a)\n    b = t.rand(n, _____=rng_b)\n    return (a.tolist(), b.tolist(), a.tolist() == b.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (42, 3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    rng_a = t.Generator().manual_seed(seed)\n    rng_b = t.Generator().manual_seed(seed)\n    a = t.rand(n, generator=rng_a)\n    b = t.rand(n, generator=rng_b)\n    return (a.tolist(), b.tolist(), a.tolist() == b.tolist())\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 696,
+       "prompt": "Build your own seeded generator and take the first draw off it.",
+       "starter_code": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t._________()._________(seed)\n    return t.rand(n, _____=rng).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (0, 3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    return t.rand(n, generator=rng).tolist()\n"
+      },
+      {
+       "question_id": 697,
+       "prompt": "Two generators on one seed, and the proof they agree.",
+       "starter_code": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    rng_a = t._________()._________(seed)\n    rng_b = t._________()._________(seed)\n    a = t.rand(n, _____=rng_a)\n    b = t.rand(n, _____=rng_b)\n    return (a.tolist(), b.tolist(), a.tolist() == b.tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (42, 3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Two generators, one seed: return (draw a, draw b, are they identical?).\"\"\"\n    rng_a = t.Generator().manual_seed(seed)\n    rng_b = t.Generator().manual_seed(seed)\n    a = t.rand(n, generator=rng_a)\n    b = t.rand(n, generator=rng_b)\n    return (a.tolist(), b.tolist(), a.tolist() == b.tolist())\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 698,
+       "prompt": "Show that a seed replays: draw, reseed from scratch, draw again.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 699,
+       "prompt": "Two different seeds, and the proof the runs differ.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 700,
+       "prompt": "Two consecutive draws off one seeded stream.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 701,
+       "prompt": "Reseed a generator mid-stream and show it restarted.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 702,
+       "prompt": "Random integers off a stream you seeded yourself.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 703,
+       "prompt": "A permutation off a seeded stream, with its shape and dtype.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 694,
+       "prompt": "A normal draw off a generator, reported with its shape and dtype.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 704,
+       "prompt": "One seeded stream feeding all four samplers, in order."
+      },
+      {
+       "question_id": 705,
+       "prompt": "A seed fixes a whole sequence, not just the first draw."
+      },
+      {
+       "question_id": 706,
+       "prompt": "A reproducible row shuffle driven entirely by a seed."
+      }
+     ],
+     "independent_items": [
+      694,
+      698,
+      699,
+      700,
+      701,
+      702,
+      703
+     ],
+     "misconceptions_markdown": ""
+    },
+    {
+     "kc": "numpy.random-threading",
+     "title": "Using a stream you were handed",
+     "supporting_kcs": [
+      "numpy.random-seeding",
+      "numpy.random-samplers",
+      "numpy.ndarray-model"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "You can now build a stream and thread it into any sampler. This concept is the\nother half, and it is the half that appears in real code far more often: a\nfunction is **handed** an `rng` and has to use *that one*.\n\nNothing new to spell here \u2014 every symbol below came from the previous two\nconcepts. What is new is a rule:\n\n> Use the generator you were given. Do not make one. Do not reseed it.\n\n```python\nimport torch as t\n\ndef good(rng, n):\n    return t.rand(n, generator=rng)      # threads the caller's stream\n\ndef ignores(rng, n):\n    return t.rand(n)                     # silently uses the GLOBAL stream\n\ndef rewinds(rng, n):\n    rng.manual_seed(0)                   # silently rewinds the CALLER's stream\n    return t.rand(n, generator=rng)\n\nshared = t.Generator().manual_seed(7)\nprint(\"threaded:\", good(shared, 3))\nprint(\"the caller's stream has now advanced by three draws\")\n```\n\nBoth wrong versions **run fine and return plausible numbers**. Nothing raises.\nThat is what makes this worth its own concept: the failure has no symptom at\nthe call site, only wrong values somewhere downstream.\n\nWhy it matters is ownership. A generator is a deterministic stream, and each\ndraw consumes the next piece of it, so whoever holds the generator controls\nwhat every function that receives it will see:\n\n```python\nimport torch as t\n\ndef draw(rng, n):\n    return t.rand(n, generator=rng)\n\n# The caller seeds once and calls twice. The two results differ because the\n# stream MOVED \u2014 not because anything is random about `draw` itself.\nrng = t.Generator().manual_seed(0)\nfirst = draw(rng, 3)\nsecond = draw(rng, 3)\nprint(\"first :\", first)\nprint(\"second:\", second)\nassert first.tolist() != second.tolist()\n\n# And because `draw` threaded the stream instead of making its own, the caller\n# can reproduce the whole run from the seed alone.\nreplay = draw(t.Generator().manual_seed(0), 3)\nassert replay.tolist() == first.tolist()\nprint(\"replay:\", replay)\n```\n\nThat last assert is the contract a grader checks. A drill that hands you `rng`\nhas already computed what your draw must be; reseeding or building your own\nproduces different numbers and fails, with nothing in the error message about\ngenerators.\n\nThe generator only reaches the sampler. Everything you build from the draw is\nordinary tensor work:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(1)\norder = t.randperm(4, generator=rng)   # random part: needs the stream\nperm = t.eye(4)[order]                 # ordinary part: does not\nprint(\"order:\", order)\nprint(perm)\n```",
+     "worked_example_markdown": "Task: draw from a generator you were handed, show that the stream advances, and\nshow that threading is what makes the result the caller's rather than yours.\n\n```python\nimport torch as t\n\ndef next_uniforms(rng, n):\n    \"\"\"The next n uniform floats from rng's stream \u2014 the caller's stream.\"\"\"\n    return t.rand(n, generator=rng)\n\n# The caller owns the seed, so the caller can predict what comes out.\nrng = t.Generator().manual_seed(42)\nfirst = next_uniforms(rng, 3)\nprint(\"first draw :\", first)\n\n# The same generator, a second call: the stream has MOVED ON.\nsecond = next_uniforms(rng, 3)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# Every sampler takes the same keyword, off the same stream, in call order.\nints = t.randint(0, 10, (3,), generator=rng)\nperm = t.randperm(4, generator=rng)\nprint(\"ints:\", ints, \" perm:\", perm)\n\n# And threading is what makes it reproducible for the caller: a fresh generator\n# on the same seed replays the first draw exactly.\nreplay = next_uniforms(t.Generator().manual_seed(42), 3)\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n```\n\nWhy each step:\n\n1. `next_uniforms` is the shape of every rng-taking function you will write:\n   the generator comes in, goes straight to the sampler, and nothing else\n   touches it.\n2. The second call proves the stream is consumed, which is why a drill that\n   hands you `rng` has already computed what your draw must be.\n3. The replay at the end is the payoff: because the function threaded the\n   generator instead of making one, the caller can reproduce the result.",
+     "segments": [
+      {
+       "concept_id": "s0-",
+       "title": "",
+       "concept_markdown": "You can now build a stream and thread it into any sampler. This concept is the\nother half, and it is the half that appears in real code far more often: a\nfunction is **handed** an `rng` and has to use *that one*.\n\nNothing new to spell here \u2014 every symbol below came from the previous two\nconcepts. What is new is a rule:\n\n> Use the generator you were given. Do not make one. Do not reseed it.\n\n```python\nimport torch as t\n\ndef good(rng, n):\n    return t.rand(n, generator=rng)      # threads the caller's stream\n\ndef ignores(rng, n):\n    return t.rand(n)                     # silently uses the GLOBAL stream\n\ndef rewinds(rng, n):\n    rng.manual_seed(0)                   # silently rewinds the CALLER's stream\n    return t.rand(n, generator=rng)\n\nshared = t.Generator().manual_seed(7)\nprint(\"threaded:\", good(shared, 3))\nprint(\"the caller's stream has now advanced by three draws\")\n```\n\nBoth wrong versions **run fine and return plausible numbers**. Nothing raises.\nThat is what makes this worth its own concept: the failure has no symptom at\nthe call site, only wrong values somewhere downstream.\n\nWhy it matters is ownership. A generator is a deterministic stream, and each\ndraw consumes the next piece of it, so whoever holds the generator controls\nwhat every function that receives it will see:\n\n```python\nimport torch as t\n\ndef draw(rng, n):\n    return t.rand(n, generator=rng)\n\n# The caller seeds once and calls twice. The two results differ because the\n# stream MOVED \u2014 not because anything is random about `draw` itself.\nrng = t.Generator().manual_seed(0)\nfirst = draw(rng, 3)\nsecond = draw(rng, 3)\nprint(\"first :\", first)\nprint(\"second:\", second)\nassert first.tolist() != second.tolist()\n\n# And because `draw` threaded the stream instead of making its own, the caller\n# can reproduce the whole run from the seed alone.\nreplay = draw(t.Generator().manual_seed(0), 3)\nassert replay.tolist() == first.tolist()\nprint(\"replay:\", replay)\n```\n\nThat last assert is the contract a grader checks. A drill that hands you `rng`\nhas already computed what your draw must be; reseeding or building your own\nproduces different numbers and fails, with nothing in the error message about\ngenerators.\n\nThe generator only reaches the sampler. Everything you build from the draw is\nordinary tensor work:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(1)\norder = t.randperm(4, generator=rng)   # random part: needs the stream\nperm = t.eye(4)[order]                 # ordinary part: does not\nprint(\"order:\", order)\nprint(perm)\n```",
+       "watch_out_markdown": "- **Dropping `generator=` is silent.** `t.rand(n)` runs fine and returns\n  plausible numbers \u2014 from the wrong stream. Nothing errors; the grader just\n  reports different values.\n- **Do not reseed a generator you were handed.** The caller owns the stream;\n  reseeding it inside your function silently rewinds their sequence.\n- **Making your own generator \"just to be safe\" is the unsafe move.** It is the\n  one thing guaranteed to produce numbers the caller cannot reproduce.",
+       "worked_example_markdown": "Task: draw from a generator you were handed, show that the stream advances, and\nshow that threading is what makes the result the caller's rather than yours.\n\n```python\nimport torch as t\n\ndef next_uniforms(rng, n):\n    \"\"\"The next n uniform floats from rng's stream \u2014 the caller's stream.\"\"\"\n    return t.rand(n, generator=rng)\n\n# The caller owns the seed, so the caller can predict what comes out.\nrng = t.Generator().manual_seed(42)\nfirst = next_uniforms(rng, 3)\nprint(\"first draw :\", first)\n\n# The same generator, a second call: the stream has MOVED ON.\nsecond = next_uniforms(rng, 3)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# Every sampler takes the same keyword, off the same stream, in call order.\nints = t.randint(0, 10, (3,), generator=rng)\nperm = t.randperm(4, generator=rng)\nprint(\"ints:\", ints, \" perm:\", perm)\n\n# And threading is what makes it reproducible for the caller: a fresh generator\n# on the same seed replays the first draw exactly.\nreplay = next_uniforms(t.Generator().manual_seed(42), 3)\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n```\n\nWhy each step:\n\n1. `next_uniforms` is the shape of every rng-taking function you will write:\n   the generator comes in, goes straight to the sampler, and nothing else\n   touches it.\n2. The second call proves the stream is consumed, which is why a drill that\n   hands you `rng` has already computed what your draw must be.\n3. The replay at the end is the payoff: because the function threaded the\n   generator instead of making one, the caller can reproduce the result.",
+       "worked_example_code": "import torch as t\n\ndef next_uniforms(rng, n):\n    \"\"\"The next n uniform floats from rng's stream \u2014 the caller's stream.\"\"\"\n    return t.rand(n, generator=rng)\n\n# The caller owns the seed, so the caller can predict what comes out.\nrng = t.Generator().manual_seed(42)\nfirst = next_uniforms(rng, 3)\nprint(\"first draw :\", first)\n\n# The same generator, a second call: the stream has MOVED ON.\nsecond = next_uniforms(rng, 3)\nprint(\"second draw:\", second)\nassert first.tolist() != second.tolist()\n\n# Every sampler takes the same keyword, off the same stream, in call order.\nints = t.randint(0, 10, (3,), generator=rng)\nperm = t.randperm(4, generator=rng)\nprint(\"ints:\", ints, \" perm:\", perm)\n\n# And threading is what makes it reproducible for the caller: a fresh generator\n# on the same seed replays the first draw exactly.\nreplay = next_uniforms(t.Generator().manual_seed(42), 3)\nassert replay.tolist() == first.tolist()\nprint(\"replayed   :\", replay)\n",
        "faded_items": [
         {
          "question_id": 8,
          "prompt": "The next n uniform floats from a generator you are handed.",
-         "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t._____(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
+         "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
          "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, generator=rng)\n"
+        },
+        {
+         "question_id": 687,
+         "prompt": "The same move on the normal sampler, returned as a plain list.",
+         "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return t.randn(n, _____=rng).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+         "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return t.randn(n, generator=rng).tolist()\n"
         }
        ]
       }
@@ -2606,25 +2846,73 @@
       {
        "question_id": 8,
        "prompt": "The next n uniform floats from a generator you are handed.",
-       "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t._____(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
+       "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, _____=rng)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_rng = t.Generator().manual_seed(42)\nprint(solve(example_rng, 3))\n",
        "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n uniform [0,1) floats from rng's stream.\"\"\"\n    return t.rand(n, generator=rng)\n"
-      }
-     ],
-     "guided_items": [
+      },
       {
-       "question_id": 42,
-       "hints_markdown": "1. A random tensor of a given 3-D shape, uniform in [0, 1) \u2014 this drill uses\n   the global stream, so no generator argument is needed.\n2. The sampling functions share the shape convention with constructors: pass\n   the whole tuple.\n3. `t.rand(shape)` \u2014 the grader checks shape, dtype, range, and that values\n   vary (so no constant tensors).",
-       "worked_example_code": "",
-       "starter_code": "import torch as t\n\ndef solve(shape):\n    return t._____(shape)\n\n\nt.manual_seed(0)\nexample = (3, 3, 3)\nprint(solve(example))\n"
+       "question_id": 687,
+       "prompt": "The same move on the normal sampler, returned as a plain list.",
+       "starter_code": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return t.randn(n, _____=rng).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.Generator().manual_seed(0), 3,)\nprint(solve(*example))\n",
+       "solution": "import torch as t\n\ndef solve(rng, n):\n    \"\"\"Return the next n standard-normal floats from rng's stream.\"\"\"\n    return t.randn(n, generator=rng).tolist()\n"
       }
      ],
+     "guided_items": [],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
-     "independent_items": [
-      104
+     "solo_items": [
+      {
+       "question_id": 688,
+       "prompt": "Random integers in a given range, off the stream you were handed.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 689,
+       "prompt": "A permutation of 0..n-1, off the stream you were handed.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 690,
+       "prompt": "Two consecutive draws from one stream, and the proof they differ.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 691,
+       "prompt": "The next n uniform floats, leaving the stream otherwise undisturbed.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 692,
+       "prompt": "Noise added to a row of zeros, drawn from the caller's stream.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 693,
+       "prompt": "Shuffle a tensor's rows with a permutation drawn from the caller's stream.",
+       "worked_example_code": ""
+      }
      ],
-     "misconceptions_markdown": "- **\"I should reseed inside my function for safety.\"** \u2014 The opposite: a\n  function that receives `rng` must use the caller's stream. Reseeding or\n  creating a new generator inside breaks reproducibility (and fails graders\n  that check the exact stream).\n- **\"`rng.rand(3)` \u2014 the generator has the sampling methods.\"** \u2014 It does not.\n  The generator is passed *to* `t.rand(...)` as `generator=`. Its own methods\n  are about seed and state.\n- **\"`t.rand(3)` might include 1.0.\"** \u2014 The interval is half-open\n  [0, 1): 0 is possible, 1 is not. Scale/shift for other ranges.\n- **\"Same code, same randomness.\"** \u2014 Only with the same SEED and the same\n  DRAW ORDER. Any extra draw in between shifts everything after it; that's\n  what \"each draw consumes the stream\" means."
+     "integrated_items": [
+      {
+       "question_id": 104,
+       "prompt": "A random permutation MATRIX built from a generator you are handed."
+      },
+      {
+       "question_id": 695,
+       "prompt": "All four samplers off the SAME stream, in a fixed order."
+      },
+      {
+       "question_id": 707,
+       "prompt": "A permutation matrix plus the order that produced it, checked for validity."
+      }
+     ],
+     "independent_items": [
+      688,
+      689,
+      690,
+      691,
+      692,
+      693
+     ],
+     "misconceptions_markdown": ""
     },
     {
      "kc": "numpy.linalg-basics",

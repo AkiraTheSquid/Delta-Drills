@@ -156,7 +156,7 @@ window.DD_GLOSSARY = {
     {
       term: "generator",
       aliases: ["seeded generator", "deterministic stream"],
-      kc: "numpy.random-generator",
+      kc: "numpy.random-seeding",
       def: "The object that carries reproducible randomness. In PyTorch you make one and pass it as an argument to a sampling function, rather than calling methods on it.",
     },
     {
@@ -326,7 +326,9 @@ window.DD_GLOSSARY.kcLesson = {
     "numpy.elementwise-ufuncs": ["Arrays from the ground up", "Elementwise math"],
     "numpy.aggregations": ["Arrays from the ground up", "Whole-tensor aggregations and Python scalars"],
     "numpy.sorting": ["Arrays from the ground up", "Sorting tensors"],
-    "numpy.random-generator": ["Arrays from the ground up", "Random numbers with a Generator"],
+    "numpy.random-samplers": ["Arrays from the ground up", "Drawing random numbers"],
+    "numpy.random-threading": ["Arrays from the ground up", "Passing a generator into a draw"],
+    "numpy.random-seeding": ["Arrays from the ground up", "Seeding your own reproducible stream"],
     "numpy.linalg-basics": ["Arrays from the ground up", "Matrix multiply and t.linalg basics"],
     "numpy.boolean-masking": ["Indexing and selection", "Boolean masks — compare, count, filter"],
     "numpy.argmin-argmax": ["Indexing and selection", "Locating extremes — argmin and argmax"],

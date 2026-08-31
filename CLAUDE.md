@@ -74,6 +74,14 @@ skill report the same thing from the other side.
   ratchet in every lesson watcher. Read that spec before proposing a node boundary —
   the test is "can a learner fail this while succeeding at the rest of the node?",
   and one-function-per-node is explicitly wrong here.
+- **First split landed** (2026-08-31): `numpy.random-generator` → `numpy.random-samplers`
+  → `numpy.random-seeding` → `numpy.random-threading`, 32 new drills (ids 676–707),
+  every rung floor met and zero symbols under the coverage floor on all three nodes.
+  Teaching order was forced by the symbols, not the pedagogy: seeding owns
+  `torch.Generator`/`manual_seed`/all four `generator=` kwargs, which left threading
+  with no symbols of its own — a legitimate discipline node ("use the generator you
+  were handed"), the same shape as the `einops.*` pattern nodes. ⚠️ The Colab concept
+  maps were NOT regenerated; they still name the dead id. See `SPEC_NODE_SPLITTING.md`.
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

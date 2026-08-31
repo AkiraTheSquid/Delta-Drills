@@ -47,9 +47,15 @@ def check_data_dependencies():
     the archive — and the only record of what it taught is the git history.
     """
     manifest = json.load(open(MANIFEST, encoding='utf-8'))
+    # Two ways a page lands here: the concept was RETIRED (ARENA cut), or it
+    # was SPLIT into narrower concepts. Both leave the registry and both
+    # must be declared, but they are recorded separately — filing a split
+    # under retired_kcs would read as 'this was dropped from the course'.
     declared = set(manifest.get('retired_kcs') or [])
+    declared |= set((manifest.get('split_kcs') or {}).get('kcs') or {})
     assert declared, (
-        'retired_question_ids.json declares no retired_kcs — the manifest and '
+        'retired_question_ids.json declares no retired_kcs or split_kcs — the '
+        'manifest and '
         'this archive are the two halves of one record; a manifest that names '
         'no concepts cannot cross-check anything'
     )
@@ -59,12 +65,13 @@ def check_data_dependencies():
         'retired but not archived: ' + ', '.join(lost)
         + '. These concepts left kc_registry.json with no page filed here, so '
         'nothing but git history says what they taught. Move the page in, or '
-        'drop the id from retired_kcs.'
+        'drop the id from retired_kcs/split_kcs.'
     )
     stray = sorted(archived - declared)
     assert not stray, (
         'archived but not in the manifest: ' + ', '.join(stray)
-        + '. Add them to retired_kcs so the retirement has one list, or move '
+        + '. Add them to retired_kcs (dropped) or split_kcs (split) so the '
+        'archive has one list, or move '
         'the page back to Local_Deployed_Shared/lessons/.'
     )
 
