@@ -108,6 +108,26 @@
   - Status: `RESOLVED` (2026-04-27).
 
 ## Recent Changes
+- 2026-08-31 (**a concept off the frontier is still narrowed to its rung**):
+  four checks in `scripts/test_kc_ladder_report.py` had been failing, and they
+  were right. `narrow_to_next_kc` looks up the frontier KC twice and, when both
+  miss, used to return the candidate pool UNNARROWED — skipping every rung
+  check below it, so the difficulty picker chose on difficulty alone and a
+  `solo` drill could reach a learner whose ladder said `faded`. That is
+  promotion by exhaustion arriving through the one door the rest of the
+  function is built to hold shut. The miss is ordinary, not exotic: `frontier`
+  drops a KC that is `kc_is_learned`, and `kc_evidence_exhausted` makes that
+  true of every concept whose drills have all been served. New `_resident_kc`
+  narrows by MEMBERSHIP as a last resort — frontier-blind on purpose, because
+  it is not answering "what next" (nothing can, or the frontier would have
+  said) but "which concept are these questions from, so their rungs can be
+  compared". A concept the learner has ladder history with wins over a bare
+  count. The pool now comes back unnarrowed only when no question in it carries
+  a KC at all, which is the one case with no rung to honour.
+  🔴 A fully-served concept now returns `[]` WITH a gap, so the router answers
+  409 "author more drills" instead of the silent 404 the unnarrowed pool used
+  to produce. That is the 2026-08-28 rule; the test's old "must still serve
+  something" check was a leftover from before it and has been restated.
 - 2026-08-31 (**the mastery models know an example was on the screen**): the
   other half of the unaided rule — the ladder decides who advances, these two
   decide how good the learner is believed to be, and both read a drill served

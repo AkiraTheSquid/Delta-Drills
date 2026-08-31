@@ -75,17 +75,30 @@ def check_public_api():
                     f"{fname}:{lineno} id={rec['id']} missing 'starter_code'"
                 )
                 tcs = rec.get("test_cases")
-                assert isinstance(tcs, list) and tcs, (
-                    f"{fname}:{lineno} id={rec['id']} 'test_cases' must be non-empty list"
+                assert isinstance(tcs, list), (
+                    f"{fname}:{lineno} id={rec['id']} 'test_cases' must be a list"
                 )
-                first = tcs[0]
-                assert isinstance(first, dict), (
-                    f"{fname}:{lineno} id={rec['id']} test_cases[0] must be object"
-                )
-                for required in ("setup_code", "call", "expected_expr"):
-                    assert required in first, (
-                        f"{fname}:{lineno} id={rec['id']} test_cases[0] missing {required!r}"
+                # 🔴 Non-empty ONLY for function mode. A `stdout` row is a
+                # stdout_prediction drill: practice/grading.py runs the
+                # canonical answer under the same harness and compares stdout,
+                # and never looks at test_cases. Round 3 carries 51 such rows
+                # (ids 429+) and this check had been failing on the first of
+                # them ever since, which is 51 real rows called malformed for
+                # having the shape their grader wants.
+                if rec.get("submission_mode") == "function":
+                    assert tcs, (
+                        f"{fname}:{lineno} id={rec['id']} function mode needs a "
+                        "non-empty 'test_cases' — nothing else grades it"
                     )
+                if tcs:
+                    first = tcs[0]
+                    assert isinstance(first, dict), (
+                        f"{fname}:{lineno} id={rec['id']} test_cases[0] must be object"
+                    )
+                    for required in ("setup_code", "call", "expected_expr"):
+                        assert required in first, (
+                            f"{fname}:{lineno} id={rec['id']} test_cases[0] missing {required!r}"
+                        )
 
     for fname in ("function_mode_broken_ids.json", "function_mode_deleted_ids.json"):
         path = os.path.join(HERE, fname)

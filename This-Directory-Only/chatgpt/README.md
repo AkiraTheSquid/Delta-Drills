@@ -83,6 +83,17 @@ Runtime artifacts for the AI quality-fix pipeline — secrets, request/response 
   - Status: ACTIVE — naming kept for backward compat.
 
 ## Recent Changes
+- 2026-08-31: `watch.py` had been failing on two counts, both of which called
+  correct data malformed. (1) It required a non-empty `test_cases` on every
+  round-1/2/3 row, but round 3 carries 51 `submission_mode: "stdout"` rows
+  (ids 429+) — stdout_prediction drills, which `backend/app/practice/grading.py`
+  grades by running the canonical answer under the same harness and comparing
+  stdout, never by test cases. The requirement is now function-mode only.
+  (2) `function_mode_deleted_ids.json` overlapped four override rows
+  (65, 125, 157, 387). `questions.py` drops a deleted id whatever the override
+  says, so those rows were dead weight left behind by the retirements that
+  removed the questions (387 was the duplicate retired in `cbc80114`); they
+  have been deleted. Bank size unchanged at 352 — verified, not assumed.
 - 2026-04-29: `numpy_einsum_prompt_rewrite_overrides.jsonl` added (164 records). Sweep of numpy + einsum prompts that named the canonical answer function (e.g. "Row-wise argmax", "Tile X three times"). Produced by `Local_Deployed_Shared/rewrite_numpy_einsum_prompts.py` + `numpy_einsum_prompt_rewrite_system.txt`. Layered last in the override stack so its question_text wins; runnable scaffolding from the round-1/2/3 layers survives.
 - 2026-04-29: 4 from-scratch scaffolds for the unscaffolded numpy-100 holdouts (171 cartesian product, 184 symmetric assignment, 201 point-to-line distance, 209 Game of Life) appended to `function_mode_overrides_round3.jsonl`. Validator broken-id count: 4 → 0; student-facing bank: 384 → 388.
 - 2026-04-29: `function_mode_overrides_round3.jsonl` added (25 manual repairs of validator-flagged failures). Loader merge order is now round-1 → round-2 → round-3 → einops prompt rewrite. Validator broken-id count: 29 → 4 (the 4 unscaffolded numpy-100 holdouts).

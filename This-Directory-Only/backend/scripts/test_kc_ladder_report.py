@@ -27,6 +27,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app import kc_graph  # noqa: E402
 from app.adaptive import UserPracticeState  # noqa: E402
 
+NOW = "2026-08-31T00:00:00+00:00"
+
 fails = []
 
 
@@ -272,7 +274,26 @@ class _Q:
         self.difficulty_score = 50
 
 
-def servable(seq, served):
+def _learn_prereqs(state, kc):
+    """Put the learner where this fixture claims they are: on `kc`.
+
+    Without this the fixture was a learner sitting on numpy.ndarray-model's
+    faded rung who had never done any python — impossible since the python
+    course went in front of it. `frontier` drops a locked KC, so BOTH of
+    `narrow_to_next_kc`'s frontier lookups returned None and every case here
+    took the last-resort path. Seeding the prerequisite atoms to mastered is
+    what a real learner arriving on this concept looks like, and it makes the
+    checks below exercise the ORDINARY narrowing rather than the fallback.
+    """
+    node = kc_graph.registry_node(kc) or {}
+    for parent in node.get("prereqs") or []:
+        row = kc_graph._crosswalk().get(parent) or {}
+        for atom in row.get("atoms") or []:
+            state.atom_mastery[atom["a"]] = 1.0
+            state.atom_last_ts[atom["a"]] = NOW
+
+
+def _state_on_rung(seq, learned_prereqs=True):
     st = fresh_state()
     st.kc_ladder[LADDER_KC] = {
         "worked_seen": 1,
@@ -281,10 +302,22 @@ def servable(seq, served):
             for c in seq
         ],
     }
-    out, _kc, _gap = prioritization.narrow_to_next_kc(
+    if learned_prereqs:
+        _learn_prereqs(st, LADDER_KC)
+    return st
+
+
+def narrowed_for(seq, served, learned_prereqs=True):
+    st = _state_on_rung(seq, learned_prereqs)
+    out, _kc, gap = prioritization.narrow_to_next_kc(
         st, [_Q(i) for i in POOL], served=set(served)
     )
-    return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out)
+    return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out), gap
+
+
+def servable(seq, served, learned_prereqs=True):
+    stage, ids, _gap = narrowed_for(seq, served, learned_prereqs)
+    return stage, ids
 
 
 SOLO = set(kc_graph.questions_at_stage(POOL, "solo"))
@@ -297,10 +330,30 @@ for label, served in (("nothing served", []), ("every drill served", POOL)):
     stage, ids = servable(POISONED, served)
     check(f"on the run, {label}: the rung it earned, not the top",
           stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
-# ...and the queue must never be left with nothing to serve, which is the
-# failure the old unserved-only shortcut was there to prevent.
-check("a fully-served concept still has something to serve",
-      all(servable(s, POOL)[1] for s in ("", "FFFF", "TTT", POISONED)))
+# A concept with every drill served serves NOTHING, and says why. That is the
+# 2026-08-28 rule ("it should notify the user that they need to make the AI
+# create more problems rather than serving up the old problems they have
+# already done"), so the contract to check is not "something comes back" — it
+# is that the empty list arrives WITH a gap naming the concept and the rung.
+# The router turns that into the 409 the learner reads; an empty list and no
+# gap would be a silent 404 instead.
+for seq in ("", "FFFF", "TTT", POISONED):
+    _stage, _ids, _gap = narrowed_for(seq, POOL)
+    check(f"a fully-served concept reports its gap rather than repeating ({seq or 'cold'})",
+          not _ids and bool(_gap) and _gap.get("kc") == LADDER_KC
+          and _gap.get("stage") == _stage,
+          f"served={_ids} gap={_gap}")
+
+# The frontier can also miss entirely — `frontier` drops a KC that is
+# `kc_is_learned`, and `kc_evidence_exhausted` makes that true of any concept
+# whose drills are all served. That used to return the pool UNNARROWED, which
+# skipped every rung check below it and let a solo drill reach a faded learner.
+# Reproduced here by leaving the prerequisites unlearned, which takes the same
+# last-resort path.
+_stage, _ids = servable("FFFFFFFFFFFTTFFTT", [], learned_prereqs=False)
+check("a concept off the frontier is still narrowed to the learner's rung",
+      _stage == "faded" and _ids and not (set(_ids) & SOLO),
+      f"stage={_stage} servable={_ids}")
 
 print()
 if fails:

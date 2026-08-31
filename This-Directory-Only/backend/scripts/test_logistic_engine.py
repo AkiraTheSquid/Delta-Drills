@@ -10,6 +10,7 @@ then the independent-replay check that the whole design rests on — the stored
 log must reproduce the live posteriors exactly, or the log is not a substitute
 for the state and the "posteriors are disposable" claim is false.
 """
+import json
 import math
 import shutil
 import sys
@@ -467,7 +468,20 @@ print("\nI. GRAPH BRIDGE — features off the real concept graph")
 from app import adaptive, engine_features as F  # noqa: E402
 
 state = adaptive.UserPracticeState(user_id="engine-test")
-KC_ROOT = "numpy.ndarray-model"
+# 🔴 The root is DERIVED from kc_registry.json, not named. It used to be
+# hard-coded to "numpy.ndarray-model", which stopped being a root the moment
+# the python course went in front of it (it now declares python.indexing,
+# python.defining-functions and python.dots-and-imports), so both root checks
+# had been failing while testing nothing: a KC with parents obviously has a
+# non-zero prereq term and something to probe. Ask the graph which KC has no
+# parents, and the assertions follow the curriculum instead of a memory of it.
+_reg = json.loads(
+    (Path(F.__file__).resolve().parents[3]
+     / "Local_Deployed_Shared" / "lessons" / "kc_registry.json").read_text()
+)
+_roots = [k["id"] for k in _reg.get("kcs", []) if not (k.get("prereqs") or [])]
+check("the concept graph has a root to start a learner on", bool(_roots), str(_roots))
+KC_ROOT = _roots[0]
 KC_CHILD = "numpy.broadcasting-rules"
 
 vec = F.build(state, KC_CHILD, "worked", difficulty_score=55)

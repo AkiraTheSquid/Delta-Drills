@@ -59,11 +59,13 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     does not place — where the KC graph has nothing to say, the finer BKT
     prerequisite index is better than no gate at all.
 
-    Intersecting the two was tried and is wrong. They disagree: the KC registry
-    makes `numpy.ndarray-model` a root with no prerequisites, while the atom
-    graph gives its atom `tensor-wraps-ndarray` unmet prerequisites. Requiring
+    Intersecting the two was tried and is wrong. They disagreed: the KC registry
+    made `numpy.ndarray-model` a root with no prerequisites, while the atom
+    graph gave its atom `tensor-wraps-ndarray` unmet prerequisites. Requiring
     both left a fresh learner exactly ONE servable question in a 373-question
-    bank. Two prerequisite structures voting produces the stricter of two
+    bank. (That KC is no longer a root — the python course now sits in front of
+    it, and `python.values-and-names` is the only root left — but the reasoning
+    is about two lattices voting, not about which node was the example.) Two prerequisite structures voting produces the stricter of two
     disagreements rather than an answer, so the graph decides alone and the
     disagreement becomes a data bug to fix in the atom graph, not a lock.
 
@@ -83,6 +85,41 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
         )
         for t in tags
     )
+
+
+def _resident_kc(user_state, candidates) -> Optional[str]:
+    """The concept this pool of questions IS, ignoring the frontier entirely.
+
+    Last resort for `narrow_to_next_kc`, and the reason it exists: `frontier`
+    drops a KC that is `kc_is_learned`, and that includes
+    `kc_evidence_exhausted` — a learner who has been served every drill on
+    their concept. For them BOTH frontier lookups return None, and the function
+    used to hand back the whole unnarrowed pool. The difficulty picker then
+    chose on difficulty alone, so a `solo` drill could reach somebody whose
+    ladder still says `faded`: promotion by exhaustion, arriving through the
+    one door the rest of this function is built to hold shut.
+
+    Frontier-blind on purpose. It is not answering "what should this learner
+    learn next" — nothing here can, or the frontier would have said so. It
+    answers the narrower question the rung logic actually needs: which concept
+    are these questions FROM, so their rungs can be compared to the rung the
+    learner is on. A concept the learner has ladder history with wins over a
+    bare count, because that history is the record of them sitting on it.
+    """
+    counts: Dict[str, int] = {}
+    for q in candidates:
+        for kc in kc_graph.question_kcs(q.id):
+            counts[kc] = counts.get(kc, 0) + 1
+    if not counts:
+        return None
+    ladder = getattr(user_state, "kc_ladder", None) or {}
+
+    def rank(kc: str):
+        row = ladder.get(kc) if isinstance(ladder, dict) else None
+        seen = bool(isinstance(row, dict) and (row.get("attempts") or row.get("worked_seen")))
+        return (0 if seen else 1, -counts[kc], kc)
+
+    return sorted(counts, key=rank)[0]
 
 
 def narrow_to_next_kc(
@@ -143,6 +180,21 @@ def narrow_to_next_kc(
         # sitting on `Worked`.
         next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here)
     if not next_kc:
+        # 🔴 Both frontier lookups can miss, and the case is ordinary rather
+        # than exotic: `frontier` skips a KC that is `kc_is_learned`, which
+        # `kc_evidence_exhausted` makes true of every concept whose drills have
+        # all been served. Returning `candidates` here returned the pool
+        # UNNARROWED, and the rung logic below — every line of which exists to
+        # stop a drill above the learner's rung being served — was skipped
+        # wholesale. Narrow by membership instead, so the rungs still get
+        # compared. (Caught by scripts/test_kc_ladder_report.py, whose fixture
+        # had been failing on exactly this since the python course put three
+        # prerequisites in front of numpy.ndarray-model.)
+        next_kc = _resident_kc(user_state, candidates)
+    if not next_kc:
+        # No question here carries a KC at all, so there is no rung to honour
+        # and nothing to compare — the only case where the whole pool is the
+        # honest answer.
         return candidates, None, None
     narrowed = [q for q in candidates if q.id in set(kc_graph.questions_for_kc(next_kc))]
     if not narrowed:

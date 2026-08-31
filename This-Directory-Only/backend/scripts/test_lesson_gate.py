@@ -24,6 +24,9 @@ from fastapi.testclient import TestClient  # noqa: E402
 from app import auth, diagnostic, lessons  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
+from app.adaptive import get_user_state  # noqa: E402
+from app.prioritization import question_is_unlocked  # noqa: E402
+from app.questions import get_all_questions  # noqa: E402
 
 fails = []
 
@@ -36,26 +39,30 @@ def check(name, cond, detail=""):
 
 # --- metadata loading -------------------------------------------------------
 lessons._load()
-# These counts moved and the constants were never updated, so both assertions
-# have been failing since before this change:
-#   380 -> 374  the structured-dtypes retirement removed that KC's questions,
-#               and q480 (curated_additions) added one back.
-#   374 -> 380  six new drills for numpy.ndarray-model, the lattice root. It
-#               owned two questions against a mastery bar wanting ~7 correct
-#               answers, so the queue had to recycle them and the rest of the
-#               course stayed locked behind the loop.
-#   380 -> 416  36 drills across the nine thinnest concepts on the learner's
-#               path, so each of the first ten reaches the ~8 the four-rung
-#               ladder needs before it starts recycling.
-#    64 -> 63   numpy.structured-dtypes was retired with the torch conversion;
-#               kc_registry.json has held 63 KCs since.
-_EXPECTED_TAGGED = 416
-_EXPECTED_KCS = 63
-check("qmatrix loads all easy-topic questions",
-      len(lessons._question_target_kcs) == _EXPECTED_TAGGED,
-      f"got {len(lessons._question_target_kcs)}, expected {_EXPECTED_TAGGED}")
-check("every KC has an introducing KP", len(lessons._kc_gate_info) == _EXPECTED_KCS,
-      f"got {len(lessons._kc_gate_info)}, expected {_EXPECTED_KCS}")
+# 🔴 DERIVED, never a frozen count. Both of these used to be magic numbers
+# (416 tagged questions, 63 KCs) and both had been failing for weeks: every
+# drill Seth authors moves the first and every retirement moves the second, so
+# the numbers rotted on their own and the failure said nothing about the gate.
+# The SIZE floors are owned by Local_Deployed_Shared/lessons/watch.py
+# (_MIN_KCS, _MIN_TAGGED_QUESTIONS) — one place, and it is the one the deploy
+# gate reads. What is left here is the pair of invariants this suite is
+# actually about, each stated against another file so it cannot go stale:
+#   - every KC the registry declares has an introducing KP, or a learner can
+#     reach a concept the gate has no lesson to send them to;
+#   - every tagged question id is a real question, or a retirement left tags
+#     pointing at drills that no longer exist.
+_registry = lessons._read_json("kc_registry.json") or {}
+_registry_kcs = {kc["id"] for kc in _registry.get("kcs", [])}
+_missing_kp = sorted(_registry_kcs - set(lessons._kc_gate_info))
+check("every registered KC has an introducing KP", not _missing_kp,
+      f"{len(_missing_kp)} without one: {_missing_kp[:5]}")
+
+_bank_ids = {q.id for q in get_all_questions()}
+_orphan_tags = sorted(set(lessons._question_target_kcs) - _bank_ids)
+check("no qmatrix tag points at a retired question", not _orphan_tags,
+      f"{len(_orphan_tags)} orphaned: {_orphan_tags[:5]}")
+check("qmatrix loaded the tagged bank", len(lessons._question_target_kcs) > 0,
+      f"got {len(lessons._question_target_kcs)}")
 
 gate = lessons.unexposed_target_kcs(1, {})
 check("unexposed target KC gates", bool(gate) and gate[0]["kc"] == "numpy.argmin-argmax")
@@ -105,10 +112,25 @@ check("exposure survives state reload", "numpy.argmin-argmax" in resp["exposed"]
 # Force the normal queue onto a numpy subtopic with the diagnostic disabled.
 # (Already imported via app.main — a plain `import app.practice...` here would
 # rebind the name `app` and shadow the FastAPI instance.)
+# 🔴 The subtopic is DERIVED from what this learner can actually be served,
+# not named. It used to be pinned to "Numpy: Core array literacy", and the
+# unlock lattice locks every numpy concept behind the python prerequisites, so
+# a fresh user has nothing unlocked there: /next-question 404d, the response
+# had no `lesson_gate` key at all and the suite died on a KeyError two checks
+# from the end. Ask the lattice which subtopic is open instead.
 qr = sys.modules["app.practice.questions_router"]
+_probe_state = get_user_state(str(user.id))
+_open = [
+    q for q in get_all_questions()
+    if question_is_unlocked(_probe_state, q) and lessons.unexposed_target_kcs(q.id, {})
+]
+check("a fresh learner has an unlocked, gated question to be served", bool(_open),
+      f"{len(_open)} unlocked and gated"
+      if _open else "nothing unlocked carries a lesson gate — no first drill")
+_gate_subtopic = _open[0].subtopic if _open else ""
 _orig_select = qr.select_next_subtopic
 _orig_should_run = diagnostic.should_run
-qr.select_next_subtopic = lambda st: "Numpy: Core array literacy"
+qr.select_next_subtopic = lambda st: _gate_subtopic
 diagnostic.should_run = lambda st: False
 try:
     data = client.get("/api/practice/next-question").json()
