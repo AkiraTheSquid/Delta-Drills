@@ -36,6 +36,41 @@ SCHEDULE: Dict[str, dict] = {
 UNAIDED_TO_FINISH = 2
 
 
+def aided(attempt: dict) -> bool:
+    """Was this attempt made behind a worked-example popup?
+
+    Attempts recorded before 2026-08-30 carry no `example` key at all, and the
+    popup did not exist then, so a missing key reads as unaided — which is what
+    those rows actually were.
+    """
+    return bool(attempt.get("example"))
+
+
+def unaided(attempts: List[dict]) -> List[dict]:
+    """`attempts` with the aided ones dropped — the record of what they can do alone."""
+    return [a for a in (attempts or []) if not aided(a)]
+
+
+def unaided_run(attempts: List[dict]) -> List[dict]:
+    """The trailing run of correct answers, counting only the unaided ones.
+
+    An aided answer is NEUTRAL: it neither counts toward the run nor breaks it.
+    Breaking on it would make this table fight the ladder — the example at Solo
+    position 2 is shown by the system, not asked for, so it would reset a run
+    the learner did nothing wrong in. Counting it would let a run promote on
+    assistance, which is the thing the unaided rule exists to stop. A WRONG
+    answer still breaks the run whether or not an example was on screen.
+    """
+    run = []
+    for attempt in reversed(attempts or []):
+        if not attempt.get("correct"):
+            break
+        if aided(attempt):
+            continue
+        run.append(attempt)
+    return run
+
+
 def position(attempts: List[dict], stage: str) -> int:
     """How many attempts in a row the learner has made at `stage`, ending now.
 

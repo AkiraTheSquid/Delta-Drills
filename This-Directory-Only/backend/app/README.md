@@ -39,7 +39,7 @@
 - `adaptive.py`: per-user state, target-difficulty curve, attempt recording, feedback application.
 - `content_gaps.py`: **where the course ran out** — one JSON object on the volume (`DATA_DIR/content-gaps.json`), keyed `user|kc|stage`, counting how often a learner hit a rung with nothing unseen left. Written from `practice/questions_router.py`; read by the `/drill-gaps` skill, which turns each row into drills to author. 🔴 Every failure is swallowed: a queue that 500s because it could not write a to-do list is strictly worse than one that quietly forgets to.
 - `prioritization.py`: subtopic-selection weights and gradient-based prioritization.
-- `example_schedule.py`: **when a worked example pops up in front of a drill** — one table (`SCHEDULE`) per stored rung: Faded only after an unaided miss, Solo at widening positions (0, 2, 5, 9), Integrated once on entry. `plan(attempts, stage)` is pure and is called at serve time (`prioritization.ladder_fields` → `ladder_example`) and again at record time so the stored attempt carries `example: bool`; `unaided_finish` is the third clause of `kc_graph.kc_evidence_exhausted`. An experiment (2026-08-30) — retune the table, nothing else. Spec: `../../SPEC_WORKED_EXAMPLE_SCHEDULE.md` (repo `This-Directory-Only/`).
+- `example_schedule.py`: **when a worked example pops up in front of a drill, and which answers count as the learner's own** — one table (`SCHEDULE`) per stored rung: Faded only after an unaided miss, Solo at widening positions (0, 2, 5, 9), Integrated once on entry. `plan(attempts, stage)` is pure and is called at serve time (`prioritization.ladder_fields` → `ladder_example`) and again at record time so the stored attempt carries `example: bool`; `unaided_finish` is the third clause of `kc_graph.kc_evidence_exhausted`, and `aided`/`unaided`/`unaided_run` are what the ladder's two promotion routes read (see the asymmetry below). An experiment (2026-08-30) — retune the table, nothing else. Spec: `../../SPEC_WORKED_EXAMPLE_SCHEDULE.md` (repo `This-Directory-Only/`).
 - `questions.py`: loads the question catalog (CSV-backed, then a stack of JSONL override layers) and exposes `get_question_by_id`, `get_questions_by_subtopic`, and `reload_questions()` for re-reading the bank after a layer is written at runtime.
 - `feedback_ai_layer.py`: storage for the ONE override layer written at runtime rather than by a batch script — the question repairs driven by per-problem feedback (`practice/feedback_ai_improver.py`). Owns `ai_feedback_overrides.jsonl` (live, rewritten whole) and `ai_feedback_revisions.jsonl` (append-only audit log), both under `DELTA_FEEDBACK_AI_DIR`. Stdlib-only and imports nothing from `app`, so `questions.py` can read the layer during startup without a cycle.
 - `feedback_repair_queue.py`: the jobs those repairs come from. A flagged question becomes a `pending` record in `ai_feedback_queue.jsonl` (same directory, same stdlib-only rule) and the request ends there; the model call happens on Seth's machine via `ops/question_repair/run_repairs.py`. **No model credential exists server-side** — that is the design, and `practice/watch.py` fails if an API-key path reappears.
@@ -108,6 +108,21 @@
   - Status: `RESOLVED` (2026-04-27).
 
 ## Recent Changes
+- 2026-08-31 (**assistance holds a rung, it does not buy one**): the `example`
+  flag was stored per attempt and then read by nothing except the small-pool
+  finish, so both promotion routes counted an answer given behind a
+  worked-example popup as evidence of unassisted competence — and the Solo
+  schedule shows one on the first and third drills of the rung against a
+  three-answer streak, so a learner could leave the rung having read two of the
+  three answers. `kc_graph._streak_stage` now counts only unaided answers in the
+  run (an aided one is neutral: it neither counts nor breaks the run) while an
+  unbroken aided run still HOLDS the rung it was made at; the Wilson route is
+  capped by `_capped_by_unaided`, floored at the rung the last attempt was
+  served at so that arriving on a rung behind its entry example cannot demote
+  anyone. Demotion is untouched and still reads the full record. `kc_estimate`
+  gained `promote_lo` and `unaided`, and `practice/stage-ladder.js` draws
+  `promote_lo` so the bar cannot fill on answers that will not promote.
+  Guarded by `watch.check_only_unaided_answers_promote`.
 - 2026-08-30 (**worked-example popups on the drill rungs**): new `example_schedule.py`; `kc_graph.record_kc_outcome` stores `example` per attempt and `kc_evidence_exhausted` requires the last two Integrated answers unaided; `prioritization.ladder_fields` adds `ladder_example` (frontend `practice/example-gate.js` draws it). `watch.py` checks the table's shape, not its numbers.
 - 2026-08-30: Two atoms joined `NON_GATING_ATOMS` and two joined the graph's `intentional_root_atoms`, for the 2026-07-08 reason in a new form. The ARENA content cut retired every question that trained `as-strided-windowing` and `inf-masking`, and a gating prerequisite with no trainer locks its dependents for every learner forever — `audit_question_bank.py --gate` caught it as `atom_prereq_untrainable` on 16 questions. `conv-output-shape` and `stride-zero-broadcast` had `as-strided-windowing` as their ONLY prerequisite, so demoting it left them ungated; both are now declared intentional roots rather than left silently rootless. Where the concept SURVIVED the cut the better fix was available and taken instead: q103 and q198 stayed in the bank so `softmax-from-logits` and `boolean-mask-combine` keep a trainer. Gate is green.
 - 2026-08-28 (**never re-serve a question; say so when the rung runs dry**): new `content_gaps.py`, plus `kc_graph.py`, `prioritization.py`, `lessons.py`, `questions.py`, `practice_schemas.py`, `practice/questions_router.py`, `watch.py`.

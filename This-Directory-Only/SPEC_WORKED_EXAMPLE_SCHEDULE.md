@@ -57,6 +57,37 @@ was served behind a popup. `kc_evidence_exhausted` (the small-pool route to
 Integrated rung to have been made WITHOUT an example: "you should really be
 tested before you move on". The BKT mastery route is untouched.
 
+**2026-08-31 — the flag now gates BOTH promotion routes, not just the
+small-pool finish.** Stored and then ignored is how a ladder comes to measure
+its own examples: the Solo schedule shows a popup on the first and third drills
+of the rung, and `_PROMOTE_STREAK` is three, so a learner could leave the rung
+having answered two of the three with the code on screen a moment earlier. The
+rule is now an ASYMMETRY, and the asymmetry is the whole thing:
+
+| | reads |
+|---|---|
+| Promotion — `_streak_stage` | UNAIDED answers only; an aided answer is neutral, it neither counts toward the run nor breaks it |
+| Promotion — the Wilson window | full record, then capped by `_capped_by_unaided` at what the unaided window supports |
+| Holding a rung | full record — an unbroken run that is merely aided returns the rung it was made at, no step up |
+| Demotion (immediate miss, confidently-struggling) | full record — a miss behind an example is still a miss |
+
+So **assistance can hold a learner where they are and can drop them; only
+their own answers move them up.** Cognitive Tutors have taken the same position
+since Corbett & Anderson: a step answered after help is not credited as correct
+evidence of the skill.
+
+The cap floors at the rung the learner's last attempt was served at. Without
+that floor, arriving on a rung whose entry the schedule chose to open with an
+example reads as 0/0 unaided — a bound of 0.0 — and would DEMOTE them for being
+shown it. The streak route is deliberately NOT put through the cap: it already
+counts unaided answers only, and the unaided bound comes from the same poisoned
+window the streak exists to overrule.
+
+`kc_estimate` reports `promote_lo` (the unaided lower bound) and `unaided`
+`{n, correct, ci}` beside the full `ci`; `practice/stage-ladder.js` draws
+`promote_lo`, because a progress bar fed by the full record would fill on
+answers that cannot promote.
+
 ### 3. The popup — `practice/example-gate.js`
 
 Server sends `ladder_example: {show, why, position}` on the question.

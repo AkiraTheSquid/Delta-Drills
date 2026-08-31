@@ -391,6 +391,53 @@ def check_the_example_schedule_fades_and_then_tests():
         "answers at the rung BELOW count as the Integrated test"
 
 
+def check_only_unaided_answers_promote():
+    """Assistance may HOLD a rung and may drop one. It may not buy one.
+
+    kc_graph, 2026-08-30. A drill served behind a worked-example popup had the
+    answer on screen a moment earlier, so counting it as evidence of unassisted
+    competence lets a learner climb on the examples — and the Solo schedule
+    shows two of the first three. Both promotion routes therefore read UNAIDED
+    answers: `_streak_stage` counts only those in the run, and the window route
+    is capped by `_capped_by_unaided`. Demotion is deliberately NOT gated — a
+    miss behind an example is still a miss.
+    """
+    from types import SimpleNamespace
+    from app import kc_graph
+
+    ok = lambda st, ex=False: {"correct": True, "stage": st, "example": ex}
+    miss = lambda st, ex=False: {"correct": False, "stage": st, "example": ex}
+    stage = lambda att: kc_graph.kc_stage(
+        SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": list(att)}}), "k"
+    )
+
+    entered = [miss("faded")] * 5 + [ok("faded")] * 3 + [miss("partial")]
+    assert stage(entered + [ok("partial", True)] * 3) == "partial", (
+        "three answers made BEHIND examples promoted off the Solo rung — the "
+        "ladder is measuring the examples"
+    )
+    assert stage(entered + [ok("partial", True), ok("partial"), ok("partial", True)]) == "partial",         "a run whose unaided answers number fewer than the streak still promoted"
+    assert stage(entered + [ok("partial")] * 3) == "solo",         "three UNAIDED correct answers no longer promote — the streak route is dead"
+
+    # An aided run HOLDS. Taking the hold away as well as the promotion would
+    # demote a learner for having been shown an example they did not ask for.
+    assert stage([miss("partial")] * 2 + [ok("partial", True)] * 12) == "partial",         "a learner answering correctly behind examples was demoted for it"
+    # ... and the same window made of unaided answers still promotes.
+    assert stage([miss("partial")] * 2 + [ok("partial")] * 12) == "solo",         "an unaided window no longer promotes"
+
+    # Demotion sees everything, and a record from before the popup existed
+    # (no `example` key at all) is unaided, which is what it was.
+    assert stage([ok("faded")] * 4 + [ok("partial"), miss("partial", True)]) == "faded",         "a miss made behind an example stopped counting as a miss"
+    assert stage([{"correct": True, "stage": "partial"} for _ in range(4)]) == "solo",         "pre-2026-08-30 attempts, which carry no example flag, stopped promoting"
+
+    est = kc_graph.kc_estimate(
+        SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": entered + [ok("partial", True)] * 3}}),
+        "k",
+    )
+    assert est["promote_lo"] == est["unaided"]["ci"][0],         "promote_lo is not the unaided bound the ladder actually promotes on"
+    assert est["streak"] == 0,         "the strip is drawing a run of aided answers as progress toward a promotion"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [
@@ -403,6 +450,7 @@ if __name__ == '__main__':
         check_a_notebook_kernel_cannot_read_the_server,
         check_a_fresh_kernel_does_not_run_the_clicked_cell_twice,
         check_the_example_schedule_fades_and_then_tests,
+        check_only_unaided_answers_promote,
     ]
     for fn in checks:
         try:

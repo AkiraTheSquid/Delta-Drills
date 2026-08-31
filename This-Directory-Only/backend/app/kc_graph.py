@@ -563,17 +563,26 @@ def kc_estimate(user_state, kc: str) -> dict:
     n = len(recent)
     k = sum(1 for a in recent if a.get("correct"))
     lo, hi = _wilson(k, n)
+    # THE SAME INTERVAL OVER UNAIDED ANSWERS ONLY, and the only one promotion
+    # may read. A drill served behind a worked example is a drill whose answer
+    # was on the screen a moment ago; counting it as evidence of unassisted
+    # competence is how a learner climbs the ladder on the examples rather than
+    # on the concept. The full-record interval above still drives DEMOTION and
+    # everything the display says, so assistance can hold a learner in place and
+    # can drop them, but only their own answers can move them up. Cognitive
+    # Tutors have taken the same position since Corbett & Anderson: a step
+    # answered after help is not credited as correct evidence of the skill.
+    unaided = example_schedule.unaided(recent)
+    n_u = len(unaided)
+    k_u = sum(1 for a in unaided if a.get("correct"))
+    lo_u, hi_u = _wilson(k_u, n_u)
     # Trailing correct answers. This is the OTHER route out of a rung — see
     # `_streak_stage`: a run of `_PROMOTE_STREAK` promotes on its own, whatever
     # the window says, because a window with a long tail of old misses in it
     # never catches up with a learner who has plainly got it. Reported so the
     # UI can draw the route the learner is actually on; a run is the half of
     # promotion that moves with the answer in front of them.
-    run = []
-    for a in reversed(attempts):
-        if not a.get("correct"):
-            break
-        run.append(a)
+    run = example_schedule.unaided_run(attempts)
     est = {
         "n": n,
         "correct": k,
@@ -581,6 +590,16 @@ def kc_estimate(user_state, kc: str) -> dict:
         "ci": [round(lo, 4), round(hi, 4)],
         "streak": len(run),
         "streak_needed": _PROMOTE_STREAK,
+        # The unaided record, reported beside the full one because it is the
+        # half the ladder promotes on — a strip drawing progress out of a rung
+        # has to draw the bound that actually opens the gate, or the bar fills
+        # while the learner stays put.
+        "unaided": {
+            "n": n_u,
+            "correct": k_u,
+            "ci": [round(lo_u, 4), round(hi_u, 4)],
+        },
+        "promote_lo": round(lo_u, 4),
         "worked_seen": int(row.get("worked_seen") or 0),
         # When this concept was last answered, from its own record. The graph's
         # "last practiced" line reads BKT atom timestamps, which exist for the
@@ -674,22 +693,48 @@ def _streak_stage(attempts: List[dict]) -> Optional[str]:
 
     Bounded on the other side by the demotion rule, which is unchanged and still
     immediate — a streak buys one rung and one miss gives it straight back.
+
+    ASSISTANCE HOLDS A RUNG, IT DOES NOT BUY ONE. The step up is read from the
+    UNAIDED run (`example_schedule.unaided_run`): an answer given behind a
+    worked-example popup is not evidence the learner can do it alone, and the
+    schedule shows two of the first three drills at the Solo rung, so a raw run
+    promoted them for reading. But a run that is unbroken and merely aided still
+    returns the rung it was made AT, because dropping that half would demote a
+    learner mid-run — the window this route exists to overrule is still poisoned
+    underneath, and taking away the hold as well as the promotion means the
+    examples the system chose to show cost them the rung they were standing on.
     """
+    full = _correct_run(attempts)
+    if len(full) < _PROMOTE_STREAK:
+        return None
+    held = _lowest_rung(full)
+    unaided = example_schedule.unaided_run(attempts)
+    if len(unaided) < _PROMOTE_STREAK:
+        return held
+    earned = _lowest_rung(unaided)
+    if earned is None:
+        return held
+    return _step_up(earned)
+
+
+def _correct_run(attempts: List[dict]) -> List[dict]:
+    """The trailing run of correct answers, aided or not."""
     run = []
     for attempt in reversed(attempts):
         if not attempt.get("correct"):
             break
         run.append(attempt)
-    if len(run) < _PROMOTE_STREAK:
-        return None
+    return run
+
+
+def _lowest_rung(run: List[dict]) -> Optional[str]:
+    """The lowest ladder rung any attempt in `run` was made at."""
     ranks = [
         LADDER_STAGES.index(a.get("stage"))
         for a in run
         if a.get("stage") in LADDER_STAGES
     ]
-    if not ranks:
-        return None
-    return _step_up(LADDER_STAGES[min(ranks)])
+    return LADDER_STAGES[min(ranks)] if ranks else None
 
 
 def _stage_from(est: dict, row: dict) -> str:
@@ -745,18 +790,55 @@ def _stage_from(est: dict, row: dict) -> str:
         return "faded"
     # Climb one rung at a time: clearing the solo bar also clears the partial
     # bar, so test from the top down and take the highest rung earned.
-    if lo >= PROMOTE_LO["partial"]:
-        earned = "solo"
-    elif lo >= PROMOTE_LO["faded"]:
-        earned = "partial"
-    else:
-        earned = "faded"
+    # The window route, gated on unaided answers. The streak route is NOT put
+    # through the same gate: it already counts only unaided answers, and the
+    # unaided bound is computed over the same poisoned window that the streak
+    # exists to overrule — running a run through it would re-poison it.
+    earned = _capped_by_unaided(_earned(lo), est, attempts)
     # Whichever route got further. They measure different things — one that the
     # concept is reliably right over a window, one that it is right NOW — and
     # taking the lower would let a poisoned window cancel a run it cannot see.
     if streak and LADDER_STAGES.index(streak) > LADDER_STAGES.index(earned):
-        return streak
+        earned = streak
     return earned
+
+
+def _earned(lo: float) -> str:
+    """The rung a Wilson lower bound clears, read from the top down."""
+    if lo >= PROMOTE_LO["partial"]:
+        return "solo"
+    if lo >= PROMOTE_LO["faded"]:
+        return "partial"
+    return "faded"
+
+
+def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
+    """`earned`, but a PROMOTION has to be supported by unaided answers.
+
+    THE ASYMMETRY IS THE WHOLE RULE. Assistance may hold a learner where they
+    are and may drop them — an answer missed behind a worked example is still a
+    miss, and the demotion paths above this one read the full record — but only
+    answers given without an example on screen can move them UP. Serving the
+    Solo rung shows an example on its first and third drills, so a ladder that
+    counted those the same as the rest promoted learners for reading.
+
+    Capping rather than recomputing is what keeps it from cutting the other
+    way. A learner who has just arrived on a rung has no unaided answers at it
+    yet, so an unaided-only estimate reads 0/0 — a bound of 0.0, which as a
+    stage would DEMOTE them for the crime of having been shown the example the
+    schedule chose to show. So the rung they are standing on (the one their last
+    attempt was served at) is the floor, and the unaided estimate can only
+    refuse to lift them off it.
+    """
+    held = attempts[-1].get("stage") if attempts else None
+    if held not in LADDER_STAGES or held == "worked":
+        held = "faded"
+    if LADDER_STAGES.index(earned) <= LADDER_STAGES.index(held):
+        return earned
+    supported = _earned(est.get("promote_lo", 0.0))
+    if LADDER_STAGES.index(supported) >= LADDER_STAGES.index(earned):
+        return earned
+    return LADDER_STAGES[max(LADDER_STAGES.index(held), LADDER_STAGES.index(supported))]
 
 
 def kc_stage(user_state, kc: str) -> str:
