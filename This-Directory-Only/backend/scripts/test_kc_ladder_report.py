@@ -25,7 +25,7 @@ os.environ["USER_DATA_DIR"] = tempfile.mkdtemp(prefix="kc_ladder_test_")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app import kc_graph  # noqa: E402
-from app.adaptive import UserPracticeState  # noqa: E402
+from app.adaptive import AttemptRecord, UserPracticeState  # noqa: E402
 
 NOW = "2026-08-31T00:00:00+00:00"
 
@@ -307,16 +307,41 @@ def _state_on_rung(seq, learned_prereqs=True):
     return st
 
 
-def narrowed_for(seq, served, learned_prereqs=True):
+def _seed_answered(state, qids):
+    """Put a graded attempt on the record for each question.
+
+    `narrow_to_next_kc` reads ANSWERED, not served, and it derives that from
+    `SubtopicState.history` (prioritization.answered_question_ids). Seeding real
+    history rather than passing a set keeps the fixture on the same path the
+    router takes.
+    """
+    sub = state.get_subtopic_state("Numpy: Core array literacy")
+    for qid in sorted(qids):
+        sub.history.append(AttemptRecord(
+            question_id=int(qid),
+            subtopic="Numpy: Core array literacy",
+            difficulty_score=50,
+            grade=100.0,
+            correct=True,
+            timestamp=NOW,
+        ))
+
+
+def narrowed_for(seq, served, learned_prereqs=True, answered=None):
     st = _state_on_rung(seq, learned_prereqs)
+    served = set(served)
+    # The cases below all mean "the learner has DONE these", so answered
+    # defaults to served. Pass `answered` explicitly to describe the other
+    # case — drills that were handed over and skipped.
+    _seed_answered(st, served if answered is None else set(answered))
     out, _kc, gap = prioritization.narrow_to_next_kc(
-        st, [_Q(i) for i in POOL], served=set(served)
+        st, [_Q(i) for i in POOL], served=served
     )
     return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out), gap
 
 
-def servable(seq, served, learned_prereqs=True):
-    stage, ids, _gap = narrowed_for(seq, served, learned_prereqs)
+def servable(seq, served, learned_prereqs=True, answered=None):
+    stage, ids, _gap = narrowed_for(seq, served, learned_prereqs, answered)
     return stage, ids
 
 
@@ -339,10 +364,31 @@ for label, served in (("nothing served", []), ("every drill served", POOL)):
 # gap would be a silent 404 instead.
 for seq in ("", "FFFF", "TTT", POISONED):
     _stage, _ids, _gap = narrowed_for(seq, POOL)
-    check(f"a fully-served concept reports its gap rather than repeating ({seq or 'cold'})",
+    check(f"a fully-answered concept reports its gap rather than repeating ({seq or 'cold'})",
           not _ids and bool(_gap) and _gap.get("kc") == LADDER_KC
           and _gap.get("stage") == _stage,
           f"served={_ids} gap={_gap}")
+
+# 🔴 SERVED IS NOT ANSWERED (2026-08-31). Every drill handed over and NONE of
+# them answered is a learner who skipped, reloaded, or closed the tab — not a
+# learner who has finished the concept. Reporting a gap there spends content
+# nobody has done, and on `python.values-and-names` (two drills at its lowest
+# authored rung, and the only root of the whole course) it 409'd Seth's account
+# out of every concept there is. The Skip button's own label promises "nothing
+# is recorded"; this is that promise.
+for seq in ("", "FFFF", POISONED):
+    _stage, _ids, _gap = narrowed_for(seq, POOL, answered=[])
+    check(f"every drill served but none answered still serves ({seq or 'cold'})",
+          bool(_ids) and _gap is None and not (set(_ids) & SOLO),
+          f"stage={_stage} servable={_ids} gap={_gap}")
+
+# And the half-and-half case: the rung is spent only by the drills that were
+# actually answered.
+_rung_faded = sorted(kc_graph.questions_at_stage(POOL, "faded"))
+_stage, _ids, _gap = narrowed_for("FFFF", POOL, answered=_rung_faded[:1])
+check("a rung counts only the drills that were answered",
+      _stage == "faded" and _ids and _rung_faded[0] not in _ids and _gap is None,
+      f"stage={_stage} answered={_rung_faded[:1]} servable={_ids} gap={_gap}")
 
 # The frontier can also miss entirely — `frontier` drops a KC that is
 # `kc_is_learned`, and `kc_evidence_exhausted` makes that true of any concept

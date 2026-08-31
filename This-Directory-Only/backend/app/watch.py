@@ -20,6 +20,23 @@ def _fastapi_available():
         return False
 
 
+def _settings_available():
+    """Can `app.config` be imported here?
+
+    `mod watch` runs on the bare interpreter, not the repo venv, so anything
+    reaching app.config (pydantic-settings) is unavailable — app.adaptive and
+    everything downstream of it, app.prioritization included. Checks that only
+    need the pure modules still run; the rest skip rather than fail the folder
+    on a missing dependency, which is what `_fastapi_available` already does
+    for the import checks.
+    """
+    try:
+        from app import config  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
 # ── Import checks ──────────────────────────────
 def check_imports():
     if not _fastapi_available():
@@ -370,6 +387,8 @@ def check_the_example_schedule_fades_and_then_tests():
     kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
     assert state.kc_ladder[kc]["attempts"][-1].get("example") is True, \
         "record_kc_outcome dropped the example flag — the schedule cannot see its own past"
+    if not _settings_available():
+        return  # the rest needs app.prioritization -> app.config; see above
     # The client's report wins over the schedule: a popup the client could
     # not draw (Colab, diagnostic, no KP page) is not assistance.
     from app import prioritization

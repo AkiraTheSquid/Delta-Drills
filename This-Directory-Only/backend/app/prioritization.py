@@ -87,6 +87,37 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     )
 
 
+def answered_question_ids(user_state: UserPracticeState) -> set:
+    """Every question this learner has actually ANSWERED, across all subtopics.
+
+    NOT the same set as `served_question_ids`, and the difference is the whole
+    of the 2026-08-31 bug. `served` is appended the moment `/next-question`
+    hands a drill over — before the learner has read it, let alone answered it.
+    A skip, a reload, a double-fetch, or simply closing the tab therefore SPENT
+    a drill permanently: it could never be offered again, and the rung it sat on
+    counted it as done. Seth's account reached the state this exists to prevent
+    on 2026-08-31 — `python.values-and-names`, the course's only root, holds two
+    drills at its lowest authored rung, both were served and NEITHER was ever
+    answered, and every `/next-question` for the next half hour 409'd
+    "you have finished every lesson problem for this concept" (15 recorded hits
+    in content-gaps.json). With that one root bricked, every other concept in
+    the course stayed locked behind it.
+
+    Evidence is what spends a drill. `SubtopicState.history` is the durable,
+    untruncated record of it — one entry per graded attempt, carrying the
+    question id — which is why it is read here rather than `kc_ladder`, whose
+    attempt list is windowed to the last 20 (`kc_graph._LADDER_WINDOW`) and so
+    forgets that an older drill was ever solved.
+    """
+    out: set = set()
+    for sub_state in (getattr(user_state, "subtopic_states", None) or {}).values():
+        for record in getattr(sub_state, "history", None) or ():
+            qid = getattr(record, "question_id", None)
+            if qid is not None:
+                out.add(int(qid))
+    return out
+
+
 def _resident_kc(user_state, candidates) -> Optional[str]:
     """The concept this pool of questions IS, ignoring the frontier entirely.
 
@@ -123,7 +154,10 @@ def _resident_kc(user_state, candidates) -> Optional[str]:
 
 
 def narrow_to_next_kc(
-    user_state: UserPracticeState, candidates: List, served: Optional[set] = None
+    user_state: UserPracticeState,
+    candidates: List,
+    served: Optional[set] = None,
+    answered: Optional[set] = None,
 ) -> Tuple[List, Optional[str], Optional[dict]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, and to the RUNG that concept is on.
@@ -164,16 +198,22 @@ def narrow_to_next_kc(
     """
     here = {q.id for q in candidates}
     served = served or set()
+    # 🔴 A drill is SPENT when it has been ANSWERED, never merely when it has
+    # been served — see `answered_question_ids` for the account this rule was
+    # written from. `served` is still read, but only by the caller's difficulty
+    # picker, where "don't hand back the one they just skipped" is exactly the
+    # right preference. It must not decide whether the course has run out.
+    answered = answered_question_ids(user_state) if answered is None else answered
     # Eligibility must match what the caller can actually serve, or the
     # narrowing targets a KC whose questions are all spent and hands back a
     # list the difficulty picker then rejects — a 404 with fresh sibling work
     # sitting right there. `select_next_subtopic` chose this subtopic because
-    # SOME frontier KC has unserved work in it; find that same KC.
+    # SOME frontier KC has unanswered work in it; find that same KC.
     next_kc = kc_graph.select_next_kc(
-        user_state, eligible=lambda qid: qid in here and qid not in served
+        user_state, eligible=lambda qid: qid in here and qid not in answered
     )
     if not next_kc:
-        # Nothing here is unserved. Re-ask on membership alone so the concept
+        # Nothing here is unanswered. Re-ask on membership alone so the concept
         # the learner is actually on can still report its own exhaustion —
         # dropping the narrowing here is what used to hand the difficulty
         # picker the whole subtopic and let a `solo` problem reach somebody
@@ -212,7 +252,7 @@ def narrow_to_next_kc(
         floor = set(kc_graph.lowest_rung([q.id for q in narrowed]))
         rung = [q for q in narrowed if q.id in floor]
 
-    fresh = [q for q in rung if q.id not in served]
+    fresh = [q for q in rung if q.id not in answered]
     if not fresh:
         # The learner's own rung is spent. Two different situations, and
         # collapsing them was the first version's mistake:
@@ -243,7 +283,7 @@ def narrow_to_next_kc(
         below = order[: order.index(stage)] if stage in order else []
         for lower in reversed(below):
             at_lower = set(kc_graph.questions_at_stage([q.id for q in narrowed], lower))
-            spare = [q for q in narrowed if q.id in at_lower and q.id not in served]
+            spare = [q for q in narrowed if q.id in at_lower and q.id not in answered]
             if spare:
                 gap["served_from"] = lower
                 return spare, next_kc, gap
@@ -255,7 +295,7 @@ def narrow_to_next_kc(
         # the one thing this whole change exists to stop. (codex, 2026-08-28.)
         spare = [
             q for q in narrowed
-            if q.id not in served and kc_graph.ladder_rank(q.id) == kc_graph.LADDER_UNRANKED
+            if q.id not in answered and kc_graph.ladder_rank(q.id) == kc_graph.LADDER_UNRANKED
         ]
         if spare:
             gap["served_from"] = "unranked"
@@ -278,7 +318,18 @@ def narrow_to_next_kc(
         # random inside its band, which on a rung with several drills can open a
         # brand-new concept on its hardest one. Serve the easiest instead; the
         # difficulty ladder starts moving on the next question, from evidence.
-        return [min(fresh, key=lambda q: (q.difficulty_score, q.id))], next_kc, None
+        #
+        # First contact is the drill they have not been SHOWN yet, which is not
+        # the same as the one they have not answered. Once every drill on the
+        # rung has been on screen and skipped, pinning the pick to a single
+        # question hands back the identical problem on every skip — the Skip
+        # button reads "move on without answering", so it has to move on. With
+        # more than one left the caller's recycler rotates them by how stale
+        # each is (grading.select_question_for_difficulty).
+        unshown = [q for q in fresh if q.id not in served]
+        if unshown:
+            return [min(unshown, key=lambda q: (q.difficulty_score, q.id))], next_kc, None
+        return sorted(fresh, key=lambda q: (q.difficulty_score, q.id)), next_kc, None
     return fresh, next_kc, None
 
 
@@ -549,6 +600,12 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
             out.append((st_name, priority, easiest))
         return out
 
+    # Same rule as `narrow_to_next_kc`: a drill the learner was shown and never
+    # answered is still work this subtopic can offer. Gating this loop on
+    # `served` let a subtopic whose drills had all been handed over — and none
+    # of them answered — drop out of the running entirely.
+    answered = answered_question_ids(user_state)
+
     # KC LATTICE FIRST. The knowledge graph decides what comes next; the
     # weakest-first machinery below is the fallback for when the lattice has
     # nothing to say (frontier exhausted, or a KC with no servable questions
@@ -562,9 +619,8 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
         for st_name in subtopics:
             if _get_weight(user_state, st_name, uniform_weight) <= 0:
                 continue
-            served = set(user_state.get_subtopic_state(st_name).served_question_ids)
             if any(
-                q.id in wanted and q.id not in served and question_is_unlocked(user_state, q)
+                q.id in wanted and q.id not in answered and question_is_unlocked(user_state, q)
                 for q in get_questions_by_subtopic(st_name)
             ):
                 return st_name

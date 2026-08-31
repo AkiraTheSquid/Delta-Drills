@@ -41,6 +41,7 @@ from app.practice_schemas import (
 )
 from app import content_gaps
 from app.prioritization import (
+    answered_question_ids,
     ladder_fields,
     ladder_starter,
     narrow_to_next_kc,
@@ -158,7 +159,14 @@ def next_question(
     # aim has to be measured on a concept on both paths, or focused practice
     # keeps the subtopic-wide average this change exists to remove.
     served = set(sub_state.served_question_ids)
-    narrowed, next_kc, gap = narrow_to_next_kc(user_state, candidates, served)
+    # Two different questions, and collapsing them is what bricked Seth's
+    # account on 2026-08-31: `served` is "don't hand back the drill they just
+    # skipped" and only the difficulty picker should read it; `answered` is
+    # "this learner has given evidence on this drill" and it is the only thing
+    # allowed to decide that the course has run out. See
+    # prioritization.answered_question_ids.
+    answered = answered_question_ids(user_state)
+    narrowed, next_kc, gap = narrow_to_next_kc(user_state, candidates, served, answered)
     # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
     # the whole subtopic pool on purpose, so `narrowed` being empty says nothing
     # about whether there is anything to serve — 409ing on it would tell a
@@ -174,7 +182,7 @@ def next_question(
         # the /drill-gaps skill will find it, every time it is hit. Recorded on
         # both paths: the rung really did run dry, whatever gets served instead.
         content_gaps.record(user_id, gap)
-        if not [q for q in candidates if q.id not in served]:
+        if not [q for q in candidates if q.id not in answered]:
             # Nothing unseen anywhere on the concept. 409 rather than 404: the
             # request was fine and the queue is healthy, the COURSE is out of
             # material here. api.js reads the JSON detail and renders `message`
