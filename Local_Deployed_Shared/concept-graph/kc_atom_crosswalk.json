@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 352,
-  "kcs_covered": 37,
-  "kcs_total": 37,
-  "kcs_measured": 27,
+  "questions_joined": 384,
+  "kcs_covered": 39,
+  "kcs_total": 39,
+  "kcs_measured": 29,
   "atoms_used": 51,
-  "pairs": 80
+  "pairs": 81
  },
  "kcs": {
   "einops.channel-groups-temporal": {
@@ -586,30 +586,53 @@
     }
    ]
   },
-  "numpy.random-generator": {
-   "n": 3,
-   "reliability": 0.801,
-   "shared_with": 0.2,
+  "numpy.random-samplers": {
+   "n": 12,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "torch-rand-uniform",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 12
+    }
+   ]
+  },
+  "numpy.random-seeding": {
+   "n": 12,
+   "reliability": 0.543,
+   "shared_with": 0.8,
    "tier": "measured",
    "atoms": [
     {
      "a": "manual-seed",
-     "w": 0.479,
-     "share": 0.384,
-     "spec": 1.0,
-     "n": 1
-    },
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.543,
+     "n": 12
+    }
+   ]
+  },
+  "numpy.random-threading": {
+   "n": 11,
+   "reliability": 0.454,
+   "shared_with": 1.2,
+   "tier": "measured",
+   "atoms": [
     {
-     "a": "torch-rand-uniform",
-     "w": 0.338,
-     "share": 0.271,
-     "spec": 1.0,
-     "n": 1
+     "a": "manual-seed",
+     "w": 0.916,
+     "share": 0.91,
+     "spec": 0.457,
+     "n": 10
     },
     {
      "a": "index-by-tensor",
-     "w": 0.183,
-     "share": 0.345,
+     "w": 0.084,
+     "share": 0.09,
      "spec": 0.424,
      "n": 1
     }

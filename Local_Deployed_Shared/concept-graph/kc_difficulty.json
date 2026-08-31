@@ -5,7 +5,7 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 29.1,
+ "mean": 26.7,
  "kcs": {
   "einops.channel-groups-temporal": {
    "d": 45.9,
@@ -72,20 +72,20 @@
    "n": 7
   },
   "numpy.constructors": {
-   "d": 12.0,
-   "n": 8
+   "d": 13.6,
+   "n": 18
   },
   "numpy.dot-matmul-patterns": {
    "d": 31.7,
    "n": 7
   },
   "numpy.dtype-astype": {
-   "d": 18.4,
-   "n": 5
+   "d": 17.0,
+   "n": 16
   },
   "numpy.elementwise-ufuncs": {
-   "d": 19.2,
-   "n": 8
+   "d": 18.7,
+   "n": 17
   },
   "numpy.linalg-basics": {
    "d": 27.8,
@@ -95,33 +95,41 @@
    "d": 23.7,
    "n": 37
   },
-  "numpy.random-generator": {
+  "numpy.random-samplers": {
+   "d": 17.7,
+   "n": 12
+  },
+  "numpy.random-seeding": {
+   "d": 23.5,
+   "n": 12
+  },
+  "numpy.random-threading": {
    "d": 22.0,
-   "n": 3
+   "n": 11
   },
   "numpy.ranges": {
    "d": 17.6,
    "n": 5
   },
   "numpy.reshape-flatten": {
-   "d": 18.5,
-   "n": 8
+   "d": 20.3,
+   "n": 19
   },
   "numpy.slicing-views": {
    "d": 21.2,
    "n": 8
   },
   "numpy.sorting": {
-   "d": 30.0,
-   "n": 8
+   "d": 23.6,
+   "n": 17
   },
   "numpy.stack-concat-interleave": {
    "d": 37.2,
    "n": 5
   },
   "numpy.transpose-axes": {
-   "d": 22.8,
-   "n": 8
+   "d": 19.6,
+   "n": 15
   },
   "numpy.views-and-copies": {
    "d": 26.4,

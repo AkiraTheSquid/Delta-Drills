@@ -135,7 +135,7 @@ def check_no_python_atom_gates_the_numpy_floor():
 
 
 
-# ── The two standing content guards ───────────
+# ── The three standing content guards ─────────
 # Filled 2026-08-29 on Seth's instruction. This folder is where the guards bite
 # hardest: py-0 is the FLOOR, so a drill here reaching for an untaught
 # construct has nothing earlier to be taught by. The three open cases recorded
