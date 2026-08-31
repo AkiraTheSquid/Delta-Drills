@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""The two standing content guards, in the form a `watch.py` can call.
+"""The three standing content guards, in the form a `watch.py` can call.
 
-Both audits already exist as command-line reports. What a Modulario watcher
+Each audit already exists as a command-line report. What a Modulario watcher
 needs is different: one call, no arguments, raises with a message that says
 what to do. Putting that adapter here rather than copying twenty lines into
 each folder's `watch.py` matters for a specific reason — a guard copied six
 times is a guard that is six different guards inside a month, and the copies
 drift toward whichever one was easiest to make pass.
 
-The two rules
--------------
+The three rules
+---------------
 1. **Prerequisites.** Every function, method, attribute and construct used in
    a drill's SOLUTION or in the PROBLEM the learner is handed must be taught
    by a concept at or before that drill's own concept in the lattice. See
@@ -21,8 +21,15 @@ The two rules
    `audit_arena_grounding.py`. Motivating case: 69 drill solutions written in
    `torch.einsum`, which appears in zero of the 458 notebooks.
 
-Both are RATCHETS, and that is the whole design
------------------------------------------------
+3. **Symbol coverage.** Every symbol a concept declares in `new_syntax` must
+   be drilled at least twice ON THAT CONCEPT. See `audit_symbol_coverage.py`.
+   Motivating case: `numpy.random-generator` declares ten symbols and drills
+   five of them, across three questions — the mastery models estimate one
+   number per concept, so the other five are marked learned on evidence that
+   was never collected.
+
+All three are RATCHETS, and that is the whole design
+---------------------------------------------------
 There is a large existing backlog for each. A hard failure on the current
 state would paint every watcher red on day one, and a permanently red watcher
 is one nobody reads. So each check fails on violations NOT in its baseline —
@@ -119,6 +126,38 @@ def check_arena_grounding(kc_prefix=None) -> None:
             + "\n  Re-recording the baseline is admitting the debt, not fixing it.")
 
 
+def check_symbol_coverage(kc_prefix=None) -> None:
+    """Every declared symbol is drilled >=2x on its own concept. NEW only."""
+    import audit_symbol_coverage as C
+
+    known = C.load_baseline()
+    if known is None:
+        raise AssertionError(
+            "symbol_coverage_baseline.json is missing — the ratchet cannot tell "
+            "new debt from old, so it cannot pass. Re-record it with "
+            "audit_symbol_coverage.py --write-baseline")
+
+    # Scoping is applied to the VIOLATIONS, not to the measurement: coverage is
+    # counted over the whole bank first, because a drill is only evidence for
+    # the concept it is tagged to and that tag may sit outside the prefix.
+    bad = C.regressions(_scope(C.find(), kc_prefix), known)
+    where = f" under {','.join(_prefixes(kc_prefix))}" if kc_prefix else ""
+    if bad:
+        listed = sorted(bad.values())
+        raise AssertionError(
+            f"{len(bad)} symbol(s){where} are declared by a concept but drilled "
+            f"fewer than {C.MIN_DRILLS_PER_SYMBOL} times on it: "
+            + "; ".join(listed[:6]) + (" …" if len(listed) > 6 else "")
+            + "\n  A concept's mastery estimate is ONE number covering every "
+              "symbol it declares. A symbol with no drills on its own node is "
+              "marked learned on evidence about something else. Write the "
+              "drills, move the symbol to a concept that drills it, or stop "
+              "declaring it.\n"
+              "  Inspect: python3 scripts/audit_symbol_coverage.py --new"
+            + (f" --kc-prefix {','.join(_prefixes(kc_prefix))}" if kc_prefix else "")
+            + "\n  Re-recording the baseline is admitting the debt, not fixing it.")
+
+
 def check_arena_index_is_current() -> None:
     """The frozen corpus summary must still describe the corpus on disk.
 
@@ -148,4 +187,9 @@ def run(kc_prefix=None) -> list:
     def every_function_appears_in_arena():
         check_arena_grounding(kc_prefix)
 
-    return [solution_prereqs_are_taught_first, every_function_appears_in_arena]
+    def every_declared_symbol_is_drilled_twice():
+        check_symbol_coverage(kc_prefix)
+
+    return [solution_prereqs_are_taught_first,
+            every_function_appears_in_arena,
+            every_declared_symbol_is_drilled_twice]

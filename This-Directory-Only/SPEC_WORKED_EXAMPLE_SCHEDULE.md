@@ -154,7 +154,14 @@ row), then `elementwise-ufuncs`, `constructors`, `dtype-astype`, `sorting`,
   until the example schedule has been used for a while. When Seth next asks
   about credit propagation, prerequisites feeling under-practised, or the
   graph "not activating" a node, bring this up.
-- **Splitting the neighbour nodes.** The one-idea-per-node test ("can a
-  learner fail this while passing the rest?") still applies to the six
-  dependents above; do it as he reaches each one, not in advance.
+- **Splitting the blob nodes.** No longer deferred and no longer vague:
+  measured, planned and written down in `SPEC_NODE_SPLITTING.md` (2026-08-31).
+  37 concepts → ~45. The six nodes it names are NOT the six dependents listed
+  above — those have had their drills written and `numpy.ndarray-model` now has
+  zero symbols under the coverage floor. The blobs are the never-segmented
+  nodes: `stack-concat-interleave`, `random-generator`, `dots-and-imports`,
+  `types-and-conversion`, `slicing-views`, `calling-functions`. The test is
+  "can a learner fail this while succeeding at the rest of the node?", NOT
+  one-function-per-node — 7 of the 11 einops nodes declare no symbols at all.
+  Read that file before re-deriving any of this.
 - **Retuning `SCHEDULE`.** Expect it. Change the table, nothing else.

@@ -277,6 +277,25 @@ def check_arena_grounding_ratchet():
     guard_checks.check_arena_grounding()
 
 
+def check_declared_symbols_are_drilled():
+    """Every symbol a concept declares must be drilled twice ON that concept.
+
+    A KP page's `new_syntax:` is the graph claiming that mastery of the
+    concept includes mastery of the symbol, and both mastery models take that
+    literally: one estimate per concept, and the lattice gates on it. So a
+    declared symbol with no drills of its own is marked learned on evidence
+    collected about something else. `numpy.random-generator` declares ten and
+    drills five, across three questions.
+
+    A RATCHET like the two above, with one addition: the baseline records the
+    drill COUNT, so deleting the single drill that was holding a symbol at one
+    fails even though the symbol was already known debt.
+    """
+    import guard_checks
+
+    guard_checks.check_symbol_coverage()
+
+
 def check_arena_index_is_current():
     """The frozen corpus summary must still describe the corpus on disk.
 
@@ -304,7 +323,8 @@ if __name__ == '__main__':
         sys.exit(1)
     checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
               check_solution_prereq_ratchet, check_solution_symbol_coverage,
-              check_arena_grounding_ratchet, check_arena_index_is_current]
+              check_arena_grounding_ratchet, check_declared_symbols_are_drilled,
+              check_arena_index_is_current]
     for fn in checks:
         try:
             fn()

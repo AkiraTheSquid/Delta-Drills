@@ -66,6 +66,14 @@ skill report the same thing from the other side.
   (which prerequisite nodes a drill exercises, encoded per drill), splitting the neighbour
   nodes, retuning the schedule. Bring the first one up whenever he talks about credit
   propagation or a prerequisite feeling under-practised.
+- **The blob nodes need SPLITTING, not just drills** (2026-08-31):
+  `This-Directory-Only/SPEC_NODE_SPLITTING.md`. Six never-segmented nodes declare
+  up to ten symbols each behind ONE mastery number; 51 of the graph's 144 declared
+  symbols are drilled fewer than twice on their own concept and 19 are drilled zero
+  times. `scripts/audit_symbol_coverage.py` measures it and now guards it as a
+  ratchet in every lesson watcher. Read that spec before proposing a node boundary —
+  the test is "can a learner fail this while succeeding at the rest of the node?",
+  and one-function-per-node is explicitly wrong here.
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

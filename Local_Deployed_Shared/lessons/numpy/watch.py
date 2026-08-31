@@ -157,7 +157,7 @@ def check_invariants():
 
 
 
-# ── The two standing content guards ───────────
+# ── The three standing content guards ─────────
 # Filled 2026-08-29 on Seth's instruction: these must fire on the folder being
 # EDITED, not only from scripts/, so that adding a drill or a KP page here is
 # what trips them. The implementations live in scripts/guard_checks.py — one
