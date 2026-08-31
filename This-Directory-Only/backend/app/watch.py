@@ -438,6 +438,75 @@ def check_only_unaided_answers_promote():
     assert est["streak"] == 0,         "the strip is drawing a run of aided answers as progress toward a promotion"
 
 
+def check_an_example_is_priced_into_the_model():
+    """The mastery models know an example was on the screen.
+
+    2026-08-31, the other half of the unaided rule. The ladder decides who
+    ADVANCES; these two decide how good the learner is believed to be, and both
+    used to read a drill served behind a worked-example popup exactly like one
+    answered cold. The logistic engine gets an `example` feature (an assistance
+    offset in logits, separate from `stage` because the popup is scheduled per
+    ATTEMPT and the rung is not); BKT raises G, which makes the attempt less
+    diagnostic in both directions.
+    """
+    from types import SimpleNamespace
+    from app import bkt_mastery as B, engine_bridge, logistic_engine as E
+
+    E.DEFAULT_CONFIG.validate()
+    for bad in (0.0, -0.3, E.DEFAULT_CONFIG.stage_offsets[E.STAGE_FADED] + 0.01):
+        try:
+            E.replace(E.DEFAULT_CONFIG, example_offset=bad).validate()
+        except ValueError:
+            continue
+        raise AssertionError(
+            f"example_offset={bad} validates. Zero or negative says the example does "
+            "not help; above the faded offset says example + blanks beats the lesson "
+            "page that contains both"
+        )
+
+    post = {E.ABILITY.name: E.initial_posterior(E.ABILITY)}
+    row = lambda aided: {
+        "ability": 1.0,
+        "difficulty": E.difficulty_to_logits(50.0),
+        "stage": E.stage_offset(E.STAGE_SOLO),
+        "example": E.example_offset(aided),
+    }
+    assert E.predict(row(True), post).p > E.predict(row(False), post).p, \
+        "an aided drill is not predicted easier than the same drill cold"
+    moved = {}
+    for aided in (False, True):
+        upd, _ = E.step(row(aided), {k: E.Posterior(v.mean, v.var) for k, v in post.items()}, True)
+        moved[aided] = upd[E.ABILITY.name].mean
+    assert moved[True] < moved[False], (
+        "the same correct answer moves ability as far behind an example as without "
+        "one — the engine is crediting the example to the learner"
+    )
+    legacy = {k: v for k, v in row(False).items() if k != "example"}
+    assert abs(E.predict(legacy, post).p - E.predict(row(False), post).p) < 1e-12, \
+        "a log row written before the feature existed no longer reads as unaided"
+
+    assert B.observe(0.10, True, aided=True) < B.observe(0.10, True), \
+        "a correct answer behind an example moves BKT as far as an unaided one"
+    try:
+        B.BKTParams(p_guess_aided=1.0 - B.P_SLIP).guess(True)
+        raise AssertionError("G >= 1 - S validates; a correct answer would lower the posterior")
+    except ValueError:
+        pass
+
+    # The flag comes from the ladder row this answer already wrote, under the
+    # same question-id match `served_stage` uses.
+    from app import kc_graph
+    kc, qids = next(iter(kc_graph._questions_by_kc().items()))
+    state = SimpleNamespace(kc_ladder={})
+    kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
+    assert engine_bridge.served_example(state, kc, qids[0]), \
+        "served_example cannot see the example the ladder row recorded"
+    assert not engine_bridge.served_example(state, kc, qids[0] + 10_000), \
+        "served_example read another question's row"
+    assert engine_bridge.answer_was_aided(state, qids[0]), \
+        "the atom-BKT path cannot tell that the answer was aided"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [
@@ -451,6 +520,7 @@ if __name__ == '__main__':
         check_a_fresh_kernel_does_not_run_the_clicked_cell_twice,
         check_the_example_schedule_fades_and_then_tests,
         check_only_unaided_answers_promote,
+        check_an_example_is_priced_into_the_model,
     ]
     for fn in checks:
         try:

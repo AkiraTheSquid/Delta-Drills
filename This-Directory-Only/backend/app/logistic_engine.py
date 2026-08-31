@@ -89,7 +89,7 @@ from typing import Dict, Iterable, Mapping, Optional, Tuple
 # tuple or the default weights change, so a later refit can tell which rows were
 # produced by which model instead of silently mixing them.
 # ---------------------------------------------------------------------------
-MODEL_VERSION = "logistic-v0.1"
+MODEL_VERSION = "logistic-v0.2"  # v0.2 (2026-08-31): + the `example` feature
 
 
 # ---------------------------------------------------------------------------
@@ -224,6 +224,16 @@ STAGE = Feature(
     description="Scaffold assistance for the rung served, in logits.",
 )
 
+EXAMPLE = Feature(
+    name="example",
+    kind=FIXED,
+    weight=1.0,
+    description=(
+        "Worked example shown in front of this drill, in logits. Separate from "
+        "`stage` because it is a fact about the SCREEN, not about the rung."
+    ),
+)
+
 PREREQ = Feature(
     name="prereq",
     kind=FIXED,
@@ -262,6 +272,7 @@ DEFAULT_FEATURES: Tuple[Feature, ...] = (
     ABILITY,
     DIFFICULTY,
     STAGE,
+    EXAMPLE,
     PREREQ,
     ENCOMPASSING,
     RECENCY,
@@ -289,6 +300,29 @@ DEFAULT_STAGE_OFFSETS: Dict[str, float] = {
     STAGE_SOLO: 0.0,
 }
 
+# --- the worked-example offset ------------------------------------------------
+#
+# `stage` says which rung was served. It cannot say whether an example was on
+# the screen, because since 2026-08-30 that is decided per ATTEMPT by
+# `example_schedule.plan` rather than per rung — the Solo rung shows one on its
+# first and third drills and none after. Folding it into `stage` would charge
+# every drill on a rung for assistance only some of them carried, and leaving it
+# out charges none of them: the model then learns that the example does not
+# help, and the mastery number reads an answer that was pattern-matched off a
+# solved instance as though it had been produced from memory.
+#
+# v0 magnitude, DERIVED rather than invented, and not fitted. Until 2026-08-30 a
+# worked example sat inline beside the drill on the `partial` rung, and that
+# assistance was part of what `STAGE_FADED = 0.7` was covering. The popup
+# replaced exactly that example (`ladder.js SUPPORTED_STAGES` was emptied the
+# same day), so it inherits the same value. The case for LESS: the example is
+# gone from the screen before the learner writes anything, so the answer is
+# retrieved rather than copied. The case for MORE: it is fresher, isomorphic and
+# unmissable. Those pull opposite ways and no data separates them yet, so the
+# number stays where it already was and the log now carries the column that can
+# settle it.
+DEFAULT_EXAMPLE_OFFSET = 0.7
+
 
 @dataclass(frozen=True)
 class EngineConfig:
@@ -306,6 +340,11 @@ class EngineConfig:
     stage_offsets: Dict[str, float] = field(
         default_factory=lambda: dict(DEFAULT_STAGE_OFFSETS)
     )
+    # Assistance value of a worked example shown in front of the drill, in
+    # logits. Added to the rung's own offset, so an aided FADED item scores at
+    # 0.7 + 0.7 = the lesson page's 1.4 — blanks plus a solved instance is very
+    # nearly the fully worked page, which is why the validator caps it there.
+    example_offset: float = DEFAULT_EXAMPLE_OFFSET
     # Item difficulty arrives on the question bank's 1..100 scale. This divisor
     # converts it to logits: 25 puts a difficulty-100 item ~2 logits above a
     # difficulty-50 one, i.e. roughly 0.5 -> 0.12 P(correct) for a median
@@ -363,6 +402,15 @@ class EngineConfig:
                 "stage offsets must satisfy worked > faded > solo == 0; got "
                 f"{offs}. A violation means the model believes a scaffold makes "
                 "a problem harder, which would promote learners for failing."
+            )
+        if not 0.0 < self.example_offset <= offs[STAGE_FADED]:
+            raise ValueError(
+                f"example_offset must satisfy 0 < e <= faded ({offs[STAGE_FADED]}); "
+                f"got {self.example_offset}. Zero or negative says a solved instance "
+                "shown a moment earlier does not help, or makes the drill harder — "
+                "the same sign error the rung ordering rules out. Above the faded "
+                "offset says the example plus the rung's own scaffold is worth more "
+                "than the lesson page that contains both."
             )
 
 
@@ -447,6 +495,16 @@ def stage_offset(stage: Optional[str], config: EngineConfig = DEFAULT_CONFIG) ->
     if key is None:
         return 0.0
     return float(config.stage_offsets.get(key, 0.0))
+
+
+def example_offset(aided: bool, config: EngineConfig = DEFAULT_CONFIG) -> float:
+    """Assistance value of a worked example in front of the drill, in logits.
+
+    0.0 when there was none — which is also what a log row written before the
+    feature existed contributes, since `predict` treats an absent feature as
+    zero, and those attempts were in fact unaided.
+    """
+    return float(config.example_offset) if aided else 0.0
 
 
 # ---------------------------------------------------------------------------

@@ -108,6 +108,37 @@
   - Status: `RESOLVED` (2026-04-27).
 
 ## Recent Changes
+- 2026-08-31 (**the mastery models know an example was on the screen**): the
+  other half of the unaided rule — the ladder decides who advances, these two
+  decide how good the learner is believed to be, and both read a drill served
+  behind a worked-example popup exactly like one answered cold.
+  `logistic_engine` gains an **`example` feature** (`DEFAULT_EXAMPLE_OFFSET =
+  0.7` logits, added to the rung's own offset; `MODEL_VERSION` → `logistic-v0.2`
+  because the design matrix changed) — deliberately NOT folded into `stage`,
+  because since 2026-08-30 the popup is scheduled per ATTEMPT while the rung is
+  not, so two drills on the same rung differ in whether one was shown. The
+  offset is derived, not invented: an example used to sit inline beside the
+  drill and was part of what `STAGE_FADED = 0.7` covered, and the popup replaced
+  exactly that. `EngineConfig.validate` now requires `0 < example_offset <=
+  faded`. `bkt_mastery` gains **`P_GUESS_AIDED = 0.50`** — raising G is the
+  standard way to say an observation is less diagnostic, and it cuts both ways:
+  a correct answer raises the posterior less AND a wrong one lowers it less.
+  The learn-transit is untouched, because studying a solved instance and then
+  writing the same shape IS a learning event; what it is not is a demonstration.
+  🔴 That also bounds the size of this knob — a run of aided correct answers
+  still walks an atom toward the unlock bar, just more slowly; what limits the
+  exposure is the schedule showing a finite number of examples per rung.
+  `engine_bridge.served_example` / `answer_was_aided` read the flag off the
+  ladder row this answer already wrote, under the same question-id match
+  `served_stage` uses — one screen, one flag, two models. Log rows written
+  before the feature existed carry no `example` key, `predict` treats an absent
+  feature as zero, and those attempts were in fact unaided, so replay is
+  unchanged. Guarded by `watch.check_an_example_is_priced_into_the_model`.
+  `BKTParams` is `kw_only` from this commit: `p_guess_aided` was inserted
+  between `p_guess` and `p_slip`, and a positional construction would have
+  silently read the slip rate as the aided guess rate (codex, 2026-08-31 —
+  raised against `engine_bridge.record`, where it does not apply because
+  those parameters are keyword-only, but it does apply here).
 - 2026-08-31 (**assistance holds a rung, it does not buy one**): the `example`
   flag was stored per attempt and then read by nothing except the small-pool
   finish, so both promotion routes counted an answer given behind a

@@ -41,6 +41,25 @@ from typing import Dict, List, Optional, Tuple
 P_INIT = 0.10            # L0: prior P(known) before any evidence
 P_TRANSIT = 0.30         # T: P(unlearned -> learned) per practice
 P_GUESS = 0.20           # G: P(correct | not known)
+P_GUESS_AIDED = 0.50     # G when a worked example was shown in front of the
+                         # drill (example_schedule): P(correct | not known) is
+                         # far higher when a solved instance of the same shape
+                         # was on the screen a moment earlier — the answer can
+                         # be pattern-matched rather than known. v0, not fitted.
+                         # 0.50 says half of those answers would come out right
+                         # from a learner who has not learned it. Raising G is
+                         # the standard way to say "this observation is less
+                         # diagnostic", and it cuts BOTH ways, which is why it
+                         # is the right knob: it makes the attempt LESS
+                         # DIAGNOSTIC IN BOTH DIRECTIONS. A correct answer
+                         # raises the posterior less (0.10 -> 0.42 rather than
+                         # 0.53), and a wrong one lowers it less (0.10 -> 0.022
+                         # rather than 0.014) — under the model an unaided miss
+                         # is the more telling of the two, because an unknowing
+                         # learner misses 80% of unaided drills and only 50% of
+                         # aided ones. That is Bayes, not a preference; the
+                         # harsh reading of an aided miss lives on the ladder,
+                         # where it demotes immediately either way.
 P_SLIP = 0.10            # S: P(incorrect | known)
 MASTERY_THRESHOLD = 0.95  # belief at/above which an atom counts as "mastered"
 UNLOCK_THRESHOLD = 0.85   # belief at/above which an atom is "cleared" for gating
@@ -54,12 +73,25 @@ GRAPH_PATH = (
 )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class BKTParams:
     p_init: float = P_INIT
     p_transit: float = P_TRANSIT
     p_guess: float = P_GUESS
+    p_guess_aided: float = P_GUESS_AIDED
     p_slip: float = P_SLIP
+
+    def guess(self, aided: bool) -> float:
+        """G for this attempt. Identifiability needs G < 1 - S either way."""
+        g = self.p_guess_aided if aided else self.p_guess
+        if not 0.0 <= g < 1.0 - self.p_slip:
+            raise ValueError(
+                f"p_guess{'_aided' if aided else ''}={g} violates 0 <= G < 1 - S "
+                f"({1.0 - self.p_slip}). At or above that bound a CORRECT answer "
+                "is evidence AGAINST knowing the atom, and the posterior runs "
+                "backwards."
+            )
+        return g
 
 
 DEFAULT_PARAMS = BKTParams()
@@ -83,7 +115,10 @@ def params_for_level(level: Optional[str]) -> BKTParams:
     prior = PRIOR_BY_LEVEL.get(level or "")
     if prior is None:
         return DEFAULT_PARAMS
-    return BKTParams(p_init=prior, p_transit=P_TRANSIT, p_guess=P_GUESS, p_slip=P_SLIP)
+    return BKTParams(
+        p_init=prior, p_transit=P_TRANSIT,
+        p_guess=P_GUESS, p_guess_aided=P_GUESS_AIDED, p_slip=P_SLIP,
+    )
 
 
 # --- encompassing graph index ------------------------------------------------
@@ -219,8 +254,27 @@ def _clamp(x: float) -> float:
     return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
 
 
-def observe(prior: float, correct: bool, params: BKTParams = DEFAULT_PARAMS) -> float:
+def observe(
+    prior: float,
+    correct: bool,
+    params: BKTParams = DEFAULT_PARAMS,
+    aided: bool = False,
+) -> float:
     """One graded attempt → posterior + learn-transit. Returns L'.
+
+    `aided` — a worked example was shown in front of the drill — raises G for
+    the EVIDENCE half only (`params.guess`). The TRANSIT half is untouched on
+    purpose, and the split is the whole point: studying a solved instance and
+    then writing the same shape is a genuine learning event, so the learner
+    still moves toward knowing it; what it is not is a demonstration that they
+    already did. Weaker evidence, same opportunity to learn.
+
+    🔴 The transit is also why this knob is SMALL. `p_transit` fires on every
+    correct answer, aided or not, so a run of aided correct answers still walks
+    an atom up toward the unlock bar — more slowly, not never. Gating the
+    transit as well would say that studying a worked example teaches nothing,
+    which is the opposite of what it is for. The schedule is what bounds the
+    exposure: it shows a finite number of examples per rung and then stops.
 
     Transit fires ONLY on a correct attempt (same rule FIRe already uses in
     apply_attempt). Vanilla BKT adds T unconditionally — "attempting teaches
@@ -230,7 +284,7 @@ def observe(prior: float, correct: bool, params: BKTParams = DEFAULT_PARAMS) -> 
     caught live 2026-07-05). Gating transit on correctness makes the target
     behave like a noise-robust staircase: wrong → down, right → up."""
     L = _clamp(prior)
-    g, s, t = params.p_guess, params.p_slip, params.p_transit
+    g, s, t = params.guess(aided), params.p_slip, params.p_transit
     if correct:
         num = L * (1 - s)
         den = num + (1 - L) * g
@@ -285,6 +339,7 @@ def apply_attempt(
     now: Optional[datetime] = None,
     params: BKTParams = DEFAULT_PARAMS,
     confidence: float = 1.0,
+    aided: bool = False,
 ) -> Dict[str, float]:
     """Update the directly-practiced atom, then FIRe-credit the atoms it
     encompasses. Mutates `mastery`/`last_ts` in place; returns {atom: new_L}
@@ -303,6 +358,14 @@ def apply_attempt(
     not demonstrably exercise the simpler skill, so it should not inflate it.
     (This is a deliberate, more-conservative choice than learner_sim.py, which
     propagated unconditionally; the robustness finding survives either way.)
+
+    `aided` says the drill was served behind a worked-example popup. It weakens
+    the evidence this attempt carries (`observe`) — an answer that could have
+    been pattern-matched off a solved instance is a weaker sign the atom is
+    known — WITHOUT weakening the learning it represents. The encompassing FIRe
+    credit below is deliberately left at full strength for the same reason: the
+    simpler skills really were exercised in writing the answer, whatever put the
+    learner in a position to write it.
     """
     now = now or datetime.now(timezone.utc)
     ts = now.isoformat()
@@ -312,7 +375,7 @@ def apply_attempt(
         return changed
 
     prior = decay(mastery.get(atom_id, params.p_init), last_ts.get(atom_id), now, params)
-    full = observe(prior, correct, params)
+    full = observe(prior, correct, params, aided=aided)
     new = prior + (full - prior) * c       # soft-apply evidence by confidence
     mastery[atom_id] = new
     last_ts[atom_id] = ts

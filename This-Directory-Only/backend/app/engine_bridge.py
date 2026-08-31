@@ -220,6 +220,7 @@ def feature_values(
     *,
     difficulty_score: Optional[float],
     stage: Optional[str],
+    example: bool = False,
     posteriors: Optional[Mapping[str, E.Posterior]] = None,
 ) -> Dict[str, float]:
     """One row of the design matrix, for this learner on this item.
@@ -240,6 +241,7 @@ def feature_values(
         E.ABILITY.name: 1.0,
         E.DIFFICULTY.name: E.difficulty_to_logits(difficulty_score),
         E.STAGE.name: E.stage_offset(stage),
+        E.EXAMPLE.name: E.example_offset(example),
         E.PREREQ.name: _prereq_mastery(user_state, kc),
         E.ENCOMPASSING.name: _encompassing_mastery(user_state, kc),
         E.RECENCY.name: E.recency_value(_days_since(ability.last_seen if ability else None)),
@@ -252,10 +254,13 @@ def predict(
     *,
     difficulty_score: Optional[float],
     stage: Optional[str],
+    example: bool = False,
 ) -> E.Prediction:
     """P(correct) for an item this learner has not answered yet."""
     return E.predict(
-        feature_values(user_state, kc, difficulty_score=difficulty_score, stage=stage),
+        feature_values(
+            user_state, kc, difficulty_score=difficulty_score, stage=stage, example=example
+        ),
         posteriors_for(user_state, kc),
     )
 
@@ -267,7 +272,9 @@ def mastery(user_state, kc: str) -> Optional[float]:
     rung — the two reference points the engine's own scale is built on
     (`difficulty_to_logits` centres at 50, `solo` is the 0.0 stage offset). So
     the number means "how likely are they to get an average problem right,
-    unaided", which is the question the difficulty aim is asking, and it is on
+    unaided" — literally so since 2026-08-31, when `example` became a feature:
+    this asks for the no-example case, which is the question the difficulty aim
+    is asking, and it is on
     the same 0–1 scale the aim already consumes.
 
     None until the concept has `MIN_ATTEMPTS_TO_SERVE` graded attempts behind
@@ -290,6 +297,7 @@ def record(
     difficulty_score: Optional[float],
     stage: Optional[str],
     correct: bool,
+    example: bool = False,
     grade: Optional[float] = None,
     atoms: Optional[list] = None,
 ) -> Optional[E.Prediction]:
@@ -316,7 +324,7 @@ def record(
     posteriors = posteriors_for(user_state, kc, exclude_latest_attempt=True)
     values = feature_values(
         user_state, kc, difficulty_score=difficulty_score, stage=normalized,
-        posteriors=posteriors,
+        example=example, posteriors=posteriors,
     )
     ability = posteriors.get(E.ABILITY.name)
     now = _now_iso()
@@ -377,6 +385,48 @@ def served_stage(user_state, kc: str, question_id: int) -> Optional[str]:
     return latest.get("stage")
 
 
+def served_example(user_state, kc: str, question_id: int) -> bool:
+    """Was this answer given behind a worked example, for one concept?
+
+    Read from the SAME ladder row as `served_stage`, under the same
+    question-id match and for the same reason: `record_ladder_outcome` has
+    already written what the learner actually saw (the client's report wins
+    over the schedule's plan, because a popup the client could not draw is not
+    assistance), and recomputing the schedule here would ask what the NEXT
+    drill gets rather than what this one had.
+
+    False when the newest row is not this question's — `served_stage` returns
+    None there and `record` declines the attempt entirely, so the value is
+    never used, but defaulting to "unaided" keeps this readable on its own: it
+    is the value that adds nothing to the prediction.
+    """
+    attempts = kc_graph.ladder_view(user_state, kc).get("attempts") or []
+    if not attempts:
+        return False
+    latest = attempts[-1]
+    if latest.get("question_id") != question_id:
+        return False
+    return bool(latest.get("example"))
+
+
+def answer_was_aided(user_state, question_id: int) -> bool:
+    """Did ANY concept's ladder row record this answer as given behind an example?
+
+    One answer, one screen: the popup is drawn once in front of the drill, not
+    once per concept the drill targets. The per-KC rows are all written from
+    that single fact, so any of them can report it — but a multi-KC question
+    can reach a concept whose row was written by an earlier question, so this
+    asks all of them rather than trusting the first.
+
+    For the atom-BKT path, which is keyed by atom rather than by concept and so
+    has no row of its own to read.
+    """
+    return any(
+        served_example(user_state, kc, question_id)
+        for kc in kc_graph.question_kcs(question_id)
+    )
+
+
 def record_attempt_across_kcs(
     user_state,
     user_id: str,
@@ -412,6 +462,7 @@ def record_attempt_across_kcs(
             subtopic=subtopic,
             difficulty_score=difficulty_score,
             stage=served_stage(user_state, kc, question_id),
+            example=served_example(user_state, kc, question_id),
             correct=correct,
             grade=grade,
             atoms=atoms,

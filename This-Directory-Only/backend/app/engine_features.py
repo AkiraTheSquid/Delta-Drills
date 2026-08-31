@@ -171,6 +171,7 @@ def build(
     kc: Optional[str],
     stage: str,
     *,
+    example: bool = False,
     question: Optional[Mapping] = None,
     difficulty_score: Optional[float] = None,
     config: E.EngineConfig = E.DEFAULT_CONFIG,
@@ -194,8 +195,13 @@ def build(
         "ability": 1.0,
         "difficulty": E.difficulty_to_logits(difficulty_score, config),
         "stage": E.stage_offset(stage, config),
+        # A fact about the SCREEN, not about the rung: since 2026-08-30 the
+        # worked example is scheduled per attempt, so two drills on the same
+        # rung differ in whether one was shown. See `logistic_engine`'s
+        # DEFAULT_EXAMPLE_OFFSET for why it is not folded into `stage`.
+        "example": E.example_offset(example, config),
     }
-    sources: Dict = {"kc": kc, "stage": E.normalize_stage(stage)}
+    sources: Dict = {"kc": kc, "stage": E.normalize_stage(stage), "example": bool(example)}
 
     # Prerequisites are accumulated into ONE dict keyed by concept id, so a
     # concept named by both the graph and the item's own tags is counted once.

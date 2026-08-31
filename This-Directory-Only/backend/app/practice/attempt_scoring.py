@@ -117,10 +117,18 @@ def finalize_attempt(
         # atom tags updates its posterior scaled by that tag's confidence, then
         # FIRe-credits the atoms it encompasses.
         #
+        # `aided` comes from the ladder row this answer already wrote, not from
+        # the schedule: `record_ladder_outcome` stored what the learner actually
+        # saw. An answer given behind a worked example is weaker evidence that
+        # the atom is known (higher G), and the same fact reaches the logistic
+        # engine above as the `example` feature — one screen, one flag, two
+        # models.
+        #
         # params carry the learner's self-reported prior so a never-practiced
         # atom's FIRST update starts from that prior (and decay regresses toward
         # it) — one wrong answer still drops a "strong" prior fast.
         user_params = bkt_mastery.params_for_level(user_state.self_reported_level)
+        aided = engine_bridge.answer_was_aided(user_state, attempt.question_id)
         for tag in getattr(question, "atom_tags", []) or []:
             bkt_mastery.apply_attempt(
                 user_state.atom_mastery,
@@ -129,6 +137,7 @@ def finalize_attempt(
                 attempt.correct,
                 params=user_params,
                 confidence=float(tag.get("confidence", 1.0)),
+                aided=aided,
             )
 
     # Snapshot the subtopic's BKT mastery into the legacy baseline/p fields the

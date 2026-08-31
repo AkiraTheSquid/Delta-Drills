@@ -88,6 +88,38 @@ window the streak exists to overrule.
 `promote_lo`, because a progress bar fed by the full record would fill on
 answers that cannot promote.
 
+**2026-08-31 — and the two mastery models price it too.** The ladder decides
+who ADVANCES; the logistic engine and the atom BKT decide how good the learner
+is believed to be, which is what the difficulty aim and the unlock lattice read.
+Both scored an aided drill exactly like a cold one.
+
+- `logistic_engine` gains an `example` feature, `DEFAULT_EXAMPLE_OFFSET = 0.7`
+  logits, added to the rung's offset. Separate from `stage` on purpose: the
+  popup is scheduled per attempt, the rung is not. The number is derived — the
+  example used to sit inline beside the drill and was part of what
+  `STAGE_FADED = 0.7` covered — and `MODEL_VERSION` moves to `logistic-v0.2`
+  because the design matrix changed. Consequence: an aided drill is predicted
+  easier (0.30 → 0.44 for a cold learner at median difficulty), so the same
+  correct answer moves ability less.
+- `bkt_mastery` gains `P_GUESS_AIDED = 0.50`. A correct answer from a 0.10
+  prior now lands at 0.42 rather than 0.53. It cuts both ways — an aided miss
+  lowers the posterior less (0.022 vs 0.014) — because under the model an
+  unknowing learner misses 80% of unaided drills and only 50% of aided ones.
+  That is Bayes, and the harsh reading of an aided miss lives on the ladder,
+  which demotes on it immediately either way.
+- 🔴 **The BKT knob is small and cannot be made large.** `p_transit` fires on
+  every correct answer, so a run of aided correct answers still walks an atom
+  toward the unlock bar — more slowly, never not at all. Gating the transit
+  would say a worked example teaches nothing. What bounds the exposure is the
+  schedule: it shows a finite number of examples per rung and then stops.
+- Both read the flag from the ladder row the answer already wrote
+  (`engine_bridge.served_example` / `answer_was_aided`), not from the schedule:
+  the client's report of what was actually drawn has already won there.
+
+⚠️ `DELTA_DRILLS_TECHNICAL_SPEC.tex` in the vault (2026-08-20) predates all of
+this. Its feature table, its `MODEL_VERSION` and its §ladder promotion rule are
+now out of date.
+
 ### 3. The popup — `practice/example-gate.js`
 
 Server sends `ladder_example: {show, why, position}` on the question.
