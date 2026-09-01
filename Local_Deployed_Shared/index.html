@@ -87,7 +87,7 @@
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=12" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
        win the ties. Inert until app.js `applyModeVisibility` writes that class,
@@ -110,7 +110,7 @@
        question.css declares that card with. Later sheet wins. Reversed, the
        concept is named twice — once up here and once in a 20px <h2> under it —
        and nothing throws. `watch_concept_pill.py` asserts the order. -->
-  <link rel="stylesheet" href="styles/concept-pill.css?v=1" />
+  <link rel="stylesheet" href="styles/concept-pill.css?v=2" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -118,7 +118,7 @@
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
-  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=6" />
+  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=8" />
   <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
   <link rel="stylesheet" href="styles/solo-route.css?v=1" />
   <link rel="stylesheet" href="styles/test-users.css?v=1" />
@@ -353,6 +353,21 @@
           <span class="account-menu-label">Learner home</span>
         </button>
         <div class="account-menu-sep" role="separator"></div>
+        <!-- RETAKE THE PLACEMENT TEST (Seth, 2026-08-31). It ROUTES, it does
+             not start: a retake CLEARS the probe log, so the destructive click
+             stays on the card. Label is state (id) — see account-menu.js. -->
+        <button class="account-menu-item" type="button" role="menuitem"
+                data-goto-tab="practice" data-placement-retake>
+          <span class="account-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+              <path d="M3.9 18a9 9 0 1 1 16.2 0"></path>
+              <path d="M12 17.2 16.1 11"></path>
+              <circle cx="12" cy="18" r="1.5"></circle>
+            </svg>
+          </span>
+          <span class="account-menu-label" id="account-menu-placement-label">Take the placement test</span>
+        </button>
         <button class="account-menu-item" type="button" role="menuitem" data-goto-tab="account">
           <span class="account-menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
@@ -555,21 +570,28 @@
     </div>
   </aside>
 
-  <!-- GUEST BANNER — shown to anyone not signed in. A guest gets the whole
-       app, not a cut-down one: guest-session.js provisions an account for
-       this browser so the diagnostic, the lessons and the student model all
-       run. The progress that builds belongs to this browser and clearing
-       site data ends it, which is what the banner has to say. It must NOT
-       say signing in carries that progress with you: Google sign-in mints a
-       different backend account and there is no merge endpoint, so what the
-       guest did stays with the guest account. Toggled by
+  <!-- GUEST BANNER — shown to anyone not signed in. Toggled by
        app.js updateTabVisibility(), keyed on isSignedIn() — a guest holds a
-       token, so `authToken` would hide this from the people it is for. -->
+       token, so `authToken` would hide this from the people it is for.
+
+       🔴 2026-09-01: THE COPY HERE USED TO PROMISE A WORKING GUEST MODE AND
+       IT DOES NOT CURRENTLY WORK. The design is still the one below — a
+       guest gets the whole app, guest-session.js provisions an account for
+       this browser, and the diagnostic, the lessons and the student model
+       all run off it — but signed out the app does not actually work today,
+       so the banner now says so instead of telling people to try it. Seth is
+       fixing the guest path separately; when it works again, restore copy
+       that says no account is needed and drop the "doesn't work yet" line.
+
+       Two things the copy must keep saying whichever state we're in: guest
+       progress lives in THIS browser and clearing site data ends it, and
+       signing in does NOT carry that progress over — Google sign-in mints a
+       different backend account and there is no merge endpoint. -->
   <div class="guest-banner" id="guest-banner">
     <div class="guest-banner-inner">
       <span class="guest-banner-dot" aria-hidden="true"></span>
       <span class="guest-banner-label">Guest</span>
-      <span class="guest-banner-meta">No account needed — everything works, and your progress is saved in this browser. <strong>Continue with Google</strong> to start an account that works on any device; guest progress stays here.</span>
+      <span class="guest-banner-meta">Guest mode doesn't work yet — the app needs an account right now. <strong>Continue with Google</strong> to sign in; anything you did as a guest stays in this browser — it doesn't move to the account, and clearing site data ends it.</span>
       <!-- Google Identity Services renders the Continue-with-Google button here
            (app.js). One click signs in or signs up — no separate login page. -->
       <div id="google-signin-banner" class="guest-banner-google"></div>
@@ -1877,7 +1899,7 @@ t.manual_seed(0)
        which is a top-level `const` in app.js and therefore NOT on `window`.
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
-  <script src="account-menu.js?v=2"></script>
+  <script src="account-menu.js?v=3"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
@@ -1953,7 +1975,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=25"></script>
+  <script src="practice/api.js?v=26"></script>
   <script src="practice/timer.js?v=23"></script>
   <script src="practice/kernel.js?v=4"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
@@ -1975,11 +1997,11 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=17"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=15"></script>
+  <script src="practice/stage-ladder.js?v=16"></script>
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=2"></script>
+  <script src="concept-pill.js?v=3"></script>
   <script src="practice/notch-menu.js?v=7"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
@@ -1992,12 +2014,13 @@ t.manual_seed(0)
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=2"></script>
-  <script src="practice/ladder.js?v=8"></script>
+  <script src="practice/ladder.js?v=9"></script>
+  <script src="practice/example-gate.js?v=1"></script>
   <script src="practice/kc-practice.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=39"></script>
+  <script src="practice/events.js?v=41"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
        the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
        of #practice-feedback-area and into a bar pinned to the bottom of the
@@ -2010,7 +2033,7 @@ t.manual_seed(0)
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-results.js?v=3"></script>
-  <script src="practice/diagnostic-page.js?v=15"></script>
+  <script src="practice/diagnostic-page.js?v=16"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->

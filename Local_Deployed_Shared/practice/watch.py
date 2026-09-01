@@ -35,6 +35,7 @@ from watch_feedback import (
     check_a_lesson_can_be_reported_without_touching_the_question,
     check_feedback_that_never_left_the_browser_is_not_called_logged,
 )
+from watch_example_gate import check_the_example_gate_runs_after_the_lesson_gates
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
     check_only_one_module_patches_a_code_editors_value,
@@ -660,6 +661,65 @@ def check_every_placement_question_gets_the_same_clock():
     )
 
 
+def check_a_taken_placement_leaves_the_learner_home():
+    """The placement card is a one-off offer, and the account menu is the way back.
+
+    Seth, 2026-08-31: "don't put it on the learner home tab ... remove it from
+    there. It should show up there only whenever the student hasn't taken the
+    diagnostic before" — and, in the same breath, "keep the diagnostic in the
+    drop-down ... that way you can always retake the placement diagnostic".
+
+    Those two halves only hold together as a pair, which is why they are checked
+    as one. Hide the card without the menu row and a learner who wants a retake
+    has NO route to one. Ship the row without the hide and the daily screen still
+    carries a card for a test already sat.
+
+    🔴 THE HIDE IS CONDITIONAL ON A COMPLETED PLACEMENT, and the condition is the
+    check. `!!status?.completed_at && !status.active` is what keeps the card on
+    screen for the two learners who need it — the one who has never taken it, and
+    the one who is in the middle of one (#diagnostic-practice-btn, the only way
+    to load the next probe, lives inside this card). An unknown status is not a
+    taken one either: render(null) is a signed-out visitor, not a graduate.
+    """
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+    css = read(os.path.join(SHARED, "styles", "practice", "diagnostic.css"))
+    menu_js = read(os.path.join(SHARED, "account-menu.js"))
+    index = read(os.path.join(SHARED, "index.html"))
+
+    assert "#page-practice.placement-taken #diagnostic-overview" in css, (
+        "the rule that takes a finished placement off the Learner Home is gone"
+    )
+    assert "placement-taken" in page, (
+        "diagnostic-page.js is no longer the writer of .placement-taken — the "
+        "CSS rule is inert and the card is back on the daily screen"
+    )
+    assert 'status?.completed_at && !status.active' in page, (
+        "the placement card is hidden on something other than a COMPLETED, "
+        "not-running placement. A learner mid-test loses the only button that "
+        "loads the next probe; a signed-out visitor loses the whole pitch"
+    )
+    # The way back. Both ends: the row exists, and it does more than route —
+    # a bare [data-goto-tab] lands on a page the card is not on.
+    assert "data-placement-retake" in index, (
+        "the account menu lost the placement row, and the card is hidden — "
+        "there is now no route to a retake at all"
+    )
+    assert "DiagnosticPage?.reveal" in menu_js, (
+        "account-menu.js stopped calling reveal(), so the placement row routes "
+        "to a Learner Home the card is hidden on"
+    )
+    assert "reveal" in page.split("return {")[-1], (
+        "DiagnosticPage stopped exporting reveal() — account-menu.js's optional "
+        "call would silently do nothing"
+    )
+    # The override is for the visit, not for the session.
+    leave = page.split("const leave = () =>")[1].split("};")[0]
+    assert "forceShow = false" in leave, (
+        "leaving the Learner Home no longer clears the reveal override, so one "
+        "click on the menu row undoes the rule for the rest of the session"
+    )
+
+
 def check_the_placement_result_is_the_number_the_backend_seeded():
     """The results card must report the placement, and say what it doesn't know.
 
@@ -798,6 +858,8 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
 
 
 # ── Run all checks ───────────────────────────────
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_a_torch_question_never_grades_on_pyodide,
@@ -811,6 +873,7 @@ if __name__ == '__main__':
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
               check_the_notebook_view_is_loaded_after_what_it_calls,
+              check_the_example_gate_runs_after_the_lesson_gates,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
               check_a_slow_run_cannot_touch_another_notebook,
@@ -823,6 +886,7 @@ if __name__ == '__main__':
               check_a_code_cell_grows_to_fit_its_own_code,
               check_every_placement_question_gets_the_same_clock,
               check_the_placement_result_is_the_number_the_backend_seeded,
+              check_a_taken_placement_leaves_the_learner_home,
               check_a_deleted_practice_notice_stays_deleted,
               check_a_hidden_rating_still_commits_the_attempt,
               check_the_difficulty_question_is_one_row_docked_to_the_bottom,

@@ -4,9 +4,10 @@ title: Elementwise math
 supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.ceil, torch.floor, torch.maximum, torch.minimum, torch.round, torch.sqrt, torch.trunc]
 previews: [Tensor.max, syntax.matmul]
-faded: [192, 49, 67]
+faded: [192, 49, 67, 630, 631, 632]
 guided: [487, 488]
-independent: [43, 489, 63]
+independent: [43, 489, 63, 633, 634, 635]
+integrated: [636, 637, 638]
 ---
 
 ## Concept: write the formula once — operators are elementwise
@@ -96,6 +97,25 @@ def solve(x):
     return x ** 3
 ```
 
+### q630
+A line through every entry — one formula, no loop.
+
+```python starter
+import torch as t
+
+def solve(x, m, b):
+    """Return m * x + b for every entry."""
+    return m _____ x _____ b
+```
+
+```python solution
+import torch as t
+
+def solve(x, m, b):
+    """Return m * x + b for every entry."""
+    return m * x + b
+```
+
 ## Concept: named math functions and the rounding family
 
 Beyond operators, named functions map over the whole tensor: `t.sqrt`,
@@ -172,6 +192,25 @@ import torch as t
 def solve(z):
     """Replace each entry by the largest integer value <= it."""
     return t.floor(z)
+```
+
+### q631
+The fractional part, sign kept — pick the rounding family member that cuts toward zero.
+
+```python starter
+import torch as t
+
+def solve(x):
+    """Return the fractional part of every entry, keeping its sign."""
+    return x - t._____(x)
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """Return the fractional part of every entry, keeping its sign."""
+    return x - t.trunc(x)
 ```
 
 ## Concept: elementwise choosers — maximum, minimum, clamp
@@ -258,6 +297,25 @@ def solve(z):
     return z.clamp(min=0.0)
 ```
 
+### q632
+Position by position, keep the smaller of the two.
+
+```python starter
+import torch as t
+
+def solve(a, b):
+    """Return the smaller of each pair of corresponding entries."""
+    return t._____(a, b)
+```
+
+```python solution
+import torch as t
+
+def solve(a, b):
+    """Return the smaller of each pair of corresponding entries."""
+    return t.minimum(a, b)
+```
+
 ## Guided practice
 
 ### q487
@@ -271,11 +329,50 @@ def solve(z):
    editing yours — which is what keeps the input unchanged.
 3. `x.abs()`.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q43 (elementwise larger of two tensors), q489 (pull every
-element into [lo, hi] — mind which of min=/max= is the floor), q63 (the
-integer part of positive floats, 3.7 becoming 3.0 — several idioms work).
+### q43
+The larger of each pair of corresponding entries.
+
+### q489
+Pull every entry into [lo, hi] — both bounds at once.
+
+### q63
+The integer part of positive entries — several members of the family agree here.
+
+### q633
+Pythagoras on every pair — square, add, root.
+
+### q634
+The two integers each entry sits between.
+
+### q635
+A floor under every entry, written as a maximum against a constant.
+
+maximum compares two tensors position by position. Pair x with a tensor of
+zeros shaped like it and you have ReLU without clamp:
+
+```python worked
+import torch as t
+
+x = t.tensor([-2.0, 0.5, 3.0])
+zeros = t.zeros_like(x)
+print("x     ", x)
+print("zeros ", zeros)
+print("relu  ", t.maximum(x, zeros))
+assert t.equal(t.maximum(x, zeros), x.clamp(min=0.0))
+```
+
+## Integrated practice
+
+### q636
+Clamp, round, and report whether the clamp had anything to do.
+
+### q637
+Larger, smaller, and the gap — three elementwise results from one pair.
+
+### q638
+One conversion formula, then two different elementwise clean-ups.
 
 ## Misconceptions
 

@@ -5,7 +5,7 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 38.2,
+ "mean": 26.7,
  "kcs": {
   "einops.channel-groups-temporal": {
    "d": 45.9,
@@ -16,7 +16,7 @@
    "n": 5
   },
   "einops.grids-montage": {
-   "d": 59.9,
+   "d": 58.6,
    "n": 9
   },
   "einops.merge-axes": {
@@ -32,8 +32,8 @@
    "n": 8
   },
   "einops.pooling": {
-   "d": 52.6,
-   "n": 7
+   "d": 54.3,
+   "n": 6
   },
   "einops.reduce-model": {
    "d": 32.8,
@@ -48,220 +48,120 @@
    "n": 8
   },
   "einops.split-axes": {
-   "d": 42.8,
-   "n": 6
-  },
-  "einsum.attention-patterns": {
-   "d": 47.9,
-   "n": 8
-  },
-  "einsum.batch-dims": {
-   "d": 38.6,
-   "n": 9
-  },
-  "einsum.broadcast-scaling": {
-   "d": 37.3,
-   "n": 7
-  },
-  "einsum.diag-trace": {
-   "d": 31.7,
-   "n": 7
-  },
-  "einsum.dot-frobenius": {
-   "d": 30.5,
-   "n": 4
-  },
-  "einsum.matrix-forms": {
-   "d": 44.0,
-   "n": 6
-  },
-  "einsum.matvec-matmul": {
-   "d": 34.4,
-   "n": 7
-  },
-  "einsum.notation-model": {
-   "d": 25.2,
+   "d": 40.4,
    "n": 5
-  },
-  "einsum.outer-products": {
-   "d": 32.0,
-   "n": 5
-  },
-  "einsum.reductions": {
-   "d": 27.0,
-   "n": 10
   },
   "numpy.aggregations": {
-   "d": 19.0,
-   "n": 4
+   "d": 18.8,
+   "n": 8
   },
   "numpy.argmin-argmax": {
    "d": 28.9,
    "n": 7
   },
-  "numpy.argsort-ranking": {
-   "d": 54.8,
-   "n": 4
-  },
   "numpy.axis-reductions": {
-   "d": 36.6,
-   "n": 5
+   "d": 30.6,
+   "n": 8
   },
   "numpy.boolean-masking": {
    "d": 29.9,
    "n": 7
   },
   "numpy.broadcasting-rules": {
-   "d": 41.0,
-   "n": 4
-  },
-  "numpy.centering": {
-   "d": 36.3,
-   "n": 6
+   "d": 36.9,
+   "n": 7
   },
   "numpy.constructors": {
-   "d": 12.0,
-   "n": 8
-  },
-  "numpy.cumulative-diff": {
-   "d": 28.3,
-   "n": 7
-  },
-  "numpy.diag-triangles": {
-   "d": 26.2,
-   "n": 10
+   "d": 13.6,
+   "n": 18
   },
   "numpy.dot-matmul-patterns": {
-   "d": 33.3,
-   "n": 6
-  },
-  "numpy.dtype-astype": {
-   "d": 18.4,
-   "n": 5
-  },
-  "numpy.elementwise-ufuncs": {
-   "d": 20.8,
-   "n": 5
-  },
-  "numpy.fancy-indexing": {
-   "d": 30.9,
-   "n": 9
-  },
-  "numpy.geometry-transforms": {
-   "d": 58.2,
-   "n": 4
-  },
-  "numpy.index-grids": {
-   "d": 43.2,
-   "n": 6
-  },
-  "numpy.inplace-out": {
-   "d": 38.0,
-   "n": 4
-  },
-  "numpy.linalg-applied": {
-   "d": 57.0,
-   "n": 5
-  },
-  "numpy.linalg-basics": {
-   "d": 19.0,
-   "n": 2
-  },
-  "numpy.memory-model": {
-   "d": 75.3,
-   "n": 3
-  },
-  "numpy.nan-handling": {
-   "d": 40.5,
-   "n": 6
-  },
-  "numpy.ndarray-model": {
-   "d": 20.0,
-   "n": 2
-  },
-  "numpy.nonzero-argwhere": {
-   "d": 32.7,
-   "n": 3
-  },
-  "numpy.onehot-bincount": {
-   "d": 48.8,
-   "n": 5
-  },
-  "numpy.pad-borders": {
-   "d": 39.5,
-   "n": 4
-  },
-  "numpy.pairwise-metrics": {
-   "d": 54.6,
+   "d": 31.7,
    "n": 7
   },
-  "numpy.random-generator": {
-   "d": 22.0,
-   "n": 3
+  "numpy.dtype-astype": {
+   "d": 17.0,
+   "n": 16
   },
-  "numpy.random-sampling": {
-   "d": 58.0,
-   "n": 4
+  "numpy.elementwise-ufuncs": {
+   "d": 18.7,
+   "n": 17
   },
-  "numpy.ranges": {
-   "d": 17.5,
-   "n": 4
-  },
-  "numpy.rescaling": {
-   "d": 36.2,
+  "numpy.linalg-basics": {
+   "d": 27.8,
    "n": 8
   },
-  "numpy.reshape-flatten": {
-   "d": 16.7,
-   "n": 3
+  "numpy.ndarray-model": {
+   "d": 23.7,
+   "n": 37
   },
-  "numpy.scatter-gather": {
-   "d": 48.8,
+  "numpy.random-samplers": {
+   "d": 17.7,
+   "n": 12
+  },
+  "numpy.random-seeding": {
+   "d": 23.5,
+   "n": 12
+  },
+  "numpy.random-threading": {
+   "d": 22.0,
+   "n": 11
+  },
+  "numpy.ranges": {
+   "d": 17.6,
    "n": 5
   },
-  "numpy.set-combinatorics": {
-   "d": 65.7,
-   "n": 10
+  "numpy.reshape-flatten": {
+   "d": 20.3,
+   "n": 19
   },
   "numpy.slicing-views": {
-   "d": 22.3,
-   "n": 6
-  },
-  "numpy.sliding-windows": {
-   "d": 57.5,
-   "n": 4
+   "d": 21.2,
+   "n": 8
   },
   "numpy.sorting": {
-   "d": 16.0,
-   "n": 1
+   "d": 23.6,
+   "n": 17
   },
   "numpy.stack-concat-interleave": {
    "d": 37.2,
    "n": 5
   },
-  "numpy.structured-dtypes": {
-   "d": 52.0,
+  "numpy.transpose-axes": {
+   "d": 19.6,
+   "n": 15
+  },
+  "numpy.views-and-copies": {
+   "d": 26.4,
+   "n": 9
+  },
+  "python.calling-functions": {
+   "d": 22.3,
    "n": 6
   },
-  "numpy.tile-repeat-meshgrid": {
+  "python.defining-functions": {
+   "d": 24.3,
+   "n": 6
+  },
+  "python.dots-and-imports": {
+   "d": 24.7,
+   "n": 6
+  },
+  "python.indexing": {
+   "d": 22.3,
+   "n": 6
+  },
+  "python.lists-and-tuples": {
+   "d": 22.3,
+   "n": 6
+  },
+  "python.types-and-conversion": {
    "d": 22.0,
    "n": 6
   },
-  "numpy.topk-selection": {
-   "d": 63.0,
-   "n": 3
-  },
-  "numpy.unique": {
-   "d": 31.2,
-   "n": 5
-  },
-  "numpy.where-select": {
-   "d": 42.0,
-   "n": 3
-  },
-  "numpy.window-stencil": {
-   "d": 65.1,
-   "n": 7
+  "python.values-and-names": {
+   "d": 20.3,
+   "n": 6
   }
  }
 }

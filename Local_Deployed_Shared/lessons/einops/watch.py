@@ -167,6 +167,21 @@ def check_invariants():
                 )
 
 
+
+# ── The three standing content guards ─────────
+# Filled 2026-08-29 on Seth's instruction: these must fire on the folder being
+# EDITED, not only from scripts/, so that adding a drill or a KP page here is
+# what trips them. The implementations live in scripts/guard_checks.py — one
+# copy, because a guard duplicated six times becomes six different guards
+# inside a month. Scoped to einops. so this watcher reports its own concepts.
+import importlib.util as _ilu
+_GUARD = os.path.join(os.path.join(_DIR, '..', '..', '..'), 'scripts', 'guard_checks.py')
+_spec = _ilu.spec_from_file_location('guard_checks', _GUARD)
+_guard = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_guard)
+
+_CONTENT_GUARDS = _guard.run('einops.')
+
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
     # a stripped run reports success having verified nothing. Refuse instead.
@@ -174,7 +189,8 @@ if __name__ == '__main__':
         print('FAIL: watch.py needs assertions enabled (do not run under -O)',
               file=sys.stderr)
         sys.exit(1)
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api,
+              check_invariants] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()

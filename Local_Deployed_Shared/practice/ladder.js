@@ -52,14 +52,19 @@ const LadderUI = (() => {
      The examples have not been taken away — they moved. The learner reads them
      on the Lesson rung, all of them, immediately before this rung starts; the
      faded drill is then recall against a scaffold rather than transcription.
-     `partial` (displayed "Solo") keeps an example for the MINORITY of its
-     drills that authored one, which is how a new move is introduced without
-     stopping the rung. `solo` (displayed "Integrated") never has one. */
-  const SUPPORTED_STAGES = new Set(["partial"]);
+     `partial` (displayed "Solo") kept an example beside the MINORITY of its
+     drills that authored one — until 2026-08-30. Examples on the drill rungs
+     are now a POPUP in front of the drill, on a schedule the server decides
+     (app/example_schedule.py → question.ladder_example, drawn by
+     practice/example-gate.js): after a miss on Faded, at widening intervals
+     on Solo, once on entry to Integrated. Nothing is rendered beside a drill
+     any more, so this set is empty; it is kept because `decorate` and the
+     strip still read it to say "no example promised here". */
+  const SUPPORTED_STAGES = new Set([]);
 
   const STAGE_BLURB = {
     faded: "You read the example in the lesson — this one is from memory. Fill in the blanks.",
-    partial: "Write the whole thing yourself.",
+    partial: "Write the whole thing yourself. An example pops up now and then, less and less.",
     solo: "Every idea in this concept at once. Nothing to read first.",
   };
 

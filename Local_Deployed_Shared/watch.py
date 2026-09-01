@@ -202,7 +202,11 @@ def check_invariants():
     # The menu is the last thing in `.topbar-side--right`; its own closing tag
     # is the only `</div>` at six-space indent after it.
     menu = index_html.split('id="account-menu"')[1].split("\n      </div>")[0]
-    assert 0 < len(menu) < 6000, (
+    # The ceiling is a TERMINATION check, not a row budget: the failure it
+    # catches is a slice that ran past `</div>` and swallowed the rest of the
+    # page (tens of KB), not a menu that grew a row. Raised 6000 -> 9000 on
+    # 2026-08-31 when the placement-retake row and its comment landed.
+    assert 0 < len(menu) < 9000, (
         "the #account-menu slice did not terminate where check_front_door "
         "expects it to — every row assertion below is now reading the wrong "
         "span of the document"
@@ -210,6 +214,29 @@ def check_invariants():
     for label in ("Learner home", "Account and Settings", "Knowledge graph",
                   "Why this app exists", "How this app works"):
         assert f">{label}<" in menu, f"the account menu lost the {label!r} row"
+    # 🔴 THE PLACEMENT ROW IS ASSERTED BY ID, NOT BY WORDS. Its label is state —
+    # diagnostic-page.js rewrites it Take / Resume / Retake off the same
+    # /diagnostic/status payload that labels #placement-start-btn — so matching
+    # the text would fail the moment a learner completes a placement. Same rule
+    # as the instructor row above.
+    assert 'id="account-menu-placement-label"' in menu, (
+        "the account menu lost the placement-test row. Seth, 2026-08-31: the "
+        "retake has to be reachable from this menu, not only from the card on "
+        "the Learner Home"
+    )
+    assert "data-placement-retake" in menu, (
+        "the placement row lost data-placement-retake — account-menu.js reads "
+        "it to scroll the placement card into view and flash its button; "
+        "without it the row is a bare jump to the Learner Home"
+    )
+    # 🔴 IT ROUTES, IT DOES NOT START. `diagnostic.start()` CLEARS the probe log
+    # and blanks completed_at, and this row sits one pixel from "Learner home".
+    # The destructive click stays on the card, behind a second deliberate press.
+    _placement_row = menu.split("data-placement-retake")[0].rsplit("<button", 1)[1]
+    assert 'data-goto-tab="practice"' in _placement_row, (
+        "the placement row stopped routing to the Learner Home through app.js's "
+        "own [data-goto-tab] binding"
+    )
     # The instructor row (Seth, 2026-08-24) is the late door into the mode and
     # the only way out. Its label is REWRITTEN by instructor-mode.js
     # (Enter ↔ Exit), so assert the id it rewrites through, not the text.
@@ -225,7 +252,7 @@ def check_invariants():
         "Learner home is no longer the first row of the account menu"
     )
     # Every row carries an icon, home included.
-    assert menu.count("account-menu-icon") == 6, (
+    assert menu.count("account-menu-icon") == 7, (
         "an account-menu row is missing its icon — Seth asked for one on each"
     )
     # The two explainer rows open a DISCLOSURE on the shared page, not a page

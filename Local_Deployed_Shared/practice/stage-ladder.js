@@ -108,7 +108,7 @@ const StageLadder = (() => {
   const STAGES = [
     { id: "lesson", label: "Lesson", blurb: "Read the explanation and run the examples." },
     { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
-    { id: "example", label: "Solo", blurb: "Write the whole thing yourself. Some of these open with an example." },
+    { id: "example", label: "Solo", blurb: "Write the whole thing yourself. An example pops up now and then, less and less." },
     { id: "solo", label: "Integrated", blurb: "Every idea in this concept at once, with nothing to read first." },
   ];
 
@@ -213,8 +213,18 @@ const StageLadder = (() => {
 
   /* The Wilson lower bound this concept's record currently stands at.
      `ladder_estimate.ci` is [lower, upper] from `kc_graph.kc_estimate`; the
-     ladder promotes on the lower one, so that is the only half drawn. */
+     ladder promotes on the lower one, so that is the only half drawn.
+
+     `promote_lo` in preference to it: since 2026-08-30 the bound that opens the
+     gate is computed over UNAIDED answers only (`_capped_by_unaided`), and a
+     drill served behind a worked-example popup does not move it. Drawing the
+     full-record bound would fill this bar on answers that cannot promote — the
+     one thing the section's own rule forbids, a bar that promises a rung it
+     will not reach. `ci` stays the fallback for a payload from before the
+     field existed. */
   const _boundOf = (estimate) => {
+    const gate = estimate && estimate.promote_lo;
+    if (Number.isFinite(gate)) return gate;
     const ci = estimate && estimate.ci;
     return Array.isArray(ci) && Number.isFinite(ci[0]) ? ci[0] : null;
   };

@@ -1,7 +1,7 @@
 ---
 kc: einops.dl-flatten-heads
 title: Deep-learning shapes — flattening and attention heads
-supporting: [einops.merge-axes, einops.split-axes, einsum.attention-patterns]
+supporting: [einops.merge-axes, einops.split-axes]
 new_syntax: []
 faded: [356]
 guided: [396]

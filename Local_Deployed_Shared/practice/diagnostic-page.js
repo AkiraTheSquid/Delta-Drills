@@ -136,6 +136,63 @@ const DiagnosticPage = (() => {
     }
   };
 
+  /* 🔴 THE PLACEMENT CARD LEAVES THE LEARNER HOME ONCE IT HAS BEEN TAKEN
+     (Seth, 2026-08-31: "don't put it on the learner home tab ... remove it from
+     there. It should show up there only whenever the student hasn't taken the
+     diagnostic before").
+
+     The Learner Home is the screen opened every day; a finished placement is a
+     thing done once, and leaving its card parked at the bottom of that screen
+     spends the daily surface on an offer already accepted. So a COMPLETED
+     placement hides the whole of #diagnostic-overview — the card, and the
+     results section inside it — and the account menu's "Retake the placement
+     test" row is the way back to both.
+
+     WHO IS STILL SHOWN IT: anyone who has not finished one. No status (signed
+     out, or a backend that did not answer) is NOT "taken" — an unknown record
+     must not delete the only pitch a first-time visitor gets. A placement in
+     progress is not "taken" either: `#diagnostic-practice-btn` lives in this
+     card and is the only way to load the next probe.
+
+     🔴 `forceShow` IS THE MENU ROW'S OVERRIDE and it is deliberately not
+     persisted. `reveal()` sets it; every render after that keeps the card up,
+     which is what lets the learner read their last results and then press
+     Retake. `leave()` clears it, so the card is gone again the next time they
+     open the Learner Home under their own steam — the row is what shows it, not
+     a one-way switch that undoes Seth's rule for the rest of the session. */
+  let lastStatus = null;
+  let forceShow = false;
+
+  /* 🔴 AND THE COPY UNDER THE AREA BARS POINTS AT THE CARD. It reads "Take the
+     placement test BELOW" — static markup, no other writer — and below is where
+     the card no longer is once it has been taken. A line that points at nothing
+     is how a learner concludes the app is broken rather than that the offer is
+     spent, so the sentence names the route that does exist instead. */
+  const AREAS_NOTE_UNTAKEN =
+    "Each bar is this area's estimated readiness. Take the placement test below " +
+    "to measure them instead of assuming them.";
+  const AREAS_NOTE_TAKEN =
+    "Each bar is this area's estimated readiness, measured by your placement " +
+    "test. Retake it any time from Account and Settings.";
+
+  const syncOverviewVisibility = (status) => {
+    const page = byId("page-practice");
+    if (!page) return;
+    const taken = !!status?.completed_at && !status.active;
+    const away = taken && !forceShow;
+    page.classList.toggle("placement-taken", away);
+    const note = byId("learner-areas-note");
+    if (note) note.textContent = away ? AREAS_NOTE_TAKEN : AREAS_NOTE_UNTAKEN;
+  };
+
+  /* Called by account-menu.js when the placement row is picked. It re-syncs off
+     the LAST status rather than waiting for the refresh that follows, so the
+     card is on screen in the same frame as the scroll that goes to it. */
+  const reveal = () => {
+    forceShow = true;
+    syncOverviewVisibility(lastStatus);
+  };
+
   /* `running` is the one fact this file publishes about a placement, and
      `syncWorkspace` is the only thing that acts on it. (There was a Practice
      tab lock written alongside it until the two tabs were merged — see the note
@@ -149,7 +206,34 @@ const DiagnosticPage = (() => {
      to refresh it (the click handler, and the state-changed sweep) and used to
      carry a second copy of the label + visibility rules; two copies of a label
      is how a button flickers between two names on refresh. */
+  /* THE ACCOUNT-MENU ROW SAYS THE SAME THING THIS BUTTON DOES.
+
+     Seth, 2026-08-31: the retake has to be reachable from the account menu, not
+     only from this card. The row is a route (account-menu.js scrolls the card up
+     and flashes the button — it never calls /diagnostic/start), so the only
+     thing it needs from here is its LABEL, and that label has to come from the
+     same status payload the button reads. Two independent copies of "Take" vs
+     "Retake" is how a menu ends up offering a retake of a test nobody has sat.
+
+     🔴 THREE STATES, not the button's two. The button HIDES while a placement
+     is active — the card shows "Load next placement question" instead — but a
+     menu row that vanishes mid-test is exactly the disappearance the row exists
+     to fix ("that way you can ALWAYS retake"). So the row stays and says
+     Resume, which is what clicking it does: route back to the live test. */
+  const syncMenuLabel = (status) => {
+    const el = byId("account-menu-placement-label");
+    if (!el) return;
+    el.textContent = status?.active
+      ? "Resume the placement test"
+      : status?.completed_at
+        ? "Retake the placement test"
+        : "Take the placement test";
+  };
+
   const renderStartButton = (status, el = byId("placement-start-btn")) => {
+    // Before the early return: the row is on the topbar, on every page, and it
+    // is labelled whether or not this card is in the document.
+    syncMenuLabel(status);
     if (!el) return;
     el.textContent = status?.completed_at
       ? "Retake the placement test"
@@ -249,7 +333,6 @@ const DiagnosticPage = (() => {
      screen-reader phase, which is the same surface a practice session uses to
      say which phase it is in. Empty when nothing is running, so notch-menu.js
      can fall back to the session's own words. */
-  let lastStatus = null;
   const progressLabel = () => {
     if (!running || !lastStatus) return "";
     const budget = Math.max(1, Number(lastStatus.budget) || 14);
@@ -270,9 +353,14 @@ const DiagnosticPage = (() => {
       continueEl?.classList.add("hidden");
       startEl?.classList.add("hidden");
       resultsEl?.classList.add("hidden");
+      // No status is not "you finished one": a stale "Retake the placement
+      // test" in the account menu is a claim about this learner's record.
+      syncMenuLabel(null);
       renderProgress(null);
       window.PlacementResults?.renderAreas([]);
       moveWorkspace(false);
+      // Unknown record ≠ taken: keep the card up for a signed-out visitor.
+      syncOverviewVisibility(null);
       return;
     }
 
@@ -318,6 +406,11 @@ const DiagnosticPage = (() => {
     if (showResults) window.PlacementResults?.render(status);
     resultsEl?.classList.toggle("hidden", !showResults);
     moveWorkspace(!!status.active);
+    /* AFTER the results card is filled, not before: the same status that says
+       "completed" is what takes the whole overview off the Learner Home, and
+       the menu row's reveal has to find a results card with this placement in
+       it rather than the shape of the last one. */
+    syncOverviewVisibility(status);
     /* 🔴 THE HAND-OFF TO PRACTICE USED TO BE HERE and is gone, because there is
        nowhere to hand off TO. A finished placement in basic mode was switched to
        the Practice tab the moment its results arrived — that was the only exit
@@ -428,6 +521,9 @@ const DiagnosticPage = (() => {
     clearTimeout(retryTimer);
     retryTimer = null;
     generation += 1;
+    // The menu row's override is for the visit it was clicked in. Coming back
+    // to the Learner Home any other way finds the card put away again.
+    forceShow = false;
     syncWorkspace();
   };
 
@@ -441,7 +537,7 @@ const DiagnosticPage = (() => {
       .observe(watched, { attributes: true, attributeFilter: ["class"] });
   }
 
-  return { refresh, leave, renderStartButton, isRunning: () => running, progressLabel };
+  return { refresh, leave, reveal, renderStartButton, isRunning: () => running, progressLabel };
 })();
 window.DiagnosticPage = DiagnosticPage;
 

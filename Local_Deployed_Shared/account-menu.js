@@ -103,6 +103,77 @@
     if (opening) requestAnimationFrame(() => focusItem(0));
   });
 
+  /* THE PLACEMENT ROW (Seth, 2026-08-31: "make it such that it shows up for
+     having the ability to retake the diagnostic in the account and settings
+     dropdown ... that way you can always retake the placement diagnostic if you
+     need to").
+
+     🔴 IT MUST NOT START THE TEST FROM HERE. `POST /diagnostic/start` calls
+     `diagnostic.start()`, which sets `probes = []` and `completed_at = None` —
+     retaking THROWS AWAY the reading the learner already has. This row sits one
+     pixel below "Learner home" in a menu that opens on a single click, so it
+     routes instead: `data-goto-tab="practice"` is app.js's binding (same
+     division of labour as `data-lab-open` above — this file never re-implements
+     the jump), and the destructive press stays on #placement-start-btn, on a
+     card that says what the test is and how long it takes.
+
+     What this adds is the part a bare jump cannot do: the placement card is
+     below the readiness dial and the area bars, so on the Learner Home it is
+     usually off screen. Scroll it up, then focus and flash the button that acts.
+
+     🔴 THE SCROLL AND THE FLASH ARE ON DIFFERENT CLOCKS. The card can be
+     scrolled to on the next frame — `switchTab` un-hides the page in this same
+     task, and it has a layout box as soon as the style recalculation lands. The
+     BUTTON cannot: it is `.hidden` until a /diagnostic/status call answers
+     (diagnostic-page.js::renderStartButton owns that), and `.focus()` on a
+     `display: none` element does nothing at all. So scroll now, and flash after
+     the refresh resolves. */
+  const flash = (el) => {
+    el.classList.remove("placement-cta-flash");
+    // Reading layout between the remove and the add is what restarts a running
+    // animation; without it a second click from the menu does nothing visible.
+    void el.offsetWidth;
+    el.classList.add("placement-cta-flash");
+  };
+
+  const revealPlacement = () => {
+    /* 🔴 THE CARD IS USUALLY NOT ON THE PAGE WHEN THIS RUNS. Seth, 2026-08-31:
+       once a placement has been taken, #diagnostic-overview is off the Learner
+       Home entirely (#page-practice.placement-taken) — so for the learner this
+       row is FOR, routing to the page would land them on a screen with nothing
+       to press. `reveal()` lifts that for this visit; `leave()` puts it back on
+       the way out. Called BEFORE the scroll: an element with `display: none` has
+       no layout box, and scrollIntoView on one goes to the top of the document.
+
+       It is called AGAIN after the refresh below, because the render that
+       refresh triggers re-decides the card's visibility — reveal() only sets the
+       override, and the second call is what re-applies it to a card that a fresh
+       "completed" status would otherwise have hidden again. It is idempotent. */
+    window.DiagnosticPage?.reveal?.();
+    const card = document.getElementById("diagnostic-overview");
+    // Still hidden means a probe is on screen (#page-practice.diagnostic-running,
+    // which reveal() does not lift): the learner is mid-test, and the card they
+    // are asking for is the test.
+    if (card && card.offsetParent !== null) {
+      requestAnimationFrame(() => {
+        card.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    }
+    Promise.resolve(window.DiagnosticPage?.refresh?.()).catch(() => {}).then(() => {
+      window.DiagnosticPage?.reveal?.();
+      /* Whichever of the two is on screen. Mid-test the start button is hidden
+         and "Load next placement question" is the live control, so pointing at
+         the start button unconditionally would focus nothing exactly when the
+         learner most needs the page to answer. */
+      const target = ["placement-start-btn", "diagnostic-practice-btn"]
+        .map((id) => document.getElementById(id))
+        .find((el) => el && !el.classList.contains("hidden"));
+      if (!target) return;
+      target.focus({ preventScroll: true });
+      flash(target);
+    });
+  };
+
   menu.addEventListener("click", (e) => {
     const item = e.target.closest(".account-menu-item");
     if (!item) return;
@@ -112,6 +183,7 @@
        belongs to is on screen — hence after, in the same task. */
     const lab = item.dataset.labOpen;
     if (lab) openDisclosure(lab);
+    if (item.hasAttribute("data-placement-retake")) revealPlacement();
   });
 
   /* Click-away and Escape. Both are what a menu is expected to do, and without
@@ -152,5 +224,5 @@
     }
   }
 
-  window.DDAccountMenu = { close, openDisclosure };
+  window.DDAccountMenu = { close, openDisclosure, revealPlacement };
 })();

@@ -6,6 +6,17 @@ function emitPracticeStateChanged() {
   window.dispatchEvent(new CustomEvent("delta:practice-state-changed"));
 }
 
+/* Did a worked-example popup (practice/example-gate.js) actually open in
+   front of the question being submitted? The server SCHEDULED it
+   (question.ladder_example) but only the client knows it was drawn — the gate
+   declines on the Colab edition, in the diagnostic, or with no KP page — and
+   an example nobody saw must not be stored as assistance. Sent on both
+   submit routes as `example_shown`. */
+function _exampleShown(questionId) {
+  const q = PracticeAPI.currentQuestion;
+  return !!(q && Number(q.question_id) === Number(questionId) && q.ladder_example_shown);
+}
+
 const PracticeAPI = {
   currentQuestion: practiceQuestionPool[0],
 
@@ -96,7 +107,7 @@ const PracticeAPI = {
     const res = await apiFetch("/api/practice/submit-local-eval", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question_id: questionId, correct, finalize }),
+      body: JSON.stringify({ question_id: questionId, correct, finalize, example_shown: _exampleShown(questionId) }),
     });
     if (res.status === 401) {
       handleExpiredToken();
@@ -362,7 +373,7 @@ const PracticeAPI = {
       const res = await apiFetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question_id: questionId, user_code: userCode }),
+        body: JSON.stringify({ question_id: questionId, user_code: userCode, example_shown: _exampleShown(questionId) }),
       });
       if (res.status === 401) {
         handleExpiredToken();

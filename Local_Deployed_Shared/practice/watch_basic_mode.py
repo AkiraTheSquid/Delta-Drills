@@ -251,6 +251,71 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
         "back to answering the difficulty question and then pressing Next"
     )
 
+    # 3b. ...but it gives the topbar its half second first. Measured
+    #     2026-08-28 with the bar sampled every 40ms: the next question
+    #     rendered 43ms after the click and published its own reading at 35ms,
+    #     so the progress the learner had just earned was on screen for about
+    #     one frame and never animated. Seth: "I didn't see the top bar show
+    #     the update for the progress like it usually does with the
+    #     animation." An unwaited click is that bug, exactly, again.
+    deferred = re.search(
+        r"setTimeout\(\s*\(\)\s*=>\s*\{(.*?)\}\s*,\s*([A-Za-z_0-9]+)\s*\)", live, re.S
+    )
+    assert deferred and "nextProblemBtn.click()" in deferred.group(1), (
+        "the rating's advance must be deferred (setTimeout) so the topbar's "
+        "0.55s fill can run. Called straight through, the next question "
+        "overwrites the reading within a frame and the click shows nothing"
+    )
+    assert deferred.group(2) == "TOPBAR_SETTLE_MS" and "const TOPBAR_SETTLE_MS" in events, (
+        "the advance delay must be the named TOPBAR_SETTLE_MS constant, "
+        "declared in events.js beside the note on what it is paired with — a "
+        "bare number here drifts away from the transition it exists to cover"
+    )
+    # 🔴 THE FLOOR IS READ OUT OF THE STYLESHEET, not written here as a second
+    #    copy of it. The delay and the transition it covers live in different
+    #    files and neither can see the other at runtime (a computed-style read
+    #    of a transition that has not started returns the wrong element's
+    #    duration), so the only place they can be held together is a check.
+    #    codex, 2026-08-28, raised the duplication; this is the answer to it —
+    #    shortening the wait or lengthening the fill now fails here instead of
+    #    silently cutting the bar off mid-slide again.
+    pill_css = read(os.path.join(SHARED, "styles", "concept-pill.css"))
+    fill_ms = re.search(r"transition:\s*width\s+([\d.]+)s", pill_css)
+    assert fill_ms, (
+        "styles/concept-pill.css no longer states the fill's transition "
+        "duration as `transition: width <n>s` — the settle delay below has "
+        "nothing to be checked against"
+    )
+    need_ms = float(fill_ms.group(1)) * 1000
+    settle = re.search(r"const TOPBAR_SETTLE_MS\s*=\s*(\d+)", events)
+    assert settle and int(settle.group(1)) >= need_ms, (
+        "TOPBAR_SETTLE_MS (%s) is shorter than the concept pill's own fill "
+        "(%dms, styles/concept-pill.css) — the bar is cut off mid-slide, "
+        "which is the state this was written to fix"
+        % (settle.group(1) if settle else "missing", need_ms)
+    )
+    assert "PracticeAPI.currentQuestion !== q" in deferred.group(1), (
+        "the deferred advance must re-check the question before firing. "
+        "TOPBAR_SETTLE_MS is long enough for the learner to skip, end the "
+        "session or switch tabs, and a click landing after that navigates "
+        "away from whatever replaced it"
+    )
+
+    # 3c. The post-attempt ladder reading belongs to the RATING, not to
+    #     submit. The backend does not score the attempt until /feedback
+    #     (finalize_attempt), and painting at submit spends the one update the
+    #     rating click had to show — the concept pill measured 33.33% before
+    #     the click and 33.33% for the whole 2.2s after it.
+    submit_paint = re.search(
+        r"if \(result\.ladder_estimate && window\.StageLadder([^)]*)\)", events
+    )
+    assert submit_paint and "!" in submit_paint.group(1), (
+        "the submit handler paints result.ladder_estimate unconditionally "
+        "again. It must be guarded on there being no rating step to follow "
+        "(placement probes only) or the difficulty answer has nothing left "
+        "to show the learner"
+    )
+
     # 4. Nobody answers it for them while it is visible.
     hides_rating = "body.dd-basic-mode .feedback-btn" in css
     if not hides_rating:

@@ -79,20 +79,52 @@
   color: var(--info);
 }
 
+/* Basis, not `auto`: on `auto` the sentence asks for its full content width,
+   which alone overflows the row, so the button wrapped onto a line of its own
+   under the text. A shrinkable basis keeps both on one line and lets the text
+   take whatever the button doesn't. */
 .guest-banner-meta {
   font-size: 13px;
   color: var(--color-muted);
-  flex: 1 1 auto;
+  flex: 1 1 320px;
   min-width: 0;
 }
 .guest-banner-meta strong { color: var(--white); font-weight: 700; }
 
-/* Continue-with-Google button (GIS-rendered) sitting inline in the banner. */
+/* Continue-with-Google button (GIS-rendered) sitting inline in the banner.
+
+   Two different things can land in here and only one of them is ours to
+   style. Signed out of Google, GIS renders an HTML button and honours the
+   theme/shape we pass in app.js (a blue pill). Signed IN to Google it
+   renders the personalised "Continue as <name>" widget inside a
+   cross-origin FedCM iframe (accounts.google.com/gsi/button, allow=
+   identity-credentials-get) — a white, square-cornered card we cannot
+   reach into: no selector, no theme, no border-radius of ours applies to
+   its contents. So we shape the box it arrives in: the pill radius rounds
+   off the white card's square corners so it stops reading as a stray white
+   rectangle dropped on the dark banner, and matches the signed-out pill. */
 .guest-banner-google {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   min-height: 40px;
+  width: fit-content;
+  /* Far right of the banner row — it is the one thing in here to act on. */
+  margin-left: auto;
+  border-radius: 999px;
+  overflow: hidden;
+  /* Shadow only, no ring: the white card is already the highest-contrast
+     thing in the banner, and a light ring around the signed-out blue pill
+     reads as a stray outline. */
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+}
+/* GIS nests the button (or the iframe) two divs deep; every wrapper has to
+   carry the radius or the white card's corners survive the clip. */
+.guest-banner-google > div,
+.guest-banner-google > div > div,
+.guest-banner-google iframe {
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .guest-banner-btn {
@@ -533,6 +565,9 @@
 }
 
 @media (max-width: 600px) {
+  /* Too narrow to hold the sentence and the button on one row, so the button
+     wraps under it — flush left with the text, not stranded on the right. */
+  .guest-banner-google { margin-left: 0; }
   .tp-card { padding: 16px 14px; }
   .tp-submit-row { justify-content: stretch; flex-direction: column; }
   .tp-submit-btn, .tp-back-btn { width: 100%; }

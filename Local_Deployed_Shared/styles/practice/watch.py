@@ -82,6 +82,14 @@ def check_public_api():
             ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
             ".placement-area-probes", ".placement-area--unprobed",
             ".placement-results-meta", ".placement-results-empty",
+            # Written by account-menu.js when the account menu's placement row
+            # routes here: the CSS is the whole of the affordance, so a stylesheet
+            # without it leaves the row landing on a page with nothing marked.
+            ".placement-cta-flash",
+            # The rule that takes a COMPLETED placement off the Learner Home
+            # (Seth, 2026-08-31). Written by diagnostic-page.js; without the
+            # rule the class is inert and the card is back on the daily screen.
+            "#page-practice.placement-taken",
         ],
     }
     for fname, selectors in expected.items():

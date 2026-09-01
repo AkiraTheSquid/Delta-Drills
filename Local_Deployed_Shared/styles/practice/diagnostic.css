@@ -122,6 +122,34 @@
    14px, which reads as a stray dot rather than part of the control. */
 .placement-cta > .dd-info { flex: none; margin: 0; position: relative; top: 0; }
 
+/* THE FLASH THE ACCOUNT MENU LEAVES BEHIND (Seth, 2026-08-31).
+   "Retake the placement test" in the account menu ROUTES here — it must not
+   start the test, because a retake clears the probe log — so the learner lands
+   on the Learner Home with the card scrolled up and has to find the button that
+   actually does it. Two amber pulses on the control account-menu.js just
+   focused: enough to say "this one", gone before it becomes decoration.
+
+   🔴 A RING, NOT A BORDER. `box-shadow` paints outside the box without
+   participating in layout; animating `border-width` or `padding` here would
+   reflow .diagnostic-actions and shunt "Load next placement question" sideways
+   twice a second. `outline` is spoken for — :focus-visible draws it, and
+   account-menu.js focuses this same element. */
+@keyframes placement-cta-flash {
+  0%   { box-shadow: 0 0 0 0 rgb(var(--warn-rgb) / 0.55); }
+  70%  { box-shadow: 0 0 0 8px rgb(var(--warn-rgb) / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(var(--warn-rgb) / 0); }
+}
+.placement-cta-flash { animation: placement-cta-flash 1.1s ease-out 2; }
+/* The pointer is still a real signal for someone who cannot take the motion:
+   a steady ring for as long as the class is on the element says the same thing
+   without pulsing. */
+@media (prefers-reduced-motion: reduce) {
+  .placement-cta-flash {
+    animation: none;
+    box-shadow: 0 0 0 3px rgb(var(--warn-rgb) / 0.45);
+  }
+}
+
 /* ---- Results: what the placement actually measured ---------------------
    Written by practice/placement-results.js. Two jobs: make the headline
    readable at a glance, and make an UNPROBED area visibly weaker evidence
@@ -224,6 +252,16 @@
    2026-08-24 (Seth: "the diagnostic and practice should be combined into one
    tab"), and the overview, the results card and the workspace host all moved
    onto that page. The selector had to follow; the class did not change. */
+/* TAKEN ONCE, THEN OFF THE DAILY SCREEN (Seth, 2026-08-31: "don't put it on
+   the learner home tab ... remove it from there. It should show up there only
+   whenever the student hasn't taken the diagnostic before"). Written by
+   practice/diagnostic-page.js::syncOverviewVisibility on a COMPLETED placement
+   only — never on an unknown status, never mid-test — and lifted for the visit
+   in which the account menu's placement row asks for it (DiagnosticPage.reveal).
+   `#learner-areas` above it is NOT hidden by this: the area bars are the daily
+   readout, the card is the one-off offer. */
+#page-practice.placement-taken #diagnostic-overview { display: none; }
+
 #page-practice.diagnostic-running #diagnostic-overview { display: none; }
 #page-practice.diagnostic-running #learner-areas { display: none; }
 #page-practice.diagnostic-running { padding: 0; }

@@ -2,6 +2,16 @@
    PRACTICE EVENTS — submit + feedback actions
    ================================================================ */
 
+/* How long the difficulty answer lets the topbar move before it advances.
+   The concept pill's fill is a 0.55s transition (styles/concept-pill.css) and
+   the level pill's is the same (styles/xp.css); this is that plus a beat, so
+   the reading has finished arriving rather than being cut off mid-slide. Kept
+   here, in the file that does the waiting, rather than read off the
+   stylesheet — a computed-style read of a transition that has not started yet
+   returns the duration of whatever the element is transitioning now, which is
+   nothing. If the stylesheet's duration changes, change this with it. */
+const TOPBAR_SETTLE_MS = 700;
+
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
@@ -76,7 +86,30 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceProgress.lastResultCorrect = result.correct;
   practiceProgress.currentTargetDifficulty = getTargetDifficultyForQuestion(q);
   savePracticeProgress(practiceProgress);
-  if (result.ladder_estimate && window.StageLadder) {
+  /* 🔴 THE POST-ATTEMPT READING IS PAINTED WHEN THE LEARNER RATES, NOT HERE.
+
+     Seth, 2026-08-28, live: "I clicked the button to make it significantly
+     harder and I didn't see the top bar show the update for the progress like
+     it usually does with the animation ... obviously it should go up a certain
+     amount after doing that." Measured in a real loop, sampling the topbar
+     every 40ms: on a correct answer the concept pill read 33.33% before the
+     click and 33.33% for the whole 2.2s after it. Zero pixels. The reason is
+     right here — the reading had already been painted at SUBMIT, seconds
+     earlier, while the learner was reading the verdict at the bottom of the
+     screen, so by the time they answered the difficulty question there was
+     nothing left for it to show.
+
+     The rating is also where the reading becomes TRUE: the backend does not
+     score the attempt at /submit at all — `feedback_router` calls
+     `finalize_attempt`, which writes the history, the per-atom BKT and the new
+     target difficulty. Painting at submit was painting an estimate the server
+     had not committed to yet.
+
+     Placement probes keep the submit-time paint, because they have no rating
+     step to defer to: /submit records the probe outright and the branch below
+     goes straight to Next. Same condition, spelled the same way, on purpose. */
+  const _ratingStepFollows = !(q.diagnostic_active && practiceMode === "backend");
+  if (result.ladder_estimate && window.StageLadder && !_ratingStepFollows) {
     window.StageLadder.setProgress(result.ladder_estimate);
   }
   // Preserve enough of the grade UI to reconstruct this review after a pause
@@ -256,8 +289,31 @@ feedbackButtons.forEach((btn) => {
        Fired AFTER `savePracticeProgress` so the rating is durable before
        anything can navigate: the load is async and a learner who closes the
        tab mid-flight must not lose the answer they gave. `showNextProblemButton()`
-       above has already revealed the button this clicks. */
-    nextProblemBtn.click();
+       above has already revealed the button this clicks.
+
+       🔴 AND IT WAITS FOR THE TOPBAR. `StageLadder.setProgress` a few lines up
+       is the one moment in the loop where the concept pill moves for what the
+       learner just did, and the fill it drives is a 0.55s width transition
+       (styles/concept-pill.css). Measured 2026-08-28 with the topbar sampled
+       every 40ms: the next question rendered 43ms after this click and
+       published its OWN reading at 35ms, so the earned value was on screen for
+       about one frame and never animated at all — on a miss it was replaced by
+       a lower reading and the pill drained 151px to 0 instead, which is the
+       opposite of the feedback it was drawn to give.
+
+       So the click that ends the question also gives the bar its half second.
+       This is not a "feels nicer" pause: without it the update is not visible
+       at any speed, which is exactly what Seth reported. It is one click still
+       — the buttons are already disabled and the pressed one is highlighted,
+       so the wait reads as the answer landing, not as a hang.
+
+       🔴 GUARDED ON THE QUESTION, because 700ms is long enough for the learner
+       to end the session, skip, or switch tabs. `timer.js::_forceAdvance` is
+       untouched by this: its watchdog does not fire for a further 10s. */
+    setTimeout(() => {
+      if (PracticeAPI.currentQuestion !== q) return;
+      nextProblemBtn.click();
+    }, TOPBAR_SETTLE_MS);
   });
 });
 
@@ -345,6 +401,15 @@ const _loadNextPracticeQuestion = async () => {
   if (
     window.LadderUI &&
     (await window.LadderUI.maybeShowWorked(nextQ, () => renderQuestion(nextQ, nextCount)))
+  ) {
+    return;
+  }
+  // Worked-example popup on the drill rungs, when the server scheduled one
+  // (question.ladder_example — app/example_schedule.py). After the two gates
+  // above so a lesson is never followed by its own example on the same card.
+  if (
+    window.ExampleGate &&
+    (await window.ExampleGate.maybeShow(nextQ, () => renderQuestion(nextQ, nextCount)))
   ) {
     return;
   }
