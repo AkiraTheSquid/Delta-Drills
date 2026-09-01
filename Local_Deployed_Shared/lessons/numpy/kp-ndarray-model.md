@@ -238,45 +238,31 @@ for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
 ## Worked example
 
 
-The problem below asks for a tensor's number of axes and its element count.
-Those sound like the same question and are not, so this example takes them
-apart. One level of nesting gives one axis, however many numbers sit in it:
+The problem below asks for a tensor's number of axes and its element count,
+in that order: `(ndim, numel)`. Build the tensor, then read those two pieces of
+metadata directly:
 
 ```python
 import torch as t
 
-flat = t.tensor([4, 1, 7, 2, 9])
-print("flat: shape", flat.shape, "ndim", flat.ndim, "numel", flat.numel())
-assert flat.ndim == 1
-assert flat.numel() == 5
+rows = [[1, 2, 3], [4, 5, 6]]
+a = t.tensor(rows)
+
+print("ndim:", a.ndim)
+print("numel:", a.numel())
+assert (a.ndim, a.numel()) == (2, 6)
 ```
 
-Five numbers, but `ndim` is 1 — the count of numbers never changes the count of
-axes. Adding a nesting level is what does. Here two levels give two axes, and
-`numel` counts every element, not the rows:
-
-```python
-grid = t.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
-print("grid: shape", grid.shape, "ndim", grid.ndim, "numel", grid.numel())
-assert grid.ndim == 2
-assert grid.numel() == 12
-```
-
-Note what `shape` printed: `torch.Size([3, 4])`, not `(3, 4)`. `torch.Size` is a
-tuple subclass, so it compares equal to a plain tuple — but it is not one, and
-anything that asks you for a tuple wants `tuple()` around it:
-
-```python
-print(grid.shape, "==", tuple(grid.shape), "->", grid.shape == (3, 4))
-assert grid.shape == (3, 4)
-assert tuple(grid.shape) == (3, 4)
-```
+Two nesting levels give `ndim == 2`. Six numbers give `numel() == 6`.
+Tuple position matters: `(2, 6)` is correct; `(6, 2)` reverses the requested
+order.
 
 ## Faded practice
 
 
 ### q482
-Count the axes and the elements. Remember which one takes parentheses.
+Count the axes and the elements. Return them in this exact order:
+`(ndim, numel)`.
 
 ```python starter
 import torch as t
@@ -419,31 +405,39 @@ gives you `torch.int64` instead.
 import torch as t
 
 print(t.tensor([1, 2, 3]).dtype)
-print(t.tensor([1, 2.5, 3]).dtype)   # one float decides the whole block
-
-# Say what you want up front rather than relying on how the input is spelled.
-print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
-
-# The two dtype names you will meet constantly, written out rather than
-# printed — this is how you ASK the question in code.
-print("all ints ->", t.tensor([1, 2, 3]).dtype == t.int64)
-print("one float ->", t.tensor([1, 2.5, 3]).dtype == t.float32)
+print(t.tensor([1, 2.5, 3]).dtype)
 ```
 
-Ordinary division still works on an integer tensor — `a / 2` quietly hands back
-a *new* float tensor — but anything that has to write a float back into the
-integer block does not. `a /= 2` raises rather than silently rounding, and the
-error is the useful kind: it happens where the type is wrong, not three steps
-later where the numbers are.
+All-integer input becomes `torch.int64`. One float makes the whole tensor
+`torch.float32`. You can also choose the dtype explicitly:
 
 ```python
-ints = t.tensor([2, 4, 6])
-print("ints / 2   ->", (ints / 2).dtype, "(a new tensor)")
+print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
+```
+
+Division shows why one dtype for the whole block matters. `a / 2` halves every
+number and creates a new float tensor. It does not change `a`:
+
+```python
+a = t.tensor([2, 4, 6])
+halved = a / 2
+
+print(a.tolist())
+print(halved.tolist())
+print(halved.dtype)
+```
+
+`a = a / 2` would make that new float tensor, then rebind the name `a` to it.
+`a /= 2` instead tries to write float results back into the original integer
+tensor. PyTorch rejects that in-place mutation rather than silently rounding:
+
+```python
+a = t.tensor([2, 4, 6])
 
 try:
-    ints /= 2
+    a /= 2
 except RuntimeError as exc:
-    print("ints /= 2  ->", type(exc).__name__)
+    print(type(exc).__name__)
 ```
 
 Two tensors can hold the same numbers in the same layout and still disagree on
@@ -453,11 +447,8 @@ is checking half the question.
 ## Worked example
 
 
-The problem below asks you to compare two tensors on shape and on dtype and
-report a `True`/`False` for each. The point of this example is to show that
-those two questions are genuinely independent — two tensors can agree on one
-and disagree on the other — and that the answer depends entirely on what you
-feed in. So rather than one block of code, here are three pairs, each printed.
+The problem below asks you to compare two tensors on shape and dtype. Those are
+two separate checks.
 
 Start with two tensors built from the same numbers in the same layout:
 
@@ -467,39 +458,33 @@ import torch as t
 a = t.tensor([[20, 21, 22], [23, 24, 25]])
 b = t.tensor([[30, 31, 32], [33, 34, 35]])
 
-print("shapes:", tuple(a.shape), tuple(b.shape), "-> match?", a.shape == b.shape)
-print("dtypes:", a.dtype, b.dtype, "-> match?", a.dtype == b.dtype)
+print(a.shape == b.shape)
+print(a.dtype == b.dtype)
 assert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)
 ```
 
-Both checks came back true. Now change ONE number to a float. Nothing about the
-layout changed, so the shapes still agree — but a tensor holds one type for
-every element, so that single `31.5` re-types the whole block:
+Both checks are `True`. Now change one number to a float. Layout stays same, so
+shapes still match. Dtypes do not:
 
 ```python
 c = t.tensor([[30, 31.5, 32], [33, 34, 35]])
 
-print("c is", c.dtype, "— because of one float, not just that one entry")
-print("shape match?", a.shape == c.shape, " dtype match?", a.dtype == c.dtype)
+print(a.shape == c.shape)
+print(a.dtype == c.dtype)
 assert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)
 ```
 
-Same answer to the shape question, opposite answer to the dtype question. Now
-the other way round: keep the type and change the layout.
+Last, keep integer dtype but change layout. Dtypes match; shapes do not:
 
 ```python
 d = t.tensor([[40, 41], [42, 43], [44, 45]])
 
-print("a is", tuple(a.shape), "and d is", tuple(d.shape))
-print("shape match?", a.shape == d.shape, " dtype match?", a.dtype == d.dtype)
+print(a.shape == d.shape)
+print(a.dtype == d.dtype)
 assert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)
 ```
 
-Three inputs, three different answers: `(True, True)`, `(True, False)`,
-`(False, True)`. That is why the problem gives you two arguments and asks for
-two booleans — there is no single right answer to memorise, only two checks to
-run. `.shape` is an attribute and `.dtype` is an attribute; neither takes
-parentheses.
+`.shape` and `.dtype` are attributes; neither takes parentheses.
 
 ## Faded practice
 

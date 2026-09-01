@@ -10471,6 +10471,11 @@
         "call": "x = [[1, 2, 3], [4, 5, 6]]\nsolve(x)",
         "output": "(2, 2)",
         "why": "`len(rows)` is the outer length only. The total element count is `.numel()`."
+      },
+      {
+        "call": "x = [[1, 2, 3], [4, 5, 6]]\nsolve(x)",
+        "output": "(6, 2)",
+        "why": "Tuple positions are reversed. Return `(ndim, numel)`, in that order."
       }
     ],
     "expected_artifact_type": "stdout",
