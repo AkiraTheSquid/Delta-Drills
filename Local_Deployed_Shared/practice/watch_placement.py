@@ -60,12 +60,29 @@ def check_every_placement_question_gets_the_same_clock():
         "no probe starts a clock — renderQuestion must arm the placement timer"
     )
     events = read(os.path.join(HERE, "events.js"))
+    advance = read(os.path.join(HERE, "advance-events.js"))
     assert "PlacementTimer?.stop()" in events, (
         "_loadNextPracticeQuestion must kill the placement clock, or an expiry "
         "at 00:01 lands on the question that just loaded"
     )
     assert "PlacementTimer?.pauseForGrading()" in events, (
         "submitting must stop the placement clock while the grade is in flight"
+    )
+    assert "_advancePlacementOrFinish" in advance, (
+        "placement answers must check whether the diagnostic finished before "
+        "the generic next-question endpoint can serve an ordinary practice drill"
+    )
+    assert "const status = await PracticeAPI.diagnosticAnswer" in advance, (
+        "timeout/I-don't-know must keep the returned diagnostic status so a "
+        "stopping-rule answer stays on placement results instead of opening practice"
+    )
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+    assert not re.search(r'^\s*switchTab\("practice"\);\s*$', page, re.M), (
+        "a completed placement must remain on its result page; switching to "
+        "Practice hides the final probe controls and makes timeout look like an abort"
+    )
+    assert "if (showResults) {" in page and "PlacementTimer?.stop?.()" in page, (
+        "rendering completed placement results must stop any surviving probe clock"
     )
     # Pyodide cannot import torch, and the einops questions in the bank ARE
     # torch questions — routing them local made every Submit unanswerable.
@@ -87,12 +104,15 @@ def check_every_placement_question_gets_the_same_clock():
     )
     # One writer for the start button: two copies of the label is how it
     # flickers between two names when the page refreshes its status.
-    page = read(os.path.join(HERE, "diagnostic-page.js"))
-    assert "renderStartButton" in page and "renderStartButton" in events, (
-        "events.js must delegate the placement start button to diagnostic-page.js"
+    assert "renderStartButton" in page and "renderStartButton" in advance, (
+        "advance-events.js must delegate the placement start button to diagnostic-page.js"
     )
-    assert "Take the placement test" not in events, (
+    assert "Take the placement test" not in advance, (
         "the start-button label lives in diagnostic-page.js only"
+    )
+    index = read(os.path.join(SHARED, "index.html"))
+    assert index.find('src="practice/events.js') < index.find('src="practice/advance-events.js'), (
+        "advance-events.js must load after events.js, which defines its shared loader"
     )
 
 
@@ -309,5 +329,3 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
         "diagnostic.css lost the unprobed styling, so a prior renders identically "
         "to a measured area"
     )
-
-

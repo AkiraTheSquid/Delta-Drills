@@ -2179,7 +2179,9 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=43"></script>
+  <script src="practice/events.js?v=44"></script>
+  <!-- events.js owns shared loading; this module owns controls that advance. -->
+  <script src="practice/advance-events.js?v=1"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
        the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
        of #practice-feedback-area and into a bar pinned to the bottom of the
