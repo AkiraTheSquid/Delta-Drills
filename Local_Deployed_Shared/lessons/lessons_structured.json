@@ -39,6 +39,54 @@
          "prompt": "Swap two values by naming each one first.",
          "starter_code": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = _____\n    second = x\n    return (first, second)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
          "solution": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = y\n    second = x\n    return (first, second)\n"
+        },
+        {
+         "question_id": 718,
+         "prompt": "Name the first result, then build the second out of that name.",
+         "starter_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = _____ + fee\n    return total\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = subtotal + fee\n    return total\n"
+        },
+        {
+         "question_id": 719,
+         "prompt": "Build the new value out of the name's own old value.",
+         "starter_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = _____ + 5\n    return n\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (10,)\nprint(solve(*example))\n",
+         "solution": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = n + 5\n    return n\n"
+        },
+        {
+         "question_id": 720,
+         "prompt": "Put both inputs and their sum into one tuple.",
+         "starter_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (_____, _____, s)\n    return p\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+         "solution": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (first, second, s)\n    return p\n"
+        },
+        {
+         "question_id": 721,
+         "prompt": "Ask what KIND of value arrived, and hand the answer back.",
+         "starter_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = _____(value)\n    return kind\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+         "solution": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = type(value)\n    return kind\n"
+        },
+        {
+         "question_id": 722,
+         "prompt": "Stick a second label on the same value, then read both.",
+         "starter_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = _____\n    return (left, right, left + right)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+         "solution": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = base\n    return (left, right, left + right)\n"
+        },
+        {
+         "question_id": 723,
+         "prompt": "Re-attach the name to its own square.",
+         "starter_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = _____ * _____\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+         "solution": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = x * x\n    return x\n"
+        },
+        {
+         "question_id": 724,
+         "prompt": "Build a new string, name it, and report its kind.",
+         "starter_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + _____\n    kind = type(greeting)\n    return (greeting, kind)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hey',)\nprint(solve(*example))\n",
+         "solution": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + \"!\"\n    kind = type(greeting)\n    return (greeting, kind)\n"
+        },
+        {
+         "question_id": 725,
+         "prompt": "Two named results, handed back as one pair.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = _____ * _____\n    both = (diff, prod)\n    return both\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = a * b\n    both = (diff, prod)\n    return both\n"
         }
        ]
       }
@@ -55,6 +103,54 @@
        "prompt": "Swap two values by naming each one first.",
        "starter_code": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = _____\n    second = x\n    return (first, second)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
        "solution": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = y\n    second = x\n    return (first, second)\n"
+      },
+      {
+       "question_id": 718,
+       "prompt": "Name the first result, then build the second out of that name.",
+       "starter_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = _____ + fee\n    return total\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = subtotal + fee\n    return total\n"
+      },
+      {
+       "question_id": 719,
+       "prompt": "Build the new value out of the name's own old value.",
+       "starter_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = _____ + 5\n    return n\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (10,)\nprint(solve(*example))\n",
+       "solution": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = n + 5\n    return n\n"
+      },
+      {
+       "question_id": 720,
+       "prompt": "Put both inputs and their sum into one tuple.",
+       "starter_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (_____, _____, s)\n    return p\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+       "solution": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (first, second, s)\n    return p\n"
+      },
+      {
+       "question_id": 721,
+       "prompt": "Ask what KIND of value arrived, and hand the answer back.",
+       "starter_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = _____(value)\n    return kind\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+       "solution": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = type(value)\n    return kind\n"
+      },
+      {
+       "question_id": 722,
+       "prompt": "Stick a second label on the same value, then read both.",
+       "starter_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = _____\n    return (left, right, left + right)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+       "solution": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = base\n    return (left, right, left + right)\n"
+      },
+      {
+       "question_id": 723,
+       "prompt": "Re-attach the name to its own square.",
+       "starter_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = _____ * _____\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+       "solution": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = x * x\n    return x\n"
+      },
+      {
+       "question_id": 724,
+       "prompt": "Build a new string, name it, and report its kind.",
+       "starter_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + _____\n    kind = type(greeting)\n    return (greeting, kind)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hey',)\nprint(solve(*example))\n",
+       "solution": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + \"!\"\n    kind = type(greeting)\n    return (greeting, kind)\n"
+      },
+      {
+       "question_id": 725,
+       "prompt": "Two named results, handed back as one pair.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = _____ * _____\n    both = (diff, prod)\n    return both\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = a * b\n    both = (diff, prod)\n    return both\n"
       }
      ],
      "guided_items": [],
@@ -89,6 +185,26 @@
        "question_id": 711,
        "prompt": "Rotate three values by one place, keeping the one that would be overwritten.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 726,
+       "prompt": "A running total: name the first sum, read it to build the grand total.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 727,
+       "prompt": "A quoted word is a value too: pair a text label with a computed number.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 728,
+       "prompt": "Powers by reuse: square the square, never multiply four times.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 729,
+       "prompt": "Re-attach a name to a tuple built from its own old value, and report the new kind.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -103,6 +219,10 @@
       {
        "question_id": 712,
        "prompt": "Name a result, build a second value out of it, then re-attach the first name \u2014\nand show that the value built earlier kept what it was given."
+      },
+      {
+       "question_id": 730,
+       "prompt": "Swap by naming, join by reading, and report the kind + made \u2014 for numbers and for text."
       }
      ],
      "independent_items": [
@@ -111,7 +231,11 @@
       708,
       709,
       710,
-      711
+      711,
+      726,
+      727,
+      728,
+      729
      ],
      "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was.",
      "notes_markdown": "Root of the python course (ids 708\u2013712 filled it to the rung floors, 2026-09-01,\ncommit cf3eaadc's predecessor slice). Course order across the whole family is\nencoded in the question-id ranges: 568\u2013573 here, 574\u2013579 [[python.types-and-conversion]],\n\u2026 604\u2013609 python.dots-and-imports.\n\n## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only,\n  'use only the information in the problem'): solved q711 (last independent\n  drill) 4/4 cases on the real harness, no missing-information claim.\n  The page is SUFFICIENT for its hardest rung.\n- 2026-08-31: brought from 5 to 10 drills (Solo 6 / Integrated 3). No two drills\n  on a rung repeat a move; verified against `audit_symbol_coverage.py`.\n\n## Checks\n- `scripts/audit_symbol_coverage.py` \u2014 every declared symbol drilled \u22652\u00d7 on-node."

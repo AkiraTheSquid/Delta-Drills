@@ -2654,3 +2654,134 @@ Python,Getting started,"Write a function solve(amount) that takes an amount writ
 example = ('2.6',)
 print(solve(*example))
 ",32,"(3, 'int', True, False)"
+Python,Getting started,"Write a function solve(price, quantity, fee) that names the product of price and quantity `subtotal`, builds `total` by adding fee to that name, and returns total. The second line reads the name the first line wrote.","def solve(price, quantity, fee):
+    """"""Name the first result, then read that name to build the second.""""""
+    subtotal = price * quantity
+    total = subtotal + fee
+    return total
+
+
+example = (3, 4, 2)
+print(solve(*example))
+",10,14
+Python,Getting started,"Write a function solve(n) that re-attaches the name `n` to its own old value plus 5, then returns n. The right-hand side runs first, while the name still holds the old value.","def solve(n):
+    """"""The right-hand side runs first, reading the OLD value.""""""
+    n = n + 5
+    return n
+
+
+example = (10,)
+print(solve(*example))
+",10,15
+Python,Getting started,"Write a function solve(first, second) that names their sum `s`, then packs first, second and s into one tuple `p` — in that order — and returns p. One tuple can hand back several values at once.","def solve(first, second):
+    """"""Three values, one tuple.""""""
+    s = first + second
+    p = (first, second, s)
+    return p
+
+
+example = (2, 3)
+print(solve(*example))
+",12,"(2, 3, 5)"
+Python,Getting started,"Write a function solve(value) that names the KIND of the value `kind` — use type — and returns kind. The answer is about the value, not about the name it arrived under.","def solve(value):
+    """"""type(...) reports the kind of the VALUE.""""""
+    kind = type(value)
+    return kind
+
+
+example = ('hi',)
+print(solve(*example))
+",12,<class 'str'>
+Python,Getting started,"Write a function solve(base) that sticks two names on the SAME value — `left` and `right` — and returns the tuple (left, right, left + right). Two labels, one value.","def solve(base):
+    """"""Two labels stuck to one value.""""""
+    left = base
+    right = base
+    return (left, right, left + right)
+
+
+example = (4,)
+print(solve(*example))
+",14,"(4, 4, 8)"
+Python,Getting started,"Write a function solve(a) that names a `x`, re-attaches `x` to x times x, and returns x. The name ends up on the square; the original value is let go.","def solve(a):
+    """"""Re-attach the name to its own square.""""""
+    x = a
+    x = x * x
+    return x
+
+
+example = (3,)
+print(solve(*example))
+",14,9
+Python,Getting started,"Write a function solve(word) that builds `greeting` by adding the text ""!"" onto the end of word, and returns the tuple (greeting, kind) where kind is what type the greeting is.","def solve(word):
+    """"""A built string is a value like any other: name it, ask its kind.""""""
+    greeting = word + ""!""
+    kind = type(greeting)
+    return (greeting, kind)
+
+
+example = ('hey',)
+print(solve(*example))
+",15,"('hey!', <class 'str'>)"
+Python,Getting started,"Write a function solve(a, b) that names the difference a - b `diff`, names the product a * b `prod`, packs them as the tuple `both` in that order, and returns both.","def solve(a, b):
+    """"""Two named results, packed as one pair.""""""
+    diff = a - b
+    prod = a * b
+    both = (diff, prod)
+    return both
+
+
+example = (5, 2)
+print(solve(*example))
+",16,"(3, 10)"
+Python,Getting started,"Write a function solve(a, b, c) that names a + b `total`, builds `grand` by adding c to that name, and returns the tuple (total, grand). Compute the first sum once and read it, not recompute it.","def solve(a, b, c):
+    """"""A running total: each step reads the name before it.""""""
+    total = a + b
+    grand = total + c
+    return (total, grand)
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",20,"(3, 6)"
+Python,Getting started,"Write a function solve(a, b) that names the text ""sum"" `label`, names a + b `value`, and returns the tuple (label, value). A quoted word is a value of its own — the five letters, not a name.","def solve(a, b):
+    """"""A string value and a number value, named and paired.""""""
+    label = ""sum""
+    value = a + b
+    return (label, value)
+
+
+example = (2, 6)
+print(solve(*example))
+",22,"('sum', 8)"
+Python,Getting started,"Write a function solve(x) that names x * x `x2`, names x2 * x2 `x4`, and returns the tuple (x, x2, x4). Each power is built by reading the name of the one before it — x is never multiplied four times.","def solve(x):
+    """"""Powers by reuse: each name reads the previous one.""""""
+    x2 = x * x
+    x4 = x2 * x2
+    return (x, x2, x4)
+
+
+example = (2,)
+print(solve(*example))
+",24,"(2, 4, 16)"
+Python,Getting started,"Write a function solve(n) that names n `v`, re-attaches `v` to the tuple (v, ""kept""), and returns the tuple (v, kind) where kind is the type of what v holds NOW. Re-attaching a name can change the kind of thing it holds.","def solve(n):
+    """"""After re-attaching, the name holds a tuple — whatever it held before.""""""
+    v = n
+    v = (v, ""kept"")
+    kind = type(v)
+    return (v, kind)
+
+
+example = (5,)
+print(solve(*example))
+",26,"((5, 'kept'), <class 'tuple'>)"
+Python,Getting started,"Write a function solve(a, b) that swaps the two inputs by name — `first` gets b, `second` gets a — names first + second `joined`, and returns the tuple ((first, second), joined, kind), where kind is the type of joined. It must work when the inputs are numbers AND when they are strings.","def solve(a, b):
+    """"""Swap by naming, combine by reading, and report what + produced.""""""
+    first = b
+    second = a
+    joined = first + second
+    return ((first, second), joined, type(joined))
+
+
+example = (2, 3)
+print(solve(*example))
+",32,"((3, 2), 5, <class 'int'>)"

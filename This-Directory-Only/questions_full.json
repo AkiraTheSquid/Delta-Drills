@@ -21282,5 +21282,642 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 718,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(price, quantity, fee) that names the product of price and quantity `subtotal`, builds `total` by adding fee to that name, and returns total. The second line reads the name the first line wrote.",
+    "answer_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = subtotal + fee\n    return total\n\n\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 10,
+    "difficulty_label": "easy",
+    "expected_output": "14",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(3, 4, 2)",
+        "expected_expr": "14"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1, 1, 0)",
+        "expected_expr": "1"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 9, 5)",
+        "expected_expr": "5"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5, 2, 1)",
+        "expected_expr": "6.0"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "12",
+        "why": "The fee was never added — `subtotal` came straight back. The second line exists to READ the name the first line wrote and build something new from it; returning the first result skips the step the drill is about."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 719,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(n) that re-attaches the name `n` to its own old value plus 5, then returns n. The right-hand side runs first, while the name still holds the old value.",
+    "answer_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = n + 5\n    return n\n\n\nexample = (10,)\nprint(solve(*example))\n",
+    "difficulty_score": 10,
+    "difficulty_label": "easy",
+    "expected_output": "15",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (10,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(10)",
+        "expected_expr": "15"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "5"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-5)",
+        "expected_expr": "0"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5)",
+        "expected_expr": "7.5"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "5",
+        "why": "That returned 5 itself — the increment, not the result. `n = n + 5` reads what n holds now, adds 5, and re-attaches the name to the answer; the old value is what the 5 was added TO."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 720,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(first, second) that names their sum `s`, then packs first, second and s into one tuple `p` — in that order — and returns p. One tuple can hand back several values at once.",
+    "answer_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (first, second, s)\n    return p\n\n\nexample = (2, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 12,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 3, 5)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(2, 3)",
+        "expected_expr": "(2, 3, 5)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0)",
+        "expected_expr": "(0, 0, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-1, 1)",
+        "expected_expr": "(-1, 1, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5, 2.5)",
+        "expected_expr": "(1.5, 2.5, 4.0)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "5",
+        "why": "Only the sum came back. The point of packing a tuple is that the caller gets all three values — the parts AND the result — in one returned thing."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 721,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(value) that names the KIND of the value `kind` — use type — and returns kind. The answer is about the value, not about the name it arrived under.",
+    "answer_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = type(value)\n    return kind\n\n\nexample = ('hi',)\nprint(solve(*example))\n",
+    "difficulty_score": 12,
+    "difficulty_label": "easy",
+    "expected_output": "<class 'str'>",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve('hi')",
+        "expected_expr": "str"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(5)",
+        "expected_expr": "int"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5)",
+        "expected_expr": "float"
+      },
+      {
+        "setup_code": "",
+        "call": "solve((1, 2))",
+        "expected_expr": "tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "'value'",
+        "why": "That returned the NAME as text. `\"value\"` is a five-letter string; the 'hi' behind the name is what type(...) asks about."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 722,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(base) that sticks two names on the SAME value — `left` and `right` — and returns the tuple (left, right, left + right). Two labels, one value.",
+    "answer_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = base\n    return (left, right, left + right)\n\n\nexample = (4,)\nprint(solve(*example))\n",
+    "difficulty_score": 14,
+    "difficulty_label": "easy",
+    "expected_output": "(4, 4, 8)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(4)",
+        "expected_expr": "(4, 4, 8)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "(0, 0, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-2)",
+        "expected_expr": "(-2, -2, -4)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('ab')",
+        "expected_expr": "('ab', 'ab', 'abab')"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(4, 4, 16)",
+        "why": "The last slot multiplied instead of adding. Both names hold the same 4, and `left + right` reads them both: 8. Nothing about sharing a value changes what + does."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 723,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a) that names a `x`, re-attaches `x` to x times x, and returns x. The name ends up on the square; the original value is let go.",
+    "answer_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = x * x\n    return x\n\n\nexample = (3,)\nprint(solve(*example))\n",
+    "difficulty_score": 14,
+    "difficulty_label": "easy",
+    "expected_output": "9",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(3)",
+        "expected_expr": "9"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "0"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-4)",
+        "expected_expr": "16"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5)",
+        "expected_expr": "2.25"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(3, 9)",
+        "why": "Both the old and new value came back. After `x = x * x` there is no old value to return — the name moved, and the 3 it used to hold is simply gone."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 724,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(word) that builds `greeting` by adding the text \"!\" onto the end of word, and returns the tuple (greeting, kind) where kind is what type the greeting is.",
+    "answer_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + \"!\"\n    kind = type(greeting)\n    return (greeting, kind)\n\n\nexample = ('hey',)\nprint(solve(*example))\n",
+    "difficulty_score": 15,
+    "difficulty_label": "easy",
+    "expected_output": "('hey!', <class 'str'>)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hey',)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve('hey')",
+        "expected_expr": "('hey!', str)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('')",
+        "expected_expr": "('!', str)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('ok')",
+        "expected_expr": "('ok!', str)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('go go')",
+        "expected_expr": "('go go!', str)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "('hey!', 'str')",
+        "why": "The kind came back as the TEXT 'str' instead of the type itself. type(greeting) is a value of its own — hand it back as it is, not wrapped in quotes."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 725,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a, b) that names the difference a - b `diff`, names the product a * b `prod`, packs them as the tuple `both` in that order, and returns both.",
+    "answer_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = a * b\n    both = (diff, prod)\n    return both\n\n\nexample = (5, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 16,
+    "difficulty_label": "easy",
+    "expected_output": "(3, 10)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(5, 2)",
+        "expected_expr": "(3, 10)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2, 5)",
+        "expected_expr": "(-3, 10)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 3)",
+        "expected_expr": "(-3, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5, 2)",
+        "expected_expr": "(-0.5, 3.0)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(3, 10, (3, 10))",
+        "why": "`both` was packed and then returned NEXT TO its parts. The pair already carries diff and prod — returning (diff, prod, both) says everything twice."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 726,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a, b, c) that names a + b `total`, builds `grand` by adding c to that name, and returns the tuple (total, grand). Compute the first sum once and read it, not recompute it.",
+    "answer_code": "def solve(a, b, c):\n    \"\"\"A running total: each step reads the name before it.\"\"\"\n    total = a + b\n    grand = total + c\n    return (total, grand)\n\n\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 20,
+    "difficulty_label": "easy",
+    "expected_output": "(3, 6)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a, b, c):\n    \"\"\"A running total: each step reads the name before it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(1, 2, 3)",
+        "expected_expr": "(3, 6)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0, 0)",
+        "expected_expr": "(0, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-1, 1, 5)",
+        "expected_expr": "(0, 5)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5, 2.5, 1)",
+        "expected_expr": "(5.0, 6.0)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "6",
+        "why": "Only the final number came back. The drill asks for both named results — the intermediate total is an answer too, and the tuple is how one return carries both."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 727,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a, b) that names the text \"sum\" `label`, names a + b `value`, and returns the tuple (label, value). A quoted word is a value of its own — the five letters, not a name.",
+    "answer_code": "def solve(a, b):\n    \"\"\"A string value and a number value, named and paired.\"\"\"\n    label = \"sum\"\n    value = a + b\n    return (label, value)\n\n\nexample = (2, 6)\nprint(solve(*example))\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "('sum', 8)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a, b):\n    \"\"\"A string value and a number value, named and paired.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 6)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(2, 6)",
+        "expected_expr": "('sum', 8)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0)",
+        "expected_expr": "('sum', 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-3, 3)",
+        "expected_expr": "('sum', 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5, 1)",
+        "expected_expr": "('sum', 2.5)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(sum, 8)",
+        "why": "`label = sum` without quotes is not the word — it reaches for whatever the NAME sum means (in Python, a built-in function). The three-letter text needs quotes: \"sum\"."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 728,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(x) that names x * x `x2`, names x2 * x2 `x4`, and returns the tuple (x, x2, x4). Each power is built by reading the name of the one before it — x is never multiplied four times.",
+    "answer_code": "def solve(x):\n    \"\"\"Powers by reuse: each name reads the previous one.\"\"\"\n    x2 = x * x\n    x4 = x2 * x2\n    return (x, x2, x4)\n\n\nexample = (2,)\nprint(solve(*example))\n",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 4, 16)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(x):\n    \"\"\"Powers by reuse: each name reads the previous one.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(2)",
+        "expected_expr": "(2, 4, 16)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "(0, 0, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-3)",
+        "expected_expr": "(-3, 9, 81)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5)",
+        "expected_expr": "(1.5, 2.25, 5.0625)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(2, 4, 8)",
+        "why": "The last slot doubled x2 instead of squaring it. `x4 = x2 * x2` reads the SQUARE twice: 4 * 4 is 16. Multiplying by x again would also be wrong — that is 8, the cube."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 729,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(n) that names n `v`, re-attaches `v` to the tuple (v, \"kept\"), and returns the tuple (v, kind) where kind is the type of what v holds NOW. Re-attaching a name can change the kind of thing it holds.",
+    "answer_code": "def solve(n):\n    \"\"\"After re-attaching, the name holds a tuple — whatever it held before.\"\"\"\n    v = n\n    v = (v, \"kept\")\n    kind = type(v)\n    return (v, kind)\n\n\nexample = (5,)\nprint(solve(*example))\n",
+    "difficulty_score": 26,
+    "difficulty_label": "easy",
+    "expected_output": "((5, 'kept'), <class 'tuple'>)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(n):\n    \"\"\"After re-attaching, the name holds a tuple — whatever it held before.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(5)",
+        "expected_expr": "((5, 'kept'), tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('hi')",
+        "expected_expr": "(('hi', 'kept'), tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "((0, 'kept'), tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5)",
+        "expected_expr": "((2.5, 'kept'), tuple)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "((5, 'kept'), <class 'int'>)",
+        "why": "The kind was read from the ORIGINAL value. By the time type(v) runs, v holds the tuple — the int is inside it, but the name is attached to the tuple now."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 730,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a, b) that swaps the two inputs by name — `first` gets b, `second` gets a — names first + second `joined`, and returns the tuple ((first, second), joined, kind), where kind is the type of joined. It must work when the inputs are numbers AND when they are strings.",
+    "answer_code": "def solve(a, b):\n    \"\"\"Swap by naming, combine by reading, and report what + produced.\"\"\"\n    first = b\n    second = a\n    joined = first + second\n    return ((first, second), joined, type(joined))\n\n\nexample = (2, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 32,
+    "difficulty_label": "easy",
+    "expected_output": "((3, 2), 5, <class 'int'>)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a, b):\n    \"\"\"Swap by naming, combine by reading, and report what + produced.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(2, 3)",
+        "expected_expr": "((3, 2), 5, int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('ab', 'cd')",
+        "expected_expr": "(('cd', 'ab'), 'cdab', str)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0)",
+        "expected_expr": "((0, 0), 0, int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5, 2.5)",
+        "expected_expr": "((2.5, 1.5), 4.0, float)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "((3, 2), 5, <class 'int'>) for solve('ab', 'cd')",
+        "why": "With strings, + concatenates: joined is 'cdab' and its kind is str. The same two lines of code produce a different KIND of value depending on what the names are attached to."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]
