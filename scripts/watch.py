@@ -313,6 +313,43 @@ def check_arena_index_is_current():
     guard_checks.check_arena_index_is_current()
 
 
+def check_graph_structure_ratchet():
+    """The lattice must record the dependencies the content actually has.
+
+    `audit_graph_structure.py` asks four structural questions the other audits
+    cannot: registry/atom-graph sanity (cycles, dangling ids, encompassing
+    weights the runtime silently drops), ORDER-ONLY dependencies (a drill uses
+    a symbol taught earlier in course order with NO prerequisite path behind
+    it — the prereq ratchet is blind to this by design, it ranks by order),
+    duplicate moves on one rung (two solutions identical after normalization),
+    and rung-difficulty inversions. Backlog exists, so: RATCHET —
+    `graph_structure_baseline.json` records it, this fails only on new debt.
+    """
+    import audit_graph_structure as G
+
+    findings = G.find()
+    known = G.load_baseline()
+    assert known is not None, (
+        'graph_structure_baseline.json is missing — re-record it with '
+        'audit_graph_structure.py --write-baseline')
+    new = sorted({f["key"] for f in findings} - known)
+    assert not new, (
+        f'{len(new)} new graph-structure finding(s): ' + '; '.join(new[:6])
+        + '  — add the edge, differentiate the drill, or argue the baseline.')
+
+    # Detector health, corpus-independent (codex round 1: asserting the
+    # CORPUS still has edge-missing debt meant the ratchet could never
+    # reach clean). Synthetic cases instead: the duplicate detector must
+    # collapse a rename+numeric change, refuse the empty program, and
+    # the ancestor walk must be transitive and directional.
+    same = 'def f(x):\n    return x + 1\n'
+    also = 'def g(y):\n    return y + 2\n'
+    assert G._move_hash(same) == G._move_hash(also), 'move-hash went blind'
+    assert G._move_hash('') is None, 'empty program must not hash'
+    anc = G._ancestors({'a': [], 'b': ['a'], 'c': ['b']})
+    assert anc['c'] == {'a', 'b'} and anc['a'] == set(), 'ancestor walk broken'
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
@@ -324,7 +361,7 @@ if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
               check_solution_prereq_ratchet, check_solution_symbol_coverage,
               check_arena_grounding_ratchet, check_declared_symbols_are_drilled,
-              check_arena_index_is_current]
+              check_arena_index_is_current, check_graph_structure_ratchet]
     for fn in checks:
         try:
             fn()
