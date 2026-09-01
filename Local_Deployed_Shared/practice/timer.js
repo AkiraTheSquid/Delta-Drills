@@ -902,7 +902,7 @@ const PracticeSession = (() => {
      exists. What is left is a failure to load and the placement taking over —
      both of which happen TO the learner, which is why each one says what
      happened rather than congratulating them. */
-  const finish = (reason) => {
+  const finish = (reason, message) => {
     if (!state) return;
     const { served } = state;
     // "Recorded answers are kept" is printed below, so make it true: an attempt
@@ -922,12 +922,59 @@ const PracticeSession = (() => {
     _showResumeOption();
     sessionStatusRow.classList.add("hidden");
     pagePractice.classList.add("session-idle");
+    /* 🔴 `message` OVERRIDES THE REASON, and the caller that passes one knows
+       something this function cannot. "Could not load a question — check the
+       connection" is right for a dead network and WRONG for the other way a
+       load fails: the backend answering, correctly, that this concept has no
+       unseen drill left at this rung (app/content_gaps.py writes that
+       sentence, names the concept and says what to do about it). Telling a
+       learner to check their connection when the connection is fine is how a
+       content gap gets read as a bug in the app. */
     sessionSummary.textContent =
-      reason === "error"
+      message ||
+      (reason === "error"
         ? "Could not load a question — check the connection and try again."
         : reason === "placement"
           ? "Placement test started — its questions are timed on their own clock, one at a time."
-          : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`;
+          : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`);
+    sessionSummary.classList.remove("hidden");
+  };
+
+  /* NO NEXT QUESTION, AND THE SCREEN MUST NOT FREEZE.
+
+     Seth, 2026-09-01: the review clock ran out, the app tried to advance, and
+     "instead of going to the next problem it just froze and didn't allow me to
+     press the next button". The backend had answered the truth — every
+     fill-in-the-blank drill for that concept was already served, "all 2 of
+     them" — and that answer arrived as a thrown Error into
+     `_loadNextPracticeQuestion`, whose six callers ALL discard it
+     (`.catch(() => {})` here in `_forceSubmitOrAdvance`, `_forceAdvance` and
+     the watchdog poll; an unhandled rejection in the Next-button handler).
+     By then the loader had already hidden the feedback area, cleared the
+     editor and hidden Next — so nothing was left on screen to press.
+
+     🔴 IT IS NOT ALWAYS A SESSION. The same wall is reachable from a
+     `?lesson=<kc>` KC drill, which is deliberately sessionless — so `finish()`
+     alone could not be the answer: it returns immediately when `state` is null
+     and the learner stays frozen.
+
+     🔴 AND IT MUST NOT EAT A PAUSED BLOCK. `finish()` clears `pausedState` and
+     the saved snapshot, which is correct for the block it is ending and
+     destructive for a block that is merely waiting to be resumed. With no live
+     session there is nothing to end: put the idle surface back, say why, and
+     leave the saved session offerable. */
+  const deadEnd = (message) => {
+    if (state) {
+      finish("error", message);
+      return;
+    }
+    _stopTick();
+    _stopPoll();
+    clockHolds.clear();
+    sessionStatusRow.classList.add("hidden");
+    pagePractice.classList.add("session-idle");
+    _showResumeOption();
+    sessionSummary.textContent = message;
     sessionSummary.classList.remove("hidden");
   };
 
@@ -999,5 +1046,6 @@ const PracticeSession = (() => {
     releaseClock,
     shouldFinishInsteadOfAdvance,
     finish,
+    deadEnd,
   };
 })();

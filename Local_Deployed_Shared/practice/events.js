@@ -351,6 +351,46 @@ const _resetProblemFeedbackRow = () => {
   }
 };
 
+/* WHAT TO DO WHEN THERE IS NO NEXT QUESTION. Two different failures wear the
+   same exception, and treating them alike breaks one of them:
+
+   THE CONTENT RAN OUT — the backend answering, correctly, that this concept has
+   no unseen drill left at this rung (app/content_gaps.py; `err.contentExhausted`
+   is set by practice/api.js when it parses that reply). There is nothing to
+   retry: retrying returns the same sentence. So the block ends, the learner is
+   handed back to the idle surface, and the reason is printed on
+   `#session-summary` where the next screen can carry it.
+
+   THE FETCH FAILED — a dropped connection, a redeploy, a 500. The content is
+   fine and the answer is to try again in a moment.
+
+   🔴 A TRANSIENT FAILURE MUST NOT END A LIVE BLOCK. `deadEnd` on a running
+   session calls `finish()`, which clears `pausedState` AND the saved snapshot —
+   so one bad request between two questions would throw away a block the learner
+   could otherwise have carried on with. A live block keeps its state and gets
+   Next back as the retry control instead; the clock is already stopped
+   (`pauseForAdvance`) and starts again when a question renders.
+
+   Everything else — no session, or a `?lesson=<kc>` KC drill, which is
+   deliberately sessionless — goes to `deadEnd`, which restores the idle surface
+   without a session to end and leaves a PAUSED block offerable. That matters
+   most for the lesson drill: the loader has already cleared the editor and
+   hidden Next by the time this runs, so "leave it as it is" is the frozen
+   screen this whole function exists to stop. */
+const _handleNoNextQuestion = (err) => {
+  const message = (err && err.message)
+    || "Could not load the next question. Try again in a moment.";
+  outputArea.textContent = message;
+  const exhausted = !!(err && err.contentExhausted);
+  const liveBlock =
+    typeof PracticeSession !== "undefined" && PracticeSession.isActive?.() === true;
+  if (!exhausted && liveBlock && !document.body.classList.contains("lesson-mode")) {
+    showNextProblemButton();
+    return;
+  }
+  PracticeSession.deadEnd(message);
+};
+
 const _loadNextPracticeQuestion = async () => {
   // Session quota reached — every advance path (Next, Skip, torch self-rate,
   // "I don't know yet", forced advance) funnels through here, so this is the
@@ -384,8 +424,34 @@ const _loadNextPracticeQuestion = async () => {
   else codeEditor.value = DEFAULT_EDITOR_CODE;
   outputArea.textContent = "";
 
-  // Load next question
-  const nextQ = await PracticeAPI.getNextQuestion();
+  /* Load next question.
+
+     🔴 A FAILED LOAD IS HANDLED HERE, NOT THROWN. Every advance path funnels
+     through this function and every one of them discards what it throws —
+     `.catch(() => {})` in timer.js's three forced advances, and a bare `await`
+     in the Next-button handler. So a throw from here was invisible, and by the
+     time it happened this function had already reset the screen for a question
+     that was never going to arrive: feedback area hidden, editor cleared, Next
+     hidden. Seth, 2026-09-01: "instead of going to the next problem it just
+     froze and didn't allow me to press the next button."
+
+     The common cause is not a broken connection. It is the backend answering
+     honestly that this concept has no unseen drill left at this rung — "you
+     have finished every fill-in-the-blank problem for X, all 2 of them"
+     (app/content_gaps.py, which also RECORDS the gap for the content
+     pipeline). That is a content state, not an error state, and the learner
+     needs the sentence and a live screen rather than a stuck one.
+
+     🔴 IT IS SWALLOWED ON PURPOSE — `deadEnd` has already put the learner
+     somewhere they can act. Re-throwing would hand the same error back to the
+     six callers that ignore it, which is exactly how this froze. */
+  let nextQ;
+  try {
+    nextQ = await PracticeAPI.getNextQuestion();
+  } catch (err) {
+    _handleNoNextQuestion(err);
+    return;
+  }
   const nextCount = practiceQuestionCount + 1;
   practiceProgress.questionCount = nextCount;
   savePracticeProgress(practiceProgress);
