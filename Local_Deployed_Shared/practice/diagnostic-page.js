@@ -31,10 +31,9 @@
      tab-disabling `setPracticeLock` — a disabled tab has no :disabled style, so
      it looks live and eats the click.
 
-     The hand-off. A placement that completes hands the learner to Practice
-     (see the transition in `render`), which is the seam Seth asked for: "after
-     they'd take the placement diagnostic ... it would seamlessly transition to
-     regular practice".
+     The finish. A placement that completes releases the workspace and leaves
+     the learner on this page's results. It never silently starts ordinary
+     practice; continuing from here is a separate learner action.
 
    WHAT IT KEEPS:
 
@@ -414,76 +413,18 @@ const DiagnosticPage = (() => {
     window.PlacementResults?.renderAreas(Array.isArray(status.areas) ? status.areas : []);
 
     const showResults = !!status.completed_at && !status.active;
-    if (showResults) window.PlacementResults?.render(status);
+    if (showResults) {
+      window.PlacementTimer?.stop?.();
+      window.PlacementResults?.render(status);
+    }
     resultsEl?.classList.toggle("hidden", !showResults);
-    /* Read BEFORE moveWorkspace, which is what writes `running`: the hand-off
-       below fires on the EDGE from a live test to a finished one, and after
-       that call there is no record left that a test was running. */
-    const wasRunning = running;
     moveWorkspace(!!status.active);
     syncOverviewVisibility(status);
-    /* 🔴 THE HAND-OFF TO PRACTICE, back with the page that needs one (Seth,
-       2026-09-01: "after they'd take the placement diagnostic, it would ...
-       seamlessly transition to regular practice"). The placement page has no
-       tab in the strip, so a learner who has just finished the test is on a
-       screen whose whole purpose is spent, with the account menu as the only
-       way off it.
-
-       🔴 ONLY ON THE EDGE, and only from this page. `wasRunning && showResults`
-       is the moment the last probe was graded — not every render of a completed
-       status, which is also what a learner gets when they open the page from
-       the menu to read their results or press Retake. Switching THEM would make
-       the menu row unusable: click it, land on Practice.
-
-       `diagnosticOnScreen()` guards the other half: a status call can resolve
-       while the learner is on some other tab entirely, and a page switch nobody
-       asked for is worse than a stale card.
-
-       The results stay rendered on the page behind them. `renderAreas` has
-       already written the area bars this same status carries onto the Learner
-       Home, so the screen they land on is the one their test just moved. */
-    if (wasRunning && showResults && diagnosticOnScreen() && typeof switchTab === "function") {
-      /* 🔴 THE PROBE IS OVER, SO THE PRACTICE PAGE MUST NOT OPEN ON IT. The
-         workspace `moveWorkspace(false)` just handed back still holds the last
-         probe — `PracticeAPI.currentQuestion.diagnostic_active` is true and its
-         clock is still on the notch — and `syncWorkspace` restores
-         `.session-idle` only when nothing "holds the question", which counts a
-         PAUSED session as a holder. So a learner with a paused block from
-         before the placement finished their test and landed on the graded probe
-         they had just finished, rendered under the practice page's name. That
-         is the exact failure the 2026-08-23 tab lock existed for, arriving
-         through the back door.
-
-         Idle unless something LIVE owns the surface: a running block or a
-         lesson (`?lesson=<kc>`) is a real question the learner is inside, and
-         hiding it would be the destructive half of this. A PAUSED session is
-         not — the idle surface is exactly where it belongs, with the resume
-         panel and "Continue practicing" on it.
-
-         The clock goes with it. `PlacementTimer.stop()` is idempotent and the
-         normal submit path has usually called it already; it has not when the
-         placement ends on a probe that was never submitted, and a placement
-         countdown left ticking over a practice screen auto-fires against a
-         question that no longer exists. */
-      const heldLive =
-        document.body.classList.contains("lesson-mode") ||
-        window.KcPractice?.isActive?.() === true ||
-        (typeof PracticeSession !== "undefined" && PracticeSession.isActive?.() === true);
-      if (!heldLive) byId("page-practice")?.classList.add("session-idle");
-      window.PlacementTimer?.stop?.();
-      switchTab("practice");
-    }
-    /* 🔴 THE HAND-OFF TO PRACTICE USED TO BE HERE and is gone, because there is
-       nowhere to hand off TO. A finished placement in basic mode was switched to
-       the Practice tab the moment its results arrived — that was the only exit
-       from a page with no tab strip on it.
-
-       The placement finishes on the Learner Home now. `moveWorkspace(false)`
-       releases the workspace, the idle surface comes back with the readiness
-       dial and the area bars already updated by this same status, and the
-       results card appears above them. Nothing switches, so nothing can drag a
-       learner off a page they opened on purpose — which is what the old
-       `justFinished` guard existed to prevent. */
+    /* Completion stays here. The completed-state branch stops the probe clock;
+       `moveWorkspace(false)` releases the final probe and reveals the result
+       card above. Do not `switchTab("practice")`: that made
+       a timeout look like it had aborted placement, and it hid the post-submit
+       controls before the learner could understand why no next probe existed. */
   };
 
   /* An unanswerable status call is not the same thing as "not signed in".
