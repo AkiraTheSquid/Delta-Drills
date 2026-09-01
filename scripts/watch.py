@@ -350,6 +350,37 @@ def check_graph_structure_ratchet():
     assert anc['c'] == {'a', 'b'} and anc['a'] == set(), 'ancestor walk broken'
 
 
+def check_prose_prereq_ratchet():
+    """No page may USE a word before the page that defines it — prose twin of
+    the solution-prereq ratchet. Vocabulary comes from lessons/glossary.js
+    (already term->KC mapped, guarded by watch_jargon.py); this only asks the
+    ordering question, over prose with all code stripped. RATCHET against
+    `prose_prereq_baseline.json`; fails on new debt only.
+    """
+    import audit_prose_prereqs as P
+
+    findings = P.find()
+    known = P.load_baseline()
+    assert known is not None, (
+        'prose_prereq_baseline.json is missing — re-record it with '
+        'audit_prose_prereqs.py --write-baseline')
+    new = sorted({f["key"] for f in findings} - known)
+    assert not new, (
+        f'{len(new)} page(s) use a term before its defining page: '
+        + '; '.join(new[:6])
+        + '  — reword, define earlier, or argue the baseline.')
+
+    # Detector health: the audit exists because kp-dots-and-imports (py-0)
+    # says "tensor" one lesson before numpy.ndarray-model defines it. That is
+    # baselined debt; assert the detector still SEES it while it exists, and
+    # allow a clean corpus once the page is reworded and the baseline shrunk.
+    if known:
+        assert findings, (
+            'baseline lists prose debt but the audit found NOTHING — the '
+            'detector went blind (glossary parse, prose stripping, or rank '
+            'lookup broke), it did not heal 41 pages at once')
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     # These checks are written as asserts, which `python -O` strips entirely —
@@ -361,7 +392,8 @@ if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
               check_solution_prereq_ratchet, check_solution_symbol_coverage,
               check_arena_grounding_ratchet, check_declared_symbols_are_drilled,
-              check_arena_index_is_current, check_graph_structure_ratchet]
+              check_arena_index_is_current, check_graph_structure_ratchet,
+              check_prose_prereq_ratchet]
     for fn in checks:
         try:
             fn()

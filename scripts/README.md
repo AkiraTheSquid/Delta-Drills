@@ -12,6 +12,7 @@
 - Lesson content itself (`Local_Deployed_Shared/lessons/`), runtime lesson gating (`Local_Deployed_Shared/practice/lessons.js`, backend `app/lessons.py`), or the drill bank.
 
 ## Key Files
+- `audit_prose_prereqs.py` + `prose_prereq_baseline.json` — the `a.T` rule for words: no page uses a glossary term before the page that defines it. Vocabulary comes from `lessons/glossary.js` (via `watch_jargon.glossary_terms`); all code is stripped before matching. Ratcheted by `watch.py::check_prose_prereq_ratchet`.
 - `audit_graph_structure.py` + `graph_structure_baseline.json` — structural audit of both served graphs: registry/atom sanity, order-only dependencies (symbol taught earlier with NO prereq path — the prereq ratchet is order-blind to this), same-move duplicates per rung (normalized AST, strings kept), rung-difficulty inversions. Ratcheted by `watch.py::check_graph_structure_ratchet`.
 - `lesson_lib.py`: shared parser — frontmatter, `split_sections` (ordered, repeatable), `build_segments` (one-concept segments), bank/registry loaders. HIGH fan-in: the other three scripts import it.
 - `validate_lessons.py`: executes every code fence in document order, grades every faded solution against bank test_cases, enforces at-least-one worked + one-or-two faded exercises per segment, and applies `lesson_quality.py` as hard errors to pages on the new standard. Run with `--coverage` as the full gate.
@@ -127,6 +128,7 @@
   - Status: `RESOLVED` (2026-08-13) in the generator. Republishing the notebooks is what puts it in front of a learner.
 
 ## Recent Changes
+- 2026-09-01: `audit_prose_prereqs.py` added — 40 baseline findings (e.g. kp-dots-and-imports says "tensor" one lesson before numpy.ndarray-model defines it). Inline+fenced code stripped, mirroring jargon.js.
 - 2026-09-01: `audit_graph_structure.py` added (64 baseline findings: 41 edge-missing, 23 difficulty; 0 same-move after the string-constant fix). Wired into watch.py as a ratchet, mutation-verified.
 
 - 2026-08-31 (**third standing guard: a concept must drill what it claims to teach**): new `audit_symbol_coverage.py` + `symbol_coverage_baseline.json`, `guard_checks.py` (`check_symbol_coverage`, added to `run()` so all four lesson watchers pick it up), `watch.py` (`check_declared_symbols_are_drilled`). The gap it closes: the two existing guards both ask whether a symbol is *legitimate* — taught in order, used by ARENA — and neither asks whether the concept claiming it ever tests it. 51 of 144 declared symbols are under a floor of two on-node drills and 19 have none at all, so it ships as a ratchet like its siblings. The baseline stores the count rather than only the key, because a key-only ratchet stays silent when a symbol already listed at 1 drops to 0. Verified by mutation, not by reading: adding an undrilled symbol to a page's `new_syntax` fires it, and untagging the single drill behind `torch.argsort#dim` fires it as a LOST regression; a wrong-family `--kc-prefix` stays quiet.
